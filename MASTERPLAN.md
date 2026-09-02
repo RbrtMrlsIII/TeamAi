@@ -3,54 +3,49 @@
 `PRODUCT_LAW.md` is the product authority. The full chronological Masterplan is maintained in the synchronized project package while this repository surface carries the active gates needed for agent recovery and execution.
 
 ## Current chronological gate
-`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
+`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE ✅ → TEAM-BACKEND-001 IN IMPLEMENTATION → TEAM-EXPERIENCE-029 HOLD`
 
 ## Phase 0 — Clean Baseline / Development Entry Gate
+Phase 0 is complete for development entry. Git history may retain retired implementation residue as historical record; the active project tree must not expose or support that retired path.
 
-Phase 0 is the final pre-development baseline gate. Git history may retain retired implementation residue as historical record; the active project tree MUST NOT expose or support that retired path.
+## TEAM-BACKEND-001 — Active implementation
+The backend foundation has entered executable implementation. The first completed implementation slice is:
 
-### Chronological checklist
-1. [x] Repository write authority confirmed for the canonical TeamAi GitHub repository.
-2. [x] `main` confirmed as the active cleaned backend-first rebaseline.
-3. [x] Active retired relational backend runtime, dependency, migration, configuration, test, documentation-path, repository, and scheduler traces removed.
-4. [x] Retired PostgreSQL implementation is historical-only and is not supported recovery infrastructure.
-5. [x] Authority boundaries confirmed: Firebase Auth = identity; Firestore `default` = TeamAi durable application/domain state; Supabase Edge Functions = trusted server execution/webhook boundary; PayPal = payment event authority; GitHub = engineering/source authority; Vercel = optional future browser/deployment surface.
-6. [x] Web AI and Development AI remain separate operational domains; Universal ToolKit is upstream-only.
-7. [x] Product Law and Masterplan contain the Phase-0 gate and current phase order.
-8. [x] Implementation traceability is a hard completion rule.
-9. [ ] Exact local-package ↔ GitHub byte parity remains a separate synchronization certification task; no false parity claim is permitted.
-10. [x] Phase-0 completion record is committed.
+1. **Authority ownership contract** — executable mapping for Firebase Auth, Firestore `default`, Supabase Edge Functions, PayPal, GitHub, hosting, and optional infrastructure roles.
+2. **Firestore ownership paths** — UID → Workplace → Project → Team → Seat/Task/Event path construction.
+3. **Effective-skill resolution** — deterministic composition of project type, field, task, provider/runtime, tools, base skills, and project skills; skill loading never grants authorization.
+4. **Durable task state contract** — lifecycle transition rules plus required durable event and idempotency fields.
 
-### Phase 0 evidence
-See `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`.
+Evidence surface: `docs/backend/BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md`.
 
-## TEAM-BACKEND-001 — Required next implementation phase
-
-TEAM-BACKEND-001 is the canonical backend foundation between the frontend blueprint and production frontend implementation. It remains the next active execution phase after Phase 0 and is not equivalent to TEAM-EXPERIENCE-029.
-
-### Gate order
-1. Architecture/authority reconciliation
-2. Firebase Auth identity boundary
-3. Firestore `default` durable domain/application state
-4. Account → Workplace → project → Team/Solo → Web AI seat/workstation/connection persistence
-5. Web AI field/domain skill inheritance and effective-skill resolution
-6. Durable task/event/job contracts
-7. Trusted Supabase Edge Function runtime boundary
-8. Server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation
-9. Verified PayPal webhook, idempotency, replay protection, durable commerce events
-10. Security / contract / integration / failure / recovery verification
-11. Traceability reconciliation and completion evidence
-12. Only then release the hold on TEAM-EXPERIENCE-029
+### Remaining chronological gates
+1. [ ] Live Firebase Auth identity integration and executable UID evidence.
+2. [ ] Firestore `default` persistence, rules, indexes, server-managed transitions, and ownership verification.
+3. [ ] Account → Workplace → project → Team/Solo → Web AI seat/workstation/connection persistence.
+4. [x] Effective-skill resolution contract.
+5. [x] Durable task/event state-transition contract.
+6. [ ] Trusted Supabase Edge Function execution against durable Firestore intent/state.
+7. [ ] Server-owned Firebase UID ↔ TeamAi ↔ PayPal correlation.
+8. [ ] Verified PayPal webhook authenticity, expected webhook identity, replay protection, idempotency, and durable commerce events.
+9. [ ] Configurable introductory commercial rule: month 1 paid; months 2–3 free; one grant per Firebase UID; then normal monthly billing.
+10. [ ] Security, authorization, contract, integration, timeout, failure, retry, cancellation, and recovery verification.
+11. [ ] Complete traceability reconciliation, completion evidence, endorsement, Product Knowledge, changelog, checkpoint, and handover synchronization.
+12. [ ] Release TEAM-EXPERIENCE-029 only after every BLOCKS_029 foundation frontier is evidenced.
 
 ## Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
 
+## Validation note
+The project test command has been attempted during TEAM-BACKEND-001. The current local environment lacks the installed Node dependency tree required by the existing project, so compilation cannot yet run here. This is an environment limitation, not a passing-test claim.
+
 ## Canonical references
 - `PRODUCT_LAW.md`
-- `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`
-- `docs/BACKEND_FIRST_REBASELINE_GUARD.md`
-- `docs/BACKEND_SYNC_BASELINE.md`
+- `AI_ASSISTANT_READ_ME.md`
+- `docs/backend/BACKEND_FOUNDATION_EXECUTION.md`
+- `docs/backend/BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md`
+- `docs/backend/BACKEND_DOCUMENT_WIRING.md`
+- `docs/FOUNDATION_IMPLEMENTATION_COMPLETION_MATRIX.md`
 - `docs/IMPLEMENTATION_COMPLETION_EVIDENCE_PROTOCOL.md`
 - `docs/TEAM-EXPERIENCE-029-STATUS.md`
 
-The synchronized project package remains the authoritative source for the full historical/chronological Masterplan text during this reconciliation window. This pointer intentionally avoids representing a partial repository surface as the entire Masterplan.
+The synchronized project package remains the authoritative source for the complete historical/chronological Masterplan text during this reconciliation window.
