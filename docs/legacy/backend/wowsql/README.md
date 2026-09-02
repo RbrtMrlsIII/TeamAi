@@ -1,9 +1,5 @@
-# WoWSQL — Legacy Evidence Only
+# Retired backend implementation
 
-WoWSQL was used during backend investigation and schema-reality discovery.
+This placeholder must not be treated as an implementation path, dependency, or recovery surface.
 
-It is frozen as **evidence infrastructure**, not an active TeamAi runtime dependency.
-
-Do not configure `DATABASE_URL`, execute TeamAi migrations against WoWSQL, or use its PostgreSQL schema as the TeamAi production source of truth.
-
-The detailed historical findings remain recoverable through Git history and canonical project archives.
+The retired relational backend has been removed from the active TeamAi architecture. The final repository-history purge is a separate destructive synchronization gate.
