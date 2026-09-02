@@ -1,0 +1,6 @@
+import Fastify from 'fastify'; import {InMemoryConversationStore,ConversationOrchestrator} from './orchestrator.js'; import {assertParticipantCount} from './billing/participant-entitlements.js'; import {transition,type WorkflowEvent,type WorkflowState} from './state-machine.js';
+const app=Fastify({logger:true}); const store=new InMemoryConversationStore(); const providers=new Map(); const orchestrator=new ConversationOrchestrator(store,providers as any); const workflows=new Map<string,WorkflowState>();
+app.get('/health',async()=>({ok:true}));
+app.post('/v1/projects/:projectId/conversations',async(req:any,reply:any)=>{const b=req.body;assertParticipantCount(b.planCode??'starter',b.participants.length);const c=await orchestrator.createConversation({id:crypto.randomUUID(),projectId:req.params.projectId,title:b.title,maxTurns:b.maxTurns,participants:b.participants});return reply.code(201).send(c)});
+app.post('/v1/workflows/:id/events',async(req:any)=>{const current=workflows.get(req.params.id)??'DISCUSSING';const next=transition(current,req.body.event as WorkflowEvent);workflows.set(req.params.id,next);return {id:req.params.id,state:next}});
+app.listen({port:Number(process.env.PORT??3000),host:'0.0.0.0'});

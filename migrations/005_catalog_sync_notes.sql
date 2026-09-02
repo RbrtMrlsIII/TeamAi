@@ -1,0 +1,3 @@
+-- Provider/model catalog rows are intentionally not hard-coded here.
+-- The catalog sync job should call provider list-model endpoints and upsert
+-- models + capabilities. Prices must be stored in model_prices with effective dates.
