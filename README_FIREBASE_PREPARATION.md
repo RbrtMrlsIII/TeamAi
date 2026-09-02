@@ -1,29 +1,13 @@
-# Firebase preparation
+# Firebase Preparation Entry Point
 
-TeamAi is prepared for a Firebase backend implementation path with the following hard constraints:
+This file is a supporting setup note. The canonical backend authority is documented under `docs/backend/` and the current execution bridge is `TEAM-BACKEND-001`.
 
-- Firebase project: `teamai-7d20f`
-- Firestore database: `default`
-- Firebase Authentication: in scope
-- Firebase Hosting: in scope
-- Cloud Firestore: in scope
-- Firebase Cloud Storage: **out of scope**
-- Cloud Functions: **out of scope**
-- Firebase/App billing upgrade to Blaze: **not required by the baseline architecture**
+## Current sequence
 
-TeamAi intentionally does **not** provide project ZIP upload inside the web app. Project artifacts are exchanged through manual GitHub setup, explicitly authorized AI-assisted external uploads (preferably via Workplace), or retrieval from the specific AI app named by the user in chat.
+`TEAM-EXPERIENCE-028 → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-Start with:
+Firebase Auth provides identity; Firestore `default` provides TeamAi durable application/domain state; Firebase Hosting provides web delivery. Trusted server execution remains in Supabase Edge Functions until a separately endorsed architecture decision changes that boundary.
 
-- `docs/FIREBASE_MIGRATION_AND_CUTOVER_PLAN.md`
-- `docs/FIREBASE_DOMAIN_MAPPING.md`
-- `docs/FIREBASE_SETUP_CHECKLIST.md`
-- `docs/PROJECT_ARTIFACT_EXCHANGE_AND_EXTERNAL_REPO_WORKFLOW.md`
-- `firebase.json`
-- `.firebaserc.example`
-- `firestore.rules`
-- `firestore.indexes.json`
+No Firebase private credential is required for the current planning/rebaseline checkpoint. Record project identity/configuration metadata only; never commit secrets.
 
-The existing WoWSQL/PostgreSQL environment remains preserved as a legacy/evidence environment until a separately approved migration/import plan is executed.
-
-Artifact UX contract: `docs/PROJECT_ARTIFACT_EXCHANGE_AND_EXTERNAL_REPO_WORKFLOW.md`
+See `docs/backend/FIREBASE_BACKEND_GUIDE.md` for the canonical setup and verification gate.
