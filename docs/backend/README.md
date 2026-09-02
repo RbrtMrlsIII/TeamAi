@@ -6,5 +6,7 @@ These are the canonical implementation guides for the external backend surfaces:
 - `SUPABASE_EDGE_FUNCTIONS_GUIDE.md` — trusted runtime and optional Storage.
 - `PAYPAL_WEBHOOK_GUIDE.md` — external payment rail and webhook boundary.
 - `BACKEND_SERVICE_BOUNDARY.md` — service-role map and re-entry rule.
+- `BACKEND_FIRST_MASTERPLAN_INSERT_2026-09-03.md` — pre-029 execution bridge and focus checklist.
+- `BACKEND_FIRST_REBASELINE_GUARD.md` — session-boundary continuity guard.
 
-Legacy PostgreSQL/WoWSQL material is documented under `docs/legacy/backend/` and is evidence only.
+The retired backend implementation is not part of the current architecture and is not a supported recovery path.
