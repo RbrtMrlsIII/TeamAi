@@ -17,6 +17,20 @@ This repository is the **GitHub-only engineering recovery anchor for TeamAi**.
 
 Only the **TeamAi** project belongs here. `HomeFinder-Official` is unrelated and must never be used as a TeamAi backup, mirror, source, or restoration target.
 
+### Existing engineering access
+
+TeamAi already has an authorized GitHub engineering path. Development AI must inspect and reuse the existing repository, branch, PR, and workflow capabilities before creating anything new.
+
+Canonical CI workflow:
+
+`.github/workflows/TeamAi.yml`
+
+Canonical protocol:
+
+`docs/recovery/GITHUB_ACCESS_AND_PR_PROTOCOL.md`
+
+**Do not create duplicate GitHub workflows, especially duplicate `.yml`/`.yaml` files, when an existing workflow already owns the responsibility.** Inspect first; update the canonical artifact when appropriate.
+
 ### Evidence rule
 
 Do not infer implementation, approval, or historical endorsement from this repository alone. Canonical authority remains in TeamAi's documented Product Law / governance system; GitHub provides durable engineering history and recovery evidence.
