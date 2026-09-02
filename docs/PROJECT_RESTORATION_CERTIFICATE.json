@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-09-02T12:30:00+08:00",
+  "backup": "TeamAi.zip",
+  "backup_files": 229,
+  "current_files": 555,
+  "backup_only": 0,
+  "common_changed": 52,
+  "current_additional": 326,
+  "restoration_status": "RESTORED_BASELINE",
+  "backup_files_all_present": true,
+  "build_dist_common_files": 39,
+  "build_dist_equal": true,
+  "foundation_006": {
+    "dedicated_checkpoint_archive": "MISSING",
+    "numbering_status": "HISTORICAL_NUMBERING_GAP",
+    "implementation_artifact": "migrations/006_team_coordination.sql",
+    "implementation_owner_checkpoint": "TEAM-FOUNDATION-001",
+    "implementation_evidence": [
+      "docs/handover/PHASE-TEAM-FOUNDATION-001-handover.md",
+      "validation/build-evidence/TEAM-FOUNDATION-001-build-evidence.md",
+      ".agent/builds/build-TEAM-FOUNDATION-001.json"
+    ]
+  },
+  "product_implementation_completion": "OPEN",
+  "source_of_truth": "current canonical project tree plus canonical docs; backup used as restoration evidence"
+}
