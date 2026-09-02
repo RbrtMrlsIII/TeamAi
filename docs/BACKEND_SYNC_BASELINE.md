@@ -10,7 +10,7 @@ The clean TeamAi package is the reconciliation baseline for the backend-first tr
 
 ## Important status
 
-TEAM-BACKEND-001 is planning-authorized and implementation is not complete. The active retired relational backend path has been removed from the clean product baseline. Final Git-history purge remains a separate destructive gate.
+TEAM-BACKEND-001 is planning-authorized and implementation is not complete. The active retired relational backend path has been removed from the clean project baseline. Final Git-history purge remains a separate destructive gate.
 
 ## GitHub synchronization rule
 
