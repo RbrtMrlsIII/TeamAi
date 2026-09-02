@@ -1,26 +1,27 @@
 # TeamAi PayPal Webhook Guide
 
 ## Canonical role
-PayPal is an external payment rail and event source. It is not a TeamAi database or application runtime.
+PayPal is the external payment rail and event source. It is not a TeamAi database or application runtime.
 
 ## Canonical flow
-PayPal event → public HTTPS webhook endpoint → Supabase Edge Function → authenticity and idempotency checks → TeamAi commerce event/state in Firestore.
+`PayPal event → public HTTPS webhook endpoint → Supabase Edge Function → authenticity + idempotency/replay checks → server-owned TeamAi-to-Firebase UID correlation → Firestore commerce state/entitlement`
 
 GitHub is never the webhook receiver and never the payment authority.
 
-## Setup sequence
-1. Create/configure a PayPal Developer application in Sandbox first.
-2. Create a webhook for the application and record its Webhook ID.
-3. Configure the public HTTPS webhook URL to the TeamAi Supabase Edge Function endpoint.
-4. Store PayPal Client Secret and related credentials only in Supabase Edge Function secrets.
-5. Keep Sandbox and Live credentials/configuration separate.
-6. Test signature verification and duplicate-event behavior before enabling business mutations.
+## Required later configuration
+1. Create/configure the PayPal Sandbox application.
+2. Create the PayPal Product and Plan after the UI/commercial experience is validated.
+3. Register the exact Supabase Edge Function HTTPS webhook URL.
+4. Record the PayPal Webhook ID as deployment configuration.
+5. Store PayPal Client ID/Secret only in trusted Supabase Edge Function secrets.
+6. Keep Sandbox and Live configuration separate.
+7. Verify signature authenticity, expected webhook identity, idempotency, replay handling, UID correlation, and Firestore entitlement mutation before enabling commerce activation.
 
-## Security requirements
-The receiver must accept POST only, validate PayPal's webhook signature, require the expected webhook identity, enforce idempotent event handling, acknowledge already-seen valid events safely, and avoid leaking credentials in logs or responses.
+## Firebase credential boundary
+No Firebase private credential is required for the current planning/rebaseline checkpoint. Do not place Firebase secrets or service-account material in chat, source, findings, logs, or commits.
 
-## Current implementation status
-The TeamAi Supabase `paypal-webhook` function is deployed as a bootstrap verification boundary. Commerce mutation is intentionally deferred until the Firestore transaction/event model is canonical.
+## Commercial hypothesis
+For the first qualifying subscription: month 1 is paid; months 2–3 are free; the three-month introductory grant is available once per Firebase UID. After the introductory period, succeeding months bill normally under the active plan. Exact Product/Plan/Button construction remains downstream of product UX and commercial validation.
 
-## Operational rule
-A successful webhook HTTP response is not proof that subscription, payment, refund, credit, or entitlement state is complete. Durable business-state confirmation comes from Firestore-backed reconciliation.
+## Current status
+The TeamAi Supabase `paypal-webhook` function is a bootstrap verification boundary. No live or sandbox subscription transaction has been exercised, and no Firestore commerce mutation is claimed complete.
