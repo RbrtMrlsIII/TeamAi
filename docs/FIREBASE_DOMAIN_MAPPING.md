@@ -26,3 +26,11 @@ The Firebase backend must implement TeamAi domain behavior without making Fireba
 ## Consistency rule
 
 Where a TeamAi invariant depends on the current state of one or more documents, use a Firestore transaction. Where a set of writes can be atomically committed without a read dependency, use a batched write. Keep transaction callbacks side-effect free because Firestore may retry a transaction under concurrent edits.
+
+## Spark runtime constraints
+
+The current TeamAi Firebase target is Spark-compatible and uses Firestore `default` plus Firebase Authentication and Hosting. Cloud Storage and Cloud Functions are not TeamAi product dependencies. Privileged orchestration and scheduling are therefore implemented behind an external TeamAi runtime boundary rather than client-side code or Cloud Functions.
+
+## Project artifact exchange boundary
+
+TeamAi web does not upload project ZIPs. A project may be manually placed in the user's GitHub repository using the canonical setup guide, or an explicitly authorized AI may perform an external upload through Workplace or another approved execution surface. When the user names a specific AI app in chat, TeamAi may direct the user to that AI app's own artifact retrieval path for the project ZIP. These flows must preserve authorization, provenance, checksum/version identity and auditability without introducing Firebase Storage.
