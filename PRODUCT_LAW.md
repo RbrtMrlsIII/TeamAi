@@ -7,6 +7,8 @@ The current sequence is:
 
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
+**Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
+
 ## Core authority invariants
 - Human user authority remains above AI authority.
 - Firebase Auth owns identity and Firebase UID ownership.
@@ -23,22 +25,22 @@ The current sequence is:
 ## LAW 101 — IMPLEMENTATION TRACEABILITY IS A HARD COMPLETION GATE
 Every implementation claim MUST be traceable from its governing Product Law and Masterplan execution item through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone MUST NOT be treated as implementation completion. A missing traceability link blocks the affected completion claim until an explicit, evidence-backed exception is recorded by the authorized human.
 
-## LAW 102 — BACKEND AUTHORITY MUST BE EXECUTABLE
-TeamAi backend implementation MUST encode its authority boundaries in executable contracts and verified transitions. Firebase Auth owns identity; Firestore `default` owns TeamAi domain/application state; Supabase Edge Functions own trusted server execution; PayPal owns payment-provider events. Frontend, cache, visual state, provider UI, and browser callbacks MUST NOT become alternate authorities.
+## LAW 102 — SERVICE AUTHORITY MUST BE EXECUTABLE
+The canonical service-authority map is not merely documentation. Backend code MUST reject authority mismatches so that identity, application state, execution, payment, engineering, and delivery responsibilities cannot silently migrate between services.
 
 ## LAW 103 — DURABLE STATE PRECEDES TRUSTED EXECUTION
-A privileged execution path MUST begin from durable, server-authorized TeamAi state and MUST produce durable result/event evidence. In-memory state, browser claims, transient callbacks, or an HTTP success response MUST NOT be treated as authoritative completion.
+A task or external event MUST have a durable identity, ownership context, lifecycle/idempotency identity, and evidence model before trusted execution or commerce mutation is considered complete. In-memory success is not durable completion.
 
-## LAW 104 — DOMAIN OWNERSHIP MUST BE TRACEABLE BY PATH
-Every durable TeamAi record MUST resolve to its Firebase UID ownership boundary and, where applicable, Workplace and Project context. Backend path construction and authorization MUST prevent cross-Workplace access by construction rather than relying on UI discipline.
+## LAW 104 — FIREBASE UID IS THE DOMAIN OWNERSHIP ROOT
+TeamAi application/domain paths MUST be rooted in the authenticated Firebase UID. Client-provided identifiers MUST NOT be treated as proof of ownership. Server-side correlation is required wherever an external provider, including PayPal, establishes an event or entitlement.
 
 ## Phase 0 disposition
 Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
 
-## TEAM-BACKEND-001 disposition
-TEAM-BACKEND-001 is now IN IMPLEMENTATION. The first executable contract slice establishes service authority ownership, Firebase-UID-scoped Firestore path construction, deterministic effective-skill resolution, and durable task-state transitions. These are implementation evidence for their specific contracts only; they do not imply full backend completion.
+## TEAM-BACKEND-001 implementation disposition
+The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, and durable event identity requirements. Firebase live integration, rules/index deployment verification, persistence, trusted runtime integration, PayPal correlation/webhook mutation, provider invocation, and E2E security/recovery evidence remain open.
 
-The remaining foundation gates are live Firebase Auth/Firestore behavior, Workplace/seat persistence, Firestore rules/index validation, trusted Supabase Edge execution, PayPal correlation and webhook verification, durable commerce state, provider/runtime invocation, recovery/security verification, and complete traceability evidence.
+See `docs/backend/BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md` and `MASTERPLAN.md` for the current execution matrix.
 
 ## Canonical note
 The complete Product Law remains in the synchronized project package and is not intentionally duplicated here during this reconciliation window. This front door MUST remain synchronized with any active authority changes.
