@@ -1,40 +1,41 @@
 # TeamAi
 
-## Durable Recovery Anchor
+## Durable Engineering Anchor
 
-This repository is the **GitHub-only engineering recovery anchor for TeamAi**.
+This repository is the **GitHub engineering source/review surface for TeamAi**. The canonical product package remains the synchronized project artifact; this repository must not drift from it.
 
-### Current baseline
+### Current gate
 
-- Restored baseline: `PRE-029 — PROJECT_RESTORED_BASELINE`
-- Canonical archive SHA-256: `9990dbaf02b7c6d6bc8f55ae21889b4e633f40b066b515e7b97619bde3f7e89a`
-- Restored-tree inventory: 558 files
-- Restoration status: `RESTORED_BASELINE`
-- Full implementation completion: `OPEN`
-- Foundation-006: `HISTORICAL_NUMBERING_GAP`; coordination migration evidence is retained under Foundation-001.
+`TEAM-EXPERIENCE-028 → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
+
+- 028 = frontend implementation blueprint.
+- TEAM-BACKEND-001 = required backend foundation; planning/implementation work begins here before 029.
+- 029 = production frontend implementation and remains on hold until the backend foundation passes.
+
+Read `docs/BACKEND_FIRST_REBASELINE_GUARD.md` before changing backend architecture or 029.
+
+### Backend authority
+
+- Firebase Auth = identity authority.
+- Firestore `default` = TeamAi durable domain/application state.
+- Supabase Edge Functions = trusted server runtime and webhook boundary.
+- PayPal = payment-provider authority.
+- GitHub = engineering source/review surface.
+- Vercel = future optional browser/deployment surface.
+- Supabase Postgres = platform infrastructure only; not TeamAi domain state.
+
+The retired relational backend implementation is removed from the active application path and is not a supported recovery implementation.
 
 ### Repository boundary
 
-Only the **TeamAi** project belongs here. `HomeFinder-Official` is unrelated and must never be used as a TeamAi backup, mirror, source, or restoration target.
+Only the TeamAi project belongs here. `HomeFinder-Official` is unrelated and must never be used as a TeamAi mirror or restoration target.
 
-### Existing engineering access
-
-TeamAi already has an authorized GitHub engineering path. Development AI must inspect and reuse the existing repository, branch, PR, and workflow capabilities before creating anything new.
-
-Canonical CI workflow:
-
-`.github/workflows/TeamAi.yml`
-
-Canonical protocol:
-
-`docs/recovery/GITHUB_ACCESS_AND_PR_PROTOCOL.md`
-
-**Do not create duplicate GitHub workflows, especially duplicate `.yml`/`.yaml` files, when an existing workflow already owns the responsibility.** Inspect first; update the canonical artifact when appropriate.
+Canonical CI workflow: `.github/workflows/TeamAi.yml`
 
 ### Evidence rule
 
-Do not infer implementation, approval, or historical endorsement from this repository alone. Canonical authority remains in TeamAi's documented Product Law / governance system; GitHub provides durable engineering history and recovery evidence.
+Planning, documentation, deployment, and isolated tests are not by themselves implementation proof. Completion requires the evidence defined by the project's implementation-completion protocol.
 
-### Recovery inventory
+### Synchronization rule
 
-See `docs/recovery/TeamAi_PRE_029_GITHUB_RECOVERY_MANIFEST.md` for the complete file-by-file SHA-256 inventory captured from the restored baseline.
+The project ZIP/rebaseline artifact and the GitHub engineering tree are treated as synchronization surfaces. Any divergence must be recorded and reconciled before the next implementation phase advances.
