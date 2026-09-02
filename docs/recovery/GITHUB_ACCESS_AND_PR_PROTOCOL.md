@@ -43,13 +43,36 @@ GitHub access does not grant Product Law authority. TeamAi Product Law and gover
 ## Canonical artifact anti-duplication
 Before creating any file, search for existing artifacts with the same or overlapping responsibility. Especially inspect workflows, README/AI entrypoints, recovery manifests, policies, architecture specs, verification protocols, and checkpoint/handover records. Update the canonical artifact instead of creating a parallel copy.
 
+## Large-file and binary rule
+The canonical TeamAi project ZIP is the complete preservation/recovery artifact. GitHub is the durable engineering/source-control surface for code and repository-managed records.
+
+Large binary/media files are **archive-first by default**. Do not upload a PNG, rendered visual board, screenshot, finding illustration, or other large reference file solely to make GitHub mirror the ZIP.
+
+A binary should enter Git only when it is genuinely required as a version-controlled engineering dependency, such as a source 3D/spatial asset, runtime asset, deterministic test fixture, or another explicitly required repository artifact.
+
+When an important binary must be uploaded but the Development AI cannot safely transfer its bytes through the available GitHub tooling, the AI must stop and give the user an intervention report before any manual upload. The report must include:
+
+1. exact local source file and purpose;
+2. why GitHub storage is required;
+3. repository: `RbrtMrlsIII/TeamAi`;
+4. exact destination folder/path;
+5. exact PR number and branch;
+6. exact user upload action; and
+7. exact post-upload verification step.
+
+The user must never have to guess where the file belongs or which PR receives it. The AI must never request a PAT in chat.
+
+After the upload, the AI verifies path, size/hash where available, absence of duplicate copies, correct repository, and the PR diff.
+
+See `docs/recovery/BINARY_AND_LARGE_FILE_UPLOAD_GUIDE.md` for the operational procedure.
+
 ## Historical preservation
 GitHub history is part of TeamAi's durable engineering record. Do not rewrite historical commits or documentation merely to make history cleaner. Corrections should be additive and traceable unless an explicit repository/security operation requires otherwise.
 
 Historical endorsement must never be inferred from GitHub access, a commit, a PR, a merge, or a workflow result. Endorsement evidence remains governed by TeamAi's documented authority model.
 
 ## Recovery principle
-The PRE-029 restored baseline is the current recovery anchor. GitHub records should preserve its identity and subsequent engineering deltas. Implementation completeness is separate and must be demonstrated by source, build, test, and product-capability evidence.
+The PRE-029 restored baseline is the current recovery anchor. The canonical project ZIP is the complete preservation surface; GitHub records should preserve the version-controlled engineering surface and its subsequent deltas. Implementation completeness is separate and must be demonstrated by source, build, test, and product-capability evidence.
 
 ## AI stop condition
-If an AI agent encounters a missing file, workflow, repository, credential, or integration and cannot establish whether it already exists: **Do not invent it. Do not duplicate it. Search/inspect first. If still ambiguous, mark `REVIEW_REQUIRED` and report the exact uncertainty.**
+If an AI agent encounters a missing file, workflow, repository, credential, integration, or required binary and cannot establish whether it already exists: **Do not invent it. Do not duplicate it. Search/inspect first. If still ambiguous, mark `REVIEW_REQUIRED` and report the exact uncertainty.**

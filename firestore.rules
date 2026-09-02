@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Safe preparation baseline: no client access is granted until
+    // tenancy, role, and data classification rules are implemented and tested.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
