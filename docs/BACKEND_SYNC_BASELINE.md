@@ -1,19 +1,7 @@
 # Backend Synchronization Baseline — 2026-09-03
 
-## Canonical project baseline
-
-The clean TeamAi package is the reconciliation baseline for the backend-first transition. Its local SHA-256 is recorded in `docs/BACKEND_REBASELINE_MANIFEST.json`.
-
-## Canonical phase order
-
 `TEAM-EXPERIENCE-028 → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-## Important status
+The clean TeamAi package is the backend-first reconciliation baseline. TEAM-BACKEND-001 is planning-authorized and not implementation-complete. Exact package/GitHub byte parity is a required verification gate. The retired relational backend has been removed from the clean active product baseline; final Git-history purge is a separate destructive gate after independent preservation/verification.
 
-TEAM-BACKEND-001 is planning-authorized and implementation is not complete. The active retired relational backend path has been removed from the clean project baseline. Final Git-history purge remains a separate destructive gate.
-
-## GitHub synchronization rule
-
-GitHub must match the clean package before production implementation advances. Exact byte-for-byte parity is a required verification result, not an assumption.
-
-The connected GitHub interface used in this session cannot ingest a local binary archive as a complete repository snapshot, so this document records the reconciliation state without falsely certifying full byte parity.
+The connected GitHub interface cannot ingest the local binary archive as one complete repository snapshot, so this record does not falsely certify full byte parity.
