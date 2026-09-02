@@ -36,20 +36,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if test -f package.json; then
-            echo 'teamai_source_present=true' >> "$GITHUB_ENV"
-          else
-            echo 'teamai_source_present=false' >> "$GITHUB_ENV"
-          fi
+          if test -f package.json; then echo 'teamai_source_present=true' >> "$GITHUB_ENV"; else echo 'teamai_source_present=false' >> "$GITHUB_ENV"; fi
       - name: Setup Node
-        if: env.teamai_source_present == 'true' && env.lockfile_present == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Setup Node without lockfile
-        if: env.teamai_source_present == 'true' && env.lockfile_present != 'true'
+        if: env.teamai_source_present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -59,12 +48,8 @@ jobs:
           set -euo pipefail
           if test "${teamai_source_present}" = 'true'; then
             if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
-            if npm run | grep -q '^  typecheck'; then npm run typecheck; fi
-            if npm run | grep -q '^  test'; then npm test; fi
+            npm run typecheck
+            npm test
           else
             echo 'TeamAi application source is not yet present in GitHub; recovery-record validation remains the active gate.'
           fi
-      - name: Detect lockfile
-        shell: bash
-        run: |
-          if test -f package-lock.json; then echo 'lockfile_present=true' >> "$GITHUB_ENV"; else echo 'lockfile_present=false' >> "$GITHUB_ENV"; fi
