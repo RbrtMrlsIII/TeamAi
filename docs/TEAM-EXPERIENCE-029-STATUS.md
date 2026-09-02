@@ -1,23 +1,47 @@
 # TEAM-EXPERIENCE-029 Status
 
-## Current foundation gate
+## Current gate
 
-TEAM-EXPERIENCE-029 is the implementation phase following the 014–028 experience/design checkpoints.
+TEAM-EXPERIENCE-029 remains the production frontend implementation phase following the 014–028 experience/design checkpoints. It is **PLANNING / IMPLEMENTATION HOLD**.
 
-## Backend foundation decision
+## Required predecessor
 
-The active application backend is Firebase Auth + Firestore (`default`) + Firebase Hosting, with Supabase Edge Functions as the trusted server runtime, optional entitlement-qualified Supabase Storage for user content, GitHub as the engineering repository/workstation surface, and PayPal as the external payment rail.
+The canonical sequence is:
 
-Supabase Postgres is platform infrastructure only and is not the TeamAi domain system of record.
+`TEAM-EXPERIENCE-028 → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-## PostgreSQL quarantine
+TEAM-BACKEND-001 is the required backend foundation bridge. Its implementation must be evidenced before 029 production frontend implementation begins.
 
-The retired PostgreSQL application runtime has been removed from the active source surface on this feature branch: database pool/repositories, migration runner and active migrations, PostgreSQL conversation store, PostgreSQL task scheduler, PostgreSQL integration tests, and compatibility shims.
+## Backend authority
 
-Historical PostgreSQL/WoWSQL material remains recoverable from Git history and canonical archives. It must not be copied back into active runtime without an explicit backend-composition decision and endorsed re-entry gate.
+- Firebase Auth = identity authority.
+- Firestore `default` = TeamAi durable domain/application authority.
+- Supabase Edge Functions = trusted server runtime and webhook receiver.
+- PayPal = payment-provider authority.
+- GitHub = engineering source/review surface.
+- Vercel = future optional browser/deployment surface.
+- Supabase Postgres = platform infrastructure only, not TeamAi domain state.
 
-A CI audit now fails when PostgreSQL runtime markers are found in active source/package/migration surfaces.
+## Commerce authority
 
-## Next implementation gate
+The browser never decides payment truth. Canonical flow:
 
-The next 029 implementation work may build a storage-neutral task/event contract and Firestore-backed persistence, followed by Supabase Edge Function worker execution. It must not reintroduce PostgreSQL as a shortcut.
+`PayPal event → Supabase Edge Function → authenticity + idempotency/replay control → server-owned Firebase UID correlation → Firestore commerce state/entitlement`
+
+The one-time introductory commercial hypothesis is: first qualifying subscription month paid; months 2–3 free; one promotional grant per Firebase UID; succeeding months bill normally. Exact Product/Plan/Button construction remains downstream of frontend/commercial validation.
+
+## Retired backend disposition
+
+The retired relational backend implementation is removed from the active application path and is not a supported recovery implementation. Final Git-history purge is a separate destructive gate after the clean replacement baseline is independently preserved and verified.
+
+## Two-team boundary
+
+Development AI builds TeamAi through GitHub and the engineering workflow. Web/Feature AI operates inside the product using user-facing skills. Skills instruct; permissions and backend policy authorize. A frontend seat resolves the applicable frontend field/domain skill bundle; a backend seat resolves the applicable backend bundle.
+
+## ToolKit boundary
+
+TeamAi-specific findings remain TeamAi-owned. Only validated, generalized lessons may move upstream into the Universal AGENT ToolKit. ToolKit changes do not automatically flow downstream.
+
+## Completion rule
+
+Documentation, planning, deployed bootstrap infrastructure, and isolated tests are not sufficient to claim end-to-end completion. 029 remains blocked until TEAM-BACKEND-001 closes its executable identity, Firestore, workplace/seat, skill-wiring, commerce, task/event/runtime, security, recovery, and verification gates.
