@@ -41,6 +41,8 @@ Before creating any `.yml` or `.yaml` file under `.github/workflows/`:
 5. Create a new workflow only when a genuinely distinct workflow responsibility is established and documented.
 6. If uncertain, stop and report `REVIEW_REQUIRED` rather than inventing a duplicate.
 
+**Specific anti-duplication rule:** `TeamAi.yml` is not a template to copy. It is the existing canonical workflow. Do not create `teamai.yml`, `TeamAi.yaml`, `ci.yml`, `teamai-ci.yml`, or another equivalent workflow unless a distinct responsibility has first been established and documented.
+
 ## 4. PAT / credential rule
 
 A GitHub Personal Access Token may be authorized for the TeamAi project, but its **secret value is never project content**.
