@@ -27,16 +27,17 @@ This is the operational recovery entry point for AI participants working on Team
 - Vercel = optional future browser/deployment surface, not backend authority.
 - Supabase Postgres = platform infrastructure only, never TeamAi domain/application state.
 
-## TEAM-BACKEND-001 implementation slice
+## TEAM-BACKEND-001 implemented foundation slice
 The first executable backend foundation contracts are in `src/backend/`:
 - `authority.ts` — canonical service ownership and authority assertions.
 - `firestore-paths.ts` — Firebase UID → Workplace → Project → Team → Seat/Task/Event ownership paths.
 - `skill-resolution.ts` — deterministic effective-skill composition. Skills never grant authorization.
 - `task-state.ts` — durable task lifecycle transitions and durable-event field requirements.
-- `tests/backend-foundation.test.mjs` — contract tests for the slice.
+
+Supporting Firebase configuration is now explicitly wired through `firebase.json`, `firestore.rules`, and `firestore.indexes.json`. The rules are UID-scoped for the modeled domain paths, with an explicit deny-all fallback. This is a source configuration baseline; deployment and emulator/rules verification remain open.
 
 ## Remaining backend gates
-Live Firebase Auth/Firestore execution, Firestore rules/index deployment and validation, Workplace/seat persistence, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, trusted Edge runtime integration, provider invocation, security/failure/recovery verification, and final traceability/endorsement remain open.
+Live Firebase Auth/Firestore execution, rules/index deployment and validation, Workplace/seat persistence, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, trusted Edge runtime integration, provider invocation, security/failure/recovery verification, and final traceability/endorsement remain open.
 
 ## Hard implementation rule
 Implementation claims must trace:
