@@ -1,1 +1,62 @@
+name: TeamAi
 
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-integrity:
+    name: Recovery integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate TeamAi recovery records
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/recovery/TeamAi_PRE_029_GITHUB_RECOVERY_MANIFEST.md
+          test -f docs/recovery/RECOVERY_POLICY.md
+          grep -q '9990dbaf02b7c6d6bc8f55ae21889b4e633f40b066b515e7b97619bde3f7e89a' docs/recovery/TeamAi_PRE_029_GITHUB_RECOVERY_MANIFEST.md
+          grep -q 'RESTORED_BASELINE' docs/recovery/TeamAi_PRE_029_GITHUB_RECOVERY_MANIFEST.md
+          grep -q 'HomeFinder-Official' docs/recovery/RECOVERY_POLICY.md
+          ! test -e HomeFinder-Official
+
+  project-tests:
+    name: Project tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Detect project tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f package.json; then
+            echo 'teamai_source_present=true' >> "$GITHUB_ENV"
+          else
+            echo 'teamai_source_present=false' >> "$GITHUB_ENV"
+          fi
+      - name: Setup Node
+        if: env.teamai_source_present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Run checks when source is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test "${teamai_source_present}" = 'true'; then
+            npm ci
+            if npm run | grep -q '^  typecheck'; then npm run typecheck; fi
+            if npm run | grep -q '^  test'; then npm test; fi
+          else
+            echo 'TeamAi application source is not yet present in GitHub; recovery-record validation remains the active gate.'
+          fi
