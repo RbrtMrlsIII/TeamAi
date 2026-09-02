@@ -32,7 +32,7 @@ The one-time introductory commercial hypothesis is: first qualifying subscriptio
 
 ## Retired backend disposition
 
-The retired relational backend implementation is removed from the active application path and is not a supported recovery implementation. Final Git-history purge is a separate destructive gate after the clean replacement baseline is independently preserved and verified.
+The retired backend implementation is removed from the active application path and is not a supported recovery implementation. Final Git-history purge is a separate destructive gate after the clean replacement baseline is independently preserved and verified.
 
 ## Two-team boundary
 
