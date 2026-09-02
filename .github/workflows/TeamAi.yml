@@ -48,9 +48,9 @@ jobs:
           set -euo pipefail
           if test "${teamai_source_present}" = 'true'; then
             if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
-            npm run backend:postgres-resurrection-audit
+            npm run backend:authority-audit
             npm run typecheck
             npm test
           else
-            echo 'TeamAi application source is not yet present in GitHub; recovery-record validation remains the active gate.'
+            echo 'TeamAi application source is not yet present; recovery-record validation remains the active gate.'
           fi
