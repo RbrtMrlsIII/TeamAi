@@ -48,6 +48,7 @@ jobs:
           set -euo pipefail
           if test "${teamai_source_present}" = 'true'; then
             if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
+            npm run backend:postgres-resurrection-audit
             npm run typecheck
             npm test
           else
