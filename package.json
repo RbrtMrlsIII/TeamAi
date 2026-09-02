@@ -1,8 +1,8 @@
 {
-  "name": "ai-council-orchestrator",
+  "name": "teamai",
   "version": "0.2.0",
   "private": true,
-  "description": "Human-controlled multi-AI discussion and execution orchestrator",
+  "description": "TeamAi — Provider-Federated AI Team Workspace (Firebase + Supabase backend architecture)",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -10,9 +10,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
-    "migrate": "node dist/db/migrate.js",
     "test:unit": "npm run build && node --test tests/*.test.mjs",
-    "test:integration": "npm run build && node --test tests/repositories.integration.test.mjs",
     "docs:audit": "python3 build-system/scripts/documentation-authority-audit.py",
     "execution:audit": "python3 build-system/scripts/execution-discipline-audit.py",
     "spatial:root-audit": "python3 build-system/scripts/spatial-root-wiring-audit.py",
@@ -29,16 +27,9 @@
     "historical:traceability-audit": "python3 build-system/scripts/historical-checkpoint-traceability-audit.py",
     "historical:traceability-regression": "python3 build-system/scripts/historical-traceability-regression-test.py",
     "foundation:implementation-audit": "python3 build-system/scripts/foundation-implementation-completion-audit.py",
-    "project:restoration-audit": "python3 build-system/scripts/project-restoration-audit.py"
+    "project:restoration-audit": "python3 build-system/scripts/project-restoration-audit.py",
+    "backend:postgres-resurrection-audit": "python3 build-system/scripts/backend-postgres-resurrection-audit.py"
   },
-  "dependencies": {
-    "fastify": "^5.0.0",
-    "pg": "^8.12.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.0.0",
-    "@types/pg": "^8.11.10",
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
-  }
+  "dependencies": {"fastify": "^5.0.0"},
+  "devDependencies": {"@types/node": "^22.0.0", "tsx": "^4.19.0", "typescript": "^5.6.0"}
 }
