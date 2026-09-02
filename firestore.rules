@@ -23,12 +23,17 @@ service cloud.firestore {
             }
           }
 
+          // Tasks and events are durable execution/evidence state.
+          // Clients may observe their own state but must not self-attest
+          // execution transitions or append authoritative evidence.
           match /tasks/{taskId} {
-            allow read, write: if signedInAs(uid);
+            allow read: if signedInAs(uid);
+            allow write: if false;
           }
 
           match /events/{eventId} {
-            allow read, write: if signedInAs(uid);
+            allow read: if signedInAs(uid);
+            allow write: if false;
           }
         }
       }
