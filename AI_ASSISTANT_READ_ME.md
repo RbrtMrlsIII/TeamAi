@@ -15,7 +15,7 @@ This is the operational recovery entry point for AI participants working on Team
 
 **Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
 
-`TEAM-EXPERIENCE-029` remains HOLD until the backend foundation completion gate is fully evidenced.
+The Firebase persistence gate is now evidence-backed. `TEAM-EXPERIENCE-029` may advance in planning/reconciliation, but production frontend implementation remains gated by the remaining backend prerequisites listed below.
 
 ## Canonical backend authority
 - Firebase Auth = identity / Firebase UID ownership.
@@ -53,15 +53,31 @@ The canonical endpoint is:
 
 ## Executable gate checkpoint — 2026-09-03
 - **Gate 1:** invalid Firebase ID token → HTTP 401 `invalid_firebase_id_token` — PASS.
-- **Gate 2:** missing Authorization header → HTTP 401 `missing_firebase_id_token` — PASS.
-- **Gate 3:** valid Firebase ID token → trusted Firestore persistence — **BLOCKED**. The test-user token acquisition attempt returned `invalid login credentials`, so no valid ID token was available for the authenticated persistence probe.
+- **Gate 2:** missing Authorization → HTTP 401 `missing_firebase_id_token` — PASS.
+- **Gate 3B:** valid Firebase ID token → trusted Firestore persistence — PASS.
+- **Gate 3C:** exact nested Firestore document independently read with actual stored values — PASS.
+- **Gate 3D:** identical authenticated repeat call returned HTTP 200 with existing-value results — PASS.
 
-Gate 3 has therefore not been claimed or completed. The backend source/deployment is not being altered merely to compensate for a test credential problem.
+### Current Firebase persistence evidence boundary
+The executable slice is now evidenced as:
 
-See `docs/backend/BACKEND_LIVE_SERVICE_STATUS.md` and `docs/CHECKPOINT_TEAM-BACKEND-001_GATE2_2026-09-03.md`.
+`Firebase ID token → verified Firebase UID → Firestore hierarchy → independent Firestore confirmation → repeat-call idempotency`
+
+Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
 
 ## Remaining backend gates
-Live authenticated Firestore document verification, repeat-call idempotency verification for the current deployment, emulator/rules verification, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, provider invocation, security/failure/recovery verification, final traceability, and endorsement remain open unless explicitly evidenced by a later checkpoint.
+The following remain open unless separately evidenced by a later checkpoint:
+- local Firebase Emulator/rules execution;
+- skill-wiring and project-type/field/task/provider/runtime resolution verification as applicable to the backend contract;
+- server-owned PayPal correlation;
+- verified PayPal webhook authenticity, idempotency, replay protection, and durable commerce events/entitlements;
+- durable task/event/job runtime behavior and provider/runtime invocation;
+- security, failure, timeout, cancellation, and recovery verification;
+- final Product Law → Masterplan → contract/skill → implementation → evidence → endorsement reconciliation;
+- TEAM-BACKEND-001 completion endorsement.
+
+## 029 disposition
+TEAM-EXPERIENCE-029 is no longer blocked by the Firebase persistence acquisition/verification blocker. It remains backend-gated by the explicit prerequisites above and must not be treated as production frontend implementation complete.
 
 ## Hard implementation rule
 Implementation claims must trace:
