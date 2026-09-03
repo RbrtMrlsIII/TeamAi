@@ -1,41 +1,27 @@
-# TeamAi
+# TeamAi — Durable Engineering Anchor
 
-## Durable Engineering Anchor
+TeamAi is a human-controlled multi-AI discussion and execution orchestrator.
 
-This repository is the **GitHub engineering source/review surface for TeamAi**. The canonical project package remains the synchronized project artifact; GitHub must not drift from it.
+## Current execution order
+`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-### Current gate
+## Current phase
+`TEAM-BACKEND-001 — IN IMPLEMENTATION`
 
-`TEAM-EXPERIENCE-028 → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
+Read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `AI_ASSISTANT_READ_ME.md` before making implementation decisions.
 
-- 028 = frontend implementation blueprint.
-- TEAM-BACKEND-001 = required backend foundation; implementation begins here before 029.
-- 029 = production frontend implementation and remains on hold until the backend foundation passes.
+## Backend authority
+- Firebase Auth: identity / Firebase UID ownership.
+- Firestore `default`: TeamAi durable application/domain state.
+- Supabase Edge Functions: trusted server runtime and PayPal webhook boundary.
+- PayPal: external payment-event authority.
+- GitHub: engineering/source authority.
+- Firebase Hosting: current web delivery.
+- Vercel: browser-verification surface only; not TeamAi hosting, backend, or production deployment authority.
+- Supabase Postgres: platform infrastructure only, never TeamAi domain state.
 
-Read `docs/BACKEND_FIRST_REBASELINE_GUARD.md` before changing backend architecture or 029.
+## Implementation completion
+An implementation is complete only when Product Law → Masterplan → contract/skill → actual implementation → verification evidence → completion/endorsement is traceable. Documentation or deployment alone does not establish completion.
 
-### Backend authority
-
-- Firebase Auth = identity authority.
-- Firestore `default` = TeamAi durable domain/application state.
-- Supabase Edge Functions = trusted server runtime and webhook boundary.
-- PayPal = payment-provider authority.
-- GitHub = engineering source/review surface.
-- Vercel = future optional browser/deployment surface.
-- Supabase Postgres = platform infrastructure only; not TeamAi domain state.
-
-The retired relational backend implementation is not a supported TeamAi implementation path and is scheduled for final history purge after clean-baseline verification.
-
-### Repository boundary
-
-Only the TeamAi project belongs here. `HomeFinder-Official` is unrelated and must never be used as a TeamAi mirror or restoration target.
-
-Canonical CI workflow: `.github/workflows/TeamAi.yml`
-
-### Evidence rule
-
-Planning, documentation, deployment, and isolated tests are not by themselves implementation proof. Completion requires the project's implementation-completion evidence protocol.
-
-### Synchronization rule
-
-The project package/rebaseline artifact and GitHub engineering tree are synchronization surfaces. Any divergence must be recorded and reconciled before the next implementation phase advances.
+## Team boundary
+Development AI builds TeamAi. Web/Feature AI operates inside the product. Universal ToolKit is upstream-only for generalized validated lessons and never overrides TeamAi authority.

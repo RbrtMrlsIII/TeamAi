@@ -1,19 +1,21 @@
-# TeamAi Backend Guides
+# TeamAi Backend Documentation
 
-These are the canonical implementation guides for the external backend surfaces:
+This directory is the canonical backend implementation and authority documentation surface.
 
-- `FIREBASE_BACKEND_GUIDE.md` — Firebase Auth, Firestore, and Hosting.
-- `SUPABASE_EDGE_FUNCTIONS_GUIDE.md` — trusted runtime and optional Storage.
-- `PAYPAL_WEBHOOK_GUIDE.md` — external payment rail and webhook boundary.
-- `FIRESTORE_DOMAIN_MODEL.md` — Firestore authority and domain planning contract.
-- `PAYPAL_COMMERCE_AND_UID_CANONICAL.md` — payment authority, UID correlation, promotion rules.
-- `WEB_AI_SKILL_INHERITANCE_CANONICAL.md` — effective Web AI skill resolution.
-- `BACKEND_SERVICE_BOUNDARY.md` — service-role map and retirement rule.
-- `BACKEND_FOUNDATION_EXECUTION.md` — ordered TEAM-BACKEND-001 execution contract.
-- `BACKEND_FIRST_MASTERPLAN_INSERT_2026-09-03.md` — pre-029 focus checklist.
-- `BACKEND_FIRST_REBASELINE_GUARD.md` — session-boundary continuity guard.
-- `BACKEND_SYNC_BASELINE.md` — package/GitHub synchronization gate.
-- `KNOWLEDGE_PRESERVATION_AND_TOOLKIT_BOUNDARY.md` — upstream-only knowledge flow.
-- `TOOLKIT_BENCHMARK_AND_FEEDBACK.md` — universal lesson benchmarking.
+## Current phase
+`TEAM-BACKEND-001 — IN IMPLEMENTATION`
 
-The retired backend implementation is not part of the current architecture and is not a supported recovery path.
+## Read order
+1. `BACKEND_SERVICE_BOUNDARY.md`
+2. `FIREBASE_BACKEND_GUIDE.md`
+3. `FIRESTORE_DOMAIN_MODEL.md`
+4. `SUPABASE_EDGE_FUNCTIONS_GUIDE.md`
+5. `PAYPAL_WEBHOOK_GUIDE.md`
+6. `BACKEND_FOUNDATION_EXECUTION.md`
+7. `BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md`
+8. `BACKEND_LIVE_SERVICE_STATUS.md`
+
+## Non-negotiable
+Firestore `default` is the TeamAi application/domain system of record. Supabase Postgres is not the TeamAi domain database. PayPal is an external payment event authority. Trusted server execution belongs in Supabase Edge Functions. Firebase UID is the ownership root.
+
+Source configuration, deployment, integration, and end-to-end completion are separate evidence states. Never infer one from another.

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window"]
+  },
+  "imports": {
+    "npm:jose@6.0.10": "npm:jose@6.0.10"
+  }
+}
