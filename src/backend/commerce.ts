@@ -38,6 +38,14 @@ export type EntitlementProjection = {
   effectiveAt: string;
 };
 
+export type CommerceCorrelationIndex = {
+  correlationId: string;
+  firebaseUid: string;
+  intentPath: string;
+  createdAt: string;
+  status: 'pending' | 'consumed' | 'cancelled';
+};
+
 function requireNonEmpty(value: string, name: string): string {
   if (!value.trim()) throw new Error(`${name} is required`);
   return value;
@@ -83,6 +91,14 @@ export function assertServerOwnedCorrelation(input: CommerceCorrelation): Commer
   requireNonEmpty(input.correlationId, 'correlationId');
   if (input.provider !== 'paypal') throw new Error('unsupported commerce provider');
   return input;
+}
+
+export function commerceIntentPath(firebaseUid: string, correlationId: string): string {
+  return `accounts/${requireNonEmpty(firebaseUid, 'firebaseUid')}/commerce/intents/${requireNonEmpty(correlationId, 'correlationId')}`;
+}
+
+export function commerceCorrelationIndexPath(correlationId: string): string {
+  return `commerceCorrelationIndex/${requireNonEmpty(correlationId, 'correlationId')}`;
 }
 
 export function commerceEventPath(firebaseUid: string, commerceEventId: string): string {
