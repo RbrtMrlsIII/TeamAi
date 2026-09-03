@@ -41,14 +41,12 @@ The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains 
 ## Current evidence
 - Gate 3B/3C/3D: Firebase UID-derived persistence, independent Firestore confirmation, and repeat-call idempotency are evidenced.
 - Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts` and direct source-contract validation passed.
-- Gate 5C: verified PayPal webhook authenticity, replay protection, durable commerce events and entitlement projection are the active implementation frontier; runtime/E2E evidence is still required before completion.
+- Gate 5C: canonical `paypal-webhook` now contains the validated v5C commerce implementation; Supabase runtime cutover is complete at the function source boundary. Live PayPal transaction/webhook E2E evidence and full Gate 5C completion evidence remain outstanding.
 
 Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
 ## PayPal boundary for the active gate
-The current isolated `teamai-paypal-webhook-v5c` function is the validation path for Gate 5C. It must correlate only authenticated PayPal events to server-owned TeamAi commerce intent and persist durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
-
-PayPal's current webhook documentation requires verification of incoming messages and describes 2xx acknowledgement plus delivery retries for non-2xx responses. The registered webhook ID is part of the verification boundary. citeturn946136search4turn946136search6
+The canonical `paypal-webhook` function is the TeamAi production webhook boundary. The previously isolated `teamai-paypal-webhook-v5c` function remains a historical validation artifact and must not become a second production authority. The canonical webhook correlates only authenticated PayPal events to server-owned TeamAi commerce intent and persists durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
 
 ## Pre-029 commercial/capability planning boundary
 The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
@@ -109,8 +107,6 @@ The most recent AI contribution is evidence/input, not authoritative user intent
 `AI Seat → authorized tool intent → TeamAi policy/authorization → scoped connection/plugin/MCP → invocation → result/artifact → durable event`
 
 Never put provider credentials into ordinary AI conversation content. Tool execution must remain attributable to the requesting Seat and Project.
-
-The published MCP 2026-07-28 specification is current and includes a stateless core, formal extensions including Tasks, authorization hardening, and a deprecation policy; keep MCP/provider compatibility version/profile-aware. citeturn946136search0
 
 ## Recovery rule for configured AI capability
 When a provider/runtime/tool degrades or becomes unavailable:
