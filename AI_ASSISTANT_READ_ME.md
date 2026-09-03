@@ -31,9 +31,9 @@ A completed TeamAi gate is not surrendered until the target project produces its
 
 **Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
 
-The Firebase emulator/rules verification gate remains **environment-constrained/parked** in the current canonical status. Available source/configuration checks must not be converted into an inferred emulator pass, hosted pass, or production pass. Record any exercised checks precisely and keep the environment limitation explicit.
+The Firebase persistence gate is evidence-backed. Available source/configuration checks must not be converted into an inferred emulator pass, hosted pass, or production pass beyond the environment actually exercised. Record any exercised checks precisely and keep the environment limitation explicit.
 
-The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains the next product-experience frontier and must not be treated as implemented merely because its planning contracts exist.
+`TEAM-EXPERIENCE-029` remains the next product-experience frontier and must not be treated as implemented merely because its planning contracts exist.
 
 ## Canonical backend authority
 - Firebase Auth = identity / Firebase UID ownership.
@@ -42,8 +42,53 @@ The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains 
 - PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
 - Firebase Hosting = current web delivery surface.
-- Vercel = browser verification surface only; it is not a TeamAi hosting authority, backend authority, or deployment target.
+- Vercel = non-authoritative browser-integrity verification surface used only for UI development/verification; it is not a TeamAi hosting authority, backend authority, deployment target, or completion authority.
 - Supabase Postgres = platform infrastructure only, never TeamAi domain/application state.
+
+## UI Browser Integrity Verification Policy
+
+The canonical policy is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+
+Vercel browser verification is **opt-in and phase-bound to UI development/verification**. Do not invoke it merely because a commit, pull request, backend change, documentation change, recovery change, or repository event exists.
+
+Allowed uses include browser rendering, interaction/navigation smoke tests, UI integration checks, responsive behavior, and controlled preview/browser verification of the UI surface.
+
+It must not be used as proof of Firestore persistence/rules, Supabase execution, PayPal transaction/webhook behavior, identity, entitlement, permission, scheduler correctness outside the exercised UI, deployment authority, backend-gate completion, or final architecture acceptance.
+
+Routing rule:
+
+`UI-only → Vercel browser verification may run`
+`UI + backend → browser evidence may run, but backend evidence remains separate`
+`backend-only / Firestore / commerce / docs / recovery → do not invoke Vercel`
+
+Anti-churn rule: never create or refresh Vercel previews simply because GitHub receives a commit. Browser verification should be deliberately invoked at the UI-development/verification boundary. Vercel availability or throttling must not be reframed as TeamAi architecture failure.
+
+A Vercel project, deployment target, domain, or environment must never be inferred from stale comments, historical bot output, screenshots, naming, or memory. Use only a currently authorized and identifiable control surface.
+
+Evidence distinction:
+
+`GitHub/source/tests/backend validation → authoritative engineering evidence`
+`Vercel browser integrity → non-authoritative UI verification evidence`
+
+The full boundary is defined in `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+
+## Founder Pulse operating boundary
+
+**Founder Pulse is a read-only product-operations observation layer over GitHub/GitLab Issue flow. It is not an execution authority.**
+
+Founder Pulse is useful after engineering work exists in GitHub because it can inspect the flow of Issues that changed from open to closed and Issues still open at period end, including creation-age buckets, labels, and visible delivery relationships. Its installed skill requires complete Issue populations, explicit transition handling, delivery-link classification, disclosure of inaccessible data, and no repository mutation. fileciteturn46file0
+
+For TeamAi, use Founder Pulse to answer operational questions such as:
+
+`What moved? → What remains? → How old is the remaining work? → What delivery links are visible? → Where is process friction accumulating?`
+
+Treat the result as **management/continuity evidence**, not as Product Law, architecture authority, implementation proof, scheduler authority, deployment control, or authorization to change code.
+
+Founder Pulse must observe the canonical engineering state rather than create a parallel project-state system. A Pulse report may identify a stale issue, bottleneck, missing linkage, or repeated churn pattern; the TeamAi Development Team must still reconcile that observation against Product Law, Masterplan, active contracts, implementation, and verification evidence before changing anything.
+
+Do not use Founder Pulse to rank individuals by productivity. Delivery attribution is evidence about a linked Issue/commit/PR relationship, not a performance score. The Founder Pulse skill explicitly forbids individual productivity ranking and requires read-only operation. fileciteturn46file0
+
+GitLab remains deferred for TeamAi architecture and control-plane work. Founder Pulse may technically support GitLab, but that capability does not change the current TeamAi decision to keep GitLab out of the active architecture until the GitLab basics and intended use are deliberately introduced.
 
 ## Frozen Firebase project identity
 **The authoritative TeamAi Firebase project is `team-ai-official`.** Never infer or substitute a Firebase project from product naming, screenshots, historical artifacts, remembered context, or a similarly named project. If project identity is ambiguous or conflicting, STOP the affected deployment/verification.
@@ -131,6 +176,7 @@ Context may be compressed with summaries, references, retrieval, or artifacts, b
 
 ## Detailed planning records
 - `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
+- `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
