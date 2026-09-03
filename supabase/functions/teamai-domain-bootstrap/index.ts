@@ -158,6 +158,18 @@ function firestoreUrl(projectId: string, path: string): string {
   return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/${encodedPath}`;
 }
 
+function safeFirestoreDiagnostic(status: number, bodyText: string): string {
+  try {
+    const parsed = JSON.parse(bodyText) as { error?: { status?: unknown; message?: unknown } };
+    const errorStatus = typeof parsed.error?.status === "string" ? parsed.error.status : "UNKNOWN";
+    const rawMessage = typeof parsed.error?.message === "string" ? parsed.error.message : "unknown firestore error";
+    const message = rawMessage.replace(/\s+/g, " ").slice(0, 240);
+    return `firestore_write_failed:${status}:${errorStatus}:${message}`;
+  } catch {
+    return `firestore_write_failed:${status}:UNPARSEABLE_RESPONSE`;
+  }
+}
+
 async function createIfAbsent(
   serviceAccount: ServiceAccount,
   path: string,
@@ -167,23 +179,40 @@ async function createIfAbsent(
   const fields: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) fields[key] = firestoreValue(value);
 
+  const url = new URL(firestoreUrl(TEAMAI_FIREBASE_PROJECT_ID, path));
+  url.searchParams.set("currentDocument.exists", "false");
+
   let response: Response;
   try {
-    response = await fetch(firestoreUrl(TEAMAI_FIREBASE_PROJECT_ID, path), {
+    response = await fetch(url.toString(), {
       method: "PATCH",
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",
       },
-      body: JSON.stringify({ fields, currentDocument: { exists: false } }),
+      body: JSON.stringify({ fields }),
     });
   } catch {
     throw new Error("firestore_write_network_failed");
   }
 
   if (response.ok) return "created";
-  if (response.status === 409) return "exists";
-  throw new Error(`firestore_write_failed:${response.status}`);
+
+  const bodyText = await response.text();
+  if (response.status === 400) {
+    try {
+      const parsed = JSON.parse(bodyText) as { error?: { status?: unknown; message?: unknown } };
+      const errorStatus = typeof parsed.error?.status === "string" ? parsed.error.status : "";
+      const errorMessage = typeof parsed.error?.message === "string" ? parsed.error.message : "";
+      if (errorStatus === "FAILED_PRECONDITION" || /already exists|must not exist/i.test(errorMessage)) {
+        return "exists";
+      }
+    } catch {
+      // Fall through to the safe diagnostic.
+    }
+  }
+
+  throw new Error(safeFirestoreDiagnostic(response.status, bodyText));
 }
 
 async function verifyFirebaseUser(req: Request): Promise<string> {
