@@ -35,10 +35,15 @@ function requireId(value: unknown, name: string): string {
 
 function parseServiceAccount(): ServiceAccount {
   const raw = Deno.env.get("FIREBASE_SERVICE_ACCOUNT_JSON");
-  if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is not configured");
-  const parsed = JSON.parse(raw) as Partial<ServiceAccount>;
+  if (!raw) throw new Error("firebase_service_account_missing");
+  let parsed: Partial<ServiceAccount>;
+  try {
+    parsed = JSON.parse(raw) as Partial<ServiceAccount>;
+  } catch {
+    throw new Error("firebase_service_account_invalid_json");
+  }
   if (!parsed.project_id || !parsed.client_email || !parsed.private_key) {
-    throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is incomplete");
+    throw new Error("firebase_service_account_incomplete");
   }
   if (parsed.project_id !== TEAMAI_FIREBASE_PROJECT_ID) {
     throw new Error("firebase_project_identity_mismatch");
@@ -61,10 +66,14 @@ function pemToArrayBuffer(pem: string): ArrayBuffer {
     .replace("-----BEGIN PRIVATE KEY-----", "")
     .replace("-----END PRIVATE KEY-----", "")
     .replace(/\s/g, "");
-  const binary = atob(normalized);
-  const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
-  return bytes.buffer;
+  try {
+    const binary = atob(normalized);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    return bytes.buffer;
+  } catch {
+    throw new Error("firebase_service_account_private_key_invalid");
+  }
 }
 
 async function googleAccessToken(serviceAccount: ServiceAccount): Promise<string> {
@@ -79,27 +88,48 @@ async function googleAccessToken(serviceAccount: ServiceAccount): Promise<string
     exp: now + 3600,
   }));
   const signingInput = `${header}.${payload}`;
-  const key = await crypto.subtle.importKey(
-    "pkcs8",
-    pemToArrayBuffer(serviceAccount.private_key),
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const signature = await crypto.subtle.sign(
-    "RSASSA-PKCS1-v1_5",
-    key,
-    new TextEncoder().encode(signingInput),
-  );
+
+  let signature: ArrayBuffer;
+  try {
+    const key = await crypto.subtle.importKey(
+      "pkcs8",
+      pemToArrayBuffer(serviceAccount.private_key),
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    signature = await crypto.subtle.sign(
+      "RSASSA-PKCS1-v1_5",
+      key,
+      new TextEncoder().encode(signingInput),
+    );
+  } catch {
+    throw new Error("firebase_service_account_signing_failed");
+  }
+
   const assertion = `${signingInput}.${base64Url(new Uint8Array(signature))}`;
-  const response = await fetch(tokenUrl, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${encodeURIComponent(assertion)}`,
-  });
-  if (!response.ok) throw new Error(`Google token exchange failed: ${response.status}`);
-  const body = await response.json() as { access_token?: unknown };
-  if (typeof body.access_token !== "string") throw new Error("Google token response missing access_token");
+  let response: Response;
+  try {
+    response = await fetch(tokenUrl, {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${encodeURIComponent(assertion)}`,
+    });
+  } catch {
+    throw new Error("firebase_google_token_exchange_network_failed");
+  }
+
+  if (!response.ok) throw new Error(`firebase_google_token_exchange_failed:${response.status}`);
+
+  let body: { access_token?: unknown };
+  try {
+    body = await response.json() as { access_token?: unknown };
+  } catch {
+    throw new Error("firebase_google_token_exchange_invalid_response");
+  }
+  if (typeof body.access_token !== "string") {
+    throw new Error("firebase_google_token_exchange_missing_access_token");
+  }
   return body.access_token;
 }
 
@@ -137,19 +167,23 @@ async function createIfAbsent(
   const fields: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) fields[key] = firestoreValue(value);
 
-  const response = await fetch(firestoreUrl(TEAMAI_FIREBASE_PROJECT_ID, path), {
-    method: "PATCH",
-    headers: {
-      authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ fields, currentDocument: { exists: false } }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(firestoreUrl(TEAMAI_FIREBASE_PROJECT_ID, path), {
+      method: "PATCH",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ fields, currentDocument: { exists: false } }),
+    });
+  } catch {
+    throw new Error("firestore_write_network_failed");
+  }
 
   if (response.ok) return "created";
   if (response.status === 409) return "exists";
-  const detail = await response.text();
-  throw new Error(`Firestore create failed: ${response.status} ${detail.slice(0, 300)}`);
+  throw new Error(`firestore_write_failed:${response.status}`);
 }
 
 async function verifyFirebaseUser(req: Request): Promise<string> {
@@ -186,8 +220,8 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
   try {
-    const serviceAccount = parseServiceAccount();
     const uid = await verifyFirebaseUser(req);
+    const serviceAccount = parseServiceAccount();
     const input = parseInput(await req.json());
     const now = new Date().toISOString();
 
@@ -224,9 +258,27 @@ Deno.serve(async (req: Request) => {
     if (message === "invalid_request" || message.includes(" is required") || message.startsWith("teamMode must")) {
       return json({ error: message }, 400);
     }
-    if (message === "firebase_project_identity_mismatch") {
-      return json({ error: message }, 500);
+
+    const safeDiagnosticPatterns = [
+      "firebase_project_identity_mismatch",
+      "firebase_service_account_missing",
+      "firebase_service_account_invalid_json",
+      "firebase_service_account_incomplete",
+      "firebase_service_account_private_key_invalid",
+      "firebase_service_account_signing_failed",
+      "firebase_google_token_exchange_network_failed",
+      "firebase_google_token_exchange_invalid_response",
+      "firebase_google_token_exchange_missing_access_token",
+      "firebase_google_token_exchange_failed:",
+      "firestore_write_network_failed",
+      "firestore_write_failed:",
+    ];
+    const safeDiagnostic = safeDiagnosticPatterns.find((pattern) => message === pattern || message.startsWith(pattern));
+    if (safeDiagnostic) {
+      console.error("teamai_domain_bootstrap_diagnostic", message);
+      return json({ error: "domain_persistence_failed", diagnostic: message }, 500);
     }
+
     console.error("teamai_domain_bootstrap_error", message);
     return json({ error: "domain_persistence_failed" }, 500);
   }
