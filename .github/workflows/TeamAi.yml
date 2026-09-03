@@ -5,6 +5,13 @@ on:
   push:
     branches: [main]
 
+# Keep only the newest validation run for the same workflow/ref. This prevents
+# stale commits from consuming runner capacity while preserving full validation
+# for the current commit.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -12,9 +19,10 @@ jobs:
   recovery-integrity:
     name: Recovery integrity
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Validate TeamAi recovery records
         shell: bash
         run: |
@@ -29,28 +37,26 @@ jobs:
   project-tests:
     name: Project tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Detect project tooling
-        shell: bash
-        run: |
-          set -euo pipefail
-          if test -f package.json; then echo 'teamai_source_present=true' >> "$GITHUB_ENV"; else echo 'teamai_source_present=false' >> "$GITHUB_ENV"; fi
+        uses: actions/checkout@v7
       - name: Setup Node
-        if: env.teamai_source_present == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
-      - name: Install dependencies and run checks when source is present
+          node-version: 24
+      - name: Install dependencies
         shell: bash
         run: |
           set -euo pipefail
-          if test "${teamai_source_present}" = 'true'; then
-            if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
-            npm run backend:authority-audit
-            npm run typecheck
-            npm test
+          if test -f package-lock.json; then
+            npm ci
           else
-            echo 'TeamAi application source is not yet present; recovery-record validation remains the active gate.'
+            npm install --no-audit --no-fund
           fi
+      - name: Run backend authority audit
+        run: npm run backend:authority-audit
+      - name: Run typecheck
+        run: npm run typecheck
+      - name: Run project tests
+        run: npm test
