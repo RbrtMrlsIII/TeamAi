@@ -34,10 +34,17 @@ The first executable backend foundation contracts are in `src/backend/`:
 - `skill-resolution.ts` — deterministic effective-skill composition. Skills never grant authorization.
 - `task-state.ts` — durable task lifecycle transitions and durable-event field requirements.
 
-Supporting Firebase configuration is now explicitly wired through `firebase.json`, `firestore.rules`, and `firestore.indexes.json`. The rules are UID-scoped for the modeled domain paths, with an explicit deny-all fallback. This is a source configuration baseline; deployment and emulator/rules verification remain open.
+Supporting Firebase configuration is wired through `firebase.json`, `firestore.rules`, and `firestore.indexes.json`. The rules are UID-scoped for the modeled domain paths, with an explicit deny-all fallback.
+
+## Live Firebase baseline — 2026-09-03
+The recreated Firebase project `team-ai-official` is reachable through the authenticated Firebase CLI. The `(default)` Firestore database exists. Email/Password and Google authentication providers are enabled. The TeamAi Firestore Security Rules have been deployed and visually verified in the Firebase console.
+
+A human-created `Posts` test composite index was observed through the CLI and was still building at capture time. It is treated as a live-project test artifact, not as a canonical TeamAi index requirement. It must not be overwritten merely because the current canonical index file has no explicit composite indexes.
+
+See `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md` for the evidence boundary and exact disposition.
 
 ## Remaining backend gates
-Live Firebase Auth/Firestore execution, rules/index deployment and validation, Workplace/seat persistence, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, trusted Edge runtime integration, provider invocation, security/failure/recovery verification, and final traceability/endorsement remain open.
+Local Firebase emulator/rules execution, application-level Auth integration, TeamAi domain persistence, Workplace/seat persistence, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, trusted Edge runtime integration, provider invocation, security/failure/recovery verification, final traceability, and endorsement remain open.
 
 ## Hard implementation rule
 Implementation claims must trace:
