@@ -37,8 +37,8 @@ See `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`.
 6. [x] Canonical Product Law, AI assistant recovery guide, Masterplan and backend evidence updated together.
 7. [ ] Local Firebase emulator/rules execution verified.
 8. [x] Authorized Firebase project identity, live `(default)` Firestore database, Email/Password and Google Auth providers, and Firestore Rules deployment verified.
-9. [~] Workplace → Project → Team/Solo → Seat persistence source slice implemented in the trusted Edge runtime; live Firestore verification remains open.
-10. [~] Trusted Supabase Edge runtime persistence slice implemented and deployed with canonical Firebase project-identity enforcement; live Firestore verification remains open.
+9. [~] Workplace → Project → Team/Solo → Seat persistence source slice implemented; live authenticated creation and repeat-call idempotency are evidenced, while independent Firestore document verification remains open.
+10. [~] Trusted Supabase Edge runtime persistence slice implemented and deployed with canonical Firebase project-identity enforcement; live authenticated execution and idempotency are evidenced, while independent Firestore document verification remains open.
 11. [ ] Server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation implemented.
 12. [ ] Verified PayPal webhook, idempotency, replay protection, durable commerce event and entitlement projection implemented.
 13. [ ] Provider/runtime invocation connected only after authorization/task contracts.
@@ -59,11 +59,11 @@ Before any Firebase-dependent deployment, authentication test, Firestore persist
 This is an architecture gate, not an optional documentation check.
 
 ### Current evidence boundary
-The executable foundation contract slice is implemented. The recreated Firebase project `team-ai-official` is live and reachable through the authenticated CLI; Email/Password and Google authentication are enabled; the TeamAi Firestore Rules are deployed and visually verified. A human-created `Posts` test composite index was observed as still building and is treated as a live-project test artifact, not as a canonical TeamAi index requirement.
+The executable foundation contract slice is implemented. The recreated Firebase project `team-ai-official` is live and reachable through the authenticated CLI; Email/Password and Google authentication are enabled; the TeamAi Firestore Rules are deployed and visually verified. A human-created `Posts` test composite index is treated as a live-project test artifact, not as a canonical TeamAi index requirement.
 
-The Firebase-backed `teamai-domain-bootstrap` Edge Function is now deployed as version 2 in Supabase project `srpgzzretfyqdsfclnuo`. The deployed source explicitly enforces `team-ai-official` as the Firebase project identity, verifies Firebase ID tokens against that fixed project, and targets that project's Firestore `(default)` database. This is **deployment evidence, not live persistence evidence**: the configured service-account credential has not been independently identity-verified without reading its secret, the authenticated persistence request has not yet produced verified Firestore documents, and repeat-call idempotency has not been proven.
+The Firebase-backed `teamai-domain-bootstrap` Edge Function is deployed as version 5 in Supabase project `srpgzzretfyqdsfclnuo`. The deployed source explicitly enforces `team-ai-official` as the Firebase project identity, verifies Firebase ID tokens against that fixed project, targets that project's Firestore `(default)` database, and maps Firestore `409 ALREADY_EXISTS` create-if-absent responses to an idempotent `exists` result. A real authenticated creation request returned HTTP 200 with `ok: true`, and an identical repeat request also returned HTTP 200 with `ok: true` after the version-5 correction.
 
-PayPal completion, provider invocation, and full security/recovery E2E completion remain unclaimed.
+Independent Firestore document verification, missing/invalid-token rejection testing, local emulator/rules execution, full backend security/recovery verification, PayPal correlation/commerce implementation, traceability audit reconciliation, and completion endorsement remain open. TEAM-EXPERIENCE-029 therefore remains gated.
 
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
