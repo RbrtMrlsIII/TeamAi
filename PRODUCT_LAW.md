@@ -48,13 +48,26 @@ Phase 0 is the clean development-entry gate. It verifies the active repository b
 The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, and durable event identity requirements.
 
 ### Live Firebase milestone — 2026-09-03
-The recreated Firebase project `team-ai-official` is reachable through the authenticated CLI, its `(default)` Firestore database exists, Email/Password and Google authentication providers are enabled, and the TeamAi Firestore Security Rules have been deployed and visually verified in the Firebase console.
+The authoritative Firebase project `team-ai-official` is live and its `(default)` Firestore database is reachable. The `teamai-domain-bootstrap` trusted persistence slice has now passed its executable Firebase persistence gate:
 
-This milestone is **deployment evidence, not backend completion**. Emulator/rules execution, application-level Auth integration, domain persistence, trusted runtime, PayPal correlation/webhook/entitlements, provider invocation, E2E security/recovery verification, and final traceability/endorsement remain open.
+`Firebase ID token → verified Firebase UID → Firestore hierarchy → independent Firestore confirmation → repeat-call idempotency`
 
-A `Posts` test composite index was observed as a live-project test artifact and was still building at capture time. It is not automatically adopted as a TeamAi canonical index requirement.
+Evidence includes:
+- invalid Firebase ID token rejected with HTTP 401;
+- missing Firebase Authorization rejected with HTTP 401;
+- valid authenticated bootstrap persisted the gate-3 test hierarchy with HTTP 200;
+- the exact nested Firestore seat document was independently read and returned actual stored values;
+- an identical authenticated repeat request returned HTTP 200 with existing-value results.
 
-See `docs/backend/FIREBASE_PROJECT_IDENTITY.md`, `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md`, and `MASTERPLAN.md` for the current execution matrix.
+Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
+
+This milestone is **evidence-backed progress, not TEAM-BACKEND-001 completion**. Local emulator/rules execution, skill-wiring verification, PayPal correlation/webhook/entitlements, durable task/event/runtime behavior, provider invocation, complete security/failure/recovery verification, final traceability reconciliation, and completion endorsement remain open.
+
+TEAM-EXPERIENCE-029 may now advance from the Firebase persistence foundation, but its production frontend implementation gate remains closed until the remaining explicit backend prerequisites are evidenced.
+
+A `Posts` test composite index was observed as a live-project test artifact and is not automatically adopted as a TeamAi canonical index requirement.
+
+See `docs/backend/FIREBASE_PROJECT_IDENTITY.md`, `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md`, `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`, and `MASTERPLAN.md` for the current execution matrix.
 
 ## Canonical note
 The complete Product Law remains in the synchronized project package and is not intentionally duplicated here during this reconciliation window. This front door MUST remain synchronized with any active authority changes.
