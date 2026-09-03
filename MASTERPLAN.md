@@ -16,7 +16,7 @@
 4. [x] Durable task lifecycle and event/idempotency contract encoded.
 5. [x] Firestore source configuration baseline wired: `firebase.json`, `firestore.rules`, `firestore.indexes.json`.
 6. [x] Canonical Product Law, AI assistant recovery guide, Masterplan and backend evidence updated together.
-7. [x] Firebase emulator/rules verification executed in the available development environment. Hosted/production execution remains environment-constrained where hosting is unavailable; this is not to be converted into a failed architecture claim.
+7. [ ] Firebase emulator/rules verification remains environment-constrained/parked. Available source/configuration checks must not be converted into an inferred emulator pass, hosted pass, or production pass.
 8. [x] Authorized Firebase project identity, live `(default)` Firestore database, Email/Password and Google Auth providers, and Firestore Rules deployment verified.
 9. [x] Workplace → Project → Team/Solo → Seat persistence source slice implemented and live authenticated creation, independent Firestore verification, and repeat-call idempotency are evidenced.
 10. [x] Trusted Supabase Edge runtime persistence slice implemented and configured with the Firebase service-account credential as the required Supabase Edge secret; authenticated execution, independent Firestore verification, and idempotency were exercised in the available environment.
