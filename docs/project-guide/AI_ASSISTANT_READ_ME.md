@@ -35,19 +35,36 @@ The repository is preparing for `TEAM-EXPERIENCE-029`, but 029 remains a plannin
 - TeamAi subscription concepts must not be mistaken for provider subscriptions.
 - MCP/tool availability must not be mistaken for authorization.
 - ToolKit is upstream-only and does not own TeamAi state.
-- Vercel browser verification is non-authoritative and UI-development-only; do not invoke it for backend, commerce, documentation, recovery, or other non-UI work.
+- Vercel is non-authoritative and may be used as a controlled web development/preview/browser-verification surface when the current web work benefits from it; it is not a TeamAi source, delivery, backend, commerce, scheduler, authorization, or completion authority.
+- The Full Project ZIP is a first-class project-state package, not an optional add-on; it must follow `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
 
-## UI browser integrity verification
+## Controlled Vercel web verification
 
 The complete rule is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
 
-Use Vercel browser verification deliberately for active UI development/verification such as rendering, interaction/navigation smoke tests, responsive behavior, and controlled UI preview checks. Do not trigger it merely because a commit or pull request exists.
+Vercel is not restricted to UI-only work. It may be used deliberately for relevant web development and browser verification, including UI, UI-plus-backend integration, authenticated web flows, commerce-facing browser flows, responsive behavior, preview environments, and end-to-end browser smoke tests.
 
-`UI-only → may run`
-`UI + backend → UI evidence only; backend evidence remains separate`
-`backend-only / Firestore / commerce / docs / recovery → do not run`
+The browser result proves only the web behavior actually exercised. Backend, Firestore, PayPal, identity, entitlement, authorization, scheduler, deployment, and architecture evidence remain owned by their canonical authorities.
 
-Vercel is not TeamAi hosting, backend, deployment, commerce, authorization, scheduler, or completion authority. Firebase Hosting remains the current TeamAi delivery surface.
+Do not assume:
+
+`1 PR = 1 Vercel deployment`
+
+or:
+
+`1 merge = exactly 1 Vercel deployment`.
+
+Configured external Vercel project rules determine deployment activity. Minimize unnecessary pushes and consolidate coherent changes before focused browser verification.
+
+## Full Project ZIP and artifact discipline
+
+The Full Project ZIP is the portable bulk-edit, handover, recovery, and transfer representation of the canonical GitHub project tree. It is derived from the pinned GitHub commit; it does not become a competing source authority.
+
+The package must be flattened at the project root, preserve exact tracked file bytes and relative paths, and verify that the extracted tree matches the canonical tracked tree byte-for-byte.
+
+Generated artifacts are not project source. Screenshots, browser captures, visual evidence images, preview output, build output, test/coverage output, logs, caches, local emulator state, deployment caches, editor state, and local secrets must not enter the package. Tracked content that violates the artifact rules is a packaging blocker, not something to silently exclude.
+
+See `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md` for the canonical package rules.
 
 ## Founder Pulse
 
@@ -111,4 +128,4 @@ When a rule is unclear or contradictory, STOP the affected implementation path a
 
 ## Continuity
 
-Planning ideas that matter must be captured in repository documents before they become cold conversation history. Use the dedicated 029 contracts and this project guide as durable memory, while keeping implementation/evidence records distinct from planning.
+Planning ideas that matter must be captured in repository documents before they become cold conversation history. Use the dedicated 029 contracts, authority documents, package policy, and this project guide as durable memory, while keeping implementation/evidence records distinct from planning.
