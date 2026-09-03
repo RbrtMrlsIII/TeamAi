@@ -1,0 +1,21 @@
+name: Canonical repository archive
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  actions: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git ls-files -z | grep -zv '^.github/workflows/canonical-archive.yml$' | xargs -0 zip -q canonical-TeamAi.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: canonical-TeamAi
+          path: canonical-TeamAi.zip
+          if-no-files-found: error
