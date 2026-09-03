@@ -27,6 +27,13 @@ This is the operational recovery entry point for AI participants working on Team
 - Vercel = optional future browser/deployment surface, not backend authority.
 - Supabase Postgres = platform infrastructure only, never TeamAi domain/application state.
 
+## Frozen Firebase project identity
+**The authoritative TeamAi Firebase project is `team-ai-official`.** Never infer or substitute a Firebase project from product naming, screenshots, historical artifacts, remembered context, or a similarly named project. `homefinder-official` is a distinct, non-authoritative project for TeamAi.
+
+All Firebase-dependent environments must reconcile to `team-ai-official`: Firebase Auth, Firestore `(default)`, Hosting, Web SDK `projectId`, Firebase CLI target, and the trusted Edge-runtime service-account `project_id`. The Web SDK config is public project-identification metadata; it is never an Admin credential. The Admin service-account JSON/private key must remain secret and must never be requested, pasted, committed, logged, or screenshotted.
+
+If project identity is ambiguous or conflicting, **STOP** the affected deployment/verification. Identity reconciliation precedes runtime diagnosis. See `docs/backend/FIREBASE_PROJECT_IDENTITY.md`.
+
 ## TEAM-BACKEND-001 implemented foundation slice
 The first executable backend foundation contracts are in `src/backend/`:
 - `authority.ts` — canonical service ownership and authority assertions.
