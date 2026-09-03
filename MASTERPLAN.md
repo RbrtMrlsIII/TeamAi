@@ -36,7 +36,7 @@ See `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`.
 5. [x] Firestore source configuration baseline wired: `firebase.json`, `firestore.rules`, `firestore.indexes.json`.
 6. [x] Canonical Product Law, AI assistant recovery guide, Masterplan and backend evidence updated together.
 7. [ ] Local Firebase emulator/rules execution verified.
-8. [ ] Authorized Firebase project identity and live Auth/Firestore integration verified.
+8. [x] Authorized Firebase project identity, live `(default)` Firestore database, Email/Password and Google Auth providers, and Firestore Rules deployment verified.
 9. [ ] Workplace → Project → Team/Solo → Seat persistence implemented and verified.
 10. [ ] Trusted Supabase Edge runtime adapter integrated and verified.
 11. [ ] Server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation implemented.
@@ -48,7 +48,7 @@ See `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`.
 17. [ ] Only after all `BLOCKS_029` gates are evidenced: release hold on TEAM-EXPERIENCE-029.
 
 ### Current evidence boundary
-The executable foundation contract slice is implemented. Firebase configuration is source-wired, but no live Firebase deployment or rules test is claimed. Project-wide Node tests remain blocked by the missing local dependency installation and therefore are not represented as passing evidence.
+The executable foundation contract slice is implemented. The recreated Firebase project is live and reachable through the authenticated CLI; Email/Password and Google authentication are enabled; the TeamAi Firestore Rules are deployed and visually verified. A human-created `Posts` test composite index was observed as still building and is treated as a live-project test artifact, not as a canonical TeamAi index requirement. No emulator-based rules test, application-level Auth integration, domain persistence, PayPal completion, provider invocation, or full security/recovery E2E completion is claimed.
 
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
@@ -57,6 +57,7 @@ An implementation claim is complete only when its governing Product Law and Mast
 - `PRODUCT_LAW.md`
 - `AI_ASSISTANT_READ_ME.md`
 - `docs/backend/BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md`
+- `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md`
 - `docs/backend/FIRESTORE_DOMAIN_MODEL.md`
 - `docs/backend/FIREBASE_BACKEND_GUIDE.md`
 - `docs/backend/SUPABASE_EDGE_FUNCTIONS_GUIDE.md`
