@@ -16,14 +16,25 @@
 ## Traceability
 `PRODUCT_LAW.md` Laws 101–104 → `MASTERPLAN.md` TEAM-BACKEND-001 checklist → backend domain/security/commerce contracts → implementation → executable foundation tests → evidence records.
 
+## Gate 5B validation
+Gate 5B is **PASS for the source-contract boundary**. The committed `src/backend/commerce.ts` was compiled with TypeScript 5.8.3 under strict NodeNext settings in a temporary local workspace, then behaviorally asserted under Node.js 22.16.0.
+
+Observed result:
+
+`GATE5B_DIRECT_TEST=PASS`
+
+Validation evidence: `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
+
 ## Current bounded commerce frontier
-Gate 5B introduces the server-owned correlation contract only. It does **not** yet claim verified PayPal webhook processing, durable commerce event persistence, entitlement projection, or live payment completion.
+Gate 5B closes only the server-owned correlation contract. It does **not** claim verified PayPal webhook processing, durable commerce event persistence, entitlement projection, or live payment completion.
+
+Gate 5C is now the active frontier: verify PayPal webhook authenticity, apply replay/idempotency controls, correlate authenticated provider events to a server-owned commerce intent, and persist durable commerce/entitlement state in Firestore.
 
 ## Remaining foundation frontiers
-Live Firebase Auth/Firestore behavior, Firestore Security Rules/index deployment and verification, Workplace/seat persistence, verified PayPal webhook processing, durable commerce mutation/entitlement projection, trusted Supabase Edge execution, provider invocation, and end-to-end security/failure/recovery evidence remain open as separate evidence gates.
+Local Firebase emulator/rules execution remains parked by the current environment. Verified PayPal webhook processing, durable commerce mutation/entitlement projection, trusted Supabase Edge execution for the complete commerce path, provider invocation, and end-to-end security/failure/recovery evidence remain open as separate evidence gates.
 
 ## Validation honesty
-Project-wide compilation/tests remain an environment-dependent evidence step; no green test result is claimed here until the repository dependency tree is available and the test command completes successfully.
+Gate 5B has direct source-contract evidence. Project-wide compilation/tests for the complete repository and live PayPal transaction/webhook business processing are not claimed.
 
 ## Unlock rule
 TEAM-EXPERIENCE-029 remains HOLD until all foundation frontiers marked `BLOCKS_029` in the completion matrix have executable evidence.
