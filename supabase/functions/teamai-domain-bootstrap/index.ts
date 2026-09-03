@@ -16,6 +16,7 @@ type DomainInput = {
   seatRole: string;
 };
 
+const TEAMAI_FIREBASE_PROJECT_ID = "team-ai-official";
 const FIREBASE_JWKS = createRemoteJWKSet(
   new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"),
 );
@@ -38,6 +39,9 @@ function parseServiceAccount(): ServiceAccount {
   const parsed = JSON.parse(raw) as Partial<ServiceAccount>;
   if (!parsed.project_id || !parsed.client_email || !parsed.private_key) {
     throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is incomplete");
+  }
+  if (parsed.project_id !== TEAMAI_FIREBASE_PROJECT_ID) {
+    throw new Error("firebase_project_identity_mismatch");
   }
   return parsed as ServiceAccount;
 }
@@ -133,7 +137,7 @@ async function createIfAbsent(
   const fields: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) fields[key] = firestoreValue(value);
 
-  const response = await fetch(firestoreUrl(serviceAccount.project_id, path), {
+  const response = await fetch(firestoreUrl(TEAMAI_FIREBASE_PROJECT_ID, path), {
     method: "PATCH",
     headers: {
       authorization: `Bearer ${token}`,
@@ -148,15 +152,15 @@ async function createIfAbsent(
   throw new Error(`Firestore create failed: ${response.status} ${detail.slice(0, 300)}`);
 }
 
-async function verifyFirebaseUser(req: Request, projectId: string): Promise<string> {
+async function verifyFirebaseUser(req: Request): Promise<string> {
   const authorization = req.headers.get("authorization");
   if (!authorization?.startsWith("Bearer ")) throw new Error("missing_firebase_id_token");
   const idToken = authorization.slice("Bearer ".length).trim();
   if (!idToken) throw new Error("missing_firebase_id_token");
 
   const { payload } = await jwtVerify(idToken, FIREBASE_JWKS, {
-    issuer: `https://securetoken.google.com/${projectId}`,
-    audience: projectId,
+    issuer: `https://securetoken.google.com/${TEAMAI_FIREBASE_PROJECT_ID}`,
+    audience: TEAMAI_FIREBASE_PROJECT_ID,
   });
 
   if (typeof payload.sub !== "string" || !payload.sub) throw new Error("firebase_token_missing_uid");
@@ -183,7 +187,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const serviceAccount = parseServiceAccount();
-    const uid = await verifyFirebaseUser(req, serviceAccount.project_id);
+    const uid = await verifyFirebaseUser(req);
     const input = parseInput(await req.json());
     const now = new Date().toISOString();
 
@@ -219,6 +223,9 @@ Deno.serve(async (req: Request) => {
     }
     if (message === "invalid_request" || message.includes(" is required") || message.startsWith("teamMode must")) {
       return json({ error: message }, 400);
+    }
+    if (message === "firebase_project_identity_mismatch") {
+      return json({ error: message }, 500);
     }
     console.error("teamai_domain_bootstrap_error", message);
     return json({ error: "domain_persistence_failed" }, 500);
