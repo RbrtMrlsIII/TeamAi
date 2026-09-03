@@ -11,20 +11,23 @@ test('commerce correlation is server-owned and PayPal-specific', () => {
     firebaseUid: 'uid-1',
     provider: 'paypal',
     providerEventId: 'paypal-event-1',
-    idempotencyKey: 'paypal-event-1',
+    idempotencyKey: 'paypal:event:paypal-event-1',
+    correlationId: 'correlation-1',
   });
   assert.deepEqual(correlation, {
     firebaseUid: 'uid-1',
     provider: 'paypal',
     providerEventId: 'paypal-event-1',
-    idempotencyKey: 'paypal-event-1',
+    idempotencyKey: 'paypal:event:paypal-event-1',
+    correlationId: 'correlation-1',
   });
   assert.throws(
     () => assertServerOwnedCorrelation({
       firebaseUid: '',
       provider: 'paypal',
       providerEventId: 'paypal-event-1',
-      idempotencyKey: 'paypal-event-1',
+      idempotencyKey: 'paypal:event:paypal-event-1',
+      correlationId: 'correlation-1',
     }),
     /firebaseUid is required/,
   );
