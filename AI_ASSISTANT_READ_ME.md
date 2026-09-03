@@ -19,13 +19,20 @@ The Firebase persistence gate is now evidence-backed. `TEAM-EXPERIENCE-029` may 
 
 ## Canonical backend authority
 - Firebase Auth = identity / Firebase UID ownership.
-- Firestore `default` = TeamAi durable application/domain state.
+- Firestore `(default)` = TeamAi durable application/domain state.
 - Supabase Edge Functions = trusted server execution and PayPal webhook receiver.
-- PayPal = payment-provider event authority.
+- PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
 - Firebase Hosting = current web delivery surface.
-- Vercel = optional future browser/deployment surface, not backend authority.
+- Vercel = browser verification surface only; it is not a TeamAi hosting authority, backend authority, or deployment target.
 - Supabase Postgres = platform infrastructure only, never TeamAi domain/application state.
+
+### Canonical backend extension invariant
+The canonical backend is a multi-authority system, not a single endpoint or single wire. Canonical Auth, canonical durable domain state, canonical trusted execution, canonical commerce, and canonical execution evidence each have explicit authorities and contracts.
+
+Adding payment buttons, additional subscription products/plans, promotional variants, or new PayPal-facing commercial flows MUST extend the existing canonical commerce contracts rather than introduce a new ownership path. Adding another sign-in/authentication method MUST extend the canonical Firebase Auth identity boundary and continue to resolve to the same authoritative Firebase UID/domain ownership model. Such product/provider additions MUST NOT require replacing the Firestore ownership root, moving TeamAi domain state to another database, or granting authority to the browser.
+
+A new provider, delivery surface, authentication method, payment product, or UI control is an extension of an existing authority boundary unless an explicit Product Law / architecture change replaces that boundary first.
 
 ## Frozen Firebase project identity
 **The authoritative TeamAi Firebase project is `team-ai-official`.** Never infer or substitute a Firebase project from product naming, screenshots, historical artifacts, remembered context, or a similarly named project. `homefinder-official` is a distinct, non-authoritative project for TeamAi.
