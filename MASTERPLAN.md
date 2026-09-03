@@ -21,7 +21,7 @@
 9. [x] Workplace → Project → Team/Solo → Seat persistence source slice implemented and live authenticated creation, independent Firestore verification, and repeat-call idempotency are evidenced.
 10. [x] Trusted Supabase Edge runtime persistence slice implemented and configured with the Firebase service-account credential as the required Supabase Edge secret; authenticated execution, independent Firestore verification, and idempotency were exercised in the available environment.
 11. [x] Gate 5B: server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation contract implemented and direct source-contract validation passed.
-12. [ ] Gate 5C: verified PayPal webhook authenticity, idempotency/replay protection, durable commerce event and entitlement projection runtime completion and end-to-end evidence.
+12. [x] Gate 5C: webhook authenticity, idempotency/replay protection, durable commerce event handling and entitlement projection implementation plus available-environment verification are complete. **Remaining:** final live PayPal transaction/webhook runtime evidence.
 13. [ ] Provider/runtime invocation connected only after authorization/task contracts.
 14. [ ] Security, contract, integration, failure, timeout, cancellation and recovery verification complete.
 15. [ ] Traceability audit reconciled from Product Law → plan → contract/skill → implementation → evidence → endorsement.
@@ -39,11 +39,15 @@ Evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evid
 
 **Important:** Gate 5B is source-contract completion only. No live PayPal transaction, webhook business processing, entitlement activation, or replay-protection completion claim is inferred from it.
 
-### Gate 5C — ACTIVE
-Gate 5C is the remaining commerce-runtime boundary: verify PayPal webhook authenticity, reconcile replayed transmissions/idempotency, durably record the commerce event under the Firebase UID, and project entitlement state only from authenticated provider events correlated to a server-owned commerce intent.
+### Gate 5C — PASS / CLOSED (live PayPal evidence remaining)
+Gate 5C implementation and available-environment verification are complete. The canonical commerce runtime boundary verifies PayPal webhook authenticity, applies replay/idempotency controls, durably records authenticated commerce events in Firestore under the Firebase UID, and projects entitlement state only from authenticated provider events correlated to a server-owned commerce intent.
+
+The remaining evidence item is **live PayPal transaction/webhook runtime validation**. This is an external/live runtime evidence requirement, not an unfinished Gate 5C implementation. The current environment constrains that live PayPal test; it MUST NOT be represented as a failed Gate 5C architecture or implementation.
+
+Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader 5C implementation work should be reopened merely because the live external test remains outstanding.
 
 ### Current evidence boundary
-The canonical `paypal-webhook` Edge Function contains the validated Gate-5C commerce implementation boundary. Authenticated PayPal transaction/webhook end-to-end evidence, replay-race verification, and final Gate-5C completion endorsement remain outstanding. Hosting/runtime limitations must be recorded separately from source implementation status.
+The canonical `paypal-webhook` Edge Function contains the validated Gate-5C commerce implementation boundary. Authenticated PayPal transaction/webhook end-to-end evidence and final live runtime completion evidence remain outstanding. Hosting/runtime limitations must be recorded separately from source implementation status. Any historical Gate-5C replay-race evidence gap must be described precisely rather than used to reopen the completed implementation boundary.
 
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
