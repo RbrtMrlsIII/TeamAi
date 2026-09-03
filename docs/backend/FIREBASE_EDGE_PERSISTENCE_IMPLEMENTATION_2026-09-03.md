@@ -54,22 +54,43 @@ A live request carrying an invalid Firebase ID token returned HTTP 401 with `inv
 A live request without the Firebase Authorization header returned HTTP 401 with `missing_firebase_id_token`.
 
 ### Gate 3 — valid Firebase ID token → Firestore persistence
-**BLOCKED**
+**PASS**
 
-The attempted Email/Password token acquisition for a Firebase Auth test user returned `invalid login credentials`. Consequently a valid Firebase ID token was not available for the authenticated persistence probe in this checkpoint.
+The authenticated persistence slice is now executable and evidence-backed for the current deployment.
 
-No Gate 3 Firestore-write success is claimed here. This checkpoint treats the blocker as a test-account/token-acquisition issue, not as evidence of Firestore failure.
+#### Gate 3B — authenticated persistence
+
+A valid Firebase ID token for `team-ai-official` reached `teamai-domain-bootstrap`. The function derived the ownership root from the verified Firebase UID and returned HTTP 200 for the `gate3-test-workplace` / `gate3-test-project` / `gate3-test-team` / `gate3-test-seat` test hierarchy.
+
+#### Gate 3C — independent Firestore verification
+
+The exact nested seat document was independently read directly from Firestore `(default)` in `team-ai-official` using Google-authenticated Firestore REST access. The response contained actual stored document values rather than `NOT_FOUND`.
+
+Canonical nested path:
+
+`accounts/{verified Firebase UID}/workplaces/gate3-test-workplace/projects/gate3-test-project/teams/gate3-test-team/seats/gate3-test-seat`
+
+#### Gate 3D — repeat-call idempotency
+
+The same authenticated bootstrap request was executed a second time using the same identifiers. It returned HTTP 200 with existing-value results, demonstrating create-if-absent/idempotent behavior rather than recreating the records.
+
+A detailed checkpoint is recorded in `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
 
 ## Evidence boundary
 
-The current checkpoint therefore establishes executable evidence for the live authentication rejection boundary, but not full authenticated persistence completion.
+The current evidence establishes:
 
-Still required:
-1. obtain a valid Firebase ID token from the authoritative `team-ai-official` project without exposing credentials or tokens;
-2. execute the authenticated bootstrap probe;
-3. independently verify the expected Firestore documents under the verified Firebase UID;
-4. verify repeat-call idempotency for the current deployment;
-5. reconcile the complete Product Law → Masterplan → contract/skill → implementation → evidence → endorsement chain.
+`Firebase ID token → verified Firebase UID → Firestore TeamAi hierarchy → independent Firestore confirmation → repeat-call idempotency`
+
+Still required for full TEAM-BACKEND-001 completion:
+1. local Firebase emulator/rules execution;
+2. server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation;
+3. verified PayPal webhook authenticity, idempotency, and replay protection;
+4. durable commerce events and entitlement projection;
+5. provider/runtime invocation behind authorization/task contracts;
+6. complete task/event runtime, security, failure, timeout, cancellation, and recovery verification;
+7. final Product Law → Masterplan → contract/skill → implementation → evidence → endorsement reconciliation;
+8. TEAM-BACKEND-001 completion endorsement.
 
 ## PayPal disposition
 PayPal remains downstream of durable domain persistence. No PayPal product/plan or live transaction is activated by this slice.
