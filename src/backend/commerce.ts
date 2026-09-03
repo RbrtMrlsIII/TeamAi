@@ -8,11 +8,20 @@ export type CommerceEventType =
   | 'subscription_cancelled'
   | 'refund_issued';
 
+export type ServerOwnedCommerceIntent = {
+  firebaseUid: string;
+  correlationId: string;
+  provider: CommerceProvider;
+  createdAt: string;
+  status: 'pending';
+};
+
 export type CommerceCorrelation = {
   firebaseUid: string;
   provider: CommerceProvider;
   providerEventId: string;
   idempotencyKey: string;
+  correlationId: string;
 };
 
 export type DurableCommerceEvent = CommerceCorrelation & {
@@ -34,10 +43,44 @@ function requireNonEmpty(value: string, name: string): string {
   return value;
 }
 
+export function createServerOwnedCommerceIntent(
+  firebaseUid: string,
+  correlationId: string,
+  createdAt: string,
+): ServerOwnedCommerceIntent {
+  return {
+    firebaseUid: requireNonEmpty(firebaseUid, 'firebaseUid'),
+    correlationId: requireNonEmpty(correlationId, 'correlationId'),
+    provider: 'paypal',
+    createdAt: requireNonEmpty(createdAt, 'createdAt'),
+    status: 'pending',
+  };
+}
+
+export function bindVerifiedPayPalEvent(
+  intent: ServerOwnedCommerceIntent,
+  providerEventId: string,
+): CommerceCorrelation {
+  requireNonEmpty(intent.firebaseUid, 'firebaseUid');
+  requireNonEmpty(intent.correlationId, 'correlationId');
+  requireNonEmpty(providerEventId, 'providerEventId');
+  if (intent.provider !== 'paypal') throw new Error('unsupported commerce provider');
+  if (intent.status !== 'pending') throw new Error('commerce intent is not pending');
+
+  return {
+    firebaseUid: intent.firebaseUid,
+    provider: 'paypal',
+    providerEventId,
+    correlationId: intent.correlationId,
+    idempotencyKey: `paypal:event:${providerEventId}`,
+  };
+}
+
 export function assertServerOwnedCorrelation(input: CommerceCorrelation): CommerceCorrelation {
   requireNonEmpty(input.firebaseUid, 'firebaseUid');
   requireNonEmpty(input.providerEventId, 'providerEventId');
   requireNonEmpty(input.idempotencyKey, 'idempotencyKey');
+  requireNonEmpty(input.correlationId, 'correlationId');
   if (input.provider !== 'paypal') throw new Error('unsupported commerce provider');
   return input;
 }
