@@ -43,8 +43,15 @@ A human-created `Posts` test composite index was observed through the CLI and wa
 
 See `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md` for the evidence boundary and exact disposition.
 
+## Current backend implementation boundary
+A new `supabase/functions/teamai-domain-bootstrap/` source slice now implements the trusted persistence path for `Firebase UID → Account → Workplace → Project → Team/Solo → Web AI Seat`. It verifies a Firebase ID token and derives the UID from the verified token; it does not trust a client-supplied UID. Firestore writes use the Google datastore scope through a service-account credential held as a Supabase Edge secret.
+
+This is **source implementation evidence only**. Deployment, Firebase service-account secret configuration, real Firebase ID-token exercise, Firestore document verification, repeat-call idempotency verification, emulator/rules verification, and full security/recovery evidence remain open.
+
+See `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
+
 ## Remaining backend gates
-Local Firebase emulator/rules execution, application-level Auth integration, TeamAi domain persistence, Workplace/seat persistence, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, trusted Edge runtime integration, provider invocation, security/failure/recovery verification, final traceability, and endorsement remain open.
+Local Firebase emulator/rules execution, live domain persistence verification, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, provider invocation, security/failure/recovery verification, final traceability, and endorsement remain open.
 
 ## Hard implementation rule
 Implementation claims must trace:
