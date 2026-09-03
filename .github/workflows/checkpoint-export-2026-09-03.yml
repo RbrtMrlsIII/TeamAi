@@ -1,0 +1,38 @@
+name: Checkpoint export
+
+on:
+  push:
+    branches:
+      - checkpoint/export-2026-09-03
+
+permissions:
+  contents: read
+
+env:
+  TARGET_SHA: 9599f0632b6ef8382e0971abb4bd3a061ff170a9
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact TeamAi checkpoint commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+
+      - name: Verify checked-out commit
+        run: test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+
+      - name: Create exact source archive
+        run: |
+          rm -rf .git .github/workflows/checkpoint-export-2026-09-03.yml
+          zip -q -r "TeamAi_TEAM-BACKEND-001_GATE2_2026-09-03_${TARGET_SHA}.zip" . -x '*.git*'
+
+      - name: Upload exact source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeamAi-TEAM-BACKEND-001-GATE2-2026-09-03-${{ env.TARGET_SHA }}
+          path: TeamAi_TEAM-BACKEND-001_GATE2_2026-09-03_${{ env.TARGET_SHA }}.zip
+          if-no-files-found: error
+          retention-days: 90
