@@ -41,14 +41,14 @@ The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains 
 ## Current evidence
 - Gate 3B/3C/3D: Firebase UID-derived persistence, independent Firestore confirmation, and repeat-call idempotency are evidenced.
 - Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts` and direct source-contract validation passed.
-- Gate 5C: verified PayPal webhook authenticity, replay protection, durable commerce events and entitlement projection are now the active implementation frontier.
+- Gate 5C: verified PayPal webhook authenticity, replay protection, durable commerce events and entitlement projection are the active implementation frontier; runtime/E2E evidence is still required before completion.
 
 Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
 ## PayPal boundary for the active gate
-The existing `paypal-webhook` Edge Function is a verification bootstrap boundary. Gate 5C must extend it into the canonical commerce flow only after webhook authenticity is established, then correlate the verified event to a server-owned TeamAi commerce intent and persist durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
+The current isolated `teamai-paypal-webhook-v5c` function is the validation path for Gate 5C. It must correlate only authenticated PayPal events to server-owned TeamAi commerce intent and persist durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
 
-PayPal's current webhook documentation requires verification of incoming messages and describes 2xx acknowledgement plus delivery retries for non-2xx responses. The registered webhook ID is part of the verification boundary. citeturn888155search0turn888155search2
+PayPal's current webhook documentation requires verification of incoming messages and describes 2xx acknowledgement plus delivery retries for non-2xx responses. The registered webhook ID is part of the verification boundary. citeturn946136search4turn946136search6
 
 ## Pre-029 commercial/capability planning boundary
 The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
@@ -57,7 +57,79 @@ These are planning concepts, not current live subscription entitlements. Exact p
 
 TeamAi subscription authority is separate from external provider entitlement. Do not infer that a TeamAi plan grants a provider subscription, API entitlement, agent runtime, model access, or external tool access that the user does not actually possess.
 
-The detailed planning record is `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md` and must be read with `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md` before 029 implementation planning becomes specific.
+## AI connection / Seat / capability lifecycle
+Do not collapse:
+
+`application ≠ provider ≠ service/runtime ≠ model ≠ connection ≠ Seat ≠ skill ≠ tool/MCP ≠ workstation ≠ entitlement ≠ authorization`
+
+A **Connection** is the externally authorized relationship. An **AI Seat** is the configured TeamAi participation identity inside a Workplace/Project. A Seat may reference a Connection; they remain separate concepts.
+
+Use the planning lifecycle:
+
+`Discover → External Setup → Import/Authorize → Capability Test → Bind → Equip → Activate → Run → Observe → Degrade/Suspend → Recover/Revalidate → Rebind/Retire`
+
+Capability state must be reason-bearing:
+
+`available → configured → TeamAi-entitled → provider-compatible → authorized → project-scoped → seat-allowed → healthy → usable`
+
+A remembered connection or a stale green UI state is never sufficient evidence of current usability. Entitlement, authorization, compatibility, scope, workstation, and health changes must block the affected execution path and preserve recovery information.
+
+### Seat capability profile
+The Seat-level configuration should distinguish at least:
+
+`provider/application + service/runtime + model/variant + Team role + Team Quality + skills + Base TeamAi capabilities + Tool Quality + workstation/scope + permissions + approvals + limits + compliance + health`
+
+The same external capability may support multiple Seats when permitted because Seat identity is a configured TeamAi runtime/policy instance, not merely a model name.
+
+### External setup versus TeamAi activation
+Provider-owned setup remains provider-owned:
+
+`provider account → provider authentication → external application/runtime setup → provider-side terms/scopes`
+
+TeamAi owns its coordination boundary:
+
+`authorized connection → capability test → Workplace/Project binding → Seat configuration → entitlement/policy evaluation → activation`
+
+Never report provider-side setup as complete merely because TeamAi has stored a connection record.
+
+### Equip and Activate
+Equip attaches allowed skills, Base TeamAi capabilities, Tool Quality, tools/plugins/MCP, workstation/scope, context visibility, permissions, approvals, and limits.
+
+Activation requires all mandatory conditions for the configured role to pass. Activation is a state transition, not a browser toggle.
+
+### Planning Team versus Working Team
+Planning Team = deliberation, controlled turns, selected participants, summarizer, structured handoff, user review.
+
+Working Team = approved plan, task/dependency eligibility, Scheduler selection, AI/tool/human execution, durable results/events, downstream eligibility, review/recovery.
+
+The most recent AI contribution is evidence/input, not authoritative user intent.
+
+## Tool execution boundary
+
+`AI Seat → authorized tool intent → TeamAi policy/authorization → scoped connection/plugin/MCP → invocation → result/artifact → durable event`
+
+Never put provider credentials into ordinary AI conversation content. Tool execution must remain attributable to the requesting Seat and Project.
+
+The published MCP 2026-07-28 specification is current and includes a stateless core, formal extensions including Tasks, authorization hardening, and a deprecation policy; keep MCP/provider compatibility version/profile-aware. citeturn946136search0
+
+## Recovery rule for configured AI capability
+When a provider/runtime/tool degrades or becomes unavailable:
+
+`failure/degradation → durable state → diagnosis → remediation → capability test → authorization re-check → scope/permission re-check → activation`
+
+Do not jump directly from Failed/Degraded to Active without required revalidation. Preserve historical execution evidence while preventing it from becoming a fresh permission grant.
+
+## User-intent preservation
+Every Planning Team turn remains grounded in:
+
+`current user instruction + accumulated relevant team discussion + approved project context + current turn instruction`
+
+The final summarizer must preserve the original objective, later clarifications, relevant contributions, disagreements, accepted decisions, constraints, unresolved questions, important artifacts/findings/events, and the latest user instruction. Summaries and references may reduce payload size but must not silently change meaning.
+
+## Detailed planning records
+- `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
+- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
+- `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
 
 ## Hard implementation rule
 Implementation claims must trace:
