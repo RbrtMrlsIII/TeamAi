@@ -17,7 +17,7 @@ Read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `AI_ASSISTANT_READ_ME.md` before m
 - PayPal: external payment-event authority.
 - GitHub: engineering/source authority.
 - Firebase Hosting: current web delivery.
-- Vercel: optional future browser/deployment surface.
+- Vercel: browser-verification surface only; not TeamAi hosting, backend, or production deployment authority.
 - Supabase Postgres: platform infrastructure only, never TeamAi domain state.
 
 ## Implementation completion
