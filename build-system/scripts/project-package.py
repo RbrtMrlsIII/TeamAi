@@ -10,8 +10,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import os
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -21,76 +19,36 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[2]
 
 BLOCKED_DIRS = {
-    ".git",
-    ".next",
-    ".vercel",
-    ".firebase",
-    ".turbo",
-    ".cache",
-    "node_modules",
-    "dist",
-    "out",
-    "coverage",
-    "playwright-report",
-    "test-results",
-    "artifacts",
-    "screenshots",
-    "captures",
-    "tmp",
-    "temp",
+    ".git", ".next", ".vercel", ".firebase", ".turbo", ".cache",
+    "node_modules", "dist", "out", "coverage", "playwright-report",
+    "test-results", "artifacts", "screenshots", "captures", "tmp", "temp",
 }
-
 BLOCKED_FILE_NAMES = {
-    ".env",
-    ".env.local",
-    ".env.development.local",
-    ".env.test.local",
-    ".env.production.local",
+    ".env", ".env.local", ".env.development.local",
+    ".env.test.local", ".env.production.local",
 }
-
 ARTIFACT_IMAGE_MARKERS = (
-    "screenshot",
-    "screen-shot",
-    "capture",
-    "evidence-image",
-    "browser-capture",
-    "playwright",
-    "visual-test",
-    "vercel-preview",
+    "screenshot", "screen-shot", "capture", "evidence-image",
+    "browser-capture", "playwright", "visual-test", "vercel-preview",
 )
-
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}
 
 
-def run_git(*args: str) -> str:
-    completed = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    return completed.stdout
-
-
 def tracked_paths() -> list[Path]:
-    raw = subprocess.run(
+    result = subprocess.run(
         ["git", "ls-files", "-z"],
         cwd=ROOT,
         check=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-    ).stdout
-    return [Path(part.decode("utf-8")) for part in raw.split(b"\0") if part]
+    )
+    return [Path(part.decode("utf-8")) for part in result.stdout.split(b"\0") if part]
 
 
-def is_blocked(path: Path) -> str | None:
-    parts = set(path.parts)
-    if parts & BLOCKED_DIRS:
+def blocker(path: Path) -> str | None:
+    if set(path.parts) & BLOCKED_DIRS:
         return "generated/runtime directory"
-    name = path.name
-    if name in BLOCKED_FILE_NAMES:
+    if path.name in BLOCKED_FILE_NAMES:
         return "local secret/environment file"
     lowered = path.as_posix().lower()
     if path.suffix.lower() in IMAGE_EXTENSIONS and any(marker in lowered for marker in ARTIFACT_IMAGE_MARKERS):
@@ -107,30 +65,25 @@ def sha256(path: Path) -> str:
 
 
 def validate_tracked(paths: list[Path]) -> None:
-    blockers = []
-    for relative in paths:
-        reason = is_blocked(relative)
-        if reason:
-            blockers.append(f"{relative.as_posix()}: {reason}")
+    blockers = [f"{path.as_posix()}: {blocker(path)}" for path in paths if blocker(path)]
     if blockers:
-        print("Packaging blocked by tracked artifact/secrets:", file=sys.stderr)
-        print("\n".join(blockers), file=sys.stderr)
-        raise SystemExit(2)
+        raise SystemExit("Packaging blocked by tracked artifact/secrets:\n" + "\n".join(blockers))
 
 
-def write_zip(paths: list[Path], destination: Path) -> None:
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(destination, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+def build(paths: list[Path], output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    if output.exists():
+        output.unlink()
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for relative in sorted(paths, key=lambda item: item.as_posix()):
-            source = ROOT / relative
             info = zipfile.ZipInfo(PurePosixPath(relative.as_posix()).as_posix())
             info.date_time = (1980, 1, 1, 0, 0, 0)
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = (0o100644 & 0xFFFF) << 16
-            archive.writestr(info, source.read_bytes())
+            archive.writestr(info, (ROOT / relative).read_bytes())
 
 
-def verify_zip(paths: list[Path], archive_path: Path) -> None:
+def verify(paths: list[Path], archive_path: Path) -> None:
     expected = {path.as_posix(): sha256(ROOT / path) for path in paths}
     with tempfile.TemporaryDirectory(prefix="teamai-package-") as temporary:
         extraction = Path(temporary)
@@ -140,15 +93,11 @@ def verify_zip(paths: list[Path], archive_path: Path) -> None:
                 raise SystemExit("Package contains duplicate paths.")
             archive.extractall(extraction)
 
-        actual_paths = sorted(name for name in names)
-        expected_paths = sorted(expected)
-        if actual_paths != expected_paths:
-            missing = sorted(set(expected_paths) - set(actual_paths))
-            extra = sorted(set(actual_paths) - set(expected_paths))
+        if sorted(names) != sorted(expected):
             raise SystemExit(
                 "Package tree mismatch.\n"
-                f"Missing: {missing}\n"
-                f"Extra: {extra}"
+                f"Missing: {sorted(set(expected) - set(names))}\n"
+                f"Extra: {sorted(set(names) - set(expected))}"
             )
 
         mismatches = []
@@ -170,19 +119,15 @@ def main() -> int:
 
     paths = tracked_paths()
     validate_tracked(paths)
-    destination = ROOT / args.output
+    output = ROOT / args.output
 
     if args.command in {"create", "create-and-verify"}:
-        if destination.exists():
-            destination.unlink()
-        write_zip(paths, destination)
-        print(f"PACKAGE_CREATE=PASS files={len(paths)} archive={destination}")
-
+        build(paths, output)
+        print(f"PACKAGE_CREATE=PASS files={len(paths)} archive={output}")
     if args.command in {"verify", "create-and-verify"}:
-        if not destination.exists():
-            raise SystemExit(f"Archive not found: {destination}")
-        verify_zip(paths, destination)
-
+        if not output.exists():
+            raise SystemExit(f"Archive not found: {output}")
+        verify(paths, output)
     return 0
 
 
