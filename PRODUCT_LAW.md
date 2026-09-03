@@ -34,6 +34,13 @@ A task or external event MUST have a durable identity, ownership context, lifecy
 ## LAW 104 — FIREBASE UID IS THE DOMAIN OWNERSHIP ROOT
 TeamAi application/domain paths MUST be rooted in the authenticated Firebase UID. Client-provided identifiers MUST NOT be treated as proof of ownership. Server-side correlation is required wherever an external provider, including PayPal, establishes an event or entitlement.
 
+## LAW 105 — FIREBASE PROJECT IDENTITY IS AN ARCHITECTURE INVARIANT
+The authoritative TeamAi Firebase project is `team-ai-official`. Firebase project identity MUST be explicit and MUST NOT be inferred from repository/product names, screenshots, historical artifacts, remembered context, or similarly named projects. `homefinder-official` and other Firebase projects are distinct and non-authoritative unless a future architecture change explicitly replaces the current project and updates the canonical identity contract first.
+
+All Firebase-dependent surfaces MUST reconcile to the same authoritative project: Firebase Auth, Firestore `(default)`, Hosting, Web SDK `projectId`, CLI target, and trusted Edge-runtime service-account `project_id`. If these identities conflict, the affected deployment or verification MUST STOP until reconciliation is complete. A public Web SDK configuration may identify a project but MUST NOT be treated as a privileged credential. Admin/service-account credentials MUST remain secret.
+
+Project identity reconciliation MUST precede Firebase runtime diagnosis. Historical project evidence may establish provenance but MUST NOT override current authoritative configuration.
+
 ## Phase 0 disposition
 Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
 
@@ -47,7 +54,7 @@ This milestone is **deployment evidence, not backend completion**. Emulator/rule
 
 A `Posts` test composite index was observed as a live-project test artifact and was still building at capture time. It is not automatically adopted as a TeamAi canonical index requirement.
 
-See `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md` and `MASTERPLAN.md` for the current execution matrix.
+See `docs/backend/FIREBASE_PROJECT_IDENTITY.md`, `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md`, and `MASTERPLAN.md` for the current execution matrix.
 
 ## Canonical note
 The complete Product Law remains in the synchronized project package and is not intentionally duplicated here during this reconciliation window. This front door MUST remain synchronized with any active authority changes.
