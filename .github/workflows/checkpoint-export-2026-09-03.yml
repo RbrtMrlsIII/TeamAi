@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  TARGET_SHA: 9599f0632b6ef8382e0971abb4bd3a061ff170a9
+  TARGET_SHA: 47efbe15f8a31852fe0159e17a8c909118053c11
 
 jobs:
   export:
