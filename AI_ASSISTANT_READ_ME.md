@@ -9,7 +9,7 @@ This is the operational recovery entry point for AI participants working on Team
 4. `AI_ASSISTANT_READ_ME.md` — operational recovery and entry point.
 5. `docs/` domain contracts and implementation/evidence records.
 6. `docs/project-guide/` — project continuation, endorsement, and handover procedures.
-7. Applicable skills/guards, implementation, verification, evidence, Product Knowledge, and continuity records.
+7. Applicable skills/guards, implementation, verification, Product Knowledge, and continuity records.
 
 See `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md` for document routing and execution discipline.
 
@@ -42,35 +42,66 @@ The Firebase persistence gate is evidence-backed. Available source/configuration
 - PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
 - Firebase Hosting = current web delivery surface.
-- Vercel = non-authoritative browser-integrity verification surface used only for UI development/verification; it is not a TeamAi hosting authority, backend authority, deployment target, or completion authority.
+- Vercel = non-authoritative web development / preview / browser-verification surface; it is not a TeamAi hosting authority, backend authority, deployment authority, or completion authority.
 - Supabase Postgres = platform infrastructure only, never TeamAi domain/application state.
 
-## UI Browser Integrity Verification Policy
+## Controlled Vercel web development and browser verification
 
-The canonical policy is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+The complete canonical rule is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
 
-Vercel browser verification is **opt-in and phase-bound to UI development/verification**. Do not invoke it merely because a commit, pull request, backend change, documentation change, recovery change, or repository event exists.
+Vercel is **not limited to UI-only work**. It may be deliberately used for relevant TeamAi web development and browser verification, including UI work, UI-plus-backend integration, authenticated browser flows, commerce-facing browser flows, responsive behavior, controlled preview environments, and end-to-end browser smoke tests.
 
-Allowed uses include browser rendering, interaction/navigation smoke tests, UI integration checks, responsive behavior, and controlled preview/browser verification of the UI surface.
+The browser environment is an evidence surface, not an authority replacement. A browser result proves only the web behavior actually exercised in that environment. Firebase Auth, Firestore, Supabase execution, PayPal events, entitlement, authorization, scheduler state, source/change state, CI state, and delivery remain owned by their canonical authorities.
 
-It must not be used as proof of Firestore persistence/rules, Supabase execution, PayPal transaction/webhook behavior, identity, entitlement, permission, scheduler correctness outside the exercised UI, deployment authority, backend-gate completion, or final architecture acceptance.
+Do not assume:
 
-Routing rule:
+`1 PR = 1 Vercel deployment`
 
-`UI-only → Vercel browser verification may run`
-`UI + backend → browser evidence may run, but backend evidence remains separate`
-`backend-only / Firestore / commerce / docs / recovery → do not invoke Vercel`
+or:
 
-Anti-churn rule: never create or refresh Vercel previews simply because GitHub receives a commit. Browser verification should be deliberately invoked at the UI-development/verification boundary. Vercel availability or throttling must not be reframed as TeamAi architecture failure.
+`1 merge = exactly 1 Vercel deployment`.
 
-A Vercel project, deployment target, domain, or environment must never be inferred from stale comments, historical bot output, screenshots, naming, or memory. Use only a currently authorized and identifiable control surface.
+A connected Vercel Git integration, deploy hook, or explicit deployment action may create deployment activity according to external project configuration. The repository event itself is not a TeamAi deployment command and TeamAi must not invent deployment triggers simply because Vercel is connected.
+
+Minimize unnecessary pushes and consolidate coherent changes before focused browser verification. Vercel throttling or temporary unavailability is a verification limitation, not a TeamAi architecture failure.
+
+Only a currently authorized and identifiable Vercel control surface may be used. Never infer the Vercel project, domain, environment, or deployment target from historical bot comments, stale URLs, screenshots, naming, or memory.
 
 Evidence distinction:
 
-`GitHub/source/tests/backend validation → authoritative engineering evidence`
-`Vercel browser integrity → non-authoritative UI verification evidence`
+`GitHub/source/tests/CI + authoritative backend checks → engineering/runtime evidence`
+`Vercel browser run → non-authoritative web/browser evidence`
 
-The full boundary is defined in `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+## Full Project ZIP and artifact discipline
+
+The **Full Project ZIP is a first-class project-state package, not an optional add-on**. It is the portable bulk-edit, handover, recovery, review, and transfer representation of the canonical GitHub project tree. GitHub remains the engineering/source authority; the ZIP never becomes a second source authority.
+
+Canonical package relationship:
+
+`GitHub tracked tree at pinned commit → flattened ZIP → extraction → path-set + SHA-256 verification`
+
+The ZIP root is the project root. An outer `TeamAi/` wrapper is invalid. The extracted tree must reconstruct the same relative paths and exact file bytes as the pinned canonical tracked tree. ZIP container metadata may differ; the byte-to-byte invariant applies to the extracted project files and paths.
+
+The package builder uses the canonical tracked-file set rather than an ad-hoc filesystem walk. A tracked packaging blocker must fail packaging rather than be silently omitted.
+
+Generated/runtime artifacts must not enter the package, including screenshots, browser captures, generated visual-evidence images, preview output, build output, dependency trees, test/coverage output, logs, caches, local emulator state, deployment caches, editor state, and local environment/secrets files.
+
+Artifact images are forbidden unless an image is intentionally classified as genuine canonical product/source content. Generated screenshots, captures, evidence images, temporary diagrams, Vercel previews, and test imagery are not source assets and must not be committed or packaged.
+
+Tracked secrets, provider credentials, service-account private keys, signing material, and local `.env` secrets are packaging blockers. Placeholder example configuration is allowed.
+
+The deterministic package commands are:
+
+`npm run project:package`
+`npm run project:package:verify`
+
+The policy is `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
+
+For coherent 029 bulk work, prefer:
+
+`approved 029 baseline → Full Project ZIP → full edit → package verification → one coherent GitHub branch/PR → GitHub CI → controlled Vercel web verification when useful → review → merge`
+
+The Full Project ZIP is a project-state package, not implementation proof or deployment proof by itself.
 
 ## Founder Pulse operating boundary
 
@@ -177,6 +208,7 @@ Context may be compressed with summaries, references, retrieval, or artifacts, b
 ## Detailed planning records
 - `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
 - `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`
+- `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
