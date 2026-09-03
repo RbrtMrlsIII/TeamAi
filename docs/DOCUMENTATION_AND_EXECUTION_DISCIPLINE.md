@@ -8,7 +8,7 @@
 Use this order when deciding where information belongs:
 
 1. `PRODUCT_LAW.md` — immutable product/architecture authority.
-2. `MASTERPLAN.md` — current phase, roadmap, architecture frontier, gates, and execution sequence.
+2. `MASTERPLAN.md` — current phase, roadmap, architectural frontier, gates, and execution sequence.
 3. `AI_ASSISTANT_READ_ME.md` — operational entry point and recovery behavior for AI agents.
 4. `docs/` domain contracts — detailed planning and domain rules for a bounded capability or phase.
 5. Implementation records — what was actually built.
@@ -152,18 +152,41 @@ The UI presents and requests policy intents over authoritative state. It must no
 
 When UI discovery reveals a missing backend capability, route the requirement back through the owning backend/integration contract.
 
-## 13. Target-project handover
+## 13. UI browser-integrity evidence boundary
+
+Vercel is a **non-authoritative browser-integrity verification surface used only during active UI development/verification**.
+
+It may be used for browser rendering, UI interaction/navigation smoke tests, responsive behavior, UI integration checks, and controlled preview/browser verification. It must not be used as authority for TeamAi hosting, backend runtime, Firestore state/rules, Supabase execution, PayPal proof, identity, entitlement, authorization, scheduler correctness outside the exercised UI, deployment state, backend-gate completion, or final architecture acceptance.
+
+Routing is explicit:
+
+`UI-only → Vercel browser verification may run`
+`UI + backend → browser evidence may run, backend evidence remains separate`
+`backend-only / Firestore / commerce / docs / recovery → do not invoke Vercel`
+
+Do not trigger previews merely because GitHub receives a commit. Avoid browser-verification churn outside UI work. Never infer a Vercel project or deployment target from historical comments, stale URLs, screenshots, or naming. See `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md` for the complete rule.
+
+## 14. Product-operations observation boundary
+
+Founder Pulse is a **read-only operational observation layer** over GitHub/GitLab Issue flow. It may summarize Issue movement, open backlog, creation-age buckets, labels, and visible delivery relationships. Its output is management/continuity evidence only; it is not Product Law, architecture authority, implementation proof, scheduler authority, deployment control, or authorization to mutate the repository.
+
+Use it to detect operational signals such as stale backlog, closure-flow changes, missing delivery links, or recurring process friction. When it identifies a problem, reconcile the observation against canonical engineering state before acting.
+
+Founder Pulse must not rank individual productivity, and its read-only observation must not be confused with a project-state database. GitLab support in the skill does not change TeamAi's present decision to keep GitLab out of the active architecture/control plane.
+
+## 15. Target-project handover
 
 A completed gate must produce the target-project handover packet in the same execution. The packet belongs to TeamAi.
 
 ToolKit may receive generalized upstream lessons only after the consuming-project implementation validates that the lesson actually generalizes.
 
-## 14. Current 029 documentation set
+## 16. Current 029 documentation set
 
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md` — phase planning contract.
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md` — commercial/capability planning boundary.
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md` — connection/Seat lifecycle.
 - `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md` — document routing and execution discipline.
+- `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md` — UI-only browser-integrity verification boundary.
 - `docs/project-guide/AI_ASSISTANT_READ_ME.md` — project-guide entry point.
 - `docs/project-guide/Endorsement.md` — completion/endorsement procedure.
 - `docs/project-guide/HandOver.md` — handover/continuity procedure.
