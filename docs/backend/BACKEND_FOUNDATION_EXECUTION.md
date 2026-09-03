@@ -27,12 +27,19 @@ Implement the durable backend foundation required before TEAM-EXPERIENCE-029 can
 - Firebase project configuration source wiring.
 - UID-scoped Firestore security baseline with server-owned task/event writes.
 
+### Current source implementation slice
+A `supabase/functions/teamai-domain-bootstrap` Edge Function now implements the source-level trusted persistence path for `Firebase UID → Account → Workplace → Project → Team/Solo → Web AI Seat`.
+
+The function verifies a Firebase Authentication ID token, derives the UID from the verified token, obtains a Google datastore OAuth token from a Supabase-held Firebase service-account credential, and uses Firestore REST create-if-absent writes. It never accepts a request-body UID as ownership proof.
+
+This is source implementation evidence only. The function is not marked deployed or live-verified yet.
+
 ### Open
-- Live Firebase Auth/Firestore configuration and execution.
-- Emulator/rules verification.
-- Persistent domain adapters.
-- Trusted Edge runtime integration.
-- PayPal correlation/webhook mutation and entitlement projection.
+- Live Firebase emulator/rules verification.
+- Firebase service-account secret configuration for the Edge runtime.
+- Deployment and live exercise of `teamai-domain-bootstrap` with a real Firebase ID token.
+- Firestore hierarchy and repeat-call idempotency verification.
+- Server-owned PayPal correlation/webhook mutation and entitlement projection.
 - Provider invocation.
 - E2E security/failure/recovery evidence.
 - Final traceability/endorsement.
