@@ -4,14 +4,24 @@ This is the operational recovery entry point for AI participants working on Team
 
 ## Authority order
 1. `PRODUCT_LAW.md` — product authority.
-2. `MASTERPLAN.md` — chronological execution authority.
-3. `POLICY.md` — operating constraints.
+2. `MASTERPLAN.md` — chronological execution/planning authority.
+3. `POLICY.md` — operating constraints where present.
 4. `AI_ASSISTANT_READ_ME.md` — operational recovery and entry point.
-5. Domain contracts under `docs/` and `docs/backend/`.
-6. Skills, implementation, verification, evidence, endorsement, Product Knowledge, and continuity records.
+5. `docs/` domain contracts and implementation/evidence records.
+6. `docs/project-guide/` — project continuation, endorsement, and handover procedures.
+7. Applicable skills/guards, implementation, verification, evidence, Product Knowledge, and continuity records.
+
+See `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md` for document routing and execution discipline.
 
 ## Backend-first execution rule
 Before implementation begins, the target project's backend authority must be clarified and reconciled with Product Law. ToolKit provides process/knowledge upstream only; it does not define or replace TeamAi backend authority.
+
+## Execution discipline
+Use this sequence before a meaningful change:
+
+`inspect authority → inspect applicable skill/guard → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
+
+Do not treat ordinary discussion as implementation approval. Do not smuggle canonical/destructive/high-impact changes in as cleanup.
 
 ## Gate handover rule
 A completed TeamAi gate is not surrendered until the target project produces its handover packet/ZIP in the same execution. The packet belongs to TeamAi. ToolKit is never the owner or handover surface for TeamAi.
@@ -21,9 +31,9 @@ A completed TeamAi gate is not surrendered until the target project produces its
 
 **Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
 
-Gate 4 (Firebase emulator/rules execution) remains explicitly parked/blocked by the current local execution environment. Do not convert that blocker into an inferred pass.
+The Firebase emulator/rules verification work has been executed in the available development environment. Where hosting or external runtime execution is unavailable, record that as an environment/proof limitation rather than a failed architecture or an inferred production pass.
 
-The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains backend-gated.
+The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains the next product-experience frontier and must not be treated as implemented merely because its planning contracts exist.
 
 ## Canonical backend authority
 - Firebase Auth = identity / Firebase UID ownership.
@@ -41,7 +51,7 @@ The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains 
 ## Current evidence
 - Gate 3B/3C/3D: Firebase UID-derived persistence, independent Firestore confirmation, and repeat-call idempotency are evidenced.
 - Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts` and direct source-contract validation passed.
-- Gate 5C: canonical `paypal-webhook` now contains the validated v5C commerce implementation; Supabase runtime cutover is complete at the function source boundary. Live PayPal transaction/webhook E2E evidence and full Gate 5C completion evidence remain outstanding.
+- Gate 5C: the canonical `paypal-webhook` source contains the Gate-5C commerce implementation boundary, while authenticated PayPal transaction/webhook end-to-end proof, replay-race evidence, and final Gate-5C completion remain outstanding.
 
 Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
@@ -49,7 +59,7 @@ Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.m
 The canonical `paypal-webhook` function is the TeamAi production webhook boundary. The previously isolated `teamai-paypal-webhook-v5c` function remains a historical validation artifact and must not become a second production authority. The canonical webhook correlates only authenticated PayPal events to server-owned TeamAi commerce intent and persists durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
 
 ## Pre-029 commercial/capability planning boundary
-The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
+The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns future Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
 
 These are planning concepts, not current live subscription entitlements. Exact plan names, prices, model catalogs, seat counts, limits, and tool packs remain open until explicitly approved.
 
@@ -96,7 +106,7 @@ Equip attaches allowed skills, Base TeamAi capabilities, Tool Quality, tools/plu
 Activation requires all mandatory conditions for the configured role to pass. Activation is a state transition, not a browser toggle.
 
 ### Planning Team versus Working Team
-Planning Team = deliberation, controlled turns, selected participants, summarizer, structured handoff, user review.
+Planning Team = user-controlled deliberation, configured turns, selected participants, selected summarizer, structured handoff, user review.
 
 Working Team = approved plan, task/dependency eligibility, Scheduler selection, AI/tool/human execution, durable results/events, downstream eligibility, review/recovery.
 
@@ -108,24 +118,24 @@ The most recent AI contribution is evidence/input, not authoritative user intent
 
 Never put provider credentials into ordinary AI conversation content. Tool execution must remain attributable to the requesting Seat and Project.
 
-## Recovery rule for configured AI capability
-When a provider/runtime/tool degrades or becomes unavailable:
-
-`failure/degradation → durable state → diagnosis → remediation → capability test → authorization re-check → scope/permission re-check → activation`
-
-Do not jump directly from Failed/Degraded to Active without required revalidation. Preserve historical execution evidence while preventing it from becoming a fresh permission grant.
-
 ## User-intent preservation
-Every Planning Team turn remains grounded in:
+Every Planning Team turn is grounded in:
 
 `current user instruction + accumulated relevant team discussion + approved project context + current turn instruction`
 
-The final summarizer must preserve the original objective, later clarifications, relevant contributions, disagreements, accepted decisions, constraints, unresolved questions, important artifacts/findings/events, and the latest user instruction. Summaries and references may reduce payload size but must not silently change meaning.
+The immediately previous AI response is only one contribution. It must never override, replace, or silently narrow the user's intent.
+
+Context may be compressed with summaries, references, retrieval, or artifacts, but the compression must preserve materially relevant meaning. The selected final summarizer must be able to synthesize the complete relevant discussion before returning control to the user.
 
 ## Detailed planning records
+- `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
+- `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `docs/project-guide/AI_ASSISTANT_READ_ME.md`
+- `docs/project-guide/Endorsement.md`
+- `docs/project-guide/HandOver.md`
 
 ## Hard implementation rule
 Implementation claims must trace:
