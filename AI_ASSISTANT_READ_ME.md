@@ -21,6 +21,8 @@ A completed TeamAi gate is not surrendered until the target project produces its
 
 **Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
 
+Gate 4 (Firebase emulator/rules execution) remains explicitly parked/blocked by the current local execution environment. Do not convert that blocker into an inferred pass.
+
 The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains backend-gated.
 
 ## Canonical backend authority
@@ -38,10 +40,15 @@ The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains 
 
 ## Current evidence
 - Gate 3B/3C/3D: Firebase UID-derived persistence, independent Firestore confirmation, and repeat-call idempotency are evidenced.
-- Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts`; project-wide validation remains pending.
-- Gate 5C: verified PayPal webhook authenticity, replay protection, durable commerce events and entitlement projection remain open.
+- Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts` and direct source-contract validation passed.
+- Gate 5C: verified PayPal webhook authenticity, replay protection, durable commerce events and entitlement projection are now the active implementation frontier.
 
-Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md`.
+Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
+
+## PayPal boundary for the active gate
+The existing `paypal-webhook` Edge Function is a verification bootstrap boundary. Gate 5C must extend it into the canonical commerce flow only after webhook authenticity is established, then correlate the verified event to a server-owned TeamAi commerce intent and persist durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
+
+PayPal's current webhook documentation requires verification of incoming messages and describes 2xx acknowledgement plus delivery retries for non-2xx responses. The registered webhook ID is part of the verification boundary. citeturn888155search0turn888155search2
 
 ## Hard implementation rule
 Implementation claims must trace:
