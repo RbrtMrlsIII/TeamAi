@@ -29,12 +29,14 @@ The Planning Team is a deliberation mode.
 
 Primary flow:
 
-`User idea/instruction → configured AI turns → one response at a time → discussion → user-selected summarizer → structured summary → user review → next command`
+`User idea/instruction → configured AI turns → one response at a time → accumulated discussion → user-selected summarizer → structured summary → user review → next command`
 
 Rules:
 - The user defines the turn plan, participating seats, turns-per-AI, and optional summarizer seat.
 - The scheduler controls speaker order and turn limits; no provider chooses the next provider.
-- Each AI receives only the minimum relevant prior context required for its turn, plus authoritative project context explicitly exposed to that seat.
+- Each AI turn must be grounded in the **current user instruction, accumulated relevant team discussion, approved project context, and the current turn instruction**. The immediately previous AI response is only one contribution and is never a substitute for the user's authority.
+- Context may be summarized, retrieved, referenced, or otherwise compressed when needed, but compression must preserve the meaning necessary to understand the user's objective, constraints, clarifications, decisions, disagreements, and unresolved questions.
+- The final summarizer must be able to synthesize the complete relevant discussion trajectory before returning control to the user.
 - One AI may be designated to document the agreed discussion result. The other participants may continue analysis, challenge assumptions, perform field-specific checks, or propose alternatives through chat.
 - Only one document-authoring path should receive authority to mutate the canonical planning document for that discussion.
 - A summarizer produces a structured handoff containing decisions, rationale, alternatives, unresolved questions, constraints, acceptance criteria, proposed document targets, and recommended next action.
@@ -67,7 +69,7 @@ The core mechanism is:
 
 AI providers are workers/capabilities behind TeamAi adapters. They do not become the global orchestration authority.
 
-A downstream worker should receive a structured, minimal handoff rather than an unbounded transcript. A useful handoff may reference findings, decisions, files, artifacts, task IDs, event IDs, and required capabilities.
+A downstream worker should receive a structured, meaning-preserving handoff rather than an unbounded transcript. A useful handoff may reference findings, decisions, files, artifacts, task IDs, event IDs, and required capabilities.
 
 ## 5. Connecting external AI applications into a Team
 
@@ -98,7 +100,7 @@ Plugins are capabilities, not intelligence.
 
 Canonical path:
 
-`AI seat → authorized tool intent → Tool Policy Engine → project-scoped connection/plugin → tool invocation → result/artifact → durable event`
+`AI seat → authorized tool intent → Team Policy Engine → project-scoped connection/plugin → tool invocation → result/artifact → durable event`
 
 Requirements:
 - each plugin declares its capabilities and scopes;
@@ -110,15 +112,15 @@ Requirements:
 - tool results never silently grant new permissions;
 - plugin/MCP capabilities must follow current provider/service terms and compatibility rules.
 
-MCP may be used as a standardized tool/context integration surface. TeamAi's scheduler, identity authority, permissions, durable event model, and human approval rules remain TeamAi responsibilities. The 2026-07-28 MCP specification also formalizes Tasks and extensions while hardening authorization, so the integration layer must remain version/profile aware.
+MCP may be used as a standardized tool/context integration surface. TeamAi's scheduler, identity authority, permissions, durable event model, and human approval rules remain TeamAi responsibilities. The integration layer must remain version/profile aware.
 
 ## 7. How AIs can read messages from other AIs
 
-The premium chat experience may visually present a shared conversation, but context delivery must remain explicit and minimal.
+The premium/pro-max chat experience may visually present a shared conversation, but context delivery must remain explicit and meaning-preserving.
 
 Canonical model:
 
-`Visible team conversation → message/event records → relevance/context selector → authorized context packet → receiving AI`
+`Visible team conversation → message/event records → relevance/context selector → authorized meaning-preserving context packet → receiving AI`
 
 A receiving AI can read:
 - prior AI contributions explicitly included for its turn;
@@ -135,7 +137,7 @@ A receiving AI must not automatically receive:
 - unrestricted repository contents;
 - private conversations outside its granted scope.
 
-The UI may show a richer shared transcript than the model receives. The visual transcript is therefore a coordination surface, while the context packet is the execution boundary.
+The model context may be smaller than the visible transcript, but it must preserve the meaning required to follow the user's objective. **Semantic completeness takes precedence over simply following the immediately previous AI.**
 
 ## 8. Team Leader and Summarizer
 
@@ -155,9 +157,13 @@ The Team Leader may detect stalls, contradictions, repeated failures, missing ve
 - provider;
 - service/runtime;
 - exact model/variant;
+- Team Quality;
 - skill bundle;
+- Base TeamAi capability set;
+- Tool Quality;
 - tool/plugin/MCP bundle;
 - workstation/scope;
+- entitlement/authorization/compatibility/health state;
 - task;
 - dependency;
 - event;
@@ -168,19 +174,19 @@ The Team Leader may detect stalls, contradictions, repeated failures, missing ve
 - team status/health;
 - execution history/recovery.
 
-The UI should make it possible to answer **why the next AI acted** by showing the relevant task dependency, event, readiness condition, scheduler decision, and authorization boundary.
+The UI should make it possible to answer **why the next AI acted** by showing the relevant task dependency, event, readiness condition, scheduler decision, capability/authorization state, and execution boundary.
 
 ## 10. Questions 029 must answer before or during implementation
 
 1. How does a user connect AI applications that are operated outside TeamAi?
 2. What provider authorization/connection states are visible and recoverable?
 3. How is an external connection bound to a specific Workplace, Project, and AI Seat?
-4. How does the user equip a seat with skills, plugins/tools/MCP, workstation scope, and permissions?
-5. How does TeamAi distinguish provider, service/runtime, exact model/variant, skills, plugins, workstation, scopes, limits, and compliance state?
+4. How does the user equip a seat with skills, Base TeamAi capabilities, Tool Quality, plugins/tools/MCP, workstation scope, permissions, and approval rules?
+5. How does TeamAi distinguish provider, service/runtime, exact model/variant, connection, Seat, Team Quality, skills, Base TeamAi capabilities, Tool Quality, workstation, scopes, limits, entitlement and compliance state?
 6. How does one AI's completed work make another AI eligible without direct provider-to-provider control?
-7. What durable event represents a meaningful AI result, action request, tool result, approval, failure, or completion?
+7. What durable event represents a meaningful AI result, action request, tool result, approval, failure, recovery, or completion?
 8. How does the scheduler explain and reproduce why the next AI/tool/human acted?
-9. How does the shared chat show the whole team discussion while each AI receives only its authorized minimal context?
+9. How does the shared chat show the whole team discussion while each AI receives a meaning-preserving authorized context packet?
 10. How can one AI explicitly reference another AI's findings, handoff, artifact, or decision without exposing private provider state?
 11. How is exactly one document-authoring path selected during planning while other AIs continue advisory analysis?
 12. How does the selected Web AI summarizer hand the discussion back to the user for `APPROVE`, `EDIT`, `MORE`, or `REJECT`?
@@ -189,10 +195,19 @@ The UI should make it possible to answer **why the next AI acted** by showing th
 15. How does the system handle a provider/runtime/tool becoming unavailable after a team has already been configured?
 16. How does the product preserve the same semantic team/workflow when represented through spatial UI, standard web UI, mobile UI, and accessibility paths?
 17. Which newly discovered needs belong in 029, which belong in backend/integration gates, and which become future product phases?
+18. What exact conditions move a connection/Seat from configured to Active, and what evidence is required to reactivate it after degradation or authorization loss?
+19. How does the product communicate the difference between TeamAi entitlement and external provider entitlement without implying one grants the other?
+20. Which capabilities belong to the Base TeamAi capability set, and which remain optional Tool Quality extensions or provider-owned capabilities?
+21. How are supplied skill bundles, startup projects, templates, or ZIP packages consumed without creating a competing authority or silently overwriting current project rules?
+22. How does the product preserve every user clarification and materially relevant team contribution when the shared conversation grows beyond one model's context limit?
 
-## 11. Root-wiring guard
+## 11. Root-wiring and execution-discipline guard
 
 Before any 029 implementation slice, reconcile the proposed UI root against its owning canonical roots. The page, component, spatial, commerce, identity, Workplace, provider, tool, task/event, notification, recovery, privacy, compatibility, and runtime contracts must not be redefined locally.
+
+Apply the project execution discipline:
+
+`inspect authority → inspect applicable skill/guard → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
 
 UI is a presentation and interaction layer over authoritative state and policy intents. A new page-local rule is invalid when an existing canonical root already owns the meaning.
 
@@ -201,10 +216,11 @@ UI is a presentation and interaction layer over authoritative state and policy i
 029 completion should require evidence that the canonical UI is not merely rendered but correctly wired to:
 - authenticated identity and semantic context;
 - Workplace/Project/Team/Seat state;
-- planning-team turn orchestration;
+- planning-team turn orchestration and user-intent preservation;
 - summarizer handoff and user approval;
 - working-team task/event execution;
 - provider/runtime connection state;
+- Team Quality and Tool Quality entitlement boundaries;
 - skill/tool/plugin capability state;
 - durable action/approval/recovery state;
 - responsive/accessibility equivalents;
@@ -212,3 +228,12 @@ UI is a presentation and interaction layer over authoritative state and policy i
 - required domain/backend contracts discovered during implementation.
 
 Any new backend capability discovered by 029 must be routed through the owning backend/integration phase rather than embedded as browser authority.
+
+## 13. Related durable planning records
+
+- `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
+- `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
+- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
+- `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `docs/project-guide/HandOver.md`
+- `docs/project-guide/Endorsement.md`
