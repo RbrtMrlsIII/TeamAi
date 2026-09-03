@@ -69,13 +69,16 @@ Evidence includes:
 
 Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
 
-This milestone is **evidence-backed progress, not TEAM-BACKEND-001 completion**. Local emulator/rules execution, skill-wiring verification, PayPal correlation/webhook/entitlements, durable task/event/runtime behavior, provider invocation, complete security/failure/recovery verification, final traceability reconciliation, and completion endorsement remain open.
+### Gate 5B — server-owned PayPal correlation contract
+The backend now encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes a pending `firebaseUid + correlationId + provider` intent; only a verified PayPal provider event may bind the PayPal event ID to that intent, with an idempotency key derived from the provider event ID. This preserves Firebase UID ownership and prevents browser-provided ownership data from becoming payment authority.
 
-TEAM-EXPERIENCE-029 may now advance from the Firebase persistence foundation, but its production frontend implementation gate remains closed until the remaining explicit backend prerequisites are evidenced.
+Evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md`.
 
-A `Posts` test composite index was observed as a live-project test artifact and is not automatically adopted as a TeamAi canonical index requirement.
+Gate 5B source validation remains pending until the repository dependency tree is available and the project test command completes successfully. No live PayPal transaction, webhook business processing, entitlement activation, or replay-protection claim is made by this gate.
 
-See `docs/backend/FIREBASE_PROJECT_IDENTITY.md`, `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md`, `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`, and `MASTERPLAN.md` for the current execution matrix.
+This milestone is **evidence-backed source progress, not TEAM-BACKEND-001 completion**. Local emulator/rules execution, verified PayPal webhook processing, durable commerce events/entitlements, provider invocation, complete security/failure/recovery verification, final traceability reconciliation, and completion endorsement remain open.
+
+TEAM-EXPERIENCE-029 remains backend-gated and its production frontend implementation hold is unchanged.
 
 ## Canonical note
 The complete Product Law remains in the synchronized project package and is not intentionally duplicated here during this reconciliation window. This front door MUST remain synchronized with any active authority changes.
