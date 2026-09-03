@@ -4,6 +4,7 @@ import { authorityFor, assertAuthority } from '../dist/src/backend/authority.js'
 import { accountPath, projectPath, taskPath } from '../dist/src/backend/firestore-paths.js';
 import { resolveEffectiveSkills } from '../dist/src/backend/skill-resolution.js';
 import { assertDurableEvent, transitionTask } from '../dist/src/backend/task-state.js';
+import { bindVerifiedPayPalEvent, createServerOwnedCommerceIntent } from '../dist/src/backend/commerce.js';
 
 test('backend authority map has canonical owners', () => {
   assert.equal(authorityFor('identity'), 'firebase-auth');
@@ -38,4 +39,21 @@ test('durable task transitions reject invalid terminal mutations', () => {
   assert.doesNotThrow(() => assertDurableEvent({
     eventId: 'evt-1', idempotencyKey: 'idem-1', type: 'COMPLETE', actorId: 'system', occurredAt: new Date().toISOString()
   }));
+});
+
+test('PayPal correlation is minted from the verified server-owned intent', () => {
+  const intent = createServerOwnedCommerceIntent('uid-1', 'corr-1', '2026-09-03T00:00:00Z');
+  const correlation = bindVerifiedPayPalEvent(intent, 'paypal-event-1');
+
+  assert.deepEqual(correlation, {
+    firebaseUid: 'uid-1',
+    provider: 'paypal',
+    providerEventId: 'paypal-event-1',
+    correlationId: 'corr-1',
+    idempotencyKey: 'paypal:event:paypal-event-1',
+  });
+  assert.throws(
+    () => bindVerifiedPayPalEvent({ ...intent, status: 'pending', provider: 'paypal' }, ''),
+    /providerEventId is required/,
+  );
 });
