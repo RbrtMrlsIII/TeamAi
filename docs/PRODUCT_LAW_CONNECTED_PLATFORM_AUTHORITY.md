@@ -53,6 +53,12 @@ A green GitHub Actions run proves only the checks actually executed by that work
 
 GitHub Actions MUST NOT be treated as a general orchestration authority for the Web AI Team. Product/runtime orchestration remains owned by TeamAi's scheduler and trusted execution boundaries.
 
+## Firestore usage and resilience consequence
+
+Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. Firebase's current no-cost Standard-edition allowance is 50,000 document reads/day, 20,000 document writes/day, 20,000 document deletes/day, 1 GiB stored data, and 10 GiB/month outbound transfer. Spark provides the no-cost quota but not pay-as-you-go overage; current Firebase documentation says exceeding Spark quota for a product can shut that product off for the remainder of the applicable billing period. Quota is project-level.
+
+TeamAi should reduce unnecessary Firestore usage rather than replace Firestore authority: targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference are preferred optimization mechanisms. Any alternate durable domain store requires explicit Product Law/architecture reconciliation. See `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`.
+
 ## TeamAi policy consequence
 
 For TeamAi, automatic Vercel deployment behavior is intentionally outside the default engineering path. Browser verification is invoked only when UI development/verification requires it. A non-UI commit or pull request must not be treated as a justification for preview creation.
@@ -64,12 +70,6 @@ A Vercel deployment is an environment artifact. A browser integrity run is verif
 Founder Pulse can observe the GitHub Issue flow that surrounds this work, but it does not initiate Vercel activity. A Pulse report can identify delivery friction or repeated preview-related churn as an operational observation; the TeamAi Development Team must reconcile that observation against Product Law and the canonical Vercel policy before making any change.
 
 GitLab support in Founder Pulse is capability of the observation skill, not adoption of GitLab as a TeamAi architecture/control-plane dependency.
-
-## Firestore usage and resilience consequence
-
-Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. Firebase's current no-cost Standard-edition allowance is 50,000 document reads/day, 20,000 document writes/day, 20,000 document deletes/day, 1 GiB stored data, and 10 GiB/month outbound transfer. Spark provides the no-cost quota but not pay-as-you-go overage; current Firebase documentation says exceeding Spark quota for a product can shut that product off for the remainder of the applicable billing period. Quota is project-level. See `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md` for TeamAi's read/write resilience rules.
-
-TeamAi should reduce unnecessary Firestore usage rather than replace Firestore authority: targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference are preferred optimization mechanisms. Any alternate durable domain store requires explicit Product Law/architecture reconciliation.
 
 ## Authority rule
 
