@@ -1,7 +1,7 @@
 # TeamAi — Documentation & Execution Discipline
 
 **Status:** CANONICAL OPERATING GUIDE
-**Purpose:** Define where architectural ideas, planning decisions, implementation records, evidence, skills, and handover records belong so future AI work does not recreate authority conflicts or lose important planning discussions.
+**Purpose:** Define where architectural ideas, planning decisions, implementation records, evidence, skills, handover records, and portable project packages belong so future AI work does not recreate authority conflicts or lose important planning discussions.
 
 ## 1. Authority and routing
 
@@ -16,6 +16,7 @@ Use this order when deciding where information belongs:
 7. `docs/project-guide/` — reusable project-entry, endorsement, and handover procedures.
 8. Skills — how an agent performs a class of work safely; skills do not override architecture authority.
 9. Findings/continuity/archive — historical observations, reusable candidates, recovery records, or superseded material.
+10. Full Project ZIP — reproducible portable representation of the canonical tracked project tree for bulk editing, handover, recovery, and transfer; it does not create a new authority.
 
 When two documents conflict, do not choose by recency alone. Reconcile against the higher authority and preserve the conflict as an explicit finding until corrected.
 
@@ -32,6 +33,7 @@ When two documents conflict, do not choose by recency alone. Reconcile against t
 | `docs/findings/` | Candidate reusable/generalized findings | Project-specific authority |
 | `skills/` / applicable skills | Execution method, guardrails, warnings | Architecture definition |
 | `docs/archive/` / dated records | Historical context and recovery | Active authority unless explicitly restored |
+| `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md` | Portable package and artifact rules | A second source repository or deployment authority |
 
 ## 3. Conversation-to-canon pipeline
 
@@ -124,7 +126,7 @@ Exact prices, plan names, model catalogs, seat counts, and tool packs remain pla
 
 ## 10. Skills and execution discipline
 
-Before implementation, the agent must identify the applicable skill/guard for the work. In particular, provider/model/runtime/MCP/context-transfer/backend/commerce work must be checked for existing-root conflicts and external compatibility requirements.
+Before implementation, the agent must identify the applicable skill/guard for the work. In particular, provider/model/runtime/MCP/context-transfer/backend/commerce/package/verification work must be checked for existing-root conflicts and external compatibility requirements.
 
 Execution discipline:
 
@@ -142,9 +144,9 @@ Verification can prove only the scope actually exercised.
 
 Therefore:
 
-`planned ≠ implemented ≠ deployed ≠ runtime-proven ≠ completed`
+`planned ≠ implemented ≠ browser-verified ≠ deployed ≠ runtime-proven ≠ completed`
 
-The same distinction applies to connections, provider entitlements, MCP capabilities, and commerce.
+The same distinction applies to connections, provider entitlements, MCP capabilities, packages, and commerce.
 
 ## 12. Backend/UI boundary
 
@@ -152,21 +154,33 @@ The UI presents and requests policy intents over authoritative state. It must no
 
 When UI discovery reveals a missing backend capability, route the requirement back through the owning backend/integration contract.
 
-## 13. UI browser-integrity evidence boundary
+## 13. Controlled Vercel web-development boundary
 
-Vercel is a **non-authoritative browser-integrity verification surface used only during active UI development/verification**.
+Vercel is a **non-authoritative web development / preview / browser-verification surface**. It is not limited to UI-only work; relevant web development may use it for UI, UI-plus-backend integration, authenticated browser flows, commerce-facing browser flows, responsive behavior, preview environments, and end-to-end browser smoke tests.
 
-It may be used for browser rendering, UI interaction/navigation smoke tests, responsive behavior, UI integration checks, and controlled preview/browser verification. It must not be used as authority for TeamAi hosting, backend runtime, Firestore state/rules, Supabase execution, PayPal proof, identity, entitlement, authorization, scheduler correctness outside the exercised UI, deployment state, backend-gate completion, or final architecture acceptance.
+It must not be used as authority for TeamAi hosting/delivery, identity, Firestore state/rules, Supabase execution, PayPal proof, entitlement, authorization, scheduler correctness, repository/source authority, engineering CI authority, backend-gate completion, or final architecture acceptance.
 
-Routing is explicit:
+A repository event does not itself authorize a Vercel run. With external Git integration, a push/PR may still create deployment activity according to Vercel configuration, so do not assume `1 PR = 1 deployment` or `1 merge = 1 deployment`.
 
-`UI-only → Vercel browser verification may run`
-`UI + backend → browser evidence may run, backend evidence remains separate`
-`backend-only / Firestore / commerce / docs / recovery → do not invoke Vercel`
+Use deliberate, consolidated verification and record the exact browser evidence obtained. Vercel throttling or unavailability is a verification limitation, not a TeamAi architecture failure. See `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
 
-Do not trigger previews merely because GitHub receives a commit. Avoid browser-verification churn outside UI work. Never infer a Vercel project or deployment target from historical comments, stale URLs, screenshots, or naming. See `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md` for the complete rule.
+## 14. Full Project ZIP and artifact boundary
 
-## 14. Product-operations observation boundary
+The Full Project ZIP is a first-class project-state package, not an optional add-on. It is derived from a pinned GitHub repository state and is intended for bulk editing, handover, recovery, and transfer.
+
+The ZIP must be flattened at the project root, preserve the canonical tracked-file set and exact file bytes, and verify that extraction reconstructs the same relative paths and SHA-256 file hashes as the pinned repository tree.
+
+Generated/runtime artifacts must not enter the package: screenshots, browser captures, visual evidence images, preview/build output, dependency trees, tests/coverage output, logs, caches, local emulator state, editor state, deployment caches, or local secrets. Untracked artifacts are naturally excluded by a tracked-file-based package builder. A tracked packaging blocker must cause the package operation to fail rather than be silently omitted.
+
+A genuine product/source image can remain only when it is intentional canonical source content. Artifact screenshots/captures/evidence images are prohibited. See `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
+
+For coherent 029 bulk edits, prefer:
+
+`canonical repository state → Full Project ZIP → full edit → package verification → one coherent GitHub branch/PR`
+
+The ZIP never bypasses GitHub review or becomes a separate source authority.
+
+## 15. Product-operations observation boundary
 
 Founder Pulse is a **read-only operational observation layer** over GitHub/GitLab Issue flow. It may summarize Issue movement, open backlog, creation-age buckets, labels, and visible delivery relationships. Its output is management/continuity evidence only; it is not Product Law, architecture authority, implementation proof, scheduler authority, deployment control, or authorization to mutate the repository.
 
@@ -174,19 +188,20 @@ Use it to detect operational signals such as stale backlog, closure-flow changes
 
 Founder Pulse must not rank individual productivity, and its read-only observation must not be confused with a project-state database. GitLab support in the skill does not change TeamAi's present decision to keep GitLab out of the active architecture/control plane.
 
-## 15. Target-project handover
+## 16. Target-project handover
 
 A completed gate must produce the target-project handover packet in the same execution. The packet belongs to TeamAi.
 
 ToolKit may receive generalized upstream lessons only after the consuming-project implementation validates that the lesson actually generalizes.
 
-## 16. Current 029 documentation set
+## 17. Current 029 documentation set
 
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md` — phase planning contract.
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md` — commercial/capability planning boundary.
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md` — connection/Seat lifecycle.
 - `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md` — document routing and execution discipline.
-- `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md` — UI-only browser-integrity verification boundary.
+- `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md` — controlled Vercel web-development/browser-verification boundary.
+- `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md` — Full Project ZIP, flattening, equality, and artifact rules.
 - `docs/project-guide/AI_ASSISTANT_READ_ME.md` — project-guide entry point.
 - `docs/project-guide/Endorsement.md` — completion/endorsement procedure.
 - `docs/project-guide/HandOver.md` — handover/continuity procedure.
