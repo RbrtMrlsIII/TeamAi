@@ -199,6 +199,16 @@ async function createIfAbsent(
   if (response.ok) return "created";
 
   const bodyText = await response.text();
+  if (response.status === 409) {
+    try {
+      const parsed = JSON.parse(bodyText) as { error?: { status?: unknown; message?: unknown } };
+      const errorStatus = typeof parsed.error?.status === "string" ? parsed.error.status : "";
+      const errorMessage = typeof parsed.error?.message === "string" ? parsed.error.message : "";
+      if (errorStatus === "ALREADY_EXISTS" || /already exists/i.test(errorMessage)) return "exists";
+    } catch {
+      // Fall through to the safe diagnostic.
+    }
+  }
   if (response.status === 400) {
     try {
       const parsed = JSON.parse(bodyText) as { error?: { status?: unknown; message?: unknown } };
