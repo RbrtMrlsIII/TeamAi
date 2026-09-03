@@ -38,9 +38,16 @@ TeamAi application/domain paths MUST be rooted in the authenticated Firebase UID
 Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
 
 ## TEAM-BACKEND-001 implementation disposition
-The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, and durable event identity requirements. Firebase live integration, rules/index deployment verification, persistence, trusted runtime integration, PayPal correlation/webhook mutation, provider invocation, and E2E security/recovery evidence remain open.
+The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, and durable event identity requirements.
 
-See `docs/backend/BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md` and `MASTERPLAN.md` for the current execution matrix.
+### Live Firebase milestone — 2026-09-03
+The recreated Firebase project `team-ai-official` is reachable through the authenticated CLI, its `(default)` Firestore database exists, Email/Password and Google authentication providers are enabled, and the TeamAi Firestore Security Rules have been deployed and visually verified in the Firebase console.
+
+This milestone is **deployment evidence, not backend completion**. Emulator/rules execution, application-level Auth integration, domain persistence, trusted runtime, PayPal correlation/webhook/entitlements, provider invocation, E2E security/recovery verification, and final traceability/endorsement remain open.
+
+A `Posts` test composite index was observed as a live-project test artifact and was still building at capture time. It is not automatically adopted as a TeamAi canonical index requirement.
+
+See `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md` and `MASTERPLAN.md` for the current execution matrix.
 
 ## Canonical note
 The complete Product Law remains in the synchronized project package and is not intentionally duplicated here during this reconciliation window. This front door MUST remain synchronized with any active authority changes.
