@@ -1,30 +1,45 @@
 # TEAM-EXPERIENCE-029 — Firebase Transfer Status
 
-Status: `FROZEN PREPARATION — NOT CONNECTED / NOT DEPLOYED`
+Status: `BACKEND FOUNDATION IN PROGRESS — 029 HOLD`
 
-Date: 2026-09-02
+Date: 2026-09-03
 
 ## Decision carried into execution
 
-TeamAi is preparing Firebase as the next application-backend implementation profile because the live WoWSQL/PostgreSQL environment materially diverges from the canonical migration set. The live WoWSQL database is preserved as legacy/evidence infrastructure; no in-place migration or destructive reset is authorized by this preparation tranche.
+TeamAi uses Firebase as the application-backend authority profile. The previously retired PostgreSQL backend implementation is not a supported active recovery path and is not to be resurrected. Any historical PostgreSQL references are historical evidence only; active repository structure must not provide an easy implementation pathway back to the retired backend.
 
 ## Firebase target
 
-- Firebase Authentication: identity/session foundation.
-- Cloud Firestore: TeamAi domain/application persistence and durable event records.
-- Cloud Functions: protected server execution, orchestration, webhooks, and scheduled jobs.
-- Cloud Storage: large project artifacts and evidence packages.
-- Firebase Security Rules: least-privilege client access after tenancy/role policy is implemented.
-- Firebase Emulator Suite: local validation before live project writes/deployment.
+- Firebase Authentication: identity/session foundation and Firebase UID ownership.
+- Cloud Firestore `(default)`: TeamAi domain/application persistence and durable domain records.
+- Firebase Hosting: current web delivery surface.
+- Firebase Security Rules: least-privilege client access for the modeled UID-rooted paths.
+- Firebase Emulator Suite: validation surface for rules and client-side behavior before broader live mutation testing.
+- Supabase Edge Functions: trusted server execution/runtime boundary and PayPal webhook receiver.
+- Supabase Postgres: platform infrastructure only, never TeamAi domain state.
 
-## 029 implementation carry-forward
+## TEAM-BACKEND-001 live foundation
 
-The PostgreSQL scheduler implementation in `src/task-scheduler.ts` and `migrations/007_durable_task_scheduler.sql` remains valid as evidence of required task/dependency/event behavior. The Firebase adapter must implement the same domain behavior without mechanically reproducing the SQL schema.
+`supabase/functions/teamai-domain-bootstrap/` implements the first trusted persistence slice:
+
+`Firebase ID token → verified Firebase UID → Account → Workplace → Project → Team/Solo → Web AI Seat`
+
+The function verifies Firebase ID tokens for the frozen `team-ai-official` project, derives ownership from the verified token, obtains Firestore authorization through the trusted service-account secret, and writes to Firestore `(default)` using create-if-absent semantics.
+
+## Executable checkpoint
+
+- Gate 1 — invalid Firebase ID token rejected with HTTP 401: **PASS**.
+- Gate 2 — missing Authorization header rejected with HTTP 401: **PASS**.
+- Gate 3 — valid Firebase ID token reaches Firestore persistence: **BLOCKED**.
+
+The Gate 3 test-user token acquisition attempt returned `invalid login credentials`. No valid Firebase ID token was available for the authenticated persistence probe, so Firestore persistence has not been claimed as live-verified by this checkpoint.
 
 ## Explicit non-claims
 
-This status does not claim Firebase project provisioning, production deployment, Security Rules completion, Authentication integration, Cloud Functions deployment, frontend completion, data migration, or product implementation completion.
+This checkpoint does not claim full TEAM-BACKEND-001 completion, independent Firestore document verification, repeat-call idempotency for the current live deployment, complete emulator/rules verification, PayPal commerce integration, provider invocation, or TEAM-EXPERIENCE-029 frontend implementation.
 
-## Required next gate
+## Canonical sequence
 
-Human-controlled Firebase project setup, then emulator validation, then Firestore repository adapters and Security Rules implementation.
+`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
+
+029 remains blocked until the backend foundation completion evidence is sufficient under the project's traceability rule.
