@@ -43,22 +43,25 @@ The first executable backend foundation contracts are in `src/backend/`:
 
 Supporting Firebase configuration is wired through `firebase.json`, `firestore.rules`, and `firestore.indexes.json`. The rules are UID-scoped for the modeled domain paths, with an explicit deny-all fallback.
 
-## Live Firebase baseline — 2026-09-03
-The recreated Firebase project `team-ai-official` is reachable through the authenticated Firebase CLI. The `(default)` Firestore database exists. Email/Password and Google authentication providers are enabled. The TeamAi Firestore Security Rules have been deployed and visually verified in the Firebase console.
+## Live Firebase / Edge baseline — 2026-09-03
+The canonical Firebase project is `team-ai-official`; the `(default)` Firestore database exists; Email/Password and Google authentication providers are enabled; and the TeamAi Firestore Security Rules were deployed and visually verified in the Firebase console.
 
-A human-created `Posts` test composite index was observed through the CLI and was still building at capture time. It is treated as a live-project test artifact, not as a canonical TeamAi index requirement. It must not be overwritten merely because the current canonical index file has no explicit composite indexes.
+The trusted persistence function is deployed at the canonical Supabase project host using `teamai-domain-bootstrap`. Its current live authentication boundary verifies Firebase ID tokens for `team-ai-official` and derives the UID from the verified token. The current live deployment is version 6.
 
-See `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md` for the evidence boundary and exact disposition.
+The canonical endpoint is:
+`https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-domain-bootstrap`
 
-## Current backend implementation boundary
-A new `supabase/functions/teamai-domain-bootstrap/` source slice now implements the trusted persistence path for `Firebase UID → Account → Workplace → Project → Team/Solo → Web AI Seat`. It verifies a Firebase ID token and derives the UID from the verified token; it does not trust a client-supplied UID. Firestore writes use the Google datastore scope through a service-account credential held as a Supabase Edge secret.
+## Executable gate checkpoint — 2026-09-03
+- **Gate 1:** invalid Firebase ID token → HTTP 401 `invalid_firebase_id_token` — PASS.
+- **Gate 2:** missing Authorization header → HTTP 401 `missing_firebase_id_token` — PASS.
+- **Gate 3:** valid Firebase ID token → trusted Firestore persistence — **BLOCKED**. The test-user token acquisition attempt returned `invalid login credentials`, so no valid ID token was available for the authenticated persistence probe.
 
-This is **source implementation evidence only**. Deployment, Firebase service-account secret configuration, real Firebase ID-token exercise, Firestore document verification, repeat-call idempotency verification, emulator/rules verification, and full security/recovery evidence remain open.
+Gate 3 has therefore not been claimed or completed. The backend source/deployment is not being altered merely to compensate for a test credential problem.
 
-See `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
+See `docs/backend/BACKEND_LIVE_SERVICE_STATUS.md` and `docs/CHECKPOINT_TEAM-BACKEND-001_GATE2_2026-09-03.md`.
 
 ## Remaining backend gates
-Local Firebase emulator/rules execution, live domain persistence verification, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, provider invocation, security/failure/recovery verification, final traceability, and endorsement remain open.
+Live authenticated Firestore document verification, repeat-call idempotency verification for the current deployment, emulator/rules verification, server-owned PayPal correlation, verified webhook handling, durable commerce events/entitlements, provider invocation, security/failure/recovery verification, final traceability, and endorsement remain open unless explicitly evidenced by a later checkpoint.
 
 ## Hard implementation rule
 Implementation claims must trace:
