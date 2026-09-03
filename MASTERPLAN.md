@@ -52,5 +52,135 @@ Firebase persistence is independently evidenced. The PayPal webhook Edge Functio
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
 
+## Pre-029 Planning Architecture — Canonical Product Capability
+
+TEAM-EXPERIENCE-029 must be planned as the construction of the **canonical AI-team experience**, not merely a set of pages. The central product capability is a human-controlled web environment where multiple externally operated AI applications/providers can participate as configured team seats, exchange authorized work through durable structured state, make downstream work eligible through the TeamAi orchestrator, and use explicitly granted tools/plugins/integrations.
+
+### Planning-stage vs working-stage distinction
+
+The product has two different operating stages and they must not be collapsed:
+
+**Planning Team stage**
+
+`User idea/instruction → configured AI turns → one response at a time → discussion → selected summarizer → structured summary → user review → next command`
+
+The Planning Team is deliberative. The user controls participation, fixed-turn settings, summarizer choice, and the decision to advance. A selected AI may be the sole document-authoring participant for an agreed canonical planning change while other AIs continue advisory analysis, challenge assumptions, inspect other fields, or provide pros/cons through chat. Durable mutation remains user-approved.
+
+**Coding / Working Team stage**
+
+`Approved plan/handoff → task decomposition → scheduler → assigned AI seat/tool → action → durable result/event → next eligible task/seat → review`
+
+The Working Team applies the approved plan. Execution is bounded by project scope, seat permissions, connection capability, budget, runtime limits, provider policy, and approval gates. Working execution does not silently rewrite the approved plan.
+
+### Canonical AI-to-AI orchestration question
+
+**How does the next AI act after the previous AI?**
+
+Not by direct provider-to-provider control.
+
+`AI response/action → durable structured event → task/state transition → scheduler eligibility → next AI/tool/human → new event`
+
+The Scheduler owns next-agent selection. A previous AI may produce a recommendation for a downstream task, but it cannot directly authorize or invoke another provider outside the orchestrator's policy path.
+
+### Team Leader and Summarizer
+
+The Web AI Team Leader is a supervisory seat/capability that may monitor participation, stalled tasks, contradictions, missing handoffs, repeated failures, verification gaps, or budget anomalies. It can recommend bounded coordination actions but cannot bypass backend authorization or human approval.
+
+The selected Summarizer is a distinct seat/capability. It converts the Planning Team discussion into a structured handoff, preserves disagreements and unresolved questions, and presents the result for user review. Summarization is not document mutation authority.
+
+### External AI application connection model
+
+AI applications may require setup outside TeamAi. The product therefore needs a connection/activation model that can import or complete externally authorized connections.
+
+`External AI application/provider account → user-authorized connection → TeamAi capability test → Workplace/Project → AI Seat → runtime/model + skills + tools/plugins + workstation + scopes + limits`
+
+A user must be able to configure more than a model name. The canonical AI Seat identity includes provider, service/runtime, exact model/variant where applicable, skill bundle, tool/plugin/MCP bundle, workstation binding, project/repository/path scope, permissions, approval rules, resource limits, and provider-compliance state.
+
+The same provider/model may support multiple distinct seats. Seat identity is an authorized runtime configuration/instance, not merely a model label.
+
+### Plugin / tool / MCP execution model
+
+Plugins are capabilities, not intelligence.
+
+`AI Seat → authorized tool intent → Tool Policy Engine → project-scoped plugin/connection → tool invocation → result/artifact → durable event`
+
+The user/project grants actual plugin scopes. Secrets remain outside ordinary chat content. Tool invocations are attributable to the requesting seat and project. Tool outputs may be bounded in model context while full artifacts remain available through authorized storage. Tool results never silently grant new permissions.
+
+MCP is treated as a standards-based integration/tool/context surface, not as TeamAi's scheduler, identity authority, permission system, or durable system of record. The current MCP specification is actively evolving, including a stateless core, formal Tasks and extensions, and authorization hardening, so TeamAi must keep MCP/provider compatibility profile-aware rather than assuming one permanently fixed protocol shape. citeturn722999search0turn722999search5
+
+### Shared-team chat vs model context boundary
+
+The UI may present a rich shared team conversation, but each AI receives an explicit authorized context packet.
+
+`Visible team conversation → message/event records → relevance/context selector → authorized minimal context packet → receiving AI`
+
+A receiving AI can read prior team contributions that are explicitly included for its turn, human interventions, structured summaries/handoffs, relevant task/event state, and referenced artifacts through authorized integrations. It must not automatically receive another provider's private model state, unrelated project data, secrets, or unrestricted repository contents.
+
+Therefore:
+
+**Chat is the coordination surface. Context packets are the execution boundary.**
+
+### Canonical UI concepts that 029 must expose
+
+029 should make these understandable and inspectable instead of hiding them behind generic UI:
+
+- Workplace
+- Project
+- AI Team
+- AI Seat
+- provider
+- service/runtime
+- exact model/variant
+- skill bundle
+- tools/plugins/MCP
+- workstation/scope
+- task
+- dependency
+- event
+- handoff
+- action request
+- approval
+- result/artifact
+- team health/status
+- execution history/recovery
+
+The experience should make it possible to answer **why the next AI acted** by showing the relevant dependency, event, readiness condition, scheduler decision, and authorization boundary.
+
+### 029 questions that must be answered before or during implementation
+
+1. How does a user connect AI applications that are operated outside TeamAi?
+2. What provider authorization/connection states are visible, testable, and recoverable?
+3. How is an external connection bound to one Workplace, Project, and AI Seat?
+4. How does the user equip each AI with skills, plugins/tools/MCP, workstation scope, permissions, and approval rules?
+5. How does TeamAi distinguish provider, service/runtime, model/variant, skills, plugins, workstation, scopes, limits, and compliance state?
+6. How does an AI completion or action make another task eligible without direct provider-to-provider authority?
+7. Which durable events represent AI results, action requests, tool results, approvals, failures, retries, cancellations, and completions?
+8. How can the Scheduler explain and reproduce why the next AI/tool/human acted?
+9. How does the shared chat expose team discussion while each AI receives only its authorized minimal context?
+10. How can one AI explicitly consume another AI's finding, handoff, artifact, or decision without exposing private provider state?
+11. How is exactly one document-authoring path selected during planning while the other AIs remain advisory?
+12. How does the selected Web AI summarizer return the discussion to the user for `APPROVE`, `EDIT`, `MORE`, or `REJECT`?
+13. How are planning decisions separated from working execution state?
+14. How are approvals, blocked actions, failures, retries, cancellation, and recovery represented visibly?
+15. What happens when a configured provider/runtime/plugin/connection becomes unavailable after configuration?
+16. How is the same team/workflow meaning preserved across spatial, standard web, mobile, and accessibility representations?
+17. Which newly discovered requirements belong in 029, which return to backend/integration gates, and which become future phases?
+
+### Root-wiring guard before 029 coding
+
+Before any production UI implementation slice, reconcile the proposed UI root against its owning canonical roots. Identity, Workplace ownership, project context, provider/runtime identity, skills, tools, task/event state, commerce, approvals, notifications, recovery, privacy, compatibility, and spatial semantics must not be redefined locally when an existing canonical root already owns the meaning.
+
+The UI is presentation and interaction over authoritative state and policy intents. A page-local rule that contradicts an existing canonical root is a reconciliation problem, not a frontend implementation opportunity.
+
+### 029 completion frontier
+
+029 should be considered complete only when evidence demonstrates that the canonical UI is correctly wired to the authoritative identity/context chain, Workplace/Project/Team/Seat state, Planning Team turn orchestration, summarizer handoff/user review, Working Team task/event execution, provider/runtime connection state, skill/tool/plugin capability state, durable action/approval/recovery state, and responsive/accessibility equivalents.
+
+Browser verification is validation evidence only; it does not become TeamAi hosting or system-of-record authority.
+
+Any backend capability discovered during 029 must be routed through the owning backend/integration contract rather than embedded as browser authority.
+
+Detailed planning contract: `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`.
+
 ## Target-project handover rule
 Every completed gate must surrender a target-project handover packet/ZIP in the same execution. The handover belongs to TeamAi; Universal ToolKit only provides reusable upstream process knowledge and does not own TeamAi project state.
