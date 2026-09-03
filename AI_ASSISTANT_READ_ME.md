@@ -50,6 +50,15 @@ The existing `paypal-webhook` Edge Function is a verification bootstrap boundary
 
 PayPal's current webhook documentation requires verification of incoming messages and describes 2xx acknowledgement plus delivery retries for non-2xx responses. The registered webhook ID is part of the verification boundary. citeturn888155search0turn888155search2
 
+## Pre-029 commercial/capability planning boundary
+The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
+
+These are planning concepts, not current live subscription entitlements. Exact plan names, prices, model catalogs, seat counts, limits, and tool packs remain open until explicitly approved.
+
+TeamAi subscription authority is separate from external provider entitlement. Do not infer that a TeamAi plan grants a provider subscription, API entitlement, agent runtime, model access, or external tool access that the user does not actually possess.
+
+The detailed planning record is `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md` and must be read with `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md` before 029 implementation planning becomes specific.
+
 ## Hard implementation rule
 Implementation claims must trace:
 `Product Law → Masterplan item → contract/skill → actual implementation → verification evidence → completion/endorsement`.
