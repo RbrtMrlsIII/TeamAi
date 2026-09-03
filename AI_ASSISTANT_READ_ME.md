@@ -51,12 +51,14 @@ The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains 
 ## Current evidence
 - Gate 3B/3C/3D: Firebase UID-derived persistence, independent Firestore confirmation, and repeat-call idempotency are evidenced.
 - Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts` and direct source-contract validation passed.
-- Gate 5C: the canonical `paypal-webhook` source contains the Gate-5C commerce implementation boundary, while authenticated PayPal transaction/webhook end-to-end proof, replay-race evidence, and final Gate-5C completion remain outstanding.
+- Gate 5C: implementation and available-environment verification are PASS/CLOSED. The remaining item is authenticated live PayPal transaction/webhook runtime evidence; this is not an unfinished 5C implementation.
 
 Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
 ## PayPal boundary for the active gate
 The canonical `paypal-webhook` function is the TeamAi production webhook boundary. The previously isolated `teamai-paypal-webhook-v5c` function remains a historical validation artifact and must not become a second production authority. The canonical webhook correlates only authenticated PayPal events to server-owned TeamAi commerce intent and persists durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
+
+The live PayPal transaction/webhook test is the remaining external runtime evidence needed for final TEAM-BACKEND-001 completion endorsement. Do not reopen completed Gate-5C implementation work merely because that live test remains unavailable.
 
 ## Pre-029 commercial/capability planning boundary
 The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns future Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
