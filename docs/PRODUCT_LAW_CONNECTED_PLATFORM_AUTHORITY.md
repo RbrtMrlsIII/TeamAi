@@ -7,7 +7,7 @@ This document gives the operational definitions behind the connected-platform au
 
 ## Platform map
 
-| Platform / surface | TeamAi usage | Authority boundary |
+| Platform / surface | TeamAi usage | Authority / evidence boundary |
 |---|---|---|
 | Firebase Authentication | User sign-in and authenticated Firebase UID establishment. | Identity authority only. |
 | Cloud Firestore `(default)` | Durable TeamAi application/domain state, including accounts, workplaces, projects, teams/Seats, tasks, and events. | Durable TeamAi state authority. |
@@ -15,11 +15,13 @@ This document gives the operational definitions behind the connected-platform au
 | Supabase Edge Functions | Trusted server execution, including protected TeamAi operations and the PayPal webhook receiver. | Trusted execution authority; not domain-state authority. |
 | Supabase Postgres | Supabase platform infrastructure where required. | Infrastructure only; never TeamAi domain/application state. |
 | PayPal | External payment events used by TeamAi's server-owned commerce correlation and entitlement projection. | External payment-event authority; TeamAi retains its correlation/projection rules. |
-| GitHub | Source repository, commits, pull requests, issues, checks, reviews, and engineering history. | Engineering/source authority. |
+| GitHub | Source repository, commits, pull requests, issues, reviews, and engineering history. | Engineering/source/change authority. |
+| GitHub Actions | Run CI validation, authority audits, tests, recovery checks, and other repository automation. | Verification/execution surface for engineering workflows; it does not replace GitHub source authority or TeamAi runtime authority. |
 | Vercel | Controlled browser rendering and interaction verification for active UI development. | Non-authoritative UI/browser verification surface only. |
-| Founder Pulse | Read-only observation of Issue flow and delivery patterns for product-operations visibility. | Observation layer only; no mutation or authorization authority. |
+| Founder Pulse | Read-only observation of Issue flow and delivery patterns for product-operations visibility. | Observation/management layer only; no mutation or authorization authority. |
 | External AI applications/providers | Models/runtimes that participate in the Web AI Team through authorized connections and Seats. | Provider ownership remains external; TeamAi owns its connection, policy, Seat, orchestration, and durable-state boundary. |
 | MCP/tools/plugins/integrations | Bounded capabilities exposed to authorized Web AI Seats. | Capability/integration surface only. |
+| Universal ToolKit | Upstream knowledge/process repository receiving validated generalized lessons. | Upstream knowledge surface only; never TeamAi state or authority. |
 
 ## Deployment-to-Vercel relationship
 
@@ -40,6 +42,16 @@ or
 `pull request → Vercel automatically`.
 
 The repository event alone has no TeamAi authority over Vercel. A Vercel Project and its configuration are the external control points that determine whether the event consumes Vercel deployment activity.
+
+## GitHub Actions distinction
+
+GitHub source/review state and GitHub Actions execution state are related but distinct:
+
+`GitHub repository / commit / PR → GitHub Actions workflow → CI execution/result → engineering evidence`
+
+A green GitHub Actions run proves only the checks actually executed by that workflow. It does not prove Vercel browser behavior, Firebase runtime behavior, PayPal live behavior, or deployment success unless those exact checks were explicitly exercised and their evidence is recorded.
+
+GitHub Actions MUST NOT be treated as a general orchestration authority for the Web AI Team. Product/runtime orchestration remains owned by TeamAi's scheduler and trusted execution boundaries.
 
 ## TeamAi policy consequence
 
