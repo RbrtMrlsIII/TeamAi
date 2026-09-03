@@ -16,7 +16,8 @@ The current sequence is:
 - Supabase Edge Functions own trusted server execution and PayPal webhook receipt.
 - PayPal is the external payment-event authority.
 - GitHub is the engineering/source authority.
-- Vercel is optional future browser/deployment infrastructure, not current TeamAi backend authority.
+- Firebase Hosting is the current TeamAi web hosting/delivery authority.
+- Vercel is a browser-verification surface only; it is not TeamAi hosting authority, backend authority, or production deployment authority.
 - Supabase Postgres is platform infrastructure only and is not the TeamAi domain/application database.
 - Retired PostgreSQL implementation is historical-only and must not remain an active/recoverable TeamAi backend path.
 - Web AI and Development AI are separate operational domains.
@@ -40,6 +41,13 @@ The authoritative TeamAi Firebase project is `team-ai-official`. Firebase projec
 All Firebase-dependent surfaces MUST reconcile to the same authoritative project: Firebase Auth, Firestore `(default)`, Hosting, Web SDK `projectId`, CLI target, and trusted Edge-runtime service-account `project_id`. If these identities conflict, the affected deployment or verification MUST STOP until reconciliation is complete. A public Web SDK configuration may identify a project but MUST NOT be treated as a privileged credential. Admin/service-account credentials MUST remain secret.
 
 Project identity reconciliation MUST precede Firebase runtime diagnosis. Historical project evidence may establish provenance but MUST NOT override current authoritative configuration.
+
+## CANONICAL BACKEND EXTENSION INVARIANT
+The canonical backend is a multi-authority system, not a single endpoint or wire. Canonical Auth, canonical durable domain state, canonical trusted execution, canonical commerce, and canonical execution evidence are distinct responsibilities with explicit authorities and contracts.
+
+Adding payment buttons, subscription products/plans, promotional variants, or additional PayPal-facing commercial flows MUST extend the existing canonical commerce contracts and preserve the same server-owned correlation to the authenticated Firebase UID. Adding another sign-in/authentication method MUST extend the canonical Firebase Auth identity boundary and preserve the same authoritative Firebase UID/domain ownership model.
+
+Such extensions MUST NOT require moving TeamAi domain state to another database, replacing the Firebase UID ownership root, allowing the browser to self-attest payment or entitlement state, or creating a parallel authority path. A new provider, authentication method, payment product, delivery/verification surface, or UI control is an extension of an existing authority boundary unless an explicit Product Law / architecture change replaces that boundary first.
 
 ## Phase 0 disposition
 Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
