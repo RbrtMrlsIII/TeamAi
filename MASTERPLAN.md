@@ -47,6 +47,17 @@ See `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`.
 16. [ ] TEAM-BACKEND-001 completion endorsement recorded.
 17. [ ] Only after all `BLOCKS_029` gates are evidenced: release hold on TEAM-EXPERIENCE-029.
 
+### Firebase identity gate — mandatory before runtime diagnosis
+Before any Firebase-dependent deployment, authentication test, Firestore persistence test, or failure diagnosis:
+
+1. Confirm the current authoritative Firebase project is `team-ai-official`.
+2. Confirm the Web SDK `projectId`, Firebase CLI target, Auth, Firestore `(default)`, and Hosting target refer to `team-ai-official`.
+3. Confirm the trusted Edge Function's service-account `project_id` is intended for `team-ai-official` without exposing its secret.
+4. Reject similarly named projects such as `homefinder-official` as distinct/non-authoritative unless Product Law is explicitly changed first.
+5. If any identity conflicts, mark the affected gate **BLOCKED** and reconcile identity before diagnosing runtime behavior.
+
+This is an architecture gate, not an optional documentation check.
+
 ### Current evidence boundary
 The executable foundation contract slice is implemented. The recreated Firebase project is live and reachable through the authenticated CLI; Email/Password and Google authentication are enabled; the TeamAi Firestore Rules are deployed and visually verified. A human-created `Posts` test composite index was observed as still building and is treated as a live-project test artifact, not as a canonical TeamAi index requirement. A Firebase-backed Supabase Edge Function source slice now exists for UID-verified Account → Workplace → Project → Team/Solo → Seat persistence. It is **not** yet deployment or E2E evidence: `FIREBASE_SERVICE_ACCOUNT_JSON` has not been asserted as configured, the function has not been exercised with a real Firebase ID token, and resulting Firestore documents/idempotency have not been verified. PayPal completion, provider invocation, and full security/recovery E2E completion remain unclaimed.
 
@@ -56,6 +67,7 @@ An implementation claim is complete only when its governing Product Law and Mast
 ## Canonical references
 - `PRODUCT_LAW.md`
 - `AI_ASSISTANT_READ_ME.md`
+- `docs/backend/FIREBASE_PROJECT_IDENTITY.md`
 - `docs/backend/BACKEND_FOUNDATION_IMPLEMENTATION_SLICE_2026-09-03.md`
 - `docs/backend/FIREBASE_LIVE_BASELINE_2026-09-03.md`
 - `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`
