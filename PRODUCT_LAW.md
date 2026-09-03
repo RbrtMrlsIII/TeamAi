@@ -53,7 +53,7 @@ Such extensions MUST NOT require moving TeamAi domain state to another database,
 Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
 
 ## TEAM-BACKEND-001 implementation disposition
-The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, and durable event identity requirements.
+The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, durable event identity requirements, and the server-owned commerce correlation contract.
 
 ### Live Firebase milestone — 2026-09-03
 The authoritative Firebase project `team-ai-official` is live and its `(default)` Firestore database is reachable. The `teamai-domain-bootstrap` trusted persistence slice has now passed its executable Firebase persistence gate:
@@ -69,16 +69,21 @@ Evidence includes:
 
 Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
 
-### Gate 5B — server-owned PayPal correlation contract
-The backend now encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes a pending `firebaseUid + correlationId + provider` intent; only a verified PayPal provider event may bind the PayPal event ID to that intent, with an idempotency key derived from the provider event ID. This preserves Firebase UID ownership and prevents browser-provided ownership data from becoming payment authority.
+### Gate 5B — server-owned PayPal correlation contract — PASS
+The backend encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes a pending `firebaseUid + correlationId + provider` intent; only a verified PayPal provider event may bind the PayPal event ID to that intent, with an idempotency key derived from the provider event ID. This preserves Firebase UID ownership and prevents browser-provided ownership data from becoming payment authority.
 
-Evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md`.
+Direct source-contract validation passed in a temporary local workspace using TypeScript 5.8.3 with strict NodeNext settings and Node.js 22.16.0. The behavioral assertions covered server-owned intent creation, verified-event binding, preserved UID ownership, deterministic idempotency key derivation, empty provider-event rejection, and Firebase-UID-rooted commerce paths.
 
-Gate 5B source validation remains pending until the repository dependency tree is available and the project test command completes successfully. No live PayPal transaction, webhook business processing, entitlement activation, or replay-protection claim is made by this gate.
+Observed result: `GATE5B_DIRECT_TEST=PASS`.
 
-This milestone is **evidence-backed source progress, not TEAM-BACKEND-001 completion**. Local emulator/rules execution, verified PayPal webhook processing, durable commerce events/entitlements, provider invocation, complete security/failure/recovery verification, final traceability reconciliation, and completion endorsement remain open.
+Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
-TEAM-EXPERIENCE-029 remains backend-gated and its production frontend implementation hold is unchanged.
+This is an evidence-backed source-contract pass, not TEAM-BACKEND-001 completion. No live PayPal transaction, webhook business processing, entitlement activation, or replay-protection completion claim is made by Gate 5B.
+
+### Gate 5C — active frontier
+Gate 5C is the next canonical commerce implementation boundary: verify PayPal webhook authenticity, apply replay/idempotency controls, durably record authenticated commerce events in Firestore under the Firebase UID, and project entitlement state only from authenticated provider events correlated to a server-owned intent.
+
+PayPal's current webhook guidance requires verification of incoming messages before processing, uses a registered webhook ID during verification, requires a 2xx acknowledgement for successful receipt, and retries non-2xx deliveries. citeturn888155search0turn888155search2
 
 ## Canonical note
 The complete Product Law remains in the synchronized project package and is not intentionally duplicated here during this reconciliation window. This front door MUST remain synchronized with any active authority changes.
