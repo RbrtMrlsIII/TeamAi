@@ -35,6 +35,27 @@ The repository is preparing for `TEAM-EXPERIENCE-029`, but 029 remains a plannin
 - TeamAi subscription concepts must not be mistaken for provider subscriptions.
 - MCP/tool availability must not be mistaken for authorization.
 - ToolKit is upstream-only and does not own TeamAi state.
+- Vercel browser verification is non-authoritative and UI-development-only; do not invoke it for backend, commerce, documentation, recovery, or other non-UI work.
+
+## UI browser integrity verification
+
+The complete rule is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+
+Use Vercel browser verification deliberately for active UI development/verification such as rendering, interaction/navigation smoke tests, responsive behavior, and controlled UI preview checks. Do not trigger it merely because a commit or pull request exists.
+
+`UI-only → may run`
+`UI + backend → UI evidence only; backend evidence remains separate`
+`backend-only / Firestore / commerce / docs / recovery → do not run`
+
+Vercel is not TeamAi hosting, backend, deployment, commerce, authorization, scheduler, or completion authority. Firebase Hosting remains the current TeamAi delivery surface.
+
+## Founder Pulse
+
+Founder Pulse is a read-only operational observation layer over GitHub/GitLab Issue flow. Use it to understand delivery flow and backlog health—what moved to closed, what remains open, how old the work is, labels, and visible delivery relationships. Its findings are management/continuity evidence, not repository mutation authority or implementation proof.
+
+A Founder Pulse observation must be reconciled against TeamAi's canonical authority chain before action. It can reveal process friction or missing linkage; it cannot authorize code changes, architecture changes, deployment changes, or scheduler decisions.
+
+GitLab support in Founder Pulse does not place GitLab inside the current TeamAi architecture. GitLab remains deliberately deferred.
 
 ## Planning Team
 
