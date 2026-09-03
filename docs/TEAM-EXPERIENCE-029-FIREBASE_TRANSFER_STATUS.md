@@ -1,6 +1,6 @@
 # TEAM-EXPERIENCE-029 — Firebase Transfer Status
 
-Status: `BACKEND FOUNDATION IN PROGRESS — 029 HOLD`
+Status: `BACKEND PERSISTENCE FOUNDATION EVIDENCED — 029 REMAINS BACKEND-GATED`
 
 Date: 2026-09-03
 
@@ -30,16 +30,35 @@ The function verifies Firebase ID tokens for the frozen `team-ai-official` proje
 
 - Gate 1 — invalid Firebase ID token rejected with HTTP 401: **PASS**.
 - Gate 2 — missing Authorization header rejected with HTTP 401: **PASS**.
-- Gate 3 — valid Firebase ID token reaches Firestore persistence: **BLOCKED**.
+- Gate 3B — valid Firebase ID token reaches Firestore persistence: **PASS**.
+- Gate 3C — exact nested Firestore document independently verified with stored values: **PASS**.
+- Gate 3D — identical authenticated repeat call returns HTTP 200 with existing-value results: **PASS**.
 
-The Gate 3 test-user token acquisition attempt returned `invalid login credentials`. No valid Firebase ID token was available for the authenticated persistence probe, so Firestore persistence has not been claimed as live-verified by this checkpoint.
+The complete evidence record is `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
 
-## Explicit non-claims
+## Gate 3 disposition
 
-This checkpoint does not claim full TEAM-BACKEND-001 completion, independent Firestore document verification, repeat-call idempotency for the current live deployment, complete emulator/rules verification, PayPal commerce integration, provider invocation, or TEAM-EXPERIENCE-029 frontend implementation.
+`GATE_3_FIREBASE_PERSISTENCE`: **PASS**
+
+The evidence-backed slice now establishes:
+
+`Firebase ID token → verified Firebase UID → Firestore hierarchy → independent persistence confirmation → repeat-call idempotency`
+
+This is sufficient to advance backend reasoning beyond the initial persistence blocker, but it is not equivalent to TEAM-BACKEND-001 completion.
+
+## Remaining backend prerequisites before 029 production implementation release
+
+- local Firebase Emulator/rules execution verification;
+- skill-wiring and project-type/field/task/provider/runtime resolution verification as applicable to the backend contract;
+- server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation;
+- verified PayPal webhook authenticity, idempotency, replay protection, and durable commerce events/entitlements;
+- durable task/event/job runtime behavior and provider/runtime invocation behind policy and authorization contracts;
+- security, failure, timeout, cancellation, and recovery verification;
+- final Product Law → Masterplan → contract/skill → implementation → evidence → endorsement traceability reconciliation;
+- TEAM-BACKEND-001 completion endorsement.
 
 ## Canonical sequence
 
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-029 remains blocked until the backend foundation completion evidence is sufficient under the project's traceability rule.
+TEAM-EXPERIENCE-029 is now eligible for continued planning/reconciliation against an evidence-backed Firebase persistence foundation, but its production frontend implementation gate remains closed until the remaining explicit backend prerequisites are satisfied.
