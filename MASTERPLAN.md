@@ -14,7 +14,7 @@ Phase 0 is the final pre-development baseline gate. Git history may retain retir
 2. [x] `main` confirmed as the active cleaned backend-first rebaseline.
 3. [x] Active retired relational backend runtime, dependency, migration, configuration, test, documentation-path, repository, and scheduler traces removed.
 4. [x] Retired PostgreSQL implementation is historical-only and is not supported recovery infrastructure.
-5. [x] Authority boundaries confirmed: Firebase Auth = identity; Firestore `default` = TeamAi durable application/domain state; Supabase Edge Functions = trusted server execution/webhook boundary; PayPal = payment event authority; GitHub = engineering/source authority; Vercel = optional future browser/deployment surface.
+5. [x] Authority boundaries confirmed: Firebase Auth = identity; Firestore `default` = TeamAi durable application/domain state; Supabase Edge Functions = trusted server execution/webhook boundary; PayPal = payment event authority; GitHub = engineering/source authority; Firebase Hosting = TeamAi web hosting/delivery authority; Vercel = browser-verification surface only.
 6. [x] Web AI and Development AI remain separate operational domains; Universal ToolKit is upstream-only.
 7. [x] Product Law and Masterplan contain the Phase-0 gate and current phase order.
 8. [x] Implementation traceability is a hard completion rule.
@@ -46,6 +46,41 @@ See `docs/PHASE_0_CLEAN_BASELINE_2026-09-03.md`.
 15. [ ] Traceability audit reconciled from Product Law → plan → contract/skill → implementation → evidence → endorsement.
 16. [ ] TEAM-BACKEND-001 completion endorsement recorded.
 17. [ ] Only after all `BLOCKS_029` gates are evidenced: release hold on TEAM-EXPERIENCE-029.
+
+### Canonical backend extension rule
+The canonical backend is a multi-authority system, not a single endpoint or wire. Product additions MUST extend the existing authority boundaries rather than create parallel authority paths.
+
+- New sign-in/authentication methods extend the Firebase Auth identity boundary and must still resolve to the same authoritative Firebase UID/domain ownership model.
+- New payment buttons, subscription products/plans, promotional variants, and PayPal commercial flows extend canonical commerce and retain server-owned PayPal-to-Firebase-UID correlation.
+- New tasks, events, providers, and runtime capabilities extend durable TeamAi state and trusted execution contracts.
+- Browser UI, Firebase Hosting, and Vercel verification surfaces remain non-authoritative for identity, payment, entitlement, or durable domain state.
+- Vercel is used only for browser verification before deployment; it is not a TeamAi hosting authority or production deployment target.
+
+Adding such capabilities MUST NOT require replacing the Firebase UID ownership root, moving domain state to another database, or granting authority to the browser. Any actual authority replacement requires an explicit Product Law / architecture change before implementation.
+
+### Next backend gate sequence
+Proceed one evidence gate at a time in this order:
+
+**GATE 4 — Firebase Emulator / Security Rules execution**
+Establish executable client/server authorization behavior against `firestore.rules`, including UID-scoped account/workplace/project/team/seat reads and writes, denial of cross-UID access, and client denial for authoritative task/event writes.
+
+**GATE 5 — Canonical Commerce foundation**
+Define and implement the durable TeamAi commerce model and server-owned PayPal correlation boundary before adding multiple commercial UI controls. Prove webhook authenticity, idempotency, replay resistance, durable commerce events, entitlement projection, and Firebase UID ownership correlation.
+
+**GATE 6 — Auth extension boundary**
+Define the canonical authentication-method extension contract so Email/Password, Google, and future sign-in methods all converge on the same Firebase Auth / Firebase UID ownership model without introducing alternate domain identities.
+
+**GATE 7 — Durable Task/Event/Runtime execution**
+Connect task/event/job lifecycle to trusted server execution and provider/runtime invocation, with durable evidence and failure/recovery semantics.
+
+**GATE 8 — Security / failure / recovery / traceability**
+Exercise unauthorized access, malformed inputs, retries, duplicate external events, timeout/cancellation paths, recovery, and final Product Law → Masterplan → contract/skill → implementation → verification → endorsement traceability.
+
+**GATE 9 — TEAM-BACKEND-001 completion endorsement**
+Close the backend foundation only when all required executable gates and evidence are present.
+
+**GATE 10 — TEAM-EXPERIENCE-029 implementation release**
+Release the frontend implementation hold only after all `BLOCKS_029` backend prerequisites are evidenced and reconciled.
 
 ### Firebase identity gate — mandatory before runtime diagnosis
 Before any Firebase-dependent deployment, authentication test, Firestore persistence test, or failure diagnosis:
