@@ -65,6 +65,12 @@ Founder Pulse can observe the GitHub Issue flow that surrounds this work, but it
 
 GitLab support in Founder Pulse is capability of the observation skill, not adoption of GitLab as a TeamAi architecture/control-plane dependency.
 
+## Firestore usage and resilience consequence
+
+Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. Firebase's current no-cost Standard-edition allowance is 50,000 document reads/day, 20,000 document writes/day, 20,000 document deletes/day, 1 GiB stored data, and 10 GiB/month outbound transfer. Spark provides the no-cost quota but not pay-as-you-go overage; current Firebase documentation says exceeding Spark quota for a product can shut that product off for the remainder of the applicable billing period. Quota is project-level. See `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md` for TeamAi's read/write resilience rules.
+
+TeamAi should reduce unnecessary Firestore usage rather than replace Firestore authority: targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference are preferred optimization mechanisms. Any alternate durable domain store requires explicit Product Law/architecture reconciliation.
+
 ## Authority rule
 
 Every connected platform MUST have an explicit role, explicit evidence boundary, and explicit non-authority boundary. Adding a new platform or expanding a platform's responsibility requires Product Law/architecture reconciliation before implementation.
