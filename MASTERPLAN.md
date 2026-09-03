@@ -47,7 +47,7 @@ PayPal's current webhook guidance requires verification of received messages and
 PayPal's current subscription model exposes subscription lifecycle/payment events and supports subscription customization, but TeamAi must treat provider identifiers and provider entitlements as external authority inputs only after authenticity and server-owned correlation checks. citeturn946136search1turn946136search8
 
 ### Current evidence boundary
-Firebase persistence is independently evidenced. The PayPal webhook Edge Function currently serves as a verification bootstrap boundary and intentionally stops before business completion claims. Gate 5C must connect verified provider events to the already-defined server-owned correlation and durable Firebase commerce state without creating a parallel authority path.
+The canonical `paypal-webhook` Edge Function now contains the validated Gate-5C commerce implementation and has been redeployed with the repository's current source plus a valid import-map configuration. The previously isolated `teamai-paypal-webhook-v5c` remains a validation artifact and is not the production authority. Runtime deployment/source alignment is therefore evidenced; authenticated PayPal transaction/webhook end-to-end evidence, replay-race verification, and final Gate-5C completion endorsement remain outstanding.
 
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
