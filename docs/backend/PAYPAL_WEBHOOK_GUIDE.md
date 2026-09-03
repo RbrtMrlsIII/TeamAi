@@ -8,6 +8,11 @@ PayPal is the external payment rail and event source. It is not a TeamAi databas
 
 GitHub is never the webhook receiver and never the payment authority.
 
+## Supabase deployment target
+- Project: `TeamAi`
+- Ref: `srpgzzretfyqdsfclnuo`
+- Region: `ap-southeast-2`
+
 ## Required later configuration
 1. Create/configure the PayPal Sandbox application.
 2. Create the PayPal Product and Plan after the UI/commercial experience is validated.
@@ -24,4 +29,4 @@ No Firebase private credential is required for the current planning/rebaseline c
 For the first qualifying subscription: month 1 is paid; months 2–3 are free; the three-month introductory grant is available once per Firebase UID. After the introductory period, succeeding months bill normally under the active plan. Exact Product/Plan/Button construction remains downstream of product UX and commercial validation.
 
 ## Current status
-The TeamAi Supabase `paypal-webhook` function is a bootstrap verification boundary. No live or sandbox subscription transaction has been exercised, and no Firestore commerce mutation is claimed complete.
+The TeamAi Supabase `paypal-webhook` function is a bootstrap verification boundary. A separate `teamai-domain-bootstrap` source slice now prepares the Firebase UID → Firestore domain persistence boundary that must be verified before PayPal UID correlation and durable commerce mutation. No live or sandbox subscription transaction has been exercised, and no Firestore commerce mutation is claimed complete.
