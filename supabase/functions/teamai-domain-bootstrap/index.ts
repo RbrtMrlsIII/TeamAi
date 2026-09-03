@@ -231,13 +231,18 @@ async function verifyFirebaseUser(req: Request): Promise<string> {
   const idToken = authorization.slice("Bearer ".length).trim();
   if (!idToken) throw new Error("missing_firebase_id_token");
 
-  const { payload } = await jwtVerify(idToken, FIREBASE_JWKS, {
-    issuer: `https://securetoken.google.com/${TEAMAI_FIREBASE_PROJECT_ID}`,
-    audience: TEAMAI_FIREBASE_PROJECT_ID,
-  });
+  try {
+    const { payload } = await jwtVerify(idToken, FIREBASE_JWKS, {
+      issuer: `https://securetoken.google.com/${TEAMAI_FIREBASE_PROJECT_ID}`,
+      audience: TEAMAI_FIREBASE_PROJECT_ID,
+    });
 
-  if (typeof payload.sub !== "string" || !payload.sub) throw new Error("firebase_token_missing_uid");
-  return payload.sub;
+    if (typeof payload.sub !== "string" || !payload.sub) throw new Error("firebase_token_missing_uid");
+    return payload.sub;
+  } catch (error) {
+    if (error instanceof Error && error.message === "firebase_token_missing_uid") throw error;
+    throw new Error("invalid_firebase_id_token");
+  }
 }
 
 function parseInput(value: unknown): DomainInput {
@@ -291,7 +296,11 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, uid, results });
   } catch (error) {
     const message = error instanceof Error ? error.message : "unknown_error";
-    if (message === "missing_firebase_id_token" || message === "firebase_token_missing_uid") {
+    if (
+      message === "missing_firebase_id_token" ||
+      message === "firebase_token_missing_uid" ||
+      message === "invalid_firebase_id_token"
+    ) {
       return json({ error: message }, 401);
     }
     if (message === "invalid_request" || message.includes(" is required") || message.startsWith("teamMode must")) {
