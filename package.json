@@ -11,6 +11,7 @@
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
     "test:unit": "npm run build && node --test tests/*.test.mjs",
+    "firebase:rules:gate": "bash build-system/scripts/firebase-rules-gate-004.sh",
     "docs:audit": "python3 build-system/scripts/documentation-authority-audit.py",
     "execution:audit": "python3 build-system/scripts/execution-discipline-audit.py",
     "spatial:root-audit": "python3 build-system/scripts/spatial-root-wiring-audit.py",
