@@ -2,7 +2,9 @@ name: GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - ui/029-working-composition-v1
   workflow_dispatch:
 
 permissions:
