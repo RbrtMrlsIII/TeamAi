@@ -178,48 +178,46 @@ The UI may present a rich shared team conversation, but each AI receives an expl
 
 A receiving AI can read prior team contributions included for its turn, human interventions, structured summaries/handoffs, relevant task/event state, and referenced artifacts through authorized integrations. It must not automatically receive another provider's private model state, unrelated project data, secrets, or unrestricted repository contents.
 
-### Team Quality vs Tool Quality
+## TEAM-EXPERIENCE-029 — Spatial Theme and Visual System
 
-The commercial planning model keeps these independent:
+**Status:** PLANNED PRODUCT-EXPERIENCE SLICE — NOT YET IMPLEMENTED.
 
-`Team Quality ≠ Tool Quality ≠ Provider Entitlement`
+The Product Law visual requirement is:
 
-Team Quality concerns the future TeamAi product axis for Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, orchestration capacity, and related resource limits.
+`one theme setting → Dark Spatial Glassmorphism OR Light Spatial Skeuomorphism`
 
-Tool Quality concerns the future capability axis for Base TeamAi capabilities plus optional tools/plugins/MCP servers and specialist integrations.
+### Chronological execution checklist
+1. [ ] Reconcile the approved visual law against existing UI roots, theme state, spatial semantics, accessibility contracts, responsive rules, and current 029 planning records.
+2. [ ] Define the shared semantic design-token and primitive roots for surfaces, depth, elevation, material treatment, borders, typography, controls, motion, focus, status feedback, and responsive behavior.
+3. [ ] Implement the single light/dark theme switch so the setting activates **Dark Spatial Glassmorphism** for Dark and **Light Spatial Skeuomorphism** for Light without duplicating theme authority.
+4. [ ] Apply the shared spatial primitives across the canonical 029 shell and first representative surfaces without introducing page-local theme authorities.
+5. [ ] Verify semantic equivalence of product behavior across both theme modes: identity, navigation, state, scheduler/readiness, approvals, forms, errors, and durable-state interactions remain unchanged by visual mode.
+6. [ ] Verify accessibility and interaction requirements across both modes, including contrast/legibility, keyboard/focus visibility, reduced-motion behavior, responsive breakpoints, and non-pointer interaction paths.
+7. [ ] Run deterministic browser verification for the exercised web scope and retain screenshots/captures only as separate GitHub evidence artifacts when useful.
+8. [ ] Record implementation commit, verification scope, workflow/run references, limitations, and any discovered root changes in HandOver.
+9. [ ] Obtain Endorsement for the completed slice and update `PRODUCT-KNOWLEDGE.md` only when the lesson is validated and reusable.
+10. [ ] Reconcile any new backend/domain requirement discovered by the visual implementation through its owning canonical contract rather than creating browser authority.
 
-A basic model may use additional entitled MCP/tools when provider/runtime compatibility and TeamAi policy/authorization permit it. An advanced model does not automatically unlock external tools. A Tool Quality purchase does not automatically grant a provider subscription or model entitlement.
+### Spatial-theme checklist skill routing
 
-Exact prices, model catalogs, seat counts, tool packs, and limits remain planning-only until approved.
+| Checklist | Required routing |
+|---|---|
+| 1 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/governance/product-law-change/SKILL.md` + applicable verification/audit skills |
+| 2 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 3 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 4 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable 029 UI implementation skills |
+| 5 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 6 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 7 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 8 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 9 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` |
+| 10 | `skills/execution/orucaveam/SKILL.md` + `skills/backend/authority-contract/SKILL.md` + applicable domain verification skills |
 
-### Base TeamAi capability set
+### Visual-system boundary
 
-The candidate Base TeamAi capability set includes:
+The spatial theme is presentation and interaction treatment. It is not a replacement for TeamAi identity, Firestore state, scheduler authority, provider entitlement, permissions, approvals, commerce truth, or durable events. A theme mode change must remain a UI-state/configuration change and must not change canonical business meaning.
 
-1. Team/Project context.
-2. Team discussion and structured handoff.
-3. Task/state reporting.
-4. Authorized artifacts/files.
-5. Authorized knowledge/search.
-6. Approved research/web capability where supported.
-7. Human approval/intervention.
-8. Coordination/readiness visibility.
-
-These are capability categories, not a commitment that every item will be an MCP server. Core TeamAi authority should remain native where appropriate; optional external integrations belong to the Tool Quality capability layer.
-
-### Skills and startup project packages
-
-TeamAi may distribute curated skill bundles, startup projects, templates, configuration packages, or initialization artifacts through project-owned ZIP/handover packages. These packages help users equip external AI applications and connect them into TeamAi.
-
-Packages do not override Product Law, user authority, provider terms, project permissions, TeamAi entitlement, or Seat authorization.
-
-ToolKit may learn only generalized lessons from TeamAi after the consuming-project evidence establishes that the lesson generalizes; TeamAi-specific assumptions do not become upstream authority automatically.
-
-### Provider/model/tool warning boundary
-
-Before modifying provider adapters, model catalogs, advanced agent runtimes, context-transfer code, tool/plugin connectors, MCP, provider-native storage, retention/disclosure behavior, or subscription/entitlement logic, the agent must first inspect the applicable provider/tool guard, existing roots, and current documented contract. Unknown, stale, contradictory, or potentially prohibited rules must become an explicit review/blocked condition rather than an assumption.
-
-### 029 questions that must be answered before or during implementation
+## 029 questions that must be answered before or during implementation
 
 1. How does a user connect AI applications that are operated outside TeamAi?
 2. What provider authorization/connection states are visible, testable, and recoverable?
@@ -252,7 +250,7 @@ The UI is presentation and interaction over authoritative state and policy inten
 
 ### 029 completion frontier
 
-029 should be considered complete only when evidence demonstrates that the canonical UI is correctly wired to the authoritative identity/context chain, Workplace/Project/Team/Seat state, connection/capability lifecycle, Planning Team turn orchestration, user-intent preservation, summarizer handoff/user review, Working Team task/event execution, provider/runtime connection state, Team Quality and Tool Quality entitlement boundaries, skill/tool/plugin capability state, durable action/approval/recovery state, and responsive/accessibility equivalents.
+029 should be considered complete only when evidence demonstrates that the canonical UI is correctly wired to the authoritative identity/context chain, Workplace/Project/Team/Seat state, connection/capability lifecycle, Planning Team turn orchestration, user-intent preservation, summarizer handoff/user review, Working Team task/event execution, provider/runtime connection state, Team Quality and Tool Quality entitlement boundaries, skill/tool/plugin capability state, durable action/approval/recovery state, responsive/accessibility equivalents, and the spatial visual system required by Product Law.
 
 Browser verification is validation evidence only; it does not become TeamAi hosting or system-of-record authority.
 
@@ -268,3 +266,7 @@ Detailed planning contracts:
 
 ## Target-project handover rule
 Every completed gate must surrender a target-project handover packet/ZIP in the same execution. The handover belongs to TeamAi; Universal ToolKit only provides reusable upstream process knowledge and does not own TeamAi project state.
+
+## Current 029 product-design execution order
+
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/frontend/spatial/UI_UX-Promax-Skill.md + applicable 029/domain skills → UI/system implementation → verification → GitHub evidence/artifacts → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
