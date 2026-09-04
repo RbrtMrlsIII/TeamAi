@@ -17,7 +17,7 @@ This document gives the operational definitions behind the connected-platform au
 | PayPal | External payment events used by TeamAi's server-owned commerce correlation and entitlement projection. | External payment-event authority; TeamAi retains its correlation/projection rules. |
 | GitHub | Source repository, commits, pull requests, issues, reviews, and engineering history. | Engineering/source/change authority. |
 | GitHub Actions | Run CI validation, authority audits, tests, recovery checks, and other repository automation. | Verification/execution surface for engineering workflows; it does not replace GitHub source authority or TeamAi runtime authority. |
-| Vercel | Controlled browser rendering and interaction verification for active UI development. | Non-authoritative UI/browser verification surface only. |
+| Vercel | Controlled web development, preview, and browser verification for relevant web work. | Non-authoritative web development/preview/browser-verification surface only. |
 | Founder Pulse | Read-only observation of Issue flow and delivery patterns for product-operations visibility. | Observation/management layer only; no mutation or authorization authority. |
 | External AI applications/providers | Models/runtimes that participate in the Web AI Team through authorized connections and Seats. | Provider ownership remains external; TeamAi owns its connection, policy, Seat, orchestration, and durable-state boundary. |
 | MCP/tools/plugins/integrations | Bounded capabilities exposed to authorized Web AI Seats. | Capability/integration surface only. |
@@ -61,7 +61,7 @@ TeamAi should reduce unnecessary Firestore usage rather than replace Firestore a
 
 ## TeamAi policy consequence
 
-For TeamAi, automatic Vercel deployment behavior is intentionally outside the default engineering path. Browser verification is invoked only when UI development/verification requires it. A non-UI commit or pull request must not be treated as a justification for preview creation.
+Automatic Vercel deployment behavior remains outside the default engineering path. Browser verification is invoked when web development/verification requires it, while Vercel remains a controlled non-authoritative web development/preview/browser-verification surface. A non-web commit or pull request must not be treated as a justification for preview creation.
 
 A Vercel deployment is an environment artifact. A browser integrity run is verification evidence. Neither becomes Product Law, backend proof, commerce proof, or TeamAi delivery authority.
 
