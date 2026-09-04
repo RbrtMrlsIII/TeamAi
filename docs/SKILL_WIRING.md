@@ -34,12 +34,12 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Product Law change | Product Law / active phase | `skills/governance/product-law-change/SKILL.md` + applicable ORUCAVEAM skills | Repository documents | Authority/discrepancy review | HandOver + endorsement; Product Knowledge when learned |
 | Masterplan checklist wiring | Masterplan | `skills/governance/masterplan-skill-wiring/SKILL.md` + applicable ORUCAVEAM skills | Repository documents | Every executable item has concrete skill routing or no-skill rationale | Wiring map + HandOver |
 | Execution discipline | Policy | `skills/execution/orucaveam/SKILL.md` + applicable letter skills | Applicable tools | ORUCAVEAM gate record | Evidence + HandOver |
-| Learning / teach-back | Completed execution | `skills/governance/learning-handover/SKILL.md` + ORUCAVEAM/Audit | HandOver/Endorsement docs | Learning acceptance and scope | `PRODUCT-KNOWLEDGE.md` + optional ToolKit candidate |
-| Backend / Firebase | TEAM-BACKEND-001 / 029 backend dependency | ORUCAVEAM + concrete backend skill family; create skills only for recurring bounded procedures | Firebase / Firestore / Supabase | Authoritative backend evidence | Backend checkpoint/HandOver |
-| Commerce | TEAM-BACKEND-001 / 029 commerce dependency | ORUCAVEAM + concrete commerce/PayPal skill family; create skills only for recurring bounded procedures | PayPal / Supabase / Firestore | Contract + runtime evidence | Commerce evidence + endorsement |
-| Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + ORUCAVEAM/V/A/M as applicable | Playwright | Real browser assertions | CI report / trace |
-| Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + ORUCAVEAM/M when resource use matters | Vercel | Controlled deployed-browser verification | CI/browser evidence |
-| Packaging | Every completed gate requiring full project package | `skills/packaging/project-package/SKILL.md` + ORUCAVEAM/V/A/M | Project package script | Extracted-path + byte/hash equality | Full Project ZIP + manifest |
+| Learning / teach-back | Completed execution | `skills/governance/learning-handover/SKILL.md` + applicable ORUCAVEAM/Audit skills | HandOver/Endorsement docs | Learning acceptance and scope | `PRODUCT-KNOWLEDGE.md` + optional ToolKit candidate |
+| Backend / Firebase | TEAM-BACKEND-001 / 029 backend dependency | ORUCAVEAM + concrete backend skill family | Firebase / Firestore / Supabase | Authoritative backend evidence | Backend checkpoint/HandOver |
+| Commerce | TEAM-BACKEND-001 / 029 commerce dependency | ORUCAVEAM + concrete commerce/PayPal skill family | PayPal / Supabase / Firestore | Contract + runtime evidence | Commerce evidence + endorsement |
+| Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions | CI report / trace |
+| Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + applicable ORUCAVEAM/M skills | Vercel | Controlled deployed-browser verification | CI/browser evidence |
+| Packaging | Every completed gate requiring full project package | `skills/packaging/project-package/SKILL.md` + applicable ORUCAVEAM/V/A/M skills | Project package script | Extracted-path + byte/hash equality | Full Project ZIP + manifest |
 
 ## 4. Field/domain expansion rule
 
