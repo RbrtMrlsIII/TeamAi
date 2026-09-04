@@ -27,7 +27,7 @@ test.describe('Working composition', () => {
     await expect(actionCluster.getByRole('button', { name: 'DENY', exact: true })).toBeVisible();
     await expect(actionCluster.getByRole('button', { name: 'APPROVE', exact: true })).toBeVisible();
     await expect(modal.getByText('Beta · worker · Provider Two · Model B', { exact: false })).toBeVisible();
-    await expect(modal.getByText('Approval does not invoke the tool', { exact: false })).toBeVisible();
+    await expect(modal.getByText('Approving does not run tools, write Firestore, or charge PayPal.', { exact: false })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(modal).toBeHidden();
   });
