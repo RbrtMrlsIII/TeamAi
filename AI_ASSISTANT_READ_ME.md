@@ -66,13 +66,24 @@ Use `skills/governance/learning-handover/SKILL.md`.
 - PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
 - Firebase Hosting = current TeamAi web delivery authority.
+- GitHub Pages = validation-only static browser surface; it may publish the canonical `frontend/spatial` UI for human/browser verification but is not a second TeamAi source, backend, commerce, scheduler, or production-web authority.
 - Vercel = controlled web development, preview, and browser-verification surface; not TeamAi source, domain-state, backend, commerce, or scheduler authority.
 
 The authoritative Firebase project is `team-ai-official`.
 
+## GitHub branch and deployment guard
+
+The default branch is protected by the repository ruleset and must not be bypassed. The development team must preserve the repository's PR-based progression and deployment gate.
+
+For live browser validation, GitHub Pages is configured with **Source = GitHub Actions**. A dedicated Pages workflow may publish `frontend/spatial` under the project route `/spatial/` without moving or duplicating the canonical HTML. The intended publication shape is `dist/spatial/index.html`, preserving the existing application route.
+
+When a protected/default-branch ruleset requires a successful deployment, do not disable or bypass the rule to make a change. Resolve the required Pages deployment through the normal PR/deployment path, then collect real deployment and browser evidence. Treat a ruleset that is marked Active but targets zero branches/resources as not effectively protecting the intended branch; ensure the intended target is configured.
+
+A successful GitHub Pages deployment is deployment evidence only. It does not replace deterministic Playwright CI evidence, backend verification, or Product Law authority. Do not treat a prior green Pages deployment as proof of current correctness.
+
 ## Browser verification
 
-When a real browser is required, use deterministic Playwright verification. Do not invent UI selectors for UI that does not yet exist. A browser pass proves only the exercised scope. Generated screenshots are not canonical evidence.
+When a real browser is required, use deterministic Playwright verification. For human validation, use the current GitHub Pages `/spatial/` deployment when available. Do not invent UI selectors for UI that does not yet exist. A browser pass proves only the exercised scope. Generated screenshots are not canonical evidence.
 
 Use `skills/verification/browser-smoke/SKILL.md` and applicable ORUCAVEAM verification/audit skills.
 
