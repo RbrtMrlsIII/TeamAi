@@ -39,3 +39,19 @@ UI_UX-Promax-Skill.md          coordinator
 Do not promote Status or Modal into the legal-box list. Do not invent a sixth legal box.
 
 Playwright is already the verification skill. Do not create a second Spatial Playwright skill.
+
+## Frontend runtime mirrors (until a bundler exists)
+
+Presentation sources under `frontend/spatial/`:
+
+| File | Role |
+|------|------|
+| `theme-root.ts` | Typed source of theme bootstrap/persistence API |
+| `theme-root.js` | **Browser ESM entry** — keep in sync with `.ts` |
+| `theme-root.css` | Token + primitive surfaces |
+| `shell-nav.js` | **Browser ESM entry** for shell/nav/deck/F7 scripts |
+| `shell-nav.ts` | Typed mirror of `shell-nav.js` (documentation / future tsc); not loaded by static HTML |
+
+Static `index.html` must import **`.js`** modules only. Do not point `<script type="module">` at `.ts` files.
+
+When changing theme or presentation behavior, update the pair (`.ts` + `.js`) in the same change, or document intentional lag.

@@ -1,7 +1,7 @@
 /**
- * TEAM-EXPERIENCE-029 — Shell + Navigation + Deck presentation scripts
- * May: theme, density, nav, Planning/Working stage skin, seat selected highlight.
- * Must not: Firestore, PayPal, scheduler actor selection, entitlements, second theme root.
+ * TEAM-EXPERIENCE-029 — Shell + Navigation + Deck + F7 presentation scripts
+ * May: theme, density, nav, stage skin, seat highlight, F7 mount/unmount + focus trap.
+ * Must not: Firestore, PayPal, scheduler actor, entitlements, execute approved actions.
  */
 
 import {
@@ -26,6 +26,9 @@ const NAV_LABELS = {
   approvals: "Approvals",
   settings: "Settings",
 };
+
+let lastFocus = null;
+let focusTrapHandler = null;
 
 function refreshThemeControls() {
   const mode = resolveMode(readSource(), readStoredMode());
@@ -86,7 +89,71 @@ function selectSeat(seatId) {
     if (selected) card.setAttribute("data-state", "selected");
     else card.removeAttribute("data-state");
   });
-  /* Intentionally does not touch scheduler eligibility or domain state */
+}
+
+function focusableIn(root) {
+  return [...root.querySelectorAll(
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter((el) => !el.hasAttribute("hidden") && el.offsetParent !== null);
+}
+
+function openModal() {
+  const modal = document.querySelector("[data-field=\"F7\"]");
+  const plate = modal?.querySelector(".ta-modal__plate");
+  if (!modal || !plate) return;
+
+  lastFocus = document.activeElement;
+  modal.hidden = false;
+  modal.setAttribute("aria-hidden", "false");
+
+  const focusables = focusableIn(plate);
+  const primary = plate.querySelector('[data-modal-action="approve"]') || focusables[0];
+  (primary || plate).focus();
+
+  focusTrapHandler = (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeModal();
+      return;
+    }
+    if (event.key !== "Tab" || focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+  document.addEventListener("keydown", focusTrapHandler);
+}
+
+function closeModal() {
+  const modal = document.querySelector("[data-field=\"F7\"]");
+  if (!modal) return;
+  modal.hidden = true;
+  modal.setAttribute("aria-hidden", "true");
+  if (focusTrapHandler) {
+    document.removeEventListener("keydown", focusTrapHandler);
+    focusTrapHandler = null;
+  }
+  if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+  lastFocus = null;
+  /* approval.mount never executes the action or writes domain state */
+}
+
+function onModalAction(action) {
+  /* DENY / APPROVE are presentation-only in this slice */
+  const note = document.querySelector("[data-modal-result]");
+  if (note) {
+    note.textContent =
+      action === "approve"
+        ? "APPROVE recorded in UI only — no domain execution."
+        : "DENY recorded in UI only — no domain execution.";
+  }
+  closeModal();
 }
 
 function toggleTheme() {
@@ -122,6 +189,10 @@ function wire() {
 
   document.querySelector('[data-action="toggle-theme"]')?.addEventListener("click", toggleTheme);
   document.querySelector('[data-action="toggle-density"]')?.addEventListener("click", toggleDensity);
+  document.querySelector('[data-action="open-approval"]')?.addEventListener("click", openModal);
+  document.querySelector('[data-modal-action="deny"]')?.addEventListener("click", () => onModalAction("deny"));
+  document.querySelector('[data-modal-action="approve"]')?.addEventListener("click", () => onModalAction("approve"));
+  document.querySelector('[data-modal-action="dismiss"]')?.addEventListener("click", closeModal);
 
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     btn.addEventListener("click", () => {

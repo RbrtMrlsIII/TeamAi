@@ -1,0 +1,61 @@
+/* TEAM-EXPERIENCE-029 — F7 shared E4 plate
+ * Single modal system surface. Not a second dialog framework.
+ * Mount may focus-trap; approval buttons do not execute domain actions.
+ */
+
+.ta-modal[hidden] {
+  display: none;
+}
+
+.ta-modal:not([hidden]) {
+  display: grid;
+}
+
+.ta-modal__plate {
+  outline: none;
+}
+
+.ta-modal__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-inset-sm);
+  margin-bottom: var(--space-stack-md);
+}
+
+.ta-modal__meta {
+  display: grid;
+  gap: var(--space-stack-sm);
+  margin-bottom: var(--space-stack-lg);
+}
+
+.ta-modal__meta dt {
+  margin: 0;
+}
+
+.ta-modal__meta dd {
+  margin: 0;
+}
+
+.ta-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-inset-sm);
+}
+
+.ta-modal__actions .ta-control[data-kind="primary"] {
+  min-height: var(--size-control-lg);
+}
+
+/* Reduced motion: no travel on plate; opacity only via instant tokens */
+html[data-motion="reduced"] .ta-modal__plate {
+  transition: none;
+}
+
+html[data-motion="full"] .ta-modal:not([hidden]) .ta-modal__plate {
+  transition:
+    opacity var(--motion-duration-enter) var(--motion-ease-enter),
+    transform var(--motion-duration-enter) var(--motion-ease-enter);
+}
