@@ -12,14 +12,15 @@ test.describe('Command Deck inhabited skeleton', () => {
     await expect(page.locator('[data-field="F2"]')).toBeVisible();
     await expect(page.locator('[data-field="F3"][aria-label="Seat rail"]')).toBeVisible();
     await expect(page.locator('[data-field="F3"][aria-labelledby="active-title"]')).toBeVisible();
-    await expect(page.locator('[data-field="F3"][aria-label="Why next"]')).toBeVisible();
+    const whyNext = page.locator('[data-field="F3"][aria-label="Why next"]');
+    await expect(whyNext).toBeVisible();
     await expect(page.locator('[data-field="F6"][aria-label="System status"]')).toBeVisible();
 
-    await expect(page.getByText('Dependency', { exact: true })).toBeVisible();
-    await expect(page.getByText('Event', { exact: true })).toBeVisible();
-    await expect(page.getByText('Readiness', { exact: true })).toBeVisible();
-    await expect(page.getByText('Scheduler', { exact: true })).toBeVisible();
-    await expect(page.getByText('Capability gate', { exact: true })).toBeVisible();
+    await expect(whyNext.getByText('Dependency', { exact: true })).toBeVisible();
+    await expect(whyNext.getByText('Event', { exact: true })).toBeVisible();
+    await expect(whyNext.getByText('Readiness', { exact: true })).toBeVisible();
+    await expect(whyNext.getByText('Scheduler', { exact: true })).toBeVisible();
+    await expect(whyNext.getByText('Capability gate', { exact: true })).toBeVisible();
   });
 
   test('keeps Planning and Working as one E3 stage', async ({ page }) => {

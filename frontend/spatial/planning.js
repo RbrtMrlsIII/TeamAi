@@ -159,3 +159,9 @@ function wirePlanningNavigation() {
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wirePlanningNavigation);
 else wirePlanningNavigation();
+
+const workingStylesheet = document.createElement('link');
+workingStylesheet.rel = 'stylesheet';
+workingStylesheet.href = './working.css';
+document.head.appendChild(workingStylesheet);
+import('./working.js');
