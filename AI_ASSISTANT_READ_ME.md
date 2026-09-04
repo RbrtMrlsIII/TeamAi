@@ -36,7 +36,7 @@ Use `skills/governance/masterplan-skill-wiring/SKILL.md`.
 
 ## Execution discipline — ORUCAVEAM
 
-ORUCAVEAM is the single execution-discipline framework. It is the existing ORUCAVEA discipline extended by one dimension: **M — Minimalistic Efficiency / Resource Use**.
+ORUCAVEAM is the single execution-discipline framework. It is an integrated sequence containing **M — Minimalistic Efficiency / Resource Use** as its final dimension. There is no separate O-R-U-C-A-V-E-A lifecycle or secondary execution framework.
 
 `O — Objective → R — Restrictions → U — User Authority → C — Canonical Authority → A — Action → V — Verification → E — Efficiency → A — Audit → M — Minimalistic Efficiency / Resource Use`
 
