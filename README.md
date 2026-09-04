@@ -8,6 +8,8 @@ TeamAi is a human-controlled multi-AI discussion and execution orchestrator.
 ## Current phase
 `TEAM-BACKEND-001 — IN IMPLEMENTATION`
 
+**029 boundary:** Masterplan item 17 holds full TEAM-EXPERIENCE-029 product-experience release until `BLOCKS_029` gates are evidenced. **Presentation foundation** (single theme-root, F0–F7 mapping, freeze/reconciliation docs) may proceed as non-domain UI work and must not write Firestore, invoke providers, charge PayPal, or alter entitlements.
+
 Read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `POLICY.md` → `docs/SKILL_WIRING.md` → applicable skills before making implementation decisions.
 
 ## Execution discipline
@@ -24,6 +26,8 @@ Read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `POLICY.md` → `docs/SKILL_WIRING
 - Firebase Hosting: current web delivery.
 - Vercel: controlled web development, preview, and browser-verification surface; not TeamAi hosting, backend, production-delivery, or architecture authority.
 - Supabase Postgres: platform infrastructure only, never TeamAi domain state.
+
+Live service status pointer: `backend/BACKEND_LIVE_SERVICE_STATUS.md` (canonical). Do not treat older copies under `docs/backend/` as current without checking the canonical file.
 
 ## Implementation completion
 An implementation is complete only when Product Law → Masterplan → Policy/ORUCAVEAM → applicable skill(s) → actual implementation → verification evidence → completion/endorsement is traceable. Documentation or deployment alone does not establish completion.
