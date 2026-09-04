@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TeamAi — Shell / Navigation</title>
   <script>
-    /* Inline boot matches theme-root THEME_BOOT_SCRIPT — avoid FOUC before modules */
     (function () {
       try {
         var source = localStorage.getItem("teamai.theme.source") === "os" ? "os" : "user";
@@ -100,6 +99,6 @@
     </section>
   </main>
 
-  <script type="module" src="./shell-nav.ts"></script>
+  <script type="module" src="./shell-nav.js"></script>
 </body>
 </html>
