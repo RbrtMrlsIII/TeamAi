@@ -1,7 +1,7 @@
 /**
- * TEAM-EXPERIENCE-029 — Shell + Navigation presentation scripts
- * May: theme mode/source, density, nav aria-current, stage label copy.
- * Must not: Firestore, PayPal, scheduler actor, entitlements, second theme root.
+ * TEAM-EXPERIENCE-029 — Shell + Navigation + Deck presentation scripts
+ * May: theme, density, nav, Planning/Working stage skin, seat selected highlight.
+ * Must not: Firestore, PayPal, scheduler actor selection, entitlements, second theme root.
  */
 
 import {
@@ -42,21 +42,51 @@ function refreshThemeControls() {
   }
 }
 
-function setNav(destination) {
+function showComposition(destination) {
+  const deck = document.querySelector("[data-deck-root]");
+  const off = document.querySelector("[data-offdeck-root]");
+  const isDeck = destination === "deck";
+  if (deck) deck.hidden = !isDeck;
+  if (off) off.hidden = isDeck;
+
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     const id = btn.getAttribute("data-nav") ?? "";
     if (id === destination) btn.setAttribute("aria-current", "page");
     else btn.removeAttribute("aria-current");
   });
-  const title = document.querySelector("[data-stage-title]");
-  const copy = document.querySelector("[data-stage-copy]");
-  const label = NAV_LABELS[destination] ?? destination;
-  if (title) title.textContent = label;
-  if (copy) {
-    copy.textContent =
-      label +
-      " composition is not implemented yet. Shell and Navigation persist; interior primitives come in later slices. Presentation only — no domain writes.";
+
+  if (!isDeck) {
+    const title = document.querySelector("[data-stage-title]");
+    const copy = document.querySelector("[data-stage-copy]");
+    const label = NAV_LABELS[destination] ?? destination;
+    if (title) title.textContent = label;
+    if (copy) {
+      copy.textContent =
+        label +
+        " composition is not implemented yet. Shell and Navigation persist; Deck interior is the only inhabited body. Presentation only — no domain writes.";
+    }
   }
+}
+
+function setStage(stage) {
+  document.querySelectorAll("[data-stage]").forEach((btn) => {
+    const id = btn.getAttribute("data-stage");
+    btn.setAttribute("aria-pressed", id === stage ? "true" : "false");
+  });
+  document.querySelectorAll("[data-stage-panel]").forEach((panel) => {
+    panel.hidden = panel.getAttribute("data-stage-panel") !== stage;
+  });
+}
+
+function selectSeat(seatId) {
+  document.querySelectorAll("[data-seat]").forEach((card) => {
+    const id = card.getAttribute("data-seat");
+    const selected = id === seatId;
+    card.setAttribute("aria-pressed", selected ? "true" : "false");
+    if (selected) card.setAttribute("data-state", "selected");
+    else card.removeAttribute("data-state");
+  });
+  /* Intentionally does not touch scheduler eligibility or domain state */
 }
 
 function toggleTheme() {
@@ -87,6 +117,8 @@ function toggleDensity() {
 function wire() {
   initializeTheme();
   refreshThemeControls();
+  showComposition("deck");
+  setStage("planning");
 
   document.querySelector('[data-action="toggle-theme"]')?.addEventListener("click", toggleTheme);
   document.querySelector('[data-action="toggle-density"]')?.addEventListener("click", toggleDensity);
@@ -94,7 +126,21 @@ function wire() {
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-nav");
-      if (id) setNav(id);
+      if (id) showComposition(id);
+    });
+  });
+
+  document.querySelectorAll("[data-stage]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const stage = btn.getAttribute("data-stage");
+      if (stage) setStage(stage);
+    });
+  });
+
+  document.querySelectorAll("[data-seat]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const id = card.getAttribute("data-seat");
+      if (id) selectSeat(id);
     });
   });
 

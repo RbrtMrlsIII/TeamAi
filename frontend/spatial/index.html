@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TeamAi — Shell / Navigation</title>
+  <title>TeamAi — Command Deck</title>
   <script>
     (function () {
       try {
@@ -35,6 +35,7 @@
   </script>
   <link rel="stylesheet" href="./theme-root.css" />
   <link rel="stylesheet" href="./shell-nav.css" />
+  <link rel="stylesheet" href="./deck-interior.css" />
 </head>
 <body data-field="F0" class="ta-atmosphere">
   <a class="ta-skip" href="#main">Skip to main</a>
@@ -52,28 +53,14 @@
         data-field="F6"
         data-status="ok"
         role="status"
-        aria-label="Connection ok. Entitlements not loaded."
+        aria-label="Connection ok. Entitlements display only."
       >
         <span class="ta-type-status" data-status-label>OK</span>
         <span class="ta-type-meta">Connection</span>
         <span class="ta-type-meta" data-status-entitlement>TeamAi · Provider (display only)</span>
       </span>
-      <button
-        type="button"
-        class="ta-control"
-        data-field="F5"
-        data-kind="nav"
-        data-action="toggle-theme"
-        aria-label="Toggle theme mode"
-      >Theme</button>
-      <button
-        type="button"
-        class="ta-control"
-        data-field="F5"
-        data-kind="nav"
-        data-action="toggle-density"
-        aria-label="Toggle compact density"
-      >Density</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-action="toggle-theme" aria-label="Toggle theme mode">Theme</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-action="toggle-density" aria-label="Toggle compact density">Density</button>
       <span class="ta-type-meta" data-shell-account>Account</span>
     </div>
   </header>
@@ -90,11 +77,74 @@
   </nav>
 
   <main id="main" class="ta-main" tabindex="-1">
-    <section class="ta-panel" data-field="F3" aria-labelledby="stage-title">
-      <h1 id="stage-title" class="ta-type-title" data-stage-title>Deck</h1>
+    <!-- Deck interior: only visible when nav is Deck -->
+    <div class="ta-deck" data-composition="deck" data-deck-root hidden>
+      <aside class="ta-panel ta-deck__seats" data-field="F3" aria-label="Seat rail">
+        <h2 class="ta-type-label">Seats</h2>
+        <ul class="ta-seat-list" role="list">
+          <li>
+            <button type="button" class="ta-card ta-seat-card" data-field="F4" data-seat="alpha" data-state="selected" aria-pressed="true">
+              <span class="ta-type-title">Alpha</span>
+              <span class="ta-type-meta">planning · provider · model</span>
+              <span class="ta-type-status" data-seat-health="ok">ok</span>
+              <span class="ta-type-meta" data-seat-eligible>eligible</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="ta-card ta-seat-card" data-field="F4" data-seat="beta" aria-pressed="false">
+              <span class="ta-type-title">Beta</span>
+              <span class="ta-type-meta">worker · provider · model</span>
+              <span class="ta-type-status" data-seat-health="ok">ok</span>
+              <span class="ta-type-meta">standby</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="ta-card ta-seat-card" data-field="F4" data-seat="gamma" aria-pressed="false">
+              <span class="ta-type-title">Gamma</span>
+              <span class="ta-type-meta">reviewer · provider · model</span>
+              <span class="ta-type-status" data-seat-health="degraded">degraded</span>
+              <span class="ta-type-meta">standby</span>
+            </button>
+          </li>
+        </ul>
+      </aside>
+
+      <section class="ta-panel ta-deck__active" data-field="F3" data-elevation="e3" aria-labelledby="active-title">
+        <div class="ta-deck__stage-bar">
+          <h2 id="active-title" class="ta-type-title">Active</h2>
+          <div class="ta-deck__stage-toggle" role="group" aria-label="Planning or Working stage">
+            <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-stage="planning" aria-pressed="true">Planning</button>
+            <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-stage="working" aria-pressed="false">Working</button>
+          </div>
+        </div>
+        <p class="ta-type-label">Pinned instruction</p>
+        <p class="ta-type-body" data-pinned-instruction>
+          Presentation placeholder. User instruction stays visible while the team works. Not domain state.
+        </p>
+        <div class="ta-deck__stage-body" data-stage-panel="planning">
+          <p class="ta-type-body">Planning stage skin. Conversation region not wired. No scheduler writes.</p>
+        </div>
+        <div class="ta-deck__stage-body" data-stage-panel="working" hidden>
+          <p class="ta-type-body">Working stage skin. Task region not wired. No scheduler writes.</p>
+        </div>
+      </section>
+
+      <aside class="ta-panel ta-deck__why" data-field="F3" aria-label="Why next">
+        <h2 class="ta-type-label">Why next</h2>
+        <dl class="ta-why-list">
+          <div><dt class="ta-type-meta">Dependency</dt><dd class="ta-type-body" data-why-dependency>None (placeholder)</dd></div>
+          <div><dt class="ta-type-meta">Event</dt><dd class="ta-type-body" data-why-event>No live event</dd></div>
+          <div><dt class="ta-type-meta">Scheduler</dt><dd class="ta-type-body" data-why-scheduler>Display only — UI does not choose the next actor</dd></div>
+          <div><dt class="ta-type-meta">Capability</dt><dd class="ta-type-body" data-why-capability>Gate not evaluated</dd></div>
+        </dl>
+      </aside>
+    </div>
+
+    <!-- Non-Deck destinations keep a simple panel -->
+    <section class="ta-panel ta-offdeck" data-field="F3" data-offdeck-root aria-labelledby="stage-title" hidden>
+      <h1 id="stage-title" class="ta-type-title" data-stage-title>Workplace</h1>
       <p class="ta-type-body" data-stage-copy>
-        Presentation skeleton only. Interior regions (seats, active stage, why-next) are not composed yet.
-        Theme and density retune material without reshuffling layout. No scheduler, Firestore, PayPal, or entitlement mutation.
+        Composition not implemented yet. Shell and Navigation persist.
       </p>
     </section>
   </main>

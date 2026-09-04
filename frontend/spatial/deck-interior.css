@@ -1,0 +1,132 @@
+/* TEAM-EXPERIENCE-029 — Command Deck interior
+ * Seat rail + Active (E3 stage) + Why-next. Theme-root tokens only.
+ */
+
+.ta-main {
+  max-width: none;
+}
+
+.ta-deck {
+  display: grid;
+  grid-template-columns: minmax(12rem, var(--size-seat-card-width)) minmax(0, 1fr) minmax(12rem, 16rem);
+  gap: var(--space-gutter);
+  align-items: start;
+}
+
+.ta-deck[hidden],
+.ta-offdeck[hidden],
+.ta-deck__stage-body[hidden] {
+  display: none !important;
+}
+
+.ta-seat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-sm);
+}
+
+.ta-seat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-stack-xs);
+  width: 100%;
+  min-height: var(--size-seat-card-min-height);
+  text-align: start;
+  cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--ink-meta) 24%, transparent);
+  transition:
+    border-color var(--motion-duration-move) var(--motion-ease-move),
+    box-shadow var(--motion-duration-move) var(--motion-ease-move),
+    background var(--motion-duration-enter) var(--motion-ease-enter);
+}
+
+.ta-seat-card[data-state="selected"],
+.ta-seat-card[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.ta-seat-card[data-state="speaking"] {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+html[data-density="compact"] .ta-seat-card {
+  min-height: var(--size-seat-card-compact-height);
+}
+
+.ta-deck__active[data-elevation="e3"] {
+  background: var(--surface-active);
+}
+
+html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
+  backdrop-filter: blur(var(--blur-active));
+  -webkit-backdrop-filter: blur(var(--blur-active));
+}
+
+.ta-deck__stage-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inset-sm);
+  margin-bottom: var(--space-stack-md);
+}
+
+.ta-deck__stage-toggle {
+  display: flex;
+  gap: var(--space-inset-xs);
+}
+
+.ta-deck__stage-toggle .ta-control[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+.ta-why-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-md);
+}
+
+.ta-why-list > div {
+  display: grid;
+  gap: var(--space-stack-xs);
+}
+
+.ta-why-list dt {
+  margin: 0;
+}
+
+.ta-why-list dd {
+  margin: 0;
+}
+
+@media (max-width: 56rem) {
+  .ta-deck {
+    grid-template-columns: 1fr;
+  }
+
+  .ta-deck__why {
+    order: 3;
+  }
+
+  .ta-seat-list {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .ta-seat-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ta-seat-card {
+    min-width: var(--size-seat-card-width);
+  }
+}
