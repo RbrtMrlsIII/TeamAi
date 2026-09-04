@@ -39,9 +39,9 @@ test.describe('Command Deck inhabited skeleton', () => {
   });
 
   test('seat selection changes display state without claiming scheduler authority', async ({ page }) => {
-    const seatRail = page.locator('[data-seat-list="deck"]');
-    const beta = seatRail.locator('[data-seat="beta"]');
-    const alpha = seatRail.locator('[data-seat="alpha"]');
+    const deck = page.locator('[data-deck-root]');
+    const beta = deck.locator('[data-seat="beta"]');
+    const alpha = deck.locator('[data-seat="alpha"]');
     await beta.click();
     await expect(beta).toHaveAttribute('aria-pressed', 'true');
     await expect(beta).toHaveAttribute('data-state', 'selected');
