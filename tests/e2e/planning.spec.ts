@@ -8,7 +8,7 @@ test.describe('Planning composition', () => {
   });
 
   test('opens the full deliberation surface without becoming chat', async ({ page }) => {
-    await page.getByRole('button', { name: 'Planning', exact: true }).click();
+    await page.getByLabel('Primary').getByRole('button', { name: 'Planning', exact: true }).click();
     const planning = page.locator('[data-planning-root]');
     await expect(planning).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Deliberation', exact: true })).toBeVisible();
@@ -23,7 +23,7 @@ test.describe('Planning composition', () => {
   });
 
   test('instruction preview updates presentation only', async ({ page }) => {
-    await page.getByRole('button', { name: 'Planning', exact: true }).click();
+    await page.getByLabel('Primary').getByRole('button', { name: 'Planning', exact: true }).click();
     const planning = page.locator('[data-planning-root]');
     const input = planning.locator('textarea[data-planning-input]');
     await input.fill('Preserve the dependency chain and document unresolved provider capability evidence.');
@@ -34,7 +34,7 @@ test.describe('Planning composition', () => {
   });
 
   test('uses the shared F7 handoff plate', async ({ page }) => {
-    await page.getByRole('button', { name: 'Planning', exact: true }).click();
+    await page.getByLabel('Primary').getByRole('button', { name: 'Planning', exact: true }).click();
     const planning = page.locator('[data-planning-root]');
     await planning.getByRole('button', { name: 'Review handoff', exact: true }).click();
     const modal = page.locator('[data-field="F7"]');
