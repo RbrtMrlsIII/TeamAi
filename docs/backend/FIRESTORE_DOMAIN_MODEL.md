@@ -1,6 +1,8 @@
-# Firestore Domain Model — Canonical Planning Contract
+# Firestore Domain Model — Historical Planning Contract
 
-Firestore database `default` is the TeamAi application/domain system of record. This document defines authority classes and ownership before exact collection/index implementation.
+> **Superseded status — 2026-09-03:** This document records the earlier Firestore planning/authority-class model. It remains preserved as historical planning evidence, but it is **not the current collection/path/runtime contract**. For current Firestore hierarchy and backend interpretation, use `FIRESTORE_DOMAIN_MODEL_V2.md` together with the implemented source contracts, `firestore.rules`, and current verification evidence.
+
+Firestore database `default` is the TeamAi application/domain system of record. This document defines authority classes and ownership before the later concrete collection/path contract was established.
 
 ## Authority classes
 
@@ -12,22 +14,22 @@ Firestore database `default` is the TeamAi application/domain system of record. 
 - Commerce: subscription intent, PayPal correlation, payment events, entitlement state, promotion eligibility, and reconciliation.
 - Audit/operations: policy decisions, security-relevant transitions, and integration evidence required by the product.
 
-## Ownership
+## Historical ownership model
 
 Client-owned data is limited to explicitly permitted user-facing fields under Firestore Security Rules. Sensitive transitions are server-managed.
 
-## Server-managed transitions
+## Historical server-managed transitions
 
 Entitlement, payment state, PayPal correlation, task leases, retry/recovery transitions, provider credential references, approval results, and reconciliation must be written only through trusted backend paths.
 
-## Event discipline
+## Historical event discipline
 
 Durable events are append-oriented evidence of state transitions. Event IDs and idempotency keys must prevent duplicate business effects.
 
-## Rules and indexes
+## Current authority pointer
 
-Rules and indexes are canonical project artifacts. They must be validated before production changes. Do not introduce another database to avoid Firestore modeling work.
+Rules and indexes are canonical project artifacts. The current concrete Firestore model is defined by `FIRESTORE_DOMAIN_MODEL_V2.md` and the implemented UID-rooted source contracts. Do not introduce another database to avoid Firestore modeling work.
 
-## Implementation status
+## Preservation rule
 
-Planning contract only. Exact collection names, indexes, security rules, and runtime transactions are to be implemented and verified under TEAM-BACKEND-001.
+This file must not be used to infer current collection names, current security rules, current runtime deployment status, or current task/event placement. Historical statements here remain useful only for provenance and reconciliation.
