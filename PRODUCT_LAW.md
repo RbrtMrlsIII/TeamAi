@@ -174,6 +174,21 @@ Provider entitlement remains externally owned. A TeamAi subscription MUST NOT ma
 
 Exact prices, model catalogs, seat counts, provider bundles, tool packs, and commercial limits remain planning-only until explicitly approved.
 
+## TEAM-EXPERIENCE-029 Visual Experience Law
+
+TeamAi uses a single overall theme setting with two mode-specific visual treatments:
+
+- **Dark mode = Dark Spatial Glassmorphism.**
+- **Light mode = Light Spatial Skeuomorphism.**
+
+The two modes are one bounded theme system, not two competing design authorities. The user-facing light/dark setting switches the active treatment; it does not duplicate application state, business rules, permissions, scheduler semantics, or backend authority.
+
+The visual system MUST be implemented through shared design tokens/primitives and canonical spatial UI roots so that the semantic behavior of a component remains equivalent across both modes. Spatial depth, material treatment, elevation, translucency, borders, controls, typography, motion, focus, status feedback, responsive behavior, and accessibility remain implementation concerns under this visual law.
+
+The theme MUST preserve legibility, focus visibility, keyboard navigation, reduced-motion behavior, responsive behavior, and semantic accessibility. Visual effects MUST NOT become a prerequisite for or source of durable application state.
+
+The spatial theme is a 029 product-experience requirement and must be executed chronologically through the Masterplan, Policy/ORUCAVEAM, the applicable frontend spatial skill, system implementation, browser/accessibility verification, evidence, HandOver, Endorsement, and Product Knowledge when a reusable lesson is validated.
+
 ## LAW 101 — IMPLEMENTATION TRACEABILITY IS A HARD COMPLETION GATE
 Every implementation claim MUST be traceable from its governing Product Law and Masterplan execution item through the applicable Policy/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone MUST NOT be treated as implementation completion. A missing traceability link blocks the affected completion claim until an explicit, evidence-backed exception is recorded by the authorized human.
 
@@ -239,7 +254,7 @@ The remaining evidence item is **live PayPal transaction/webhook runtime validat
 Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader 5C implementation work should be reopened merely because the live external test remains outstanding.
 
 ## Canonical execution-document relationship
-`PRODUCT_LAW.md` establishes durable product/architecture invariants. `MASTERPLAN.md` translates those invariants into the chronological execution plan and checklist. `POLICY.md` establishes execution discipline, including ORUCAVEAM while preserving O-R-U-C-A-V-E-A as the outer lifecycle where applicable. `docs/SKILL_WIRING.md` maps executable concepts/checklist items to the applicable skill path, tool/system, and verification route. `skills/**/SKILL.md` provide direct operational instructions without becoming product authority. `PRODUCT-KNOWLEDGE.md` retains validated, distilled lessons. `docs/project-guide/HandOver.md` preserves continuation and learning transfer. `docs/project-guide/Endorsement.md` records authorized completion and accepted learning. `AI_ASSISTANT_READ_ME.md` provides practical agent memory and recovery guidance.
+`PRODUCT_LAW.md` establishes durable product/architecture invariants. `MASTERPLAN.md` translates those invariants into the chronological execution plan and checklist. `POLICY.md` establishes execution discipline through the single ORUCAVEAM framework. `docs/SKILL_WIRING.md` maps executable concepts/checklist items to the applicable skill path, tool/system, and verification route. `skills/**/SKILL.md` provide direct operational instructions without becoming product authority. `PRODUCT-KNOWLEDGE.md` retains validated, distilled lessons. `docs/project-guide/HandOver.md` preserves continuation and learning transfer. `docs/project-guide/Endorsement.md` records authorized completion and accepted learning. `AI_ASSISTANT_READ_ME.md` provides practical agent memory and recovery guidance.
 
 Lower-level documents MUST NOT silently redefine Product Law. A change to a canonical product concept MUST be reconciled against the existing logic before editing, and any discrepancy that affects authority, architecture, scope, or protected roots MUST be surfaced before proceeding.
 
