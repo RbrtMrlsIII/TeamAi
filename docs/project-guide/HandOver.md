@@ -82,13 +82,34 @@ Never hand over an assumption such as “connected” when only a stored connect
 
 Where tools were used, preserve the relevant M/minimalistic-resource-use decision when it materially explains why operations were limited, reused, or intentionally repeated.
 
-## 7. ZIP/package rule
+## 7. Full Project ZIP handover gate
 
-A target-project ZIP is a handover artifact, not an authority replacement. Its manifest should state whether it is a full snapshot, scoped packet, reduced planning package, or another limited representation. Excluded images or generated artifacts must be explicit.
+A declared **project handover** is incomplete without its required Full Project ZIP when the handover scope calls for the full project state.
 
-A full-project package is current only when it matches the pinned canonical repository tree by intended paths and file bytes/hashes.
+The required full-project handover package MUST be produced from a pinned GitHub canonical commit/tree and verified before delivery:
 
-## 8. ToolKit boundary
+`GitHub pinned tree → deterministic flattened Full Project ZIP → extraction → path equality → byte-for-byte file verification → supported user delivery`
+
+The ZIP must contain the canonical tracked project tree at its pinned revision, with extracted paths exactly matching the tracked paths and extracted file bytes matching the pinned repository bytes. Archive-container metadata/compression bytes may differ; the project files may not.
+
+The delivery record must identify the pinned commit SHA, package filename, package verification result, and the supported delivery target/reference. A handover claiming a full project package without a corresponding verified deliverable MUST fail the handover gate.
+
+This rule applies to the **handover event**, not to every ordinary implementation run. CI may produce a verified ZIP as a derived artifact for engineering evidence; that artifact does not itself mean a user handover occurred.
+
+Generated/runtime artifacts are never restored into the handover package. Screenshots, browser captures, visual-evidence images, temporary diagrams, preview output, build output, dependency trees, coverage/test output, logs, caches, emulator state, editor state, deployment caches, and local secrets are excluded or, when tracked in violation of policy, block packaging until reconciled.
+
+## 8. ZIP/package verification rule
+
+A full-project handover package is current only when it matches the pinned canonical repository tree by paths and file bytes/hashes.
+
+Use the project-package skill and policy:
+
+- `skills/packaging/project-package/SKILL.md`
+- `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`
+
+The ZIP remains a derived handover artifact and never becomes a second source authority.
+
+## 9. ToolKit boundary
 
 TeamAi owns TeamAi handover. ToolKit may receive a generalized lesson only after the consuming-project evidence establishes that the lesson generalizes. Team-specific provider choices, pricing, exact model catalogs, or implementation assumptions must not be promoted upstream merely because they appear in a handover.
 
@@ -98,4 +119,5 @@ TeamAi owns TeamAi handover. ToolKit may receive a generalized lesson only after
 - `docs/SKILL_WIRING.md`
 - `docs/project-guide/Endorsement.md`
 - `skills/governance/learning-handover/SKILL.md`
+- `skills/packaging/project-package/SKILL.md`
 - `skills/execution/orucaveam/SKILL.md`
