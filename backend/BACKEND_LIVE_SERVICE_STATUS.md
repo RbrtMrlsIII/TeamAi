@@ -1,6 +1,6 @@
 # TEAM-BACKEND-001 — Live Service Status
 
-**Date:** 2026-09-03  
+**Date:** 2026-09-04  
 **Phase:** TEAM-BACKEND-001  
 **Status:** IN IMPLEMENTATION — GATE 3 PASS; GATE 5B PASS; GATE 5C IMPLEMENTED / AVAILABLE-ENVIRONMENT VERIFIED; LIVE PAYPAL RUNTIME EVIDENCE OUTSTANDING
 
@@ -12,7 +12,7 @@
 | PayPal | External event authority | Server-owned correlation contract and Gate-5C implementation are present; final authenticated PayPal transaction/webhook runtime proof remains outstanding | IMPLEMENTED / RUNTIME EVIDENCE OPEN |
 | GitHub | Engineering authority | `main` is the current engineering/source authority | PASS |
 | Firebase Hosting | TeamAi web delivery | Current Product Law keeps Firebase Hosting as delivery authority | PASS |
-| Vercel | Browser-verification surface only | External preview/deployment activity exists, but Vercel is not TeamAi hosting/backend authority | EXTERNAL / NON-AUTHORITATIVE |
+| Vercel | Non-authoritative preview/browser-verification only | **TEMPORARY CUTOFF (2026-09-04):** disconnected/rate-limited from TeamAi GitHub repo; not a merge blocker; GitHub Actions + Playwright remain verification path | PARKED / CUTOFF |
 
 ## Live endpoint
 
@@ -47,6 +47,8 @@ The remaining runtime evidence must not be represented as an architecture failur
 `Source configuration != deployment != integration != end-to-end completion.`
 
 No live PayPal transaction-success, authenticated business-webhook, or final TEAM-BACKEND-001 completion claim is made until the corresponding executable evidence and completion/endorsement record exist.
+
+Vercel cutoff must not be recorded as a TeamAi architecture or delivery failure.
 
 ## Next executable gate
 

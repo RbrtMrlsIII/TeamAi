@@ -24,7 +24,7 @@ Read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `POLICY.md` → `docs/SKILL_WIRING
 - PayPal: external payment-event authority.
 - GitHub: engineering/source authority.
 - Firebase Hosting: current web delivery.
-- Vercel: controlled web development, preview, and browser-verification surface; not TeamAi hosting, backend, production-delivery, or architecture authority.
+- Vercel: non-authoritative preview/browser-verification surface when connected. **Temporary cutoff (2026-09-04):** disconnected/rate-limited from the TeamAi GitHub repository — do not treat Vercel status as a merge blocker or delivery authority. Use GitHub Actions + Playwright while parked.
 - Supabase Postgres: platform infrastructure only, never TeamAi domain state.
 
 Live service status pointer: `backend/BACKEND_LIVE_SERVICE_STATUS.md` (canonical). Do not treat older copies under `docs/backend/` as current without checking the canonical file.

@@ -11,6 +11,7 @@
 | PK-BASE-002 | Skill references should point to complete executable paths and deeper context should be linked with explicit `See also` references. | Baseline wiring design. | TeamAi | BASELINE |
 | PK-BASE-003 | Deterministic browser verification belongs in Playwright when real browser behavior is required; deployment surfaces remain non-authoritative. | Browser verification architecture baseline. | TeamAi | BASELINE |
 | PK-BASE-004 | Every ORUCAVEAM letter should resolve to a small direct execution skill, and field/domain skills compose with the applicable letters instead of duplicating the execution constitution. | ORUCAVEAM baseline skill-family reconciliation. | TeamAi | BASELINE |
+| PK-BASE-011 | F0–F7 is field identity only; legal boxes remain Shell · Panel · Card · Control · Navigation; F6 Status and F7 Modal are system surfaces. | 029 reconciliation + skill adaptation + theme-root foundation. | TeamAi 029 | BASELINE |
 
 ## 2. Anti-Patterns & Dead Ends [DONT]
 
@@ -21,6 +22,7 @@
 | AP-BASE-003 | Treating screenshots as canonical proof of backend, persistence, authorization, or payment state. | Visual evidence can be mistaken for authoritative state. | Execution-policy baseline. | A future evidence policy explicitly permits it. |
 | AP-BASE-004 | Using deployment suppression to conceal or bypass an expected deployment/verification problem. | Failures disappear instead of being diagnosed. | Deployment-discipline baseline. | Release policy explicitly changes. |
 | AP-BASE-005 | Creating a duplicate M/minimal-tool skill when an existing reusable minimal-tool-use procedure already satisfies the ORUCAVEAM M requirement. | Duplicate procedures drift and agents must choose between equivalent instructions. | ORUCAVEAM skill reconciliation. | The tool/resource-use domain needs materially different behavior. |
+| AP-BASE-006 | Blocking merges or claiming architecture failure because Vercel is rate-limited or disconnected from GitHub. | Non-authoritative surface becomes a false gate. | 2026-09-04 cutoff + Product Law platform authority. | Vercel is intentionally re-enabled and required for a specific browser evidence plan. |
 
 ## 3. Contract & Dependency Gotchas
 
@@ -34,7 +36,7 @@
 
 | Quirk | Impact | Workaround | ID |
 |---|---|---|---|
-| Vercel deployment availability can be externally constrained. | Hosted browser verification may be temporarily unavailable. | Keep source/CI verification authoritative and record hosted evidence as a separate boundary. | PK-BASE-009 |
+| Vercel deployment availability can be externally constrained or cut off from GitHub. | Hosted browser verification may be unavailable; status checks may fail. | Keep GitHub Actions + Playwright authoritative; record `VERCEL=PARKED/CUTOFF`; do not block merges on Vercel alone. | PK-BASE-009 |
 | Firebase and external services can consume finite read/write or runtime resources. | Wasteful probing can increase cost or trigger limits. | Apply ORUCAVEAM-M minimalistic tool/resource usage while preserving authoritative verification. | PK-BASE-010 |
 
 ## 5. Evidence Rules
@@ -43,6 +45,7 @@
 - Textual, reproducible evidence is preferred.
 - Generated screenshots, captures, and decorative images are not canonical Product Knowledge evidence.
 - A green CI run, deployment, or screenshot does not by itself prove a broader completion claim.
+- A red Vercel badge during cutoff is not a TeamAi architecture failure.
 
 ## 6. Learning Promotion
 
