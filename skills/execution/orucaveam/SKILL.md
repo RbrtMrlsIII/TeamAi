@@ -1,47 +1,54 @@
 # ORUCAVEAM Execution Skill
 
 ## WHEN TO USE
-Use for any meaningful TeamAi action where the agent must decide what to change, which authority/tool to use, how much work to perform, and what evidence is required.
+Use for any meaningful TeamAi action where the agent must determine the objective, restrictions, authority, action, verification, efficiency, audit trace, and minimal sufficient resource/tool usage.
 
 ## INPUT
-User objective, current Product Law, current Masterplan item, relevant Policy, skill set, tools/services, permissions, and verification target.
+Current user instruction/approval, applicable Product Law concept, Masterplan checklist item, Policy, field/domain, tools/services, permissions, verification target, and known evidence/anti-patterns.
 
-## ACTION LENS
-Apply:
+## AUTHORITY
+`PRODUCT_LAW.md` is product authority. `MASTERPLAN.md` is execution-plan authority. `POLICY.md` is execution-discipline authority. This skill does not grant permission or redefine any of them.
 
-**O — Objective:** state the exact outcome.
+## ACTION
+Apply the single ORUCAVEAM discipline:
 
-**R — Restrictions:** identify protected roots, forbidden actions, scope limits, security/privacy constraints, and known blockers.
+**O — Objective** → `skills/execution/orucaveam/objective/SKILL.md`
 
-**U — User Authority:** confirm the instruction or approval that permits the bounded action.
+**R — Restrictions** → `skills/execution/orucaveam/restrictions/SKILL.md`
 
-**C — Canonical Authority:** identify which existing document/service owns the meaning or durable state.
+**U — User Authority** → `skills/execution/orucaveam/user-authority/SKILL.md`
 
-**A — Action:** choose the smallest canonical operation that advances the objective.
+**C — Canonical Authority** → `skills/execution/orucaveam/canonical-authority/SKILL.md`
 
-**V — Verification:** define the evidence needed to prove the claimed scope.
+**A — Action** → `skills/execution/orucaveam/action/SKILL.md`
 
-**E — Efficiency:** avoid unnecessary edits, reads, writes, deployments, browser runs, context transfers, or external calls.
+**V — Verification** → `skills/execution/orucaveam/verification/SKILL.md`
 
-**A — Audit:** preserve enough trace for another agent to understand and reproduce the action.
+**E — Efficiency** → `skills/execution/orucaveam/efficiency/SKILL.md`
 
-**M — Minimalistic Tool/Resource Use:** use the minimum sufficient authoritative tool/resource operations; never trade away required verification merely to save a call.
+**A — Audit** → `skills/execution/orucaveam/audit/SKILL.md`
+
+**M — Minimalistic Efficiency / Resource Use** → `skills/execution/orucaveam/minimalistic-resource-use/SKILL.md`
+
+Compose the required ORUCAVEAM skills with the smallest sufficient field/domain and tool/system skills for the Masterplan item.
 
 ## DO NOT
+- Treat ORUCAVEAM as a second authority.
+- Create a second ORUCAVEA/ORUCAVEAM lifecycle.
 - Treat the previous AI response as authority.
-- Substitute a non-authoritative service merely because it is easier or cheaper.
-- Skip verification because the source change looks obvious.
-- Trigger unnecessary external deployments or broad reads.
-- Turn tool output into product law.
+- Assume every letter needs the same depth for every task; resolve only the applicable skills.
+- Skip a field-specific skill merely because ORUCAVEAM is present.
+- Skip required verification or evidence in the name of efficiency.
 
 ## PASS
-The action is permissioned, uses the owning canonical root, is minimally scoped, and has a defined verification/evidence path.
+The action has a clear objective, bounded restrictions, explicit authority, identified canonical owner, direct action skill(s), verification path, audit trace, and minimal sufficient resource/tool plan.
 
 ## EVIDENCE
-Record the action, authority, affected paths/systems, verification, limitations, and next authorized state.
+Record the applicable ORUCAVEAM letters, selected skill paths, affected canonical paths/systems, tools/resources used, verification, limitations, and next authorized state.
 
 ## SEE ALSO
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 - `PRODUCT_LAW.md`
 - `MASTERPLAN.md`
+- `skills/governance/masterplan-skill-wiring/SKILL.md`
