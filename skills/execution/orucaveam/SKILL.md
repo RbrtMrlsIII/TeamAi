@@ -32,6 +32,8 @@ Apply the single ORUCAVEAM discipline:
 
 Compose the required ORUCAVEAM skills with the smallest sufficient field/domain and tool/system skills for the Masterplan item.
 
+When the task is spatial/UI, resolve `skills/frontend/spatial/UI_UX-Promax-Skill.md` after C. F0–F7 is field identity only; legal boxes remain Shell · Panel · Card · Control · Navigation.
+
 ## DO NOT
 - Treat ORUCAVEAM as a second authority.
 - Create a second ORUCAVEA/ORUCAVEAM lifecycle.
@@ -39,6 +41,7 @@ Compose the required ORUCAVEAM skills with the smallest sufficient field/domain 
 - Assume every letter needs the same depth for every task; resolve only the applicable skills.
 - Skip a field-specific skill merely because ORUCAVEAM is present.
 - Skip required verification or evidence in the name of efficiency.
+- Treat F6 Status or F7 Modal as new legal boxes.
 
 ## PASS
 The action has a clear objective, bounded restrictions, explicit authority, identified canonical owner, direct action skill(s), verification path, audit trace, and minimal sufficient resource/tool plan.
@@ -53,3 +56,4 @@ Record the applicable ORUCAVEAM letters, selected skill paths, affected canonica
 - `MASTERPLAN.md`
 - `skills/governance/masterplan-skill-wiring/SKILL.md`
 - `skills/tools/minimal-tool-usage/SKILL.md`
+- `skills/frontend/spatial/UI_UX-Promax-Skill.md`

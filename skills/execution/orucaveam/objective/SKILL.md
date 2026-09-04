@@ -1,28 +1,26 @@
 # ORUCAVEAM — Objective Skill
 
 ## WHEN TO USE
-Use when defining or checking the exact outcome of a bounded execution item.
+Use when naming the exact bounded outcome of the current action before tools or implementation begin.
 
 ## INPUT
-User instruction, governing Product Law concept, Masterplan item, and current scope.
+User instruction, Masterplan item, current phase, and known constraints.
 
 ## AUTHORITY
-Product Law defines the required product outcome; Masterplan defines the execution item.
+User instruction and the applicable Masterplan item define the objective. This skill does not enlarge scope.
 
 ## ACTION
-State the concrete outcome in terms that can later be implemented and verified. Separate the desired result from preferred implementation details.
+State one bounded objective. If the work is spatial/UI, name the F0–F7 surfaces involved without promoting Status or Modal into legal boxes.
 
 ## DO NOT
-Do not invent requirements, silently broaden scope, or treat an AI suggestion as the user's objective.
+Do not replace the requested objective with a broader rewrite. Do not invent extra legal boxes to make the objective sound complete.
 
 ## PASS
-Another agent can identify exactly what successful completion means and what is out of scope.
+The objective is specific, bounded, and traceable to an authorized item.
 
 ## EVIDENCE
-Record the objective or the canonical reference that defines it.
+Record the stated objective and source item.
 
 ## SEE ALSO
-- `POLICY.md`
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
 - `skills/execution/orucaveam/SKILL.md`
+- `MASTERPLAN.md`

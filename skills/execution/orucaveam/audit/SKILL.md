@@ -1,28 +1,26 @@
 # ORUCAVEAM — Audit Skill
 
 ## WHEN TO USE
-Use when preserving the trace needed for another agent or reviewer to understand and reproduce the execution decision.
+Use when recording what was done, what was not done, and what remains authorized next.
 
 ## INPUT
-Action record, authority sources, affected paths/systems, verification results, limitations, and next state.
+Executed action, verification result, limitations, and next state.
 
 ## AUTHORITY
-Policy defines the audit obligation; canonical evidence and repository history remain the authoritative trace sources.
+Audit is a record, not a new product law.
 
 ## ACTION
-Capture enough durable context to reconstruct what was authorized, what changed, what was verified, what remained limited, and what should happen next.
+Record owners, files, F0–F7 mappings when UI changed, verification, and leftover restrictions.
 
 ## DO NOT
-Do not create audit records that contradict canonical source state or turn chat narrative into unverified product fact.
+Do not bury a legal-box change inside an audit note instead of Product Law / reconciliation docs.
 
 ## PASS
-Another agent can follow the recorded trace without needing to reconstruct the decision from private conversation memory.
+A later agent can recover authority and next action from the record.
 
 ## EVIDENCE
-Link the relevant commit/paths, verification results, handover, endorsement, and applicable knowledge record.
+The audit record itself.
 
 ## SEE ALSO
-- `POLICY.md`
-- `docs/project-guide/HandOver.md`
-- `docs/project-guide/Endorsement.md`
+- `skills/governance/learning-handover/SKILL.md`
 - `skills/execution/orucaveam/SKILL.md`

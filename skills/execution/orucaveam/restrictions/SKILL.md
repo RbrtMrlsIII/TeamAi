@@ -1,28 +1,26 @@
 # ORUCAVEAM — Restrictions Skill
 
 ## WHEN TO USE
-Use before execution to establish what must not be changed, bypassed, exposed, or broadened.
+Use when listing the hard limits that bound the current action.
 
 ## INPUT
-Product Law boundaries, Policy, Masterplan scope, security/privacy rules, protected roots, and known blockers.
+Product Law, Policy, current phase, authority map, and known anti-patterns.
 
 ## AUTHORITY
-Product Law and applicable canonical/security contracts define protected boundaries.
+Product Law and Policy define restrictions. Skills cannot relax them.
 
 ## ACTION
-List only the restrictions relevant to the bounded task. Treat unresolved conflicts or protected-boundary ambiguity as a stop condition.
+Name the restrictions that actually apply. For UI work include: one theme root; five legal boxes only; F6/F7 remain system surfaces; no backend/domain mutation from presentation scripts.
 
 ## DO NOT
-Do not infer permission from convenience, prior AI output, deployment success, or tool availability.
+Do not invent restrictions that block authorized work. Do not omit the legal-box vs field-identity distinction on spatial tasks.
 
 ## PASS
-The execution scope and prohibited actions are explicit enough to prevent accidental boundary crossing.
+The action has an explicit restriction set that matches current authority.
 
 ## EVIDENCE
-Record material restrictions and any blocked conditions.
+Record the restrictions applied.
 
 ## SEE ALSO
 - `POLICY.md`
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
 - `skills/execution/orucaveam/SKILL.md`

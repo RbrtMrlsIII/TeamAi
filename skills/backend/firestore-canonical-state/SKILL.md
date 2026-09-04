@@ -1,29 +1,26 @@
 # Backend — Firestore Canonical State Skill
 
 ## WHEN TO USE
-Use when reading, writing, validating, or reconciling TeamAi durable application/domain state in Cloud Firestore.
+Use when reading or writing TeamAi durable application/domain state.
 
 ## INPUT
-Canonical Firestore path, required fields, intended state transition, authenticated UID, and verification target.
+Authenticated Firebase UID, canonical collection/document path, intended mutation, and evidence boundary.
 
 ## AUTHORITY
-Cloud Firestore `(default)` is the TeamAi durable domain/application-state authority. Firebase UID is the domain ownership root.
+Firestore `(default)` is TeamAi durable domain-state authority. Presentation fields F0–F7 cannot become a second store.
 
 ## ACTION
-Use the canonical account/workplace/project hierarchy and exact document paths. Perform only the required read/write. Validate ownership and rule constraints. Confirm important writes with authoritative read-back when the task requires persistence proof.
+Read and write only canonical domain paths. Preserve UID ownership. Do not persist theme-root or field-identity presentation state as domain truth.
 
 ## DO NOT
-Do not use Supabase Postgres as TeamAi domain state. Do not accept client-provided ownership identifiers as proof. Do not create a parallel Firestore root without reconciliation.
+Do not store TeamAi domain state in Supabase Postgres, browser storage, or Vercel. Do not let F6 Status or F7 Modal write Firestore on mount.
 
 ## PASS
-The intended state exists at the canonical Firestore path under the authenticated UID and required rules/contracts are respected.
+The mutation or read uses the canonical Firestore path and ownership rule.
 
 ## EVIDENCE
-Record the canonical path, operation, authenticated owner context, result, and read-back/verification evidence.
+Record path, UID boundary, and read-back when required.
 
 ## SEE ALSO
-- `PRODUCT_LAW.md`
-- `src/backend/firestore-paths.ts`
-- `firestore.rules`
-- `skills/backend/firebase-project-identity/SKILL.md`
-- `skills/tools/minimal-tool-usage/SKILL.md`
+- `docs/backend/FIRESTORE_DOMAIN_MODEL_V2.md`
+- `skills/backend/authority-contract/SKILL.md`

@@ -15,17 +15,18 @@ Target Masterplan section/item, governing Product Law concept, field/domain, pha
 3. Classify the item by field/domain and affected authority.
 4. Determine the ORUCAVEAM letters applicable to the item.
 5. Find existing skills that are sufficient for those letters and the field/domain.
-6. If a required bounded procedure has no sufficient skill, record the skill gap and propose/create the smallest reusable skill before execution where practical.
-7. Add each concrete skill path to `docs/SKILL_WIRING.md`.
-8. Identify the tool/system and verification method.
-9. Mark completion only after the stated evidence exists and the wiring remains valid.
+6. If the item is spatial/UI, route through `skills/frontend/spatial/UI_UX-Promax-Skill.md` and preserve F0–F7 vs legal-box distinction.
+7. If a required bounded procedure has no sufficient skill, record the skill gap and propose/create the smallest reusable skill before execution where practical.
+8. Add each concrete skill path to `docs/SKILL_WIRING.md`.
+9. Identify the tool/system and verification method.
+10. Mark completion only after the stated evidence exists and the wiring remains valid.
 
 ## DO NOT
 - Use `skills/README.md` or a skill-library index as the TeamAi wiring substitute.
 - Treat an entire field folder as sufficient routing without a concrete skill.
 - Mark a checklist complete because source code or deployment exists.
 - Hide missing procedure coverage by writing an ad-hoc checklist note.
-- Create a taxonomy-only skill that has no recurring bounded use.
+- Treat F-numbers as Product Law or as a new legal-box list.
 
 ## PASS
 Every executable item has an unambiguous canonical concept, applicable ORUCAVEAM letter skill(s), concrete field/domain/tool skill path(s), and verification/evidence boundary, or an explicit no-skill rationale.
@@ -38,3 +39,4 @@ Masterplan item, ORUCAVEAM letter routing, wiring-map row, concrete skill path(s
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 - `skills/execution/orucaveam/SKILL.md`
+- `skills/frontend/spatial/UI_UX-Promax-Skill.md`

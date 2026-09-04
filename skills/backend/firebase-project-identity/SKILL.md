@@ -1,27 +1,27 @@
 # Backend — Firebase Project Identity Skill
 
 ## WHEN TO USE
-Use when a backend, hosting, authentication, or Firestore task depends on identifying the authoritative Firebase project.
+Use when confirming or changing which Firebase project, app, or hosting target TeamAi is bound to.
 
 ## INPUT
-Current Product Law identity invariant, repository Firebase configuration, runtime configuration, and target operation.
+Current Firebase project identity documents, environment configuration, and the intended backend/Masterplan item.
 
 ## AUTHORITY
-The authoritative TeamAi Firebase project is `team-ai-official` under Product Law.
+The authoritative Firebase project is `team-ai-official` unless Product Law is explicitly amended. UI theme roots and F0–F7 fields do not select the Firebase project.
 
 ## ACTION
-Check the configured Firebase project identity before diagnosis or mutation. Reconcile Firebase Auth, Firestore `(default)`, Hosting, Web SDK projectId, CLI target, and trusted runtime project identity where relevant.
+Confirm project identity before changing Auth, Firestore, Hosting, or related configuration. Reject silent fallback to another Firebase project.
 
 ## DO NOT
-Do not infer the project from repository/product names, screenshots, historical artifacts, remembered context, or similarly named projects. Do not expose credentials.
+Do not infer project identity from a Vercel preview, a local `.firebaserc` guess, or a UI field number.
 
 ## PASS
-All affected Firebase surfaces resolve to the same authoritative project, or a documented stop condition is recorded.
+The intended Firebase project is named and used.
 
 ## EVIDENCE
-Record the resolved project identity and the configuration/runtime checks that support it.
+Record project id, config path, and verification.
 
 ## SEE ALSO
+- `docs/backend/FIREBASE_PROJECT_IDENTITY.md`
 - `PRODUCT_LAW.md`
-- `skills/execution/orucaveam/canonical-authority/SKILL.md`
-- `skills/execution/orucaveam/verification/SKILL.md`
+- `skills/backend/authority-contract/SKILL.md`
