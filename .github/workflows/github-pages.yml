@@ -2,9 +2,7 @@ name: GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-      - validation/teamai-029-live
+    branches: [main]
   workflow_dispatch:
 
 permissions:
