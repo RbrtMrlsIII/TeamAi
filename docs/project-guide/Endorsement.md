@@ -8,7 +8,7 @@ Endorsement records an authorized acceptance of completed work or a learned oper
 
 Every completed implementation claim must trace:
 
-`Product Law → Masterplan item → Policy/ORUCAVEAM → domain skill → actual implementation → verification evidence → handover → endorsement`
+`Product Law → Masterplan item → Policy/ORUCAVEAM → applicable ORUCAVEAM letter skill(s) + field/domain skill(s) → actual implementation → verification evidence → handover → endorsement`
 
 A missing link blocks the completion claim.
 
@@ -16,7 +16,7 @@ A missing link blocks the completion claim.
 
 When an AI Development Team agent discovers a better, safer, clearer, more accurate, or more efficient method:
 
-`agent discovery → evidence → HandOver learning note → endorsement decision → skill / AI_ASSISTANT_READ_ME / PRODUCT-KNOWLEDGE update as applicable`
+`agent discovery → evidence → HandOver learning note → endorsement decision → affected skill / AI_ASSISTANT_READ_ME / PRODUCT-KNOWLEDGE update as applicable`
 
 An AI can teach a procedure, but the lesson is not automatically law or permanent knowledge. Endorsement accepts the lesson only for the stated scope.
 
@@ -26,7 +26,8 @@ Confirm that:
 
 - the claimed scope is precise;
 - the governing Product Law is identified;
-- the Masterplan item and skill path are identified;
+- the Masterplan item and concrete skill path(s) are identified;
+- applicable ORUCAVEAM letter routing is identified;
 - no competing root or stale implementation path remains;
 - implementation exists in the canonical path;
 - verification actually exercised the claimed behavior;
@@ -35,7 +36,8 @@ Confirm that:
 - provider entitlement is not confused with TeamAi entitlement;
 - external configuration is not claimed as TeamAi-owned;
 - UI behavior is reconciled to backend/domain authority;
-- any learned procedure is clearly separated from product law.
+- any learned procedure is clearly separated from product law;
+- M/minimalistic resource use did not remove a required verification or evidence step.
 
 ## 4. Evidence classes
 
@@ -69,7 +71,7 @@ When hosting, provider access, sandbox availability, credentials, or other envir
 
 ## 7. Reopening
 
-A prior endorsement does not permanently authorize later changes. A meaningful architecture, provider, security, entitlement, or canonical-root change must reopen the affected trace and obtain fresh evidence.
+A prior endorsement does not permanently authorize later changes. A meaningful architecture, provider, security, entitlement, or canonical-root change must reopen the affected trace, refresh the applicable skill routing, and obtain fresh evidence.
 
 ## SEE ALSO
 
@@ -77,3 +79,4 @@ A prior endorsement does not permanently authorize later changes. A meaningful a
 - `docs/SKILL_WIRING.md`
 - `docs/project-guide/HandOver.md`
 - `skills/governance/learning-handover/SKILL.md`
+- `skills/execution/orucaveam/SKILL.md`
