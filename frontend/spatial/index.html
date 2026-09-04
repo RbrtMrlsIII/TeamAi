@@ -54,11 +54,11 @@
         data-field="F6"
         data-status="ok"
         role="status"
-        aria-label="Connection ok. Entitlements display only."
+        aria-label="Connection ok. Entitlements display only. Recovery clear."
       >
         <span class="ta-type-status" data-status-label>OK</span>
         <span class="ta-type-meta">Connection</span>
-        <span class="ta-type-meta" data-status-entitlement>TeamAi · Provider (display only)</span>
+        <span class="ta-type-meta" data-status-entitlement>TeamAi · Provider</span>
       </span>
       <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-action="toggle-theme" aria-label="Toggle theme mode">Theme</button>
       <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-action="toggle-density" aria-label="Toggle compact density">Density</button>
@@ -67,27 +67,49 @@
   </header>
 
   <nav data-field="F2" class="ta-nav" role="navigation" aria-label="Primary">
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="deck" aria-current="page">Deck</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="workplace">Workplace</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="seats">Seats</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="planning">Planning</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="working">Working</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="artifacts">Artifacts</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="approvals">Approvals</button>
-    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="settings">Settings</button>
+    <div class="ta-nav__wide" data-nav-wide>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="deck" aria-current="page">Deck</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="workplace">Workplace</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="seats">Seats</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="planning">Planning</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="working">Working</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="artifacts">Artifacts</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="approvals">Approvals</button>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="settings">Settings</button>
+    </div>
+    <div class="ta-nav__compact" data-nav-compact hidden>
+      <label class="ta-type-label" for="nav-menu">Navigate</label>
+      <select id="nav-menu" class="ta-control" data-nav-menu>
+        <option value="deck">Deck</option>
+        <option value="workplace">Workplace</option>
+        <option value="seats">Seats</option>
+        <option value="planning">Planning</option>
+        <option value="working">Working</option>
+        <option value="artifacts">Artifacts</option>
+        <option value="approvals">Approvals</option>
+        <option value="settings">Settings</option>
+      </select>
+    </div>
   </nav>
 
   <main id="main" class="ta-main" tabindex="-1">
     <div class="ta-deck" data-composition="deck" data-deck-root hidden>
       <aside class="ta-panel ta-deck__seats" data-field="F3" aria-label="Seat rail">
-        <h2 class="ta-type-label">Seats</h2>
+        <div class="ta-region-heading">
+          <div>
+            <p class="ta-type-label">Current team</p>
+            <h2 class="ta-type-title">Seats</h2>
+          </div>
+          <span class="ta-type-meta">3 configured</span>
+        </div>
         <ul class="ta-seat-list" role="list">
           <li>
             <button type="button" class="ta-card ta-seat-card" data-field="F4" data-seat="alpha" data-state="selected" aria-pressed="true">
               <span class="ta-type-title">Alpha</span>
               <span class="ta-type-meta">planning · provider · model</span>
               <span class="ta-type-status" data-seat-health="ok">ok</span>
-              <span class="ta-type-meta" data-seat-eligible>eligible</span>
+              <span class="ta-type-meta" data-seat-connection>connection: ready</span>
+              <span class="ta-type-meta" data-seat-eligible>eligible · speaking candidate</span>
             </button>
           </li>
           <li>
@@ -95,6 +117,7 @@
               <span class="ta-type-title">Beta</span>
               <span class="ta-type-meta">worker · provider · model</span>
               <span class="ta-type-status" data-seat-health="ok">ok</span>
+              <span class="ta-type-meta">connection: ready</span>
               <span class="ta-type-meta">standby</span>
             </button>
           </li>
@@ -103,7 +126,8 @@
               <span class="ta-type-title">Gamma</span>
               <span class="ta-type-meta">reviewer · provider · model</span>
               <span class="ta-type-status" data-seat-health="degraded">degraded</span>
-              <span class="ta-type-meta">standby</span>
+              <span class="ta-type-meta">connection: degraded</span>
+              <span class="ta-type-meta">standby · recovery needed</span>
             </button>
           </li>
         </ul>
@@ -111,24 +135,41 @@
 
       <section class="ta-panel ta-deck__active" data-field="F3" data-elevation="e3" aria-labelledby="active-title">
         <div class="ta-deck__stage-bar">
-          <h2 id="active-title" class="ta-type-title">Active</h2>
+          <div>
+            <p class="ta-type-label">Current turn / task</p>
+            <h2 id="active-title" class="ta-type-title">Active</h2>
+          </div>
           <div class="ta-deck__stage-toggle" role="group" aria-label="Planning or Working stage">
             <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-stage="planning" aria-pressed="true">Planning</button>
             <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-stage="working" aria-pressed="false">Working</button>
           </div>
         </div>
-        <p class="ta-type-label">Pinned instruction</p>
-        <p class="ta-type-body" data-pinned-instruction>
-          Presentation placeholder. User instruction stays visible while the team works. Not domain state.
-        </p>
+        <div class="ta-deck__instruction" data-field="F4">
+          <p class="ta-type-label">Pinned instruction</p>
+          <p class="ta-type-body" data-pinned-instruction>
+            Keep the current user instruction visible while the configured Web AI Team deliberates or executes the eligible task.
+          </p>
+        </div>
         <div class="ta-deck__stage-body" data-stage-panel="planning">
-          <p class="ta-type-body">Planning stage skin. Conversation region not wired. No scheduler writes.</p>
+          <p class="ta-type-label">Planning turn</p>
+          <p class="ta-type-body">Alpha is contributing. The next turn is scheduler-controlled. Prior replies are contributions, not authority.</p>
+          <dl class="ta-proof-grid">
+            <div><dt class="ta-type-meta">Current speaker</dt><dd class="ta-type-body">Alpha</dd></div>
+            <div><dt class="ta-type-meta">Next turn</dt><dd class="ta-type-body">Scheduler decides</dd></div>
+            <div><dt class="ta-type-meta">Handoff</dt><dd class="ta-type-body">Review gate pending</dd></div>
+          </dl>
         </div>
         <div class="ta-deck__stage-body" data-stage-panel="working" hidden>
-          <p class="ta-type-body">Working stage skin. Task region not wired. No scheduler writes.</p>
+          <p class="ta-type-label">Working task</p>
+          <p class="ta-type-body">Eligible task is presentation-only in this slice. Execution state remains backend-owned and is not written here.</p>
+          <dl class="ta-proof-grid">
+            <div><dt class="ta-type-meta">Task</dt><dd class="ta-type-body">Placeholder task</dd></div>
+            <div><dt class="ta-type-meta">Assigned seat</dt><dd class="ta-type-body">Beta</dd></div>
+            <div><dt class="ta-type-meta">Last event</dt><dd class="ta-type-body">No live event</dd></div>
+          </dl>
         </div>
         <p class="ta-type-meta" data-modal-result role="status"></p>
-        <div class="ta-deck__f7-triggers" style="display:flex;flex-wrap:wrap;gap:var(--space-inset-sm)">
+        <div class="ta-deck__f7-triggers">
           <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-action="open-approval">
             Preview approval plate
           </button>
@@ -139,14 +180,39 @@
       </section>
 
       <aside class="ta-panel ta-deck__why" data-field="F3" aria-label="Why next">
-        <h2 class="ta-type-label">Why next</h2>
+        <div class="ta-region-heading">
+          <div>
+            <p class="ta-type-label">Scheduler evidence</p>
+            <h2 class="ta-type-label">Why next</h2>
+          </div>
+          <span class="ta-type-status">display</span>
+        </div>
         <dl class="ta-why-list">
-          <div><dt class="ta-type-meta">Dependency</dt><dd class="ta-type-body" data-why-dependency>None (placeholder)</dd></div>
-          <div><dt class="ta-type-meta">Event</dt><dd class="ta-type-body" data-why-event>No live event</dd></div>
-          <div><dt class="ta-type-meta">Scheduler</dt><dd class="ta-type-body" data-why-scheduler>Display only — UI does not choose the next actor</dd></div>
-          <div><dt class="ta-type-meta">Capability</dt><dd class="ta-type-body" data-why-capability>Gate not evaluated</dd></div>
+          <div><dt class="ta-type-meta">Dependency</dt><dd class="ta-type-body" data-why-dependency>Planning turn 2 must follow turn 1</dd></div>
+          <div><dt class="ta-type-meta">Event</dt><dd class="ta-type-body" data-why-event>planning.turn.completed (fixture)</dd></div>
+          <div><dt class="ta-type-meta">Readiness</dt><dd class="ta-type-body" data-why-readiness>Alpha connection ready; Gamma degraded</dd></div>
+          <div><dt class="ta-type-meta">Scheduler</dt><dd class="ta-type-body" data-why-scheduler>Scheduler owns next-actor selection</dd></div>
+          <div><dt class="ta-type-meta">Capability gate</dt><dd class="ta-type-body" data-why-capability>Planning skill bundle present; action capability not invoked</dd></div>
         </dl>
       </aside>
+
+      <section class="ta-panel ta-deck__status" data-field="F6" aria-label="System status">
+        <div class="ta-status-item">
+          <span class="ta-type-status">OK</span>
+          <span class="ta-type-meta">Connection</span>
+          <span class="ta-type-body">Alpha ready · Beta ready · Gamma degraded</span>
+        </div>
+        <div class="ta-status-item">
+          <span class="ta-type-status">SPLIT</span>
+          <span class="ta-type-meta">Entitlement</span>
+          <span class="ta-type-body">TeamAi entitlement + provider entitlement are separate facts</span>
+        </div>
+        <div class="ta-status-item">
+          <span class="ta-type-status">CLEAR</span>
+          <span class="ta-type-meta">Recovery</span>
+          <span class="ta-type-body">No recovery action pending in this presentation slice</span>
+        </div>
+      </section>
     </div>
 
     <section class="ta-panel ta-offdeck" data-field="F3" data-offdeck-root aria-labelledby="stage-title" hidden>
@@ -187,14 +253,10 @@
           <dd class="ta-type-status">ok</dd>
         </div>
       </dl>
-
-      <!-- Cluster A — action request -->
       <div class="ta-modal__actions" data-cluster="action">
         <button type="button" class="ta-control" data-field="F5" data-modal-action="deny">DENY</button>
         <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-modal-action="approve" aria-primary="true">APPROVE</button>
       </div>
-
-      <!-- Cluster B — planning handoff -->
       <div class="ta-modal__actions" data-cluster="handoff" hidden>
         <button type="button" class="ta-control" data-field="F5" data-modal-action="reject">REJECT</button>
         <button type="button" class="ta-control" data-field="F5" data-modal-action="edit">EDIT</button>

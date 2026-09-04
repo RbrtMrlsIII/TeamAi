@@ -46,6 +46,11 @@ function refreshThemeControls() {
   }
 }
 
+function syncCompactNavigation(destination) {
+  const menu = document.querySelector("[data-nav-menu]");
+  if (menu && menu.value !== destination) menu.value = destination;
+}
+
 function showComposition(destination) {
   const deck = document.querySelector("[data-deck-root]");
   const off = document.querySelector("[data-offdeck-root]");
@@ -58,6 +63,7 @@ function showComposition(destination) {
     if (id === destination) btn.setAttribute("aria-current", "page");
     else btn.removeAttribute("aria-current");
   });
+  syncCompactNavigation(destination);
 
   if (!isDeck) {
     const title = document.querySelector("[data-stage-title]");
@@ -144,7 +150,6 @@ function openModal(cluster) {
   focusTrapHandler = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      // Cluster B: Escape behaves as MORE (dismiss, leave packet). Cluster A: dismiss without approve.
       if (activeCluster === "handoff") onModalAction("more");
       else closeModal();
       return;
@@ -237,6 +242,11 @@ function wire() {
       const id = btn.getAttribute("data-nav");
       if (id) showComposition(id);
     });
+  });
+
+  document.querySelector("[data-nav-menu]")?.addEventListener("change", (event) => {
+    const destination = event.target.value;
+    if (destination) showComposition(destination);
   });
 
   document.querySelectorAll("[data-stage]").forEach((btn) => {
