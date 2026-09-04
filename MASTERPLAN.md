@@ -178,6 +178,47 @@ The UI may present a rich shared team conversation, but each AI receives an expl
 
 A receiving AI can read prior team contributions included for its turn, human interventions, structured summaries/handoffs, relevant task/event state, and referenced artifacts through authorized integrations. It must not automatically receive another provider's private model state, unrelated project data, secrets, or unrestricted repository contents.
 
+### Team Quality vs Tool Quality
+
+The commercial planning model keeps these independent:
+
+`Team Quality ≠ Tool Quality ≠ Provider Entitlement`
+
+Team Quality concerns the future TeamAi product axis for Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, orchestration capacity, and related resource limits.
+
+Tool Quality concerns the future capability axis for Base TeamAi capabilities plus optional tools/plugins/MCP servers and specialist integrations.
+
+A basic model may use additional entitled MCP/tools when provider/runtime compatibility and TeamAi policy/authorization permit it. An advanced model does not automatically unlock external tools. A Tool Quality purchase does not automatically grant a provider subscription or model entitlement.
+
+Exact prices, model catalogs, seat counts, tool packs, and limits remain planning-only until approved.
+
+### Base TeamAi capability set
+
+The candidate Base TeamAi capability set includes:
+
+1. Team/Project context.
+2. Team discussion and structured handoff.
+3. Task/state reporting.
+4. Authorized artifacts/files.
+5. Authorized knowledge/search.
+6. Approved research/web capability where supported.
+7. Human approval/intervention.
+8. Coordination/readiness visibility.
+
+These are capability categories, not a commitment that every item will be an MCP server. Core TeamAi authority should remain native where appropriate; optional external integrations belong to the Tool Quality capability layer.
+
+### Skills and startup project packages
+
+TeamAi may distribute curated skill bundles, startup projects, templates, configuration packages, or initialization artifacts through project-owned ZIP/handover packages. These packages help users equip external AI applications and connect them into TeamAi.
+
+Packages do not override Product Law, user authority, provider terms, project permissions, TeamAi entitlement, or Seat authorization.
+
+ToolKit may learn only generalized lessons from TeamAi after the consuming-project evidence establishes that the lesson generalizes; TeamAi-specific assumptions do not become upstream authority automatically.
+
+### Provider/model/tool warning boundary
+
+Before modifying provider adapters, model catalogs, advanced agent runtimes, context-transfer code, tool/plugin connectors, MCP, provider-native storage, retention/disclosure behavior, or subscription/entitlement logic, the agent must first inspect the applicable provider/tool guard, existing roots, and current documented contract. Unknown, stale, contradictory, or potentially prohibited rules must become an explicit review/blocked condition rather than an assumption.
+
 ## TEAM-EXPERIENCE-029 — Spatial Theme and Visual System
 
 **Status:** PLANNED PRODUCT-EXPERIENCE SLICE — NOT YET IMPLEMENTED.
