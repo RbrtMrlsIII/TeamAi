@@ -99,7 +99,7 @@ function focusableIn(root: ParentNode): HTMLElement[] {
 
 function openModal(): void {
   const modal = document.querySelector<HTMLElement>('[data-field="F7"]');
-  const plate = modal?.querySelector<HTMLElement+(".ta-modal__plate");
+  const plate = modal?.querySelector<HTMLElement>(".ta-modal__plate");
   if (!modal || !plate) return;
   lastFocus = document.activeElement;
   modal.hidden = false;
