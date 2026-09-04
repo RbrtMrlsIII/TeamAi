@@ -1,27 +1,26 @@
 # ORUCAVEAM — Efficiency Skill
 
 ## WHEN TO USE
-Use when choosing an execution approach that avoids unnecessary work while preserving correctness and required evidence.
+Use when choosing the cheapest sufficient path that still preserves authority and evidence.
 
 ## INPUT
-Task scope, required evidence, available skills/tools, likely cost or churn, and current state.
+Objective, required evidence, available tools, and current constraints.
 
 ## AUTHORITY
-Policy defines the efficiency discipline; canonical authorities and required verification cannot be weakened for convenience.
+Efficiency cannot override Product Law, Policy, or canonical ownership.
 
 ## ACTION
-Prefer targeted reads, coherent changes, deterministic checks before hosted checks, reuse of valid evidence, bounded context, and idempotent operations. When the efficiency decision concerns the number or sequence of tool/resource operations, compose `skills/tools/minimal-tool-usage/SKILL.md` for the ORUCAVEAM M dimension.
+Prefer one coherent change over many small unverified edits. For 029 UI, batch against the approved F0–F7 baseline rather than restyling page by page.
 
 ## DO NOT
-Do not skip mandatory verification, weaken a canonical boundary, or replace authoritative infrastructure merely to reduce effort.
+Do not skip verification to save steps. Do not create deployment churn for confidence cheaper evidence can establish.
 
 ## PASS
-The chosen execution approach is materially leaner without reducing correctness, authorization, or evidence quality.
+The path is sufficient and not wasteful of authoritative resources.
 
 ## EVIDENCE
-Record material efficiency decisions when they affect scope, resource use, or verification ordering.
+Record why the chosen path was sufficient.
 
 ## SEE ALSO
-- `POLICY.md`
-- `skills/execution/orucaveam/SKILL.md`
 - `skills/tools/minimal-tool-usage/SKILL.md`
+- `skills/execution/orucaveam/SKILL.md`

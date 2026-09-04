@@ -1,28 +1,26 @@
 # ORUCAVEAM — Verification Skill
 
 ## WHEN TO USE
-Use to define and run the smallest sufficient verification that proves the claimed execution scope.
+Use when proving that the executed action matches the authorized objective and restrictions.
 
 ## INPUT
-Claimed result, changed paths/systems, applicable verification method, and required evidence boundary.
+Expected outcome, verification target, and available evidence mechanism.
 
 ## AUTHORITY
-The governing Masterplan gate and applicable verification contracts determine what must be proven.
+Verification does not become product authority. Browser passes prove only exercised UI scope.
 
 ## ACTION
-Match the verification method to the actual scope: deterministic source/tests for source behavior, authoritative read-back for durable state, controlled browser verification for browser behavior, and explicit external-runtime evidence where required.
+Choose the smallest authoritative verification. For spatial/UI, use Playwright when real browser proof is required. Do not invent selectors for F0–F7 surfaces that do not exist yet.
 
 ## DO NOT
-Do not treat green tests, screenshots, deployment presence, or AI assertions as proof of untested scope.
+Do not treat a screenshot as domain-state proof. Do not treat Vercel as delivery authority.
 
 ## PASS
-The selected evidence directly demonstrates the behavior or state claimed as complete, with limitations recorded.
+The exercised scope is verified against the stated objective.
 
 ## EVIDENCE
-Record verification command/result, tested scope, relevant identifiers, and remaining limitations.
+Record method, target, and result.
 
 ## SEE ALSO
-- `POLICY.md`
-- `MASTERPLAN.md`
 - `skills/verification/browser-smoke/SKILL.md`
 - `skills/execution/orucaveam/SKILL.md`

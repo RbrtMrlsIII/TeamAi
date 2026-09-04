@@ -1,28 +1,25 @@
 # ORUCAVEAM — Action Skill
 
 ## WHEN TO USE
-Use when selecting and performing the concrete operation that advances an authorized execution item.
+Use when executing the smallest sufficient authorized change after O/R/U/C are resolved.
 
 ## INPUT
-Objective, restrictions, user authority, canonical authority, field/domain skill(s), tool/system skill(s), and verification target.
+Approved objective, restrictions, authority, and selected field/domain skills.
 
 ## AUTHORITY
-The governing Product Law, Masterplan, Policy, and selected field/tool skills constrain the action. This skill does not grant authority.
+Action follows the resolved canonical owner. This skill does not create a new owner.
 
 ## ACTION
-Choose the smallest canonical operation that advances the objective. Use the relevant domain and tool skills rather than embedding their procedures here.
+Perform only the bounded change. For UI, implement against F0–F7 field identity while leaving the five legal boxes unchanged.
 
 ## DO NOT
-Do not perform speculative cleanup, unrelated refactors, parallel authority writes, or actions outside the authorized checklist scope.
+Do not expand into unauthorized files, services, or a sixth legal box.
 
 ## PASS
-The performed operation directly advances the intended checklist item and stays within its authorized boundaries.
+The change matches the approved objective and owner.
 
 ## EVIDENCE
-Record changed paths/systems, the action performed, and the resulting state needed for verification.
+Record the files/systems changed and the skill paths used.
 
 ## SEE ALSO
-- `POLICY.md`
-- `MASTERPLAN.md`
-- `docs/SKILL_WIRING.md`
 - `skills/execution/orucaveam/SKILL.md`

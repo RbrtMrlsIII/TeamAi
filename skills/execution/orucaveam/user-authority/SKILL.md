@@ -1,27 +1,26 @@
 # ORUCAVEAM — User Authority Skill
 
 ## WHEN TO USE
-Use whenever execution depends on a user instruction, approval, or previously authorized bounded action.
+Use when confirming whether the current instruction is sufficient permission for the planned action.
 
 ## INPUT
-Current user instruction, approved Masterplan scope, affected protected boundaries, and prior authorization records.
+User instruction, Masterplan item, Policy gates, and impact class.
 
 ## AUTHORITY
-Human user authority remains above AI authority. Policy defines permitted forms of authorization.
+User authority is above agent preference. Skills never create permission.
 
 ## ACTION
-Identify the exact instruction or approved scope authorizing the action. Check whether the proposed action remains inside that scope.
+Confirm the permission basis. High-impact Product Law, entitlement, authorization, or legal-box changes require explicit approval.
 
 ## DO NOT
-Do not infer new authorization from silence, recency of an AI message, or an implementation suggestion.
+Do not treat a numbered field (F0–F7) as permission to change Product Law or domain state.
 
 ## PASS
-The bounded action has an attributable authorization source and does not cross an unapproved protected boundary.
+The planned action has an identified permission basis.
 
 ## EVIDENCE
-Record the authorization basis and any approval/reconciliation gate used.
+Record the permission basis and any withheld action.
 
 ## SEE ALSO
 - `POLICY.md`
-- `MASTERPLAN.md`
 - `skills/execution/orucaveam/SKILL.md`

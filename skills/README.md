@@ -20,6 +20,15 @@ The `SEE ALSO` section should point to deeper canonical context when the skill n
 
 A skill cannot grant permission to change Product Law, canonical state, protected history, security boundaries, entitlements, or external accounts. User approval, Policy gates, and service authorization remain binding.
 
+## Field identity vs legal boxes
+
+When a skill touches UI surfaces:
+
+- Legal boxes remain only `Shell · Panel · Card · Control · Navigation`.
+- F0–F7 is field-identity vocabulary for implementation.
+- F6 Status and F7 Modal are controlled system surfaces, not new legal boxes and not a second dialog system.
+- Backend, commerce, packaging, and execution skills must not invent UI legal boxes or treat presentation fields as domain authority.
+
 ## Growth rule
 
 Create or extend a skill when a recurring checklist/execution pattern needs a reusable procedure. Do not create empty taxonomy folders merely for appearance. Skill families expand from actual consuming-project needs and verified experience.
