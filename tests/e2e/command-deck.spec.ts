@@ -46,6 +46,7 @@ test.describe('Command Deck inhabited skeleton', () => {
     await beta.click();
     await expect(beta).toHaveAttribute('aria-pressed', 'true');
     await expect(beta).toHaveAttribute('data-state', 'selected');
+    await expect(alpha).toHaveAttribute('aria-pressed', 'false');
     await expect(page.getByText('Scheduler owns next-actor selection', { exact: true })).toBeVisible();
   });
 
