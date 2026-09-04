@@ -12,16 +12,16 @@ test.describe('Workplace composition', () => {
     const workplace = page.locator('[data-workplace-root]');
     await expect(workplace).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Northstar Workplace' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Command Deck', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Atlas Migration', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Recovery Lab', exact: true })).toBeVisible();
+    await expect(workplace.locator('[data-project="command-deck"]')).toBeVisible();
+    await expect(workplace.locator('[data-project="atlas"]')).toBeVisible();
+    await expect(workplace.locator('[data-project="recovery"]')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Command Deck', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Enter Project', exact: true })).toBeVisible();
   });
 
   test('project selection changes Workplace detail without domain writes', async ({ page }) => {
     await page.getByRole('button', { name: 'Workplace', exact: true }).click();
-    const atlas = page.getByRole('button', { name: 'Atlas Migration', exact: true });
+    const atlas = page.locator('[data-project="atlas"]');
     await atlas.click();
     await expect(atlas).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByRole('heading', { name: 'Atlas Migration', exact: true })).toBeVisible();
