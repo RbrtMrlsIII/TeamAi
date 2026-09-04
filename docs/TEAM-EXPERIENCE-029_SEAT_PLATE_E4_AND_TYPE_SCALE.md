@@ -4,7 +4,7 @@
 **Date:** 2026-09-04  
 **Consumes:** Command Deck freeze (E0–E4, no e5; token *families*)  
 **Assigns now:** Seat E3 interior, shared E4 plate, Size / Space / Type **values**  
-**Still not assigned:** field numbers, color hex, glass blur px, typeface *files* (stacks only), motion cubic-bezier
+**Supersession (2026-09-04 hygiene):** Field numbers (F0–F7), first palette anchors, blur cap, and motion ms are assigned in `TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md`. Do not treat the historical “still not assigned” wording as authority over that reconciliation. Typeface *files* remain open (stacks only).
 
 Canonical unit: **4px grid**. Values are `rem` first, `px` at 16px root in parentheses. Dark and Light do **not** retune these values — only Surface / Depth / State accents.
 
@@ -12,12 +12,12 @@ Canonical unit: **4px grid**. Values are `rem` first, `px` at 16px root in paren
 
 ## 1. Shared E4 approval contract
 
-One plate primitive. Two button clusters. No second dialog system.
+One plate primitive. Two button clusters. No second dialog system. Field identity **F7**.
 
 ```text
 E0–E3  deck/composition  (inert while open)
 E4     depth.scrim
-       ┌──────────────────────────────────────────┐
+       ┌───────────────────────────────────────────┐
        │ surface.modal  elev.e4                   │
        │ title                                    │
        │ actor  (seat · role · provider · model)  │
@@ -27,7 +27,7 @@ E4     depth.scrim
        │ health  ok|degraded|blocked|unauthorized │
        │                                          │
        │ [ secondary ]              [ primary ]   │
-       └──────────────────────────────────────────┘
+       └───────────────────────────────────────────┘
 ```
 
 | Slot | Primitive | Type | Must be seen |
@@ -81,12 +81,12 @@ E3  SEAT PLATE  (surface.active)
     │ IDENTITY   name   role   health                         │
     │            provider · runtime · model   (type.mono)     │
     │            connection  ok|degraded|blocked|unauthorized │
-    ├───────────────────────────┬─────────────────────────────┤
+    ├──────────────────────────┬─────────────────────────────┤
     │ TEAM                      │ TOOLS                       │
     │ Team Quality              │ Tool Quality                │
     │ skill bundle              │ tools / plugins / MCP       │
     │ Base TeamAi capabilities  │ workstation / scope         │
-    ├───────────────────────────┴─────────────────────────────┤
+    ├──────────────────────────┴─────────────────────────────┤
     │ LIMITS     budget · rate · storage · approval gates     │
     │ SPLIT      TeamAi entitlement  |  provider entitlement  │
     │ CONTROLS   [ Test connection ]     [ Activate ]         │
@@ -138,7 +138,7 @@ Two columns stack (Team above Tools). Split stays two facts, stacked, not merged
 | `size.seat-card.min-height` | 4.50 | 72 | Deck rail default |
 | `size.seat-card.compact-height` | 2.75 | 44 | Deck rail compact |
 
-No pills. No 9999px radii. Same radii in Dark and Light.
+No pills. No 9999px radii. Same radii in Dark and Light. Nested surfaces follow concentric radius craft where padding is tight (`outer = inner + padding`).
 
 ---
 
@@ -194,13 +194,13 @@ Dark/Light retune **color against surface**, not size, weight, or family.
 - Do not scale type independently per composition.
 - Do not give E4 a larger type ramp than the Deck.
 - Do not shrink `APPROVE` below `size.control.lg`.
-- Do not encode status only as a color token (colors still unassigned).
+- Do not encode status only as a color token.
 - Do not introduce a display face, serif, or “logo font” without a Product Law change.
 
-## 7. Still not assigned
+## 7. Still not assigned (narrowed)
 
-Field numbers. Hex / rgba. Blur px. Shadow recipes. Cubic-bezier. Bundled font files. Motion durations as ms (roles remain instant/short/medium/long).
+Typeface *files* (stacks only). Items already assigned in the theme-root reconciliation (F0–F7, palette anchors, blur cap, motion ms) are closed.
 
 ## 8. Next
 
-Motion duration ms + reduced-motion map, **or** Surface/Depth color recipes for Command Space and Instrument Space (the first actual palettes), **or** implementation of theme root using this scale.
+Implementation of the single theme root using this scale and the reconciliation map — presentation foundation only until Masterplan item 17 releases the full 029 product-experience hold.
