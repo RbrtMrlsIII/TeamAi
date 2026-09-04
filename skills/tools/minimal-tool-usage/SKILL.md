@@ -27,10 +27,10 @@ M applies across domain skills. Examples include:
 
 - **Firebase/Firestore:** targeted canonical reads, minimal fields, bounded queries, required write plus read-back rather than repeated broad reads.
 - **GitHub:** fetch only the files/commits/PR state needed for the decision, reuse pinned evidence, and avoid redundant repository scans.
-- **Vercel/browser:** make one coherent web change and one deliberate verification deployment/run when browser evidence is actually required; do not generate deployment churn merely for confidence that cheaper evidence can establish.
+- **Vercel/browser:** make one coherent web change and one deliberate verification deployment/run when browser evidence is actually required.
 - **Supabase/PayPal:** perform only the trusted operations required by the applicable contract and preserve idempotency/replay controls.
+- **Spatial/UI:** inspect the coordinator skill and F0–F7 map once; do not restyle every composition separately when the theme root owns the change.
 - **Tests/builds:** run the smallest relevant deterministic checks first, then expand only when the evidence boundary requires it.
-- **Context/file retrieval:** retrieve the smallest sufficient authoritative context and avoid duplicate transcript or artifact transfer.
 
 ## DO NOT
 - Replace authoritative verification with a cheaper non-authoritative shortcut.

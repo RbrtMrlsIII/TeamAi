@@ -1,27 +1,26 @@
-# Backend — Task / Event / Idempotency Skill
+# Backend — Task Event Idempotency Skill
 
 ## WHEN TO USE
-Use when creating, transitioning, leasing, completing, failing, cancelling, retrying, or reconciling TeamAi tasks and durable events.
+Use when creating, projecting, or replaying TeamAi task/commerce/runtime events that must not double-apply.
 
 ## INPUT
-Task/event identity, authenticated ownership context, current lifecycle state, requested transition, idempotency identity, and scheduler/approval boundary.
+Event identity, source authority, destination Firestore path, and replay/idempotency key.
 
 ## AUTHORITY
-Firestore `(default)` owns durable TeamAi task/event state. The task-state contract defines valid lifecycle transitions and event semantics.
+Durable event identity lives in canonical backend state, not in UI animation, F6 Status pulses, or F7 mount/unmount.
 
 ## ACTION
-Use the canonical task/event paths and lifecycle transitions. Require durable identity and ownership context. Preserve idempotency for repeatable operations and never infer completion from in-memory state alone.
+Derive a stable idempotency identity from the authoritative event and persist only through the trusted path.
 
 ## DO NOT
-Do not bypass valid state transitions, duplicate durable events on retry, or allow an AI/provider to directly select the next actor outside scheduler eligibility.
+Do not use presentation transitions as event identity. Do not double-write because a UI surface remounted.
 
 ## PASS
-The requested state transition/event is valid, durably recorded, attributable, and safe under repeat execution where applicable.
+Replay does not create a second authoritative event.
 
 ## EVIDENCE
-Record task/event IDs, transition, idempotency identity, resulting durable state, and recovery/failure evidence when relevant.
+Record idempotency key, source event, and projection result.
 
 ## SEE ALSO
-- `src/backend/task-state.ts`
-- `PRODUCT_LAW.md`
 - `skills/backend/firestore-canonical-state/SKILL.md`
+- `skills/backend/commerce-paypal/SKILL.md`

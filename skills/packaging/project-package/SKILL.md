@@ -17,10 +17,13 @@ GitHub tracked source is the canonical source tree. The ZIP is a derived project
 5. Verify extracted relative paths and file bytes/hashes against the pinned tracked tree.
 6. Record the package manifest and verification result.
 
+Skills and F0–F7 docs in the package remain source text. Generated screenshots of those surfaces are not source.
+
 ## DO NOT
 - Build the ZIP from an unpinned working tree.
 - Silently omit a tracked generated artifact that violates package rules.
 - Treat the ZIP as a new source authority.
+- Package runtime theme state as if it were legal-box law.
 
 ## PASS
 The extracted package contains exactly the intended relative paths and file bytes from the pinned canonical tree, subject to the explicit packaging policy.

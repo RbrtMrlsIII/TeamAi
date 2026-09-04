@@ -9,6 +9,8 @@ Approved web verification scenario, repository commit, intended Vercel project/t
 ## AUTHORITY
 GitHub remains source/change authority. GitHub Actions remains engineering CI authority. Firebase Hosting remains TeamAi delivery authority where applicable. Firestore and trusted backend services retain their own authority. Vercel is a controlled non-authoritative web development/preview/browser-verification surface.
 
+Vercel may render F0–F7 surfaces for verification. It does not own legal boxes, theme-root law, or domain state.
+
 ## ACTION
 1. Confirm Vercel is intentionally enabled for the current phase.
 2. Confirm the repository/project relationship and do not infer stale project configuration.
@@ -24,6 +26,7 @@ GitHub remains source/change authority. GitHub Actions remains engineering CI au
 - Assume one PR or one merge automatically equals one deployment in every external configuration.
 - Use ignored-build rules to hide an unexpected failure.
 - Claim hosted completion from a source-only CI pass.
+- Treat a preview render of F6/F7 as proof those surfaces are Product Law legal boxes.
 
 ## PASS
 The intended Vercel deployment is identifiable, the required browser scenario is exercised, and the result is recorded without transferring authority to Vercel.

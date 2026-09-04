@@ -12,12 +12,13 @@ Observed lesson, execution evidence, affected Masterplan item, applicable ORUCAV
 ## ACTION
 1. Record what was discovered and why it matters.
 2. Tie the lesson to the executed Masterplan checklist, applicable ORUCAVEAM letter skill(s), field/domain skill(s), and evidence.
-3. Put current continuation state in `docs/project-guide/HandOver.md`.
-4. Request/record the applicable endorsement in `docs/project-guide/Endorsement.md`.
-5. Update the appropriate operational skill when the procedure itself changed, including the relevant ORUCAVEAM letter or field skill.
-6. Update `AI_ASSISTANT_READ_ME.md` when the lesson is a practical session/recovery technique that future agents need to remember.
-7. Update `PRODUCT-KNOWLEDGE.md` only when the lesson is validated and worth permanent retention.
-8. Propose a ToolKit upstream candidate only after the lesson has enough evidence and scope analysis to test for generalization.
+3. If the lesson concerns UI surfaces, state whether it affects legal boxes or only F0–F7 field identity.
+4. Put current continuation state in `docs/project-guide/HandOver.md`.
+5. Request/record the applicable endorsement in `docs/project-guide/Endorsement.md`.
+6. Update the appropriate operational skill when the procedure itself changed.
+7. Update `AI_ASSISTANT_READ_ME.md` when the lesson is a practical session/recovery technique.
+8. Update `PRODUCT-KNOWLEDGE.md` only when the lesson is validated and worth permanent retention.
+9. Propose a ToolKit upstream candidate only after the lesson has enough evidence and scope analysis to test for generalization.
 
 ## DO NOT
 - Promote an agent opinion directly to Product Law.
@@ -25,6 +26,7 @@ Observed lesson, execution evidence, affected Masterplan item, applicable ORUCAV
 - Store raw conversation or screenshot evidence in Product Knowledge.
 - Change a skill without checking the governing Product Law, Masterplan, and Policy.
 - Hide a changed procedure in a canonical document when it belongs in a reusable skill.
+- Quietly promote F6 Status or F7 Modal into legal boxes through handover wording.
 
 ## PASS
 The lesson has an evidence path, a clear scope, an identified Masterplan item, applicable ORUCAVEAM/field skill destination, and a durable handover/endorsement record where required.
