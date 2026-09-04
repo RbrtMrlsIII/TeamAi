@@ -1,0 +1,43 @@
+name: Boundary / authority
+description: CI, delivery, service ownership, or protected-authority concern that must outlive a single PR.
+labels: ["boundary"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues do **not** amend Product Law. Prefer POLICY, skills, and Masterplan for permanent rules.
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Boundary in question
+      description: What authority or system is at risk (GitHub, Firebase Hosting, Firestore, Supabase, PayPal, Vercel, etc.)?
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What happened (throttling, wrong owner, assumed 1 PR = 1 deploy, etc.)?
+    validations:
+      required: true
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired operating rule
+      description: One short rule. Link POLICY / skill / doc if it already exists.
+    validations:
+      required: true
+  - type: textarea
+    id: not-in-scope
+    attributes:
+      label: Not in scope
+      description: What this issue must not become (feature request, second Product Law, etc.).
+    validations:
+      required: false
+  - type: checkboxes
+    id: gates
+    attributes:
+      label: Checks
+      options:
+        - label: Does not invent a second source/delivery/domain authority
+        - label: Linked to existing POLICY or skill path when known

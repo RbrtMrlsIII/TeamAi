@@ -1,0 +1,40 @@
+name: 029 presentation slice
+description: Durable follow-up for TEAM-EXPERIENCE-029 UI (not a substitute for a PR + slice doc).
+labels: ["029"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prefer a **PR + `docs/TEAM-EXPERIENCE-029_*_SLICE.md`** for the actual slice. Open an issue only when the work must survive chat or is blocked.
+  - type: input
+    id: surface
+    attributes:
+      label: Surface / field
+      description: e.g. F7 plate, Deck why-next, theme-root, hosting route
+      placeholder: F7 shared E4 plate
+    validations:
+      required: true
+  - type: textarea
+    id: why-issue
+    attributes:
+      label: Why an issue (not only a PR)
+      description: Blocked? Recurring noise? Needs decision before code?
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Presentation boundaries
+      value: |
+        - No Firestore / PayPal / scheduler actor selection
+        - No second theme root
+        - F6/F7 stay system surfaces, not new legal boxes
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Acceptance in one or two lines.
+    validations:
+      required: true
