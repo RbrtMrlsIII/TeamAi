@@ -1,0 +1,43 @@
+name: Backend gate / domain
+description: TEAM-BACKEND-001 gate, commerce, identity, or durable domain hold.
+labels: ["backend-001"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Domain authority stays on Firebase/Firestore/Supabase/PayPal contracts. UI fields (F0–F7) do not own backend truth.
+  - type: input
+    id: gate
+    attributes:
+      label: Gate or area
+      description: e.g. item 17, PayPal webhook correlation, Firestore path X
+    validations:
+      required: true
+  - type: textarea
+    id: blocker
+    attributes:
+      label: Blocker or debt
+      description: What is missing, held, or failing?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence / skill path
+      description: Link skill, status doc, or prior HandOver if any.
+    validations:
+      required: false
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Runtime or contract evidence required — not a screenshot alone.
+    validations:
+      required: true
+  - type: checkboxes
+    id: forbid
+    attributes:
+      label: Forbidden shortcuts
+      options:
+        - label: Will not move domain state to browser/Vercel/F6/F7
+        - label: Will not treat preview success as architecture acceptance
