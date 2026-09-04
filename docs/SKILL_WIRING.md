@@ -39,11 +39,12 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Commerce | TEAM-BACKEND-001 / 029 commerce dependency | ORUCAVEAM + concrete commerce/PayPal skill family | PayPal / Supabase / Firestore | Contract + runtime evidence | Commerce evidence + endorsement |
 | Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions | CI report / trace |
 | Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + applicable ORUCAVEAM/M skills | Vercel | Controlled deployed-browser verification | CI/browser evidence |
+| Spatial UI/UX | TEAM-EXPERIENCE-029 visual experience | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable ORUCAVEAM skills | TeamAi frontend/theme system | Theme-mode, accessibility, responsive, and browser verification | GitHub evidence + HandOver |
 | Packaging | Every completed gate requiring full project package | `skills/packaging/project-package/SKILL.md` + applicable ORUCAVEAM/V/A/M skills | Project package script | Extracted-path + byte/hash equality | Full Project ZIP + manifest |
 
 ## 4. Field/domain expansion rule
 
-A field skill family is a set of small direct procedures for a real recurring work domain. Examples include `backend/`, `commerce/`, `web/`, `engineering/`, `verification/`, or `packaging/`.
+A field skill family is a set of small direct procedures for a real recurring work domain. Examples include `backend/`, `commerce/`, `web/`, `engineering/`, `verification/`, `frontend/spatial/`, or `packaging/`.
 
 A field skill must:
 
