@@ -2,8 +2,10 @@ import { expect, test } from '@playwright/test';
 
 test.describe('F7 shared E4 plate (presentation)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/spatial/');
-    await expect(page.locator('[data-deck-root]')).toBeVisible();
+    const response = await page.goto('/spatial/');
+    expect(response?.ok(), `GET /spatial/ status ${response?.status()}`).toBeTruthy();
+    // Deck starts with [hidden]; shell-nav.js unhides after module load
+    await expect(page.locator('[data-deck-root]')).toBeVisible({ timeout: 15_000 });
   });
 
   test('action cluster: open, Escape closes, no domain claim', async ({ page }) => {
