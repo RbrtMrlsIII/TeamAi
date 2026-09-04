@@ -16,6 +16,7 @@
     "project:package": "python3 build-system/scripts/project-package.py create-and-verify",
     "project:package:verify": "python3 build-system/scripts/project-package.py verify",
     "firebase:rules:gate": "bash build-system/scripts/firebase-rules-gate-004.sh",
+    "build-system:audit": "python3 build-system/scripts/build-system-script-reference-audit.py",
     "backend:authority-audit": "python3 build-system/scripts/backend-authority-audit.py"
   },
   "dependencies": {
