@@ -39,11 +39,12 @@ test.describe('Planning composition', () => {
     await planning.getByRole('button', { name: 'Review handoff', exact: true }).click();
     const modal = page.locator('[data-field="F7"]');
     await expect(modal).toBeVisible();
-    await expect(modal.locator('[data-modal-cluster="handoff"]').or(modal.locator('[data-cluster="handoff"]'))).toBeVisible();
-    await expect(modal.getByRole('button', { name: 'REJECT', exact: true })).toBeVisible();
-    await expect(modal.getByRole('button', { name: 'EDIT', exact: true })).toBeVisible();
-    await expect(modal.getByRole('button', { name: 'MORE', exact: true })).toBeVisible();
-    await expect(modal.getByRole('button', { name: 'APPROVE', exact: true })).toBeVisible();
+    const handoff = modal.locator('[data-modal-cluster="handoff"]').or(modal.locator('[data-cluster="handoff"]'));
+    await expect(handoff).toBeVisible();
+    await expect(handoff.getByRole('button', { name: 'REJECT', exact: true })).toBeVisible();
+    await expect(handoff.getByRole('button', { name: 'EDIT', exact: true })).toBeVisible();
+    await expect(handoff.getByRole('button', { name: 'MORE', exact: true })).toBeVisible();
+    await expect(handoff.getByRole('button', { name: 'APPROVE', exact: true })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(modal).toBeHidden();
   });
