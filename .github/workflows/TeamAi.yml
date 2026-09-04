@@ -5,9 +5,6 @@ on:
   push:
     branches: [main]
 
-# Keep only the newest validation run for the same workflow/ref. This prevents
-# stale commits from consuming runner capacity while preserving full validation
-# for the current commit.
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
@@ -35,9 +32,9 @@ jobs:
           ! test -e HomeFinder-Official
 
   project-tests:
-    name: Project tests
+    name: Project tests + canonical package
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -49,14 +46,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if test -f package-lock.json; then
-            npm ci
-          else
-            npm install --no-audit --no-fund
-          fi
+          if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
       - name: Run backend authority audit
         run: npm run backend:authority-audit
       - name: Run typecheck
         run: npm run typecheck
       - name: Run project tests
         run: npm test
+      - name: Build and verify Full Project ZIP
+        run: npm run project:package
+      - name: Require Full Project ZIP output
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f TeamAi-Full-Project.zip
+          test -s TeamAi-Full-Project.zip
+      - name: Upload Full Project ZIP verification artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: teamai-full-project-${{ github.sha }}
+          path: TeamAi-Full-Project.zip
+          if-no-files-found: error
+          retention-days: 30

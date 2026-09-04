@@ -1,24 +1,33 @@
 # TeamAi Project Guide — Endorsement
 
-**Status:** CANONICAL PROCEDURE
+**Status:** CANONICAL PROCEDURE / BASELINE
 
-Endorsement is a completion record. It is not a substitute for implementation or verification.
+Endorsement records an authorized acceptance of completed work or a learned operating rule. It is not a substitute for implementation or verification.
 
-## 1. Required trace
+## 1. Required implementation trace
 
 Every completed implementation claim must trace:
 
-`Product Law → Masterplan item → domain contract/skill → actual implementation → verification evidence → endorsement`
+`Product Law → Masterplan item → Policy/ORUCAVEAM → applicable ORUCAVEAM letter skill(s) + field/domain skill(s) → actual implementation → verification evidence → handover → endorsement`
 
 A missing link blocks the completion claim.
 
-## 2. Before endorsement
+## 2. Learning / teach-back trace
+
+When an AI Development Team agent discovers a better, safer, clearer, more accurate, or more efficient method:
+
+`agent discovery → evidence → HandOver learning note → endorsement decision → affected skill / AI_ASSISTANT_READ_ME / PRODUCT-KNOWLEDGE update as applicable`
+
+An AI can teach a procedure, but the lesson is not automatically law or permanent knowledge. Endorsement accepts the lesson only for the stated scope.
+
+## 3. Before endorsement
 
 Confirm that:
 
 - the claimed scope is precise;
-- the governing authority is identified;
-- applicable skills/guards were consulted;
+- the governing Product Law is identified;
+- the Masterplan item and concrete skill path(s) are identified;
+- applicable ORUCAVEAM letter routing is identified;
 - no competing root or stale implementation path remains;
 - implementation exists in the canonical path;
 - verification actually exercised the claimed behavior;
@@ -26,9 +35,11 @@ Confirm that:
 - planning-only material is not being presented as shipped behavior;
 - provider entitlement is not confused with TeamAi entitlement;
 - external configuration is not claimed as TeamAi-owned;
-- UI behavior is reconciled to backend/domain authority.
+- UI behavior is reconciled to backend/domain authority;
+- any learned procedure is clearly separated from product law;
+- M/minimalistic resource use did not remove a required verification or evidence step.
 
-## 3. Evidence classes
+## 4. Evidence classes
 
 Use precise state language:
 
@@ -40,11 +51,13 @@ Use precise state language:
 
 `RUNTIME-PROVEN` — behavior was exercised in the relevant environment.
 
+`LEARNED` — an evidence-backed procedural lesson has been captured.
+
 `COMPLETED` — required implementation and verification gates are satisfied and an authorized completion record exists.
 
 Do not promote one class into another by implication.
 
-## 4. Planning approval is different
+## 5. Planning approval is different
 
 For Planning Team discussions:
 
@@ -52,10 +65,18 @@ For Planning Team discussions:
 
 A summarizer, Team Leader, or other AI cannot endorse its own recommendation as though it were user approval.
 
-## 5. Backend and environment limitations
+## 6. Backend and environment limitations
 
 When hosting, provider access, sandbox availability, credentials, or other environmental limits prevent final runtime proof, record exactly what was exercised and what remains unproven. Do not downgrade a successful local test into a failure, and do not upgrade local/source evidence into hosted production proof.
 
-## 6. Reopening
+## 7. Reopening
 
-A prior endorsement does not permanently authorize later changes. A meaningful architecture, provider, security, entitlement, or canonical-root change must reopen the affected trace and obtain fresh evidence.
+A prior endorsement does not permanently authorize later changes. A meaningful architecture, provider, security, entitlement, or canonical-root change must reopen the affected trace, refresh the applicable skill routing, and obtain fresh evidence.
+
+## SEE ALSO
+
+- `POLICY.md`
+- `docs/SKILL_WIRING.md`
+- `docs/project-guide/HandOver.md`
+- `skills/governance/learning-handover/SKILL.md`
+- `skills/execution/orucaveam/SKILL.md`

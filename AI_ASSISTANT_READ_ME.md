@@ -1,149 +1,85 @@
 # TeamAi — AI Assistant Read Me
 
-This is the operational recovery entry point for AI participants working on TeamAi.
+This is the operational recovery and continuation entry point for AI Development Team agents working on TeamAi.
 
-## Authority order
-1. `PRODUCT_LAW.md` — product authority.
-2. `MASTERPLAN.md` — chronological execution/planning authority.
-3. `POLICY.md` — operating constraints where present.
-4. `AI_ASSISTANT_READ_ME.md` — operational recovery and entry point.
-5. `docs/` domain contracts and implementation/evidence records.
-6. `docs/project-guide/` — project continuation, endorsement, and handover procedures.
-7. Applicable skills/guards, implementation, verification, evidence, Product Knowledge, and continuity records.
+## Authority and navigation order
 
-See `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md` for document routing and execution discipline.
+1. `PRODUCT_LAW.md` — canonical product/architecture authority.
+2. `MASTERPLAN.md` — chronological plan, checklist, dependencies, and gates.
+3. `POLICY.md` — execution constitution and single ORUCAVEAM discipline.
+4. `docs/SKILL_WIRING.md` — end-to-end concept → checklist → ORUCAVEAM → field/domain skill → tool → verification map.
+5. `skills/**/SKILL.md` — direct operational procedures for the current work class.
+6. `PRODUCT-KNOWLEDGE.md` — validated and distilled lessons; read relevant anti-patterns/evidence before repeating work.
+7. `docs/project-guide/HandOver.md` — durable continuation and learning handoff.
+8. `docs/project-guide/Endorsement.md` — authorized completion and learning acceptance.
+9. Domain contracts, implementation, verification evidence, and historical records.
 
-## Backend-first execution rule
-Before implementation begins, the target project's backend authority must be clarified and reconciled with Product Law. ToolKit provides process/knowledge upstream only; it does not define or replace TeamAi backend authority.
+Do not reconstruct current authority from chat memory when the repository contains the authority.
 
-## Execution discipline
-Use this sequence before a meaningful change:
+## Before any meaningful action
 
-`inspect authority → inspect applicable skill/guard → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
+`inspect Product Law → inspect Masterplan → inspect Policy/ORUCAVEAM → resolve applicable ORUCAVEAM skill set → resolve field/domain skills → inspect existing roots/implementation → check known anti-patterns → classify impact → confirm permission → implement smallest canonical change → verify → record evidence → handover/endorsement → update knowledge when learned`
 
-Do not treat ordinary discussion as implementation approval. Do not smuggle canonical/destructive/high-impact changes in as cleanup.
+## Product Law change rule
 
-## Gate handover rule
-A completed TeamAi gate is not surrendered until the target project produces its handover packet/ZIP in the same execution. The packet belongs to TeamAi. ToolKit is never the owner or handover surface for TeamAi.
+When the user adds or changes a feature, read the existing `PRODUCT_LAW.md` logic first. Amend the existing canonical concept when applicable instead of appending a duplicate. Inspect affected consumers and skills. Warn the user before proceeding when the request introduces a discrepancy with an existing protected root, canonical rule, contract, permission boundary, or authority.
 
-## Current gate
-`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
+Use `skills/governance/product-law-change/SKILL.md` together with the applicable ORUCAVEAM skills.
 
-**Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
+## Masterplan and skill wiring
 
-The Firebase emulator/rules verification gate remains **environment-constrained/parked** in the current canonical status. Available source/configuration checks must not be converted into an inferred emulator pass, hosted pass, or production pass. Record any exercised checks precisely and keep the environment limitation explicit.
+Every executable Masterplan checklist item must resolve through `docs/SKILL_WIRING.md` to the applicable ORUCAVEAM letter skills plus relevant field/domain/tool skills, or an explicit no-skill rationale.
 
-The Firebase persistence gate is evidence-backed. `TEAM-EXPERIENCE-029` remains the next product-experience frontier and must not be treated as implemented merely because its planning contracts exist.
+A checklist item is not fully wired merely because it names a domain. The concrete procedure must resolve to an existing direct skill, or the required skill must be proposed/updated before the item is considered executable.
 
-## Canonical backend authority
+Use `skills/governance/masterplan-skill-wiring/SKILL.md`.
+
+## Execution discipline — ORUCAVEAM
+
+ORUCAVEAM is the single execution-discipline framework. It is an integrated sequence containing **M — Minimalistic Efficiency / Resource Use** as its final dimension. There is no separate O-R-U-C-A-V-E-A lifecycle or secondary execution framework.
+
+`O — Objective → R — Restrictions → U — User Authority → C — Canonical Authority → A — Action → V — Verification → E — Efficiency → A — Audit → M — Minimalistic Efficiency / Resource Use`
+
+Each letter resolves to one or more small direct execution skills under `skills/execution/orucaveam/`, except **M**, which resolves to the existing reusable `skills/tools/minimal-tool-usage/SKILL.md` because that tool/resource procedure already provides the required bounded operation.
+
+Use `skills/execution/orucaveam/SKILL.md` first, then resolve only the applicable letter and domain skills needed for the bounded action.
+
+## Permission to proceed
+
+A skill never creates permission. Permission comes from direct user authorization, an approved Masterplan item within scope, or a permitted policy-defined routine that remains inside its recorded scope. Changes to Product Law, protected canonical roots, destructive history, security/authorization boundaries, entitlement, or other high-impact architecture require the appropriate approval/reconciliation gate.
+
+## Learning and teach-back
+
+When an agent discovers a better, safer, clearer, more accurate, or more efficient approach, do not bury it in chat. Tie it to the executed checklist and evidence, capture it in `HandOver.md`, obtain the appropriate endorsement, then update the affected skill and/or this file. Promote to `PRODUCT-KNOWLEDGE.md` only when validated. Propose a ToolKit upstream lesson only after generalization is demonstrated.
+
+An improved procedure belongs in the relevant skill when it is reusable and bounded. This file remains the practical recovery/memory layer and must not become a second policy or product authority.
+
+Use `skills/governance/learning-handover/SKILL.md`.
+
+## Canonical service boundaries
+
 - Firebase Auth = identity / Firebase UID ownership.
 - Firestore `(default)` = TeamAi durable application/domain state.
 - Supabase Edge Functions = trusted server execution and PayPal webhook receiver.
 - PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
-- Firebase Hosting = current web delivery surface.
-- Vercel = browser verification surface only; it is not a TeamAi hosting authority, backend authority, or deployment target.
-- Supabase Postgres = platform infrastructure only, never TeamAi domain/application state.
+- Firebase Hosting = current TeamAi web delivery authority.
+- Vercel = controlled web development, preview, and browser-verification surface; not TeamAi source, domain-state, backend, commerce, or scheduler authority.
 
-## Frozen Firebase project identity
-**The authoritative TeamAi Firebase project is `team-ai-official`.** Never infer or substitute a Firebase project from product naming, screenshots, historical artifacts, remembered context, or a similarly named project. If project identity is ambiguous or conflicting, STOP the affected deployment/verification.
+The authoritative Firebase project is `team-ai-official`.
 
-## Current evidence
-- Gate 3B/3C/3D: Firebase UID-derived persistence, independent Firestore confirmation, and repeat-call idempotency are evidenced.
-- Gate 5B: server-owned PayPal correlation contract is implemented in `src/backend/commerce.ts` and direct source-contract validation passed.
-- Gate 5C: implementation and available-environment verification are PASS/CLOSED. The remaining item is authenticated live PayPal transaction/webhook runtime evidence; this is not an unfinished 5C implementation.
+## Browser verification
 
-Detailed Gate-5B evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
+When a real browser is required, use deterministic Playwright verification. Do not invent UI selectors for UI that does not yet exist. A browser pass proves only the exercised scope. Generated screenshots are not canonical evidence.
 
-## PayPal boundary for the active gate
-The canonical `paypal-webhook` function is the TeamAi production webhook boundary. The previously isolated `teamai-paypal-webhook-v5c` function remains a historical validation artifact and must not become a second production authority. The canonical webhook correlates only authenticated PayPal events to server-owned TeamAi commerce intent and persists durable commerce/entitlement state in Firestore. Browser-provided Firebase UID or payment-success claims are never authoritative.
+Use `skills/verification/browser-smoke/SKILL.md` and applicable ORUCAVEAM verification/audit skills.
 
-The live PayPal transaction/webhook test is the remaining external runtime evidence needed for final TEAM-BACKEND-001 completion endorsement. Do not reopen completed Gate-5C implementation work merely because that live test remains unavailable.
+## Packaging
 
-## Pre-029 commercial/capability planning boundary
-The current 029 planning model distinguishes **Team Quality** from **Tool Quality**. Team Quality concerns future Solo/Team operating mode, persistent AI-seat capacity, basic/advanced model allocation, and team/orchestration capacity. Tool Quality concerns Base TeamAi capabilities plus separately entitled additional tools, plugins, MCP servers, and specialist integrations.
+The Full Project ZIP is a derived project-state package. It must be produced from a pinned canonical repository tree and verified by extracted-path and file-byte/hash equality. It never becomes a second source authority.
 
-These are planning concepts, not current live subscription entitlements. Exact plan names, prices, model catalogs, seat counts, limits, and tool packs remain open until explicitly approved.
-
-TeamAi subscription authority is separate from external provider entitlement. Do not infer that a TeamAi plan grants a provider subscription, API entitlement, agent runtime, model access, or external tool access that the user does not actually possess.
-
-## AI connection / Seat / capability lifecycle
-Do not collapse:
-
-`application ≠ provider ≠ service/runtime ≠ model ≠ connection ≠ Seat ≠ skill ≠ tool/MCP ≠ workstation ≠ entitlement ≠ authorization`
-
-A **Connection** is the externally authorized relationship. An **AI Seat** is the configured TeamAi participation identity inside a Workplace/Project. A Seat may reference a Connection; they remain separate concepts.
-
-Use the planning lifecycle:
-
-`Discover → External Setup → Import/Authorize → Capability Test → Bind → Equip → Activate → Run → Observe → Degrade/Suspend → Recover/Revalidate → Rebind/Retire`
-
-Capability state must be reason-bearing:
-
-`available → configured → TeamAi-entitled → provider-compatible → authorized → project-scoped → seat-allowed → healthy → usable`
-
-A remembered connection or a stale green UI state is never sufficient evidence of current usability. Entitlement, authorization, compatibility, scope, workstation, and health changes must block the affected execution path and preserve recovery information.
-
-### Seat capability profile
-The Seat-level configuration should distinguish at least:
-
-`provider/application + service/runtime + model/variant + Team role + Team Quality + skills + Base TeamAi capabilities + Tool Quality + workstation/scope + permissions + approvals + limits + compliance + health`
-
-The same external capability may support multiple Seats when permitted because Seat identity is a configured TeamAi runtime/policy instance, not merely a model name.
-
-### External setup versus TeamAi activation
-Provider-owned setup remains provider-owned:
-
-`provider account → provider authentication → external application/runtime setup → provider-side terms/scopes`
-
-TeamAi owns its coordination boundary:
-
-`authorized connection → capability test → Workplace/Project binding → Seat configuration → entitlement/policy evaluation → activation`
-
-Never report provider-side setup as complete merely because TeamAi has stored a connection record.
-
-### Equip and Activate
-Equip attaches allowed skills, Base TeamAi capabilities, Tool Quality, tools/plugins/MCP, workstation/scope, context visibility, permissions, approvals, and limits.
-
-Activation requires all mandatory conditions for the configured role to pass. Activation is a state transition, not a browser toggle.
-
-### Planning Team versus Working Team
-Planning Team = user-controlled deliberation, configured turns, selected participants, selected summarizer, structured handoff, user review.
-
-Working Team = approved plan, task/dependency eligibility, Scheduler selection, AI/tool/human execution, durable results/events, downstream eligibility, review/recovery.
-
-The most recent AI contribution is evidence/input, not authoritative user intent.
-
-## Tool execution boundary
-
-`AI Seat → authorized tool intent → TeamAi policy/authorization → scoped connection/plugin/MCP → invocation → result/artifact → durable event`
-
-Never put provider credentials into ordinary AI conversation content. Tool execution must remain attributable to the requesting Seat and Project.
-
-## User-intent preservation
-Every Planning Team turn is grounded in:
-
-`current user instruction + accumulated relevant team discussion + approved project context + current turn instruction`
-
-The immediately previous AI response is only one contribution. It must never override, replace, or silently narrow the user's intent.
-
-Context may be compressed with summaries, references, retrieval, or artifacts, but the compression must preserve materially relevant meaning. The selected final summarizer must be able to synthesize the complete relevant discussion before returning control to the user.
-
-## Detailed planning records
-- `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
-- `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
-- `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
-- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
-- `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
-- `docs/project-guide/AI_ASSISTANT_READ_ME.md`
-- `docs/project-guide/Endorsement.md`
-- `docs/project-guide/HandOver.md`
-
-## Hard implementation rule
-Implementation claims must trace:
-`Product Law → Masterplan item → contract/skill → actual implementation → verification evidence → completion/endorsement`.
-
-Documentation, deployment, green unit tests, or endorsement alone never proves implementation completion.
+Use `skills/packaging/project-package/SKILL.md` with applicable ORUCAVEAM skills, especially verification, audit, efficiency, and M.
 
 ## Recovery rule
-Never reconstruct current authority from chat history when the repository provides a canonical document. Read the authority chain first, then the active checkpoint and execution contract. Preserve historical gaps as gaps; do not manufacture evidence.
+
+Preserve current authority, unresolved limitations, evidence boundaries, and next authorized action across sessions. A previous green deployment or AI answer is not proof of current correctness. Distinguish planned, implemented, verified, runtime-proven, completed, and generalized states.

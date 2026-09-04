@@ -1,7 +1,7 @@
 # TEAM-EXPERIENCE-029 — Canonical UI Planning Contract
 
-**Status:** PLANNING DISCUSSION — NOT IMPLEMENTATION AUTHORITY
-**Date:** 2026-09-03
+**Status:** PLANNING DISCUSSION — NOT IMPLEMENTATION AUTHORITY  
+**Date:** 2026-09-03  
 **Purpose:** Durable planning record for the next frontend/UI phase before production implementation begins.
 
 ## 1. Why this exists
@@ -207,7 +207,7 @@ Before any 029 implementation slice, reconcile the proposed UI root against its 
 
 Apply the project execution discipline:
 
-`inspect authority → inspect applicable skill/guard → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
+`inspect authority → inspect applicable ORUCAVEAM letter skills → inspect field/domain skills → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
 
 UI is a presentation and interaction layer over authoritative state and policy intents. A new page-local rule is invalid when an existing canonical root already owns the meaning.
 
@@ -231,9 +231,10 @@ Any new backend capability discovered by 029 must be routed through the owning b
 
 ## 13. Related durable planning records
 
-- `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `POLICY.md`
+- `docs/SKILL_WIRING.md`
 - `docs/project-guide/HandOver.md`
 - `docs/project-guide/Endorsement.md`
