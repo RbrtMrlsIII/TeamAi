@@ -21,7 +21,7 @@ A permanent Spatial Theme root may be created only after the existing frontend s
 
 Before each implementation slice:
 
-1. Inspect the current repository tree and actual frontend/build-system sources.
+1. Inspect the current repository tree and actual frontend sources (if any).
 2. Identify HTML entrypoints/templates, CSS/style sources, JS/TS modules, shared components, layout shells, existing theme state, token declarations, responsive rules, accessibility behavior, and browser-facing entrypoints.
 3. Trace each discovered visual/state mechanism to its owning root.
 4. Record discrepancies such as duplicate theme state, duplicated token namespaces, page-local breakpoint systems, conflicting selectors, stale references, or structural coupling.
@@ -42,11 +42,13 @@ Use these categories while inspecting real code:
 | Field root | A real functional UI structure found in source, not a predicted future page. |
 | Verification surface | Browser-facing route or test target used by Playwright; never a visual authority. |
 
-## Current pre-theme principle
+## Current source reality (2026-09-04 hygiene)
 
-Permanent field numbering is intentionally **not assigned in this inventory**. Once the real frontend structure is established, approved field roots can be numbered in a separate reconciliation change with evidence showing:
+**No frontend application roots exist on `main` yet.** There is no `frontend/` tree, no `theme-root` CSS/TS, and no HTML shell. `build-system/` contains audit and packaging scripts only — it is **not** a frontend source tree.
 
-`existing source structure → owning root → proposed field identity → affected primitives → companion skill routing → verification boundary`
+Field identity **F0–F7** is assigned for implementation review in `TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md` while legal boxes remain only Shell · Panel · Card · Control · Navigation. Status (F6) and Modal (F7) are system surfaces.
+
+**First implementation root:** a single theme-root under the spatial path (presentation foundation only). Do not invent speculative page fields before that root exists.
 
 ## Spatial Theme constraint
 
@@ -91,4 +93,4 @@ Every populated inventory entry should identify the source path(s), owning root/
 
 ## Next inventory boundary
 
-The first implementation-ready inventory should be produced from the current `build-system` frontend source tree after this document is merged. Do not pre-populate speculative field roots.
+After theme-root lands, re-run this inventory against the real files and record owning roots. Until then, treat “no frontend roots” as the factual baseline.

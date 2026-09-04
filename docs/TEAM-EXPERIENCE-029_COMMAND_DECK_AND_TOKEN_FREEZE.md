@@ -3,7 +3,7 @@
 **Status:** PLANNING STORYBOARD / NOT IMPLEMENTATION / NOT PRODUCT LAW  
 **Date:** 2026-09-04  
 **Authority of this file:** The Command Deck section below is the endorsed freeze. Earlier long-form E0–E5 drafts are superseded.  
-**Still not assigned:** field numbers, color hex, typeface *files*. Size / Space / Type **values** live in `TEAM-EXPERIENCE-029_SEAT_PLATE_E4_AND_TYPE_SCALE.md`.
+**Supersession (2026-09-04 hygiene):** Field numbers (F0–F7), first palette anchors, blur cap, and motion ms are assigned in `TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md`. The historical “Still not assigned” lists below are **stale for those items** and must not undo the reconciliation. Typeface *files* remain unassigned (stacks only).
 
 Command Deck is the first body on the skeleton — same bones in both modes, material only changes. Token *families* are frozen here. Size / Space / Type values, Seat E3 interior, and the shared E4 plate are in the companion scale document.
 
@@ -20,13 +20,13 @@ E0  atmosphere
 E1  │ SHELL   Workplace / Project   health   theme   account  │
 E1  │ NAV     Deck · Workplace · Seats · Planning · Working   │
     │         Artifacts · Approvals · Settings                │
-    ├──────────┬────────────────────────────┬─────────────────┤
+    ├──────────┬──────────────────────────────┬─────────────────┴
 E2  │ SEATS    │ E3 ACTIVE                  │ E2 WHY-NEXT     │
     │ cards    │ Planning conversation  OR  │ dependency      │
     │ role     │ Working task               │ event           │
     │ provider │ user instruction stays     │ scheduler       │
     │ health   │ pinned                     │ capability gate │
-    ├──────────┴────────────────────────────┴─────────────────┤
+    ├──────────┴──────────────────────────────┴─────────────────┤
 E2  │ STATUS   connections · entitlement · recovery           │
     └─────────────────────────────────────────────────────────┘
 E4  approval overlay — only when an action request exists
@@ -40,8 +40,8 @@ E4  approval overlay — only when an action request exists
 | Seat rail | Cards in a Panel | E2 | Name, role, provider, model, connection, eligible/speaking |
 | Active | Panel | E3 | Planning or Working. User instruction stays visible |
 | Why-next | Panel | E2 | Dependency + event + readiness + scheduler + capability gate |
-| Status | Shell | E2 | Connection, TeamAi vs provider entitlement, recovery — text+icon |
-| Approval | Modal panel | E4 | Action + impact + APPROVE/DENY. Strongest plate |
+| Status | System surface inside Shell (F6; not a legal box) | E2 | Connection, TeamAi vs provider entitlement, recovery — text+icon. Not a nav destination. |
+| Approval | Modal panel (F7; shared E4 plate, not a second dialog system) | E4 | Action + impact + APPROVE/DENY. Strongest plate |
 
 Planning vs Working is a product stage inside E3, not a second theme.
 
@@ -71,7 +71,7 @@ One namespace. No `--hero-*`, no page-local hex.
 | Motion | instant/short/medium/long; enter/exit/move; travel none/small | — |
 
 **Legal boxes:** shell · panel · card · control · navigation.  
-The Deck composes them. It does not restyle them.
+The Deck composes them. It does not restyle them. Status (F6) and Modal (F7) are controlled system surfaces, not additional legal boxes.
 
 **Simple scripts later, still not code:** theme switch, Planning/Working stage, seat select, panel presence, approval mount, reduced-motion map. None of those may touch scheduler, Firestore, or entitlements.
 
@@ -185,7 +185,7 @@ Theme control here is the **same** `theme.mode` as the shell control. Not a seco
 
 ## Status strip (not a nav destination)
 
-Always available from Shell/Status on every composition:
+Always available from Shell/Status on every composition. Field identity **F6** — controlled system surface, not a sixth legal box.
 
 | Item | Must communicate | Must not communicate |
 |---|---|---|
@@ -221,8 +221,8 @@ Always available from Shell/Status on every composition:
 
 ---
 
-## Still not assigned
+## Still not assigned (narrowed)
 
-Field numbers. Color hex. Typeface files. Motion as ms.
+Typeface *files* (stacks only remain assigned). Any item already set in `TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md` (F0–F7, palette anchors, blur cap, motion ms) is **not** open for re-assignment from this file.
 
-Values for Size / Space / Type, the Seat plate, and E4 are assigned in `TEAM-EXPERIENCE-029_SEAT_PLATE_E4_AND_TYPE_SCALE.md`.
+Size / Space / Type values, the Seat plate, and E4 remain assigned in `TEAM-EXPERIENCE-029_SEAT_PLATE_E4_AND_TYPE_SCALE.md`.
