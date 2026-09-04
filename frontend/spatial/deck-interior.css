@@ -6,6 +6,11 @@
   max-width: none;
 }
 
+/* Deck panels must not inherit shell-nav's single-column max-width */
+.ta-main .ta-deck .ta-panel {
+  max-width: none;
+}
+
 .ta-deck {
   display: grid;
   grid-template-columns: minmax(12rem, var(--size-seat-card-width)) minmax(0, 1fr) minmax(12rem, 16rem);
@@ -13,10 +18,11 @@
   align-items: start;
 }
 
+/* Attribute selector beats .ta-deck { display: grid } — no !important */
 .ta-deck[hidden],
 .ta-offdeck[hidden],
 .ta-deck__stage-body[hidden] {
-  display: none !important;
+  display: none;
 }
 
 .ta-seat-list {

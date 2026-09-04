@@ -26,6 +26,11 @@ Placeholder seats (Alpha / Beta / Gamma) are static presentation fixtures — no
 | Seat `selected` highlight | Choose next scheduler actor |
 | Theme / density | Firestore / PayPal / entitlements |
 
+## CSS notes (review)
+
+- `[hidden]` uses attribute specificity against `.ta-deck { display: grid }` — **no `!important`**.
+- Deck panels override shell-nav `.ta-main .ta-panel { max-width: 48rem }` so the three-column grid is not cramped.
+
 ## Not included
 
 - Live conversation / task graph
