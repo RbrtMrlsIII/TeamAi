@@ -10,14 +10,15 @@ test.describe('F7 shared E4 plate (presentation)', () => {
 
   test('action cluster: open, Escape closes, no domain claim', async ({ page }) => {
     const modal = page.locator('[data-field="F7"]');
+    const actionCluster = modal.locator('[data-cluster="action"]');
     await expect(modal).toBeHidden();
 
     await page.getByRole('button', { name: 'Preview approval plate' }).click();
     await expect(modal).toBeVisible();
     await expect(modal).toHaveAttribute('aria-hidden', 'false');
     await expect(modal).toHaveAttribute('data-modal-cluster', 'action');
-    await expect(page.getByRole('button', { name: 'DENY' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'APPROVE' })).toBeVisible();
+    await expect(actionCluster.getByRole('button', { name: 'DENY' })).toBeVisible();
+    await expect(actionCluster.getByRole('button', { name: 'APPROVE' })).toBeVisible();
 
     await page.keyboard.press('Escape');
     await expect(modal).toBeHidden();
@@ -32,15 +33,17 @@ test.describe('F7 shared E4 plate (presentation)', () => {
   });
 
   test('handoff cluster: REJECT · EDIT · MORE · APPROVE visible', async ({ page }) => {
-    await page.getByRole('button', { name: 'Preview planning handoff' }).click();
     const modal = page.locator('[data-field="F7"]');
+    const handoffCluster = modal.locator('[data-cluster="handoff"]');
+
+    await page.getByRole('button', { name: 'Preview planning handoff' }).click();
     await expect(modal).toBeVisible();
     await expect(modal).toHaveAttribute('data-modal-cluster', 'handoff');
-    await expect(page.getByRole('button', { name: 'REJECT' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'EDIT' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'MORE' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'APPROVE' })).toBeVisible();
-    await expect(modal.locator('[data-modal-action]:visible')).toHaveCount(5);
+    await expect(handoffCluster.getByRole('button', { name: 'REJECT' })).toBeVisible();
+    await expect(handoffCluster.getByRole('button', { name: 'EDIT' })).toBeVisible();
+    await expect(handoffCluster.getByRole('button', { name: 'MORE' })).toBeVisible();
+    await expect(handoffCluster.getByRole('button', { name: 'APPROVE' })).toBeVisible();
+    await expect(handoffCluster.locator('[data-modal-action]:visible')).toHaveCount(4);
   });
 
   test('handoff: MORE dismisses without approve language', async ({ page }) => {
