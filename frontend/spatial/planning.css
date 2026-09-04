@@ -1,0 +1,150 @@
+/* TEAM-EXPERIENCE-029 — Planning composition
+ * Bounded companion. Theme-root tokens only; no second visual system.
+ */
+
+.ta-planning {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(14rem, 0.8fr);
+  grid-template-areas:
+    "transcript plan"
+    "instruction handoff";
+  gap: var(--space-gutter);
+  align-items: start;
+}
+
+.ta-planning[hidden] {
+  display: none;
+}
+
+.ta-planning__transcript { grid-area: transcript; }
+.ta-planning__plan { grid-area: plan; }
+.ta-planning__instruction { grid-area: instruction; }
+.ta-planning__handoff { grid-area: handoff; }
+
+.ta-planning > .ta-panel {
+  min-width: 0;
+  max-width: none;
+}
+
+.ta-planning__messages {
+  display: grid;
+  gap: var(--space-stack-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ta-planning__message {
+  display: grid;
+  gap: var(--space-stack-xs);
+  min-width: 0;
+  padding: var(--space-inset-md);
+  border-radius: var(--size-radius-sm);
+  background: var(--surface-panel);
+}
+
+.ta-planning__message[data-actor="human"] {
+  background: var(--surface-inset);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink-meta) 20%, transparent);
+}
+
+.ta-planning__message[data-state="current"] {
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.ta-planning__message > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.ta-planning__turns,
+.ta-planning__handoff-facts {
+  margin: 0;
+  display: grid;
+  gap: var(--space-stack-md);
+}
+
+.ta-planning__turns > div,
+.ta-planning__handoff-facts > div {
+  display: grid;
+  gap: var(--space-stack-xs);
+  min-width: 0;
+}
+
+.ta-planning__turns dt,
+.ta-planning__turns dd,
+.ta-planning__handoff-facts dt,
+.ta-planning__handoff-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ta-planning__instruction {
+  background: var(--surface-active);
+}
+
+html[data-theme-mode="dark"] .ta-planning__instruction {
+  backdrop-filter: blur(var(--blur-active));
+  -webkit-backdrop-filter: blur(var(--blur-active));
+}
+
+.ta-planning__form {
+  display: grid;
+  gap: var(--space-stack-md);
+}
+
+.ta-planning__input {
+  width: 100%;
+  min-width: 0;
+  min-height: 7rem;
+  resize: vertical;
+  box-sizing: border-box;
+  padding: var(--space-inset-md);
+  border: 1px solid color-mix(in srgb, var(--ink-meta) 28%, transparent);
+  border-radius: var(--size-radius-sm);
+  background: var(--surface-inset);
+  color: var(--ink-body);
+  font: inherit;
+}
+
+.ta-planning__actions,
+.ta-planning__handoff-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-inset-sm);
+  align-items: center;
+}
+
+.ta-planning__actions .ta-control,
+.ta-planning__handoff-actions .ta-control {
+  max-width: 100%;
+}
+
+.ta-planning__status {
+  min-width: 0;
+  min-height: 1.25rem;
+}
+
+@media (max-width: 56rem) {
+  .ta-planning {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "transcript"
+      "instruction"
+      "plan"
+      "handoff";
+  }
+}
+
+@media (max-width: 28rem) {
+  .ta-planning__actions,
+  .ta-planning__handoff-actions {
+    width: 100%;
+  }
+
+  .ta-planning__actions .ta-control,
+  .ta-planning__handoff-actions .ta-control {
+    flex: 1 1 10rem;
+  }
+}
