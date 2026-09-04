@@ -1,134 +1,228 @@
-# TEAM-EXPERIENCE-029 — Command Deck Storyboard and Token-Family Freeze
+# TEAM-EXPERIENCE-029 — Command Deck Freeze + Remaining Compositions
 
-Status: planning baseline only. No frontend implementation is authorized by this document.
+**Status:** PLANNING STORYBOARD / NOT IMPLEMENTATION / NOT PRODUCT LAW  
+**Date:** 2026-09-04  
+**Authority of this file:** The Command Deck section below is the endorsed freeze. Earlier long-form E0–E5 drafts are superseded.  
+**Still not assigned:** field numbers, color hex, typeface *files*. Size / Space / Type **values** live in `TEAM-EXPERIENCE-029_SEAT_PLATE_E4_AND_TYPE_SCALE.md`.
 
-## Product-order verdict
+Command Deck is the first body on the skeleton — same bones in both modes, material only changes. Token *families* are frozen here. Size / Space / Type values, Seat E3 interior, and the shared E4 plate are in the companion scale document.
 
-`Give life → Skeleton → Hero proof → Remaining compositions → Assign roots/values → Simple scripts → Code`
+---
 
-The skeleton is the foundation. The Command Deck is the first body that wears it.
+## Command Deck
 
-“Give life” defines what each composition must communicate and allow the user to do. It does not mean a landing-page hero, twenty routes, or private visual recipes. Fields remain the meaning units; pages are compositions of fields.
-
-## Command Deck — first inhabited skeleton
+**Purpose:** operate the current team. Not a marketing hero.  
+**Primary action:** instruct, watch the turn/task, approve or refuse, switch Planning/Working without losing context.
 
 ```text
-E0  ATMOSPHERE
-    ┌────────────────────────────────────────────────────────────┐
-E1  │ SHELL   Workplace / Project   health   theme   account     │
-E1  │ NAV     Deck · Workplace · Seats · Planning · Working     │
-    │         Artifacts · Approvals · Settings                  │
-    ├────────────┬────────────────────────────┬────────────────┤
-E2  │ SEATS      │ E3 ACTIVE                  │ E2 WHY-NEXT    │
-    │ cards      │ Planning conversation OR   │ dependency     │
-    │ role       │ Working task               │ event          │
-    │ provider   │ user instruction pinned    │ scheduler      │
-    │ health     │                            │ capability     │
-    ├────────────┴────────────────────────────┴────────────────┤
-E2  │ STATUS   connections · entitlement · recovery             │
-    └────────────────────────────────────────────────────────────┘
+E0  atmosphere
+    ┌─────────────────────────────────────────────────────────┐
+E1  │ SHELL   Workplace / Project   health   theme   account  │
+E1  │ NAV     Deck · Workplace · Seats · Planning · Working   │
+    │         Artifacts · Approvals · Settings                │
+    ├──────────┬────────────────────────────┬─────────────────┤
+E2  │ SEATS    │ E3 ACTIVE                  │ E2 WHY-NEXT     │
+    │ cards    │ Planning conversation  OR  │ dependency      │
+    │ role     │ Working task               │ event           │
+    │ provider │ user instruction stays     │ scheduler       │
+    │ health   │ pinned                     │ capability gate │
+    ├──────────┴────────────────────────────┴─────────────────┤
+E2  │ STATUS   connections · entitlement · recovery           │
+    └─────────────────────────────────────────────────────────┘
 E4  approval overlay — only when an action request exists
 ```
 
 | Region | Primitive | Elevation | Must be seen |
 |---|---|---|---|
-| Atmosphere | Environment | E0 | Depth only; no durable data |
+| Atmosphere | environment | E0 | Depth only. No data. |
 | Shell | Shell | E1 | Workplace, Project, health, theme, account |
-| Nav | Navigation | E1 | Same labels in Dark, Light, compact |
-| Seat rail | Cards in Panel | E2 | Name, role, provider, model, connection, eligibility/speaking |
-| Active | Panel | E3 | Planning or Working; user instruction remains visible |
-| Why-next | Panel | E2 | Dependency + event + readiness + scheduler + authorization |
-| Status | Shell | E2 | Connection, TeamAi/provider entitlement, recovery; text + icon |
-| Approval | Modal Panel | E4 | Action + impact + APPROVE/DENY; strongest plate |
+| Nav | Navigation | E1 | Same labels in Dark, Light, and compact |
+| Seat rail | Cards in a Panel | E2 | Name, role, provider, model, connection, eligible/speaking |
+| Active | Panel | E3 | Planning or Working. User instruction stays visible |
+| Why-next | Panel | E2 | Dependency + event + readiness + scheduler + capability gate |
+| Status | Shell | E2 | Connection, TeamAi vs provider entitlement, recovery — text+icon |
+| Approval | Modal panel | E4 | Action + impact + APPROVE/DENY. Strongest plate |
 
-Planning vs Working is a product stage inside E3, not a second theme and not a fork of the skeleton.
+Planning vs Working is a product stage inside E3, not a second theme.
 
-Primary action: operate the current team/task — instruct, observe, approve/refuse an action, and switch Planning/Working without losing context.
+**Dark (Command Space):** deep field, stable opaque shell, glass only on elevated panels, localized light on the active seat/task, approval almost opaque. Blur is an edge cue, not a fill.
 
-## Material personalities
+**Light (Instrument Space):** warm foundation, bezel shell, inset fields, raised buttons, pressed = inset. Not inverted Dark. Not fake leather.
 
-### Command Space — Dark Spatial Glassmorphism
-Recommended name; not endorsed yet.
+**Keyboard:** shell → nav → seats → active → why-next → status → approval if open.  
+**Reduced motion:** no travel, no pulse. Theme switch does not reshuffle layout.
 
-Deep spatial field, stable opaque shell, restrained glass on elevated panels, localized light on active seat/task, near-opaque approval surface. Blur is an edge cue, not a default fill. Elevation carries hierarchy rather than decorative glow.
+---
 
-### Instrument Space — Light Spatial Skeuomorphism
-Recommended name; not endorsed yet.
+## Token-family freeze (names only)
 
-Warm/light foundation, bezel-like shell, inset fields, raised controls, pressed controls become inset. Physical depth is controlled and purposeful. It is not inverted Dark and not white glass.
-
-Both modes preserve meaning, structure, controls, and elevation roles; only material treatment and shadow/light language may retune.
-
-## Interaction baseline
-
-Keyboard order:
-
-`Shell → Navigation → Seats → Active → Why-next → Status → Approval (when open)`
-
-Reduced motion means no travel and no pulse. Theme switching does not reshuffle layout.
-
-## Token-family freeze — names only
-
-One semantic namespace. Values come later.
+One namespace. No `--hero-*`, no page-local hex.
 
 | Family | Frozen roles | Dark/Light may retune |
 |---|---|---|
-| Theme | mode, color-scheme, source (user beats OS) | material only |
-| Surface | atmosphere, shell, panel, active, modal, inset, raised | fill/material |
-| Depth | atmosphere, scrim (E4 only), blur-cap, optional-light-grain | intensity |
-| Elevation | e0…e4 + focus; no e5 | shadow/light |
-| Type | family, mono, display, title, body, label, meta, status | color relative to surface |
-| Size | control-sm/md/lg, icon, radius-scale, seat-card, focus-ring | no semantic drift |
-| Space | inset, stack, gutter, shell, density-default/compact | no page-local padding |
-| State | focus, hover, pressed, selected, disabled, speaking; ok/degraded/blocked/unauthorized | accent only |
-| Motion | instant/short/medium/long; enter/exit/move; travel-none/small | no page-local timing |
+| Theme | `mode`, `color-scheme`, `source` (user beats OS) | — |
+| Surface | atmosphere, shell, panel, active, modal, inset, raised | fill / glass vs plate |
+| Depth | atmosphere, scrim (E4 only), blur cap, optional light grain | intensity |
+| Elevation | `e0`…`e4` + `focus`. **No e5** | shadow/light, not order |
+| Type | family, mono, display, title, body, label, meta, status | color vs surface, not role |
+| Size | control sm/md/lg, icon, radius, seat-card, focus ring | — |
+| Space | inset, stack, gutter, shell, density default/compact | — |
+| State | focus, hover, pressed, selected, disabled, speaking; status ok/degraded/blocked/unauthorized | accent, not meaning |
+| Motion | instant/short/medium/long; enter/exit/move; travel none/small | — |
 
-Legal shared boxes:
+**Legal boxes:** shell · panel · card · control · navigation.  
+The Deck composes them. It does not restyle them.
 
-`Shell · Panel · Card · Control · Navigation`
+**Simple scripts later, still not code:** theme switch, Planning/Working stage, seat select, panel presence, approval mount, reduced-motion map. None of those may touch scheduler, Firestore, or entitlements.
 
-The Deck composes these primitives; it does not restyle them per page.
+---
 
-## Motion ownership
+## Remaining nav compositions
 
-Motion owns duration/easing/travel tokens. Transition consumes them for bounded state changes. Animation consumes them for bounded choreographed sequences. Pages do not invent durations, curves, or local motion systems.
+Same skeleton. Same tokens. Same E0–E4. Same Dark/Light material law.  
+A destination is a **rearrangement of primitives**, not a new theme.
 
-## Initial composition set
+Shell + Nav + Atmosphere persist on every composition. Only the interior changes. Compact collapse still parks E2 rails before E3, and never parks E4 if an approval is open.
 
-These are compositions, not numbered roots.
+### Workplace
 
-| Composition | Must be seen | Primary action | Elevation peak |
+**Purpose:** choose and understand the current Workplace / Project.  
+**Primary action:** enter a Project (returns to Deck).
+
+| Region | Primitive | Elev | Must be seen |
 |---|---|---|---|
-| Command Deck | Shell, nav, team, seats, active task, status | Operate current team/task | Active task |
-| Workplace / Project | Workplace, Project, context, health | Enter/switch context | Panel |
-| Seat / Provider | Seat, provider, runtime, model, connection, skills, tools | Bind/test/activate | Panel |
-| Planning Team | Shared conversation, turns, summarizer, review | Approve / Edit / More / Reject | Conversation panel |
-| Working Team | Task, dependency, event, why-next | Review execution | Active task |
-| Approval / Action | Action request, impact, confirm/deny | Approve/refuse | E4 modal |
-| Artifacts | Files, handoffs, results | Open/attach | Card |
-| Commerce | TeamAi entitlement vs provider entitlement | Buy/manage | Panel |
-| Settings | Connections, limits, theme | Save setting | Panel |
-| Recovery | Failures, retries, diagnostics | Recover | Panel |
+| List | Cards in a Panel | E2 | Workplace name, owner, project count, health |
+| Detail | Panel | E3 | Selected Workplace, its Projects, workstation/scope, team bound here |
+| Danger | Modal | E4 | Only for leave/archive/transfer — not ordinary switch |
 
-Add another composition only when a real view requires a new assembly.
+Must not: host seat OAuth, commerce checkout, or the live conversation.
 
-## Non-goals before endorsement
+### Seats
 
-- No HTML, CSS, or UI JavaScript/TypeScript.
-- No field-number assignment.
-- No page-local theme roots, palettes, fonts, spacing scales, or motion durations.
-- No second browser-verification skill; existing Playwright/browser-smoke remains the verification surface.
-- No backend, scheduler, Firestore, entitlement, or authorization behavior is introduced by this baseline.
+**Purpose:** bind a provider connection to a seat and see capability truth.  
+**Primary action:** select a seat, test connection, activate when allowed.
 
-## After endorsement and explicit 029 UI authorization
+| Region | Primitive | Elev | Must be seen |
+|---|---|---|---|
+| Seat list | Cards | E2 | Name, role (planning/summarizer/worker/reviewer/leader), provider, runtime, model, connection, health |
+| Seat plate | Panel | E3 | Skills, Base TeamAi capabilities, Tool Quality, tools/MCP, workstation, scopes, limits, Team Quality |
+| Entitlement split | Panel | E2 | TeamAi entitlement vs provider entitlement — never implied as one |
+| Test / activate | Modal | E4 | Capability test result before Active; or approval if policy requires |
 
-1. Establish the unified theme root, semantic tokens, and `color-scheme` behavior.
-2. Establish Shell, Panels, Cards, Controls, and Navigation primitives.
-3. Assemble the application shell and navigation.
-4. Build one Command Deck proof in both Command Space and Instrument Space using the same skeleton.
-5. Add remaining compositions by consuming the same skeleton.
-6. Assign concrete roots for size, type, space, boxes, and motion only after that contact with implementation.
-7. Add simple presentation scripts only: theme switch, focus, panel presence, stage switch, approval mount, reduced-motion mapping.
-8. Proceed to UI code only after the baseline is stable and verified.
+Must not: become the chat. Activation failure stays on this composition and in Status.
 
-Root numbering is the final reconciliation step: number only roots that survive contact with the implementation tree.
+### Planning
+
+**Purpose:** full deliberation surface when E3 on the Deck is not enough.  
+**Primary action:** instruct; review summarizer handoff.
+
+| Region | Primitive | Elev | Must be seen |
+|---|---|---|---|
+| Transcript | Panel (inset in Light) | E2 | Shared conversation; current speaker; human messages distinct |
+| Pinned instruction | Active panel | E3 | Current user instruction remains visible while AIs talk |
+| Turn plan | Panel | E2 | Seat order, turns-per-AI, designated summarizer, document-author path (one only) |
+| Handoff | Active or Modal | E3 / E4 | Decisions, rationale, alternatives, unresolved, `APPROVE / EDIT / MORE / REJECT` |
+
+Durable mutation does not happen from this visual. User review is the gate.  
+Previous AI reply is a contribution, not authority.
+
+### Working
+
+**Purpose:** full execution surface.  
+**Primary action:** inspect the eligible task and why it is next.
+
+| Region | Primitive | Elev | Must be seen |
+|---|---|---|---|
+| Task graph | Cards in a Panel | E2 | Task, dependency, state, assigned seat/tool |
+| Current task | Active panel | E3 | Eligible task, assigned seat, last event, result/artifact pointer |
+| Why-next | Panel | E2 | Same sentence as Deck: dependency + event + scheduler + capability gate |
+| Blocked action | Modal | E4 | Approval, missing capability, unauthorized, or failed connection |
+
+Working does not rewrite the approved plan. A new planning path is required to change it.
+
+### Artifacts
+
+**Purpose:** open, attach, and trace files/handoffs/results.  
+**Primary action:** open an artifact or attach it to the current task.
+
+| Region | Primitive | Elev | Must be seen |
+|---|---|---|---|
+| Index | Cards | E2 | Name, type, originating seat, task/event id (`type.mono`), time |
+| Preview | Panel | E3 | Bounded preview or summary; large bodies stay referenced |
+| Attach / export | Modal | E4 | Confirm attach to task, or export — policy may require approval |
+
+Must not: dump unrestricted repo contents or secrets into the well.
+
+### Approvals
+
+**Purpose:** the queue of action requests. The E4 plate is the same primitive as the Deck overlay.  
+**Primary action:** APPROVE or DENY one request.
+
+| Region | Primitive | Elev | Must be seen |
+|---|---|---|---|
+| Queue | Cards | E2 | Request, seat, impact, waiting-since, status |
+| Selected | Active panel | E3 | Full impact, what will run, what will not |
+| Decision | Modal | E4 | APPROVE / DENY. Focus trapped. Same plate as Deck E4 |
+
+One approval language everywhere. No “cute” confirm on Deck and a different dialog here.
+
+### Settings
+
+**Purpose:** account, theme, connections, limits — configuration, not operations.  
+**Primary action:** save a setting; start a connection flow (completes outside if the provider requires it).
+
+| Region | Primitive | Elev | Must be seen |
+|---|---|---|---|
+| Account | Panel | E2 | Identity (Firebase UID ownership is backend; UI only displays) |
+| Theme | Controls | E2 | One mode switch. `source` user vs OS default |
+| Connections | Cards | E2 | Provider connections, health ok/degraded/blocked/unauthorized |
+| Limits | Panel | E3 | Budget, rate, storage, approval policy — display of policy, not a rewrite of Product Law |
+| Destructive | Modal | E4 | Disconnect, revoke, reset local theme |
+
+Theme control here is the **same** `theme.mode` as the shell control. Not a second root.
+
+---
+
+## Status strip (not a nav destination)
+
+Always available from Shell/Status on every composition:
+
+| Item | Must communicate | Must not communicate |
+|---|---|---|
+| Connection | ok / degraded / blocked / unauthorized | “try another provider” as authority |
+| Entitlement | TeamAi plan vs provider subscription as two facts | that one grants the other |
+| Recovery | something failed and where to go | a debugger as the product |
+
+---
+
+## Compact law (all compositions)
+
+1. E4 stays reachable if open  
+2. E3 stays reachable  
+3. Seat/list rails compress  
+4. Why-next / extra E2 parks behind a label  
+5. Nav → bar/menu  
+6. Atmosphere chrome goes first  
+7. No horizontal overflow  
+8. Hover is never the only path
+
+---
+
+## Scripts later (closed list)
+
+| Script | May do | Must not do |
+|---|---|---|
+| theme switch | write `theme.mode` + `color-scheme` | change layout or domain state |
+| Planning/Working stage | retune E3 skin | create a second theme |
+| seat select | `state.selected` / `speaking` | pick the next scheduler actor |
+| panel presence | open/close E2 rails | persist as Firestore truth |
+| approval mount | E4 + focus trap | execute the action |
+| reduced-motion map | travel → none | hide status |
+
+---
+
+## Still not assigned
+
+Field numbers. Color hex. Typeface files. Motion as ms.
+
+Values for Size / Space / Type, the Seat plate, and E4 are assigned in `TEAM-EXPERIENCE-029_SEAT_PLATE_E4_AND_TYPE_SCALE.md`.
