@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="./theme-root.css" />
   <link rel="stylesheet" href="./shell-nav.css" />
   <link rel="stylesheet" href="./deck-interior.css" />
+  <link rel="stylesheet" href="./f7-modal.css" />
 </head>
 <body data-field="F0" class="ta-atmosphere">
   <a class="ta-skip" href="#main">Skip to main</a>
@@ -77,7 +78,6 @@
   </nav>
 
   <main id="main" class="ta-main" tabindex="-1">
-    <!-- Deck interior: only visible when nav is Deck -->
     <div class="ta-deck" data-composition="deck" data-deck-root hidden>
       <aside class="ta-panel ta-deck__seats" data-field="F3" aria-label="Seat rail">
         <h2 class="ta-type-label">Seats</h2>
@@ -127,6 +127,10 @@
         <div class="ta-deck__stage-body" data-stage-panel="working" hidden>
           <p class="ta-type-body">Working stage skin. Task region not wired. No scheduler writes.</p>
         </div>
+        <p class="ta-type-meta" data-modal-result role="status"></p>
+        <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-action="open-approval">
+          Preview approval plate
+        </button>
       </section>
 
       <aside class="ta-panel ta-deck__why" data-field="F3" aria-label="Why next">
@@ -140,7 +144,6 @@
       </aside>
     </div>
 
-    <!-- Non-Deck destinations keep a simple panel -->
     <section class="ta-panel ta-offdeck" data-field="F3" data-offdeck-root aria-labelledby="stage-title" hidden>
       <h1 id="stage-title" class="ta-type-title" data-stage-title>Workplace</h1>
       <p class="ta-type-body" data-stage-copy>
@@ -148,6 +151,42 @@
       </p>
     </section>
   </main>
+
+  <!-- F7: single shared E4 plate — not a second dialog system -->
+  <div
+    class="ta-modal"
+    data-field="F7"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="f7-title"
+    aria-hidden="true"
+    hidden
+  >
+    <div class="ta-modal__plate" tabindex="-1">
+      <div class="ta-modal__header">
+        <h2 id="f7-title" class="ta-type-title">Action request</h2>
+        <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-modal-action="dismiss" aria-label="Close">Close</button>
+      </div>
+      <dl class="ta-modal__meta">
+        <div>
+          <dt class="ta-type-meta">Actor</dt>
+          <dd class="ta-type-body">Alpha · planning · provider · model (fixture)</dd>
+        </div>
+        <div>
+          <dt class="ta-type-meta">Impact</dt>
+          <dd class="ta-type-body">Presentation preview only. Approving does not run tools, write Firestore, or charge PayPal.</dd>
+        </div>
+        <div>
+          <dt class="ta-type-meta">Health</dt>
+          <dd class="ta-type-status">ok</dd>
+        </div>
+      </dl>
+      <div class="ta-modal__actions">
+        <button type="button" class="ta-control" data-field="F5" data-modal-action="deny">DENY</button>
+        <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-modal-action="approve" aria-primary="true">APPROVE</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="./shell-nav.js"></script>
 </body>
