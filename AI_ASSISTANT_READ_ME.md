@@ -40,7 +40,7 @@ ORUCAVEAM is the single execution-discipline framework. It is the existing ORUCA
 
 `O — Objective → R — Restrictions → U — User Authority → C — Canonical Authority → A — Action → V — Verification → E — Efficiency → A — Audit → M — Minimalistic Efficiency / Resource Use`
 
-Each letter resolves to one or more small direct execution skills under `skills/execution/orucaveam/`. These are composed with field/domain skills as required by the Masterplan item.
+Each letter resolves to one or more small direct execution skills under `skills/execution/orucaveam/`, except **M**, which resolves to the existing reusable `skills/tools/minimal-tool-usage/SKILL.md` because that tool/resource procedure already provides the required bounded operation.
 
 Use `skills/execution/orucaveam/SKILL.md` first, then resolve only the applicable letter and domain skills needed for the bounded action.
 
@@ -78,7 +78,7 @@ Use `skills/verification/browser-smoke/SKILL.md` and applicable ORUCAVEAM verifi
 
 The Full Project ZIP is a derived project-state package. It must be produced from a pinned canonical repository tree and verified by extracted-path and file-byte/hash equality. It never becomes a second source authority.
 
-Use `skills/packaging/project-package/SKILL.md` with applicable ORUCAVEAM skills, especially verification, audit, efficiency, and minimalistic resource use.
+Use `skills/packaging/project-package/SKILL.md` with applicable ORUCAVEAM skills, especially verification, audit, efficiency, and M.
 
 ## Recovery rule
 
