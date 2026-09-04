@@ -2,7 +2,6 @@ import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { ConversationOrchestrator, type CreateConversationInput } from '../orchestrator.js';
 import type { Participant } from '../domain.js';
 import { assertParticipantLimit, type PlanCode } from '../billing/tiers.js';
@@ -10,7 +9,9 @@ import { transition, type WorkflowEvent, type WorkflowState } from '../state/wor
 
 export interface ApiDependencies { orchestrator: ConversationOrchestrator; resolvePlan(userId:string): Promise<PlanCode>; catalog?: { listModels(input:{userPlan?:string;provider?:string;capability?:string}): Promise<unknown[]> }; }
 
-const SPATIAL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../frontend/spatial');
+// npm start runs from dist/; import.meta.url would point under dist/src/api.
+// Always resolve presentation assets from the repository working directory.
+const SPATIAL_ROOT = path.resolve(process.cwd(), 'frontend/spatial');
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -29,7 +30,7 @@ async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
   let rel = url.pathname.slice('/spatial'.length);
   if (rel === '' || rel === '/') rel = '/index.html';
   const resolved = path.resolve(SPATIAL_ROOT, '.' + rel);
-  if (!resolved.startsWith(SPATIAL_ROOT)) {
+  if (!resolved.startsWith(SPATIAL_ROOT + path.sep) && resolved !== SPATIAL_ROOT) {
     json(res, 403, { error: 'forbidden' });
     return true;
   }
@@ -39,7 +40,7 @@ async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
     res.writeHead(200, { 'content-type': MIME[ext] ?? 'application/octet-stream' });
     res.end(data);
   } catch {
-    json(res, 404, { error: 'not_found' });
+    json(res, 404, { error: 'not_found', path: rel, root: SPATIAL_ROOT });
   }
   return true;
 }
