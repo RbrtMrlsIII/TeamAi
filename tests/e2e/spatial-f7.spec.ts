@@ -11,9 +11,10 @@ test.describe('F7 shared E4 plate (presentation)', () => {
   test('action cluster: open, Escape closes, no domain claim', async ({ page }) => {
     const modal = page.locator('[data-field="F7"]');
     const actionCluster = modal.locator('[data-cluster="action"]');
+    const active = page.getByLabel('Active');
     await expect(modal).toBeHidden();
 
-    await page.getByRole('button', { name: 'Preview approval plate' }).click();
+    await active.getByRole('button', { name: 'Preview approval plate', exact: true }).click();
     await expect(modal).toBeVisible();
     await expect(modal).toHaveAttribute('aria-hidden', 'false');
     await expect(modal).toHaveAttribute('data-modal-cluster', 'action');
@@ -25,7 +26,8 @@ test.describe('F7 shared E4 plate (presentation)', () => {
   });
 
   test('action cluster: DENY records UI-only result', async ({ page }) => {
-    await page.getByRole('button', { name: 'Preview approval plate' }).click();
+    const active = page.getByLabel('Active');
+    await active.getByRole('button', { name: 'Preview approval plate', exact: true }).click();
     await page.getByRole('button', { name: 'DENY' }).click();
     await expect(page.locator('[data-field="F7"]')).toBeHidden();
     await expect(page.locator('[data-modal-result]')).toContainText('DENY');
