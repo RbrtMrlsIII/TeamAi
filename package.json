@@ -11,6 +11,8 @@
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
     "test:unit": "npm run build && node --test tests/*.test.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report",
     "project:package": "python3 build-system/scripts/project-package.py create-and-verify",
     "project:package:verify": "python3 build-system/scripts/project-package.py verify",
     "firebase:rules:gate": "bash build-system/scripts/firebase-rules-gate-004.sh",
@@ -37,6 +39,7 @@
     "fastify": "^5.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.1",
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
