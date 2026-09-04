@@ -2,6 +2,12 @@
 
 `PRODUCT_LAW.md` is the product authority. The full chronological Masterplan is maintained in the synchronized project package while this repository surface carries the active gates needed for agent recovery and execution.
 
+## Current execution wiring
+
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → tools/systems → verification → evidence → HandOver / Endorsement → PRODUCT-KNOWLEDGE.md`
+
+Every executable checklist item must resolve to a skill path in `docs/SKILL_WIRING.md` or explicitly state why no skill is required. `skills/SKILLS_INDEX.md` is a skill-library README/index when present; it is not the canonical wiring map.
+
 ## Current chronological gate
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
@@ -27,6 +33,19 @@
 15. [ ] Traceability audit reconciled from Product Law → plan → contract/skill → implementation → evidence → endorsement.
 16. [ ] TEAM-BACKEND-001 completion endorsement recorded.
 17. [ ] Only after all `BLOCKS_029` gates are evidenced: release hold on TEAM-EXPERIENCE-029.
+
+### Checklist skill-routing baseline
+
+| Checklist | Required routing |
+|---|---|
+| 1–6 | `skills/execution/orucaveam/SKILL.md` + relevant governance/document skills |
+| 7 | `skills/execution/orucaveam/SKILL.md`; Firebase-specific skill is a future bounded extension |
+| 8–10 | `skills/execution/orucaveam/SKILL.md`; backend/Firebase/Supabase skill family is a future bounded extension |
+| 11–12 | `skills/execution/orucaveam/SKILL.md`; commerce skill family is a future bounded extension |
+| 13–14 | `skills/execution/orucaveam/SKILL.md`; provider/backend skills to be wired before implementation expands |
+| 15–17 | `skills/governance/learning-handover/SKILL.md` + `skills/governance/masterplan-skill-wiring/SKILL.md` |
+
+A field-specific skill must be created before a recurring bounded procedure becomes dependent on repeated ad-hoc instructions.
 
 ### Gate 5B boundary — PASS
 The server-owned commerce contract establishes a pending intent from the trusted Firebase UID and correlation ID. A later verified PayPal event binds its provider event ID to that existing intent and derives the stable idempotency key. The browser is never the source of payment ownership truth.
@@ -229,11 +248,12 @@ Browser verification is validation evidence only; it does not become TeamAi host
 Any backend capability discovered during 029 must be routed through the owning backend/integration contract rather than embedded as browser authority.
 
 Detailed planning contracts:
-- `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `POLICY.md`
+- `docs/SKILL_WIRING.md`
 
 ## Target-project handover rule
 Every completed gate must surrender a target-project handover packet/ZIP in the same execution. The handover belongs to TeamAi; Universal ToolKit only provides reusable upstream process knowledge and does not own TeamAi project state.

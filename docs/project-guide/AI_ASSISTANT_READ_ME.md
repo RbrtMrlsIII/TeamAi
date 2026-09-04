@@ -1,6 +1,6 @@
 # TeamAi Project Guide — AI Assistant Entry Point
 
-**Status:** OPERATIONAL ENTRY GUIDE
+**Status:** OPERATIONAL ENTRY GUIDE / BASELINE
 
 This file is the project-guide companion to the root `AI_ASSISTANT_READ_ME.md`. It does not replace the root authority chain.
 
@@ -11,11 +11,13 @@ Read in this order:
 1. `README.md`
 2. `PRODUCT_LAW.md`
 3. `MASTERPLAN.md`
-4. `/AI_ASSISTANT_READ_ME.md`
-5. `docs/DOCUMENTATION_AND_EXECUTION_DISCIPLINE.md`
-6. the applicable phase/domain contract
-7. the applicable implementation/evidence records
+4. `POLICY.md`
+5. `docs/SKILL_WIRING.md`
+6. `/AI_ASSISTANT_READ_ME.md`
+7. the applicable phase/domain contract
 8. the applicable skill/guard before changing code or canonical documents
+9. the applicable implementation/verification/evidence records
+10. `docs/project-guide/HandOver.md` and `docs/project-guide/Endorsement.md` when completing or transferring work
 
 ## Current phase
 
@@ -35,22 +37,66 @@ The repository is preparing for `TEAM-EXPERIENCE-029`, but 029 remains a plannin
 - TeamAi subscription concepts must not be mistaken for provider subscriptions.
 - MCP/tool availability must not be mistaken for authorization.
 - ToolKit is upstream-only and does not own TeamAi state.
+- Vercel is non-authoritative and may be used as a controlled web development/preview/browser-verification surface when the current web work benefits from it; it is not a TeamAi source, delivery, backend, commerce, scheduler, authorization, or completion authority.
+- The Full Project ZIP is a first-class project-state package, not an optional add-on; it must follow `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
 
-## Planning Team
+## Execution discipline
 
-The Planning Team is a user-controlled, turn-based deliberation system.
+The outer lifecycle is:
+
+`Observe → Record → Understand → Classify → Align → Validate → Endorse → Advance`
+
+The inner action lens is ORUCAVEAM:
+
+`Objective → Restrictions → User Authority → Canonical Authority → Action → Verification → Efficiency → Audit → Minimalistic Tool/Resource Use`
+
+Use `docs/SKILL_WIRING.md` to select the applicable skill and `skills/**/SKILL.md` for the direct procedure.
+
+## Product Law change
+
+When the user adds or changes a feature, inspect the existing Product Law logic first. Amend the existing canonical concept when applicable instead of appending a duplicate. Warn the user before proceeding when the requested change creates a discrepancy with an existing protected root or canonical rule.
+
+Use `skills/governance/product-law-change/SKILL.md`.
+
+## Learning and teach-back
+
+When an AI Development Team agent discovers a better, safer, clearer, more accurate, or more efficient method, record it with execution evidence. Put the continuation/learning note in `docs/project-guide/HandOver.md`, obtain the applicable endorsement, then update the affected skill and/or `AI_ASSISTANT_READ_ME.md`. Promote to `PRODUCT-KNOWLEDGE.md` only when validated. Propose a ToolKit upstream lesson only after generalization is demonstrated.
+
+Use `skills/governance/learning-handover/SKILL.md`.
+
+## Controlled Vercel web verification
+
+The complete rule is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+
+Vercel is not restricted to UI-only work. It may be used deliberately for relevant web development and browser verification, including UI, UI-plus-backend integration, authenticated web flows, commerce-facing browser flows, responsive behavior, preview environments, and end-to-end browser smoke tests.
+
+The browser result proves only the web behavior actually exercised. Backend, Firestore, PayPal, identity, entitlement, authorization, scheduler, deployment, and architecture evidence remain owned by their canonical authorities.
+
+## Full Project ZIP and artifact discipline
+
+The Full Project ZIP is the portable bulk-edit, handover, recovery, and transfer representation of the canonical GitHub project tree. It is derived from the pinned GitHub commit; it does not become a competing source authority.
+
+The package must be flattened at the project root, preserve exact tracked file bytes and relative paths, and verify that the extracted tree matches the canonical tracked tree byte-for-byte.
+
+Generated artifacts are not project source. Screenshots, browser captures, visual evidence images, preview output, build output, test/coverage output, logs, caches, local emulator state, deployment caches, editor state, and local secrets must not enter the package.
+
+See `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
+
+## Founder Pulse
+
+Founder Pulse is a read-only operational observation layer over GitHub/GitLab Issue flow. Its observations are continuity/management evidence, not mutation authority or implementation proof. GitLab support in Founder Pulse does not place GitLab inside the current TeamAi architecture.
+
+## Planning and Working Team
+
+Planning Team:
 
 `User objective → configured participants → one response at a time → accumulated discussion → selected summarizer → structured handoff → user review → next command`
 
-The user controls turn settings, participant selection, summarizer selection, and whether the discussion moves forward.
-
-The final summarizer must preserve the meaningful accumulated discussion, not merely the latest AI message. The user remains the final authority.
-
-## Working Team
+Working Team:
 
 `Approved handoff → task/dependency graph → Scheduler → AI/tool/human execution → durable event/result → next eligible work → review/recovery`
 
-The Working Team applies the approved plan under Seat, connection, capability, permission, budget, and approval constraints.
+The latest AI contribution never replaces accumulated user intent.
 
 ## Connection and Seat
 
@@ -60,34 +106,8 @@ Do not combine these meanings:
 
 Provider/application setup may happen outside TeamAi. TeamAi then tests, scopes, equips, binds, authorizes, and activates the participating AI Seat.
 
-## Tools and MCP
-
-An AI may use an individual tool only through the authorized TeamAi boundary:
-
-`Seat → tool intent → policy/authorization → scoped plugin/connection/MCP → invocation → result/artifact → durable event`
-
-MCP is an integration/capability protocol and does not replace TeamAi's scheduler, identity authority, permission model, or durable state.
-
-Base TeamAi capabilities may be native. Additional MCP/tool capability can be separately entitled and may be used by basic or advanced models when all conditions permit.
-
-## Context and user intent
-
-A rich team chat does not mean every model receives the same unrestricted transcript.
-
-The execution context should be meaning-preserving:
-
-`current user instruction + accumulated relevant team discussion + approved project context + current turn instruction`
-
-Compression, summarization, retrieval, and artifact references are allowed only when they do not silently alter the meaning of the user's request.
-
 ## Before changing anything
 
-Use the project execution discipline:
+`inspect Product Law → inspect Masterplan → inspect Policy/ORUCAVEAM → resolve skill → inspect existing roots → check knowledge/anti-patterns → confirm permission → change → verify → evidence → handover/endorsement`
 
-`inspect authority → inspect applicable skill/guard → inspect existing roots → classify proposal/change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
-
-When a rule is unclear or contradictory, STOP the affected implementation path and document the reconciliation need instead of inventing a new authority.
-
-## Continuity
-
-Planning ideas that matter must be captured in repository documents before they become cold conversation history. Use the dedicated 029 contracts and this project guide as durable memory, while keeping implementation/evidence records distinct from planning.
+When a rule is unclear or contradictory, stop the affected path and reconcile it instead of inventing a new authority.

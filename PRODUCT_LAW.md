@@ -22,11 +22,79 @@ The current sequence is:
 - PayPal is the external payment-event authority.
 - GitHub is the engineering/source authority.
 - Firebase Hosting is the current TeamAi web hosting/delivery authority.
-- Vercel is a browser-verification surface only; it is not TeamAi hosting authority, backend authority, or production deployment authority.
+- Vercel is a controlled web development, preview, and browser-verification surface; it is not TeamAi hosting authority, backend authority, or production deployment authority.
 - Supabase Postgres is platform infrastructure only and is not the TeamAi domain/application database.
 - Retired PostgreSQL implementation is historical-only and must not remain an active/recoverable TeamAi backend path.
 - Web AI and Development AI are separate operational domains.
 - Universal ToolKit is upstream-only: validated/generalized TeamAi lessons may flow upstream; ToolKit does not become TeamAi authority.
+
+## Connected Platform Authority Map
+
+The following connected-platform roles are Product Law. A technical connection does not grant a platform authority that is not explicitly assigned here. Each platform has a bounded usage and evidence role, and expanding that role requires Product Law / architecture reconciliation before implementation.
+
+| Platform / surface | TeamAi usage | Authority / evidence boundary |
+|---|---|---|
+| Firebase Authentication | User sign-in and authenticated Firebase UID establishment. | Identity authority only. |
+| Cloud Firestore `(default)` | Durable TeamAi application/domain state, including accounts, workplaces, projects, teams/Seats, tasks, and events. | Durable TeamAi state authority. |
+| Firebase Hosting | Delivery of the current TeamAi web application. | Current web delivery/hosting authority. |
+| Supabase Edge Functions | Trusted server execution, including protected TeamAi operations and the PayPal webhook receiver. | Trusted execution authority; not domain-state authority. |
+| Supabase Postgres | Supabase platform infrastructure where required. | Infrastructure only; never TeamAi domain/application state. |
+| PayPal | External payment events used by TeamAi's server-owned commerce correlation and entitlement projection. | External payment-event authority; TeamAi retains its correlation/projection rules. |
+| GitHub | Source repository, commits, pull requests, issues, reviews, and engineering history. | Engineering/source/change authority. |
+| GitHub Actions | CI validation, authority audits, tests, recovery checks, and repository automation. | Verification/execution surface for engineering workflows; it does not replace GitHub source authority or TeamAi runtime authority. |
+| Vercel | Controlled web development, preview, deployment inspection, and browser verification for relevant web work. | Non-authoritative web development/preview/browser-verification surface only. |
+| Founder Pulse | Read-only observation of Issue flow and delivery patterns for product-operations visibility. | Observation/management layer only; no mutation or authorization authority. |
+| External AI applications/providers | Models/runtimes that participate in the Web AI Team through authorized connections and Seats. | Provider ownership remains external; TeamAi owns its connection, policy, Seat, orchestration, and durable-state boundary. |
+| MCP/tools/plugins/integrations | Bounded capabilities exposed to authorized Web AI Seats. | Capability/integration surface only. |
+| Universal ToolKit | Upstream knowledge/process repository receiving validated generalized lessons. | Upstream knowledge surface only; never TeamAi state or authority. |
+
+### Deployment and browser-verification boundary
+
+A Git commit or pull request is first a GitHub engineering/review event. It causes Vercel deployment activity only when an applicable Vercel deployment mechanism is configured and enabled, such as a connected Vercel Project with Git integration, a deployment hook, or an explicit Vercel deployment command/API call.
+
+With Vercel Git integration, repository events can automatically create preview or production-related deployments according to the Vercel Project's branch/environment configuration. A Vercel deployment may retain Git metadata such as the triggering commit SHA/ref and, where applicable, pull-request identity.
+
+Therefore the causal model is:
+
+`commit/push → Git repository event → configured Vercel trigger → Vercel build/deployment → controlled web surface → browser verification`
+
+and not:
+
+`commit → Vercel automatically`
+
+or
+
+`pull request → Vercel automatically`.
+
+The repository event alone has no TeamAi authority over Vercel. The currently authorized Vercel Project/control surface and its configuration determine whether an event consumes Vercel deployment activity. TeamAi MUST NOT infer a project, domain, deployment target, or environment from stale comments, historical bot output, screenshots, naming, or memory.
+
+Vercel browser/web verification is opt-in and phase-bound to active web development/verification. It may cover UI work, UI-plus-backend integration, authenticated browser flows, commerce-facing browser flows, responsive behavior, controlled preview environments, and end-to-end browser smoke tests. It MUST NOT become a general prerequisite for backend, Firestore, commerce, documentation, recovery, or other non-web changes. Vercel quota/unavailability is a verification limitation, not a TeamAi architecture failure.
+
+A Vercel deployment is an environment artifact. A browser-integrity run is verification evidence. Neither is TeamAi delivery authority, backend proof, commerce proof, scheduler authority, or final architecture acceptance. Firebase Hosting remains the TeamAi web delivery authority.
+
+### Engineering verification boundary
+
+GitHub source/review state and GitHub Actions execution state are related but distinct:
+
+`GitHub repository / commit / PR → GitHub Actions workflow → CI execution/result → engineering evidence`
+
+A green GitHub Actions run proves only the checks actually executed by that workflow. It does not prove Vercel browser behavior, Firebase runtime behavior, PayPal live behavior, or deployment success unless those exact checks were explicitly exercised and their evidence is recorded.
+
+GitHub Actions MUST NOT be treated as a general orchestration authority for the Web AI Team. Product/runtime orchestration remains owned by TeamAi's scheduler and trusted execution boundaries.
+
+### Firestore usage and resilience boundary
+
+Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. TeamAi MUST reduce unnecessary Firestore usage rather than replace Firestore authority. Preferred techniques include targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference.
+
+UI behavior MUST NOT claim durable mutation success until the authoritative Firestore write is confirmed. Under quota or temporary unavailability pressure, the system SHOULD detect the bounded failure, preserve local/recovery state where safe, avoid destructive retries, surface a truthful status, and reconcile when authoritative persistence becomes available.
+
+Any alternate durable TeamAi domain store requires explicit Product Law / architecture reconciliation before implementation.
+
+### Founder Pulse boundary
+
+Founder Pulse is a read-only product-operations observation layer over GitHub/GitLab Issue flow. It may report movement, remaining open work, age, labels, visible delivery relationships, or process friction. It MUST NOT mutate repositories, authorize changes, initiate Vercel activity, become a scheduler, or become a parallel source of project truth.
+
+GitLab support in Founder Pulse is observation capability only and does not add GitLab to the TeamAi architecture/control plane. The current decision to defer GitLab from TeamAi architecture/control-plane work remains in force until deliberately revisited.
 
 ## Product Team Boundary
 
@@ -107,7 +175,7 @@ Provider entitlement remains externally owned. A TeamAi subscription MUST NOT ma
 Exact prices, model catalogs, seat counts, provider bundles, tool packs, and commercial limits remain planning-only until explicitly approved.
 
 ## LAW 101 — IMPLEMENTATION TRACEABILITY IS A HARD COMPLETION GATE
-Every implementation claim MUST be traceable from its governing Product Law and Masterplan execution item through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone MUST NOT be treated as implementation completion. A missing traceability link blocks the affected completion claim until an explicit, evidence-backed exception is recorded by the authorized human.
+Every implementation claim MUST be traceable from its governing Product Law and Masterplan execution item through the applicable Policy/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone MUST NOT be treated as implementation completion. A missing traceability link blocks the affected completion claim until an explicit, evidence-backed exception is recorded by the authorized human.
 
 ## LAW 102 — SERVICE AUTHORITY MUST BE EXECUTABLE
 The canonical service-authority map is not merely documentation. Backend code MUST reject authority mismatches so that identity, application state, execution, payment, engineering, and delivery responsibilities cannot silently migrate between services.
@@ -170,7 +238,9 @@ The remaining evidence item is **live PayPal transaction/webhook runtime validat
 
 Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader 5C implementation work should be reopened merely because the live external test remains outstanding.
 
-## Canonical documentation relationship
-`PRODUCT_LAW.md` establishes durable product/architecture invariants. `MASTERPLAN.md` is the primary chronological execution and planning authority that elaborates how those invariants are applied. Detailed 029 contracts, project-guide documents, implementation files, evidence records, handover packets, and endorsements provide the applicable execution detail and proof. Lower-level documents MUST NOT silently redefine Product Law.
+## Canonical execution-document relationship
+`PRODUCT_LAW.md` establishes durable product/architecture invariants. `MASTERPLAN.md` translates those invariants into the chronological execution plan and checklist. `POLICY.md` establishes execution discipline, including ORUCAVEAM while preserving O-R-U-C-A-V-E-A as the outer lifecycle where applicable. `docs/SKILL_WIRING.md` maps executable concepts/checklist items to the applicable skill path, tool/system, and verification route. `skills/**/SKILL.md` provide direct operational instructions without becoming product authority. `PRODUCT-KNOWLEDGE.md` retains validated, distilled lessons. `docs/project-guide/HandOver.md` preserves continuation and learning transfer. `docs/project-guide/Endorsement.md` records authorized completion and accepted learning. `AI_ASSISTANT_READ_ME.md` provides practical agent memory and recovery guidance.
+
+Lower-level documents MUST NOT silently redefine Product Law. A change to a canonical product concept MUST be reconciled against the existing logic before editing, and any discrepancy that affects authority, architecture, scope, or protected roots MUST be surfaced before proceeding.
 
 This front door MUST remain synchronized with active authority changes.
