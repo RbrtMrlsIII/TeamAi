@@ -11,7 +11,7 @@ Load the smallest sufficient skill bundle. A skill never grants authorization.
 
 ## 2. Single ORUCAVEAM skill family
 
-ORUCAVEAM is the single execution-discipline framework. The existing ORUCAVEA discipline has been extended by one letter: **M — Minimalistic Efficiency / Resource Use**.
+ORUCAVEAM is the single execution-discipline framework. It contains one integrated sequence with **M — Minimalistic Efficiency / Resource Use** as its final dimension. There is no separate O-R-U-C-A-V-E-A lifecycle or secondary execution framework.
 
 | Letter | Execution concern | Direct skill |
 |---|---|---|
