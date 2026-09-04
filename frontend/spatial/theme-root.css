@@ -252,12 +252,6 @@ html[data-theme-mode="dark"] .ta-panel { backdrop-filter: blur(var(--blur-panel)
   outline-offset: var(--size-focus-offset);
 }
 
-html[data-motion="reduced"] *,
-html[data-motion="reduced"] *::before,
-html[data-motion="reduced"] *::after {
-  scroll-behavior: auto !important;
-}
-
 @media (max-width: 56rem) {
   .ta-nav { overflow-x: auto; scrollbar-width: none; }
   .ta-nav::-webkit-scrollbar { display: none; }
