@@ -1,0 +1,53 @@
+.ta-working {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, .65fr);
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.ta-working__handoff,
+.ta-working__task,
+.ta-working__why,
+.ta-working__action,
+.ta-working__result { min-width: 0; }
+
+.ta-working__handoff,
+.ta-working__task,
+.ta-working__why,
+.ta-working__action,
+.ta-working__result { overflow-wrap: anywhere; }
+
+.ta-working__handoff { grid-column: 1 / -1; }
+.ta-working__task { grid-row: 2 / span 2; }
+.ta-working__why { grid-column: 2; grid-row: 2; }
+.ta-working__action { grid-column: 2; grid-row: 3; }
+.ta-working__result { grid-column: 1 / -1; }
+
+.ta-working__facts,
+.ta-working__task-list,
+.ta-working__event-list { display: grid; gap: var(--space-3); margin: 0; }
+.ta-working__facts > div,
+.ta-working__task-list > li,
+.ta-working__event-list > div { padding: var(--space-3); }
+.ta-working__facts > div { display: grid; gap: var(--space-1); }
+.ta-working__task-list,
+.ta-working__event-list { list-style: none; padding: 0; }
+.ta-working__task-list > li { display: grid; gap: var(--space-1); }
+
+.ta-working__action > .ta-working__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.ta-working__status { margin-top: var(--space-2); }
+
+@media (max-width: 56rem) {
+  .ta-working { grid-template-columns: minmax(0, 1fr); }
+  .ta-working__handoff,
+  .ta-working__task,
+  .ta-working__why,
+  .ta-working__action,
+  .ta-working__result { grid-column: 1; grid-row: auto; }
+}
+
+@media (max-width: 28rem) {
+  .ta-working { gap: var(--space-3); }
+  .ta-working__action > .ta-working__actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .ta-working__action .ta-control { width: 100%; }
+}
