@@ -23,7 +23,7 @@ ORUCAVEAM is the single execution-discipline framework. The existing ORUCAVEA di
 | V | Verification | `skills/execution/orucaveam/verification/SKILL.md` |
 | E | Efficiency | `skills/execution/orucaveam/efficiency/SKILL.md` |
 | A | Audit | `skills/execution/orucaveam/audit/SKILL.md` |
-| M | Minimalistic Efficiency / Resource Use | `skills/execution/orucaveam/minimalistic-resource-use/SKILL.md` |
+| M | Minimalistic Efficiency / Resource Use | `skills/tools/minimal-tool-usage/SKILL.md` |
 
 The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only the letters needed by the task and then adds the smallest sufficient field/domain and tool/system skills.
 
