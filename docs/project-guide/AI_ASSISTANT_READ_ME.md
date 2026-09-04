@@ -40,23 +40,19 @@ The repository is preparing for `TEAM-EXPERIENCE-029`, but 029 remains a plannin
 - Vercel is non-authoritative and may be used as a controlled web development/preview/browser-verification surface when the current web work benefits from it; it is not a TeamAi source, delivery, backend, commerce, scheduler, authorization, or completion authority.
 - The Full Project ZIP is a first-class project-state package, not an optional add-on; it must follow `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
 
-## Execution discipline
+## Execution discipline — ORUCAVEAM
 
-The outer lifecycle is:
+ORUCAVEAM is the single execution-discipline framework. It is an integrated sequence containing **M — Minimalistic Efficiency / Resource Use** as its final dimension. There is no separate O-R-U-C-A-V-E-A lifecycle or secondary execution framework.
 
-`Observe → Record → Understand → Classify → Align → Validate → Endorse → Advance`
+`Objective → Restrictions → User Authority → Canonical Authority → Action → Verification → Efficiency → Audit → Minimalistic Efficiency / Resource Use`
 
-The inner action lens is ORUCAVEAM:
-
-`Objective → Restrictions → User Authority → Canonical Authority → Action → Verification → Efficiency → Audit → Minimalistic Tool/Resource Use`
-
-Use `docs/SKILL_WIRING.md` to select the applicable skill and `skills/**/SKILL.md` for the direct procedure.
+Use `docs/SKILL_WIRING.md` to select the applicable ORUCAVEAM letter and field/domain skill; then use `skills/**/SKILL.md` for the direct procedure.
 
 ## Product Law change
 
 When the user adds or changes a feature, inspect the existing Product Law logic first. Amend the existing canonical concept when applicable instead of appending a duplicate. Warn the user before proceeding when the requested change creates a discrepancy with an existing protected root or canonical rule.
 
-Use `skills/governance/product-law-change/SKILL.md`.
+Use `skills/governance/product-law-change/SKILL.md` together with the applicable ORUCAVEAM skills.
 
 ## Learning and teach-back
 
@@ -78,7 +74,7 @@ The Full Project ZIP is the portable bulk-edit, handover, recovery, and transfer
 
 The package must be flattened at the project root, preserve exact tracked file bytes and relative paths, and verify that the extracted tree matches the canonical tracked tree byte-for-byte.
 
-Generated artifacts are not project source. Screenshots, browser captures, visual evidence images, preview output, build output, test/coverage output, logs, caches, local emulator state, deployment caches, editor state, and local secrets must not enter the package.
+Generated artifacts are not project source. Screenshots, browser captures, visual evidence images, preview output, build output, test/coverage output, logs, caches, local emulator state, deployment caches, editor state, and local secrets must not enter the package. Such verification artifacts may remain attached to the relevant GitHub Actions workflow run as evidence/reference, separate from the Full Project ZIP.
 
 See `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
 
