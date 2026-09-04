@@ -26,6 +26,13 @@
   display: none;
 }
 
+.ta-deck__seats,
+.ta-deck__active,
+.ta-deck__why,
+.ta-deck__status {
+  min-width: 0;
+}
+
 .ta-deck__seats { grid-area: seats; }
 .ta-deck__active { grid-area: active; }
 .ta-deck__why { grid-area: why; }
@@ -38,6 +45,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-stack-sm);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ta-seat-list > li {
+  min-width: 0;
 }
 
 .ta-seat-card {
@@ -47,6 +60,7 @@
   gap: var(--space-stack-xs);
   width: 100%;
   min-height: var(--size-seat-card-min-height);
+  min-width: 0;
   text-align: start;
   cursor: pointer;
   border: 1px solid color-mix(in srgb, var(--ink-meta) 24%, transparent);
@@ -54,6 +68,11 @@
     border-color var(--motion-duration-move) var(--motion-ease-move),
     box-shadow var(--motion-duration-move) var(--motion-ease-move),
     background var(--motion-duration-enter) var(--motion-ease-enter);
+}
+
+.ta-seat-card > * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .ta-seat-card[data-state="selected"],
@@ -106,6 +125,7 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
   margin-bottom: var(--space-stack-md);
   background: var(--surface-inset);
   border-radius: var(--size-radius-sm);
+  min-width: 0;
 }
 
 .ta-deck__instruction .ta-type-label,
@@ -135,6 +155,7 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
 }
 
 .ta-proof-grid > div {
+  min-width: 0;
   padding-top: var(--space-inset-sm);
   border-top: 1px solid color-mix(in srgb, var(--ink-meta) 22%, transparent);
 }
@@ -142,6 +163,10 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
 .ta-proof-grid dt,
 .ta-proof-grid dd {
   margin: 0;
+}
+
+.ta-proof-grid dd {
+  overflow-wrap: anywhere;
 }
 
 .ta-why-list {
@@ -154,6 +179,7 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
 .ta-why-list > div {
   display: grid;
   gap: var(--space-stack-xs);
+  min-width: 0;
 }
 
 .ta-why-list dt,
@@ -161,11 +187,19 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
   margin: 0;
 }
 
+.ta-why-list dd {
+  overflow-wrap: anywhere;
+}
+
 .ta-deck__f7-triggers {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-inset-sm);
   margin-top: var(--space-stack-md);
+}
+
+.ta-deck__f7-triggers .ta-control {
+  max-width: 100%;
 }
 
 .ta-deck__status {
@@ -176,9 +210,10 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
 
 .ta-status-item {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-stack-xs) var(--space-inset-sm);
   align-items: baseline;
+  min-width: 0;
   padding: var(--space-inset-md);
   background: var(--surface-panel);
   border-radius: var(--size-radius-sm);
@@ -190,16 +225,12 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
 
 @media (max-width: 56rem) {
   .ta-deck {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "seats"
       "active"
       "why"
       "status";
-  }
-
-  .ta-deck__why {
-    order: 0;
   }
 
   .ta-seat-list {
@@ -218,7 +249,7 @@ html[data-theme-mode="dark"] .ta-deck__active[data-elevation="e3"] {
 
   .ta-proof-grid,
   .ta-deck__status {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
