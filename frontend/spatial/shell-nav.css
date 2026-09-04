@@ -1,0 +1,79 @@
+/* TEAM-EXPERIENCE-029 — Shell + Navigation layout (F1 / F2)
+ * Presentation only. Consumes theme-root tokens. Does not invent a second theme root.
+ */
+
+.ta-skip {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.ta-skip:focus {
+  left: var(--space-inset-md);
+  top: var(--space-inset-md);
+  z-index: 2000;
+  width: auto;
+  height: auto;
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  background: var(--surface-raised);
+  color: var(--ink-title);
+  border-radius: var(--size-radius-sm);
+}
+
+.ta-shell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-stack-sm);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink-meta) 28%, transparent);
+}
+
+.ta-shell__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-inset-sm);
+  min-height: var(--size-touch-min);
+}
+
+.ta-shell__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-inset-sm);
+}
+
+.ta-nav {
+  padding: var(--space-inset-sm) var(--space-shell);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink-meta) 22%, transparent);
+  gap: var(--space-inset-xs);
+}
+
+.ta-nav .ta-control[aria-current="page"] {
+  background: var(--surface-raised);
+  color: var(--ink-title);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.ta-main {
+  padding: var(--space-inset-lg);
+  min-height: 40vh;
+}
+
+.ta-main .ta-panel {
+  max-width: 48rem;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 40rem) {
+  .ta-shell__actions .ta-status-strip .ta-type-meta:last-child {
+    display: none;
+  }
+}

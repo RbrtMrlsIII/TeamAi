@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TeamAi — Shell / Navigation</title>
+  <script>
+    (function () {
+      try {
+        var source = localStorage.getItem("teamai.theme.source") === "os" ? "os" : "user";
+        var stored = localStorage.getItem("teamai.theme.mode");
+        var mode = source === "os"
+          ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+          : (stored === "light" || stored === "dark" ? stored : "dark");
+        var motion = localStorage.getItem("teamai.theme.motion");
+        if (motion !== "full" && motion !== "reduced") {
+          motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "reduced" : "full";
+        }
+        var density = localStorage.getItem("teamai.theme.density") === "compact" ? "compact" : "default";
+        var root = document.documentElement;
+        root.setAttribute("data-theme-mode", mode);
+        root.setAttribute("data-theme-source", source);
+        root.setAttribute("data-motion", motion);
+        root.setAttribute("data-density", density);
+        root.style.colorScheme = mode;
+      } catch (e) {
+        var r = document.documentElement;
+        r.setAttribute("data-theme-mode", "dark");
+        r.setAttribute("data-theme-source", "user");
+        r.setAttribute("data-motion", "full");
+        r.setAttribute("data-density", "default");
+        r.style.colorScheme = "dark";
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="./theme-root.css" />
+  <link rel="stylesheet" href="./shell-nav.css" />
+</head>
+<body data-field="F0" class="ta-atmosphere">
+  <a class="ta-skip" href="#main">Skip to main</a>
+
+  <header data-field="F1" class="ta-shell" role="banner">
+    <div class="ta-shell__brand">
+      <span class="ta-type-title">TeamAi</span>
+      <span class="ta-type-meta" data-shell-workplace>Workplace</span>
+      <span class="ta-type-meta" aria-hidden="true">/</span>
+      <span class="ta-type-meta" data-shell-project>Project</span>
+    </div>
+    <div class="ta-shell__actions">
+      <span
+        class="ta-status-strip"
+        data-field="F6"
+        data-status="ok"
+        role="status"
+        aria-label="Connection ok. Entitlements not loaded."
+      >
+        <span class="ta-type-status" data-status-label>OK</span>
+        <span class="ta-type-meta">Connection</span>
+        <span class="ta-type-meta" data-status-entitlement>TeamAi · Provider (display only)</span>
+      </span>
+      <button
+        type="button"
+        class="ta-control"
+        data-field="F5"
+        data-kind="nav"
+        data-action="toggle-theme"
+        aria-label="Toggle theme mode"
+      >Theme</button>
+      <button
+        type="button"
+        class="ta-control"
+        data-field="F5"
+        data-kind="nav"
+        data-action="toggle-density"
+        aria-label="Toggle compact density"
+      >Density</button>
+      <span class="ta-type-meta" data-shell-account>Account</span>
+    </div>
+  </header>
+
+  <nav data-field="F2" class="ta-nav" role="navigation" aria-label="Primary">
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="deck" aria-current="page">Deck</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="workplace">Workplace</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="seats">Seats</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="planning">Planning</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="working">Working</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="artifacts">Artifacts</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="approvals">Approvals</button>
+    <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="settings">Settings</button>
+  </nav>
+
+  <main id="main" class="ta-main" tabindex="-1">
+    <section class="ta-panel" data-field="F3" aria-labelledby="stage-title">
+      <h1 id="stage-title" class="ta-type-title" data-stage-title>Deck</h1>
+      <p class="ta-type-body" data-stage-copy>
+        Presentation skeleton only. Interior regions (seats, active stage, why-next) are not composed yet.
+        Theme and density retune material without reshuffling layout. No scheduler, Firestore, PayPal, or entitlement mutation.
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="./shell-nav.js"></script>
+</body>
+</html>
