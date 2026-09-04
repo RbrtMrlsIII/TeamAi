@@ -10,7 +10,7 @@ Task scope, required evidence, available skills/tools, likely cost or churn, and
 Policy defines the efficiency discipline; canonical authorities and required verification cannot be weakened for convenience.
 
 ## ACTION
-Prefer targeted reads, coherent changes, deterministic checks before hosted checks, reuse of valid evidence, bounded context, and idempotent operations. Stop unnecessary work that does not improve completion confidence.
+Prefer targeted reads, coherent changes, deterministic checks before hosted checks, reuse of valid evidence, bounded context, and idempotent operations. When the efficiency decision concerns the number or sequence of tool/resource operations, compose `skills/tools/minimal-tool-usage/SKILL.md` for the ORUCAVEAM M dimension.
 
 ## DO NOT
 Do not skip mandatory verification, weaken a canonical boundary, or replace authoritative infrastructure merely to reduce effort.
@@ -23,5 +23,5 @@ Record material efficiency decisions when they affect scope, resource use, or ve
 
 ## SEE ALSO
 - `POLICY.md`
-- `skills/execution/orucaveam/minimalistic-resource-use/SKILL.md`
 - `skills/execution/orucaveam/SKILL.md`
+- `skills/tools/minimal-tool-usage/SKILL.md`
