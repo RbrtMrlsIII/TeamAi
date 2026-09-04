@@ -49,7 +49,17 @@
 .ta-nav {
   padding: var(--space-inset-sm) var(--space-shell);
   border-bottom: 1px solid color-mix(in srgb, var(--ink-meta) 22%, transparent);
+}
+
+.ta-nav__wide {
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-inset-xs);
+}
+
+.ta-nav__compact {
+  align-items: center;
+  gap: var(--space-inset-sm);
 }
 
 .ta-nav .ta-control[aria-current="page"] {
@@ -73,7 +83,33 @@ html {
 }
 
 @media (max-width: 40rem) {
-  .ta-shell__actions .ta-status-strip .ta-type-meta:last-child {
+  .ta-shell {
+    gap: var(--space-inset-xs);
+  }
+
+  .ta-shell__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ta-shell__actions .ta-status-strip .ta-type-meta:last-child,
+  .ta-shell__actions [data-shell-account] {
     display: none;
+  }
+
+  .ta-nav__wide {
+    display: none;
+  }
+
+  .ta-nav__compact {
+    display: flex;
+  }
+
+  .ta-nav__compact .ta-control {
+    min-width: 10rem;
+  }
+
+  .ta-main {
+    padding: var(--space-inset-md);
   }
 }
