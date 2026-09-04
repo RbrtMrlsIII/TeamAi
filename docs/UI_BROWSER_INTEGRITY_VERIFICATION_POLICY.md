@@ -18,11 +18,17 @@ Vercel use is **deliberate and phase-bound to relevant web development or browse
 
 A repository event does not, by itself, authorize a preview or browser run. The TeamAi Development Team should invoke Vercel when the current work actually benefits from a controlled web environment.
 
-For a connected project with Vercel Git integration, a push/PR may still cause external automatic deployment activity according to the Vercel project's configuration. TeamAi must treat that as an external mechanism, not as an instruction to create more deployments or a guarantee that exactly one deployment will occur.
+### 2.1 Current project-control state — Vercel paused
+
+**Vercel is currently paused for TeamAi.** No TeamAi Development Team agent, workflow, integration, or tool may resume Vercel project/deployment/preview activity without **explicit user approval in the active execution context**.
+
+This pause is a project-control condition, not a change in Vercel's non-authoritative architectural role. It remains valid until the user explicitly authorizes resumption. GitHub CI, Playwright, local browser verification, and other approved verification routes must not treat Vercel availability as a prerequisite while the pause is active.
+
+For a connected project with Vercel Git integration, a push/PR may still cause external automatic deployment activity according to the Vercel project's configuration. TeamAi must treat that as an external mechanism and must not intentionally trigger, resume, or rely on that activity while the Vercel pause is active.
 
 ## 3. Allowed uses
 
-Vercel may be used for:
+When explicitly authorized and the pause is lifted, Vercel may be used for:
 
 - browser rendering and responsive-layout checks;
 - UI interaction and navigation smoke tests;
@@ -58,17 +64,17 @@ Firebase Hosting remains the current TeamAi web delivery authority. GitHub remai
 
 | Work type | Vercel use |
 |---|---|
-| Web/UI-only | Allowed when useful and deliberately invoked |
-| Web + backend integration | Allowed for the browser-exercised path; backend evidence remains separate |
-| Authenticated web flow | Allowed when the required authorized environment exists; identity proof remains authoritative elsewhere |
-| Commerce-facing web flow | Allowed for browser behavior; PayPal/backend proof remains separate |
+| Web/UI-only | Paused until explicit user approval; then allowed when useful and deliberately invoked |
+| Web + backend integration | Paused until explicit user approval; then allowed for the browser-exercised path; backend evidence remains separate |
+| Authenticated web flow | Paused until explicit user approval; then allowed when the required authorized environment exists; identity proof remains authoritative elsewhere |
+| Commerce-facing web flow | Paused until explicit user approval; then allowed for browser behavior; PayPal/backend proof remains separate |
 | Backend-only | Do not invoke merely as backend proof |
 | Firestore/rules/history-only | Do not invoke merely as persistence proof |
 | Commerce backend-only | Do not invoke merely as payment/webhook proof |
 | Documentation/governance-only | Do not invoke |
 | Recovery/evidence-only | Do not invoke |
 
-A mixed change may have GitHub/CI/backend evidence and Vercel browser evidence. Keep the evidence classes explicit and separate.
+While Vercel is paused, use approved alternatives such as local/browser CI validation where available. A blocked Vercel route must not be misreported as a failed architecture or implementation.
 
 ## 6. Anti-churn and deployment-count rule
 
@@ -84,7 +90,7 @@ or:
 
 Actual deployment count depends on the currently configured external Vercel project, branch/environment rules, Git integration, hooks, and explicit deployment actions. Minimize pushes and consolidate coherent changes before browser verification so the project does not intentionally consume unnecessary deployment quota.
 
-A deliberate 029 pattern is:
+A deliberate 029 pattern, when Vercel is explicitly authorized, is:
 
 `bulk/coherent change → GitHub CI → available Vercel preview → one focused browser-verification session → review → merge`
 
@@ -96,7 +102,7 @@ Vercel throttling or temporary unavailability is a verification limitation, not 
 
 A Vercel project, team, deployment target, domain, or environment must not be inferred from historical bot comments, stale URLs, screenshots, product naming, or remembered configuration.
 
-Only a currently authorized and identifiable Vercel control surface may be used for deliberate browser verification or deployment actions.
+Only a currently authorized and identifiable Vercel control surface may be used for deliberate browser verification or deployment actions. During the current pause, the required authorization is explicit user approval to resume Vercel activity.
 
 ## 8. Evidence classification
 
@@ -104,9 +110,11 @@ Use the following distinction:
 
 `GitHub source/tests/CI + authoritative backend checks → engineering/runtime evidence`
 
+`Playwright browser run → non-authoritative browser evidence`
+
 `Vercel browser run → non-authoritative web/browser evidence`
 
-A passing browser run proves only the exercised web behavior in the observed environment. It does not promote Vercel to an authority and does not prove unexercised backend behavior.
+A passing browser run proves only the exercised web behavior in the observed environment. It does not promote Vercel or Playwright to an authority and does not prove unexercised backend behavior.
 
 ## 9. Verification versus completion
 
@@ -114,12 +122,13 @@ Use:
 
 `planned ≠ implemented ≠ browser-verified ≠ deployed ≠ runtime-proven ≠ completed`
 
-A Vercel deployment is an environment artifact. A browser run is verification evidence. Neither is, by itself, implementation completion or architectural acceptance.
+A Vercel deployment is an environment artifact. A Playwright browser run is verification evidence. Neither is, by itself, implementation completion or architectural acceptance.
 
 ## 10. Required recording
 
-When Vercel is used, record:
+When Vercel is used after explicit approval, record:
 
+- the authorization context for resuming Vercel;
 - the web flow/change being exercised;
 - the browser and environment actually used;
 - the observed result;
@@ -128,6 +137,8 @@ When Vercel is used, record:
 - exact evidence boundary;
 - any separate authoritative backend/runtime evidence.
 
+For Playwright, record the exercised scope, browsers/projects, workflow/run reference, result, and any trace/report artifact retained.
+
 Never report a browser-only observation as proof of a backend gate or external provider transaction.
 
 ## 11. Relationship to Full Project ZIP
@@ -135,6 +146,8 @@ Never report a browser-only observation as proof of a backend gate or external p
 The Full Project ZIP is a first-class project-state package, not an optional add-on. For bulk web development, package synchronization should be established before large edits, and the package must follow `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
 
 Vercel is never the source for constructing the canonical ZIP. The ZIP is derived from the canonical GitHub tracked tree.
+
+Playwright reports, traces, videos, screenshots, and other browser-run outputs are evidence artifacts and remain separate from the canonical Full Project ZIP source package.
 
 ## 12. Relationship to Founder Pulse
 
