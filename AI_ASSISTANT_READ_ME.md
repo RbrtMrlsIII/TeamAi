@@ -1,4 +1,4 @@
-# TeamAi — AI Assistant Read Me
+# TeamAi — End-to-End AI Development Journey: `Endorsement → PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → system/tool execution → verification → evidence → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
 
 This is the operational recovery and continuation entry point for AI Development Team agents working on TeamAi.
 
@@ -13,6 +13,8 @@ This is the operational recovery and continuation entry point for AI Development
 7. `docs/project-guide/HandOver.md` — durable continuation and learning handoff.
 8. `docs/project-guide/Endorsement.md` — authorized completion and learning acceptance.
 9. Domain contracts, implementation, verification evidence, and historical records.
+
+The end-to-end journey is cyclic. An endorsed result becomes the next reliable recovery point: `Endorsement → PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → system/tool execution → verification → evidence → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`.
 
 Do not reconstruct current authority from chat memory when the repository contains the authority.
 
