@@ -128,9 +128,14 @@
           <p class="ta-type-body">Working stage skin. Task region not wired. No scheduler writes.</p>
         </div>
         <p class="ta-type-meta" data-modal-result role="status"></p>
-        <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-action="open-approval">
-          Preview approval plate
-        </button>
+        <div class="ta-deck__f7-triggers" style="display:flex;flex-wrap:wrap;gap:var(--space-inset-sm)">
+          <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-action="open-approval">
+            Preview approval plate
+          </button>
+          <button type="button" class="ta-control" data-field="F5" data-action="open-handoff">
+            Preview planning handoff
+          </button>
+        </div>
       </section>
 
       <aside class="ta-panel ta-deck__why" data-field="F3" aria-label="Why next">
@@ -152,10 +157,11 @@
     </section>
   </main>
 
-  <!-- F7: single shared E4 plate — not a second dialog system -->
+  <!-- F7: single shared E4 plate — Cluster A (action) or Cluster B (handoff) -->
   <div
     class="ta-modal"
     data-field="F7"
+    data-modal-cluster="action"
     role="dialog"
     aria-modal="true"
     aria-labelledby="f7-title"
@@ -164,25 +170,35 @@
   >
     <div class="ta-modal__plate" tabindex="-1">
       <div class="ta-modal__header">
-        <h2 id="f7-title" class="ta-type-title">Action request</h2>
+        <h2 id="f7-title" class="ta-type-title" data-modal-title>Action request</h2>
         <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-modal-action="dismiss" aria-label="Close">Close</button>
       </div>
       <dl class="ta-modal__meta">
         <div>
           <dt class="ta-type-meta">Actor</dt>
-          <dd class="ta-type-body">Alpha · planning · provider · model (fixture)</dd>
+          <dd class="ta-type-body" data-modal-actor>Alpha · planning · provider · model (fixture)</dd>
         </div>
         <div>
           <dt class="ta-type-meta">Impact</dt>
-          <dd class="ta-type-body">Presentation preview only. Approving does not run tools, write Firestore, or charge PayPal.</dd>
+          <dd class="ta-type-body" data-modal-impact>Presentation preview only. Approving does not run tools, write Firestore, or charge PayPal.</dd>
         </div>
         <div>
           <dt class="ta-type-meta">Health</dt>
           <dd class="ta-type-status">ok</dd>
         </div>
       </dl>
-      <div class="ta-modal__actions">
+
+      <!-- Cluster A — action request -->
+      <div class="ta-modal__actions" data-cluster="action">
         <button type="button" class="ta-control" data-field="F5" data-modal-action="deny">DENY</button>
+        <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-modal-action="approve" aria-primary="true">APPROVE</button>
+      </div>
+
+      <!-- Cluster B — planning handoff -->
+      <div class="ta-modal__actions" data-cluster="handoff" hidden>
+        <button type="button" class="ta-control" data-field="F5" data-modal-action="reject">REJECT</button>
+        <button type="button" class="ta-control" data-field="F5" data-modal-action="edit">EDIT</button>
+        <button type="button" class="ta-control" data-field="F5" data-modal-action="more">MORE</button>
         <button type="button" class="ta-control" data-field="F5" data-kind="primary" data-modal-action="approve" aria-primary="true">APPROVE</button>
       </div>
     </div>
