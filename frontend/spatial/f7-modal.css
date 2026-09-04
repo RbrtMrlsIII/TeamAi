@@ -45,6 +45,10 @@
   gap: var(--space-inset-sm);
 }
 
+.ta-modal__actions[hidden] {
+  display: none;
+}
+
 .ta-modal__actions .ta-control[data-kind="primary"] {
   min-height: var(--size-control-lg);
 }
