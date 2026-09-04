@@ -47,6 +47,8 @@ jobs:
         run: |
           set -euo pipefail
           if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
+      - name: Run build-system script reference audit
+        run: npm run build-system:audit
       - name: Run backend authority audit
         run: npm run backend:authority-audit
       - name: Run typecheck
