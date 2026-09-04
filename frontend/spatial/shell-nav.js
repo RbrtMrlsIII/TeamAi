@@ -1,6 +1,6 @@
 /**
  * TEAM-EXPERIENCE-029 — Shell + Navigation + Deck + F7 presentation scripts
- * May: theme, density, nav, stage skin, seat highlight, F7 mount/unmount + focus trap.
+ * May: theme, density, nav, stage, seat highlight, F7 clusters (action | handoff).
  * Must not: Firestore, PayPal, scheduler actor, entitlements, execute approved actions.
  */
 
@@ -29,6 +29,7 @@ const NAV_LABELS = {
 
 let lastFocus = null;
 let focusTrapHandler = null;
+let activeCluster = "action";
 
 function refreshThemeControls() {
   const mode = resolveMode(readSource(), readStoredMode());
@@ -97,23 +98,55 @@ function focusableIn(root) {
   )].filter((el) => !el.hasAttribute("hidden") && el.offsetParent !== null);
 }
 
-function openModal() {
-  const modal = document.querySelector("[data-field=\"F7\"]");
+function applyCluster(cluster) {
+  activeCluster = cluster === "handoff" ? "handoff" : "action";
+  const modal = document.querySelector('[data-field="F7"]');
+  if (modal) modal.setAttribute("data-modal-cluster", activeCluster);
+
+  document.querySelectorAll("[data-cluster]").forEach((el) => {
+    el.hidden = el.getAttribute("data-cluster") !== activeCluster;
+  });
+
+  const title = document.querySelector("[data-modal-title]");
+  const impact = document.querySelector("[data-modal-impact]");
+  if (activeCluster === "handoff") {
+    if (title) title.textContent = "Planning handoff";
+    if (impact) {
+      impact.textContent =
+        "Review the planning packet. APPROVE is review only — not task execution. EDIT returns to the well; MORE keeps Planning running. Presentation only.";
+    }
+  } else {
+    if (title) title.textContent = "Action request";
+    if (impact) {
+      impact.textContent =
+        "Presentation preview only. Approving does not run tools, write Firestore, or charge PayPal.";
+    }
+  }
+}
+
+function openModal(cluster) {
+  const modal = document.querySelector('[data-field="F7"]');
   const plate = modal?.querySelector(".ta-modal__plate");
   if (!modal || !plate) return;
+
+  applyCluster(cluster ?? "action");
 
   lastFocus = document.activeElement;
   modal.hidden = false;
   modal.setAttribute("aria-hidden", "false");
 
   const focusables = focusableIn(plate);
-  const primary = plate.querySelector('[data-modal-action="approve"]') || focusables[0];
+  const primary =
+    plate.querySelector(`[data-cluster="${activeCluster}"] [data-modal-action="approve"]`) ||
+    focusables[0];
   (primary || plate).focus();
 
   focusTrapHandler = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      closeModal();
+      // Cluster B: Escape behaves as MORE (dismiss, leave packet). Cluster A: dismiss without approve.
+      if (activeCluster === "handoff") onModalAction("more");
+      else closeModal();
       return;
     }
     if (event.key !== "Tab" || focusables.length === 0) return;
@@ -131,7 +164,7 @@ function openModal() {
 }
 
 function closeModal() {
-  const modal = document.querySelector("[data-field=\"F7\"]");
+  const modal = document.querySelector('[data-field="F7"]');
   if (!modal) return;
   modal.hidden = true;
   modal.setAttribute("aria-hidden", "true");
@@ -141,18 +174,18 @@ function closeModal() {
   }
   if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
   lastFocus = null;
-  /* approval.mount never executes the action or writes domain state */
 }
 
 function onModalAction(action) {
-  /* DENY / APPROVE are presentation-only in this slice */
   const note = document.querySelector("[data-modal-result]");
-  if (note) {
-    note.textContent =
-      action === "approve"
-        ? "APPROVE recorded in UI only — no domain execution."
-        : "DENY recorded in UI only — no domain execution.";
-  }
+  const labels = {
+    approve: "APPROVE recorded in UI only — no domain execution.",
+    deny: "DENY recorded in UI only — no domain execution.",
+    reject: "REJECT recorded in UI only — packet not accepted; no domain write.",
+    edit: "EDIT recorded in UI only — would return to planning well (not wired).",
+    more: "MORE recorded in UI only — plate dismissed; Planning continues (display).",
+  };
+  if (note) note.textContent = labels[action] ?? `${String(action).toUpperCase()} — UI only.`;
   closeModal();
 }
 
@@ -189,10 +222,15 @@ function wire() {
 
   document.querySelector('[data-action="toggle-theme"]')?.addEventListener("click", toggleTheme);
   document.querySelector('[data-action="toggle-density"]')?.addEventListener("click", toggleDensity);
-  document.querySelector('[data-action="open-approval"]')?.addEventListener("click", openModal);
-  document.querySelector('[data-modal-action="deny"]')?.addEventListener("click", () => onModalAction("deny"));
-  document.querySelector('[data-modal-action="approve"]')?.addEventListener("click", () => onModalAction("approve"));
+  document.querySelector('[data-action="open-approval"]')?.addEventListener("click", () => openModal("action"));
+  document.querySelector('[data-action="open-handoff"]')?.addEventListener("click", () => openModal("handoff"));
   document.querySelector('[data-modal-action="dismiss"]')?.addEventListener("click", closeModal);
+
+  document.querySelectorAll("[data-modal-action]").forEach((btn) => {
+    const action = btn.getAttribute("data-modal-action");
+    if (!action || action === "dismiss") return;
+    btn.addEventListener("click", () => onModalAction(action));
+  });
 
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     btn.addEventListener("click", () => {
