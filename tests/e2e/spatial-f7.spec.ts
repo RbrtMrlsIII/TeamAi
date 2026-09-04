@@ -38,9 +38,7 @@ test.describe('F7 shared E4 plate (presentation)', () => {
     await expect(page.getByRole('button', { name: 'EDIT' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'MORE' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'APPROVE' })).toBeVisible();
-    // Primary is not the only visible verb
-    const verbs = modal.locator('[data-modal-action]');
-    await expect(verbs).toHaveCount(5); // close + 4 cluster
+    await expect(modal.locator('[data-modal-action]:visible')).toHaveCount(5);
   });
 
   test('handoff: MORE dismisses without approve language', async ({ page }) => {
