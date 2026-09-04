@@ -48,5 +48,4 @@ Record authoritative source, selected operations, important limitations, reuse o
 ## SEE ALSO
 - `POLICY.md`
 - `skills/execution/orucaveam/SKILL.md`
-- `skills/execution/orucaveam/minimalistic-resource-use/` (concept routing; use this skill as the M implementation)
 - `docs/SKILL_WIRING.md`
