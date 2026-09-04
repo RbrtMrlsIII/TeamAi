@@ -24,17 +24,18 @@ test.describe('Command Deck inhabited skeleton', () => {
 
   test('keeps Planning and Working as one E3 stage', async ({ page }) => {
     const active = page.locator('[aria-labelledby="active-title"]');
+    const stageToggle = active.getByRole('group', { name: 'Planning or Working stage' });
     const planning = page.locator('[data-stage-panel="planning"]');
     const working = page.locator('[data-stage-panel="working"]');
 
     await expect(planning).toBeVisible();
     await expect(working).toBeHidden();
 
-    await active.getByRole('button', { name: 'Working' }).click();
+    await stageToggle.getByRole('button', { name: 'Working' }).click();
     await expect(planning).toBeHidden();
     await expect(working).toBeVisible();
-    await expect(active.getByRole('button', { name: 'Working' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(active.getByRole('button', { name: 'Planning' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(stageToggle.getByRole('button', { name: 'Working' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(stageToggle.getByRole('button', { name: 'Planning' })).toHaveAttribute('aria-pressed', 'false');
   });
 
   test('seat selection changes display state without claiming scheduler authority', async ({ page }) => {
