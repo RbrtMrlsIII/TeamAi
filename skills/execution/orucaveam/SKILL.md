@@ -28,7 +28,7 @@ Apply the single ORUCAVEAM discipline:
 
 **A — Audit** → `skills/execution/orucaveam/audit/SKILL.md`
 
-**M — Minimalistic Efficiency / Resource Use** → `skills/execution/orucaveam/minimalistic-resource-use/SKILL.md`
+**M — Minimalistic Efficiency / Resource Use** → `skills/tools/minimal-tool-usage/SKILL.md`
 
 Compose the required ORUCAVEAM skills with the smallest sufficient field/domain and tool/system skills for the Masterplan item.
 
@@ -52,3 +52,4 @@ Record the applicable ORUCAVEAM letters, selected skill paths, affected canonica
 - `PRODUCT_LAW.md`
 - `MASTERPLAN.md`
 - `skills/governance/masterplan-skill-wiring/SKILL.md`
+- `skills/tools/minimal-tool-usage/SKILL.md`
