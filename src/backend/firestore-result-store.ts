@@ -84,7 +84,7 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     required(identity.projectId, 'projectId');
     required(identity.eventId, 'eventId');
     const token = await this.accessToken();
-    const response = await fetch(this.documentUrl(this.resultPath(identity)), { headers: { authorization: `Bearer ${token}` } });
+    const response = await fetch(this.documentHttpUrl(this.resultPath(identity)), { headers: { authorization: `Bearer ${token}` } });
     if (response.status === 404) return null;
     if (!response.ok) throw new Error(`Firestore execution result read failed: ${response.status}`);
     return decodeDocument(await response.json() as FirestoreDocument);
@@ -102,21 +102,28 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         writes: [{
-          update: { name: this.documentUrl(this.resultPath(result)), fields: fields(result as unknown as Record<string, unknown>) },
+          update: { name: this.resourceName(this.resultPath(result)), fields: fields(result as unknown as Record<string, unknown>) },
           currentDocument: { exists: false },
         }],
       }),
     });
-    if (!response.ok && ![409, 412].includes(response.status)) throw new Error(`Firestore execution result write failed: ${response.status}`);
+    if (!response.ok && ![409, 412].includes(response.status)) {
+      const body = await response.text();
+      throw new Error(`Firestore execution result write failed: ${response.status} ${body.slice(0, 300)}`);
+    }
   }
 
   private resultPath(identity: TaskExecutionResultIdentity): string {
     return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${identity.projectId}/tasks/${identity.taskId}/execution-results/${identity.eventId}`;
   }
 
-  private documentUrl(path: string): string {
+  private resourceName(path: string): string {
     const encoded = path.split('/').map((segment) => encodeURIComponent(segment)).join('/');
-    return `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents/${encoded}`;
+    return `projects/${this.firebaseProjectId}/databases/(default)/documents/${encoded}`;
+  }
+
+  private documentHttpUrl(path: string): string {
+    return `${ROOT}/${this.resourceName(path)}`;
   }
 
   private async accessToken(): Promise<string> {
