@@ -1,6 +1,6 @@
 /**
- * TEAM-EXPERIENCE-029 — Shell + Navigation + Deck + Workplace + Seats + F7 presentation scripts
- * May: theme, density, nav, stage, seat highlight, Workplace project selection, Seats/Provider detail, F7 clusters.
+ * TEAM-EXPERIENCE-029 — Shell + Navigation + Deck + Workplace + Seats + F7 + Approvals presentation scripts
+ * May: theme, density, nav, stage, seat highlight, Workplace project selection, Seats/Provider detail, F7 clusters, Approvals queue/detail.
  * Must not: Firestore, PayPal, scheduler actor, entitlements, execute approved actions.
  */
 
@@ -75,13 +75,57 @@ const SEAT_DATA = {
   },
 };
 
+const APPROVAL_DATA = {
+  "runtime-alpha": {
+    request: "Provider runtime invocation",
+    task: "TASK-042 · Working task",
+    seat: "Beta · worker",
+    provider: "Provider Two · Model B",
+    impact: "Invoke the already-bound provider runtime for the eligible task using the project's execution capability.",
+    scope: "Northstar Workplace / Command Deck project",
+    waiting: "2 min ago",
+    status: "waiting approval",
+    gate: "Approval pending · runtime gate not yet opened",
+    runs: "Provider runtime invocation for TASK-042, after authoritative approval and runtime checks.",
+    notRuns: "No browser-side provider call, Firestore write, scheduler selection, entitlement mutation, or PayPal activity.",
+  },
+  "workspace-write": {
+    request: "Workspace artifact write",
+    task: "TASK-044 · Artifact preparation",
+    seat: "Beta · worker",
+    provider: "Provider Two · Model B",
+    impact: "Write the prepared artifact into the project-scoped workspace through the authorized tool path.",
+    scope: "Northstar Workplace / Command Deck project workspace",
+    waiting: "6 min ago",
+    status: "waiting approval",
+    gate: "Approval pending · tool policy and task state remain backend-owned",
+    runs: "A project-scoped workspace tool invocation, only after the authoritative approval path permits it.",
+    notRuns: "No direct filesystem write from this browser, no provider-to-provider control, and no entitlement or PayPal mutation.",
+  },
+  "review-export": {
+    request: "Export review package",
+    task: "TASK-046 · Review handoff",
+    seat: "Gamma · reviewer",
+    provider: "Provider Three · Model C",
+    impact: "Prepare a bounded review package for export after the reviewer connection is revalidated.",
+    scope: "Northstar Workplace / Command Deck review scope",
+    waiting: "11 min ago",
+    status: "blocked",
+    gate: "Blocked · Gamma connection is degraded and requires recovery before execution",
+    runs: "Nothing yet; recovery and capability revalidation must precede any execution eligibility.",
+    notRuns: "No export, no provider request, no task transition, and no browser-side recovery bypass.",
+  },
+};
+
 let lastFocus = null;
 let focusTrapHandler = null;
 let activeCluster = "action";
 let activeProject = "command-deck";
 let workplaceBuilt = false;
 let seatsBuilt = false;
+let approvalsBuilt = false;
 let activeSeat = "alpha";
+let activeApproval = "runtime-alpha";
 
 function refreshThemeControls() {
   const mode = resolveMode(readSource(), readStoredMode());
@@ -371,20 +415,151 @@ function activateSeat() {
   if (impact) impact.textContent = `${seat.name} activation is a presentation preview. No provider connection is changed, no entitlement is mutated, and no scheduler state is written.`;
 }
 
+function buildApprovals() {
+  if (approvalsBuilt) return;
+  const main = document.querySelector("#main");
+  if (!main) return;
+
+  const section = document.createElement("section");
+  section.className = "ta-approvals-page";
+  section.dataset.composition = "approvals";
+  section.dataset.approvalsRoot = "";
+  section.hidden = true;
+  section.setAttribute("aria-labelledby", "approvals-title");
+  section.innerHTML = `
+    <div class="ta-approvals__queue ta-panel" data-field="F3" aria-label="Approval request queue">
+      <div class="ta-region-heading">
+        <div>
+          <p class="ta-type-label">Execution boundary</p>
+          <h1 id="approvals-title" class="ta-type-title">Approvals</h1>
+        </div>
+        <span class="ta-type-meta">3 requests</span>
+      </div>
+      <p class="ta-type-body">Review action requests before any authoritative execution path is allowed. Selecting a request changes presentation only.</p>
+      <ul class="ta-approval-list" role="list">
+        ${Object.entries(APPROVAL_DATA).map(([id, approval], index) => `
+          <li>
+            <button type="button" class="ta-card ta-approval-card" data-approval="${id}" aria-pressed="${index === 0 ? "true" : "false"}">
+              <span class="ta-type-title">${approval.request}</span>
+              <span class="ta-type-meta">${approval.task}</span>
+              <span class="ta-type-meta">${approval.seat} · ${approval.provider}</span>
+              <span class="ta-type-status">${approval.status}</span>
+              <span class="ta-type-meta">waiting: ${approval.waiting}</span>
+            </button>
+          </li>
+        `).join("")}
+      </ul>
+    </div>
+
+    <section class="ta-approvals__detail ta-panel" data-field="F3" data-elevation="e3" aria-labelledby="approval-detail-title">
+      <div class="ta-region-heading">
+        <div>
+          <p class="ta-type-label">Selected request</p>
+          <h2 id="approval-detail-title" class="ta-type-title" data-approval-title>Provider runtime invocation</h2>
+          <p class="ta-type-meta" data-approval-task>TASK-042 · Working task</p>
+        </div>
+        <span class="ta-type-status" data-approval-status>waiting approval</span>
+      </div>
+
+      <dl class="ta-approval-facts">
+        <div><dt class="ta-type-meta">Seat</dt><dd class="ta-type-body" data-approval-seat>Beta · worker</dd></div>
+        <div><dt class="ta-type-meta">Provider</dt><dd class="ta-type-body" data-approval-provider>Provider Two · Model B</dd></div>
+        <div><dt class="ta-type-meta">Scope</dt><dd class="ta-type-body" data-approval-scope>Northstar Workplace / Command Deck project</dd></div>
+        <div><dt class="ta-type-meta">Waiting</dt><dd class="ta-type-body" data-approval-waiting>2 min ago</dd></div>
+        <div><dt class="ta-type-meta">Runtime gate</dt><dd class="ta-type-body" data-approval-gate>Approval pending · runtime gate not yet opened</dd></div>
+      </dl>
+
+      <div class="ta-approval-impact ta-card" data-field="F4">
+        <p class="ta-type-label">Impact</p>
+        <p class="ta-type-body" data-approval-impact>Invoke the already-bound provider runtime for the eligible task using the project's execution capability.</p>
+      </div>
+
+      <div class="ta-approval-boundary-grid">
+        <section class="ta-card" data-field="F4" aria-labelledby="approval-runs-title">
+          <h3 id="approval-runs-title" class="ta-type-label">What would run</h3>
+          <p class="ta-type-body" data-approval-runs>Provider runtime invocation for TASK-042, after authoritative approval and runtime checks.</p>
+        </section>
+        <section class="ta-card" data-field="F4" aria-labelledby="approval-not-runs-title">
+          <h3 id="approval-not-runs-title" class="ta-type-label">What will not run here</h3>
+          <p class="ta-type-body" data-approval-not-runs>No browser-side provider call, Firestore write, scheduler selection, entitlement mutation, or PayPal activity.</p>
+        </section>
+      </div>
+
+      <div class="ta-approval-actions">
+        <button type="button" class="ta-control" data-field="F5" data-action="back-to-deck">Back to Deck</button>
+        <button type="button" class="ta-control" data-field="F5" data-action="open-selected-approval" data-kind="primary">Open decision plate</button>
+      </div>
+      <p class="ta-type-meta" data-approval-result role="status">Presentation only. The approval decision is not a durable state transition in this slice.</p>
+    </section>
+  `;
+  main.insertBefore(section, main.querySelector("[data-offdeck-root]"));
+
+  section.querySelectorAll("[data-approval]").forEach((card) => {
+    card.addEventListener("click", () => selectApproval(card.getAttribute("data-approval") ?? "runtime-alpha"));
+  });
+  section.querySelector('[data-action="open-selected-approval"]')?.addEventListener("click", openSelectedApproval);
+  section.querySelector('[data-action="back-to-deck"]')?.addEventListener("click", () => showComposition("deck"));
+  approvalsBuilt = true;
+  selectApproval(activeApproval);
+}
+
+function selectApproval(approvalId) {
+  const id = APPROVAL_DATA[approvalId] ? approvalId : "runtime-alpha";
+  activeApproval = id;
+  document.querySelectorAll("[data-approval]").forEach((card) => {
+    const selected = card.getAttribute("data-approval") === id;
+    card.setAttribute("aria-pressed", selected ? "true" : "false");
+  });
+  const approval = APPROVAL_DATA[id];
+  if (!approval) return;
+  const set = (selector, value) => {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = value;
+  };
+  set("[data-approval-title]", approval.request);
+  set("[data-approval-task]", approval.task);
+  set("[data-approval-status]", approval.status);
+  set("[data-approval-seat]", approval.seat);
+  set("[data-approval-provider]", approval.provider);
+  set("[data-approval-scope]", approval.scope);
+  set("[data-approval-waiting]", approval.waiting);
+  set("[data-approval-gate]", approval.gate);
+  set("[data-approval-impact]", approval.impact);
+  set("[data-approval-runs]", approval.runs);
+  set("[data-approval-not-runs]", approval.notRuns);
+  set("[data-approval-result]", "Presentation only. The approval decision is not a durable state transition in this slice.");
+}
+
+function openSelectedApproval() {
+  const approval = APPROVAL_DATA[activeApproval];
+  if (!approval) return;
+  openModal("action");
+  const title = document.querySelector("[data-modal-title]");
+  const actor = document.querySelector("[data-modal-actor]");
+  const impact = document.querySelector("[data-modal-impact]");
+  if (title) title.textContent = approval.request;
+  if (actor) actor.textContent = `${approval.seat} · ${approval.provider} · ${approval.task}`;
+  if (impact) impact.textContent = `${approval.impact} ${approval.notRuns}`;
+}
+
 function showComposition(destination) {
   buildWorkplace();
   buildSeats();
+  buildApprovals();
   const deck = document.querySelector("[data-deck-root]");
   const workplace = document.querySelector("[data-workplace-root]");
   const seats = document.querySelector("[data-seats-root]");
+  const approvals = document.querySelector("[data-approvals-root]");
   const off = document.querySelector("[data-offdeck-root]");
   const isDeck = destination === "deck";
   const isWorkplace = destination === "workplace";
   const isSeats = destination === "seats";
+  const isApprovals = destination === "approvals";
   if (deck) deck.hidden = !isDeck;
   if (workplace) workplace.hidden = !isWorkplace;
   if (seats) seats.hidden = !isSeats;
-  if (off) off.hidden = isDeck || isWorkplace || isSeats;
+  if (approvals) approvals.hidden = !isApprovals;
+  if (off) off.hidden = isDeck || isWorkplace || isSeats || isApprovals;
 
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     const id = btn.getAttribute("data-nav") ?? "";
@@ -393,12 +568,12 @@ function showComposition(destination) {
   });
   syncCompactNavigation(destination);
 
-  if (!isDeck && !isWorkplace && !isSeats) {
+  if (!isDeck && !isWorkplace && !isSeats && !isApprovals) {
     const title = document.querySelector("[data-stage-title]");
     const copy = document.querySelector("[data-stage-copy]");
     const label = NAV_LABELS[destination] ?? destination;
     if (title) title.textContent = label;
-    if (copy) copy.textContent = label + " composition is not implemented yet. Shell and Navigation persist; Deck, Workplace, and Seats are the inhabited bodies. Presentation only — no domain writes.";
+    if (copy) copy.textContent = label + " composition is not implemented yet. Shell and Navigation persist; Deck, Workplace, Seats, and Approvals are the inhabited bodies. Presentation only — no domain writes.";
   }
 }
 
@@ -472,6 +647,7 @@ function closeModal() {
 
 function onModalAction(action) {
   const note = document.querySelector("[data-modal-result]");
+  const approvalNote = document.querySelector("[data-approval-result]");
   const labels = {
     approve: "APPROVE recorded in UI only — no domain execution.",
     deny: "DENY recorded in UI only — no domain execution.",
@@ -480,6 +656,7 @@ function onModalAction(action) {
     more: "MORE recorded in UI only — plate dismissed; Planning continues (display).",
   };
   if (note) note.textContent = labels[action] ?? `${String(action).toUpperCase()} — UI only.`;
+  if (approvalNote && (action === "approve" || action === "deny")) approvalNote.textContent = `${labels[action]} Authoritative approval state remains backend-owned.`;
   closeModal();
 }
 
@@ -503,6 +680,7 @@ function wire() {
   refreshThemeControls();
   buildWorkplace();
   buildSeats();
+  buildApprovals();
   showComposition("deck");
   setStage("planning");
 
