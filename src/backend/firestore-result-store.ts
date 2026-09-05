@@ -7,32 +7,31 @@ type ServiceAccount = { project_id: string; client_email: string; private_key: s
 type FirestoreValue =
   | { stringValue: string }
   | { booleanValue: boolean }
+  | { integerValue: string }
   | { timestampValue: string }
   | { doubleValue: number }
   | { arrayValue: { values?: FirestoreValue[] } }
   | { mapValue: { fields?: Record<string, FirestoreValue> } }
   | { nullValue: null };
 
-type FirestoreDocument = { name?: string };
-
 function required(value: string, name: string): string {
   if (!value.trim()) throw new Error(`${name} is required`);
   return value.trim();
 }
 
-function value(input: unknown): FirestoreValue {
+function firestoreValue(input: unknown): FirestoreValue {
   if (input === null) return { nullValue: null };
   if (typeof input === 'string') return { stringValue: input };
   if (typeof input === 'boolean') return { booleanValue: input };
-  if (typeof input === 'number') return Number.isInteger(input) ? { doubleValue: input } : { doubleValue: input };
+  if (typeof input === 'number') return Number.isInteger(input) ? { integerValue: String(input) } : { doubleValue: input };
   if (input instanceof Date) return { timestampValue: input.toISOString() };
-  if (Array.isArray(input)) return { arrayValue: { values: input.map(value) } };
-  if (typeof input === 'object') return { mapValue: { fields: Object.fromEntries(Object.entries(input as Record<string, unknown>).map(([key, child]) => [key, value(child)])) } };
+  if (Array.isArray(input)) return { arrayValue: { values: input.map(firestoreValue) } };
+  if (typeof input === 'object') return { mapValue: { fields: Object.fromEntries(Object.entries(input as Record<string, unknown>).map(([key, child]) => [key, firestoreValue(child)])) } };
   throw new Error(`Unsupported Firestore result value: ${typeof input}`);
 }
 
 function fields(input: Record<string, unknown>): Record<string, FirestoreValue> {
-  return Object.fromEntries(Object.entries(input).map(([key, item]) => [key, value(item)]));
+  return Object.fromEntries(Object.entries(input).map(([key, item]) => [key, firestoreValue(item)]));
 }
 
 function loadServiceAccount(): ServiceAccount {
@@ -68,8 +67,12 @@ async function accessToken(account: ServiceAccount): Promise<string> {
 export class FirestoreTaskExecutionResultStore implements TaskExecutionResultStore {
   private readonly account = loadServiceAccount();
   private readonly firebaseProjectId: string;
+  private readonly uid: string;
+  private readonly workplaceId: string;
 
-  constructor(firebaseProjectId = process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official') {
+  constructor(uid: string, workplaceId: string, firebaseProjectId = process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official') {
+    this.uid = required(uid, 'uid');
+    this.workplaceId = required(workplaceId, 'workplaceId');
     this.firebaseProjectId = required(firebaseProjectId, 'firebaseProjectId');
     if (this.account.project_id !== this.firebaseProjectId) throw new Error('Firebase project identity mismatch');
   }
@@ -77,7 +80,7 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
   async hasResult(eventId: string): Promise<boolean> {
     required(eventId, 'eventId');
     const token = await accessToken(this.account);
-    const response = await fetch(this.documentUrl(`result-index/${eventId}`), { headers: { authorization: `Bearer ${token}` } });
+    const response = await fetch(this.documentUrl(`accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${this.expectedProjectId()}/execution-results/${eventId}`), { headers: { authorization: `Bearer ${token}` } });
     return response.ok;
   }
 
@@ -88,26 +91,22 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     required(result.eventId, 'eventId');
     required(result.idempotencyKey, 'idempotencyKey');
     const token = await accessToken(this.account);
-    const taskPath = `accounts/${result.taskId.split(':')[0]}`;
-    const resultDocumentPath = `accounts/${encodeURIComponent(result.idempotencyKey)}/executionResults/${encodeURIComponent(result.eventId)}`;
-    const indexPath = `result-index/${encodeURIComponent(result.eventId)}`;
-    const writes = [
-      {
-        update: { name: this.documentUrl(resultDocumentPath), fields: fields(result as unknown as Record<string, unknown>) },
-        currentDocument: { exists: false },
-      },
-      {
-        update: { name: this.documentUrl(indexPath), fields: fields({ taskId: result.taskId, projectId: result.projectId, eventId: result.eventId, resultDocumentPath, recordedAt: result.recordedAt }) },
-        currentDocument: { exists: false },
-      },
-    ];
+    const resultPath = `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${result.projectId}/tasks/${result.taskId}/execution-results/${result.eventId}`;
     const response = await fetch(`${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents:commit`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ writes }),
+      body: JSON.stringify({
+        writes: [{
+          update: { name: this.documentUrl(resultPath), fields: fields(result as unknown as Record<string, unknown>) },
+          currentDocument: { exists: false },
+        }],
+      }),
     });
     if (!response.ok && ![409, 412].includes(response.status)) throw new Error(`Firestore execution result write failed: ${response.status}`);
-    void taskPath;
+  }
+
+  private expectedProjectId(): string {
+    throw new Error('hasResult requires project scope; use persist through TaskExecutionService or a project-bound store');
   }
 
   private documentUrl(path: string): string {
