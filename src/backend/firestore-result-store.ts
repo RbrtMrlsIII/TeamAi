@@ -14,6 +14,8 @@ type FirestoreValue =
   | { mapValue: { fields?: Record<string, FirestoreValue> } }
   | { nullValue: null };
 
+type FirestoreDocument = { fields?: Record<string, FirestoreValue> };
+
 function required(value: string, name: string): string {
   if (!value.trim()) throw new Error(`${name} is required`);
   return value.trim();
@@ -34,6 +36,22 @@ function fields(input: Record<string, unknown>): Record<string, FirestoreValue> 
   return Object.fromEntries(Object.entries(input).map(([key, item]) => [key, firestoreValue(item)]));
 }
 
+function decode(value: FirestoreValue): unknown {
+  if ('stringValue' in value) return value.stringValue;
+  if ('booleanValue' in value) return value.booleanValue;
+  if ('integerValue' in value) return Number(value.integerValue);
+  if ('doubleValue' in value) return value.doubleValue;
+  if ('timestampValue' in value) return value.timestampValue;
+  if ('nullValue' in value) return null;
+  if ('arrayValue' in value) return (value.arrayValue.values ?? []).map(decode);
+  return Object.fromEntries(Object.entries(value.mapValue.fields ?? {}).map(([key, child]) => [key, decode(child)]));
+}
+
+function decodeDocument(document: FirestoreDocument): DurableExecutionResult {
+  const decodedFields = Object.fromEntries(Object.entries(document.fields ?? {}).map(([key, value]) => [key, decode(value)]));
+  return decodedFields as DurableExecutionResult;
+}
+
 function loadServiceAccount(): ServiceAccount {
   const raw = process.env.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON;
   if (!raw) throw new Error('TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON is required');
@@ -43,32 +61,12 @@ function loadServiceAccount(): ServiceAccount {
   return parsed as ServiceAccount;
 }
 
-async function accessToken(account: ServiceAccount): Promise<string> {
-  const now = Math.floor(Date.now() / 1000);
-  const encode = (input: string) => Buffer.from(input).toString('base64url');
-  const header = encode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-  const payload = encode(JSON.stringify({ iss: account.client_email, scope: 'https://www.googleapis.com/auth/datastore', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 }));
-  const signingInput = `${header}.${payload}`;
-  const signer = createSign('RSA-SHA256');
-  signer.update(signingInput);
-  signer.end();
-  const assertion = `${signingInput}.${signer.sign(account.private_key, 'base64url')}`;
-  const response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
-  });
-  if (!response.ok) throw new Error(`Firebase token exchange failed: ${response.status}`);
-  const body = await response.json() as { access_token?: unknown };
-  if (typeof body.access_token !== 'string') throw new Error('Firebase access token missing');
-  return body.access_token;
-}
-
 export class FirestoreTaskExecutionResultStore implements TaskExecutionResultStore {
   private readonly account = loadServiceAccount();
   private readonly firebaseProjectId: string;
   private readonly uid: string;
   private readonly workplaceId: string;
+  private token?: { value: string; expiresAt: number };
 
   constructor(uid: string, workplaceId: string, firebaseProjectId = process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official') {
     this.uid = required(uid, 'uid');
@@ -78,12 +76,18 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
   }
 
   async hasResult(identity: TaskExecutionResultIdentity): Promise<boolean> {
+    return (await this.getResult(identity)) !== null;
+  }
+
+  async getResult(identity: TaskExecutionResultIdentity): Promise<DurableExecutionResult | null> {
     required(identity.taskId, 'taskId');
     required(identity.projectId, 'projectId');
     required(identity.eventId, 'eventId');
-    const token = await accessToken(this.account);
+    const token = await this.accessToken();
     const response = await fetch(this.documentUrl(this.resultPath(identity)), { headers: { authorization: `Bearer ${token}` } });
-    return response.ok;
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Firestore execution result read failed: ${response.status}`);
+    return decodeDocument(await response.json() as FirestoreDocument);
   }
 
   async persist(result: DurableExecutionResult): Promise<void> {
@@ -92,7 +96,7 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     required(result.seatId, 'seatId');
     required(result.eventId, 'eventId');
     required(result.idempotencyKey, 'idempotencyKey');
-    const token = await accessToken(this.account);
+    const token = await this.accessToken();
     const response = await fetch(`${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents:commit`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
@@ -114,4 +118,33 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     const encoded = path.split('/').map((segment) => encodeURIComponent(segment)).join('/');
     return `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents/${encoded}`;
   }
+
+  private async accessToken(): Promise<string> {
+    const now = Math.floor(Date.now() / 1000);
+    if (this.token && this.token.expiresAt > now + 60) return this.token.value;
+    const token = await exchangeAccessToken(this.account);
+    this.token = { value: token, expiresAt: now + 3500 };
+    return token;
+  }
+}
+
+async function exchangeAccessToken(account: ServiceAccount): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const encode = (input: string) => Buffer.from(input).toString('base64url');
+  const header = encode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const payload = encode(JSON.stringify({ iss: account.client_email, scope: 'https://www.googleapis.com/auth/datastore', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 }));
+  const signingInput = `${header}.${payload}`;
+  const signer = createSign('RSA-SHA256');
+  signer.update(signingInput);
+  signer.end();
+  const assertion = `${signingInput}.${signer.sign(account.private_key, 'base64url')}`;
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
+  });
+  if (!response.ok) throw new Error(`Firebase token exchange failed: ${response.status}`);
+  const body = await response.json() as { access_token?: unknown };
+  if (typeof body.access_token !== 'string') throw new Error('Firebase access token missing');
+  return body.access_token;
 }
