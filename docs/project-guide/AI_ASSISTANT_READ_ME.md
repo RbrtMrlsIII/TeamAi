@@ -14,16 +14,17 @@ Read in this order:
 4. `POLICY.md`
 5. `docs/SKILL_WIRING.md`
 6. `/AI_ASSISTANT_READ_ME.md`
-7. the applicable phase/domain contract
-8. the applicable skill/guard before changing code or canonical documents
-9. the applicable implementation/verification/evidence records
-10. `docs/project-guide/HandOver.md` and `docs/project-guide/Endorsement.md` when completing or transferring work
+7. `docs/TEAMAI_CURRENT_STATE.md`
+8. the applicable phase/domain contract
+9. the applicable skill/guard before changing code or canonical documents
+10. the applicable implementation/verification/evidence records
+11. `docs/project-guide/HandOver.md` and `docs/project-guide/Endorsement.md` when completing or transferring work
 
 ## Current phase
 
-`TEAM-BACKEND-001 — IN IMPLEMENTATION`
+`TEAM-EXPERIENCE-029 — FRONTEND CATCH-UP / RECONCILIATION + POLISH`
 
-The repository is preparing for `TEAM-EXPERIENCE-029`, but 029 remains a planning/architecture frontier until the required backend gates and explicit implementation approval allow the next phase to proceed.
+`TEAM-BACKEND-001` remains **IN IMPLEMENTATION / intentionally slowed** at its remaining external/live evidence and completion frontier. The repository is not waiting for a nonexistent frontend: the 029 spatial UI is materially inhabited and is now being reconciled, polished, and prepared for a separately authorized live integration boundary.
 
 ## Non-negotiable working rules
 
@@ -37,7 +38,8 @@ The repository is preparing for `TEAM-EXPERIENCE-029`, but 029 remains a plannin
 - TeamAi subscription concepts must not be mistaken for provider subscriptions.
 - MCP/tool availability must not be mistaken for authorization.
 - ToolKit is upstream-only and does not own TeamAi state.
-- Vercel is non-authoritative and may be used as a controlled web development/preview/browser-verification surface when the current web work benefits from it; it is not a TeamAi source, delivery, backend, commerce, scheduler, authorization, or completion authority.
+- Vercel is currently paused. Do not resume Vercel project, deployment, preview, or browser-verification activity without explicit user approval in the active execution context. The canonical rule is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
+- GitHub Actions + Playwright and approved local/browser paths remain valid verification routes while Vercel is paused.
 - The Full Project ZIP is a first-class project-state package, not an optional add-on; it must follow `docs/PROJECT_ZIP_AND_ARTIFACT_POLICY.md`.
 
 ## Execution discipline — ORUCAVEAM
@@ -64,7 +66,7 @@ Use `skills/governance/learning-handover/SKILL.md`.
 
 The complete rule is `docs/UI_BROWSER_INTEGRITY_VERIFICATION_POLICY.md`.
 
-Vercel is not restricted to UI-only work. It may be used deliberately for relevant web development and browser verification, including UI, UI-plus-backend integration, authenticated web flows, commerce-facing browser flows, responsive behavior, preview environments, and end-to-end browser smoke tests.
+Vercel is currently paused. Do not resume it without explicit user approval. When/if that approval is given, Vercel may be used as a non-authoritative web development / preview / browser-verification surface for the exact exercised scope.
 
 The browser result proves only the web behavior actually exercised. Backend, Firestore, PayPal, identity, entitlement, authorization, scheduler, deployment, and architecture evidence remain owned by their canonical authorities.
 
