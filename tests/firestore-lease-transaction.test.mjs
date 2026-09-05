@@ -5,10 +5,7 @@ import { FirestoreLeaseTransaction } from '../dist/src/backend/firestore-lease-t
 
 const originalFetch = globalThis.fetch;
 
-function privateKey() {
-  return generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
-}
-
+function privateKey() { return generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }); }
 function mockFetch(responses) {
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
@@ -19,16 +16,10 @@ function mockFetch(responses) {
   };
   return calls;
 }
-
 function restore() { globalThis.fetch = originalFetch; }
-
 function setup() {
   process.env.TEAMAI_FIREBASE_PROJECT_ID = 'team-ai-official';
-  process.env.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON = JSON.stringify({
-    project_id: 'team-ai-official',
-    client_email: 'runtime-test@example.iam.gserviceaccount.com',
-    private_key: privateKey(),
-  });
+  process.env.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON = JSON.stringify({ project_id: 'team-ai-official', client_email: 'runtime-test@example.iam.gserviceaccount.com', private_key: privateKey() });
 }
 
 test('Firestore lease transaction reads READY state and atomically commits lease + task transition', async () => {
@@ -36,14 +27,13 @@ test('Firestore lease transaction reads READY state and atomically commits lease
   const calls = mockFetch([
     { body: { access_token: 'token-1' } },
     { body: { transaction: 'tx-1' } },
-    { body: { updateTime: '2026-09-05T00:00:00Z', fields: { status: { stringValue: 'ready' }, projectId: { stringValue: 'project-1' } } } },
-    { body: { commitVersion: 'v1' } },
+    { body: { updateTime: '2026-09-05T00:00:00Z', fields: { status: { stringValue: 'ready' } } } },
+    { body: { writeResults: [{}] } },
   ]);
   try {
     const result = await new FirestoreLeaseTransaction().leaseReady({ uid: 'uid-1', workplaceId: 'workplace-1', projectId: 'project-1', taskId: 'task-1', seatId: 'seat-a', leaseId: 'lease-1', actorId: 'scheduler-1' });
     assert.deepEqual(result, { acquired: true, leaseId: 'lease-1', taskId: 'task-1', seatId: 'seat-a', status: 'leased' });
-    const transactionRead = calls.find((call) => call.method === 'GET' && call.url.includes('transaction=tx-1'));
-    assert.ok(transactionRead);
+    assert.ok(calls.find((call) => call.method === 'GET' && call.url.includes('transaction=tx-1')));
     const commit = calls.find((call) => call.url.includes(':commit'));
     assert.ok(commit);
     const body = JSON.parse(commit.body);
