@@ -13,3 +13,4 @@ export * from './mcp/servers.js';
 export * from './plugins/registry.js';
 export * from './api/server.js';
 export * from './catalog-service.js';
+export * from './backend/provider-runtime.js';
