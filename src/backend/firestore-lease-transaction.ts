@@ -85,6 +85,12 @@ async function accessToken(account: ServiceAccount): Promise<string> {
   return body.access_token;
 }
 
+/** Document resource name for commit writes (no https host). */
+function resourceName(firebaseProjectId: string, documentPath: string): string {
+  const encoded = documentPath.split('/').map((segment) => encodeURIComponent(segment)).join('/');
+  return `projects/${firebaseProjectId}/databases/(default)/documents/${encoded}`;
+}
+
 export class FirestoreLeaseTransaction {
   private readonly account = serviceAccountFromEnv();
 
@@ -104,48 +110,80 @@ export class FirestoreLeaseTransaction {
 
     const token = await accessToken(this.account);
     const taskPath = `accounts/${input.uid}/workplaces/${input.workplaceId}/projects/${input.projectId}/tasks/${input.taskId}`;
-    const documentBase = `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents`;
-    const taskUrl = `${documentBase}/${taskPath}`;
-    const transactionResponse = await fetch(`${documentBase}:beginTransaction`, {
+    const documentsRoot = `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents`;
+    const taskHttpUrl = `${documentsRoot}/${taskPath.split('/').map((s) => encodeURIComponent(s)).join('/')}`;
+    const taskResource = resourceName(this.firebaseProjectId, taskPath);
+
+    const transactionResponse = await fetch(`${documentsRoot}:beginTransaction`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({ options: { readWrite: {} } }),
     });
-    if (!transactionResponse.ok) throw new Error(`Firestore begin transaction failed: ${transactionResponse.status}`);
+    if (!transactionResponse.ok) {
+      const body = await transactionResponse.text();
+      throw new Error(`Firestore begin transaction failed: ${transactionResponse.status} ${body.slice(0, 200)}`);
+    }
     const { transaction } = await transactionResponse.json() as { transaction?: string };
     if (!transaction) throw new Error('Firestore transaction id missing');
 
-    const readUrl = new URL(taskUrl);
+    const readUrl = new URL(taskHttpUrl);
     readUrl.searchParams.set('transaction', transaction);
     const taskResponse = await fetch(readUrl, { headers: { authorization: `Bearer ${token}` } });
     if (taskResponse.status === 404) return { acquired: false, leaseId: input.leaseId, taskId: input.taskId, reason: 'NOT_FOUND' };
-    if (!taskResponse.ok) throw new Error(`Firestore transactional read failed: ${taskResponse.status}`);
+    if (!taskResponse.ok) {
+      const body = await taskResponse.text();
+      throw new Error(`Firestore transactional read failed: ${taskResponse.status} ${body.slice(0, 200)}`);
+    }
     const task = await taskResponse.json() as FirestoreDocument;
     const current = decoded(task);
     if (current.status !== 'ready') return { acquired: false, leaseId: input.leaseId, taskId: input.taskId, reason: 'NOT_READY' };
 
     const now = new Date().toISOString();
     const leasePath = `${taskPath}/leases/${input.leaseId}`;
-    const commitResponse = await fetch(`${documentBase}:commit`, {
+    const leaseResource = resourceName(this.firebaseProjectId, leasePath);
+    const commitResponse = await fetch(`${documentsRoot}:commit`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         transaction,
         writes: [
           {
-            update: { name: `${documentBase}/${leasePath}`, fields: fields({ uid: input.uid, taskId: input.taskId, seatId: input.seatId, leaseId: input.leaseId, actorId: input.actorId, status: 'leased', leasedAt: now }) },
+            update: {
+              name: leaseResource,
+              fields: fields({
+                uid: input.uid,
+                taskId: input.taskId,
+                seatId: input.seatId,
+                leaseId: input.leaseId,
+                actorId: input.actorId,
+                status: 'leased',
+                leasedAt: now,
+              }),
+            },
             currentDocument: { exists: false },
           },
           {
-            update: { name: taskUrl, fields: fields({ ...current, status: 'leased', leaseId: input.leaseId, leasedBy: input.actorId, updatedAt: now }) },
+            update: {
+              name: taskResource,
+              fields: fields({
+                ...current,
+                status: 'leased',
+                leaseId: input.leaseId,
+                leasedBy: input.actorId,
+                updatedAt: now,
+              }),
+            },
             currentDocument: { updateTime: task.updateTime },
           },
         ],
       }),
     });
     if (!commitResponse.ok) {
-      if ([409, 412].includes(commitResponse.status)) return { acquired: false, leaseId: input.leaseId, taskId: input.taskId, reason: 'CONFLICT' };
-      throw new Error(`Firestore lease commit failed: ${commitResponse.status}`);
+      if ([409, 412].includes(commitResponse.status)) {
+        return { acquired: false, leaseId: input.leaseId, taskId: input.taskId, reason: 'CONFLICT' };
+      }
+      const body = await commitResponse.text();
+      throw new Error(`Firestore lease commit failed: ${commitResponse.status} ${body.slice(0, 400)}`);
     }
     return { acquired: true, leaseId: input.leaseId, taskId: input.taskId, seatId: input.seatId, status: 'leased' };
   }
