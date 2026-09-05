@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TeamAi — Backend Validator Contract</title>
+  <link rel="stylesheet" href="./theme-root.css" />
+  <link rel="stylesheet" href="./shell-nav.css" />
+</head>
+<body data-field="F0" class="ta-atmosphere">
+  <main class="ta-main" tabindex="-1">
+    <section class="ta-panel" data-field="F3" aria-labelledby="backend-validator-title">
+      <header class="ta-region-heading">
+        <div>
+          <p class="ta-type-label">Backend-owned fact · presentation contract</p>
+          <h1 id="backend-validator-title" class="ta-type-title">Execution fact validator</h1>
+        </div>
+        <span class="ta-type-status" data-validator-status>VALID</span>
+      </header>
+
+      <div class="ta-card" data-field="F4">
+        <dl class="ta-proof-grid">
+          <div><dt class="ta-type-meta">Task</dt><dd class="ta-type-body" data-fact-task>task-1</dd></div>
+          <div><dt class="ta-type-meta">Status</dt><dd class="ta-type-body" data-fact-status>running</dd></div>
+          <div><dt class="ta-type-meta">Approval</dt><dd class="ta-type-body" data-fact-approved>approved</dd></div>
+          <div><dt class="ta-type-meta">Seat</dt><dd class="ta-type-body" data-fact-seat>seat-a</dd></div>
+          <div><dt class="ta-type-meta">Provider</dt><dd class="ta-type-body" data-fact-provider>provider-a</dd></div>
+          <div><dt class="ta-type-meta">Connection</dt><dd class="ta-type-body" data-fact-connection>ready</dd></div>
+        </dl>
+      </div>
+
+      <section class="ta-card" data-field="F4" aria-label="Validator result">
+        <p class="ta-type-label">Validation</p>
+        <p class="ta-type-body" data-validator-message>Backend fact passes the presentation contract.</p>
+        <p class="ta-type-meta">Source: <span data-fact-source>fixture</span> · read-only · no backend mutation</p>
+      </section>
+
+      <section class="ta-panel" data-field="F6" aria-label="Authority boundary">
+        <div class="ta-status-item">
+          <span class="ta-type-status">BACKEND</span>
+          <span class="ta-type-meta">Authority</span>
+          <span class="ta-type-body">Execution state remains backend-owned.</span>
+        </div>
+        <div class="ta-status-item">
+          <span class="ta-type-status">UI</span>
+          <span class="ta-type-meta">Role</span>
+          <span class="ta-type-body">The UI may validate and present facts only.</span>
+        </div>
+        <div class="ta-status-item">
+          <span class="ta-type-status">NONE</span>
+          <span class="ta-type-meta">Side effects</span>
+          <span class="ta-type-body">No scheduler selection, provider invocation, Firestore write, entitlement mutation, or PayPal action.</span>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var fact = {
+        source: "fixture",
+        taskId: "task-1",
+        taskStatus: "running",
+        approved: true,
+        connection: "ready",
+        provider: "provider-a",
+        seatId: "seat-a"
+      };
+      var reasons = [];
+      if (!fact.taskId.trim()) reasons.push("taskId is required");
+      if (!fact.seatId.trim()) reasons.push("seatId is required");
+      if (!fact.provider.trim()) reasons.push("provider is required");
+      if (fact.taskStatus === "running" && fact.connection !== "ready") reasons.push("running task must report a ready connection");
+      if (fact.taskStatus === "completed" && !fact.lastEventType) reasons.push("completed task should expose its terminal event type");
+
+      document.querySelector("[data-fact-task]").textContent = fact.taskId;
+      document.querySelector("[data-fact-status]").textContent = fact.taskStatus;
+      document.querySelector("[data-fact-approved]").textContent = fact.approved ? "approved" : "not approved";
+      document.querySelector("[data-fact-seat]").textContent = fact.seatId;
+      document.querySelector("[data-fact-provider]").textContent = fact.provider;
+      document.querySelector("[data-fact-connection]").textContent = fact.connection;
+      document.querySelector("[data-fact-source]").textContent = fact.source;
+
+      var valid = reasons.length === 0;
+      document.querySelector("[data-validator-status]").textContent = valid ? "VALID" : "INVALID";
+      document.querySelector("[data-validator-status]").setAttribute("data-status", valid ? "ok" : "error");
+      document.querySelector("[data-validator-message]").textContent = valid
+        ? "Backend fact passes the presentation contract."
+        : reasons.join("; ");
+    })();
+  </script>
+</body>
+</html>
