@@ -70,11 +70,7 @@ export class TaskExecutionService {
 
     let result: GenerateResult | undefined;
     let providerError: unknown;
-    try {
-      result = await this.runtime.invoke(invocation);
-    } catch (error) {
-      providerError = error;
-    }
+    try { result = await this.runtime.invoke(invocation); } catch (error) { providerError = error; }
 
     if (providerError !== undefined) {
       const failKey = `${idempotencyKey}:fail`;
@@ -98,7 +94,7 @@ export class TaskExecutionService {
 
   private async persistResult(result: DurableExecutionResult): Promise<void> {
     if (!this.results) return;
-    if (await this.results.hasResult(result.eventId)) return;
+    if (await this.results.hasResult({ taskId: result.taskId, projectId: result.projectId, eventId: result.eventId })) return;
     await this.results.persist(result);
   }
 
