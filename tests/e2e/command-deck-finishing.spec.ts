@@ -15,20 +15,29 @@ test.describe('029 Command Deck finishing contract', () => {
     await expect(page.locator('[data-field="F6"][aria-label="System status"]')).toBeVisible();
   });
 
-  test('current 029 navigation destinations do not expose stale visible placeholder copy', async ({ page }) => {
+  test('current 029 navigation destinations expose their inhabited composition without stale placeholder copy', async ({ page }) => {
     await openDeck(page);
-    const destinations = ['Workplace', 'Seats', 'Planning', 'Working', 'Artifacts', 'Approvals', 'Settings'];
+    const destinations = [
+      ['Workplace', '[data-workplace-root]'],
+      ['Seats', '[data-seats-root]'],
+      ['Planning', '[data-planning-root]'],
+      ['Working', '[data-working-root]'],
+      ['Artifacts', '[data-artifacts-root]'],
+      ['Approvals', '[data-approvals-root]'],
+      ['Settings', '[data-settings-root]'],
+    ] as const;
 
-    for (const destination of destinations) {
+    for (const [destination, rootSelector] of destinations) {
       await page.getByRole('button', { name: destination, exact: true }).click();
-      const offdeck = page.locator('[data-offdeck-root]:visible');
-      await expect(offdeck).toContainText(destination);
-      await expect(offdeck).not.toContainText('Composition not implemented yet');
+      const root = page.locator(rootSelector);
+      await expect(root).toBeVisible();
+      await expect(root).toContainText(destination);
+      await expect(page.locator('body')).not.toContainText('Composition not implemented yet');
     }
 
     await page.getByRole('button', { name: 'Deck', exact: true }).click();
     await expect(page.locator('[data-deck-root]')).toBeVisible();
-    await expect(page.locator('[data-offdeck-root]:visible')).toHaveCount(0);
+    await expect(page.locator('[data-offdeck-root]')).toBeHidden();
   });
 
   test('F7 remains a single surface with one visible cluster', async ({ page }) => {
