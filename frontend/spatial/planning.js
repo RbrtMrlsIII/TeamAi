@@ -171,3 +171,9 @@ artifactsStylesheet.rel = 'stylesheet';
 artifactsStylesheet.href = './artifacts.css';
 document.head.appendChild(artifactsStylesheet);
 import('./artifacts.js');
+
+const settingsStylesheet = document.createElement('link');
+settingsStylesheet.rel = 'stylesheet';
+settingsStylesheet.href = './settings.css';
+document.head.appendChild(settingsStylesheet);
+import('./settings.js');
