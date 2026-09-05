@@ -457,9 +457,243 @@ The remaining evidence item is **live PayPal transaction/webhook runtime validat
 
 Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader 5C implementation work should be reopened merely because the live external test remains outstanding.
 
+## Web AI Workforce, Workspace, and Skill Evolution Law
+
+TeamAi SHALL treat the Web AI Team as a configurable workforce whose responsibilities, skills, capabilities, and workspace behavior evolve with the product being built while remaining subordinate to Product Law and ORUCAVEAM.
+
+The Web AI Workforce model is not limited to assigning AI Seats to source-code branches. It defines how TeamAi equips a changing population of Web AI Seats to perform complementary responsibilities within a shared project while maintaining sufficient knowledge of the whole project for safe cooperation.
+
+### Whole-team knowledge continuity
+
+Every Web AI Seat participating in an active project MUST have access to enough authoritative project knowledge to understand the objective, current state, relevant dependencies, assigned responsibility, restrictions, recent material decisions, unresolved questions, verification state, and handoff expectations required for its task.
+
+A Seat MUST NOT be expected to cooperate safely from only its own local conversation, branch, or most recent response.
+
+The canonical continuity model is:
+
+`User authority + project context + relevant team discussion + durable task/event state + applicable workspace state + evidence/handover → authorized context packet → Web AI Seat`
+
+When Web AI Seats are operating through separate external applications or separate workspace sessions, TeamAi MUST preserve the same whole-team continuity by connecting those systems through authorized context, durable structured events, handoffs, summaries, workspace records, or other approved integration mechanisms.
+
+Direct provider-to-provider authority transfer remains prohibited. Separation between external AI applications is therefore an integration problem that TeamAi must solve through its own durable coordination boundary rather than by allowing one provider to directly control another provider.
+
+### Workspace selection and workspace-specific rules
+
+The user MAY select the workspace model that the Web AI Team will use for a project. The selected workspace determines which native collaboration primitives, repository concepts, review mechanisms, branch/ref semantics, issue/task mechanisms, verification hooks, and operational controls are applicable.
+
+For the current coding-focused product scope, **GitHub is the first concrete workspace model**.
+
+The GitHub model is:
+
+`repository → branch/ref → commit → pull request → review → Issue/task → verification → merge → main`
+
+The TeamAi Product Law, Policy/ORUCAVEAM, user authority, and service-authority rules remain project-wide regardless of workspace selection.
+
+A workspace-specific ruleset MUST therefore adapt TeamAi to the selected workspace without replacing the project-wide Product Law.
+
+TeamAi MAY maintain a separate **Workspace Ruleset Repository** for each supported workspace platform or major workspace variant. Such repositories preserve platform-specific operational knowledge, mappings, vocabulary, constraints, verification procedures, and integration conventions. They are subordinate to Product Law and MUST NOT become alternative product authorities.
+
+A Workspace Ruleset Repository MAY define:
+
+`workspace primitives + native roles + native review flow + native task flow + native ref/branch behavior + workspace permissions + workspace verification mechanisms + workspace-specific failure/recovery behavior + mapping into TeamAi responsibilities`
+
+It MUST NOT redefine:
+
+`human authority + Product Law + ORUCAVEAM + TeamAi service authorities + Web AI Seat identity + canonical durable state + TeamAi scheduler authority + protected approval boundaries`
+
+This allows TeamAi to learn GitHub deeply first, then add other workspace models without forcing every platform to behave like GitHub.
+
+### Workspace-aware skill resolution
+
+The effective skills of a Web AI Seat MUST be derived from both the Seat's responsibility and the selected workspace context.
+
+The canonical resolution is:
+
+`Product Law → project purpose → Development Field → Responsibility Profile → workspace ruleset → required skills → allowed capabilities/tools → authorization → task requirements → scheduler eligibility`
+
+A skill intended for GitHub repository work is not automatically the correct skill for a different workspace platform. A platform-specific skill bundle MAY contain native concepts and procedures that have no direct GitHub equivalent.
+
+Workspace selection MUST therefore influence skill recommendation and skill packaging without allowing the workspace to elevate a Seat's authority.
+
+### Skill growth and upgrading law
+
+TeamAi skills MUST be capable of growing as the product, its supported workspaces, its backend services, its verification methods, and its Web AI workforce model become more capable.
+
+A skill MAY be created, extended, specialized, deprecated, superseded, or upgraded only through an evidence-backed growth path.
+
+The canonical skill-growth path is:
+
+`new requirement or learning → Product Law / Masterplan reconciliation → applicable Policy/ORUCAVEAM routing → skill design/change → implementation → deterministic verification → evidence → Product Knowledge → reusable skill/version promotion`
+
+A skill MUST NOT silently expand its authority while being upgraded.
+
+Skill upgrades SHOULD preserve a clear distinction between:
+
+`knowledge improvement` and `authority expansion`
+
+An upgraded skill may teach a Seat a better way to perform an authorized responsibility without giving that Seat additional permissions.
+
+An authority expansion requires explicit authorization and Product Law / policy reconciliation before it becomes effective.
+
+Skills SHOULD be versionable and traceable to the Product Law, workspace ruleset, evidence, and validated Product Knowledge that justify their current behavior.
+
+When a new project exposes a genuinely new responsibility, TeamAi SHOULD first determine whether an existing skill can be specialized or composed before creating a duplicate skill family.
+
+### ZipSkills commercial foundation
+
+**ZipSkills** is the planned commercial packaging mechanism for validated TeamAi skill bundles, workspace-specific skill bundles, or capability-oriented skill collections offered to users for a defined charge.
+
+ZipSkills MUST package validated operational knowledge and skill composition; it MUST NOT sell Product Law authority itself.
+
+Purchasing or enabling a ZipSkills package MUST NOT automatically grant repository permissions, backend authority, merge authority, provider subscriptions, entitlements, or unrestricted tool access unless those rights are separately and explicitly defined by the applicable authorization model.
+
+A ZipSkills package MAY contain:
+
+`skill versions + applicable Fields + workspace mappings + capability recommendations + verification expectations + compatibility metadata + learning references`
+
+ZipSkills SHOULD therefore be versioned and traceable like the skills it packages. A package update SHOULD identify what skill knowledge changed, what workspace assumptions changed, what evidence supports the change, and whether the change is behavioral, compatibility-related, or merely explanatory.
+
+Commercial pricing, package names, package limits, and catalog contents remain planning-only until explicitly approved.
+
+### Skill-to-responsibility control invariant
+
+TeamAi SHALL preserve the distinction:
+
+`Field defines responsibility → Skill defines how to perform it → Capability defines available mechanisms → Authorization defines permitted control → Workspace defines operating context → Scheduler defines when the Seat may act`
+
+This is the central control model for configuring heterogeneous Web AI populations.
+
+The same principle MUST apply whether there are two Seats or eight Seats.
+
+A smaller population MAY require broader skill bundles and broader Field coverage per Seat.
+
+A larger population MAY use narrower, more specialized skill bundles and more narrowly scoped responsibility profiles.
+
+Neither condition permits a Seat to exceed its authorization boundary.
+
+### Backend account and Seat wiring
+
+The TeamAi backend account model MUST provide the durable foundation for the workforce configuration.
+
+The authenticated Firebase UID remains the ownership root. Within that ownership boundary, durable TeamAi state MAY represent Workplaces, Projects, Web AI Seats, Connections, Responsibility Profiles, skill assignments, capability/tool assignments, workspace selections, repository/ref scopes, permissions, task assignments, task state, team discussion state, summaries, and execution evidence.
+
+The durable configuration relationship is conceptually:
+
+`Firebase UID → account/workspace/project → Web AI Seat → Connection → runtime/model → Responsibility Profile → workspace ruleset → effective skills → capabilities → authorization → task eligibility`
+
+The browser or visual theme MUST NOT self-attest the durable truth of this relationship. User-facing settings present or request changes to the authoritative backend configuration; the backend remains the authority for durable state and authorization.
+
+### Spatial Theme as the workforce interface
+
+The TeamAi Spatial Theme is the visual expression of the workforce model, not a second authority model.
+
+The existing 029 requirement remains:
+
+`Dark mode = Dark Spatial Glassmorphism`
+`Light mode = Light Spatial Skeuomorphism`
+
+The spatial experience SHOULD make the user's workforce legible by exposing the relevant relationship among:
+
+`Seat → responsibility → skills → capability → authorization → task → status → evidence → integration`
+
+The visual interface SHOULD use the spatial system to help users understand which AI is responsible for which Field, which skills are active, which controls are allowed, which controls are prohibited, what workspace is selected, which tasks are pending, and what is ready for integration.
+
+Visual presentation MUST NOT become the source of truth for any of those facts.
+
+The Spatial Theme therefore acts as the **human-facing map of the workforce**, while backend state, authorization, scheduler state, GitHub/workspace state, and durable evidence remain authoritative in their respective boundaries.
+
+### User guides and product dictionary
+
+TeamAi user guides, terminology, and dictionary/help surfaces MUST be derived from the same canonical vocabulary used by Product Law, workspace rulesets, skills, and backend contracts.
+
+The dictionary MUST distinguish at least:
+
+`Web AI Team`
+`AI Seat`
+`Development Field`
+`Responsibility Profile`
+`Skill`
+`Capability`
+`Connection`
+`Authorization`
+`Workspace`
+`Workspace Ruleset`
+`Branch/ref scope`
+`Main Integration Seat`
+`Scheduler eligibility`
+`Durable event`
+`ZipSkills`
+
+A workspace-specific guide MAY explain native GitHub concepts or future workspace concepts, but it MUST map them back to TeamAi's canonical vocabulary rather than introducing contradictory definitions.
+
+User guidance SHOULD be responsibility-aware and workspace-aware. A user configuring a GitHub project should receive GitHub-specific explanations and controls; the same user choosing another supported workspace later should receive that workspace's native rules and concepts while retaining the same TeamAi-wide authority model.
+
+### Workspace ruleset knowledge repositories
+
+Workspace-specific ruleset repositories are **knowledge and operational adapters**, not competing Product Laws.
+
+For example, TeamAi MAY maintain a GitHub workspace ruleset repository containing validated knowledge about repositories, branches, commits, pull requests, Issues, reviews, Actions, checks, protected refs, merge strategies, and GitHub-specific integration behavior.
+
+A future workspace integration MAY maintain its own ruleset repository containing the equivalent native concepts for that platform.
+
+Each such ruleset repository MUST identify its supported platform/version assumptions, evidence basis, applicable TeamAi Fields, applicable skills, known limitations, and mapping back to TeamAi Product Law.
+
+A workspace ruleset MUST NOT silently change the global TeamAi meaning of a Seat, Field, Skill, Capability, Authorization, Scheduler, or durable event.
+
+### Coding-first scope and future workforce expansion
+
+The current product scope is intentionally coding-first: TeamAi is first learning how to construct and govern Web AI development teams that build web applications, applications, APIs, services, and related software through coding workspaces, with GitHub as the first concrete workspace model.
+
+After the coding-workspace model is sufficiently understood and validated, TeamAi MAY explore other workspace platforms, backend systems, organizational responsibility models, business/company functions, specialist applications, MCP servers, and broader workforce domains.
+
+Future expansion MUST reuse the same responsibility chain:
+
+`responsibility → skills → capabilities → authorization → workspace → execution → verification → integration → learning`
+
+The future model MUST NOT be generalized merely because an external platform or AI provider can be connected. TeamAi must first establish the platform's actual operating primitives, authority boundaries, evidence requirements, and integration semantics.
+
+### ORUCAVEAM is project-wide
+
+Workspace-specific rules, skill instructions, provider-native guidance, repository conventions, and user-interface configuration MUST remain subordinate to the project-wide ORUCAVEAM execution discipline.
+
+The project-wide execution rule remains:
+
+`O — Objective → R — Restrictions → U — User Authority → C — Canonical Authority → A — Action → V — Verification → E — Efficiency → A — Audit → M — Minimalistic Efficiency / Resource Use`
+
+A workspace ruleset may explain **how** a GitHub action is performed. A skill may explain **how** a Seat should execute that action. A UI may expose **how** the user configures it. None of those may override the project-wide ORUCAVEAM authority sequence.
+
+### Workforce growth preservation
+
+As TeamAi grows, the workforce model MUST grow by explicit reconciliation rather than by uncontrolled accumulation of branches, skills, workspace adapters, providers, or duplicated authority documents.
+
+The project SHOULD prefer:
+
+`one Product Law + one project-wide ORUCAVEAM discipline + a small set of Development Fields + configurable Web AI Seats + workspace-specific rulesets + composable/versioned skills + authoritative backend state + durable evidence`
+
+rather than creating a permanent artifact for every new responsibility, AI, provider, task, or historical event.
+
+Product growth should increase the clarity and coverage of the responsibility model, not multiply competing authorities.
+
 ## Canonical execution-document relationship
 `PRODUCT_LAW.md` establishes durable product/architecture invariants. `MASTERPLAN.md` translates those invariants into the chronological execution plan and checklist. `POLICY.md` establishes execution discipline through the single ORUCAVEAM framework. `docs/SKILL_WIRING.md` maps executable concepts/checklist items to the applicable skill path, tool/system, and verification route. `skills/**/SKILL.md` provide direct operational instructions without becoming product authority. `PRODUCT-KNOWLEDGE.md` retains validated, distilled lessons. `docs/project-guide/HandOver.md` preserves continuation and learning transfer. `docs/project-guide/Endorsement.md` records authorized completion and accepted learning. `AI_ASSISTANT_READ_ME.md` provides practical agent memory and recovery guidance.
 
 Lower-level documents MUST NOT silently redefine Product Law. A change to a canonical product concept MUST be reconciled against the existing logic before editing, and any discrepancy that affects authority, architecture, scope, or protected roots MUST be surfaced before proceeding.
+
+This front door MUST remain synchronized with active authority changes.
+
+## LAW 106 — WORKSPACE RULESETS ARE SUBORDINATE ADAPTERS
+A workspace ruleset, including a GitHub-specific ruleset repository, adapts TeamAi to the native behavior of a selected workspace. It MUST NOT replace Product Law, ORUCAVEAM, TeamAi service authorities, or human authority. Workspace-specific knowledge is contextual operational knowledge, not a parallel product constitution.
+
+## LAW 107 — SKILLS MUST EVOLVE WITHOUT SILENTLY EXPANDING AUTHORITY
+TeamAi skills MUST be allowed to grow, specialize, compose, version, and retire as evidence accumulates, but a skill change MUST NOT silently expand a Seat's authority. Any authority expansion requires explicit authorization and the applicable Product Law/policy reconciliation.
+
+## LAW 108 — TEAM KNOWLEDGE MUST SURVIVE SEPARATED AI APPLICATIONS
+When Web AI Seats operate across separate external applications or isolated workspace sessions, TeamAi MUST preserve sufficient project-wide knowledge continuity through authorized context, durable events, summaries, handoffs, artifacts, and workspace state so that each eligible Seat can understand the material state needed for safe cooperation.
+
+## LAW 109 — ZIPSKILLS IS A SKILL PACKAGE, NOT AN AUTHORITY PACKAGE
+ZipSkills MAY commercialize validated skill bundles and workspace-aware skill packages, but possession or purchase of a ZipSkills package MUST NOT by itself grant repository, backend, scheduler, merge, payment, entitlement, or Product Law authority.
+
+## LAW 110 — WORKSPACE CHOICE MUST SHAPE CONFIGURATION WITHOUT FRAGMENTING TEAMAI
+When a user selects a workspace, TeamAi MUST present workspace-appropriate configuration, guidance, skills, capabilities, and validation while preserving the same project-wide Product Law, ORUCAVEAM discipline, authorization hierarchy, durable-state model, and scheduler authority.
 
 This front door MUST remain synchronized with active authority changes.
