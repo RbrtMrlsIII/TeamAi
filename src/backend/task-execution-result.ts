@@ -16,5 +16,6 @@ export type TaskExecutionResultIdentity = Pick<DurableExecutionResult, 'taskId' 
 
 export type TaskExecutionResultStore = {
   hasResult(identity: TaskExecutionResultIdentity): Promise<boolean>;
+  getResult(identity: TaskExecutionResultIdentity): Promise<DurableExecutionResult | null>;
   persist(result: DurableExecutionResult): Promise<void>;
 };
