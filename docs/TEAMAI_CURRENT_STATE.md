@@ -11,7 +11,7 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **IN IMPLEMENTATION**; scheduler/domain-state contracts, runtime bridge, and concrete Firestore lease-transaction source are implemented; live Firestore concurrency/restart evidence, durable result/artifact persistence, authenticated end-to-end execution wiring, and PayPal runtime evidence remain open.
+- `TEAM-BACKEND-001`: **IN IMPLEMENTATION**; scheduler/domain-state contracts, runtime bridge, concrete Firestore lease transaction source, and its `AtomicTaskLeaseStore` adapter are implemented; live Firestore concurrency/restart evidence, durable result/artifact persistence, authenticated end-to-end execution wiring, and PayPal runtime evidence remain open.
 - `TEAM-EXPERIENCE-029`: **presentation implementation materially inhabited; backend/live-domain integration and full completion frontier remain open**.
 - GitHub is the engineering/source authority.
 - Firebase `(default)` Firestore is the durable application/domain-state authority.
@@ -28,7 +28,7 @@ The 029 spatial progression currently present on `main` remains the established 
 
 The backend execution progression currently present on `main` is:
 
-`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction source`
+`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction source → AtomicTaskLeaseStore adapter`
 
 These are bounded implementation slices and do **not** by themselves establish full 029 completion or TEAM-BACKEND-001 completion.
 
@@ -36,7 +36,9 @@ These are bounded implementation slices and do **not** by themselves establish f
 
 The backend foundation now includes Firebase UID-rooted paths, durable task/event state, deterministic Seat eligibility, explicit authorization, atomic lease contract, scheduler-to-execution bridge, trusted ProviderRuntime execution, and a concrete server-side Firestore transaction implementation for `ready → leased` task acquisition.
 
-The concrete Firestore adapter uses runtime-only service-account configuration and Firestore optimistic transaction preconditions. Source tests exercise transaction construction, ready-state gating, and conflict handling. This is **source/test evidence**, not live Firebase runtime proof.
+The concrete Firestore boundary is deliberately split: `FirestoreLeaseTransaction` owns transaction mechanics, while `FirestoreAtomicTaskLeaseStore` maps the result into the canonical scheduler lease contract. It carries explicit Firebase UID, workplace, and TeamAi project scope; TeamAi `projectId` is not treated as the Firebase infrastructure project ID.
+
+The concrete Firestore adapter uses runtime-only service-account configuration and Firestore optimistic transaction preconditions. Source tests exercise transaction construction, ready-state gating, conflict handling, and contract mapping. This is **source/test evidence**, not live Firebase runtime proof.
 
 The existing `teamai-domain-bootstrap` runtime remains the live authenticated UID → Firestore domain hierarchy proof.
 
@@ -68,7 +70,7 @@ Do not inject browser Firebase/domain behavior ad hoc. Consume backend-owned rea
 Browser writes must not become scheduler or execution authority.
 
 ### 5. Concurrency and recovery
-The lease source implementation exists, but live contention and restart evidence are still required.
+The transactional lease source and its scheduler-contract adapter are implemented, but live contention and restart evidence are still required.
 
 ### 6. PayPal evidence frontier
 Gate 5C implementation/available-environment verification is complete as a source boundary; live transaction/webhook runtime evidence remains outstanding.
