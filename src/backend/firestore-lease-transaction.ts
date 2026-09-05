@@ -1,4 +1,5 @@
 import { createSign } from 'node:crypto';
+import type { AtomicTaskLeaseStore, LeaseResult } from './task-lease.js';
 
 export type FirestoreLeaseInput = {
   uid: string;
@@ -147,5 +148,24 @@ export class FirestoreLeaseTransaction {
       throw new Error(`Firestore lease commit failed: ${commitResponse.status}`);
     }
     return { acquired: true, leaseId: input.leaseId, taskId: input.taskId, seatId: input.seatId, status: 'leased' };
+  }
+}
+
+export class FirestoreAtomicTaskLeaseStore implements AtomicTaskLeaseStore {
+  constructor(
+    private readonly transaction: FirestoreLeaseTransaction,
+    private readonly uid: string,
+    private readonly workplaceId: string,
+    private readonly projectId: string,
+  ) {}
+
+  async leaseReadyTask(input: { taskId: string; seatId: string; leaseId: string; actorId: string }): Promise<LeaseResult> {
+    const result = await this.transaction.leaseReady({ ...input, uid: this.uid, workplaceId: this.workplaceId, projectId: this.projectId });
+    if (result.acquired) return result;
+    return {
+      acquired: false,
+      taskId: result.taskId,
+      reason: result.reason === 'CONFLICT' ? 'ALREADY_LEASED' : result.reason,
+    };
   }
 }
