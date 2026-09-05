@@ -10,6 +10,9 @@ export interface AtomicTaskLeaseStore {
    * Implementations must perform the read/check/write as one transaction.
    */
   leaseReadyTask(input: {
+    uid: string;
+    workplaceId: string;
+    projectId: string;
     taskId: string;
     seatId: string;
     leaseId: string;
