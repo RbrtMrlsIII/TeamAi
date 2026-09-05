@@ -1,7 +1,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** `main` was the source baseline; this branch adds the next controlled TEAM-BACKEND-002 slice.
+**Revision basis:** `main` @ live Firestore contention/recovery run #7 (`d50f6ab5…`) — RUNTIME-PROVEN for the lease + durable-result probe.
 
 This document is a compact operational index for agents. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
 
@@ -11,8 +11,8 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **IN IMPLEMENTATION**; scheduler/domain-state contracts, runtime bridge, concrete Firestore lease transaction source, `AtomicTaskLeaseStore` adapter, durable execution-result persistence source, and live-proof probe/workflow preparation are implemented; successful live Firebase contention/restart evidence, authenticated end-to-end execution wiring, and PayPal runtime evidence remain open.
-- `TEAM-BACKEND-002`: **IMPLEMENTED ENGINEERING SLICE / controlled branch**; settings draft/save boundary, conversation-turn durability contract, transcript working-set read reduction, result retrieval, and token-cache/read-write economy rules are implemented here.
+- `TEAM-BACKEND-001`: **IN IMPLEMENTATION** with a **RUNTIME-PROVEN** sub-gate for live two-worker lease contention + durable result restart/recovery (GitHub Actions run #7, workflow `firestore-live-recovery.yml`, head `d50f6ab5…`). Scheduler/domain-state contracts, runtime bridge, concrete Firestore lease transaction, `AtomicTaskLeaseStore` adapter, and durable execution-result persistence remain implemented. Still open: authenticated end-to-end UID→scheduler→lease→approval→execution wiring, final audit/HandOver/Endorsement, and separate PayPal runtime evidence.
+- `TEAM-BACKEND-002`: **IMPLEMENTED** on `main` (settings draft/Save boundary, conversation-turn durability, transcript working-set read reduction, result retrieval, token-cache / read-write economy). Live probe secrets and workflow are operational; economy rules are source-tested and used by the live probe path.
 - `TEAM-EXPERIENCE-029`: **presentation implementation materially inhabited; backend/live-domain integration and full completion frontier remain open**.
 - GitHub is the engineering/source authority.
 - Firebase `(default)` Firestore is the durable application/domain-state authority.
@@ -41,11 +41,11 @@ Full operational detail is in `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`.
 
 The 029 spatial progression currently present on `main` remains the established Shell → Deck → F7 → Workplace → Seats → Planning → Working → Approvals → Artifacts → Settings composition.
 
-The backend execution progression currently present on `main`, plus this controlled branch's next economy slice, is:
+The backend execution progression currently present on `main` is:
 
-`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction source → AtomicTaskLeaseStore adapter → durable execution-result store → restart retrieval contract → read/write economy controls`
+`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction (live-proven single-winner) → AtomicTaskLeaseStore adapter → durable execution-result store (live-proven persist + restart retrieval) → read/write economy controls`
 
-These are bounded implementation slices and do **not** by themselves establish full 029 completion or TEAM-BACKEND-001 completion.
+These are bounded implementation slices and do **not** by themselves establish full 029 completion or full TEAM-BACKEND-001 completion.
 
 ## Backend reality
 
@@ -55,27 +55,43 @@ The concrete Firestore lease boundary is deliberately split: `FirestoreLeaseTran
 
 Terminal execution results are modeled separately from task events and persisted under the same UID/workplace/project/task hierarchy, keyed by terminal event identity. The execution service persists the normalized result before appending the terminal `COMPLETE` or `FAIL` event. Create-only semantics prevent silent replacement of a previously durable terminal result.
 
-The controlled TEAM-BACKEND-002 slice also adds a direct result retrieval contract for restart recovery and a create-only durable conversation-turn store for the Web AI transcript boundary.
+TEAM-BACKEND-002 adds a direct result retrieval contract for restart recovery and a create-only durable conversation-turn store for the Web AI transcript boundary.
 
-All current Firestore implementation tests are source-level contract tests. They exercise transaction construction, ready-state gating, conflict handling, scope, result identity, ordering, retrieval decoding, and read/write economy. They are **source/test evidence**, not live Firebase runtime proof.
+**Live evidence (2026-09-05):** workflow run [#7](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/33981670897) on `main` proved:
+
+1. Isolated READY task create under scoped UID/workplace/TeamAi project.
+2. Two concurrent worker processes; **exactly one** lease winner.
+3. Durable terminal result persist.
+4. Fresh process retrieves result by `(taskId, projectId, eventId)` after “restart.”
+5. Cleanup of probe documents.
+
+Commit writes use Firestore **resource names** (not full `https://` URLs). Worker children inherit `TEAMAI_LIVE_RUN_ID` / `TEAMAI_LIVE_TASK_ID` / `TEAMAI_LIVE_RESULT_EVENT_ID` so they do not regenerate a different task identity.
+
+All unit/contract tests remain source-level evidence. The live probe is the runtime proof for contention + recovery only; it is not yet authenticated end-to-end product execution.
 
 The existing `teamai-domain-bootstrap` runtime remains the live authenticated UID → Firestore domain hierarchy proof.
 
 ## Live recovery probe
 
-A manual GitHub Actions workflow is provided at `.github/workflows/firestore-live-recovery.yml` and runs `scripts/firestore-live-contention-recovery.mjs`.
+Manual workflow: `.github/workflows/firestore-live-recovery.yml`  
+Script: `scripts/firestore-live-contention-recovery.mjs`
 
-The probe creates an isolated READY task, starts two fresh worker processes concurrently, proves a single lease winner, writes a durable terminal result, starts a fresh recovery process, retrieves the result by durable identity, and cleans the test documents.
+**Status: RUNTIME-PROVEN** (run #7, conclusion `success`).
 
-The exact loser timing may produce `CONFLICT` or `NOT_READY`; the required invariant is **one winner only**.
+Required repository secrets (names only; never commit values):
 
-Required secret names are documented in `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`. Secret values must never enter source or logs.
+- `TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON`
+- `TEAMAI_FIREBASE_TEST_UID`
+- `TEAMAI_FIREBASE_TEST_WORKPLACE_ID`
+- `TEAMAI_FIREBASE_TEST_PROJECT_ID`
+
+Hard-coded in workflow env: `TEAMAI_FIREBASE_PROJECT_ID=team-ai-official`.
 
 ## Remaining TEAM-BACKEND-001 frontier
 
-1. Successful live Firestore transactional lease exercise with two concurrent workers proving single-winner behavior.
-2. Successful restart/recovery proof after a fresh process loses its in-memory state.
-3. Successful live durable result retrieval after process restart.
+1. ~~Successful live Firestore transactional lease exercise with two concurrent workers proving single-winner behavior.~~ **DONE (run #7).**
+2. ~~Successful restart/recovery proof after a fresh process loses its in-memory state.~~ **DONE (run #7).**
+3. ~~Successful live durable result retrieval after process restart.~~ **DONE (run #7).**
 4. Authenticated end-to-end runtime wiring from verified Firebase UID through scheduler, lease, approval, execution, and durable evidence.
 5. Final audit/traceability, HandOver, and Endorsement evidence.
 6. Separate live PayPal sandbox transaction/webhook runtime evidence.
@@ -87,7 +103,7 @@ The spatial frontend remains fixture-backed presentation. Fixtures are presentat
 ## Known brittle points
 
 ### 1. Canonical-state drift
-Keep documentation synchronized with the implementation frontier without promoting source implementation into runtime-proven or completed status.
+Keep documentation synchronized with the implementation frontier without promoting partial gates into full completion.
 
 ### 2. Branch accumulation
 Before reusing any non-main branch, compare it with current `main` and classify it.
@@ -99,13 +115,16 @@ Do not inject browser Firebase/domain behavior ad hoc. Consume backend-owned rea
 Browser writes must not become scheduler or execution authority.
 
 ### 5. Concurrency and recovery
-The transactional lease source, scheduler-contract adapter, durable result source, and restart retrieval contract are implemented, but successful live contention, restart, and result-retrieval evidence are still required.
+Transactional lease + durable result + restart retrieval are **live-proven** for the isolated probe path. Authenticated product path (UID session → real scheduler → approval → ProviderRuntime) is still open.
 
 ### 6. PayPal evidence frontier
 Gate 5C implementation/available-environment verification is complete as a source boundary; live transaction/webhook runtime evidence remains outstanding.
 
 ### 7. Dual API-server ambiguity
 `src/main.ts` launches `src/api/server.ts`. `src/server.ts` remains present and must not be removed without dependency proof and explicit reconciliation.
+
+### 8. Firestore commit `name` format
+Commit writes must use resource names `projects/{id}/databases/(default)/documents/...`, not full HTTPS URLs. GET/PATCH HTTP endpoints still use the full URL.
 
 ## Rules for high-concurrency agents
 
@@ -119,17 +138,17 @@ Gate 5C implementation/available-environment verification is complete as a sourc
 
 ## Immediate next gate
 
-**TEAM-BACKEND-001 — live Firestore concurrency/recovery exercise and durable result retrieval.**
+**TEAM-BACKEND-001 — authenticated end-to-end runtime wiring.**
 
-Scope:
+Scope (recommended next slice):
 
-`verified Firebase UID → authoritative task read → transactional lease → approval → trusted execution → durable result/event → restart/concurrency recovery`
+`verified Firebase UID session → authoritative task/domain read → scheduler eligibility → transactional lease → approval boundary → trusted ProviderRuntime execution → durable result/event → recovery-safe evidence`
 
-Read/write economy is a supporting invariant throughout this path: read authoritative state when needed, reuse it locally during one logical operation, coalesce user configuration edits, and do not eliminate reads/writes that protect correctness, authority, or recovery.
+Supporting invariant: read/write economy (draft until Save; one conversation turn per submit; no preflight for create-only results; token cache).
 
-Out of scope:
+Out of scope for the next slice unless explicitly approved:
 
-`browser Firestore authority, provider-to-provider orchestration, PayPal transaction activity, Vercel activation, Product Law rewrite, second frontend theme/root.`
+`browser Firestore write authority, provider-to-provider orchestration, PayPal live activity, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB migration.`
 
 ## Evidence language
 
