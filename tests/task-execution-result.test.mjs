@@ -18,6 +18,7 @@ test('Firestore result store persists only inside the Firebase UID/workplace/pro
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
+    if (String(url).includes('oauth2.googleapis.com/token')) return new Response(JSON.stringify({ access_token: 'token-1' }), { status: 200 });
     return new Response(JSON.stringify({ commit: true }), { status: 200, headers: { 'content-type': 'application/json' } });
   };
   try {
@@ -27,8 +28,8 @@ test('Firestore result store persists only inside the Firebase UID/workplace/pro
       idempotencyKey: 'exec-9:complete', status: 'completed', recordedAt: '2026-09-05T00:00:00Z',
       result: { provider: 'fixture', model: 'model-1', requestId: 'request-1', text: 'done', usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } },
     });
-    const commit = calls[0];
-    assert.equal(commit.method, 'POST');
+    const commit = calls.find((call) => call.url.includes(':commit'));
+    assert.ok(commit);
     const body = JSON.parse(commit.body);
     assert.equal(body.writes.length, 1);
     assert.equal(body.writes[0].currentDocument.exists, false);
@@ -41,13 +42,16 @@ test('Firestore result store can detect an already durable result by task/projec
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET' });
+    if (String(url).includes('oauth2.googleapis.com/token')) return new Response(JSON.stringify({ access_token: 'token-2' }), { status: 200 });
     return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
   };
   try {
     const store = new FirestoreTaskExecutionResultStore('uid-1', 'workplace-1');
     const found = await store.hasResult({ taskId: 'task-9', projectId: 'project-1', eventId: 'exec-9:complete:event' });
     assert.equal(found, true);
-    assert.match(calls[0].url, /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-1\/tasks\/task-9\/execution-results\/exec-9%3Acomplete%3Aevent$/);
+    const read = calls.find((call) => call.method === 'GET' && !call.url.includes('oauth2.googleapis.com'));
+    assert.ok(read);
+    assert.match(read.url, /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-1\/tasks\/task-9\/execution-results\/exec-9%3Acomplete%3Aevent$/);
   } finally { restore(); }
 });
 
