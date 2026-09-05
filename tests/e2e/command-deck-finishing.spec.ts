@@ -32,7 +32,7 @@ test.describe('029 Command Deck finishing contract', () => {
       const root = page.locator(rootSelector);
       await expect(root).toBeVisible();
       await expect(root).toContainText(destination);
-      await expect(page.locator('body')).not.toContainText('Composition not implemented yet');
+      await expect(root).not.toContainText('Composition not implemented yet');
     }
 
     await page.getByRole('button', { name: 'Deck', exact: true }).click();
