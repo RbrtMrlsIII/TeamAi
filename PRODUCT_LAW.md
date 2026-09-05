@@ -97,13 +97,13 @@ SKILL / WORKSPACE KNOWLEDGE EVOLUTION
 ```text
 Field defines responsibility
         ↓
-Skill defines how to perform it
+Responsibility Profile binds the Seat to that responsibility
         ↓
-Capability defines available mechanisms
+Workspace rules + Skills define the operating procedure/context
+        ↓
+Capabilities define available mechanisms
         ↓
 Authorization defines permitted control
-        ↓
-Workspace defines operating context
         ↓
 Task state defines present condition
         ↓
@@ -443,7 +443,7 @@ Workspace choice changes operating context, not TeamAi constitutional authority.
 Each ruleset SHOULD identify platform/version assumptions, evidence basis, applicable Fields, applicable skills, known limitations, and mapping back to Product Law.
 
 ### Connections
-Family G feeds Family E Seat configuration and Family I skill resolution.
+Family G feeds Family E Seat configuration and Family H skill resolution.
 
 ## 8. LAW FAMILY H — SKILLS, CAPABILITIES, AUTHORIZATION, AND SCHEDULER ELIGIBILITY
 
@@ -510,7 +510,7 @@ available ≠ configured ≠ TeamAi-entitled ≠ provider-compatible ≠ authori
 Plugins, tools, and MCP are capability/integration mechanisms, not orchestration authority. Tool results MUST NOT silently grant permission. Secrets remain outside ordinary chat content. Invocations MUST be attributable to the requesting Seat and project.
 
 ### Connections
-Family H operationalizes Families E and G and feeds scheduling/execution in Family J.
+Family H operationalizes Families E and G and feeds scheduler eligibility and authorized execution governed by Families C and K.
 
 ## 9. LAW FAMILY I — COMMERCE, ZIPSKILLS, AND PROVIDER ENTITLEMENT
 
