@@ -12,6 +12,7 @@
 | PK-BASE-003 | Deterministic browser verification belongs in Playwright when real browser behavior is required; deployment surfaces remain non-authoritative. | Browser verification architecture baseline. | TeamAi | BASELINE |
 | PK-BASE-004 | Every ORUCAVEAM letter should resolve to a small direct execution skill, and field/domain skills compose with the applicable letters instead of duplicating the execution constitution. | ORUCAVEAM baseline skill-family reconciliation. | TeamAi | BASELINE |
 | PK-BASE-011 | F0–F7 is field identity only; legal boxes remain Shell · Panel · Card · Control · Navigation; F6 Status and F7 Modal are system surfaces. | 029 reconciliation + skill adaptation + theme-root foundation. | TeamAi 029 | BASELINE |
+| PK-BASE-012 | Backend-owned execution facts should cross into spatial UI through an explicit typed fact contract, a read-only frontend validation/presentation layer, and a separate backend runtime authority boundary. | PR #46 typed validator, PR #47 spatial UI contract, PR #49 backend runtime-validation gate. | TeamAi 029 / TEAM-BACKEND-001 | VALIDATED TEAMAI PATTERN |
 
 ## 2. Anti-Patterns & Dead Ends [DONT]
 
@@ -23,6 +24,7 @@
 | AP-BASE-004 | Using deployment suppression to conceal or bypass an expected deployment/verification problem. | Failures disappear instead of being diagnosed. | Deployment-discipline baseline. | Release policy explicitly changes. |
 | AP-BASE-005 | Creating a duplicate M/minimal-tool skill when an existing reusable minimal-tool-use procedure already satisfies the ORUCAVEAM M requirement. | Duplicate procedures drift and agents must choose between equivalent instructions. | ORUCAVEAM skill reconciliation. | The tool/resource-use domain needs materially different behavior. |
 | AP-BASE-006 | Blocking merges or claiming architecture failure because Vercel is rate-limited or disconnected from GitHub. | Non-authoritative surface becomes a false gate. | 2026-09-04 cutoff + Product Law platform authority. | Vercel is intentionally re-enabled and required for a specific browser evidence plan. |
+| AP-BASE-012 | Treating a frontend validation result as backend authorization, scheduler authority, execution completion, or entitlement truth. | Presentation validation can silently become a second execution authority and misrepresent system state. | PR #46/#47 validator contract and PR #49 runtime-gate separation. | Product Law explicitly changes the authority model. |
 
 ## 3. Contract & Dependency Gotchas
 
@@ -46,6 +48,7 @@
 - Generated screenshots, captures, and decorative images are not canonical Product Knowledge evidence.
 - A green CI run, deployment, or screenshot does not by itself prove a broader completion claim.
 - A red Vercel badge during cutoff is not a TeamAi architecture failure.
+- Deterministic frontend/runtime validation does not prove live external-service completion unless the relevant external environment was actually exercised.
 
 ## 6. Learning Promotion
 
