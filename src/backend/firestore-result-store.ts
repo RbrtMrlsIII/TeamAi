@@ -1,5 +1,5 @@
 import { createSign } from 'node:crypto';
-import type { DurableExecutionResult, TaskExecutionResultStore } from './task-execution-result.js';
+import type { DurableExecutionResult, TaskExecutionResultIdentity, TaskExecutionResultStore } from './task-execution-result.js';
 
 const ROOT = 'https://firestore.googleapis.com/v1';
 type ServiceAccount = { project_id: string; client_email: string; private_key: string };
@@ -52,7 +52,7 @@ async function accessToken(account: ServiceAccount): Promise<string> {
   const signer = createSign('RSA-SHA256');
   signer.update(signingInput);
   signer.end();
-  const assertion = `${signingInput}.${signer.sign(account.private_key, 'base64url')}`;
+  const assertion = `${signingInput}.${signingInput.length ? signer.sign(account.private_key, 'base64url') : ''}`;
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -77,10 +77,12 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     if (this.account.project_id !== this.firebaseProjectId) throw new Error('Firebase project identity mismatch');
   }
 
-  async hasResult(eventId: string): Promise<boolean> {
-    required(eventId, 'eventId');
+  async hasResult(identity: TaskExecutionResultIdentity): Promise<boolean> {
+    required(identity.taskId, 'taskId');
+    required(identity.projectId, 'projectId');
+    required(identity.eventId, 'eventId');
     const token = await accessToken(this.account);
-    const response = await fetch(this.documentUrl(`accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${this.expectedProjectId()}/execution-results/${eventId}`), { headers: { authorization: `Bearer ${token}` } });
+    const response = await fetch(this.documentUrl(this.resultPath(identity)), { headers: { authorization: `Bearer ${token}` } });
     return response.ok;
   }
 
@@ -91,13 +93,12 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     required(result.eventId, 'eventId');
     required(result.idempotencyKey, 'idempotencyKey');
     const token = await accessToken(this.account);
-    const resultPath = `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${result.projectId}/tasks/${result.taskId}/execution-results/${result.eventId}`;
     const response = await fetch(`${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents:commit`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         writes: [{
-          update: { name: this.documentUrl(resultPath), fields: fields(result as unknown as Record<string, unknown>) },
+          update: { name: this.documentUrl(this.resultPath(result)), fields: fields(result as unknown as Record<string, unknown>) },
           currentDocument: { exists: false },
         }],
       }),
@@ -105,8 +106,8 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     if (!response.ok && ![409, 412].includes(response.status)) throw new Error(`Firestore execution result write failed: ${response.status}`);
   }
 
-  private expectedProjectId(): string {
-    throw new Error('hasResult requires project scope; use persist through TaskExecutionService or a project-bound store');
+  private resultPath(identity: TaskExecutionResultIdentity): string {
+    return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${identity.projectId}/tasks/${identity.taskId}/execution-results/${identity.eventId}`;
   }
 
   private documentUrl(path: string): string {
