@@ -94,7 +94,9 @@ export class TaskExecutionService {
 
   private async persistResult(result: DurableExecutionResult): Promise<void> {
     if (!this.results) return;
-    if (await this.results.hasResult({ taskId: result.taskId, projectId: result.projectId, eventId: result.eventId })) return;
+    // The durable result document is create-only. Its uniqueness condition is
+    // the write itself, so a preflight hasResult() read is unnecessary.
+    // This keeps one terminal result at one durable write attempt.
     await this.results.persist(result);
   }
 
