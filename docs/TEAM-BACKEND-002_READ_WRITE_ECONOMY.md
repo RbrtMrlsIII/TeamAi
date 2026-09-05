@@ -1,6 +1,6 @@
 # TEAM-BACKEND-002 — Firebase Read/Write Economy
 
-**Status:** IMPLEMENTED ENGINEERING SLICE  
+**Status:** IMPLEMENTED ENGINEERING SLICE + live probe RUNTIME-PROVEN (contention/recovery)  
 **Purpose:** make Firebase usage predictable, economical, and easy for every TeamAi session to understand.
 
 This document is a practical companion to Product Law, Masterplan, Policy/ORUCAVEAM, skills, and the current-state index. It does not replace any of them.
@@ -103,7 +103,7 @@ Repeatedly asking Firestore for the same transcript during one orchestrated run 
 The orchestrator now loads the transcript into a working in-memory set once at the start of a run, then appends newly completed messages to that local working set as the run proceeds.
 
 ```text
-Firestore transcript
+load transcript
         │
         ▼
   one durable read
@@ -221,24 +221,29 @@ The source boundary is:
 
 The required safety result is **exactly one winner for the same READY task**. The losing process may observe `CONFLICT` or, depending on timing, `NOT_READY`; the safety invariant is that it must not acquire a second lease.
 
+Commit writes use Firestore **resource names** (`projects/{id}/databases/(default)/documents/...`), not full HTTPS URLs in the `name` field.
+
 ## 10. Live verification
 
-A manual GitHub Actions workflow is provided at:
+Manual GitHub Actions workflow:
 
 `.github/workflows/firestore-live-recovery.yml`
 
-It runs:
+Script:
 
 `scripts/firestore-live-contention-recovery.mjs`
 
-The probe does four things:
+**Status: RUNTIME-PROVEN** — workflow run [#7](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/33981670897) on `main` (`d50f6ab5…`), conclusion `success`.
+
+The probe:
 
 1. Creates a unique READY test task in an explicitly scoped Firebase account/workplace/TeamAi project.
-2. Starts two fresh worker processes concurrently and proves one lease winner only.
+2. Starts two fresh worker processes concurrently (shared `TEAMAI_LIVE_*` ids via env) and proves one lease winner only.
 3. Persists a durable terminal result.
 4. Starts a fresh recovery process and retrieves the result by `(taskId, projectId, eventId)`.
+5. Cleans up probe documents.
 
-Required GitHub Actions secrets are referenced by name only:
+Required GitHub Actions secrets (names only):
 
 - `TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON`
 - `TEAMAI_FIREBASE_TEST_UID`
@@ -247,7 +252,7 @@ Required GitHub Actions secrets are referenced by name only:
 
 Do not put secret values in source, documentation, issues, PRs, screenshots, logs, or handover files.
 
-**Important:** the workflow is prepared but live runtime proof is only earned by a successful workflow run against real Firebase. Source tests and GitHub build tests do not count as runtime proof.
+Re-run the workflow after material lease/result changes to keep the gate green.
 
 ## 11. What newer TeamAi sessions should remember
 
@@ -276,8 +281,9 @@ And remember the workforce path:
 
 ## 12. Current implementation state
 
-This slice is an engineering implementation of read/write economy and runtime verification preparation.
+- Read/write economy contracts: **IMPLEMENTED** on `main`.
+- Live two-worker lease + durable result restart/recovery: **RUNTIME-PROVEN** (run #7).
 
-It does **not** mean TEAM-BACKEND-001 is complete.
+This does **not** mean TEAM-BACKEND-001 is complete.
 
-TEAM-BACKEND-001 still needs successful live Firestore contention/restart/retrieval evidence, authenticated end-to-end runtime wiring, final governance evidence, and separate PayPal runtime evidence.
+TEAM-BACKEND-001 still needs authenticated end-to-end runtime wiring (verified UID session through scheduler, lease, approval, execution, durable evidence), final governance evidence, and separate PayPal runtime evidence.
