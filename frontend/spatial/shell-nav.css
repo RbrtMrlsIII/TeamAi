@@ -88,11 +88,6 @@
   display: none;
 }
 
-.ta-seats__list,
-.ta-seats__detail {
-  min-width: 0;
-}
-
 .ta-seat-page-list {
   list-style: none;
   margin: var(--space-stack-md) 0 0;
@@ -208,18 +203,131 @@
   min-width: 12rem;
 }
 
+.ta-approvals-page {
+  display: grid;
+  grid-template-columns: minmax(14rem, 21rem) minmax(0, 1fr);
+  gap: var(--space-gutter);
+  align-items: start;
+}
+
+.ta-approvals-page[hidden] {
+  display: none;
+}
+
+.ta-approvals__queue,
+.ta-approvals__detail {
+  min-width: 0;
+}
+
+.ta-approval-list {
+  list-style: none;
+  margin: var(--space-stack-md) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-stack-sm);
+}
+
+.ta-approval-card {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: var(--space-stack-xs);
+  text-align: start;
+  border: 1px solid color-mix(in srgb, var(--ink-meta) 22%, transparent);
+}
+
+.ta-approval-card > * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.ta-approval-card[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.ta-approval-facts {
+  display: grid;
+  gap: var(--space-stack-sm);
+  margin: 0;
+}
+
+.ta-approval-facts > div {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-stack-xs);
+}
+
+.ta-approval-facts dt,
+.ta-approval-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ta-approval-impact {
+  margin-top: var(--space-inset-lg);
+}
+
+.ta-approval-impact .ta-type-label,
+.ta-approval-impact .ta-type-body {
+  margin: 0;
+}
+
+.ta-approval-impact .ta-type-label {
+  margin-bottom: var(--space-stack-xs);
+}
+
+.ta-approval-boundary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-inset-md);
+  margin-top: var(--space-inset-md);
+}
+
+.ta-approval-boundary-grid .ta-card {
+  min-width: 0;
+}
+
+.ta-approval-boundary-grid .ta-type-label,
+.ta-approval-boundary-grid .ta-type-body {
+  margin: 0;
+}
+
+.ta-approval-boundary-grid .ta-type-label {
+  margin-bottom: var(--space-stack-xs);
+}
+
+.ta-approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-inset-sm);
+  margin-top: var(--space-inset-lg);
+}
+
+.ta-approval-actions .ta-control {
+  flex: 0 1 auto;
+}
+
+.ta-approval-actions + .ta-type-meta {
+  margin-top: var(--space-stack-sm);
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 @media (max-width: 56rem) {
-  .ta-seats-page {
+  .ta-seats-page,
+  .ta-approvals-page {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .ta-seat-columns,
-  .ta-seat-entitlement-grid {
+  .ta-seat-entitlement-grid,
+  .ta-approval-boundary-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -257,11 +365,13 @@ html {
 }
 
 @media (max-width: 28rem) {
-  .ta-seat-actions {
+  .ta-seat-actions,
+  .ta-approval-actions {
     width: 100%;
   }
 
-  .ta-seat-actions .ta-control {
+  .ta-seat-actions .ta-control,
+  .ta-approval-actions .ta-control {
     flex: 1 1 12rem;
   }
 }
