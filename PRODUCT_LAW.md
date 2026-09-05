@@ -106,6 +106,210 @@ The Web AI Team is not a collection of TeamAi source-code contributors by defini
 
 TeamAi MUST preserve this boundary in terminology, UI, data models, permissions, documentation, and orchestration contracts. Planning or working behavior of the Web AI Team MUST NOT be represented as the internal development process of the TeamAi Development Team.
 
+## Development Fields, Integration Boundary, and AI Responsibility Model
+
+TeamAi SHALL use **Development Fields** to partition responsibility without partitioning product authority. A Development Field is a bounded area of responsibility inside the single TeamAi Development Team. The fields are complementary contributors to `main`, not separate product authorities.
+
+The canonical connector between frontend and backend responsibilities is the **Application Integration & Contract Field**. It owns the contracts, adapters, validation boundaries, and reconciliation work required for frontend consumers and backend authorities to agree on the same facts and semantics. It MUST NOT become a shadow backend, a second scheduler, or a second frontend authority.
+
+The responsibility model is:
+
+`Product/Governance Field → defines authority and constraints`
+`Backend/Runtime Field → owns server/domain/execution implementation within those constraints`
+`Frontend/Experience Field → owns user-facing presentation and interaction within those constraints`
+`Application Integration & Contract Field → reconciles the frontend/backend contract and prevents semantic drift`
+`Verification/CI Field → proves the claimed behavior through deterministic checks and browser verification where applicable`
+`Documentation/Knowledge Field → preserves traceability, handover, endorsement, and validated learning`
+`Recovery/History Field → preserves recoverability, checkpoints, provenance, and safe reconciliation without rewriting history`
+`Delivery/Operations Field → owns bounded release, hosting, runtime-observation, and operational evidence concerns without replacing product authority`
+
+These fields describe **what responsibility is covered**, not how many permanent branches must exist. A repository MAY implement a field through one or more short-lived working branches, but the field remains the conceptual unit of responsibility.
+
+### Frontend scope and backend scope
+
+The **Frontend/Experience Field** includes presentation, interaction, accessibility, responsive behavior, frontend state presentation, and frontend-facing validation of backend-owned facts. It MUST NOT invent backend truth, mutate durable domain state directly outside authorized APIs, choose the scheduler's next actor, invoke external providers as an uncontrolled shortcut, or redefine Product Law.
+
+The **Backend/Runtime Field** includes identity verification, durable domain/application state, task lifecycle, provider invocation boundaries, trusted execution, commerce correlation, entitlement projection, scheduler-owned eligibility, and durable execution evidence. It MUST NOT silently become the visual authority or redesign user-facing product semantics without reconciliation.
+
+The **Application Integration & Contract Field** is the seam between those scopes. It exists to make the interface explicit: typed contracts, backend-fact schemas, adapters, error/status mappings, contract tests, integration fixtures, and reconciliation rules. It does not own either endpoint's domain authority. It is a **bridge, not a replacement authority**.
+
+### Example: three Web AI Seats acting as a development team
+
+A user may configure three Web AI Seats for TeamAi development:
+
+- **AI-1 — Backend Seat:** works primarily in the Backend/Runtime Field and applies the backend skills needed for server, state, execution, provider, and commerce work.
+- **AI-2 — Frontend Seat:** works primarily in the Frontend/Experience Field and applies frontend/spatial/accessibility/browser-facing skills.
+- **AI-3 — Integration/Team Lead Seat:** works primarily in the Application Integration & Contract Field and coordinates the contribution flow. It can inspect both sides, create or update PRs/commits, reconcile contracts, run or request verification, and lead integration through the approved repository process.
+
+AI-3 does **not** gain backend or frontend authority merely because it coordinates them. Leadership is a coordination responsibility, not an entitlement to override the specialized field owner's authority or the Product Law.
+
+The same pattern may be used with more or fewer AI Seats. Seat role is determined by explicit project configuration, applicable skills, capabilities, authorization, connection health, task requirements, and scheduler eligibility; not by a branch name alone.
+
+### Web AI cooperation and responsibility distribution
+
+The Development Field model is directly relevant to the Web AI Team because it establishes the same separation principle TeamAi applies to connected AI Seats: **cooperation happens through explicit boundaries, not through uncontrolled direct authority transfer**.
+
+For Web AI cooperation, the canonical conceptual chain is:
+
+`AI Seat → assigned responsibility/skill bundle → eligible task → authorized action/tool → durable result/event → contract/state reconciliation → next eligible Seat`
+
+An AI Seat may contribute research, critique, implementation, verification, documentation, or coordination according to its configured role. A Seat MUST NOT inherit another Seat's authority merely because its output is newer, more persuasive, or adjacent in time. Scheduler eligibility, authorization, task state, and durable events determine when another Seat may act.
+
+Thus a Web AI Team can cooperate as a real team without requiring every AI to have the same skills or access. Responsibility is distributed by **Seat + Field + Skill + Capability + Authorization + Scheduler eligibility**, while TeamAi remains the common coordination and durable-state boundary.
+
+### Main branch and history preservation
+
+`main` is the canonical assembled TeamAi state. A branch is a **working field or temporary reconciliation surface**, not a second Product Law and not a mandatory permanent archive.
+
+TeamAi MUST NOT create or retain branches solely to preserve history when the same history is already represented by commits, merged pull requests, issues, tags/checkpoints, evidence records, and handover/endorsement documents. Historical branches MAY be retained when they carry useful provenance or recovery value, but branch count is not a measure of product completeness.
+
+The target operating model is a **small set of coverage fields** capable of covering the whole `main` surface. The initial target is approximately **7–8 canonical responsibility fields**, subject to future reconciliation:
+
+1. Product & Governance
+2. Backend & Runtime
+3. Frontend & Experience
+4. Application Integration & Contracts
+5. Verification & CI/Browser
+6. Documentation, Knowledge & Handover
+7. Recovery, History & Reconciliation
+8. Delivery & Operations
+
+These are coverage categories, not a demand to keep exactly eight live branches at all times. The project SHOULD prefer a small number of active, purpose-specific branches and SHOULD close, supersede, or classify old branches once their unique value is captured and safely merged or preserved elsewhere.
+
+A branch inventory therefore answers **where current work is happening**; the coverage model answers **whether the assembled `main` is fully represented**; the historical record answers **how the product got there**. These are different questions and MUST remain distinct.
+
+## Web AI Population, Responsibility Allocation, Skill Control, and Main Integration
+
+A **Web AI population** is the set of Web AI Seats configured by a user for a particular TeamAi Workplace/Project and operating purpose. Population size changes how responsibilities are distributed; it does not create additional product authorities.
+
+TeamAi SHALL support responsibility allocation across a bounded practical population, with **2–8 Web AI Seats as the canonical configuration range for the team-development operating model**. A user MAY configure fewer or more Seats only where a future product rule explicitly permits it; this law defines the baseline 2–8 model and does not imply that every user must have eight Seats.
+
+The user-facing configuration MUST therefore answer, before execution:
+
+`Who is this Seat? → What Field(s) does this Seat cover? → Which skills are equipped? → Which capabilities/tools are enabled? → Which repository/branch scope is allowed? → Which actions are permitted? → Which actions require review/approval? → Which tasks may the scheduler assign?`
+
+Seat population is not itself authority. The effective responsibility of a Seat is the intersection of:
+
+`Seat identity + assigned Field + effective Skill bundle + Capability set + Authorization + Connection/entitlement state + branch/ref scope + Task requirements + Scheduler eligibility`
+
+A skill MUST guide execution inside an allowed responsibility boundary; a skill MUST NOT grant authority by itself. A Seat with a backend skill but no backend authorization cannot perform backend-authoritative work. A Seat with merge capability but no Main Integration authorization cannot merge into `main`. A Seat with documentation skills but no canonical-document authorization cannot silently rewrite Product Law or another canonical authority.
+
+### Canonical population examples
+
+**Two-seat population — compact team:**
+
+One Seat MAY combine Backend/Runtime + Frontend/Experience as a specialist/full-stack Seat, while the second Seat serves as Integration/Team Lead with Application Integration, Verification, repository coordination, PR/Issue flow, and team-conversation summarization responsibilities. Alternatively, two specialist Seats MAY split Frontend and Backend while the user remains the integration authority; the selected configuration MUST explicitly identify who owns integration and final merge responsibility.
+
+**Three-seat population — balanced implementation team:**
+
+The canonical example is Backend Seat + Frontend Seat + Integration/Team Lead Seat. This gives the two implementation domains independent responsibility while keeping contract reconciliation and contribution flow explicit.
+
+**Four-seat population — user example / three contributors plus lead:**
+
+The user MAY configure three specialist Web AI Seats, each working from its own controlled working branch, plus one **Main Integration/Team Lead Seat** responsible for reviewing contributions, managing PR/commit/Issue flow, reconciling the work, leading team conversation summarisation, coordinating verification, and determining what is ready to enter `main` through the approved repository process.
+
+In this pattern:
+
+`AI-1 branch → specialist contribution`
+`AI-2 branch → specialist contribution`
+`AI-3 branch → specialist contribution`
+`AI-4 / Main Integration Seat → review + reconcile + verify + PR/merge coordination + summarise`
+
+The Main Integration Seat MUST NOT use its leadership role as an unrestricted write path into `main`. The normal path remains:
+
+`specialist branch → PR → verification/review → Main Integration decision → merge → main`
+
+The Main Integration Seat may coordinate the repository process and may hold explicit merge authority where the project's authorization policy grants it. That authority is repository/change coordination authority, not automatic ownership of every underlying product field.
+
+**Five-seat population:**
+
+The four-seat model MAY be expanded by separating another responsibility such as Verification/CI, Documentation/Knowledge, or Recovery/History from a combined specialist role. The integration lead remains explicit rather than being hidden inside an unrelated specialist role.
+
+**Six-seat population:**
+
+The population MAY assign dedicated Backend/Runtime, Frontend/Experience, Integration/Contracts, Verification/CI, Documentation/Knowledge, and Main Team Lead responsibilities. Some fields MAY still be combined where workload does not justify a separate Seat.
+
+**Seven-seat population:**
+
+The population MAY additionally separate Recovery/History/Reconciliation from Documentation/Knowledge or give Delivery/Operations its own specialized Seat. The resulting team can cover most of the canonical fields without requiring every Seat to possess every skill.
+
+**Eight-seat population — full field-oriented configuration:**
+
+A user MAY assign one Seat primarily to each of the eight canonical Development Fields, with the Product/Governance or Main Integration/Team Lead responsibility explicitly configured as the supervisory coordination seat. The exact mapping MUST remain configurable because one external provider/model may appear through multiple Seats and because Seat capability, connection health, entitlement, authorization, and task demand can vary.
+
+No population size changes the authority hierarchy. More Seats increase parallel responsibility capacity; they do not create more Product Laws, more canonical durable stores, more schedulers, or more independent product authorities.
+
+### Skill equipment and control model
+
+Every configured Web AI Seat SHOULD have an explicit **Responsibility Profile** containing at least:
+
+`Seat → primary Field(s) → allowed secondary Field(s) → required skills → optional skills → allowed capabilities/tools → repository/ref scope → permitted operations → prohibited operations → approval requirements → escalation target`
+
+The effective skill set SHOULD be resolved deterministically from the applicable TeamAi skill wiring and the Seat's authorized role. Skill selection MUST remain subordinate to Product Law, Masterplan, Policy/ORUCAVEAM, service authority, and task authorization.
+
+The responsibility profile MUST distinguish **can read**, **can propose**, **can implement**, **can create PR/commit**, **can approve**, **can merge**, **can modify canonical documents**, and **can summarise/lead**. These actions are not interchangeable.
+
+The profile MUST also encode negative boundaries. Examples include:
+
+- A Frontend Seat may consume backend facts but MUST NOT become backend authority.
+- A Backend Seat may implement runtime contracts but MUST NOT become visual authority.
+- An Integration Seat may reconcile frontend/backend contracts but MUST NOT silently replace either endpoint's domain authority.
+- A Verification Seat may prove behavior but MUST NOT create product authority by passing a test.
+- A Documentation/Knowledge Seat may preserve traceability and learning but MUST NOT invent implementation truth.
+- A Main Integration/Team Lead Seat may control contribution flow and merge coordination when authorized, but MUST NOT bypass Product Law, required review/approval, or scheduler policy.
+
+A Seat's skill bundle MUST therefore be treated as **guided operational capability within an authorization envelope**, not as a grant of unrestricted power.
+
+### Main Integration Seat and team conversation leadership
+
+When a user configures a dedicated Main Integration/Team Lead Seat, TeamAi SHOULD expose explicit controls for:
+
+`main/repository coordination + PR/commit/Issue coordination + contract reconciliation + verification coordination + team discussion summarisation + handover preparation + escalation`
+
+Team conversation summarisation is a coordination capability. It MUST preserve materially relevant contributions, disagreements, decisions, constraints, warnings, unresolved questions, and evidence references. Summarisation MUST NOT silently become approval or implementation authority.
+
+The Main Integration Seat MAY recommend that a task is ready for merge, but the effective merge authority is determined by the repository permission model and TeamAi authorization. Where human approval is required, the Main Integration Seat cannot replace it.
+
+### Branch allocation rule for Web AI Seats
+
+A working branch MAY represent a Seat's active contribution, a Field's active work, or a temporary integration/reconciliation workspace. The branch assignment is an execution aid, not the source of identity or authority.
+
+For multi-seat development, TeamAi SHOULD prefer:
+
+`one canonical main + a small number of active Seat/Field working branches + PR-based contribution flow`
+
+rather than creating branches solely as permanent archives. A branch MAY be reused for successive tasks when doing so preserves a clean review boundary, or a fresh branch MAY be created when task isolation requires it.
+
+The Main Integration Seat's special responsibility is to control **what enters `main`**, not to make `main` a personal workspace for unreviewed changes. `main` remains the canonical assembled state and must be advanced through the approved repository process.
+
+### Scheduler and Web AI responsibility selection
+
+The TeamAi scheduler MUST select the next eligible Web AI Seat from durable task state and the responsibility/authorization model rather than from conversational recency or branch naming.
+
+A task is eligible for a Seat only when its task requirements intersect the Seat's assigned Field(s), effective skills, enabled capabilities/tools, authorization, connection health, repository scope, approval state, and other applicable constraints.
+
+The scheduler MUST be able to represent situations where:
+
+`a Seat has the skill but not the authorization`
+`a Seat has the authorization but not the skill`
+`a Seat has both but the connection is unhealthy`
+`a Seat has both but the task is blocked or not yet eligible`
+`a Seat can propose but cannot execute`
+`a Seat can create a PR but cannot merge`
+`a Seat can coordinate but cannot override a specialist authority`
+
+These distinctions are essential to controlling heterogeneous Web AI populations safely and predictably.
+
+### Responsibility distribution is a product feature
+
+The user-accessible Team configuration MUST not merely ask **how many AI Seats** the user wants. It MUST help the user understand and configure **what each Seat is responsible for**, **what skills it is equipped with**, **what it may control**, and **what it must not control**.
+
+The configuration model MUST make responsibility visible enough that a user can construct a two-seat, three-seat, four-seat, or larger team while preserving the same Product Law and authority boundaries. The UI MAY simplify presentation, but it MUST NOT hide the underlying responsibility model from TeamAi's authorization and scheduling layers.
+
+`Web AI population size → responsibility distribution → skill equipment → capability/authorization envelope → branch/workspace scope → scheduler eligibility → execution → durable event → team coordination`
+
+The purpose of the population model is not to force identical teams. It is to let the user shape a Web AI Team whose Seats have complementary responsibilities while TeamAi preserves one coherent product authority and one auditable history.
+
 ## Web AI Team Operating Stages
 
 The Web AI Team may operate through distinct product stages. At minimum, TeamAi MUST preserve the distinction between:
