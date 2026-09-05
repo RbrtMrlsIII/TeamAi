@@ -165,3 +165,9 @@ workingStylesheet.rel = 'stylesheet';
 workingStylesheet.href = './working.css';
 document.head.appendChild(workingStylesheet);
 import('./working.js');
+
+const artifactsStylesheet = document.createElement('link');
+artifactsStylesheet.rel = 'stylesheet';
+artifactsStylesheet.href = './artifacts.css';
+document.head.appendChild(artifactsStylesheet);
+import('./artifacts.js');
