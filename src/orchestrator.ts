@@ -1,4 +1,4 @@
-// Updated: 2026-09-01 22:35:10 PHASE TEAM-FOUNDATION-001 by TeamArchitect
+// Updated: 2026-09-05 — TEAM-BACKEND-002 read economy
 import type { Conversation, Message, Participant, SkipReason, TeamHealthSnapshot } from './domain.js';
 import type { AIProvider, ChatMessage } from './providers/types.js';
 
@@ -105,6 +105,10 @@ export class ConversationOrchestrator {
       return { turnsCompleted: 0, speakers: [], skipped: [], leaderReports: [] };
     }
 
+    // Read the transcript once for the run. The local working set is updated
+    // after each completed turn, so repeated provider turns do not re-read the
+    // same transcript from the durable store.
+    const workingMessages = await this.store.getMessages(conversationId);
     conversation.status = 'running';
     await this.store.saveConversation(conversation);
     const speakers: string[] = [];
@@ -124,30 +128,32 @@ export class ConversationOrchestrator {
       const provider = (participant.provider && this.providers.get(participant.provider)) ?? this.providers.get(participant.modelId);
       if (!provider) {
         skipped.push({ modelId: participant.modelId, reason: 'provider_not_configured' });
-        await this.recordSkip(conversation, participant, 'provider_unavailable');
+        workingMessages.push(await this.recordSkip(conversation, participant, 'provider_unavailable'));
         continue;
       }
 
       try {
-        const messages = await this.buildContext(conversationId, participant);
+        const messages = this.buildContext(workingMessages, participant);
         const result = await provider.generate({ model: participant.modelId, messages, maxOutputTokens: conversation.maxWords ? Math.max(16, conversation.maxWords * 2) : undefined });
         const content = enforceWordTarget(result.text, conversation.maxWords);
         conversation.currentTurn += 1;
         participant.status = 'active';
-        await this.store.appendMessage({
+        const message: Message = {
           id: crypto.randomUUID(), conversationId, authorType: 'ai', modelId: participant.modelId, role: 'assistant', content,
           turnNumber: conversation.currentTurn, createdAt: new Date().toISOString()
-        });
+        };
+        await this.store.appendMessage(message);
+        workingMessages.push(message);
         speakers.push(participant.modelId);
         completedResponses += 1;
 
         if (conversation.teamLeaderModelId && conversation.currentTurn % (conversation.leaderCheckInterval ?? 1) === 0) {
-          const report = await this.supervise(conversationId, conversation);
+          const report = await this.supervise(conversationId, conversation, workingMessages);
           if (report) leaderReports.push(report);
         }
       } catch (error) {
         skipped.push({ modelId: participant.modelId, reason: 'provider_error' });
-        await this.recordSkip(conversation, participant, 'provider_error', error instanceof Error ? error.message : 'unknown provider error');
+        workingMessages.push(await this.recordSkip(conversation, participant, 'provider_error', error instanceof Error ? error.message : 'unknown provider error'));
       }
 
       await this.store.saveConversation(conversation);
@@ -164,7 +170,7 @@ export class ConversationOrchestrator {
     };
   }
 
-  async supervise(conversationId: string, conversationOverride?: Conversation): Promise<TeamHealthSnapshot | undefined> {
+  async supervise(conversationId: string, conversationOverride?: Conversation, recentMessages?: Message[]): Promise<TeamHealthSnapshot | undefined> {
     const conversation = conversationOverride ?? await this.requireConversation(conversationId);
     if (!conversation.teamLeaderModelId) return undefined;
     const leader = this.providers.get(conversation.teamLeaderModelId);
@@ -175,7 +181,7 @@ export class ConversationOrchestrator {
       return report;
     }
 
-    const recent = (await this.store.getMessages(conversationId)).slice(-12);
+    const recent = (recentMessages ?? await this.store.getMessages(conversationId)).slice(-12);
     const prompt: ChatMessage[] = [
       { role: 'system', content: 'You are the Team Leader. Monitor participation, contradictions, failures, stalled work, missing verification, and unhealthy team behavior. Return concise observations and recommendations. You are supervisory only; never assume permission to execute.' },
       { role: 'user', content: JSON.stringify({ participants: conversation.participants, currentTurn: conversation.currentTurn, recent }) }
@@ -184,11 +190,13 @@ export class ConversationOrchestrator {
       const result = await leader.generate({ model: conversation.teamLeaderModelId, messages: prompt, maxOutputTokens: 500 });
       const report = this.computeHealth(conversation, extractBullets(result.text), []);
       conversation.health = report;
-      await this.store.appendMessage({
+      const reportMessage: Message = {
         id: crypto.randomUUID(), conversationId, authorType: 'system', authorId: conversation.teamLeaderModelId, role: 'system', modelId: conversation.teamLeaderModelId,
         content: `TEAM_LEADER_REPORT ${JSON.stringify(report)}`,
         turnNumber: conversation.currentTurn, createdAt: new Date().toISOString()
-      });
+      };
+      await this.store.appendMessage(reportMessage);
+      if (recentMessages) recentMessages.push(reportMessage);
       await this.store.saveConversation(conversation);
       return report;
     } catch {
@@ -218,16 +226,18 @@ export class ConversationOrchestrator {
     return selection?.participant;
   }
 
-  private async recordSkip(conversation: Conversation, participant: Participant, reason: SkipReason, detail?: string): Promise<void> {
+  private async recordSkip(conversation: Conversation, participant: Participant, reason: SkipReason, detail?: string): Promise<Message> {
     participant.status = reason === 'provider_unavailable' ? 'disconnected' : 'performing_poorly';
     participant.skipReason = reason;
-    await this.store.appendMessage({
+    const message: Message = {
       id: crypto.randomUUID(), conversationId: conversation.id, authorType: 'system', role: 'system', modelId: participant.modelId,
       content: `Participant ${participant.modelId} skipped after ${reason}.${detail ? ` ${detail}` : ''} Next eligible participant will continue.`,
       turnNumber: conversation.currentTurn, createdAt: new Date().toISOString()
-    });
+    };
+    await this.store.appendMessage(message);
     const activeParticipants = conversation.participants.filter((candidate) => candidate.enabled !== false && candidate.status === 'active').length;
     if (activeParticipants === 0) conversation.health = this.computeHealth(conversation, ['No eligible worker remains.'], ['Re-enable, replace, or reconnect a worker.']);
+    return message;
   }
 
   private computeHealth(conversation: Conversation, discrepancies: string[], recommendations: string[]): TeamHealthSnapshot {
@@ -249,8 +259,7 @@ export class ConversationOrchestrator {
     return conversation;
   }
 
-  private async buildContext(conversationId: string, participant: Participant): Promise<ChatMessage[]> {
-    const messages = await this.store.getMessages(conversationId);
+  private buildContext(messages: Message[], participant: Participant): ChatMessage[] {
     const context: ChatMessage[] = [
       { role: 'system', content: `You are the ${participant.role} on a provider-federated AI team. Respond to the current task with a useful contribution, identify relevant disagreements, avoid needless repetition, and never assume another agent's permissions.` }
     ];

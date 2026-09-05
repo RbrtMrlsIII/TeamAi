@@ -1,9 +1,8 @@
 import { createSign } from 'node:crypto';
-import type { DurableExecutionResult, TaskExecutionResultIdentity, TaskExecutionResultStore } from './task-execution-result.js';
+import type { ConversationTurnIdentity, ConversationTurnStore, WebAiConversationTurn } from './conversation-turn.js';
 
 const ROOT = 'https://firestore.googleapis.com/v1';
 type ServiceAccount = { project_id: string; client_email: string; private_key: string };
-
 type FirestoreValue =
   | { stringValue: string }
   | { booleanValue: boolean }
@@ -13,7 +12,6 @@ type FirestoreValue =
   | { arrayValue: { values?: FirestoreValue[] } }
   | { mapValue: { fields?: Record<string, FirestoreValue> } }
   | { nullValue: null };
-
 type FirestoreDocument = { fields?: Record<string, FirestoreValue> };
 
 function required(value: string, name: string): string {
@@ -21,35 +19,34 @@ function required(value: string, name: string): string {
   return value.trim();
 }
 
-function firestoreValue(input: unknown): FirestoreValue {
+function value(input: unknown): FirestoreValue {
   if (input === null) return { nullValue: null };
   if (typeof input === 'string') return { stringValue: input };
   if (typeof input === 'boolean') return { booleanValue: input };
   if (typeof input === 'number') return Number.isInteger(input) ? { integerValue: String(input) } : { doubleValue: input };
   if (input instanceof Date) return { timestampValue: input.toISOString() };
-  if (Array.isArray(input)) return { arrayValue: { values: input.map(firestoreValue) } };
-  if (typeof input === 'object') return { mapValue: { fields: Object.fromEntries(Object.entries(input as Record<string, unknown>).map(([key, child]) => [key, firestoreValue(child)])) } };
-  throw new Error(`Unsupported Firestore result value: ${typeof input}`);
+  if (Array.isArray(input)) return { arrayValue: { values: input.map(value) } };
+  if (typeof input === 'object') return { mapValue: { fields: Object.fromEntries(Object.entries(input as Record<string, unknown>).map(([key, child]) => [key, value(child)])) } };
+  throw new Error(`Unsupported Firestore conversation turn value: ${typeof input}`);
 }
 
 function fields(input: Record<string, unknown>): Record<string, FirestoreValue> {
-  return Object.fromEntries(Object.entries(input).map(([key, item]) => [key, firestoreValue(item)]));
+  return Object.fromEntries(Object.entries(input).map(([key, item]) => [key, value(item)]));
 }
 
-function decode(value: FirestoreValue): unknown {
-  if ('stringValue' in value) return value.stringValue;
-  if ('booleanValue' in value) return value.booleanValue;
-  if ('integerValue' in value) return Number(value.integerValue);
-  if ('doubleValue' in value) return value.doubleValue;
-  if ('timestampValue' in value) return value.timestampValue;
-  if ('nullValue' in value) return null;
-  if ('arrayValue' in value) return (value.arrayValue.values ?? []).map(decode);
-  return Object.fromEntries(Object.entries(value.mapValue.fields ?? {}).map(([key, child]) => [key, decode(child)]));
+function decode(input: FirestoreValue): unknown {
+  if ('stringValue' in input) return input.stringValue;
+  if ('booleanValue' in input) return input.booleanValue;
+  if ('integerValue' in input) return Number(input.integerValue);
+  if ('doubleValue' in input) return input.doubleValue;
+  if ('timestampValue' in input) return input.timestampValue;
+  if ('nullValue' in input) return null;
+  if ('arrayValue' in input) return (input.arrayValue.values ?? []).map(decode);
+  return Object.fromEntries(Object.entries(input.mapValue.fields ?? {}).map(([key, child]) => [key, decode(child)]));
 }
 
-function decodeDocument(document: FirestoreDocument): DurableExecutionResult {
-  const decodedFields = Object.fromEntries(Object.entries(document.fields ?? {}).map(([key, value]) => [key, decode(value)]));
-  return decodedFields as DurableExecutionResult;
+function decodeDocument(document: FirestoreDocument): WebAiConversationTurn {
+  return Object.fromEntries(Object.entries(document.fields ?? {}).map(([key, field]) => [key, decode(field)])) as unknown as WebAiConversationTurn;
 }
 
 function loadServiceAccount(): ServiceAccount {
@@ -61,7 +58,7 @@ function loadServiceAccount(): ServiceAccount {
   return parsed as ServiceAccount;
 }
 
-export class FirestoreTaskExecutionResultStore implements TaskExecutionResultStore {
+export class FirestoreConversationTurnStore implements ConversationTurnStore {
   private readonly account = loadServiceAccount();
   private readonly firebaseProjectId: string;
   private readonly uid: string;
@@ -75,43 +72,37 @@ export class FirestoreTaskExecutionResultStore implements TaskExecutionResultSto
     if (this.account.project_id !== this.firebaseProjectId) throw new Error('Firebase project identity mismatch');
   }
 
-  async hasResult(identity: TaskExecutionResultIdentity): Promise<boolean> {
-    return (await this.getResult(identity)) !== null;
-  }
-
-  async getResult(identity: TaskExecutionResultIdentity): Promise<DurableExecutionResult | null> {
-    required(identity.taskId, 'taskId');
-    required(identity.projectId, 'projectId');
-    required(identity.eventId, 'eventId');
-    const token = await this.accessToken();
-    const response = await fetch(this.documentUrl(this.resultPath(identity)), { headers: { authorization: `Bearer ${token}` } });
-    if (response.status === 404) return null;
-    if (!response.ok) throw new Error(`Firestore execution result read failed: ${response.status}`);
-    return decodeDocument(await response.json() as FirestoreDocument);
-  }
-
-  async persist(result: DurableExecutionResult): Promise<void> {
-    required(result.taskId, 'taskId');
-    required(result.projectId, 'projectId');
-    required(result.seatId, 'seatId');
-    required(result.eventId, 'eventId');
-    required(result.idempotencyKey, 'idempotencyKey');
+  async appendTurn(turn: WebAiConversationTurn): Promise<void> {
+    required(turn.conversationId, 'conversationId');
+    required(turn.turnId, 'turnId');
+    required(turn.content, 'content');
+    if (!Number.isInteger(turn.sequence) || turn.sequence < 0) throw new Error('sequence must be a non-negative integer');
     const token = await this.accessToken();
     const response = await fetch(`${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents:commit`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         writes: [{
-          update: { name: this.documentUrl(this.resultPath(result)), fields: fields(result as unknown as Record<string, unknown>) },
+          update: { name: this.documentUrl(this.turnPath(turn.conversationId, turn.turnId)), fields: fields(turn as unknown as Record<string, unknown>) },
           currentDocument: { exists: false },
         }],
       }),
     });
-    if (!response.ok && ![409, 412].includes(response.status)) throw new Error(`Firestore execution result write failed: ${response.status}`);
+    if (!response.ok && ![409, 412].includes(response.status)) throw new Error(`Firestore conversation turn write failed: ${response.status}`);
   }
 
-  private resultPath(identity: TaskExecutionResultIdentity): string {
-    return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${identity.projectId}/tasks/${identity.taskId}/execution-results/${identity.eventId}`;
+  async getTurn(identity: ConversationTurnIdentity): Promise<WebAiConversationTurn | null> {
+    required(identity.conversationId, 'conversationId');
+    required(identity.turnId, 'turnId');
+    const token = await this.accessToken();
+    const response = await fetch(this.documentUrl(this.turnPath(identity.conversationId, identity.turnId)), { headers: { authorization: `Bearer ${token}` } });
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Firestore conversation turn read failed: ${response.status}`);
+    return decodeDocument(await response.json() as FirestoreDocument);
+  }
+
+  private turnPath(conversationId: string, turnId: string): string {
+    return `accounts/${this.uid}/workplaces/${this.workplaceId}/conversations/${conversationId}/turns/${turnId}`;
   }
 
   private documentUrl(path: string): string {
