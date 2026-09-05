@@ -87,9 +87,9 @@ async function accessToken(account: ServiceAccount): Promise<string> {
 export class FirestoreLeaseTransaction {
   private readonly account = serviceAccountFromEnv();
 
-  constructor(private readonly projectId = process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official') {
-    required(projectId, 'projectId');
-    if (this.account.project_id !== projectId) throw new Error('Firebase project identity mismatch');
+  constructor(private readonly firebaseProjectId = process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official') {
+    required(firebaseProjectId, 'firebaseProjectId');
+    if (this.account.project_id !== firebaseProjectId) throw new Error('Firebase project identity mismatch');
   }
 
   async leaseReady(input: FirestoreLeaseInput): Promise<FirestoreLeaseResult> {
@@ -100,12 +100,12 @@ export class FirestoreLeaseTransaction {
     required(input.seatId, 'seatId');
     required(input.leaseId, 'leaseId');
     required(input.actorId, 'actorId');
-    if (input.projectId !== this.projectId) throw new Error('projectId does not match Firebase runtime project scope');
 
     const token = await accessToken(this.account);
     const taskPath = `accounts/${input.uid}/workplaces/${input.workplaceId}/projects/${input.projectId}/tasks/${input.taskId}`;
-    const taskUrl = `${ROOT}/projects/${encodeURIComponent(this.projectId)}/databases/(default)/documents/${taskPath}`;
-    const transactionResponse = await fetch(`${taskUrl.split('/documents/')[0]}/documents:beginTransaction`, {
+    const documentBase = `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents`;
+    const taskUrl = `${documentBase}/${taskPath}`;
+    const transactionResponse = await fetch(`${documentBase}:beginTransaction`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({ options: { readWrite: {} } }),
@@ -125,14 +125,14 @@ export class FirestoreLeaseTransaction {
 
     const now = new Date().toISOString();
     const leasePath = `${taskPath}/leases/${input.leaseId}`;
-    const commitResponse = await fetch(`${ROOT}/projects/${encodeURIComponent(this.projectId)}/databases/(default)/documents:commit`, {
+    const commitResponse = await fetch(`${documentBase}:commit`, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         transaction,
         writes: [
           {
-            update: { name: `${ROOT}/projects/${encodeURIComponent(this.projectId)}/databases/(default)/documents/${leasePath}`, fields: fields({ uid: input.uid, taskId: input.taskId, seatId: input.seatId, leaseId: input.leaseId, actorId: input.actorId, status: 'leased', leasedAt: now }) },
+            update: { name: `${documentBase}/${leasePath}`, fields: fields({ uid: input.uid, taskId: input.taskId, seatId: input.seatId, leaseId: input.leaseId, actorId: input.actorId, status: 'leased', leasedAt: now }) },
             currentDocument: { exists: false },
           },
           {
