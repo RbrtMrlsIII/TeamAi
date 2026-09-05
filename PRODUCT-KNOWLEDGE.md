@@ -3,9 +3,75 @@
 **Status:** BASELINE KNOWLEDGE LIBRARY + CONNECTED PRODUCT-LAW MAP
 **Purpose:** Preserve validated and deliberately classified learning about how the Product Law works as one connected system. This file is subordinate to `PRODUCT_LAW.md`; it MUST NOT become a second Product Law or silently add authority.
 
-## 0. Product Law picture — law-to-law conceptual map
+## 0. Product Law picture — numerical law spine + connected conceptual map
 
-The primary picture in this file is the **connection between the laws themselves**. It is not a diagram of repository files. Repository/document traceability is retained later as supporting evidence.
+The primary picture in this file is the **connection between the numbered hard laws themselves**. The numerical order `LAW 101 → LAW 102 → ... → LAW 110` is the canonical editorial spine for the hard-law register. The arrows in that spine establish the intended reading/implementation progression; the family links beneath it show cross-cutting dependencies and are **not** alternative numbering.
+
+The register is contiguous: **LAW 101 through LAW 110, with no missing number and no second definition for any hard-law number**. Repeated ideas that belong to the same underlying logic are consolidated under the law families in `PRODUCT_LAW.md`; the hard-law entries below are the enforceable cross-cutting invariants and their relationship to those families.
+
+### 0.0 Hard-law numerical spine
+
+```text
+LAW 101
+Implementation traceability
+      ↓
+LAW 102
+Executable service authority
+      ↓
+LAW 103
+Durable state before trusted execution
+      ↓
+LAW 104
+Firebase UID ownership root
+      ↓
+LAW 105
+Firebase project identity invariant
+      ↓
+LAW 106
+Workspace rulesets as subordinate adapters
+      ↓
+LAW 107
+Skill evolution without authority expansion
+      ↓
+LAW 108
+Team knowledge survives separated AI applications
+      ↓
+LAW 109
+ZipSkills is knowledge packaging, not authority
+      ↓
+LAW 110
+Workspace choice shapes configuration without fragmenting TeamAi
+```
+
+### 0.1 Numerical spine wired to the law-family system
+
+```text
+101 ──► K/L   proof, verification, handover, completion
+ │
+102 ──► B/C/K service authority → executable boundary → verified integration
+ │
+103 ──► C/H/K durable identity → authorization → execution → evidence
+ │
+104 ──► A/B/C/I identity ownership → UID-rooted domain + commerce correlation
+ │
+105 ──► B/C/J/K one Firebase project identity across dependent surfaces
+ │
+106 ──► D/E/G/H responsibility → workspace adapter → native operation
+ │
+107 ──► E/G/H/I/L learning → skill evolution → verification → promotion
+ │
+108 ──► A/E/F/G/K/L context continuity → eligible Seat without direct provider control
+ │
+109 ──► H/I/L validated skill knowledge → package → enablement → separate authorization
+ │
+110 ──► E/F/G/H/J workspace choice → configured context → skills/capability/auth → UI guidance
+```
+
+This is the **numeric-to-family wiring**: each hard law has one numerical position and a deliberate set of family connections. A law may connect to several families without becoming several laws.
+
+### 0.2 Connected family dependency picture
+
+The family graph remains useful, but it is now explicitly subordinate to the numbered spine:
 
 ```text
                          HUMAN USER AUTHORITY
@@ -26,7 +92,7 @@ The primary picture in this file is the **connection between the laws themselves
                   ┌────────────────────────────┐
                   │ LAW FAMILY C               │
                   │ UID + durable state        │
-                  │ + trusted execution       │
+                  │ + trusted execution        │
                   └──────────────┬─────────────┘
                                  │
                                  ▼
@@ -70,7 +136,7 @@ The primary picture in this file is the **connection between the laws themselves
         │ LAW FAMILY J         │   │ LAW FAMILY I         │
         │ Spatial + guides +   │   │ Commerce + ZipSkills │
         │ dictionary           │   │ + provider entitlement│
-        └──────────┬───────────┘   └──────────┬───────────┘
+        └──────────┬───────────┘   └──────────┬─────────────┘
                    └────────────┬─────────────┘
                                 ▼
                   ┌────────────────────────────┐
@@ -85,7 +151,9 @@ The primary picture in this file is the **connection between the laws themselves
                              without changing authority
 ```
 
-### 0.1 Why the laws are grouped
+The family graph describes conceptual dependency. The numerical spine remains the authoritative hard-law ordering for this knowledge map.
+
+### 0.3 Why the laws are grouped
 
 The Product Law contains several kinds of statements that previously appeared in different sections but describe the same underlying logic. They are now interpreted as connected law families.
 
@@ -230,17 +298,17 @@ The purpose of this consolidation is not to delete meaning. It is to make the **
 
 ## 2. The law-system operating picture
 
-The laws are not independent. The central reasoning is:
+The laws are not independent. The central reasoning is aligned with the canonical Product Law resolution order:
 
 ```text
 WHO?
 Human authority + Seat identity
         ↓
-WHERE / WHAT CONTEXT?
-Workspace + Development Field
+WHAT RESPONSIBILITY?
+Development Field + Responsibility Profile
         ↓
-WHAT ROLE?
-Responsibility Profile
+WHERE / IN WHAT CONTEXT?
+Workspace + workspace ruleset
         ↓
 HOW?
 Skills + workspace-native procedure
@@ -460,7 +528,7 @@ ToolKit remains upstream knowledge, not TeamAi authority.
 
 The project-file relationship exists, but it is intentionally **secondary to the law-to-law picture above**:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → HandOver.md → Endorsement.md → PRODUCT-KNOWLEDGE.md`
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → docs/project-guide/HandOver.md → docs/project-guide/Endorsement.md → PRODUCT-KNOWLEDGE.md`
 
 This chain explains where the law is operationalized and evidenced; it does not define the law itself.
 
@@ -473,3 +541,5 @@ This chain explains where the law is operationalized and evidenced; it does not 
 - Preserve the evidence path for every validated lesson.
 - Keep future workspace implementations, Team Settings UI, ZipSkills commerce, and unimplemented cross-application connectors clearly labeled as design/planning until runtime evidence exists.
 - Keep law-family consolidation semantic: merge duplicated meaning, not merely similar wording.
+- Keep the hard-law register contiguous and numerically ordered from LAW 101 through LAW 110.
+- Keep the numerical spine and family dependency graph together: the spine gives one canonical sequence; family links explain cross-cutting relationships without creating duplicate laws.
