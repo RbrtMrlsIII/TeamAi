@@ -27,12 +27,21 @@ const taskPath = `accounts/${uid}/workplaces/${workplaceId}/projects/${testProje
 
 function loadServiceAccount() {
   const raw = requiredEnv('TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON');
-  const parsed = JSON.parse(raw);
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error('TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON is invalid JSON');
+  }
   if (!parsed.project_id || !parsed.client_email || !parsed.private_key) {
     throw new Error('Firebase service account is incomplete');
   }
   if (parsed.project_id !== projectId) {
-    throw new Error('Firebase project identity mismatch');
+    throw new Error(`Firebase project identity mismatch: got ${parsed.project_id}`);
+  }
+  // GitHub secrets sometimes store real newlines; normalize to JSON-style PEM.
+  if (typeof parsed.private_key === 'string' && parsed.private_key.includes('BEGIN') && !parsed.private_key.includes('\\n') && parsed.private_key.includes('\n')) {
+    // already has real newlines — fine for crypto.sign
   }
   return parsed;
 }
@@ -63,23 +72,30 @@ async function accessToken() {
       assertion,
     }),
   });
-  if (!response.ok) throw new Error(`Firebase token exchange failed: ${response.status}`);
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Firebase token exchange failed: ${response.status} ${body.slice(0, 300)}`);
+  }
   const body = await response.json();
   if (typeof body.access_token !== 'string') throw new Error('Firebase access token missing');
   cachedToken = { value: body.access_token, expiresAt: now + 3500 };
   return body.access_token;
 }
 
-function documentUrl(path) {
-  return `${ROOT}/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/${path
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/')}`;
+/** Resource name for commit writes (no https host). */
+function resourceName(path) {
+  const encoded = path.split('/').map((segment) => encodeURIComponent(segment)).join('/');
+  return `projects/${projectId}/databases/(default)/documents/${encoded}`;
+}
+
+/** HTTPS URL for GET/PATCH. */
+function documentHttpUrl(path) {
+  return `${ROOT}/${resourceName(path)}`;
 }
 
 async function writeTask() {
   const token = await accessToken();
-  const url = documentUrl(taskPath);
+  const name = resourceName(taskPath);
   const response = await fetch(
     `${ROOT}/projects/${encodeURIComponent(projectId)}/databases/(default)/documents:commit`,
     {
@@ -88,7 +104,7 @@ async function writeTask() {
       body: JSON.stringify({
         writes: [{
           update: {
-            name: url,
+            name,
             fields: {
               uid: { stringValue: uid },
               projectId: { stringValue: testProjectId },
@@ -101,7 +117,10 @@ async function writeTask() {
       }),
     },
   );
-  if (!response.ok) throw new Error(`Live test task create failed: ${response.status}`);
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Live test task create failed: ${response.status} path=${taskPath} body=${body.slice(0, 500)}`);
+  }
 }
 
 function spawnWorker(actorId) {
@@ -149,22 +168,25 @@ function parseWorkerResult(child) {
 
 async function cleanup(leaseId) {
   const token = await accessToken();
-  const base = `${ROOT}/projects/${encodeURIComponent(projectId)}/databases/(default)/documents`;
   const names = [
     taskPath,
     `${taskPath}/leases/${leaseId}`,
     `${taskPath}/execution-results/${resultEventId}`,
   ];
-  const response = await fetch(`${base}:commit`, {
-    method: 'POST',
-    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-    body: JSON.stringify({
-      writes: names.map((path) => ({
-        delete: `${base}/${path.split('/').map((segment) => encodeURIComponent(segment)).join('/')}`,
-      })),
-    }),
-  });
-  if (!response.ok) throw new Error(`Live test cleanup failed: ${response.status}`);
+  const response = await fetch(
+    `${ROOT}/projects/${encodeURIComponent(projectId)}/databases/(default)/documents:commit`,
+    {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        writes: names.map((path) => ({ delete: resourceName(path) })),
+      }),
+    },
+  );
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Live test cleanup failed: ${response.status} ${body.slice(0, 300)}`);
+  }
 }
 
 if (process.argv[2] === 'worker') {
