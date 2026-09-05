@@ -1,1 +1,0 @@
-Stabilization work will proceed from a feature branch and PR after this baseline checkpoint.
