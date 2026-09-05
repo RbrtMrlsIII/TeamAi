@@ -1,0 +1,1 @@
+Direct writes to main should not be used for ongoing implementation. Use branches + PRs.
