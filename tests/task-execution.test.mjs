@@ -12,6 +12,7 @@ function task(overrides = {}) {
     model: 'model-1',
     status: 'waiting_approval',
     approved: true,
+    authorizationStatus: 'authorized',
     connection: {
       id: 'connection-1',
       projectId: 'project-1',
@@ -38,7 +39,7 @@ function service(generate) {
   };
 }
 
-test('executes an approved task through ProviderRuntime and records START then COMPLETE', async () => {
+test('executes an approved authorized task through ProviderRuntime and records START then COMPLETE', async () => {
   let calls = 0;
   const { service: execution, events } = service(async (request) => {
     calls += 1;
@@ -62,6 +63,15 @@ test('executes an approved task through ProviderRuntime and records START then C
 test('blocks unapproved task before recording execution events', async () => {
   const { service: execution, events } = service(async () => { throw new Error('must not run'); });
   await assert.rejects(execution.execute(task({ approved: false }), 'scheduler-1', 'exec-blocked'), /requires approval/);
+  assert.equal(events.length, 0);
+});
+
+test('blocks unauthorized task before recording execution events', async () => {
+  const { service: execution, events } = service(async () => { throw new Error('must not run'); });
+  await assert.rejects(
+    execution.execute(task({ authorizationStatus: 'suspended' }), 'scheduler-1', 'exec-auth-blocked'),
+    /requires authorization/,
+  );
   assert.equal(events.length, 0);
 });
 

@@ -5,11 +5,14 @@ import type { ExecutionStatus } from '../execution-state.js';
 export type ProviderInvocationBlockReason =
   | 'TASK_NOT_RUNNING'
   | 'APPROVAL_REQUIRED'
+  | 'AUTHORIZATION_REQUIRED'
   | 'CONNECTION_INACTIVE'
   | 'PROJECT_MISMATCH'
   | 'PROVIDER_MISMATCH'
   | 'EXECUTE_CAPABILITY_MISSING'
   | 'PROVIDER_NOT_REGISTERED';
+
+export type ExecutionAuthorizationStatus = 'authorized' | 'suspended' | 'revoked';
 
 export interface ProviderInvocationRequest {
   taskId: string;
@@ -19,6 +22,7 @@ export interface ProviderInvocationRequest {
   model: string;
   executionStatus: ExecutionStatus;
   approved: boolean;
+  authorizationStatus: ExecutionAuthorizationStatus;
   connection: ProjectConnection;
   request: Omit<GenerateRequest, 'model'>;
 }
@@ -65,6 +69,12 @@ export function assertInvocationAllowed(input: ProviderInvocationRequest): void 
   }
   if (!input.approved) {
     throw new ProviderInvocationError('APPROVAL_REQUIRED', 'provider invocation requires an approved execution');
+  }
+  if (input.authorizationStatus !== 'authorized') {
+    throw new ProviderInvocationError(
+      'AUTHORIZATION_REQUIRED',
+      `provider invocation requires authorized execution, got ${input.authorizationStatus}`
+    );
   }
   if (input.connection.status !== 'active') {
     throw new ProviderInvocationError(

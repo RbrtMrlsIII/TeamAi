@@ -11,6 +11,7 @@ function request(overrides = {}) {
     model: 'model-1',
     executionStatus: 'running',
     approved: true,
+    authorizationStatus: 'authorized',
     connection: {
       id: 'connection-1',
       projectId: 'project-1',
@@ -28,7 +29,7 @@ function request(overrides = {}) {
   };
 }
 
-test('provider runtime invokes only an approved running task with a scoped executable connection', async () => {
+test('provider runtime invokes only an approved authorized running task with a scoped executable connection', async () => {
   let called = false;
   const provider = {
     provider: 'fixture',
@@ -57,6 +58,14 @@ test('provider runtime blocks unapproved execution before provider call', async 
   await assert.rejects(
     runtime.invoke(request({ approved: false })),
     (error) => error instanceof ProviderInvocationError && error.reason === 'APPROVAL_REQUIRED'
+  );
+});
+
+test('provider runtime blocks unauthorized execution before provider call', async () => {
+  const runtime = new ProviderRuntime(new Map([['fixture', { provider: 'fixture', async generate() { throw new Error('must not call'); } }]]));
+  await assert.rejects(
+    runtime.invoke(request({ authorizationStatus: 'suspended' })),
+    (error) => error instanceof ProviderInvocationError && error.reason === 'AUTHORIZATION_REQUIRED'
   );
 });
 

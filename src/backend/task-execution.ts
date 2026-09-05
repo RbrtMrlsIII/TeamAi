@@ -1,6 +1,6 @@
 import type { ProjectConnection } from '../connections.js';
 import type { GenerateRequest, GenerateResult } from '../providers/types.js';
-import { ProviderRuntime, type ProviderInvocationRequest } from './provider-runtime.js';
+import { ProviderRuntime, type ExecutionAuthorizationStatus, type ProviderInvocationRequest } from './provider-runtime.js';
 import { assertDurableEvent, transitionTask, type TaskEvent, type TaskStatus } from './task-state.js';
 
 export type ExecutableTask = {
@@ -11,6 +11,7 @@ export type ExecutableTask = {
   model: string;
   status: TaskStatus;
   approved: boolean;
+  authorizationStatus: ExecutionAuthorizationStatus;
   connection: ProjectConnection;
   request: Omit<GenerateRequest, 'model'>;
 };
@@ -44,6 +45,7 @@ export class TaskExecutionService {
       throw new Error(`task execution requires waiting_approval state, got ${task.status}`);
     }
     if (!task.approved) throw new Error('task execution requires approval');
+    if (task.authorizationStatus !== 'authorized') throw new Error(`task execution requires authorization, got ${task.authorizationStatus}`);
 
     const startedAt = new Date().toISOString();
     const startEvent = this.event(`${idempotencyKey}:start`, idempotencyKey, 'START', actorId, startedAt);
@@ -59,6 +61,7 @@ export class TaskExecutionService {
       model: task.model,
       executionStatus: 'running',
       approved: task.approved,
+      authorizationStatus: task.authorizationStatus,
       connection: task.connection,
       request: task.request,
     };
