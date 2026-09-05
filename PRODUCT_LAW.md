@@ -106,6 +106,78 @@ The Web AI Team is not a collection of TeamAi source-code contributors by defini
 
 TeamAi MUST preserve this boundary in terminology, UI, data models, permissions, documentation, and orchestration contracts. Planning or working behavior of the Web AI Team MUST NOT be represented as the internal development process of the TeamAi Development Team.
 
+## Development Fields, Integration Boundary, and AI Responsibility Model
+
+TeamAi SHALL use **Development Fields** to partition responsibility without partitioning product authority. A Development Field is a bounded area of responsibility inside the single TeamAi Development Team. The fields are complementary contributors to `main`, not separate product authorities.
+
+The canonical connector between frontend and backend responsibilities is the **Application Integration & Contract Field**. It owns the contracts, adapters, validation boundaries, and reconciliation work required for frontend consumers and backend authorities to agree on the same facts and semantics. It MUST NOT become a shadow backend, a second scheduler, or a second frontend authority.
+
+The responsibility model is:
+
+`Product/Governance Field → defines authority and constraints`
+`Backend/Runtime Field → owns server/domain/execution implementation within those constraints`
+`Frontend/Experience Field → owns user-facing presentation and interaction within those constraints`
+`Application Integration & Contract Field → reconciles the frontend/backend contract and prevents semantic drift`
+`Verification/CI Field → proves the claimed behavior through deterministic checks and browser verification where applicable`
+`Documentation/Knowledge Field → preserves traceability, handover, endorsement, and validated learning`
+`Recovery/History Field → preserves recoverability, checkpoints, provenance, and safe reconciliation without rewriting history`
+`Delivery/Operations Field → owns bounded release, hosting, runtime-observation, and operational evidence concerns without replacing product authority`
+
+These fields describe **what responsibility is covered**, not how many permanent branches must exist. A repository MAY implement a field through one or more short-lived working branches, but the field remains the conceptual unit of responsibility.
+
+### Frontend scope and backend scope
+
+The **Frontend/Experience Field** includes presentation, interaction, accessibility, responsive behavior, frontend state presentation, and frontend-facing validation of backend-owned facts. It MUST NOT invent backend truth, mutate durable domain state directly outside authorized APIs, choose the scheduler's next actor, invoke external providers as an uncontrolled shortcut, or redefine Product Law.
+
+The **Backend/Runtime Field** includes identity verification, durable domain/application state, task lifecycle, provider invocation boundaries, trusted execution, commerce correlation, entitlement projection, scheduler-owned eligibility, and durable execution evidence. It MUST NOT silently become the visual authority or redesign user-facing product semantics without reconciliation.
+
+The **Application Integration & Contract Field** is the seam between those scopes. It exists to make the interface explicit: typed contracts, backend-fact schemas, adapters, error/status mappings, contract tests, integration fixtures, and reconciliation rules. It does not own either endpoint's domain authority. It is a **bridge, not a replacement authority**.
+
+### Example: three Web AI Seats acting as a development team
+
+A user may configure three Web AI Seats for TeamAi development:
+
+- **AI-1 — Backend Seat:** works primarily in the Backend/Runtime Field and applies the backend skills needed for server, state, execution, provider, and commerce work.
+- **AI-2 — Frontend Seat:** works primarily in the Frontend/Experience Field and applies frontend/spatial/accessibility/browser-facing skills.
+- **AI-3 — Integration/Team Lead Seat:** works primarily in the Application Integration & Contract Field and coordinates the contribution flow. It can inspect both sides, create or update PRs/commits, reconcile contracts, run or request verification, and lead integration through the approved repository process.
+
+AI-3 does **not** gain backend or frontend authority merely because it coordinates them. Leadership is a coordination responsibility, not an entitlement to override the specialized field owner's authority or the Product Law.
+
+The same pattern may be used with more or fewer AI Seats. Seat role is determined by explicit project configuration, applicable skills, capabilities, authorization, connection health, task requirements, and scheduler eligibility; not by a branch name alone.
+
+### Web AI cooperation and responsibility distribution
+
+The Development Field model is directly relevant to the Web AI Team because it establishes the same separation principle TeamAi applies to connected AI Seats: **cooperation happens through explicit boundaries, not through uncontrolled direct authority transfer**.
+
+For Web AI cooperation, the canonical conceptual chain is:
+
+`AI Seat → assigned responsibility/skill bundle → eligible task → authorized action/tool → durable result/event → contract/state reconciliation → next eligible Seat`
+
+An AI Seat may contribute research, critique, implementation, verification, documentation, or coordination according to its configured role. A Seat MUST NOT inherit another Seat's authority merely because its output is newer, more persuasive, or adjacent in time. Scheduler eligibility, authorization, task state, and durable events determine when another Seat may act.
+
+Thus a Web AI Team can cooperate as a real team without requiring every AI to have the same skills or access. Responsibility is distributed by **Seat + Field + Skill + Capability + Authorization + Scheduler eligibility**, while TeamAi remains the common coordination and durable-state boundary.
+
+### Main branch and history preservation
+
+`main` is the canonical assembled TeamAi state. A branch is a **working field or temporary reconciliation surface**, not a second Product Law and not a mandatory permanent archive.
+
+TeamAi MUST NOT create or retain branches solely to preserve history when the same history is already represented by commits, merged pull requests, issues, tags/checkpoints, evidence records, and handover/endorsement documents. Historical branches MAY be retained when they carry useful provenance or recovery value, but branch count is not a measure of product completeness.
+
+The target operating model is a **small set of coverage fields** capable of covering the whole `main` surface. The initial target is approximately **7–8 canonical responsibility fields**, subject to future reconciliation:
+
+1. Product & Governance
+2. Backend & Runtime
+3. Frontend & Experience
+4. Application Integration & Contracts
+5. Verification & CI/Browser
+6. Documentation, Knowledge & Handover
+7. Recovery, History & Reconciliation
+8. Delivery & Operations
+
+These are coverage categories, not a demand to keep exactly eight live branches at all times. The project SHOULD prefer a small number of active, purpose-specific branches and SHOULD close, supersede, or classify old branches once their unique value is captured and safely merged or preserved elsewhere.
+
+A branch inventory therefore answers **where current work is happening**; the coverage model answers **whether the assembled `main` is fully represented**; the historical record answers **how the product got there**. These are different questions and MUST remain distinct.
+
 ## Web AI Team Operating Stages
 
 The Web AI Team may operate through distinct product stages. At minimum, TeamAi MUST preserve the distinction between:
