@@ -8,13 +8,11 @@ export type ConfigurationDraftState = {
 };
 
 /**
- * Client/service boundary for settings that are edited many times but should
- * become durable only when the user explicitly saves.
- *
- * Rule: update() is local only. save() is the durable mutation boundary.
+ * Settings may change many times locally but become durable only when the
+ * user explicitly saves. Cache/draft state is never authority.
  */
 export class ConfigurationDraft<T> {
-  private readonly saved: T;
+  private saved: T;
   private draft: T;
 
   constructor(initial: T) {
@@ -51,6 +49,7 @@ export class ConfigurationDraft<T> {
     const current = this.value;
     if (!this.state.dirty) return { saved: false, value: current };
     await store.save(current);
+    this.saved = structuredClone(current);
     return { saved: true, value: current };
   }
 }
