@@ -68,24 +68,32 @@ export class TaskExecutionService {
       request: task.request,
     };
 
+    let result: GenerateResult | undefined;
+    let providerError: unknown;
     try {
-      const result = await this.runtime.invoke(invocation);
-      const completeKey = `${idempotencyKey}:complete`;
-      const completeEvent = this.event(`${completeKey}:event`, completeKey, 'COMPLETE', actorId, new Date().toISOString());
-      assertDurableEvent(completeEvent);
-      await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: completeEvent.eventId, idempotencyKey: completeKey, status: 'completed', recordedAt: completeEvent.occurredAt, result });
-      await this.events.append(completeEvent);
-      task.status = transitionTask(task.status, 'COMPLETE');
-      return { status: 'completed', result, duplicate: false };
+      result = await this.runtime.invoke(invocation);
     } catch (error) {
+      providerError = error;
+    }
+
+    if (providerError !== undefined) {
       const failKey = `${idempotencyKey}:fail`;
       const failEvent = this.event(`${failKey}:event`, failKey, 'FAIL', actorId, new Date().toISOString());
       assertDurableEvent(failEvent);
-      await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: failEvent.eventId, idempotencyKey: failKey, status: 'failed', recordedAt: failEvent.occurredAt, error: serializeError(error) });
+      await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: failEvent.eventId, idempotencyKey: failKey, status: 'failed', recordedAt: failEvent.occurredAt, error: serializeError(providerError) });
       await this.events.append(failEvent);
       task.status = transitionTask(task.status, 'FAIL');
-      return { status: 'failed', error, duplicate: false };
+      return { status: 'failed', error: providerError, duplicate: false };
     }
+
+    if (!result) throw new Error('ProviderRuntime returned no result');
+    const completeKey = `${idempotencyKey}:complete`;
+    const completeEvent = this.event(`${completeKey}:event`, completeKey, 'COMPLETE', actorId, new Date().toISOString());
+    assertDurableEvent(completeEvent);
+    await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: completeEvent.eventId, idempotencyKey: completeKey, status: 'completed', recordedAt: completeEvent.occurredAt, result });
+    await this.events.append(completeEvent);
+    task.status = transitionTask(task.status, 'COMPLETE');
+    return { status: 'completed', result, duplicate: false };
   }
 
   private async persistResult(result: DurableExecutionResult): Promise<void> {
