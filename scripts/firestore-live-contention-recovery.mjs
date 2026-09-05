@@ -22,7 +22,7 @@ if (process.argv[2] === 'worker') {
     const transaction = new FirestoreLeaseTransaction(projectId);
     const result = await transaction.leaseReady({ uid, workplaceId, projectId: testProjectId, taskId, seatId: `seat-${actorId}`, leaseId, actorId });
     process.stdout.write(JSON.stringify({ actorId, leaseId, result }));
-    process.exit(result.acquired ? 0 : 0);
+    process.exit(0);
   } catch (error) {
     process.stderr.write(error instanceof Error ? error.message : String(error));
     process.exit(1);
@@ -46,11 +46,8 @@ if (process.argv[2] === 'recover') {
 }
 
 await writeTask();
-const workers = await Promise.all([
-  spawnWorker('worker-a'),
-  spawnWorker('worker-b'),
-]);
-const parsed = workers.map(parseWorkerResult);
+const workers = await Promise.all([spawnWorker('worker-a'), spawnWorker('worker-b')]);
+const parsed = await Promise.all(workers.map(parseWorkerResult));
 const winners = parsed.filter((item) => item.result?.acquired === true);
 const losers = parsed.filter((item) => item.result?.acquired === false);
 if (winners.length !== 1 || losers.length !== 1) throw new Error(`Contention invariant failed: winners=${winners.length} losers=${losers.length}`);
