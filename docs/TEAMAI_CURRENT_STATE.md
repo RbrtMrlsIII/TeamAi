@@ -11,7 +11,7 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **IN IMPLEMENTATION**; scheduler/domain-state contracts, runtime bridge, concrete Firestore lease transaction source, and its `AtomicTaskLeaseStore` adapter are implemented; live Firestore concurrency/restart evidence, durable result/artifact persistence, authenticated end-to-end execution wiring, and PayPal runtime evidence remain open.
+- `TEAM-BACKEND-001`: **IN IMPLEMENTATION**; scheduler/domain-state contracts, runtime bridge, concrete Firestore lease transaction source, `AtomicTaskLeaseStore` adapter, and durable execution-result persistence source are implemented; live Firestore concurrency/restart evidence, authenticated end-to-end execution wiring, and PayPal runtime evidence remain open.
 - `TEAM-EXPERIENCE-029`: **presentation implementation materially inhabited; backend/live-domain integration and full completion frontier remain open**.
 - GitHub is the engineering/source authority.
 - Firebase `(default)` Firestore is the durable application/domain-state authority.
@@ -28,7 +28,7 @@ The 029 spatial progression currently present on `main` remains the established 
 
 The backend execution progression currently present on `main` is:
 
-`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction source → AtomicTaskLeaseStore adapter`
+`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction source → AtomicTaskLeaseStore adapter → durable execution-result store`
 
 These are bounded implementation slices and do **not** by themselves establish full 029 completion or TEAM-BACKEND-001 completion.
 
@@ -36,9 +36,11 @@ These are bounded implementation slices and do **not** by themselves establish f
 
 The backend foundation now includes Firebase UID-rooted paths, durable task/event state, deterministic Seat eligibility, explicit authorization, atomic lease contract, scheduler-to-execution bridge, trusted ProviderRuntime execution, and a concrete server-side Firestore transaction implementation for `ready → leased` task acquisition.
 
-The concrete Firestore boundary is deliberately split: `FirestoreLeaseTransaction` owns transaction mechanics, while `FirestoreAtomicTaskLeaseStore` maps the result into the canonical scheduler lease contract. It carries explicit Firebase UID, workplace, and TeamAi project scope; TeamAi `projectId` is not treated as the Firebase infrastructure project ID.
+The concrete Firestore lease boundary is deliberately split: `FirestoreLeaseTransaction` owns transaction mechanics, while `FirestoreAtomicTaskLeaseStore` maps the result into the canonical scheduler lease contract. It carries explicit Firebase UID, workplace, and TeamAi project scope; TeamAi `projectId` is not treated as the Firebase infrastructure project ID.
 
-The concrete Firestore adapter uses runtime-only service-account configuration and Firestore optimistic transaction preconditions. Source tests exercise transaction construction, ready-state gating, conflict handling, and contract mapping. This is **source/test evidence**, not live Firebase runtime proof.
+Terminal execution results are now modeled separately from task events and persisted under the same UID/workplace/project/task hierarchy, keyed by terminal event identity. The execution service persists the normalized result before appending the terminal `COMPLETE` or `FAIL` event. Create-only semantics prevent silent replacement of a previously durable terminal result.
+
+All current Firestore implementation tests are source-level contract tests. They exercise transaction construction, ready-state gating, conflict handling, scope, result identity, and ordering. They are **source/test evidence**, not live Firebase runtime proof.
 
 The existing `teamai-domain-bootstrap` runtime remains the live authenticated UID → Firestore domain hierarchy proof.
 
@@ -46,7 +48,7 @@ The existing `teamai-domain-bootstrap` runtime remains the live authenticated UI
 
 1. Live Firestore transactional lease exercise with two concurrent workers proving single-winner behavior.
 2. Restart/recovery proof after lease acquisition and before/after provider execution.
-3. Durable normalized result/artifact persistence tied to task and event identity.
+3. Live durable result retrieval after process restart.
 4. Authenticated end-to-end runtime wiring from verified Firebase UID through scheduler, lease, approval, execution, and durable evidence.
 5. Final audit/traceability, HandOver, and Endorsement evidence.
 6. Separate live PayPal sandbox transaction/webhook runtime evidence.
@@ -61,7 +63,7 @@ The spatial frontend remains fixture-backed presentation. Fixtures are presentat
 Keep documentation synchronized with the implementation frontier without promoting source implementation into runtime-proven or completed status.
 
 ### 2. Branch accumulation
-Before reusing any non-main branch, compare it against current `main` and classify it.
+Before reusing any non-main branch, compare it with current `main` and classify it.
 
 ### 3. Frontend/backend contract boundary
 Do not inject browser Firebase/domain behavior ad hoc. Consume backend-owned read models and trusted runtime facts through explicit contracts.
@@ -70,7 +72,7 @@ Do not inject browser Firebase/domain behavior ad hoc. Consume backend-owned rea
 Browser writes must not become scheduler or execution authority.
 
 ### 5. Concurrency and recovery
-The transactional lease source and its scheduler-contract adapter are implemented, but live contention and restart evidence are still required.
+The transactional lease source, scheduler-contract adapter, and durable result source are implemented, but live contention, restart, and result-retrieval evidence are still required.
 
 ### 6. PayPal evidence frontier
 Gate 5C implementation/available-environment verification is complete as a source boundary; live transaction/webhook runtime evidence remains outstanding.
@@ -90,7 +92,7 @@ Gate 5C implementation/available-environment verification is complete as a sourc
 
 ## Immediate next gate
 
-**TEAM-BACKEND-001 — live Firestore concurrency/recovery exercise and durable result persistence.**
+**TEAM-BACKEND-001 — live Firestore concurrency/recovery exercise and durable result retrieval.**
 
 Scope:
 
