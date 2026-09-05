@@ -11,9 +11,16 @@ export type RuntimeTaskStore = {
   getExecutableTask(taskId: string, seatId: string): Promise<ExecutableTask | null>;
 };
 
+export type RuntimeApprovalStore = {
+  approveLeasedTask(input: { taskId: string; seatId: string; leaseId: string; actorId: string }): Promise<
+    { approved: true } | { approved: false; reason: 'LEASE_NOT_FOUND' | 'LEASE_EXPIRED' | 'TASK_NOT_LEASED' }
+  >;
+};
+
 export type TaskRuntimeBridgeResult =
   | { stage: 'scheduled'; decision: SchedulerDecision }
   | { stage: 'leased'; decision: SchedulerDecision; leaseId: string }
+  | { stage: 'approved'; decision: SchedulerDecision; leaseId: string }
   | { stage: 'executed'; decision: SchedulerDecision; leaseId: string; result: TaskExecutionResult };
 
 export class TaskRuntimeBridge {
@@ -23,6 +30,7 @@ export class TaskRuntimeBridge {
     runtime: ProviderRuntime,
     private readonly state: RuntimeTaskStore,
     private readonly leases: AtomicTaskLeaseStore,
+    private readonly approvals: RuntimeApprovalStore,
     events: TaskExecutionEventStore,
   ) {
     this.execution = new TaskExecutionService(runtime, events);
@@ -36,6 +44,8 @@ export class TaskRuntimeBridge {
   }
 
   async lease(taskId: string, actorId: string, leaseId: string): Promise<TaskRuntimeBridgeResult> {
+    if (!actorId.trim()) throw new Error('actorId is required');
+    if (!leaseId.trim()) throw new Error('leaseId is required');
     const { decision } = await this.schedule(taskId);
     if (decision.reason !== 'ELIGIBLE' || !decision.eligibleSeatId) return { stage: 'scheduled', decision };
 
@@ -51,11 +61,21 @@ export class TaskRuntimeBridge {
     return { stage: 'leased', decision, leaseId: lease.leaseId };
   }
 
-  async executeLeased(taskId: string, actorId: string, leaseId: string): Promise<TaskRuntimeBridgeResult> {
+  async approve(taskId: string, actorId: string, leaseId: string): Promise<TaskRuntimeBridgeResult> {
     const leased = await this.lease(taskId, actorId, leaseId);
     if (leased.stage !== 'leased') return leased;
     const seatId = leased.decision.eligibleSeatId;
-    if (!seatId) throw new Error('leased execution requires an eligible seat');
+    if (!seatId) throw new Error('approved transition requires an eligible seat');
+    const approval = await this.approvals.approveLeasedTask({ taskId, seatId, leaseId, actorId });
+    if (!approval.approved) throw new Error(`task approval failed: ${approval.reason}`);
+    return { stage: 'approved', decision: leased.decision, leaseId };
+  }
+
+  async executeApproved(taskId: string, actorId: string, leaseId: string): Promise<TaskRuntimeBridgeResult> {
+    const approved = await this.approve(taskId, actorId, leaseId);
+    if (approved.stage !== 'approved') return approved;
+    const seatId = approved.decision.eligibleSeatId;
+    if (!seatId) throw new Error('approved execution requires an eligible seat');
 
     const task = await this.state.getExecutableTask(taskId, seatId);
     if (!task) throw new Error(`executable task not found: ${taskId}`);
@@ -63,6 +83,6 @@ export class TaskRuntimeBridge {
     if (task.status !== 'waiting_approval') throw new Error(`task execution requires waiting_approval state, got ${task.status}`);
 
     const result = await this.execution.execute(task, actorId, `${leaseId}:execute`);
-    return { stage: 'executed', decision: leased.decision, leaseId, result };
+    return { stage: 'executed', decision: approved.decision, leaseId, result };
   }
 }
