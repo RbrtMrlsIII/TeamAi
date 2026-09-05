@@ -1,169 +1,186 @@
 # PRODUCT LAW — TeamAi Canonical Front Door
 
-`PRODUCT_LAW.md` is the product authority and MUST NOT be overridden by implementation, UI, deployment, provider, or tool conventions. The synchronized project package contains the complete Product Law text during this reconciliation window; this repository file is the engineering-visible authority front door for agent recovery.
+`PRODUCT_LAW.md` is the highest product authority for TeamAi. It defines what must remain true about the product, its responsibilities, its boundaries, and its canonical authorities. Implementation, UI, deployment, provider, tool, branch, skill, workspace, or documentation conventions MUST NOT silently override it.
 
-## Current execution authority
-The current sequence is:
+This document is intentionally written as a connected law system rather than a collection of isolated rules. Repeated concepts are defined once and then referenced by the flow in which they participate.
+
+## 0. Canonical Product Law Flow
+
+The whole product follows one project-wide authority and execution chain:
+
+```text
+Human User Authority
+        │
+        ▼
+PRODUCT LAW
+(product meaning, invariants, authority boundaries)
+        │
+        ▼
+MASTERPLAN
+(chronological plan, gates, dependencies)
+        │
+        ▼
+POLICY / ORUCAVEAM
+(how an authorized command is evaluated and executed)
+        │
+        ▼
+DEVELOPMENT FIELD
+(responsibility boundary)
+        │
+        ▼
+RESPONSIBILITY PROFILE
+(Seat + Fields + permissions + scope + negative boundaries)
+        │
+        ├───────────────┐
+        ▼               ▼
+WORKSPACE RULESET    REQUIRED SKILLS
+(native workspace    (how to perform the
+operating context)    responsibility)
+        │               │
+        └───────┬───────┘
+                ▼
+CAPABILITIES / TOOLS
+(available mechanisms)
+                │
+                ▼
+AUTHORIZATION
+(permitted control)
+                │
+                ▼
+TASK REQUIREMENTS + DURABLE TASK STATE
+                │
+                ▼
+SCHEDULER ELIGIBILITY
+(when this Seat may act)
+                │
+                ▼
+TRUSTED ACTION / EXECUTION
+                │
+                ▼
+DURABLE RESULT / EVENT / ARTIFACT
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+VERIFICATION      INTEGRATION / RECONCILIATION
+        │                │
+        └───────┬────────┘
+                ▼
+HANDOVER / ENDORSEMENT
+                │
+                ▼
+PRODUCT KNOWLEDGE
+(validated learning)
+                │
+                ▼
+REUSABLE SKILL / WORKSPACE KNOWLEDGE PROMOTION
+(without silent authority expansion)
+```
+
+### 0.1 Meaning of the flow
+
+**Product Law** answers what TeamAi is and what may never be violated. **Masterplan** converts those invariants into a chronological build and delivery path. **ORUCAVEAM** governs the command itself. A **Development Field** says which responsibility area is being addressed. A **Responsibility Profile** says which configured Seat is responsible and what it may and may not do. A **Workspace Ruleset** supplies the selected workspace's native procedures without becoming a second constitution. **Skills** describe how the authorized responsibility is performed. **Capabilities** describe the mechanisms available to the Seat. **Authorization** determines which controls are actually permitted. **Durable task state** and the **Scheduler** determine whether the Seat is eligible to act now. Execution produces durable state and evidence. Verification and integration reconcile the result. Handover and endorsement preserve continuation and acceptance. Product Knowledge captures validated lessons so the same learning can improve future skills and workspace rules.
+
+### 0.2 Project-wide invariant
+
+The project-wide invariant is:
+
+`Product Law → ORUCAVEAM → responsibility → workspace context → skills → capabilities → authorization → scheduler eligibility → execution → evidence → integration → learning`
+
+Changing a workspace, Seat, skill bundle, provider, branch, or UI configuration MUST NOT create a parallel authority chain.
+
+## 1. Current execution authority
+
+The current execution sequence is:
 
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
 **Current phase:** `TEAM-BACKEND-001 — IN IMPLEMENTATION`.
 
-## Core authority invariants
-- Human user authority remains above AI authority.
-- **The TeamAi Development Team and the Web AI Team are different entities.** The TeamAi Development Team develops, governs, tests, documents, and delivers the TeamAi product. The Web AI Team is the user's configured collection of externally operated AI applications/providers that TeamAi connects to, equips, coordinates, and orchestrates. They MUST NOT be conflated.
-- The term **AI Team** MUST be interpreted in product context. It does not mean the TeamAi Development Team. When referring to the connected product experience, use **Web AI Team** where ambiguity could occur.
-- TeamAi does not claim ownership of externally operated AI applications, provider accounts, provider subscriptions, provider models, or provider-native workspaces. External setup and provider ownership remain external; TeamAi owns the connection, participation, policy, durable state, and orchestration boundaries it provides.
-- A Web AI Team AI Seat is a TeamAi participation identity/configuration for an externally operated AI application/runtime. `application ≠ provider ≠ service/runtime ≠ model ≠ connection ≠ seat ≠ skill ≠ tool/MCP ≠ workstation ≠ entitlement ≠ authorization`.
-- The same provider/model may participate through multiple distinct AI Seats with different roles, skills, tools, workstations, scopes, permissions, limits, and approval rules.
-- Firebase Auth owns identity and Firebase UID ownership.
-- Firestore `default` owns TeamAi durable domain/application state.
-- Supabase Edge Functions own trusted server execution and PayPal webhook receipt.
-- PayPal is the external payment-event authority.
-- GitHub is the engineering/source authority.
-- Firebase Hosting is the current TeamAi web hosting/delivery authority.
-- Vercel is a controlled web development, preview, and browser-verification surface; it is not TeamAi hosting authority, backend authority, or production deployment authority.
-- Supabase Postgres is platform infrastructure only and is not the TeamAi domain/application database.
-- Retired PostgreSQL implementation is historical-only and must not remain an active/recoverable TeamAi backend path.
-- Web AI and Development AI are separate operational domains.
-- Universal ToolKit is upstream-only: validated/generalized TeamAi lessons may flow upstream; ToolKit does not become TeamAi authority.
+This status is part of the current project state; it is not a license to treat unfinished external evidence as complete.
 
-## Connected Platform Authority Map
+## 2. Core authority invariants
 
-The following connected-platform roles are Product Law. A technical connection does not grant a platform authority that is not explicitly assigned here. Each platform has a bounded usage and evidence role, and expanding that role requires Product Law / architecture reconciliation before implementation.
+1. Human user authority remains above AI authority.
+2. **TeamAi Development Team and Web AI Team are different entities.** The TeamAi Development Team builds, governs, tests, documents, and delivers TeamAi. The Web AI Team is the user's configured collection of externally operated AI applications/providers that TeamAi connects to, equips, coordinates, and orchestrates.
+3. When the connected product experience is meant, use **Web AI Team** rather than the ambiguous phrase **AI Team**.
+4. TeamAi does not own externally operated AI provider accounts, subscriptions, provider-native workspaces, or provider models. TeamAi owns the connection, participation, policy, durable-state, and orchestration boundaries it provides.
+5. A **Web AI Seat** is a TeamAi participation identity/configuration for an externally operated AI application/runtime. The distinctions below are permanent:
 
-| Platform / surface | TeamAi usage | Authority / evidence boundary |
+`application ≠ provider ≠ service/runtime ≠ model ≠ connection ≠ seat ≠ skill ≠ capability/tool/MCP ≠ workstation ≠ entitlement ≠ authorization`
+
+6. The same provider/model may participate through multiple Seats with different roles, skills, tools, workstations, scopes, permissions, limits, and approval requirements.
+7. Web AI and Development AI are separate operational domains.
+8. Universal ToolKit is upstream-only. Validated/generalized TeamAi learning may flow into ToolKit; ToolKit does not become TeamAi authority.
+
+## 3. Canonical service and platform authority map
+
+A technical connection does not grant authority. Each platform is bounded to the role below.
+
+| Platform / surface | Canonical TeamAi usage | Authority boundary |
 |---|---|---|
-| Firebase Authentication | User sign-in and authenticated Firebase UID establishment. | Identity authority only. |
-| Cloud Firestore `(default)` | Durable TeamAi application/domain state, including accounts, workplaces, projects, teams/Seats, tasks, and events. | Durable TeamAi state authority. |
-| Firebase Hosting | Delivery of the current TeamAi web application. | Current web delivery/hosting authority. |
-| Supabase Edge Functions | Trusted server execution, including protected TeamAi operations and the PayPal webhook receiver. | Trusted execution authority; not domain-state authority. |
-| Supabase Postgres | Supabase platform infrastructure where required. | Infrastructure only; never TeamAi domain/application state. |
-| PayPal | External payment events used by TeamAi's server-owned commerce correlation and entitlement projection. | External payment-event authority; TeamAi retains its correlation/projection rules. |
-| GitHub | Source repository, commits, pull requests, issues, reviews, and engineering history. | Engineering/source/change authority. |
-| GitHub Actions | CI validation, authority audits, tests, recovery checks, and repository automation. | Verification/execution surface for engineering workflows; it does not replace GitHub source authority or TeamAi runtime authority. |
-| Vercel | Controlled web development, preview, deployment inspection, and browser verification for relevant web work. | Non-authoritative web development/preview/browser-verification surface only. |
-| Founder Pulse | Read-only observation of Issue flow and delivery patterns for product-operations visibility. | Observation/management layer only; no mutation or authorization authority. |
-| External AI applications/providers | Models/runtimes that participate in the Web AI Team through authorized connections and Seats. | Provider ownership remains external; TeamAi owns its connection, policy, Seat, orchestration, and durable-state boundary. |
-| MCP/tools/plugins/integrations | Bounded capabilities exposed to authorized Web AI Seats. | Capability/integration surface only. |
-| Universal ToolKit | Upstream knowledge/process repository receiving validated generalized lessons. | Upstream knowledge surface only; never TeamAi state or authority. |
+| Firebase Authentication | Sign-in and authenticated Firebase UID establishment. | Identity authority only. |
+| Cloud Firestore `(default)` | Durable TeamAi domain/application state, including accounts, Workplaces, Projects, Seats, tasks, and events. | Canonical durable TeamAi state authority. |
+| Firebase Hosting | Delivery of the current TeamAi web application. | Current TeamAi web delivery authority. |
+| Supabase Edge Functions | Trusted server execution, protected server operations, and PayPal webhook receipt. | Trusted execution authority; not TeamAi domain-state authority. |
+| Supabase Postgres | Supabase platform infrastructure where needed. | Infrastructure only; never TeamAi domain/application authority. |
+| PayPal | External payment events used by TeamAi commerce correlation and entitlement projection. | External payment-event authority; TeamAi retains correlation and projection rules. |
+| GitHub | Repository, commits, branches/refs, pull requests, Issues, reviews, and engineering history. | Engineering/source/change authority. |
+| GitHub Actions | CI, repository checks, automated verification, authority audits, recovery checks, and engineering automation. | Verification/engineering execution surface; not Web AI runtime orchestration authority. |
+| Vercel | Controlled web development/preview/browser-verification surface when explicitly authorized for relevant web work. | Non-authoritative web surface. It is currently paused/cut off for TeamAi verification and MUST NOT be resumed or used without explicit user approval. |
+| Founder Pulse | Read-only observation of issue flow and delivery patterns. | Observation/management layer only. |
+| External AI applications/providers | External runtimes/models participating through authorized connections and Seats. | Ownership remains external; TeamAi controls its participation and coordination boundary. |
+| MCP/tools/plugins/integrations | Capabilities exposed to authorized Seats. | Capability/integration surface only. |
+| Universal ToolKit | Upstream validated knowledge/process repository. | Upstream knowledge only; never TeamAi domain authority. |
 
-### Deployment and browser-verification boundary
-
-A Git commit or pull request is first a GitHub engineering/review event. It causes Vercel deployment activity only when an applicable Vercel deployment mechanism is configured and enabled, such as a connected Vercel Project with Git integration, a deployment hook, or an explicit Vercel deployment command/API call.
-
-With Vercel Git integration, repository events can automatically create preview or production-related deployments according to the Vercel Project's branch/environment configuration. A Vercel deployment may retain Git metadata such as the triggering commit SHA/ref and, where applicable, pull-request identity.
-
-Therefore the causal model is:
-
-`commit/push → Git repository event → configured Vercel trigger → Vercel build/deployment → controlled web surface → browser verification`
-
-and not:
-
-`commit → Vercel automatically`
-
-or
-
-`pull request → Vercel automatically`.
-
-The repository event alone has no TeamAi authority over Vercel. The currently authorized Vercel Project/control surface and its configuration determine whether an event consumes Vercel deployment activity. TeamAi MUST NOT infer a project, domain, deployment target, or environment from stale comments, historical bot output, screenshots, naming, or memory.
-
-Vercel browser/web verification is opt-in and phase-bound to active web development/verification. It may cover UI work, UI-plus-backend integration, authenticated browser flows, commerce-facing browser flows, responsive behavior, controlled preview environments, and end-to-end browser smoke tests. It MUST NOT become a general prerequisite for backend, Firestore, commerce, documentation, recovery, or other non-web changes. Vercel quota/unavailability is a verification limitation, not a TeamAi architecture failure.
-
-A Vercel deployment is an environment artifact. A browser-integrity run is verification evidence. Neither is TeamAi delivery authority, backend proof, commerce proof, scheduler authority, or final architecture acceptance. Firebase Hosting remains the TeamAi web delivery authority.
-
-### Engineering verification boundary
-
-GitHub source/review state and GitHub Actions execution state are related but distinct:
+### 3.1 Engineering source and verification are distinct
 
 `GitHub repository / commit / PR → GitHub Actions workflow → CI execution/result → engineering evidence`
 
-A green GitHub Actions run proves only the checks actually executed by that workflow. It does not prove Vercel browser behavior, Firebase runtime behavior, PayPal live behavior, or deployment success unless those exact checks were explicitly exercised and their evidence is recorded.
+A green Actions run proves only the checks actually executed. It does not automatically prove Firebase runtime behavior, PayPal live behavior, browser behavior on an external deployment surface, or overall product completion.
 
-GitHub Actions MUST NOT be treated as a general orchestration authority for the Web AI Team. Product/runtime orchestration remains owned by TeamAi's scheduler and trusted execution boundaries.
+GitHub Actions MUST NOT become a general Web AI Team scheduler. Product/runtime orchestration remains owned by TeamAi's scheduler and trusted execution boundaries.
 
-### Firestore usage and resilience boundary
+### 3.2 Browser/deployment boundary
 
-Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. TeamAi MUST reduce unnecessary Firestore usage rather than replace Firestore authority. Preferred techniques include targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference.
+A commit or pull request is first a GitHub engineering/review event. A deployment on another platform requires an explicit configured trigger or authorized deployment mechanism.
 
-UI behavior MUST NOT claim durable mutation success until the authoritative Firestore write is confirmed. Under quota or temporary unavailability pressure, the system SHOULD detect the bounded failure, preserve local/recovery state where safe, avoid destructive retries, surface a truthful status, and reconcile when authoritative persistence becomes available.
+The conceptual causal chain is:
+
+`commit/push → repository event → configured deployment trigger → deployment → controlled web surface → browser verification`
+
+A deployment artifact is not proof of architecture or backend authority. Browser verification is evidence for the browser behaviors actually exercised.
+
+Vercel is an optional/non-authoritative verification surface. Current policy places Vercel in a paused/cutoff state; TeamAi MUST NOT infer a project, deployment target, environment, or resumed access from stale comments, screenshots, bot messages, memory, or naming.
+
+### 3.3 Firestore usage and resilience
+
+Cloud Firestore `(default)` remains the canonical durable TeamAi store. TeamAi SHOULD reduce unnecessary reads/writes without changing that authority through targeted reads, bounded queries, cursor pagination, safe caching/offline persistence where appropriate, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference.
+
+UI behavior MUST NOT claim durable mutation success until the authoritative write is confirmed. Under bounded quota or temporary unavailability, the system SHOULD detect the failure, preserve local/recovery state where safe, avoid destructive retries, expose truthful status, and reconcile when authoritative persistence is available.
 
 Any alternate durable TeamAi domain store requires explicit Product Law / architecture reconciliation before implementation.
 
-### Founder Pulse boundary
+### 3.4 Founder Pulse boundary
 
-Founder Pulse is a read-only product-operations observation layer over GitHub/GitLab Issue flow. It may report movement, remaining open work, age, labels, visible delivery relationships, or process friction. It MUST NOT mutate repositories, authorize changes, initiate Vercel activity, become a scheduler, or become a parallel source of project truth.
+Founder Pulse is a read-only observation layer over issue flow and delivery patterns. It MAY report movement, remaining work, age, labels, visible delivery relationships, or process friction. It MUST NOT mutate repositories, authorize changes, initiate deployments, become a scheduler, or become a parallel source of project truth.
 
-GitLab support in Founder Pulse is observation capability only and does not add GitLab to the TeamAi architecture/control plane. The current decision to defer GitLab from TeamAi architecture/control-plane work remains in force until deliberately revisited.
+GitLab use within Founder Pulse is observation capability only and does not add GitLab to the TeamAi architecture/control plane unless Product Law is explicitly changed.
 
-## Product Team Boundary
+## 4. Product Team boundary
 
-TeamAi is a product built by one development domain for use with another AI-team domain:
+The product relationship is:
 
 `TeamAi Development Team → builds TeamAi → connects/equips/coordinates/orchestrates → Web AI Team`
 
-The Web AI Team is not a collection of TeamAi source-code contributors by definition. It is the connected AI participation environment through which users can conduct planning, discussion, handoffs, working execution, tool use, and coordinated AI work.
+The Web AI Team is not, by definition, TeamAi source-code contributors. It is the connected AI participation environment for planning, discussion, handoffs, working execution, tool use, and coordinated AI work.
 
-TeamAi MUST preserve this boundary in terminology, UI, data models, permissions, documentation, and orchestration contracts. Planning or working behavior of the Web AI Team MUST NOT be represented as the internal development process of the TeamAi Development Team.
+This distinction MUST remain stable across terminology, UI, data models, permissions, documentation, orchestration, and user guidance.
 
-## Development Fields, Integration Boundary, and AI Responsibility Model
+## 5. Development Fields
 
-TeamAi SHALL use **Development Fields** to partition responsibility without partitioning product authority. A Development Field is a bounded area of responsibility inside the single TeamAi Development Team. The fields are complementary contributors to `main`, not separate product authorities.
+A **Development Field** is a bounded responsibility area inside the single TeamAi Development Team. Fields partition responsibility without partitioning product authority.
 
-The canonical connector between frontend and backend responsibilities is the **Application Integration & Contract Field**. It owns the contracts, adapters, validation boundaries, and reconciliation work required for frontend consumers and backend authorities to agree on the same facts and semantics. It MUST NOT become a shadow backend, a second scheduler, or a second frontend authority.
-
-The responsibility model is:
-
-`Product/Governance Field → defines authority and constraints`
-`Backend/Runtime Field → owns server/domain/execution implementation within those constraints`
-`Frontend/Experience Field → owns user-facing presentation and interaction within those constraints`
-`Application Integration & Contract Field → reconciles the frontend/backend contract and prevents semantic drift`
-`Verification/CI Field → proves the claimed behavior through deterministic checks and browser verification where applicable`
-`Documentation/Knowledge Field → preserves traceability, handover, endorsement, and validated learning`
-`Recovery/History Field → preserves recoverability, checkpoints, provenance, and safe reconciliation without rewriting history`
-`Delivery/Operations Field → owns bounded release, hosting, runtime-observation, and operational evidence concerns without replacing product authority`
-
-These fields describe **what responsibility is covered**, not how many permanent branches must exist. A repository MAY implement a field through one or more short-lived working branches, but the field remains the conceptual unit of responsibility.
-
-### Frontend scope and backend scope
-
-The **Frontend/Experience Field** includes presentation, interaction, accessibility, responsive behavior, frontend state presentation, and frontend-facing validation of backend-owned facts. It MUST NOT invent backend truth, mutate durable domain state directly outside authorized APIs, choose the scheduler's next actor, invoke external providers as an uncontrolled shortcut, or redefine Product Law.
-
-The **Backend/Runtime Field** includes identity verification, durable domain/application state, task lifecycle, provider invocation boundaries, trusted execution, commerce correlation, entitlement projection, scheduler-owned eligibility, and durable execution evidence. It MUST NOT silently become the visual authority or redesign user-facing product semantics without reconciliation.
-
-The **Application Integration & Contract Field** is the seam between those scopes. It exists to make the interface explicit: typed contracts, backend-fact schemas, adapters, error/status mappings, contract tests, integration fixtures, and reconciliation rules. It does not own either endpoint's domain authority. It is a **bridge, not a replacement authority**.
-
-### Example: three Web AI Seats acting as a development team
-
-A user may configure three Web AI Seats for TeamAi development:
-
-- **AI-1 — Backend Seat:** works primarily in the Backend/Runtime Field and applies the backend skills needed for server, state, execution, provider, and commerce work.
-- **AI-2 — Frontend Seat:** works primarily in the Frontend/Experience Field and applies frontend/spatial/accessibility/browser-facing skills.
-- **AI-3 — Integration/Team Lead Seat:** works primarily in the Application Integration & Contract Field and coordinates the contribution flow. It can inspect both sides, create or update PRs/commits, reconcile contracts, run or request verification, and lead integration through the approved repository process.
-
-AI-3 does **not** gain backend or frontend authority merely because it coordinates them. Leadership is a coordination responsibility, not an entitlement to override the specialized field owner's authority or the Product Law.
-
-The same pattern may be used with more or fewer AI Seats. Seat role is determined by explicit project configuration, applicable skills, capabilities, authorization, connection health, task requirements, and scheduler eligibility; not by a branch name alone.
-
-### Web AI cooperation and responsibility distribution
-
-The Development Field model is directly relevant to the Web AI Team because it establishes the same separation principle TeamAi applies to connected AI Seats: **cooperation happens through explicit boundaries, not through uncontrolled direct authority transfer**.
-
-For Web AI cooperation, the canonical conceptual chain is:
-
-`AI Seat → assigned responsibility/skill bundle → eligible task → authorized action/tool → durable result/event → contract/state reconciliation → next eligible Seat`
-
-An AI Seat may contribute research, critique, implementation, verification, documentation, or coordination according to its configured role. A Seat MUST NOT inherit another Seat's authority merely because its output is newer, more persuasive, or adjacent in time. Scheduler eligibility, authorization, task state, and durable events determine when another Seat may act.
-
-Thus a Web AI Team can cooperate as a real team without requiring every AI to have the same skills or access. Responsibility is distributed by **Seat + Field + Skill + Capability + Authorization + Scheduler eligibility**, while TeamAi remains the common coordination and durable-state boundary.
-
-### Main branch and history preservation
-
-`main` is the canonical assembled TeamAi state. A branch is a **working field or temporary reconciliation surface**, not a second Product Law and not a mandatory permanent archive.
-
-TeamAi MUST NOT create or retain branches solely to preserve history when the same history is already represented by commits, merged pull requests, issues, tags/checkpoints, evidence records, and handover/endorsement documents. Historical branches MAY be retained when they carry useful provenance or recovery value, but branch count is not a measure of product completeness.
-
-The target operating model is a **small set of coverage fields** capable of covering the whole `main` surface. The initial target is approximately **7–8 canonical responsibility fields**, subject to future reconciliation:
+The canonical responsibility surface is:
 
 1. Product & Governance
 2. Backend & Runtime
@@ -174,263 +191,542 @@ The target operating model is a **small set of coverage fields** capable of cove
 7. Recovery, History & Reconciliation
 8. Delivery & Operations
 
-These are coverage categories, not a demand to keep exactly eight live branches at all times. The project SHOULD prefer a small number of active, purpose-specific branches and SHOULD close, supersede, or classify old branches once their unique value is captured and safely merged or preserved elsewhere.
+These are coverage categories, not a requirement for exactly eight permanent branches.
 
-A branch inventory therefore answers **where current work is happening**; the coverage model answers **whether the assembled `main` is fully represented**; the historical record answers **how the product got there**. These are different questions and MUST remain distinct.
+### 5.1 Field relationships
 
-## Web AI Population, Responsibility Allocation, Skill Control, and Main Integration
+`Product/Governance → defines authority and constraints`
 
-A **Web AI population** is the set of Web AI Seats configured by a user for a particular TeamAi Workplace/Project and operating purpose. Population size changes how responsibilities are distributed; it does not create additional product authorities.
+`Backend/Runtime → owns server/domain/execution implementation inside those constraints`
 
-TeamAi SHALL support responsibility allocation across a bounded practical population, with **2–8 Web AI Seats as the canonical configuration range for the team-development operating model**. A user MAY configure fewer or more Seats only where a future product rule explicitly permits it; this law defines the baseline 2–8 model and does not imply that every user must have eight Seats.
+`Frontend/Experience → owns user-facing presentation and interaction inside those constraints`
 
-The user-facing configuration MUST therefore answer, before execution:
+`Application Integration & Contracts → reconciles frontend/backend contracts and prevents semantic drift`
 
-`Who is this Seat? → What Field(s) does this Seat cover? → Which skills are equipped? → Which capabilities/tools are enabled? → Which repository/branch scope is allowed? → Which actions are permitted? → Which actions require review/approval? → Which tasks may the scheduler assign?`
+`Verification/CI → proves the claimed behavior through deterministic checks and browser verification where applicable`
 
-Seat population is not itself authority. The effective responsibility of a Seat is the intersection of:
+`Documentation/Knowledge → preserves traceability, handover, endorsement, and validated learning`
 
-`Seat identity + assigned Field + effective Skill bundle + Capability set + Authorization + Connection/entitlement state + branch/ref scope + Task requirements + Scheduler eligibility`
+`Recovery/History → preserves checkpoints, provenance, recoverability, and safe reconciliation without rewriting history`
 
-A skill MUST guide execution inside an allowed responsibility boundary; a skill MUST NOT grant authority by itself. A Seat with a backend skill but no backend authorization cannot perform backend-authoritative work. A Seat with merge capability but no Main Integration authorization cannot merge into `main`. A Seat with documentation skills but no canonical-document authorization cannot silently rewrite Product Law or another canonical authority.
+`Delivery/Operations → handles bounded release, hosting, runtime observation, and operational evidence without replacing product authority`
 
-### Canonical population examples
+A Field defines responsibility, not permission by itself.
 
-**Two-seat population — compact team:**
+### 5.2 Frontend, backend, and integration boundaries
 
-One Seat MAY combine Backend/Runtime + Frontend/Experience as a specialist/full-stack Seat, while the second Seat serves as Integration/Team Lead with Application Integration, Verification, repository coordination, PR/Issue flow, and team-conversation summarization responsibilities. Alternatively, two specialist Seats MAY split Frontend and Backend while the user remains the integration authority; the selected configuration MUST explicitly identify who owns integration and final merge responsibility.
+**Frontend/Experience** includes presentation, interaction, accessibility, responsive behavior, and frontend presentation/validation of backend-owned facts. It MUST NOT invent backend truth, bypass authorized APIs, choose the scheduler's next actor, invoke providers through uncontrolled shortcuts, or redefine Product Law.
 
-**Three-seat population — balanced implementation team:**
+**Backend/Runtime** includes identity verification, durable domain state, task lifecycle, provider invocation boundaries, trusted execution, commerce correlation, entitlement projection, scheduler-owned eligibility, and durable execution evidence. It MUST NOT silently become visual authority.
 
-The canonical example is Backend Seat + Frontend Seat + Integration/Team Lead Seat. This gives the two implementation domains independent responsibility while keeping contract reconciliation and contribution flow explicit.
+**Application Integration & Contracts** is the explicit seam: typed contracts, backend-fact schemas, adapters, error/status mappings, contract tests, fixtures, and reconciliation rules. It is a bridge, not a second backend, second scheduler, or replacement frontend authority.
 
-**Four-seat population — user example / three contributors plus lead:**
+## 6. Branches, main, and history
 
-The user MAY configure three specialist Web AI Seats, each working from its own controlled working branch, plus one **Main Integration/Team Lead Seat** responsible for reviewing contributions, managing PR/commit/Issue flow, reconciling the work, leading team conversation summarisation, coordinating verification, and determining what is ready to enter `main` through the approved repository process.
+`main` is the canonical assembled TeamAi state.
 
-In this pattern:
+A branch is a working Field, Seat contribution surface, or temporary reconciliation workspace. It is not a second Product Law and is not automatically a permanent archive.
 
-`AI-1 branch → specialist contribution`
-`AI-2 branch → specialist contribution`
-`AI-3 branch → specialist contribution`
-`AI-4 / Main Integration Seat → review + reconcile + verify + PR/merge coordination + summarise`
+The project SHOULD prefer:
 
-The Main Integration Seat MUST NOT use its leadership role as an unrestricted write path into `main`. The normal path remains:
+`one canonical main + a small set of active purpose-specific branches + PR-based contribution flow`
 
-`specialist branch → PR → verification/review → Main Integration decision → merge → main`
+rather than branch accumulation.
 
-The Main Integration Seat may coordinate the repository process and may hold explicit merge authority where the project's authorization policy grants it. That authority is repository/change coordination authority, not automatic ownership of every underlying product field.
+History MAY be preserved through commits, merged PRs, Issues, tags/checkpoints, evidence, handover, endorsement, and branch retention where a branch carries unique provenance or recovery value.
 
-**Five-seat population:**
+Three questions MUST remain separate:
 
-The four-seat model MAY be expanded by separating another responsibility such as Verification/CI, Documentation/Knowledge, or Recovery/History from a combined specialist role. The integration lead remains explicit rather than being hidden inside an unrelated specialist role.
+`branch inventory = where current work is happening`
 
-**Six-seat population:**
+`coverage model = whether the assembled main is fully represented`
 
-The population MAY assign dedicated Backend/Runtime, Frontend/Experience, Integration/Contracts, Verification/CI, Documentation/Knowledge, and Main Team Lead responsibilities. Some fields MAY still be combined where workload does not justify a separate Seat.
+`historical record = how the product got here`
 
-**Seven-seat population:**
+Branch count is not a measure of product completeness.
 
-The population MAY additionally separate Recovery/History/Reconciliation from Documentation/Knowledge or give Delivery/Operations its own specialized Seat. The resulting team can cover most of the canonical fields without requiring every Seat to possess every skill.
+## 7. Web AI workforce model
 
-**Eight-seat population — full field-oriented configuration:**
+A **Web AI population** is the set of Web AI Seats configured for a TeamAi Workplace/Project and operating purpose.
 
-A user MAY assign one Seat primarily to each of the eight canonical Development Fields, with the Product/Governance or Main Integration/Team Lead responsibility explicitly configured as the supervisory coordination seat. The exact mapping MUST remain configurable because one external provider/model may appear through multiple Seats and because Seat capability, connection health, entitlement, authorization, and task demand can vary.
+TeamAi's canonical team-development baseline is **2–8 Web AI Seats**. Population size changes responsibility distribution; it does not create additional product authorities.
 
-No population size changes the authority hierarchy. More Seats increase parallel responsibility capacity; they do not create more Product Laws, more canonical durable stores, more schedulers, or more independent product authorities.
+The user-facing configuration must make the following relationship explicit:
 
-### Skill equipment and control model
+`Seat identity → Field(s) → skills → capabilities/tools → scope → permitted/prohibited operations → approval requirements → scheduler eligibility`
 
-Every configured Web AI Seat SHOULD have an explicit **Responsibility Profile** containing at least:
+### 7.1 Responsibility Profile
 
-`Seat → primary Field(s) → allowed secondary Field(s) → required skills → optional skills → allowed capabilities/tools → repository/ref scope → permitted operations → prohibited operations → approval requirements → escalation target`
+Each configured Seat SHOULD have a Responsibility Profile containing:
 
-The effective skill set SHOULD be resolved deterministically from the applicable TeamAi skill wiring and the Seat's authorized role. Skill selection MUST remain subordinate to Product Law, Masterplan, Policy/ORUCAVEAM, service authority, and task authorization.
+`Seat → primary Field(s) → allowed secondary Field(s) → required skills → optional skills → capabilities/tools → workspace/repository/ref scope → permitted operations → prohibited operations → approval requirements → escalation target → coordination role`
 
-The responsibility profile MUST distinguish **can read**, **can propose**, **can implement**, **can create PR/commit**, **can approve**, **can merge**, **can modify canonical documents**, and **can summarise/lead**. These actions are not interchangeable.
+The effective operating authority is the intersection of:
 
-The profile MUST also encode negative boundaries. Examples include:
+`Seat identity + assigned Field + effective Skill bundle + Capability set + Authorization + Connection/entitlement state + Workspace/ref scope + Task requirements + Scheduler eligibility`
 
-- A Frontend Seat may consume backend facts but MUST NOT become backend authority.
-- A Backend Seat may implement runtime contracts but MUST NOT become visual authority.
-- An Integration Seat may reconcile frontend/backend contracts but MUST NOT silently replace either endpoint's domain authority.
-- A Verification Seat may prove behavior but MUST NOT create product authority by passing a test.
-- A Documentation/Knowledge Seat may preserve traceability and learning but MUST NOT invent implementation truth.
-- A Main Integration/Team Lead Seat may control contribution flow and merge coordination when authorized, but MUST NOT bypass Product Law, required review/approval, or scheduler policy.
+The following permissions are distinct and MUST remain distinct:
 
-A Seat's skill bundle MUST therefore be treated as **guided operational capability within an authorization envelope**, not as a grant of unrestricted power.
+`can read ≠ can propose ≠ can implement ≠ can commit ≠ can create PR ≠ can approve ≠ can merge ≠ can modify canonical documents ≠ can coordinate ≠ can summarise`
 
-### Main Integration Seat and team conversation leadership
+A skill is guided operational capability inside an authorization envelope. It is not a permission grant.
 
-When a user configures a dedicated Main Integration/Team Lead Seat, TeamAi SHOULD expose explicit controls for:
+### 7.2 Population scaling
 
-`main/repository coordination + PR/commit/Issue coordination + contract reconciliation + verification coordination + team discussion summarisation + handover preparation + escalation`
+**2 Seats:** broader responsibility bundles may be necessary; integration/final-merge authority must still be explicit.
 
-Team conversation summarisation is a coordination capability. It MUST preserve materially relevant contributions, disagreements, decisions, constraints, warnings, unresolved questions, and evidence references. Summarisation MUST NOT silently become approval or implementation authority.
+**3 Seats:** Backend + Frontend + Integration/Lead is the canonical balanced pattern.
 
-The Main Integration Seat MAY recommend that a task is ready for merge, but the effective merge authority is determined by the repository permission model and TeamAi authorization. Where human approval is required, the Main Integration Seat cannot replace it.
+**4 Seats:** three specialist contributors plus a dedicated Main Integration/Team Lead Seat is a canonical parallel-development pattern.
 
-### Branch allocation rule for Web AI Seats
+**5–8 Seats:** additional specialization MAY be introduced for Verification, Documentation, Recovery, Delivery/Operations, or other explicitly reconciled responsibilities.
 
-A working branch MAY represent a Seat's active contribution, a Field's active work, or a temporary integration/reconciliation workspace. The branch assignment is an execution aid, not the source of identity or authority.
+A larger population MAY use narrower skills; a smaller population MAY combine more responsibilities. Neither model permits authority to escape its authorization envelope.
 
-For multi-seat development, TeamAi SHOULD prefer:
+## 8. Main Integration / Team Lead Seat
 
-`one canonical main + a small number of active Seat/Field working branches + PR-based contribution flow`
+A dedicated Main Integration / Team Lead Seat is a coordination role, not automatic ownership of every Field.
 
-rather than creating branches solely as permanent archives. A branch MAY be reused for successive tasks when doing so preserves a clean review boundary, or a fresh branch MAY be created when task isolation requires it.
+It MAY coordinate:
 
-The Main Integration Seat's special responsibility is to control **what enters `main`**, not to make `main` a personal workspace for unreviewed changes. `main` remains the canonical assembled state and must be advanced through the approved repository process.
+`main/repository flow + PR/commit/Issue coordination + contract reconciliation + verification coordination + team summarisation + handover preparation + escalation`
 
-### Scheduler and Web AI responsibility selection
+It MUST NOT use leadership as an unrestricted write path into `main`.
 
-The TeamAi scheduler MUST select the next eligible Web AI Seat from durable task state and the responsibility/authorization model rather than from conversational recency or branch naming.
+The normal repository contribution flow is:
 
-A task is eligible for a Seat only when its task requirements intersect the Seat's assigned Field(s), effective skills, enabled capabilities/tools, authorization, connection health, repository scope, approval state, and other applicable constraints.
+```text
+Specialist Seat / Field
+        ↓
+Working branch
+        ↓
+Commit
+        ↓
+Pull Request
+        ↓
+Verification / Review
+        ↓
+Main Integration decision
+        ↓
+Authorized merge
+        ↓
+main
+```
 
-The scheduler MUST be able to represent situations where:
+The Main Integration Seat MAY recommend readiness and coordinate the flow. Effective merge authority is determined by repository permissions and TeamAi authorization, with human approval retained wherever required.
 
-`a Seat has the skill but not the authorization`
-`a Seat has the authorization but not the skill`
-`a Seat has both but the connection is unhealthy`
-`a Seat has both but the task is blocked or not yet eligible`
-`a Seat can propose but cannot execute`
-`a Seat can create a PR but cannot merge`
-`a Seat can coordinate but cannot override a specialist authority`
+## 9. Web AI cooperation and whole-team knowledge continuity
 
-These distinctions are essential to controlling heterogeneous Web AI populations safely and predictably.
+Every active Web AI Seat MUST have enough authoritative project knowledge for the task at hand, including the objective, current state, relevant dependencies, assigned responsibility, restrictions, material decisions, unresolved questions, verification state, and handoff expectations.
 
-### Responsibility distribution is a product feature
+A Seat MUST NOT be expected to cooperate safely using only its own conversation, branch, or most recent response.
 
-The user-accessible Team configuration MUST not merely ask **how many AI Seats** the user wants. It MUST help the user understand and configure **what each Seat is responsible for**, **what skills it is equipped with**, **what it may control**, and **what it must not control**.
+The canonical continuity packet is:
 
-The configuration model MUST make responsibility visible enough that a user can construct a two-seat, three-seat, four-seat, or larger team while preserving the same Product Law and authority boundaries. The UI MAY simplify presentation, but it MUST NOT hide the underlying responsibility model from TeamAi's authorization and scheduling layers.
+```text
+User authority
+     +
+Project context
+     +
+Relevant team discussion
+     +
+Durable task/event state
+     +
+Applicable workspace state
+     +
+Evidence / handover
+     ↓
+Authorized context packet
+     ↓
+Web AI Seat
+```
 
-`Web AI population size → responsibility distribution → skill equipment → capability/authorization envelope → branch/workspace scope → scheduler eligibility → execution → durable event → team coordination`
+Separate external AI applications MUST be connected through TeamAi-authorized context, structured events, summaries, handoffs, workspace records, or other approved integration mechanisms.
 
-The purpose of the population model is not to force identical teams. It is to let the user shape a Web AI Team whose Seats have complementary responsibilities while TeamAi preserves one coherent product authority and one auditable history.
+### 9.1 Orchestration boundary
 
-## Web AI Team Operating Stages
+Direct provider-to-provider orchestration is prohibited.
 
-The Web AI Team may operate through distinct product stages. At minimum, TeamAi MUST preserve the distinction between:
+The canonical coordination path is:
 
-**Planning Team stage** — deliberative discussion and planning controlled by the user. Configured Web AI Seats participate according to the user's turn settings. Contributions accumulate into a meaning-preserving discussion. A selected Web AI Team Lead/Summarizer may synthesize the discussion into a structured handoff for user review. The planning result is not execution authorization by itself.
+`AI result/action proposal → durable structured event → task/state transition → scheduler eligibility → next Web AI Seat/tool/human → new event`
 
-**Working/Coding Team stage** — execution after the user approves or commands the transition from planning. The approved plan/handoff is decomposed into tasks and dependencies; the TeamAi scheduler selects eligible AI Seats, tools, or human interventions; actions produce durable results/events; and subsequent work becomes eligible through the orchestrator. Working execution MUST NOT silently rewrite the approved plan.
+The latest response is not the latest authority. Context compression MUST preserve materially relevant meaning, including objectives, clarifications, contributions, disagreements, decisions, constraints, warnings, unresolved questions, and important findings/artifacts/events.
 
-The Planning Team and Working/Coding Team are stages/operating modes of the Web AI Team experience. They are NOT the TeamAi Development Team, and they are NOT the two fundamental teams in the project.
+### 9.2 Planning and Working stages
 
-## User Intent and AI-to-AI Orchestration
+**Planning Team stage:** deliberative discussion under user control. Configured Web AI Seats participate according to user turn settings. A selected Summarizer/Team Lead MAY synthesize a structured handoff for user review. The planning result is not execution authorization by itself.
 
-TeamAi MUST preserve the user's authority across multi-AI discussion and execution.
+**Working/Coding Team stage:** execution after user approval/command. The approved plan/handoff is decomposed into tasks and dependencies. The scheduler selects eligible Seats, tools, or human intervention. Actions produce durable results/events. The approved plan MUST NOT be silently rewritten during execution.
 
-Every Planning Team turn MUST be grounded in the current authoritative user instruction plus the accumulated materially relevant team discussion and approved project context. The immediately previous AI response is only one contribution. **Latest AI ≠ latest authority.** Context compression, summaries, retrieval, and artifact references may reduce payload size but MUST preserve materially relevant meaning, including objectives, clarifications, contributions, disagreements, decisions, constraints, warnings, unresolved questions, and important findings/artifacts/events.
+Planning and Working are stages of the Web AI Team experience. They are not the TeamAi Development Team.
 
-AI applications/providers MUST NOT directly orchestrate one another. The canonical coordination path is:
+## 10. Web AI connection, capability, and tool boundaries
 
-`AI result/action proposal → durable structured event → task/state transition → scheduler eligibility → next AI Seat/tool/human → new event`
+External setup may occur outside TeamAi. The canonical participation relationship is:
 
-The TeamAi scheduler owns next-actor selection and policy evaluation. MCP, plugins, and provider-native mechanisms are capability/integration surfaces, not TeamAi orchestration authority.
+`External application/provider account → user-authorized connection → TeamAi capability test → Workplace/Project → Web AI Seat → runtime/model + skills + capabilities + tools + workstation + scopes + limits`
 
-## Team Leader, Summarizer, and Authority
+A Connection is the externally authorized relationship. A Seat is the TeamAi participation identity/configuration. They are distinct.
 
-The Web AI Team Leader is a supervisory AI Seat/capability within the Web AI Team experience. It may monitor participation, stalled work, contradictions, missing handoffs, repeated failures, verification gaps, or budget anomalies and recommend bounded coordination actions. It MUST NOT bypass TeamAi authorization or human approval boundaries.
-
-The selected Web AI Summarizer is a distinct seat/capability for synthesizing the relevant Planning Team discussion into a structured handoff. It preserves material disagreements and unresolved questions and returns the result to the user for review. Summarization alone is not authorization and is not an unrestricted document-mutation authority.
-
-Where one AI is selected to formally document an agreed planning change, that role is an explicit product authorization/configuration decision; other Web AI Seats may remain advisory and may critique, investigate, or provide pros/cons without becoming the canonical document author.
-
-## Web AI Connection and Seat Boundary
-
-External AI applications may require setup outside TeamAi. The canonical product relationship is:
-
-`External AI application/provider account → user-authorized connection → TeamAi capability test → Workplace/Project → Web AI AI Seat → runtime/model + skills + tools/plugins + workstation + scopes + limits`
-
-A Connection represents the externally authorized relationship. An AI Seat represents the TeamAi participation identity and policy configuration. A Seat may reference a Connection, but these concepts MUST remain distinct.
-
-A capability is not automatically usable merely because it exists. TeamAi MUST preserve the distinction:
+A capability is not automatically usable. TeamAi MUST preserve:
 
 `available ≠ configured ≠ TeamAi-entitled ≠ provider-compatible ≠ authorized ≠ project-scoped ≠ seat-allowed ≠ healthy ≠ usable`
 
-Loss of authorization, entitlement, compatibility, scope, workstation availability, or health MUST block only the affected capability/Seat while preserving diagnostic and recovery state.
+Loss of authorization, entitlement, compatibility, scope, workstation availability, or health MUST block only the affected capability/Seat while preserving diagnostic and recovery state where possible.
 
-## Capability and Tool Boundary
+Plugins, tools, and MCP are capability/integration mechanisms, not intelligence or orchestration authority.
 
-Plugins, tools, and MCP are capabilities/integration mechanisms, not intelligence or orchestration authority.
+```text
+Web AI Seat
+    ↓
+authorized tool intent
+    ↓
+TeamAi policy / permission boundary
+    ↓
+project-scoped integration
+    ↓
+invocation
+    ↓
+result / artifact
+    ↓
+durable event
+```
 
-`Web AI Seat → authorized tool intent → TeamAi policy/permission boundary → project-scoped integration → invocation → result/artifact → durable event`
+Tool results MUST NOT silently grant permissions. Secrets MUST remain outside ordinary chat content. Invocations MUST be attributable to the requesting Seat and project.
 
-Tool results MUST NOT silently grant permissions. Secrets MUST remain outside ordinary chat content. Tool invocations MUST be attributable to the requesting Seat and project.
+TeamAi-native capabilities and optional external Tool Quality capabilities remain distinct. TeamAi capability categories may include team/project context, structured handoff, task/state reporting, authorized artifacts/files, authorized search/research, human approval/intervention, and coordination/readiness visibility.
 
-TeamAi-native capabilities and optional external Tool Quality capabilities MUST remain distinct. Base TeamAi capability categories may include project/team context, structured handoff, task/state reporting, authorized artifacts/files, authorized search/research, human approval/intervention, and coordination/readiness visibility. Not every capability must be implemented as MCP.
+## 11. Commercial boundary
 
-## Commercial Capability Boundary
-
-The commercial planning model separates three concepts:
+The commercial model separates:
 
 `Team Quality ≠ Tool Quality ≠ Provider Entitlement`
 
-Team Quality is the future TeamAi product axis for Solo/Team operating mode, AI-seat capacity, model allocation, orchestration capacity, and related resource limits.
+**Team Quality** is the planned TeamAi product axis for Solo/Team operation, Seat capacity, model allocation, orchestration capacity, and related resource limits.
 
-Tool Quality is the future capability axis for Base TeamAi capabilities plus optional tools/plugins/MCP servers and specialist integrations.
+**Tool Quality** is the planned capability axis for Base TeamAi capabilities plus optional tools/plugins/MCP servers and specialist integrations.
 
-Provider entitlement remains externally owned. A TeamAi subscription MUST NOT masquerade as a provider subscription. An advanced model entitlement MUST NOT automatically imply additional tools, and a Tool Quality purchase MUST NOT automatically grant a provider subscription or model entitlement.
+**Provider entitlement** remains externally owned. A TeamAi subscription MUST NOT masquerade as a provider subscription. An advanced provider model entitlement does not automatically grant TeamAi tools, and a Tool Quality purchase does not automatically grant a provider subscription or model entitlement.
 
 Exact prices, model catalogs, seat counts, provider bundles, tool packs, and commercial limits remain planning-only until explicitly approved.
 
-## TEAM-EXPERIENCE-029 Visual Experience Law
+## 12. Workspace law
 
-TeamAi uses a single overall theme setting with two mode-specific visual treatments:
+The user MAY select a workspace model for a project. The selected workspace supplies native collaboration primitives, repository concepts, review mechanisms, branch/ref behavior, issue/task mechanisms, verification hooks, permissions, and operational controls.
 
-- **Dark mode = Dark Spatial Glassmorphism.**
-- **Light mode = Light Spatial Skeuomorphism.**
+For the current coding-focused scope, **GitHub is the first concrete workspace model**.
 
-The two modes are one bounded theme system, not two competing design authorities. The user-facing light/dark setting switches the active treatment; it does not duplicate application state, business rules, permissions, scheduler semantics, or backend authority.
+The GitHub conceptual flow is:
 
-The visual system MUST be implemented through shared design tokens/primitives and canonical spatial UI roots so that the semantic behavior of a component remains equivalent across both modes. Spatial depth, material treatment, elevation, translucency, borders, controls, typography, motion, focus, status feedback, responsive behavior, and accessibility remain implementation concerns under this visual law.
+`repository → branch/ref → commit → pull request → review → Issue/task → verification → merge → main`
 
-The theme MUST preserve legibility, focus visibility, keyboard navigation, reduced-motion behavior, responsive behavior, and semantic accessibility. Visual effects MUST NOT become a prerequisite for or source of durable application state.
+Workspace selection changes operating context; it does not change Product Law, human authority, ORUCAVEAM, TeamAi service authority, Seat identity, or canonical durable-state ownership.
 
-The spatial theme is a 029 product-experience requirement and must be executed chronologically through the Masterplan, Policy/ORUCAVEAM, the applicable frontend spatial skill, system implementation, browser/accessibility verification, evidence, HandOver, Endorsement, and Product Knowledge when a reusable lesson is validated.
+### 12.1 Workspace Ruleset Repositories
 
-## LAW 101 — IMPLEMENTATION TRACEABILITY IS A HARD COMPLETION GATE
-Every implementation claim MUST be traceable from its governing Product Law and Masterplan execution item through the applicable Policy/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone MUST NOT be treated as implementation completion. A missing traceability link blocks the affected completion claim until an explicit, evidence-backed exception is recorded by the authorized human.
+TeamAi MAY maintain a separate **Workspace Ruleset Repository** for each supported workspace platform or major workspace variant.
 
-## LAW 102 — SERVICE AUTHORITY MUST BE EXECUTABLE
-The canonical service-authority map is not merely documentation. Backend code MUST reject authority mismatches so that identity, application state, execution, payment, engineering, and delivery responsibilities cannot silently migrate between services.
+A ruleset repository is a platform-specific operational adapter. It MAY contain:
 
-## LAW 103 — DURABLE STATE PRECEDES TRUSTED EXECUTION
-A task or external event MUST have a durable identity, ownership context, lifecycle/idempotency identity, and evidence model before trusted execution or commerce mutation is considered complete. In-memory success is not durable completion.
+`workspace primitives + native roles + review flow + task flow + branch/ref behavior + workspace permissions + verification mechanisms + failure/recovery behavior + mapping into TeamAi responsibilities`
 
-## LAW 104 — FIREBASE UID IS THE DOMAIN OWNERSHIP ROOT
-TeamAi application/domain paths MUST be rooted in the authenticated Firebase UID. Client-provided identifiers MUST NOT be treated as proof of ownership. Server-side correlation is required wherever an external provider, including PayPal, establishes an event or entitlement.
+It MUST NOT redefine:
 
-## LAW 105 — FIREBASE PROJECT IDENTITY IS AN ARCHITECTURE INVARIANT
-The authoritative TeamAi Firebase project is `team-ai-official`. Firebase project identity MUST be explicit and MUST NOT be inferred from repository/product names, screenshots, historical artifacts, remembered context, or similarly named projects. `homefinder-official` and other Firebase projects are distinct and non-authoritative unless a future architecture change explicitly replaces the current project and updates the canonical identity contract first.
+`human authority + Product Law + ORUCAVEAM + TeamAi service authorities + Web AI Seat identity + canonical durable state + scheduler authority + protected approvals`
 
-All Firebase-dependent surfaces MUST reconcile to the same authoritative project: Firebase Auth, Firestore `(default)`, Hosting, Web SDK `projectId`, CLI target, and trusted Edge-runtime service-account `project_id`. If these identities conflict, the affected deployment or verification MUST STOP until reconciliation is complete. A public Web SDK configuration may identify a project but MUST NOT be treated as a privileged credential. Admin/service-account credentials MUST remain secret.
+Each ruleset SHOULD identify its supported platform/version assumptions, evidence basis, applicable Fields, applicable skills, known limitations, and mapping back to Product Law.
 
-Project identity reconciliation MUST precede Firebase runtime diagnosis. Historical project evidence may establish provenance but MUST NOT override current authoritative configuration.
+### 12.2 Workspace-aware skill resolution
 
-## CANONICAL BACKEND EXTENSION INVARIANT
-The canonical backend is a multi-authority system, not a single endpoint or wire. Canonical Auth, canonical durable domain state, canonical trusted execution, canonical commerce, and canonical execution evidence are distinct responsibilities with explicit authorities and contracts.
+The canonical skill-resolution chain is:
 
-Adding payment buttons, subscription products/plans, promotional variants, or additional PayPal-facing commercial flows MUST extend the existing canonical commerce contracts and preserve the same server-owned correlation to the authenticated Firebase UID. Adding another sign-in/authentication method MUST extend the canonical Firebase Auth identity boundary and preserve the same authoritative Firebase UID/domain ownership model.
+`Product Law → project purpose → Development Field → Responsibility Profile → workspace ruleset → required skills → allowed capabilities/tools → authorization → task requirements → scheduler eligibility`
 
-Such extensions MUST NOT require moving TeamAi domain state to another database, replacing the Firebase UID ownership root, allowing the browser to self-attest payment or entitlement state, or creating a parallel authority path. A new provider, authentication method, payment product, delivery/verification surface, or UI control is an extension of an existing authority boundary unless an explicit Product Law / architecture change replaces that boundary first.
+A GitHub-specific skill is not automatically suitable for another workspace. Workspace-specific skills MAY contain native concepts that have no direct GitHub equivalent.
 
-## Phase 0 disposition
-Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
+Workspace choice therefore changes skill recommendation and packaging without elevating authority.
 
-## TEAM-BACKEND-001 implementation disposition
-The first executable foundation contracts are implemented and recorded: service authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, durable event identity requirements, and the server-owned commerce correlation contract.
+### 12.3 Workspace expansion law
+
+The current scope is coding-first. Future support for other workspace platforms, backend systems, company/business functions, specialist applications, MCP servers, or broader workforce domains requires explicit study of actual platform primitives, boundaries, evidence requirements, and integration semantics before adoption.
+
+The reusable future chain is:
+
+`responsibility → skills → capabilities → authorization → workspace → execution → verification → integration → learning`
+
+## 13. Skill evolution law
+
+Skills MUST be capable of growing as TeamAi grows, but skill growth is an evidence-backed process.
+
+The canonical growth path is:
+
+`new requirement / learning → Product Law or Masterplan reconciliation → Policy/ORUCAVEAM routing → skill design/change → implementation → deterministic verification → evidence → Product Knowledge → reusable skill/version promotion`
+
+A skill MAY be created, extended, specialized, composed, deprecated, superseded, or upgraded. It MUST NOT silently expand authority.
+
+Every material skill upgrade SHOULD preserve a distinction between:
+
+`knowledge improvement` and `authority expansion`
+
+Better knowledge may teach an already-authorized Seat a better procedure. Authority expansion requires explicit authorization and applicable Product Law/policy reconciliation.
+
+Skills SHOULD be versionable and traceable to the Product Law, applicable workspace ruleset, evidence, and validated Product Knowledge.
+
+Where an existing skill can be specialized or composed to satisfy a new requirement, TeamAi SHOULD prefer that over an unnecessary duplicate skill family.
+
+## 14. ZipSkills law
+
+**ZipSkills** is the planned commercial packaging mechanism for validated TeamAi skill bundles, workspace-specific skill bundles, or capability-oriented skill collections.
+
+ZipSkills packages validated operational knowledge and composition. It MUST NOT sell Product Law authority.
+
+Purchase or enabling of a ZipSkills package MUST NOT, by itself, grant repository permissions, backend authority, merge authority, scheduler control, provider subscriptions, payment entitlements, or unrestricted tool access unless those rights are separately and explicitly defined by authorization policy.
+
+A ZipSkills package MAY contain:
+
+`skill versions + applicable Fields + workspace mappings + capability recommendations + verification expectations + compatibility metadata + learning references`
+
+Packages SHOULD be versioned and traceable. A package update SHOULD explain what changed, what workspace assumptions changed, what evidence supports the change, and whether the change is behavioral, compatibility-related, or explanatory.
+
+Commercial pricing, package names, package limits, and catalog contents remain planning-only until explicitly approved.
+
+## 15. Backend account and Seat wiring
+
+The authenticated Firebase UID is the ownership root for TeamAi account/domain state.
+
+Within that root, durable state MAY represent Workplaces, Projects, Web AI Seats, Connections, Responsibility Profiles, skill assignments, capability/tool assignments, workspace selections, repository/ref scopes, permissions, tasks, task state, team discussion, summaries, and evidence.
+
+The conceptual durable relationship is:
+
+`Firebase UID → account/workspace/project → Web AI Seat → Connection → runtime/model → Responsibility Profile → workspace ruleset → effective skills → capabilities → authorization → task eligibility`
+
+The browser and visual theme MUST NOT self-attest this durable truth. User-facing settings may present or request changes; authoritative persistence and authorization remain backend responsibilities.
+
+## 16. Spatial Theme law
+
+TeamAi uses one overall theme system with two visual treatments:
+
+`Dark mode = Dark Spatial Glassmorphism`
+
+`Light mode = Light Spatial Skeuomorphism`
+
+These are two modes of one bounded theme, not two authorities.
+
+The Spatial Theme SHOULD make the workforce legible through:
+
+`Seat → responsibility → skills → capability → authorization → workspace → task → status → evidence → integration`
+
+The spatial interface is the **human-facing map of the workforce**. It is not the source of truth for durable state, authorization, scheduler eligibility, workspace authority, provider status, or execution completion.
+
+The theme MUST preserve legibility, focus visibility, keyboard navigation, reduced-motion behavior, responsive behavior, and semantic accessibility. Visual effects MUST NOT become a prerequisite for durable application state.
+
+The 029 experience MUST continue to use shared spatial primitives/tokens and the established F0–F7 system. F0–F7 identify fields within the spatial design contract; they do not by themselves create new authority or legal boxes.
+
+## 17. Guides and product dictionary
+
+User guides, help text, and dictionary surfaces MUST derive their canonical terminology from Product Law, workspace rulesets, skills, and backend contracts.
+
+At minimum, the dictionary MUST distinguish:
+
+`Web AI Team`
+`AI Seat`
+`Development Field`
+`Responsibility Profile`
+`Skill`
+`Capability`
+`Connection`
+`Authorization`
+`Workspace`
+`Workspace Ruleset`
+`Branch/ref scope`
+`Main Integration Seat`
+`Scheduler eligibility`
+`Durable event`
+`ZipSkills`
+
+Workspace-specific guides MAY explain native concepts, but those concepts MUST map back to the TeamAi vocabulary rather than introduce contradictory definitions.
+
+Guidance SHOULD be responsibility-aware and workspace-aware. A GitHub project should expose GitHub-native explanations and controls. Another supported workspace may expose its own native terminology while retaining the same TeamAi-wide authority model.
+
+## 18. Canonical execution-document relationship
+
+The project documents are connected as follows:
+
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → docs/project-guide/HandOver.md → docs/project-guide/Endorsement.md → PRODUCT-KNOWLEDGE.md`
+
+`AI_ASSISTANT_READ_ME.md` provides practical recovery and agent-entry guidance across this chain.
+
+`PRODUCT_LAW.md` defines **what** must remain true.
+
+`MASTERPLAN.md` defines **when/where** the approved work is executed.
+
+`POLICY.md` and ORUCAVEAM define **how a command is evaluated and executed safely**.
+
+`docs/SKILL_WIRING.md` resolves the applicable direct skills and verification path.
+
+`skills/**/SKILL.md` provide the operational procedure; they do not become Product Law.
+
+Implementation realizes the approved behavior.
+
+Verification proves only the behavior actually exercised.
+
+`HandOver.md` preserves continuation and learning transfer.
+
+`Endorsement.md` records authorized completion and accepted learning.
+
+`PRODUCT-KNOWLEDGE.md` preserves validated lessons without redefining Product Law.
+
+Lower-level documents MUST NOT silently redefine a Product Law concept. A change to a canonical concept requires reconciliation against the existing logic before editing.
+
+## 19. Canonical law register — 101–110
+
+The numbered laws below summarize the highest-leverage completion, service, state, identity, workspace, skill, knowledge, and commerce-package invariants. The surrounding sections explain the domain context; these laws state the non-optional rule.
+
+### LAW 101 — IMPLEMENTATION TRACEABILITY IS A HARD COMPLETION GATE
+
+**Rule.** Every implementation claim MUST be traceable from its governing Product Law requirement and Masterplan execution item through the applicable Policy/skill path, actual implementation, verification evidence, and completion/endorsement record.
+
+**Why.** Planning text, documentation presence, deployment presence, a green unit-test run, or an endorsement alone cannot establish that the exact claimed behavior exists and has been verified.
+
+**Flow.**
+
+`Law → Masterplan → Policy/skill → implementation → verification → evidence → handover/endorsement`
+
+**Boundary.** A missing traceability link blocks the affected completion claim unless an explicit, evidence-backed exception is recorded by the authorized human.
+
+### LAW 102 — SERVICE AUTHORITY MUST BE EXECUTABLE
+
+**Rule.** The service-authority map MUST be enforced by executable backend boundaries where authority can otherwise migrate silently.
+
+**Why.** A documented service map that code does not enforce becomes advisory and can drift into multiple competing sources of truth.
+
+**Flow.**
+
+`identity authority → durable-state authority → trusted-execution authority → commerce authority → engineering/source authority → delivery/verification surfaces`
+
+**Boundary.** Backend code MUST reject authority mismatches. UI, deployment, plugins, or provider integrations MUST NOT silently acquire an authority already assigned to a canonical service.
+
+### LAW 103 — DURABLE STATE PRECEDES TRUSTED EXECUTION
+
+**Rule.** A trusted task or externally initiated event MUST have durable identity, ownership context, lifecycle/idempotency identity, and an evidence model before trusted execution or commerce mutation can be treated as complete.
+
+**Why.** In-memory success cannot provide reliable replay protection, attribution, recovery, or auditability.
+
+**Flow.**
+
+`durable identity → ownership → lifecycle/idempotency → authorized execution → durable result/event → evidence`
+
+**Boundary.** In-memory or transient success is not durable completion.
+
+### LAW 104 — FIREBASE UID IS THE DOMAIN OWNERSHIP ROOT
+
+**Rule.** TeamAi application/domain paths MUST be rooted in the authenticated Firebase UID.
+
+**Why.** Client-provided identifiers cannot prove ownership.
+
+**Flow.**
+
+`authenticated Firebase ID token → verified UID → UID-rooted domain path → authorized server operation → durable state`
+
+**Boundary.** External provider events, including PayPal events, MUST be correlated server-side to the authenticated UID. Browser-supplied ownership claims cannot replace server verification.
+
+### LAW 105 — FIREBASE PROJECT IDENTITY IS AN ARCHITECTURE INVARIANT
+
+**Rule.** The authoritative TeamAi Firebase project is `team-ai-official`.
+
+Firebase project identity MUST be explicit and MUST NOT be inferred from repository names, screenshots, historical artifacts, remembered context, or similarly named projects. `homefinder-official` and other projects remain distinct and non-authoritative unless a future architecture change explicitly replaces the current project and updates the identity contract first.
+
+**Flow.**
+
+`Firebase Auth + Firestore(default) + Hosting + Web SDK projectId + CLI target + Edge-runtime service-account project_id → SAME authoritative project`
+
+**Boundary.** Any conflict MUST stop the affected deployment/verification until reconciled. Public Web SDK configuration is not a privileged credential. Admin/service-account credentials remain secret. Project-identity reconciliation precedes Firebase runtime diagnosis.
+
+### LAW 106 — WORKSPACE RULESETS ARE SUBORDINATE ADAPTERS
+
+**Rule.** A Workspace Ruleset Repository adapts TeamAi to a selected workspace's native behavior. It does not replace Product Law, ORUCAVEAM, human authority, Seat identity, durable-state authority, scheduler authority, or protected approvals.
+
+**Why.** TeamAi must be able to support many workspaces without multiplying constitutions.
+
+**Flow.**
+
+`Product Law → ORUCAVEAM → TeamAi responsibilities → selected workspace ruleset → native workspace action`
+
+**Boundary.** A workspace ruleset may explain how a GitHub PR, branch, Issue, review, Action, or protected ref is handled; it may not redefine what a Seat or Field means in TeamAi.
+
+### LAW 107 — SKILLS MUST EVOLVE WITHOUT SILENTLY EXPANDING AUTHORITY
+
+**Rule.** Skills MAY grow, specialize, compose, version, deprecate, supersede, or retire as evidence accumulates, but a skill change MUST NOT silently expand a Seat's authority.
+
+**Why.** Knowledge improvement and permission expansion are different kinds of change.
+
+**Flow.**
+
+`new learning → law/plan reconciliation → ORUCAVEAM routing → skill change → implementation → verification → evidence → Product Knowledge → promoted skill version`
+
+**Boundary.** Better procedure for an authorized task does not grant new permissions. New authority requires explicit authorization and the applicable Product Law/policy reconciliation.
+
+### LAW 108 — TEAM KNOWLEDGE MUST SURVIVE SEPARATED AI APPLICATIONS
+
+**Rule.** When Web AI Seats operate across separate external applications or isolated workspace sessions, TeamAi MUST preserve sufficient project-wide knowledge continuity for the next eligible Seat to understand the relevant state and safely cooperate.
+
+**Why.** A multi-provider team cannot remain coherent if each Seat only knows its own local conversation.
+
+**Flow.**
+
+`user authority + project context + discussion + durable state + workspace state + evidence/handover → authorized context packet → next Seat`
+
+**Boundary.** Direct provider-to-provider control is prohibited. TeamAi preserves cooperation through durable events, task transitions, scheduler eligibility, authorized context, summaries, handoffs, and workspace records.
+
+### LAW 109 — ZIPSKILLS IS A SKILL PACKAGE, NOT AN AUTHORITY PACKAGE
+
+**Rule.** ZipSkills MAY package and commercialize validated skill bundles and workspace-aware skill packages, but possession or purchase MUST NOT by itself grant repository, backend, scheduler, merge, payment, entitlement, or Product Law authority.
+
+**Why.** Commerce must package capability knowledge without creating an undeclared permission path.
+
+**Flow.**
+
+`validated skills → versioned ZipSkills package → compatibility/verification metadata → user purchase/enablement → separately evaluated authorization`
+
+**Boundary.** Commercial entitlement and technical authorization remain distinct. Package contents, prices, and limits remain planning-only until explicitly approved.
+
+### LAW 110 — WORKSPACE CHOICE MUST SHAPE CONFIGURATION WITHOUT FRAGMENTING TEAMAI
+
+**Rule.** A user's workspace choice MUST shape configuration, skill recommendation, guides, dictionary terms, verification, and native operating controls while preserving one TeamAi-wide authority model.
+
+**Why.** Users need workspace-native behavior without having to adopt a different TeamAi constitution for every platform.
+
+**Flow.**
+
+`user workspace choice → workspace ruleset → workspace-aware Responsibility Profile → skill resolution → capability/authorization evaluation → task eligibility → native workspace operation`
+
+**Boundary.** Workspace choice MUST NOT create another Product Law, ORUCAVEAM, durable-state authority, scheduler, or Seat identity model.
+
+## 20. Canonical backend extension invariant
+
+The canonical backend is a multi-authority system, not a single endpoint or wire. Canonical Auth, durable domain state, trusted execution, commerce, and execution evidence remain distinct responsibilities with explicit authorities and contracts.
+
+Adding payment buttons, subscription products, promotional variants, or additional PayPal-facing flows MUST extend the existing commerce contracts and preserve server-owned correlation to the authenticated Firebase UID.
+
+Adding another sign-in/authentication method MUST extend the canonical Firebase Auth boundary and preserve the same authoritative Firebase UID/domain ownership model.
+
+These extensions MUST NOT require moving TeamAi domain state to another database, replacing the Firebase UID ownership root, allowing the browser to self-attest payment or entitlement state, or creating a parallel authority path.
+
+A new provider, authentication method, payment product, delivery/verification surface, or UI control is an extension of an existing authority boundary unless an explicit Product Law / architecture change replaces that boundary first.
+
+## 21. Current backend implementation disposition
+
+The first executable TEAM-BACKEND-001 foundation contracts are implemented and recorded, including service-authority assertions, UID-rooted Firestore path construction, deterministic effective-skill resolution, durable task transitions, durable event identity requirements, and server-owned commerce correlation.
 
 ### Live Firebase milestone — 2026-09-03
-The authoritative Firebase project `team-ai-official` is live and its `(default)` Firestore database is reachable. The `teamai-domain-bootstrap` trusted persistence slice has passed its executable Firebase persistence gate:
+
+The authoritative Firebase project `team-ai-official` is live and its `(default)` Firestore database is reachable. The `teamai-domain-bootstrap` trusted persistence slice passed its executable Firebase persistence gate:
 
 `Firebase ID token → verified Firebase UID → Firestore hierarchy → independent Firestore confirmation → repeat-call idempotency`
 
-Evidence includes:
+Evidence included:
+
 - invalid Firebase ID token rejected with HTTP 401;
 - missing Firebase Authorization rejected with HTTP 401;
 - valid authenticated bootstrap persisted the gate-3 test hierarchy with HTTP 200;
@@ -440,9 +736,10 @@ Evidence includes:
 Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
 
 ### Gate 5B — server-owned PayPal correlation contract — PASS
-The backend encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes a pending `firebaseUid + correlationId + provider` intent; only a verified PayPal provider event may bind the PayPal event ID to that intent, with an idempotency key derived from the provider event ID. This preserves Firebase UID ownership and prevents browser-provided ownership data from becoming payment authority.
 
-Direct source-contract validation passed in a temporary local workspace using TypeScript 5.8.3 with strict NodeNext settings and Node.js 22.16.0. The behavioral assertions covered server-owned intent creation, verified-event binding, preserved UID ownership, deterministic idempotency key derivation, empty provider-event rejection, and Firebase-UID-rooted commerce paths.
+The backend encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes a pending `firebaseUid + correlationId + provider` intent; only a verified PayPal provider event may bind the PayPal event ID to that intent, with idempotency derived from the provider event ID.
+
+Direct source-contract validation passed in a temporary local workspace using TypeScript 5.8.3 with strict NodeNext settings and Node.js 22.16.0. Assertions covered server-owned intent creation, verified-event binding, preserved UID ownership, deterministic idempotency key derivation, empty provider-event rejection, and Firebase-UID-rooted commerce paths.
 
 Observed result: `GATE5B_DIRECT_TEST=PASS`.
 
@@ -451,15 +748,80 @@ Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `
 This is an evidence-backed source-contract pass, not TEAM-BACKEND-001 completion. No live PayPal transaction, webhook business processing, entitlement activation, or replay-protection completion claim is made by Gate 5B.
 
 ### Gate 5C — implementation and available-environment verification — PASS / CLOSED
+
 Gate 5C implementation and available-environment verification are complete. The canonical commerce runtime boundary verifies PayPal webhook authenticity, applies replay/idempotency controls, durably records authenticated commerce events in Firestore under the Firebase UID, and projects entitlement state only from authenticated provider events correlated to a server-owned intent.
 
 The remaining evidence item is **live PayPal transaction/webhook runtime validation**. This is an external/live runtime evidence requirement, not an unfinished Gate 5C implementation. The current environment constrains that live PayPal test; it MUST NOT be represented as a failed Gate 5C architecture or implementation.
 
-Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader 5C implementation work should be reopened merely because the live external test remains outstanding.
+Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader Gate 5C implementation work should be reopened merely because the live external test remains outstanding.
 
-## Canonical execution-document relationship
-`PRODUCT_LAW.md` establishes durable product/architecture invariants. `MASTERPLAN.md` translates those invariants into the chronological execution plan and checklist. `POLICY.md` establishes execution discipline through the single ORUCAVEAM framework. `docs/SKILL_WIRING.md` maps executable concepts/checklist items to the applicable skill path, tool/system, and verification route. `skills/**/SKILL.md` provide direct operational instructions without becoming product authority. `PRODUCT-KNOWLEDGE.md` retains validated, distilled lessons. `docs/project-guide/HandOver.md` preserves continuation and learning transfer. `docs/project-guide/Endorsement.md` records authorized completion and accepted learning. `AI_ASSISTANT_READ_ME.md` provides practical agent memory and recovery guidance.
+## 22. Phase 0 disposition
 
-Lower-level documents MUST NOT silently redefine Product Law. A change to a canonical product concept MUST be reconciled against the existing logic before editing, and any discrepancy that affects authority, architecture, scope, or protected roots MUST be surfaced before proceeding.
+Phase 0 is the clean development-entry gate. It verifies the active repository baseline, retired-backend removal from supported paths, service authority boundaries, team/toolkit boundaries, and synchronization of the current execution gate before TEAM-BACKEND-001 implementation.
 
-This front door MUST remain synchronized with active authority changes.
+## 23. Product-wide control invariant
+
+The most important cross-domain distinction is:
+
+`Field defines responsibility → Skill defines how to perform it → Capability defines available mechanisms → Authorization defines permitted control → Workspace defines operating context → Scheduler defines when the Seat may act`
+
+This invariant applies whether the workforce has two Seats or eight Seats, whether the task is planning, coding, verification, documentation, recovery, commerce, or another reconciled responsibility, and whether the selected workspace is GitHub or a future validated workspace.
+
+No Seat, skill, branch, workspace, tool, provider, UI, or commercial package may silently elevate itself above this chain.
+
+## 24. Non-negotiable product constraints
+
+- Direct provider-to-provider orchestration is prohibited.
+- A skill cannot grant authority.
+- A branch cannot define authority.
+- A UI cannot self-attest durable backend truth.
+- A workspace ruleset cannot replace Product Law.
+- Product Knowledge cannot redefine Product Law.
+- ZipSkills cannot sell undeclared authority.
+- GitHub Actions cannot become the runtime scheduler.
+- Vercel cannot become the hosting or backend authority, and current Vercel access is paused/cut off pending explicit user approval for any reuse.
+- Alternate durable TeamAi domain databases require explicit Product Law / architecture reconciliation.
+- Historical project evidence cannot override current authoritative configuration.
+- More Seats create more execution capacity, not more constitutions.
+
+## 25. Final Product Law closure
+
+The complete TeamAi concept can be understood as one governed system:
+
+```text
+USER
+ │
+ ├── chooses purpose and workspace
+ │
+ ▼
+TEAMAI
+ │
+ ├── preserves Product Law + ORUCAVEAM project-wide
+ │
+ ├── stores authoritative state under Firebase UID
+ │
+ ├── configures Web AI Seats and Responsibility Profiles
+ │
+ ├── resolves workspace rules + skills + capabilities + authorization
+ │
+ ├── schedules eligible work
+ │
+ ├── executes through trusted boundaries
+ │
+ ├── records durable events/results
+ │
+ ├── verifies and reconciles
+ │
+ ├── hands over and endorses
+ │
+ └── promotes validated learning into Product Knowledge and future skill/workspace versions
+ │
+ ▼
+WEB AI TEAM
+ │
+ ├── Planning Team stage
+ ├── Working/Coding Team stage
+ └── coordinated multi-Seat participation
+```
+
+The Web AI Team may grow in Seat count, provider diversity, workspace diversity, skills, capabilities, and commercial packaging. The governing chain does not fragment. Growth MUST increase coverage, knowledge, and coordination without creating competing product authorities.
