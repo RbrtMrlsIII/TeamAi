@@ -11,7 +11,6 @@ function requiredEnv(name) {
   return value.trim();
 }
 
-// Must be initialized before any top-level await that calls accessToken().
 let cachedToken;
 
 const projectId = requiredEnv('TEAMAI_FIREBASE_PROJECT_ID');
@@ -19,9 +18,12 @@ const uid = requiredEnv('TEAMAI_FIREBASE_TEST_UID');
 const workplaceId = requiredEnv('TEAMAI_FIREBASE_TEST_WORKPLACE_ID');
 const testProjectId = requiredEnv('TEAMAI_FIREBASE_TEST_PROJECT_ID');
 const script = new URL(import.meta.url).pathname;
-const runId = `live-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
-const taskId = `${runId}-task`;
-const resultEventId = `${runId}-complete-event`;
+
+// Parent generates ids once. Worker/recover children MUST inherit them via env
+// (a new process re-evaluating Date.now()/randomUUID would look at a different task).
+const runId = process.env.TEAMAI_LIVE_RUN_ID?.trim() || `live-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
+const taskId = process.env.TEAMAI_LIVE_TASK_ID?.trim() || `${runId}-task`;
+const resultEventId = process.env.TEAMAI_LIVE_RESULT_EVENT_ID?.trim() || `${runId}-complete-event`;
 const resultIdentity = { taskId, projectId: testProjectId, eventId: resultEventId };
 const taskPath = `accounts/${uid}/workplaces/${workplaceId}/projects/${testProjectId}/tasks/${taskId}`;
 
@@ -38,10 +40,6 @@ function loadServiceAccount() {
   }
   if (parsed.project_id !== projectId) {
     throw new Error(`Firebase project identity mismatch: got ${parsed.project_id}`);
-  }
-  // GitHub secrets sometimes store real newlines; normalize to JSON-style PEM.
-  if (typeof parsed.private_key === 'string' && parsed.private_key.includes('BEGIN') && !parsed.private_key.includes('\\n') && parsed.private_key.includes('\n')) {
-    // already has real newlines — fine for crypto.sign
   }
   return parsed;
 }
@@ -82,15 +80,9 @@ async function accessToken() {
   return body.access_token;
 }
 
-/** Resource name for commit writes (no https host). */
 function resourceName(path) {
   const encoded = path.split('/').map((segment) => encodeURIComponent(segment)).join('/');
   return `projects/${projectId}/databases/(default)/documents/${encoded}`;
-}
-
-/** HTTPS URL for GET/PATCH. */
-function documentHttpUrl(path) {
-  return `${ROOT}/${resourceName(path)}`;
 }
 
 async function writeTask() {
@@ -123,21 +115,27 @@ async function writeTask() {
   }
 }
 
+function childEnv(extra = {}) {
+  return {
+    ...process.env,
+    TEAMAI_LIVE_RUN_ID: runId,
+    TEAMAI_LIVE_TASK_ID: taskId,
+    TEAMAI_LIVE_RESULT_EVENT_ID: resultEventId,
+    ...extra,
+  };
+}
+
 function spawnWorker(actorId) {
   return spawn(process.execPath, [script, 'worker'], {
-    env: { ...process.env, TEAMAI_LIVE_ACTOR: actorId },
+    env: childEnv({ TEAMAI_LIVE_ACTOR: actorId }),
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 }
 
-function spawnRecovery(eventId, expectedText) {
+function spawnRecovery(expectedText) {
   return new Promise((resolve) => {
     const child = spawn(process.execPath, [script, 'recover'], {
-      env: {
-        ...process.env,
-        TEAMAI_LIVE_RESULT_EVENT_ID: eventId,
-        TEAMAI_LIVE_EXPECTED_RESULT: expectedText,
-      },
+      env: childEnv({ TEAMAI_LIVE_EXPECTED_RESULT: expectedText }),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';
@@ -203,7 +201,7 @@ if (process.argv[2] === 'worker') {
       leaseId,
       actorId,
     });
-    process.stdout.write(JSON.stringify({ actorId, leaseId, result }));
+    process.stdout.write(JSON.stringify({ actorId, leaseId, taskId, result }));
     process.exit(0);
   } catch (error) {
     process.stderr.write(error instanceof Error ? error.message : String(error));
@@ -212,11 +210,10 @@ if (process.argv[2] === 'worker') {
 }
 
 if (process.argv[2] === 'recover') {
-  const eventId = requiredEnv('TEAMAI_LIVE_RESULT_EVENT_ID');
   const expectedText = requiredEnv('TEAMAI_LIVE_EXPECTED_RESULT');
   try {
     const store = new FirestoreTaskExecutionResultStore(uid, workplaceId, projectId);
-    const result = await store.getResult({ taskId, projectId: testProjectId, eventId });
+    const result = await store.getResult({ taskId, projectId: testProjectId, eventId: resultEventId });
     if (!result) throw new Error('Durable result was not retrievable after restart');
     if (result.result?.text !== expectedText) {
       throw new Error(`Recovered result mismatch: expected ${expectedText}`);
@@ -237,10 +234,14 @@ if (process.argv[2] === 'recover') {
 await writeTask();
 const workers = await Promise.all([spawnWorker('worker-a'), spawnWorker('worker-b')]);
 const parsed = await Promise.all(workers.map(parseWorkerResult));
+console.log(JSON.stringify({ phase: 'worker-results', taskId, results: parsed }));
+
 const winners = parsed.filter((item) => item.result?.acquired === true);
 const losers = parsed.filter((item) => item.result?.acquired === false);
 if (winners.length !== 1 || losers.length !== 1) {
-  throw new Error(`Contention invariant failed: winners=${winners.length} losers=${losers.length}`);
+  throw new Error(
+    `Contention invariant failed: winners=${winners.length} losers=${losers.length} detail=${JSON.stringify(parsed)}`,
+  );
 }
 
 const winner = winners[0];
@@ -271,7 +272,7 @@ const durableResult = {
 };
 await durableStore.persist(durableResult);
 
-const recovery = await spawnRecovery(resultIdentity.eventId, durableResult.result.text);
+const recovery = await spawnRecovery(durableResult.result.text);
 if (recovery.exitCode !== 0) {
   throw new Error(`Restart/recovery probe failed: ${recovery.stderr}`);
 }
