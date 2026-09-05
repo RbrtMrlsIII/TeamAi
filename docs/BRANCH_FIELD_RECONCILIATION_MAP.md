@@ -1,7 +1,7 @@
 # TeamAi Branch / Field Reconciliation Map
 
 **Status:** ACTIVE GOVERNANCE MAP  
-**Baseline:** `main` at `72613b93cbe59c861ceefd2361a416b7afd4e2f1`
+**Baseline:** `main` at `2e4f90f005e59a371ccf19ed305ff4e6c6f11bd2`
 
 ## Canonical rule
 
@@ -13,7 +13,7 @@
 |---|---|---|---|
 | Frontend | `field/frontend-*` | visual contract, spatial composition, frontend validators, browser-facing presentation | backend authority, scheduler, Firestore, PayPal, entitlement mutation |
 | Backend | `field/backend-*` / `team-backend-001/*` | runtime/state/provider/commerce execution contracts and backend verification | visual authority, Product Law, direct provider-to-provider orchestration |
-| Governance | `field/governance-*` plus canonical governance docs | Product Law, Masterplan, Policy/ORUCAVEAM, skill wiring, recovery rules | implementation authority outside approved canonical documents |
+| Governance | `field/governance-*` plus canonical governance docs | Product Law, Masterplan, Policy/ORUCAVEAM, skills, authority/recovery records | implementation authority outside approved canonical documents |
 | Verification | `field/verification-*` / `ci/*` | CI, browser smoke, package/integrity, evidence contracts | product/runtime authority |
 | Integration | `field/integration-*` | temporary cross-field reconciliation | permanent source authority |
 
@@ -35,14 +35,21 @@ Classification is based on branch tip, PR lineage, merge state, and whether usef
 
 ## Current observation
 
-The current branch inventory contains one active field branch, `field/frontend-command-deck-reconciliation-v1`. The remaining inventory is dominated by historical 029, recovery, backend, CI, documentation, and stabilization lines.
+PR #43 (Command Deck finishing/reconciliation) is merged into `main` as `2e4f90f005e59a371ccf19ed305ff4e6c6f11bd2`. Its branch `field/frontend-command-deck-reconciliation-v1` is therefore no longer an active work field and is a **MERGED** cleanup candidate after lineage is verified.
 
-The next cleanup operation should therefore separate **active field branches** from **historical/superseded branches**, then remove only the latter after lineage is verified. No destructive Git-history rewrite is part of this map.
+The branch inventory contains a small set of active/current field lines plus a much larger historical/specialized set from 029, recovery, backend, CI, documentation, and stabilization work. The next cleanup pass should classify each branch before any deletion request.
 
-## Vercel boundary
+## Immediate field posture
 
-Vercel remains present as a non-authoritative platform. It is paused and must not be resumed without explicit approval. Vercel branch/deployment activity must not become a field authority or merge gate.
+- `field/frontend-command-deck-reconciliation-v1` — **MERGED**; PR #43 merged.
+- `field/branch-reconciliation-map-v1` — current governance-map working line; PR #44 uses this branch and its validations have passed on the reconciled tip.
+- No empty permanent field branches are required. Create `field/frontend-*`, `field/backend-*`, `field/governance-*`, or `field/verification-*` only when real work begins.
+- `field/integration-*` is temporary by definition and exists only for active reconciliation.
 
-## Firestore boundary
+## Safety boundaries
 
-Firestore write-authority ambiguity is intentionally deferred from this branch-map slice. Frontend validator/contract design may proceed first; the eventual Firestore authority reconciliation remains a separate backend/governance decision.
+- Do not resume Vercel.
+- Do not change Firestore authority in this slice.
+- Do not rewrite Git history.
+- Do not delete historical evidence without separately verified lineage and an explicit destructive action.
+- Frontend field work may define and validate contracts for backend-facing UI, but must not become backend execution authority.
