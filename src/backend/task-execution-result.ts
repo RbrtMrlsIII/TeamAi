@@ -12,7 +12,9 @@ export type DurableExecutionResult = {
   error?: unknown;
 };
 
+export type TaskExecutionResultIdentity = Pick<DurableExecutionResult, 'taskId' | 'projectId' | 'eventId'>;
+
 export type TaskExecutionResultStore = {
-  hasResult(eventId: string): Promise<boolean>;
+  hasResult(identity: TaskExecutionResultIdentity): Promise<boolean>;
   persist(result: DurableExecutionResult): Promise<void>;
 };
