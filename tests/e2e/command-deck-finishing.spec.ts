@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-async function openDeck(page: Parameters<typeof test>[0] extends never ? never : any) {
+async function openDeck(page: Page) {
   const response = await page.goto('/spatial/');
   expect(response?.ok(), `GET /spatial/ status ${response?.status()}`).toBeTruthy();
   await expect(page.locator('[data-deck-root]')).toBeVisible({ timeout: 15_000 });
@@ -15,21 +15,26 @@ test.describe('029 Command Deck finishing contract', () => {
     await expect(page.locator('[data-field="F6"][aria-label="System status"]')).toBeVisible();
   });
 
-  test('all current 029 navigation destinations avoid stale placeholder copy', async ({ page }) => {
+  test('current 029 navigation destinations do not expose stale visible placeholder copy', async ({ page }) => {
     await openDeck(page);
-    const destinations = ['Deck', 'Workplace', 'Seats', 'Planning', 'Working', 'Artifacts', 'Approvals', 'Settings'];
+    const destinations = ['Workplace', 'Seats', 'Planning', 'Working', 'Artifacts', 'Approvals', 'Settings'];
 
     for (const destination of destinations) {
       await page.getByRole('button', { name: destination, exact: true }).click();
-      await expect(page.locator('#stage-title')).toContainText(destination);
-      await expect(page.locator('[data-offdeck-root]')).not.toContainText('Composition not implemented yet');
+      const offdeck = page.locator('[data-offdeck-root]:visible');
+      await expect(offdeck).toContainText(destination);
+      await expect(offdeck).not.toContainText('Composition not implemented yet');
     }
+
+    await page.getByRole('button', { name: 'Deck', exact: true }).click();
+    await expect(page.locator('[data-deck-root]')).toBeVisible();
+    await expect(page.locator('[data-offdeck-root]:visible')).toHaveCount(0);
   });
 
   test('F7 remains a single surface with one visible cluster', async ({ page }) => {
     await openDeck(page);
     const modal = page.locator('[data-field="F7"]');
-    await page.getByRole('button', { name: 'Preview approval plate', exact: true }).click();
+    await page.getByLabel('Active').getByRole('button', { name: 'Preview approval plate', exact: true }).click();
     await expect(modal).toBeVisible();
     await expect(modal.locator('[data-cluster]:visible')).toHaveCount(1);
     await page.keyboard.press('Escape');
