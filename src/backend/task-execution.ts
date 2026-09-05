@@ -2,6 +2,7 @@ import type { ProjectConnection } from '../connections.js';
 import type { GenerateRequest, GenerateResult } from '../providers/types.js';
 import { ProviderRuntime, type ExecutionAuthorizationStatus, type ProviderInvocationRequest } from './provider-runtime.js';
 import { assertDurableEvent, transitionTask, type TaskEvent, type TaskStatus } from './task-state.js';
+import type { DurableExecutionResult, TaskExecutionResultStore } from './task-execution-result.js';
 
 export type ExecutableTask = {
   id: string;
@@ -32,6 +33,7 @@ export class TaskExecutionService {
   constructor(
     private readonly runtime: ProviderRuntime,
     private readonly events: TaskExecutionEventStore,
+    private readonly results?: TaskExecutionResultStore,
   ) {}
 
   async execute(task: ExecutableTask, actorId: string, idempotencyKey: string): Promise<TaskExecutionResult> {
@@ -71,6 +73,7 @@ export class TaskExecutionService {
       const completeKey = `${idempotencyKey}:complete`;
       const completeEvent = this.event(`${completeKey}:event`, completeKey, 'COMPLETE', actorId, new Date().toISOString());
       assertDurableEvent(completeEvent);
+      await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: completeEvent.eventId, idempotencyKey: completeKey, status: 'completed', recordedAt: completeEvent.occurredAt, result });
       await this.events.append(completeEvent);
       task.status = transitionTask(task.status, 'COMPLETE');
       return { status: 'completed', result, duplicate: false };
@@ -78,13 +81,25 @@ export class TaskExecutionService {
       const failKey = `${idempotencyKey}:fail`;
       const failEvent = this.event(`${failKey}:event`, failKey, 'FAIL', actorId, new Date().toISOString());
       assertDurableEvent(failEvent);
+      await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: failEvent.eventId, idempotencyKey: failKey, status: 'failed', recordedAt: failEvent.occurredAt, error: serializeError(error) });
       await this.events.append(failEvent);
       task.status = transitionTask(task.status, 'FAIL');
       return { status: 'failed', error, duplicate: false };
     }
   }
 
+  private async persistResult(result: DurableExecutionResult): Promise<void> {
+    if (!this.results) return;
+    if (await this.results.hasResult(result.eventId)) return;
+    await this.results.persist(result);
+  }
+
   private event(eventId: string, idempotencyKey: string, type: TaskEvent['type'], actorId: string, occurredAt: string): TaskEvent {
     return { eventId, idempotencyKey, type, actorId, occurredAt };
   }
+}
+
+function serializeError(error: unknown): unknown {
+  if (error instanceof Error) return { name: error.name, message: error.message };
+  return error;
 }
