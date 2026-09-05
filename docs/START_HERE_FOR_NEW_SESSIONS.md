@@ -23,6 +23,12 @@ Read this first if you are a new agent or human session joining the repo.
 
 Live proof link: https://github.com/RbrtMrlsIII/TeamAi/actions/runs/33981670897
 
+## Next implementation slice (this frontier)
+
+**`teamai-task-execute` Edge Function** — authenticated UID → lease → stub runtime → durable result.  
+Docs: `docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md`  
+**PayPal / commerce stays on a separate gate only.**
+
 ## Rules that stay hard
 
 - **EDIT ≠ SAVE.** Settings draft is local until Save.
@@ -33,16 +39,16 @@ Live proof link: https://github.com/RbrtMrlsIII/TeamAi/actions/runs/33981670897
 - Commit write `name` = resource name `projects/.../documents/...` (not full https URL).
 - Vercel is cut off unless the user explicitly re-approves.
 - Do not migrate durable state to Turso/SQLite to “save quota.”
+- Do not fold task execution into PayPal webhook functions.
 
-## Immediate open gate
+## Immediate open gates
 
-**Authenticated end-to-end runtime wiring:**
+1. Deploy + live-call `teamai-task-execute` with a real Firebase ID token → **RUNTIME-PROVEN** for authenticated path.
+2. Full TEAM-BACKEND-001 HandOver/Endorsement.
+3. PayPal live transaction/webhook evidence (commerce only).
+4. Frontend read-model integration (fixture → backend).
 
-`verified Firebase UID → task/domain read → scheduler → lease → approval → ProviderRuntime → durable result/event`
-
-Not yet complete: full TEAM-BACKEND-001 HandOver/Endorsement, PayPal live evidence, frontend read-model integration.
-
-## If you need to re-run the live probe
+## If you need to re-run the Node live probe
 
 Actions → **Firestore live contention and recovery** → Run workflow on `main`.  
 Requires the four repository secrets (names only in docs; values never in git).
