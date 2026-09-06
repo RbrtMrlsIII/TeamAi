@@ -23,15 +23,15 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.getByRole('button', { name: 'Map', exact: true }).click();
     await expect(page.locator('#hero-canvas')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Surface', exact: true }).click({ force: true });
-    await expect(page.getByRole('button', { name: 'Surface', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('[data-part="surface"]').evaluate((button: HTMLButtonElement) => button.click());
+    await expect(page.locator('[data-part="surface"]')).toHaveAttribute('aria-pressed', 'true');
     const activePart = await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart());
     expect(activePart).toBe('surface');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('surface'))).toBe('WORKSPACE_CLOSE');
 
-    await page.getByRole('button', { name: 'Focus', exact: true }).click({ force: true });
-    await expect(page.getByRole('button', { name: 'Surface', exact: true })).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.getByRole('button', { name: 'Focus', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('[data-part="focus"]').evaluate((button: HTMLButtonElement) => button.click());
+    await expect(page.locator('[data-part="surface"]')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('[data-part="focus"]')).toHaveAttribute('aria-pressed', 'true');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
 
     await page.getByRole('button', { name: 'Seat', exact: true }).click();
@@ -49,11 +49,8 @@ test.describe('Living Web AI Workspace Hero', () => {
 
     const handoffEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-seat-configure-request', (event: any) => resolve(event.detail), { once: true });
-      pageSafeClick();
-      function pageSafeClick() {
-        const buttons = Array.from(document.querySelectorAll('.seat-stack__handoff')) as HTMLButtonElement[];
-        buttons[0]?.click();
-      }
+      const buttons = Array.from(document.querySelectorAll('.seat-stack__handoff')) as HTMLButtonElement[];
+      buttons[0]?.click();
     }));
     expect(await handoffEvent).toMatchObject({ targetSection: 'capabilities', seatContext: 'current', presentationOnly: true });
 
