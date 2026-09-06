@@ -35,7 +35,7 @@ test('turn lifecycle exists', () => {
 
 test('flexible seat model is present', () => {
   for (const marker of ['profile(', 'buildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
-    assert.match(runtime, new RegExp(marker.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')));
+    assert.ok(runtime.includes(marker), marker);
   }
   assert.match(runtime, /clamp\(count,1,8\)/);
 });
