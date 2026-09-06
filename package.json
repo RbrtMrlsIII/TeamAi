@@ -5,7 +5,7 @@
   "description": "TeamAi — Provider-Federated AI Team Workspace (Firebase + Supabase backend architecture)",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node build-system/scripts/copy-public.mjs",
     "test": "npm run build && node --test tests/*.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "npm run build && node dist/src/main.js",
