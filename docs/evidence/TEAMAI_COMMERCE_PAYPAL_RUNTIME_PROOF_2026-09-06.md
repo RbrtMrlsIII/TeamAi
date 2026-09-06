@@ -118,8 +118,8 @@ The same real PayPal event was resent through PayPal's event delivery path. A ne
 - response content type: `application/json`
 - response content length: `62`
 - Edge region: `us-west-1`
-
-The invocation ID was `d956c79b-32c2-4496-be44-19ddbb1998a2` and the execution ID was `e2d5e9af-d504-45a6-906c-5d846036195b`.
+- Invocation ID: `d956c79b-32c2-4496-be44-19ddbb1998a2`
+- Execution ID: `e2d5e9af-d504-45a6-906c-5d846036195b`
 
 This proves that the real PayPal redelivery reached **v13** and v13 returned **HTTP 200**.
 
@@ -141,7 +141,7 @@ accounts/{uid}/commerce/{correlationId}/entitlements/{correlationId}
     sourceCommerceEventId = {providerEventId}
 ```
 
-Until that direct Firestore read is recorded, the isolated PayPal commerce lifecycle must **not** be labeled `COMPLETED`.
+The direct Firestore read is the **only remaining runtime evidence gate for this isolated PayPal correction**. Until that read is recorded, the isolated PayPal commerce lifecycle must **not** be labeled `COMPLETED`.
 
 ## Evidence boundary
 
