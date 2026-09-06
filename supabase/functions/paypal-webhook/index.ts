@@ -162,7 +162,7 @@ Deno.serve(async (req: Request) => {
     const indexedUid = (index.fields.firebaseUid as { stringValue?: unknown } | undefined)?.stringValue;
     if (typeof indexedUid !== "string" || !indexedUid) return json({ error: "commerce_correlation_index_invalid" }, 500);
 
-    const intentPath = `accounts/${indexedUid}/commerce/intents/${correlationId}`;
+    const intentPath = `accounts/${indexedUid}/commerce/${correlationId}`;
     const intent = await firestoreGet(intentPath, firestoreToken);
     if (!intent.exists) return json({ ok: true, verified: true, processed: false, reason: "commerce_intent_missing" }, 200);
 
@@ -170,7 +170,7 @@ Deno.serve(async (req: Request) => {
     const intentCorrelation = (intent.fields.correlationId as { stringValue?: unknown } | undefined)?.stringValue;
     if (intentUid !== indexedUid || intentCorrelation !== correlationId) return json({ error: "commerce_correlation_mismatch" }, 500);
 
-    const eventPath = `accounts/${indexedUid}/commerce/events/${providerEventId}`;
+    const eventPath = `accounts/${indexedUid}/commerce/${correlationId}/events/${providerEventId}`;
     const eventResult = await firestoreCreate(eventPath, firestoreStringFields({
       firebaseUid: indexedUid,
       provider: "paypal",
@@ -187,7 +187,7 @@ Deno.serve(async (req: Request) => {
     if (eventResult === "exists") return json({ ok: true, verified: true, processed: true, duplicate: true }, 200);
 
     if (mapped.entitlementStatus) {
-      await firestorePatch(`accounts/${indexedUid}/commerce/entitlements/${correlationId}`, firestoreStringFields({
+      await firestorePatch(`accounts/${indexedUid}/commerce/${correlationId}/entitlements/${correlationId}`, firestoreStringFields({
         firebaseUid: indexedUid,
         entitlementId: correlationId,
         sourceCommerceEventId: providerEventId,
@@ -196,7 +196,7 @@ Deno.serve(async (req: Request) => {
         warning: mapped.warning ?? "",
       }), firestoreToken);
     } else if (mapped.warning) {
-      const entitlementPath = `accounts/${indexedUid}/commerce/entitlements/${correlationId}`;
+      const entitlementPath = `accounts/${indexedUid}/commerce/${correlationId}/entitlements/${correlationId}`;
       const existing = await firestoreGet(entitlementPath, firestoreToken);
       if (existing.exists) await firestorePatch(entitlementPath, firestoreStringFields({
         firebaseUid: indexedUid,
