@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./hero.css" />
     <link rel="stylesheet" href="./hero-materials.css" />
     <link rel="stylesheet" href="./hero-parts.css" />
+    <link rel="stylesheet" href="./hero-seat-stack.css" />
   </head>
   <body>
     <main class="hero-shell" aria-label="TeamAi Web AI living workspace 3D hero">
@@ -40,7 +41,11 @@
         <span class="hero-inspection__label">INSPECT</span>
         <button data-camera="SEAT_CLOSE">Seat</button>
         <button data-camera="DETAIL_ANCHOR">Detail</button>
-        <span class="hero-inspection__hint">Seat → profile → skills/capabilities → authorization/scope → task/evidence → normal UI</span>
+        <span class="hero-inspection__hint">Seat → connection → behavior → toolkit/ZipSkills → capabilities → authorization/scope → workspace → task/evidence → normal UI</span>
+      </section>
+
+      <section class="seat-stack" aria-label="Web AI Seat configuration stack">
+        <span class="sr-only">Each Seat can be configured independently. Connection depends on the supported external AI app integration. No file upload is required for Seat configuration.</span>
       </section>
 
       <section class="hero-controls" aria-label="3D hero controls">
@@ -64,5 +69,6 @@
     <script type="module" src="./hero-flex.js"></script>
     <script type="module" src="./hero-aura.js"></script>
     <script type="module" src="./hero-parts.js"></script>
+    <script type="module" src="./hero-seat-stack.js"></script>
   </body>
 </html>
