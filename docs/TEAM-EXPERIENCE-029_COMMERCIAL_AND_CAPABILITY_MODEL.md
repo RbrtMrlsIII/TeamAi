@@ -231,6 +231,24 @@ This model does not yet decide:
 
 Those decisions belong to later planning/approval and must not be inferred as current implementation.
 
+## 12b. Current commerce implementation reconciliation
+
+The first real commerce runtime has now established a concrete TeamAi-owned boundary without closing the planning questions above:
+
+`server-owned correlation → PayPal custom_id → verified provider event → UID-owned commerce aggregate → durable event history → entitlement projection`
+
+The canonical aggregate currently uses the existing `correlationId` as its document identifier:
+
+`accounts/{uid}/commerce/{correlationId}`
+
+with child event and entitlement projections. This concrete hierarchy is an implementation contract and does not imply that future subscription names, pricing, or product packaging are decided.
+
+The frontend consequence is equally bounded: commerce UI should consume a backend-owned read model. Aggregate lifecycle is the primary commerce state; event records are history/evidence; entitlement is the access projection. TeamAi entitlement remains distinct from provider entitlement.
+
+The currently isolated PayPal validation discovered and corrected a stale-parent-state defect: an event and entitlement could be durably written while the aggregate remained `pending`. The correction synchronizes the aggregate for supported successful provider events. The evidence and remaining direct Firestore verification requirement are recorded separately in `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`.
+
+This subsection is a current implementation reconciliation, not a pricing, packaging, or Product Law decision.
+
 ## 13. Relationship to existing canonical documents
 
 This is a planning contract under `docs/` and does not override `PRODUCT_LAW.md`.
