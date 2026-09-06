@@ -150,7 +150,7 @@ Hard-coded in workflow env: `TEAMAI_FIREBASE_PROJECT_ID=team-ai-official`.
 
 The spatial frontend remains fixture-backed presentation. Fixtures are presentation content, not durable domain authority. Backend-owned read-model integration is still a separate controlled slice.
 
-The next frontend gate should therefore begin from the canonical commerce contract, not from PayPal-specific event payloads: aggregate state is the primary commerce UI authority; events are durable history/evidence; entitlements are the access projection.
+The next frontend gate should therefore begin from the canonical commerce contract, not from PayPal-specific event payloads: aggregate status is the primary commerce UI authority; events are durable history/evidence; entitlements are the access projection.
 
 ## Known brittle points
 
