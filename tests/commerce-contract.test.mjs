@@ -39,14 +39,8 @@ test('commerce hierarchy is UID-rooted and Firestore-valid', () => {
   const eventPath = commerceEventPath('uid-1', 'correlation-1', 'event-1');
   const entitlementPathValue = entitlementPath('uid-1', 'correlation-1', 'entitlement-1');
 
-  assert.equal(
-    intentPath,
-    'accounts/uid-1/commerce/correlation-1',
-  );
-  assert.equal(
-    eventPath,
-    'accounts/uid-1/commerce/correlation-1/events/event-1',
-  );
+  assert.equal(intentPath, 'accounts/uid-1/commerce/correlation-1');
+  assert.equal(eventPath, 'accounts/uid-1/commerce/correlation-1/events/event-1');
   assert.equal(
     entitlementPathValue,
     'accounts/uid-1/commerce/correlation-1/entitlements/entitlement-1',
