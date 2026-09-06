@@ -23,15 +23,15 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.getByRole('button', { name: 'Map', exact: true }).click();
     await expect(page.locator('#hero-canvas')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Surface', exact: true }).click({ force: true });
-    await expect(page.getByRole('button', { name: 'Surface', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: 'Surface shared state', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Surface shared state', exact: true })).toHaveAttribute('aria-pressed', 'true');
     const activePart = await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart());
     expect(activePart).toBe('surface');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('surface'))).toBe('WORKSPACE_CLOSE');
 
-    await page.getByRole('button', { name: 'Focus', exact: true }).click({ force: true });
-    await expect(page.getByRole('button', { name: 'Surface', exact: true })).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.getByRole('button', { name: 'Focus', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: 'Focus active Seat', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Surface shared state', exact: true })).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.getByRole('button', { name: 'Focus active Seat', exact: true })).toHaveAttribute('aria-pressed', 'true');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
 
     await page.getByRole('button', { name: 'Seat', exact: true }).click();
