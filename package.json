@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json && node build-system/scripts/copy-public.mjs",
-    "test": "npm run build && node --check public/hero.js && node --test tests/*.test.mjs",
+    "test": "npm run build && node --check public/hero.js && node --check public/hero-flex.js && node --test tests/*.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
