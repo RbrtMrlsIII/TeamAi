@@ -12,6 +12,7 @@ export interface ApiDependencies { orchestrator: ConversationOrchestrator; resol
 // npm start runs from dist/; import.meta.url would point under dist/src/api.
 // Always resolve presentation assets from the repository working directory.
 const SPATIAL_ROOT = path.resolve(process.cwd(), 'frontend/spatial');
+const HERO_ROOT = path.resolve(process.cwd(), 'public');
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -25,12 +26,12 @@ const MIME: Record<string, string> = {
 function json(res:any,status:number,body:unknown){res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(body));}
 async function body(req:any):Promise<any>{const chunks:any[]=[];for await(const c of req)chunks.push(Buffer.from(c)); const text=Buffer.concat(chunks).toString('utf8'); return text?JSON.parse(text):{};}
 
-async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
-  if (req.method !== 'GET' || !url.pathname.startsWith('/spatial')) return false;
-  let rel = url.pathname.slice('/spatial'.length);
-  if (rel === '' || rel === '/') rel = '/index.html';
-  const resolved = path.resolve(SPATIAL_ROOT, '.' + rel);
-  if (!resolved.startsWith(SPATIAL_ROOT + path.sep) && resolved !== SPATIAL_ROOT) {
+async function serveStatic(req:any, res:any, url: URL, prefix:string, root:string, indexFile:string): Promise<boolean> {
+  if (req.method !== 'GET' || !(url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) return false;
+  let rel = url.pathname.slice(prefix.length);
+  if (rel === '' || rel === '/') rel = `/${indexFile}`;
+  const resolved = path.resolve(root, '.' + rel);
+  if (!resolved.startsWith(root + path.sep) && resolved !== root) {
     json(res, 403, { error: 'forbidden' });
     return true;
   }
@@ -40,9 +41,17 @@ async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
     res.writeHead(200, { 'content-type': MIME[ext] ?? 'application/octet-stream' });
     res.end(data);
   } catch {
-    json(res, 404, { error: 'not_found', path: rel, root: SPATIAL_ROOT });
+    json(res, 404, { error: 'not_found', path: rel, root });
   }
   return true;
+}
+
+async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
+  return serveStatic(req, res, url, '/spatial', SPATIAL_ROOT, 'index.html');
+}
+
+async function serveHero(req:any, res:any, url: URL): Promise<boolean> {
+  return serveStatic(req, res, url, '/hero', HERO_ROOT, 'index.html');
 }
 
 export function createApiServer(deps:ApiDependencies){
@@ -50,6 +59,7 @@ export function createApiServer(deps:ApiDependencies){
   return createServer(async(req:any,res:any)=>{
     try {
       const url=new URL(req.url??'/', 'http://localhost');
+      if (await serveHero(req, res, url)) return;
       if (await serveSpatial(req, res, url)) return;
       if(req.method==='GET'&&url.pathname==='/health') return json(res,200,{ok:true});
       if(req.method==='GET'&&url.pathname==='/v1/catalog/models'){ const userId=url.searchParams.get('userId')??'anonymous'; const provider=url.searchParams.get('provider')??undefined; const capability=url.searchParams.get('capability')??undefined; const plan=await deps.resolvePlan(userId); if(!deps.catalog) return json(res,200,{plan,models:[]}); return json(res,200,{plan,models:await deps.catalog.listModels({userPlan:plan,provider,capability})}); }

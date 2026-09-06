@@ -1,0 +1,1 @@
+Implementation slice complete: WebGL light-theme Hero, semantic POVs, presentation-state animation loop, static Firebase build packaging, and smoke assertions are staged on `feat/3d-hero-prototype-light`.
