@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f2ec" />
+    <title>TeamAi — Web AI Living Workspace</title>
+    <link rel="stylesheet" href="./hero.css" />
+  </head>
+  <body>
+    <main class="hero-shell" aria-label="TeamAi Web AI living workspace 3D hero">
+      <canvas id="hero-canvas" aria-label="Interactive 3D Web AI workspace"></canvas>
+
+      <div class="hero-copy">
+        <p class="eyebrow">TEAMAI / WEB AI</p>
+        <h1>Living Web AI Workspace</h1>
+        <p class="lede">A shared workspace made visible as participating Web AI Seats contribute, absorb, and hand off.</p>
+      </div>
+
+      <section class="hero-controls" aria-label="3D hero controls">
+        <div class="control-row">
+          <button data-camera="HERO_WIDE">Wide</button>
+          <button data-camera="HERO_LOW_ORBIT">Low orbit</button>
+          <button data-camera="TEAM_ORBIT">Team</button>
+          <button data-camera="WORKSPACE_CLOSE">Workspace</button>
+          <button data-camera="OVERHEAD_MAP">Map</button>
+          <button id="demo-toggle" class="primary">Start turn loop</button>
+        </div>
+        <div class="status-row">
+          <span id="state-label">IDLE</span>
+          <span id="seat-label">Next: Web AI Seat 1</span>
+          <button id="motion-toggle" class="quiet">Reduced motion: off</button>
+        </div>
+      </section>
+
+      <div class="hero-note" aria-hidden="true">Contribution → shared state → next eligible Seat</div>
+    </main>
+    <script type="module" src="./hero-prototype.js"></script>
+  </body>
+</html>
