@@ -1,7 +1,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** `main` @ authenticated `teamai-task-execute` live runtime proof (2026-09-06) plus live Firestore contention/recovery run #7 (`d50f6ab5…`) — both bounded runtime gates are RUNTIME-PROVEN.
+**Revision basis:** `main` @ authenticated `teamai-task-execute` live runtime proof (2026-09-06), plus live Firestore contention/recovery run #7 (`d50f6ab5…`), plus isolated PayPal Sandbox commerce runtime evidence recorded in `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`. The bounded task-execute and contention/recovery gates are RUNTIME-PROVEN; the isolated PayPal v5c delivery/HTTP-200 gate is RUNTIME-PROVEN while the post-fix Firestore aggregate transition remains a separate verification step.
 
 This document is a compact operational index for agents. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
 
@@ -11,7 +11,7 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **IN IMPLEMENTATION** with **RUNTIME-PROVEN** bounded sub-gates for (a) live two-worker lease contention + durable result restart/recovery (GitHub Actions run #7) and (b) authenticated `teamai-task-execute` Edge execution. Still open: final audit/traceability, HandOver/Endorsement, separate live PayPal runtime evidence, and remaining authenticated product-path integration beyond this bounded Edge slice.
+- `TEAM-BACKEND-001`: **IN IMPLEMENTATION** with **RUNTIME-PROVEN** bounded sub-gates for (a) live two-worker lease contention + durable result restart/recovery (GitHub Actions run #7), (b) authenticated `teamai-task-execute` Edge execution, and (c) isolated PayPal Sandbox delivery to `teamai-paypal-webhook-v5c` with real `PAYMENT.CAPTURE.COMPLETED` evidence and v13 HTTP 200 redelivery. Still open: final audit/traceability, HandOver/Endorsement, definitive post-fix Firestore aggregate verification, and remaining authenticated product-path integration beyond these bounded slices.
 - `TEAM-BACKEND-002`: **IMPLEMENTED** on `main` (settings draft/Save boundary, conversation-turn durability, transcript working-set read reduction, result retrieval, token-cache / read-write economy). Live probe secrets and workflow are operational; economy rules are source-tested and used by the live probe path.
 - `TEAM-EXPERIENCE-029`: **presentation implementation materially inhabited; backend/live-domain integration and full completion frontier remain open**.
 - GitHub is the engineering/source authority.
@@ -87,6 +87,38 @@ The existing `teamai-domain-bootstrap` runtime remains the live authenticated UI
 
 Evidence record: `docs/evidence/TEAM-BACKEND-001_EDGE_RUNTIME_PROOF_2026-09-06.md`
 
+## Live PayPal commerce evidence
+
+**Status:** bounded isolated runtime gate **RUNTIME-PROVEN** for real Sandbox capture → PayPal webhook delivery to v5c → HTTP 200. The post-fix Firestore state transition remains separately open until directly re-read after the v13 redelivery.
+
+The canonical commerce aggregate is:
+
+`accounts/{uid}/commerce/{correlationId}`
+
+with supporting children:
+
+`accounts/{uid}/commerce/{correlationId}/events/{providerEventId}`  
+`accounts/{uid}/commerce/{correlationId}/entitlements/{entitlementId}`
+
+and the server-only lookup:
+
+`commerceCorrelationIndex/{correlationId}`
+
+Runtime evidence already established:
+
+1. TeamAi commerce intent creation returned a server-owned `correlationId` and the same value was used as PayPal `custom_id`.
+2. PayPal Sandbox OAuth succeeded using the REST app credentials.
+3. A real Sandbox PayPal order was created with `custom_id={correlationId}`.
+4. The Sandbox buyer approved the order.
+5. The order capture completed successfully.
+6. PayPal exposed a real `PAYMENT.CAPTURE.COMPLETED` event with provider event ID `WH-71666988RB043112X-1WA30416DF8293903` and the same `custom_id` correlation.
+7. The original event reached `teamai-paypal-webhook-v5c` on v12 and returned HTTP 200; the event record and entitlement were later verified in Firestore, while the parent aggregate was observed still `pending`.
+8. After the aggregate-state correction was deployed as v13, the same real PayPal event was resent and a new Supabase invocation reached deployment/version **13**, from `PayPal/AUHD-1.0-1`, with HTTP **200**.
+
+The v13 correction remains intentionally isolated to `teamai-paypal-webhook-v5c`; the canonical `paypal-webhook` function remains untouched.
+
+Evidence record: `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`
+
 ## Live recovery probe
 
 Manual workflow: `.github/workflows/firestore-live-recovery.yml`  
@@ -111,11 +143,14 @@ Hard-coded in workflow env: `TEAMAI_FIREBASE_PROJECT_ID=team-ai-official`.
 4. ~~Bounded authenticated `teamai-task-execute` Edge runtime path.~~ **DONE / RUNTIME-PROVEN (2026-09-06).**
 5. Final audit/traceability, HandOver, and Endorsement evidence for TEAM-BACKEND-001.
 6. Full authenticated product-path integration beyond the bounded Edge slice, including any required scheduler/approval contract integration not exercised by this operator call.
-7. Separate live PayPal sandbox transaction/webhook runtime evidence.
+7. ~~Real PayPal Sandbox capture + webhook delivery to isolated v5c with HTTP 200.~~ **DONE / RUNTIME-PROVEN (2026-09-06).**
+8. **Post-fix Firestore verification:** directly re-read the existing aggregate/event/entitlement after the v13 redelivery and prove the expected aggregate transition to `completed` without duplicate event creation.
 
 ## Frontend reality
 
 The spatial frontend remains fixture-backed presentation. Fixtures are presentation content, not durable domain authority. Backend-owned read-model integration is still a separate controlled slice.
+
+The next frontend gate should therefore begin from the canonical commerce contract, not from PayPal-specific event payloads: aggregate status is the primary commerce UI authority; events are durable history/evidence; entitlements are the access projection.
 
 ## Known brittle points
 
@@ -135,7 +170,7 @@ Browser writes must not become scheduler or execution authority.
 Transactional lease + durable result + restart retrieval are **live-proven** for the isolated probe path. The bounded authenticated Edge task-execute path is now also **live-proven**. Broader authenticated product-path scheduler/approval integration remains open.
 
 ### 6. PayPal evidence frontier
-Gate 5C implementation/available-environment verification is complete as a source boundary; live transaction/webhook runtime evidence remains outstanding.
+The isolated v5c real Sandbox delivery/HTTP-200 gate is **RUNTIME-PROVEN**. Post-fix Firestore aggregate-state verification remains open; do not call the entire PayPal commerce lifecycle complete until the aggregate/event/entitlement state is directly re-read and matches the canonical contract.
 
 ### 7. Dual API-server ambiguity
 `src/main.ts` launches `src/api/server.ts`. `src/server.ts` remains present and must not be removed without dependency proof and explicit reconciliation.
@@ -146,7 +181,7 @@ Commit writes must use resource names `projects/{id}/databases/(default)/documen
 ## Rules for high-concurrency agents
 
 1. `main` is the baseline for current work.
-2. Before reusing an old branch, compare it with current `main`.
+2. Before reusing an old branch, compare it with current `main` and classify it.
 3. Do not merge based on branch naming, stale PR descriptions, or old screenshots.
 4. A PR must identify governing Masterplan item, concrete skill routing, verification scope, and limitations.
 5. Do not turn fixture UI into claimed live domain behavior without an explicit integration contract and runtime evidence.
@@ -155,13 +190,13 @@ Commit writes must use resource names `projects/{id}/databases/(default)/documen
 
 ## Immediate next gate
 
-**TEAM-BACKEND-001 — final audit/traceability + HandOver/Endorsement, with remaining broader integration and separate PayPal evidence kept distinct.**
+**TEAM-BACKEND-001 — complete post-fix Firestore verification for the isolated PayPal commerce aggregate, then final audit/traceability + HandOver/Endorsement, with broader authenticated integration kept distinct.**
 
-The bounded `teamai-task-execute` authenticated Edge runtime gate is now **RUNTIME-PROVEN** and should not be re-run merely to increase confidence. Reuse the recorded evidence unless a defined regression requires a new test.
+The bounded `teamai-task-execute` authenticated Edge runtime gate is **RUNTIME-PROVEN** and should not be re-run merely to increase confidence. The isolated PayPal v5c delivery gate is also **RUNTIME-PROVEN**; reuse its recorded evidence unless the remaining Firestore verification exposes a regression or inconsistency.
 
 Out of scope for the next slice unless explicitly approved:
 
-`browser Firestore write authority, provider-to-provider orchestration, PayPal live activity, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB migration.`
+`browser Firestore write authority, provider-to-provider orchestration, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB migration.`
 
 ## Evidence language
 

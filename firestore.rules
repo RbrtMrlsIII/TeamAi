@@ -9,6 +9,23 @@ service cloud.firestore {
     match /accounts/{uid} {
       allow read, write: if signedInAs(uid);
 
+      // Commerce state is server-mutated, but a signed-in owner may read
+      // their own intent, durable provider events, and entitlement projection.
+      match /commerce/{correlationId} {
+        allow read: if signedInAs(uid);
+        allow write: if false;
+
+        match /events/{providerEventId} {
+          allow read: if signedInAs(uid);
+          allow write: if false;
+        }
+
+        match /entitlements/{entitlementId} {
+          allow read: if signedInAs(uid);
+          allow write: if false;
+        }
+      }
+
       match /workplaces/{workplaceId} {
         allow read, write: if signedInAs(uid);
 

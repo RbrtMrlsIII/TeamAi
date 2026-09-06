@@ -42,7 +42,7 @@ Deno.serve(async (req: Request) => {
 
     const correlationId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
-    const intentPath = `accounts/${uid}/commerce/intents/${correlationId}`;
+    const intentPath = `accounts/${uid}/commerce/${correlationId}`;
     const indexPath = `commerceCorrelationIndex/${correlationId}`;
     const accessToken = await getFirestoreAccessToken();
 

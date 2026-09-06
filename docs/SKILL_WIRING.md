@@ -36,7 +36,8 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Execution discipline | Policy | `skills/execution/orucaveam/SKILL.md` + applicable letter skills | Applicable tools | ORUCAVEAM gate record | Evidence + HandOver |
 | Learning / teach-back | Completed execution | `skills/governance/learning-handover/SKILL.md` + applicable ORUCAVEAM/Audit skills | HandOver/Endorsement docs | Learning acceptance and scope | `PRODUCT-KNOWLEDGE.md` + optional ToolKit candidate |
 | Backend / Firebase | TEAM-BACKEND-001 / 029 backend dependency | ORUCAVEAM + concrete backend skill family | Firebase / Firestore / Supabase | Authoritative backend evidence | Backend checkpoint/HandOver |
-| Commerce | TEAM-BACKEND-001 / 029 commerce dependency | ORUCAVEAM + concrete commerce/PayPal skill family | PayPal / Supabase / Firestore | Contract + runtime evidence | Commerce evidence + endorsement |
+| Commerce | TEAM-BACKEND-001 / 029 commerce dependency | ORUCAVEAM + `skills/backend/commerce-paypal/SKILL.md` + `skills/backend/verification-recovery/SKILL.md` | PayPal / Supabase / Firestore | Contract + runtime + direct aggregate/event/entitlement read | Commerce evidence + HandOver/endorsement |
+| Commerce UI read model | TEAM-EXPERIENCE-029 commerce frontend dependency | ORUCAVEAM + `skills/frontend/spatial/commerce-read-model/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + browser verification | TeamAi frontend/read-model layer | Read-only contract, state mapping, accessibility, responsive browser verification | Commerce UI contract + evidence + HandOver |
 | Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions | CI report / trace |
 | Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + applicable ORUCAVEAM/M skills | Vercel | Controlled deployed-browser verification (when connected; temporary cutoff is non-blocking) | CI/browser evidence |
 | Spatial UI/UX | TEAM-EXPERIENCE-029 visual experience | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable ORUCAVEAM skills | TeamAi frontend/theme system | Theme-mode, accessibility, responsive, and browser verification | GitHub evidence + HandOver |
@@ -103,3 +104,17 @@ A wiring change is incomplete when:
 - a domain skill contradicts Product Law/Policy;
 - the required verification/evidence path is absent; or
 - a new procedure is added without deciding whether it belongs in an existing skill or a new reusable skill.
+
+## 10. 2026-09-06 commerce frontend preparation
+
+The newly introduced commerce frontend read-model procedure is intentionally presentation-only. It consumes a backend-owned commerce contract and must never become a shadow authority for payment, entitlement, scheduler, authorization, or durable state.
+
+The read model is based on:
+
+`commerce aggregate status → primary UI state`
+
+`commerce event history → evidence/history display`
+
+`entitlement projection → access-state display`
+
+PayPal is not called directly by the browser for authoritative payment state. Browser-side status is a projection of trusted TeamAi state.

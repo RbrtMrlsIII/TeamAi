@@ -113,6 +113,36 @@ The ZIP remains a derived handover artifact and never becomes a second source au
 
 TeamAi owns TeamAi handover. ToolKit may receive a generalized lesson only after the consuming-project evidence establishes that the lesson generalizes. Team-specific provider choices, pricing, exact model catalogs, or implementation assumptions must not be promoted upstream merely because they appear in a handover.
 
+## 10. Current 2026-09-06 Commerce / Backend Continuation Record
+
+**Scope:** TEAM-BACKEND-001 bounded commerce/PayPal correction and preparation for the next frontend implementation gate.
+
+**Authority chain:** `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/execution/orucaveam/* + skills/backend/commerce-paypal/SKILL.md + skills/backend/verification-recovery/SKILL.md → implementation → verification/evidence`.
+
+**Canonical commerce model:**
+
+`accounts/{uid}/commerce/{correlationId}`
+
+with:
+
+`events/{providerEventId}`
+
+`entitlements/{entitlementId}`
+
+and server-only lookup:
+
+`commerceCorrelationIndex/{correlationId}`.
+
+**Proven runtime evidence:** a real PayPal Sandbox `PAYMENT.CAPTURE.COMPLETED` event was correlated to the TeamAi commerce `correlationId`, captured successfully, delivered to the isolated `teamai-paypal-webhook-v5c`, and redelivered to **ACTIVE v13** with PayPal-originated `POST` and HTTP `200`.
+
+**Learned defect:** the original v12 path persisted the event and activated the entitlement while leaving the parent commerce aggregate at `pending`. The v13 correction synchronizes the aggregate to `completed` for mapped successful payment events and performs that patch before the duplicate-event return so redelivery can repair stale aggregate state without creating another event.
+
+**Open proof gate:** directly re-read Firestore after the v13 redelivery and prove `aggregate.status=completed`, the provider event remains singular, and the entitlement remains `active` with `sourceCommerceEventId` equal to the provider event ID. Until this is observed, the isolated commerce lifecycle remains `RUNTIME-PROVEN` for delivery/HTTP-200 but not `COMPLETED`.
+
+**Frontend continuation:** after the backend proof gate, proceed with the canonical commerce UI contract. The frontend consumes aggregate status as primary commerce state, event records as history/evidence, and entitlement as access projection. It must not call PayPal directly for authority, self-attest payment success, or write commerce state directly to Firestore.
+
+**Learning status:** TeamAi-scoped, evidence-backed. Not a Product Law amendment. Generalization to ToolKit remains undecided.
+
 ## SEE ALSO
 
 - `POLICY.md`
@@ -121,3 +151,4 @@ TeamAi owns TeamAi handover. ToolKit may receive a generalized lesson only after
 - `skills/governance/learning-handover/SKILL.md`
 - `skills/packaging/project-package/SKILL.md`
 - `skills/execution/orucaveam/SKILL.md`
+- `skills/backend/commerce-paypal/SKILL.md`

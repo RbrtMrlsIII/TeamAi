@@ -211,30 +211,54 @@ Apply the project execution discipline:
 
 UI is a presentation and interaction layer over authoritative state and policy intents. A new page-local rule is invalid when an existing canonical root already owns the meaning.
 
-## 12. Completion boundary
+## 12. Commerce UI read-model boundary
+
+Commerce is a backend-owned domain projection exposed to the frontend through an explicit read model. The canonical backend shape is:
+
+`accounts/{uid}/commerce/{correlationId}`
+
+with:
+
+`events/{providerEventId}` and `entitlements/{entitlementId}`.
+
+The primary frontend commerce state is the aggregate lifecycle. Durable provider events are history/evidence. The entitlement projection is the access-state projection. `commerceCorrelationIndex/{correlationId}` remains server-only.
+
+The browser must not call PayPal for authoritative state, write commerce documents directly, or infer entitlement from redirects, local flags, or provider payloads. TeamAi entitlement and provider entitlement remain distinct.
+
+The commerce frontend should reuse the existing 029 F0–F7 primitives and E0–E4 hierarchy. A commerce surface is a composition, not a second visual system or modal family.
+
+The initial implementation-ready contract is documented in:
+
+`docs/TEAM-EXPERIENCE-029_COMMERCE_UI_CONTRACT.md`
+
+with procedure routing through:
+
+`skills/frontend/spatial/commerce-read-model/SKILL.md`.
+
+## 13. Completion boundary
 
 029 completion should require evidence that the canonical UI is not merely rendered but correctly wired to:
 - authenticated identity and semantic context;
 - Workplace/Project/Team/Seat state;
 - planning-team turn orchestration and user-intent preservation;
 - summarizer handoff and user approval;
-- working-team task/event execution;
-- provider/runtime connection state;
-- Team Quality and Tool Quality entitlement boundaries;
-- skill/tool/plugin capability state;
-- durable action/approval/recovery state;
-- responsive/accessibility equivalents;
-- browser verification;
-- required domain/backend contracts discovered during implementation.
+- working-team task/state/event/result flow;
+- capability, connection, entitlement, and authorization state;
+- commerce read model and provider-entitlement separation;
+- artifact and recovery visibility;
+- spatial theme/accessibility/responsive rules;
+- browser verification and evidence.
 
-Any new backend capability discovered by 029 must be routed through the owning backend/integration phase rather than embedded as browser authority.
+Planning documents may define these boundaries, but implementation and runtime state must be proven separately.
 
-## 13. Related durable planning records
+## SEE ALSO
 
+- `PRODUCT_LAW.md`
+- `MASTERPLAN.md`
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `docs/TEAM-EXPERIENCE-029_COMMERCE_UI_CONTRACT.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 - `docs/project-guide/HandOver.md`
-- `docs/project-guide/Endorsement.md`
