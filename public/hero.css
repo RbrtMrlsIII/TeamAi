@@ -31,8 +31,8 @@ body { min-height: 100vh; overflow: hidden; background: #f5f2ec; }
 .hero-copy {
   position: absolute;
   left: clamp(24px, 6vw, 84px);
-  top: clamp(24px, 8vh, 88px);
-  width: min(470px, calc(100vw - 48px));
+  top: clamp(24px, 7vh, 76px);
+  width: min(360px, calc(100vw - 48px));
   z-index: 2;
   pointer-events: none;
 }
@@ -47,7 +47,8 @@ body { min-height: 100vh; overflow: hidden; background: #f5f2ec; }
 
 h1 {
   margin: 0;
-  font-size: clamp(38px, 5.4vw, 76px);
+  max-width: 360px;
+  font-size: clamp(38px, 4.6vw, 60px);
   line-height: .96;
   letter-spacing: -.045em;
   font-weight: 760;
@@ -55,10 +56,10 @@ h1 {
 }
 
 .lede {
-  width: min(410px, 100%);
-  margin: 18px 0 0;
-  font-size: clamp(14px, 1.4vw, 18px);
-  line-height: 1.55;
+  width: min(340px, 100%);
+  margin: 16px 0 0;
+  font-size: clamp(13px, 1.2vw, 16px);
+  line-height: 1.5;
   color: rgba(52, 54, 49, .72);
 }
 
