@@ -27,7 +27,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.getByRole('button', { name: 'Stop turn loop' }).click();
     await expect(page.locator('#state-label')).toHaveText('IDLE');
 
-    await page.locator('#hero-canvas').click({ position: { x: 500, y: 420 } });
+    await page.locator('#hero-canvas').click({ position: { x: 80, y: 420 } });
     await expect(page.locator('#state-label')).toHaveText('FOCUS');
     await expect(page.locator('#seat-label')).toContainText('Web AI Seat 2');
 
