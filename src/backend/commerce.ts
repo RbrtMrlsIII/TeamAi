@@ -94,17 +94,17 @@ export function assertServerOwnedCorrelation(input: CommerceCorrelation): Commer
 }
 
 export function commerceIntentPath(firebaseUid: string, correlationId: string): string {
-  return `accounts/${requireNonEmpty(firebaseUid, 'firebaseUid')}/commerce/intents/${requireNonEmpty(correlationId, 'correlationId')}`;
+  return `accounts/${requireNonEmpty(firebaseUid, 'firebaseUid')}/commerce/${requireNonEmpty(correlationId, 'correlationId')}`;
 }
 
 export function commerceCorrelationIndexPath(correlationId: string): string {
   return `commerceCorrelationIndex/${requireNonEmpty(correlationId, 'correlationId')}`;
 }
 
-export function commerceEventPath(firebaseUid: string, commerceEventId: string): string {
-  return `accounts/${requireNonEmpty(firebaseUid, 'firebaseUid')}/commerce/events/${requireNonEmpty(commerceEventId, 'commerceEventId')}`;
+export function commerceEventPath(firebaseUid: string, correlationId: string, providerEventId: string): string {
+  return `${commerceIntentPath(firebaseUid, correlationId)}/events/${requireNonEmpty(providerEventId, 'providerEventId')}`;
 }
 
-export function entitlementPath(firebaseUid: string, entitlementId: string): string {
-  return `accounts/${requireNonEmpty(firebaseUid, 'firebaseUid')}/commerce/entitlements/${requireNonEmpty(entitlementId, 'entitlementId')}`;
+export function entitlementPath(firebaseUid: string, correlationId: string, entitlementId: string): string {
+  return `${commerceIntentPath(firebaseUid, correlationId)}/entitlements/${requireNonEmpty(entitlementId, 'entitlementId')}`;
 }
