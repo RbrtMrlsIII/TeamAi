@@ -18,6 +18,24 @@ commerceCorrelationIndex/{correlationId}
 
 The existing server-owned `correlationId` is the commerce aggregate document identifier and is propagated to PayPal as `purchase_units[].custom_id`.
 
+## Authority and skill routing
+
+Governing chain:
+
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md`
+
+Applicable execution/field skills:
+
+- `skills/execution/orucaveam/SKILL.md`
+- `skills/backend/commerce-paypal/SKILL.md`
+- `skills/backend/verification-recovery/SKILL.md`
+- `skills/backend/task-event-idempotency/SKILL.md`
+- `skills/backend/firestore-canonical-state/SKILL.md`
+
+Frontend continuation skill:
+
+- `skills/frontend/spatial/commerce-read-model/SKILL.md`
+
 ## Evidence sequence
 
 ### 1. Commerce intent / correlation
@@ -118,8 +136,8 @@ The same real PayPal event was resent through PayPal's event delivery path. A ne
 - response content type: `application/json`
 - response content length: `62`
 - Edge region: `us-west-1`
-- Invocation ID: `d956c79b-32c2-4496-be44-19ddbb1998a2`
-- Execution ID: `e2d5e9af-d504-45a6-906c-5d846036195b`
+
+The invocation ID was `d956c79b-32c2-4496-be44-19ddbb1998a2` and the execution ID was `e2d5e9af-d504-45a6-906c-5d846036195b`.
 
 This proves that the real PayPal redelivery reached **v13** and v13 returned **HTTP 200**.
 
@@ -127,7 +145,7 @@ This proves that the real PayPal redelivery reached **v13** and v13 returned **H
 
 ## Remaining verification gate
 
-The final post-fix Firestore verification must still be performed directly after the v13 redelivery. It must prove all of the following together:
+The final post-fix Firestore verification remains open. It must prove all of the following together:
 
 ```text
 accounts/{uid}/commerce/{correlationId}
@@ -141,7 +159,25 @@ accounts/{uid}/commerce/{correlationId}/entitlements/{correlationId}
     sourceCommerceEventId = {providerEventId}
 ```
 
-The direct Firestore read is the **only remaining runtime evidence gate for this isolated PayPal correction**. Until that read is recorded, the isolated PayPal commerce lifecycle must **not** be labeled `COMPLETED`.
+This final read must be performed after the v13 redelivery. Until it is directly recorded, the isolated PayPal commerce lifecycle must **not** be labeled `COMPLETED`.
+
+## Frontend implementation boundary
+
+The visual/frontend slice may now be implemented against the explicit contract in `docs/TEAM-EXPERIENCE-029_COMMERCE_UI_CONTRACT.md`, provided the implementation remains read-only and does not claim live backend behavior from fixtures.
+
+Primary UI authority:
+
+`commerce aggregate status`
+
+History/evidence:
+
+`commerce events`
+
+Access projection:
+
+`entitlement`
+
+The frontend must not read `commerceCorrelationIndex`, write commerce state directly, call PayPal for authoritative state, or equate TeamAi entitlement with provider entitlement.
 
 ## Evidence boundary
 
@@ -150,9 +186,8 @@ This record does not claim:
 - full `TEAM-BACKEND-001` completion;
 - canonical `paypal-webhook` cutover;
 - browser-side payment authority;
-- frontend commerce integration;
 - production PayPal/live-mode readiness;
-- final HandOver/Endorsement.
+- final HandOver/Endorsement for TEAM-BACKEND-001.
 
 Use precise state labels:
 
