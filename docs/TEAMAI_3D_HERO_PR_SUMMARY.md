@@ -1,0 +1,1 @@
+Light-theme 3D Hero prototype summary: dependency-free WebGL scene, four Web AI Seats, shared workspace, semantic POV cameras, state-driven contribution loop, reduced-motion support, static Firebase packaging, and smoke assertions.
