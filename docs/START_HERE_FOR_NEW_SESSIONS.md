@@ -20,14 +20,18 @@ Read this first if you are a new agent or human session joining the repo.
 | Durable execution result persist + restart retrieval | IMPLEMENTED + **RUNTIME-PROVEN** |
 | Read/write economy (ConfigurationDraft, conversation turns, no hasResult preflight, token cache) | IMPLEMENTED |
 | Live workflow `firestore-live-recovery.yml` | **RUNTIME-PROVEN** run #7 |
+| `teamai-task-execute` authenticated Edge path | **DEPLOYED + RUNTIME-PROVEN** (2026-09-06) |
 
 Live proof link: https://github.com/RbrtMrlsIII/TeamAi/actions/runs/33981670897
 
-## Next implementation slice (this frontier)
+## Current bounded frontier
 
-**`teamai-task-execute` Edge Function** — authenticated UID → lease → stub runtime → durable result.  
+**`teamai-task-execute` Edge Function** — authenticated UID → task → lease → stub runtime → durable result.  
 Docs: `docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md`  
-**PayPal / commerce stays on a separate gate only.**
+Evidence: `docs/evidence/TEAM-BACKEND-001_EDGE_RUNTIME_PROOF_2026-09-06.md`  
+The bounded authenticated Edge runtime gate is **RUNTIME-PROVEN**. Do not rerun it merely to increase confidence; reuse the recorded evidence unless a defined regression requires a new test.
+
+**PayPal / commerce remains on a separate gate only.**
 
 ## Rules that stay hard
 
@@ -43,8 +47,8 @@ Docs: `docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md`
 
 ## Immediate open gates
 
-1. Deploy + live-call `teamai-task-execute` with a real Firebase ID token → **RUNTIME-PROVEN** for authenticated path.
-2. Full TEAM-BACKEND-001 HandOver/Endorsement.
+1. Final TEAM-BACKEND-001 audit/traceability + HandOver/Endorsement.
+2. Any broader authenticated scheduler/approval product-path integration not exercised by the bounded Edge call.
 3. PayPal live transaction/webhook evidence (commerce only).
 4. Frontend read-model integration (fixture → backend).
 
