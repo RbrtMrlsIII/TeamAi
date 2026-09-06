@@ -181,7 +181,7 @@ Commit writes must use resource names `projects/{id}/databases/(default)/documen
 ## Rules for high-concurrency agents
 
 1. `main` is the baseline for current work.
-2. Before reusing an old branch, compare it with current `main`.
+2. Before reusing an old branch, compare it with current `main` and classify it.
 3. Do not merge based on branch naming, stale PR descriptions, or old screenshots.
 4. A PR must identify governing Masterplan item, concrete skill routing, verification scope, and limitations.
 5. Do not turn fixture UI into claimed live domain behavior without an explicit integration contract and runtime evidence.
