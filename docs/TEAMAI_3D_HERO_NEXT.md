@@ -1,0 +1,1 @@
+Next visual pass: replace procedural primitives with authored production meshes, improve shadow/material fidelity, then bind the scene to validated Web AI presentation state.
