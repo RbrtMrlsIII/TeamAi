@@ -1,7 +1,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** `main` @ live Firestore contention/recovery run #7 (`d50f6ab5…`) — RUNTIME-PROVEN for the lease + durable-result probe.
+**Revision basis:** `main` @ authenticated `teamai-task-execute` live runtime proof (2026-09-06) plus live Firestore contention/recovery run #7 (`d50f6ab5…`) — both bounded runtime gates are RUNTIME-PROVEN.
 
 This document is a compact operational index for agents. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
 
@@ -11,7 +11,7 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **IN IMPLEMENTATION** with a **RUNTIME-PROVEN** sub-gate for live two-worker lease contention + durable result restart/recovery (GitHub Actions run #7, workflow `firestore-live-recovery.yml`, head `d50f6ab5…`). Scheduler/domain-state contracts, runtime bridge, concrete Firestore lease transaction, `AtomicTaskLeaseStore` adapter, and durable execution-result persistence remain implemented. Still open: authenticated end-to-end UID→scheduler→lease→approval→execution wiring, final audit/HandOver/Endorsement, and separate PayPal runtime evidence.
+- `TEAM-BACKEND-001`: **IN IMPLEMENTATION** with **RUNTIME-PROVEN** bounded sub-gates for (a) live two-worker lease contention + durable result restart/recovery (GitHub Actions run #7) and (b) authenticated `teamai-task-execute` Edge execution. Still open: final audit/traceability, HandOver/Endorsement, separate live PayPal runtime evidence, and remaining authenticated product-path integration beyond this bounded Edge slice.
 - `TEAM-BACKEND-002`: **IMPLEMENTED** on `main` (settings draft/Save boundary, conversation-turn durability, transcript working-set read reduction, result retrieval, token-cache / read-write economy). Live probe secrets and workflow are operational; economy rules are source-tested and used by the live probe path.
 - `TEAM-EXPERIENCE-029`: **presentation implementation materially inhabited; backend/live-domain integration and full completion frontier remain open**.
 - GitHub is the engineering/source authority.
@@ -43,7 +43,7 @@ The 029 spatial progression currently present on `main` remains the established 
 
 The backend execution progression currently present on `main` is:
 
-`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction (live-proven single-winner) → AtomicTaskLeaseStore adapter → durable execution-result store (live-proven persist + restart retrieval) → read/write economy controls`
+`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility + runtime bridge → concrete Firestore lease transaction (live-proven single-winner) → AtomicTaskLeaseStore adapter → durable execution-result store (live-proven persist + restart retrieval) → authenticated teamai-task-execute Edge path (live-proven) → read/write economy controls`
 
 These are bounded implementation slices and do **not** by themselves establish full 029 completion or full TEAM-BACKEND-001 completion.
 
@@ -65,11 +65,27 @@ TEAM-BACKEND-002 adds a direct result retrieval contract for restart recovery an
 4. Fresh process retrieves result by `(taskId, projectId, eventId)` after “restart.”
 5. Cleanup of probe documents.
 
+**Live evidence (2026-09-06):** Supabase Edge Function `teamai-task-execute` was invoked from Cloud Shell with a fresh Firebase ID token against `workplaceId=e2e-probe-003` and `projectId=e2e-project-003`.
+
+The observed response was:
+
+- HTTP `201`
+- `ok=true`
+- `phase=complete`
+- `taskId=exec-f3d8f07f-354354`
+- `leaseId=lease-f3d8f07f-354354`
+- `eventId=complete-f3d8f07f-354354`
+- `provider=stub-edge-runtime`
+
+The emitted result path was UID/workplace/project/task scoped. The Edge function only returns the `201` success response after persisting the create-only execution result and marking the task completed.
+
 Commit writes use Firestore **resource names** (not full `https://` URLs). Worker children inherit `TEAMAI_LIVE_RUN_ID` / `TEAMAI_LIVE_TASK_ID` / `TEAMAI_LIVE_RESULT_EVENT_ID` so they do not regenerate a different task identity.
 
-All unit/contract tests remain source-level evidence. The live probe is the runtime proof for contention + recovery only; it is not yet authenticated end-to-end product execution.
+All unit/contract tests remain source-level evidence. Run #7 is the runtime proof for contention + recovery; the 2026-09-06 Edge call is the runtime proof for the bounded authenticated task-execute path.
 
 The existing `teamai-domain-bootstrap` runtime remains the live authenticated UID → Firestore domain hierarchy proof.
+
+Evidence record: `docs/evidence/TEAM-BACKEND-001_EDGE_RUNTIME_PROOF_2026-09-06.md`
 
 ## Live recovery probe
 
@@ -92,9 +108,10 @@ Hard-coded in workflow env: `TEAMAI_FIREBASE_PROJECT_ID=team-ai-official`.
 1. ~~Successful live Firestore transactional lease exercise with two concurrent workers proving single-winner behavior.~~ **DONE (run #7).**
 2. ~~Successful restart/recovery proof after a fresh process loses its in-memory state.~~ **DONE (run #7).**
 3. ~~Successful live durable result retrieval after process restart.~~ **DONE (run #7).**
-4. Authenticated end-to-end runtime wiring from verified Firebase UID through scheduler, lease, approval, execution, and durable evidence.
-5. Final audit/traceability, HandOver, and Endorsement evidence.
-6. Separate live PayPal sandbox transaction/webhook runtime evidence.
+4. ~~Bounded authenticated `teamai-task-execute` Edge runtime path.~~ **DONE / RUNTIME-PROVEN (2026-09-06).**
+5. Final audit/traceability, HandOver, and Endorsement evidence for TEAM-BACKEND-001.
+6. Full authenticated product-path integration beyond the bounded Edge slice, including any required scheduler/approval contract integration not exercised by this operator call.
+7. Separate live PayPal sandbox transaction/webhook runtime evidence.
 
 ## Frontend reality
 
@@ -115,7 +132,7 @@ Do not inject browser Firebase/domain behavior ad hoc. Consume backend-owned rea
 Browser writes must not become scheduler or execution authority.
 
 ### 5. Concurrency and recovery
-Transactional lease + durable result + restart retrieval are **live-proven** for the isolated probe path. Authenticated product path (UID session → real scheduler → approval → ProviderRuntime) is still open.
+Transactional lease + durable result + restart retrieval are **live-proven** for the isolated probe path. The bounded authenticated Edge task-execute path is now also **live-proven**. Broader authenticated product-path scheduler/approval integration remains open.
 
 ### 6. PayPal evidence frontier
 Gate 5C implementation/available-environment verification is complete as a source boundary; live transaction/webhook runtime evidence remains outstanding.
@@ -138,13 +155,9 @@ Commit writes must use resource names `projects/{id}/databases/(default)/documen
 
 ## Immediate next gate
 
-**TEAM-BACKEND-001 — authenticated end-to-end runtime wiring.**
+**TEAM-BACKEND-001 — final audit/traceability + HandOver/Endorsement, with remaining broader integration and separate PayPal evidence kept distinct.**
 
-Scope (recommended next slice):
-
-`verified Firebase UID session → authoritative task/domain read → scheduler eligibility → transactional lease → approval boundary → trusted ProviderRuntime execution → durable result/event → recovery-safe evidence`
-
-Supporting invariant: read/write economy (draft until Save; one conversation turn per submit; no preflight for create-only results; token cache).
+The bounded `teamai-task-execute` authenticated Edge runtime gate is now **RUNTIME-PROVEN** and should not be re-run merely to increase confidence. Reuse the recorded evidence unless a defined regression requires a new test.
 
 Out of scope for the next slice unless explicitly approved:
 
