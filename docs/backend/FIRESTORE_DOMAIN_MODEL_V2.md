@@ -21,13 +21,13 @@ Commerce state is rooted in the authenticated Firebase UID and uses the existing
 `accounts/{uid}/commerce/{correlationId}/events/{providerEventId}`  
 `accounts/{uid}/commerce/{correlationId}/entitlements/{entitlementId}`
 
-The top-level server-only correlation lookup remains:
+The aggregate document is the server-owned pending commerce intent/correlation established before PayPal processing. Verified provider events and entitlement projections are child collections of that aggregate. The top-level server-only correlation lookup remains:
 
 `commerceCorrelationIndex/{correlationId}`
 
-The commerce aggregate document represents the server-owned pending commerce intent/correlation established before PayPal processing. Verified provider events are persisted beneath that aggregate, and entitlement state is projected beneath the same aggregate. The correlation index is a server-side lookup aid that resolves a verified PayPal `custom_id` to the Firebase UID and aggregate path; it is not an independent ownership or entitlement authority.
+The correlation index is a server-side lookup aid that resolves a verified PayPal `custom_id` to the Firebase UID and commerce aggregate path; it is not an independent ownership or entitlement authority.
 
-Commerce mutations are server-owned. Client/browser input may initiate a commercial flow but must not self-attest payment success, provider event authenticity, Firebase ownership, or entitlement state.
+Commerce mutations are server-owned. Client/browser input may initiate a commercial flow but must not self-attest payment success, provider event authenticity, Firebase ownership, or entitlement state. Signed-in owners may read their own UID-rooted commerce aggregate, event, and entitlement state according to `firestore.rules`.
 
 All commerce document paths must obey Firestore's collection/document alternation. The invalid legacy shape `accounts/{uid}/commerce/intents/{correlationId}` is not part of the current contract and must not be introduced or relied upon.
 
