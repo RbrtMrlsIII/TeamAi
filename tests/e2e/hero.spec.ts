@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Living Web AI Workspace Hero', () => {
   test('renders the signature geometry shell and captures the hero frame', async ({ page }, testInfo) => {
-    await page.goto('/');
+    await page.goto('/hero/');
     await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
     await expect(page.locator('#hero-canvas')).toBeVisible();
     for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map']) {
@@ -14,7 +14,7 @@ test.describe('Living Web AI Workspace Hero', () => {
   });
 
   test('exercises semantic POV, turn-loop, seat-focus, and reduced-motion controls', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
 
     await page.getByRole('button', { name: 'Workspace' }).click();
