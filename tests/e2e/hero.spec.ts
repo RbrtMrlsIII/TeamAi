@@ -5,7 +5,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.goto('/hero/');
     await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map']) {
+    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map', 'Seat', 'Detail']) {
       await expect(page.getByRole('button', { name: label })).toBeVisible();
     }
     await expect(page.locator('.spatial-part')).toHaveCount(3);
@@ -26,10 +26,15 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.getByRole('button', { name: 'Surface' })).toHaveAttribute('aria-pressed', 'true');
     const activePart = await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart());
     expect(activePart).toBe('surface');
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('surface'))).toBe('WORKSPACE_CLOSE');
 
     await page.getByRole('button', { name: 'Focus' }).click();
     await expect(page.getByRole('button', { name: 'Surface' })).toHaveAttribute('aria-pressed', 'false');
     await expect(page.getByRole('button', { name: 'Focus' })).toHaveAttribute('aria-pressed', 'true');
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
+
+    await page.getByRole('button', { name: 'Seat' }).click();
+    await page.getByRole('button', { name: 'Detail' }).click();
 
     await page.getByRole('button', { name: 'Start turn loop' }).click();
     await expect(page.locator('#state-label')).toHaveText(/FOCUS|ACTIVE|CONTRIBUTE/);
