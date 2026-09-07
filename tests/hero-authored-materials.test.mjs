@@ -30,9 +30,7 @@ test('Issue #88 material roles are explicit and pure', () => {
     assert.equal(m.color.length, 3);
     assert.equal(m.spec.length, 3);
   }
-  // Ring is shinier (lower roughness) than shell in light mode
   assert.ok(ring.rough < shell.rough);
-  // Inset is darker channel than shell body (depth separation)
   assert.ok(inset.color[0] < shell.color[0]);
 });
 
@@ -43,12 +41,13 @@ test('Light and Dark material families remain distinguishable', () => {
   assert.notDeepEqual(authoredSeatShellMaterial(light), authoredSeatShellMaterial(dark));
 });
 
-test('hero-flex consumes authored material helpers and depth cues', () => {
+test('hero-flex consumes authored material helpers and stays public-self-contained', () => {
   assert.match(heroFlex, /authoredRingMaterial/);
   assert.match(heroFlex, /authoredSeatShellMaterial/);
   assert.match(heroFlex, /authoredSeatInsetMaterial/);
   assert.match(heroFlex, /heroMaterialContext/);
-  assert.match(heroFlex, /mapHeroThemeLighting/);
+  assert.doesNotMatch(heroFlex, /mapHeroThemeLighting/);
+  assert.doesNotMatch(heroFlex, /frontend\/spatial/);
   assert.match(heroFlex, /AUTHORED_RING/);
   assert.match(heroFlex, /AUTHORED_SEAT_SHELL/);
 });
