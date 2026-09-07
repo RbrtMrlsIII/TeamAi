@@ -24,39 +24,35 @@ if (!text.includes("runSeatConnectionTest")) {
   throw new Error("connection wire missing — run apply-seat-connection-wire first");
 }
 
-const marker = "  seatsBuilt = true;\n  selectSeat(activeSeat);\n}";
-if (!text.includes(marker)) throw new Error("buildSeats end marker not found");
-text = text.replace(
-  marker,
-  `  seatsBuilt = true;\n  selectSeat(activeSeat);\n  import(\./seat-provider-bind-wire.js\).then((m) => m.ensureProviderBindOnSeatsPage()).catch(() => {});\n}`,
-);
-// Fix the escaped import from template — write intended form:
-text = text.replace(
-  "import(\\./seat-provider-bind-wire.js\\)",
-  'import("./seat-provider-bind-wire.js")',
-);
-if (!text.includes('import("./seat-provider-bind-wire.js")')) {
-  text = fs.readFileSync(target, "utf8");
-  if (text.includes("ensureProviderBindOnSeatsPage")) {
-    console.log("provider bind wire already applied");
-    process.exit(0);
-  }
-  text = text.replace(
-    marker,
-    "  seatsBuilt = true;\n  selectSeat(activeSeat);\n  import(\"./seat-provider-bind-wire.js\").then((m) => m.ensureProviderBindOnSeatsPage()).catch(() => {});\n}",
-  );
-}
+const marker = [
+  "  seatsBuilt = true;",
+  "  selectSeat(activeSeat);",
+  "}",
+].join("\n");
 
-const selMarker = "  renderSeatDetail();\n}";
+if (!text.includes(marker)) throw new Error("buildSeats end marker not found");
+
+const injectBuild = [
+  "  seatsBuilt = true;",
+  "  selectSeat(activeSeat);",
+  "  import(\"./seat-provider-bind-wire.js\").then((m) => m.ensureProviderBindOnSeatsPage()).catch(() => {});",
+  "}",
+].join("\n");
+
+text = text.replace(marker, injectBuild);
+
+const selMarker = ["  renderSeatDetail();", "}"].join("\n");
 const idx = text.indexOf("function selectSeat");
 if (idx < 0) throw new Error("selectSeat not found");
 const after = text.indexOf(selMarker, idx);
 if (after < 0) throw new Error("selectSeat render marker not found");
 if (!text.includes("syncProviderBindSeat")) {
-  text =
-    text.slice(0, after) +
-    "  renderSeatDetail();\n  import(\"./seat-provider-bind-wire.js\").then((m) => m.syncProviderBindSeat(id)).catch(() => {});\n}" +
-    text.slice(after + selMarker.length);
+  const injectSel = [
+    "  renderSeatDetail();",
+    "  import(\"./seat-provider-bind-wire.js\").then((m) => m.syncProviderBindSeat(id)).catch(() => {});",
+    "}",
+  ].join("\n");
+  text = text.slice(0, after) + injectSel + text.slice(after + selMarker.length);
 }
 
 fs.writeFileSync(target, text);
