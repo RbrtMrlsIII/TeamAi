@@ -130,6 +130,28 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.getByRole('button', { name: 'Reduced motion: on', exact: true })).toBeVisible();
   });
 
+  test('completes contribution, workspace absorption, persistent trace, and next-seat handoff', async ({ page }) => {
+    await page.goto('/hero/?seats=2');
+    const lifecycle = await page.evaluate(() => new Promise<string[]>((resolve) => {
+      const seen: string[] = [];
+      const onState = (event: any) => {
+        seen.push(event.detail.state);
+        if (event.detail.state === 'FOCUS' && seen.includes('HANDOFF')) {
+          window.removeEventListener('teamai:hero-state-change', onState);
+          resolve(seen);
+        }
+      };
+      window.addEventListener('teamai:hero-state-change', onState);
+      (window as any).TeamAiHero.startLoop();
+    }));
+    expect(lifecycle.slice(0, 6)).toEqual(['FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB', 'REFLECT', 'HANDOFF']);
+    expect(lifecycle.at(-1)).toBe('FOCUS');
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getTraceCount())).toBe(1);
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat())).toBe(1);
+    await page.evaluate(() => (window as any).TeamAiHero.stopLoop());
+    await expect(page.locator('#state-label')).toHaveText('IDLE');
+  });
+
   test('scales the same stage from one seat to eight unlocked seats', async ({ page }) => {
     await page.goto('/hero/?seats=1');
     await expect(page.locator('#seat-label')).toContainText('1 seat unlocked');
