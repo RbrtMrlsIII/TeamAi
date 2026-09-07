@@ -2,6 +2,8 @@ const STAGES = Object.freeze([
   { id: 'HERO_ORIENTATION', label: 'Hero orientation', semanticCamera: 'HERO_WIDE' },
   { id: 'SURFACE', label: 'Shared surface', semanticCamera: 'WORKSPACE_CLOSE' },
   { id: 'FOCUS', label: 'Active Seat', semanticCamera: 'SEAT_CLOSE' },
+  { id: 'IDENTITY', label: 'Seat identity', semanticCamera: 'MECHANISM_IDENTITY' },
+  { id: 'RESPONSIBILITY', label: 'Responsibility', semanticCamera: 'MECHANISM_RESPONSIBILITY' },
   { id: 'CONNECTION', label: 'Connection', semanticCamera: 'MECHANISM_CONNECTION' },
   { id: 'BEHAVIOR', label: 'Behavior', semanticCamera: 'MECHANISM_BEHAVIOR' },
   { id: 'SKILLS', label: 'Skills', semanticCamera: 'MECHANISM_SKILLS' },
