@@ -1,7 +1,14 @@
+const HEALTH = Object.freeze({
+  unknown: { label: '·', title: 'Connection health unknown (presentation)' },
+  offline: { label: 'OFF', title: 'Offline (presentation preview)' },
+  degraded: { label: 'DEG', title: 'Degraded (presentation preview)' },
+  healthy: { label: 'OK', title: 'Healthy (presentation preview)' }
+});
+
 const LAYERS = [
   { id: 'identity', label: 'Identity', sub: 'Web AI Seat label / role (presentation)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_IDENTITY', handoff: 'identity' },
-  { id: 'responsibility', label: 'Responsibility', sub: 'duty dial (presentation, not authority)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_RESPONSIBILITY', handoff: 'responsibility' },
-  { id: 'connection', label: 'Connection', sub: 'external app account / integration', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_CONNECTION', handoff: 'connection' },
+  { id: 'responsibility', label: 'Responsibility', sub: 'duty dial (presentation, not authority)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_RESPONSIBILITY', handoff: 'responsibility', dial: true },
+  { id: 'connection', label: 'Connection', sub: 'external app account / integration', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_CONNECTION', handoff: 'connection', health: true },
   { id: 'behavior', label: 'Behavior', sub: 'Do / Don’t', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_BEHAVIOR', handoff: 'behavior' },
   { id: 'toolkit', label: 'Built-in Toolkit', sub: 'included skills', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_SKILLS', handoff: 'skills' },
   { id: 'zipskills', label: 'ZipSkills', sub: 'optional skills', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_ZIPSKILLS', handoff: 'zipskills' },
@@ -16,6 +23,10 @@ if (!stack) throw new Error('Web AI Seat stack mount missing');
 
 let activeLayer = null;
 const equipped = new Set();
+/** Presentation-only connection health. Never durable domain authority. */
+let connectionHealth = 'unknown';
+/** Presentation-only responsibility dial 0–1. */
+let responsibilityDial = 0.35;
 
 function setVisualState() {
   stack.querySelectorAll('[data-seat-layer]').forEach((el) => {
@@ -27,10 +38,27 @@ function setVisualState() {
     el.classList.toggle('is-equipped-focus', selected);
     el.classList.toggle('is-equipped', isEquipped);
     const state = el.querySelector('.seat-stack__state');
-    if (state) state.textContent = isEquipped ? 'ON' : '·';
+    if (id === 'connection' && state) {
+      const h = HEALTH[connectionHealth] || HEALTH.unknown;
+      state.textContent = h.label;
+      state.title = h.title;
+      el.dataset.connectionHealth = connectionHealth;
+      el.setAttribute('data-health', connectionHealth);
+    } else if (state) {
+      state.textContent = isEquipped ? 'ON' : '·';
+      state.removeAttribute('title');
+    }
+    if (id === 'responsibility') {
+      el.style.setProperty('--responsibility-dial', String(responsibilityDial));
+      el.dataset.responsibilityDial = String(responsibilityDial);
+      const dial = el.querySelector('.seat-stack__dial');
+      if (dial) dial.style.setProperty('--dial', String(responsibilityDial));
+    }
   });
   stack.dataset.activeLayer = activeLayer || '';
+  stack.dataset.connectionHealth = connectionHealth;
   stack.style.setProperty('--equipped-count', String(equipped.size));
+  stack.style.setProperty('--responsibility-dial', String(responsibilityDial));
 }
 
 function inspect(layer) {
@@ -42,6 +70,8 @@ function inspect(layer) {
       layer: activeLayer,
       camera: activeLayer ? layer.camera : null,
       semanticCamera: activeLayer ? layer.semanticCamera : null,
+      connectionHealth,
+      responsibilityDial,
       presentationOnly: true
     }
   }));
@@ -56,8 +86,11 @@ LAYERS.forEach((layer, index) => {
   button.style.setProperty('--stack-depth', String(index));
   button.setAttribute('aria-pressed', 'false');
   button.setAttribute('aria-label', `${layer.label}: inspect ${layer.semanticCamera}`);
+  const dialHtml = layer.dial
+    ? '<span class="seat-stack__dial" aria-hidden="true"><span class="seat-stack__dial-fill"></span></span>'
+    : '<span class="seat-stack__gear" aria-hidden="true"></span>';
   button.innerHTML = `
-    <span class="seat-stack__gear" aria-hidden="true"></span>
+    ${dialHtml}
     <span class="seat-stack__copy"><b>${layer.label}</b><small>${layer.sub}</small></span>
     <span class="seat-stack__state" aria-hidden="true">·</span>
   `;
@@ -67,12 +100,12 @@ LAYERS.forEach((layer, index) => {
 
 const note = document.createElement('p');
 note.className = 'seat-stack__note';
-note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required.';
+note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health badges are presentation previews only.';
 stack.appendChild(note);
 
 const distinction = document.createElement('p');
 distinction.className = 'seat-stack__distinction';
-distinction.innerHTML = '<b>Capability ≠ Authorization</b><span>Availability is inspected separately from allowed scope. Identity and responsibility are presentation labels, not durable authority.</span>';
+distinction.innerHTML = '<b>Capability ≠ Authorization</b><span>Availability is inspected separately from allowed scope. Identity, responsibility, and connection health are presentation labels — not durable authority.</span>';
 stack.appendChild(distinction);
 
 const handoff = document.createElement('button');
@@ -104,16 +137,40 @@ function setEquipped(id, value = true) {
   return equipped.has(id);
 }
 
+function setConnectionHealth(next = 'unknown') {
+  const key = Object.prototype.hasOwnProperty.call(HEALTH, next) ? next : 'unknown';
+  connectionHealth = key;
+  setVisualState();
+  window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-connection-health', {
+    detail: { health: connectionHealth, presentationOnly: true, durable: false }
+  }));
+  return connectionHealth;
+}
+
+function setResponsibilityDial(value = 0.35) {
+  const n = Number(value);
+  responsibilityDial = Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : 0.35;
+  setVisualState();
+  window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-responsibility-dial', {
+    detail: { dial: responsibilityDial, presentationOnly: true, durable: false }
+  }));
+  return responsibilityDial;
+}
+
 window.TeamAiHeroSeatStack = {
   layers: () => LAYERS.map((layer) => ({ ...layer })),
   getActiveLayer: () => activeLayer,
   getEquippedLayers: () => Array.from(equipped),
+  getConnectionHealth: () => connectionHealth,
+  getResponsibilityDial: () => responsibilityDial,
   inspect: (id) => {
     const layer = LAYERS.find((item) => item.id === id);
     if (layer) inspect(layer);
     return activeLayer;
   },
   setEquipped,
+  setConnectionHealth,
+  setResponsibilityDial,
   setConfiguration: (configuration = {}) => {
     Object.keys(configuration).forEach((id) => setEquipped(id, Boolean(configuration[id])));
     return Array.from(equipped);
