@@ -5,7 +5,7 @@
 
 ## 1. Resolution model
 
-`Product Law concept + Masterplan item + field/domain + current phase + provider/service/runtime + permissions/policy → effective skill set`
+`Product Law concept + Masterplan item + field/domain + current phase + provider/service/runtime + permissions/policy → effective skill bundle`
 
 Load the smallest sufficient skill bundle. A skill never grants authorization.
 
@@ -40,7 +40,8 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Commerce UI read model | TEAM-EXPERIENCE-029 commerce frontend dependency | ORUCAVEAM + `skills/frontend/spatial/commerce-read-model/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + browser verification | TeamAi frontend/read-model layer | Read-only contract, state mapping, accessibility, responsive browser verification | Commerce UI contract + evidence + HandOver |
 | Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions | CI report / trace |
 | Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + applicable ORUCAVEAM/M skills | Vercel | Controlled deployed-browser verification (when connected; temporary cutoff is non-blocking) | CI/browser evidence |
-| Spatial UI/UX | TEAM-EXPERIENCE-029 visual experience | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable ORUCAVEAM skills | TeamAi frontend/theme system | Theme-mode, accessibility, responsive, and browser verification | GitHub evidence + HandOver |
+| Spatial UI/UX | TEAM-EXPERIENCE-029 visual experience | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + motion/transition/animation/responsive/accessibility companions + applicable ORUCAVEAM skills | TeamAi frontend/theme system | Theme-mode, accessibility, responsive, and browser verification | GitHub evidence + HandOver |
+| 3D Hero lighting | TEAM-EXPERIENCE-029 Hero presentation | Same spatial family. Hero consumes `frontend/spatial/hero-theme-lighting-adapter.js`. **No new Hero skill.** | Hero presentation + theme root | Static adapter/light-rig tests + Playwright | Issue #85/#96 + HandOver |
 | Packaging | Every completed gate requiring full project package | `skills/packaging/project-package/SKILL.md` + applicable ORUCAVEAM/V/A/M skills | Project package script | Extracted-path + byte/hash equality | Full Project ZIP + manifest |
 
 ## 4. Field/domain expansion rule
@@ -118,3 +119,13 @@ The read model is based on:
 `entitlement projection → access-state display`
 
 PayPal is not called directly by the browser for authoritative payment state. Browser-side status is a projection of trusted TeamAi state.
+
+Commerce UI implementation remains blocked until TEAM-BACKEND-001 records a direct Firestore aggregate re-read after the v13 PayPal redelivery.
+
+## 11. 2026-09-07 3D Hero presentation
+
+Hero lighting is presentation-only. Route it through the existing spatial family (Issue #96 bundle). Do not create a Hero skill, a second theme root, or `--hero-*` as Product Law.
+
+Allowed while TEAM-BACKEND-001 endorsement is still open: manufactured light rig, contribution corridor presentation, material/depth, reduced-motion lighting.
+
+Blocked until TEAM-BACKEND-001 endorsement: Seat Identity Inspection, live-domain joins, commerce UI claiming live PayPal/Firestore state, browser writes.

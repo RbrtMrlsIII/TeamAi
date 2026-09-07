@@ -18,6 +18,10 @@ UI_UX-Promax-Skill.md          coordinator
         `-- (Playwright) skills/verification/browser-smoke/SKILL.md
 ```
 
+Do **not** add a 3D Hero skill. Hero is a composition. It consumes the single theme root through `frontend/spatial/hero-theme-lighting-adapter.js` and the existing motion/transition/animation/responsive/accessibility companions.
+
+Seat Identity Inspection and live-domain joins stay blocked until TEAM-BACKEND-001 is endorsed.
+
 ## Legal boxes vs field identity
 
 **Legal boxes** (only five reusable general-purpose boxes):
@@ -49,6 +53,7 @@ Presentation sources under `frontend/spatial/`:
 | `theme-root.ts` | Typed source of theme bootstrap/persistence API |
 | `theme-root.js` | **Browser ESM entry** — keep in sync with `.ts` |
 | `theme-root.css` | Token + primitive surfaces |
+| `hero-theme-lighting-adapter.js` | Deterministic theme/root → Hero lighting map. Not a second root. |
 | `shell-nav.js` | **Browser ESM entry** for shell/nav/deck/F7 scripts |
 | `shell-nav.ts` | Typed mirror of `shell-nav.js` (documentation / future tsc); not loaded by static HTML |
 
