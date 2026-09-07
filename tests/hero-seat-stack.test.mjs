@@ -7,7 +7,7 @@ const stackSrc = fs.readFileSync(path.join(process.cwd(), 'public/hero-seat-stac
 const cssSrc = fs.readFileSync(path.join(process.cwd(), 'public/hero-seat-stack.css'), 'utf8');
 
 test('seat stack exposes identity → responsibility → connection ladder', () => {
-  for (const id of ['identity', 'responsibility', 'connection', 'behavior', 'capabilities', 'authorization']) {
+  for (const id of ['identity', 'responsibility', 'connection', 'behavior', 'capabilities', 'authorization', 'workspace', 'task']) {
     assert.match(stackSrc, new RegExp(`id: '${id}'`));
   }
   const identityAt = stackSrc.indexOf("id: 'identity'");
@@ -25,8 +25,7 @@ test('connection health is presentation-only API surface', () => {
   for (const h of ['unknown', 'offline', 'degraded', 'healthy']) {
     assert.match(stackSrc, new RegExp(h));
   }
-  assert.doesNotMatch(stackSrc, /firestore/i);
-  assert.doesNotMatch(stackSrc, /scheduler/i);
+  assert.doesNotMatch(stackSrc, /getFirestore|writeBatch|scheduler\.pick|paypal/i);
 });
 
 test('responsibility dial is presentation-only', () => {
@@ -51,4 +50,21 @@ test('authorization presentation is reason-bearing and non-authoritative', () =>
   assert.match(stackSrc, /approvalRequired/);
   assert.match(stackSrc, /authorizationScope/);
   assert.doesNotMatch(stackSrc, /paypal/i);
+});
+
+test('workspace task evidence anchors are presentation-only', () => {
+  assert.match(stackSrc, /setWorkspaceTaskPresentation/);
+  assert.match(stackSrc, /getWorkspaceTaskPresentation/);
+  assert.match(stackSrc, /teamai:web-ai-seat-workspace-task-preview/);
+  assert.match(stackSrc, /systemOfRecord: false/);
+  for (const state of ['idle', 'queued', 'running', 'blocked', 'complete', 'failed']) {
+    assert.match(stackSrc, new RegExp(`${state}:`));
+  }
+  for (const ev of ['pending', 'recorded', 'disputed']) {
+    assert.match(stackSrc, new RegExp(ev));
+  }
+  assert.match(cssSrc, /data-task-state=running/);
+  assert.match(cssSrc, /data-workspace-ready=true/);
+  assert.match(cssSrc, /data-evidence-state=disputed/);
+  assert.match(stackSrc, /Workspace ≠ Firestore/);
 });
