@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TeamAi Dictionary</title>
+  <link rel="stylesheet" href="./theme-root.css" />
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.5; }
+    main { max-width: 42rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    h1 { font-size: 1.35rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.75rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { border-bottom: 1px solid color-mix(in srgb, CanvasText 18%, transparent); padding: 0.4rem 0.35rem; text-align: left; vertical-align: top; }
+    a { color: inherit; }
+    .meta { opacity: 0.8; font-size: 0.85rem; }
+    .nav { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+  </style>
+</head>
+<body data-theme="light">
+  <main data-field="F7">
+    <p class="meta" data-field="F0">TeamAi · presentation help · not product authority</p>
+    <h1>Dictionary</h1>
+    <p>Plain meanings for complex tabs and 3D Hero parts. Full text lives in the repo docs so Git remains the source.</p>
+    <nav class="nav" data-field="F2" aria-label="Dictionary links">
+      <a href="https://github.com/RbrtMrlsIII/TeamAi/blob/main/docs/DICTIONARY.md">Full dictionary (GitHub)</a>
+      <a href="https://github.com/RbrtMrlsIII/TeamAi/blob/main/docs/CHRONOLOGY.md">Chronology</a>
+      <a href="https://github.com/RbrtMrlsIII/TeamAi/blob/main/docs/USER_MANUAL_DEPLOY_AND_SEATS.md">Deploy &amp; seats</a>
+      <a href="./index.html">Spatial UI</a>
+    </nav>
+
+    <h2 id="fields">Fields F0–F7</h2>
+    <table>
+      <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>F0</td><td>Identity / orientation</td></tr>
+        <tr><td>F1</td><td>Shell</td></tr>
+        <tr><td>F2</td><td>Navigation</td></tr>
+        <tr><td>F3</td><td>Content</td></tr>
+        <tr><td>F4</td><td>Status (display only)</td></tr>
+        <tr><td>F5</td><td>Action</td></tr>
+        <tr><td>F6</td><td>Modal</td></tr>
+        <tr><td>F7</td><td>Plate</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="hero">3D Hero (short)</h2>
+    <ul>
+      <li><strong>Hero</strong> = presentation of the shared Web AI workspace — not backend authority.</li>
+      <li><strong>Seats around the ring</strong> = participants; center = shared workspace.</li>
+      <li><strong>Inspection spine</strong> = guided visual stages; “authorization” stage does not grant permission.</li>
+      <li><strong>Turn lifecycle</strong> = visual only; not a live provider call.</li>
+    </ul>
+
+    <h2 id="seats">Seats &amp; keys (short)</h2>
+    <ul>
+      <li>Login = Firebase. API keys = server (seat or platform).</li>
+      <li><code>probeMode: stub</code> = free smoke, no provider billing.</li>
+      <li><code>TEAMAI_SEAT_SECRET_KEY</code> = encrypts seat keys; not an OpenAI key.</li>
+    </ul>
+
+    <p class="meta">For chronological decisions and gates, open <a href="https://github.com/RbrtMrlsIII/TeamAi/blob/main/docs/CHRONOLOGY.md">CHRONOLOGY.md</a>.</p>
+  </main>
+</body>
+</html>
