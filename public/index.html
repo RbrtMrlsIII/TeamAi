@@ -54,12 +54,40 @@
           <button data-camera="TEAM_ORBIT">Team</button>
           <button data-camera="WORKSPACE_CLOSE">Workspace</button>
           <button data-camera="OVERHEAD_MAP">Map</button>
+          <button data-hero-engine-open class="primary">Open engine</button>
           <button id="demo-toggle" class="primary">Start turn loop</button>
         </div>
         <div class="status-row">
           <span id="state-label">IDLE</span>
           <span id="seat-label">Next: Web AI Seat 1</span>
           <button id="motion-toggle" class="quiet">Reduced motion: off</button>
+        </div>
+      </section>
+
+      <section id="hero-auth-panel" class="hero-auth-panel" aria-label="Authentication controls" aria-hidden="true" hidden>
+        <div class="hero-auth-panel__inner" role="dialog" aria-modal="false" aria-labelledby="auth-title">
+          <div class="hero-auth-panel__topline">
+            <span class="hero-auth-panel__kicker">ENGINE / AUTH</span>
+            <button type="button" class="quiet" data-auth-close>Close</button>
+          </div>
+          <h2 id="auth-title" data-auth-title>Sign in to TeamAi</h2>
+          <div class="auth-mode" role="tablist" aria-label="Authentication mode">
+            <button type="button" role="tab" data-auth-mode="login" aria-selected="true">Login</button>
+            <button type="button" role="tab" data-auth-mode="signup" aria-selected="false">Sign up</button>
+          </div>
+          <form data-auth-form="login">
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+            <button type="submit" class="primary">Continue</button>
+          </form>
+          <form data-auth-form="signup" hidden>
+            <label>Name<input name="name" type="text" autocomplete="name" required /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" required /></label>
+            <button type="submit" class="primary">Create account</button>
+          </form>
+          <p id="auth-status" class="hero-auth-panel__status" role="status">Firebase Authentication connection is not enabled in this build yet.</p>
+          <p class="hero-auth-panel__note">Credential authority belongs to the authenticated application layer. This Hero only presents the handoff surface.</p>
         </div>
       </section>
 
@@ -70,5 +98,6 @@
     <script type="module" src="./hero-parts.js"></script>
     <script type="module" src="./hero-seat-stack.js"></script>
     <script type="module" src="./hero-semantic-camera.js"></script>
+    <script type="module" src="./hero-auth-handoff.js"></script>
   </body>
 </html>
