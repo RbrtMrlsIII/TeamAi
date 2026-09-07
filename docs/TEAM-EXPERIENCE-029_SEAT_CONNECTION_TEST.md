@@ -1,11 +1,11 @@
-# TEAM-EXPERIENCE-029 — Seat connection Test (phase 3–6)
+# TEAM-EXPERIENCE-029 — Seat connection Test (phase 3–7)
 
 **Status:** OPERATING CONTRACT / NOT PRODUCT LAW  
 **Date:** 2026-09-07
 
 ## Purpose
 
-Trusted server projection of seat connection health, with optional **server-side durable write**. The browser never writes Firestore for connection health.
+Trusted server projection of seat connection health, optional durable write, and **HTTP provider health probe** — browser never writes Firestore.
 
 ## Authority
 
@@ -13,72 +13,62 @@ Trusted server projection of seat connection health, with optional **server-side
 |-------|------|
 | Firebase Auth | Identity / ID token |
 | Edge `teamai-seat-connection-test` | Probe + optional durable health write |
-| Firestore | Seat doc + create-only `connection-tests/{probeId}` |
+| Provider HTTP (Edge only) | Models-list / GET health — **not** chat or tools |
 | Browser | Display only |
 
-## Phase 6 — Durable health write
+## Phase 7 — Real provider HTTP probe
 
-When **both** `workplaceId` and `projectId` are present (and `persist !== false`):
+`runConnectionProbe()` is async and supports:
 
-1. Run `runConnectionProbe()` (currently **stub-edge-runtime**; seam ready for real provider HTTP later).
-2. **Create-only** event:  
-   `accounts/{uid}/workplaces/{workplaceId}/projects/{projectId}/seats/{seatId}/connection-tests/{probeId}`
-3. **Patch** existing seat or **create** seat with:
-   - `connectionHealth`
-   - `lastProbedAt`, `lastProbeId`, `lastProbe`, `lastProbeDetail`
-4. Return projection with `durableWritten: true`, `source: "domain-durable"`.
+| `probeMode` | Behavior |
+|-------------|----------|
+| `auto` (default) | HTTP when API key / probe URL available; else stub |
+| `http` | Require HTTP config; `degraded` if unconfigured |
+| `stub` | Baseline / catalog only |
 
-Without workplace/project → projection only (`domain-stub` / `domain-read`), **no write** (read/write economy).
+### Provider kinds
 
-### Probe seam (not full external provider yet)
+| Kind | How selected | HTTP |
+|------|--------------|------|
+| `openai` | name contains openai/gpt, or `providerKind` | `GET https://api.openai.com/v1/models` |
+| `anthropic` | anthropic/claude, or `providerKind` | `GET https://api.anthropic.com/v1/models` |
+| `generic` | `probeUrl` / `TEAMAI_PROVIDER_PROBE_URL` | GET that URL |
+| `stub` | fixture names without kind | no external call |
 
-```text
-runConnectionProbe({ provider, model, baselineHealth, forceHealth? })
-  → { connectionHealth, probe, probeDetail }
-```
+Secrets (Supabase Edge secrets): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, optional `TEAMAI_PROVIDER_PROBE_URL`.
 
-Today: stub (baseline or `forceHealth` for harnesses).  
-Later: same function body can call a real provider health endpoint without changing the durable write shape.
+Status → health: 2xx **healthy**; 401/403/404/429 **degraded**; 5xx / timeout **offline**.
 
-### Request body
+**Not performed:** chat completions, embeddings spend loops, tool calls.
+
+### Request extras
 
 ```json
 {
   "seatId": "alpha",
   "workplaceId": "wp-1",
   "projectId": "proj-1",
-  "persist": true,
-  "forceHealth": "healthy"
+  "providerKind": "openai",
+  "probeMode": "auto",
+  "probeUrl": null,
+  "forceHealth": null
 }
 ```
 
-### Deploy
+## Phase 6 durable write
+
+When workplace + project present: create-only `connection-tests/{probeId}` + patch/create seat health.
+
+## Deploy
 
 ```bash
 npx supabase functions deploy teamai-seat-connection-test --project-ref <ref> --no-verify-jwt
+# optional secrets:
+npx supabase secrets set OPENAI_API_KEY=sk-... --project-ref <ref>
 ```
 
 See `docs/DEPLOY_SEAT_CONNECTION_TEST.md`.
 
-## Plate wire (phase 5)
-
-Browser uses `seat-connection-wire.js`. Config:
-
-```js
-window.TEAMAI_SEAT_CONNECTION_BASE_URL = "https://<ref>.supabase.co/functions/v1";
-window.TEAMAI_FIREBASE_ID_TOKEN = "…";
-window.TEAMAI_WORKPLACE_ID = "wp-1";  // required for durable write
-window.TEAMAI_PROJECT_ID = "proj-1";
-```
-
-## Not yet
-
-- Real external provider HTTP probe inside `runConnectionProbe`
-- Browser Activate / entitlement mutation
-- PayPal / commerce
-
 ## Phase ladder
 
-1–5 done (read model → plate wire)  
-6. **Durable health write + probe seam — this PR**  
-7. Real provider probe implementation (same Edge path)
+1–6 done · **7 HTTP probe — this PR**

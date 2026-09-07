@@ -10,24 +10,28 @@ import {
 } from "../_shared/firestore.ts";
 
 /**
- * TEAM-EXPERIENCE-029 — Seat connection Test (phase 4–6)
+ * TEAM-EXPERIENCE-029 — Seat connection Test (phase 4–7)
  *
  * verified Firebase UID
  *   → optional Firestore seat read
- *   → connection probe (stub provider runtime in this slice)
- *   → optional durable write when workplaceId + projectId present:
- *       create-only connection-tests/{probeId}
- *       patch-or-create seats/{seatId} connectionHealth
+ *   → connection probe:
+ *       forceHealth → harness
+ *       probeMode stub | http | auto (default auto)
+ *       HTTP health checks for openai / anthropic / generic (no chat completion)
+ *       falls back to stub when credentials missing
+ *   → optional durable write when workplaceId + projectId present
  *   → JSON projection for browser (presentation only)
  *
- * Browser never writes. Commerce / PayPal out of scope.
- * Real external provider HTTP probe remains a later upgrade of runConnectionProbe().
+ * Browser never writes. No provider chat/tool execution in this path.
+ * Commerce / PayPal out of scope.
  */
 
 const FIREBASE_PROJECT_ID = "team-ai-official";
 const FIREBASE_JWKS = createRemoteJWKSet(
   new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"),
 );
+
+const PROBE_TIMEOUT_MS = 5_000;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -42,6 +46,15 @@ const CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-headers": "authorization, content-type",
   "access-control-allow-methods": "POST, OPTIONS",
+};
+
+type Health = "unknown" | "offline" | "degraded" | "healthy";
+
+type ProbeResult = {
+  connectionHealth: Health;
+  probe: string;
+  probeDetail: string;
+  httpStatus?: number;
 };
 
 async function verifyFirebaseUid(req: Request): Promise<string> {
@@ -83,7 +96,7 @@ function decodeFields(fields: Record<string, unknown> | undefined): Record<strin
   return out;
 }
 
-function normalizeHealth(raw: unknown): "unknown" | "offline" | "degraded" | "healthy" {
+function normalizeHealth(raw: unknown): Health {
   const v = String(raw ?? "").trim().toLowerCase();
   if (["healthy", "ok", "ready", "pass", "passed"].includes(v)) return "healthy";
   if (["degraded", "warn", "warning", "partial"].includes(v)) return "degraded";
@@ -126,21 +139,127 @@ function stubSeatCatalog(): Record<string, Record<string, string>> {
   };
 }
 
+/** Map provider display name / explicit kind → probe family. */
+function resolveProviderKind(provider: string, explicit?: string | null): "openai" | "anthropic" | "generic" | "stub" {
+  const e = String(explicit ?? "").trim().toLowerCase();
+  if (e === "openai" || e === "anthropic" || e === "generic" || e === "stub") return e;
+  const p = String(provider ?? "").trim().toLowerCase();
+  if (!p) return "stub";
+  if (p.includes("openai") || p.includes("gpt")) return "openai";
+  if (p.includes("anthropic") || p.includes("claude")) return "anthropic";
+  if (p.startsWith("http://") || p.startsWith("https://")) return "generic";
+  // Fixture names like "Provider One" → stub unless keys + generic URL configured
+  return "stub";
+}
+
+function healthFromHttpStatus(status: number): Health {
+  if (status >= 200 && status < 300) return "healthy";
+  if (status === 401 || status === 403) return "degraded"; // reachable but auth/config problem
+  if (status === 404 || status === 429) return "degraded";
+  if (status >= 500) return "offline";
+  return "degraded";
+}
+
+function readApiKey(kind: "openai" | "anthropic" | "generic"): string | null {
+  const pick = (...names: string[]) => {
+    for (const n of names) {
+      const v = Deno.env.get(n)?.trim();
+      if (v) return v;
+    }
+    return null;
+  };
+  if (kind === "openai") return pick("OPENAI_API_KEY", "TEAMAI_OPENAI_API_KEY");
+  if (kind === "anthropic") return pick("ANTHROPIC_API_KEY", "TEAMAI_ANTHROPIC_API_KEY");
+  return pick("TEAMAI_PROVIDER_API_KEY", "PROVIDER_API_KEY");
+}
+
+function buildProbeRequest(
+  kind: "openai" | "anthropic" | "generic",
+  apiKey: string | null,
+  probeUrl?: string | null,
+): { url: string; headers: Record<string, string>; probeLabel: string } | null {
+  if (kind === "openai") {
+    if (!apiKey) return null;
+    return {
+      url: "https://api.openai.com/v1/models",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        accept: "application/json",
+      },
+      probeLabel: "openai-models",
+    };
+  }
+  if (kind === "anthropic") {
+    if (!apiKey) return null;
+    return {
+      url: "https://api.anthropic.com/v1/models",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        accept: "application/json",
+      },
+      probeLabel: "anthropic-models",
+    };
+  }
+  // generic: require explicit URL (body or env) — never invent a host
+  const url =
+    (probeUrl && probeUrl.trim()) ||
+    Deno.env.get("TEAMAI_PROVIDER_PROBE_URL")?.trim() ||
+    null;
+  if (!url || !/^https?:\/\//i.test(url)) return null;
+  const headers: Record<string, string> = { accept: "application/json" };
+  if (apiKey) headers.authorization = `Bearer ${apiKey}`;
+  return { url, headers, probeLabel: "generic-http" };
+}
+
+async function httpProbe(
+  req: { url: string; headers: Record<string, string>; probeLabel: string },
+  fetchImpl: typeof fetch = fetch,
+): Promise<ProbeResult> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+  try {
+    const response = await fetchImpl(req.url, {
+      method: "GET",
+      headers: req.headers,
+      signal: controller.signal,
+    });
+    const connectionHealth = healthFromHttpStatus(response.status);
+    return {
+      connectionHealth,
+      probe: `http:${req.probeLabel}`,
+      probeDetail: `http:${response.status}:${req.probeLabel}`,
+      httpStatus: response.status,
+    };
+  } catch (err) {
+    const name = err instanceof Error ? err.name : "Error";
+    const msg = err instanceof Error ? err.message : "probe_failed";
+    const aborted = name === "AbortError" || /abort/i.test(msg);
+    return {
+      connectionHealth: "offline",
+      probe: `http:${req.probeLabel}`,
+      probeDetail: aborted ? `timeout:${PROBE_TIMEOUT_MS}ms` : `error:${msg.slice(0, 80)}`,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
- * Connection probe seam. This slice uses stub-edge-runtime only.
- * Later: replace body with real provider health HTTP under the same return shape.
+ * Connection probe: real HTTP when credentials/URL available; else stub.
+ * Does not run chat completions or tool calls — models list / GET only.
  */
-function runConnectionProbe(input: {
+async function runConnectionProbe(input: {
   seatId: string;
   provider: string;
   model: string;
   baselineHealth: string;
   forceHealth?: string | null;
-}): {
-  connectionHealth: "unknown" | "offline" | "degraded" | "healthy";
-  probe: string;
-  probeDetail: string;
-} {
+  providerKind?: string | null;
+  probeMode?: string | null;
+  probeUrl?: string | null;
+  fetchImpl?: typeof fetch;
+}): Promise<ProbeResult> {
   if (input.forceHealth) {
     return {
       connectionHealth: normalizeHealth(input.forceHealth),
@@ -148,12 +267,46 @@ function runConnectionProbe(input: {
       probeDetail: `forced:${normalizeHealth(input.forceHealth)}`,
     };
   }
-  // Stub: trust baseline catalog/durable health; no external HTTP yet.
-  return {
-    connectionHealth: normalizeHealth(input.baselineHealth),
-    probe: "stub-edge-runtime",
-    probeDetail: `stub:${input.provider || "none"}:${input.model || "none"}`,
-  };
+
+  const mode = String(input.probeMode ?? "auto").trim().toLowerCase();
+  if (mode === "stub") {
+    return {
+      connectionHealth: normalizeHealth(input.baselineHealth),
+      probe: "stub-edge-runtime",
+      probeDetail: `stub:${input.provider || "none"}:${input.model || "none"}`,
+    };
+  }
+
+  const kind = resolveProviderKind(input.provider, input.providerKind);
+  if (kind === "stub" && mode !== "http") {
+    return {
+      connectionHealth: normalizeHealth(input.baselineHealth),
+      probe: "stub-edge-runtime",
+      probeDetail: `stub:${input.provider || "none"}:${input.model || "none"}`,
+    };
+  }
+
+  const effectiveKind = kind === "stub" ? "generic" : kind;
+  const apiKey = readApiKey(effectiveKind);
+  const built = buildProbeRequest(effectiveKind, apiKey, input.probeUrl);
+
+  if (!built) {
+    // auto without credentials → stub; explicit http without config → degraded
+    if (mode === "http") {
+      return {
+        connectionHealth: "degraded",
+        probe: "http:unconfigured",
+        probeDetail: "missing_api_key_or_probe_url",
+      };
+    }
+    return {
+      connectionHealth: normalizeHealth(input.baselineHealth),
+      probe: "stub-edge-runtime",
+      probeDetail: `stub-fallback:${input.provider || "none"}`,
+    };
+  }
+
+  return httpProbe(built, input.fetchImpl ?? fetch);
 }
 
 async function persistConnectionProbe(input: {
@@ -252,21 +405,28 @@ Deno.serve(async (req: Request) => {
         : null;
     const projectId =
       typeof body.projectId === "string" && body.projectId.trim() ? body.projectId.trim() : null;
-    const persistRequested = body.persist !== false; // default true when path is complete
+    const persistRequested = body.persist !== false;
     const forceHealth =
       typeof body.forceHealth === "string" && body.forceHealth.trim()
         ? body.forceHealth.trim()
         : null;
+    const providerKind =
+      typeof body.providerKind === "string" && body.providerKind.trim()
+        ? body.providerKind.trim()
+        : null;
+    const probeMode =
+      typeof body.probeMode === "string" && body.probeMode.trim() ? body.probeMode.trim() : "auto";
+    const probeUrl =
+      typeof body.probeUrl === "string" && body.probeUrl.trim() ? body.probeUrl.trim() : null;
 
     let durable: Record<string, unknown> | null = null;
     let durablePath: string | null = null;
-    let accessToken: string | null = null;
 
     if (workplaceId && projectId) {
       durablePath =
         `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}`;
       try {
-        accessToken = await getFirestoreAccessToken();
+        const accessToken = await getFirestoreAccessToken();
         const doc = await firestoreGet(durablePath, accessToken);
         if (doc.exists) durable = decodeFields(doc.fields as Record<string, unknown>);
       } catch (err) {
@@ -303,12 +463,15 @@ Deno.serve(async (req: Request) => {
       durable?.connectionHealth ?? durable?.health ?? durable?.connection ?? stub.connectionHealth,
     );
 
-    const probeResult = runConnectionProbe({
+    const probeResult = await runConnectionProbe({
       seatId,
       provider,
       model,
       baselineHealth,
       forceHealth,
+      providerKind,
+      probeMode,
+      probeUrl,
     });
 
     const probedAt = new Date().toISOString();
@@ -378,6 +541,7 @@ Deno.serve(async (req: Request) => {
       source: durableWritten ? "domain-durable" : durable ? "domain-read" : "domain-stub",
       probe: probeResult.probe,
       probeDetail: probeResult.probeDetail,
+      httpStatus: probeResult.httpStatus ?? null,
       probeId,
       probedAt,
       durablePath,
