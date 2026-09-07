@@ -5,6 +5,21 @@ const HEALTH = Object.freeze({
   healthy: { label: 'OK', title: 'Healthy (presentation preview)' }
 });
 
+/** Reason-bearing authorization presentation. Not durable authority. */
+const AUTH_STATES = Object.freeze({
+  available: { label: 'AVL', title: 'Available — authorized for presented scope (preview)' },
+  blocked: { label: 'BLK', title: 'Blocked — policy or eligibility prevents use (preview)' },
+  unauthorized: { label: 'UNA', title: 'Unauthorized — no grant for this seat/scope (preview)' },
+  degraded: { label: 'DEG', title: 'Degraded — entitled but compatibility/health reduced (preview)' },
+  unavailable: { label: 'NAV', title: 'Unavailable — capability or connection not present (preview)' }
+});
+
+const ENTITLEMENT_STATES = Object.freeze({
+  none: { label: 'NONE', title: 'No TeamAi entitlement projection (presentation)' },
+  entitled: { label: 'ENT', title: 'Entitled (presentation projection)' },
+  expired: { label: 'EXP', title: 'Entitlement expired (presentation projection)' }
+});
+
 /** Workspace / task / evidence presentation. Not durable system of record. */
 const TASK_STATES = Object.freeze({
   idle: { label: 'IDL', title: 'Idle — no active workspace task (preview)' },
@@ -36,7 +51,7 @@ const LAYERS = [
   { id: 'toolkit', label: 'Built-in Toolkit', sub: 'included skills', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_SKILLS', handoff: 'skills' },
   { id: 'zipskills', label: 'ZipSkills', sub: 'optional skills', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_ZIPSKILLS', handoff: 'zipskills' },
   { id: 'capabilities', label: 'Capabilities', sub: 'tools / MCP availability', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_CAPABILITY', handoff: 'capabilities' },
-  { id: 'authorization', label: 'Authorization', sub: 'scope / approvals', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_AUTHORIZATION', handoff: 'authorization' },
+  { id: 'authorization', label: 'Authorization', sub: 'scope / approvals (reason-bearing preview)', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_AUTHORIZATION', handoff: 'authorization', auth: true },
   { id: 'workspace', label: 'Workspace', sub: 'shared ref / history (preview, not Firestore)', camera: 'WORKSPACE_CLOSE', semanticCamera: 'MECHANISM_WORKSPACE', handoff: 'workspace', workspace: true },
   { id: 'task', label: 'Task / Evidence', sub: 'state / result / provenance / verification (preview)', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_TASK', handoff: 'task-evidence', task: true }
 ];
@@ -46,10 +61,12 @@ if (!stack) throw new Error('Web AI Seat stack mount missing');
 
 let activeLayer = null;
 const equipped = new Set();
-/** Presentation-only connection health. Never durable domain authority. */
 let connectionHealth = 'unknown';
-/** Presentation-only responsibility dial 0–1. */
 let responsibilityDial = 0.35;
+let authorizationState = 'unavailable';
+let authorizationScope = 'project';
+let approvalRequired = true;
+let entitlementState = 'none';
 let workspaceRef = 'shared-workspace';
 let historyCount = 0;
 let handoffReady = false;
@@ -57,6 +74,13 @@ let taskState = 'idle';
 let resultState = 'none';
 let evidenceState = 'none';
 let provenanceLabel = 'no-trace';
+
+function authorizationReason() {
+  const auth = AUTH_STATES[authorizationState] || AUTH_STATES.unavailable;
+  const ent = ENTITLEMENT_STATES[entitlementState] || ENTITLEMENT_STATES.none;
+  const approval = approvalRequired ? 'approval required' : 'no extra approval shown';
+  return `${auth.title} · scope=${authorizationScope} · ${ent.title} · ${approval}`;
+}
 
 function workspaceReason() {
   const ready = handoffReady ? 'handoff ready' : 'handoff not ready';
@@ -86,6 +110,16 @@ function setVisualState() {
       state.title = h.title;
       el.dataset.connectionHealth = connectionHealth;
       el.setAttribute('data-health', connectionHealth);
+    } else if (id === 'authorization' && state) {
+      const auth = AUTH_STATES[authorizationState] || AUTH_STATES.unavailable;
+      state.textContent = auth.label;
+      state.title = authorizationReason();
+      el.dataset.authState = authorizationState;
+      el.dataset.authScope = authorizationScope;
+      el.dataset.approvalRequired = String(approvalRequired);
+      el.dataset.entitlement = entitlementState;
+      el.setAttribute('data-auth-state', authorizationState);
+      el.setAttribute('aria-label', `Authorization: ${authorizationReason()}`);
     } else if (id === 'workspace' && state) {
       state.textContent = handoffReady ? 'RDY' : 'WS';
       state.title = workspaceReason();
@@ -119,6 +153,10 @@ function setVisualState() {
   });
   stack.dataset.activeLayer = activeLayer || '';
   stack.dataset.connectionHealth = connectionHealth;
+  stack.dataset.authState = authorizationState;
+  stack.dataset.authScope = authorizationScope;
+  stack.dataset.approvalRequired = String(approvalRequired);
+  stack.dataset.entitlement = entitlementState;
   stack.dataset.workspaceRef = workspaceRef;
   stack.dataset.historyCount = String(historyCount);
   stack.dataset.handoffReady = String(handoffReady);
@@ -141,6 +179,10 @@ function inspect(layer) {
       semanticCamera: activeLayer ? layer.semanticCamera : null,
       connectionHealth,
       responsibilityDial,
+      authorizationState,
+      authorizationScope,
+      approvalRequired,
+      entitlementState,
       workspaceRef,
       historyCount,
       handoffReady,
@@ -176,12 +218,12 @@ LAYERS.forEach((layer, index) => {
 
 const note = document.createElement('p');
 note.className = 'seat-stack__note';
-note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health, workspace, and task/evidence badges are presentation previews only.';
+note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health, authorization, workspace, and task/evidence badges are presentation previews only.';
 stack.appendChild(note);
 
 const distinction = document.createElement('p');
 distinction.className = 'seat-stack__distinction';
-distinction.innerHTML = '<b>Workspace ≠ Firestore</b><span>The shared Web AI workspace is not TeamAi, not the scheduler, and not durable authority. Task, result, provenance, and evidence anchors summarize presentation state — they do not invent or persist records.</span>';
+distinction.innerHTML = '<b>Capability ≠ Authorization · Workspace ≠ Firestore</b><span>Availability is inspected separately from allowed scope. The shared Web AI workspace is not TeamAi, not the scheduler, and not durable authority. Identity, responsibility, connection health, authorization, task, result, provenance, and evidence labels are presentation only — they do not invent or persist records and do not grant permission.</span>';
 stack.appendChild(distinction);
 
 const handoff = document.createElement('button');
@@ -231,6 +273,40 @@ function setResponsibilityDial(value = 0.35) {
     detail: { dial: responsibilityDial, presentationOnly: true, durable: false }
   }));
   return responsibilityDial;
+}
+
+function setAuthorizationPresentation(next = {}) {
+  if (next.state && Object.prototype.hasOwnProperty.call(AUTH_STATES, next.state)) {
+    authorizationState = next.state;
+  }
+  if (typeof next.scope === 'string' && next.scope.trim()) {
+    authorizationScope = next.scope.trim().slice(0, 48);
+  }
+  if (typeof next.approvalRequired === 'boolean') {
+    approvalRequired = next.approvalRequired;
+  }
+  if (next.entitlement && Object.prototype.hasOwnProperty.call(ENTITLEMENT_STATES, next.entitlement)) {
+    entitlementState = next.entitlement;
+  }
+  setVisualState();
+  window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-authorization-preview', {
+    detail: {
+      state: authorizationState,
+      scope: authorizationScope,
+      approvalRequired,
+      entitlement: entitlementState,
+      reason: authorizationReason(),
+      presentationOnly: true,
+      durable: false,
+      grantsPermission: false
+    }
+  }));
+  return {
+    state: authorizationState,
+    scope: authorizationScope,
+    approvalRequired,
+    entitlement: entitlementState
+  };
 }
 
 function setWorkspaceTaskPresentation(next = {}) {
@@ -291,6 +367,8 @@ function getWorkspaceTaskPresentation() {
 
 window.TeamAiHeroSeatStack = {
   layers: () => LAYERS.map((layer) => ({ ...layer })),
+  authStates: () => Object.keys(AUTH_STATES),
+  entitlementStates: () => Object.keys(ENTITLEMENT_STATES),
   taskStates: () => Object.keys(TASK_STATES),
   resultStates: () => Object.keys(RESULT_STATES),
   evidenceStates: () => Object.keys(EVIDENCE_STATES),
@@ -298,6 +376,15 @@ window.TeamAiHeroSeatStack = {
   getEquippedLayers: () => Array.from(equipped),
   getConnectionHealth: () => connectionHealth,
   getResponsibilityDial: () => responsibilityDial,
+  getAuthorizationPresentation: () => ({
+    state: authorizationState,
+    scope: authorizationScope,
+    approvalRequired,
+    entitlement: entitlementState,
+    reason: authorizationReason(),
+    presentationOnly: true,
+    durable: false
+  }),
   getWorkspaceTaskPresentation,
   inspect: (id) => {
     const layer = LAYERS.find((item) => item.id === id);
@@ -307,6 +394,7 @@ window.TeamAiHeroSeatStack = {
   setEquipped,
   setConnectionHealth,
   setResponsibilityDial,
+  setAuthorizationPresentation,
   setWorkspaceTaskPresentation,
   setConfiguration: (configuration = {}) => {
     Object.keys(configuration).forEach((id) => setEquipped(id, Boolean(configuration[id])));
