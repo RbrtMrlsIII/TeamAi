@@ -5,6 +5,21 @@ const HEALTH = Object.freeze({
   healthy: { label: 'OK', title: 'Healthy (presentation preview)' }
 });
 
+/** Reason-bearing authorization presentation. Not durable authority. */
+const AUTH_STATES = Object.freeze({
+  available: { label: 'AVL', title: 'Available — authorized for presented scope (preview)' },
+  blocked: { label: 'BLK', title: 'Blocked — policy or eligibility prevents use (preview)' },
+  unauthorized: { label: 'UNA', title: 'Unauthorized — no grant for this seat/scope (preview)' },
+  degraded: { label: 'DEG', title: 'Degraded — entitled but compatibility/health reduced (preview)' },
+  unavailable: { label: 'NAV', title: 'Unavailable — capability or connection not present (preview)' }
+});
+
+const ENTITLEMENT_STATES = Object.freeze({
+  none: { label: 'NONE', title: 'No TeamAi entitlement projection (presentation)' },
+  entitled: { label: 'ENT', title: 'Entitled (presentation projection)' },
+  expired: { label: 'EXP', title: 'Entitlement expired (presentation projection)' }
+});
+
 const LAYERS = [
   { id: 'identity', label: 'Identity', sub: 'Web AI Seat label / role (presentation)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_IDENTITY', handoff: 'identity' },
   { id: 'responsibility', label: 'Responsibility', sub: 'duty dial (presentation, not authority)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_RESPONSIBILITY', handoff: 'responsibility', dial: true },
@@ -13,7 +28,7 @@ const LAYERS = [
   { id: 'toolkit', label: 'Built-in Toolkit', sub: 'included skills', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_SKILLS', handoff: 'skills' },
   { id: 'zipskills', label: 'ZipSkills', sub: 'optional skills', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_ZIPSKILLS', handoff: 'zipskills' },
   { id: 'capabilities', label: 'Capabilities', sub: 'tools / MCP availability', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_CAPABILITY', handoff: 'capabilities' },
-  { id: 'authorization', label: 'Authorization', sub: 'scope / approvals', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_AUTHORIZATION', handoff: 'authorization' },
+  { id: 'authorization', label: 'Authorization', sub: 'scope / approvals (reason-bearing preview)', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_AUTHORIZATION', handoff: 'authorization', auth: true },
   { id: 'workspace', label: 'Workspace', sub: 'shared ref / state', camera: 'WORKSPACE_CLOSE', semanticCamera: 'MECHANISM_WORKSPACE', handoff: 'workspace' },
   { id: 'task', label: 'Task / Evidence', sub: 'state / verification', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_TASK', handoff: 'task-evidence' }
 ];
@@ -23,10 +38,19 @@ if (!stack) throw new Error('Web AI Seat stack mount missing');
 
 let activeLayer = null;
 const equipped = new Set();
-/** Presentation-only connection health. Never durable domain authority. */
 let connectionHealth = 'unknown';
-/** Presentation-only responsibility dial 0–1. */
 let responsibilityDial = 0.35;
+let authorizationState = 'unavailable';
+let authorizationScope = 'project';
+let approvalRequired = true;
+let entitlementState = 'none';
+
+function authorizationReason() {
+  const auth = AUTH_STATES[authorizationState] || AUTH_STATES.unavailable;
+  const ent = ENTITLEMENT_STATES[entitlementState] || ENTITLEMENT_STATES.none;
+  const approval = approvalRequired ? 'approval required' : 'no extra approval shown';
+  return `${auth.title} · scope=${authorizationScope} · ${ent.title} · ${approval}`;
+}
 
 function setVisualState() {
   stack.querySelectorAll('[data-seat-layer]').forEach((el) => {
@@ -44,6 +68,16 @@ function setVisualState() {
       state.title = h.title;
       el.dataset.connectionHealth = connectionHealth;
       el.setAttribute('data-health', connectionHealth);
+    } else if (id === 'authorization' && state) {
+      const auth = AUTH_STATES[authorizationState] || AUTH_STATES.unavailable;
+      state.textContent = auth.label;
+      state.title = authorizationReason();
+      el.dataset.authState = authorizationState;
+      el.dataset.authScope = authorizationScope;
+      el.dataset.approvalRequired = String(approvalRequired);
+      el.dataset.entitlement = entitlementState;
+      el.setAttribute('data-auth-state', authorizationState);
+      el.setAttribute('aria-label', `Authorization: ${authorizationReason()}`);
     } else if (state) {
       state.textContent = isEquipped ? 'ON' : '·';
       state.removeAttribute('title');
@@ -57,6 +91,10 @@ function setVisualState() {
   });
   stack.dataset.activeLayer = activeLayer || '';
   stack.dataset.connectionHealth = connectionHealth;
+  stack.dataset.authState = authorizationState;
+  stack.dataset.authScope = authorizationScope;
+  stack.dataset.approvalRequired = String(approvalRequired);
+  stack.dataset.entitlement = entitlementState;
   stack.style.setProperty('--equipped-count', String(equipped.size));
   stack.style.setProperty('--responsibility-dial', String(responsibilityDial));
 }
@@ -72,6 +110,10 @@ function inspect(layer) {
       semanticCamera: activeLayer ? layer.semanticCamera : null,
       connectionHealth,
       responsibilityDial,
+      authorizationState,
+      authorizationScope,
+      approvalRequired,
+      entitlementState,
       presentationOnly: true
     }
   }));
@@ -100,12 +142,12 @@ LAYERS.forEach((layer, index) => {
 
 const note = document.createElement('p');
 note.className = 'seat-stack__note';
-note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health badges are presentation previews only.';
+note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health and authorization badges are presentation previews only.';
 stack.appendChild(note);
 
 const distinction = document.createElement('p');
 distinction.className = 'seat-stack__distinction';
-distinction.innerHTML = '<b>Capability ≠ Authorization</b><span>Availability is inspected separately from allowed scope. Identity, responsibility, and connection health are presentation labels — not durable authority.</span>';
+distinction.innerHTML = '<b>Capability ≠ Authorization</b><span>Availability is inspected separately from allowed scope. Identity, responsibility, connection health, and authorization labels are presentation only — not durable authority and not an action that grants permission.</span>';
 stack.appendChild(distinction);
 
 const handoff = document.createElement('button');
@@ -157,12 +199,57 @@ function setResponsibilityDial(value = 0.35) {
   return responsibilityDial;
 }
 
+function setAuthorizationPresentation(next = {}) {
+  if (next.state && Object.prototype.hasOwnProperty.call(AUTH_STATES, next.state)) {
+    authorizationState = next.state;
+  }
+  if (typeof next.scope === 'string' && next.scope.trim()) {
+    authorizationScope = next.scope.trim().slice(0, 48);
+  }
+  if (typeof next.approvalRequired === 'boolean') {
+    approvalRequired = next.approvalRequired;
+  }
+  if (next.entitlement && Object.prototype.hasOwnProperty.call(ENTITLEMENT_STATES, next.entitlement)) {
+    entitlementState = next.entitlement;
+  }
+  setVisualState();
+  window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-authorization-preview', {
+    detail: {
+      state: authorizationState,
+      scope: authorizationScope,
+      approvalRequired,
+      entitlement: entitlementState,
+      reason: authorizationReason(),
+      presentationOnly: true,
+      durable: false,
+      grantsPermission: false
+    }
+  }));
+  return {
+    state: authorizationState,
+    scope: authorizationScope,
+    approvalRequired,
+    entitlement: entitlementState
+  };
+}
+
 window.TeamAiHeroSeatStack = {
   layers: () => LAYERS.map((layer) => ({ ...layer })),
+  authStates: () => Object.keys(AUTH_STATES),
+  entitlementStates: () => Object.keys(ENTITLEMENT_STATES),
   getActiveLayer: () => activeLayer,
   getEquippedLayers: () => Array.from(equipped),
   getConnectionHealth: () => connectionHealth,
   getResponsibilityDial: () => responsibilityDial,
+  getAuthorizationPresentation: () => ({
+    state: authorizationState,
+    scope: authorizationScope,
+    approvalRequired,
+    entitlement: entitlementState,
+    reason: authorizationReason(),
+    presentationOnly: true,
+    durable: false
+  }),
   inspect: (id) => {
     const layer = LAYERS.find((item) => item.id === id);
     if (layer) inspect(layer);
@@ -171,6 +258,7 @@ window.TeamAiHeroSeatStack = {
   setEquipped,
   setConnectionHealth,
   setResponsibilityDial,
+  setAuthorizationPresentation,
   setConfiguration: (configuration = {}) => {
     Object.keys(configuration).forEach((id) => setEquipped(id, Boolean(configuration[id])));
     return Array.from(equipped);
