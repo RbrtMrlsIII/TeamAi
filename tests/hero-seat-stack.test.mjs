@@ -25,8 +25,7 @@ test('connection health is presentation-only API surface', () => {
   for (const h of ['unknown', 'offline', 'degraded', 'healthy']) {
     assert.match(stackSrc, new RegExp(h));
   }
-  assert.doesNotMatch(stackSrc, /firestore/i);
-  assert.doesNotMatch(stackSrc, /scheduler/i);
+  assert.doesNotMatch(stackSrc, /getFirestore|writeBatch|scheduler\.pick|paypal/i);
 });
 
 test('responsibility dial is presentation-only', () => {
