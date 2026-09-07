@@ -82,17 +82,19 @@ test.describe('Living Web AI Workspace Hero', () => {
     }));
     await expect(page.locator('#hero-auth-panel')).toBeVisible();
     await expect(page.getByRole('tab', { name: 'Login', exact: true })).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByLabel('Email')).toBeVisible();
+    const loginForm = page.locator('form[data-auth-form="login"]');
+    await expect(loginForm.getByLabel('Email')).toBeVisible();
     expect(await authEvent).toMatchObject({ semanticCamera: 'MECHANISM_AUTHENTICATION', presentationOnly: true });
     expect(await page.evaluate(() => (window as any).TeamAiHeroAuthHandoff.getState())).toMatchObject({ open: true, mode: 'login' });
 
     await page.getByRole('tab', { name: 'Sign up', exact: true }).click();
-    await expect(page.getByLabel('Name')).toBeVisible();
-    await expect(page.getByLabel('Password')).toHaveAttribute('autocomplete', 'new-password');
-    await page.getByLabel('Name').fill('Example User');
-    await page.getByLabel('Email').fill('example@example.com');
-    await page.getByLabel('Password').fill('not-sent-password');
-    await page.getByRole('button', { name: 'Create account', exact: true }).click();
+    const signupForm = page.locator('form[data-auth-form="signup"]');
+    await expect(signupForm.getByLabel('Name')).toBeVisible();
+    await expect(signupForm.getByLabel('Password')).toHaveAttribute('autocomplete', 'new-password');
+    await signupForm.getByLabel('Name').fill('Example User');
+    await signupForm.getByLabel('Email').fill('example@example.com');
+    await signupForm.getByLabel('Password').fill('not-sent-password');
+    await signupForm.getByRole('button', { name: 'Create account', exact: true }).click();
     await expect(page.locator('#auth-status')).toContainText('Authentication is not connected yet');
 
     await page.getByRole('button', { name: 'Close', exact: true }).click();
