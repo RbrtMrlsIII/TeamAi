@@ -5,7 +5,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.goto('/hero/');
     await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map', 'Seat', 'Detail']) {
+    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map', 'Open engine', 'Seat', 'Detail']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
     await expect(page.locator('.spatial-part')).toHaveCount(3);
@@ -15,7 +15,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
   });
 
-  test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, and reduced-motion controls', async ({ page }) => {
+  test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, auth handoff, and reduced-motion controls', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
 
@@ -48,9 +48,10 @@ test.describe('Living Web AI Workspace Hero', () => {
     const registryIds = await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.ids());
     expect(registryIds).toEqual([
       'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS', 'MECHANISM_ZIPSKILLS',
-      'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK', 'APP_UI_HANDOFF'
+      'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_AUTHENTICATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK', 'APP_UI_HANDOFF'
     ]);
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_CAPABILITY'))).toBe('DETAIL_ANCHOR');
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_AUTHENTICATION'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('APP_UI_HANDOFF'))).toBeNull();
 
     const inspectionEvent = page.evaluate(() => new Promise((resolve) => {
@@ -74,6 +75,25 @@ test.describe('Living Web AI Workspace Hero', () => {
       document.querySelector('.seat-stack__handoff')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     }));
     expect(await handoffEvent).toMatchObject({ semanticCamera: 'APP_UI_HANDOFF', physicalCamera: null, source: 'seat-normal-ui-handoff', normalUi: true, presentationOnly: true });
+
+    const authEvent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:web-ai-hero-engine-open', (event: any) => resolve(event.detail), { once: true });
+      document.querySelector('[data-hero-engine-open]')?.click();
+    }));
+    await expect(page.locator('#hero-auth-panel')).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Login', exact: true })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByLabel('Email')).toBeVisible();
+    expect(await authEvent).toMatchObject({ semanticCamera: 'MECHANISM_AUTHENTICATION', presentationOnly: true });
+    expect(await page.evaluate(() => (window as any).TeamAiHeroAuthHandoff.getState())).toMatchObject({ open: true, mode: 'login' });
+
+    await page.getByRole('tab', { name: 'Sign up', exact: true }).click();
+    await expect(page.getByLabel('Name')).toBeVisible();
+    await expect(page.getByLabel('Password')).toHaveAttribute('autocomplete', 'new-password');
+    await page.getByRole('button', { name: 'Create account', exact: true }).click();
+    await expect(page.locator('#auth-status')).toContainText('Authentication is not connected yet');
+
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeHidden();
 
     await page.getByRole('button', { name: 'Start turn loop', exact: true }).click();
     await expect(page.locator('#state-label')).toHaveText(/FOCUS|ACTIVE|CONTRIBUTE/);
