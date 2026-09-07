@@ -68,11 +68,6 @@ reducedQuery?.addEventListener?.('change', event => {
   publish('motion-preference');
 });
 
-window.addEventListener('teamai:web-ai-hero-engine-open', event => {
-  if (event.detail?.presentationOnly !== true) return;
-  publish('engine-open');
-});
-
 window.TeamAiHeroInspectionSpine = Object.freeze({
   stages: () => STAGES.map(({ id, label, semanticCamera }) => ({ id, label, semanticCamera })),
   current: () => ({ ...stage(), index, reducedMotion }),
