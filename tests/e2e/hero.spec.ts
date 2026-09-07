@@ -9,7 +9,7 @@ test.describe('Living Web AI Workspace Hero', () => {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
     await expect(page.locator('.spatial-part')).toHaveCount(3);
-    await expect(page.locator('[data-seat-layer]')).toHaveCount(8);
+    await expect(page.locator('[data-seat-layer]')).toHaveCount(10);
     const path = testInfo.outputPath('hero-wide.png');
     await page.screenshot({ path });
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
@@ -18,21 +18,21 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, inspection spine, auth handoff, and reduced-motion controls', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/13)');
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
 
     const stageEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-hero-inspection-stage', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('[data-inspection-next]')?.click();
     }));
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/13)');
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/15)');
     expect(await stageEvent).toMatchObject({ stage: 'SURFACE', semanticCamera: 'WORKSPACE_CLOSE', presentationOnly: true });
 
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.next());
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Active Seat (3/13)');
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Active Seat (3/15)');
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.previous());
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/13)');
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/15)');
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.reset());
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/13)');
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
 
     await page.getByRole('button', { name: 'Workspace', exact: true }).click();
     await page.getByRole('button', { name: 'Map', exact: true }).click();
@@ -53,17 +53,21 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.getByRole('button', { name: 'Detail', exact: true }).click();
 
     const stackLayers = await page.evaluate(() => (window as any).TeamAiHeroSeatStack.layers().map((layer: any) => layer.id));
-    expect(stackLayers).toEqual(['connection', 'behavior', 'toolkit', 'zipskills', 'capabilities', 'authorization', 'workspace', 'task']);
+    expect(stackLayers).toEqual([
+      'identity', 'responsibility', 'connection', 'behavior', 'toolkit', 'zipskills',
+      'capabilities', 'authorization', 'workspace', 'task'
+    ]);
     const semanticCameras = await page.evaluate(() => (window as any).TeamAiHeroSeatStack.layers().map((layer: any) => layer.semanticCamera));
     expect(semanticCameras).toEqual([
-      'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS', 'MECHANISM_ZIPSKILLS',
-      'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK'
+      'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
+      'MECHANISM_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK'
     ]);
 
     const registryIds = await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.ids());
     expect(registryIds).toEqual([
-      'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS', 'MECHANISM_ZIPSKILLS',
-      'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_AUTHENTICATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK', 'APP_UI_HANDOFF'
+      'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
+      'MECHANISM_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_AUTHENTICATION',
+      'MECHANISM_WORKSPACE', 'MECHANISM_TASK', 'APP_UI_HANDOFF'
     ]);
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_CAPABILITY'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_AUTHENTICATION'))).toBe('DETAIL_ANCHOR');
