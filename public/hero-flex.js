@@ -33,6 +33,18 @@ const I=()=>[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],mul=(a,b)=>{const r=new Array(16).
 function look(e,t){const z=norm(sub(e,t)),x=norm(cross([0,1,0],z)),y=cross(z,x);return[x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-x[0]*e[0]-x[1]*e[1]-x[2]*e[2],-y[0]*e[0]-y[1]*e[1]-y[2]*e[2],-z[0]*e[0]-z[1]*e[1]-z[2]*e[2],1]}
 let camera={p:[0,6.4,9.6],t:[0,.78,0],f:39},seatCount=4,selectedSeat=0,state='IDLE',demo=false,reducedMotion=false,stateStart=performance.now(),cameraId='HERO_WIDE',camFrom=camera,camTo=camera,camStart=performance.now(),camAt=1,contribution=0;
 const traces=[];const TRACE_LIMIT=8;
+/** Timed holds for the presentation lifecycle. Kept short enough for Playwright (full cycle << 30s). */
+function durations(){
+  const k=reducedMotion?0.35:1;
+  return{
+    focus:700*k,
+    active:900*k,
+    contribute:1100*k,
+    absorb:520*k,
+    reflect:520*k,
+    handoff:800*k,
+  };
+}
 const profile=count=>{const density=(clamp(count,1,8)-1)/7;return{workspace:lerp(4.35,5.95,density),seatRadius:lerp(4.25,6.45,density),seatScale:lerp(1,.78,density),cameraDist:lerp(9.6,12.2,density),ambient:lerp(.35,.78,density),artifacts:Math.round(lerp(3,8,density))}};
 const buildSeats=count=>Array.from({length:count},(_,i)=>({id:`seat-${i+1}`,label:`Web AI Seat ${i+1}`,a:-Math.PI/2+i*(Math.PI*2/count),accent:PALETTE[i%PALETTE.length]}));
 let seats=buildSeats(seatCount);
