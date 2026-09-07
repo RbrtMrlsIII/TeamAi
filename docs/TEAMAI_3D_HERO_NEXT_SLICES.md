@@ -4,7 +4,7 @@ Status: planning/continuity only. Active TEAM-EXPERIENCE-029 implementation rema
 
 ## Ordered development sequence
 
-`#84 Theme adapter → #85 manufactured light rig → #86 contribution/absorption → #88 material/depth → #89 responsive/reduced motion → #81 Seat Identity Inspection → #91 Seat mechanisms → #92 authorization/scope (PR #126 open) → #93 task/evidence anchors (branch feat/029-hero-workspace-task-evidence-93) → #88/#89/#95 material + motion → #96/#97/#98 Slice A close-after-evidence`
+`#84 Theme adapter → #85 manufactured light rig → #86 contribution/absorption → #88 material/depth → #89 responsive/reduced motion → #81 Seat Identity Inspection → #91 Seat mechanisms → #92 authorization/scope (IMPLEMENTED on main via PR #126) → #93 task/evidence anchors (PR #127 rebased onto main; keeps both auth + workspace APIs) → #88/#89/#95 material + motion → #96/#97/#98 Slice A close-after-evidence`
 
 ## Implementation entry condition
 
