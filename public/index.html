@@ -41,7 +41,13 @@
         <span class="hero-inspection__label">INSPECT</span>
         <button data-camera="SEAT_CLOSE">Seat</button>
         <button data-camera="DETAIL_ANCHOR">Detail</button>
-        <span class="hero-inspection__hint">Seat → connection → behavior → toolkit/ZipSkills → capabilities → authorization/scope → workspace → task/evidence → normal UI</span>
+        <div class="inspection-spine" aria-label="Inspection spine controls">
+          <span data-inspection-stage role="status">Hero orientation (1/13)</span>
+          <button type="button" data-inspection-prev>Back</button>
+          <button type="button" data-inspection-next class="primary">Next</button>
+          <button type="button" data-inspection-reset class="quiet">Reset</button>
+        </div>
+        <span class="hero-inspection__hint">Hero → surface → focus / Seat → connection → behavior → skills / ZipSkills → capabilities → authorization / scope → workspace → task / evidence → normal UI</span>
       </section>
 
       <section class="seat-stack" aria-label="Web AI Seat configuration stack">
@@ -98,6 +104,7 @@
     <script type="module" src="./hero-parts.js"></script>
     <script type="module" src="./hero-seat-stack.js"></script>
     <script type="module" src="./hero-semantic-camera.js"></script>
+    <script type="module" src="./hero-inspection-spine.js"></script>
     <script type="module" src="./hero-auth-handoff.js"></script>
   </body>
 </html>

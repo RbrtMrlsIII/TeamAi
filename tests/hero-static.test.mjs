@@ -7,6 +7,7 @@ const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url
 const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
 const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
 const semantic = await readFile(new URL('../public/hero-semantic-camera.js', import.meta.url), 'utf8');
+const spine = await readFile(new URL('../public/hero-inspection-spine.js', import.meta.url), 'utf8');
 const css = await readFile(new URL('../public/hero.css', import.meta.url), 'utf8');
 const materials = await readFile(new URL('../public/hero-materials.css', import.meta.url), 'utf8');
 const partsCss = await readFile(new URL('../public/hero-parts.css', import.meta.url), 'utf8');
@@ -17,6 +18,7 @@ test('3D Hero static shell is wired', () => {
   assert.match(html, /hero-aura\.js/);
   assert.match(html, /hero-parts\.js/);
   assert.match(html, /hero-semantic-camera\.js/);
+  assert.match(html, /hero-inspection-spine\.js/);
   assert.match(html, /hero-auth-handoff\.js/);
   assert.match(html, /hero-canvas/);
   assert.match(html, /Living Web AI Workspace/);
@@ -82,6 +84,33 @@ test('authentication handoff is presentation-only and uses normal form semantics
     'Firebase Authentication connection is not enabled in this build yet.',
   ]) assert.ok(html.includes(marker) || auth.includes(marker), marker);
   assert.match(semantic, /MECHANISM_AUTHENTICATION/);
+});
+
+test('semantic inspection spine is deterministic and presentation-only', () => {
+  for (const marker of [
+    'HERO_ORIENTATION',
+    'SURFACE',
+    'FOCUS',
+    'CONNECTION',
+    'BEHAVIOR',
+    'SKILLS',
+    'ZIPSKILLS',
+    'CAPABILITY',
+    'AUTHORIZATION',
+    'WORKSPACE',
+    'TASK',
+    'EVIDENCE',
+    'NORMAL_UI',
+    'TeamAiHeroInspectionSpine',
+    'teamai:web-ai-hero-inspection-stage',
+    'presentationOnly: true',
+    'reducedMotion',
+  ]) assert.ok(spine.includes(marker), marker);
+  assert.match(spine, /MECHANISM_CONNECTION/);
+  assert.match(spine, /APP_UI_HANDOFF/);
+  assert.match(html, /data-inspection-next/);
+  assert.match(html, /data-inspection-prev/);
+  assert.match(html, /data-inspection-reset/);
 });
 
 test('normal UI handoff and inspection vocabulary are documented', () => {
