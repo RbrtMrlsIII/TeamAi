@@ -10,10 +10,25 @@
 .hero-shell {
   --hero-density: .45;
   --hero-seat-glow: .13;
+  --hero-light-fill: .72;
+  --hero-light-key: .86;
+  --hero-light-grazing: .62;
+  --hero-light-contribution: .54;
+  --hero-light-roughness: .48;
+  --hero-light-reflectance: .72;
+  --hero-light-shadow: .56;
+  --hero-light-emissive: .08;
+  --hero-light-dir-x: -.52;
+  --hero-light-dir-y: .82;
+  --hero-light-dir-z: .28;
+  --hero-light-motion: 1;
   background:
-    radial-gradient(circle at 61% 42%, rgba(255,255,255,.99) 0, rgba(250,248,243,.98) 28%, rgba(240,236,229,.98) 58%, rgba(226,221,211,.99) 100%),
-    linear-gradient(115deg, rgba(255,255,255,.54), rgba(221,215,205,.18));
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), inset 0 -80px 140px rgba(93,88,77,.08);
+    radial-gradient(circle at 61% 42%, rgba(255,255,255,calc(.64 + var(--hero-light-fill) * .35)) 0, rgba(250,248,243,.98) 28%, rgba(240,236,229,.98) 58%, rgba(226,221,211,.99) 100%),
+    linear-gradient(115deg, rgba(255,255,255,calc(.32 + var(--hero-light-key) * .25)), rgba(221,215,205,.18));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.7),
+    inset 0 -80px 140px rgba(93,88,77,calc(.04 + var(--hero-light-shadow) * .08)),
+    inset calc(var(--hero-light-dir-x) * -22px) calc(var(--hero-light-dir-y) * 8px) 36px rgba(255,255,255,calc(.04 + var(--hero-light-grazing) * .08));
 }
 
 .hero-shell::before {
@@ -22,9 +37,9 @@
   inset: 4% 10% 16% 32%;
   border-radius: 46% 54% 48% 52%;
   background:
-    radial-gradient(circle at 52% 48%, rgba(255,255,255,.78), rgba(255,255,255,.25) 38%, rgba(255,255,255,0) 71%),
-    radial-gradient(circle at 52% 72%, rgba(145,133,111,.08), rgba(145,133,111,0) 56%);
-  filter: blur(16px);
+    radial-gradient(circle at 52% 48%, rgba(255,255,255,calc(.38 + var(--hero-light-key) * .38)), rgba(255,255,255,.25) 38%, rgba(255,255,255,0) 71%),
+    radial-gradient(circle at 52% 72%, rgba(145,133,111,calc(.03 + var(--hero-light-shadow) * .07)), rgba(145,133,111,0) 56%);
+  filter: blur(calc(18px - var(--hero-light-grazing) * 7px));
   pointer-events: none;
 }
 
@@ -32,17 +47,20 @@
   content: '';
   position: absolute;
   inset: 18px;
-  border: 1px solid rgba(73,69,63,.07);
+  border: 1px solid rgba(73,69,63,calc(.045 + var(--hero-light-shadow) * .06));
   border-radius: 26px;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.82),
     inset 0 0 0 1px rgba(255,255,255,.18),
-    0 20px 80px rgba(70,66,58,.05);
+    0 20px 80px rgba(70,66,58,calc(.02 + var(--hero-light-fill) * .05));
   pointer-events: none;
 }
 
 #hero-canvas {
-  filter: saturate(.94) contrast(1.025);
+  filter:
+    saturate(calc(.88 + var(--hero-light-grazing) * .12))
+    brightness(calc(.94 + var(--hero-light-key) * .10))
+    contrast(calc(1 + var(--hero-light-shadow) * .025));
 }
 
 .hero-aura {
@@ -51,7 +69,7 @@
   z-index: 1;
   border-radius: 999px;
   mix-blend-mode: multiply;
-  opacity: .18;
+  opacity: calc(.10 + var(--hero-light-fill) * .11);
   transition: inset 800ms cubic-bezier(.22,.8,.24,1), opacity 500ms ease, transform 800ms cubic-bezier(.22,.8,.24,1), filter 800ms ease;
 }
 
@@ -60,9 +78,9 @@
   aspect-ratio: 1;
   right: 3%;
   top: 9%;
-  background: radial-gradient(circle, rgba(204,193,169,.22) 0, rgba(204,193,169,.11) 26%, rgba(204,193,169,0) 67%);
-  filter: blur(10px);
-  transform: scale(calc(.92 + var(--hero-density) * .12));
+  background: radial-gradient(circle, rgba(204,193,169,calc(.10 + var(--hero-light-key) * .18)) 0, rgba(204,193,169,.11) 26%, rgba(204,193,169,0) 67%);
+  filter: blur(calc(13px - var(--hero-light-grazing) * 5px));
+  transform: scale(calc(.92 + var(--hero-density) * .12 + var(--hero-light-key) * .03));
 }
 
 .hero-aura-b {
@@ -70,26 +88,26 @@
   aspect-ratio: 1;
   right: 17%;
   bottom: -10%;
-  background: radial-gradient(circle, rgba(188,207,198,.19) 0, rgba(188,207,198,.08) 34%, rgba(188,207,198,0) 70%);
-  filter: blur(18px);
-  transform: scale(calc(.9 + var(--hero-density) * .18));
+  background: radial-gradient(circle, rgba(188,207,198,calc(.09 + var(--hero-light-fill) * .12)) 0, rgba(188,207,198,.08) 34%, rgba(188,207,198,0) 70%);
+  filter: blur(calc(19px - var(--hero-light-grazing) * 4px));
+  transform: scale(calc(.9 + var(--hero-density) * .18 + var(--hero-light-reflectance) * .04));
 }
 
 .hero-shell[data-state='FOCUS'] .hero-aura-a,
 .hero-shell[data-state='ACTIVE'] .hero-aura-a,
 .hero-shell[data-state='CONTRIBUTE'] .hero-aura-a {
-  opacity: .27;
+  opacity: calc(.17 + var(--hero-light-key) * .13);
 }
 
 .hero-shell[data-state='CONTRIBUTE'] .hero-aura-a {
-  transform: scale(calc(1.02 + var(--hero-density) * .18));
-  filter: blur(6px);
+  transform: scale(calc(1.02 + var(--hero-density) * .18 + var(--hero-light-contribution) * .06));
+  filter: blur(calc(8px - var(--hero-light-grazing) * 3px));
 }
 
 .hero-shell[data-state='ABSORB'] .hero-aura-b,
 .hero-shell[data-state='REFLECT'] .hero-aura-b {
-  opacity: .30;
-  transform: scale(calc(1.02 + var(--hero-density) * .2));
+  opacity: calc(.18 + var(--hero-light-emissive) * .55);
+  transform: scale(calc(1.02 + var(--hero-density) * .2 + var(--hero-light-reflectance) * .06));
 }
 
 .hero-copy h1 {
@@ -131,6 +149,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #hero-canvas { filter: saturate(.94) contrast(1.015); }
+  #hero-canvas {
+    filter: saturate(.94) contrast(1.015) brightness(calc(.98 + var(--hero-light-key) * .04));
+  }
   .hero-aura { transition: opacity 300ms ease; transform: none !important; filter: blur(14px) !important; }
+}
+
+html[data-motion='reduced'] .hero-aura {
+  transition: opacity 300ms ease;
+  transform: none !important;
 }
