@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   mapHeroThemeLighting,
   HERO_THEME_LIGHTING_FIXTURES,
+  HERO_THEME_LIGHTING_LIMITS,
 } from '../frontend/spatial/hero-theme-lighting-adapter.js';
 
 const boundedKeys = [
@@ -14,8 +15,6 @@ const boundedKeys = [
   'shadowSeparationStrength',
   'emissiveCeilingFloor',
 ];
-
-const requiredSemantic = ['themeMode', 'themeSource', 'density', 'atmosphere', 'surface', 'focus', 'signal', 'status', 'reducedMotion'];
 
 function byId(id) {
   return HERO_THEME_LIGHTING_FIXTURES.find((row) => row.id === id);
@@ -140,9 +139,23 @@ test('adapter consumes every required Issue #84 semantic input field', () => {
   assert.equal(output.themeSource, 'user');
   assert.equal(output.density, 'compact');
   assert.equal(output.reducedMotionChoreography, false);
-  for (const key of requiredSemantic) {
-    assert.ok(key === 'atmosphere' || key === 'surface' || key === 'focus' || key === 'signal' || key === 'status' || output[key] !== undefined || key);
-  }
   assert.ok(output.environmentalFillIntensity <= 1);
   assert.ok(output.shadowSeparationStrength > mapHeroThemeLighting({ themeMode: 'dark', density: 'compact', status: 0 }).shadowSeparationStrength);
+});
+
+test('Issue #98 limits table stays finite and matches bounded output ranges', () => {
+  assert.deepEqual(HERO_THEME_LIGHTING_LIMITS.intensity, Object.freeze([0, 1]));
+  assert.deepEqual(HERO_THEME_LIGHTING_LIMITS.roughness, Object.freeze([0, 1]));
+  for (const row of HERO_THEME_LIGHTING_FIXTURES) {
+    const o = mapHeroThemeLighting(row);
+    for (const key of boundedKeys) {
+      assert.ok(o[key] >= HERO_THEME_LIGHTING_LIMITS.intensity[0]);
+      assert.ok(o[key] <= HERO_THEME_LIGHTING_LIMITS.intensity[1]);
+    }
+  }
+});
+
+test('Issue #98 contract stays presentation-only (no I/O or backend symbols)', () => {
+  const src = mapHeroThemeLighting.toString();
+  assert.doesNotMatch(src, /fetch|Firestore|Firebase|scheduler|PayPal|localStorage/i);
 });
