@@ -5,6 +5,29 @@ const HEALTH = Object.freeze({
   healthy: { label: 'OK', title: 'Healthy (presentation preview)' }
 });
 
+/** Workspace / task / evidence presentation. Not durable system of record. */
+const TASK_STATES = Object.freeze({
+  idle: { label: 'IDL', title: 'Idle — no active workspace task (preview)' },
+  queued: { label: 'QUE', title: 'Queued — waiting for eligible execution (preview)' },
+  running: { label: 'RUN', title: 'Running — execution in progress (preview)' },
+  blocked: { label: 'BLK', title: 'Blocked — cannot proceed until a reason is cleared (preview)' },
+  complete: { label: 'DONE', title: 'Complete — result available for inspection (preview)' },
+  failed: { label: 'FAIL', title: 'Failed — result/evidence records a failure (preview)' }
+});
+
+const RESULT_STATES = Object.freeze({
+  none: { label: 'NONE', title: 'No result/artifact attached (preview)' },
+  attached: { label: 'ART', title: 'Result/artifact attached to workspace (preview)' },
+  stale: { label: 'STL', title: 'Attached result is stale versus current task (preview)' }
+});
+
+const EVIDENCE_STATES = Object.freeze({
+  none: { label: 'NONE', title: 'No verification/evidence yet (preview)' },
+  pending: { label: 'PEND', title: 'Verification pending (preview)' },
+  recorded: { label: 'EVD', title: 'Evidence recorded — inspect in normal UI (preview)' },
+  disputed: { label: 'DSP', title: 'Evidence disputed — reason-bearing, not color-only (preview)' }
+});
+
 const LAYERS = [
   { id: 'identity', label: 'Identity', sub: 'Web AI Seat label / role (presentation)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_IDENTITY', handoff: 'identity' },
   { id: 'responsibility', label: 'Responsibility', sub: 'duty dial (presentation, not authority)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_RESPONSIBILITY', handoff: 'responsibility', dial: true },
@@ -14,8 +37,8 @@ const LAYERS = [
   { id: 'zipskills', label: 'ZipSkills', sub: 'optional skills', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_ZIPSKILLS', handoff: 'zipskills' },
   { id: 'capabilities', label: 'Capabilities', sub: 'tools / MCP availability', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_CAPABILITY', handoff: 'capabilities' },
   { id: 'authorization', label: 'Authorization', sub: 'scope / approvals', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_AUTHORIZATION', handoff: 'authorization' },
-  { id: 'workspace', label: 'Workspace', sub: 'shared ref / state', camera: 'WORKSPACE_CLOSE', semanticCamera: 'MECHANISM_WORKSPACE', handoff: 'workspace' },
-  { id: 'task', label: 'Task / Evidence', sub: 'state / verification', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_TASK', handoff: 'task-evidence' }
+  { id: 'workspace', label: 'Workspace', sub: 'shared ref / history (preview, not Firestore)', camera: 'WORKSPACE_CLOSE', semanticCamera: 'MECHANISM_WORKSPACE', handoff: 'workspace', workspace: true },
+  { id: 'task', label: 'Task / Evidence', sub: 'state / result / provenance / verification (preview)', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_TASK', handoff: 'task-evidence', task: true }
 ];
 
 const stack = document.querySelector('.seat-stack');
@@ -27,6 +50,25 @@ const equipped = new Set();
 let connectionHealth = 'unknown';
 /** Presentation-only responsibility dial 0–1. */
 let responsibilityDial = 0.35;
+let workspaceRef = 'shared-workspace';
+let historyCount = 0;
+let handoffReady = false;
+let taskState = 'idle';
+let resultState = 'none';
+let evidenceState = 'none';
+let provenanceLabel = 'no-trace';
+
+function workspaceReason() {
+  const ready = handoffReady ? 'handoff ready' : 'handoff not ready';
+  return `Workspace ref=${workspaceRef} · history=${historyCount} · ${ready} (presentation, not durable)`;
+}
+
+function taskReason() {
+  const task = TASK_STATES[taskState] || TASK_STATES.idle;
+  const result = RESULT_STATES[resultState] || RESULT_STATES.none;
+  const evidence = EVIDENCE_STATES[evidenceState] || EVIDENCE_STATES.none;
+  return `${task.title} · result=${result.title} · evidence=${evidence.title} · rail=${provenanceLabel}`;
+}
 
 function setVisualState() {
   stack.querySelectorAll('[data-seat-layer]').forEach((el) => {
@@ -44,6 +86,26 @@ function setVisualState() {
       state.title = h.title;
       el.dataset.connectionHealth = connectionHealth;
       el.setAttribute('data-health', connectionHealth);
+    } else if (id === 'workspace' && state) {
+      state.textContent = handoffReady ? 'RDY' : 'WS';
+      state.title = workspaceReason();
+      el.dataset.workspaceRef = workspaceRef;
+      el.dataset.historyCount = String(historyCount);
+      el.dataset.handoffReady = String(handoffReady);
+      el.setAttribute('data-workspace-ready', String(handoffReady));
+      el.setAttribute('aria-label', `Workspace: ${workspaceReason()}`);
+    } else if (id === 'task' && state) {
+      const task = TASK_STATES[taskState] || TASK_STATES.idle;
+      state.textContent = task.label;
+      state.title = taskReason();
+      el.dataset.taskState = taskState;
+      el.dataset.resultState = resultState;
+      el.dataset.evidenceState = evidenceState;
+      el.dataset.provenance = provenanceLabel;
+      el.setAttribute('data-task-state', taskState);
+      el.setAttribute('data-result-state', resultState);
+      el.setAttribute('data-evidence-state', evidenceState);
+      el.setAttribute('aria-label', `Task / Evidence: ${taskReason()}`);
     } else if (state) {
       state.textContent = isEquipped ? 'ON' : '·';
       state.removeAttribute('title');
@@ -57,6 +119,13 @@ function setVisualState() {
   });
   stack.dataset.activeLayer = activeLayer || '';
   stack.dataset.connectionHealth = connectionHealth;
+  stack.dataset.workspaceRef = workspaceRef;
+  stack.dataset.historyCount = String(historyCount);
+  stack.dataset.handoffReady = String(handoffReady);
+  stack.dataset.taskState = taskState;
+  stack.dataset.resultState = resultState;
+  stack.dataset.evidenceState = evidenceState;
+  stack.dataset.provenance = provenanceLabel;
   stack.style.setProperty('--equipped-count', String(equipped.size));
   stack.style.setProperty('--responsibility-dial', String(responsibilityDial));
 }
@@ -72,6 +141,13 @@ function inspect(layer) {
       semanticCamera: activeLayer ? layer.semanticCamera : null,
       connectionHealth,
       responsibilityDial,
+      workspaceRef,
+      historyCount,
+      handoffReady,
+      taskState,
+      resultState,
+      evidenceState,
+      provenanceLabel,
       presentationOnly: true
     }
   }));
@@ -100,12 +176,12 @@ LAYERS.forEach((layer, index) => {
 
 const note = document.createElement('p');
 note.className = 'seat-stack__note';
-note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health badges are presentation previews only.';
+note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health, workspace, and task/evidence badges are presentation previews only.';
 stack.appendChild(note);
 
 const distinction = document.createElement('p');
 distinction.className = 'seat-stack__distinction';
-distinction.innerHTML = '<b>Capability ≠ Authorization</b><span>Availability is inspected separately from allowed scope. Identity, responsibility, and connection health are presentation labels — not durable authority.</span>';
+distinction.innerHTML = '<b>Workspace ≠ Firestore</b><span>The shared Web AI workspace is not TeamAi, not the scheduler, and not durable authority. Task, result, provenance, and evidence anchors summarize presentation state — they do not invent or persist records.</span>';
 stack.appendChild(distinction);
 
 const handoff = document.createElement('button');
@@ -157,12 +233,72 @@ function setResponsibilityDial(value = 0.35) {
   return responsibilityDial;
 }
 
+function setWorkspaceTaskPresentation(next = {}) {
+  if (typeof next.workspaceRef === 'string' && next.workspaceRef.trim()) {
+    workspaceRef = next.workspaceRef.trim().slice(0, 48);
+  }
+  if (Number.isFinite(Number(next.historyCount))) {
+    historyCount = Math.max(0, Math.min(999, Math.floor(Number(next.historyCount))));
+  }
+  if (typeof next.handoffReady === 'boolean') {
+    handoffReady = next.handoffReady;
+  }
+  if (next.taskState && Object.prototype.hasOwnProperty.call(TASK_STATES, next.taskState)) {
+    taskState = next.taskState;
+  }
+  if (next.resultState && Object.prototype.hasOwnProperty.call(RESULT_STATES, next.resultState)) {
+    resultState = next.resultState;
+  }
+  if (next.evidenceState && Object.prototype.hasOwnProperty.call(EVIDENCE_STATES, next.evidenceState)) {
+    evidenceState = next.evidenceState;
+  }
+  if (typeof next.provenance === 'string' && next.provenance.trim()) {
+    provenanceLabel = next.provenance.trim().slice(0, 48);
+  }
+  setVisualState();
+  window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-workspace-task-preview', {
+    detail: {
+      workspaceRef,
+      historyCount,
+      handoffReady,
+      taskState,
+      resultState,
+      evidenceState,
+      provenance: provenanceLabel,
+      reason: `${workspaceReason()} · ${taskReason()}`,
+      presentationOnly: true,
+      durable: false,
+      systemOfRecord: false
+    }
+  }));
+  return getWorkspaceTaskPresentation();
+}
+
+function getWorkspaceTaskPresentation() {
+  return {
+    workspaceRef,
+    historyCount,
+    handoffReady,
+    taskState,
+    resultState,
+    evidenceState,
+    provenance: provenanceLabel,
+    reason: `${workspaceReason()} · ${taskReason()}`,
+    presentationOnly: true,
+    durable: false
+  };
+}
+
 window.TeamAiHeroSeatStack = {
   layers: () => LAYERS.map((layer) => ({ ...layer })),
+  taskStates: () => Object.keys(TASK_STATES),
+  resultStates: () => Object.keys(RESULT_STATES),
+  evidenceStates: () => Object.keys(EVIDENCE_STATES),
   getActiveLayer: () => activeLayer,
   getEquippedLayers: () => Array.from(equipped),
   getConnectionHealth: () => connectionHealth,
   getResponsibilityDial: () => responsibilityDial,
+  getWorkspaceTaskPresentation,
   inspect: (id) => {
     const layer = LAYERS.find((item) => item.id === id);
     if (layer) inspect(layer);
@@ -171,6 +307,7 @@ window.TeamAiHeroSeatStack = {
   setEquipped,
   setConnectionHealth,
   setResponsibilityDial,
+  setWorkspaceTaskPresentation,
   setConfiguration: (configuration = {}) => {
     Object.keys(configuration).forEach((id) => setEquipped(id, Boolean(configuration[id])));
     return Array.from(equipped);

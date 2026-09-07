@@ -7,7 +7,7 @@ const stackSrc = fs.readFileSync(path.join(process.cwd(), 'public/hero-seat-stac
 const cssSrc = fs.readFileSync(path.join(process.cwd(), 'public/hero-seat-stack.css'), 'utf8');
 
 test('seat stack exposes identity → responsibility → connection ladder', () => {
-  for (const id of ['identity', 'responsibility', 'connection', 'behavior', 'capabilities', 'authorization']) {
+  for (const id of ['identity', 'responsibility', 'connection', 'behavior', 'capabilities', 'authorization', 'workspace', 'task']) {
     assert.match(stackSrc, new RegExp(`id: '${id}'`));
   }
   const identityAt = stackSrc.indexOf("id: 'identity'");
@@ -34,4 +34,21 @@ test('responsibility dial is presentation-only', () => {
   assert.match(stackSrc, /teamai:web-ai-seat-responsibility-dial/);
   assert.match(cssSrc, /seat-stack__dial/);
   assert.match(cssSrc, /data-health=healthy/);
+});
+
+test('workspace task evidence anchors are presentation-only', () => {
+  assert.match(stackSrc, /setWorkspaceTaskPresentation/);
+  assert.match(stackSrc, /getWorkspaceTaskPresentation/);
+  assert.match(stackSrc, /teamai:web-ai-seat-workspace-task-preview/);
+  assert.match(stackSrc, /systemOfRecord: false/);
+  for (const state of ['idle', 'queued', 'running', 'blocked', 'complete', 'failed']) {
+    assert.match(stackSrc, new RegExp(`${state}:`));
+  }
+  for (const ev of ['pending', 'recorded', 'disputed']) {
+    assert.match(stackSrc, new RegExp(ev));
+  }
+  assert.match(cssSrc, /data-task-state=running/);
+  assert.match(cssSrc, /data-workspace-ready=true/);
+  assert.match(cssSrc, /data-evidence-state=disputed/);
+  assert.match(stackSrc, /Workspace ≠ Firestore/);
 });
