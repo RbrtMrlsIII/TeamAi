@@ -35,3 +35,20 @@ test('responsibility dial is presentation-only', () => {
   assert.match(cssSrc, /seat-stack__dial/);
   assert.match(cssSrc, /data-health=healthy/);
 });
+
+test('authorization presentation is reason-bearing and non-authoritative', () => {
+  assert.match(stackSrc, /setAuthorizationPresentation/);
+  assert.match(stackSrc, /getAuthorizationPresentation/);
+  assert.match(stackSrc, /teamai:web-ai-seat-authorization-preview/);
+  assert.match(stackSrc, /grantsPermission: false/);
+  for (const state of ['available', 'blocked', 'unauthorized', 'degraded', 'unavailable']) {
+    assert.match(stackSrc, new RegExp(state));
+    assert.match(cssSrc, new RegExp(`data-auth-state=${state}`));
+  }
+  for (const ent of ['none', 'entitled', 'expired']) {
+    assert.match(stackSrc, new RegExp(ent));
+  }
+  assert.match(stackSrc, /approvalRequired/);
+  assert.match(stackSrc, /authorizationScope/);
+  assert.doesNotMatch(stackSrc, /paypal/i);
+});
