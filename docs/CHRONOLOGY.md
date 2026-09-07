@@ -73,10 +73,11 @@ When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidenc
 | H5 | Turn lifecycle is visual only | Baseline |
 | H6 | Light-skeuomorphic first; dark glass later | Planned (#83+) |
 | H7 | Theme-lighting adapter pure/deterministic | Gated issues #84–#98 |
-| H8 | Material refinement, task/evidence anchors | Planned #88, #93 |
+| H8 | Material refinement, task/evidence anchors | #93 open — PR #127 **conflicts with main after #92** |
 | H9 | Seat Identity Inspection | Spec held behind Masterplan gate |
+| H10 | Authorization / scope presentation (#92) | **IMPLEMENTED** on main PR #126 (`66b6c19`). Presentation-only. Not live auth authority. |
 
-**Next complex 3D work** should stay **presentation-only** and prefer **one bounded issue** (e.g. lighting adapter contract tests) over a full mesh rewrite.
+**Next complex 3D work** should stay **presentation-only** and prefer **one bounded issue**.
 
 Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md`
 
@@ -97,10 +98,12 @@ Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-0
 
 Pick **one**:
 
-1. **3D (bounded):** theme-lighting adapter **contract tests only** (issue #98 fixture matrix) — no full lighting rewrite.  
-2. **3D (visual):** single material/depth pass on `workspaceRing` / `seatShell` under light mode (#88) — still presentation-only.  
-3. **UX:** wire Command Deck tab help icons → `DICTIONARY.md` anchors (spatial `dictionary` plate).  
-4. **Ops:** deploy Edge functions + secrets when ready for live seats (not required for stub/CI).
+1. **Required next:** rebase/resolve PR #127 onto main so #93 keeps both `setAuthorizationPresentation` (#92) and `setWorkspaceTaskPresentation` (#93). Then merge if CI green.
+2. **3D (bounded):** theme-lighting adapter **contract tests only** (issue #98 / PR #125) — no full lighting rewrite.
+3. **3D (visual):** single material/depth pass on `workspaceRing` / `seatShell` under light mode (#88) — still presentation-only.
+4. **Ops:** deploy Edge functions + secrets when ready for live seats (not required for stub/CI). Leave existing deploy docs; user-manual setups only.
+
+Vercel remains cut off. Do not create a second deployment file.
 
 ---
 
