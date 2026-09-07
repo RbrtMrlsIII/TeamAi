@@ -5,6 +5,8 @@ import { readFile } from 'node:fs/promises';
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
+const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
+const semantic = await readFile(new URL('../public/hero-semantic-camera.js', import.meta.url), 'utf8');
 const css = await readFile(new URL('../public/hero.css', import.meta.url), 'utf8');
 const materials = await readFile(new URL('../public/hero-materials.css', import.meta.url), 'utf8');
 const partsCss = await readFile(new URL('../public/hero-parts.css', import.meta.url), 'utf8');
@@ -14,6 +16,8 @@ test('3D Hero static shell is wired', () => {
   assert.match(html, /hero-flex\.js/);
   assert.match(html, /hero-aura\.js/);
   assert.match(html, /hero-parts\.js/);
+  assert.match(html, /hero-semantic-camera\.js/);
+  assert.match(html, /hero-auth-handoff\.js/);
   assert.match(html, /hero-canvas/);
   assert.match(html, /Living Web AI Workspace/);
 });
@@ -61,6 +65,23 @@ test('spatial depth layer is wired', () => {
   for (const marker of ['--rest-x', '--rest-z', '--rest-d', '--drift-x', '--drift-z', 'requestAnimationFrame(animateParts)']) {
     assert.ok(parts.includes(marker), marker);
   }
+});
+
+test('authentication handoff is presentation-only and uses normal form semantics', () => {
+  for (const marker of [
+    'data-hero-engine-open',
+    'hero-auth-panel',
+    'data-auth-mode="login"',
+    'data-auth-mode="signup"',
+    'autocomplete="email"',
+    'autocomplete="current-password"',
+    'autocomplete="new-password"',
+    'teamai:web-ai-hero-engine-open',
+    'teamai:web-ai-auth-intent',
+    'presentationOnly: true',
+    'Firebase Authentication connection is not enabled in this build yet.',
+  ]) assert.ok(html.includes(marker) || auth.includes(marker), marker);
+  assert.match(semantic, /MECHANISM_AUTHENTICATION/);
 });
 
 test('normal UI handoff and inspection vocabulary are documented', () => {
