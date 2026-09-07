@@ -73,13 +73,16 @@ When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidenc
 | H5 | Turn lifecycle is visual only | Baseline |
 | H6 | Light-skeuomorphic first; dark glass later | Planned (#83+) |
 | H7 | Theme-lighting adapter pure/deterministic | Gated issues #84–#98 |
-| H8 | Material refinement, task/evidence anchors | #93 open — PR #127 **conflicts with main after #92** |
+| H8 | Workspace/task/evidence presentation (#93) | **IMPLEMENTED** on main via PR #129 (`41df903`). Presentation-only. PR #127 closed as superseded. |
+| H8b | Material/depth pass (#88) | **IMPLEMENTED** on branch `029-hero-material-depth-88` (source/contract). Not merged. Not RUNTIME-PROVEN. |
 | H9 | Seat Identity Inspection | Spec held behind Masterplan gate |
 | H10 | Authorization / scope presentation (#92) | **IMPLEMENTED** on main PR #126 (`66b6c19`). Presentation-only. Not live auth authority. |
 
 **Next complex 3D work** should stay **presentation-only** and prefer **one bounded issue**.
 
-Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md`
+Checkpoints:
+- `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md`
+- `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_MATERIAL_DEPTH_88_2026-09-08.md`
 
 ---
 
@@ -98,9 +101,9 @@ Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-0
 
 Pick **one**:
 
-1. **Required next:** rebase/resolve PR #127 onto main so #93 keeps both `setAuthorizationPresentation` (#92) and `setWorkspaceTaskPresentation` (#93). Then merge if CI green.
-2. **3D (bounded):** theme-lighting adapter **contract tests only** (issue #98 / PR #125) — no full lighting rewrite.
-3. **3D (visual):** single material/depth pass on `workspaceRing` / `seatShell` under light mode (#88) — still presentation-only.
+1. **Human gate:** review/merge PR for #88 when Issue #42 allows. Do not auto-merge.
+2. **3D (bounded):** theme-lighting adapter fixture matrix (issue #98 / PR #125) — contract tests only.
+3. **3D (next visual):** Issue #89 reduced-motion + responsive lighting contract.
 4. **Ops:** deploy Edge functions + secrets when ready for live seats (not required for stub/CI). Leave existing deploy docs; user-manual setups only.
 
 Vercel remains cut off. Do not create a second deployment file.
@@ -112,4 +115,5 @@ Vercel remains cut off. Do not create a second deployment file.
 - [Dictionary](./DICTIONARY.md)
 - [Deploy & seats manual](./USER_MANUAL_DEPLOY_AND_SEATS.md)
 - [Hero baseline](./CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md)
+- [Issue #88 material checkpoint](./CHECKPOINT_TEAM-EXPERIENCE-029_HERO_MATERIAL_DEPTH_88_2026-09-08.md)
 - [Seat secret & free smoke](./TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md)
