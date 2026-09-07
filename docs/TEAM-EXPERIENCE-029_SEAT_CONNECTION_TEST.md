@@ -1,59 +1,84 @@
-# TEAM-EXPERIENCE-029 — Seat connection Test (phase 3–5)
+# TEAM-EXPERIENCE-029 — Seat connection Test (phase 3–6)
 
 **Status:** OPERATING CONTRACT / NOT PRODUCT LAW  
 **Date:** 2026-09-07
 
 ## Purpose
 
-Move connection health from **fixture-only** presentation toward a **trusted server projection**, without making the browser the write authority.
+Trusted server projection of seat connection health, with optional **server-side durable write**. The browser never writes Firestore for connection health.
 
 ## Authority
 
 | Layer | Owns |
 |-------|------|
 | Firebase Auth | Identity / ID token |
-| Edge Function `teamai-seat-connection-test` | Authenticated probe + projection JSON |
-| Firestore | Optional durable seat read; durable health **write** still later |
+| Edge `teamai-seat-connection-test` | Probe + optional durable health write |
+| Firestore | Seat doc + create-only `connection-tests/{probeId}` |
 | Browser | Display only |
 
-## Phase 5 — Plate wire
+## Phase 6 — Durable health write
 
-`frontend/spatial/seat-connection-wire.js` + `scripts/apply-seat-connection-wire.mjs`
+When **both** `workplaceId` and `projectId` are present (and `persist !== false`):
 
-When the Seats plate **Test Connection** is pressed:
+1. Run `runConnectionProbe()` (currently **stub-edge-runtime**; seam ready for real provider HTTP later).
+2. **Create-only** event:  
+   `accounts/{uid}/workplaces/{workplaceId}/projects/{projectId}/seats/{seatId}/connection-tests/{probeId}`
+3. **Patch** existing seat or **create** seat with:
+   - `connectionHealth`
+   - `lastProbedAt`, `lastProbeId`, `lastProbe`, `lastProbeDetail`
+4. Return projection with `durableWritten: true`, `source: "domain-durable"`.
 
-1. Build fixture projection (`source: fixture`).
-2. If `window.TEAMAI_SEAT_CONNECTION_BASE_URL` is **unset** → fixture message (unchanged UX).
-3. If set → `fetchSeatConnectionProjection` with optional `TEAMAI_FIREBASE_ID_TOKEN`.
-4. Prefer domain projection; update result line + optional Hero health mirror.
-5. On HTTP error → show failure text; keep fixture health for display recovery.
+Without workplace/project → projection only (`domain-stub` / `domain-read`), **no write** (read/write economy).
 
-### Browser config (optional)
+### Probe seam (not full external provider yet)
+
+```text
+runConnectionProbe({ provider, model, baselineHealth, forceHealth? })
+  → { connectionHealth, probe, probeDetail }
+```
+
+Today: stub (baseline or `forceHealth` for harnesses).  
+Later: same function body can call a real provider health endpoint without changing the durable write shape.
+
+### Request body
+
+```json
+{
+  "seatId": "alpha",
+  "workplaceId": "wp-1",
+  "projectId": "proj-1",
+  "persist": true,
+  "forceHealth": "healthy"
+}
+```
+
+### Deploy
+
+```bash
+npx supabase functions deploy teamai-seat-connection-test --project-ref <ref> --no-verify-jwt
+```
+
+See `docs/DEPLOY_SEAT_CONNECTION_TEST.md`.
+
+## Plate wire (phase 5)
+
+Browser uses `seat-connection-wire.js`. Config:
 
 ```js
 window.TEAMAI_SEAT_CONNECTION_BASE_URL = "https://<ref>.supabase.co/functions/v1";
-window.TEAMAI_FIREBASE_ID_TOKEN = "<id-token>"; // required for live Edge
-window.TEAMAI_WORKPLACE_ID = "…"; // optional durable path
-window.TEAMAI_PROJECT_ID = "…";
+window.TEAMAI_FIREBASE_ID_TOKEN = "…";
+window.TEAMAI_WORKPLACE_ID = "wp-1";  // required for durable write
+window.TEAMAI_PROJECT_ID = "proj-1";
 ```
-
-CI / Pages run `npm run seat:connection:wire` (includes phase2) before tests/deploy. Local `git pull` not required for this slice.
-
-## Edge Function (phase 4)
-
-`POST /functions/v1/teamai-seat-connection-test` with Firebase Bearer token. See `docs/DEPLOY_SEAT_CONNECTION_TEST.md`.
 
 ## Not yet
 
-- Durable connection-health **write** path
-- Real provider runtime probes
-- Browser Activate authority
+- Real external provider HTTP probe inside `runConnectionProbe`
+- Browser Activate / entitlement mutation
+- PayPal / commerce
 
 ## Phase ladder
 
-1. Read model — done
-2. Seats plate bind + Pages apply — done
-3. Client + contract — done
-4. Edge Function stub — done
-5. **Plate Test Connection wire — this PR**
-6. Durable health write + real provider probe (later)
+1–5 done (read model → plate wire)  
+6. **Durable health write + probe seam — this PR**  
+7. Real provider probe implementation (same Edge path)

@@ -1,17 +1,27 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@6.0.10";
-import { firestoreGet, getFirestoreAccessToken, readFirebaseServiceAccount } from "../_shared/firestore.ts";
+import {
+  firestoreCreate,
+  firestoreGet,
+  firestorePatch,
+  firestoreStringFields,
+  getFirestoreAccessToken,
+  readFirebaseServiceAccount,
+} from "../_shared/firestore.ts";
 
 /**
- * TEAM-EXPERIENCE-029 — Seat connection Test (phase 4)
+ * TEAM-EXPERIENCE-029 — Seat connection Test (phase 4–6)
  *
  * verified Firebase UID
- *   → optional Firestore seat read (if document exists)
- *   → stub connection probe (no external provider call)
- *   → JSON projection matching seat-connection-client mapServerSeatPayload
+ *   → optional Firestore seat read
+ *   → connection probe (stub provider runtime in this slice)
+ *   → optional durable write when workplaceId + projectId present:
+ *       create-only connection-tests/{probeId}
+ *       patch-or-create seats/{seatId} connectionHealth
+ *   → JSON projection for browser (presentation only)
  *
- * Does not write durable health, lease, or provider runtime state.
- * Commerce / PayPal out of scope.
+ * Browser never writes. Commerce / PayPal out of scope.
+ * Real external provider HTTP probe remains a later upgrade of runConnectionProbe().
  */
 
 const FIREBASE_PROJECT_ID = "team-ai-official";
@@ -81,7 +91,6 @@ function normalizeHealth(raw: unknown): "unknown" | "offline" | "degraded" | "he
   return "unknown";
 }
 
-/** Stub seats when no durable seat document exists yet. */
 function stubSeatCatalog(): Record<string, Record<string, string>> {
   return {
     alpha: {
@@ -117,6 +126,113 @@ function stubSeatCatalog(): Record<string, Record<string, string>> {
   };
 }
 
+/**
+ * Connection probe seam. This slice uses stub-edge-runtime only.
+ * Later: replace body with real provider health HTTP under the same return shape.
+ */
+function runConnectionProbe(input: {
+  seatId: string;
+  provider: string;
+  model: string;
+  baselineHealth: string;
+  forceHealth?: string | null;
+}): {
+  connectionHealth: "unknown" | "offline" | "degraded" | "healthy";
+  probe: string;
+  probeDetail: string;
+} {
+  if (input.forceHealth) {
+    return {
+      connectionHealth: normalizeHealth(input.forceHealth),
+      probe: "stub-edge-runtime",
+      probeDetail: `forced:${normalizeHealth(input.forceHealth)}`,
+    };
+  }
+  // Stub: trust baseline catalog/durable health; no external HTTP yet.
+  return {
+    connectionHealth: normalizeHealth(input.baselineHealth),
+    probe: "stub-edge-runtime",
+    probeDetail: `stub:${input.provider || "none"}:${input.model || "none"}`,
+  };
+}
+
+async function persistConnectionProbe(input: {
+  uid: string;
+  workplaceId: string;
+  projectId: string;
+  seatId: string;
+  probeId: string;
+  probedAt: string;
+  connectionHealth: string;
+  probe: string;
+  probeDetail: string;
+  name: string;
+  role: string;
+  provider: string;
+  model: string;
+  teamEntitlement: string;
+  providerEntitlement: string;
+  capability: string;
+}): Promise<{ durableWritten: boolean; eventStatus: "created" | "exists"; seatPath: string; eventPath: string }> {
+  const accessToken = await getFirestoreAccessToken();
+  const seatPath =
+    `accounts/${input.uid}/workplaces/${input.workplaceId}/projects/${input.projectId}/seats/${input.seatId}`;
+  const eventPath = `${seatPath}/connection-tests/${input.probeId}`;
+
+  const eventFields = firestoreStringFields({
+    uid: input.uid,
+    workplaceId: input.workplaceId,
+    projectId: input.projectId,
+    seatId: input.seatId,
+    probeId: input.probeId,
+    connectionHealth: input.connectionHealth,
+    probe: input.probe,
+    probeDetail: input.probeDetail,
+    probedAt: input.probedAt,
+    source: "teamai-seat-connection-test",
+  });
+
+  const eventStatus = await firestoreCreate(eventPath, eventFields, accessToken);
+
+  const healthFields = firestoreStringFields({
+    connectionHealth: input.connectionHealth,
+    lastProbedAt: input.probedAt,
+    lastProbeId: input.probeId,
+    lastProbe: input.probe,
+    lastProbeDetail: input.probeDetail,
+    updatedAt: input.probedAt,
+  });
+
+  const existing = await firestoreGet(seatPath, accessToken);
+  if (existing.exists) {
+    await firestorePatch(seatPath, healthFields, accessToken);
+  } else {
+    await firestoreCreate(
+      seatPath,
+      {
+        ...firestoreStringFields({
+          uid: input.uid,
+          workplaceId: input.workplaceId,
+          projectId: input.projectId,
+          seatId: input.seatId,
+          name: input.name,
+          role: input.role,
+          provider: input.provider,
+          model: input.model,
+          teamEntitlement: input.teamEntitlement,
+          providerEntitlement: input.providerEntitlement,
+          capability: input.capability,
+          createdAt: input.probedAt,
+        }),
+        ...healthFields,
+      },
+      accessToken,
+    );
+  }
+
+  return { durableWritten: true, eventStatus, seatPath, eventPath };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS });
@@ -136,16 +252,21 @@ Deno.serve(async (req: Request) => {
         : null;
     const projectId =
       typeof body.projectId === "string" && body.projectId.trim() ? body.projectId.trim() : null;
+    const persistRequested = body.persist !== false; // default true when path is complete
+    const forceHealth =
+      typeof body.forceHealth === "string" && body.forceHealth.trim()
+        ? body.forceHealth.trim()
+        : null;
 
     let durable: Record<string, unknown> | null = null;
     let durablePath: string | null = null;
+    let accessToken: string | null = null;
 
-    // Prefer durable seat when workplace/project + document exist; otherwise stub catalog.
     if (workplaceId && projectId) {
       durablePath =
         `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}`;
       try {
-        const accessToken = await getFirestoreAccessToken();
+        accessToken = await getFirestoreAccessToken();
         const doc = await firestoreGet(durablePath, accessToken);
         if (doc.exists) durable = decodeFields(doc.fields as Record<string, unknown>);
       } catch (err) {
@@ -153,7 +274,6 @@ Deno.serve(async (req: Request) => {
           "seat_connection_firestore_read",
           err instanceof Error ? err.message : "read_failed",
         );
-        // Continue with stub — read failure must not block presentation probe response shape.
       }
     }
 
@@ -169,19 +289,73 @@ Deno.serve(async (req: Request) => {
       capability: "",
     };
 
-    const connectionHealth = normalizeHealth(
-      durable?.connectionHealth ?? durable?.health ?? durable?.connection ?? stub.connectionHealth,
-    );
-
-    const teamEntitlement = String(
-      durable?.teamEntitlement ?? stub.teamEntitlement ?? "unknown",
-    );
+    const name = String(durable?.name ?? stub.name);
+    const role = String(durable?.role ?? stub.role);
+    const provider = String(durable?.provider ?? stub.provider);
+    const model = String(durable?.model ?? stub.model);
+    const teamEntitlement = String(durable?.teamEntitlement ?? stub.teamEntitlement ?? "unknown");
     const providerEntitlement = String(
       durable?.providerEntitlement ?? stub.providerEntitlement ?? "unknown",
     );
+    const capability = String(durable?.capability ?? stub.capability ?? "");
 
-    // Stub probe: no external provider. Marks that authority path was authenticated.
+    const baselineHealth = String(
+      durable?.connectionHealth ?? durable?.health ?? durable?.connection ?? stub.connectionHealth,
+    );
+
+    const probeResult = runConnectionProbe({
+      seatId,
+      provider,
+      model,
+      baselineHealth,
+      forceHealth,
+    });
+
     const probedAt = new Date().toISOString();
+    const probeId = `probe-${crypto.randomUUID().slice(0, 12)}`;
+
+    let durableWritten = false;
+    let eventStatus: "created" | "exists" | null = null;
+    let eventPath: string | null = null;
+
+    if (persistRequested && workplaceId && projectId) {
+      try {
+        const persisted = await persistConnectionProbe({
+          uid,
+          workplaceId,
+          projectId,
+          seatId,
+          probeId,
+          probedAt,
+          connectionHealth: probeResult.connectionHealth,
+          probe: probeResult.probe,
+          probeDetail: probeResult.probeDetail,
+          name,
+          role,
+          provider,
+          model,
+          teamEntitlement,
+          providerEntitlement,
+          capability,
+        });
+        durableWritten = persisted.durableWritten;
+        eventStatus = persisted.eventStatus;
+        eventPath = persisted.eventPath;
+        durablePath = persisted.seatPath;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "persist_failed";
+        console.error("seat_connection_persist_error", message);
+        return json(
+          {
+            error: "seat_connection_persist_failed",
+            diagnostic: message,
+            connectionHealth: probeResult.connectionHealth,
+            probe: probeResult.probe,
+          },
+          500,
+        );
+      }
+    }
 
     return json({
       ok: true,
@@ -190,23 +364,29 @@ Deno.serve(async (req: Request) => {
       seatId,
       workplaceId,
       projectId,
-      name: String(durable?.name ?? stub.name),
-      role: String(durable?.role ?? stub.role),
-      provider: String(durable?.provider ?? stub.provider),
-      model: String(durable?.model ?? stub.model),
-      connectionHealth,
+      name,
+      role,
+      provider,
+      model,
+      connectionHealth: probeResult.connectionHealth,
       teamEntitlement,
       providerEntitlement,
-      capability: String(durable?.capability ?? stub.capability ?? ""),
+      capability,
       teamQuality: String(durable?.teamQuality ?? ""),
       toolQuality: String(durable?.toolQuality ?? ""),
       limits: String(durable?.limits ?? ""),
-      source: durable ? "domain-durable" : "domain-stub",
-      probe: "stub-edge-runtime",
+      source: durableWritten ? "domain-durable" : durable ? "domain-read" : "domain-stub",
+      probe: probeResult.probe,
+      probeDetail: probeResult.probeDetail,
+      probeId,
       probedAt,
       durablePath,
-      note:
-        "Presentation projection only. No provider runtime call and no durable health write in this slice.",
+      eventPath,
+      eventStatus,
+      durableWritten,
+      note: durableWritten
+        ? "Probe recorded server-side (create-only event + seat health). Browser did not write."
+        : "Projection only — durable write requires workplaceId + projectId (and persist !== false).",
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "seat_connection_test_failed";
