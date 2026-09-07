@@ -1,124 +1,66 @@
 # TeamAi 3D Hero — Light-Skeuomorphic Slice Ladder
 
-**Status:** PREPARATION / IMPLEMENTATION HELD BY MASTERPLAN
+**Status:** SLICES 1–3 IMPLEMENTED ON `main` (presentation-only). Formal HandOver/Endorsement for Issue #86 may still be recorded.
 
 ## Authority and continuity
 
-This document is a continuity record for the Living Web AI Shared Workspace Hero. It does not create product authority and does not release TEAM-EXPERIENCE-029.
+This document is a continuity record for the Living Web AI Shared Workspace Hero. It does not create product authority and does not release TEAM-EXPERIENCE-029 by itself.
 
 Execution remains:
 
 `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → applicable spatial skills → GitHub Issue → implementation → verification → evidence → HandOver / Endorsement → PRODUCT-KNOWLEDGE.md`
 
-The current chronological gate remains:
-
-`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
-
 ## Spatial premise
 
-The Hero represents a **Living Web AI Shared Workspace**. The shared workspace is central; distinct Web AI Seats surround it. TeamAi is the enabling product system, not a giant central AI brain. Lighting is visual language only.
+The Hero represents a **Living Web AI Shared Workspace**. The shared workspace is central; distinct Web AI Seats surround it. Lighting is visual language only.
 
-The spatial scene remains presentation-only. The canonical orchestration meaning is still:
+Presentation-only. Canonical orchestration meaning remains:
 
 `AI result/action → durable structured event → task/state transition → scheduler eligibility → next AI/tool/human → new event`
 
 No light effect may imply direct provider-to-provider control.
 
+## Hard rules for any Hero / 3D presentation change
+
+These are already hardened by Product Law + spatial skills + CURRENT_STATE — not a separate “3D Hero skill”:
+
+1. **One theme root only** (`theme-root.css` / theme attributes). No second Hero theme system.
+2. **Lighting** maps through `hero-theme-lighting-adapter.js` (or successor pure adapter). Do not invent page-local theme tokens.
+3. **Motion / transition / reduced-motion** must honor `reducedMotion` / system preference; traveling choreography must have a static equivalent.
+4. **Camera PoV** stays in the semantic camera registry; no orphan free-look that implies domain authority.
+5. **Dependencies are code + existing skills** — theme, lighting adapter, spatial motion companions, browser smoke — not a new engine skill and not Three.js unless Masterplan explicitly adopts it.
+6. **No domain writes** from the Hero canvas (no Firestore, no scheduler, no entitlement mutation).
+7. **Seat count 1–8** is presentation scaling; durable unlock remains domain/entitlement authority.
+
 ## Slice order
 
-### Slice 1 — Issue #84: semantic 3D theme-lighting adapter
+### Slice 1 — Issue #84: semantic 3D theme-lighting adapter — **IMPLEMENTED on main**
 
-Translate the canonical unified theme root into a deterministic presentation-safe spatial parameter set.
+Theme root → deterministic presentation-safe spatial parameters.
 
-Inputs:
+### Slice 2 — Issue #85: manufactured environment and workspace light rig — **IMPLEMENTED on main** (#104)
 
-- theme mode/source
-- atmosphere
-- surface/elevation
-- focus
-- signal
-- status
-- motion/reduced motion
+Consumes Slice 1; base illumination for workspace/seats/shells.
 
-Outputs:
+### Slice 3 — Issue #86: contribution corridor and workspace absorption — **IMPLEMENTED on main** (#107)
 
-- environmental fill
-- workspace key relationship
-- Seat practical/rim family
-- grazing strength
-- contribution-light base
-- roughness/reflectance family
-- shadow separation
-- emissive bounds
-- reduced-motion choreography flag
+Lifecycle: `FOCUS → ACTIVE → CONTRIBUTE → ABSORB → REFLECT → HANDOFF`  
+Contribution corridor, cumulative traces, reduced-motion path, Playwright lifecycle proof (after `durations()` fix).
 
-Rules:
+**Active visual pass:** light-skeuomorphic (Instrument Space). Dark / glassmorphism is a **paired future mode** via the same theme root — not a second parallel visual system built at the same time.
 
-- `frontend/spatial/theme-root.css` remains the only theme authority.
-- No second Hero theme root or duplicated theme state.
-- Mapping is deterministic and side-effect free.
-- Light-skeuomorphism is the active implementation direction.
-- Dark-glassmorphism is a future paired mode, not part of this active visual pass.
+## Verification ladder (each slice)
 
-### Slice 2 — Issue #85: manufactured environment and workspace light rig
+1. Static contract assertions  
+2. WebGL init without fatal errors  
+3. Browser smoke at representative seat counts  
+4. Reduced-motion smoke  
+5. Theme mode comparison (when both modes are product-active)  
+6. Camera/inspection regression  
+7. Contribution-corridor visibility  
+8. Authority-boundary scan  
+9. Evidence before completion claim  
 
-Consume Slice 1 to establish the spatial instrument's base illumination.
+## Issues
 
-Light families:
-
-1. Environmental fill for room/atmosphere.
-2. Workspace key relationship for the central shared surface.
-3. Restrained Seat practical/rim lighting.
-4. Grazing/rim response for authored shells and machined surfaces.
-5. Shadow separation for physical depth.
-
-The goal is to reveal authored form, not simulate a flat interface with CSS-like glow.
-
-### Slice 3 — Issue #86: contribution corridor and workspace absorption
-
-Consume Slices 1–2 and map the existing lifecycle into restrained semantic light choreography:
-
-`FOCUS → ACTIVE → CONTRIBUTE → ABSORB → REFLECT → HANDOFF`
-
-`CONTRIBUTE` must visually travel from the active Web AI Seat toward the shared Workspace.
-
-`ABSORB` must make the workspace visibly receive and settle the contribution.
-
-`REFLECT` is a brief acknowledgement/ripple, not a second orchestration channel.
-
-`HANDOFF` decays the outgoing Seat and focuses the next eligible Seat.
-
-Reduced motion replaces traveling/pulsing choreography with static semantic state changes.
-
-## Existing spatial systems that must remain intact
-
-- authored `workspaceRing` and `seatShell`
-- 1–8 Seat scaling
-- semantic camera registry
-- inspection spine
-- contribution corridor
-- turn lifecycle
-- authentication handoff boundary
-- responsive framing
-- reduced-motion behavior
-- `APP_UI_HANDOFF` to normal application UI
-
-## Verification ladder
-
-Each slice must remain independently testable.
-
-1. Static contract assertions.
-2. WebGL initialization without fatal runtime errors.
-3. Browser smoke at representative Seat counts.
-4. Reduced-motion smoke.
-5. Theme mode comparison.
-6. Camera/inspection regression check.
-7. Contribution-corridor visibility check.
-8. Authority-boundary scan.
-9. Evidence captured before considering the slice complete.
-
-## Blocking gate
-
-No active 029 implementation should be merged until `MASTERPLAN.md` releases TEAM-EXPERIENCE-029 after TEAM-BACKEND-001 completion/endorsement and required evidence.
-
-This ladder therefore acts as preparation and continuity knowledge rather than an implementation bypass.
+Durable work for Hero slices is tracked as GitHub Issues (#84, #85, #86). See `docs/GITHUB_ISSUES.md`. Closing an Issue requires acceptance criteria + verification; a green PR alone does not auto-Endorsement.

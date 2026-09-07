@@ -1,7 +1,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** `main` @ Hero manufactured light rig ([PR #104](https://github.com/RbrtMrlsIII/TeamAi/pull/104), `d22927ac…`) plus authenticated `teamai-task-execute` live runtime proof (2026-09-06), live Firestore contention/recovery run #7, isolated PayPal Sandbox commerce runtime evidence, and final Firestore aggregate re-read (GitHub Actions run #1, attempt 2, 2026-09-07). The bounded task-execute, contention/recovery, PayPal delivery, and post-v13 aggregate verification gates are **RUNTIME-PROVEN**. `TEAM-BACKEND-001` is **ENDORSED for the bounded recorded implementation/validation scope**.
+**Revision basis:** `main` @ Hero contribution absorption ([PR #107](https://github.com/RbrtMrlsIII/TeamAi/pull/107), `903bc014…`) plus manufactured light rig (#104), authenticated `teamai-task-execute` live proof, Firestore contention/recovery run #7, PayPal Sandbox + aggregate re-read. `TEAM-BACKEND-001` remains **ENDORSED** for the bounded recorded scope.
 
 This document is a compact operational index for agents. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
 
@@ -11,9 +11,9 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **ENDORSED for bounded recorded scope**. Live two-worker lease contention + durable result restart/recovery, authenticated `teamai-task-execute`, isolated PayPal Sandbox delivery/HTTP 200, and direct post-v13 Firestore aggregate/event/entitlement re-read are RUNTIME-PROVEN. The final re-read passed on GitHub Actions run #1 (attempt 2), with aggregate `completed`, event count `1`, entitlement `active`, and source-event match. Broader authenticated product-path integration remains distinct.
+- `TEAM-BACKEND-001`: **ENDORSED for bounded recorded scope**. Live lease contention/recovery, authenticated `teamai-task-execute`, PayPal Sandbox delivery/HTTP 200, and post-v13 Firestore aggregate re-read are RUNTIME-PROVEN. Broader authenticated product-path integration remains distinct.
 - `TEAM-BACKEND-002`: **IMPLEMENTED** on `main`.
-- `TEAM-EXPERIENCE-029`: **presentation inhabited**. Command Deck remains fixture-backed. Manufactured Hero light rig is on `main` as presentation-only. Seat Identity Inspection is no longer blocked by TEAM-BACKEND-001 endorsement, but remains subject to its own continuation/implementation gates.
+- `TEAM-EXPERIENCE-029`: **presentation inhabited**. Command Deck remains fixture-backed. Hero slices 1–3 (theme-lighting adapter, manufactured light rig, contribution corridor / absorb / traces) are on `main` as **presentation-only**. Issue #86 implementation is merged; formal HandOver/Endorsement for the Hero ladder may still be recorded. Seat Identity Inspection remains its own gate.
 - GitHub is the engineering/source authority.
 - Firebase `(default)` Firestore is the durable application/domain-state authority.
 - Firebase Auth owns identity / Firebase UID ownership.
@@ -31,68 +31,37 @@ Full operational detail is in `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`.
 
 ## Merged implementation frontier
 
-The 029 spatial progression currently present on `main` remains Shell → Deck → F7 → Workplace → Seats → Planning → Working → Approvals → Artifacts → Settings, plus presentation-only Hero lighting that consumes `frontend/spatial/hero-theme-lighting-adapter.js`.
+The 029 spatial progression on `main` remains Shell → Deck → F7 → Workplace → Seats → Planning → Working → Approvals → Artifacts → Settings, plus presentation-only Hero:
 
-Hero uses the existing spatial skill family. There is no 3D Hero skill and no second theme root.
+- Theme → lighting via `frontend/spatial/hero-theme-lighting-adapter.js` (one theme root only)
+- Manufactured light rig + WebGL Hero (`public/hero-flex.js`, authored meshes)
+- Lifecycle `FOCUS → ACTIVE → CONTRIBUTE → ABSORB → REFLECT → HANDOFF` with workspace traces (#107)
 
-The backend execution progression currently present on `main` is:
+Hero uses the existing spatial skill family. **There is no 3D Hero skill and no second theme root.**
+
+Backend execution on `main`:
 
 `ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility → Firestore lease (live-proven) → durable execution-result store (live-proven) → authenticated teamai-task-execute (live-proven) → read/write economy controls`
 
-These slices do not by themselves establish full 029 completion or broader authenticated product-path integration.
-
 ## Live PayPal commerce evidence
 
-**Status:** bounded isolated runtime gate **RUNTIME-PROVEN** for real Sandbox capture → PayPal webhook delivery to v5c → HTTP 200, plus final post-v13 Firestore aggregate/event/entitlement re-read.
+**Status:** bounded isolated runtime gate **RUNTIME-PROVEN**.
 
-Canonical path:
+Canonical path: `accounts/{uid}/commerce/{correlationId}` (+ events, entitlements, correlation index).
 
-`accounts/{uid}/commerce/{correlationId}`  
-`.../events/{providerEventId}`  
-`.../entitlements/{entitlementId}`  
-`commerceCorrelationIndex/{correlationId}` (server-only)
+Recorded 2026-09-06: correlationId `68b4ef3a-4132-46bf-8a01-43ebe97ba51e`; provider event `WH-71666988RB043112X-1WA30416DF8293903`.
 
-Recorded identities from 2026-09-06:
+Re-read workflow: `.github/workflows/firestore-commerce-aggregate-read.yml` — run #1 attempt 2 (`34089143256`) passed.
 
-- correlationId: `68b4ef3a-4132-46bf-8a01-43ebe97ba51e`
-- provider event: `WH-71666988RB043112X-1WA30416DF8293903`
-
-Live re-read probe:
-
-- Script: `scripts/firestore-commerce-aggregate-read.mjs`
-- Workflow: `.github/workflows/firestore-commerce-aggregate-read.yml` (`workflow_dispatch`)
-- Required secret name only: `TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON`
-- Successful execution: run #1 / attempt 2 / run ID `34089143256`
-
-Final observed probe result:
-
-```text
-status=commerce-aggregate-read-pass
-aggregateStatus=completed
-eventCount=1
-eventType=payment_completed
-entitlementStatus=active
-sourceMatches=true
-```
-
-Evidence record: `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`
+Evidence: `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`
 
 ## TEAM-BACKEND-001 conclusion
 
-1. ~~Live two-worker lease.~~ DONE (run #7).
-2. ~~Restart/recovery.~~ DONE (run #7).
-3. ~~Durable result retrieval.~~ DONE (run #7).
-4. ~~Authenticated `teamai-task-execute`.~~ DONE (2026-09-06).
-5. ~~Direct Firestore commerce aggregate re-read after v13.~~ DONE / RUNTIME-PROVEN (2026-09-07, Actions run #1 attempt 2).
-6. ~~Final bounded gate audit / HandOver / Endorsement.~~ DONE for the recorded scope.
-7. Broader authenticated product-path scheduler/approval integration — separate and remains open.
-8. ~~PayPal Sandbox delivery / HTTP 200.~~ DONE (2026-09-06).
+Bounded recorded gates DONE / ENDORSED. Broader authenticated product-path scheduler/approval integration remains open.
 
 ## Frontend reality
 
-The spatial frontend remains fixture-backed except for local theme/Hero lighting presentation. With TEAM-BACKEND-001 endorsed, the explicit backend release hold is cleared; frontend work must still obey its own Product Law, Masterplan, skill, verification, and continuation gates. Do not turn fixture UI into claimed live domain behavior.
-
-Allowed Hero slices remain presentation-only unless a later gate explicitly establishes live domain integration.
+Spatial frontend remains fixture-backed except local theme/Hero presentation. Do not turn fixture UI into claimed live domain behavior. Hero remains presentation-only until a later gate explicitly joins live domain.
 
 ## Known brittle points
 
@@ -114,14 +83,19 @@ Allowed Hero slices remain presentation-only unless a later gate explicitly esta
 6. Do not create page-local Product Law, scheduler, identity, entitlement, commerce, or durable-state authority.
 7. Do not resume Vercel without explicit user approval.
 8. Do not add a 3D Hero skill.
+9. Hero 3D dependencies (theme, lighting, motion, camera, reduced-motion) stay code-bound to the single theme root and existing spatial skills — no parallel engine skill.
 
 ## Immediate next gate
 
-TEAM-BACKEND-001 is endorsed for the bounded recorded scope. The next work may proceed from the now-cleared backend release hold, beginning with the already-defined continuation gates rather than inventing a new authority track.
+Priority suggestions (pick one track):
+
+1. **Hero #86 evidence/HandOver** — close Issue #86 formally if acceptance criteria are met.
+2. **Seat Identity Inspection** — next 029 presentation gate after backend hold cleared.
+3. **Broader product-path** — authenticated scheduler/approval integration (larger; separate from Hero).
 
 Out of scope unless explicitly approved:
 
-`browser Firestore write authority, provider-to-provider orchestration, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB, a 3D Hero skill, broader authenticated product-path scheduler/approval integration.`
+`browser Firestore write authority, provider-to-provider orchestration, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB, a 3D Hero skill, simultaneous full dark-glassmorphism pass as a second visual system.`
 
 ## Evidence language
 
