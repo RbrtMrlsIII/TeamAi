@@ -1,0 +1,43 @@
+name: Firestore commerce aggregate re-read
+
+on:
+  workflow_dispatch:
+    inputs:
+      correlation_id:
+        description: Existing TeamAi commerce correlationId to re-read
+        required: false
+        default: 68b4ef3a-4132-46bf-8a01-43ebe97ba51e
+      provider_event_id:
+        description: Existing PayPal provider event ID that must remain singular
+        required: false
+        default: WH-71666988RB043112X-1WA30416DF8293903
+
+permissions:
+  contents: read
+
+jobs:
+  live-commerce-read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f package-lock.json; then npm ci; else npm install --no-audit --no-fund; fi
+
+      - name: Re-read commerce aggregate, event, and entitlement
+        env:
+          TEAMAI_FIREBASE_PROJECT_ID: team-ai-official
+          TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON }}
+          TEAMAI_COMMERCE_CORRELATION_ID: ${{ inputs.correlation_id }}
+          TEAMAI_COMMERCE_PROVIDER_EVENT_ID: ${{ inputs.provider_event_id }}
+        run: node scripts/firestore-commerce-aggregate-read.mjs
