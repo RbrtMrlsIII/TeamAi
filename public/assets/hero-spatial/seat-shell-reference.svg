@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 520" role="img" aria-labelledby="t d">
+  <title id="t">Web AI Seat shell reference</title>
+  <desc id="d">Engineering reference showing a distinct manufactured Web AI Seat shell with a focus collar and capability aperture.</desc>
+  <rect width="420" height="520" fill="#e7dcc8"/>
+  <g transform="translate(210 260)">
+    <path d="M-132-166 Q-108-202 0-212 Q108-202 132-166 L118 126 Q108 174 0 192 Q-108 174-118 126 Z" fill="#d4c7b0" stroke="#564b40" stroke-width="7"/>
+    <path d="M-104-132 Q-88-160 0-168 Q88-160 104-132 L94 102 Q82 138 0 150 Q-82 138-94 102 Z" fill="#f3ebe0" stroke="#807363" stroke-width="4"/>
+    <ellipse cy="-12" rx="72" ry="94" fill="#e3d8c6" stroke="#6e6255" stroke-width="6"/>
+    <ellipse cy="-12" rx="45" ry="62" fill="#f8f3eb" stroke="#9a8c77" stroke-width="4"/>
+    <path d="M-60 82 Q0 114 60 82" fill="none" stroke="#7a6d5d" stroke-width="6" opacity=".58"/>
+    <circle cy="-12" r="11" fill="#2a5240"/>
+    <path d="M0-168 V-118" stroke="#765a2a" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
