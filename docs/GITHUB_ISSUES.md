@@ -5,6 +5,8 @@
 
 GitHub Issues are durable, scoped development definitions. They sit **under Product Law** and beside implementation/verification; they do not grant permission, amend authority by themselves, or replace Product Law, architecture, policy, skills, or PR review.
 
+See also: `docs/AGENT_SLICE_EXECUTION.md` (green CI + audit + next-slice checkpoint).
+
 ## Authority and development order
 
 ```text
@@ -30,6 +32,23 @@ Use this distinction consistently:
 An Issue may make Product Law more concrete for one feature. It must **not silently create a new Product Law**.
 
 When implementation reveals a genuinely new product invariant, stop and reconcile the higher-level authority first; update Product Law only through the repository's normal governed process, then continue the Issue.
+
+## Issue body vs comments
+
+| Surface | Role |
+|---------|------|
+| **Issue body** | Stable definition: objective, acceptance criteria, out of scope, verification. Edit the body when the **definition** of done changes. |
+| **Comments** | Chronological evidence trail: gate open/closed, CI links, merge SHAs, limitations, next checkpoint. **Do not** treat comments as a second Product Law. |
+
+**You do not need to avoid comments.** Prefer:
+
+1. One clear **evidence comment** when a PR lands or a gate clears.  
+2. One **next-checkpoint** comment when work pauses.  
+3. Avoid chat-like noise and duplicate status posts.
+
+Comments are **not** something that must be “re-updated” on every small talk turn. If acceptance criteria change, **edit the Issue body**; if only progress happened, **add a comment** (or close the Issue with an evidence comment).
+
+Closing an Issue means the **bounded acceptance criteria** are met (or explicitly abandoned). It does not auto-endorse a whole Masterplan milestone.
 
 ## When to open an Issue
 
@@ -76,7 +95,7 @@ Read Product Law
 → inspect the current implementation
 → make the smallest compliant change
 → run the Issue's verification
-→ update PR / Issue evidence
+→ update PR / Issue evidence (comment)
 → continue from the next implementation checkpoint
 ```
 
