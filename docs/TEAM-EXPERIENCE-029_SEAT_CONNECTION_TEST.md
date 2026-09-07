@@ -1,4 +1,4 @@
-# TEAM-EXPERIENCE-029 — Seat connection Test (phase 3)
+# TEAM-EXPERIENCE-029 — Seat connection Test (phase 3–4)
 
 **Status:** OPERATING CONTRACT / NOT PRODUCT LAW  
 **Date:** 2026-09-07
@@ -7,26 +7,57 @@
 
 Move connection health from **fixture-only** presentation toward a **trusted server projection**, without making the browser the write authority.
 
-## CLI note (phase 2 follow-up)
+## CLI note (phase 2)
 
-You do **not** need to run this on your machine for GitHub/`main` to work:
-
-```bash
-npm run seat:plate:phase2
-git add frontend/spatial/shell-nav.js
-git commit -m "chore(029): commit applied Seats plate phase2 bind"
-```
-
-That commit is **optional**. CI and GitHub Pages already run the apply script. Use it only for a local static preview that must match production without re-applying.
+Local `npm run seat:plate:phase2` + commit is **optional**. CI and GitHub Pages already apply the bind. No early `git pull` required for this backend slice.
 
 ## Authority
 
 | Layer | Owns |
 |-------|------|
 | Firebase Auth | Identity / ID token |
-| Trusted Edge/API | Test connection probe + durable health write (future) |
-| Firestore | Durable seat/connection facts (future write path) |
-| Browser | Display projection only |
+| Edge Function `teamai-seat-connection-test` | Authenticated probe + projection JSON |
+| Firestore | Optional durable seat read; durable health **write** still later |
+| Browser | Display only |
+
+## Phase 4 Edge Function
+
+**Path:** `POST /functions/v1/teamai-seat-connection-test`  
+**Auth:** `Authorization: Bearer <Firebase ID token>`  
+**Deploy (when you are ready):**
+
+```bash
+npx supabase functions deploy teamai-seat-connection-test --project-ref <ref> --no-verify-jwt
+```
+
+(`--no-verify-jwt` matches `teamai-task-execute`: function verifies Firebase ID token itself.)
+
+### Behavior
+
+1. Verify Firebase UID (same JWKS path as task-execute).
+2. If `workplaceId` + `projectId` provided, try read  
+   `accounts/{uid}/workplaces/.../projects/.../seats/{seatId}`.
+3. Else (or on miss): **stub catalog** (alpha healthy, gamma degraded, …).
+4. Return JSON projection — **no external provider call**, **no durable health write**.
+
+### Response shape (client-compatible)
+
+```json
+{
+  "ok": true,
+  "phase": "seat_connection_test",
+  "uid": "…",
+  "seatId": "alpha",
+  "connectionHealth": "healthy",
+  "teamEntitlement": "allowed",
+  "providerEntitlement": "allowed",
+  "source": "domain-stub",
+  "probe": "stub-edge-runtime",
+  "probedAt": "…"
+}
+```
+
+Client maps via `mapServerSeatPayload` → `projectSeat(..., { source: 'domain' })`.
 
 ## Client module
 
@@ -34,36 +65,19 @@ That commit is **optional**. CI and GitHub Pages already run the apply script. U
 
 - `fetchSeatConnectionProjection({ baseUrl, idToken, seatId, … })`
 - Returns `null` when `baseUrl` is unset (plate stays fixture)
-- On HTTP success, maps body through `mapServerSeatPayload` → `projectSeat(…, { source: 'domain' })`
-- Shared health enum: `unknown | offline | degraded | healthy`
 
-## Expected server response (JSON)
+## Not yet
 
-```json
-{
-  "seatId": "alpha",
-  "name": "Alpha",
-  "connectionHealth": "healthy",
-  "teamEntitlement": "allowed",
-  "providerEntitlement": "allowed",
-  "provider": "…",
-  "model": "…"
-}
-```
-
-Default path: `POST {baseUrl}/teamai-seat-connection-test` with `Authorization: Bearer <Firebase ID token>`.
-
-## Not in phase 3
-
-- Deployed Edge Function implementation (next slice)
-- Durable Firestore health writes
+- Durable connection-health write path
 - Real provider runtime probes
-- Browser self-authorizing Activate
+- Plate button auto-wired to live baseUrl (next thin slice)
+- Browser Activate authority
 
 ## Phase ladder
 
 1. Read model — done
 2. Seats plate bind + Pages apply — done
-3. **Client + contract for domain projection — this PR**
-4. Edge Function `teamai-seat-connection-test` (auth + stub/real probe)
-5. Wire plate Test Connection button to client when `baseUrl` configured
+3. Client + contract — done (#115)
+4. **Edge Function stub probe — this PR**
+5. Wire plate Test Connection when `baseUrl` configured
+6. Durable health write + real provider probe (later)
