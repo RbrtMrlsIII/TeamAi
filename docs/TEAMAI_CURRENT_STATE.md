@@ -1,7 +1,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** `main` @ Hero manufactured light rig ([PR #104](https://github.com/RbrtMrlsIII/TeamAi/pull/104), `d22927ac…`) plus authenticated `teamai-task-execute` live runtime proof (2026-09-06), live Firestore contention/recovery run #7, and isolated PayPal Sandbox commerce runtime evidence. The bounded task-execute and contention/recovery gates are RUNTIME-PROVEN. PayPal v5c delivery/HTTP-200 is RUNTIME-PROVEN. The post-fix Firestore aggregate re-read remains the open TEAM-BACKEND-001 proof item.
+**Revision basis:** `main` @ Hero manufactured light rig ([PR #104](https://github.com/RbrtMrlsIII/TeamAi/pull/104), `d22927ac…`) plus authenticated `teamai-task-execute` live runtime proof (2026-09-06), live Firestore contention/recovery run #7, isolated PayPal Sandbox commerce runtime evidence, and final Firestore aggregate re-read (GitHub Actions run #1, attempt 2, 2026-09-07). The bounded task-execute, contention/recovery, PayPal delivery, and post-v13 aggregate verification gates are **RUNTIME-PROVEN**. `TEAM-BACKEND-001` is **ENDORSED for the bounded recorded implementation/validation scope**.
 
 This document is a compact operational index for agents. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
 
@@ -11,9 +11,9 @@ This document is a compact operational index for agents. It does not replace Pro
 
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **IN IMPLEMENTATION** with **RUNTIME-PROVEN** bounded sub-gates for (a) live two-worker lease contention + durable result restart/recovery (GitHub Actions run #7), (b) authenticated `teamai-task-execute` Edge execution, and (c) isolated PayPal Sandbox delivery to `teamai-paypal-webhook-v5c` with real `PAYMENT.CAPTURE.COMPLETED` evidence and v13 HTTP 200 redelivery. Still open: **direct Firestore aggregate/event/entitlement re-read after v13**, then final audit/traceability and HandOver/Endorsement. Broader authenticated product-path integration remains distinct.
+- `TEAM-BACKEND-001`: **ENDORSED for bounded recorded scope**. Live two-worker lease contention + durable result restart/recovery, authenticated `teamai-task-execute`, isolated PayPal Sandbox delivery/HTTP 200, and direct post-v13 Firestore aggregate/event/entitlement re-read are RUNTIME-PROVEN. The final re-read passed on GitHub Actions run #1 (attempt 2), with aggregate `completed`, event count `1`, entitlement `active`, and source-event match. Broader authenticated product-path integration remains distinct.
 - `TEAM-BACKEND-002`: **IMPLEMENTED** on `main`.
-- `TEAM-EXPERIENCE-029`: **presentation inhabited**. Command Deck remains fixture-backed. Manufactured Hero light rig is on `main` as presentation-only. **Seat Identity Inspection and live-domain UI are blocked until TEAM-BACKEND-001 is endorsed.**
+- `TEAM-EXPERIENCE-029`: **presentation inhabited**. Command Deck remains fixture-backed. Manufactured Hero light rig is on `main` as presentation-only. Seat Identity Inspection is no longer blocked by TEAM-BACKEND-001 endorsement, but remains subject to its own continuation/implementation gates.
 - GitHub is the engineering/source authority.
 - Firebase `(default)` Firestore is the durable application/domain-state authority.
 - Firebase Auth owns identity / Firebase UID ownership.
@@ -39,11 +39,11 @@ The backend execution progression currently present on `main` is:
 
 `ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility → Firestore lease (live-proven) → durable execution-result store (live-proven) → authenticated teamai-task-execute (live-proven) → read/write economy controls`
 
-These slices do **not** by themselves establish full 029 completion or TEAM-BACKEND-001 endorsement.
+These slices do not by themselves establish full 029 completion or broader authenticated product-path integration.
 
 ## Live PayPal commerce evidence
 
-**Status:** bounded isolated runtime gate **RUNTIME-PROVEN** for real Sandbox capture → PayPal webhook delivery to v5c → HTTP 200. The post-fix Firestore state transition remains open until directly re-read.
+**Status:** bounded isolated runtime gate **RUNTIME-PROVEN** for real Sandbox capture → PayPal webhook delivery to v5c → HTTP 200, plus final post-v13 Firestore aggregate/event/entitlement re-read.
 
 Canonical path:
 
@@ -57,32 +57,42 @@ Recorded identities from 2026-09-06:
 - correlationId: `68b4ef3a-4132-46bf-8a01-43ebe97ba51e`
 - provider event: `WH-71666988RB043112X-1WA30416DF8293903`
 
-Live re-read probe (this slice):
+Live re-read probe:
 
 - Script: `scripts/firestore-commerce-aggregate-read.mjs`
 - Workflow: `.github/workflows/firestore-commerce-aggregate-read.yml` (`workflow_dispatch`)
 - Required secret name only: `TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON`
+- Successful execution: run #1 / attempt 2 / run ID `34089143256`
 
-PASS requires together: aggregate `status=completed`, exactly one event document for that provider event ID, entitlement `status=active` with `sourceCommerceEventId` equal to that event ID.
+Final observed probe result:
+
+```text
+status=commerce-aggregate-read-pass
+aggregateStatus=completed
+eventCount=1
+eventType=payment_completed
+entitlementStatus=active
+sourceMatches=true
+```
 
 Evidence record: `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`
 
-## Remaining TEAM-BACKEND-001 frontier
+## TEAM-BACKEND-001 conclusion
 
 1. ~~Live two-worker lease.~~ DONE (run #7).
 2. ~~Restart/recovery.~~ DONE (run #7).
 3. ~~Durable result retrieval.~~ DONE (run #7).
 4. ~~Authenticated `teamai-task-execute`.~~ DONE (2026-09-06).
-5. **Direct Firestore commerce aggregate re-read after v13.** OPEN until the live workflow succeeds.
-6. Final audit/traceability, HandOver, and Endorsement.
-7. Broader authenticated product-path scheduler/approval integration — separate.
+5. ~~Direct Firestore commerce aggregate re-read after v13.~~ DONE / RUNTIME-PROVEN (2026-09-07, Actions run #1 attempt 2).
+6. ~~Final bounded gate audit / HandOver / Endorsement.~~ DONE for the recorded scope.
+7. Broader authenticated product-path scheduler/approval integration — separate and remains open.
 8. ~~PayPal Sandbox delivery / HTTP 200.~~ DONE (2026-09-06).
 
 ## Frontend reality
 
-The spatial frontend remains fixture-backed except for local theme/Hero lighting presentation. Do not inspect Seats as identity, and do not join live domain, until TEAM-BACKEND-001 is endorsed.
+The spatial frontend remains fixture-backed except for local theme/Hero lighting presentation. With TEAM-BACKEND-001 endorsed, the explicit backend release hold is cleared; frontend work must still obey its own Product Law, Masterplan, skill, verification, and continuation gates. Do not turn fixture UI into claimed live domain behavior.
 
-Allowed 3D Hero slices while 001 is still open: contribution corridor presentation, machined material/depth, reduced-motion lighting. Blocked: Seat Identity Inspection, commerce UI claiming live state, browser Firestore writes.
+Allowed Hero slices remain presentation-only unless a later gate explicitly establishes live domain integration.
 
 ## Known brittle points
 
@@ -91,9 +101,8 @@ Allowed 3D Hero slices while 001 is still open: contribution corridor presentati
 3. Frontend/backend contract boundary.
 4. Firestore write-authority boundary.
 5. Broader product-path scheduler/approval integration remains open.
-6. PayPal aggregate re-read is still the endorsement blocker.
-7. Dual API-server: `src/main.ts` launches `src/api/server.ts`; `src/server.ts` remains.
-8. Firestore commit `name` format must be resource names, not HTTPS URLs.
+6. Dual API-server: `src/main.ts` launches `src/api/server.ts`; `src/server.ts` remains.
+7. Firestore commit `name` format must be resource names, not HTTPS URLs.
 
 ## Rules for high-concurrency agents
 
@@ -108,11 +117,11 @@ Allowed 3D Hero slices while 001 is still open: contribution corridor presentati
 
 ## Immediate next gate
 
-**Run `.github/workflows/firestore-commerce-aggregate-read.yml` against the existing Sandbox correlation after this probe is on `main`. If it PASSes, record RUNTIME-PROVEN for the aggregate transition and then produce TEAM-BACKEND-001 HandOver/Endorsement. If it FAILs with `pending`, that is LEARNED, not completion.**
+TEAM-BACKEND-001 is endorsed for the bounded recorded scope. The next work may proceed from the now-cleared backend release hold, beginning with the already-defined continuation gates rather than inventing a new authority track.
 
 Out of scope unless explicitly approved:
 
-`Seat Identity Inspection, live-domain UI, browser Firestore write authority, provider-to-provider orchestration, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB, a 3D Hero skill.`
+`browser Firestore write authority, provider-to-provider orchestration, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB, a 3D Hero skill, broader authenticated product-path scheduler/approval integration.`
 
 ## Evidence language
 
