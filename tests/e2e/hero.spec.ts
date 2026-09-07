@@ -89,6 +89,9 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.getByRole('tab', { name: 'Sign up', exact: true }).click();
     await expect(page.getByLabel('Name')).toBeVisible();
     await expect(page.getByLabel('Password')).toHaveAttribute('autocomplete', 'new-password');
+    await page.getByLabel('Name').fill('Example User');
+    await page.getByLabel('Email').fill('example@example.com');
+    await page.getByLabel('Password').fill('not-sent-password');
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
     await expect(page.locator('#auth-status')).toContainText('Authentication is not connected yet');
 
