@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "status": "reference",
+  "purpose": "TeamAi Living Web AI Shared Workspace Hero spatial asset references",
+  "authority": "semantic asset names and Product Law; renderer remains presentation-only",
+  "families": [
+    {
+      "id": "workspace-ring",
+      "path": "workspace-ring-reference.svg",
+      "semanticRole": "shared-web-ai-workspace",
+      "reuseClass": "hero-shared",
+      "symmetry": "radial",
+      "attachment": "world-surface",
+      "target": "machined-shell/recessed-surface/trace-rail"
+    },
+    {
+      "id": "web-ai-seat-shell",
+      "path": "seat-shell-reference.svg",
+      "semanticRole": "web-ai-seat",
+      "reuseClass": "repeated-1-to-8",
+      "symmetry": "bilateral",
+      "attachment": "seat-mount",
+      "target": "manufactured-shell/focus-collar/capability-aperture"
+    },
+    {
+      "id": "contribution-anchor",
+      "path": "contribution-anchor-reference.svg",
+      "semanticRole": "seat-to-workspace-contribution",
+      "reuseClass": "semantic-effect-anchor",
+      "symmetry": "directional",
+      "attachment": "seat-and-workspace-semantic-anchors",
+      "target": "constrained-contribution-corridor"
+    }
+  ],
+  "productionRule": "References may guide later GLB/mesh authoring; they do not replace the current authored renderer topology until an authorized implementation slice passes Function, Form, Runtime, and browser gates.",
+  "spendRule": "No paid asset generation is authorized by this manifest."
+}
