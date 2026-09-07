@@ -1,17 +1,21 @@
-# shell-nav phase2 bind status
+# Seats plate phase2 bind
 
-Run from repo root to materialize the bind in `frontend/spatial/shell-nav.js`:
+## Do you need to run the CLI commit?
+
+**No — not required for CI or GitHub Pages.**
+
+| Surface | How bind is applied |
+|---------|---------------------|
+| Unit / e2e CI | `npm test` / `npm run test:e2e` runs `seat:plate:phase2` first |
+| GitHub Pages | workflow runs `node scripts/apply-seat-plate-phase2.mjs` before copy |
+| Local static preview | run `npm run seat:plate:phase2` once after pull |
+
+Optional (only if you want the bound file committed in git history):
 
 ```bash
 npm run seat:plate:phase2
+git add frontend/spatial/shell-nav.js
+git commit -m "chore(029): commit applied Seats plate phase2 bind"
 ```
 
-Idempotent. CI already runs this before unit/e2e tests.
-
-Bound markers expected after apply:
-- `from "./seat-read-model.js"`
-- `function projectedSeat`
-- `applyProjectionToHeroSeatStack`
-- health display uses `connectionHealth`
-
-This marker file documents that phase2 bind is the intended mainline state even when the large `shell-nav.js` rewrite is applied via the script.
+The apply script is **idempotent** — safe to re-run.
