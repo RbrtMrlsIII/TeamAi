@@ -1,55 +1,95 @@
-# TeamAi — When to open a GitHub Issue
+# TeamAi — GitHub Issues as development memory
 
-**Status:** OPERATING NOTE / NOT PRODUCT LAW  
-**Date:** 2026-09-04
+**Status:** OPERATING CONTRACT / NOT PRODUCT LAW
+**Date:** 2026-09-07
 
-Issues are a **lightweight tracker**. They do not grant permission, amend Product Law, or replace Masterplan / POLICY / skills / PRs.
+GitHub Issues are durable, scoped development definitions. They sit **under Product Law** and beside implementation/verification; they do not grant permission, amend authority by themselves, or replace Product Law, architecture, policy, skills, or PR review.
 
-## Prefer a PR (+ slice or skill doc) when
+## Authority and development order
 
-- Work is a bounded TEAM-EXPERIENCE-029 presentation slice
-- Verification is GitHub Actions / Playwright
-- The change is the implementation itself
+```text
+PRODUCT_LAW.md
+    ↓
+Architecture / governing docs
+    ↓
+GitHub Issue
+    ↓
+Implementation
+    ↓
+Tests / CI / evidence
+```
 
-## Open an Issue when
+Use this distinction consistently:
 
-| Situation | Typical label |
-|-----------|---------------|
-| Authority / CI / delivery boundary must outlive one PR | `boundary` |
-| Backend gate or domain hold needs a durable reminder | `backend-001` |
-| 029 work is **blocked** or needs a decision before code | `029` |
-| Docs/skills/wiring debt that keeps recurring | `docs` |
-| Discrepancy/noise that must not die in chat | `noise` |
+- **Product Law** = what must remain true across the product.
+- **Architecture / policy / skills** = how the system is governed and constrained.
+- **Issue** = what one bounded piece of that product truth means for the current development slice, including acceptance criteria and verification.
+- **PR** = the proposed code/documentation change.
+- **Tests / CI / evidence** = proof that the implementation satisfies the Issue without violating higher authority.
 
-## Do not open an Issue for
+An Issue may make Product Law more concrete for one feature. It must **not silently create a new Product Law**.
 
-- Every small PR
-- Restating Product Law
-- Chat-only questions already answered in freeze docs
-- Turning Vercel external status into architecture failure (see cutoff / POLICY)
+When implementation reveals a genuinely new product invariant, stop and reconcile the higher-level authority first; update Product Law only through the repository's normal governed process, then continue the Issue.
 
-## Labels (keep small)
+## When to open an Issue
 
-`029` · `backend-001` · `boundary` · `docs` · `noise`
+Open an Issue when future sessions benefit from a durable, scoped definition that should survive the current chat or PR, especially when work has non-trivial acceptance criteria, a decision boundary, a blocked dependency, or a verification gate.
 
-Plus existing: `ci` · `deployment` when useful.
+Do **not** open an Issue for every small PR or for chat-only questions whose answer is already captured in canonical docs.
 
-## Templates
+## Required Issue structure
 
-See `.github/ISSUE_TEMPLATE/`:
+A useful Issue should answer:
 
-- **Boundary / authority**
-- **029 presentation slice**
-- **Backend gate / domain**
+1. **Objective** — what bounded outcome is being pursued?
+2. **Product Law / authority** — which existing rule(s) constrain it?
+3. **User-visible behavior** — what should the product do or show?
+4. **System / spatial behavior** — what mechanism or interaction changes, where relevant?
+5. **Backend / authority boundary** — what remains authoritative elsewhere?
+6. **Acceptance criteria** — what observable conditions mean this Issue is complete?
+7. **Verification** — which tests, CI runs, screenshots, or evidence prove completion?
+8. **Dependencies / blockers** — what must be true first?
+9. **Out of scope** — what this Issue must not expand into.
+10. **Next implementation checkpoint** — the smallest useful next action for a future session.
 
-Blank issues remain allowed for odd cases; prefer a template.
+## Issue types
+
+Prefer a small vocabulary:
+
+- `feature` — bounded product capability or experience slice
+- `adr` — architectural or product-shaping decision that should remain durable
+- `bug` — observed incorrect behavior
+- `verification` — evidence or validation gate that deserves durable tracking
+- `boundary` — authority, CI, delivery, or integration boundary that must outlive a PR
+- `chore` — bounded maintenance work
+
+Use area labels such as `area:hero`, `area:web-ai`, `area:seat`, `area:orchestration`, `area:backend`, or `area:governance` when useful.
+
+## Future-session startup protocol
+
+A future development session should begin with:
+
+```text
+Read Product Law
+→ identify the active milestone / Issue
+→ read its acceptance criteria and authority boundary
+→ inspect the current implementation
+→ make the smallest compliant change
+→ run the Issue's verification
+→ update PR / Issue evidence
+→ continue from the next implementation checkpoint
+```
+
+The Issue is therefore **development memory and a scoped executable definition**, not a second constitution.
 
 ## Linking
 
-Link PR ↔ issue only when the PR actually resolves durable debt (`Fixes #N`). Do not invent issues just to satisfy a keyword.
+Link a PR to an Issue only when the PR actually advances or resolves that durable work. Prefer `Fixes #N` when the PR truly closes the Issue; do not manufacture Issues merely to create links.
 
 ## Authority reminder
 
-`PRODUCT_LAW → MASTERPLAN → POLICY/ORUCAVEAM → skills → implementation → verification → evidence`
+```text
+PRODUCT_LAW → architecture / policy / skills → Issue → implementation → verification → evidence
+```
 
-Issues sit beside that path as memory, not above it.
+The Issue can make higher-level rules specific. It cannot outrank them.
