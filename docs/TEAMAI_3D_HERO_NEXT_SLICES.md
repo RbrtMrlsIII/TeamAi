@@ -4,11 +4,11 @@ Status: planning/continuity only. Active TEAM-EXPERIENCE-029 implementation rema
 
 ## Ordered development sequence
 
-`#84 Theme adapter → #85 manufactured light rig → #86 contribution/absorption → #88 material/depth → #89 responsive/reduced motion → #81 Seat Identity Inspection → #91 Seat mechanisms → #92 authorization/scope → #93 task/evidence anchors`
+`#84 Theme adapter → #85 manufactured light rig → #86 contribution/absorption → #88 material/depth → #89 responsive/reduced motion → #81 Seat Identity Inspection → #91 Seat mechanisms → #92 authorization/scope (IMPLEMENTED on main via PR #126) → #93 task/evidence anchors (this PR; keeps both auth + workspace APIs) → #88/#89/#95 material + motion → #96/#97/#98 Slice A close-after-evidence`
 
 ## Implementation entry condition
 
-Before active implementation, re-check `MASTERPLAN.md`. TEAM-EXPERIENCE-029 may advance only after TEAM-BACKEND-001 reaches its required evidence and completion/endorsement conditions.
+Before active implementation, re-check `MASTERPLAN.md`. TEAM-EXPERIENCE-029 may advance only after TEAM-BACKEND-001 reaches its required evidence and completion/endorsement conditions. TEAM-BACKEND-001 is ENDORSED for bounded recorded scope; Hero slices remain presentation-only.
 
 ## Spatial engineering rule
 
