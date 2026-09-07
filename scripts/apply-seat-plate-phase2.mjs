@@ -13,55 +13,67 @@ if (text.includes('from "./seat-read-model.js"')) {
   process.exit(0);
 }
 
-const oldImport = `import {
-  applyDocumentTheme,
-  initializeTheme,
-  persistTheme,
-  readDensity,
-  readMotion,
-  readSource,
-  readStoredMode,
-  resolveMode,
-  watchOsTheme,
-} from "./theme-root.js";
-`;
-const newImport = `import {
-  applyDocumentTheme,
-  initializeTheme,
-  persistTheme,
-  readDensity,
-  readMotion,
-  readSource,
-  readStoredMode,
-  resolveMode,
-  watchOsTheme,
-} from "./theme-root.js";
-import {
-  projectSeat,
-  normalizeConnectionHealth,
-  applyProjectionToHeroSeatStack,
-} from "./seat-read-model.js";
-`;
+const oldImport = [
+  "import {",
+  "  applyDocumentTheme,",
+  "  initializeTheme,",
+  "  persistTheme,",
+  "  readDensity,",
+  "  readMotion,",
+  "  readSource,",
+  "  readStoredMode,",
+  "  resolveMode,",
+  "  watchOsTheme,",
+  '} from "./theme-root.js";',
+  "",
+].join("\n");
+
+const newImport = [
+  "import {",
+  "  applyDocumentTheme,",
+  "  initializeTheme,",
+  "  persistTheme,",
+  "  readDensity,",
+  "  readMotion,",
+  "  readSource,",
+  "  readStoredMode,",
+  "  resolveMode,",
+  "  watchOsTheme,",
+  '} from "./theme-root.js";',
+  "import {",
+  "  projectSeat,",
+  "  normalizeConnectionHealth,",
+  "  applyProjectionToHeroSeatStack,",
+  '} from "./seat-read-model.js";',
+  "",
+].join("\n");
+
 if (!text.includes(oldImport)) throw new Error("import block not found");
 text = text.replace(oldImport, newImport);
 
-const oldAct = `function seatActivationAllowed(seat) {
-  return seat.connection === "ready" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";
-}
-`;
-const newAct = `function projectedSeat(seatId = activeSeat) {
-  const raw = SEAT_DATA[seatId] || SEAT_DATA.alpha;
-  return projectSeat(raw, { seatId: SEAT_DATA[seatId] ? seatId : "alpha", source: "fixture" });
-}
+const oldAct = [
+  "function seatActivationAllowed(seat) {",
+  '  return seat.connection === "ready" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";',
+  "}",
+  "",
+].join("\n");
 
-function seatActivationAllowed(seat) {
-  if (seat && seat.connectionHealth) {
-    return Boolean(seat.activationAllowedPresentation);
-  }
-  const health = normalizeConnectionHealth(seat?.health ?? seat?.connection);
-  return health === "healthy" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";
-}
-`;
+const newAct = [
+  "function projectedSeat(seatId = activeSeat) {",
+  "  const raw = SEAT_DATA[seatId] || SEAT_DATA.alpha;",
+  '  return projectSeat(raw, { seatId: SEAT_DATA[seatId] ? seatId : "alpha", source: "fixture" });',
+  "}",
+  "",
+  "function seatActivationAllowed(seat) {",
+  "  if (seat && seat.connectionHealth) {",
+  "    return Boolean(seat.activationAllowedPresentation);",
+  "  }",
+  "  const health = normalizeConnectionHealth(seat?.health ?? seat?.connection);",
+  '  return health === "healthy" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";',
+  "}",
+  "",
+].join("\n");
+
 if (!text.includes(oldAct)) throw new Error("seatActivationAllowed not found");
 text = text.replace(oldAct, newAct);
 
@@ -71,40 +83,52 @@ text = text.replace(
   "health.textContent = projectedSeat(activeSeat).connectionHealth;",
 );
 
-const oldTest = `function testSeatConnection() {
-  const seat = SEAT_DATA[activeSeat];
-  if (!seat) return;
-  const result = document.querySelector("[data-seat-result]");
-  if (seat.connection === "ready") {
-    if (result) result.textContent = \`\${seat.name} connection test passed in UI only; no provider request was made.\`;
-  } else {
-    if (result) result.textContent = \`\${seat.name} connection remains degraded in UI; no provider request was made.\`;
-  }
-}
-`;
-const newTest = `function testSeatConnection() {
-  const seat = projectedSeat(activeSeat);
-  if (!seat) return;
-  const result = document.querySelector("[data-seat-result]");
-  if (seat.connectionHealth === "healthy") {
-    if (result) result.textContent = \`\${seat.name} connection test passed in UI only (health: \${seat.connectionHealth}, source: \${seat.source}); no provider request was made.\`;
-  } else {
-    if (result) result.textContent = \`\${seat.name} connection remains \${seat.connectionHealth} in UI (source: \${seat.source}); no provider request was made.\`;
-  }
-  applyProjectionToHeroSeatStack(seat);
-}
-`;
+const oldTest = [
+  "function testSeatConnection() {",
+  "  const seat = SEAT_DATA[activeSeat];",
+  "  if (!seat) return;",
+  '  const result = document.querySelector("[data-seat-result]");',
+  '  if (seat.connection === "ready") {',
+  "    if (result) result.textContent = `${seat.name} connection test passed in UI only; no provider request was made.`;",
+  "  } else {",
+  "    if (result) result.textContent = `${seat.name} connection remains degraded in UI; no provider request was made.`;",
+  "  }",
+  "}",
+  "",
+].join("\n");
+
+const newTest = [
+  "function testSeatConnection() {",
+  "  const seat = projectedSeat(activeSeat);",
+  "  if (!seat) return;",
+  '  const result = document.querySelector("[data-seat-result]");',
+  '  if (seat.connectionHealth === "healthy") {',
+  "    if (result) result.textContent = `${seat.name} connection test passed in UI only (health: ${seat.connectionHealth}, source: ${seat.source}); no provider request was made.`;",
+  "  } else {",
+  "    if (result) result.textContent = `${seat.name} connection remains ${seat.connectionHealth} in UI (source: ${seat.source}); no provider request was made.`;",
+  "  }",
+  "  applyProjectionToHeroSeatStack(seat);",
+  "}",
+  "",
+].join("\n");
+
 if (!text.includes(oldTest)) throw new Error("testSeatConnection not found");
 text = text.replace(oldTest, newTest);
 
-const oldAct2 = `function activateSeat() {
-  const seat = SEAT_DATA[activeSeat];
-  if (!seat || !seatActivationAllowed(seat)) return;
-`;
-const newAct2 = `function activateSeat() {
-  const seat = projectedSeat(activeSeat);
-  if (!seat || !seat.activationAllowedPresentation) return;
-`;
+const oldAct2 = [
+  "function activateSeat() {",
+  "  const seat = SEAT_DATA[activeSeat];",
+  "  if (!seat || !seatActivationAllowed(seat)) return;",
+  "",
+].join("\n");
+
+const newAct2 = [
+  "function activateSeat() {",
+  "  const seat = projectedSeat(activeSeat);",
+  "  if (!seat || !seat.activationAllowedPresentation) return;",
+  "",
+].join("\n");
+
 if (!text.includes(oldAct2)) throw new Error("activateSeat not found");
 text = text.replace(oldAct2, newAct2);
 
