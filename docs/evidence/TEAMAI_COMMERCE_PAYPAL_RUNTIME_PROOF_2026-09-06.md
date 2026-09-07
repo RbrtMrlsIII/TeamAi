@@ -143,54 +143,64 @@ This proves that the real PayPal redelivery reached **v13** and v13 returned **H
 
 **State:** `RUNTIME-PROVEN`
 
-## Remaining verification gate
+## Final post-fix Firestore aggregate re-read — 2026-09-07
 
-The final post-fix Firestore verification remains open. It must prove all of the following together:
+GitHub Actions workflow `.github/workflows/firestore-commerce-aggregate-read.yml` was manually dispatched against the existing Sandbox correlation.
+
+Execution:
+
+- Workflow run: **#1**
+- Run ID: `34089143256`
+- Attempt: `2`
+- Head SHA: `ac51bc5f81cdb48a54b4f183389dda7734dd876b`
+- Job: `live-commerce-read`
+- Job ID: `101693799874`
+- Job conclusion: `success`
+
+The read-only probe emitted:
+
+```text
+phase=commerce-aggregate-read
+status=commerce-aggregate-read-pass
+correlationId=68b4ef3a-4132-46bf-8a01-43ebe97ba51e
+providerEventId=WH-71666988RB043112X-1WA30416DF8293903
+aggregateStatus=completed
+eventCount=1
+eventType=payment_completed
+entitlementStatus=active
+sourceMatches=true
+```
+
+Therefore the final read gate proves together:
 
 ```text
 accounts/{uid}/commerce/{correlationId}
     status = completed
 
 accounts/{uid}/commerce/{correlationId}/events/{providerEventId}
-    existing event remains singular / no duplicate event created
+    event remains singular
 
 accounts/{uid}/commerce/{correlationId}/entitlements/{correlationId}
     status = active
     sourceCommerceEventId = {providerEventId}
 ```
 
-This final read must be performed after the v13 redelivery. Until it is directly recorded, the isolated PayPal commerce lifecycle must **not** be labeled `COMPLETED`.
+**State:** `RUNTIME-PROVEN`
 
-## Frontend implementation boundary
+## Gate conclusion
 
-The visual/frontend slice may now be implemented against the explicit contract in `docs/TEAM-EXPERIENCE-029_COMMERCE_UI_CONTRACT.md`, provided the implementation remains read-only and does not claim live backend behavior from fixtures.
+The post-v13 Firestore aggregate/event/entitlement verification blocker is resolved.
 
-Primary UI authority:
+`TEAM-BACKEND-001` is **ENDORSED for the bounded recorded implementation/validation scope** represented by the evidence in this record and the linked runtime proof.
 
-`commerce aggregate status`
+This does not claim:
 
-History/evidence:
-
-`commerce events`
-
-Access projection:
-
-`entitlement`
-
-The frontend must not read `commerceCorrelationIndex`, write commerce state directly, call PayPal for authoritative state, or equate TeamAi entitlement with provider entitlement.
-
-## Evidence boundary
-
-This record does not claim:
-
-- full `TEAM-BACKEND-001` completion;
+- broader authenticated product-path scheduler/approval integration;
 - canonical `paypal-webhook` cutover;
-- browser-side payment authority;
 - production PayPal/live-mode readiness;
-- final HandOver/Endorsement for TEAM-BACKEND-001.
+- browser-side payment authority;
+- full TeamAi commerce completion beyond the bounded gate scope.
 
 Use precise state labels:
 
 `PLANNED → IMPLEMENTED → DEPLOYED → RUNTIME-PROVEN → LEARNED → COMPLETED`
-
-No state upgrade is implied by documentation alone.
