@@ -8,22 +8,15 @@ import {
   getFirestoreAccessToken,
   readFirebaseServiceAccount,
 } from "../_shared/firestore.ts";
+import { decryptSeatApiKey } from "../_shared/seat-secret.ts";
 
 /**
- * TEAM-EXPERIENCE-029 — Seat connection Test (phase 4–7)
+ * TEAM-EXPERIENCE-029 — Seat connection Test (phase 4–7 + seat key)
  *
- * verified Firebase UID
- *   → optional Firestore seat read
- *   → connection probe:
- *       forceHealth → harness
- *       probeMode stub | http | auto (default auto)
- *       HTTP health checks for openai / anthropic / generic (no chat completion)
- *       falls back to stub when credentials missing
- *   → optional durable write when workplaceId + projectId present
- *   → JSON projection for browser (presentation only)
- *
- * Browser never writes. No provider chat/tool execution in this path.
- * Commerce / PayPal out of scope.
+ * Credential order for HTTP probe:
+ *   forceHealth / stub → free
+ *   per-seat encrypted key → platform env → stub fallback
+ * Browser never writes. No chat/tools. Commerce out of scope.
  */
 
 const FIREBASE_PROJECT_ID = "team-ai-official";
@@ -139,7 +132,6 @@ function stubSeatCatalog(): Record<string, Record<string, string>> {
   };
 }
 
-/** Map provider display name / explicit kind → probe family. */
 function resolveProviderKind(provider: string, explicit?: string | null): "openai" | "anthropic" | "generic" | "stub" {
   const e = String(explicit ?? "").trim().toLowerCase();
   if (e === "openai" || e === "anthropic" || e === "generic" || e === "stub") return e;
@@ -148,13 +140,12 @@ function resolveProviderKind(provider: string, explicit?: string | null): "opena
   if (p.includes("openai") || p.includes("gpt")) return "openai";
   if (p.includes("anthropic") || p.includes("claude")) return "anthropic";
   if (p.startsWith("http://") || p.startsWith("https://")) return "generic";
-  // Fixture names like "Provider One" → stub unless keys + generic URL configured
   return "stub";
 }
 
 function healthFromHttpStatus(status: number): Health {
   if (status >= 200 && status < 300) return "healthy";
-  if (status === 401 || status === 403) return "degraded"; // reachable but auth/config problem
+  if (status === 401 || status === 403) return "degraded";
   if (status === 404 || status === 429) return "degraded";
   if (status >= 500) return "offline";
   return "degraded";
@@ -182,10 +173,7 @@ function buildProbeRequest(
     if (!apiKey) return null;
     return {
       url: "https://api.openai.com/v1/models",
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-        accept: "application/json",
-      },
+      headers: { authorization: `Bearer ${apiKey}`, accept: "application/json" },
       probeLabel: "openai-models",
     };
   }
@@ -201,7 +189,6 @@ function buildProbeRequest(
       probeLabel: "anthropic-models",
     };
   }
-  // generic: require explicit URL (body or env) — never invent a host
   const url =
     (probeUrl && probeUrl.trim()) ||
     Deno.env.get("TEAMAI_PROVIDER_PROBE_URL")?.trim() ||
@@ -224,9 +211,8 @@ async function httpProbe(
       headers: req.headers,
       signal: controller.signal,
     });
-    const connectionHealth = healthFromHttpStatus(response.status);
     return {
-      connectionHealth,
+      connectionHealth: healthFromHttpStatus(response.status),
       probe: `http:${req.probeLabel}`,
       probeDetail: `http:${response.status}:${req.probeLabel}`,
       httpStatus: response.status,
@@ -245,10 +231,6 @@ async function httpProbe(
   }
 }
 
-/**
- * Connection probe: real HTTP when credentials/URL available; else stub.
- * Does not run chat completions or tool calls — models list / GET only.
- */
 async function runConnectionProbe(input: {
   seatId: string;
   provider: string;
@@ -258,6 +240,7 @@ async function runConnectionProbe(input: {
   providerKind?: string | null;
   probeMode?: string | null;
   probeUrl?: string | null;
+  seatApiKey?: string | null;
   fetchImpl?: typeof fetch;
 }): Promise<ProbeResult> {
   if (input.forceHealth) {
@@ -287,11 +270,10 @@ async function runConnectionProbe(input: {
   }
 
   const effectiveKind = kind === "stub" ? "generic" : kind;
-  const apiKey = readApiKey(effectiveKind);
+  const apiKey = (input.seatApiKey && input.seatApiKey.trim()) || readApiKey(effectiveKind);
   const built = buildProbeRequest(effectiveKind, apiKey, input.probeUrl);
 
   if (!built) {
-    // auto without credentials → stub; explicit http without config → degraded
     if (mode === "http") {
       return {
         connectionHealth: "degraded",
@@ -463,6 +445,28 @@ Deno.serve(async (req: Request) => {
       durable?.connectionHealth ?? durable?.health ?? durable?.connection ?? stub.connectionHealth,
     );
 
+    let seatApiKey: string | null = null;
+    let credentialSource: "seat" | "platform" | "none" = "none";
+    if (workplaceId && projectId) {
+      try {
+        const accessTokenForSecret = await getFirestoreAccessToken();
+        const secretPath =
+          `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}/secrets/providerApiKey`;
+        const secretDoc = await firestoreGet(secretPath, accessTokenForSecret);
+        if (secretDoc.exists) {
+          const sf = decodeFields(secretDoc.fields as Record<string, unknown>);
+          if (typeof sf.ciphertext === "string" && typeof sf.iv === "string") {
+            seatApiKey = await decryptSeatApiKey(sf.ciphertext, sf.iv);
+          }
+        }
+      } catch (err) {
+        console.error(
+          "seat_connection_seat_key_load",
+          err instanceof Error ? err.message : "load_failed",
+        );
+      }
+    }
+
     const probeResult = await runConnectionProbe({
       seatId,
       provider,
@@ -472,7 +476,11 @@ Deno.serve(async (req: Request) => {
       providerKind,
       probeMode,
       probeUrl,
+      seatApiKey,
     });
+    if (probeResult.probe.startsWith("http:")) {
+      credentialSource = seatApiKey ? "seat" : "platform";
+    }
 
     const probedAt = new Date().toISOString();
     const probeId = `probe-${crypto.randomUUID().slice(0, 12)}`;
@@ -548,6 +556,7 @@ Deno.serve(async (req: Request) => {
       eventPath,
       eventStatus,
       durableWritten,
+      credentialSource,
       note: durableWritten
         ? "Probe recorded server-side (create-only event + seat health). Browser did not write."
         : "Projection only — durable write requires workplaceId + projectId (and persist !== false).",
