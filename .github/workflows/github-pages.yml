@@ -33,11 +33,11 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Apply Seats plate phase2 + connection wire
+      - name: Apply Seats plate wires (phase2 + connection + provider bind)
         shell: bash
         run: |
           set -euo pipefail
-          node scripts/apply-seat-connection-wire.mjs
+          node scripts/apply-seat-provider-bind-wire.mjs
 
       - name: Prepare site
         shell: bash
