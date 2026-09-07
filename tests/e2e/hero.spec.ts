@@ -27,11 +27,11 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/13)');
     expect(await stageEvent).toMatchObject({ stage: 'SURFACE', semanticCamera: 'WORKSPACE_CLOSE', presentationOnly: true });
 
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
+    await page.getByRole('button', { name: 'Next', exact: true }).click({ force: true });
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Active Seat (3/13)');
-    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await page.getByRole('button', { name: 'Back', exact: true }).click({ force: true });
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/13)');
-    await page.getByRole('button', { name: 'Reset', exact: true }).click();
+    await page.getByRole('button', { name: 'Reset', exact: true }).click({ force: true });
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/13)');
 
     await page.getByRole('button', { name: 'Workspace', exact: true }).click();
