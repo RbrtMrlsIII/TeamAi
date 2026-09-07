@@ -19,6 +19,11 @@ const MODE_PROFILE = Object.freeze({
   }),
 });
 
+const DENSITY_PROFILE = Object.freeze({
+  default: Object.freeze({ fill: 1, roughness: 0, shadow: 0 }),
+  compact: Object.freeze({ fill: 0.96, roughness: 0.04, shadow: 0.04 }),
+});
+
 const normalizeVector = (vector) => {
   const x = Number(vector?.[0]) || 0;
   const y = Number(vector?.[1]) || 0;
@@ -32,6 +37,7 @@ const normalizeVector = (vector) => {
  * @param {object} semantic
  * @param {'light'|'dark'} [semantic.themeMode]
  * @param {'user'|'system'|'default'} [semantic.themeSource]
+ * @param {'default'|'compact'} [semantic.density]
  * @param {number} [semantic.atmosphere]
  * @param {number} [semantic.surface]
  * @param {number} [semantic.focus]
@@ -41,6 +47,7 @@ const normalizeVector = (vector) => {
  */
 export function mapHeroThemeLighting(semantic = {}) {
   const profile = MODE_PROFILE[semantic.themeMode === 'dark' ? 'dark' : 'light'];
+  const density = DENSITY_PROFILE[semantic.density === 'compact' ? 'compact' : 'default'];
   const atmosphere = clamp(semantic.atmosphere ?? 0.5, 0, 1);
   const surface = clamp(semantic.surface ?? 0.5, 0, 1);
   const focus = clamp(semantic.focus ?? 0, 0, 1);
@@ -52,16 +59,17 @@ export function mapHeroThemeLighting(semantic = {}) {
   return Object.freeze({
     themeMode: semantic.themeMode === 'dark' ? 'dark' : 'light',
     themeSource: String(semantic.themeSource || 'default'),
-    environmentalFillIntensity: bounded(profile.fill * (0.72 + atmosphere * 0.28)),
+    density: semantic.density === 'compact' ? 'compact' : 'default',
+    environmentalFillIntensity: bounded(profile.fill * density.fill * (0.72 + atmosphere * 0.28)),
     keyLight: Object.freeze({
       intensity: bounded(profile.key * (0.82 + surface * 0.18)),
       direction: normalizeVector(profile.direction),
     }),
     grazingRimStrength: bounded(profile.grazing + focus * 0.18),
     contributionLightBaseIntensity: bounded(profile.contribution + signal * 0.28),
-    roughness: bounded(profile.roughness - surface * 0.12),
+    roughness: bounded(profile.roughness - surface * 0.12 + density.roughness),
     reflectance: bounded(profile.reflectance + focus * 0.16),
-    shadowSeparationStrength: bounded(profile.shadow + status * 0.12),
+    shadowSeparationStrength: bounded(profile.shadow + status * 0.12 + density.shadow),
     emissiveCeilingFloor: bounded(profile.emissive + signal * 0.12),
     reducedMotionChoreography: !reducedMotion,
   });
@@ -74,3 +82,13 @@ export const HERO_THEME_LIGHTING_LIMITS = Object.freeze({
   shadowSeparation: Object.freeze([0, 1]),
   emissive: Object.freeze([0, 1]),
 });
+
+/** Issue #98 fixture matrix. Presentation-only; no I/O. */
+export const HERO_THEME_LIGHTING_FIXTURES = Object.freeze([
+  Object.freeze({ id: 'light-default-normal', themeMode: 'light', density: 'default', reducedMotion: false, atmosphere: 0.5, surface: 0.5, focus: 0, signal: 0, status: 0 }),
+  Object.freeze({ id: 'dark-default-normal', themeMode: 'dark', density: 'default', reducedMotion: false, atmosphere: 0.5, surface: 0.5, focus: 0, signal: 0, status: 0 }),
+  Object.freeze({ id: 'light-compact-normal', themeMode: 'light', density: 'compact', reducedMotion: false, atmosphere: 0.5, surface: 0.5, focus: 0, signal: 0, status: 0 }),
+  Object.freeze({ id: 'light-default-reduced', themeMode: 'light', density: 'default', reducedMotion: true, atmosphere: 0.5, surface: 0.5, focus: 0, signal: 0, status: 0 }),
+  Object.freeze({ id: 'light-focus-active', themeMode: 'light', density: 'default', reducedMotion: false, atmosphere: 0.5, surface: 0.5, focus: 1, signal: 0, status: 0 }),
+  Object.freeze({ id: 'light-status-bearing', themeMode: 'light', density: 'default', reducedMotion: false, atmosphere: 0.5, surface: 0.5, focus: 0, signal: 0, status: 1 }),
+]);
