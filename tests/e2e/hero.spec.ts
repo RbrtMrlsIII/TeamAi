@@ -10,6 +10,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     }
     await expect(page.locator('.spatial-part')).toHaveCount(3);
     await expect(page.locator('[data-seat-layer]')).toHaveCount(10);
+    await expect(page.locator('.seat-stack__dial')).toHaveCount(1);
     const path = testInfo.outputPath('hero-wide.png');
     await page.screenshot({ path });
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
@@ -72,6 +73,21 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_CAPABILITY'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_AUTHENTICATION'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('APP_UI_HANDOFF'))).toBeNull();
+
+    const healthEvent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:web-ai-seat-connection-health', (event: any) => resolve(event.detail), { once: true });
+      (window as any).TeamAiHeroSeatStack.setConnectionHealth('healthy');
+    }));
+    await expect(page.locator('[data-seat-layer="connection"]')).toHaveAttribute('data-health', 'healthy');
+    expect(await healthEvent).toMatchObject({ health: 'healthy', presentationOnly: true, durable: false });
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSeatStack.getConnectionHealth())).toBe('healthy');
+
+    const dialEvent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:web-ai-seat-responsibility-dial', (event: any) => resolve(event.detail), { once: true });
+      (window as any).TeamAiHeroSeatStack.setResponsibilityDial(0.72);
+    }));
+    expect(await dialEvent).toMatchObject({ dial: 0.72, presentationOnly: true, durable: false });
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSeatStack.getResponsibilityDial())).toBe(0.72);
 
     const inspectionEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-semantic-camera', (event: any) => resolve(event.detail), { once: true });
