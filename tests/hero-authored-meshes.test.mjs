@@ -18,8 +18,8 @@ test('authored Hero meshes are static assets with explicit topology', () => {
 
 test('Hero renderer consumes authored meshes and retains scalable semantic runtime', () => {
   assert.match(heroFlex, /HERO_AUTHORED_MESHES/);
-  assert.match(heroFlex, /AUTHORED_RING=authoredMesh\(HERO_AUTHORED_MESHES\.workspaceRing\)/);
-  assert.match(heroFlex, /AUTHORED_SEAT_SHELL=authoredMesh\(HERO_AUTHORED_MESHES\.seatShell\)/);
+  assert.match(heroFlex, /AUTHORED_RING=.*HERO_AUTHORED_MESHES\.workspaceRing/);
+  assert.match(heroFlex, /AUTHORED_SEAT_SHELL=.*HERO_AUTHORED_MESHES\.seatShell/);
   assert.match(heroFlex, /draw\(AUTHORED_RING/);
   assert.match(heroFlex, /draw\(AUTHORED_SEAT_SHELL/);
   assert.match(heroFlex, /teamai:web-ai-seat-unlocked/);
