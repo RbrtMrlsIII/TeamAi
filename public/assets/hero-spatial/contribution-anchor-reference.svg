@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" role="img" aria-labelledby="t d">
+  <title id="t">Seat to shared workspace contribution corridor reference</title>
+  <desc id="d">Engineering reference showing a constrained directional contribution path from a Web AI Seat toward the shared workspace.</desc>
+  <rect width="760" height="240" fill="#e7dcc8"/>
+  <g transform="translate(70 120)">
+    <rect x="0" y="-54" width="112" height="108" rx="24" fill="#d4c7b0" stroke="#564b40" stroke-width="6"/>
+    <rect x="22" y="-32" width="68" height="64" rx="16" fill="#f3ebe0" stroke="#7a6d5d" stroke-width="4"/>
+    <circle cx="56" cy="0" r="9" fill="#2a5240"/>
+  </g>
+  <path d="M188 120 H520" stroke="#765a2a" stroke-width="10" stroke-linecap="round"/>
+  <path d="M486 88 L532 120 L486 152" fill="#765a2a"/>
+  <g transform="translate(628 120)">
+    <ellipse rx="72" ry="54" fill="#d8cbb7" stroke="#5b5044" stroke-width="6"/>
+    <ellipse rx="50" ry="36" fill="#f3ebe0" stroke="#8d806d" stroke-width="4"/>
+    <circle cy="0" r="9" fill="#765a2a"/>
+  </g>
+  <path d="M188 82 H520" stroke="#c09c5c" stroke-width="3" stroke-dasharray="8 10" opacity=".8"/>
+  <path d="M188 158 H520" stroke="#c09c5c" stroke-width="3" stroke-dasharray="8 10" opacity=".8"/>
+</svg>
