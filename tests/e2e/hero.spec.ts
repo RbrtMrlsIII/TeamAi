@@ -5,7 +5,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.goto('/hero/');
     await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map', 'Open engine', 'Seat', 'Detail']) {
+    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map', 'Open engine', 'Seat', 'Detail', 'Back', 'Next', 'Reset']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
     await expect(page.locator('.spatial-part')).toHaveCount(3);
@@ -15,9 +15,24 @@ test.describe('Living Web AI Workspace Hero', () => {
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
   });
 
-  test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, auth handoff, and reduced-motion controls', async ({ page }) => {
+  test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, inspection spine, auth handoff, and reduced-motion controls', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/13)');
+
+    const stageEvent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:web-ai-hero-inspection-stage', (event: any) => resolve(event.detail), { once: true });
+      document.querySelector('[data-inspection-next]')?.click();
+    }));
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/13)');
+    expect(await stageEvent).toMatchObject({ stage: 'SURFACE', semanticCamera: 'WORKSPACE_CLOSE', presentationOnly: true });
+
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Active Seat (3/13)');
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/13)');
+    await page.getByRole('button', { name: 'Reset', exact: true }).click();
+    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/13)');
 
     await page.getByRole('button', { name: 'Workspace', exact: true }).click();
     await page.getByRole('button', { name: 'Map', exact: true }).click();
@@ -86,6 +101,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(loginForm.getByLabel('Email')).toBeVisible();
     expect(await authEvent).toMatchObject({ semanticCamera: 'MECHANISM_AUTHENTICATION', presentationOnly: true });
     expect(await page.evaluate(() => (window as any).TeamAiHeroAuthHandoff.getState())).toMatchObject({ open: true, mode: 'login' });
+    expect(await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.current().id)).toBe('HERO_ORIENTATION');
 
     await page.getByRole('tab', { name: 'Sign up', exact: true }).click();
     const signupForm = page.locator('form[data-auth-form="signup"]');
