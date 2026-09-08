@@ -44,12 +44,11 @@ Children are **presentation faces**. v1 marks which are **shown as layers** vs *
 |------:|----------|-----------------|--------------|----------------------|
 | 1 | `SEAT_CONNECTION` | Connection & entitlement face | **Layer** (status face) | Yes |
 | 2 | `SEAT_BEHAVIOR` | Behavior Do / Don’t | **Stub** | Yes |
-| 3 | `SEAT_TOOLKIT` | Built-in toolkit | **Deferred** | Yes |
-| 4 | `SEAT_ZIPSKILLS` | Optional ZipSkills | **Deferred** | Yes |
-| 5 | `SEAT_CAPABILITIES` | Tools / MCP availability | **Stub** | Yes |
-| 6 | `SEAT_AUTHORIZATION` | Scope / approvals face | **Stub** | Yes |
-| 7 | `SEAT_WORKSPACE_SCOPE` | Workspace / ref scope face | **Stub** | Yes |
-| 8 | `SEAT_TASK_EVIDENCE` | Task / evidence face | **Stub** | Yes |
+| 3 | `SEAT_TOOLKIT` | Built-in toolkit (skill bundles from seat preferences / responsibilities) | **Deferred** (seat-scoped) | Yes |
+| 4 | `SEAT_CAPABILITIES` | Tools / MCP availability | **Stub** | Yes |
+| 5 | `SEAT_AUTHORIZATION` | Scope / approvals face | **Stub** | Yes |
+| 6 | `SEAT_WORKSPACE_SCOPE` | Workspace / ref scope face | **Stub** | Yes |
+| 7 | `SEAT_TASK_EVIDENCE` | Task / evidence face | **Stub** | Yes |
 
 **v1 visible stack (minimal):**
 
@@ -63,7 +62,19 @@ SEAT_SHELL (open)
   └─ SEAT_TASK_EVIDENCE  ← stub face
 ```
 
-Toolkit + ZipSkills deferred so the first open stays readable.
+`SEAT_TOOLKIT` remains **deferred seat-scoped** (basic skill bundles from that seat’s preferences / responsibilities).
+
+### WORKSPACE_ZIPSKILLS — workspace tree (not a Seat child)
+
+Former `SEAT_ZIPSKILLS` is **removed from the Seat child table** and renamed **`WORKSPACE_ZIPSKILLS`**.
+
+It **equips on the workspace tree**, not on a Seat shell:
+
+- Web AI team lead handles governance updates, **or**
+- Shared team handles governance (continuity), **or**
+- Responsibilities split via **branches** before merge to main.
+
+Same tier as future workspace services ring. Continuity vs separate ownership is a governance choice, not a seat-open pose.
 
 ## 4. v1 leaf (inside the open shell)
 
@@ -108,12 +119,10 @@ Rules:
 
 | Existing | Relation to this sheet |
 |----------|----------------------|
-| `hero-flex.js` seat draw | Visual Seat body; **no open hierarchy yet** |
-| `hero-authored-meshes.js` `seatShell` | Mesh candidate for parent shell |
-| `hero-seat-stack.js` | **Interim DOM debt** — categories overlap; long-term absorb into in-shell children |
+| `hero-flex.js` drawSeat / authored seatShell | Parent mesh + open pose target |
+| `hero-seat-stack.js` / shell-nav seat stack | Parallel DOM presentation — do not expand as permanent hierarchy home |
+| Seat connection status faces | Feed candidate for `SEAT_CONNECTION` layer / health leaf |
 | `hero-semantic-camera.js` / `SEAT_CLOSE` | Camera dock baseline |
-| `hero-inspection-spine.js` | Stage IDs may align (`MECHANISM_*`) as open deepens |
-| Seat read-model skill | Future feed for connection health face |
 
 v1 implementation should **not** expand DOM seat-stack as the permanent home; prefer in-shell presentation even if first leaf is a simple labeled face in 3D/CSS-in-canvas-adjacent controlled by shell state.
 
@@ -157,6 +166,7 @@ v1 implementation should **not** expand DOM seat-stack as the permanent home; pr
 - Provider key bind / PayPal / Firestore writes  
 - Multi-seat simultaneous open  
 - Dark-glass material pass as primary goal  
+- `WORKSPACE_ZIPSKILLS` as a Seat child (workspace tree only)
 
 ## 9. Implementation ladder (after you confirm this sheet)
 
