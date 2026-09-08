@@ -2,6 +2,8 @@
 
 **Status:** design/implementation contract for the Web AI Living Workspace Hero
 
+**Continuity (2026-09-08):** Nested in-machine configuration (gears → parts → leaf controls) and environment-only outside tabs are locked in `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`. That contract supersedes older “all forms leave to external UI” wording for product configuration while preserving Product Law boundaries.
+
 ## 1. Purpose
 
 The spatial Hero is a presentation layer for the Web AI experience. It is not a second authority system and it must never self-attest backend truth, authorization, scheduler eligibility, execution completion, provider entitlement, or protected approval state.
@@ -75,15 +77,28 @@ The Hero may present backend-owned facts after the authoritative application sta
 
 This layer answers **what is the current state?**
 
-### Depth 4 — Normal application UI
+### Depth 4 — In-machine leaf controls (updated by Machine Interaction Contract)
 
-At the point where the user needs to read substantial text, compare structured records, edit a form, configure a Seat, inspect permissions, review evidence, manage a workspace, or perform an ordinary application action, the experience exits the cinematic 3D metaphor and uses normal UI.
+Leaf interaction (buttons, fields, toggles, short forms) remains **spatially inside** the opened parent mechanism. See `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`.
 
-Use semantic HTML controls, labels, dialogs, forms, lists, tables, tabs, keyboard navigation, focus management, responsive layouts, and screen-reader semantics.
+Semantic accessibility still applies (keyboard, labels, reduced motion). Durable commits still follow backend authority. Only **environment/legal tabs** intentionally live outside the machine.
 
-3D is the spatial orientation layer; conventional UI is the precision interaction layer.
+Leaf controls remain **normal application UI** semantically (accessible HTML controls) while staying spatially inside the machine. Presentation identifiers for inspection stages include:
 
-This layer answers **what can I read, edit, confirm, or operate?**
+- `DETAIL_SURFACE`
+- `DETAIL_FOCUS`
+- `DETAIL_TRACE`
+- `MECHANISM_RESPONSIBILITY`
+- `MECHANISM_CAPABILITY`
+- `MECHANISM_AUTHORIZATION`
+- `MECHANISM_WORKSPACE`
+- `MECHANISM_TASK`
+- `MECHANISM_EVIDENCE`
+- `APP_UI_HANDOFF`
+
+These are presentation identifiers only and must remain separate from backend authority/state identifiers.
+
+This layer answers **what exact control am I operating?**
 
 ## 3. What belongs under the panels
 
@@ -180,9 +195,7 @@ These are short-lived and event-driven rather than perpetual:
 
 ### Inspection motion
 
-When future depth inspection is implemented:
-
-`wide → selected part → closer camera → mechanism reveal → normal UI`
+`wide → selected part → closer camera → mechanism reveal → nested children → leaf control`
 
 Each step should use one dominant motion vector, preserve the workspace/contribution corridor, and return to a stable camera state on completion.
 
@@ -192,47 +205,13 @@ A click on a spatial part is a presentation intent.
 
 Conceptual transition:
 
-`click part → focus part → move semantic camera → reveal deeper spatial layer → optionally hand off to normal UI`
+`click part → focus part → move semantic camera → reveal deeper spatial layer → recurse if child is parent → leaf control inside machine`
 
 The Hero must never use camera state as authorization.
 
-A future implementation should expose explicit semantic inspection states instead of relying on arbitrary DOM coordinates. Suggested identifiers:
+## 7. Environment vs in-machine
 
-- `DETAIL_SURFACE`
-- `DETAIL_FOCUS`
-- `DETAIL_TRACE`
-- `MECHANISM_RESPONSIBILITY`
-- `MECHANISM_CAPABILITY`
-- `MECHANISM_AUTHORIZATION`
-- `MECHANISM_WORKSPACE`
-- `MECHANISM_TASK`
-- `MECHANISM_EVIDENCE`
-- `APP_UI_HANDOFF`
-
-These are presentation identifiers only and must remain separate from backend authority/state identifiers.
-
-## 7. Normal UI handoff rules
-
-The experience should switch to conventional UI when any of the following becomes primary:
-
-- text-heavy reading;
-- form editing;
-- multi-field configuration;
-- list/table comparison;
-- permission inspection;
-- evidence review;
-- workspace/ref management;
-- approval/review actions;
-- accessible keyboard-first operation;
-- mobile layouts where precision beats cinematic framing.
-
-The transition should preserve semantic continuity. A selected spatial part should map to the ordinary UI section that represents the same concept.
-
-Example:
-
-`Focus part → Responsibility mechanism → Seat configuration UI`
-
-The 3D layer explains and orients. The normal UI performs the precise operation.
+Product configuration does **not** leave the machine for an external panel. Environment camera tabs (terms, privacy, about, contact) are the intentional outside. See Machine Interaction Contract §3.
 
 ## 8. Accessibility and reduced motion
 
@@ -250,10 +229,8 @@ For reduced motion:
 
 This model follows the spatial-experience law: spatial UI is a human-facing map and presentation layer, not a second authority layer. The frontend owns presentation/interaction and must not invent backend truth, bypass authorization, choose the scheduler's actor, or become provider execution authority.
 
-The visual hierarchy therefore stops at ordinary application UI rather than attempting to represent every internal implementation detail as 3D machinery.
-
 ## 10. Design principle
 
 **The deeper the camera goes, the more concrete the product concept should become.**
 
-A shallow layer can be atmospheric. A deep layer must be semantic. At the final depth, the metaphor gives way to the real UI.
+A shallow layer can be atmospheric. A deep layer must be semantic. Leaves remain inside the machine; only the room around the machine is outside.
