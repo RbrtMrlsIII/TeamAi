@@ -12,6 +12,9 @@ export const OPEN_DURATION_MS = 520;
 export const CLOSE_DURATION_MS = 420;
 export const HIERARCHY_REDUCED_SNAP = true;
 export const CAMERA_LERP_MS = 700;
+/** Ring radius multipliers off profile().workspace — §9 home. */
+export const RING_R1_SCALE = 1.18;
+export const RING_R2_SCALE = 1.42;
 
 export const HIERARCHY_PART = {
   SEAT_SHELL: 'SEAT_SHELL',

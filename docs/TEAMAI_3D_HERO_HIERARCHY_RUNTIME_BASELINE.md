@@ -1,84 +1,70 @@
 # TeamAi 3D Hero — Hierarchy Runtime Baseline
 
-**Status:** Living baseline (required for hierarchy slices; **not frozen**)  
-**Date:** 2026-09-08  
-**Authority:** PRODUCT_LAW.md (Family J + hard invariants) → MASTERPLAN.md → Machine Interaction Contract → Project-Wide Census → Seat Shell Hierarchy v1 → **this baseline** → implementation  
-**Companion skills:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md` (execution) · `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` (first parent fill)
-
----
-
-## 0. How to use this document (sessions)
-
-### 0.1 Living, not frozen
-
-This baseline is the **shared root set** every hierarchy/open-machine slice must **account for**. It is intentionally **not** a frozen graphics standard:
-
-- Numeric ranges, mesh altitudes, gesture maps, and transition timings **will be adjusted** as Seat shell v1 and later parents teach us what works.
-- Structure (roots, phases, authority boundaries, validation *kinds*) should stay stable unless Product Law or Machine Interaction Contract changes.
-- Amendments are expected. **Omitting** a root without recording why is what fails validation — not discovering that a constant needs tuning.
-
-### 0.2 Required for execution slices
-
-Any PR/slice that opens/closes a hierarchical parent, adds child/leaf faces, or changes camera dock / hierarchy motion must name part IDs, account for R1–R10, and avoid second theme roots or durable browser authority.
-
-### 0.3 Validation (fail when not followed)
-
-| Check | Fail if |
-|-------|---------|
-| Authority | Slice claims entitlement/auth from open/camera/gear motion |
-| Theme | New theme tokens or body-level theme authority for Hero materials |
-| Hierarchy model | Open UI without part IDs / open state / one-open rule when applicable |
-| Motion | Continuous choreography required under `data-motion=reduced` |
-| Amendment silence | Root behavior changed in code with no note in PR body or this doc |
+**Status:** Living documentation (presentation domain)
+**Authority:** PRODUCT_LAW Family J → Machine Interaction Contract → this baseline → skills
+**Companion skill:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md`
 
 ---
 
 ## 1. Purpose
 
-Provide one place that lists the **runtime roots** shared by every mechanical hierarchy animation: lighting/theme · camera/PoV · input · transitions · animation display · layout math · viewport · graphic preferences · wiring/trajectories · altitudes · part↔theme binding.
+Single baseline for hierarchy runtime numbers, phases, and presentation boundaries on the 3D Hero.
+
+This document is the **number home**. Code exports and skills consume these names; amend table and code in the same change when values are learned.
 
 ---
 
-## 2. Product Law boundary (non-negotiable)
+## 2. Shared roots (R1–R10)
 
-- Family **J** presents; engines own durable truth.  
-- Open shells, gears, camera pose, and leaf faces **never** grant entitlement.  
-- One theme law via `document.documentElement`.  
-- Reduced motion, keyboard, and accessible names remain mandatory.
+| Root | Concern |
+|------|--------|
+| R1 | State machine (IDLE → FOCUS → …) |
+| R2 | Pose / altitude math (seat rest, open lift, child stack) |
+| R3 | Camera semantic docks |
+| R4 | Input modes (NAVIGATE / INSPECT / DEMO) |
+| R5 | Motion phases + reduced-motion snap |
+| R6 | Hierarchy open/close parent contract |
+| R7 | Viewport / responsive FOV |
+| R8 | Document motion attribute sync |
+| R9 | Seat shell children / leaves |
+| R10 | Theme material context subset |
 
 ---
 
-## 3. Runtime roots (R1–R10)
+## 3. State and phases
 
-### R1 — Hierarchy state model
-One fully open parent at a time (v1). Part IDs stable. Phase drives motion; camera does not authorize.
+Hierarchy phase: `rest` → `opening` → `open` → `closing` → `rest`.
+One open parent at a time. Presentation only.
 
-### R2 — Layout & pose math
+---
+
+## 4. Pose math
+
 `profile(seatCount)`, seat ring placement, named altitudes (`SEAT_REST_Y`, `SEAT_OPEN_LIFT`, `CHILD_STEP_Y`/`R`). Numbers live in §9.
 
-### R3 — Camera & normal PoV angles
-Semantic cameras; dock on hierarchy select; free orbit **may-evolve**.
+---
 
-### R4 — Input
-Distinct select parent / child / leaf / close intents. Keyboard when hierarchy active.
+## 5. Motion
 
-### R5 — Motion phases & transitions
-`rest → opening → open → closing → rest`. Reduced motion snaps.
+`OPEN_DURATION_MS`, `CLOSE_DURATION_MS`, `HIERARCHY_REDUCED_SNAP`, `CAMERA_LERP_MS`.
 
-### R6 — Animation display design
-Readable silhouette; stubs vs interactive layers distinct without implying permission.
+---
 
-### R7 — Viewport & UI size
-Narrow readable open; FOV boost anchors.
+## 6. Input modes
 
-### R8 — Graphic / motion preferences
-Read `data-motion` from documentElement.
+`NAVIGATE` | `INSPECT` | `DEMO` — R4. Orbit/zoom belong to NAVIGATE; seat inspect uses semantic docks.
 
-### R9 — Wiring, trajectories, connections
-Contribution paths and future backend **threads** are presentation, not network truth.
+---
 
-### R10 — Theme & material binding
-Same `heroMaterialContext` pipeline; Isolation preserved.
+## 7. Viewport
+
+`responsiveFovBoost` — narrow aspect adds FOV (R7).
+
+---
+
+## 8. Theme
+
+`heroMaterialContext` reads `document.documentElement` only (R10). Isolation preserved — no cross-root import.
 
 ---
 
@@ -104,6 +90,8 @@ Same `heroMaterialContext` pipeline; Isolation preserved.
 | `FOV_BOOST_NARROW` | `+4` | measured | R7 |
 | `ROUGH_LIGHT` | `0.48` | measured | R10 |
 | `REFL_DARK` | `0.54` | measured | R10 |
+| `RING_R1_SCALE` | `1.18` | starting | R1 ring |
+| `RING_R2_SCALE` | `1.42` | starting | R2 ring |
 
 Full measured table remains authoritative on `main` history; amend rows in the same PR when values change.
 
@@ -121,9 +109,11 @@ Full map: `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`.
 
 | Ring | Name | Role |
 |------|------|------|
-| R0 | Workspace core | Shared work surface; `WORKSPACE_ZIPSKILLS` |
+| R0 | Workspace core | Shared work surface; `WORKSPACE_ZIPSKILLS` (optional equip — not required platform config) |
 | R1 | Backend display | Platform rules/docs + animated connection threads |
 | R2 | Setup / config | Configuration branches; login/register mechanical presentation |
-| R3 | Seat ring | Web AI Seats (Seat Shell Hierarchy v1) |
+| R3 | Seat ring | Web AI Seats (Seat Shell Hierarchy v1); `SEAT_TOOLKIT` optional seat-scoped bundles |
 
-Radii / §9 numbers for intermediate rings are **TBD measured** — amend §9 when stubs land. Do not invent private radius tables in code without this doc + §9.
+R1/R2 radius multipliers are **named** (`RING_R1_SCALE`, `RING_R2_SCALE`) in this table and in `hero-hierarchy-runtime.js`. Status **starting** until measured in-browser; amend §9 + code together. Do not invent private radius tables outside this doc.
+
+**Note:** Workspace ZipSkills and Seat Toolkit are **not required** setups. Users may assign skills/toolkits outside the platform; presentation stubs must not imply entitlement or mandatory bind.
