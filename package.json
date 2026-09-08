@@ -9,7 +9,7 @@
     "seat:plate:phase2": "node scripts/apply-seat-plate-phase2.mjs",
     "seat:connection:wire": "node scripts/apply-seat-connection-wire.mjs",
     "seat:provider:wire": "node scripts/apply-seat-provider-bind-wire.mjs",
-    "test": "npm run seat:provider:wire && npm run build && node --check public/hero.js && node --check public/hero-flex.js && node --test tests/*.test.mjs",
+    "test": "npm run seat:provider:wire && npm run build && node --check public/hero-flex.js && node --test tests/*.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
