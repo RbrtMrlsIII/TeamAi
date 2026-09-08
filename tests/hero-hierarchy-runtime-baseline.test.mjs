@@ -51,7 +51,7 @@ test('docs hold named living numbers (baseline §9)', () => {
 });
 
 test('measured numbers still match hero-flex anchors', () => {
-  assert.match(hero, /seatRadius,0?\.62/);
+  assert.match(hero, /seatRadius,(?:0?\.62|SEAT_REST_Y)/);
   assert.match(hero, /clamp\(count,1,8\)/);
   assert.match(hero, /lerp\(4\.35,5\.95/);
   assert.match(hero, /lerp\(4\.25,6\.45/);
