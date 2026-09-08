@@ -52,4 +52,4 @@ Easing: prefer shared **enter / exit / move** roles from the motion skill when t
 
 ## Boundaries
 
-Presentation only · Merge gate #133 · Skills do not grant permission
+Presentation only · **no 029-released claim** · Merge gate #133 · Skills do not grant permission
