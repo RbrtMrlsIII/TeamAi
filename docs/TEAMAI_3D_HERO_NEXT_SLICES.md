@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work on Hero hierarchy + rings.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-## Ordered ladder (2026-09-08)
+## Completed ladder (2026-09-08)
 
 | Slice | Topic | Status |
 |-------|--------|--------|
@@ -17,32 +17,38 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | I.1 | #95 cross-root skill wiring matrix | **Merged** (#158) |
 | I.2 | Motion + transition token alignment vs §9 | **Merged** (#159) |
 | I.3 | Responsive + a11y wiring + reduced regression | **Merged** (#160) |
-| J | #88 material depth evidence + HandOver | **In PR** |
+| J | #88 material depth evidence + HandOver | **Merged** (#161) |
 
-## Next development phase
+## Next development phase (ordered)
 
 | Slice | Topic | Desired output | Workaround if blocked |
 |-------|--------|----------------|------------------------|
-| F | Health leaf → domain read-model | `source: 'domain'` only under named contract | Keep fixture |
-| Owner | #88 endorsement | Product owner visual sign-off to close issue | Optional for presentation continuity |
-| Hygiene | #96–#98 verification residual | Close or re-scope open verification issues | Docs-only if code already on main |
+| **K** | Issue hygiene — #89 / #95 / #88 presentation close notes | Comment on issues pointing at merged PRs + evidence; leave Masterplan gate explicit | Do not close issues that still require product-owner endorsement |
+| **L** | Verification residual #96–#98 | Map already-landed adapter/fixture work to verification issues; evidence pointers only | If implementation already on main, file docs-only “satisfied by” notes — no re-implement |
+| **F** | Health leaf → domain read-model | `SEAT_CONNECTION_HEALTH_FACE` accepts `source:'domain'` only under a **named** seat-read-model contract | No contract yet → keep fixture; never fake healthy = entitled |
+| **M** | Optional background 3D Hero assets (angles/routes) | One Hero canvas; page angles via semantic cameras; 2.5D container assets only if authored | No external paid assets; no second canvas |
+| **Owner** | #88 / #89 endorsement | Product owner visual sign-off | Optional for presentation continuity; required for PRODUCT-KNOWLEDGE promotion |
 
-## Optional skills / toolkits (product rule)
+## Product rules that stay true
 
-- **SEAT_TOOLKIT** and **WORKSPACE_ZIPSKILLS** are **not required** platform setups or configs.
-- Users may assign skills/toolkits **outside** TeamAi; Hero presentation must not imply entitlement or mandatory bind.
-- Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same physical dock).
+- **SEAT_TOOLKIT** and **WORKSPACE_ZIPSKILLS** are **not required** platform setups.
+- Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
+- Hierarchy numbers live in baseline §9; amend with code in the same PR.
+- Theme: `document.documentElement` only; Isolation preserved.
+- Presentation never invents entitlement, scheduler, or durable auth.
 
 ## Camera (Slice C landed)
 
-- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
-- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
-- Named §9 zoom bounds; reduced-motion clamps remain contract.
+- Free orbit / zoom: **NAVIGATE** only (R4).
+- Inspect → semantic dock wins; orbit paused.
+- Named §9 zoom bounds + reduced clamps.
 
 ## Related docs
 
 - `docs/EVIDENCE_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md`  
 - `docs/HANDOVER_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md`  
 - `docs/TEAMAI_3D_HERO_CROSS_ROOT_SKILL_WIRING_MATRIX.md`  
+- `docs/TEAMAI_3D_HERO_MOTION_TRANSITION_TOKEN_ALIGNMENT.md`  
+- `docs/TEAMAI_3D_HERO_RESPONSIVE_A11Y_WIRING.md`  
 - `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
