@@ -10,7 +10,7 @@ The spatial Hero is a presentation layer for the Web AI experience. It is not a 
 
 The Hero should become more informative as a human moves from a wide composition into closer inspection, but the semantics remain grounded in the Product Law hierarchy.
 
-CanonicalProduct Law references are:
+Canonical Product Law references are:
 
 `Web AI Seat → responsibility → skills → capabilities → authorization → workspace → task → status → evidence → integration`
 
@@ -82,6 +82,21 @@ This layer answers **what is the current state?**
 Leaf interaction (buttons, fields, toggles, short forms) remains **spatially inside** the opened parent mechanism. See `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`.
 
 Semantic accessibility still applies (keyboard, labels, reduced motion). Durable commits still follow backend authority. Only **environment/legal tabs** intentionally live outside the machine.
+
+Leaf controls remain **normal application UI** semantically (accessible HTML controls) while staying spatially inside the machine. Presentation identifiers for inspection stages include:
+
+- `DETAIL_SURFACE`
+- `DETAIL_FOCUS`
+- `DETAIL_TRACE`
+- `MECHANISM_RESPONSIBILITY`
+- `MECHANISM_CAPABILITY`
+- `MECHANISM_AUTHORIZATION`
+- `MECHANISM_WORKSPACE`
+- `MECHANISM_TASK`
+- `MECHANISM_EVIDENCE`
+- `APP_UI_HANDOFF`
+
+These are presentation identifiers only and must remain separate from backend authority/state identifiers.
 
 This layer answers **what exact control am I operating?**
 
@@ -193,8 +208,6 @@ Conceptual transition:
 `click part → focus part → move semantic camera → reveal deeper spatial layer → recurse if child is parent → leaf control inside machine`
 
 The Hero must never use camera state as authorization.
-
-Suggested presentation identifiers remain separate from backend authority identifiers (see Machine Interaction Contract).
 
 ## 7. Environment vs in-machine
 
