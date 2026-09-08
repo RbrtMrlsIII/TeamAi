@@ -16,6 +16,11 @@ import {
   SETUP_CONFIG_V1,
   RING_R1_SCALE,
   RING_R2_SCALE,
+  NAV_ZOOM_MIN,
+  NAV_ZOOM_MAX,
+  NAV_ZOOM_REDUCED_MIN,
+  NAV_ZOOM_REDUCED_MAX,
+  HIERARCHY_INPUT,
   createRingFocusState,
   focusRingItem,
   cycleRingFocus,
@@ -236,6 +241,7 @@ let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;
 let touchState = null;
 function applyNavCamera() {
   if (hierarchyRuntime.openParentId) return;
+  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;
   const base = cameras().HERO_WIDE;
   const dist = base.p[2] * navZoom;
   const cy = base.p[1] + navOrbitPitch * 1.2;
@@ -247,8 +253,8 @@ canvas.addEventListener('wheel', (event) => {
   event.preventDefault();
   if (hierarchyRuntime.openParentId) return;
   const delta = Math.sign(event.deltaY) * 0.08;
-  navZoom = clamp(navZoom + delta, 0.72, 1.55);
-  if (reducedMotion) navZoom = clamp(navZoom, 0.9, 1.2);
+  navZoom = clamp(navZoom + delta, NAV_ZOOM_MIN, NAV_ZOOM_MAX);
+  if (reducedMotion) navZoom = clamp(navZoom, NAV_ZOOM_REDUCED_MIN, NAV_ZOOM_REDUCED_MAX);
   applyNavCamera();
 }, { passive: false });
 canvas.addEventListener('pointerdown', (event) => {
@@ -282,8 +288,8 @@ canvas.addEventListener('touchmove', (event) => {
   if (event.touches.length === 2 && pinchStart) {
     const [a, b] = event.touches;
     const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-    navZoom = clamp(pinchStart.zoom * (pinchStart.dist / Math.max(1, dist)), 0.72, 1.55);
-    if (reducedMotion) navZoom = clamp(navZoom, 0.9, 1.2);
+    navZoom = clamp(pinchStart.zoom * (pinchStart.dist / Math.max(1, dist)), NAV_ZOOM_MIN, NAV_ZOOM_MAX);
+    if (reducedMotion) navZoom = clamp(navZoom, NAV_ZOOM_REDUCED_MIN, NAV_ZOOM_REDUCED_MAX);
     applyNavCamera();
     event.preventDefault();
   }
@@ -294,7 +300,7 @@ demoButton?.addEventListener('click',()=>demo?stopLoop():startLoop());
 motionButton?.addEventListener('click',()=>{setReducedMotion(!reducedMotion);setCamera(cameraId);updateLabels()});
 window.addEventListener('keydown',event=>{if(event.key.toLowerCase()==='d')demo?stopLoop():startLoop();if(event.key.toLowerCase()==='m'){setReducedMotion(!reducedMotion);setCamera(cameraId)}if(/^[1-8]$/.test(event.key))setSeatCount(Number(event.key));if(event.key==='0')setSeatCount(1);if(event.key==='Enter'){if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION&&hierarchyRuntime.focusedLeafId!==HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){focusHierarchyLeaf(hierarchyRuntime,HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE);event.preventDefault()}else if(hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){const order=[HEALTH_STATUS.UNKNOWN,HEALTH_STATUS.LOADING,HEALTH_STATUS.UNAVAILABLE];const i=order.indexOf(hierarchyRuntime.healthStatus||HEALTH_STATUS.UNKNOWN);hierarchyRuntime.healthStatus=order[(i+1)%order.length];event.preventDefault()}else{selectSeatShell(selectedSeat);event.preventDefault()}}if(event.key==='Escape'){if(hierarchyRuntime.focusedLeafId){clearLeafFocus(hierarchyRuntime);event.preventDefault()}else{returnFromSeatShell();event.preventDefault()}}if(event.key==='['||event.key===']'){if(!hierarchyRuntime.openParentId){cycleRingFocus(ringFocus,'r1',event.key===']'?1:-1);event.preventDefault()}}if(event.key==='{'||event.key==='}'||event.key===';'||event.key==="'"){if(!hierarchyRuntime.openParentId){cycleRingFocus(ringFocus,'r2',(event.key==='}'||event.key==="'")?1:-1);event.preventDefault()}}if(event.key==='.'&&!hierarchyRuntime.openParentId){clearRingFocus(ringFocus);event.preventDefault()}if((event.key==='ArrowRight'||event.key==='ArrowLeft')&&hierarchyRuntime.openParentId){const list=SEAT_SHELL_V1_CHILDREN;const cur=Math.max(0,list.indexOf(hierarchyRuntime.focusedChildId));const next=event.key==='ArrowRight'?(cur+1)%list.length:(cur-1+list.length)%list.length;focusHierarchyChild(hierarchyRuntime,list[next]);event.preventDefault()}updateLabels()});
 window.addEventListener('teamai:web-ai-seat-unlocked',event=>setSeatCount(event.detail?.seatCount??event.detail?.count??seatCount+1));
-window.TeamAiHero={setSeatCount,getSeatCount:()=>seatCount,setTeamSize:setSeatCount,setCamera,startLoop:()=>startLoop(),stopLoop:()=>stopLoop(),getState:()=>state,getTraceCount:()=>traces.length,getSelectedSeat:()=>selectedSeat,getContributionProgress:()=>contribution,getReducedMotion:()=>reducedMotion,setReducedMotion:(v)=>setReducedMotion(v),getHierarchyState:()=>getHierarchyState(),selectSeatShell:(i)=>selectSeatShell(i),closeHierarchyParent:()=>returnFromSeatShell(),HIERARCHY_PART,HIERARCHY_PHASE,SEAT_SHELL_V1_CHILDREN,SEAT_REST_Y,SEAT_OPEN_LIFT,CHILD_STEP_Y,CHILD_STEP_R,OPEN_DURATION_MS,CLOSE_DURATION_MS,focusChild:(id)=>focusHierarchyChild(hierarchyRuntime,id),focusLeaf:(id)=>focusHierarchyLeaf(hierarchyRuntime,id),HEALTH_STATUS,healthLeafAccessibleName,BACKEND_DISPLAY_V1,SETUP_CONFIG_V1,RING_R1_SCALE,RING_R2_SCALE,getRingFocus:()=>({ring:ringFocus.ring,index:ringFocus.index}),focusRing:(ring,i)=>{focusRingItem(ringFocus,ring,i);updateLabels();return ringFocusAccessibleName(ringFocus);},cycleRing:(ring,d=1)=>{cycleRingFocus(ringFocus,ring,d);updateLabels();return ringFocusAccessibleName(ringFocus);},getNavZoom:()=>navZoom,resetNav:()=>{navOrbitYaw=0;navOrbitPitch=0;navZoom=1;applyNavCamera();}};
+window.TeamAiHero={setSeatCount,getSeatCount:()=>seatCount,setTeamSize:setSeatCount,setCamera,startLoop:()=>startLoop(),stopLoop:()=>stopLoop(),getState:()=>state,getTraceCount:()=>traces.length,getSelectedSeat:()=>selectedSeat,getContributionProgress:()=>contribution,getReducedMotion:()=>reducedMotion,setReducedMotion:(v)=>setReducedMotion(v),getHierarchyState:()=>getHierarchyState(),selectSeatShell:(i)=>selectSeatShell(i),closeHierarchyParent:()=>returnFromSeatShell(),HIERARCHY_PART,HIERARCHY_PHASE,SEAT_SHELL_V1_CHILDREN,SEAT_REST_Y,SEAT_OPEN_LIFT,CHILD_STEP_Y,CHILD_STEP_R,OPEN_DURATION_MS,CLOSE_DURATION_MS,focusChild:(id)=>focusHierarchyChild(hierarchyRuntime,id),focusLeaf:(id)=>focusHierarchyLeaf(hierarchyRuntime,id),HEALTH_STATUS,healthLeafAccessibleName,BACKEND_DISPLAY_V1,SETUP_CONFIG_V1,RING_R1_SCALE,RING_R2_SCALE,NAV_ZOOM_MIN,NAV_ZOOM_MAX,getRingFocus:()=>({ring:ringFocus.ring,index:ringFocus.index}),focusRing:(ring,i)=>{focusRingItem(ringFocus,ring,i);updateLabels();return ringFocusAccessibleName(ringFocus);},cycleRing:(ring,d=1)=>{cycleRingFocus(ringFocus,ring,d);updateLabels();return ringFocusAccessibleName(ringFocus);},getNavZoom:()=>navZoom,resetNav:()=>{navOrbitYaw=0;navOrbitPitch=0;navZoom=1;applyNavCamera();}};
 const query=new URLSearchParams(location.search);if(query.has('seats'))setSeatCount(Number(query.get('seats')));
 syncReducedMotionFromDocument();
 setCamera('HERO_WIDE');updateLabels();requestAnimationFrame(frame);
