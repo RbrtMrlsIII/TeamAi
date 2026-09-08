@@ -12,7 +12,7 @@
 - Inner-crown draw `drawWorkspaceZipskills` using §9 `RING_R0_ZIP_SCALE` (`0.22`)
 - Keyboard `z` / `x` cycles R0; `.` still clears ring focus
 - a11y: not required; external assignment allowed; not entitlement or authority (LAW 109)
-- Docs: ring map, seat sheet, baseline §9, NEXT_SLICES (D merged, E in PR, F–J queued)
+- Docs: ring map, seat sheet, baseline §9, NEXT_SLICES (D merged, E merged (#155), F–J queued)
 
 ## Product rule
 

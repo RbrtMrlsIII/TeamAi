@@ -11,16 +11,18 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
 | C | Camera orbit polish — NAVIGATE-only; dock wins on inspect | **Merged** (#152) |
 | D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **Merged** (#153) |
-| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **In PR** (#154) |
+| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **Merged** (#155) |
 
 ## Next development phase (after E)
+
+**Slice G in progress** on `feat/029-reduced-motion-lighting-g` — contract + tests for Issue #89.
 
 Presentation ring + hierarchy ladder A–E is complete once E merges. Next phase is **interaction / lighting / read-model**, not more ring stubs.
 
 | Slice | Topic | Desired output | Workaround if blocked |
 |-------|--------|----------------|------------------------|
 | F | Health leaf → domain read-model | `SEAT_CONNECTION_HEALTH_FACE` accepts `source: 'domain'` only when a named seat-read-model contract exists; fixture remains default | No live health feed yet → keep fixture; do not fake healthy = entitled |
-| G | #89 reduced-motion lighting contract | Lighting stays readable under `data-motion=reduced`; no continuous choreography required | Highest-leverage lighting slice; do not start #95 until this is clean |
+| G | #89 reduced-motion lighting contract | Lighting stays readable under `data-motion=reduced`; no continuous choreography required | **In PR** — formal contract + static tests |
 | H | Legacy `MECHANISM_ZIPSKILLS` reconcile | e2e / inspection spine / seat-stack labels point at `WORKSPACE_ZIPSKILLS` without breaking Playwright | Dual-name alias first if e2e selectors still expect MECHANISM_* |
 | I | #95 cross-root motion / a11y integration | Motion · transition · animation · responsive · a11y skills wired as companions | **Blocked on G / #89** |
 | J | #88 remaining visual acceptance | Browser review at HERO_WIDE / SEAT_CLOSE + endorsement chain | Code already on main; this is evidence, not a rewrite |
