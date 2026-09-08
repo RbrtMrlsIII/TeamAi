@@ -3,7 +3,7 @@
 **Date:** 2026-09-08  
 **Issue:** #144  
 **Branch:** `feat/029-seat-shell-hierarchy-v1`  
-**Status:** PREPARATION — coding not started  
+**Status:** CODING — Step 1 complete; Steps 2–7 pending  
 **Authority:** Product Law E+J → Masterplan 029 (presentation continuity) → hierarchy-runtime + seat-shell-hierarchy skills → sheet + baseline §9  
 
 ## PR strategy
@@ -25,7 +25,7 @@ Do not open parallel PRs for the same parent. Commit per ladder step if useful; 
 | Step | Content | Status |
 |------|---------|--------|
 | 0 | Sheet confirmed; issue #144; branch | DONE |
-| 1 | State model: SeatShellState → HierarchyRuntimeState | PENDING |
+| 1 | State model: SeatShellState → HierarchyRuntimeState | DONE (hero-flex + static tests) |
 | 2 | Select Seat + dock SEAT_CLOSE; one-open | PENDING |
 | 3 | Open/close pose (§9 names; reduced-motion snap) | PENDING |
 | 4 | Place v1 children (Connection layer + stubs) | PENDING |
@@ -67,4 +67,4 @@ See session target contract: proxy pose if mesh hard; snap if motion flaky; fixt
 
 ## Next action
 
-Begin **Step 1 — State model** when user authorizes coding.
+Next: **Step 2 — Select Seat + dock SEAT_CLOSE; one-open** (wire select path to openParentId later; dock camera).
