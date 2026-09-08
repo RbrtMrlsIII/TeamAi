@@ -3,7 +3,7 @@
 **Status:** Continuity / design contract (presentation)  
 **Date:** 2026-09-08  
 **Authority order:** PRODUCT_LAW.md (Family J) → MASTERPLAN.md → this contract → Spatial Depth Model → implementation  
-**Related:** `docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md`, `docs/TEAMAI_3D_HERO_SEAT_CONFIGURATION_MAP.md`, `docs/TEAMAI_3D_HERO_SEAT_STACK.md`
+**Related:** `docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md`, `docs/TEAMAI_3D_HERO_SEAT_CONFIGURATION_MAP.md`, `docs/TEAMAI_3D_HERO_SEAT_STACK.md`, `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md`, `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`
 
 ## 1. Purpose
 
@@ -15,7 +15,7 @@ It exists so future sessions do not regress to “pretty canvas + DOM chrome out
 
 - Spatial UI is the **human-facing map** of the workforce (Family J). It is **not** a second authority layer.
 - Visible gears, open shells, glowing locks, or animated collars **never** grant entitlement, authorization, scheduler eligibility, or durable completion.
-- Durable truth remains backend-owned (Families C, E, G, H, K as applicable).
+- Durable truth remains backend-owned (Families C, E, G, H, and K as applicable).
 - Theme law still applies: Light Spatial Skeuomorphism / Dark Spatial Glassmorphism — mechanism materials follow that single theme root.
 - Reduced-motion, keyboard, and accessible names remain mandatory; cinematic depth cannot be the only path to meaning.
 
@@ -121,6 +121,8 @@ This contract **extends** `TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md`:
 - Older wording that pushed all forms to an **external** normal UI is **superseded for product configuration**: leaf controls are still “ordinary UI” **semantically** (accessible, keyboardable) but **spatially** remain inside the opened parent.  
 - Environment/legal content (§3.1) remains the only intentional “outside.”
 
+Hierarchy open/close, camera dock, layout math, and motion phases for any parent are governed by the living **Hierarchy Runtime Baseline** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md`) — required to account for, not frozen numerics.
+
 ## 6. Click / focus contract
 
 ```text
@@ -160,12 +162,13 @@ As of 2026-09-08 on `main`, the live Hero provides:
 ## 8. Implementation ladder (suggested)
 
 1. **Document** (this file) — continuity lock.  
-2. **Part hierarchy model** (data): parent/child IDs → Product Law concepts.  
-3. **One parent open prototype** (e.g. single Seat shell → 2–3 child layers → one leaf control).  
-4. **Domain gears** (settings, discussion/coding, subscription) with same open grammar.  
-5. **Environment cameras** for outside tabs.  
-6. **Retire external product chrome** as in-machine coverage grows.  
-7. Bind presentation faces to backend **read-models** without granting browser authority.
+2. **Hierarchy Runtime Baseline** — shared roots R1–R10 (living).  
+3. **Part hierarchy model** (data): parent/child IDs → Product Law concepts (Seat Shell v1 sheet).  
+4. **One parent open prototype** (e.g. single Seat shell → children → one leaf control).  
+5. **Domain gears** (settings, discussion/coding, subscription) with same open grammar.  
+6. **Environment cameras** for outside tabs.  
+7. **Retire external product chrome** as in-machine coverage grows.  
+8. Bind presentation faces to backend **read-models** without granting browser authority.
 
 Each slice remains presentation-only until its own verification evidence is recorded.
 
