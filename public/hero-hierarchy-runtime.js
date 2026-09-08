@@ -25,6 +25,10 @@ export const HIERARCHY_PART = {
   // R1 Backend display ring (Concentric Ring Map) — presentation only
   WORKSPACE_BACKEND_DISPLAY: 'WORKSPACE_BACKEND_DISPLAY',
   WORKSPACE_BACKEND_THREAD: 'WORKSPACE_BACKEND_THREAD',
+  // R2 Setup / configuration ring — mechanical presentation only (not auth authority)
+  WORKSPACE_SETUP_ENGINE: 'WORKSPACE_SETUP_ENGINE',
+  WORKSPACE_AUTH_MECHANISM: 'WORKSPACE_AUTH_MECHANISM',
+  WORKSPACE_CONFIG_BRANCH: 'WORKSPACE_CONFIG_BRANCH',
 };
 
 /** R1 v1 fixture platforms (labels only — not live bind). */
@@ -32,6 +36,14 @@ export const BACKEND_DISPLAY_V1 = Object.freeze([
   { id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' },
   { id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' },
   { id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' },
+]);
+
+/** R2 v1 setup/config mechanical stubs (flow stages — not durable auth). */
+export const SETUP_CONFIG_V1 = Object.freeze([
+  { id: 'WORKSPACE_SETUP_ENGINE#core', label: 'Setup engine', kind: 'engine' },
+  { id: 'WORKSPACE_AUTH_MECHANISM#login', label: 'Login mechanism', kind: 'auth' },
+  { id: 'WORKSPACE_AUTH_MECHANISM#register', label: 'Register mechanism', kind: 'auth' },
+  { id: 'WORKSPACE_CONFIG_BRANCH#primary', label: 'Config branch', kind: 'branch' },
 ]);
 
 export const HIERARCHY_PHASE = {
