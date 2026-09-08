@@ -1,32 +1,32 @@
-# Seat Shell Hierarchy v1 Skill
+---
+name: seat-shell-hierarchy
+description: >
+  Seat Shell Hierarchy v1 — first in-machine parent open path for TeamAi 3D Hero.
+  Use when implementing or reviewing Seat shell open, v1 children, health leaf,
+  one-open rule, or amending the Seat Shell sheet. ZipSkills is NOT seat-scoped.
+---
 
-**Status:** SPATIAL COMPANION / FIRST PARENT FILL  
-**Coordinator:** `skills/frontend/spatial/UI_UX-Promax-Skill.md`  
-**Runtime:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md`  
-**Sheet:** `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`
+# Seat Shell Hierarchy
 
 ## WHEN TO USE
 Use when implementing or reviewing the **first in-machine parent**: Seat shell open → v1 children → one leaf health face.
 
 Triggers: Seat shell, SEAT_SHELL, SEAT_CONNECTION, SEAT_CONNECTION_HEALTH_FACE, seat open, dock SEAT_CLOSE, first gear open, in-machine leaf.
 
-Do **not** use this skill to implement Subscription / Discussion / Coding / Settings gears in the same slice.
-
 ## INPUT
 - Seat Shell Hierarchy v1 sheet (part IDs, child order, v1 leaf, non-goals).
-- Hierarchy Runtime skill + baseline §9 living numbers.
-- Machine Interaction Contract (leaves stay inside; only the room is outside).
+- Hierarchy Runtime Baseline R1–R10 + §9 living numbers.
 - `public/hero-flex.js`, `hero-authored-meshes.js` `seatShell`, semantic camera `SEAT_CLOSE`.
 - Seat read-model skill (future feed only — v1 leaf may stay fixture/`unknown`).
-- Accessibility + motion + responsive companions.
 
 ## AUTHORITY
-Product Law Families **E** (Seat) + **J** (presentation). Connection face may *read* H/I facts later without owning them. Browser must not write durable seat/health/entitlement. Mechanical open is never entitlement.
-
-Numbers come from the baseline doc, not from this skill.
+1. PRODUCT_LAW.md (Families E, H, J)
+2. Machine Interaction Contract
+3. Hierarchy Runtime Baseline + hierarchy-runtime skill
+4. This sheet + this skill
+5. Presentation-only boundary unless a named backend contract authorizes more
 
 ## ACTION
-
 Execute the sheet ladder, one step per PR if needed:
 
 1. **Confirm sheet** — child order and v1 leaf unchanged unless the user amends the sheet.
@@ -40,7 +40,8 @@ Execute the sheet ladder, one step per PR if needed:
    - `SEAT_AUTHORIZATION` — stub
    - `SEAT_WORKSPACE_SCOPE` — stub
    - `SEAT_TASK_EVIDENCE` — stub  
-   Deferred: `SEAT_TOOLKIT`, `SEAT_ZIPSKILLS`.
+   Deferred **seat-scoped**: `SEAT_TOOLKIT` (skill bundles from seat preferences / responsibilities).
+   **Not a Seat child:** ZipSkills — workplace governance / execution discipline (team-lead, shared team, or branch-before-main). See sheet § children / ZipSkills note.
    Stack with `CHILD_STEP_Y` / `CHILD_STEP_R`.
 6. **One leaf** — `SEAT_CONNECTION_HEALTH_FACE` inside `SEAT_CONNECTION`. Presentation enums: `unknown` | `loading` | `unavailable` | (later) read-model health. Accessible name + keyboard when focused. **Not** API key / OAuth / durable bind.
 7. **Evidence** — static: part IDs, one-open, leaf-inside-shell. Browser: wide → open seat → child stack visible.
@@ -51,7 +52,8 @@ PR body must include the Hierarchy Runtime R1–R10 accounting table (Seat v1 fi
 ## DO NOT
 - Do not expand `hero-seat-stack.js` DOM as the permanent home of this hierarchy.
 - Do not treat health face `healthy` as entitlement or live provider success without `source: 'domain'`.
-- Do not implement Toolkit/ZipSkills or other domain gears here.
+- Do not implement `SEAT_TOOLKIT` or other deferred seat gears here.
+- Do not place ZipSkills on seats — workspace governance only (sheet amendment).
 - Do not invent numbers; load §9.
 - Do not skip reduced-motion snap or a11y name on the leaf.
 - Do not write Firestore / PayPal / scheduler state.
