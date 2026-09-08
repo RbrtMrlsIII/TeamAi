@@ -14,10 +14,15 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **Merged** (#155) |
 | G | #89 reduced-motion lighting contract | **Merged** (#156) |
 | H | Legacy `MECHANISM_ZIPSKILLS` reconcile | **Merged** (#157) |
-| I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160) |
+| I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160); issue **closed** |
 | J | #88 material depth evidence + HandOver | **Merged** (#161) |
 | Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS (Zip ≠ commerce) | **Merged** (#163) |
-| N.1 | First skill bodies (`ws.029.presentation`, `seat.planning.summarize`) | **In PR** |
+| N.1 | First skill bodies (`ws.029.presentation`, `seat.planning.summarize`) | **Merged** (#164) |
+| N.2 | More skill bodies (`ws.contribution.flow`, `seat.work.coding`, `ws.tools.github`) | **Merged** (#165) |
+| N.3 | Entitlement architecture (no numbers) + `ws.turn.defaults`, `ws.secrets.boundary`, `seat.field.verification` | **Merged** (#166) |
+| K | Issue hygiene + living NEXT_SLICES + Grok Skills alignment | **This PR** |
+
+Stale PR **#162** (post-J NEXT_SLICES only) was **closed as superseded** — merging it would have dropped N.1–N.3.
 
 ## Naming
 
@@ -43,20 +48,39 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock). Prefer W
 - Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
 - Named §9 zoom bounds; reduced-motion clamps remain contract.
 
-## Next
+## Next (ordered — execute one slice per session)
 
-| Slice | Topic | Desired output |
-|-------|--------|----------------|
-| N.2 | More skill bodies | `ws.contribution.flow`, `seat.work.coding`, `ws.tools.github` |
-| K | Issue hygiene | #88/#89/#95 comments |
-| L | #96–#98 map | Satisfied-by notes |
-| F | Health domain read-model | Named contract only |
+| Slice | Topic | Desired output | Workaround if blocked |
+|-------|--------|----------------|------------------------|
+| **L** | Verification residual #96–#98 | Satisfied-by comments mapping landed adapter/fixture work; **do not re-implement** | Docs-only notes; leave Masterplan 029 hold explicit |
+| **N.4** | Remaining WORKSPACE_SKILLS bodies | `ws.authority.map`, `ws.evidence.handover` | Same SKILL.md contract as N.1–N.3; not Product Law |
+| **N.5** | Remaining SEAT_SKILLS bodies | `seat.planning.discuss`, `seat.field.backend`, `seat.field.frontend`, `seat.field.integration`, `seat.field.docs`, `seat.coord.leader` | One kind per PR if large; presentation/procedure only |
+| **F** | Health leaf → domain read-model | `source:'domain'` only under a **named** seat-read-model contract | No contract yet → keep fixture; never fake healthy = entitled |
+| **M** | Optional background 3D Hero assets | One Hero canvas; semantic cameras; 2.5D container assets only if authored | No external paid assets; no second canvas |
+| **Owner** | #88 / #89 endorsement | Product-owner visual sign-off | Required to close those issues and to promote PRODUCT-KNOWLEDGE |
+
+## MASTERPLAN empty checks (do not invent live evidence)
+
+Remaining TEAM-BACKEND-001 checkboxes **7, 13–17** are **user-manual / environment / owner** — flagged on the existing live-service file `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Do **not** create a second deployment file. Do **not** check them from source presence.
+
+## Grok Skills alignment
+
+Grok App Builder / Grok Build skills (`.grok/skills/` in a Grok sandbox) are **not** TeamAi product skills. Route through `docs/GROK_SKILLS_ALIGNMENT.md` and `docs/SKILL_WIRING.md` §8b / §13. Repository `skills/**` + Product Law win.
+
+## Product rules that stay true
+
+- Theme: `document.documentElement` only; Isolation preserved.
+- Hierarchy numbers live in baseline §9; amend with code in the same PR.
+- Presentation never invents entitlement, scheduler, or durable auth.
+- Green CI is necessary, not Endorsement.
 
 ## Related
 
-- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`  
-- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`  
-- `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`  
-- `skills/workspace/ws.029.presentation/SKILL.md`  
-- `skills/seat/seat.planning.summarize/SKILL.md`  
-- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
+- `docs/GROK_SKILLS_ALIGNMENT.md`
+- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`
+- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
+- `docs/TEAM-EXPERIENCE-029_ENTITLEMENT_AND_USAGE_LIMITS_ARCHITECTURE.md`
+- `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`
+- `backend/BACKEND_LIVE_SERVICE_STATUS.md` (user-manual remainder)
+- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89)
+- `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9

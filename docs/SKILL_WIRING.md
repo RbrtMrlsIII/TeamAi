@@ -143,3 +143,20 @@ Blocked until a later explicit join: live-domain seat identity as durable truth,
 | `seat-shell-hierarchy` skill | First parent fill procedure |
 | Implementation | Named constants matching §9 |
 | Grok skill mirrors | Procedural cache only (§8b) |
+
+## 13. 2026-09-09 Grok Skills alignment (non-authoritative)
+
+Grok Build / Grok App Builder skills (host `.grok/skills/`) are **not** a TeamAi field family.
+
+Operational map: `docs/GROK_SKILLS_ALIGNMENT.md`.
+
+Rules:
+
+1. Repository `skills/**` + `PRODUCT_LAW.md` win over any Grok sandbox skill (§8b).
+2. Do **not** transfer Better Auth, Neon/Postgres, TanStack Start scaffolding, game/sprite skills, or `xai-api` as TeamAi identity, domain state, delivery, scheduler, or Seat runtime.
+3. `design-ui` taste (contrast, reduced-motion, anti-slop) may inform **presentation review** only; implementation still routes through `skills/frontend/spatial/UI_UX-Promax-Skill.md` and companions.
+4. This section does not grant merge permission, 029 release, or commerce authority. Merge automation remains Issue #133.
+
+Wiring path for a Grok-hosted continuation session:
+
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → docs/GROK_SKILLS_ALIGNMENT.md → docs/TEAMAI_3D_HERO_NEXT_SLICES.md → skills/**`

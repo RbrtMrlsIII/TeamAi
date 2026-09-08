@@ -53,3 +53,20 @@ Vercel cutoff must not be recorded as a TeamAi architecture or delivery failure.
 ## Next executable gate
 
 Obtain the remaining live PayPal sandbox transaction/webhook evidence without exposing credentials or tokens in chat, then reconcile the resulting runtime evidence into the Gate-5C checkpoint and final TEAM-BACKEND-001 completion/endorsement packet.
+
+## MASTERPLAN TEAM-BACKEND-001 remainder (user-manual only)
+
+Agent-executable source work for TEAM-BACKEND-001 is exhausted for live infrastructure. Remaining Masterplan checkboxes **must not be ticked from source presence**. They require a human operator, a live environment, or product-owner endorsement. Flagged here on the **existing** live-service file — do **not** create a second deployment file.
+
+| Checklist | Remainder | Who | Agent action |
+|---|---|---|---|
+| 7 | Firebase emulator / rules verification is environment-constrained / parked | Operator with emulator | Do **not** infer emulator pass, hosted pass, or production pass |
+| 13 | Provider / runtime invocation only after authorization / task contracts | Architecture + owner | Do **not** connect providers from presentation or Grok `xai-api` |
+| 14 | Security, contract, integration, failure, timeout, cancellation, recovery verification | Mix of CI + live | Source/CI may continue; live recovery proof stays open |
+| 15 | Traceability audit Product Law → plan → skill → implementation → evidence → endorsement | After remaining runtime evidence | Do not close from docs-only |
+| 16 | TEAM-BACKEND-001 completion endorsement | Product owner | HandOver + Endorsement only |
+| 17 | Release hold on TEAM-EXPERIENCE-029 | After all `BLOCKS_029` evidenced | 029 presentation may continue; **no 029-released claim** |
+
+**Operator next step (unchanged):** obtain remaining live PayPal sandbox transaction/webhook evidence, then **directly re-read Firestore** after the v13 redelivery and prove `aggregate.status=completed`, singular provider event, entitlement `active` with matching `sourceCommerceEventId`. Do not paste credentials or tokens into chat.
+
+Vercel remains **TEMPORARY CUTOFF**. GitHub Actions + Playwright remain the verification path.
