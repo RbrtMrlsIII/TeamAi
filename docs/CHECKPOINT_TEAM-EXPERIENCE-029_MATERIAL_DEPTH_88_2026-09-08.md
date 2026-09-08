@@ -1,7 +1,7 @@
 # TEAM-EXPERIENCE-029 — Issue #88 material/depth pass (workspaceRing / seatShell)
 
 **Date:** 2026-09-08  
-**Status:** IMPLEMENTED (presentation) / static tests / **browser visual evidence captured**  
+**Status:** IMPLEMENTED (presentation) / static tests / **browser visual evidence captured** / **Slice J evidence + HandOver filed**  
 **Depends on:** Issue #98 fixture matrix on main (#125)
 
 ## Scope
@@ -35,6 +35,12 @@ Captured via Playwright against live `/hero/?seats=4` (light theme):
 
 Evidence artifacts (local run): `88-hero-wide-light.png`, `88-seat-close-light.png`, `88-hero-wide-reduced-motion.png` under test-results / HandOver attachments.
 
+## Slice J package
+
+- Evidence index: `docs/EVIDENCE_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md`
+- HandOver: `docs/HANDOVER_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md`
+- Completeness tests: `tests/hero-material-depth-evidence.test.mjs`
+
 ## Out of scope
 
 - Full environment lighting rewrite
@@ -47,10 +53,11 @@ Evidence artifacts (local run): `88-hero-wide-light.png`, `88-seat-close-light.p
 | Criterion | Status |
 |-----------|--------|
 | Static material bounds + theme-adapter usage | Done |
-| Browser frames at HERO_WIDE / SEAT_CLOSE | **Done (this checkpoint)** |
-| Reduced-motion material stability | **Done (frame + #89 contract)** |
-| Endorsement chain / HandOver | Open for product owner |
+| Browser frames at HERO_WIDE / SEAT_CLOSE | **Done** |
+| Reduced-motion material stability | **Done** |
+| Evidence + HandOver package | **Done (Slice J)** |
+| Endorsement chain | Open for product owner |
 
 ## Next
 
-Product owner visual confirmation → close Issue #88 when endorsement is recorded. Then #95 cross-root motion/a11y as planned.
+Product owner visual confirmation → close Issue #88 when endorsement is recorded. **No 029-released claim.**
