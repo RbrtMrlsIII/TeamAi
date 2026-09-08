@@ -33,10 +33,18 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | **Zip package** | distribution format only | No |
 | **Team Quality / team size / Tool Quality** | subscription axes | Yes |
 
-## Camera
+Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 
-- Free orbit / zoom: **NAVIGATE** only (R4).
-- Inspect → semantic dock wins.
+## Optional skills / toolkits (product rule)
+
+- SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
+- Users may assign skills outside TeamAi; presentation must not imply entitlement.
+
+## Camera (Slice C landed)
+
+- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
+- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
+- Named §9 zoom bounds; reduced-motion clamps remain contract.
 
 ## Next (one slice per session)
 
@@ -45,16 +53,18 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | **N.5** | Remaining SEAT_SKILLS bodies (`seat.planning.discuss`, field seats, `seat.coord.leader`) |
 | **F** | Health leaf domain read-model (contract-gated) |
 | **M** | Optional single-canvas background assets |
-| **Owner** | Visual endorsement when environment + outer UI are fair to judge (#89 open; #88 deferred if needed) |
+| **Owner** | Visual endorsement when environment + outer UI are fair to judge (#89 open) |
 
 ## Owner visual note
 
-Hero hierarchy is **visible** on GitHub Pages validation surface, but outer product UI and environment polish remain incomplete. **Do not** treat owner endorsement as done until a fair review is possible. Presentation ≠ 029-released.
+Hero hierarchy is visible on GitHub Pages validation surface, but outer product UI and rich machinery animation remain incomplete. **Do not** treat owner endorsement as done until a fair review is possible. Presentation ≠ 029-released.
 
-## Product rules
+## Product rules that stay true
 
-- Theme: `document.documentElement` only.
-- Skills ≠ authorization. Green CI ≠ endorsement.
+- Theme: `document.documentElement` only; Isolation preserved.
+- Hierarchy numbers live in baseline §9; amend with code in the same PR.
+- Presentation never invents entitlement, scheduler, or durable auth.
+- Green CI is necessary, not Endorsement.
 - CAPABILITY ≠ AUTHORIZATION ≠ WORKSPACE ≠ FIRESTORE.
 
 ## Related
@@ -62,4 +72,5 @@ Hero hierarchy is **visible** on GitHub Pages validation surface, but outer prod
 - `skills/workspace/ws.authority.map/SKILL.md`  
 - `skills/workspace/ws.evidence.handover/SKILL.md`  
 - `docs/GROK_SKILLS_ALIGNMENT.md`  
+- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
