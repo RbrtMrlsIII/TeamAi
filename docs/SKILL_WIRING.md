@@ -41,7 +41,9 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions | CI report / trace |
 | Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + applicable ORUCAVEAM/M skills | Vercel | Controlled deployed-browser verification (when connected; temporary cutoff is non-blocking) | CI/browser evidence |
 | Spatial UI/UX | TEAM-EXPERIENCE-029 visual experience | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + motion/transition/animation/responsive/accessibility companions + applicable ORUCAVEAM skills | TeamAi frontend/theme system | Theme-mode, accessibility, responsive, and browser verification | GitHub evidence + HandOver |
-| 3D Hero lighting | TEAM-EXPERIENCE-029 Hero presentation | Same spatial family. Hero consumes `frontend/spatial/hero-theme-lighting-adapter.js`. **No new Hero skill.** | Hero presentation + theme root | Static adapter/light-rig tests + Playwright | Issue #85/#96 + HandOver |
+| 3D Hero lighting | TEAM-EXPERIENCE-029 Hero presentation | Same spatial family. Hero consumes `frontend/spatial/hero-theme-lighting-adapter.js`. **No Hero lighting/theme skill.** | Hero presentation + theme root | Static adapter/light-rig tests + Playwright | Issue #85/#96 + HandOver |
+| 3D Hero hierarchy runtime | TEAM-EXPERIENCE-029 in-machine parent/open grammar | ORUCAVEAM + `skills/frontend/spatial/hierarchy-runtime/SKILL.md` + UI_UX-Promax + motion/responsive/accessibility. Numbers from `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9. | `public/hero-flex.js` + baseline doc | Named-number static tests; R1–R10 PR table; reduced-motion readability | Issue #142 + HandOver |
+| 3D Hero Seat shell v1 | TEAM-EXPERIENCE-029 first parent fill | ORUCAVEAM + `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` + hierarchy-runtime + seat-read-model (later feed) | Hero presentation (in-machine leaves) | Part IDs, one-open, leaf-inside-shell static tests; optional open-silhouette frame | Issue #142 then Seat-open implementation issue |
 | Packaging | Every completed gate requiring full project package | `skills/packaging/project-package/SKILL.md` + applicable ORUCAVEAM/V/A/M skills | Project package script | Extracted-path + byte/hash equality | Full Project ZIP + manifest |
 
 ## 4. Field/domain expansion rule
@@ -124,8 +126,20 @@ Commerce UI implementation remains blocked until TEAM-BACKEND-001 records a dire
 
 ## 11. 2026-09-07 3D Hero presentation
 
-Hero lighting is presentation-only. Route it through the existing spatial family (Issue #96 bundle). Do not create a Hero skill, a second theme root, or `--hero-*` as Product Law.
+Hero **lighting** is presentation-only. Route it through the existing spatial family (Issue #96 bundle). Do not create a Hero *lighting/theme* skill, a second theme root, or `--hero-*` as Product Law.
 
-Allowed while TEAM-BACKEND-001 endorsement is still open: manufactured light rig, contribution corridor presentation, material/depth, reduced-motion lighting.
+**Hierarchy runtime is a different companion** (Issue #142). Mechanical parent-open grammar is reused by Seat, Subscription, Discussion, Coding, and Settings. That procedure lives in `skills/frontend/spatial/hierarchy-runtime/SKILL.md`. **Documentation holds the numbers** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9). Skills execute; they do not freeze art direction.
 
-Blocked until TEAM-BACKEND-001 endorsement: Seat Identity Inspection, live-domain joins, commerce UI claiming live PayPal/Firestore state, browser writes.
+Allowed while TEAM-BACKEND-001 endorsement is still open: manufactured light rig, contribution corridor presentation, material/depth, reduced-motion lighting, hierarchy runtime docs/skills, Seat shell v1 *presentation* open (no durable seat authority).
+
+Blocked until a later explicit join: live-domain seat identity as durable truth, commerce UI claiming live PayPal/Firestore state, browser writes.
+
+## 12. 2026-09-08 hierarchy numbers vs skills
+
+| Layer | Owns |
+|-------|------|
+| Baseline doc §9 | Named living numbers |
+| `hierarchy-runtime` skill | How every session consumes/amends those numbers and accounts for R1–R10 |
+| `seat-shell-hierarchy` skill | First parent fill procedure |
+| Implementation | Named constants matching §9 |
+| Grok skill mirrors | Procedural cache only (§8b) |

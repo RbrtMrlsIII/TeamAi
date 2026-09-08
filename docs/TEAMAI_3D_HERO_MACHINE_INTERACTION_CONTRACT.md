@@ -121,7 +121,7 @@ This contract **extends** `TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md`:
 - Older wording that pushed all forms to an **external** normal UI is **superseded for product configuration**: leaf controls are still “ordinary UI” **semantically** (accessible, keyboardable) but **spatially** remain inside the opened parent.  
 - Environment/legal content (§3.1) remains the only intentional “outside.”
 
-Hierarchy open/close, camera dock, layout math, and motion phases for any parent are governed by the living **Hierarchy Runtime Baseline** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md`) — required to account for, not frozen numerics.
+Hierarchy open/close, camera dock, layout math, and motion phases for any parent are governed by the living **Hierarchy Runtime Baseline** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md`) — required to account for, not frozen numerics. **Docs hold numbers** (§9). Execution is `skills/frontend/spatial/hierarchy-runtime/SKILL.md`. First parent fill is `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md`.
 
 ## 6. Click / focus contract
 

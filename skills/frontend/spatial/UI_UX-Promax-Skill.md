@@ -111,3 +111,5 @@ This is a TeamAi-specific learned procedure until broader evidence establishes g
 - `skills/execution/orucaveam/SKILL.md`
 - `skills/governance/learning-handover/SKILL.md`
 - `skills/verification/browser-smoke/SKILL.md`
+- `skills/frontend/spatial/hierarchy-runtime/SKILL.md`
+- `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md`

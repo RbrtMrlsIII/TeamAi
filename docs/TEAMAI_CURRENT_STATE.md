@@ -37,7 +37,7 @@ The 029 spatial progression on `main` remains Shell → Deck → F7 → Workplac
 - Manufactured light rig + WebGL Hero (`public/hero-flex.js`, authored meshes)
 - Lifecycle `FOCUS → ACTIVE → CONTRIBUTE → ABSORB → REFLECT → HANDOFF` with workspace traces (#107)
 
-Hero uses the existing spatial skill family. **There is no 3D Hero skill and no second theme root.**
+Hero uses the existing spatial skill family. **There is no 3D Hero lighting/theme skill and no second theme root.** Hierarchy runtime + Seat shell v1 skills exist as spatial companions; **docs hold living numbers** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9).
 
 Backend execution on `main`:
 

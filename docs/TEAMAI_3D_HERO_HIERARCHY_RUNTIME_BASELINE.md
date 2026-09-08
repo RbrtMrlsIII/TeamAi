@@ -3,7 +3,7 @@
 **Status:** Living baseline (required for hierarchy slices; **not frozen**)  
 **Date:** 2026-09-08  
 **Authority:** PRODUCT_LAW.md (Family J + hard invariants) → MASTERPLAN.md → Machine Interaction Contract → Project-Wide Census → Seat Shell Hierarchy v1 → **this baseline** → implementation  
-**Companion sheets:** `TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`, `TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`, `TEAMAI_PROJECT_WIDE_CENSUS.md`
+**Companion skills:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md` (execution) · `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` (first parent fill)
 
 ---
 
@@ -127,15 +127,17 @@ HierarchyRuntimeState
 - Child stack offset: depth index → local offset (radial and/or vertical) so faces do not z-fight.  
 - Open pose is a **deterministic** function of rest pose + open parameters (time phase optional).
 
-**Initial formula placeholders (tunable, not frozen):**
+**Initial formula placeholders (tunable, not frozen) — names live in §9:**
 
 ```text
-seatRestY          ≈ 0.62          // current seatPos Y
-seatOpenLiftY      = seatRestY + openLift   // openLift TBD in Seat v1
-childStackY(i)     = seatOpenLiftY + i * childStepY
-childStackRadial(i)= radialIn + i * childStepR   // optional
+seatRestY          = SEAT_REST_Y          // 0.62 measured
+seatOpenLiftY      = SEAT_REST_Y + SEAT_OPEN_LIFT
+childStackY(i)     = seatOpenLiftY + i * CHILD_STEP_Y
+childStackRadial(i)= radialIn + i * CHILD_STEP_R
 openAmount(t)      ∈ [0,1]  // 1 = fully open; reduced motion may jump to 1
 ```
+
+Numeric values: **§9 living numbers table** (documentation is the number home).
 
 **May-evolve:** All numeric placeholders after visual sessions.  
 **Deferred:** Full constraint solver / physics.
@@ -383,6 +385,91 @@ Seat v1 implementation PRs must map to these rows (short table in PR body is eno
 
 ---
 
-## 8. Design principle
+## 8. Skills (execution help; docs still hold numbers)
 
-**Shared roots, living numbers. Every hierarchy slice accounts for R1–R10 or records why not. Authority never rides the camera. Leaves stay inside the machine.**
+| Concern | Skill |
+|---------|--------|
+| Shared R1–R10 procedure + how to consume/amend §9 | `skills/frontend/spatial/hierarchy-runtime/SKILL.md` |
+| First parent fill (Seat shell v1) | `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` |
+| Theme / legal boxes / F0–F7 | `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| Timing tokens | `skills/frontend/spatial/motion/SKILL.md` |
+| Viewport | `skills/frontend/spatial/responsive/SKILL.md` |
+| Keyboard / reduced-motion a11y | `skills/frontend/spatial/accessibility/SKILL.md` |
+
+A session that implements hierarchy **without** loading the hierarchy-runtime skill **fails validation** (same class as omitting R1–R10). Grok mirrors of these skills are procedural caches only (`docs/SKILL_WIRING.md` §8b).
+
+---
+
+## 9. Living numbers table (documentation holds numbers)
+
+**Rule:** This table is the **number home**. Skills (`skills/frontend/spatial/hierarchy-runtime/SKILL.md`) tell sessions how to consume and amend it. Implementation uses these **names** (or identical literals with the name in a comment). Chat memory is not a number authority.
+
+**Living, not frozen:** visual sessions may change values. Amendment silence (code changes a number with no table/PR note) **fails validation**. Discovering that a constant needs tuning does **not** fail.
+
+**Status key:** `measured` = currently on `main` in `public/hero-flex.js` (or theme adapter MODE_PROFILE). `starting` = named guess for Seat shell v1 open stack — free to learn.
+
+| Name | Value | Status | Root | Anchor |
+|------|-------|--------|------|--------|
+| `SEAT_COUNT_MIN` | `1` | measured | R2 | `clamp(count,1,8)` |
+| `SEAT_COUNT_MAX` | `8` | measured | R2 | `clamp(count,1,8)` |
+| `WORKSPACE_R_MIN` | `4.35` | measured | R2 | `profile().workspace` lerp start |
+| `WORKSPACE_R_MAX` | `5.95` | measured | R2 | `profile().workspace` lerp end |
+| `SEAT_R_MIN` | `4.25` | measured | R2 | `profile().seatRadius` |
+| `SEAT_R_MAX` | `6.45` | measured | R2 | `profile().seatRadius` |
+| `SEAT_SCALE_MAX` | `1` | measured | R2 | 1-seat scale |
+| `SEAT_SCALE_MIN` | `0.78` | measured | R2 | 8-seat scale |
+| `CAM_DIST_MIN` | `9.6` | measured | R2/R3 | `profile().cameraDist` |
+| `CAM_DIST_MAX` | `12.2` | measured | R2/R3 | `profile().cameraDist` |
+| `AMBIENT_MIN` | `0.35` | measured | R6 | `profile().ambient` |
+| `AMBIENT_MAX` | `0.78` | measured | R6 | `profile().ambient` |
+| `ARTIFACTS_MIN` | `3` | measured | R9 | `profile().artifacts` |
+| `ARTIFACTS_MAX` | `8` | measured | R9 | `profile().artifacts` |
+| `SEAT_REST_Y` | `0.62` | measured | R2 | `seatPos()` Y |
+| `SEAT_OPEN_LIFT` | `0.28` | starting | R2 | Seat v1 open lift (learn) |
+| `CHILD_STEP_Y` | `0.22` | starting | R2 | child stack altitude (learn) |
+| `CHILD_STEP_R` | `-0.14` | starting | R2 | child stack inward radial (learn) |
+| `CAMERA_LERP_MS` | `700` | measured | R3/R5 | `frame()` camera lerp |
+| `EASE` | `t*t*(3-2*t)` | measured | R5 | `ease` smoothstep |
+| `REDUCED_MOTION_K` | `0.35` | measured | R5/R8 | `durations()` scale |
+| `HIERARCHY_REDUCED_SNAP` | `true` | contract | R5 | open/close snap under `data-motion=reduced` |
+| `DURATION_FOCUS_MS` | `700` | measured | R5 | turn `focus` |
+| `DURATION_ACTIVE_MS` | `900` | measured | R5 | turn `active` |
+| `DURATION_CONTRIBUTE_MS` | `1100` | measured | R5 | turn `contribute` |
+| `DURATION_ABSORB_MS` | `520` | measured | R5 | turn `absorb` |
+| `DURATION_REFLECT_MS` | `520` | measured | R5 | turn `reflect` |
+| `DURATION_HANDOFF_MS` | `800` | measured | R5 | turn `handoff` |
+| `OPEN_DURATION_MS` | `520` | starting | R5 | hierarchy open (align absorb; learn) |
+| `CLOSE_DURATION_MS` | `420` | starting | R5 | hierarchy close (learn) |
+| `FOV_WIDE` | `39` | measured | R3 | `HERO_WIDE` |
+| `FOV_SEAT_CLOSE` | `36` | measured | R3 | `SEAT_CLOSE` |
+| `SEAT_CLOSE_EYE_Y` | `2.3` | measured | R3 | `SEAT_CLOSE.p[1]` |
+| `FOV_BOOST_NARROW` | `+4` | measured | R7 | aspect `< 0.85` |
+| `FOV_BOOST_MID` | `+2` | measured | R7 | aspect `< 1.1` |
+| `FOV_BOOST_WIDE` | `0` | measured | R7 | else |
+| `DPR_CLAMP` | `2` | measured | R7 | `resize()` |
+| `ROUGH_LIGHT` | `0.48` | measured | R10 | MODE_PROFILE light |
+| `ROUGH_DARK` | `0.62` | measured | R10 | MODE_PROFILE dark |
+| `REFL_LIGHT` | `0.72` | measured | R10 | MODE_PROFILE light |
+| `REFL_DARK` | `0.54` | measured | R10 | MODE_PROFILE dark |
+| `GRAZE_LIGHT` | `0.62` | measured | R10 | MODE_PROFILE light |
+| `GRAZE_DARK` | `0.44` | measured | R10 | MODE_PROFILE dark |
+| `SHADOW_LIGHT` | `0.56` | measured | R10 | MODE_PROFILE light |
+| `SHADOW_DARK` | `0.72` | measured | R10 | MODE_PROFILE dark |
+| `EMISSIVE_LIGHT` | `0.08` | measured | R10 | MODE_PROFILE light |
+| `EMISSIVE_DARK` | `0.16` | measured | R10 | MODE_PROFILE dark |
+
+Theme attributes (not numbers, but the read contract): `data-theme-mode`, `data-density`, `data-motion` on **`document.documentElement` only**.
+
+### 9.1 How a session amends a number
+
+1. Load this table via the hierarchy-runtime skill.  
+2. Tune in implementation after visual/a11y check.  
+3. Update **this row** in the same PR (`old → new` in PR body).  
+4. Keep the **name**. Do not silently rename.  
+5. `starting` may become `measured` once Seat v1 open lands and a frame is recorded.
+
+---
+
+## 10. Design principle
+
+**Shared roots, living numbers. Docs hold the numbers. Skills execute them. Every hierarchy slice accounts for R1–R10 or records why not. Authority never rides the camera. Leaves stay inside the machine.**
