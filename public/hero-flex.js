@@ -29,12 +29,19 @@ function authored(def){const P=[],N=[];for(let i=0;i<def.indices.length;i+=3){co
 const CUBE=cube(),CYL=cyl(),TORUS=torus(),RING=torus(.52,.045,40,8),SPH=sphere(),AUTHORED_RING=authored(HERO_AUTHORED_MESHES.workspaceRing),AUTHORED_SEAT_SHELL=authored(HERO_AUTHORED_MESHES.seatShell);
 const M={shell:[.89,.88,.84],metal:[.47,.51,.49],metal2:[.71,.72,.68],glass:[.58,.71,.75],dark:[.13,.15,.14],energy:[1,.56,.12],trace:[.30,.43,.40],floor:[.76,.75,.71]};
 const PALETTE=[[.66,.57,.46],[.48,.60,.57],[.57,.50,.65],[.69,.57,.43],[.47,.57,.66],[.65,.53,.40],[.45,.62,.53],[.59,.49,.61]];
-/** Issue #88 — presentation material context (no cross-root import; public/ self-contained). */
+/** Issue #88 + B/E reconciliation — presentation material context.
+ * Subset of mapHeroThemeLighting material keys (roughness, reflectance, grazingRimStrength,
+ * shadowSeparationStrength, emissiveCeilingFloor, themeMode, density).
+ * Numeric bases kept identical to frontend/spatial/hero-theme-lighting-adapter.js MODE_PROFILE.
+ * Canonical theme source is document.documentElement data-theme-mode / data-density
+ * (written by spatial theme-root). No body fallback. Isolation preserved — no cross-root import.
+ */
 function heroMaterialContext(){
-  const themeMode = (document.documentElement.getAttribute('data-theme-mode') || document.body?.dataset?.theme || 'light').toLowerCase() === 'dark' ? 'dark' : 'light';
+  const themeMode = (document.documentElement.getAttribute('data-theme-mode') || 'light').toLowerCase() === 'dark' ? 'dark' : 'light';
   const density = (document.documentElement.getAttribute('data-density') || 'default') === 'compact' ? 'compact' : 'default';
   const focus = state==='FOCUS'||state==='ACTIVE'?0.85:0.25;
   const signal = state==='CONTRIBUTE'?0.7:0.15;
+  // MODE_PROFILE bases (light/dark) from canonical adapter — keep identical.
   const baseRough = themeMode==='dark'?0.62:0.48;
   const baseRefl = themeMode==='dark'?0.54:0.72;
   return {

@@ -46,8 +46,10 @@ test('hero-flex consumes authored material helpers and stays public-self-contain
   assert.match(heroFlex, /authoredSeatShellMaterial/);
   assert.match(heroFlex, /authoredSeatInsetMaterial/);
   assert.match(heroFlex, /heroMaterialContext/);
-  assert.doesNotMatch(heroFlex, /mapHeroThemeLighting/);
-  assert.doesNotMatch(heroFlex, /frontend\/spatial/);
+  // Comment may name the canonical function; forbid actual import or call.
+  assert.doesNotMatch(heroFlex, /from ['"].*mapHeroThemeLighting/);
+  assert.doesNotMatch(heroFlex, /mapHeroThemeLighting\s*\(/);
+  assert.doesNotMatch(heroFlex, /from ['"].*frontend\/spatial/);
   assert.match(heroFlex, /AUTHORED_RING/);
   assert.match(heroFlex, /AUTHORED_SEAT_SHELL/);
 });
@@ -56,4 +58,20 @@ test('materials are deterministic for identical lighting input', () => {
   const L = mapHeroThemeLighting({ themeMode: 'light', surface: 0.7, focus: 0.4 });
   assert.deepEqual(authoredRingMaterial(L), authoredRingMaterial(L));
   assert.deepEqual(authoredSeatShellMaterial(L), authoredSeatShellMaterial(L));
+});
+
+test('B/E reconciliation: heroMaterialContext uses documentElement only (no body fallback) and documents MODE_PROFILE subset', () => {
+  // No body.dataset.theme fallback
+  assert.doesNotMatch(heroFlex, /body\?\.dataset\?\.theme/);
+  assert.doesNotMatch(heroFlex, /body\.dataset\.theme/);
+  // Canonical attribute source
+  assert.match(heroFlex, /document\.documentElement\.getAttribute\('data-theme-mode'\)/);
+  assert.match(heroFlex, /document\.documentElement\.getAttribute\('data-density'\)/);
+  // Isolation + subset documentation
+  assert.match(heroFlex, /Isolation preserved/);
+  assert.match(heroFlex, /MODE_PROFILE/);
+  assert.match(heroFlex, /mapHeroThemeLighting material keys/);
+  // Still no cross-root import
+  assert.doesNotMatch(heroFlex, /from ['"].*frontend\/spatial/);
+  assert.doesNotMatch(heroFlex, /mapHeroThemeLighting\s*\(/);
 });
