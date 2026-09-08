@@ -37,6 +37,13 @@ export const HIERARCHY_INPUT = {
   DEMO: 'DEMO',
 };
 
+/** Presentation-only health face enums (v1 fixture — not domain success). */
+export const HEALTH_STATUS = {
+  UNKNOWN: 'unknown',
+  LOADING: 'loading',
+  UNAVAILABLE: 'unavailable',
+};
+
 /** v1 visible children in Product Law order (Toolkit/ZipSkills deferred). */
 export const SEAT_SHELL_V1_CHILDREN = [
   HIERARCHY_PART.SEAT_CONNECTION,
@@ -51,7 +58,6 @@ export function seatShellParentId(index) {
   return HIERARCHY_PART.SEAT_SHELL + '#' + index;
 }
 
-/** Create HierarchyRuntimeState. Presentation only — never entitlement. */
 export function createHierarchyRuntime(seed = {}) {
   return {
     openParentId: seed.openParentId ?? null,
@@ -64,6 +70,7 @@ export function createHierarchyRuntime(seed = {}) {
     motionMode: seed.motionMode ?? 'full',
     cameraId: seed.cameraId ?? 'HERO_WIDE',
     inputMode: seed.inputMode ?? HIERARCHY_INPUT.NAVIGATE,
+    healthStatus: seed.healthStatus ?? HEALTH_STATUS.UNKNOWN,
   };
 }
 
@@ -98,41 +105,23 @@ export function closeHierarchyParent(state, opts = {}) {
 export function tickHierarchyPose(state, nowMs, reducedMotion) {
   const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;
   if (state.phase === HIERARCHY_PHASE.OPENING) {
-    if (snap) {
-      state.openAmount = 1;
-      state.phase = HIERARCHY_PHASE.OPEN;
-      return state;
-    }
+    if (snap) { state.openAmount = 1; state.phase = HIERARCHY_PHASE.OPEN; return state; }
     const t = Math.max(0, Math.min(1, (nowMs - state.phaseStartMs) / OPEN_DURATION_MS));
     state.openAmount = t * t * (3 - 2 * t);
-    if (t >= 1) {
-      state.openAmount = 1;
-      state.phase = HIERARCHY_PHASE.OPEN;
-    }
+    if (t >= 1) { state.openAmount = 1; state.phase = HIERARCHY_PHASE.OPEN; }
   } else if (state.phase === HIERARCHY_PHASE.CLOSING) {
     if (snap) {
-      state.openAmount = 0;
-      state.openParentId = null;
-      state.focusedChildId = null;
-      state.focusedLeafId = null;
-      state.phase = HIERARCHY_PHASE.REST;
-      return state;
+      state.openAmount = 0; state.openParentId = null; state.focusedChildId = null;
+      state.focusedLeafId = null; state.phase = HIERARCHY_PHASE.REST; return state;
     }
     const t = Math.max(0, Math.min(1, (nowMs - state.phaseStartMs) / CLOSE_DURATION_MS));
-    const e = t * t * (3 - 2 * t);
-    state.openAmount = 1 - e;
+    state.openAmount = 1 - t * t * (3 - 2 * t);
     if (t >= 1) {
-      state.openAmount = 0;
-      state.openParentId = null;
-      state.focusedChildId = null;
-      state.focusedLeafId = null;
-      state.phase = HIERARCHY_PHASE.REST;
+      state.openAmount = 0; state.openParentId = null; state.focusedChildId = null;
+      state.focusedLeafId = null; state.phase = HIERARCHY_PHASE.REST;
     }
-  } else if (state.phase === HIERARCHY_PHASE.OPEN) {
-    state.openAmount = 1;
-  } else if (state.phase === HIERARCHY_PHASE.REST) {
-    state.openAmount = 0;
-  }
+  } else if (state.phase === HIERARCHY_PHASE.OPEN) state.openAmount = 1;
+  else if (state.phase === HIERARCHY_PHASE.REST) state.openAmount = 0;
   return state;
 }
 
@@ -145,47 +134,28 @@ export function openSeatShellParent(state, seatIndex, opts = {}) {
   state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
   state.focusedLeafId = null;
   state.phaseStartMs = now;
-  if (snap) {
-    state.phase = HIERARCHY_PHASE.OPEN;
-    state.openAmount = 1;
-  } else {
-    state.phase = HIERARCHY_PHASE.OPENING;
-    state.openAmount = 0;
-  }
+  if (snap) { state.phase = HIERARCHY_PHASE.OPEN; state.openAmount = 1; }
+  else { state.phase = HIERARCHY_PHASE.OPENING; state.openAmount = 0; }
   state.inputMode = HIERARCHY_INPUT.INSPECT;
   return state;
 }
 
-export function seatOpenY() {
-  return SEAT_REST_Y + SEAT_OPEN_LIFT;
-}
-
+export function seatOpenY() { return SEAT_REST_Y + SEAT_OPEN_LIFT; }
 export function seatAltitudeY(openAmount) {
   const a = Math.max(0, Math.min(1, Number(openAmount) || 0));
   return SEAT_REST_Y + SEAT_OPEN_LIFT * a;
 }
 
-/** Child stack offsets inside an open Seat shell (baseline §9). */
 export function childStackOffset(index, openAmount = 1) {
   const i = Math.max(0, Math.floor(Number(index) || 0));
   const a = Math.max(0, Math.min(1, Number(openAmount) || 0));
-  return {
-    dy: CHILD_STEP_Y * i * a,
-    dr: CHILD_STEP_R * i * a,
-    scale: 0.42 + 0.08 * (1 - Math.min(i, 4) / 4),
-  };
+  return { dy: CHILD_STEP_Y * i * a, dr: CHILD_STEP_R * i * a, scale: 0.42 + 0.08 * (1 - Math.min(i, 4) / 4) };
 }
 
 export function childLocalPosition(seatAngle, seatRadius, index, openAmount = 1) {
   const off = childStackOffset(index, openAmount);
   const r = seatRadius + off.dr;
-  return {
-    x: Math.cos(seatAngle) * r,
-    y: off.dy,
-    z: Math.sin(seatAngle) * r,
-    scale: off.scale,
-    childId: SEAT_SHELL_V1_CHILDREN[index] || null,
-  };
+  return { x: Math.cos(seatAngle) * r, y: off.dy, z: Math.sin(seatAngle) * r, scale: off.scale, childId: SEAT_SHELL_V1_CHILDREN[index] || null };
 }
 
 export function focusChild(state, childId) {
@@ -194,6 +164,24 @@ export function focusChild(state, childId) {
   state.focusedChildId = childId;
   state.focusedLeafId = null;
   return state;
+}
+
+export function focusLeaf(state, leafId) {
+  if (!state.openParentId) return state;
+  if (leafId !== HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE) return state;
+  state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
+  state.focusedLeafId = leafId;
+  return state;
+}
+
+export function clearLeafFocus(state) {
+  state.focusedLeafId = null;
+  return state;
+}
+
+export function healthLeafAccessibleName(status = HEALTH_STATUS.UNKNOWN) {
+  const s = status || HEALTH_STATUS.UNKNOWN;
+  return `Seat connection health: ${s}. Presentation only; not authorization.`;
 }
 
 export function getHierarchySnapshot(state) {
