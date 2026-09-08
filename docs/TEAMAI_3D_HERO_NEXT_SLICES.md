@@ -7,7 +7,11 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 | Slice | Topic | Status |
 |-------|--------|--------|
-| A–E | Rings, hierarchy, ZipSkills face | **Merged** (#150–#155) |
+| A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
+| B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
+| C | Camera orbit polish — **NAVIGATE**-only; dock wins on inspect | **Merged** (#152) |
+| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **Merged** (#153) |
+| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **Merged** (#155) |
 | G | #89 reduced-motion lighting contract | **Merged** (#156) |
 | H | Legacy `MECHANISM_ZIPSKILLS` reconcile | **Merged** (#157) |
 | I.1 | #95 cross-root skill wiring matrix | **Merged** (#158) |
@@ -24,7 +28,14 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 ## Optional skills / toolkits (product rule)
 
 - **SEAT_TOOLKIT** and **WORKSPACE_ZIPSKILLS** are **not required** platform setups or configs.
+- Users may assign skills/toolkits **outside** TeamAi; Hero presentation must not imply entitlement or mandatory bind.
 - Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same physical dock).
+
+## Camera (Slice C landed)
+
+- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
+- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
+- Named §9 zoom bounds; reduced-motion clamps remain contract.
 
 ## Related docs
 
