@@ -22,23 +22,19 @@ export const HIERARCHY_PART = {
   SEAT_WORKSPACE_SCOPE: 'SEAT_WORKSPACE_SCOPE',
   SEAT_TASK_EVIDENCE: 'SEAT_TASK_EVIDENCE',
   SEAT_CONNECTION_HEALTH_FACE: 'SEAT_CONNECTION_HEALTH_FACE',
-  // R1 Backend display ring (Concentric Ring Map) — presentation only
   WORKSPACE_BACKEND_DISPLAY: 'WORKSPACE_BACKEND_DISPLAY',
   WORKSPACE_BACKEND_THREAD: 'WORKSPACE_BACKEND_THREAD',
-  // R2 Setup / configuration ring — mechanical presentation only (not auth authority)
   WORKSPACE_SETUP_ENGINE: 'WORKSPACE_SETUP_ENGINE',
   WORKSPACE_AUTH_MECHANISM: 'WORKSPACE_AUTH_MECHANISM',
   WORKSPACE_CONFIG_BRANCH: 'WORKSPACE_CONFIG_BRANCH',
 };
 
-/** R1 v1 fixture platforms (labels only — not live bind). */
 export const BACKEND_DISPLAY_V1 = Object.freeze([
   { id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' },
   { id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' },
   { id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' },
 ]);
 
-/** R2 v1 setup/config mechanical stubs (flow stages — not durable auth). */
 export const SETUP_CONFIG_V1 = Object.freeze([
   { id: 'WORKSPACE_SETUP_ENGINE#core', label: 'Setup engine', kind: 'engine' },
   { id: 'WORKSPACE_AUTH_MECHANISM#login', label: 'Login mechanism', kind: 'auth' },
@@ -59,14 +55,12 @@ export const HIERARCHY_INPUT = {
   DEMO: 'DEMO',
 };
 
-/** Presentation-only health face enums (v1 fixture — not domain success). */
 export const HEALTH_STATUS = {
   UNKNOWN: 'unknown',
   LOADING: 'loading',
   UNAVAILABLE: 'unavailable',
 };
 
-/** v1 visible children in Product Law order (Toolkit/ZipSkills deferred). */
 export const SEAT_SHELL_V1_CHILDREN = [
   HIERARCHY_PART.SEAT_CONNECTION,
   HIERARCHY_PART.SEAT_BEHAVIOR,
@@ -221,4 +215,52 @@ export function healthLeafAccessibleName(status = HEALTH_STATUS.UNKNOWN) {
 
 export function getHierarchySnapshot(state) {
   return Object.assign({}, state);
+}
+
+/** R1/R2 ring focus (presentation only — not auth / not seat hierarchy). */
+export function createRingFocusState() {
+  return { ring: null, index: 0 };
+}
+
+export function ringCatalog(ring) {
+  if (ring === 'r1') return BACKEND_DISPLAY_V1;
+  if (ring === 'r2') return SETUP_CONFIG_V1;
+  return [];
+}
+
+export function focusRingItem(ringFocus, ring, index) {
+  const catalog = ringCatalog(ring);
+  if (!catalog.length) return ringFocus;
+  const i = ((Math.floor(Number(index)) % catalog.length) + catalog.length) % catalog.length;
+  ringFocus.ring = ring;
+  ringFocus.index = i;
+  return ringFocus;
+}
+
+export function cycleRingFocus(ringFocus, ring, delta = 1) {
+  const catalog = ringCatalog(ring);
+  if (!catalog.length) return ringFocus;
+  if (ringFocus.ring !== ring) {
+    ringFocus.ring = ring;
+    ringFocus.index = 0;
+    return ringFocus;
+  }
+  const n = catalog.length;
+  ringFocus.index = ((ringFocus.index + delta) % n + n) % n;
+  return ringFocus;
+}
+
+export function clearRingFocus(ringFocus) {
+  ringFocus.ring = null;
+  ringFocus.index = 0;
+  return ringFocus;
+}
+
+export function ringFocusAccessibleName(ringFocus) {
+  if (!ringFocus || !ringFocus.ring) return 'No workspace ring face focused. Presentation only.';
+  const catalog = ringCatalog(ringFocus.ring);
+  const item = catalog[ringFocus.index];
+  if (!item) return 'Workspace ring face. Presentation only.';
+  const ringLabel = ringFocus.ring === 'r1' ? 'Backend display' : 'Setup configuration';
+  return `${ringLabel}: ${item.label}. Presentation only; not authorization.`;
 }
