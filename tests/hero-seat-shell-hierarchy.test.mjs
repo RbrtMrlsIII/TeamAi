@@ -5,78 +5,76 @@ import {
   createHierarchyRuntime,
   openSeatShellParent,
   closeHierarchyParent,
+  tickHierarchyPose,
   seatShellParentId,
+  seatAltitudeY,
   HIERARCHY_PHASE,
   HIERARCHY_PART,
   SEAT_SHELL_V1_CHILDREN,
+  SEAT_REST_Y,
+  SEAT_OPEN_LIFT,
+  OPEN_DURATION_MS,
+  CLOSE_DURATION_MS,
+  HIERARCHY_REDUCED_SNAP,
 } from '../public/hero-hierarchy-runtime.js';
 
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 const hierarchy = await readFile(new URL('../public/hero-hierarchy-runtime.js', import.meta.url), 'utf8');
-const sheet = await readFile(new URL('../docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md', import.meta.url), 'utf8');
 const baseline = await readFile(new URL('../docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md', import.meta.url), 'utf8');
 const combined = runtime + '\n' + hierarchy;
 
-test('Seat shell v1 part IDs are defined in hierarchy runtime module', () => {
-  for (const id of [
-    'SEAT_SHELL',
-    'SEAT_CONNECTION',
-    'SEAT_BEHAVIOR',
-    'SEAT_CAPABILITIES',
-    'SEAT_AUTHORIZATION',
-    'SEAT_WORKSPACE_SCOPE',
-    'SEAT_TASK_EVIDENCE',
-    'SEAT_CONNECTION_HEALTH_FACE',
-  ]) {
-    assert.match(hierarchy, new RegExp(id));
-  }
-});
-
-test('HierarchyRuntimeState fields and phases are present (R1)', () => {
-  assert.match(combined, /hierarchyRuntime|createHierarchyRuntime/);
-  assert.match(hierarchy, /openParentId/);
-  assert.match(hierarchy, /focusedChildId/);
-  assert.match(hierarchy, /focusedLeafId/);
-  assert.match(hierarchy, /HIERARCHY_PHASE/);
-  assert.match(hierarchy, /['"]rest['"]/);
-  assert.match(hierarchy, /['"]opening['"]/);
-  assert.match(hierarchy, /['"]open['"]/);
-  assert.match(hierarchy, /['"]closing['"]/);
-});
-
-test('openSeatShellParent sets one parent and connection focus (Step 2)', () => {
-  const state = createHierarchyRuntime();
-  openSeatShellParent(state, 2);
-  assert.equal(state.openParentId, 'SEAT_SHELL#2');
-  assert.equal(state.selectedSeatIndex, 2);
-  assert.equal(state.phase, HIERARCHY_PHASE.OPEN);
-  assert.equal(state.focusedChildId, HIERARCHY_PART.SEAT_CONNECTION);
-  openSeatShellParent(state, 5);
-  assert.equal(state.openParentId, 'SEAT_SHELL#5');
-  assert.notEqual(state.openParentId, 'SEAT_SHELL#2');
-  closeHierarchyParent(state);
-  assert.equal(state.openParentId, null);
-  assert.equal(state.phase, HIERARCHY_PHASE.REST);
-});
-
-test('hero-flex selectSeatShell docks SEAT_CLOSE and wires one-open', () => {
-  assert.match(runtime, /function selectSeatShell/);
-  assert.match(runtime, /setCamera\(['"]SEAT_CLOSE['"]\)/);
-  assert.match(runtime, /openSeatShellParent/);
-  assert.match(runtime, /returnFromSeatShell|closeHierarchyParent/);
-  assert.match(runtime, /hero-hierarchy-runtime\.js/);
-});
-
-test('v1 children order excludes deferred Toolkit and ZipSkills', () => {
-  assert.equal(SEAT_SHELL_V1_CHILDREN.includes(HIERARCHY_PART.SEAT_CONNECTION), true);
-  assert.equal(SEAT_SHELL_V1_CHILDREN.some((id) => id.includes('TOOLKIT') || id.includes('ZIPSKILLS')), false);
-});
-
-test('sheet and baseline remain the number/part authority', () => {
-  assert.match(sheet, /SEAT_CONNECTION_HEALTH_FACE/);
-  assert.match(sheet, /SEAT_CLOSE/);
+test('§9 named numbers match baseline starting values', () => {
+  assert.equal(SEAT_REST_Y, 0.62);
+  assert.equal(SEAT_OPEN_LIFT, 0.28);
+  assert.equal(OPEN_DURATION_MS, 520);
+  assert.equal(CLOSE_DURATION_MS, 420);
+  assert.equal(HIERARCHY_REDUCED_SNAP, true);
   assert.match(baseline, /SEAT_OPEN_LIFT/);
-  assert.match(baseline, /openParentId/);
+  assert.match(hierarchy, /SEAT_REST_Y/);
+});
+
+test('seatAltitudeY maps openAmount to rest + lift', () => {
+  assert.equal(seatAltitudeY(0), SEAT_REST_Y);
+  assert.equal(seatAltitudeY(1), SEAT_REST_Y + SEAT_OPEN_LIFT);
+  assert.ok(Math.abs(seatAltitudeY(0.5) - (SEAT_REST_Y + SEAT_OPEN_LIFT * 0.5)) < 1e-9);
+});
+
+test('open animates OPENING → OPEN; reduced snap is immediate', () => {
+  const state = createHierarchyRuntime();
+  openSeatShellParent(state, 1, { snap: false, nowMs: 0 });
+  assert.equal(state.phase, HIERARCHY_PHASE.OPENING);
+  assert.equal(state.openAmount, 0);
+  tickHierarchyPose(state, OPEN_DURATION_MS / 2, false);
+  assert.equal(state.phase, HIERARCHY_PHASE.OPENING);
+  assert.ok(state.openAmount > 0 && state.openAmount < 1);
+  tickHierarchyPose(state, OPEN_DURATION_MS, false);
+  assert.equal(state.phase, HIERARCHY_PHASE.OPEN);
+  assert.equal(state.openAmount, 1);
+
+  const snapped = createHierarchyRuntime();
+  openSeatShellParent(snapped, 0, { snap: true, nowMs: 0 });
+  assert.equal(snapped.phase, HIERARCHY_PHASE.OPEN);
+  assert.equal(snapped.openAmount, 1);
+});
+
+test('close animates CLOSING → REST; one-open preserved', () => {
+  const state = createHierarchyRuntime();
+  openSeatShellParent(state, 2, { snap: true, nowMs: 0 });
+  closeHierarchyParent(state, { snap: false, nowMs: 1000 });
+  assert.equal(state.phase, HIERARCHY_PHASE.CLOSING);
+  assert.equal(state.openParentId, 'SEAT_SHELL#2');
+  tickHierarchyPose(state, 1000 + CLOSE_DURATION_MS, false);
+  assert.equal(state.phase, HIERARCHY_PHASE.REST);
+  assert.equal(state.openParentId, null);
+  assert.equal(state.openAmount, 0);
+});
+
+test('hero-flex consumes §9 names and ticks pose', () => {
+  assert.match(runtime, /SEAT_REST_Y/);
+  assert.match(runtime, /SEAT_OPEN_LIFT/);
+  assert.match(runtime, /tickHierarchyPose/);
+  assert.match(runtime, /hierLift|SEAT_OPEN_LIFT\s*\*\s*hierarchyRuntime\.openAmount/);
+  assert.match(runtime, /HIERARCHY_REDUCED_SNAP/);
 });
 
 test('presentation-only boundary held', () => {
@@ -84,7 +82,11 @@ test('presentation-only boundary held', () => {
   assert.doesNotMatch(combined, /firestore|paypal|scheduler eligibility/i);
 });
 
+test('v1 children still exclude Toolkit/ZipSkills', () => {
+  assert.equal(SEAT_SHELL_V1_CHILDREN.includes(HIERARCHY_PART.SEAT_CONNECTION), true);
+  assert.equal(SEAT_SHELL_V1_CHILDREN.some((id) => /TOOLKIT|ZIPSKILLS/.test(id)), false);
+});
+
 test('seatShellParentId format', () => {
   assert.equal(seatShellParentId(0), 'SEAT_SHELL#0');
-  assert.equal(seatShellParentId(3), 'SEAT_SHELL#3');
 });

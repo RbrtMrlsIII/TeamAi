@@ -1,8 +1,18 @@
 /**
- * Issue #144 — Seat shell hierarchy v1 / Hierarchy Runtime R1 (presentation only).
+ * Issue #144 — Seat shell hierarchy v1 / Hierarchy Runtime (presentation only).
  * Number home remains docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md §9.
- * Open/close pose and child faces land in later ladder steps.
+ * Child faces land in later ladder steps.
  */
+
+/** Living numbers from baseline §9 — amend §9 + code together if learned. */
+export const SEAT_REST_Y = 0.62;
+export const SEAT_OPEN_LIFT = 0.28;
+export const CHILD_STEP_Y = 0.22;
+export const CHILD_STEP_R = -0.14;
+export const OPEN_DURATION_MS = 520;
+export const CLOSE_DURATION_MS = 420;
+export const HIERARCHY_REDUCED_SNAP = true;
+export const CAMERA_LERP_MS = 700;
 
 export const HIERARCHY_PART = {
   SEAT_SHELL: 'SEAT_SHELL',
@@ -51,6 +61,8 @@ export function createHierarchyRuntime(seed = {}) {
     focusedChildId: seed.focusedChildId ?? null,
     focusedLeafId: seed.focusedLeafId ?? null,
     phase: seed.phase ?? HIERARCHY_PHASE.REST,
+    openAmount: seed.openAmount ?? 0,
+    phaseStartMs: seed.phaseStartMs ?? 0,
     selectedSeatIndex: seed.selectedSeatIndex ?? 0,
     motionMode: seed.motionMode ?? 'full',
     cameraId: seed.cameraId ?? 'HERO_WIDE',
@@ -68,12 +80,64 @@ export function syncHierarchyRuntime(state, globals) {
   return state;
 }
 
-/** Close any open parent (one-open rule). Pose animation is a later step. */
-export function closeHierarchyParent(state) {
-  state.openParentId = null;
-  state.focusedChildId = null;
+/** Close parent — snap or begin CLOSING. Pose animation is presentation only. */
+export function closeHierarchyParent(state, opts = {}) {
+  const snap = Boolean(opts.snap);
+  const now = opts.nowMs ?? 0;
+  if (snap || !state.openParentId) {
+    state.openParentId = null;
+    state.focusedChildId = null;
+    state.focusedLeafId = null;
+    state.phase = HIERARCHY_PHASE.REST;
+    state.openAmount = 0;
+    state.phaseStartMs = now;
+    return state;
+  }
+  state.phase = HIERARCHY_PHASE.CLOSING;
+  state.phaseStartMs = now;
   state.focusedLeafId = null;
-  state.phase = HIERARCHY_PHASE.REST;
+  return state;
+}
+
+/** Advance opening/closing openAmount. Call once per frame with nowMs. */
+export function tickHierarchyPose(state, nowMs, reducedMotion) {
+  const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;
+  if (state.phase === HIERARCHY_PHASE.OPENING) {
+    if (snap) {
+      state.openAmount = 1;
+      state.phase = HIERARCHY_PHASE.OPEN;
+      return state;
+    }
+    const t = Math.max(0, Math.min(1, (nowMs - state.phaseStartMs) / OPEN_DURATION_MS));
+    state.openAmount = t * t * (3 - 2 * t);
+    if (t >= 1) {
+      state.openAmount = 1;
+      state.phase = HIERARCHY_PHASE.OPEN;
+    }
+  } else if (state.phase === HIERARCHY_PHASE.CLOSING) {
+    if (snap) {
+      state.openAmount = 0;
+      state.openParentId = null;
+      state.focusedChildId = null;
+      state.focusedLeafId = null;
+      state.phase = HIERARCHY_PHASE.REST;
+      return state;
+    }
+    const t = Math.max(0, Math.min(1, (nowMs - state.phaseStartMs) / CLOSE_DURATION_MS));
+    const e = t * t * (3 - 2 * t);
+    state.openAmount = 1 - e;
+    if (t >= 1) {
+      state.openAmount = 0;
+      state.openParentId = null;
+      state.focusedChildId = null;
+      state.focusedLeafId = null;
+      state.phase = HIERARCHY_PHASE.REST;
+    }
+  } else if (state.phase === HIERARCHY_PHASE.OPEN) {
+    state.openAmount = 1;
+  } else if (state.phase === HIERARCHY_PHASE.REST) {
+    state.openAmount = 0;
+  }
   return state;
 }
 
@@ -81,15 +145,34 @@ export function closeHierarchyParent(state) {
  * Open one Seat shell parent (v1 one-open). Presentation only — not entitlement.
  * Caller docks camera to SEAT_CLOSE separately (R3).
  */
-export function openSeatShellParent(state, seatIndex) {
+export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
+  const snap = Boolean(opts.snap);
+  const now = opts.nowMs ?? 0;
   state.openParentId = seatShellParentId(index);
   state.selectedSeatIndex = index;
   state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
   state.focusedLeafId = null;
-  state.phase = HIERARCHY_PHASE.OPEN; // pose animation is Step 3; state is open for inspect
+  state.phaseStartMs = now;
+  if (snap) {
+    state.phase = HIERARCHY_PHASE.OPEN;
+    state.openAmount = 1;
+  } else {
+    state.phase = HIERARCHY_PHASE.OPENING;
+    state.openAmount = 0;
+  }
   state.inputMode = HIERARCHY_INPUT.INSPECT;
   return state;
+}
+
+export function seatOpenY() {
+  return SEAT_REST_Y + SEAT_OPEN_LIFT;
+}
+
+/** openAmount ∈ [0,1] — rest → open lift. */
+export function seatAltitudeY(openAmount) {
+  const a = Math.max(0, Math.min(1, Number(openAmount) || 0));
+  return SEAT_REST_Y + SEAT_OPEN_LIFT * a;
 }
 
 export function getHierarchySnapshot(state) {
