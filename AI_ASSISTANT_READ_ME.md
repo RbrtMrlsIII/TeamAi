@@ -71,6 +71,10 @@ Use `skills/governance/learning-handover/SKILL.md`.
 
 The authoritative Firebase project is `team-ai-official`.
 
+## Hierarchy runtime (029 presentation)
+
+In-machine parent/open work (Seat shell, later domain gears) must load `skills/frontend/spatial/hierarchy-runtime/SKILL.md`. **Documentation holds numbers** in `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9. Do not invent a private altitude/duration table. Seat shell v1 uses `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md`. This is not a Hero lighting skill and not a second theme root.
+
 ## GitHub branch and deployment guard
 
 The default branch is protected by the repository ruleset and must not be bypassed. The development team must preserve the repository's PR-based progression and deployment gate.
