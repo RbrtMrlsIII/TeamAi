@@ -2,24 +2,25 @@
 
 **Date:** 2026-09-08  
 **Issue:** #144  
+**PR:** https://github.com/RbrtMrlsIII/TeamAi/pull/145  
 **Branch:** `feat/029-seat-shell-hierarchy-v1`  
-**Status:** CODING — Steps 1–6 complete; Step 7 pending  
+**Status:** PR OPEN — Steps 1–7 delivered; awaiting CI + merge under #133  
 **Skills in force:** teamai-project → hierarchy-runtime → seat-shell-hierarchy  
 
 ## Ladder
 
 | Step | Content | Status |
 |------|---------|--------|
-| 0–5 | State → select → pose → children → health leaf + a11y | DONE |
-| 6 | Static tests + evidence doc | DONE |
-| 7 | PR body R1–R10 table; CI green; merge under #133 | PENDING |
+| 0–6 | State → select → pose → children → leaf + a11y → evidence | DONE |
+| 7 | PR #145 + R1–R10 table; merge under #133 | OPEN |
 
-## Deferred
+## Deferred / product placement (not this PR)
 
-- Toolkit / ZipSkills (sheet)
-- Workspace services ring (follow-on)
-- Free orbit / zoom (R3/R4 may-evolve)
+| Part | Placement |
+|------|-----------|
+| `SEAT_TOOLKIT` | Future **seat** skill bundles from seat preferences / responsibilities |
+| `SEAT_ZIPSKILLS` | **Not seats** — workplace governance / execution discipline (team-lead, shared team, or branch ownership before main) |
+| Workspace services ring | Middle ring follow-on |
+| Free orbit / zoom | R3/R4 may-evolve |
 
-## Next
-
-**Step 7 — Open PR** with R1–R10 table; merge under #133 when checks green.
+Presentation only. **No 029-released claim.**
