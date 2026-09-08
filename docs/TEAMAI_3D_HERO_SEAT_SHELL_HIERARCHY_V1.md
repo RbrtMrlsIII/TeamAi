@@ -2,7 +2,8 @@
 
 **Status:** Hybrid baseline — design lock before first open prototype  
 **Date:** 2026-09-08  
-**Authority:** PRODUCT_LAW.md (Families E, H, J) → Machine Interaction Contract → Project-Wide Census → this sheet  
+**Authority:** PRODUCT_LAW.md (Families E, H, J) → Machine Interaction Contract → Project-Wide Census → Hierarchy Runtime Baseline → this sheet  
+**Runtime roots:** `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` (R1–R10; living, not frozen)  
 **Scope:** **One parent only** — Seat shell on the outer ring. Not subscription / discussion / coding / settings gears.
 
 ## 1. Goal of the hybrid slice
@@ -165,6 +166,8 @@ v1 implementation should **not** expand DOM seat-stack as the permanent home; pr
 6. One leaf health face + a11y name.  
 7. Static + browser evidence.  
 8. Stop — do not expand to other domain gears in the same PR.
+
+Seat v1 implementation PRs must also account for Hierarchy Runtime Baseline roots R1–R10 (or explicit defer with reason).
 
 ## 10. Design principle for this baseline
 
