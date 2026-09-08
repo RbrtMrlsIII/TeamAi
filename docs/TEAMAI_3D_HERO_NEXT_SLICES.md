@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work on Hero hierarchy + rings.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-## Ordered ladder (2026-09-08)
+## Completed ladder (2026-09-08)
 
 | Slice | Topic | Status |
 |-------|--------|--------|
@@ -17,32 +17,47 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | I.1 | #95 cross-root skill wiring matrix | **Merged** (#158) |
 | I.2 | Motion + transition token alignment vs §9 | **Merged** (#159) |
 | I.3 | Responsive + a11y wiring + reduced regression | **Merged** (#160) |
-| J | #88 material depth evidence + HandOver | **In PR** |
+| J | #88 material depth evidence + HandOver | **Merged** (#161) |
 
-## Next development phase
+## Naming harden (this track)
+
+| Canonical | Legacy Hero face | Commerce? |
+|-----------|------------------|-----------|
+| **SEAT_SKILLS** | SEAT_TOOLKIT | No |
+| **WORKSPACE_SKILLS** | WORKSPACE_ZIPSKILLS | No |
+| **Zip package** | distribution format | No |
+| **Team Quality / Tool Quality** | billing axes | Yes |
+
+Contract: `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`
+
+## Next development phase (ordered)
 
 | Slice | Topic | Desired output | Workaround if blocked |
 |-------|--------|----------------|------------------------|
-| F | Health leaf → domain read-model | `source: 'domain'` only under named contract | Keep fixture |
-| Owner | #88 endorsement | Product owner visual sign-off to close issue | Optional for presentation continuity |
-| Hygiene | #96–#98 verification residual | Close or re-scope open verification issues | Docs-only if code already on main |
+| **K** | Issue hygiene #88/#89/#95 | Comments → evidence PRs; leave endorsement open | Do not close without owner |
+| **L** | Verification residual #96–#98 | Map landed adapter work to issues | Docs-only “satisfied by” |
+| **F** | Health leaf domain read-model | `source:'domain'` under named contract | Keep fixture |
+| **N** | Author first SEAT_SKILLS / WORKSPACE_SKILLS bodies | One kind per PR | Start with `ws.029.presentation` + `seat.planning.summarize` |
+| **M** | Optional single-canvas background assets | Semantic camera angles only | No second canvas |
+| **Owner** | #88 / #89 endorsement | Visual sign-off | Optional for continuity |
 
 ## Optional skills / toolkits (product rule)
 
-- **SEAT_TOOLKIT** and **WORKSPACE_ZIPSKILLS** are **not required** platform setups or configs.
-- Users may assign skills/toolkits **outside** TeamAi; Hero presentation must not imply entitlement or mandatory bind.
-- Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same physical dock).
+- **SEAT_SKILLS** / **WORKSPACE_SKILLS** (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
+- Users may assign skills **outside** TeamAi; presentation must not imply entitlement.
+- Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
+- **Zip package** = distribution only; **not** a commerce SKU name.
 
 ## Camera (Slice C landed)
 
-- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
-- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
-- Named §9 zoom bounds; reduced-motion clamps remain contract.
+- Free orbit / zoom: **NAVIGATE** only (R4).
+- Inspect → semantic dock wins; orbit paused.
+- Named §9 zoom bounds + reduced clamps.
 
 ## Related docs
 
+- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`  
 - `docs/EVIDENCE_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md`  
-- `docs/HANDOVER_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md`  
 - `docs/TEAMAI_3D_HERO_CROSS_ROOT_SKILL_WIRING_MATRIX.md`  
 - `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
