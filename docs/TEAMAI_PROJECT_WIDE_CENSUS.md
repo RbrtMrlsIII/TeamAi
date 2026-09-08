@@ -138,7 +138,7 @@ HERO MACHINE (near)
 | Subscription gear | Does it only *present* unlock paths; never claim paid entitlement? |
 | Discussion / Coding gears | Do they enter the correct flow without starting durable execution alone? |
 | Settings gear | Are turn management and preferences nested parts, not external chrome? |
-| Leaf controls | Are they they inside the open parent and still accessible? |
+| Leaf controls | Are they inside the open parent and still accessible? |
 | Environment tabs | Are legal/about/contact far cameras only? |
 | Theme / motion | Single theme root? Reduced-motion preserves hierarchy meaning? |
 | Materials / depth | Skeuomorphic light / glass dark without second theme authority? |
@@ -217,7 +217,7 @@ Before marking a feature done, answer **all** that apply:
 
 ### Continuity
 
-14. Does this reduce dual-root / dual-track **noise**noise**?  
+14. Does this reduce dual-root / dual-track **noise**?  
 15. Is the Masterplan checklist item still **held** or legitimately advanced?
 
 ---
