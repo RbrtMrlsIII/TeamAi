@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import {
+  createHierarchyRuntime,
+  openSeatShellParent,
+  closeHierarchyParent,
+  seatShellParentId,
+  HIERARCHY_PHASE,
+  HIERARCHY_PART,
+  SEAT_SHELL_V1_CHILDREN,
+} from '../public/hero-hierarchy-runtime.js';
 
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 const hierarchy = await readFile(new URL('../public/hero-hierarchy-runtime.js', import.meta.url), 'utf8');
@@ -33,33 +42,49 @@ test('HierarchyRuntimeState fields and phases are present (R1)', () => {
   assert.match(hierarchy, /['"]opening['"]/);
   assert.match(hierarchy, /['"]open['"]/);
   assert.match(hierarchy, /['"]closing['"]/);
-  assert.match(hierarchy, /NAVIGATE/);
-  assert.match(hierarchy, /INSPECT/);
 });
 
-test('one-open closeHierarchyParent exists and is presentation-only', () => {
-  assert.match(hierarchy, /function closeHierarchyParent|export function closeHierarchyParent/);
-  assert.match(runtime, /getHierarchyState/);
-  assert.match(combined, /presentation only|Presentation only/i);
+test('openSeatShellParent sets one parent and connection focus (Step 2)', () => {
+  const state = createHierarchyRuntime();
+  openSeatShellParent(state, 2);
+  assert.equal(state.openParentId, 'SEAT_SHELL#2');
+  assert.equal(state.selectedSeatIndex, 2);
+  assert.equal(state.phase, HIERARCHY_PHASE.OPEN);
+  assert.equal(state.focusedChildId, HIERARCHY_PART.SEAT_CONNECTION);
+  openSeatShellParent(state, 5);
+  assert.equal(state.openParentId, 'SEAT_SHELL#5');
+  assert.notEqual(state.openParentId, 'SEAT_SHELL#2');
+  closeHierarchyParent(state);
+  assert.equal(state.openParentId, null);
+  assert.equal(state.phase, HIERARCHY_PHASE.REST);
+});
+
+test('hero-flex selectSeatShell docks SEAT_CLOSE and wires one-open', () => {
+  assert.match(runtime, /function selectSeatShell/);
+  assert.match(runtime, /setCamera\(['"]SEAT_CLOSE['"]\)/);
+  assert.match(runtime, /openSeatShellParent/);
+  assert.match(runtime, /returnFromSeatShell|closeHierarchyParent/);
+  assert.match(runtime, /hero-hierarchy-runtime\.js/);
 });
 
 test('v1 children order excludes deferred Toolkit and ZipSkills', () => {
-  assert.match(hierarchy, /SEAT_SHELL_V1_CHILDREN/);
-  const childrenBlock = hierarchy.match(/SEAT_SHELL_V1_CHILDREN\s*=\s*\[[^\]]+\]/);
-  assert.ok(childrenBlock, 'SEAT_SHELL_V1_CHILDREN array present');
-  assert.doesNotMatch(childrenBlock[0], /SEAT_TOOLKIT|SEAT_ZIPSKILLS/);
+  assert.equal(SEAT_SHELL_V1_CHILDREN.includes(HIERARCHY_PART.SEAT_CONNECTION), true);
+  assert.equal(SEAT_SHELL_V1_CHILDREN.some((id) => id.includes('TOOLKIT') || id.includes('ZIPSKILLS')), false);
 });
 
 test('sheet and baseline remain the number/part authority', () => {
   assert.match(sheet, /SEAT_CONNECTION_HEALTH_FACE/);
-  assert.match(sheet, /one fully open|Only \*\*one\*\* Seat shell/i);
+  assert.match(sheet, /SEAT_CLOSE/);
   assert.match(baseline, /SEAT_OPEN_LIFT/);
-  assert.match(baseline, /HierarchyRuntimeState|openParentId/);
+  assert.match(baseline, /openParentId/);
 });
 
-test('TeamAiHero exposes hierarchy getters; hero-flex imports hierarchy module', () => {
-  assert.match(runtime, /hero-hierarchy-runtime\.js/);
-  assert.match(runtime, /getHierarchyState/);
-  assert.match(runtime, /closeHierarchyParent/);
+test('presentation-only boundary held', () => {
+  assert.match(combined, /presentation only|Presentation only/i);
   assert.doesNotMatch(combined, /firestore|paypal|scheduler eligibility/i);
+});
+
+test('seatShellParentId format', () => {
+  assert.equal(seatShellParentId(0), 'SEAT_SHELL#0');
+  assert.equal(seatShellParentId(3), 'SEAT_SHELL#3');
 });

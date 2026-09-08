@@ -77,6 +77,21 @@ export function closeHierarchyParent(state) {
   return state;
 }
 
+/**
+ * Open one Seat shell parent (v1 one-open). Presentation only — not entitlement.
+ * Caller docks camera to SEAT_CLOSE separately (R3).
+ */
+export function openSeatShellParent(state, seatIndex) {
+  const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
+  state.openParentId = seatShellParentId(index);
+  state.selectedSeatIndex = index;
+  state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
+  state.focusedLeafId = null;
+  state.phase = HIERARCHY_PHASE.OPEN; // pose animation is Step 3; state is open for inspect
+  state.inputMode = HIERARCHY_INPUT.INSPECT;
+  return state;
+}
+
 export function getHierarchySnapshot(state) {
   return Object.assign({}, state);
 }
