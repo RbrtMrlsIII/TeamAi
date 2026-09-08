@@ -17,12 +17,11 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160); issue **closed** |
 | J | #88 material depth evidence + HandOver | **Merged** (#161) |
 | Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS (Zip ≠ commerce) | **Merged** (#163) |
-| N.1 | First skill bodies | **Merged** (#164) |
-| N.2 | contribution / coding / GitHub skills | **Merged** (#165) |
-| N.3 | entitlement arch + turn/secrets/verification skills | **Merged** (#166) |
+| N.1–N.3 | Skill bodies + entitlement architecture (no numbers) | **Merged** (#164–#166) |
 | K | Issue hygiene + Grok Skills alignment | **Merged** (#167) |
 | L | #96–#98 satisfied-by map | **Merged** (#168) |
-| N.4 | `ws.authority.map`, `ws.evidence.handover` | **In PR** |
+| N.4 | `ws.authority.map`, `ws.evidence.handover` | **Merged** (#169) |
+| N.5 | Remaining SEAT_SKILLS (discuss, fields, leader) | **Merged** (#170) |
 
 ## Naming
 
@@ -46,18 +45,31 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 - Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
 - Named §9 zoom bounds; reduced-motion clamps remain contract.
 
-## Next (one slice per session)
+## Next (ordered — one slice per session)
 
-| Slice | Topic |
-|-------|--------|
-| **N.5** | Remaining SEAT_SKILLS bodies (`seat.planning.discuss`, field seats, `seat.coord.leader`) |
-| **F** | Health leaf domain read-model (contract-gated) |
-| **M** | Optional single-canvas background assets |
-| **Owner** | Visual endorsement when environment + outer UI are fair to judge (#89 open) |
+| Slice | Topic | Desired output | Workaround if blocked |
+|-------|--------|----------------|------------------------|
+| **P** | Hierarchy motion / transition polish | Stronger open-child / stack motion using existing §9 durations + motion/transition skills; **no** second animation framework | Keep current open/close if polish is large — optional |
+| **F** | Health leaf → domain read-model | `source:'domain'` only under a **named** seat-read-model contract | Keep fixture; never healthy = entitled |
+| **M** | Optional single-canvas background assets | One Hero canvas; semantic cameras; authored only | No paid assets; no second canvas |
+| **Outer UI** | Non-Hero plates / chrome | Readable product shell so owner can fair-judge Hero | Separate from 029 release claim |
+| **Owner** | Visual endorsement | #89 (and #88 if reopened) when environment + outer UI are fair | Do not fake endorsement |
+
+## Skill catalog status (procedure library)
+
+| Family | Status |
+|--------|--------|
+| WORKSPACE_SKILLS kinds with bodies | `ws.029.presentation`, `ws.contribution.flow`, `ws.tools.github`, `ws.turn.defaults`, `ws.secrets.boundary`, `ws.authority.map`, `ws.evidence.handover` |
+| SEAT_SKILLS kinds with bodies | `seat.planning.summarize`, `seat.planning.discuss`, `seat.work.coding`, `seat.field.*` (backend/frontend/integration/docs/verification), `seat.coord.leader` |
+| Still optional / not written as SKILL.md | Any future kinds only when product needs them |
 
 ## Owner visual note
 
-Hero hierarchy is visible on GitHub Pages validation surface, but outer product UI and rich machinery animation remain incomplete. **Do not** treat owner endorsement as done until a fair review is possible. Presentation ≠ 029-released.
+Hero hierarchy is **visible** (e.g. GitHub Pages), but outer product UI and rich transforming/branch **machinery cinema** remain incomplete. Functional open/close + docks exist; showpiece animation is **later (P)**. **Do not** treat owner endorsement as done until a fair review is possible. Presentation ≠ 029-released.
+
+## MASTERPLAN empty checks
+
+TEAM-BACKEND-001 remainder **7, 13–17** = user-manual on existing `backend/BACKEND_LIVE_SERVICE_STATUS.md`. No second deployment file.
 
 ## Product rules that stay true
 
@@ -69,8 +81,8 @@ Hero hierarchy is visible on GitHub Pages validation surface, but outer product 
 
 ## Related
 
-- `skills/workspace/ws.authority.map/SKILL.md`  
-- `skills/workspace/ws.evidence.handover/SKILL.md`  
 - `docs/GROK_SKILLS_ALIGNMENT.md`  
+- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`  
+- `docs/TEAM-EXPERIENCE-029_ENTITLEMENT_AND_USAGE_LIMITS_ARCHITECTURE.md`  
 - `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
