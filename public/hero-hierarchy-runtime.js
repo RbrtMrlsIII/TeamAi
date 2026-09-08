@@ -1,7 +1,6 @@
 /**
  * Issue #144 — Seat shell hierarchy v1 / Hierarchy Runtime (presentation only).
  * Number home remains docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md §9.
- * Child faces land in later ladder steps.
  */
 
 /** Living numbers from baseline §9 — amend §9 + code together if learned. */
@@ -52,9 +51,7 @@ export function seatShellParentId(index) {
   return HIERARCHY_PART.SEAT_SHELL + '#' + index;
 }
 
-/**
- * Create HierarchyRuntimeState. Presentation only — never entitlement.
- */
+/** Create HierarchyRuntimeState. Presentation only — never entitlement. */
 export function createHierarchyRuntime(seed = {}) {
   return {
     openParentId: seed.openParentId ?? null,
@@ -80,7 +77,6 @@ export function syncHierarchyRuntime(state, globals) {
   return state;
 }
 
-/** Close parent — snap or begin CLOSING. Pose animation is presentation only. */
 export function closeHierarchyParent(state, opts = {}) {
   const snap = Boolean(opts.snap);
   const now = opts.nowMs ?? 0;
@@ -99,7 +95,6 @@ export function closeHierarchyParent(state, opts = {}) {
   return state;
 }
 
-/** Advance opening/closing openAmount. Call once per frame with nowMs. */
 export function tickHierarchyPose(state, nowMs, reducedMotion) {
   const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;
   if (state.phase === HIERARCHY_PHASE.OPENING) {
@@ -141,10 +136,6 @@ export function tickHierarchyPose(state, nowMs, reducedMotion) {
   return state;
 }
 
-/**
- * Open one Seat shell parent (v1 one-open). Presentation only — not entitlement.
- * Caller docks camera to SEAT_CLOSE separately (R3).
- */
 export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
   const snap = Boolean(opts.snap);
@@ -169,10 +160,40 @@ export function seatOpenY() {
   return SEAT_REST_Y + SEAT_OPEN_LIFT;
 }
 
-/** openAmount ∈ [0,1] — rest → open lift. */
 export function seatAltitudeY(openAmount) {
   const a = Math.max(0, Math.min(1, Number(openAmount) || 0));
   return SEAT_REST_Y + SEAT_OPEN_LIFT * a;
+}
+
+/** Child stack offsets inside an open Seat shell (baseline §9). */
+export function childStackOffset(index, openAmount = 1) {
+  const i = Math.max(0, Math.floor(Number(index) || 0));
+  const a = Math.max(0, Math.min(1, Number(openAmount) || 0));
+  return {
+    dy: CHILD_STEP_Y * i * a,
+    dr: CHILD_STEP_R * i * a,
+    scale: 0.42 + 0.08 * (1 - Math.min(i, 4) / 4),
+  };
+}
+
+export function childLocalPosition(seatAngle, seatRadius, index, openAmount = 1) {
+  const off = childStackOffset(index, openAmount);
+  const r = seatRadius + off.dr;
+  return {
+    x: Math.cos(seatAngle) * r,
+    y: off.dy,
+    z: Math.sin(seatAngle) * r,
+    scale: off.scale,
+    childId: SEAT_SHELL_V1_CHILDREN[index] || null,
+  };
+}
+
+export function focusChild(state, childId) {
+  if (!state.openParentId) return state;
+  if (!SEAT_SHELL_V1_CHILDREN.includes(childId)) return state;
+  state.focusedChildId = childId;
+  state.focusedLeafId = null;
+  return state;
 }
 
 export function getHierarchySnapshot(state) {

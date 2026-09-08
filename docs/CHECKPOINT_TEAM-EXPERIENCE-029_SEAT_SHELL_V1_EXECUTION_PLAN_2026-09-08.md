@@ -3,7 +3,7 @@
 **Date:** 2026-09-08  
 **Issue:** #144  
 **Branch:** `feat/029-seat-shell-hierarchy-v1`  
-**Status:** CODING — Steps 1–3 complete; Steps 4–7 pending  
+**Status:** CODING — Steps 1–4 complete; Steps 5–7 pending  
 **Authority:** Product Law E+J → Masterplan 029 (presentation continuity) → hierarchy-runtime + seat-shell-hierarchy skills → sheet + baseline §9  
 
 ## Ladder
@@ -14,11 +14,11 @@
 | 1 | State model | DONE |
 | 2 | Select Seat + dock SEAT_CLOSE; one-open | DONE |
 | 3 | Open/close pose (§9 names; reduced-motion snap) | DONE |
-| 4 | Place v1 children (Connection layer + stubs) | PENDING |
+| 4 | Place v1 children (Connection layer + stubs) | DONE |
 | 5 | Leaf SEAT_CONNECTION_HEALTH_FACE + a11y | PENDING |
 | 6 | Static tests + optional browser frames | PENDING |
 | 7 | PR body R1–R10 table; CI green; merge under #133 | PENDING |
 
 ## Next
 
-**Step 4 — Place v1 children** (Connection layer + stubs) inside open shell.
+**Step 5 — Leaf SEAT_CONNECTION_HEALTH_FACE + a11y** inside Connection.
