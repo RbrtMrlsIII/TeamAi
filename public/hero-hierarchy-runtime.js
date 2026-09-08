@@ -13,6 +13,7 @@ export const CLOSE_DURATION_MS = 420;
 export const HIERARCHY_REDUCED_SNAP = true;
 export const CAMERA_LERP_MS = 700;
 /** Ring radius multipliers off profile().workspace — §9 home. */
+export const RING_R0_ZIP_SCALE = 0.22;
 export const RING_R1_SCALE = 1.18;
 export const RING_R2_SCALE = 1.42;
 /** NAVIGATE free-orbit zoom bounds — §9 home. */
@@ -36,6 +37,7 @@ export const HIERARCHY_PART = {
   WORKSPACE_SETUP_ENGINE: 'WORKSPACE_SETUP_ENGINE',
   WORKSPACE_AUTH_MECHANISM: 'WORKSPACE_AUTH_MECHANISM',
   WORKSPACE_CONFIG_BRANCH: 'WORKSPACE_CONFIG_BRANCH',
+  WORKSPACE_ZIPSKILLS: 'WORKSPACE_ZIPSKILLS',
 };
 
 export const BACKEND_DISPLAY_V1 = Object.freeze([
@@ -56,6 +58,14 @@ export const SETUP_CONFIG_V1 = Object.freeze([
   { id: 'WORKSPACE_AUTH_MECHANISM#login', label: 'Login mechanism', kind: 'auth' },
   { id: 'WORKSPACE_AUTH_MECHANISM#register', label: 'Register mechanism', kind: 'auth' },
   { id: 'WORKSPACE_CONFIG_BRANCH#primary', label: 'Config branch', kind: 'branch' },
+]);
+
+/** Optional workspace-tree ZipSkills fixture — not required; not authority (LAW 109). */
+export const WORKSPACE_ZIPSKILLS_V1 = Object.freeze([
+  { id: 'WORKSPACE_ZIPSKILLS#team-lead', label: 'Team-lead governance', optional: true, mode: 'team-lead' },
+  { id: 'WORKSPACE_ZIPSKILLS#shared', label: 'Shared team continuity', optional: true, mode: 'shared' },
+  { id: 'WORKSPACE_ZIPSKILLS#branch', label: 'Branch-before-main', optional: true, mode: 'branch' },
+  { id: 'WORKSPACE_ZIPSKILLS#external', label: 'External assign slot', optional: true, mode: 'external' },
 ]);
 
 export const HIERARCHY_PHASE = {
@@ -229,6 +239,11 @@ export function toolkitChildAccessibleName() {
   return 'Seat toolkit (optional). Not required; external assignment allowed. Presentation only; not entitlement.';
 }
 
+export function zipskillsAccessibleName(item) {
+  const label = item && item.label ? item.label : 'Workspace ZipSkills';
+  return `${label} (optional). Not required; external assignment allowed. Workspace-tree governance continuity only. Presentation only; not entitlement or authority.`;
+}
+
 export function healthLeafAccessibleName(status = HEALTH_STATUS.UNKNOWN) {
   const s = status || HEALTH_STATUS.UNKNOWN;
   return `Seat connection health: ${s}. Presentation only; not authorization.`;
@@ -238,12 +253,13 @@ export function getHierarchySnapshot(state) {
   return Object.assign({}, state);
 }
 
-/** R1/R2 ring focus (presentation only — not auth / not seat hierarchy). */
+/** R0–R2 ring focus (presentation only — not auth / not seat hierarchy). */
 export function createRingFocusState() {
   return { ring: null, index: 0 };
 }
 
 export function ringCatalog(ring) {
+  if (ring === 'r0') return WORKSPACE_ZIPSKILLS_V1;
   if (ring === 'r1') return BACKEND_DISPLAY_V1;
   if (ring === 'r2') return SETUP_CONFIG_V1;
   return [];
@@ -282,6 +298,9 @@ export function ringFocusAccessibleName(ringFocus) {
   const catalog = ringCatalog(ringFocus.ring);
   const item = catalog[ringFocus.index];
   if (!item) return 'Workspace ring face. Presentation only.';
-  const ringLabel = ringFocus.ring === 'r1' ? 'Backend display' : 'Setup configuration';
+  const ringLabel = ringFocus.ring === 'r0'
+    ? 'Workspace ZipSkills'
+    : (ringFocus.ring === 'r1' ? 'Backend display' : 'Setup configuration');
+  if (ringFocus.ring === 'r0') return zipskillsAccessibleName(item);
   return `${ringLabel}: ${item.label}. Presentation only; not authorization.`;
 }

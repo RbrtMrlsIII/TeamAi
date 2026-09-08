@@ -30,7 +30,7 @@ Radii increase with ring index. Exact numbers live in baseline §9 when measured
 
 - User’s chosen / configured **workspace surface**
 - Contribution, absorb / reflect / handoff, traces
-- Hosts **workspace-tier** presentation: `WORKSPACE_ZIPSKILLS` (governance equip), future workspace services stubs
+- Hosts **workspace-tier** presentation: `WORKSPACE_ZIPSKILLS` (optional governance equip — **implemented stub**, inner crown `RING_R0_ZIP_SCALE`)
 - Not empty decoration
 
 ### R1 — Backend display ring
@@ -74,6 +74,7 @@ Radii increase with ring index. Exact numbers live in baseline §9 when measured
 | Existing | Ring |
 |----------|------|
 | `workspace()` in `hero-flex.js` | R0 |
+| `drawWorkspaceZipskills` (`WORKSPACE_ZIPSKILLS_V1`) | R0 optional ZipSkills crown |
 | Contribution paths / traces | R0 ↔ R3 (R9) |
 | Seat ring `seatPos` / `drawSeat` | R3 |
 | Intermediate R1/R2 meshes | **Not yet** — sheet + stubs later |

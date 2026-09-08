@@ -40,6 +40,7 @@ SEAT_SHELL#index
 Former `SEAT_ZIPSKILLS` is **removed from the Seat child table** and renamed **`WORKSPACE_ZIPSKILLS`**.
 It equips on the **workspace tree** (R0 / governance continuity), not on seats.
 Also **not required** — external governance assignment allowed.
+Slice E presents `WORKSPACE_ZIPSKILLS_V1` as an optional inner-crown fixture (`RING_R0_ZIP_SCALE`). Keyboard `z`/`x`. Not authority (LAW 109).
 
 ## Health leaf
 

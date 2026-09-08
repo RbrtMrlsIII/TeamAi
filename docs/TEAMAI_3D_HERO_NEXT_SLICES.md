@@ -10,14 +10,26 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
 | B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
 | C | Camera orbit polish — NAVIGATE-only; dock wins on inspect | **Merged** (#152) |
-| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **In PR** |
-| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | Queued |
+| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **Merged** (#153) |
+| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **In PR** (#154) |
+
+## Next development phase (after E)
+
+Presentation ring + hierarchy ladder A–E is complete once E merges. Next phase is **interaction / lighting / read-model**, not more ring stubs.
+
+| Slice | Topic | Desired output | Workaround if blocked |
+|-------|--------|----------------|------------------------|
+| F | Health leaf → domain read-model | `SEAT_CONNECTION_HEALTH_FACE` accepts `source: 'domain'` only when a named seat-read-model contract exists; fixture remains default | No live health feed yet → keep fixture; do not fake healthy = entitled |
+| G | #89 reduced-motion lighting contract | Lighting stays readable under `data-motion=reduced`; no continuous choreography required | Highest-leverage lighting slice; do not start #95 until this is clean |
+| H | Legacy `MECHANISM_ZIPSKILLS` reconcile | e2e / inspection spine / seat-stack labels point at `WORKSPACE_ZIPSKILLS` without breaking Playwright | Dual-name alias first if e2e selectors still expect MECHANISM_* |
+| I | #95 cross-root motion / a11y integration | Motion · transition · animation · responsive · a11y skills wired as companions | **Blocked on G / #89** |
+| J | #88 remaining visual acceptance | Browser review at HERO_WIDE / SEAT_CLOSE + endorsement chain | Code already on main; this is evidence, not a rewrite |
 
 ## Optional skills / toolkits (product rule)
 
 - **SEAT_TOOLKIT** and **WORKSPACE_ZIPSKILLS** are **not required** platform setups or configs.
 - Users may assign skills/toolkits **outside** TeamAi; Hero presentation must not imply entitlement or mandatory bind.
-- When shown: Toolkit = seat-scoped fixture only; ZipSkills = workspace-tree governance continuity only.
+- When shown: Toolkit = seat-scoped fixture only; ZipSkills = workspace-tree governance continuity only (LAW 109 — skill package, not authority).
 
 ## Implementation entry condition
 
@@ -29,7 +41,7 @@ Each slice introduces one new spatial capability and one verification boundary. 
 
 ## Deep inspection progression
 
-`orientation → surface → seat/focus → connection → behavior → (optional toolkit) → capability → authorization/scope → workspace → task/evidence → normal UI`
+`orientation → surface → seat/focus → connection → behavior → (optional toolkit) → capability → authorization/scope → workspace → (optional ZipSkills) → task/evidence → normal UI`
 
 ## Camera (Slice C landed)
 

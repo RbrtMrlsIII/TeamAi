@@ -31,7 +31,7 @@ Triggers: WORKSPACE_BACKEND_DISPLAY, WORKSPACE_BACKEND_THREAD, WORKSPACE_SETUP_E
 2. Keep **radii** named or expressed off `profile().workspace` (e.g. R1 `* 1.18`, R2 `* 1.42`); amend §9 when measured numbers freeze.
 3. R1: display faces + animated threads — no live bind.
 4. R2: mechanical setup/login/register stubs — **not** auth authority, no password fields.
-5. `WORKSPACE_ZIPSKILLS` equips on workspace tree — never Seat children.
+5. `WORKSPACE_ZIPSKILLS` equips on workspace tree — never Seat children. v1 fixture `WORKSPACE_ZIPSKILLS_V1` (all optional) draws as an inner crown at `RING_R0_ZIP_SCALE`. Keyboard `z`/`x` cycles R0. LAW 109: skill package, not authority.
 6. Evidence: static part IDs + optional browser frame.
 
 ## DO NOT
