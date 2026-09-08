@@ -29,11 +29,11 @@ function authored(def){const P=[],N=[];for(let i=0;i<def.indices.length;i+=3){co
 const CUBE=cube(),CYL=cyl(),TORUS=torus(),RING=torus(.52,.045,40,8),SPH=sphere(),AUTHORED_RING=authored(HERO_AUTHORED_MESHES.workspaceRing),AUTHORED_SEAT_SHELL=authored(HERO_AUTHORED_MESHES.seatShell);
 const M={shell:[.89,.88,.84],metal:[.47,.51,.49],metal2:[.71,.72,.68],glass:[.58,.71,.75],dark:[.13,.15,.14],energy:[1,.56,.12],trace:[.30,.43,.40],floor:[.76,.75,.71]};
 const PALETTE=[[.66,.57,.46],[.48,.60,.57],[.57,.50,.65],[.69,.57,.43],[.47,.57,.66],[.65,.53,.40],[.45,.62,.53],[.59,.49,.61]];
-/** Issue #88 + B/E reconciliation — presentation material context.
+/** Issue #88 + B/E + #89 — presentation material context.
  * Subset of mapHeroThemeLighting material keys (roughness, reflectance, grazingRimStrength,
- * shadowSeparationStrength, emissiveCeilingFloor, themeMode, density).
+ * shadowSeparationStrength, emissiveCeilingFloor, themeMode, density) plus reducedMotionChoreography.
  * Numeric bases kept identical to frontend/spatial/hero-theme-lighting-adapter.js MODE_PROFILE.
- * Canonical theme source is document.documentElement data-theme-mode / data-density
+ * Canonical theme source is document.documentElement data-theme-mode / data-density / data-motion
  * (written by spatial theme-root). No body fallback. Isolation preserved — no cross-root import.
  */
 function heroMaterialContext(){
@@ -44,9 +44,13 @@ function heroMaterialContext(){
   // MODE_PROFILE bases (light/dark) from canonical adapter — keep identical.
   const baseRough = themeMode==='dark'?0.62:0.48;
   const baseRefl = themeMode==='dark'?0.54:0.72;
+  // Match adapter: reducedMotionChoreography false when reduced motion is active.
+  const reducedMotionChoreography = !reducedMotion;
   return {
     themeMode,
     density,
+    reducedMotion,
+    reducedMotionChoreography,
     roughness: Math.min(1, baseRough + (density==='compact'?0.04:0)),
     reflectance: Math.min(1, baseRefl + focus*0.12),
     grazingRimStrength: Math.min(1, (themeMode==='dark'?0.44:0.62) + focus*0.18),
@@ -60,6 +64,30 @@ function look(e,t){const z=norm(sub(e,t)),x=norm(cross([0,1,0],z)),y=cross(z,x);
 let camera={p:[0,6.4,9.6],t:[0,.78,0],f:39},seatCount=4,selectedSeat=0,state='IDLE',demo=false,reducedMotion=false,stateStart=performance.now(),cameraId='HERO_WIDE',camFrom=camera,camTo=camera,camStart=performance.now(),camAt=1,contribution=0;
 const traces=[];const TRACE_LIMIT=8;
 /** Timed holds for the presentation lifecycle. Kept short enough for Playwright (full cycle << 30s). */
+/** Issue #89 — sync reduced-motion from canonical documentElement data-motion
+ * (written by spatial theme-root). Demo toggle may also write the attribute so shell and Hero stay aligned.
+ * Presentation only; does not alter orchestration or eligibility.
+ */
+function readDocumentMotionReduced(){
+  const v = (document.documentElement.getAttribute('data-motion') || '').toLowerCase();
+  return v === 'reduced' || v === 'reduce';
+}
+function syncReducedMotionFromDocument(){
+  const next = readDocumentMotionReduced();
+  if (next !== reducedMotion) {
+    reducedMotion = next;
+  }
+  return reducedMotion;
+}
+function setReducedMotion(next, {writeDocument = true} = {}){
+  reducedMotion = Boolean(next);
+  if (writeDocument) {
+    try {
+      document.documentElement.setAttribute('data-motion', reducedMotion ? 'reduced' : 'full');
+    } catch (_) { /* non-DOM test environments */ }
+  }
+  return reducedMotion;
+}
 function durations(){
   const k=reducedMotion?0.35:1;
   return{
@@ -76,9 +104,23 @@ const buildSeats=count=>Array.from({length:count},(_,i)=>({id:`seat-${i+1}`,labe
 let seats=buildSeats(seatCount);
 function cameras(){const p=profile(seatCount),d=p.cameraDist;return{HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39},HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},TEAM_ORBIT:{p:[d*.92,d*.5,d*.14],t:[0,.78,0],f:42},SEAT_CLOSE:{p:[p.seatRadius*.78,2.3,p.seatRadius*.78],t:[0,.95,0],f:36},WORKSPACE_CLOSE:{p:[3.55,2.45,4.65],t:[0,.62,0],f:33},TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},OVERHEAD_MAP:{p:[0,lerp(10.8,14.8,(seatCount-1)/7),.2],t:[0,.1,0],f:50},DETAIL_ANCHOR:{p:[2.45,1.9,3.05],t:[0,.82,0],f:31}}}
 function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now()}
-function resize(){const d=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.floor(canvas.clientWidth*d)),h=Math.max(1,Math.floor(canvas.clientHeight*d));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}}
+/** Issue #89 — track CSS size for responsive framing; preserve hierarchy on narrow viewports. */
+let viewW = 1, viewH = 1;
+function resize(){
+  const d=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.floor(canvas.clientWidth*d)),h=Math.max(1,Math.floor(canvas.clientHeight*d));
+  viewW = Math.max(1, canvas.clientWidth || w);
+  viewH = Math.max(1, canvas.clientHeight || h);
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}
+}
+function responsiveFovBoost(){
+  // Slight FOV open on narrow widths so 1–8 seat ring stays readable (presentation only).
+  const aspect = viewW / Math.max(1, viewH);
+  if (aspect < 0.85) return 4;
+  if (aspect < 1.1) return 2;
+  return 0;
+}
 function seatPos(seat){const p=profile(seatCount);return[Math.cos(seat.a)*p.seatRadius,.62,Math.sin(seat.a)*p.seatRadius]}
-function draw(mesh,model,color,opts={}){const mvp=mul(persp(camera.f,canvas.width/canvas.height,.1,90),mul(look(camera.p,camera.t),model));gl.uniformMatrix4fv(U.mvp,false,new Float32Array(mvp));gl.uniformMatrix4fv(U.model,false,new Float32Array(model));gl.uniform3fv(U.color,new Float32Array(color));gl.uniform3fv(U.specular,new Float32Array(opts.spec||[.5,.52,.49]));gl.uniform1f(U.rough,opts.rough??.7);gl.uniform1f(U.emit,opts.emit??0);gl.uniform1f(U.alpha,opts.alpha??1);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.pb);gl.enableVertexAttribArray(U.p);gl.vertexAttribPointer(U.p,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.nb);gl.enableVertexAttribArray(U.n);gl.vertexAttribPointer(U.n,3,gl.FLOAT,false,0,0);gl.drawArrays(gl.TRIANGLES,0,mesh.count)}
+function draw(mesh,model,color,opts={}){const mvp=mul(persp(camera.f+responsiveFovBoost(),canvas.width/Math.max(1,canvas.height),.1,90),mul(look(camera.p,camera.t),model));gl.uniformMatrix4fv(U.mvp,false,new Float32Array(mvp));gl.uniformMatrix4fv(U.model,false,new Float32Array(model));gl.uniform3fv(U.color,new Float32Array(color));gl.uniform3fv(U.specular,new Float32Array(opts.spec||[.5,.52,.49]));gl.uniform1f(U.rough,opts.rough??.7);gl.uniform1f(U.emit,opts.emit??0);gl.uniform1f(U.alpha,opts.alpha??1);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.pb);gl.enableVertexAttribArray(U.p);gl.vertexAttribPointer(U.p,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.nb);gl.enableVertexAttribArray(U.n);gl.vertexAttribPointer(U.n,3,gl.FLOAT,false,0,0);gl.drawArrays(gl.TRIANGLES,0,mesh.count)}
 function addTrace(){const slots=Math.max(1,profile(seatCount).artifacts);traces.push({seatId:seats[selectedSeat]?.id||`seat-${selectedSeat+1}`,slot:traces.length%slots,sequence:traces.length+1});if(traces.length>TRACE_LIMIT)traces.shift()}
 function workspace(t){const p=profile(seatCount),r=p.workspace;draw(CYL,mul(T(0,.40,0),S(r+1,.52,r+1)),M.metal,{rough:.4,spec:[.86,.87,.83]});draw(CYL,mul(T(0,.69,0),S(r+.55,.34,r+.55)),M.shell,{rough:.6,spec:[.66,.65,.61]});{const L=heroMaterialContext(),Rm=authoredRingMaterial(L);draw(AUTHORED_RING,mul(T(0,.91,0),S(r*.88,.95,r*.88)),Rm.color,{rough:Rm.rough,spec:Rm.spec,emit:Rm.emit||0});draw(CYL,mul(T(0,.875,0),S(r*.86,.06,r*.86)),M.dark,{rough:.68,spec:[.32,.33,.31]});}draw(CYL,mul(T(0,.95,0),S(r*.84,.12,r*.84)),M.glass,{rough:.18,spec:[.96,.97,.95],alpha:.72});draw(TORUS,mul(T(0,1.01,0),S(r*.70,1,r*.70)),M.metal,{rough:.35,spec:[.8,.82,.78]});draw(CYL,mul(T(0,1.04,0),S(r*.65,.09,r*.65)),M.dark,{rough:.66,spec:[.42,.45,.43]});draw(TORUS,mul(T(0,1.08,0),S(r*.59,1,r*.59)),M.trace,{rough:.52,emit:.04});for(let i=0;i<p.artifacts;i++){const a=i*(Math.PI*2/p.artifacts)+.22,x=Math.cos(a)*r*.39,z=Math.sin(a)*r*.39;draw(CUBE,mul(mul(T(x,1.14,z),RY(a)),S(.82,.09,.20)),M.trace,{rough:.44,spec:[.68,.68,.63]})}for(let i=0;i<traces.length;i++){const tr=traces[i],a=tr.slot*(Math.PI*2/p.artifacts)+.22,x=Math.cos(a)*r*.52,z=Math.sin(a)*r*.52,isNew=i===traces.length-1;let pulse=1;if(!reducedMotion&&state==='HANDOFF'&&isNew)pulse=.5+.5*Math.sin(t*3.4);draw(RING,mul(mul(T(x,1.18,z),RY(a)),S(.18+.05*pulse,1,.18+.05*pulse)),isNew?M.energy:M.trace,{rough:.24,spec:[.84,.84,.80],emit:isNew?.16:.04,alpha:.5+.25*pulse});draw(CUBE,mul(mul(T(x,1.19,z),RY(a)),S(.36,.055,.12)),M.trace,{rough:.42,spec:[.7,.7,.66],alpha:.84})}if(state==='ABSORB'||state==='REFLECT'){const d=durations();let q=1;if(!reducedMotion){q=state==='ABSORB'?clamp((performance.now()-stateStart)/d.absorb,0,1):clamp(1-(performance.now()-stateStart)/d.reflect,0,1)}draw(TORUS,mul(T(0,1.11,0),S(.55+1.7*q,1,.55+1.7*q)),M.energy,{rough:.18,emit:.26+.20*q,alpha:.18+.24*q})}}
 function drawSeat(seat,index,t){const p=seatPos(seat),cfg=profile(seatCount),active=index===selectedSeat&&state!=='IDLE',engaged=active&&['FOCUS','ACTIVE','CONTRIBUTE'].includes(state),scale=cfg.seatScale,bob=(active?Math.sin(t*2.1)*.04:Math.sin(t*.7+index)*.012)*(reducedMotion?.2:1),y=p[1]+bob;draw(CYL,mul(T(p[0],.27,p[2]),S(1.9*scale,.44,1.9*scale)),M.metal,{rough:.45,spec:[.8,.81,.77]});draw(TORUS,mul(T(p[0],.50,p[2]),S(.92*scale,1,.92*scale)),M.metal2,{rough:.3,spec:[.92,.92,.88]});{const L=heroMaterialContext(),Sm=authoredSeatShellMaterial(L),In=authoredSeatInsetMaterial(L);draw(AUTHORED_SEAT_SHELL,mul(mul(T(p[0],y,p[2]),RY(seat.a+Math.PI)),S(1.24*scale,1.12*scale,1.02*scale)),Sm.color,{rough:Sm.rough,spec:Sm.spec,emit:Sm.emit||0});draw(CYL,mul(mul(T(p[0],y+.08*scale,p[2]),RY(seat.a)),S(.98*scale,.55*scale,.98*scale)),In.color,{rough:In.rough,spec:In.spec});}draw(CYL,mul(mul(T(p[0],y+.47*scale,p[2]),RY(seat.a)),S(.62*scale,.12,.62*scale)),seat.accent,{rough:.25,spec:[.9,.9,.86],emit:engaged?.09:0});draw(TORUS,mul(T(p[0],y+.52*scale,p[2]),S(.40*scale,1,.40*scale)),engaged?M.energy:seat.accent,{rough:.22,emit:engaged?.28:.02,alpha:engaged?.88:.55});const nose=[p[0]+Math.cos(seat.a)*(.66*scale),y+.18*scale,p[2]+Math.sin(seat.a)*(.66*scale)];draw(CYL,mul(mul(T(...nose),RY(seat.a+Math.PI/2)),S(.15*scale,.45*scale,.15*scale)),M.metal2,{rough:.35,spec:[.88,.88,.84]});if(engaged){const pulse=reducedMotion?.65:.5+.5*Math.sin(t*4.2);draw(RING,mul(T(p[0],y+.66*scale,p[2]),S(.7*scale+.08*pulse,.7*scale+.08*pulse,.7*scale+.08*pulse)),M.energy,{rough:.18,emit:.12+.20*pulse,alpha:.27+.12*pulse})}}
@@ -92,12 +134,15 @@ function setSeatCount(next){const count=clamp(Math.round(Number(next)||1),1,8);i
 function startLoop(){demo=true;setState('FOCUS','loop-start')}
 function stopLoop(){demo=false;contribution=0;setState('IDLE','loop-stop')}
 function cycleTurn(now){if(!demo)return;const elapsed=now-stateStart,d=durations();if(state==='FOCUS'&&elapsed>d.focus)setState('ACTIVE');else if(state==='ACTIVE'&&elapsed>d.active){contribution=0;setCamera('TURN_FOLLOW');setState('CONTRIBUTE','contribution-start')}else if(state==='CONTRIBUTE'){contribution=clamp(elapsed/d.contribute,0,1);if(elapsed>d.contribute){contribution=1;setState('ABSORB','workspace-absorb')}}else if(state==='ABSORB'&&elapsed>d.absorb)setState('REFLECT','workspace-reflect');else if(state==='REFLECT'&&elapsed>d.reflect){addTrace();setState('HANDOFF','trace-committed')}else if(state==='HANDOFF'&&elapsed>d.handoff){selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus');setCamera('TEAM_ORBIT')}}
-function frame(now){resize();cycleTurn(now);if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);floor();environment(now/1000);workspace(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
+function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);floor();environment(now/1000);workspace(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
 canvas.addEventListener('click',event=>{const r=canvas.getBoundingClientRect(),x=(event.clientX-r.left)/r.width,y=(event.clientY-r.top)/r.height;if(x>.32&&x<.68&&y>.32&&y<.68)return;selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','pointer-focus')});
 document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>setCamera(button.dataset.camera)));
 demoButton?.addEventListener('click',()=>demo?stopLoop():startLoop());
-motionButton?.addEventListener('click',()=>{reducedMotion=!reducedMotion;setCamera(cameraId);updateLabels()});
-window.addEventListener('keydown',event=>{if(event.key.toLowerCase()==='d')demo?stopLoop():startLoop();if(event.key.toLowerCase()==='m'){reducedMotion=!reducedMotion;setCamera(cameraId)}if(/^[1-8]$/.test(event.key))setSeatCount(Number(event.key));if(event.key==='0')setSeatCount(1);updateLabels()});
+motionButton?.addEventListener('click',()=>{setReducedMotion(!reducedMotion);setCamera(cameraId);updateLabels()});
+window.addEventListener('keydown',event=>{if(event.key.toLowerCase()==='d')demo?stopLoop():startLoop();if(event.key.toLowerCase()==='m'){setReducedMotion(!reducedMotion);setCamera(cameraId)}if(/^[1-8]$/.test(event.key))setSeatCount(Number(event.key));if(event.key==='0')setSeatCount(1);updateLabels()});
 window.addEventListener('teamai:web-ai-seat-unlocked',event=>setSeatCount(event.detail?.seatCount??event.detail?.count??seatCount+1));
-window.TeamAiHero={setSeatCount,getSeatCount:()=>seatCount,setTeamSize:setSeatCount,setCamera,startLoop:()=>startLoop(),stopLoop:()=>stopLoop(),getState:()=>state,getTraceCount:()=>traces.length,getSelectedSeat:()=>selectedSeat,getContributionProgress:()=>contribution};
-const query=new URLSearchParams(location.search);if(query.has('seats'))setSeatCount(Number(query.get('seats')));setCamera('HERO_WIDE');updateLabels();requestAnimationFrame(frame);
+window.TeamAiHero={setSeatCount,getSeatCount:()=>seatCount,setTeamSize:setSeatCount,setCamera,startLoop:()=>startLoop(),stopLoop:()=>stopLoop(),getState:()=>state,getTraceCount:()=>traces.length,getSelectedSeat:()=>selectedSeat,getContributionProgress:()=>contribution,getReducedMotion:()=>reducedMotion,setReducedMotion:(v)=>setReducedMotion(v)};
+const query=new URLSearchParams(location.search);if(query.has('seats'))setSeatCount(Number(query.get('seats')));
+// Issue #89: prefer canonical data-motion from spatial theme-root; then start render loop.
+syncReducedMotionFromDocument();
+setCamera('HERO_WIDE');updateLabels();requestAnimationFrame(frame);

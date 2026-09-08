@@ -39,7 +39,7 @@ test('semantic POV catalog exists', () => {
 
 test('turn lifecycle exists', () => {
   for (const state of ['IDLE', 'FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB', 'REFLECT', 'HANDOFF']) {
-    assert.match(runtime, new RegExp(`['\\\"]${state}['\\\"]`));
+    assert.match(runtime, new RegExp(`['\"']${state}['\"']`));
   }
 });
 
@@ -52,7 +52,7 @@ test('flexible seat model is present', () => {
 
 test('signature geometry primitives are present', () => {
   for (const primitive of ['function torus', 'function sph', 'TORUS', 'RING', 'SPH']) {
-    assert.match(runtime, new RegExp(primitive.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')));
+    assert.match(runtime, new RegExp(primitive.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
 });
 
@@ -134,4 +134,20 @@ test('light-theme shell styling is present', () => {
   assert.match(materials, /hero-shell::after/);
   assert.match(partsCss, /rotateX/);
   assert.match(partsCss, /prefers-reduced-motion/);
+});
+
+test('Issue #89 reduced-motion contract is wired to documentElement data-motion', () => {
+  assert.match(runtime, /data-motion/);
+  assert.match(runtime, /syncReducedMotionFromDocument/);
+  assert.match(runtime, /setReducedMotion/);
+  assert.match(runtime, /readDocumentMotionReduced/);
+  assert.match(runtime, /reducedMotionChoreography/);
+  assert.match(runtime, /setAttribute\('data-motion'/);
+  assert.match(runtime, /getReducedMotion/);
+});
+
+test('Issue #89 responsive framing helpers exist without second theme root', () => {
+  assert.match(runtime, /responsiveFovBoost/);
+  assert.doesNotMatch(runtime, /from ['"].*frontend\/spatial/);
+  assert.doesNotMatch(runtime, /mapHeroThemeLighting\s*\(/);
 });
