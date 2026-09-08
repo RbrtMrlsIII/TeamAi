@@ -56,20 +56,34 @@ function authored(def){const P=[],N=[];for(let i=0;i<def.indices.length;i+=3){co
 const CUBE=cube(),CYL=cyl(),TORUS=torus(),RING=torus(.52,.045,40,8),SPH=sphere(),AUTHORED_RING=authored(HERO_AUTHORED_MESHES.workspaceRing),AUTHORED_SEAT_SHELL=authored(HERO_AUTHORED_MESHES.seatShell);
 const M={shell:[.89,.88,.84],metal:[.47,.51,.49],metal2:[.71,.72,.68],glass:[.58,.71,.75],dark:[.13,.15,.14],energy:[1,.56,.12],trace:[.30,.43,.40],floor:[.76,.75,.71]};
 const PALETTE=[[.66,.57,.46],[.48,.60,.57],[.57,.50,.65],[.69,.57,.43],[.47,.57,.66],[.65,.53,.40],[.45,.62,.53],[.59,.49,.61]];
+/** Issue #88 + B/E + #89 — presentation material context.
+ * Subset of mapHeroThemeLighting material keys (roughness, reflectance, grazingRimStrength,
+ * shadowSeparationStrength, emissiveCeilingFloor, themeMode, density) plus reducedMotionChoreography.
+ * Numeric bases kept identical to frontend/spatial/hero-theme-lighting-adapter.js MODE_PROFILE.
+ * Canonical theme source is document.documentElement data-theme-mode / data-density / data-motion
+ * (written by spatial theme-root). No body fallback. Isolation preserved — no cross-root import.
+ */
 function heroMaterialContext(){
   const themeMode = (document.documentElement.getAttribute('data-theme-mode') || 'light').toLowerCase() === 'dark' ? 'dark' : 'light';
   const density = (document.documentElement.getAttribute('data-density') || 'default') === 'compact' ? 'compact' : 'default';
   const focus = state==='FOCUS'||state==='ACTIVE'?0.85:0.25;
   const signal = state==='CONTRIBUTE'?0.7:0.15;
+  // MODE_PROFILE bases (light/dark) from canonical adapter — keep identical.
   const baseRough = themeMode==='dark'?0.62:0.48;
   const baseRefl = themeMode==='dark'?0.54:0.72;
+  // Match adapter: reducedMotionChoreography false when reduced motion is active.
   const reducedMotionChoreography = !reducedMotion;
-  return { themeMode, density, reducedMotion, reducedMotionChoreography,
+  return {
+    themeMode,
+    density,
+    reducedMotion,
+    reducedMotionChoreography,
     roughness: Math.min(1, baseRough + (density==='compact'?0.04:0)),
     reflectance: Math.min(1, baseRefl + focus*0.12),
     grazingRimStrength: Math.min(1, (themeMode==='dark'?0.44:0.62) + focus*0.18),
     shadowSeparationStrength: Math.min(1, (themeMode==='dark'?0.72:0.56) + 0.12),
-    emissiveCeilingFloor: Math.min(1, (themeMode==='dark'?0.16:0.08) + signal*0.1) };
+    emissiveCeilingFloor: Math.min(1, (themeMode==='dark'?0.16:0.08) + signal*0.1),
+  };
 }
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,ease=t=>t*t*(3-2*t),sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],len=a=>Math.hypot(...a),norm=a=>{const m=len(a)||1;return[a[0]/m,a[1]/m,a[2]/m]},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const I=()=>[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],mul=(a,b)=>{const r=new Array(16).fill(0);for(let c=0;c<4;c++)for(let q=0;q<4;q++)for(let k=0;k<4;k++)r[c*4+q]+=a[k*4+q]*b[c*4+k];return r},T=(x,y,z)=>{const m=I();m[12]=x;m[13]=y;m[14]=z;return m},S=(x,y,z)=>{const m=I();m[0]=x;m[5]=y;m[10]=z;return m},RY=a=>{const c=Math.cos(a),s=Math.sin(a);return[c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]},persp=(fov,asp,n,f)=>{const q=1/Math.tan(fov*Math.PI/360),nf=1/(n-f);return[q/asp,0,0,0,0,q,0,0,0,0,(f+n)*nf,-1,0,0,2*f*n*nf,0]};
@@ -103,6 +117,11 @@ function returnFromSeatShell(){
   return getHierarchyState();
 }
 const traces=[];const TRACE_LIMIT=8;
+/** Timed holds for the presentation lifecycle. Kept short enough for Playwright (full cycle << 30s). */
+/** Issue #89 — sync reduced-motion from canonical documentElement data-motion
+ * (written by spatial theme-root). Demo toggle may also write the attribute so shell and Hero stay aligned.
+ * Presentation only; does not alter orchestration or eligibility.
+ */
 function readDocumentMotionReduced(){
   const v = (document.documentElement.getAttribute('data-motion') || '').toLowerCase();
   return v === 'reduced' || v === 'reduce';
@@ -126,6 +145,7 @@ const buildSeats=count=>Array.from({length:count},(_,i)=>({id:`seat-${i+1}`,labe
 let seats=buildSeats(seatCount);
 function cameras(){const p=profile(seatCount),d=p.cameraDist;return{HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39},HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},TEAM_ORBIT:{p:[d*.92,d*.5,d*.14],t:[0,.78,0],f:42},SEAT_CLOSE:{p:[p.seatRadius*.78,2.3,p.seatRadius*.78],t:[0,.95,0],f:36},WORKSPACE_CLOSE:{p:[3.55,2.45,4.65],t:[0,.62,0],f:33},TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},OVERHEAD_MAP:{p:[0,lerp(10.8,14.8,(seatCount-1)/7),.2],t:[0,.1,0],f:50},DETAIL_ANCHOR:{p:[2.45,1.9,3.05],t:[0,.82,0],f:31}}}
 function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}
+/** Issue #89 — track CSS size for responsive framing; preserve hierarchy on narrow viewports. */
 let viewW = 1, viewH = 1;
 function resize(){
   const d=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.floor(canvas.clientWidth*d)),h=Math.max(1,Math.floor(canvas.clientHeight*d));
@@ -134,6 +154,7 @@ function resize(){
   if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}
 }
 function responsiveFovBoost(){
+  // Slight FOV open on narrow widths so 1–8 seat ring stays readable (presentation only).
   const aspect = viewW / Math.max(1, viewH);
   if (aspect < 0.85) return 4;
   if (aspect < 1.1) return 2;
