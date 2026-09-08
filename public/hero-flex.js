@@ -12,6 +12,7 @@ import {
   CLOSE_DURATION_MS,
   HIERARCHY_REDUCED_SNAP,
   HEALTH_STATUS,
+  BACKEND_DISPLAY_V1,
   createHierarchyRuntime,
   syncHierarchyRuntime,
   closeHierarchyParent as closeHierarchyParentState,
@@ -68,16 +69,11 @@ function heroMaterialContext(){
   const density = (document.documentElement.getAttribute('data-density') || 'default') === 'compact' ? 'compact' : 'default';
   const focus = state==='FOCUS'||state==='ACTIVE'?0.85:0.25;
   const signal = state==='CONTRIBUTE'?0.7:0.15;
-  // MODE_PROFILE bases (light/dark) from canonical adapter — keep identical.
   const baseRough = themeMode==='dark'?0.62:0.48;
   const baseRefl = themeMode==='dark'?0.54:0.72;
-  // Match adapter: reducedMotionChoreography false when reduced motion is active.
   const reducedMotionChoreography = !reducedMotion;
   return {
-    themeMode,
-    density,
-    reducedMotion,
-    reducedMotionChoreography,
+    themeMode, density, reducedMotion, reducedMotionChoreography,
     roughness: Math.min(1, baseRough + (density==='compact'?0.04:0)),
     reflectance: Math.min(1, baseRefl + focus*0.12),
     grazingRimStrength: Math.min(1, (themeMode==='dark'?0.44:0.62) + focus*0.18),
@@ -212,6 +208,37 @@ function drawHierarchyChildren(seat, index, t, shellY, scale) {
     }
   }
 }
+/** R1 — Backend display ring stubs + connection threads (presentation only). */
+function drawBackendDisplayRing(t) {
+  const p = profile(seatCount);
+  const r = p.workspace * 1.18; // just outside workspace core
+  const n = BACKEND_DISPLAY_V1.length;
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + i * (Math.PI * 2 / Math.max(n, 1)) + 0.35;
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * r;
+    const y = 1.05;
+    const pulse = reducedMotion ? 0 : 0.5 + 0.5 * Math.sin(t * 1.4 + i);
+    draw(CUBE, mul(mul(T(x, y, z), RY(a + Math.PI / 2)), S(0.55, 0.12, 0.38)), M.glass, {
+      rough: 0.28, spec: [0.9, 0.92, 0.9], emit: 0.04 + 0.03 * pulse, alpha: 0.72,
+    });
+    draw(TORUS, mul(T(x, y + 0.08, z), S(0.22, 1, 0.22)), M.trace, {
+      rough: 0.35, emit: 0.06, alpha: 0.55,
+    });
+    const steps = 5;
+    for (let s = 1; s <= steps; s++) {
+      const q = s / (steps + 1);
+      const jitter = reducedMotion ? 0 : 0.02 * Math.sin(t * 2.2 + s + i);
+      const tx = x * (1 - q) + jitter;
+      const ty = y * (1 - q * 0.35) + 0.7 * q;
+      const tz = z * (1 - q);
+      const k = 0.08 * (1 - q * 0.4);
+      draw(SPH, mul(T(tx, ty, tz), S(k, k, k)), M.energy, {
+        rough: 0.2, emit: 0.12 + 0.08 * pulse * (1 - q), alpha: 0.35 + 0.25 * (1 - q),
+      });
+    }
+  }
+}
 function drawSeat(seat,index,t){const p=seatPos(seat),cfg=profile(seatCount),active=index===selectedSeat&&state!=='IDLE',engaged=active&&['FOCUS','ACTIVE','CONTRIBUTE'].includes(state),scale=cfg.seatScale,bob=(active?Math.sin(t*2.1)*.04:Math.sin(t*.7+index)*.012)*(reducedMotion?.2:1),hierLift=(hierarchyRuntime.openParentId===seatShellParentId(index)?SEAT_OPEN_LIFT*hierarchyRuntime.openAmount:0),y=p[1]+bob+hierLift;draw(CYL,mul(T(p[0],.27,p[2]),S(1.9*scale,.44,1.9*scale)),M.metal,{rough:.45,spec:[.8,.81,.77]});draw(TORUS,mul(T(p[0],.50,p[2]),S(.92*scale,1,.92*scale)),M.metal2,{rough:.3,spec:[.92,.92,.88]});{const L=heroMaterialContext(),Sm=authoredSeatShellMaterial(L),In=authoredSeatInsetMaterial(L);draw(AUTHORED_SEAT_SHELL,mul(mul(T(p[0],y,p[2]),RY(seat.a+Math.PI)),S(1.24*scale,1.12*scale,1.02*scale)),Sm.color,{rough:Sm.rough,spec:Sm.spec,emit:Sm.emit||0});draw(CYL,mul(mul(T(p[0],y+.08*scale,p[2]),RY(seat.a)),S(.98*scale,.55*scale,.98*scale)),In.color,{rough:In.rough,spec:In.spec});}draw(CYL,mul(mul(T(p[0],y+.47*scale,p[2]),RY(seat.a)),S(.62*scale,.12,.62*scale)),seat.accent,{rough:.25,spec:[.9,.9,.86],emit:engaged?.09:0});draw(TORUS,mul(T(p[0],y+.52*scale,p[2]),S(.40*scale,1,.40*scale)),engaged?M.energy:seat.accent,{rough:.22,emit:engaged?.28:.02,alpha:engaged?.88:.55});const nose=[p[0]+Math.cos(seat.a)*(.66*scale),y+.18*scale,p[2]+Math.sin(seat.a)*(.66*scale)];draw(CYL,mul(mul(T(...nose),RY(seat.a+Math.PI/2)),S(.15*scale,.45*scale,.15*scale)),M.metal2,{rough:.35,spec:[.88,.88,.84]});if(engaged){const pulse=reducedMotion?.65:.5+.5*Math.sin(t*4.2);draw(RING,mul(T(p[0],y+.66*scale,p[2]),S(.7*scale+.08*pulse,.7*scale+.08*pulse,.7*scale+.08*pulse)),M.energy,{rough:.18,emit:.12+.20*pulse,alpha:.27+.12*pulse})}drawHierarchyChildren(seat,index,t,y,scale);}
 function point(start,c1,c2,end,q){const u=1-q;return[u*u*u*start[0]+3*u*u*q*c1[0]+3*u*q*q*c2[0]+q*q*q*end[0],u*u*u*start[1]+3*u*u*q*c1[1]+3*u*q*q*c2[1]+q*q*q*end[1],u*u*u*start[2]+3*u*u*q*c1[2]+3*u*q*q*c2[2]+q*q*q*end[2]]}
 function contributionEffect(seat){if(state!=='CONTRIBUTE')return;const p=seatPos(seat),d=durations(),start=[p[0],1.03,p[2]],c1=[p[0]*.55,1.32,p[2]*.55],c2=[p[0]*.14,1.42,p[2]*.14],end=[0,1.3,0];if(reducedMotion){for(const q of[.3,.5,.7]){const[x,y,z]=point(start,c1,c2,end,q);draw(SPH,mul(T(x,y,z),S(.23,.23,.23)),M.energy,{rough:.15,emit:.25,alpha:.58})}return}const q=clamp((performance.now()-stateStart)/d.contribute,0,1);for(let i=0;i<5;i++){const tt=clamp(q-i*.06,0,1),[x,y,z]=point(start,c1,c2,end,tt),k=Math.max(.18,.34*(1-i*.13));draw(SPH,mul(T(x,y,z),S(k,k,k)),M.energy,{rough:.15,emit:.38,alpha:.82-i*.12})}}
@@ -223,14 +250,14 @@ function setSeatCount(next){const count=clamp(Math.round(Number(next)||1),1,8);i
 function startLoop(){demo=true;setState('FOCUS','loop-start')}
 function stopLoop(){demo=false;contribution=0;setState('IDLE','loop-stop')}
 function cycleTurn(now){if(!demo)return;const elapsed=now-stateStart,d=durations();if(state==='FOCUS'&&elapsed>d.focus)setState('ACTIVE');else if(state==='ACTIVE'&&elapsed>d.active){contribution=0;setCamera('TURN_FOLLOW');setState('CONTRIBUTE','contribution-start')}else if(state==='CONTRIBUTE'){contribution=clamp(elapsed/d.contribute,0,1);if(elapsed>d.contribute){contribution=1;setState('ABSORB','workspace-absorb')}}else if(state==='ABSORB'&&elapsed>d.absorb)setState('REFLECT','workspace-reflect');else if(state==='REFLECT'&&elapsed>d.reflect){addTrace();setState('HANDOFF','trace-committed')}else if(state==='HANDOFF'&&elapsed>d.handoff){selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus');setCamera('TEAM_ORBIT')}}
-function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);floor();environment(now/1000);workspace(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
+function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);floor();environment(now/1000);workspace(now/1000);drawBackendDisplayRing(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
 canvas.addEventListener('click',event=>{const r=canvas.getBoundingClientRect(),x=(event.clientX-r.left)/r.width,y=(event.clientY-r.top)/r.height;if(x>.32&&x<.68&&y>.32&&y<.68)return;const next=(selectedSeat+1)%seatCount;selectSeatShell(next);});
 document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>setCamera(button.dataset.camera)));
 demoButton?.addEventListener('click',()=>demo?stopLoop():startLoop());
 motionButton?.addEventListener('click',()=>{setReducedMotion(!reducedMotion);setCamera(cameraId);updateLabels()});
 window.addEventListener('keydown',event=>{if(event.key.toLowerCase()==='d')demo?stopLoop():startLoop();if(event.key.toLowerCase()==='m'){setReducedMotion(!reducedMotion);setCamera(cameraId)}if(/^[1-8]$/.test(event.key))setSeatCount(Number(event.key));if(event.key==='0')setSeatCount(1);if(event.key==='Enter'){if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION&&hierarchyRuntime.focusedLeafId!==HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){focusHierarchyLeaf(hierarchyRuntime,HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE);event.preventDefault()}else if(hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){const order=[HEALTH_STATUS.UNKNOWN,HEALTH_STATUS.LOADING,HEALTH_STATUS.UNAVAILABLE];const i=order.indexOf(hierarchyRuntime.healthStatus||HEALTH_STATUS.UNKNOWN);hierarchyRuntime.healthStatus=order[(i+1)%order.length];event.preventDefault()}else{selectSeatShell(selectedSeat);event.preventDefault()}}if(event.key==='Escape'){if(hierarchyRuntime.focusedLeafId){clearLeafFocus(hierarchyRuntime);event.preventDefault()}else{returnFromSeatShell();event.preventDefault()}}if((event.key==='ArrowRight'||event.key==='ArrowLeft')&&hierarchyRuntime.openParentId){const list=SEAT_SHELL_V1_CHILDREN;const cur=Math.max(0,list.indexOf(hierarchyRuntime.focusedChildId));const next=event.key==='ArrowRight'?(cur+1)%list.length:(cur-1+list.length)%list.length;focusHierarchyChild(hierarchyRuntime,list[next]);event.preventDefault()}updateLabels()});
 window.addEventListener('teamai:web-ai-seat-unlocked',event=>setSeatCount(event.detail?.seatCount??event.detail?.count??seatCount+1));
-window.TeamAiHero={setSeatCount,getSeatCount:()=>seatCount,setTeamSize:setSeatCount,setCamera,startLoop:()=>startLoop(),stopLoop:()=>stopLoop(),getState:()=>state,getTraceCount:()=>traces.length,getSelectedSeat:()=>selectedSeat,getContributionProgress:()=>contribution,getReducedMotion:()=>reducedMotion,setReducedMotion:(v)=>setReducedMotion(v),getHierarchyState:()=>getHierarchyState(),selectSeatShell:(i)=>selectSeatShell(i),closeHierarchyParent:()=>returnFromSeatShell(),HIERARCHY_PART,HIERARCHY_PHASE,SEAT_SHELL_V1_CHILDREN,SEAT_REST_Y,SEAT_OPEN_LIFT,CHILD_STEP_Y,CHILD_STEP_R,OPEN_DURATION_MS,CLOSE_DURATION_MS,focusChild:(id)=>focusHierarchyChild(hierarchyRuntime,id),focusLeaf:(id)=>focusHierarchyLeaf(hierarchyRuntime,id),HEALTH_STATUS,healthLeafAccessibleName};
+window.TeamAiHero={setSeatCount,getSeatCount:()=>seatCount,setTeamSize:setSeatCount,setCamera,startLoop:()=>startLoop(),stopLoop:()=>stopLoop(),getState:()=>state,getTraceCount:()=>traces.length,getSelectedSeat:()=>selectedSeat,getContributionProgress:()=>contribution,getReducedMotion:()=>reducedMotion,setReducedMotion:(v)=>setReducedMotion(v),getHierarchyState:()=>getHierarchyState(),selectSeatShell:(i)=>selectSeatShell(i),closeHierarchyParent:()=>returnFromSeatShell(),HIERARCHY_PART,HIERARCHY_PHASE,SEAT_SHELL_V1_CHILDREN,SEAT_REST_Y,SEAT_OPEN_LIFT,CHILD_STEP_Y,CHILD_STEP_R,OPEN_DURATION_MS,CLOSE_DURATION_MS,focusChild:(id)=>focusHierarchyChild(hierarchyRuntime,id),focusLeaf:(id)=>focusHierarchyLeaf(hierarchyRuntime,id),HEALTH_STATUS,healthLeafAccessibleName,BACKEND_DISPLAY_V1};
 const query=new URLSearchParams(location.search);if(query.has('seats'))setSeatCount(Number(query.get('seats')));
 syncReducedMotionFromDocument();
 setCamera('HERO_WIDE');updateLabels();requestAnimationFrame(frame);

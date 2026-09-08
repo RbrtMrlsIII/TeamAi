@@ -22,7 +22,17 @@ export const HIERARCHY_PART = {
   SEAT_WORKSPACE_SCOPE: 'SEAT_WORKSPACE_SCOPE',
   SEAT_TASK_EVIDENCE: 'SEAT_TASK_EVIDENCE',
   SEAT_CONNECTION_HEALTH_FACE: 'SEAT_CONNECTION_HEALTH_FACE',
+  // R1 Backend display ring (Concentric Ring Map) — presentation only
+  WORKSPACE_BACKEND_DISPLAY: 'WORKSPACE_BACKEND_DISPLAY',
+  WORKSPACE_BACKEND_THREAD: 'WORKSPACE_BACKEND_THREAD',
 };
+
+/** R1 v1 fixture platforms (labels only — not live bind). */
+export const BACKEND_DISPLAY_V1 = Object.freeze([
+  { id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' },
+  { id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' },
+  { id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' },
+]);
 
 export const HIERARCHY_PHASE = {
   REST: 'rest',
@@ -71,54 +81,67 @@ export function createHierarchyRuntime(seed = {}) {
     cameraId: seed.cameraId ?? 'HERO_WIDE',
     inputMode: seed.inputMode ?? HIERARCHY_INPUT.NAVIGATE,
     healthStatus: seed.healthStatus ?? HEALTH_STATUS.UNKNOWN,
+    presentationOnly: true,
+    durable: false,
   };
 }
 
-export function syncHierarchyRuntime(state, globals) {
-  state.selectedSeatIndex = globals.selectedSeatIndex;
-  state.cameraId = globals.cameraId;
-  state.motionMode = globals.reducedMotion ? 'reduced' : 'full';
-  if (globals.demo) state.inputMode = HIERARCHY_INPUT.DEMO;
-  else if (state.phase === HIERARCHY_PHASE.REST) state.inputMode = HIERARCHY_INPUT.NAVIGATE;
-  else state.inputMode = HIERARCHY_INPUT.INSPECT;
+export function syncHierarchyRuntime(state, globals = {}) {
+  if (globals.selectedSeatIndex != null) state.selectedSeatIndex = globals.selectedSeatIndex;
+  if (globals.cameraId != null) state.cameraId = globals.cameraId;
+  if (globals.reducedMotion != null) state.motionMode = globals.reducedMotion ? 'reduced' : 'full';
+  if (globals.demo != null && globals.demo) state.inputMode = HIERARCHY_INPUT.DEMO;
   return state;
 }
 
 export function closeHierarchyParent(state, opts = {}) {
   const snap = Boolean(opts.snap);
   const now = opts.nowMs ?? 0;
-  if (snap || !state.openParentId) {
-    state.openParentId = null;
-    state.focusedChildId = null;
-    state.focusedLeafId = null;
+  state.focusedLeafId = null;
+  state.focusedChildId = null;
+  state.phaseStartMs = now;
+  if (snap) {
     state.phase = HIERARCHY_PHASE.REST;
     state.openAmount = 0;
-    state.phaseStartMs = now;
-    return state;
+    state.openParentId = null;
+    state.inputMode = HIERARCHY_INPUT.NAVIGATE;
+  } else {
+    state.phase = HIERARCHY_PHASE.CLOSING;
   }
-  state.phase = HIERARCHY_PHASE.CLOSING;
-  state.phaseStartMs = now;
-  state.focusedLeafId = null;
   return state;
 }
 
-export function tickHierarchyPose(state, nowMs, reducedMotion) {
-  const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;
+function smoothstep(t) {
+  const x = Math.max(0, Math.min(1, t));
+  return x * x * (3 - 2 * x);
+}
+
+export function tickHierarchyPose(state, nowMs, reducedMotion = false) {
+  const now = nowMs ?? 0;
   if (state.phase === HIERARCHY_PHASE.OPENING) {
-    if (snap) { state.openAmount = 1; state.phase = HIERARCHY_PHASE.OPEN; return state; }
-    const t = Math.max(0, Math.min(1, (nowMs - state.phaseStartMs) / OPEN_DURATION_MS));
-    state.openAmount = t * t * (3 - 2 * t);
-    if (t >= 1) { state.openAmount = 1; state.phase = HIERARCHY_PHASE.OPEN; }
-  } else if (state.phase === HIERARCHY_PHASE.CLOSING) {
-    if (snap) {
-      state.openAmount = 0; state.openParentId = null; state.focusedChildId = null;
-      state.focusedLeafId = null; state.phase = HIERARCHY_PHASE.REST; return state;
+    if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+      state.openAmount = 1;
+      state.phase = HIERARCHY_PHASE.OPEN;
+    } else {
+      const progress = Math.min((now - state.phaseStartMs) / OPEN_DURATION_MS, 1);
+      state.openAmount = smoothstep(progress);
+      if (progress >= 1) state.phase = HIERARCHY_PHASE.OPEN;
     }
-    const t = Math.max(0, Math.min(1, (nowMs - state.phaseStartMs) / CLOSE_DURATION_MS));
-    state.openAmount = 1 - t * t * (3 - 2 * t);
-    if (t >= 1) {
-      state.openAmount = 0; state.openParentId = null; state.focusedChildId = null;
-      state.focusedLeafId = null; state.phase = HIERARCHY_PHASE.REST;
+  } else if (state.phase === HIERARCHY_PHASE.CLOSING) {
+    if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+      state.openAmount = 0;
+      state.phase = HIERARCHY_PHASE.REST;
+      state.openParentId = null;
+      state.inputMode = HIERARCHY_INPUT.NAVIGATE;
+    } else {
+      const progress = Math.min((now - state.phaseStartMs) / CLOSE_DURATION_MS, 1);
+      state.openAmount = 1 - smoothstep(progress);
+      if (progress >= 1) {
+        state.openAmount = 0;
+        state.phase = HIERARCHY_PHASE.REST;
+        state.openParentId = null;
+        state.inputMode = HIERARCHY_INPUT.NAVIGATE;
+      }
     }
   } else if (state.phase === HIERARCHY_PHASE.OPEN) state.openAmount = 1;
   else if (state.phase === HIERARCHY_PHASE.REST) state.openAmount = 0;
