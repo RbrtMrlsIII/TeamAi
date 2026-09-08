@@ -48,8 +48,9 @@ const LAYERS = [
   { id: 'responsibility', label: 'Responsibility', sub: 'duty dial (presentation, not authority)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_RESPONSIBILITY', handoff: 'responsibility', dial: true },
   { id: 'connection', label: 'Connection', sub: 'external app account / integration', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_CONNECTION', handoff: 'connection', health: true },
   { id: 'behavior', label: 'Behavior', sub: 'Do / Don’t', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_BEHAVIOR', handoff: 'behavior' },
-  { id: 'toolkit', label: 'Built-in Toolkit', sub: 'included skills', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_SKILLS', handoff: 'skills' },
-  { id: 'zipskills', label: 'ZipSkills', sub: 'optional skills', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_ZIPSKILLS', handoff: 'zipskills' },
+  { id: 'toolkit', label: 'Built-in Toolkit', sub: 'included skills (optional seat-scoped)', camera: 'SEAT_CLOSE', semanticCamera: 'MECHANISM_SKILLS', handoff: 'skills' },
+  /** ZipSkills: interim stack label; canonical home is workspace tree (WORKSPACE_ZIPSKILLS). Optional; not required. Legacy semantic id kept for e2e. */
+  { id: 'zipskills', label: 'ZipSkills', sub: 'optional workspace equip (not seat authority)', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_ZIPSKILLS', canonicalSemanticCamera: 'WORKSPACE_ZIPSKILLS', handoff: 'zipskills', optional: true, workspaceScoped: true },
   { id: 'capabilities', label: 'Capabilities', sub: 'tools / MCP availability', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_CAPABILITY', handoff: 'capabilities' },
   { id: 'authorization', label: 'Authorization', sub: 'scope / approvals (reason-bearing preview)', camera: 'DETAIL_ANCHOR', semanticCamera: 'MECHANISM_AUTHORIZATION', handoff: 'authorization', auth: true },
   { id: 'workspace', label: 'Workspace', sub: 'shared ref / history (preview, not Firestore)', camera: 'WORKSPACE_CLOSE', semanticCamera: 'MECHANISM_WORKSPACE', handoff: 'workspace', workspace: true },
@@ -177,6 +178,7 @@ function inspect(layer) {
       layer: activeLayer,
       camera: activeLayer ? layer.camera : null,
       semanticCamera: activeLayer ? layer.semanticCamera : null,
+      canonicalSemanticCamera: activeLayer ? (layer.canonicalSemanticCamera || layer.semanticCamera) : null,
       connectionHealth,
       responsibilityDial,
       authorizationState,
@@ -201,6 +203,8 @@ LAYERS.forEach((layer, index) => {
   button.className = 'seat-stack__module';
   button.dataset.seatLayer = layer.id;
   button.dataset.semanticCamera = layer.semanticCamera;
+  if (layer.canonicalSemanticCamera) button.dataset.canonicalSemanticCamera = layer.canonicalSemanticCamera;
+  if (layer.optional) button.dataset.optional = 'true';
   button.style.setProperty('--stack-depth', String(index));
   button.setAttribute('aria-pressed', 'false');
   button.setAttribute('aria-label', `${layer.label}: inspect ${layer.semanticCamera}`);
@@ -218,7 +222,7 @@ LAYERS.forEach((layer, index) => {
 
 const note = document.createElement('p');
 note.className = 'seat-stack__note';
-note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health, authorization, workspace, and task/evidence badges are presentation previews only.';
+note.textContent = 'Connect through the external app’s supported account/integration flow. No file upload is required. Health, authorization, workspace, and task/evidence badges are presentation previews only. ZipSkills is optional workspace equip — not a required setup.';
 stack.appendChild(note);
 
 const distinction = document.createElement('p');
@@ -250,7 +254,13 @@ function setEquipped(id, value = true) {
   if (value) equipped.add(id); else equipped.delete(id);
   setVisualState();
   window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-equipment-preview', {
-    detail: { layer: id, equipped: value, semanticCamera: layer.semanticCamera, presentationOnly: true }
+    detail: {
+      layer: id,
+      equipped: value,
+      semanticCamera: layer.semanticCamera,
+      canonicalSemanticCamera: layer.canonicalSemanticCamera || layer.semanticCamera,
+      presentationOnly: true
+    }
   }));
   return equipped.has(id);
 }

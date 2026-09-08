@@ -63,13 +63,21 @@ test.describe('Living Web AI Workspace Hero', () => {
       'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
       'MECHANISM_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK'
     ]);
+    // Slice H: zipskills layer exposes canonical WORKSPACE_ZIPSKILLS while keeping legacy MECHANISM_* for continuity
+    expect(await page.evaluate(() => {
+      const z = (window as any).TeamAiHeroSeatStack.layers().find((l: any) => l.id === 'zipskills');
+      return z?.canonicalSemanticCamera;
+    })).toBe('WORKSPACE_ZIPSKILLS');
 
     const registryIds = await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.ids());
     expect(registryIds).toEqual([
       'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
-      'MECHANISM_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_AUTHENTICATION',
+      'MECHANISM_ZIPSKILLS', 'WORKSPACE_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_AUTHENTICATION',
       'MECHANISM_WORKSPACE', 'MECHANISM_TASK', 'APP_UI_HANDOFF'
     ]);
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_ZIPSKILLS'))).toBe('DETAIL_ANCHOR');
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('WORKSPACE_ZIPSKILLS'))).toBe('DETAIL_ANCHOR');
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.canonical('MECHANISM_ZIPSKILLS'))).toBe('WORKSPACE_ZIPSKILLS');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_CAPABILITY'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_AUTHENTICATION'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('APP_UI_HANDOFF'))).toBeNull();
@@ -103,7 +111,13 @@ test.describe('Living Web AI Workspace Hero', () => {
       (window as any).TeamAiHeroSeatStack.setEquipped('zipskills', true);
     }));
     await expect(page.locator('[data-seat-layer="zipskills"]')).toHaveAttribute('data-equipped', 'true');
-    expect(await equipmentEvent).toMatchObject({ layer: 'zipskills', equipped: true, semanticCamera: 'MECHANISM_ZIPSKILLS', presentationOnly: true });
+    expect(await equipmentEvent).toMatchObject({
+      layer: 'zipskills',
+      equipped: true,
+      semanticCamera: 'MECHANISM_ZIPSKILLS',
+      canonicalSemanticCamera: 'WORKSPACE_ZIPSKILLS',
+      presentationOnly: true
+    });
 
     const handoffEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-semantic-camera', (event: any) => resolve(event.detail), { once: true });

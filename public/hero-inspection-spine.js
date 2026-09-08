@@ -7,7 +7,8 @@ const STAGES = Object.freeze([
   { id: 'CONNECTION', label: 'Connection', semanticCamera: 'MECHANISM_CONNECTION' },
   { id: 'BEHAVIOR', label: 'Behavior', semanticCamera: 'MECHANISM_BEHAVIOR' },
   { id: 'SKILLS', label: 'Skills', semanticCamera: 'MECHANISM_SKILLS' },
-  { id: 'ZIPSKILLS', label: 'ZipSkills', semanticCamera: 'MECHANISM_ZIPSKILLS' },
+  /** ZipSkills: legacy MECHANISM_* kept for e2e; canonical name WORKSPACE_ZIPSKILLS (R0, optional). */
+  { id: 'ZIPSKILLS', label: 'ZipSkills (workspace, optional)', semanticCamera: 'MECHANISM_ZIPSKILLS', canonicalSemanticCamera: 'WORKSPACE_ZIPSKILLS' },
   { id: 'CAPABILITY', label: 'Capabilities', semanticCamera: 'MECHANISM_CAPABILITY' },
   { id: 'AUTHORIZATION', label: 'Authorization / scope', semanticCamera: 'MECHANISM_AUTHORIZATION' },
   { id: 'WORKSPACE', label: 'Workspace', semanticCamera: 'MECHANISM_WORKSPACE' },
@@ -45,6 +46,7 @@ function publish(source = 'api') {
       stage: current.id,
       label: current.label,
       semanticCamera: semantic?.semanticCamera || current.semanticCamera,
+      canonicalSemanticCamera: semantic?.canonicalSemanticCamera || current.canonicalSemanticCamera || current.semanticCamera,
       physicalCamera: semantic?.physicalCamera || null,
       presentationOnly: true,
       reducedMotion
@@ -71,7 +73,9 @@ reducedQuery?.addEventListener?.('change', event => {
 });
 
 window.TeamAiHeroInspectionSpine = Object.freeze({
-  stages: () => STAGES.map(({ id, label, semanticCamera }) => ({ id, label, semanticCamera })),
+  stages: () => STAGES.map(({ id, label, semanticCamera, canonicalSemanticCamera }) => ({
+    id, label, semanticCamera, canonicalSemanticCamera: canonicalSemanticCamera || semanticCamera
+  })),
   current: () => ({ ...stage(), index, reducedMotion }),
   next: () => move(1, 'api-next'),
   previous: () => move(-1, 'api-previous'),
