@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - ui/029-working-composition-v1
   workflow_dispatch:
 
 permissions:
@@ -44,8 +43,26 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf dist
+          mkdir -p dist
+
+          # Publish spatial Command Deck at site ROOT so github.io/TeamAi/ resolves.
+          # (Previously nested under dist/spatial/ → root 404 while /spatial/ worked.)
+          cp -R frontend/spatial/. dist/
+
+          # Keep legacy /spatial/ path working (bookmark / docs compatibility).
           mkdir -p dist/spatial
           cp -R frontend/spatial/. dist/spatial/
+
+          # Optional: 3D Hero presentation under /hero/ (public/ self-contained).
+          if [ -d public ]; then
+            mkdir -p dist/hero
+            cp -R public/. dist/hero/
+          fi
+
+          # Guard: root must have index.html or Pages shows 404.
+          test -f dist/index.html
+          test -f dist/theme-root.css
+          test -f dist/shell-nav.js
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
