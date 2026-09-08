@@ -15,6 +15,11 @@ export const CAMERA_LERP_MS = 700;
 /** Ring radius multipliers off profile().workspace — §9 home. */
 export const RING_R1_SCALE = 1.18;
 export const RING_R2_SCALE = 1.42;
+/** NAVIGATE free-orbit zoom bounds — §9 home. */
+export const NAV_ZOOM_MIN = 0.72;
+export const NAV_ZOOM_MAX = 1.55;
+export const NAV_ZOOM_REDUCED_MIN = 0.9;
+export const NAV_ZOOM_REDUCED_MAX = 1.2;
 
 export const HIERARCHY_PART = {
   SEAT_SHELL: 'SEAT_SHELL',

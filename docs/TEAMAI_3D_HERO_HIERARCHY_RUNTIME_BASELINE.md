@@ -92,6 +92,10 @@ One open parent at a time. Presentation only.
 | `REFL_DARK` | `0.54` | measured | R10 |
 | `RING_R1_SCALE` | `1.18` | starting | R1 ring |
 | `RING_R2_SCALE` | `1.42` | starting | R2 ring |
+| `NAV_ZOOM_MIN` | `0.72` | starting | R4 nav |
+| `NAV_ZOOM_MAX` | `1.55` | starting | R4 nav |
+| `NAV_ZOOM_REDUCED_MIN` | `0.9` | starting | R4/R5 |
+| `NAV_ZOOM_REDUCED_MAX` | `1.2` | starting | R4/R5 |
 
 Full measured table remains authoritative on `main` history; amend rows in the same PR when values change.
 
