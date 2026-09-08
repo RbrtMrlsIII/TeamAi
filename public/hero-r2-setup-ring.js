@@ -1,4 +1,5 @@
 /** R2 setup/config ring draw — presentation only (not auth authority). */
+import { RING_R2_SCALE } from './hero-hierarchy-runtime.js';
 export function drawSetupConfigRing(ctx, t) {
   const { profile, seatCount, reducedMotion, draw, CYL, TORUS, CUBE, T, S, RY, mul, M, focusedIndex } = ctx;
   const items = (typeof window !== 'undefined' && window.TeamAiHero && window.TeamAiHero.SETUP_CONFIG_V1)
@@ -10,7 +11,7 @@ export function drawSetupConfigRing(ctx, t) {
         { id: 'WORKSPACE_CONFIG_BRANCH#primary', label: 'Config branch', kind: 'branch' },
       ];
   const p = profile(seatCount);
-  const r = p.workspace * 1.42;
+  const r = p.workspace * RING_R2_SCALE;
   const n = items.length;
   for (let i = 0; i < n; i++) {
     const item = items[i];
