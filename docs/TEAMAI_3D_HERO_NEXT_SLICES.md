@@ -19,10 +19,11 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS (Zip ≠ commerce) | **Merged** (#163) |
 | N.1 | First skill bodies (`ws.029.presentation`, `seat.planning.summarize`) | **Merged** (#164) |
 | N.2 | More skill bodies (`ws.contribution.flow`, `seat.work.coding`, `ws.tools.github`) | **Merged** (#165) |
-| N.3 | Entitlement architecture (no numbers) + `ws.turn.defaults`, `ws.secrets.boundary`, `seat.field.verification` | **Merged** (#166) |
-| K | Issue hygiene + living NEXT_SLICES + Grok Skills alignment | **This PR** |
+| N.3 | Entitlement architecture (no numbers) + turn/secrets/verification skills | **Merged** (#166) |
+| K | Issue hygiene + living NEXT_SLICES + Grok Skills alignment | **Merged** (#167) |
+| L | Verification residual #96–#98 satisfied-by map | **In PR** |
 
-Stale PR **#162** (post-J NEXT_SLICES only) was **closed as superseded** — merging it would have dropped N.1–N.3.
+Stale PR **#162** was closed as superseded under Slice K.
 
 ## Naming
 
@@ -35,7 +36,7 @@ Stale PR **#162** (post-J NEXT_SLICES only) was **closed as superseded** — mer
 | **Tool Quality** | optional tools/MCP packs | Yes (separate) |
 | **Team size** | persistent WebAi seats unlocked | Part of Team Quality |
 
-Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock). Prefer WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS in new docs.
+Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 
 ## Optional skills (product rule)
 
@@ -52,20 +53,19 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock). Prefer W
 
 | Slice | Topic | Desired output | Workaround if blocked |
 |-------|--------|----------------|------------------------|
-| **L** | Verification residual #96–#98 | Satisfied-by comments mapping landed adapter/fixture work; **do not re-implement** | Docs-only notes; leave Masterplan 029 hold explicit |
 | **N.4** | Remaining WORKSPACE_SKILLS bodies | `ws.authority.map`, `ws.evidence.handover` | Same SKILL.md contract as N.1–N.3; not Product Law |
-| **N.5** | Remaining SEAT_SKILLS bodies | `seat.planning.discuss`, `seat.field.backend`, `seat.field.frontend`, `seat.field.integration`, `seat.field.docs`, `seat.coord.leader` | One kind per PR if large; presentation/procedure only |
-| **F** | Health leaf → domain read-model | `source:'domain'` only under a **named** seat-read-model contract | No contract yet → keep fixture; never fake healthy = entitled |
-| **M** | Optional background 3D Hero assets | One Hero canvas; semantic cameras; 2.5D container assets only if authored | No external paid assets; no second canvas |
-| **Owner** | #88 / #89 endorsement | Product-owner visual sign-off | Required to close those issues and to promote PRODUCT-KNOWLEDGE |
+| **N.5** | Remaining SEAT_SKILLS bodies | `seat.planning.discuss`, `seat.field.*`, `seat.coord.leader` | One kind per PR if large |
+| **F** | Health leaf → domain read-model | `source:'domain'` only under named contract | Keep fixture; never healthy = entitled |
+| **M** | Optional background 3D Hero assets | One Hero canvas; semantic cameras | No paid assets; no second canvas |
+| **Owner** | #88 / #89 endorsement | Product-owner visual sign-off | Required to close those issues |
 
 ## MASTERPLAN empty checks (do not invent live evidence)
 
-Remaining TEAM-BACKEND-001 checkboxes **7, 13–17** are **user-manual / environment / owner** — flagged on the existing live-service file `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Do **not** create a second deployment file. Do **not** check them from source presence.
+Remaining TEAM-BACKEND-001 checkboxes **7, 13–17** are **user-manual / environment / owner** — flagged on `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Do **not** create a second deployment file.
 
 ## Grok Skills alignment
 
-Grok App Builder / Grok Build skills (`.grok/skills/` in a Grok sandbox) are **not** TeamAi product skills. Route through `docs/GROK_SKILLS_ALIGNMENT.md` and `docs/SKILL_WIRING.md` §8b / §13. Repository `skills/**` + Product Law win.
+Route through `docs/GROK_SKILLS_ALIGNMENT.md` and `docs/SKILL_WIRING.md` §8b / §13. Repository `skills/**` + Product Law win.
 
 ## Product rules that stay true
 
@@ -76,11 +76,8 @@ Grok App Builder / Grok Build skills (`.grok/skills/` in a Grok sandbox) are **n
 
 ## Related
 
-- `docs/GROK_SKILLS_ALIGNMENT.md`
-- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`
-- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
-- `docs/TEAM-EXPERIENCE-029_ENTITLEMENT_AND_USAGE_LIMITS_ARCHITECTURE.md`
-- `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`
-- `backend/BACKEND_LIVE_SERVICE_STATUS.md` (user-manual remainder)
-- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89)
-- `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9
+- `docs/EVIDENCE_TEAM-EXPERIENCE-029_VERIFICATION_96_98_SATISFIED_BY.md`  
+- `docs/GROK_SKILLS_ALIGNMENT.md`  
+- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`  
+- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89)  
+- `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
