@@ -18,7 +18,7 @@ Not required platform config. External assignment allowed.
 
 ## Next
 
-E — WORKSPACE_ZIPSKILLS optional face (workspace tree only).
+E — WORKSPACE_ZIPSKILLS optional face (workspace tree only). Issue #154.
 
 ## Boundaries
 

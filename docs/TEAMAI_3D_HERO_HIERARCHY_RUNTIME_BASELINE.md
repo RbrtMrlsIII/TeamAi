@@ -90,6 +90,7 @@ One open parent at a time. Presentation only.
 | `FOV_BOOST_NARROW` | `+4` | measured | R7 |
 | `ROUGH_LIGHT` | `0.48` | measured | R10 |
 | `REFL_DARK` | `0.54` | measured | R10 |
+| `RING_R0_ZIP_SCALE` | `0.22` | starting | R0 ZipSkills crown |
 | `RING_R1_SCALE` | `1.18` | starting | R1 ring |
 | `RING_R2_SCALE` | `1.42` | starting | R2 ring |
 | `NAV_ZOOM_MIN` | `0.72` | starting | R4 nav |
@@ -118,6 +119,6 @@ Full map: `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`.
 | R2 | Setup / config | Configuration branches; login/register mechanical presentation |
 | R3 | Seat ring | Web AI Seats (Seat Shell Hierarchy v1); `SEAT_TOOLKIT` optional seat-scoped bundles |
 
-R1/R2 radius multipliers are **named** (`RING_R1_SCALE`, `RING_R2_SCALE`) in this table and in `hero-hierarchy-runtime.js`. Status **starting** until measured in-browser; amend §9 + code together. Do not invent private radius tables outside this doc.
+R0 ZipSkills inner crown and R1/R2 radius multipliers are **named** (`RING_R0_ZIP_SCALE`, `RING_R1_SCALE`, `RING_R2_SCALE`) in this table and in `hero-hierarchy-runtime.js`. Status **starting** until measured in-browser; amend §9 + code together. Do not invent private radius tables outside this doc.
 
 **Note:** Workspace ZipSkills and Seat Toolkit are **not required** setups. Users may assign skills/toolkits outside the platform; presentation stubs must not imply entitlement or mandatory bind.
