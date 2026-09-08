@@ -49,7 +49,10 @@ test('docs prefer WORKSPACE_ZIPSKILLS and record Slice H', () => {
   assert.match(map, /WORKSPACE_ZIPSKILLS/);
 });
 
-test('presentation-only: no entitlement or required setup from ZipSkills alias', () => {
-  assert.doesNotMatch(camera, /required\s*setup|entitlement\s*=\s*true/i);
+test('presentation-only: ZipSkills alias does not assert entitlement grants', () => {
+  // Denial language ("not required setup") is OK; fail only on positive entitlement assignment.
+  assert.doesNotMatch(camera, /entitlement\s*=\s*true/i);
+  assert.doesNotMatch(camera, /grantsPermission:\s*true/);
   assert.match(stack, /presentationOnly:\s*true/);
+  assert.match(camera, /presentationOnly:\s*true/);
 });
