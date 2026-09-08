@@ -1,25 +1,47 @@
 # TeamAi 3D Hero Next Slices
 
-Status: planning/continuity only. Active TEAM-EXPERIENCE-029 implementation remains gated by `MASTERPLAN.md`.
+Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work on Hero hierarchy + rings.  
+Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-## Ordered development sequence
+## Ordered ladder (2026-09-08)
 
-`#84 Theme adapter → #85 manufactured light rig → #86 contribution/absorption → #88 material/depth → #89 responsive/reduced motion → #81 Seat Identity Inspection → #91 Seat mechanisms → #92 authorization/scope (IMPLEMENTED on main via PR #126) → #93 task/evidence anchors (this PR; keeps both auth + workspace APIs) → #88/#89/#95 material + motion → #96/#97/#98 Slice A close-after-evidence`
+| Slice | Topic | Status |
+|-------|--------|--------|
+| A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
+| B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
+| C | Camera orbit polish — NAVIGATE-only; dock wins on inspect | **Next** |
+| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | Queued |
+| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | Queued |
+
+## Optional skills / toolkits (product rule)
+
+- **SEAT_TOOLKIT** and **WORKSPACE_ZIPSKILLS** are **not required** platform setups or configs.
+- Users may assign skills/toolkits **outside** TeamAi; Hero presentation must not imply entitlement or mandatory bind.
+- When shown: Toolkit = seat-scoped fixture only; ZipSkills = workspace-tree governance continuity only.
 
 ## Implementation entry condition
 
-Before active implementation, re-check `MASTERPLAN.md`. TEAM-EXPERIENCE-029 may advance only after TEAM-BACKEND-001 reaches its required evidence and completion/endorsement conditions. TEAM-BACKEND-001 is ENDORSED for bounded recorded scope; Hero slices remain presentation-only.
+Before active implementation, re-check `MASTERPLAN.md`. Hero slices remain **presentation-only** unless a named backend contract authorizes more.
 
 ## Spatial engineering rule
 
-Each slice introduces one new spatial capability and one verification boundary. Preserve semantic cameras, authored topology, 1–8 Seat scaling, lifecycle semantics, authentication handoff, responsive behavior, reduced motion, contribution-corridor visibility, and the normal-UI handoff boundary.
-
-## Visual priority
-
-Use light-skeuomorphism as the first-class active interpretation. Prefer physically motivated illumination, manufactured material response, contact/depth cues, and restrained semantic light choreography. Do not mix dark-glassmorphism aesthetics into the active light slice.
+Each slice introduces one new spatial capability and one verification boundary. Preserve semantic cameras, authored topology, 1–8 Seat scaling, reduced motion, and the normal-UI handoff boundary.
 
 ## Deep inspection progression
 
-`orientation → surface → seat/focus → connection → behavior → skills/ZipSkills → capability → authorization/scope → workspace → task/evidence → normal UI`
+`orientation → surface → seat/focus → connection → behavior → (optional toolkit) → capability → authorization/scope → workspace → task/evidence → normal UI`
 
-Spatial depth becomes more concrete as the camera moves inward. Text-heavy, form-heavy, multi-field, permission-review, evidence-review, and precision interaction belongs to normal UI rather than pretending those tasks are machinery.
+## Camera (Slice C target)
+
+- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
+- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
+- Wheel + touch/pinch already on main; polish = mode gate + §9 named zoom bounds + optional reset affordance.
+- Reduced-motion clamps remain contract.
+
+## Related docs
+
+- `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
+- `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`  
+- `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`  
+- `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md` §4.1b  
+- `skills/frontend/spatial/workspace-ring/SKILL.md`
