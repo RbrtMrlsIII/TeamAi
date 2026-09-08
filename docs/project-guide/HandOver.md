@@ -143,6 +143,22 @@ and server-only lookup:
 
 **Learning status:** TeamAi-scoped, evidence-backed. Not a Product Law amendment. Generalization to ToolKit remains undecided.
 
+## 11. Current 2026-09-09 Slice K / Grok alignment continuation
+
+**Scope:** TEAM-EXPERIENCE-029 presentation continuity (Slice K) plus Grok Skills alignment. Not a commerce completion claim.
+
+**Authoritative now:** `PRODUCT_LAW.md` → `MASTERPLAN.md` (TEAM-BACKEND-001 still IN IMPLEMENTATION; 029 still held) → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md` §8b/§13 → `docs/GROK_SKILLS_ALIGNMENT.md` → `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`.
+
+**Changed:** living NEXT_SLICES (N.1–N.3 merged; K this slice); Grok alignment map; SKILL_WIRING pointer; user-manual remainder flagged on existing `backend/BACKEND_LIVE_SERVICE_STATUS.md`; stale PR #162 closed as superseded.
+
+**Proven:** docs-only. CI green on this PR is necessary, not Endorsement.
+
+**Learned:** A Grok App Builder host will try to apply Better Auth / Neon / TanStack / game skills unless explicitly forbidden. Alignment belongs in a bounded map, not a second Product Law. Stale NEXT_SLICES PRs that lag merged N-slices must be closed, not merged.
+
+**Open:** live PayPal Firestore re-read (commerce COMPLETED); Firebase emulator (item 7); owner endorsement for #88/#89; Slice L issue comments; remaining skill bodies N.4/N.5.
+
+**Next authorized command:** Slice **L** — satisfied-by comments on Issues #96, #97, #98. Then N.4 `ws.authority.map` + `ws.evidence.handover`.
+
 ## SEE ALSO
 
 - `POLICY.md`
