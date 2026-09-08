@@ -9,8 +9,8 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 |-------|--------|--------|
 | A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
 | B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
-| C | Camera orbit polish — NAVIGATE-only; dock wins on inspect | **Next** |
-| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | Queued |
+| C | Camera orbit polish — NAVIGATE-only; dock wins on inspect | **Merged** (#152) |
+| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **In PR** |
 | E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | Queued |
 
 ## Optional skills / toolkits (product rule)
@@ -31,12 +31,11 @@ Each slice introduces one new spatial capability and one verification boundary. 
 
 `orientation → surface → seat/focus → connection → behavior → (optional toolkit) → capability → authorization/scope → workspace → task/evidence → normal UI`
 
-## Camera (Slice C target)
+## Camera (Slice C landed)
 
 - Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
 - Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
-- Wheel + touch/pinch already on main; polish = mode gate + §9 named zoom bounds + optional reset affordance.
-- Reduced-motion clamps remain contract.
+- Named §9 zoom bounds; reduced-motion clamps remain contract.
 
 ## Related docs
 
@@ -44,4 +43,3 @@ Each slice introduces one new spatial capability and one verification boundary. 
 - `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`  
 - `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`  
 - `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md` §4.1b  
-- `skills/frontend/spatial/workspace-ring/SKILL.md`

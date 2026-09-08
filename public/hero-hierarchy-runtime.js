@@ -25,6 +25,7 @@ export const HIERARCHY_PART = {
   SEAT_SHELL: 'SEAT_SHELL',
   SEAT_CONNECTION: 'SEAT_CONNECTION',
   SEAT_BEHAVIOR: 'SEAT_BEHAVIOR',
+  SEAT_TOOLKIT: 'SEAT_TOOLKIT',
   SEAT_CAPABILITIES: 'SEAT_CAPABILITIES',
   SEAT_AUTHORIZATION: 'SEAT_AUTHORIZATION',
   SEAT_WORKSPACE_SCOPE: 'SEAT_WORKSPACE_SCOPE',
@@ -41,6 +42,13 @@ export const BACKEND_DISPLAY_V1 = Object.freeze([
   { id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' },
   { id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' },
   { id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' },
+]);
+
+/** Optional seat-scoped toolkit fixture — not required; not entitlement. */
+export const SEAT_TOOLKIT_V1 = Object.freeze([
+  { id: 'SEAT_TOOLKIT#bundle-core', label: 'Core skill bundle', optional: true },
+  { id: 'SEAT_TOOLKIT#bundle-domain', label: 'Domain skill bundle', optional: true },
+  { id: 'SEAT_TOOLKIT#external', label: 'External assign slot', optional: true },
 ]);
 
 export const SETUP_CONFIG_V1 = Object.freeze([
@@ -72,6 +80,7 @@ export const HEALTH_STATUS = {
 export const SEAT_SHELL_V1_CHILDREN = [
   HIERARCHY_PART.SEAT_CONNECTION,
   HIERARCHY_PART.SEAT_BEHAVIOR,
+  HIERARCHY_PART.SEAT_TOOLKIT,
   HIERARCHY_PART.SEAT_CAPABILITIES,
   HIERARCHY_PART.SEAT_AUTHORIZATION,
   HIERARCHY_PART.SEAT_WORKSPACE_SCOPE,
@@ -214,6 +223,10 @@ export function focusLeaf(state, leafId) {
 export function clearLeafFocus(state) {
   state.focusedLeafId = null;
   return state;
+}
+
+export function toolkitChildAccessibleName() {
+  return 'Seat toolkit (optional). Not required; external assignment allowed. Presentation only; not entitlement.';
 }
 
 export function healthLeafAccessibleName(status = HEALTH_STATUS.UNKNOWN) {
