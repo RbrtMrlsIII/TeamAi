@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { SETUP_CONFIG_V1, HIERARCHY_PART } from '../public/hero-hierarchy-runtime.js';
 
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const r2mod = await readFile(new URL('../public/hero-r2-setup-ring.js', import.meta.url), 'utf8');
 const map = await readFile(new URL('../docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md', import.meta.url), 'utf8');
 
 test('R2 part IDs and SETUP_CONFIG_V1 catalog', () => {
@@ -16,9 +17,9 @@ test('R2 part IDs and SETUP_CONFIG_V1 catalog', () => {
 });
 
 test('hero-flex draws setup/config ring outside R1', () => {
-  assert.match(hero, /drawSetupConfigRing/);
+  assert.match(hero + r2mod, /drawSetupConfigRing/);
   assert.match(hero, /SETUP_CONFIG_V1/);
-  assert.match(hero, /workspace \* 1\.42|workspace\*1\.42/);
+  assert.match(r2mod, /workspace \* 1\.42|workspace\*1\.42/);
 });
 
 test('ring map places setup/config on R2', () => {
@@ -28,9 +29,7 @@ test('ring map places setup/config on R2', () => {
 });
 
 test('presentation-only: no credential capture in R2 draw', () => {
-  const start = hero.indexOf('function drawSetupConfigRing');
-  const end = hero.indexOf('function drawBackendDisplayRing');
-  const fn = hero.slice(start, end);
-  assert.doesNotMatch(fn, /password|client_secret|Bearer |oauth\.|firestore/i);
-  assert.match(fn, /mechanical presentation|rough:/i);
+  const src = hero + r2mod;
+  assert.doesNotMatch(src, /password|client_secret|Bearer |oauth\.|firestore/i);
+  assert.match(r2mod, /presentation only|rough:/i);
 });
