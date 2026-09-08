@@ -3,7 +3,7 @@ name: seat-shell-hierarchy
 description: >
   Seat Shell Hierarchy v1 — first in-machine parent open path for TeamAi 3D Hero.
   Use when implementing or reviewing Seat shell open, v1 children, health leaf,
-  one-open rule, or amending the Seat Shell sheet. ZipSkills is NOT seat-scoped.
+  one-open rule, or amending the Seat Shell sheet. WORKSPACE_ZIPSKILLS is workspace-tree scoped (not seat).
 ---
 
 # Seat Shell Hierarchy
@@ -26,6 +26,8 @@ Triggers: Seat shell, SEAT_SHELL, SEAT_CONNECTION, SEAT_CONNECTION_HEALTH_FACE, 
 4. This sheet + this skill
 5. Presentation-only boundary unless a named backend contract authorizes more
 
+Numbers come from the baseline doc, not from this skill.
+
 ## ACTION
 Execute the sheet ladder, one step per PR if needed:
 
@@ -41,7 +43,7 @@ Execute the sheet ladder, one step per PR if needed:
    - `SEAT_WORKSPACE_SCOPE` — stub
    - `SEAT_TASK_EVIDENCE` — stub  
    Deferred **seat-scoped**: `SEAT_TOOLKIT` (skill bundles from seat preferences / responsibilities).
-   **Not a Seat child:** ZipSkills — workplace governance / execution discipline (team-lead, shared team, or branch-before-main). See sheet § children / ZipSkills note.
+   **Not a Seat child:** `WORKSPACE_ZIPSKILLS` — equips on the **workspace tree** (governance / execution discipline: team-lead, shared team, or branch-before-main). See sheet ZipSkills note.
    Stack with `CHILD_STEP_Y` / `CHILD_STEP_R`.
 6. **One leaf** — `SEAT_CONNECTION_HEALTH_FACE` inside `SEAT_CONNECTION`. Presentation enums: `unknown` | `loading` | `unavailable` | (later) read-model health. Accessible name + keyboard when focused. **Not** API key / OAuth / durable bind.
 7. **Evidence** — static: part IDs, one-open, leaf-inside-shell. Browser: wide → open seat → child stack visible.
@@ -53,7 +55,7 @@ PR body must include the Hierarchy Runtime R1–R10 accounting table (Seat v1 fi
 - Do not expand `hero-seat-stack.js` DOM as the permanent home of this hierarchy.
 - Do not treat health face `healthy` as entitlement or live provider success without `source: 'domain'`.
 - Do not implement `SEAT_TOOLKIT` or other deferred seat gears here.
-- Do not place ZipSkills on seats — workspace governance only (sheet amendment).
+- Do not place `WORKSPACE_ZIPSKILLS` on seats — workspace tree only (sheet amendment).
 - Do not invent numbers; load §9.
 - Do not skip reduced-motion snap or a11y name on the leaf.
 - Do not write Firestore / PayPal / scheduler state.

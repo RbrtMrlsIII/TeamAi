@@ -64,15 +64,17 @@ SEAT_SHELL (open)
 
 `SEAT_TOOLKIT` remains **deferred seat-scoped** (basic skill bundles from that seat’s preferences / responsibilities).
 
-### ZipSkills — not a Seat child
+### WORKSPACE_ZIPSKILLS — workspace tree (not a Seat child)
 
-`SEAT_ZIPSKILLS` is **removed from the Seat child table**. ZipSkills belongs to **workplace governance / execution discipline**, not per-seat faces:
+Former `SEAT_ZIPSKILLS` is **removed from the Seat child table** and renamed **`WORKSPACE_ZIPSKILLS`**.
+
+It **equips on the workspace tree**, not on a Seat shell:
 
 - Web AI team lead handles governance updates, **or**
 - Shared team handles governance (continuity), **or**
 - Responsibilities split via **branches** before merge to main.
 
-Presentation of ZipSkills (if any) is a **workspace-level** concern — same tier as future workspace services ring — not an in-shell Seat child. Continuity vs separate ownership is a governance choice, not a seat-open pose.
+Same tier as future workspace services ring. Continuity vs separate ownership is a governance choice, not a seat-open pose.
 
 ## 4. v1 leaf (inside the open shell)
 
@@ -164,7 +166,7 @@ v1 implementation should **not** expand DOM seat-stack as the permanent home; pr
 - Provider key bind / PayPal / Firestore writes  
 - Multi-seat simultaneous open  
 - Dark-glass material pass as primary goal  
-- ZipSkills as a Seat child (workspace governance only)
+- `WORKSPACE_ZIPSKILLS` as a Seat child (workspace tree only)
 
 ## 9. Implementation ladder (after you confirm this sheet)
 

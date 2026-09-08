@@ -1,8 +1,9 @@
-# Checkpoint — ZipSkills workplace governance home (sheet amendment)
+# Checkpoint — WORKSPACE_ZIPSKILLS (workspace tree)
 
 **Date:** 2026-09-08  
 **Branch:** `docs/029-zipskills-workspace-governance-home`  
 **After:** #145 merged (Seat Shell v1)  
+**PR:** #146  
 **Skills:** teamai-project → seat-shell-hierarchy  
 
 ## Change
@@ -10,23 +11,26 @@
 | Item | Before | After |
 |------|--------|--------|
 | `SEAT_TOOLKIT` | Deferred seat child | **Deferred seat-scoped** — skill bundles from seat preferences / responsibilities |
-| `SEAT_ZIPSKILLS` | Deferred seat child | **Removed from Seat children** — workplace governance / execution discipline |
+| `SEAT_ZIPSKILLS` | Deferred seat child | **`WORKSPACE_ZIPSKILLS`** — equips on **workspace tree** (not Seat) |
 
-## Governance placement (ZipSkills)
+## WORKSPACE_ZIPSKILLS placement
 
-- Team-lead updates, **or**
-- Shared team continuity, **or**
-- Branch ownership before merge to main
+- Workplace governance / execution discipline
+- Team-lead updates, shared team continuity, or branch ownership before main
+- Presentation lives at **workspace** tier (with services ring), not in-shell Seat children
 
-Not an in-shell Seat face. Future presentation lives at workspace tier (with services ring).
+## Validation fix (#146 CI)
+
+- Restored skill phrase required by baseline test: `Numbers come from the baseline doc`
+- Headings WHEN TO USE → … → SEE ALSO retained
 
 ## Non-goals this slice
 
-- No runtime code
+- No runtime equip code
 - No Toolkit implementation
-- No ZipSkills UI
+- No ZipSkills UI mesh yet
 - No 029-released claim
 
 ## Next
 
-Slice 2 — Workspace services ring sheet + baseline note.
+Slice 2 — Workspace services ring sheet + baseline note (`WORKSPACE_*` namespace).
