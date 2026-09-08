@@ -44,6 +44,9 @@ test('hero-flex wires ring focus keys and click zones', () => {
   assert.match(hero, /ringFocusAccessibleName/);
   assert.match(hero, /event\.key==='\['/);
   assert.match(hero, /getRingFocus/);
+  assert.match(hero, /y>0\.28&&y<0\.48/);
+  assert.match(hero, /wheel|passive: false/);
+  assert.match(hero, /touchmove|pointermove/);
 });
 
 test('draw paths react to focusedIndex / r1 focus', () => {
