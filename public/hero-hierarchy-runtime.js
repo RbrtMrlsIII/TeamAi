@@ -17,6 +17,8 @@ export const CONNECTION_BRANCH_MS = 380;
 export const BEHAVIOR_BRANCH_MS = 360;
 /** P3: SEAT_TOOLKIT branch expand duration — optional equip face. */
 export const TOOLKIT_BRANCH_MS = 340;
+/** P4: SEAT_CAPABILITIES branch expand duration — capability face (not authorization). */
+export const CAPABILITIES_BRANCH_MS = 320;
 export const HIERARCHY_REDUCED_SNAP = true;
 export const CAMERA_LERP_MS = 700;
 export const RING_R0_ZIP_SCALE = 0.22;
@@ -332,6 +334,54 @@ export function requestToolkitConfigureHandoff(detail = {}) {
   return intent;
 }
 
+
+export function tickCapabilitiesBranch(state, nowMs, reducedMotion = false) {
+  const now = nowMs ?? 0;
+  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_CAPABILITIES) {
+    if ((state.capabilitiesBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_CAPABILITIES) {
+      state.capabilitiesBranchAmount = 0;
+    }
+    return state;
+  }
+  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+    state.capabilitiesBranchAmount = 1;
+    return state;
+  }
+  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
+  if (!parentReady) {
+    state.capabilitiesBranchAmount = 0;
+    return state;
+  }
+  const start = state.capabilitiesBranchStartMs ?? now;
+  const progress = Math.min((now - start) / CAPABILITIES_BRANCH_MS, 1);
+  const x = Math.max(0, Math.min(1, progress));
+  state.capabilitiesBranchAmount = x * x * (3 - 2 * x);
+  return state;
+}
+
+export function getCapabilitiesBranchAmount(state) {
+  return Math.max(0, Math.min(1, Number(state?.capabilitiesBranchAmount) || 0));
+}
+
+export function capabilitiesFaceAccessibleName(branchAmount = 1) {
+  const open = (Number(branchAmount) || 0) >= 0.85 ? "expanded" : "opening";
+  return "Seat capabilities face (" + open + "). Capability only; not authorization; not entitlement. Press K for normal UI.";
+}
+
+export function requestCapabilitiesConfigureHandoff(detail = {}) {
+  const intent = {
+    source: "p4-seat-capabilities",
+    targetSection: detail.targetSection || "capabilities",
+    normalUi: true,
+    presentationOnly: true,
+    notAuthorization: true,
+  };
+  if (typeof window !== "undefined" && window.dispatchEvent) {
+    window.dispatchEvent(new CustomEvent("teamai:web-ai-seat-configure-request", { detail: intent }));
+  }
+  return intent;
+}
+
 export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
   const snap = Boolean(opts.snap);
@@ -385,20 +435,30 @@ export function focusChild(state, childId, opts = {}) {
     state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
     state.behaviorBranchAmount = 0;
     state.toolkitBranchAmount = 0;
+    state.capabilitiesBranchAmount = 0;
   } else if (childId === HIERARCHY_PART.SEAT_BEHAVIOR) {
     state.behaviorBranchStartMs = now;
     state.behaviorBranchAmount = snap ? 1 : Math.min(state.behaviorBranchAmount || 0, 0.15);
     state.connectionBranchAmount = 0;
     state.toolkitBranchAmount = 0;
+    state.capabilitiesBranchAmount = 0;
   } else if (childId === HIERARCHY_PART.SEAT_TOOLKIT) {
     state.toolkitBranchStartMs = now;
     state.toolkitBranchAmount = snap ? 1 : Math.min(state.toolkitBranchAmount || 0, 0.15);
     state.connectionBranchAmount = 0;
     state.behaviorBranchAmount = 0;
+    state.capabilitiesBranchAmount = 0;
+  } else if (childId === HIERARCHY_PART.SEAT_CAPABILITIES) {
+    state.capabilitiesBranchStartMs = now;
+    state.capabilitiesBranchAmount = snap ? 1 : Math.min(state.capabilitiesBranchAmount || 0, 0.15);
+    state.connectionBranchAmount = 0;
+    state.behaviorBranchAmount = 0;
+    state.toolkitBranchAmount = 0;
   } else {
     state.connectionBranchAmount = 0;
     state.behaviorBranchAmount = 0;
     state.toolkitBranchAmount = 0;
+    state.capabilitiesBranchAmount = 0;
   }
   return state;
 }
