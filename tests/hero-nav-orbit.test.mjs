@@ -22,8 +22,9 @@ test('nav zoom bounds match §9', () => {
   assert.match(baseline, /`NAV_ZOOM_MAX`\s*\|\s*`1\.55`/);
 });
 
-test('hero-flex gates orbit to NAVIGATE and uses named bounds', () => {
-  assert.match(hero, /HIERARCHY_INPUT\.NAVIGATE/);
+test('hero-flex uses Cam-3 tree-center nav + named zoom bounds', () => {
+  // Cam-3: free zoom about current tree center (even when parent open)
+  assert.match(hero, /poseAboutTreeCenter|shouldApplyTreeNav|hero-cam3-tree-center-zoom/);
   assert.match(hero, /NAV_ZOOM_MIN/);
   assert.match(hero, /NAV_ZOOM_MAX/);
   assert.doesNotMatch(hero, /clamp\(navZoom \+ delta, 0\.72, 1\.55\)/);
