@@ -1,7 +1,7 @@
 # Grok Skills ↔ TeamAi Skills alignment
 
 **Status:** OPERATING MAP / NOT PRODUCT LAW  
-**Date:** 2026-09-09  
+**Date:** 2026-09-10  
 **Authority:** `PRODUCT_LAW.md` → `MASTERPLAN.md` → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md` §8b  
 **Purpose:** Tell a Grok Build / Grok App Builder session how to continue TeamAi without importing the sandbox’s default stack as a second architecture.
 
@@ -50,13 +50,26 @@ Do **not** reconstruct TeamAi from Grok App Builder `AGENTS.md` §0.5 (auth/db d
 | 029 Hero / spatial / theme | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + companions; `skills/workspace/ws.029.presentation/SKILL.md` |
 | Contribution / PR / merge | `skills/workspace/ws.contribution.flow/SKILL.md` + merge gate Issue **#133** |
 | GitHub tool use | `skills/workspace/ws.tools.github/SKILL.md` |
+| GitHub App form (Conn-1) | `skills/workspace/ws.github.app-least-privilege/SKILL.md` |
+| GitHub webhook + UID map (Conn-2) | `skills/workspace/ws.github.webhook-uid-map/SKILL.md` |
 | Secrets | `skills/workspace/ws.secrets.boundary/SKILL.md` |
+| User manual / deploy setups | `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` (human-only steps; agents log here, do not invent URLs) |
 | Verification seat | `skills/seat/seat.field.verification/SKILL.md` |
 | Coding seat | `skills/seat/seat.work.coding/SKILL.md` |
 | Backend / commerce | `skills/backend/*` — Firebase, Firestore, Supabase Edge, PayPal |
 | Learning / HandOver | `skills/governance/learning-handover/SKILL.md` |
 
 SEAT_SKILLS and WORKSPACE_SKILLS are **optional user-assignable procedures**, not commerce SKUs and not required platform setups.
+
+## 4b. GitHub Connection skills (Grok must use TeamAi skills)
+
+| Slice | TeamAi skill | Grok must not |
+|-------|--------------|---------------|
+| Conn-1 | `ws.github.app-least-privilege` | Invent App permissions; grant Admin/Secrets; activate empty webhook |
+| Conn-2 | `ws.github.webhook-uid-map` | Mint UID from `sender.login`; paste PEM in chat; Hero live bind |
+| Conn-3 | `ws.github.oauth-uid-bind` (planning) | Treat keyboard C as OAuth; claim 029 released |
+
+Manual operator steps for App create, secrets, and webhook Active live only in `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` §12.
 
 ## 5. Merge / automation behavior (Grok connector)
 
@@ -82,3 +95,4 @@ A Grok session on TeamAi **passes** this alignment when:
 - `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`
 - `skills/workspace/ws.029.presentation/SKILL.md`
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md`
+- `docs/USER_MANUAL_DEPLOY_AND_SEATS.md`
