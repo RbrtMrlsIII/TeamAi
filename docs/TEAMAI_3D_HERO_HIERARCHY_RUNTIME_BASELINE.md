@@ -99,6 +99,7 @@ One open parent at a time. Presentation only.
 | `NAV_ZOOM_REDUCED_MAX` | `1.2` | starting | R4/R5 |
 | `SETUP_RING_FILL_MS` | `480` | starting | R2/R3 camera-fill |
 | `SETUP_RING_FOV_FILL` | `3` | starting | R7 camera-fill |
+| `ZIPSKILLS_BRANCH_MS` | `300` | starting | R0 ZipSkills branch |
 
 Full measured table remains authoritative on `main` history; amend rows in the same PR when values change.
 
