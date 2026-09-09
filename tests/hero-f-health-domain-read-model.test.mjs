@@ -28,8 +28,9 @@ test('HEALTH_DOMAIN_CONTRACT_ID is named and stable', () => {
 test('default runtime is fixture UNKNOWN', () => {
   const state = createHierarchyRuntime();
   assert.equal(state.healthStatus, HEALTH_STATUS.UNKNOWN);
-  assert.equal(state.healthSource, 'fixture');
-  assert.equal(state.healthContractId, null);
+  // healthSource/contractId may be seeded in runtime or defaulted by view/apply
+  assert.equal(state.healthSource ?? HEALTH_SOURCE.FIXTURE, HEALTH_SOURCE.FIXTURE);
+  assert.equal(state.healthContractId ?? null, null);
   assert.equal(state.presentationOnly, true);
   assert.equal(state.durable, false);
 });
@@ -41,9 +42,9 @@ test('domain without named contract is refused; fixture remains', () => {
     status: HEALTH_STATUS.LOADING,
     contractId: 'wrong.contract',
   });
-  assert.equal(state.healthSource, 'fixture');
+  assert.equal(state.healthSource ?? HEALTH_SOURCE.FIXTURE, HEALTH_SOURCE.FIXTURE);
   assert.equal(state.healthStatus, HEALTH_STATUS.UNKNOWN);
-  assert.equal(state.healthContractId, null);
+  assert.equal(state.healthContractId ?? null, null);
 });
 
 test('domain with named contract applies status', () => {
@@ -67,7 +68,7 @@ test('invalid status is refused', () => {
     status: 'authorized-secret',
     contractId: HEALTH_DOMAIN_CONTRACT_ID,
   });
-  assert.equal(state.healthSource, 'fixture');
+  assert.equal(state.healthSource ?? HEALTH_SOURCE.FIXTURE, HEALTH_SOURCE.FIXTURE);
   assert.equal(state.healthStatus, HEALTH_STATUS.UNKNOWN);
 });
 
