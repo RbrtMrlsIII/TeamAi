@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P6** **merged** (#174–#184). **P6.1** WORKSPACE_SCOPE visual flex **this PR**. Next: **P7** SEAT_TASK_EVIDENCE.
+**P1**–**P6.1** **merged** (#174–#185). **P7** SEAT_TASK_EVIDENCE runtime **this PR**. Next: **P7.1** visual flex (optional) or ladder complete for seat faces.
 
 ## Completed ladder (structure + skills)
 
@@ -65,8 +65,9 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P5** | `SEAT_AUTHORIZATION` | Branch open motion; authorization face a11y + handoff (**not** capability) | **Merged** (#182) |
 | **P5.1** | AUTHORIZATION visual flex | Frame tick + branchBoost + keyboard **A** | **Merged** (#183) |
 | **P6** | `SEAT_WORKSPACE_SCOPE` | Branch open motion; workspace scope face a11y + handoff (**not** durable store) | **Merged** (#184) |
-| **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | **This PR** |
-| **P7…** | Task/evidence | One face per slice | Same gates |
+| **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | **Merged** (#185) |
+| **P7** | `SEAT_TASK_EVIDENCE` | Branch open motion; task evidence face a11y + handoff (presentation only) | **This PR** (runtime) |
+| **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | After P7 merge |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
 | **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
 | **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
@@ -102,7 +103,7 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 - Hierarchy numbers live in baseline §9; amend with code in the same PR.
 - Presentation never invents entitlement, scheduler, or durable auth.
 - Green CI is necessary, not Endorsement.
-- CAPABILITY ≠ AUTHORIZATION ≠ WORKSPACE ≠ FIRESTORE.
+- CAPABILITY ≠ AUTHORIZATION ≠ WORKSPACE ≠ durable store.
 - **no 029-released claim**
 
 ## Related
