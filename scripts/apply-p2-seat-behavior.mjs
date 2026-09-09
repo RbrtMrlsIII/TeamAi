@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Idempotent P2 SEAT_BEHAVIOR patch for public/hero-hierarchy-runtime.js
- * Run from repo root after checkout main hierarchy file if needed.
+ * Run from repo root.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -40,17 +40,38 @@ if (!t.includes('behaviorBranchAmount:')) {
   );
 }
 
-if (!t.includes('state.behaviorBranchAmount = 0;') || t.indexOf('state.behaviorBranchAmount = 0;') > t.indexOf('export function closeHierarchyParent') + 400) {
+if (!t.includes('state.behaviorBranchAmount = 0;')) {
   t = t.replace(
     '  state.connectionBranchAmount = 0;\n  state.connectionBranchStartMs = now;\n  state.phaseStartMs = now;\n',
     '  state.connectionBranchAmount = 0;\n  state.connectionBranchStartMs = now;\n  state.behaviorBranchAmount = 0;\n  state.behaviorBranchStartMs = now;\n  state.phaseStartMs = now;\n',
   );
 }
 
-const oldFocus = `  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {\n    state.connectionBranchStartMs = now;\n    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);\n  } else {\n    state.connectionBranchAmount = 0;\n  }\n  return state;\n}`;
-const newFocus = `  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {\n    state.connectionBranchStartMs = now;\n    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);\n    state.behaviorBranchAmount = 0;\n  } else if (childId === HIERARCHY_PART.SEAT_BEHAVIOR) {\n    state.behaviorBranchStartMs = now;\n    state.behaviorBranchAmount = snap ? 1 : Math.min(state.behaviorBranchAmount || 0, 0.15);\n    state.connectionBranchAmount = 0;\n  } else {\n    state.connectionBranchAmount = 0;\n    state.behaviorBranchAmount = 0;\n  }\n  return state;\n}`;
+const oldFocus = `  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
+    state.connectionBranchStartMs = now;
+    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
+  } else {
+    state.connectionBranchAmount = 0;
+  }
+  return state;
+}`;
+const newFocus = `  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
+    state.connectionBranchStartMs = now;
+    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
+    state.behaviorBranchAmount = 0;
+  } else if (childId === HIERARCHY_PART.SEAT_BEHAVIOR) {
+    state.behaviorBranchStartMs = now;
+    state.behaviorBranchAmount = snap ? 1 : Math.min(state.behaviorBranchAmount || 0, 0.15);
+    state.connectionBranchAmount = 0;
+  } else {
+    state.connectionBranchAmount = 0;
+    state.behaviorBranchAmount = 0;
+  }
+  return state;
+}`;
 if (t.includes(oldFocus)) t = t.replace(oldFocus, newFocus);
 
+// Accessible-name body uses string concat so this apply script never evaluates ${open}
 const apis = `
 export function tickBehaviorBranch(state, nowMs, reducedMotion = false) {
   const now = nowMs ?? 0;
@@ -82,7 +103,7 @@ export function getBehaviorBranchAmount(state) {
 
 export function behaviorFaceAccessibleName(branchAmount = 1) {
   const open = (Number(branchAmount) || 0) >= 0.85 ? 'expanded' : 'opening';
-  return \`Seat behavior face (${open}). Do / Don't presentation only; not durable policy. Press B for normal UI.\`;
+  return 'Seat behavior face (' + open + '). Do / Don\'t presentation only; not durable policy. Press B for normal UI.';
 }
 
 export function requestBehaviorConfigureHandoff(detail = {}) {
