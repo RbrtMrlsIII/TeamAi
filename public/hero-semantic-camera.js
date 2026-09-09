@@ -1,3 +1,4 @@
+import { applyResolvedCamera, resolveDomCameraAction } from './hero-dom-action-map.js';
 const SEMANTIC_CAMERAS = Object.freeze({
   MECHANISM_IDENTITY: 'SEAT_CLOSE',
   MECHANISM_RESPONSIBILITY: 'SEAT_CLOSE',
@@ -47,7 +48,9 @@ function dispatchIntent(semanticCamera, detail = {}) {
   window.dispatchEvent(new CustomEvent('teamai:web-ai-semantic-camera', { detail: intent }));
 
   if (physicalCamera) {
-    document.querySelector(`[data-camera="${physicalCamera}"]`)?.click();
+    const hierarchyOpen = document.querySelector('.hero-shell')?.getAttribute('data-hero-machine-ui') === '1'
+      || document.querySelector('.hero-shell')?.dataset?.hierarchyOpen === 'true';
+    applyResolvedCamera(physicalCamera, { hierarchyOpen });
   }
 
   return intent;
