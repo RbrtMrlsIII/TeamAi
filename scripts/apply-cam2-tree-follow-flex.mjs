@@ -1,6 +1,6 @@
 /**
- * Idempotent Cam-2 flex wire: tree camera follow + ~45° HERO_WIDE.
- * If emergency loader / short file, restore from main raw then patch.
+ * Idempotent Cam-2 + Cam-3 flex wire.
+ * If emergency loader / short file, restore from pre-loader SHA then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -8,7 +8,7 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const path = join(root, 'public/hero-flex.js');
-const MAIN_RAW = 'https://raw.githubusercontent.com/RbrtMrlsIII/TeamAi/main/public/hero-flex.js';
+const MAIN_RAW = 'https://raw.githubusercontent.com/RbrtMrlsIII/TeamAi/a2f8a3e162ff2a19acc496bff07dd6b6d7ffcdec/public/hero-flex.js';
 
 function applyPatches(t) {
   let changed = false;
@@ -67,6 +67,36 @@ function applyPatches(t) {
       changed = true;
     }
   }
+  // Cam-3: tree-center free zoom while parent open
+  if (!t.includes("from './hero-cam3-tree-center-zoom.js'")) {
+    if (t.includes("from './hero-cam2-tree-follow.js';")) {
+      t = t.replace(
+        "from './hero-cam2-tree-follow.js';",
+        "from './hero-cam2-tree-follow.js';\nimport { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree } from './hero-cam3-tree-center-zoom.js';"
+      );
+      changed = true;
+    }
+  }
+  const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
+  const newNav = `function applyNavCamera() {\n  // Cam-3: free zoom/orbit about current tree center even when parent open\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  const base = hierarchyRuntime.openParentId\n    ? baseDockForTree({ cameraId }, table)\n    : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
+  if (t.includes(oldNav)) {
+    t = t.replace(oldNav, newNav);
+    changed = true;
+  }
+  if (t.includes('if (hierarchyRuntime.openParentId) return;\n  const delta = Math.sign(event.deltaY)')) {
+    t = t.replace(
+      'if (hierarchyRuntime.openParentId) return;\n  const delta = Math.sign(event.deltaY)',
+      'const delta = Math.sign(event.deltaY)'
+    );
+    changed = true;
+  }
+  if (t.includes("if (!touchState || touchState.id !== event.pointerId) return;\n  if (hierarchyRuntime.openParentId) return;")) {
+    t = t.replace(
+      "if (!touchState || touchState.id !== event.pointerId) return;\n  if (hierarchyRuntime.openParentId) return;",
+      "if (!touchState || touchState.id !== event.pointerId) return;"
+    );
+    changed = true;
+  }
   return { t, changed };
 }
 
@@ -79,9 +109,9 @@ async function loadBase() {
     !t.includes('function cameras()');
   if (isEmergency) {
     const res = await fetch(MAIN_RAW);
-    if (!res.ok) throw new Error(`Failed to fetch main hero-flex: ${res.status}`);
+    if (!res.ok) throw new Error(`Failed to fetch hero-flex base: ${res.status}`);
     t = await res.text();
-    console.log('Cam-2 flex: restored base from main raw');
+    console.log('Cam-2/3 flex: restored base from pre-loader SHA');
   }
   return t;
 }
@@ -89,4 +119,4 @@ async function loadBase() {
 const t = await loadBase();
 const { t: next, changed } = applyPatches(t);
 writeFileSync(path, next);
-console.log(changed ? 'Cam-2 flex applied' : 'Cam-2 flex already applied');
+console.log(changed ? 'Cam-2/3 flex applied' : 'Cam-2/3 flex already applied');
