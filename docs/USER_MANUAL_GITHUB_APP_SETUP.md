@@ -1,7 +1,7 @@
 # TeamAi User Manual — GitHub App Connection (human-only steps)
 
 **Audience:** operators / founders creating the GitHub App and Edge secrets  
-**Authority:** Conn-1 matrix · Conn-2 webhook map · Conn-3 OAuth mint (planning)  
+**Authority:** Conn-1 matrix · Conn-2 webhook map · Conn-3 OAuth mint  
 **Canonical parent:** `docs/USER_MANUAL_DEPLOY_AND_SEATS.md`  
 **Status:** OPERATING GUIDE · **no 029 production-release claim**
 
@@ -12,16 +12,19 @@ Hero `SEAT_CONNECTION` / keyboard **C** is **normal-UI handoff only** — not a 
 | Item | Value |
 |------|--------|
 | **Supabase project ref** | `srpgzzretfyqdsfclnuo` |
+| **GitHub App** | [teamai-devtools](https://github.com/apps/teamai-devtools) |
+| **App slug** | `teamai-devtools` |
 | **Edge base** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1` |
 | **Webhook URL (Conn-2)** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-webhook` |
-| **OAuth callback (Conn-3, when deployed)** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-oauth-bind` |
+| **OAuth callback (Conn-3)** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-oauth-bind` |
 
 Use this ref in every `npx supabase … --project-ref` command for TeamAi Edge. Not a secret; safe in docs.
 
+Logo / user-preview description can be filled later on the App settings page — not required for Conn-2/3 runtime.
 
 ## 1. Create the GitHub App (outside TeamAi)
 
-1. GitHub → **Settings → Developer settings → GitHub Apps → New GitHub App**.
+1. GitHub → **Settings → Developer settings → GitHub Apps → New GitHub App** (or edit existing **teamai-devtools**).
 2. Permissions from `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md` / `public/github-app-permission-matrix.json`:
    - **Metadata** Read
    - **Contents** Read & write
@@ -33,7 +36,7 @@ Use this ref in every `npx supabase … --project-ref` command for TeamAi Edge. 
    - Administration, Secrets, org/enterprise, … → **No access**
 3. **Request user authorization (OAuth) during installation** → **On**
 4. **Expire user authorization tokens** → **On**
-5. **Webhook Active** → **Off** until a real HTTPS Edge URL exists (**do not invent a URL**)
+5. **Webhook Active** → **Off** until Edge webhook is deployed
 6. Install scope: **Only this account** until public launch
 7. Generate **PEM** once; store only in a trusted secret store (never TeamChat, Hero, browser Firestore, or git)
 
@@ -47,16 +50,22 @@ npx supabase secrets set GITHUB_WEBHOOK_SECRET='<from-GitHub-App-webhook-secret>
 # Existing required secrets (already in parent manual):
 # FIREBASE_SERVICE_ACCOUNT_JSON
 # TEAMAI_SEAT_SECRET_KEY
-# Optional platform fallbacks: OPENAI_API_KEY / ANTHROPIC_API_KEY
 
-# Conn-3+ installation tokens (when tool calls need them):
+# Conn-3 optional OAuth code exchange:
+# GITHUB_APP_CLIENT_ID / GITHUB_APP_CLIENT_SECRET
+# Conn-3+ installation tokens (tool calls):
 # GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY  — trusted store only
 ```
 
-## 3. Deploy webhook function (after Conn-2 on main)
+## 3. Deploy Edge functions
 
 ```bash
+# Conn-2 webhook
 npx supabase functions deploy teamai-github-webhook \
+  --project-ref srpgzzretfyqdsfclnuo --no-verify-jwt
+
+# Conn-3 bind mint
+npx supabase functions deploy teamai-github-oauth-bind \
   --project-ref srpgzzretfyqdsfclnuo --no-verify-jwt
 ```
 
@@ -74,7 +83,7 @@ npx supabase functions deploy teamai-github-webhook \
 | Webhook events | Platform | Edge → Firestore lookup (**Conn-2**) |
 | GitHub tools | Seat under policy | After equip + health + scopes |
 
-**Conn-2** looks up the map. **Conn-3** mints the first row after OAuth.
+**Conn-2** looks up the map. **Conn-3** mints the first row after install/OAuth.
 
 ## 5. Firestore paths
 
@@ -90,6 +99,7 @@ accounts/{uid}/githubInstallations/{installationId}   # client write false
 - [ ] Webhook **inactive** until deploy + real HTTPS URL
 - [ ] `GITHUB_WEBHOOK_SECRET` on Edge
 - [ ] `teamai-github-webhook` deployed
+- [ ] `teamai-github-oauth-bind` deployed
 - [ ] PEM never in chat / Hero / client
 - [ ] No 029 production-release claim from Connection alone
 

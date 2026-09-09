@@ -1,11 +1,11 @@
 # TEAM-EXPERIENCE-029 — GitHub OAuth mint of UID ↔ installation_id (Conn-3)
 
-**Status:** CONTRACT / PLANNING SKELETON (not implemented runtime)  
+**Status:** CONTRACT · Edge `teamai-github-oauth-bind` **implemented** (mint path); full UX handoff still normal-UI  
 **Not a Hero live bind.** **No 029 production-release claim.**
 
 ## Purpose
 
-After the user installs the TeamAi GitHub App and completes **user-to-server OAuth**, a **trusted Edge** path mints the first durable map:
+After the user installs the TeamAi GitHub App and completes install/OAuth, a **trusted Edge** path mints the first durable map:
 
 ```text
 User clicks Connect GitHub (normal UI — not 3D)
@@ -18,6 +18,15 @@ User clicks Connect GitHub (normal UI — not 3D)
 
 Conn-2 webhooks **only look up** this map. Conn-3 is the **only** allowed first-write of the index from product flows.
 
+## Live operator identity
+
+| Item | Value |
+|------|--------|
+| App | [teamai-devtools](https://github.com/apps/teamai-devtools) |
+| Supabase ref | `srpgzzretfyqdsfclnuo` |
+| Callback | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-oauth-bind` |
+| Webhook | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-webhook` |
+
 ## Ownership
 
 | Concern | Owner |
@@ -28,24 +37,34 @@ Conn-2 webhooks **only look up** this map. Conn-3 is the **only** allowed first-
 | Secrets (client_id / client_secret / PEM) | Edge env / trusted store — never browser |
 | Seat may use Connection | Equip + scope + health + tool policy (later) |
 
+## HTTP contract
+
+- `POST` only (+ `OPTIONS` CORS)
+- Missing/invalid Firebase Bearer → **401**
+- Missing `installationId` → **400**
+- Installation already bound to another UID → **409**
+- Success → **200** `{ ok, mapping: "bound", firebaseUid, installationId, … }`
+- Optional body `code` + env `GITHUB_APP_CLIENT_ID` / `GITHUB_APP_CLIENT_SECRET` → user-token exchange (does not replace Firebase UID authority)
+
 ## Non-goals
 
 - Hero keyboard **C** is not OAuth
 - Webhook payload must not mint UID
 - No Postgres domain column
-- No invented callback URL in docs before Edge is deployed (log real URL only in `USER_MANUAL_DEPLOY_AND_SEATS.md` after deploy)
+- Logo / user-preview polish is optional operator work, not a product gate
 
-## Implementation checklist (when coding)
+## Implementation checklist
 
-1. [ ] Edge `teamai-github-oauth-bind`: verify Firebase ID token → extract `installation_id` + OAuth code exchange
-2. [ ] Server-only write of index + UID-rooted record via `bindGitHubInstallation`
-3. [ ] Tests: no client write path; no mint from webhook skill
-4. [ ] Skill `ws.github.oauth-uid-bind`
-5. [ ] User manual §12 updated with real callback URL after deploy only
+1. [x] Edge `teamai-github-oauth-bind`: verify Firebase ID token + installationId
+2. [x] Server-only write of index + UID-rooted record
+3. [x] Tests: contract suite `tests/github-oauth-uid-bind.test.mjs`
+4. [x] Skill `ws.github.oauth-uid-bind`
+5. [ ] Deploy Edge + set App callback to real URL (operator)
+6. [ ] Normal-UI “Connect GitHub” handoff screen (presentation slice)
 
 ## See also
 
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md` (Conn-2)
 - `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md` (Conn-1)
-- `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` §12
+- `docs/USER_MANUAL_GITHUB_APP_SETUP.md`
 - `src/backend/github-installation.ts`
