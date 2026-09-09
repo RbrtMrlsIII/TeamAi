@@ -1,5 +1,5 @@
 /**
- * Idempotent Cam-2 + Cam-3 flex wire.
+ * Idempotent Cam-2 + Cam-3 + Cam-4 flex wire.
  * If emergency loader / short file, restore from pre-loader SHA then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -67,7 +67,6 @@ function applyPatches(t) {
       changed = true;
     }
   }
-  // Cam-3: tree-center free zoom while parent open
   if (!t.includes("from './hero-cam3-tree-center-zoom.js'")) {
     if (t.includes("from './hero-cam2-tree-follow.js';")) {
       t = t.replace(
@@ -97,6 +96,40 @@ function applyPatches(t) {
     );
     changed = true;
   }
+  if (!t.includes("from './hero-cam4-edge-swipe.js'")) {
+    if (t.includes("from './hero-cam3-tree-center-zoom.js';")) {
+      t = t.replace(
+        "from './hero-cam3-tree-center-zoom.js';",
+        "from './hero-cam3-tree-center-zoom.js';\nimport { edgePressure, edgeDriftDelta, inverseSwipeDelta, clampPitch, pointerNorm } from './hero-cam4-edge-swipe.js';"
+      );
+      changed = true;
+    }
+  }
+  if (!t.includes('edgePointerNorm') && t.includes('let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;')) {
+    t = t.replace(
+      'let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;',
+      'let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;\nlet edgePointerNorm = null; // Cam-4'
+    );
+    changed = true;
+  }
+  if (t.includes('navOrbitYaw += dx * Math.PI;') && !t.includes('inverseSwipeDelta(dx')) {
+    t = t.replace(
+      `  const dx = (event.clientX - touchState.x) / Math.max(1, canvas.clientWidth);\n  const dy = (event.clientY - touchState.y) / Math.max(1, canvas.clientHeight);\n  touchState.x = event.clientX; touchState.y = event.clientY;\n  navOrbitYaw += dx * Math.PI;\n  navOrbitPitch = clamp(navOrbitPitch + dy * 1.2, -0.45, 0.55);`,
+      `  const rect = canvas.getBoundingClientRect();\n  edgePointerNorm = pointerNorm(event.clientX - rect.left, event.clientY - rect.top, rect.width, rect.height);\n  const dx = (event.clientX - touchState.x) / Math.max(1, canvas.clientWidth);\n  const dy = (event.clientY - touchState.y) / Math.max(1, canvas.clientHeight);\n  touchState.x = event.clientX; touchState.y = event.clientY;\n  const inv = inverseSwipeDelta(dx, dy);\n  navOrbitYaw += inv.dYaw;\n  navOrbitPitch = clampPitch(navOrbitPitch + inv.dPitch);`
+    );
+    changed = true;
+  }
+  if (!t.includes('edgeDriftDelta(press') && t.includes('function frame')) {
+    const m = t.match(/function frame\s*\([^)]*\)\s*\{/);
+    if (m) {
+      const insert = t.indexOf(m[0]) + m[0].length;
+      t =
+        t.slice(0, insert) +
+        `\n  // Cam-4 edge-drag continuous orbit\n  if (edgePointerNorm && !reducedMotion && typeof shouldApplyTreeNav === 'function' && shouldApplyTreeNav(hierarchyRuntime)) {\n    const press = edgePressure(edgePointerNorm.nx, edgePointerNorm.ny);\n    if (press.px || press.py) {\n      const dt = Math.min(0.05, Math.max(0, ((typeof frame._last === 'number' ? now - frame._last : 16) / 1000)));\n      frame._last = now;\n      const drift = edgeDriftDelta(press, dt, { reducedMotion });\n      navOrbitYaw += drift.dYaw;\n      navOrbitPitch = clampPitch(navOrbitPitch + drift.dPitch);\n      applyNavCamera();\n    } else {\n      frame._last = now;\n    }\n  } else if (typeof now === 'number') {\n    frame._last = now;\n  }\n` +
+        t.slice(insert);
+      changed = true;
+    }
+  }
   return { t, changed };
 }
 
@@ -111,7 +144,7 @@ async function loadBase() {
     const res = await fetch(MAIN_RAW);
     if (!res.ok) throw new Error(`Failed to fetch hero-flex base: ${res.status}`);
     t = await res.text();
-    console.log('Cam-2/3 flex: restored base from pre-loader SHA');
+    console.log('Cam flex: restored base from pre-loader SHA');
   }
   return t;
 }
@@ -119,4 +152,4 @@ async function loadBase() {
 const t = await loadBase();
 const { t: next, changed } = applyPatches(t);
 writeFileSync(path, next);
-console.log(changed ? 'Cam-2/3 flex applied' : 'Cam-2/3 flex already applied');
+console.log(changed ? 'Cam-2/3/4 flex applied' : 'Cam-2/3/4 flex already applied');
