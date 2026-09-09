@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-## Completed ladder
+## Completed ladder (structure + skills)
 
 | Slice | Topic | Status |
 |-------|--------|--------|
@@ -22,7 +22,66 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | N.3 | entitlement arch + turn/secrets/verification skills | **Merged** (#166) |
 | K | Issue hygiene + Grok Skills alignment | **Merged** (#167) |
 | L | #96–#98 satisfied-by map | **Merged** (#168) |
-| N.4 | `ws.authority.map`, `ws.evidence.handover` | **In PR** |
+| N.4 | `ws.authority.map`, `ws.evidence.handover` | **Merged** (#169) |
+| N.5 | Remaining SEAT_SKILLS (discuss, fields, leader) | **Merged** (#170) |
+
+## Product rule: depth-first hierarchy animation (plan of record)
+
+We build **one hierarchy node at a time**, not a thin shell with empty faces forever.
+
+```text
+Open parent (validated motion + camera + theme + a11y)
+  → open first child branch (mechanical)
+  → camera docks / zooms until that node's full contents are readable
+  → if contents are dense (login, signup, long forms): fill the view
+  → hand off to normal UI when 3D cannot host the whole form
+  → only then the next sibling child
+```
+
+### Camera-fill rule (login / signup / full-area content)
+
+When a face or plate **covers the whole working area** (e.g. auth login/signup, wide config):
+
+1. Semantic camera **docks** to that content’s anchor (not free orbit while INSPECT).
+2. Zoom / framing continues until **the whole contents can be seen** (or the maximum safe dock), within §9 `NAV_ZOOM_*` and reduced-motion clamps.
+3. FOV may use `FOV_BOOST_NARROW` on small viewports so content is not cropped without reason.
+4. Prefer **one** Hero canvas; dense forms may complete via **normal-UI handoff** after the mechanical reveal — still presentation, not entitlement.
+
+### Shared roots every node must respect
+
+| Concern | Home |
+|---------|------|
+| Durations / reduced snap | Baseline §9 + motion / transition skills |
+| Theme | `document.documentElement` only |
+| FOV / density | responsive skill + `FOV_BOOST_NARROW` |
+| One open parent | Hierarchy runtime R6 |
+| No second animation framework | I.1 / I.2 matrix |
+
+## Hierarchy animation ladder (execute in order)
+
+| Slice | Node | Desired output | Pass gate |
+|-------|------|----------------|-----------|
+| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | Motion, dock, reduced snap, theme, a11y; no entitlement claim |
+| **P2** | `SEAT_BEHAVIOR` | Same treatment for Do/Don’t face | Don’t start until P1 pass |
+| **P3** | `SEAT_TOOLKIT` (optional) | Optional equip face; still **not required** setup | Optional skip if product defers |
+| **P4…** | Capabilities → Authorization → Workspace scope → Task/evidence | One face per slice | Same gates |
+| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
+| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
+| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
+| **M** | Background assets | One canvas only | No paid assets |
+| **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
+
+## Optional skills / toolkits (product rule)
+
+- SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
+- Users may assign skills outside TeamAi; presentation must not imply entitlement.
+
+## Camera (baseline already on main)
+
+- Free orbit / zoom: **NAVIGATE** only (R4).
+- Inspect → semantic dock (`SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …) wins.
+- Named §9 zoom bounds; reduced-motion clamps remain contract.
+- **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 
 ## Naming
 
@@ -35,30 +94,6 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 
-## Optional skills / toolkits (product rule)
-
-- SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
-- Users may assign skills outside TeamAi; presentation must not imply entitlement.
-
-## Camera (Slice C landed)
-
-- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
-- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
-- Named §9 zoom bounds; reduced-motion clamps remain contract.
-
-## Next (one slice per session)
-
-| Slice | Topic |
-|-------|--------|
-| **N.5** | Remaining SEAT_SKILLS bodies (`seat.planning.discuss`, field seats, `seat.coord.leader`) |
-| **F** | Health leaf domain read-model (contract-gated) |
-| **M** | Optional single-canvas background assets |
-| **Owner** | Visual endorsement when environment + outer UI are fair to judge (#89 open) |
-
-## Owner visual note
-
-Hero hierarchy is visible on GitHub Pages validation surface, but outer product UI and rich machinery animation remain incomplete. **Do not** treat owner endorsement as done until a fair review is possible. Presentation ≠ 029-released.
-
 ## Product rules that stay true
 
 - Theme: `document.documentElement` only; Isolation preserved.
@@ -66,11 +101,13 @@ Hero hierarchy is visible on GitHub Pages validation surface, but outer product 
 - Presentation never invents entitlement, scheduler, or durable auth.
 - Green CI is necessary, not Endorsement.
 - CAPABILITY ≠ AUTHORIZATION ≠ WORKSPACE ≠ FIRESTORE.
+- **no 029-released claim**
 
 ## Related
 
-- `skills/workspace/ws.authority.map/SKILL.md`  
-- `skills/workspace/ws.evidence.handover/SKILL.md`  
-- `docs/GROK_SKILLS_ALIGNMENT.md`  
-- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
+- `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
+- `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`  
+- `docs/TEAMAI_3D_HERO_MOTION_TRANSITION_TOKEN_ALIGNMENT.md`  
+- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
+- `docs/GROK_SKILLS_ALIGNMENT.md`  
