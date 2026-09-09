@@ -1,6 +1,6 @@
 /**
  * Idempotent Cam-2 + Cam-3 + Cam-4 flex wire.
- * If emergency loader / short file, restore from pre-loader SHA then patch.
+ * Prefer public/_flex_src parts (static restore); else pre-loader SHA fetch; then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -77,7 +77,7 @@ function applyPatches(t) {
     }
   }
   const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
-  const newNav = `function applyNavCamera() {\n  // Cam-3: free zoom/orbit about current tree center even when parent open\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  const base = hierarchyRuntime.openParentId\n    ? baseDockForTree({ cameraId }, table)\n    : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
+  const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  const base = hierarchyRuntime.openParentId\n    ? baseDockForTree({ cameraId }, table)\n    : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
   if (t.includes(oldNav)) {
     t = t.replace(oldNav, newNav);
     changed = true;
@@ -134,6 +134,19 @@ function applyPatches(t) {
 }
 
 async function loadBase() {
+  const partsDir = join(root, 'public', '_flex_src');
+  if (existsSync(join(partsDir, 'part00.txt'))) {
+    let assembled = '';
+    for (let i = 0; i < 32; i++) {
+      const p = join(partsDir, `part${String(i).padStart(2, '0')}.txt`);
+      if (!existsSync(p)) break;
+      assembled += readFileSync(p, 'utf8');
+    }
+    if (assembled.includes('function cameras()')) {
+      console.log('Cam flex: assembled from public/_flex_src parts');
+      return assembled;
+    }
+  }
   let t = existsSync(path) ? readFileSync(path, 'utf8') : '';
   const isEmergency =
     t.includes('emergency loader') ||
