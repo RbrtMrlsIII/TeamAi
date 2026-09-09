@@ -30,3 +30,13 @@ export function taskPath(uid: string, workplaceId: string, projectId: string, ta
 export function eventPath(uid: string, workplaceId: string, projectId: string, eventId: string): string {
   return `${projectPath(uid, workplaceId, projectId)}/events/${requireNonEmpty(eventId, 'eventId')}`;
 }
+
+/** Server-only: installation_id → Firebase UID. Not an ownership root. */
+export function githubInstallationIndexPath(installationId: string): string {
+  return `githubInstallationIndex/${requireNonEmpty(installationId, 'installationId')}`;
+}
+
+/** UID-rooted GitHub App installation record. */
+export function githubInstallationPath(firebaseUid: string, installationId: string): string {
+  return `${accountPath(firebaseUid)}/githubInstallations/${requireNonEmpty(installationId, 'installationId')}`;
+}
