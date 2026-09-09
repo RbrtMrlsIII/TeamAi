@@ -19,7 +19,7 @@ Live Hero still shows **normal-web DOM** beside the machine (seat/config stack, 
 
 ## 3. Execution order (slices)
 
-1. **Hide-or-gate DOM** behind `data-hero-machine-ui=1` when hierarchy open (soft)
+1. **Hide-or-gate DOM** behind `data-hero-machine-ui=1` when hierarchy open (soft) — **done** (`applyMachineUiChrome`, #198)
 2. **Map each DOM action** to existing hierarchy keyboard/API (already largely wired)
 3. **Remove duplicate labels** once faces are readable (depth FOV + plate scale)
 4. **Retire lock-only camera buttons** that ignore open tree
