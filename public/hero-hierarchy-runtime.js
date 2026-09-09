@@ -1,22 +1,22 @@
 /**
  * Issue #144 — Seat shell hierarchy v1 / Hierarchy Runtime (presentation only).
  * Number home remains docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md §9.
+ * P1: SEAT_CONNECTION branch expand + configure handoff helpers.
  */
 
-/** Living numbers from baseline §9 — amend §9 + code together if learned. */
 export const SEAT_REST_Y = 0.62;
 export const SEAT_OPEN_LIFT = 0.28;
 export const CHILD_STEP_Y = 0.22;
 export const CHILD_STEP_R = -0.14;
 export const OPEN_DURATION_MS = 520;
 export const CLOSE_DURATION_MS = 420;
+/** P1: SEAT_CONNECTION branch expand duration — §9 home. */
+export const CONNECTION_BRANCH_MS = 380;
 export const HIERARCHY_REDUCED_SNAP = true;
 export const CAMERA_LERP_MS = 700;
-/** Ring radius multipliers off profile().workspace — §9 home. */
 export const RING_R0_ZIP_SCALE = 0.22;
 export const RING_R1_SCALE = 1.18;
 export const RING_R2_SCALE = 1.42;
-/** NAVIGATE free-orbit zoom bounds — §9 home. */
 export const NAV_ZOOM_MIN = 0.72;
 export const NAV_ZOOM_MAX = 1.55;
 export const NAV_ZOOM_REDUCED_MIN = 0.9;
@@ -39,34 +39,6 @@ export const HIERARCHY_PART = {
   WORKSPACE_CONFIG_BRANCH: 'WORKSPACE_CONFIG_BRANCH',
   WORKSPACE_ZIPSKILLS: 'WORKSPACE_ZIPSKILLS',
 };
-
-export const BACKEND_DISPLAY_V1 = Object.freeze([
-  { id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' },
-  { id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' },
-  { id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' },
-]);
-
-/** Optional seat-scoped toolkit fixture — not required; not entitlement. */
-export const SEAT_TOOLKIT_V1 = Object.freeze([
-  { id: 'SEAT_TOOLKIT#bundle-core', label: 'Core skill bundle', optional: true },
-  { id: 'SEAT_TOOLKIT#bundle-domain', label: 'Domain skill bundle', optional: true },
-  { id: 'SEAT_TOOLKIT#external', label: 'External assign slot', optional: true },
-]);
-
-export const SETUP_CONFIG_V1 = Object.freeze([
-  { id: 'WORKSPACE_SETUP_ENGINE#core', label: 'Setup engine', kind: 'engine' },
-  { id: 'WORKSPACE_AUTH_MECHANISM#login', label: 'Login mechanism', kind: 'auth' },
-  { id: 'WORKSPACE_AUTH_MECHANISM#register', label: 'Register mechanism', kind: 'auth' },
-  { id: 'WORKSPACE_CONFIG_BRANCH#primary', label: 'Config branch', kind: 'branch' },
-]);
-
-/** Optional workspace-tree ZipSkills fixture — not required; not authority (LAW 109). */
-export const WORKSPACE_ZIPSKILLS_V1 = Object.freeze([
-  { id: 'WORKSPACE_ZIPSKILLS#team-lead', label: 'Team-lead governance', optional: true, mode: 'team-lead' },
-  { id: 'WORKSPACE_ZIPSKILLS#shared', label: 'Shared team continuity', optional: true, mode: 'shared' },
-  { id: 'WORKSPACE_ZIPSKILLS#branch', label: 'Branch-before-main', optional: true, mode: 'branch' },
-  { id: 'WORKSPACE_ZIPSKILLS#external', label: 'External assign slot', optional: true, mode: 'external' },
-]);
 
 export const HIERARCHY_PHASE = {
   REST: 'rest',
@@ -97,6 +69,32 @@ export const SEAT_SHELL_V1_CHILDREN = [
   HIERARCHY_PART.SEAT_TASK_EVIDENCE,
 ];
 
+export const BACKEND_DISPLAY_V1 = Object.freeze([
+  { id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' },
+  { id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' },
+  { id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' },
+]);
+
+export const SEAT_TOOLKIT_V1 = Object.freeze([
+  { id: 'SEAT_TOOLKIT#bundle-core', label: 'Core skill bundle', optional: true },
+  { id: 'SEAT_TOOLKIT#bundle-domain', label: 'Domain skill bundle', optional: true },
+  { id: 'SEAT_TOOLKIT#external', label: 'External assign slot', optional: true },
+]);
+
+export const SETUP_CONFIG_V1 = Object.freeze([
+  { id: 'WORKSPACE_SETUP_ENGINE#core', label: 'Setup engine', kind: 'engine' },
+  { id: 'WORKSPACE_AUTH_MECHANISM#login', label: 'Login mechanism', kind: 'auth' },
+  { id: 'WORKSPACE_AUTH_MECHANISM#register', label: 'Register mechanism', kind: 'auth' },
+  { id: 'WORKSPACE_CONFIG_BRANCH#prefs', label: 'Config branch', kind: 'config' },
+]);
+
+export const WORKSPACE_ZIPSKILLS_V1 = Object.freeze([
+  { id: 'WORKSPACE_ZIPSKILLS#team-lead', label: 'Team-lead governance', optional: true },
+  { id: 'WORKSPACE_ZIPSKILLS#shared', label: 'Shared team continuity', optional: true },
+  { id: 'WORKSPACE_ZIPSKILLS#branch-before-main', label: 'Branch-before-main', optional: true },
+  { id: 'WORKSPACE_ZIPSKILLS#external', label: 'External assign slot', optional: true },
+]);
+
 export function seatShellParentId(index) {
   return HIERARCHY_PART.SEAT_SHELL + '#' + index;
 }
@@ -114,6 +112,8 @@ export function createHierarchyRuntime(seed = {}) {
     cameraId: seed.cameraId ?? 'HERO_WIDE',
     inputMode: seed.inputMode ?? HIERARCHY_INPUT.NAVIGATE,
     healthStatus: seed.healthStatus ?? HEALTH_STATUS.UNKNOWN,
+    connectionBranchAmount: seed.connectionBranchAmount ?? 0,
+    connectionBranchStartMs: seed.connectionBranchStartMs ?? 0,
     presentationOnly: true,
     durable: false,
   };
@@ -132,6 +132,8 @@ export function closeHierarchyParent(state, opts = {}) {
   const now = opts.nowMs ?? 0;
   state.focusedLeafId = null;
   state.focusedChildId = null;
+  state.connectionBranchAmount = 0;
+  state.connectionBranchStartMs = now;
   state.phaseStartMs = now;
   if (snap) {
     state.phase = HIERARCHY_PHASE.REST;
@@ -181,6 +183,52 @@ export function tickHierarchyPose(state, nowMs, reducedMotion = false) {
   return state;
 }
 
+export function tickConnectionBranch(state, nowMs, reducedMotion = false) {
+  const now = nowMs ?? 0;
+  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_CONNECTION) {
+    if ((state.connectionBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_CONNECTION) {
+      state.connectionBranchAmount = 0;
+    }
+    return state;
+  }
+  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+    state.connectionBranchAmount = 1;
+    return state;
+  }
+  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
+  if (!parentReady) {
+    state.connectionBranchAmount = 0;
+    return state;
+  }
+  const start = state.connectionBranchStartMs ?? now;
+  const progress = Math.min((now - start) / CONNECTION_BRANCH_MS, 1);
+  const x = Math.max(0, Math.min(1, progress));
+  state.connectionBranchAmount = x * x * (3 - 2 * x);
+  return state;
+}
+
+export function getConnectionBranchAmount(state) {
+  return Math.max(0, Math.min(1, Number(state?.connectionBranchAmount) || 0));
+}
+
+export function connectionFaceAccessibleName(branchAmount = 1) {
+  const open = (Number(branchAmount) || 0) >= 0.85 ? 'expanded' : 'opening';
+  return `Seat connection face (${open}). Presentation only; not live bind. Press C to configure seat in normal UI.`;
+}
+
+export function requestConnectionConfigureHandoff(detail = {}) {
+  const intent = {
+    source: 'p1-seat-connection',
+    targetSection: detail.targetSection || 'connection',
+    normalUi: true,
+    presentationOnly: true,
+  };
+  if (typeof window !== 'undefined' && window.dispatchEvent) {
+    window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-configure-request', { detail: intent }));
+  }
+  return intent;
+}
+
 export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
   const snap = Boolean(opts.snap);
@@ -190,8 +238,16 @@ export function openSeatShellParent(state, seatIndex, opts = {}) {
   state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
   state.focusedLeafId = null;
   state.phaseStartMs = now;
-  if (snap) { state.phase = HIERARCHY_PHASE.OPEN; state.openAmount = 1; }
-  else { state.phase = HIERARCHY_PHASE.OPENING; state.openAmount = 0; }
+  state.connectionBranchStartMs = now;
+  if (snap) {
+    state.phase = HIERARCHY_PHASE.OPEN;
+    state.openAmount = 1;
+    state.connectionBranchAmount = 1;
+  } else {
+    state.phase = HIERARCHY_PHASE.OPENING;
+    state.openAmount = 0;
+    state.connectionBranchAmount = 0;
+  }
   state.inputMode = HIERARCHY_INPUT.INSPECT;
   return state;
 }
@@ -214,11 +270,19 @@ export function childLocalPosition(seatAngle, seatRadius, index, openAmount = 1)
   return { x: Math.cos(seatAngle) * r, y: off.dy, z: Math.sin(seatAngle) * r, scale: off.scale, childId: SEAT_SHELL_V1_CHILDREN[index] || null };
 }
 
-export function focusChild(state, childId) {
+export function focusChild(state, childId, opts = {}) {
   if (!state.openParentId) return state;
   if (!SEAT_SHELL_V1_CHILDREN.includes(childId)) return state;
   state.focusedChildId = childId;
   state.focusedLeafId = null;
+  const now = opts.nowMs ?? 0;
+  const snap = Boolean(opts.snap);
+  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
+    state.connectionBranchStartMs = now;
+    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
+  } else {
+    state.connectionBranchAmount = 0;
+  }
   return state;
 }
 
@@ -253,7 +317,6 @@ export function getHierarchySnapshot(state) {
   return Object.assign({}, state);
 }
 
-/** R0–R2 ring focus (presentation only — not auth / not seat hierarchy). */
 export function createRingFocusState() {
   return { ring: null, index: 0 };
 }
