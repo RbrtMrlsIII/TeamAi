@@ -1,6 +1,6 @@
 /**
  * Idempotent Cam-2 + Cam-3 + Cam-4 flex wire.
- * Prefer public/_flex_src parts (static restore); else pre-loader SHA fetch; then patch.
+ * Prefer public/_flex_src parts (.txt or .b64); else pre-loader SHA fetch; then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -125,7 +125,7 @@ function applyPatches(t) {
       const insert = t.indexOf(m[0]) + m[0].length;
       t =
         t.slice(0, insert) +
-        `\n  // Cam-4 edge-drag continuous orbit\n  if (edgePointerNorm && !reducedMotion && typeof shouldApplyTreeNav === 'function' && shouldApplyTreeNav(hierarchyRuntime)) {\n    const press = edgePressure(edgePointerNorm.nx, edgePointerNorm.ny);\n    if (press.px || press.py) {\n      const dt = Math.min(0.05, Math.max(0, ((typeof frame._last === 'number' ? now - frame._last : 16) / 1000)));\n      frame._last = now;\n      const drift = edgeDriftDelta(press, dt, { reducedMotion });\n      navOrbitYaw += drift.dYaw;\n      navOrbitPitch = clampPitch(navOrbitPitch + drift.dPitch);\n      applyNavCamera();\n    } else {\n      frame._last = now;\n    }\n  } else if (typeof now === 'number') {\n    frame._last = now;\n  }\n` +
+        `\n  if (edgePointerNorm && !reducedMotion && typeof shouldApplyTreeNav === 'function' && shouldApplyTreeNav(hierarchyRuntime)) {\n    const press = edgePressure(edgePointerNorm.nx, edgePointerNorm.ny);\n    if (press.px || press.py) {\n      const dt = Math.min(0.05, Math.max(0, ((typeof frame._last === 'number' ? now - frame._last : 16) / 1000)));\n      frame._last = now;\n      const drift = edgeDriftDelta(press, dt, { reducedMotion });\n      navOrbitYaw += drift.dYaw;\n      navOrbitPitch = clampPitch(navOrbitPitch + drift.dPitch);\n      applyNavCamera();\n    } else {\n      frame._last = now;\n    }\n  } else if (typeof now === 'number') {\n    frame._last = now;\n  }\n` +
         t.slice(insert);
       changed = true;
     }
@@ -135,12 +135,15 @@ function applyPatches(t) {
 
 async function loadBase() {
   const partsDir = join(root, 'public', '_flex_src');
-  if (existsSync(join(partsDir, 'part00.txt'))) {
+  if (existsSync(join(partsDir, 'part00.txt')) || existsSync(join(partsDir, 'part00.b64'))) {
     let assembled = '';
     for (let i = 0; i < 32; i++) {
-      const p = join(partsDir, `part${String(i).padStart(2, '0')}.txt`);
-      if (!existsSync(p)) break;
-      assembled += readFileSync(p, 'utf8');
+      const id = String(i).padStart(2, '0');
+      const pTxt = join(partsDir, `part${id}.txt`);
+      const pB64 = join(partsDir, `part${id}.b64`);
+      if (existsSync(pTxt)) assembled += readFileSync(pTxt, 'utf8');
+      else if (existsSync(pB64)) assembled += Buffer.from(readFileSync(pB64, 'utf8'), 'base64').toString('utf8');
+      else break;
     }
     if (assembled.includes('function cameras()')) {
       console.log('Cam flex: assembled from public/_flex_src parts');
