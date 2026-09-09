@@ -1,5 +1,5 @@
 /**
- * Idempotent Cam-2+3+4 + depth-readable + plate-scale flex wire.
+ * Idempotent Cam-2+3+4 + depth + plate-scale + DOM soft-hide flex wire.
  * Prefer public/_flex_src parts; else pre-loader SHA; then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -93,6 +93,14 @@ function applyPatches(t) {
   }
   if (t.includes('const s = loc.scale * scale * (0.55 + 0.45 * amt);') && !t.includes('facePlateScaleForChild(hierarchyRuntime, childId)')) {
     t = t.replace('const s = loc.scale * scale * (0.55 + 0.45 * amt);', 'const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);');
+    changed = true;
+  }
+  if (!t.includes("from './hero-dom-chrome-absorption.js'") && t.includes("from './hero-depth-readable-faces.js';")) {
+    t = t.replace("from './hero-depth-readable-faces.js';", "from './hero-depth-readable-faces.js';\nimport { applyMachineUiChrome } from './hero-dom-chrome-absorption.js';");
+    changed = true;
+  }
+  if (t.includes('if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();') && !t.includes('applyMachineUiChrome(shell')) {
+    t = t.replace('if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();', `if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();\n  applyMachineUiChrome(shell, { hierarchyOpen: Boolean(hierarchyRuntime.openParentId) });`);
     changed = true;
   }
   return { t, changed };
