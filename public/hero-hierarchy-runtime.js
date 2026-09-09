@@ -2,6 +2,7 @@
  * Issue #144 — Seat shell hierarchy v1 / Hierarchy Runtime (presentation only).
  * Number home remains docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md §9.
  * P1: SEAT_CONNECTION branch expand + configure handoff helpers.
+ * P2: SEAT_BEHAVIOR branch expand + Do/Don't face handoff helpers.
  */
 
 export const SEAT_REST_Y = 0.62;
@@ -12,6 +13,8 @@ export const OPEN_DURATION_MS = 520;
 export const CLOSE_DURATION_MS = 420;
 /** P1: SEAT_CONNECTION branch expand duration — §9 home. */
 export const CONNECTION_BRANCH_MS = 380;
+/** P2: SEAT_BEHAVIOR branch expand duration — §9 home. */
+export const BEHAVIOR_BRANCH_MS = 360;
 export const HIERARCHY_REDUCED_SNAP = true;
 export const CAMERA_LERP_MS = 700;
 export const RING_R0_ZIP_SCALE = 0.22;
@@ -114,6 +117,8 @@ export function createHierarchyRuntime(seed = {}) {
     healthStatus: seed.healthStatus ?? HEALTH_STATUS.UNKNOWN,
     connectionBranchAmount: seed.connectionBranchAmount ?? 0,
     connectionBranchStartMs: seed.connectionBranchStartMs ?? 0,
+    behaviorBranchAmount: seed.behaviorBranchAmount ?? 0,
+    behaviorBranchStartMs: seed.behaviorBranchStartMs ?? 0,
     presentationOnly: true,
     durable: false,
   };
@@ -134,6 +139,8 @@ export function closeHierarchyParent(state, opts = {}) {
   state.focusedChildId = null;
   state.connectionBranchAmount = 0;
   state.connectionBranchStartMs = now;
+  state.behaviorBranchAmount = 0;
+  state.behaviorBranchStartMs = now;
   state.phaseStartMs = now;
   if (snap) {
     state.phase = HIERARCHY_PHASE.REST;
@@ -229,6 +236,52 @@ export function requestConnectionConfigureHandoff(detail = {}) {
   return intent;
 }
 
+export function tickBehaviorBranch(state, nowMs, reducedMotion = false) {
+  const now = nowMs ?? 0;
+  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_BEHAVIOR) {
+    if ((state.behaviorBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_BEHAVIOR) {
+      state.behaviorBranchAmount = 0;
+    }
+    return state;
+  }
+  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+    state.behaviorBranchAmount = 1;
+    return state;
+  }
+  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
+  if (!parentReady) {
+    state.behaviorBranchAmount = 0;
+    return state;
+  }
+  const start = state.behaviorBranchStartMs ?? now;
+  const progress = Math.min((now - start) / BEHAVIOR_BRANCH_MS, 1);
+  const x = Math.max(0, Math.min(1, progress));
+  state.behaviorBranchAmount = x * x * (3 - 2 * x);
+  return state;
+}
+
+export function getBehaviorBranchAmount(state) {
+  return Math.max(0, Math.min(1, Number(state?.behaviorBranchAmount) || 0));
+}
+
+export function behaviorFaceAccessibleName(branchAmount = 1) {
+  const open = (Number(branchAmount) || 0) >= 0.85 ? 'expanded' : 'opening';
+  return "Seat behavior face (" + open + "). Do/Dont presentation only; not durable policy. Press B for normal UI.";
+}
+
+export function requestBehaviorConfigureHandoff(detail = {}) {
+  const intent = {
+    source: 'p2-seat-behavior',
+    targetSection: detail.targetSection || 'behavior',
+    normalUi: true,
+    presentationOnly: true,
+  };
+  if (typeof window !== 'undefined' && window.dispatchEvent) {
+    window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-configure-request', { detail: intent }));
+  }
+  return intent;
+}
+
 export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
   const snap = Boolean(opts.snap);
@@ -280,8 +333,14 @@ export function focusChild(state, childId, opts = {}) {
   if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
     state.connectionBranchStartMs = now;
     state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
+    state.behaviorBranchAmount = 0;
+  } else if (childId === HIERARCHY_PART.SEAT_BEHAVIOR) {
+    state.behaviorBranchStartMs = now;
+    state.behaviorBranchAmount = snap ? 1 : Math.min(state.behaviorBranchAmount || 0, 0.15);
+    state.connectionBranchAmount = 0;
   } else {
     state.connectionBranchAmount = 0;
+    state.behaviorBranchAmount = 0;
   }
   return state;
 }

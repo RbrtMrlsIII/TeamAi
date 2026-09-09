@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1** SEAT_CONNECTION runtime **merged** (`4bda6e7`). **P1.1** visual flex + keyboard C + a11y labels **on branch** `feat/029-p1.1-connection-flex` (this PR). Next after merge: **P2 SEAT_BEHAVIOR**.
+**P1** + **P1.1** SEAT_CONNECTION **merged** (#174). **P2** SEAT_BEHAVIOR runtime **this PR**. Next: **P2.1** visual flex (optional) → **P3 SEAT_TOOLKIT**.
 
 ## Completed ladder (structure + skills)
 
@@ -45,19 +45,19 @@ Open parent (validated motion + camera + theme + a11y)
 When a face or plate **covers the whole working area** (e.g. auth login/signup, wide config):
 
 1. Semantic camera **docks** to that content’s anchor (not free orbit while INSPECT).
-2. Zoom / framing continues until **the whole contents can be seen** (or the maximum safe dock), within §9 `NAV_ZOOM_*` and reduced-motion clamps.
-3. FOV may use `FOV_BOOST_NARROW` on small viewports so content is not cropped without reason.
-4. Prefer **one** Hero surface; overflow uses `APP_UI_HANDOFF` / normal UI for real forms (auth remains Firebase-owned).
-
-Login/signup **presentation** in the machine does not replace Firebase Auth or invent entitlement.
+2. Zoom / framing continues until **the whole contents can be seen** (or the maximum safe dock), within §9 clamps.
+3. On narrow viewports, FOV boost may assist readability.
+4. Reduced motion: snap dock; no continuous travel choreography.
+5. If the form cannot live honestly in WebGL → **APP_UI_HANDOFF** / normal UI (auth remains Firebase-owned).
 
 ## Hierarchy animation ladder (execute in order)
 
 | Slice | Node | Desired output | Pass gate |
 |-------|------|----------------|-----------|
 | **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | **Merged** runtime |
-| **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **This PR** |
-| **P2** | `SEAT_BEHAVIOR` | Same treatment for Do/Don’t face | Don’t start until P1 pass |
+| **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **Merged** (#174) |
+| **P2** | `SEAT_BEHAVIOR` | Branch open motion; Do/Dont face a11y + configure handoff | **This PR** (runtime) |
+| **P2.1** | BEHAVIOR visual flex | Frame tick + branchBoost + keyboard **B** | After P2 merge |
 | **P3** | `SEAT_TOOLKIT` (optional) | Optional equip face; still **not required** setup | Optional skip if product defers |
 | **P4…** | Capabilities → Authorization → Workspace scope → Task/evidence | One face per slice | Same gates |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
