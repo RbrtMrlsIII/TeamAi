@@ -1,39 +1,45 @@
 #!/usr/bin/env node
 /**
- * P1.1 — apply CONNECTION branch wiring to public/hero-flex.js
- * Idempotent. Presentation only.
+ * Idempotent P1.1 connection-flex patch for public/hero-flex.js
+ * Presentation only · no 029-released claim
  */
-import fs from "node:fs";
-import path from "node:path";
+import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
-const target = path.join(process.cwd(), "public/hero-flex.js");
-let text = fs.readFileSync(target, "utf8");
-
-if (text.includes("tickConnectionBranch(hierarchyRuntime")) {
-  console.log("P1.1 connection flex already applied");
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const path = join(root, 'public/hero-flex.js');
+let text = readFileSync(path, 'utf8');
+if (text.trim() === 'PLACEHOLDER' || text.length < 500) {
+  console.error('hero-flex.js is placeholder or truncated; restore from main first');
+  process.exit(1);
+}
+if (text.includes('tickConnectionBranch') && text.includes('branchBoost') && text.includes("event.key==='c'||event.key==='C'")) {
+  console.log('P1.1 already applied');
   process.exit(0);
 }
 
-const oldImp = `  tickHierarchyPose,
+const oldImport = `  openSeatShellParent as openSeatShellParentState,
+  tickHierarchyPose,
   seatAltitudeY,`;
-const newImp = `  tickHierarchyPose,
+const newImport = `  openSeatShellParent as openSeatShellParentState,
+  tickHierarchyPose,
   tickConnectionBranch,
   getConnectionBranchAmount,
   connectionFaceAccessibleName,
   requestConnectionConfigureHandoff,
   CONNECTION_BRANCH_MS,
   seatAltitudeY,`;
-if (!text.includes(oldImp)) throw new Error("import marker missing");
-text = text.replace(oldImp, newImp, 1);
+if (!text.includes(oldImport)) { console.error('import anchor missing'); process.exit(1); }
+text = text.replace(oldImport, newImport);
 
-const oldFrame =
-  "tickHierarchyPose(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();";
-const newFrame =
-  "tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();";
-if (!text.includes(oldFrame)) throw new Error("frame marker missing");
-text = text.replace(oldFrame, newFrame, 1);
+const oldFrame = 'tickHierarchyPose(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();';
+const newFrame = 'tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();';
+if (!text.includes(oldFrame)) { console.error('frame anchor missing'); process.exit(1); }
+text = text.replace(oldFrame, newFrame);
 
-const oldConn = `    const isConnection = childId === HIERARCHY_PART.SEAT_CONNECTION;
+const oldDraw = `    const focused = hierarchyRuntime.focusedChildId === childId;
+    const isConnection = childId === HIERARCHY_PART.SEAT_CONNECTION;
     const isToolkit = childId === HIERARCHY_PART.SEAT_TOOLKIT;
     const col = isConnection ? M.energy : (isToolkit ? M.glass : (focused ? seat.accent : M.trace));
     const emit = focused || isConnection ? 0.14 * amt : (isToolkit && focused ? 0.1 * amt : 0.03 * amt);
@@ -43,39 +49,39 @@ const oldConn = `    const isConnection = childId === HIERARCHY_PART.SEAT_CONNEC
       drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);
     }`;
 
-const newConn = `    const isConnection = childId === HIERARCHY_PART.SEAT_CONNECTION;
+const newDraw = `    const focused = hierarchyRuntime.focusedChildId === childId;
+    const isConnection = childId === HIERARCHY_PART.SEAT_CONNECTION;
     const isToolkit = childId === HIERARCHY_PART.SEAT_TOOLKIT;
     const branch = isConnection ? getConnectionBranchAmount(hierarchyRuntime) : 0;
-    const branchBoost = 1 + 0.35 * branch;
+    const branchBoost = 1 + 0.28 * branch;
     const col = isConnection ? M.energy : (isToolkit ? M.glass : (focused ? seat.accent : M.trace));
-    const emit = focused || isConnection ? (0.14 + 0.16 * branch) * amt : (isToolkit && focused ? 0.1 * amt : 0.03 * amt);
-    draw(CUBE, mul(mul(T(cx, cy, cz), RY(seat.a + Math.PI / 2)), S(0.55 * s * branchBoost, 0.08 * s * (1 + 0.2 * branch), 0.38 * s * branchBoost)), col, { rough: 0.35, spec: [0.8, 0.82, 0.78], emit, alpha: 0.35 + 0.55 * amt });
+    const emit = focused || isConnection ? 0.14 * amt * (1 + 0.55 * branch) : (isToolkit && focused ? 0.1 * amt : 0.03 * amt);
+    const sx = 0.55 * s * (isConnection ? branchBoost : 1);
+    const sy = 0.08 * s * (isConnection ? (1 + 0.35 * branch) : 1);
+    const sz = 0.38 * s * (isConnection ? branchBoost : 1);
+    draw(CUBE, mul(mul(T(cx, cy, cz), RY(seat.a + Math.PI / 2)), S(sx, sy, sz)), col, { rough: 0.35, spec: [0.8, 0.82, 0.78], emit, alpha: 0.35 + 0.55 * amt });
     if (isConnection) {
-      const ts = 0.22 * s * (1 + 0.45 * branch);
-      draw(TORUS, mul(T(cx, cy + 0.06 * s, cz), S(ts, 1, ts)), M.energy, { rough: 0.2, emit: (0.2 + 0.22 * branch) * amt, alpha: 0.5 + 0.4 * amt });
-      if (branch > 0.15) {
-        draw(TORUS, mul(T(cx, cy + 0.1 * s, cz), S(ts * 1.25, 1, ts * 1.25)), M.energy, { rough: 0.18, emit: 0.12 * branch * amt, alpha: 0.25 + 0.35 * branch });
-      }
+      const torusScale = 0.22 * s * branchBoost;
+      draw(TORUS, mul(T(cx, cy + 0.06 * s * (1 + 0.2 * branch), cz), S(torusScale, 1, torusScale)), M.energy, { rough: 0.2, emit: 0.2 * amt * (1 + 0.7 * branch), alpha: 0.5 + 0.4 * amt });
       drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);
     }`;
+if (!text.includes(oldDraw)) { console.error('draw anchor missing'); process.exit(1); }
+text = text.replace(oldDraw, newDraw);
 
-if (!text.includes(oldConn)) throw new Error("connection draw marker missing");
-text = text.replace(oldConn, newConn, 1);
+const oldLabels = "if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){seatText=healthLeafAccessibleName(hierarchyRuntime.healthStatus)}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TOOLKIT){seatText=toolkitChildAccessibleName()}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId){seatText=`${seat.label} · ${hierarchyRuntime.focusedChildId}`}";
+const newLabels = "if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){seatText=healthLeafAccessibleName(hierarchyRuntime.healthStatus)}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION){seatText=connectionFaceAccessibleName(getConnectionBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TOOLKIT){seatText=toolkitChildAccessibleName()}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId){seatText=`${seat.label} · ${hierarchyRuntime.focusedChildId}`}";
+if (!text.includes(oldLabels)) { console.error('labels anchor missing'); process.exit(1); }
+text = text.replace(oldLabels, newLabels);
 
-const marker =
-  "if((event.key==='ArrowRight'||event.key==='ArrowLeft')&&hierarchyRuntime.openParentId){";
-const cHandler =
-  "if((event.key==='c'||event.key==='C')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION){requestConnectionConfigureHandoff({seatIndex:hierarchyRuntime.selectedSeatIndex});event.preventDefault()}";
-if (!text.includes("requestConnectionConfigureHandoff({seatIndex")) {
-  if (!text.includes(marker)) throw new Error("keydown marker missing");
-  text = text.replace(marker, cHandler + marker, 1);
-}
+const oldKeys = "if((event.key==='ArrowRight'||event.key==='ArrowLeft')&&hierarchyRuntime.openParentId){const list=SEAT_SHELL_V1_CHILDREN;const cur=Math.max(0,list.indexOf(hierarchyRuntime.focusedChildId));const next=event.key==='ArrowRight'?(cur+1)%list.length:(cur-1+list.length)%list.length;focusHierarchyChild(hierarchyRuntime,list[next]);event.preventDefault()}updateLabels()});";
+const newKeys = "if((event.key==='ArrowRight'||event.key==='ArrowLeft')&&hierarchyRuntime.openParentId){const list=SEAT_SHELL_V1_CHILDREN;const cur=Math.max(0,list.indexOf(hierarchyRuntime.focusedChildId));const next=event.key==='ArrowRight'?(cur+1)%list.length:(cur-1+list.length)%list.length;focusHierarchyChild(hierarchyRuntime,list[next],{nowMs:performance.now(),snap:HIERARCHY_REDUCED_SNAP&&reducedMotion});event.preventDefault()}if((event.key==='c'||event.key==='C')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION){requestConnectionConfigureHandoff({targetSection:'connection'});event.preventDefault()}updateLabels()});";
+if (!text.includes(oldKeys)) { console.error('keydown anchor missing'); process.exit(1); }
+text = text.replace(oldKeys, newKeys);
 
-const oldApi =
-  "getNavZoom:()=>navZoom,resetNav:()=>{navOrbitYaw=0;navOrbitPitch=0;navZoom=1;applyNavCamera();}};";
-const newApi =
-  "getNavZoom:()=>navZoom,resetNav:()=>{navOrbitYaw=0;navOrbitPitch=0;navZoom=1;applyNavCamera();},getConnectionBranchAmount:()=>getConnectionBranchAmount(hierarchyRuntime),requestConnectionConfigure:()=>requestConnectionConfigureHandoff({seatIndex:hierarchyRuntime.selectedSeatIndex}),CONNECTION_BRANCH_MS,connectionFaceAccessibleName};";
-if (text.includes(oldApi)) text = text.replace(oldApi, newApi, 1);
+const oldExport = 'getNavZoom:()=>navZoom,resetNav:()=>{navOrbitYaw=0;navOrbitPitch=0;navZoom=1;applyNavCamera();}};';
+const newExport = "getNavZoom:()=>navZoom,resetNav:()=>{navOrbitYaw=0;navOrbitPitch=0;navZoom=1;applyNavCamera();},getConnectionBranchAmount:()=>getConnectionBranchAmount(hierarchyRuntime),requestConnectionConfigure:()=>requestConnectionConfigureHandoff({targetSection:'connection'}),CONNECTION_BRANCH_MS,connectionFaceAccessibleName};";
+if (!text.includes(oldExport)) { console.error('export anchor missing'); process.exit(1); }
+text = text.replace(oldExport, newExport);
 
-fs.writeFileSync(target, text);
-console.log("applied P1.1 connection flex to", target);
+writeFileSync(path, text);
+console.log('P1.1 applied to public/hero-flex.js');
