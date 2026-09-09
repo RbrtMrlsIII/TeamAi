@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P7.1** **merged** (#174–#187) — seat-shell hierarchy ladder complete. **P-R2** setup-ring camera-fill **Merged** (#188).
+**P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** health domain read-model **this PR**.
 
 ## Completed ladder (structure + skills)
 
@@ -45,25 +45,12 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 
 | Slice | Node | Desired output | Pass gate |
 |-------|------|----------------|-----------|
-| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | **Merged** runtime |
-| **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **Merged** (#174) |
-| **P2** | `SEAT_BEHAVIOR` | Branch open motion; Do/Dont face a11y + configure handoff | **Merged** (#175) |
-| **P2.1** | BEHAVIOR visual flex | Frame tick + branchBoost + keyboard **B** | **Merged** (#176) |
-| **P3** | `SEAT_TOOLKIT` (optional) | Branch open motion; optional equip a11y + configure handoff | **Merged** (#178) |
-| **P3.1** | TOOLKIT visual flex | Frame tick + branchBoost + keyboard **T** | **Merged** (#179) |
-| **P4** | `SEAT_CAPABILITIES` | Branch open motion; capability face a11y + handoff (**not** authorization) | **Merged** (#180) |
-| **P4.1** | CAPABILITIES visual flex | Frame tick + branchBoost + keyboard **K** | **Merged** (#181) |
-| **P5** | `SEAT_AUTHORIZATION` | Branch open motion; authorization face a11y + handoff (**not** capability) | **Merged** (#182) |
-| **P5.1** | AUTHORIZATION visual flex | Frame tick + branchBoost + keyboard **A** | **Merged** (#183) |
-| **P6** | `SEAT_WORKSPACE_SCOPE` | Branch open motion; workspace scope face a11y + handoff (**not** durable store) | **Merged** (#184) |
-| **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | **Merged** (#185) |
-| **P7** | `SEAT_TASK_EVIDENCE` | Branch open motion; task evidence face a11y + handoff (presentation only) | **Merged** (#186) |
-| **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **Merged** (#187) |
+| **P1**–**P7.1** | Seat shell children ladder | Branch open + flex visual | **Merged** (#174–#187) |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **Merged** (#188) |
-| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **This PR** |
-| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
+| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **Merged** (#189) |
+| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | **This PR** |
 | **M** | Background assets | One canvas only | No paid assets |
-| **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
+| **Owner** | Visual endorsement | When environment + outer UI fair | materials/lighting fair |
 
 ## Optional skills / toolkits (product rule)
 
@@ -94,3 +81,7 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 - No 029-released claim until backend gate + endorsement.
 - One hierarchy node at a time (depth-first).
 - Skills packages are not authority / entitlement (LAW 109).
+
+## Graphics path
+
+Materials / lighting foundation (#84–#86, #88, #89) is on main. **Owner** visual endorsement and richer gear meshes follow after **M** (background assets) when environment + outer UI are fair. Structure-first keeps the machine stable before deep visual polish.
