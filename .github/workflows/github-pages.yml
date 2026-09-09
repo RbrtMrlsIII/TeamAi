@@ -46,7 +46,6 @@ jobs:
           mkdir -p dist
 
           # Publish spatial Command Deck at site ROOT so github.io/TeamAi/ resolves.
-          # (Previously nested under dist/spatial/ → root 404 while /spatial/ worked.)
           cp -R frontend/spatial/. dist/
 
           # Keep legacy /spatial/ path working (bookmark / docs compatibility).
@@ -55,6 +54,7 @@ jobs:
 
           # Optional: 3D Hero presentation under /hero/ (public/ self-contained).
           if [ -d public ]; then
+            node scripts/apply-cam2-tree-follow-flex.mjs || true
             mkdir -p dist/hero
             cp -R public/. dist/hero/
           fi
