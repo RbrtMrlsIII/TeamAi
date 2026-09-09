@@ -5,7 +5,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **this PR**.
+**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **next**.
 
 ## Completed ladder (structure + skills)
 
@@ -32,6 +32,8 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | P-R2 / P-R0 / F | Setup ring, ZipSkills crown, health read-model | **Merged** (#188–#190) |
 | Cam-1–Cam-4 | Camera follow / tree zoom / edge-swipe | **Merged** (#191–#194) |
 | DOM map | Action map, lock-only retirement, soft-hide | **Merged** (#196–#199) |
+| Conn-1 | GitHub App least privilege | **Merged** (#200) |
+| Conn-2 | Webhook + UID map | **Merged** (#202) |
 
 ## Product rule: depth-first hierarchy animation (plan of record)
 
@@ -56,8 +58,8 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P2**–**P7.1** | Remaining seat children | One node at a time | **Merged** |
 | **Cam-1**–**Cam-4** | Hierarchy camera follow | Follow tree, free zoom, edge-swipe | **Merged** |
 | **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
-| **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **This PR** |
-| **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | After Conn-2 |
+| **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **Merged** (#202) |
+| **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Next** |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
@@ -74,12 +76,15 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 - **Cam-1 contract:** camera must follow growing hierarchy trees; lock-only presets are debt; see `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`.
 
-## Connection (Conn-1)
+## Connection (Conn-1 / Conn-2 / Conn-3)
 
 - GitHub App is the first real Connection behind `SEAT_CONNECTION`.
 - Fill the Create GitHub App form from `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md`.
 - Machine matrix: `public/github-app-permission-matrix.json`.
 - Skill: `skills/workspace/ws.github.app-least-privilege/SKILL.md`.
+- Conn-2 webhook map: `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md`.
+- Conn-3 OAuth mint (next): `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`.
+- **Human-only setup steps** are logged in `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` §12 (do not invent webhook/callback URLs before deploy).
 - Creating the App is **not** a live Hero bind and **not** 029-released.
 
 ## Naming
