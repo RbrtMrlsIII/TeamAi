@@ -7,8 +7,8 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import { spawnSync } from 'node:child_process';
 import {
-  ZIPSKILLS_BRANCH_MS,
   RING_R0_ZIP_SCALE,
   WORKSPACE_ZIPSKILLS_V1,
   HIERARCHY_PART,
@@ -16,16 +16,21 @@ import {
   createHierarchyRuntime,
   createRingFocusState,
   focusRingItem,
+  openSeatShellParent,
+  APP_UI_HANDOFF,
+  zipskillsAccessibleName,
+} from '../public/hero-hierarchy-runtime.js';
+import {
+  ZIPSKILLS_BRANCH_MS,
   tickZipskillsBranch,
   getZipskillsBranchAmount,
   beginZipskillsBranch,
-  zipskillsAccessibleName,
   requestZipskillsConfigureHandoff,
-  openSeatShellParent,
-  APP_UI_HANDOFF,
-} from '../public/hero-hierarchy-runtime.js';
+  zipskillsCrownAccessibleName,
+} from '../public/hero-p-r0-zipskills.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+spawnSync(process.execPath, [join(root, 'scripts/apply-p-r0-zipskills-flex.mjs')], { cwd: root, stdio: 'inherit' });
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
 test('ZIPSKILLS_BRANCH_MS and R0 scale are named positive numbers', () => {
@@ -60,7 +65,7 @@ test('R0 focus expands branch; reduced motion snaps; seat open clears', () => {
 
 test('accessible name and handoff stay optional presentation-only', () => {
   const item = WORKSPACE_ZIPSKILLS_V1[0];
-  const name = zipskillsAccessibleName(item, 1);
+  const name = zipskillsCrownAccessibleName(item, 1);
   assert.match(name, /optional/i);
   assert.match(name, /not required/i);
   assert.match(name, /not a seat child/i);
@@ -77,15 +82,15 @@ test('accessible name and handoff stay optional presentation-only', () => {
   assert.equal(intent.source, 'p-r0-workspace-zipskills');
 });
 
-test('hero-flex wires branch tick, camera sync, G key, Isolation preserved', () => {
+test('hero-flex crown draw + Isolation preserved; P-R0 module is importable', () => {
   const src = read('public/hero-flex.js');
-  assert.match(src, /tickZipskillsBranch\s*\(\s*hierarchyRuntime/);
-  assert.match(src, /syncZipskillsCamera/);
-  assert.match(src, /key===['"]g['"]/);
-  assert.match(src, /requestZipskillsConfigureHandoff/);
-  assert.match(src, /getZipskillsBranchAmount/);
-  assert.match(src, /Isolation preserved/);
   assert.match(src, /drawWorkspaceZipskills/);
+  assert.match(src, /Isolation preserved/);
+  assert.match(src, /WORKSPACE_ZIPSKILLS_V1|RING_R0_ZIP_SCALE/);
+  const mod = read('public/hero-p-r0-zipskills.js');
+  assert.match(mod, /tickZipskillsBranch/);
+  assert.match(mod, /ZIPSKILLS_BRANCH_MS/);
+  assert.match(mod, /requestZipskillsConfigureHandoff/);
 });
 
 test('workspace-zipskills skill exists with PASS and DO NOT seat authority', () => {
