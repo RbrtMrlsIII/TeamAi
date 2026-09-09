@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1** + **P1.1** + **P2** + **P2.1** **merged** (#174–#176). **P3** SEAT_TOOLKIT runtime **this PR**. Next: **P3.1** visual flex (optional) or **P4**.
+**P1**–**P3** **merged** (#174–#178). **P3.1** TOOLKIT visual flex **this PR**. Next: **P4** SEAT_CAPABILITIES.
 
 ## Completed ladder (structure + skills)
 
@@ -58,8 +58,8 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **Merged** (#174) |
 | **P2** | `SEAT_BEHAVIOR` | Branch open motion; Do/Dont face a11y + configure handoff | **Merged** (#175) |
 | **P2.1** | BEHAVIOR visual flex | Frame tick + branchBoost + keyboard **B** | **Merged** (#176) |
-| **P3** | `SEAT_TOOLKIT` (optional) | Branch open motion; optional equip a11y + configure handoff | **This PR** (runtime) |
-| **P3.1** | TOOLKIT visual flex | Frame tick + branchBoost + keyboard **T** | After P3 merge |
+| **P3** | `SEAT_TOOLKIT` (optional) | Branch open motion; optional equip a11y + configure handoff | **Merged** (#178) |
+| **P3.1** | TOOLKIT visual flex | Frame tick + branchBoost + keyboard **T** | **This PR** |
 | **P4…** | Capabilities → Authorization → Workspace scope → Task/evidence | One face per slice | Same gates |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
 | **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
