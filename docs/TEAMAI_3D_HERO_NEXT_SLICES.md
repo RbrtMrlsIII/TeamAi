@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P7** **merged** (#174–#186). **P7.1** TASK_EVIDENCE visual flex **this PR** — completes seat-shell hierarchy ladder.
+**P1**–**P7.1** **merged** (#174–#187) — seat-shell hierarchy ladder complete. **P-R2** setup-ring camera-fill **this PR**.
 
 ## Completed ladder (structure + skills)
 
@@ -67,8 +67,8 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P6** | `SEAT_WORKSPACE_SCOPE` | Branch open motion; workspace scope face a11y + handoff (**not** durable store) | **Merged** (#184) |
 | **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | **Merged** (#185) |
 | **P7** | `SEAT_TASK_EVIDENCE` | Branch open motion; task evidence face a11y + handoff (presentation only) | **Merged** (#186) |
-| **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **This PR** |
-| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
+| **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **Merged** (#187) |
+| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **This PR** |
 | **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
 | **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
 | **M** | Background assets | One canvas only | No paid assets |

@@ -1,6 +1,7 @@
 /** R2 setup/config ring draw — presentation only (not auth authority). */
 import { RING_R2_SCALE } from './hero-hierarchy-runtime.js';
 export function drawSetupConfigRing(ctx, t) {
+  const fill = Math.max(0, Math.min(1, Number(ctx && ctx.fillAmount) || 0));
   const { profile, seatCount, reducedMotion, draw, CYL, TORUS, CUBE, T, S, RY, mul, M, focusedIndex } = ctx;
   const items = (typeof window !== 'undefined' && window.TeamAiHero && window.TeamAiHero.SETUP_CONFIG_V1)
     ? window.TeamAiHero.SETUP_CONFIG_V1
@@ -21,8 +22,9 @@ export function drawSetupConfigRing(ctx, t) {
     const y = 0.95;
     const spin = reducedMotion ? 0 : t * 0.35 + i;
     const gear = item.kind === 'engine' || item.kind === 'auth';
-    const scale = gear ? 0.42 : 0.36;
     const focused = focusedIndex === i;
+    const fullArea = item.kind === 'auth' || item.kind === 'config' || item.kind === 'branch';
+    const scale = (gear ? 0.42 : 0.36) * (1 + 0.35 * (focused && fullArea ? fill : 0));
     draw(CYL, mul(T(x, y, z), S(scale * 1.1, 0.14, scale * 1.1)), M.metal, {
       rough: 0.4, spec: [0.82, 0.84, 0.8], emit: focused ? 0.12 : 0.02,
     });

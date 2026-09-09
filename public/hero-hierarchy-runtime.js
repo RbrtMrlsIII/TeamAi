@@ -3,6 +3,7 @@
  * Number home remains docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md §9.
  * P1: SEAT_CONNECTION branch expand + configure handoff helpers.
  * P2: SEAT_BEHAVIOR branch expand + Do/Don't face handoff helpers.
+ * P-R2: R2 setup-ring camera-fill + APP_UI_HANDOFF for login/signup/config (presentation only).
  */
 
 export const SEAT_REST_Y = 0.62;
@@ -25,8 +26,14 @@ export const AUTHORIZATION_BRANCH_MS = 300;
 export const WORKSPACE_SCOPE_BRANCH_MS = 280;
 /** P7: SEAT_TASK_EVIDENCE branch expand duration — task evidence face (presentation only). */
 export const TASK_EVIDENCE_BRANCH_MS = 260;
+/** P-R2: R2 setup-ring camera-fill duration — full-area login/signup/config. */
+export const SETUP_RING_FILL_MS = 480;
+/** P-R2: extra FOV degrees at full camera-fill (added to FOV_BOOST_NARROW on narrow viewports). */
+export const SETUP_RING_FOV_FILL = 3;
 export const HIERARCHY_REDUCED_SNAP = true;
 export const CAMERA_LERP_MS = 700;
+/** §9 R7 — narrow-viewport FOV boost. */
+export const FOV_BOOST_NARROW = 4;
 export const RING_R0_ZIP_SCALE = 0.22;
 export const RING_R1_SCALE = 1.18;
 export const RING_R2_SCALE = 1.42;
@@ -65,6 +72,9 @@ export const HIERARCHY_INPUT = {
   INSPECT: 'INSPECT',
   DEMO: 'DEMO',
 };
+
+/** Semantic overflow to ordinary application UI (auth remains Firebase-owned). */
+export const APP_UI_HANDOFF = 'APP_UI_HANDOFF';
 
 export const HEALTH_STATUS = {
   UNKNOWN: 'unknown',
@@ -129,6 +139,9 @@ export function createHierarchyRuntime(seed = {}) {
     connectionBranchStartMs: seed.connectionBranchStartMs ?? 0,
     behaviorBranchAmount: seed.behaviorBranchAmount ?? 0,
     behaviorBranchStartMs: seed.behaviorBranchStartMs ?? 0,
+    setupRingItemId: seed.setupRingItemId ?? null,
+    setupRingFillStartMs: seed.setupRingFillStartMs ?? 0,
+    setupRingFillAmount: seed.setupRingFillAmount ?? 0,
     presentationOnly: true,
     durable: false,
   };
@@ -532,6 +545,105 @@ export function requestTaskEvidenceConfigureHandoff(detail = {}) {
   return intent;
 }
 
+
+export function setupRingFocusedItem(ringFocus) {
+  if (!ringFocus || ringFocus.ring !== 'r2') return null;
+  return SETUP_CONFIG_V1[ringFocus.index] || null;
+}
+
+export function isSetupFullAreaItem(item) {
+  const kind = item && item.kind;
+  return kind === 'auth' || kind === 'config' || kind === 'branch';
+}
+
+export function setupRingCameraId(item) {
+  if (!item) return 'HERO_WIDE';
+  if (isSetupFullAreaItem(item)) return 'DETAIL_ANCHOR';
+  return 'WORKSPACE_CLOSE';
+}
+
+export function beginSetupRingFill(state, ringFocus, opts = {}) {
+  const item = setupRingFocusedItem(ringFocus);
+  const now = opts.nowMs ?? 0;
+  const snap = Boolean(opts.snap);
+  state.setupRingItemId = item ? item.id : null;
+  state.setupRingFillStartMs = now;
+  if (!item || !isSetupFullAreaItem(item)) {
+    state.setupRingFillAmount = 0;
+    return state;
+  }
+  state.setupRingFillAmount = snap ? 1 : Math.min(state.setupRingFillAmount || 0, 0.15);
+  state.inputMode = HIERARCHY_INPUT.INSPECT;
+  state.cameraId = setupRingCameraId(item);
+  return state;
+}
+
+export function tickSetupRingFill(state, ringFocus, nowMs, reducedMotion = false) {
+  const item = setupRingFocusedItem(ringFocus);
+  if (state.openParentId || !item || !isSetupFullAreaItem(item)) {
+    if ((state.setupRingFillAmount || 0) > 0) state.setupRingFillAmount = 0;
+    return state;
+  }
+  if (state.setupRingItemId !== item.id) {
+    state.setupRingItemId = item.id;
+    state.setupRingFillStartMs = nowMs ?? 0;
+    state.setupRingFillAmount = 0;
+  }
+  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+    state.setupRingFillAmount = 1;
+    return state;
+  }
+  const start = state.setupRingFillStartMs ?? nowMs ?? 0;
+  const progress = Math.min(((nowMs ?? 0) - start) / SETUP_RING_FILL_MS, 1);
+  const x = Math.max(0, Math.min(1, progress));
+  state.setupRingFillAmount = x * x * (3 - 2 * x);
+  return state;
+}
+
+export function getSetupRingFillAmount(state) {
+  return Math.max(0, Math.min(1, Number(state && state.setupRingFillAmount) || 0));
+}
+
+export function setupRingAccessibleName(item, fillAmount = 0) {
+  if (!item) return 'Setup configuration ring. Presentation only; not authorization.';
+  const fill = (Number(fillAmount) || 0) >= 0.85 ? 'filled' : 'filling';
+  if (item.kind === 'auth') {
+    return 'Setup ' + item.label + ' (' + fill + '). Full-area camera-fill. Login/signup presentation only; not Firebase Auth; not entitlement. Press L for normal UI.';
+  }
+  if (item.kind === 'config' || item.kind === 'branch') {
+    return 'Setup ' + item.label + ' (' + fill + '). Full-area camera-fill. Presentation only; not durable configuration. Press L for normal UI.';
+  }
+  return 'Setup ' + item.label + '. Presentation only; not authorization.';
+}
+
+export function requestSetupRingHandoff(detail = {}) {
+  const item = detail.item || null;
+  const kind = (item && item.kind) || detail.kind || 'setup';
+  const intent = {
+    source: 'p-r2-setup-ring',
+    targetSection: detail.targetSection || (kind === 'auth' ? 'auth' : 'setup'),
+    kind,
+    itemId: (item && item.id) || detail.itemId || null,
+    cameraId: setupRingCameraId(item || { kind }),
+    appUiHandoff: true,
+    reason: APP_UI_HANDOFF,
+    normalUi: true,
+    presentationOnly: true,
+    notAuthority: true,
+    notFirebaseAuth: true,
+  };
+  if (typeof window !== 'undefined' && window.dispatchEvent) {
+    window.dispatchEvent(new CustomEvent('teamai:app-ui-handoff', { detail: intent }));
+  }
+  return intent;
+}
+
+export function setupRingFovBoost(fillAmount, narrowBoost = 0) {
+  const fill = Math.max(0, Math.min(1, Number(fillAmount) || 0));
+  const narrow = Number(narrowBoost) || 0;
+  return narrow + SETUP_RING_FOV_FILL * fill;
+}
+
 export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));
   const snap = Boolean(opts.snap);
@@ -734,5 +846,6 @@ export function ringFocusAccessibleName(ringFocus) {
     ? 'Workspace ZipSkills'
     : (ringFocus.ring === 'r1' ? 'Backend display' : 'Setup configuration');
   if (ringFocus.ring === 'r0') return zipskillsAccessibleName(item);
+  if (ringFocus.ring === 'r2') return setupRingAccessibleName(item, 1);
   return `${ringLabel}: ${item.label}. Presentation only; not authorization.`;
 }
