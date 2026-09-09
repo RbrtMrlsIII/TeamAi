@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** health domain read-model **this PR**.
+**P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1** hierarchy camera follow contract **this PR**.
 
 ## Completed ladder (structure + skills)
 
@@ -61,9 +61,14 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **Merged** (#187) |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **Merged** (#188) |
 | **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **Merged** (#189) |
-| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | **This PR** |
+| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | **Merged** (#190) |
+| **Cam-1** | Hierarchy Camera Follow Contract | Docs: follow tree, center-target zoom, retire lock-only cams, interim DOM debt | **This PR** |
+| **Cam-2** | Camera follows open parent/child | Pre-made docks + center target per node | Next |
+| **Cam-3** | Free zoom on current tree center | Even when parent open | After Cam-2 |
+| **Cam-4** | Edge-drag + inverse-swipe | Whole-web PoV | After Cam-3 |
+| **Cam-5** | Absorb DOM chrome + UI scale 50–100% | Settings tree preference | Parallel |
 | **M** | Background assets | One canvas only | No paid assets |
-| **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
+| **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
 ## Optional skills / toolkits (product rule)
 
@@ -77,6 +82,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - Named §9 zoom bounds; reduced-motion clamps remain contract.
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 - Physical eye/target/FOV positions already live in `hero-flex.js` `cameras()` (`HERO_WIDE`, `SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …). Per-node refined docks may evolve later; baseline positions exist now.
+- **Cam-1 contract:** camera must follow growing hierarchy trees; lock-only presets are debt; see `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`.
 
 ## Naming
 
