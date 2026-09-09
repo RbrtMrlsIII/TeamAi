@@ -158,7 +158,11 @@ test.describe('Living Web AI Workspace Hero', () => {
 
     await page.locator('#hero-canvas').click({ position: { x: 80, y: 420 } });
     await expect(page.locator('#state-label')).toHaveText('FOCUS');
-    await expect(page.locator('#seat-label')).toContainText('Web AI Seat 2');
+    // P1.1: seat-shell open focuses SEAT_CONNECTION — status label is connection-face a11y copy
+    await expect(page.locator('#seat-label')).toContainText('Seat connection face');
+    await expect(page.locator('#seat-label')).toContainText('Presentation only');
+    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero?.getHierarchyState?.());
+    expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
 
     await page.getByRole('button', { name: 'Reduced motion: off', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Reduced motion: on', exact: true })).toBeVisible();

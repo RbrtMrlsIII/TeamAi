@@ -3,6 +3,8 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
+**P1** SEAT_CONNECTION runtime **merged** (`4bda6e7`). **P1.1** visual flex + keyboard C + a11y labels **on branch** `feat/029-p1.1-connection-flex` (this PR). Next after merge: **P2 SEAT_BEHAVIOR**.
+
 ## Completed ladder (structure + skills)
 
 | Slice | Topic | Status |
@@ -45,23 +47,16 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 1. Semantic camera **docks** to that content’s anchor (not free orbit while INSPECT).
 2. Zoom / framing continues until **the whole contents can be seen** (or the maximum safe dock), within §9 `NAV_ZOOM_*` and reduced-motion clamps.
 3. FOV may use `FOV_BOOST_NARROW` on small viewports so content is not cropped without reason.
-4. Prefer **one** Hero canvas; dense forms may complete via **normal-UI handoff** after the mechanical reveal — still presentation, not entitlement.
+4. Prefer **one** Hero surface; overflow uses `APP_UI_HANDOFF` / normal UI for real forms (auth remains Firebase-owned).
 
-### Shared roots every node must respect
-
-| Concern | Home |
-|---------|------|
-| Durations / reduced snap | Baseline §9 + motion / transition skills |
-| Theme | `document.documentElement` only |
-| FOV / density | responsive skill + `FOV_BOOST_NARROW` |
-| One open parent | Hierarchy runtime R6 |
-| No second animation framework | I.1 / I.2 matrix |
+Login/signup **presentation** in the machine does not replace Firebase Auth or invent entitlement.
 
 ## Hierarchy animation ladder (execute in order)
 
 | Slice | Node | Desired output | Pass gate |
 |-------|------|----------------|-----------|
-| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | Motion, dock, reduced snap, theme, a11y; no entitlement claim |
+| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | **Merged** runtime |
+| **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **This PR** |
 | **P2** | `SEAT_BEHAVIOR` | Same treatment for Do/Don’t face | Don’t start until P1 pass |
 | **P3** | `SEAT_TOOLKIT` (optional) | Optional equip face; still **not required** setup | Optional skip if product defers |
 | **P4…** | Capabilities → Authorization → Workspace scope → Task/evidence | One face per slice | Same gates |
