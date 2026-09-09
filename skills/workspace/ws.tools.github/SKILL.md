@@ -22,7 +22,7 @@ This skill does not create OAuth tokens or grant merge rights.
 ## ACTION
 
 1. User prepares repo **outside** TeamAi when needed.
-2. User authorizes GitHub **inside** TeamAi (OAuth / connection).
+2. User authorizes GitHub **inside** TeamAi (GitHub App install + OAuth — see `ws.github.app-least-privilege`).
 3. Equip seat with connection + scope; run capability/health checks.
 4. Invocation path: `Seat → tool intent → policy → scoped GitHub connection → result → event`.
 5. Read vs write operations remain distinct permissions.
@@ -34,6 +34,7 @@ This skill does not create OAuth tokens or grant merge rights.
 - Do not treat provider API key as GitHub access.
 - Do not treat “connected” UI as fully usable without scope + health + seat-allowed.
 - Do not use GitHub Actions as the Web AI runtime scheduler.
+- Do not grant Administration, Secrets, org, or enterprise App permissions for v1.
 
 ## PASS
 
@@ -43,3 +44,5 @@ Connection and seat scope are explicit; tool calls are attributable; results ret
 
 - `PRODUCT_LAW.md` Family B (GitHub role)
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md`
+- `skills/workspace/ws.github.app-least-privilege/SKILL.md`

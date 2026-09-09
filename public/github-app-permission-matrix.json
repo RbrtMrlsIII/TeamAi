@@ -1,0 +1,80 @@
+{
+  "appName": "TeamAi",
+  "version": "v1",
+  "status": "PLANNING MATRIX — not a live bind, not 029-released",
+  "productLaw": {
+    "githubRole": "Engineering/source/change authority",
+    "githubActionsRole": "Verification/engineering surface; never Web AI scheduler",
+    "durableDomain": "Cloud Firestore (default) under Firebase UID",
+    "trustedExecution": "Supabase Edge Functions",
+    "supabasePostgres": "Infrastructure only; never TeamAi domain authority",
+    "identity": "Firebase Authentication"
+  },
+  "repositoryPermissions": {
+    "grant": {
+      "metadata": "read",
+      "contents": "write",
+      "pull_requests": "write",
+      "issues": "write",
+      "checks": "read",
+      "statuses": "read",
+      "actions": "read"
+    },
+    "optionalLater": {
+      "discussions": "read",
+      "actions": "write"
+    },
+    "never": [
+      "administration",
+      "secrets",
+      "variables",
+      "environments",
+      "members",
+      "blocking",
+      "codespaces",
+      "codespaces_secrets",
+      "codespaces_lifecycle",
+      "dependabot_secrets",
+      "dependabot_alerts",
+      "security_events",
+      "secret_scanning_alerts",
+      "copilot",
+      "workflows",
+      "pages",
+      "merge_queues",
+      "deployments",
+      "packages",
+      "repository_hooks",
+      "single_file",
+      "custom_properties"
+    ]
+  },
+  "organizationPermissions": "none",
+  "accountPermissions": "none",
+  "enterprisePermissions": "none",
+  "webhookEvents": [
+    "installation",
+    "installation_repositories",
+    "pull_request",
+    "issues",
+    "issue_comment",
+    "push",
+    "check_run"
+  ],
+  "form": {
+    "requestUserAuthorizationOauth": true,
+    "expireUserAuthorizationTokens": true,
+    "enableDeviceFlow": false,
+    "allowWildcardRedirect": false,
+    "webhookActiveUntilHttpsReady": false,
+    "whereCanBeInstalled": "only_this_account_until_public"
+  },
+  "safeguards": {
+    "noDirectPushToDefaultBranch": true,
+    "allAiCodeViaPullRequest": true,
+    "noPatPasteIntoTeamChat": true,
+    "pemPrivateKeyTrustedStoreOnly": true,
+    "agentsDoNotHoldUserGithubAccounts": true,
+    "browserNeverSelfAttestsInstall": true
+  }
+}
