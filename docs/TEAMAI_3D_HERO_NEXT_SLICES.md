@@ -3,7 +3,9 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1** hierarchy camera follow contract **this PR**.
+**P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
+
+**Conn-1** GitHub App least-privilege matrix **this PR**.
 
 ## Completed ladder (structure + skills)
 
@@ -26,6 +28,10 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | L | #96–#98 satisfied-by map | **Merged** (#168) |
 | N.4 | `ws.authority.map`, `ws.evidence.handover` | **Merged** (#169) |
 | N.5 | Remaining SEAT_SKILLS (discuss, fields, leader) | **Merged** (#170) |
+| P1–P7.1 | Seat hierarchy nodes + visual flex | **Merged** (#173–#187) |
+| P-R2 / P-R0 / F | Setup ring, ZipSkills crown, health read-model | **Merged** (#188–#190) |
+| Cam-1–Cam-4 | Camera follow / tree zoom / edge-swipe | **Merged** (#191–#194) |
+| DOM map | Action map, lock-only retirement, soft-hide | **Merged** (#196–#199) |
 
 ## Product rule: depth-first hierarchy animation (plan of record)
 
@@ -39,34 +45,18 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 2. Zoom / framing continues until **the whole contents can be seen** (or the maximum safe dock), within §9 clamps.
 3. On narrow viewports, FOV boost may assist readability.
 4. Reduced motion: snap dock; no continuous travel choreography.
-5. If the form cannot live honestly in WebGL → **APP_UI_HANDOFF** / normal UI (auth remains Firebase-owned).
+5. If the form cannot live honestly in WebGL → **APP_UI_HANDOFF** / normal UI (auth remains Firebase-owned). GitHub App install is the same handoff — not a 3D OAuth.
 
 ## Hierarchy animation ladder (execute in order)
 
 | Slice | Node | Desired output | Pass gate |
 |-------|------|----------------|-----------|
-| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | **Merged** runtime |
+| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | **Merged** (#173) |
 | **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **Merged** (#174) |
-| **P2** | `SEAT_BEHAVIOR` | Branch open motion; Do/Dont face a11y + configure handoff | **Merged** (#175) |
-| **P2.1** | BEHAVIOR visual flex | Frame tick + branchBoost + keyboard **B** | **Merged** (#176) |
-| **P3** | `SEAT_TOOLKIT` (optional) | Branch open motion; optional equip a11y + configure handoff | **Merged** (#178) |
-| **P3.1** | TOOLKIT visual flex | Frame tick + branchBoost + keyboard **T** | **Merged** (#179) |
-| **P4** | `SEAT_CAPABILITIES` | Branch open motion; capability face a11y + handoff (**not** authorization) | **Merged** (#180) |
-| **P4.1** | CAPABILITIES visual flex | Frame tick + branchBoost + keyboard **K** | **Merged** (#181) |
-| **P5** | `SEAT_AUTHORIZATION` | Branch open motion; authorization face a11y + handoff (**not** capability) | **Merged** (#182) |
-| **P5.1** | AUTHORIZATION visual flex | Frame tick + branchBoost + keyboard **A** | **Merged** (#183) |
-| **P6** | `SEAT_WORKSPACE_SCOPE` | Branch open motion; workspace scope face a11y + handoff (**not** durable store) | **Merged** (#184) |
-| **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | **Merged** (#185) |
-| **P7** | `SEAT_TASK_EVIDENCE` | Branch open motion; task evidence face a11y + handoff (presentation only) | **Merged** (#186) |
-| **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **Merged** (#187) |
-| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **Merged** (#188) |
-| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **Merged** (#189) |
-| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | **Merged** (#190) |
-| **Cam-1** | Hierarchy Camera Follow Contract | Docs: follow tree, center-target zoom, retire lock-only cams, interim DOM debt | **This PR** |
-| **Cam-2** | Camera follows open parent/child | Pre-made docks + center target per node | Next |
-| **Cam-3** | Free zoom on current tree center | Even when parent open | After Cam-2 |
-| **Cam-4** | Edge-drag + inverse-swipe | Whole-web PoV | After Cam-3 |
-| **Cam-5** | Absorb DOM chrome + UI scale 50–100% | Settings tree preference | Parallel |
+| **P2**–**P7.1** | Remaining seat children | One node at a time | **Merged** |
+| **Cam-1**–**Cam-4** | Hierarchy camera follow | Follow tree, free zoom, edge-swipe | **Merged** |
+| **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **This PR** |
+| **Conn-2** | Edge webhook + UID map | Trusted HTTPS webhook; Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | After Conn-1 |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
@@ -81,8 +71,15 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - Inspect → semantic dock (`SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …) wins.
 - Named §9 zoom bounds; reduced-motion clamps remain contract.
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
-- Physical eye/target/FOV positions already live in `hero-flex.js` `cameras()` (`HERO_WIDE`, `SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …). Per-node refined docks may evolve later; baseline positions exist now.
 - **Cam-1 contract:** camera must follow growing hierarchy trees; lock-only presets are debt; see `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`.
+
+## Connection (Conn-1)
+
+- GitHub App is the first real Connection behind `SEAT_CONNECTION`.
+- Fill the Create GitHub App form from `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md`.
+- Machine matrix: `public/github-app-permission-matrix.json`.
+- Skill: `skills/workspace/ws.github.app-least-privilege/SKILL.md`.
+- Creating the App is **not** a live Hero bind and **not** 029-released.
 
 ## Naming
 
@@ -101,3 +98,5 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 - No 029-released claim until backend gate + endorsement.
 - One hierarchy node at a time (depth-first).
 - Skills packages are not authority / entitlement (LAW 109).
+- GitHub Actions is not the Web AI scheduler.
+- Durable domain remains Firestore; Supabase Postgres is not TeamAi domain.
