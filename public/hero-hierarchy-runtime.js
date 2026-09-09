@@ -266,7 +266,7 @@ export function getBehaviorBranchAmount(state) {
 
 export function behaviorFaceAccessibleName(branchAmount = 1) {
   const open = (Number(branchAmount) || 0) >= 0.85 ? 'expanded' : 'opening';
-  return 'Seat behavior face (' + open + '). Do / Don't presentation only; not durable policy. Press B for normal UI.';
+  return "Seat behavior face (" + open + "). Do/Dont presentation only; not durable policy. Press B for normal UI.";
 }
 
 export function requestBehaviorConfigureHandoff(detail = {}) {
@@ -281,7 +281,6 @@ export function requestBehaviorConfigureHandoff(detail = {}) {
   }
   return intent;
 }
-
 
 export function openSeatShellParent(state, seatIndex, opts = {}) {
   const index = Math.max(0, Math.floor(Number(seatIndex) || 0));

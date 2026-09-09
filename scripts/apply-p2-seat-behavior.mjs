@@ -71,7 +71,6 @@ const newFocus = `  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
 }`;
 if (t.includes(oldFocus)) t = t.replace(oldFocus, newFocus);
 
-// Accessible-name body uses string concat so this apply script never evaluates ${open}
 const apis = `
 export function tickBehaviorBranch(state, nowMs, reducedMotion = false) {
   const now = nowMs ?? 0;
@@ -103,7 +102,7 @@ export function getBehaviorBranchAmount(state) {
 
 export function behaviorFaceAccessibleName(branchAmount = 1) {
   const open = (Number(branchAmount) || 0) >= 0.85 ? 'expanded' : 'opening';
-  return 'Seat behavior face (' + open + '). Do / Don\'t presentation only; not durable policy. Press B for normal UI.';
+  return "Seat behavior face (" + open + "). Do/Dont presentation only; not durable policy. Press B for normal UI.";
 }
 
 export function requestBehaviorConfigureHandoff(detail = {}) {

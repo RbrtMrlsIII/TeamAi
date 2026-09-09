@@ -81,7 +81,7 @@ test('accessible name and configure handoff are presentation-only', () => {
   const name = behaviorFaceAccessibleName(1);
   assert.match(name, /Seat behavior face/);
   assert.match(name, /Presentation only|presentation only/i);
-  assert.match(name, /Do \/ Don't|Do\/Don't/i);
+  assert.match(name, /Do\/? ?Don'?t/i);
   const intent = requestBehaviorConfigureHandoff({ targetSection: 'behavior' });
   assert.equal(intent.presentationOnly, true);
   assert.equal(intent.normalUi, true);
