@@ -5,7 +5,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Conn-1** GitHub App least-privilege matrix **this PR**.
+**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **this PR**.
 
 ## Completed ladder (structure + skills)
 
@@ -55,8 +55,9 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P1.1** | CONNECTION visual flex | Frame tick + branchBoost + keyboard **C** + accessible name | **Merged** (#174) |
 | **P2**–**P7.1** | Remaining seat children | One node at a time | **Merged** |
 | **Cam-1**–**Cam-4** | Hierarchy camera follow | Follow tree, free zoom, edge-swipe | **Merged** |
-| **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **This PR** |
-| **Conn-2** | Edge webhook + UID map | Trusted HTTPS webhook; Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | After Conn-1 |
+| **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
+| **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **This PR** |
+| **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | After Conn-2 |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
