@@ -4,6 +4,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import {
   createHierarchyRuntime,
   openSeatShellParent,
@@ -19,6 +22,9 @@ import {
   resolveTreeCamera,
   shouldFollowTree,
 } from '../public/hero-cam2-tree-follow.js';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
 
 test('default world elevation product note is 45°', () => {
   assert.equal(DEFAULT_WORLD_ELEVATION_DEG, 45);

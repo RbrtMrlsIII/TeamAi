@@ -11,7 +11,7 @@
 - Close → HERO_WIDE
 - World default elevation ~**45°** (`HERO_WIDE` p:[0,d,d])
 - User may still maneuver (scroll zoom, drag/pitch) under NAVIGATE / future Cam-3–4
-- Flex: `selectSeatShell` + `followHierarchyTreeCamera`
+- Flex wire via `scripts/apply-cam2-tree-follow-flex.mjs` (idempotent; tests auto-run)
 
 ## Next
 
