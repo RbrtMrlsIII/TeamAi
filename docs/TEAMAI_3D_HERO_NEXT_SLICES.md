@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P7.1** **merged** (#174–#187) — seat-shell hierarchy ladder complete. **P-R2** setup-ring camera-fill **this PR**.
+**P1**–**P7.1** **merged** (#174–#187) — seat-shell hierarchy ladder complete. **P-R2** setup-ring camera-fill **Merged** (#188).
 
 ## Completed ladder (structure + skills)
 
@@ -30,15 +30,6 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 ## Product rule: depth-first hierarchy animation (plan of record)
 
 We build **one hierarchy node at a time**, not a thin shell with empty faces forever.
-
-```text
-Open parent (validated motion + camera + theme + a11y)
-  → open first child branch (mechanical)
-  → camera docks / zooms until that node's full contents are readable
-  → if contents are dense (login, signup, long forms): fill the view
-  → hand off to normal UI when 3D cannot host the whole form
-  → only then the next sibling child
-```
 
 ### Camera-fill rule (login / signup / full-area content)
 
@@ -68,8 +59,8 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | **Merged** (#185) |
 | **P7** | `SEAT_TASK_EVIDENCE` | Branch open motion; task evidence face a11y + handoff (presentation only) | **Merged** (#186) |
 | **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **Merged** (#187) |
-| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **This PR** |
-| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
+| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **Merged** (#188) |
+| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **This PR** |
 | **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
@@ -99,18 +90,7 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 
 ## Product rules that stay true
 
-- Theme: `document.documentElement` only; Isolation preserved.
-- Hierarchy numbers live in baseline §9; amend with code in the same PR.
-- Presentation never invents entitlement, scheduler, or durable auth.
-- Green CI is necessary, not Endorsement.
-- CAPABILITY ≠ AUTHORIZATION ≠ WORKSPACE ≠ durable store.
-- **no 029-released claim**
-
-## Related
-
-- `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`  
-- `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
-- `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`  
-- `docs/TEAMAI_3D_HERO_MOTION_TRANSITION_TOKEN_ALIGNMENT.md`  
-- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
-- `docs/GROK_SKILLS_ALIGNMENT.md`  
+- Presentation only. No durable grant from canvas.
+- No 029-released claim until backend gate + endorsement.
+- One hierarchy node at a time (depth-first).
+- Skills packages are not authority / entitlement (LAW 109).
