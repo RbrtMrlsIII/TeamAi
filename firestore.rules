@@ -26,6 +26,12 @@ service cloud.firestore {
         }
       }
 
+      // GitHub App Connection map. Server-owned; browser never writes.
+      match /githubInstallations/{installationId} {
+        allow read: if signedInAs(uid);
+        allow write: if false;
+      }
+
       match /workplaces/{workplaceId} {
         allow read, write: if signedInAs(uid);
 
@@ -54,6 +60,10 @@ service cloud.firestore {
           }
         }
       }
+    }
+
+    match /githubInstallationIndex/{installationId} {
+      allow read, write: if false;
     }
 
     match /{document=**} {
