@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P5** **merged** (#174–#182). **P5.1** AUTHORIZATION visual flex **this PR**. Next: **P6** SEAT_WORKSPACE_SCOPE.
+**P1**–**P5.1** **merged** (#174–#183). **P6** SEAT_WORKSPACE_SCOPE runtime **this PR**. Next: **P6.1** visual flex (optional) or **P7**.
 
 ## Completed ladder (structure + skills)
 
@@ -63,8 +63,10 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P4** | `SEAT_CAPABILITIES` | Branch open motion; capability face a11y + handoff (**not** authorization) | **Merged** (#180) |
 | **P4.1** | CAPABILITIES visual flex | Frame tick + branchBoost + keyboard **K** | **Merged** (#181) |
 | **P5** | `SEAT_AUTHORIZATION` | Branch open motion; authorization face a11y + handoff (**not** capability) | **Merged** (#182) |
-| **P5.1** | AUTHORIZATION visual flex | Frame tick + branchBoost + keyboard **A** | **This PR** |
-| **P6…** | Workspace scope → Task/evidence | One face per slice | Same gates |
+| **P5.1** | AUTHORIZATION visual flex | Frame tick + branchBoost + keyboard **A** | **Merged** (#183) |
+| **P6** | `SEAT_WORKSPACE_SCOPE` | Branch open motion; workspace scope face a11y + handoff (**not** Firestore) | **This PR** (runtime) |
+| **P6.1** | WORKSPACE_SCOPE visual flex | Frame tick + branchBoost + keyboard **W** | After P6 merge |
+| **P7…** | Task/evidence | One face per slice | Same gates |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
 | **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
 | **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
