@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Idempotent P6 SEAT_WORKSPACE_SCOPE branch runtime patch for public/hero-hierarchy-runtime.js
- * Presentation only · WORKSPACE ≠ FIRESTORE · no entitlement · no 029-released claim
+ * Presentation only · WORKSPACE ≠ durable store · no entitlement · no 029-released claim
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,14 +33,14 @@ if (!t.includes('WORKSPACE_SCOPE_BRANCH_MS')) {
   }
   t = t.replace(
     'export const AUTHORIZATION_BRANCH_MS = 300;',
-    'export const AUTHORIZATION_BRANCH_MS = 300;\n/** P6: SEAT_WORKSPACE_SCOPE branch expand duration — workspace scope face (not Firestore authority). */\nexport const WORKSPACE_SCOPE_BRANCH_MS = 280;',
+    'export const AUTHORIZATION_BRANCH_MS = 300;\n/** P6: SEAT_WORKSPACE_SCOPE branch expand duration — workspace scope face (not durable-store authority). */\nexport const WORKSPACE_SCOPE_BRANCH_MS = 280;',
   );
 }
 
 if (!t.includes('P6: SEAT_WORKSPACE_SCOPE')) {
   t = t.replace(
     ' * P5: SEAT_AUTHORIZATION branch expand + authorization face handoff helpers (not capability).',
-    ' * P5: SEAT_AUTHORIZATION branch expand + authorization face handoff helpers (not capability).\n * P6: SEAT_WORKSPACE_SCOPE branch expand + workspace scope face handoff helpers (not Firestore).',
+    ' * P5: SEAT_AUTHORIZATION branch expand + authorization face handoff helpers (not capability).\n * P6: SEAT_WORKSPACE_SCOPE branch expand + workspace scope face handoff helpers (not durable store).',
   );
 }
 
@@ -75,7 +75,7 @@ export function getWorkspaceScopeBranchAmount(state) {
 
 export function workspaceScopeFaceAccessibleName(branchAmount = 1) {
   const open = (Number(branchAmount) || 0) >= 0.85 ? "expanded" : "opening";
-  return "Seat workspace scope face (" + open + "). Workspace scope only; not Firestore; not entitlement. Press W for normal UI.";
+  return "Seat workspace scope face (" + open + "). Workspace scope only; not durable store authority; not entitlement. Press W for normal UI.";
 }
 
 export function requestWorkspaceScopeConfigureHandoff(detail = {}) {
@@ -84,7 +84,7 @@ export function requestWorkspaceScopeConfigureHandoff(detail = {}) {
     targetSection: detail.targetSection || "workspace-scope",
     normalUi: true,
     presentationOnly: true,
-    notFirestore: true,
+    notDurableStore: true,
   };
   if (typeof window !== "undefined" && window.dispatchEvent) {
     window.dispatchEvent(new CustomEvent("teamai:web-ai-seat-configure-request", { detail: intent }));

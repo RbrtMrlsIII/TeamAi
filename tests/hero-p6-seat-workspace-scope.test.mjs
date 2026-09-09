@@ -1,6 +1,6 @@
 /**
  * P6 SEAT_WORKSPACE_SCOPE branch runtime — presentation only
- * WORKSPACE ≠ FIRESTORE · no entitlement
+ * WORKSPACE ≠ durable store · no entitlement
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -80,13 +80,13 @@ test('focusing away from WORKSPACE_SCOPE clears branch amount', () => {
   assert.equal(getWorkspaceScopeBranchAmount(s), 0);
 });
 
-test('accessible name and configure handoff are presentation-only not Firestore', () => {
+test('accessible name and configure handoff are presentation-only not durable store', () => {
   const name = workspaceScopeFaceAccessibleName(1);
   assert.match(name, /workspace scope/i);
-  assert.match(name, /not Firestore/i);
+  assert.match(name, /not durable store/i);
   const intent = requestWorkspaceScopeConfigureHandoff({ targetSection: 'workspace-scope' });
   assert.equal(intent.presentationOnly, true);
-  assert.equal(intent.notFirestore, true);
+  assert.equal(intent.notDurableStore, true);
   assert.equal(intent.normalUi, true);
   assert.equal(intent.source, 'p6-seat-workspace-scope');
   assert.equal(intent.targetSection, 'workspace-scope');
