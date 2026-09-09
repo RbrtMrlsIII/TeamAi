@@ -7,11 +7,23 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 | Slice | Topic | Status |
 |-------|--------|--------|
-| A–C | Rings, scales, **NAVIGATE** orbit; dock wins on inspect | **Merged** (#150–#152) |
-| D–E | SEAT_TOOLKIT + WORKSPACE_ZIPSKILLS faces | **Merged** (#153, #155) |
-| G–J | #89 reduced-motion lighting, alias H, #95 wiring, #88 materials | **Merged** (#156–#161) |
-| Taxonomy + N.1–N.5 | SEAT_SKILLS / WORKSPACE_SKILLS bodies + entitlement arch | **Merged** (#163–#170) |
-| K–L | Hygiene + #96–#98 satisfied-by | **Merged** (#167–#168) |
+| A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
+| B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
+| C | Camera orbit polish — **NAVIGATE**-only; dock wins on inspect | **Merged** (#152) |
+| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **Merged** (#153) |
+| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **Merged** (#155) |
+| G | #89 reduced-motion lighting contract | **Merged** (#156) |
+| H | Legacy `MECHANISM_ZIPSKILLS` reconcile | **Merged** (#157) |
+| I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160); issue **closed** |
+| J | #88 material depth evidence + HandOver | **Merged** (#161) |
+| Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS (Zip ≠ commerce) | **Merged** (#163) |
+| N.1 | First skill bodies | **Merged** (#164) |
+| N.2 | contribution / coding / GitHub skills | **Merged** (#165) |
+| N.3 | entitlement arch + turn/secrets/verification skills | **Merged** (#166) |
+| K | Issue hygiene + Grok Skills alignment | **Merged** (#167) |
+| L | #96–#98 satisfied-by map | **Merged** (#168) |
+| N.4 | `ws.authority.map`, `ws.evidence.handover` | **Merged** (#169) |
+| N.5 | Remaining SEAT_SKILLS (discuss, fields, leader) | **Merged** (#170) |
 
 ## Product rule: depth-first hierarchy animation (plan of record)
 
@@ -49,19 +61,19 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 
 | Slice | Node | Desired output | Pass gate |
 |-------|------|----------------|-----------|
-| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; clear path to configure / normal UI | Motion, dock, reduced snap, theme, a11y; no entitlement claim |
+| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; path to configure / normal UI | Motion, dock, reduced snap, theme, a11y; no entitlement claim |
 | **P2** | `SEAT_BEHAVIOR` | Same treatment for Do/Don’t face | Don’t start until P1 pass |
-| **P3** | `SEAT_TOOLKIT` (optional) | Optional equip face; still not required setup | Optional skip if product defers |
+| **P3** | `SEAT_TOOLKIT` (optional) | Optional equip face; still **not required** setup | Optional skip if product defers |
 | **P4…** | Capabilities → Authorization → Workspace scope → Task/evidence | One face per slice | Same gates |
-| **P-R2** | Setup ring content (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | Especially FOV + narrow viewport |
+| **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | FOV + narrow viewport |
 | **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
 | **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
 
-## Optional skills / toolkits
+## Optional skills / toolkits (product rule)
 
-- SEAT_SKILLS / WORKSPACE_SKILLS (Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
+- SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
 - Users may assign skills outside TeamAi; presentation must not imply entitlement.
 
 ## Camera (baseline already on main)
@@ -69,7 +81,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - Free orbit / zoom: **NAVIGATE** only (R4).
 - Inspect → semantic dock (`SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …) wins.
 - Named §9 zoom bounds; reduced-motion clamps remain contract.
-- **New emphasis:** full-area content → zoom/dock until contents fit (see above).
+- **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 
 ## Naming
 
@@ -93,8 +105,9 @@ Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 
 ## Related
 
-- `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md` (this direction, expanded)  
+- `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
 - `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`  
 - `docs/TEAMAI_3D_HERO_MOTION_TRANSITION_TOKEN_ALIGNMENT.md`  
+- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
 - `docs/GROK_SKILLS_ALIGNMENT.md`  
