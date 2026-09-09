@@ -7,6 +7,18 @@
 
 Hero `SEAT_CONNECTION` / keyboard **C** is **normal-UI handoff only** — not a live OAuth bind.
 
+## Operator project identity (do not forget)
+
+| Item | Value |
+|------|--------|
+| **Supabase project ref** | `srpgzzretfyqdsfclnuo` |
+| **Edge base** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1` |
+| **Webhook URL (Conn-2)** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-webhook` |
+| **OAuth callback (Conn-3, when deployed)** | `https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-oauth-bind` |
+
+Use this ref in every `npx supabase … --project-ref` command for TeamAi Edge. Not a secret; safe in docs.
+
+
 ## 1. Create the GitHub App (outside TeamAi)
 
 1. GitHub → **Settings → Developer settings → GitHub Apps → New GitHub App**.
@@ -29,7 +41,7 @@ Hero `SEAT_CONNECTION` / keyboard **C** is **normal-UI handoff only** — not a 
 
 ```bash
 npx supabase secrets set GITHUB_WEBHOOK_SECRET='<from-GitHub-App-webhook-secret>' \
-  --project-ref <REF>
+  --project-ref srpgzzretfyqdsfclnuo
 # Alias also accepted: TEAMAI_GITHUB_WEBHOOK_SECRET
 
 # Existing required secrets (already in parent manual):
@@ -45,12 +57,12 @@ npx supabase secrets set GITHUB_WEBHOOK_SECRET='<from-GitHub-App-webhook-secret>
 
 ```bash
 npx supabase functions deploy teamai-github-webhook \
-  --project-ref <REF> --no-verify-jwt
+  --project-ref srpgzzretfyqdsfclnuo --no-verify-jwt
 ```
 
 **Only then** set Webhook **Active** on the App form to:
 
-`https://<project-ref>.supabase.co/functions/v1/teamai-github-webhook`
+`https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-github-webhook`
 
 ## 4. What users do inside TeamAi
 
