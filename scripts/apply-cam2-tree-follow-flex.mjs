@@ -1,5 +1,5 @@
 /**
- * Idempotent Cam-2 + Cam-3 + Cam-4 flex wire.
+ * Idempotent Cam-2 + Cam-3 + Cam-4 + depth-readable flex wire.
  * Prefer public/_flex_src parts (.txt or .b64); else pre-loader SHA fetch; then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -25,10 +25,7 @@ function applyPatches(t) {
     }
   }
   if (t.includes('HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39}')) {
-    t = t.replace(
-      'HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39}',
-      'HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39}'
-    );
+    t = t.replace('HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39}', 'HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39}');
     changed = true;
   }
   if (!t.includes('function followHierarchyTreeCamera')) {
@@ -41,11 +38,7 @@ function applyPatches(t) {
       changed = true;
     }
   }
-  if (
-    t.includes(
-      "openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  setCamera('SEAT_CLOSE');"
-    )
-  ) {
+  if (t.includes("openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  setCamera('SEAT_CLOSE');")) {
     t = t.replace(
       "openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  setCamera('SEAT_CLOSE');\n  syncHierarchyFromGlobals();",
       `openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  syncHierarchyFromGlobals();\n  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });\n  setCamera(treeCam.cameraId);`
@@ -67,14 +60,12 @@ function applyPatches(t) {
       changed = true;
     }
   }
-  if (!t.includes("from './hero-cam3-tree-center-zoom.js'")) {
-    if (t.includes("from './hero-cam2-tree-follow.js';")) {
-      t = t.replace(
-        "from './hero-cam2-tree-follow.js';",
-        "from './hero-cam2-tree-follow.js';\nimport { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree } from './hero-cam3-tree-center-zoom.js';"
-      );
-      changed = true;
-    }
+  if (!t.includes("from './hero-cam3-tree-center-zoom.js'") && t.includes("from './hero-cam2-tree-follow.js';")) {
+    t = t.replace(
+      "from './hero-cam2-tree-follow.js';",
+      "from './hero-cam2-tree-follow.js';\nimport { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree } from './hero-cam3-tree-center-zoom.js';"
+    );
+    changed = true;
   }
   const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
   const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  const base = hierarchyRuntime.openParentId\n    ? baseDockForTree({ cameraId }, table)\n    : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
@@ -96,14 +87,12 @@ function applyPatches(t) {
     );
     changed = true;
   }
-  if (!t.includes("from './hero-cam4-edge-swipe.js'")) {
-    if (t.includes("from './hero-cam3-tree-center-zoom.js';")) {
-      t = t.replace(
-        "from './hero-cam3-tree-center-zoom.js';",
-        "from './hero-cam3-tree-center-zoom.js';\nimport { edgePressure, edgeDriftDelta, inverseSwipeDelta, clampPitch, pointerNorm } from './hero-cam4-edge-swipe.js';"
-      );
-      changed = true;
-    }
+  if (!t.includes("from './hero-cam4-edge-swipe.js'") && t.includes("from './hero-cam3-tree-center-zoom.js';")) {
+    t = t.replace(
+      "from './hero-cam3-tree-center-zoom.js';",
+      "from './hero-cam3-tree-center-zoom.js';\nimport { edgePressure, edgeDriftDelta, inverseSwipeDelta, clampPitch, pointerNorm } from './hero-cam4-edge-swipe.js';"
+    );
+    changed = true;
   }
   if (!t.includes('edgePointerNorm') && t.includes('let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;')) {
     t = t.replace(
@@ -129,6 +118,23 @@ function applyPatches(t) {
         t.slice(insert);
       changed = true;
     }
+  }
+  if (!t.includes("from './hero-depth-readable-faces.js'") && t.includes("from './hero-cam4-edge-swipe.js';")) {
+    t = t.replace(
+      "from './hero-cam4-edge-swipe.js';",
+      "from './hero-cam4-edge-swipe.js';\nimport { depthReadableFovBoost, depthReadableFaceScale } from './hero-depth-readable-faces.js';"
+    );
+    changed = true;
+  }
+  if (
+    t.includes('return setupRingFovBoost(getSetupRingFillAmount(hierarchyRuntime), boost);') &&
+    !t.includes('depthReadableFovBoost(hierarchyRuntime, setupRingFovBoost')
+  ) {
+    t = t.replace(
+      'return setupRingFovBoost(getSetupRingFillAmount(hierarchyRuntime), boost);',
+      'return depthReadableFovBoost(hierarchyRuntime, setupRingFovBoost(getSetupRingFillAmount(hierarchyRuntime), boost));'
+    );
+    changed = true;
   }
   return { t, changed };
 }
