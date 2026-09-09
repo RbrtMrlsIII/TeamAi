@@ -3,25 +3,73 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-## Completed ladder
+## Completed ladder (structure + skills)
 
 | Slice | Topic | Status |
 |-------|--------|--------|
-| A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
-| B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
-| C | Camera orbit polish — **NAVIGATE**-only; dock wins on inspect | **Merged** (#152) |
-| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **Merged** (#153) |
-| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **Merged** (#155) |
-| G | #89 reduced-motion lighting contract | **Merged** (#156) |
-| H | Legacy `MECHANISM_ZIPSKILLS` reconcile | **Merged** (#157) |
-| I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160); issue **closed** |
-| J | #88 material depth evidence + HandOver | **Merged** (#161) |
-| Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS (Zip ≠ commerce) | **Merged** (#163) |
-| N.1–N.3 | Skill bodies + entitlement architecture (no numbers) | **Merged** (#164–#166) |
-| K | Issue hygiene + Grok Skills alignment | **Merged** (#167) |
-| L | #96–#98 satisfied-by map | **Merged** (#168) |
-| N.4 | `ws.authority.map`, `ws.evidence.handover` | **Merged** (#169) |
-| N.5 | Remaining SEAT_SKILLS (discuss, fields, leader) | **Merged** (#170) |
+| A–C | Rings, scales, **NAVIGATE** orbit; dock wins on inspect | **Merged** (#150–#152) |
+| D–E | SEAT_TOOLKIT + WORKSPACE_ZIPSKILLS faces | **Merged** (#153, #155) |
+| G–J | #89 reduced-motion lighting, alias H, #95 wiring, #88 materials | **Merged** (#156–#161) |
+| Taxonomy + N.1–N.5 | SEAT_SKILLS / WORKSPACE_SKILLS bodies + entitlement arch | **Merged** (#163–#170) |
+| K–L | Hygiene + #96–#98 satisfied-by | **Merged** (#167–#168) |
+
+## Product rule: depth-first hierarchy animation (plan of record)
+
+We build **one hierarchy node at a time**, not a thin shell with empty faces forever.
+
+```text
+Open parent (validated motion + camera + theme + a11y)
+  → open first child branch (mechanical)
+  → camera docks / zooms until that node's full contents are readable
+  → if contents are dense (login, signup, long forms): fill the view
+  → hand off to normal UI when 3D cannot host the whole form
+  → only then the next sibling child
+```
+
+### Camera-fill rule (login / signup / full-area content)
+
+When a face or plate **covers the whole working area** (e.g. auth login/signup, wide config):
+
+1. Semantic camera **docks** to that content’s anchor (not free orbit while INSPECT).
+2. Zoom / framing continues until **the whole contents can be seen** (or the maximum safe dock), within §9 `NAV_ZOOM_*` and reduced-motion clamps.
+3. FOV may use `FOV_BOOST_NARROW` on small viewports so content is not cropped without reason.
+4. Prefer **one** Hero canvas; dense forms may complete via **normal-UI handoff** after the mechanical reveal — still presentation, not entitlement.
+
+### Shared roots every node must respect
+
+| Concern | Home |
+|---------|------|
+| Durations / reduced snap | Baseline §9 + motion / transition skills |
+| Theme | `document.documentElement` only |
+| FOV / density | responsive skill + `FOV_BOOST_NARROW` |
+| One open parent | Hierarchy runtime R6 |
+| No second animation framework | I.1 / I.2 matrix |
+
+## Hierarchy animation ladder (execute in order)
+
+| Slice | Node | Desired output | Pass gate |
+|-------|------|----------------|-----------|
+| **P1** | `SEAT_CONNECTION` (+ health leaf) | Branch open motion; camera to readable connection face; clear path to configure / normal UI | Motion, dock, reduced snap, theme, a11y; no entitlement claim |
+| **P2** | `SEAT_BEHAVIOR` | Same treatment for Do/Don’t face | Don’t start until P1 pass |
+| **P3** | `SEAT_TOOLKIT` (optional) | Optional equip face; still not required setup | Optional skip if product defers |
+| **P4…** | Capabilities → Authorization → Workspace scope → Task/evidence | One face per slice | Same gates |
+| **P-R2** | Setup ring content (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | Especially FOV + narrow viewport |
+| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | Not a seat child |
+| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
+| **M** | Background assets | One canvas only | No paid assets |
+| **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
+
+## Optional skills / toolkits
+
+- SEAT_SKILLS / WORKSPACE_SKILLS (Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
+- Users may assign skills outside TeamAi; presentation must not imply entitlement.
+
+## Camera (baseline already on main)
+
+- Free orbit / zoom: **NAVIGATE** only (R4).
+- Inspect → semantic dock (`SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …) wins.
+- Named §9 zoom bounds; reduced-motion clamps remain contract.
+- **New emphasis:** full-area content → zoom/dock until contents fit (see above).
 
 ## Naming
 
@@ -34,43 +82,6 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 Legacy `MECHANISM_ZIPSKILLS` aliases `WORKSPACE_ZIPSKILLS` (same dock).
 
-## Optional skills / toolkits (product rule)
-
-- SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
-- Users may assign skills outside TeamAi; presentation must not imply entitlement.
-
-## Camera (Slice C landed)
-
-- Free orbit / zoom: **NAVIGATE** input mode only (Hierarchy Runtime R4).
-- Seat select → semantic dock (`SEAT_CLOSE`) wins; orbit paused while `INSPECT`.
-- Named §9 zoom bounds; reduced-motion clamps remain contract.
-
-## Next (ordered — one slice per session)
-
-| Slice | Topic | Desired output | Workaround if blocked |
-|-------|--------|----------------|------------------------|
-| **P** | Hierarchy motion / transition polish | Stronger open-child / stack motion using existing §9 durations + motion/transition skills; **no** second animation framework | Keep current open/close if polish is large — optional |
-| **F** | Health leaf → domain read-model | `source:'domain'` only under a **named** seat-read-model contract | Keep fixture; never healthy = entitled |
-| **M** | Optional single-canvas background assets | One Hero canvas; semantic cameras; authored only | No paid assets; no second canvas |
-| **Outer UI** | Non-Hero plates / chrome | Readable product shell so owner can fair-judge Hero | Separate from 029 release claim |
-| **Owner** | Visual endorsement | #89 (and #88 if reopened) when environment + outer UI are fair | Do not fake endorsement |
-
-## Skill catalog status (procedure library)
-
-| Family | Status |
-|--------|--------|
-| WORKSPACE_SKILLS kinds with bodies | `ws.029.presentation`, `ws.contribution.flow`, `ws.tools.github`, `ws.turn.defaults`, `ws.secrets.boundary`, `ws.authority.map`, `ws.evidence.handover` |
-| SEAT_SKILLS kinds with bodies | `seat.planning.summarize`, `seat.planning.discuss`, `seat.work.coding`, `seat.field.*` (backend/frontend/integration/docs/verification), `seat.coord.leader` |
-| Still optional / not written as SKILL.md | Any future kinds only when product needs them |
-
-## Owner visual note
-
-Hero hierarchy is **visible** (e.g. GitHub Pages), but outer product UI and rich transforming/branch **machinery cinema** remain incomplete. Functional open/close + docks exist; showpiece animation is **later (P)**. **Do not** treat owner endorsement as done until a fair review is possible. Presentation ≠ 029-released.
-
-## MASTERPLAN empty checks
-
-TEAM-BACKEND-001 remainder **7, 13–17** = user-manual on existing `backend/BACKEND_LIVE_SERVICE_STATUS.md`. No second deployment file.
-
 ## Product rules that stay true
 
 - Theme: `document.documentElement` only; Isolation preserved.
@@ -78,11 +89,12 @@ TEAM-BACKEND-001 remainder **7, 13–17** = user-manual on existing `backend/BAC
 - Presentation never invents entitlement, scheduler, or durable auth.
 - Green CI is necessary, not Endorsement.
 - CAPABILITY ≠ AUTHORIZATION ≠ WORKSPACE ≠ FIRESTORE.
+- **no 029-released claim**
 
 ## Related
 
-- `docs/GROK_SKILLS_ALIGNMENT.md`  
-- `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`  
-- `docs/TEAM-EXPERIENCE-029_ENTITLEMENT_AND_USAGE_LIMITS_ARCHITECTURE.md`  
-- `docs/TEAMAI_3D_HERO_REDUCED_MOTION_LIGHTING_CONTRACT.md` (#89 reduced-motion lighting)  
+- `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md` (this direction, expanded)  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9  
+- `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`  
+- `docs/TEAMAI_3D_HERO_MOTION_TRANSITION_TOKEN_ALIGNMENT.md`  
+- `docs/GROK_SKILLS_ALIGNMENT.md`  
