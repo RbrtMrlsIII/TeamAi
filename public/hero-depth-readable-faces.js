@@ -22,3 +22,18 @@ export function depthReadableFaceScale(state = {}) {
   if (state.focusedChildId) return Math.max(TREE_FACE_SCALE_MIN, 1.04);
   return 1;
 }
+
+/**
+ * Scale multiplier for a specific hierarchy child plate.
+ * Focused child/leaf gets depthReadableFaceScale; others stay 1.
+ */
+export function facePlateScaleForChild(state = {}, childId = null) {
+  if (!state || !state.openParentId || !childId) return 1;
+  if (state.focusedLeafId && state.focusedChildId === childId) {
+    return depthReadableFaceScale(state);
+  }
+  if (state.focusedChildId === childId) {
+    return depthReadableFaceScale(state);
+  }
+  return 1;
+}

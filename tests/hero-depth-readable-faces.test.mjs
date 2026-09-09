@@ -16,6 +16,7 @@ import {
   TREE_LEAF_FOV_BOOST,
   depthReadableFovBoost,
   depthReadableFaceScale,
+  facePlateScaleForChild,
 } from '../public/hero-depth-readable-faces.js';
 
 test('named FOV boosts are positive', () => {
@@ -44,6 +45,14 @@ test('leaf adds stronger FOV', () => {
   assert.equal(depthReadableFovBoost(state, 0), TREE_LEAF_FOV_BOOST);
 });
 
+test('facePlateScaleForChild boosts only the focused child', () => {
+  const state = createHierarchyRuntime();
+  openSeatShellParent(state, 0, { snap: true, nowMs: 0 });
+  focusChild(state, HIERARCHY_PART.SEAT_CONNECTION);
+  assert.ok(facePlateScaleForChild(state, HIERARCHY_PART.SEAT_CONNECTION) > 1);
+  assert.equal(facePlateScaleForChild(state, HIERARCHY_PART.SEAT_BEHAVIOR), 1);
+});
+
 test('module and contract stay presentation-only', async () => {
   const src = await readFile(new URL('../public/hero-depth-readable-faces.js', import.meta.url), 'utf8');
   assert.match(src, /Depth-readable|TREE_FACE_FOV|presentation only/i);
@@ -55,7 +64,7 @@ test('module and contract stay presentation-only', async () => {
   assert.match(contract, /Depth readability|readable/i);
 });
 
-test('hero-flex wires depth-readable FOV after apply', async () => {
+test('hero-flex wires depth-readable FOV and plate scale after apply', async () => {
   const { spawnSync } = await import('node:child_process');
   const { fileURLToPath } = await import('node:url');
   const { dirname, join } = await import('node:path');
@@ -63,4 +72,5 @@ test('hero-flex wires depth-readable FOV after apply', async () => {
   spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
   assert.match(flex, /hero-depth-readable-faces|depthReadableFovBoost/);
+  assert.match(flex, /facePlateScaleForChild/);
 });
