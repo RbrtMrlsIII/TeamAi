@@ -3,7 +3,7 @@
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
 Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
-**P1**–**P7.1** **merged** (#174–#187) — seat-shell hierarchy ladder complete. **P-R2** setup-ring camera-fill **Merged** (#188).
+**P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** health domain read-model **this PR**.
 
 ## Completed ladder (structure + skills)
 
@@ -60,8 +60,8 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P7** | `SEAT_TASK_EVIDENCE` | Branch open motion; task evidence face a11y + handoff (presentation only) | **Merged** (#186) |
 | **P7.1** | TASK_EVIDENCE visual flex | Frame tick + branchBoost + keyboard **E** | **Merged** (#187) |
 | **P-R2** | Setup ring (incl. **login/signup** full-area) | Camera-fill until whole auth/config contents visible; handoff if needed | **Merged** (#188) |
-| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **This PR** |
-| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | Else keep fixture |
+| **P-R0** | WORKSPACE_ZIPSKILLS crown | Small optional branch on workspace tree | **Merged** (#189) |
+| **F** | Health leaf domain read-model | `source:'domain'` only with named contract | **This PR** |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | #89 open |
 
@@ -76,6 +76,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - Inspect → semantic dock (`SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …) wins.
 - Named §9 zoom bounds; reduced-motion clamps remain contract.
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
+- Physical eye/target/FOV positions already live in `hero-flex.js` `cameras()` (`HERO_WIDE`, `SEAT_CLOSE`, `DETAIL_ANCHOR`, `WORKSPACE_CLOSE`, …). Per-node refined docks may evolve later; baseline positions exist now.
 
 ## Naming
 
