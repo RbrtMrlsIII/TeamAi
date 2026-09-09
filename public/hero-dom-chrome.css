@@ -1,0 +1,13 @@
+/* DOM chrome soft-absorption when hierarchy machine UI is open (presentation only) */
+.hero-shell[data-hero-machine-ui="1"] .seat-stack,
+.hero-shell[data-hero-machine-ui="1"] .hero-inspection,
+.hero-shell[data-hero-machine-ui="1"] .hero-controls .control-row,
+.hero-shell[data-hero-machine-ui="1"] .spatial-parts {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.hero-shell[data-hero-machine-ui="1"] .seat-stack.is-machine-absorbed,
+.hero-shell[data-hero-machine-ui="1"] .hero-inspection.is-machine-absorbed {
+  position: absolute;
+}
