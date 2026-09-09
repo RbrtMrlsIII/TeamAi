@@ -46,7 +46,7 @@ One open parent at a time. Presentation only.
 
 ## 5. Motion
 
-`OPEN_DURATION_MS`, `CLOSE_DURATION_MS`, `HIERARCHY_REDUCED_SNAP`, `CAMERA_LERP_MS`.
+`OPEN_DURATION_MS`, `CLOSE_DURATION_MS`, `CONNECTION_BRANCH_MS` (P1), `HIERARCHY_REDUCED_SNAP`, `CAMERA_LERP_MS`.
 
 ---
 
@@ -81,6 +81,7 @@ One open parent at a time. Presentation only.
 | `CAMERA_LERP_MS` | `700` | measured | R3/R5 |
 | `OPEN_DURATION_MS` | `520` | starting | R5 |
 | `CLOSE_DURATION_MS` | `420` | starting | R5 |
+| `CONNECTION_BRANCH_MS` | `380` | starting | R5 / P1 SEAT_CONNECTION branch |
 | `HIERARCHY_REDUCED_SNAP` | `true` | contract | R5 |
 | `WORKSPACE_R_MIN` | `4.35` | measured | R2 |
 | `WORKSPACE_R_MAX` | `5.95` | measured | R2 |
