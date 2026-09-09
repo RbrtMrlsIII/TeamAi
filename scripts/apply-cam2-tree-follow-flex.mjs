@@ -1,5 +1,5 @@
 /**
- * Idempotent Cam-2+3+4 + depth + plate-scale + DOM soft-hide flex wire.
+ * Idempotent Cam-2+3+4 + depth + plate-scale + DOM soft-hide + action-map flex wire.
  * Prefer public/_flex_src parts; else pre-loader SHA; then patch.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -101,6 +101,14 @@ function applyPatches(t) {
   }
   if (t.includes('if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();') && !t.includes('applyMachineUiChrome(shell')) {
     t = t.replace('if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();', `if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();\n  applyMachineUiChrome(shell, { hierarchyOpen: Boolean(hierarchyRuntime.openParentId) });`);
+    changed = true;
+  }
+  if (!t.includes("from './hero-dom-action-map.js'") && t.includes("from './hero-dom-chrome-absorption.js';")) {
+    t = t.replace("from './hero-dom-chrome-absorption.js';", "from './hero-dom-chrome-absorption.js';\nimport { resolveDomCameraAction } from './hero-dom-action-map.js';");
+    changed = true;
+  }
+  if (t.includes("document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>setCamera(") && !t.includes('resolveDomCameraAction(id')) {
+    t = t.replace(/document\.querySelectorAll\('\[data-camera\]'\)\.forEach\(button=>button\.addEventListener\('click',\(\)=>setCamera\([^)]+\)\)\);/, `document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>{const id=button.dataset.camera||button.getAttribute('data-camera');const hierarchyOpen=Boolean(hierarchyRuntime&&hierarchyRuntime.openParentId);const resolved=resolveDomCameraAction(id,{hierarchyOpen});if(resolved.allowed&&resolved.effectiveCameraId)setCamera(resolved.effectiveCameraId);}));`);
     changed = true;
   }
   return { t, changed };

@@ -1,3 +1,4 @@
+import { applyResolvedCamera } from './hero-dom-action-map.js';
 const parts=[...document.querySelectorAll('.spatial-part')];
 let active=null;
 const profiles=[
@@ -11,7 +12,9 @@ let reducedMotion=Boolean(reduced?.matches);
 function focusCamera(name){
   const id=cameraForPart[name];
   if(!id)return;
-  document.querySelector(`[data-camera="${id}"]`)?.click();
+  const hierarchyOpen = document.querySelector('.hero-shell')?.getAttribute('data-hero-machine-ui') === '1'
+    || document.querySelector('.hero-shell')?.dataset?.hierarchyOpen === 'true';
+  applyResolvedCamera(id, { hierarchyOpen });
 }
 function setPart(part){
   active=active===part?null:part;

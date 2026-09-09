@@ -57,10 +57,10 @@
       <section class="hero-controls" aria-label="3D hero controls">
         <div class="control-row">
           <button data-camera="HERO_WIDE">Wide</button>
-          <button data-camera="HERO_LOW_ORBIT">Low orbit</button>
-          <button data-camera="TEAM_ORBIT">Team</button>
+          <button data-camera="HERO_LOW_ORBIT" data-lock-only="1">Low orbit</button>
+          <button data-camera="TEAM_ORBIT" data-lock-only="1">Team</button>
           <button data-camera="WORKSPACE_CLOSE">Workspace</button>
-          <button data-camera="OVERHEAD_MAP">Map</button>
+          <button data-camera="OVERHEAD_MAP" data-lock-only="1">Map</button>
           <button data-hero-engine-open class="primary">Open engine</button>
           <button id="demo-toggle" class="primary">Start turn loop</button>
         </div>
@@ -100,10 +100,20 @@
 
       <div class="hero-note" aria-hidden="true">Contribution → shared state → next eligible Seat</div>
     </main>
+
+    <!-- Far-environment only (outside hero machine shell): legal / contact / about -->
+    <aside class="far-environment" aria-label="Site environment">
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#terms">Terms</a>
+      <a href="#privacy">Privacy</a>
+    </aside>
+
     <script type="module" src="./hero-flex.js"></script>
     <script type="module" src="./hero-aura.js"></script>
     <script type="module" src="./hero-parts.js"></script>
     <script type="module" src="./hero-seat-stack.js"></script>
+    <script type="module" src="./hero-seat-stack-action-bridge.js"></script>
     <script type="module" src="./hero-semantic-camera.js"></script>
     <script type="module" src="./hero-inspection-spine.js"></script>
     <script type="module" src="./hero-auth-handoff.js"></script>
