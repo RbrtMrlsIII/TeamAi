@@ -201,7 +201,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     const count = await page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
     expect(count).toBe(8);
 
-    await page.evaluate(() => window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-unlocked', { detail: { seatCount: 6 } }));
+    await page.evaluate(() => window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-unlocked', { detail: { seatCount: 6 } })));
     await expect(page.locator('#seat-label')).toContainText('6 seats unlocked');
   });
 });
