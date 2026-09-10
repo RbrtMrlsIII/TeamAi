@@ -6,8 +6,8 @@
 
 ```text
 CURRENT FRONTIER (2026-09-10):
-  SP-07 frontier decision CLOSED
-  NEXT AUTHORIZED SPATIAL COMMAND: V3.3 Gentle Hero atmosphere
+  V3.3 Gentle Hero atmosphere (this slice)
+  NEXT AFTER MERGE: V3.4 get-started → machine baseline handoff
   NOT Cam-2
 ```
 
@@ -15,13 +15,7 @@ CURRENT FRONTIER (2026-09-10):
 
 | ID | Intent | Status |
 |----|--------|--------|
-| SP-01 | Canonical spatial snapshot | **Satisfied** (ledger + matrices) |
-| SP-02 | Camera precedence | **Merged** (#236) |
-| SP-03 | Cam-4 browser proof | **Merged** (#237) |
-| SP-04 | Apply-path integrity | **Merged** (#239) |
-| SP-05 | Tree depth/readability | **Merged** (#241) |
-| SP-06 | R1/R2 readiness boundary | **Merged** (#242) |
-| **SP-07** | Current frontier decision | **This slice** |
+| SP-01–SP-07 | Spatial gates + frontier decision | **Closed** |
 
 ## Vision V3
 
@@ -29,18 +23,18 @@ CURRENT FRONTIER (2026-09-10):
 |----|--------|
 | V3.1 | **Merged** (#230) |
 | V3.2 | **Merged** (#235) |
-| **V3.3** | **Next authorized** — Gentle Hero atmosphere |
-| V3.4–V3.5 | Planned after V3.3 |
+| **V3.3** | **This slice** — Gentle Hero atmosphere |
+| V3.4 | **Next** — Get-started → machine baseline |
+| V3.5 | Planned |
 
 ## Next authorized commands
 
-1. **V3.3** — Gentle Hero atmosphere (adjust existing Hero bootstrap as Layer A backdrop; no second runtime).  
-2. Parallel **Conn-3** Edge/OAuth only — never Hero live bind.  
-3. After V3.3 → **V3.4** get-started → machine baseline handoff.
+1. **V3.3** (this slice) → merge when CI green.  
+2. **V3.4** get-started → machine baseline handoff.  
+3. Parallel **Conn-3** Edge/OAuth only — never Hero live bind.
 
 ## SEE ALSO
 
+- `docs/TEAMAI_3D_HERO_V3_3_GENTLE_ATMOSPHERE.md`  
 - `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`  
-- `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`  
-- `docs/TEAMAI_3D_HERO_R1_R2_READINESS.md`  
-- `docs/VISION.md` §6 Phase V3  
+- `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`  
