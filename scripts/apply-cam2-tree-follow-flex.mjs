@@ -3,10 +3,12 @@
  * Prefer public/_flex_src parts; else pre-loader SHA; then patch.
  * Cam-6 (Issue #212): mandatory selected-seat look-at while seat shell open.
  * V0.2 (Vision #214): return-to-baseline on close — HERO_WIDE + nav home.
+ * SP-04: fail loudly when expected markers are missing (no silent no-op success).
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { assertFlexIntegrityOrExit } from './flex-apply-integrity.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const path = join(root, 'public/hero-flex.js');
@@ -95,7 +97,6 @@ function applyPatches(t) {
   }
   if (t.includes('const s = loc.scale * scale * (0.55 + 0.45 * amt);') && !t.includes('facePlateScaleForChild(hierarchyRuntime, childId)')) {
     t = t.replace('const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);', 'const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);');
-    // no-op if already has facePlate - keep original replace intent
     changed = true;
   }
   if (t.includes('const s = loc.scale * scale * (0.55 + 0.45 * amt);') && !t.includes('facePlateScaleForChild(hierarchyRuntime, childId)')) {
@@ -118,7 +119,6 @@ function applyPatches(t) {
     t = t.replace(/document\.querySelectorAll\('\[data-camera\]'\)\.forEach\(button=>button\.addEventListener\('click',\(\)=>setCamera\([^)]+\)\)\);/, `document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>{const id=button.dataset.camera||button.getAttribute('data-camera');const hierarchyOpen=Boolean(hierarchyRuntime&&hierarchyRuntime.openParentId);const resolved=resolveDomCameraAction(id,{hierarchyOpen});if(resolved.allowed&&resolved.effectiveCameraId)setCamera(resolved.effectiveCameraId);}));`);
     changed = true;
   }
-  // Cam-5/6 import — selected seat look-at authority (Issue #212)
   if (!t.includes("from './hero-cam5-selected-tree-center.js'")) {
     if (t.includes("from './hero-cam4-edge-swipe.js';")) {
       t = t.replace("from './hero-cam4-edge-swipe.js';", "from './hero-cam4-edge-swipe.js';\nimport { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';");
@@ -131,7 +131,6 @@ function applyPatches(t) {
       changed = true;
     }
   }
-  // Cam-6: mandatory selected-seat look-at while seat shell open (Issue #212)
   if (!t.includes('seatDock') && t.includes('function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;')) {
     t = t.replace(
       "function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
@@ -201,3 +200,5 @@ const t = await loadBase();
 const { t: next, changed } = applyPatches(t);
 writeFileSync(path, next);
 console.log(changed ? 'Cam-2/3/4/6 flex applied' : 'Cam-2/3/4/6 flex already applied');
+// SP-04: never treat missing markers / emergency loader as success
+assertFlexIntegrityOrExit(next);
