@@ -19,7 +19,7 @@ The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/valida
 - `teamai-task-execute` is runtime-proven only through its bounded authenticated path and still uses `stub-edge-runtime`; real external provider invocation remains **OPEN / NOT PROVEN**.
 - GitHub App installation is operator-confirmed, while Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind.
 - Seat connection/provider surfaces are deployed but remain implementation/deployment surfaces rather than automatic product acceptance.
-- The spatial clock is independent: **Vision V3.5 complete** (entrance ladder V3.1–V3.5 merged). Next parallel work is **Conn-3 live deployment/browser proof** (not a Hero live bind), with no backend authority transferred into the Hero.
+- The spatial clock is independent: **Vision V3.5 complete** (entrance ladder V3.1–V3.5 merged). **#258 residual** in flight: Layer A/B legibility + machine chrome soft-hide (ENT-R2/R3, CHR-R1/R2 — PR #259); Cam-6 seat look-at residual still open. Next parallel work remains **Conn-3 live deployment/browser proof** (not a Hero live bind), with no backend authority transferred into the Hero.
 
 Historical checkpoints may retain earlier pending wording because they are evidence records. This active index is the current recovery map and must not rewrite those historical records.
 
