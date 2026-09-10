@@ -7,10 +7,14 @@
 ## Delivered
 
 - `public/hero-cam3-tree-center-zoom.js` — `poseAboutTreeCenter`, `shouldApplyTreeNav`
-- Free wheel / pinch / orbit **while hierarchy parent open**
-- Look-at stays locked to **current tree center** (dock target)
-- apply script restores full flex from pre-loader SHA and applies Cam-2+Cam-3 wires
+- Free wheel / pinch / orbit while hierarchy parent is open
+- Look-at stays locked to the current tree center (dock target)
+- apply path restores and wires the Cam-2 + Cam-3 behavior
 
-## Next
+## Historical status
 
-Cam-4 edge-drag + inverse-swipe whole-web PoV.
+Cam-3 is **fulfilled historical architecture**. Cam-4 subsequently merged, and later Vision V0–V2 work refined the experience. Agents must not schedule Cam-4 from this checkpoint.
+
+Use `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` for current camera chronology and `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` for current spatial gates.
+
+Any remaining camera work must be named as a current V-series adjustment or residual verification item.
