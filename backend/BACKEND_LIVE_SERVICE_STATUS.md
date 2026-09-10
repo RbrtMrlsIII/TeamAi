@@ -1,7 +1,7 @@
 # TEAM-BACKEND-001 — Live Service Status
 
-**Date:** 2026-09-10
-**Phase:** TEAM-BACKEND-001
+**Date:** 2026-09-10  
+**Phase:** TEAM-BACKEND-001  
 **Status:** IN IMPLEMENTATION — bounded runtime slices are live; final evidence/endorsement remains open
 
 ## Boundary state
@@ -58,6 +58,14 @@ This boundary is recorded so future agents do not restart completed infrastructu
 `source implementation ≠ deployment ≠ integration ≠ runtime proof ≠ completion ≠ endorsement`
 
 The current repository and live Supabase deployment therefore support a layered state model rather than a single “backend done/not done” flag.
+
+## Operator / manual setup visibility
+
+Some backend progress is intentionally completed through the human operator because it crosses external provider dashboards, secrets, account authorization, sandbox payment interaction, or other user-owned boundaries. These actions may not be visible to an ordinary repository-only Agent.
+
+The durable bridge for this hidden-state problem is `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`, which records the relationship between repository intent, operator action, connected-runtime observation, evidence class, owner, stopping boundary, and the next authorized evidence action.
+
+Before performing a major backend refactor or cleanup that could obscure a live/manual setup, preserve the observed state in that ledger first.
 
 ## Next backend continuation
 
