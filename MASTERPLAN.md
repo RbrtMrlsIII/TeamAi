@@ -227,7 +227,77 @@ ToolKit may learn only generalized lessons from TeamAi after the consuming-proje
 
 ### Provider/model/tool warning boundary
 
-Before modifying provider adapters, model catalogs, advanced agent runtimes, context-transfer code, tool/plugin connectors, MCP, provider-native storage, retention/disclosure behavior, or subscription/entitlement logic, the agent must re-read the governing Product Law, Masterplan residual boundaries, and the applicable planning contracts. Speculative expansion is not authorized.
+Before modifying provider adapters, model catalogs, advanced agent runtimes, context-transfer code, tool/plugin connectors, MCP, provider-native storage, retention/disclosure behavior, or subscription/entitlement logic, the agent must first inspect the applicable provider/tool guard, existing roots, and current documented contract. Unknown, stale, contradictory, or potentially prohibited rules must become an explicit review/blocked condition rather than an assumption.
+
+## TEAM-EXPERIENCE-029 — Spatial Theme and Visual System
+
+**Status:** PLANNED PRODUCT-EXPERIENCE SLICE — NOT YET IMPLEMENTED.
+
+The Product Law visual requirement is:
+
+`one theme setting → Dark Spatial Glassmorphism OR Light Spatial Skeuomorphism`
+
+### Chronological execution checklist
+1. [ ] Reconcile the approved visual law against existing UI roots, theme state, spatial semantics, accessibility contracts, responsive rules, and current 029 planning records.
+2. [ ] Define the shared semantic design-token and primitive roots for surfaces, depth, elevation, material treatment, borders, typography, controls, motion, focus, status feedback, and responsive behavior.
+3. [ ] Implement the single light/dark theme switch so the setting activates **Dark Spatial Glassmorphism** for Dark and **Light Spatial Skeuomorphism** for Light without duplicating theme authority.
+4. [ ] Apply the shared spatial primitives across the canonical 029 shell and first representative surfaces without introducing page-local theme authorities.
+5. [ ] Verify semantic equivalence of product behavior across both theme modes: identity, navigation, state, scheduler/readiness, approvals, forms, errors, and durable-state interactions remain unchanged by visual mode.
+6. [ ] Verify accessibility and interaction requirements across both modes, including contrast/legibility, keyboard/focus visibility, reduced-motion behavior, responsive breakpoints, and non-pointer interaction paths.
+7. [ ] Run deterministic browser verification for the exercised web scope and retain screenshots/captures only as separate GitHub evidence artifacts when useful.
+8. [ ] Record implementation commit, verification scope, workflow/run references, limitations, and any discovered root changes in HandOver.
+9. [ ] Obtain Endorsement for the completed slice and update `PRODUCT-KNOWLEDGE.md` only when the lesson is validated and reusable.
+10. [ ] Reconcile any new backend/domain requirement discovered by the visual implementation through its owning canonical contract rather than creating browser authority.
+
+### Spatial-theme checklist skill routing
+
+| Checklist | Required routing |
+|---|---|
+| 1 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/governance/product-law-change/SKILL.md` + applicable verification/audit skills |
+| 2 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 3 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 4 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable 029 UI implementation skills |
+| 5 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 6 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 7 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 8 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 9 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` |
+| 10 | `skills/execution/orucaveam/SKILL.md` + `skills/backend/authority-contract/SKILL.md` + applicable domain verification skills |
+
+### Visual-system boundary
+
+The spatial theme is presentation and interaction treatment. It is not a replacement for TeamAi identity, Firestore state, scheduler authority, provider entitlement, permissions, approvals, commerce truth, or durable events. A theme mode change must remain a UI-state/configuration change and must not change canonical business meaning.
+
+## 029 questions that must be answered before or during implementation
+
+1. How does a user connect AI applications that are operated outside TeamAi?
+2. What provider authorization/connection states are visible, testable, and recoverable?
+3. How is an external connection bound to one Workplace, Project, and AI Seat?
+4. How does the user equip each AI with skills, Base TeamAi capabilities, Tool Quality, plugins/tools/MCP, workstation scope, permissions, and approval rules?
+5. How does TeamAi distinguish provider, service/runtime, exact model/variant, connection, Seat, Team Quality, skills, Base TeamAi capabilities, Tool Quality, workstation, scopes, limits, entitlement and compliance?
+6. How does an AI completion or action make another task eligible without direct provider-to-provider control?
+7. Which durable events represent AI results, action requests, tool results, approvals, failures, retries, cancellations, recovery, and completions?
+8. How can the Scheduler explain and reproduce why the next AI/tool/human acted?
+9. How does the shared chat expose the complete relevant discussion while each AI receives a meaning-preserving authorized context packet?
+10. How can one AI explicitly consume another AI's finding, handoff, artifact, or decision without exposing private provider state?
+11. How is exactly one document-authoring path selected during planning while other AIs remain advisory?
+12. How does the selected Web AI summarizer return the discussion to the user for `APPROVE`, `EDIT`, `MORE`, or `REJECT`?
+13. How are planning decisions separated from working execution state?
+14. How are approvals, blocked actions, failures, retries, cancellation, and recovery represented visibly?
+15. What happens when a configured provider/runtime/plugin/connection becomes unavailable after configuration?
+16. How is the same semantic team/workflow preserved across spatial, standard web, mobile, and accessibility representations?
+17. Which newly discovered requirements belong in 029, which return to backend/integration gates, and which become future phases?
+18. What exact conditions move a connection/Seat from configured to Active, and what evidence is required to reactivate it after degradation or authorization loss?
+19. How does the product communicate the difference between TeamAi entitlement and external provider entitlement without implying one grants the other?
+20. Which capabilities belong to the Base TeamAi capability set, and which remain optional Tool Quality extensions or provider-owned capabilities?
+21. How are supplied skill bundles, startup projects, templates, or ZIP packages consumed without creating a competing authority or silently overwriting current project rules?
+22. How does the system preserve every user clarification and materially relevant team contribution when the shared conversation grows beyond one model's context limit?
+
+### Root-wiring guard before 029 coding
+
+Before any production UI implementation slice, reconcile the proposed UI root against its owning canonical roots. Identity, Workplace ownership, project context, provider/runtime identity, connection state, Team Quality, skills, Base TeamAi capabilities, Tool Quality, tools, task/event state, commerce, approvals, notifications, recovery, privacy, compatibility, and spatial semantics must not be redefined locally when an existing canonical root already owns the meaning.
+
+The UI is presentation and interaction over authoritative state and policy intents, not a new authority layer.
 
 ### 029 completion frontier
 
