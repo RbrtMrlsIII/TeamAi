@@ -252,3 +252,15 @@ button.quiet { margin-left: auto; background: transparent; box-shadow: none; bor
   .hero-auth-panel { transition: none; }
   .hero-aura { animation: none !important; opacity: 0.28; }
 }
+
+/* V3.4 — machine layer presentation (same Hero; entrance brand softens) */
+.hero-shell[data-hero-layer="machine"] .hero-copy {
+  opacity: 0.42;
+  transition: opacity 220ms ease;
+}
+.hero-shell[data-hero-layer="entrance"] .hero-copy {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-shell[data-hero-layer="machine"] .hero-copy { transition: none; }
+}
