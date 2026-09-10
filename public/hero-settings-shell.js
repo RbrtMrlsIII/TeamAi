@@ -1,6 +1,6 @@
 /**
- * V2.3–V2.5 settings shell (Vision).
- * Owner: theme-root via documentElement only (theme, motion, UI scale).
+ * V2.3–V2.6 settings shell (Vision).
+ * Owner: theme-root via documentElement only (theme, motion, scale, language scaffold).
  * Presentation only · no 029-released claim · Issue #214
  */
 import {
@@ -14,6 +14,9 @@ import {
   initializeTheme,
   readScale,
   applyUiScale,
+  readLang,
+  applyUiLang,
+  SUPPORTED_UI_LANGS,
 } from '../frontend/spatial/theme-root.js';
 
 export const SETTINGS_SHELL_ID = 'hero-settings-shell';
@@ -60,6 +63,14 @@ export function buildSettingsShellPanel() {
         <input id="hero-ui-scale" type="range" min="0.85" max="1.35" step="0.05" data-settings-scale />
       </label>
       <span data-settings-scale-value aria-live="polite">100%</span>
+    </div>
+    <div class="hero-settings-panel__row hero-settings-panel__lang">
+      <label for="hero-ui-lang">Language
+        <select id="hero-ui-lang" data-settings-lang>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <span class="hero-settings-panel__lang-note">Scaffold — copy catalog pending</span>
     </div>
   `;
   return panel;
@@ -118,6 +129,8 @@ export function syncSettingsShellPressed(root = document) {
   if (input) input.value = String(scale);
   const label = panel.querySelector('[data-settings-scale-value]');
   if (label) label.textContent = Math.round(scale * 100) + '%';
+  const langSel = panel.querySelector('[data-settings-lang]');
+  if (langSel) langSel.value = readLang();
 }
 
 export function mountSettingsShell(root = document) {
@@ -151,7 +164,7 @@ export function mountSettingsShell(root = document) {
     root.documentElement?.setAttribute?.('data-settings-open', open ? '1' : '0');
     root.dispatchEvent(
       new CustomEvent('teamai:settings-shell', {
-        detail: { open, source: 'v2.5-settings-shell', presentationOnly: true },
+        detail: { open, source: 'v2.6-settings-shell', presentationOnly: true },
         bubbles: true,
       }),
     );
@@ -177,6 +190,20 @@ export function mountSettingsShell(root = document) {
     document.dispatchEvent(
       new CustomEvent('teamai:ui-scale', {
         detail: { scale: next, source: 'v2.5-settings-shell', presentationOnly: true },
+        bubbles: true,
+      }),
+    );
+  });
+
+  panel.addEventListener('change', (event) => {
+    const t = event.target;
+    if (!(t instanceof Element)) return;
+    if (!t.hasAttribute('data-settings-lang')) return;
+    const next = applyUiLang(t.value);
+    persistTheme({ lang: next });
+    document.dispatchEvent(
+      new CustomEvent('teamai:ui-lang', {
+        detail: { lang: next, supported: [...SUPPORTED_UI_LANGS], source: 'v2.6-settings-shell', presentationOnly: true },
         bubbles: true,
       }),
     );
