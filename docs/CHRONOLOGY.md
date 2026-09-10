@@ -88,7 +88,7 @@ Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-0
 | Order | Thought |
 |-------|---------|
 | D1 | Agent slice needs green CI + assumptions + reasons + next slice | `docs/AGENT_SLICE_EXECUTION.md` |
-| D2 | User manual for deploy + seats | `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` |
+| D2 | User manual for deploy + seats | `docs/USER_MANUAL_DEPLOYMENT.md` |
 | D3 | Dictionary for complex tabs / Hero parts | `docs/DICTIONARY.md` |
 | D4 | This chronology | `docs/CHRONOLOGY.md` |
 
@@ -110,6 +110,6 @@ Vercel remains cut off. Do not create a second deployment file.
 ## Quick links
 
 - [Dictionary](./DICTIONARY.md)
-- [Deploy & seats manual](./USER_MANUAL_DEPLOY_AND_SEATS.md)
+- [Deploy manual](./USER_MANUAL_DEPLOYMENT.md)
 - [Hero baseline](./CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md)
 - [Seat secret & free smoke](./TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md)

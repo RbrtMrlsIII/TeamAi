@@ -53,7 +53,7 @@ Do **not** reconstruct TeamAi from Grok App Builder `AGENTS.md` §0.5 (auth/db d
 | GitHub App form (Conn-1) | `skills/workspace/ws.github.app-least-privilege/SKILL.md` |
 | GitHub webhook + UID map (Conn-2) | `skills/workspace/ws.github.webhook-uid-map/SKILL.md` |
 | Secrets | `skills/workspace/ws.secrets.boundary/SKILL.md` |
-| User manual / deploy setups | `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` (human-only steps; agents log here, do not invent URLs) |
+| User manual / deploy setups | `docs/USER_MANUAL_DEPLOYMENT.md` (human-only steps; agents log here, do not invent URLs) |
 | Verification seat | `skills/seat/seat.field.verification/SKILL.md` |
 | Coding seat | `skills/seat/seat.work.coding/SKILL.md` |
 | Backend / commerce | `skills/backend/*` — Firebase, Firestore, Supabase Edge, PayPal |
@@ -69,7 +69,7 @@ SEAT_SKILLS and WORKSPACE_SKILLS are **optional user-assignable procedures**, no
 | Conn-2 | `ws.github.webhook-uid-map` | Mint UID from `sender.login`; paste PEM in chat; Hero live bind |
 | Conn-3 | `ws.github.oauth-uid-bind` (planning) | Treat keyboard C as OAuth; claim 029 released |
 
-Manual operator steps for App create, secrets, and webhook Active live only in `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` §12.
+Manual operator steps for App create, secrets, and webhook Active live only in `docs/USER_MANUAL_DEPLOYMENT.md`.
 
 ## 5. Merge / automation behavior (Grok connector)
 
@@ -95,4 +95,4 @@ A Grok session on TeamAi **passes** this alignment when:
 - `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`
 - `skills/workspace/ws.029.presentation/SKILL.md`
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md`
-- `docs/USER_MANUAL_DEPLOY_AND_SEATS.md`
+- `docs/USER_MANUAL_DEPLOYMENT.md`
