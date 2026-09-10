@@ -1,41 +1,90 @@
 /**
- * Cam-2 emergency loader — patches main hero-flex at runtime for tree camera follow.
- * Full static wire remains via scripts/apply-cam2-tree-follow-flex.mjs (CI + Pages).
- * Presentation only; no 029-released claim.
+ * Hero flex loader — Cam-2…Cam-5 + prior wires applied at runtime to the
+ * pre-loader SHA base. Full static assembly: node scripts/apply-cam2-tree-follow-flex.mjs
+ * Presentation only · no 029-released claim.
  */
 import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';
+import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 
-const MAIN_URL = 'https://raw.githubusercontent.com/RbrtMrlsIII/TeamAi/main/public/hero-flex.js';
+const MAIN_URL =
+  'https://raw.githubusercontent.com/RbrtMrlsIII/TeamAi/a2f8a3e162ff2a19acc496bff07dd6b6d7ffcdec/public/hero-flex.js';
 
 function patchSource(src) {
-  let patched = src;
-  if (!patched.includes('hero-cam2-tree-follow')) {
-    patched = patched.replace(
+  let t = src;
+
+  if (!t.includes("from './hero-cam2-tree-follow.js'")) {
+    t = t.replace(
       "from './hero-hierarchy-runtime.js';",
-      "from './hero-hierarchy-runtime.js';\nimport { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';"
+      "from './hero-hierarchy-runtime.js';\nimport { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';\nimport { poseAboutTreeCenter, baseDockForTree, shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';\nimport { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';",
+    );
+  } else if (!t.includes("from './hero-cam5-selected-tree-center.js'")) {
+    t = t.replace(
+      "from './hero-cam2-tree-follow.js';",
+      "from './hero-cam2-tree-follow.js';\nimport { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';",
     );
   }
-  patched = patched.replace(
-    'HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39}',
-    'HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39}'
-  );
-  if (patched.includes("setCamera('SEAT_CLOSE')")) {
-    patched = patched.replace(
+
+  if (t.includes('HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39}')) {
+    t = t.replace(
+      'HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39}',
+      'HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39}',
+    );
+  }
+
+  if (t.includes("openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  setCamera('SEAT_CLOSE');")) {
+    t = t.replace(
       "openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  setCamera('SEAT_CLOSE');\n  syncHierarchyFromGlobals();",
-      "openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  syncHierarchyFromGlobals();\n  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });\n  setCamera(treeCam.cameraId);"
+      "openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });\n  syncHierarchyFromGlobals();\n  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });\n  setCamera(treeCam.cameraId);",
     );
   }
-  if (!patched.includes('function followHierarchyTreeCamera')) {
-    patched = patched.replace(
+
+  if (!t.includes('function followHierarchyTreeCamera')) {
+    t = t.replace(
       'function returnFromSeatShell(){',
-      "function followHierarchyTreeCamera(){\n  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });\n  if (treeCam.cameraId && treeCam.cameraId !== cameraId) setCamera(treeCam.cameraId);\n  return treeCam;\n}\nfunction returnFromSeatShell(){"
+      "function followHierarchyTreeCamera(){\n  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });\n  if (treeCam.cameraId && treeCam.cameraId !== cameraId) setCamera(treeCam.cameraId);\n  return treeCam;\n}\nfunction returnFromSeatShell(){",
     );
   }
-  return patched;
+
+  if (!t.includes('seatDock')) {
+    t = t.replace(
+      "function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
+      "function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount)):null;if(seatDock)next=seatDock;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
+    );
+  }
+
+  const oldNav = `function applyNavCamera() {
+  if (hierarchyRuntime.openParentId) return;
+  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;
+  const base = cameras().HERO_WIDE;
+  const dist = base.p[2] * navZoom;
+  const cy = base.p[1] + navOrbitPitch * 1.2;
+  const yaw = navOrbitYaw;
+  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };
+  camAt = 1;
+}`;
+  const newNav = `function applyNavCamera() {
+  if (!shouldApplyTreeNav(hierarchyRuntime)) return;
+  const table = cameras();
+  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
+  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
+    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount));
+    if (seatDock) base = seatDock;
+  }
+  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
+  camAt = 1;
+}`;
+  if (t.includes(oldNav)) t = t.replace(oldNav, newNav);
+
+  t = t.replace(
+    "canvas.addEventListener('wheel', (event) => {\n  event.preventDefault();\n  if (hierarchyRuntime.openParentId) return;",
+    "canvas.addEventListener('wheel', (event) => {\n  event.preventDefault();\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;",
+  );
+
+  return t;
 }
 
 const src = await fetch(MAIN_URL).then((r) => {
-  if (!r.ok) throw new Error('Failed to load main hero-flex');
+  if (!r.ok) throw new Error('Failed to load hero-flex base');
   return r.text();
 });
 const patched = patchSource(src);
@@ -43,4 +92,4 @@ const blob = new Blob([patched], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 await import(/* @vite-ignore */ url);
 
-export { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG };
+export { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG, resolveSelectedSeatDock };
