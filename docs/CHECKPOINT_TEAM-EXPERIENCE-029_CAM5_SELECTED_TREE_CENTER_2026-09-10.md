@@ -11,15 +11,15 @@ Camera switched to `SEAT_CLOSE` / `DETAIL_ANCHOR` on hierarchy open, but dock lo
 ## Delivered
 
 - `public/hero-cam5-selected-tree-center.js` — `seatWorldTarget`, `dockTowardSeat`, `resolveSelectedSeatDock`
-- `setCamera` / `applyNavCamera` (via flex wire) use selected seat ring position for SEAT_CLOSE / DETAIL_ANCHOR
+- `setCamera` / `applyNavCamera` use selected seat ring position for `SEAT_CLOSE` / `DETAIL_ANCHOR`
 - Angle formula matches `buildSeats`: `-π/2 + i * 2π/n`
 
-## Deferred
+## Historical status and deferred boundary
 
-- Tree **colors** (later)
-- Full **seat-by-seat** product testing (later)
-- Normal-UI Connect GitHub bind POST
+Cam-5 records the selected-tree centering correction. Subsequent Cam-6 and Vision V0–V2 work refined the surrounding experience.
 
-## Next
+The remaining verification question is browser-level confirmation across representative seats and interaction states. That belongs to the current spatial verification sequence, not to an immediate coloring pass.
 
-Operator verifies selected seat is centered when opening a seat shell; then optional tree color pass.
+**Tree colors/material art direction are explicitly deferred until the pre-backend / pre-coloring spatial execution basis is satisfied.** Do not treat this checkpoint as authorization to start color work.
+
+Use `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` and `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` for current continuation.
