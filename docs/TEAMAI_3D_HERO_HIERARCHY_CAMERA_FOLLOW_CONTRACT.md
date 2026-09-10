@@ -1,9 +1,10 @@
 # TeamAi 3D Hero — Hierarchy Camera Follow Contract (Cam-1)
 
-**Status:** Living presentation contract (Cam-1 documentation slice)  
+**Status:** Living presentation **architecture** contract · Cam-1–Cam-4 **implementation slices fulfilled**  
 **Authority:** PRODUCT_LAW Family J → Machine Interaction Contract → Hierarchy Runtime Baseline → this contract  
 **Claim:** presentation only · **no 029-released claim**  
-**Skills:** teamai-project → hierarchy-runtime → workspace-ring · companion motion/responsive
+**Skills:** hierarchy-runtime · camera-ladder-recovery · companion motion/responsive  
+**Current execution chronology:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` + `docs/VISION.md` §6 — **not** “Cam-2 next”
 
 ---
 
@@ -75,6 +76,8 @@ User may zoom in/out **as long as look-at remains the current center target**.
 
 Applies to **all** complex parent/child trees (seat shell, workspace rings, setup engines, future gears).
 
+**Implementation note (Issue #232):** runtime `resolveTreeCamera()` is strongest for Seat Shell + workspace/setup families; other parents may still fall back to world camera until a concrete Masterplan/Issue expands support. Do not claim universal follow as RUNTIME-PROVEN for every future tree without tests.
+
 ### 3.2 Retire lock-only cameras
 
 Camera modes that **do not follow** any hierarchy node and only “lock” a free view are **debt**:
@@ -105,7 +108,7 @@ Opening a parent may enter INSPECT for that dock; user can return to NAVIGATE ab
 | Touch **swipe** | Camera moves **inversely** proportional to swipe path |
 | Reduced motion | Snap docks; no continuous edge drift; tighter zoom clamps |
 
-**Gap today:** orbit/zoom is blocked while `openParentId` is set; edge-drag is unwired; swipe is direct, not inverse. Cam-2–Cam-4 implement the gaps.
+**Historical gap (Cam-1 era):** orbit/zoom blocked while `openParentId` set; edge-drag unwired; swipe direct. **Cam-2–Cam-4 closed that module gap** (#192–#194). Residual: deeper Playwright proof for Cam-4 (Issue #232).
 
 ---
 
@@ -123,7 +126,7 @@ Camera-fill / FOV boost already aim at full-area login/config (P-R2).
 
 Overall UI scale is a **user preference** under the **overall settings** hierarchy tree:
 
-- Range **50% – 100%** (manual drag / control)
+- Range **50% – 100%** (manual drag / control) — Vision V2.5 scaffolds related presentation scale on theme-root
 - Lives **inside** the machine settings tree (not a page-local CSS authority forever)
 - Interim CSS `transform: scale(...)` on seat-stack is debt until absorbed
 
@@ -137,16 +140,18 @@ Mechanical tree **may grow without skins** (geometry / parts only). Materials an
 
 ---
 
-## 8. Execution ladder (Cam slices)
+## 8. Execution ladder (Cam slices) — HISTORICAL / FULFILLED
+
+> **Issue #232:** Do not use this table as “what to build next.” Current experience work is the **Vision V-series** (`docs/VISION.md` §6 + `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`).
 
 | Slice | Intent | Status |
 |-------|--------|--------|
-| **Cam-1** | This contract (docs + skill pointers) | **This PR** |
-| **Cam-2** | Camera follows open parent/child (center target per node) | Next |
-| **Cam-3** | Free zoom on **current** tree center even when parent open | After Cam-2 |
-| **Cam-4** | Edge-drag + inverse-swipe whole-web PoV | After Cam-3 |
-| **Cam-5** | Absorb interim DOM chrome into machine trees; settings UI scale 50–100% | Parallel / after follow works |
-| **Cam-6** | Retire lock-only preset cameras; keep hierarchy-bound docks only | With Cam-2/5 |
+| **Cam-1** | This contract (docs + skill pointers) | **Merged** #191 — architecture law still valid |
+| **Cam-2** | Camera follows open parent/child (center target per node) | **Merged** #192 |
+| **Cam-3** | Free zoom on **current** tree center even when parent open | **Merged** #193 |
+| **Cam-4** | Edge-drag + inverse-swipe whole-web PoV | **Merged** #194 (module); browser depth open on #232 |
+| **Cam-5** | Absorb interim DOM chrome; settings UI scale | **Partially via** DOM #196–#199 + Vision V2 settings |
+| **Cam-6** | Selected-tree look-at; retire lock-only presets | **Behavior + regression** (e.g. V0.3 #219); lock-only retirement continues as debt |
 
 Green CI ≠ Endorsement. **no 029-released claim**.
 
@@ -154,10 +159,12 @@ Green CI ≠ Endorsement. **no 029-released claim**.
 
 ## 9. Related
 
+- `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` — **current Cam↔V execution ledger**  
+- `docs/VISION.md` — product experience intent + V ladder  
 - `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md` §5 nested depth / no parallel outside UI  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` R3–R5, §9 zoom numbers  
 - `docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md` click/zoom contract  
-- `public/hero-flex.js` `cameras()` · `applyNavCamera()` (current gaps)  
+- `public/hero-flex.js` · `hero-cam2-tree-follow.js` · `hero-cam3-tree-center-zoom.js` · `hero-cam4-edge-swipe.js`  
 - `public/hero-seat-stack.js` (interim DOM debt)
 
 ---
