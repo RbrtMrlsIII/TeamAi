@@ -65,3 +65,51 @@
   background: color-mix(in srgb, Canvas 88%, transparent);
   color: inherit;
 }
+
+/* V2.3 settings shell beside machine nav */
+.hero-settings-shell {
+  margin: 0 0 0.75rem;
+  padding: 0 0.65rem 0.5rem;
+}
+.machine-nav__settings {
+  font: inherit;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.hero-settings-panel {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  font-size: 0.85rem;
+}
+.hero-settings-panel__kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.hero-settings-panel__note {
+  margin: 0 0 0.5rem;
+  opacity: 0.85;
+}
+.hero-settings-panel__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+.hero-settings-panel__row button {
+  font: inherit;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: color-mix(in srgb, Canvas 88%, transparent);
+  color: inherit;
+  cursor: pointer;
+}
