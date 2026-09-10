@@ -7,7 +7,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **Vision V3.1–V3.5** entrance ladder **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`. **#258 residual (PR #259):** ENT-R2/R3 brand retire + Return control; CHR-R1/R2 soft-hide seat-stack modules; contract `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`. Open: CAM-R1–R3 seat look-at. **no 029-released claim**.
+**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **Vision V3.1–V3.5** entrance ladder **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`. **#258 residual (PR #259):** **CAM-R-RETIRE** (HERO_LOW_ORBIT + TURN_FOLLOW removed from UI/runtime); ENT-R2/R3 brand retire + Return control; CHR-R1/R2 soft-hide seat-stack modules; contract `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`. Open: CAM-R1–R3 seat look-at; ENT get-started CTA. **no 029-released claim**.
 
 **Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented in PR #246; live deployment/browser proof pending** (parallel; not Hero live bind).
 
@@ -42,7 +42,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | Vision V3.3 | Gentle Hero atmosphere | **Merged** (#247) |
 | Vision V3.4 | Get-started machine handoff | **Merged** (#249) |
 | Vision V3.5 | Far-environment clarity | **Merged** (#252) |
-| #258 residual | Layer A/B + chrome soft-hide (ENT/CHR) | **In PR #259** — CAM residual open |
+| #258 residual | Layer A/B + chrome + CAM-R-RETIRE | **In PR #259** |
 | Spatial basis | S0–S8 gates + SP-01–SP-07 sequence | **Merged** (#234) |
 | SP-02–SP-06 | Precedence, Cam-4 proof, apply integrity, tree matrix, R1/R2 readiness | **Merged** (#236–#242) |
 | SP-07 | Current frontier decision | **Closed** |
@@ -77,7 +77,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **Vision V3.3** | Gentle Hero atmosphere | Adjust existing Hero as Layer A backdrop | **Merged** (#247) |
 | **Vision V3.4** | Get-started → machine baseline | Adjust handoff | **Merged** (#249) |
 | **Vision V3.5** | Far-environment clarity | Keep / clarify outside machine | **Merged** (#252) |
-| **#258** | Entrance legibility + chrome | ENT/CHR in #259; CAM open | **Residual** |
+| **#258** | Entrance legibility + chrome | ENT/CHR + CAM-R-RETIRE in #259 | **Residual** |
 | **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
 | **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **Merged** (#202) |
 | **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Implemented; live deployment/browser proof pending** (parallel) |
@@ -97,6 +97,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - **Skill:** `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
 - **Spatial basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
 - **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`
+- **Retired:** `HERO_LOW_ORBIT` and `TURN_FOLLOW` removed from UI and runtime table (CAM-R-RETIRE).
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 
 ## Connection (Conn-1 / Conn-2 / Conn-3)
