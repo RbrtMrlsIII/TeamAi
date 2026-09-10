@@ -113,3 +113,30 @@
   color: inherit;
   cursor: pointer;
 }
+
+.hero-settings-panel__scale {
+  align-items: center;
+  gap: 0.5rem;
+}
+.hero-settings-panel__scale label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.hero-settings-panel__scale input[type="range"] {
+  width: 100%;
+}
+.hero-settings-panel [data-settings-scale-value] {
+  min-width: 3rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+/* Presentation-only root scale hook */
+html {
+  font-size: calc(100% * var(--ui-scale, 1));
+}
