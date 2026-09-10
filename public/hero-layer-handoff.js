@@ -3,10 +3,9 @@
  * Owners: .hero-shell data-hero-layer · existing HERO_WIDE camera path · auth engine-open event.
  * Presentation only · one Hero instance · no second WebGL · no 029-released claim.
  *
- * Note: data-inspection-reset remains the inspection-spine camera owner — this module
- * does not intercept it. Return to entrance uses returnToEntranceLayer() or [data-hero-layer-return].
- * Baseline camera is requested via TeamAiHero API or event — not a synthetic DOM click
- * (avoids double-firing control handlers in e2e).
+ * Does NOT set data-hero-machine-ui (that flag soft-hides controls via hero-dom-chrome.css
+ * and remains owned by hierarchy machine-UI absorption).
+ * data-inspection-reset remains inspection-spine owner.
  */
 
 const WORLD_BASELINE = 'HERO_WIDE';
@@ -32,7 +31,7 @@ export function enterMachineLayer(opts = {}) {
   if (!el) return { ok: false, reason: 'no-shell' };
   const source = opts.source || 'get-started';
   el.dataset.heroLayer = 'machine';
-  el.dataset.heroMachineUi = '1';
+  // Do not set data-hero-machine-ui here — that flag hides control-row (DOM chrome absorption).
   const cam = requestBaselineCamera();
   window.dispatchEvent(new CustomEvent('teamai:hero-layer-change', {
     detail: {
@@ -52,7 +51,6 @@ export function returnToEntranceLayer(opts = {}) {
   if (!el) return { ok: false, reason: 'no-shell' };
   const source = opts.source || 'return';
   el.dataset.heroLayer = 'entrance';
-  delete el.dataset.heroMachineUi;
   const cam = requestBaselineCamera();
   window.dispatchEvent(new CustomEvent('teamai:hero-layer-change', {
     detail: {

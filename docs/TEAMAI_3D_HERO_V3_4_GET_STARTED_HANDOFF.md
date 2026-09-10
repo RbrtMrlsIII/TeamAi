@@ -14,32 +14,32 @@ When the user takes a primary get-started / open-engine action, the product move
 | Piece | Owner |
 |-------|--------|
 | Layer flag | `.hero-shell[data-hero-layer]` |
-| Machine UI flag | `.hero-shell[data-hero-machine-ui]` (existing consumers) |
-| Baseline camera | `[data-camera="HERO_WIDE"]` · existing Cam / hierarchy path |
+| Baseline camera | existing Cam / `TeamAiHero.setCamera` / event |
 | Module | `public/hero-layer-handoff.js` |
 | Engine-open event | `teamai:web-ai-hero-engine-open` (from `hero-auth-handoff.js`) |
-| Return | `returnToEntranceLayer()` API · optional `[data-hero-layer-return]` |
-| Inspection reset | **Remains** inspection-spine owner — **not** intercepted by this module |
+| Return | `returnToEntranceLayer()` · optional `[data-hero-layer-return]` |
+| `data-hero-machine-ui` | **Not set by V3.4** — owned by hierarchy DOM chrome absorption |
+| Inspection reset | **Remains** inspection-spine owner |
 
 ## Flow
 
 ```text
 Layer A (entrance)
   → Open engine / demo (get-started)
-      → data-hero-layer="machine" + data-hero-machine-ui="1"
-      → request HERO_WIDE baseline
+      → data-hero-layer="machine"
+      → request HERO_WIDE baseline (API/event; no synthetic control click)
       → (auth panel may still open — presentation handoff only)
   ← returnToEntranceLayer() or [data-hero-layer-return]
       → data-hero-layer="entrance"
-      → clear data-hero-machine-ui
       → HERO_WIDE again; Hero instance kept
 ```
 
 ## Forbidden
 
 - Second `<canvas>` / second Three.js app  
+- Setting `data-hero-machine-ui` from this module (hides control-row)  
 - Firestore / OAuth / durable auth from this module  
-- Stealing `data-inspection-reset` from inspection-spine  
+- Stealing `data-inspection-reset`  
 - 029-released claim  
 
 ## Tests
