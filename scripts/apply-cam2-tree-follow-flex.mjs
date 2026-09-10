@@ -2,6 +2,7 @@
  * Idempotent Cam-2+3+4+5/6 + depth + plate-scale + DOM soft-hide + action-map flex wire.
  * Prefer public/_flex_src parts; else pre-loader SHA; then patch.
  * Cam-6 (Issue #212): mandatory selected-seat look-at while seat shell open.
+ * V0.2 (Vision #214): return-to-baseline on close — HERO_WIDE + nav home.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -18,7 +19,7 @@ function applyPatches(t) {
     const idx = t.indexOf(anchor);
     if (idx >= 0) {
       const end = t.indexOf(';', idx);
-      t = t.slice(0, end + 1) + "\nimport { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';" + t.slice(end + 1);
+      t = t.slice(0, end + 1) + "\nimport { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG, WORLD_BASELINE_DOCK_ID } from './hero-cam2-tree-follow.js';" + t.slice(end + 1);
       changed = true;
     }
   }
@@ -93,6 +94,11 @@ function applyPatches(t) {
     changed = true;
   }
   if (t.includes('const s = loc.scale * scale * (0.55 + 0.45 * amt);') && !t.includes('facePlateScaleForChild(hierarchyRuntime, childId)')) {
+    t = t.replace('const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);', 'const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);');
+    // no-op if already has facePlate - keep original replace intent
+    changed = true;
+  }
+  if (t.includes('const s = loc.scale * scale * (0.55 + 0.45 * amt);') && !t.includes('facePlateScaleForChild(hierarchyRuntime, childId)')) {
     t = t.replace('const s = loc.scale * scale * (0.55 + 0.45 * amt);', 'const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);');
     changed = true;
   }
@@ -133,11 +139,30 @@ function applyPatches(t) {
     );
     changed = true;
   }
-  // Upgrade applyNav if already applied without force seatDock
   if (t.includes('baseDockForTree({ cameraId }, table)') && !t.includes("resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE'")) {
     t = t.replace(
       'const base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });',
       "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });",
+    );
+    changed = true;
+  }
+  // V0.2 Vision: return-to-baseline — close/return always HERO_WIDE + reset free-nav home
+  if (t.includes("from './hero-cam2-tree-follow.js'") && !t.includes('WORLD_BASELINE_DOCK_ID')) {
+    t = t.replace(
+      "import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';",
+      "import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG, WORLD_BASELINE_DOCK_ID } from './hero-cam2-tree-follow.js';",
+    );
+    changed = true;
+  }
+  if (t.includes('function returnFromSeatShell(){') && !t.includes('/* V0.2 return baseline */')) {
+    const oldRet = `function returnFromSeatShell(){\n  const now = performance.now();\n  const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;\n  closeHierarchyParentState(hierarchyRuntime, { snap, nowMs: now });\n  setCamera('HERO_WIDE');\n  syncHierarchyFromGlobals();\n  setState('IDLE', 'seat-shell-close');\n  return getHierarchyState();\n}`;
+    const newRet = `function returnFromSeatShell(){\n  /* V0.2 return baseline */\n  const now = performance.now();\n  const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;\n  closeHierarchyParentState(hierarchyRuntime, { snap, nowMs: now });\n  navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;\n  setCamera(typeof WORLD_BASELINE_DOCK_ID !== 'undefined' ? WORLD_BASELINE_DOCK_ID : 'HERO_WIDE');\n  syncHierarchyFromGlobals();\n  setState('IDLE', 'seat-shell-close');\n  return getHierarchyState();\n}`;
+    if (t.includes(oldRet)) { t = t.replace(oldRet, newRet); changed = true; }
+  }
+  if (t.includes('function closeHierarchyParent(){ closeHierarchyParentState(hierarchyRuntime); return syncHierarchyFromGlobals(); }') && !t.includes('/* V0.2 close baseline */')) {
+    t = t.replace(
+      'function closeHierarchyParent(){ closeHierarchyParentState(hierarchyRuntime); return syncHierarchyFromGlobals(); }',
+      `function closeHierarchyParent(){ /* V0.2 close baseline */ closeHierarchyParentState(hierarchyRuntime); navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1; setCamera(typeof WORLD_BASELINE_DOCK_ID !== 'undefined' ? WORLD_BASELINE_DOCK_ID : 'HERO_WIDE'); return syncHierarchyFromGlobals(); }`,
     );
     changed = true;
   }
