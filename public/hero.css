@@ -37,6 +37,17 @@ body { min-height: 100vh; overflow: hidden; background: #f5f2ec; }
   pointer-events: none;
 }
 
+/* V3.2 — brand mark in entrance-brand region (additive; no second WebGL) */
+.hero-brand-mark {
+  display: block;
+  width: clamp(56px, 8vw, 72px);
+  height: auto;
+  margin: 0 0 14px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(40, 38, 32, .12), inset 0 1px 0 rgba(255,255,255,.5);
+  object-fit: contain;
+}
+
 .eyebrow {
   margin: 0 0 12px;
   font-size: 11px;
@@ -182,6 +193,7 @@ button.quiet { margin-left: auto; background: transparent; box-shadow: none; bor
   body { overflow: hidden; }
   .hero-shell { min-height: 540px; }
   .hero-copy { top: 22px; left: 20px; width: calc(100vw - 40px); }
+  .hero-brand-mark { width: 52px; margin-bottom: 10px; }
   h1 { max-width: 500px; font-size: clamp(34px, 11vw, 54px); }
   .lede { font-size: 13px; max-width: 360px; }
   .hero-controls { bottom: 14px; width: calc(100vw - 24px); padding: 10px; border-radius: 18px; }

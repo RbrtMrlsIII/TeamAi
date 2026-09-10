@@ -5,7 +5,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **V3.1** entrance IA **open** (#230). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**).
+**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **V3.1** entrance IA **merged** (#230). **V3.2** brand hero image **in progress**. **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234).
 
 **Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **next** (parallel; not Hero live bind).
 
@@ -35,6 +35,8 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | Cam-1–Cam-4 | Camera follow / tree zoom / edge-swipe **architecture** | **Merged** (#191–#194) — historical module ladder |
 | DOM map | Action map, lock-only retirement, soft-hide | **Merged** (#196–#199) |
 | Vision V0–V2 | 45° baseline, subject lock, branch walk, machine chrome | **Merged** (#217–#229) |
+| Vision V3.1 | Entrance IA / layout contract | **Merged** (#230) |
+| Spatial basis | S0–S8 gates + SP-01–SP-07 sequence | **Merged** (#234) |
 | Conn-1 | GitHub App least privilege | **Merged** (#200) |
 | Conn-2 | Webhook + UID map | **Merged** (#202) |
 
@@ -61,12 +63,13 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **P2**–**P7.1** | Remaining seat children | One node at a time | **Merged** |
 | **Cam-1**–**Cam-4** | Hierarchy camera **modules** | Follow tree, free zoom, edge-swipe | **Merged** — do not restart |
 | **Vision V0–V2** | Camera truth + chrome feel | Adjust Cam owners toward VISION | **Merged** |
-| **Vision V3.1** | Entrance IA / layout | Docs + markers on existing shell | **Open** #230 (reconcile vs main) |
-| **Vision V3.2+** | Brand image, atmosphere, get-started | Additive / adjust | After V3.1 |
+| **Vision V3.1** | Entrance IA / layout | Docs + markers on existing shell | **Merged** (#230) |
+| **Vision V3.2** | Brand hero image | Additive asset in entrance-brand | **This PR** |
+| **Vision V3.3+** | Atmosphere, get-started | Adjust wiring | After V3.2 |
 | **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
 | **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **Merged** (#202) |
 | **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Next** (parallel) |
-| **#232 residual** | Precedence matrix, Cam-4 browser depth, apply integrity | Docs/tests after Cam↔V map | After this reconcile |
+| **#232 residual** | Precedence matrix, Cam-4 browser depth, apply integrity | Docs/tests after Cam↔V map | Parallel with V3.x |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
@@ -78,9 +81,10 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 ## Camera (baseline already on main)
 
 - **Architecture (Cam):** Free orbit / zoom: **NAVIGATE** only (R4). Inspect → semantic dock wins. Named §9 zoom bounds; reduced-motion clamps remain contract.
-- **Experience (Vision V):** ~45° baseline, subject lock, return home (V0), branch walk (V1), machine chrome (V2).
+- **Experience (Vision V):** ~45° baseline, subject lock, return home (V0), branch walk (V1), machine chrome (V2), entrance (V3).
 - **Ledger:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` — agents must not follow stale “Cam-2 next” text in the Cam-1 contract.
 - **Skill:** `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
+- **Spatial basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 
 ## Connection (Conn-1 / Conn-2 / Conn-3)

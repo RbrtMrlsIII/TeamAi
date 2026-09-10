@@ -27,7 +27,7 @@ CURRENT experience path (Vision #214):
   V0 camera truth → V1 branch walk → V2 machine chrome → V3 entrance → V4 polish
 
 CURRENT FRONTIER (2026-09-10):
-  V3.1 Entrance IA/layout — PR #230 open (reconcile vs main before merge)
+  V3.2 Brand hero image — wire asset into entrance-brand region
   NOT Cam-2
 ```
 
@@ -86,8 +86,8 @@ Parent: Issue **#214** (closed) · docs PR **#215** · living ladder `docs/VISIO
 
 | ID | Intent | PR | Status |
 |----|--------|-----|--------|
-| **V3.1** | Entrance IA / layout contract | **#230** | **OPEN** — reconcile vs current `main`, re-verify, then merge |
-| V3.2 | Brand hero image | asset may exist (#231) | **Asset ≠ slice complete** |
+| **V3.1** | Entrance IA / layout contract | **#230** | **Merged** |
+| **V3.2** | Brand hero image | this PR | **In progress** — asset wired into entrance-brand |
 | V3.3 | Gentle Hero atmosphere | — | **Planned** |
 | V3.4 | Get-started → machine baseline | — | **Planned** |
 | V3.5 | Far-environment links clarify | — | **Planned** |
@@ -110,10 +110,10 @@ Tree color language, full seat smoke, reduced-motion path, mobile parity — alw
 | Branch Back/Next | Hierarchy focus + V1.1/V1.2 | **Merged** |
 | Right-side parts list | DOM chrome + V2.1/V2.2 | **Merged** |
 | Settings / theme / scale / lang | theme-root + V2.3–V2.6 | **Merged** |
-| Public entrance layout | `public/index.html` / shell | **V3.1 open (#230)** |
+| Public entrance layout | `public/index.html` / shell | **V3.1 merged**; **V3.2 brand mark in progress** |
 
 **Wrong recovery path:** open Cam follow contract §8 → implement Cam-2.  
-**Right recovery path:** this ledger §3 → current frontier V3.1 / #230 (or remaining #232 checklist items).
+**Right recovery path:** this ledger §3 → current frontier V3.2 / residual #232 / spatial SP sequence.
 
 ---
 
@@ -137,6 +137,7 @@ Tree color language, full seat smoke, reduced-motion path, mobile parity — alw
 | `docs/VISION.md` | **Current experience intent** + ordered V ladder |
 | **This file** | **Current execution ledger** Cam↔V + frontier |
 | `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` | Living continuity pointer; defers camera chronology here |
+| `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` | Pre-backend / pre-coloring spatial gates S0–S8 + SP-01–SP-07 |
 | `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9 | Living numbers only |
 
 ---
@@ -152,20 +153,17 @@ PLANNED → IMPLEMENTED → DEPLOYED → RUNTIME-PROVEN → LEARNED → COMPLETE
 | Cam-2 module dock | IMPLEMENTED + unit tests |
 | Cam-4 edge/swipe | IMPLEMENTED + module tests; browser interaction depth still #232 open |
 | V0.2 return baseline | IMPLEMENTED + tests |
-| V3.1 entrance IA | PR #230 IMPLEMENTED on branch; not COMPLETED until merged on reconciled main |
-| #231 hero icon asset | Asset staged ≠ V3.2 COMPLETED |
+| V3.1 entrance IA | **Merged** (#230) |
+| V3.2 brand mark wiring | IMPLEMENTED when this PR merges; visual endorsement separate |
 | 029 product release | **Not claimed** — TEAM-BACKEND-001 remains the release gate |
 
 ---
 
-## 8. Next authorized commands (after this docs slice)
+## 8. Next authorized commands
 
-Ordered for agents (Issue #232 remaining work is broader; this slice only closes the **Cam↔V map** finding):
-
-1. Reconcile **PR #230** against current `main`, re-run checks, merge when green → **V3.1**.  
-2. Continue **#232** residual items (precedence matrix, Cam-4 browser proof, apply-patch integrity, Conn-3 state, HandOver convention) as separate bounded slices.  
-3. **V3.2** brand hero only after V3.1; distinguish asset present vs visually accepted.  
-4. Parallel **Conn-3** stays Edge/OAuth — never Hero live bind.
+1. **V3.2** brand hero image (this slice) → merge when CI green.  
+2. **V3.3** gentle Hero atmosphere **or** residual **#232** / spatial basis **SP-02–SP-04** (precedence matrix, Cam-4 browser proof, apply integrity).  
+3. Parallel **Conn-3** stays Edge/OAuth — never Hero live bind.
 
 ---
 
@@ -186,6 +184,8 @@ Ordered for agents (Issue #232 remaining work is broader; this slice only closes
 - Issue #232  
 - Issue #214 / PR #215  
 - `docs/VISION.md`  
+- `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`  
 - `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`  
 - `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`  
+- `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`  
 - `docs/SKILL_WIRING.md`  
