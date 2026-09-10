@@ -111,11 +111,18 @@
     </main>
 
     <!-- Far-environment only (outside hero machine shell): legal / contact / about -->
-    <aside class="far-environment" data-entrance-region="far" aria-label="Site environment">
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#terms">Terms</a>
-      <a href="#privacy">Privacy</a>
+    <!-- V3.5: far-environment stays outside .hero-shell — never machine chrome -->
+    <aside
+      class="far-environment"
+      data-entrance-region="far"
+      data-far-outside-machine="1"
+      role="contentinfo"
+      aria-label="Site environment — outside the machine"
+    >
+      <a href="#about" data-far-link="about">About</a>
+      <a href="#contact" data-far-link="contact">Contact</a>
+      <a href="#terms" data-far-link="terms">Terms</a>
+      <a href="#privacy" data-far-link="privacy">Privacy</a>
     </aside>
 
     <script type="module" src="./hero-flex.js"></script>
