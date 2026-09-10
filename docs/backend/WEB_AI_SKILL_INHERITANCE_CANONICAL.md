@@ -51,5 +51,6 @@ Planning contract only. Effective-skill resolution, loading, authorization bindi
 ## See also
 
 - `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md`
+- `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md` — responsibility unit catalog (H-T1 / #256)
 - `docs/backend/KNOWLEDGE_PRESERVATION_AND_TOOLKIT_BOUNDARY.md`
 - `docs/backend/TOOLKIT_BENCHMARK_AND_FEEDBACK.md`
