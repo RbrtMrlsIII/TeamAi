@@ -1,6 +1,6 @@
 # TeamAi 029 — Current State & Continuation Map
 
-**Status:** Working reconciliation map for AI-agent recovery
+**Status:** Current active reconciliation map for AI-agent recovery (2026-09-10)
 **Authority:** Product Law → Masterplan → Policy/ORUCAVEAM → domain contracts → this map → implementation/evidence
 **Purpose:** flatten parallel development clocks into one incremental slice view so an agent can tell what is implemented, what is proven, what stopped, why it stopped, and what condition permits continuation.
 
@@ -54,8 +54,9 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | Cam-1–Cam-4 | COMPLETED architecture lineage | follow / center zoom / edge-swipe modules merged | Historical architecture, not a new queue |
 | Cam-5–Cam-6 | IMPLEMENTED + verification boundary | selected-seat look-at strengthened | Browser proof and integration state still determine completion quality |
 | V0–V2 | MERGED | baseline, subject lock, branch walk, machine chrome | Current experience history |
-| V3.1 | RECONCILE | PR lineage exists but may diverge from moving `main` | Rebase/review against current `main` before continuing |
-| V3.2+ | PLANNED / STAGED | asset may exist | Asset presence ≠ implemented/accepted slice |
+| V3.1 | MERGED | entrance IA/layout contract is on `main` via PR #230 | Historical slice; do not reopen without a new discrepancy |
+| V3.2 | MERGED | brand hero image is on `main` via PR #235 | Historical slice; do not reopen without a new discrepancy |
+| V3.3 | CURRENT NEXT SLICE | Gentle Hero atmosphere is the current spatial frontier per SP-07 | Execute only as a bounded presentation slice after current-main reconciliation |
 | R1/R2 mesh topology | SPECIFIED / PARTIAL | topology contract exists | Do not invent geometry without a named owner |
 
 ## 4. Current backend frontier
@@ -65,11 +66,11 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | Gate 3 identity + Firestore bootstrap | RUNTIME-PROVEN | authenticated live execution + independent Firestore read + idempotency | Stable, not reopened unless regression appears |
 | Gate 4 Firebase emulator/rules | PARKED | reproducible harness exists; emulator execution unavailable in prior environment | Operator runs emulator-capable verification and records real PASS |
 | Gate 5B commerce correlation | VERIFIED / PASS | direct source-contract validation | Do not imply live payment evidence |
-| Gate 5C commerce implementation | IMPLEMENTED / AVAILABLE-ENV VERIFIED | webhook authenticity/idempotency/durable event/entitlement projection source boundary | Remaining live PayPal transaction/webhook evidence |
-| Provider/runtime invocation | NOT STARTED | intentionally deferred by Masterplan; live `teamai-task-execute` is still a stub runtime, not provider runtime | Authorization/task contracts + approved real-provider runtime owner |
-| Security/failure/recovery verification | OPEN | mixed source/CI/live evidence | Complete bounded matrix including live recovery where required |
-| Traceability | OPEN | not yet final | Reconcile Product Law → plan → skill → implementation → evidence → endorsement |
-| Final endorsement | OPEN | none yet | HandOver + Endorsement after remaining gates |
+| Gate 5C commerce implementation | RUNTIME-PROVEN / ENDORSED (bounded) | live PayPal Sandbox transaction/webhook + direct Firestore aggregate/event/entitlement re-read are recorded | Do not expand the claim beyond the recorded boundary |
+| Provider/runtime invocation | OPEN / STUB ONLY | `teamai-task-execute` is runtime-proven through `stub-edge-runtime`; no real external provider execution is proven | Separate authorized provider-runtime owner and evidence |
+| Security/failure/recovery verification | BOUNDED PROVEN; BROADER OPEN | lease contention/restart recovery and exercised auth/contract paths are recorded | Gate 4 emulator PASS and any broader matrix claims still require their own evidence |
+| Traceability | RECORDED (bounded) | current evidence chain links implementation, verification, HandOver and Endorsement for the bounded scope | Preserve historical evidence records; extend only by new claim-level proof |
+| Final endorsement | ENDORSED (bounded) | `docs/project-guide/Endorsement.md` + 2026-09-07 PayPal aggregate re-read record | Does not imply 029 release or closure of residual boundaries |
 
 ### 4.1 Live Supabase cross-check — 2026-09-10
 
@@ -94,11 +95,11 @@ The backend did not stop because its source architecture was absent. The reposit
 It stopped at **verification, external-runtime, and final-governance boundaries** rather than source implementation:
 
 - Firebase emulator/rules execution was environment-constrained and explicitly parked.
-- Gate 5B source contract passed, but live PayPal evidence was not inferred.
-- Gate 5C implementation and available-environment verification are complete, but final live PayPal transaction/webhook evidence remains open.
-- `teamai-task-execute` is live and authenticated but intentionally invokes `stub-edge-runtime`; real provider invocation has not been established by this function.
-- GitHub OAuth/installation bind infrastructure is deployed, but that does not mean Hero live binding or final Conn-3 product acceptance.
-- Security/recovery, traceability, and completion endorsement remain open.
+- Gate 5B source contract is PASS and remains source-contract scope only.
+- Gate 5C bounded live PayPal Sandbox transaction/webhook and direct Firestore aggregate/event/entitlement evidence are now runtime-proven and endorsed for the recorded scope.
+- `teamai-task-execute` is live/authenticated but intentionally invokes `stub-edge-runtime`; real external provider invocation remains unproven.
+- GitHub OAuth/installation bind infrastructure is deployed; Conn-3 live deployment/browser proof remains pending and is not Hero live binding.
+- Bounded recovery and traceability evidence is recorded; Gate 4 emulator PASS and broader security/approval/runtime matrices remain independently bounded.
 
 This is a stopped **evidence/authorization frontier**, not a reason to restart already-completed backend implementation.
 
@@ -166,7 +167,7 @@ Continue the backend clock only when the next open Masterplan item has:
 - a live/operator dependency explicitly identified when applicable;
 - no dependency on a falsely completed earlier gate.
 
-For the current backend frontier, this means the principal open evidence work is live PayPal sandbox transaction/webhook evidence, direct Firestore verification, and final traceability/endorsement. The deployed GitHub OAuth and seat-connection functions should be treated as **implemented/deployed surfaces requiring their own claim-level evidence**, not as automatic proof of full Conn-3 product completion. Real provider runtime remains parked behind authorization/task foundations.
+For the current backend frontier, the bounded PayPal blocker and endorsement loop are closed for the recorded scope. Remaining backend work is claim-specific: Gate 4 emulator PASS, any broader scheduler/approval integration, real external provider invocation beyond `stub-edge-runtime`, Conn-3 live deployment/browser proof, and deferred seat surfaces. Deployed GitHub OAuth and seat-connection functions remain **implemented/deployed surfaces requiring their own claim-level evidence**, not automatic proof of full Conn-3 product completion.
 
 ## 10. When to continue spatial work
 
