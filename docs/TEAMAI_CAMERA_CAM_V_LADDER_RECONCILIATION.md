@@ -6,7 +6,7 @@
 **Claim:** presentation continuity only · **no 029-released claim**  
 **Does not:** rewrite Product Law, redesign the Hero, or close TEAM-BACKEND-001
 
-This document is the **single recovery map** so agents do not choose a stale Cam-2 path when the living frontier is Vision V3.
+This document is the **single recovery map** so agents do not choose a stale Cam-2 path when the living frontier is Vision V3 / spatial SP sequence.
 
 ---
 
@@ -27,7 +27,7 @@ CURRENT experience path (Vision #214):
   V0 camera truth → V1 branch walk → V2 machine chrome → V3 entrance → V4 polish
 
 CURRENT FRONTIER (2026-09-10):
-  V3.2 Brand hero image — wire asset into entrance-brand region
+  SP-02 Camera precedence matrix (Gate S3) — residual #232
   NOT Cam-2
 ```
 
@@ -40,7 +40,7 @@ CURRENT FRONTIER (2026-09-10):
 | **Cam-1** | Hierarchy camera follow **contract** (docs) | This family of contracts | #191 | **MERGED — historical** |
 | **Cam-2** | Semantic tree dock on every open parent/child | `public/hero-cam2-tree-follow.js` · `resolveTreeCamera` · apply-cam2 flex | #192 | **MERGED — historical** |
 | **Cam-3** | Free zoom/orbit about **current tree center** while parent open | `public/hero-cam3-tree-center-zoom.js` | #193 | **MERGED — historical** |
-| **Cam-4** | Edge-drag + inverse-swipe whole-web PoV | `public/hero-cam4-edge-swipe.js` | #194 | **MERGED — historical** (unit/module strong; browser depth still open per #232) |
+| **Cam-4** | Edge-drag + inverse-swipe whole-web PoV | `public/hero-cam4-edge-swipe.js` | #194 | **MERGED — historical** (unit/module strong; browser depth still open per #232 / SP-03) |
 | **Cam-5** | Absorb interim DOM chrome; settings UI scale path | DOM absorption + settings shell (also Vision V2) | #196–#199 + V2.* | **Partially fulfilled by later DOM/V2 work** — not a separate “next Cam” |
 | **Cam-6** | Selected-tree look-at; retire pure lock-only presets | `resolveSelectedSeatDock` + Cam-6 docs; V0.3 regression | docs + #219 | **Behavior landed; lock-only retirement continues as debt** |
 
@@ -87,7 +87,7 @@ Parent: Issue **#214** (closed) · docs PR **#215** · living ladder `docs/VISIO
 | ID | Intent | PR | Status |
 |----|--------|-----|--------|
 | **V3.1** | Entrance IA / layout contract | **#230** | **Merged** |
-| **V3.2** | Brand hero image | this PR | **In progress** — asset wired into entrance-brand |
+| **V3.2** | Brand hero image | **#235** | **Merged** (wiring; visual endorsement separate) |
 | V3.3 | Gentle Hero atmosphere | — | **Planned** |
 | V3.4 | Get-started → machine baseline | — | **Planned** |
 | V3.5 | Far-environment links clarify | — | **Planned** |
@@ -104,16 +104,17 @@ Tree color language, full seat smoke, reduced-motion path, mobile parity — alw
 |--------------|---------------|------------------|
 | Follow open tree dock | Cam-2 `resolveTreeCamera` | Landed; V0.1 tunes baseline dock |
 | Free zoom about subject | Cam-3 | Landed; V0.4/V0.5 refine gates/clamps |
-| Edge / inverse swipe | Cam-4 | Landed module; browser proof still deeper per #232 |
+| Edge / inverse swipe | Cam-4 | Landed module; browser proof still deeper per #232 / SP-03 |
 | Selected-tree look-at | Cam-6 / `resolveSelectedSeatDock` | Landed; V0.3 regression |
 | Return home on leave | Close-parent + `HERO_WIDE` | **V0.2 merged**; do not reimplement as blank V1.3 without new nested-unwind spec |
 | Branch Back/Next | Hierarchy focus + V1.1/V1.2 | **Merged** |
 | Right-side parts list | DOM chrome + V2.1/V2.2 | **Merged** |
 | Settings / theme / scale / lang | theme-root + V2.3–V2.6 | **Merged** |
-| Public entrance layout | `public/index.html` / shell | **V3.1 merged**; **V3.2 brand mark in progress** |
+| Public entrance layout | `public/index.html` / shell | **V3.1 + V3.2 merged** |
+| Camera precedence matrix | Gate S3 + SP-02 tests | **This residual** |
 
 **Wrong recovery path:** open Cam follow contract §8 → implement Cam-2.  
-**Right recovery path:** this ledger §3 → current frontier V3.2 / residual #232 / spatial SP sequence.
+**Right recovery path:** this ledger §3 → SP-02 / SP-03 / V3.3.
 
 ---
 
@@ -151,18 +152,19 @@ PLANNED → IMPLEMENTED → DEPLOYED → RUNTIME-PROVEN → LEARNED → COMPLETE
 | Claim | Evidence class on main (typical) |
 |-------|----------------------------------|
 | Cam-2 module dock | IMPLEMENTED + unit tests |
-| Cam-4 edge/swipe | IMPLEMENTED + module tests; browser interaction depth still #232 open |
+| Cam-4 edge/swipe | IMPLEMENTED + module tests; browser interaction depth still SP-03 |
 | V0.2 return baseline | IMPLEMENTED + tests |
 | V3.1 entrance IA | **Merged** (#230) |
-| V3.2 brand mark wiring | IMPLEMENTED when this PR merges; visual endorsement separate |
+| V3.2 brand mark wiring | **Merged** (#235); visual endorsement separate |
+| SP-02 camera precedence | IMPLEMENTED (unit matrix) when this PR merges |
 | 029 product release | **Not claimed** — TEAM-BACKEND-001 remains the release gate |
 
 ---
 
 ## 8. Next authorized commands
 
-1. **V3.2** brand hero image (this slice) → merge when CI green.  
-2. **V3.3** gentle Hero atmosphere **or** residual **#232** / spatial basis **SP-02–SP-04** (precedence matrix, Cam-4 browser proof, apply integrity).  
+1. **SP-02** camera precedence matrix (this slice) → merge when CI green.  
+2. **SP-03** Cam-4 browser proof **or** **V3.3** gentle Hero atmosphere.  
 3. Parallel **Conn-3** stays Edge/OAuth — never Hero live bind.
 
 ---
