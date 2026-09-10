@@ -1,49 +1,127 @@
 # TeamAi 3D Hero — Hierarchy Runtime Baseline
 
-**Status:** Living number home (presentation only · **no 029-released claim**)
-**Authority:** Product Law · Machine Interaction · Camera Follow · Vision V0.5
+**Status:** Living documentation (presentation domain)
+**Authority:** PRODUCT_LAW Family J → Machine Interaction Contract → this baseline → skills
+**Companion skill:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md`
 
-Numbers in this §9 table are the product home for hierarchy layout and nav clamps. Amend **table + code together**.
+---
 
-## Related
+## 1. Purpose
 
-- `public/hero-hierarchy-runtime.js` — exports matching these names
-- `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`
-- `docs/VISION.md` (V0.5 zoom ceiling)
+Single baseline for hierarchy runtime numbers, phases, and presentation boundaries on the 3D Hero.
 
-## §9 — Named constants
+This document is the **number home**. Code exports and skills consume these names; amend table and code in the same change when values are learned.
 
-| Name | Value | Status | Notes |
-|------|-------|--------|-------|
+---
+
+## 2. Shared roots (R1–R10)
+
+| Root | Concern |
+|------|--------|
+| R1 | State machine (IDLE → FOCUS → …) |
+| R2 | Pose / altitude math (seat rest, open lift, child stack) |
+| R3 | Camera semantic docks |
+| R4 | Input modes (NAVIGATE / INSPECT / DEMO) |
+| R5 | Motion phases + reduced-motion snap |
+| R6 | Hierarchy open/close parent contract |
+| R7 | Viewport / responsive FOV |
+| R8 | Document motion attribute sync |
+| R9 | Seat shell children / leaves |
+| R10 | Theme material context subset |
+
+---
+
+## 3. State and phases
+
+Hierarchy phase: `rest` → `opening` → `open` → `closing` → `rest`.
+One open parent at a time. Presentation only.
+
+---
+
+## 4. Pose math
+
+`profile(seatCount)`, seat ring placement, named altitudes (`SEAT_REST_Y`, `SEAT_OPEN_LIFT`, `CHILD_STEP_Y`/`R`). Numbers live in §9.
+
+---
+
+## 5. Motion
+
+`OPEN_DURATION_MS`, `CLOSE_DURATION_MS`, `HIERARCHY_REDUCED_SNAP`, `CAMERA_LERP_MS`.
+
+---
+
+## 6. Input modes
+
+`NAVIGATE` | `INSPECT` | `DEMO` — R4. Orbit/zoom belong to NAVIGATE; seat inspect uses semantic docks.
+
+---
+
+## 7. Viewport
+
+`responsiveFovBoost` — narrow aspect adds FOV (R7).
+
+---
+
+## 8. Theme
+
+`heroMaterialContext` reads `document.documentElement` only (R10). Isolation preserved — no cross-root import.
+
+---
+
+## 9. Living numbers table (documentation holds numbers)
+
+**Rule:** This table is the **number home**. Skills tell sessions how to consume and amend it.
+
+| Name | Value | Status | Root |
+|------|-------|--------|------|
 | `SEAT_REST_Y` | `0.62` | measured | R2 |
-| `SEAT_OPEN_LIFT` | `0.28` | measured | R2 |
-| `CHILD_STEP_Y` | `0.22` | measured | R2 |
-| `CHILD_STEP_R` | `-0.14` | measured | R2 |
-| `OPEN_DURATION_MS` | `520` | starting | R3 |
-| `CLOSE_DURATION_MS` | `420` | starting | R3 |
-| `CONNECTION_BRANCH_MS` | `380` | starting | P1 |
-| `BEHAVIOR_BRANCH_MS` | `360` | starting | P2 |
-| `TOOLKIT_BRANCH_MS` | `340` | starting | P3 |
-| `CAPABILITIES_BRANCH_MS` | `320` | starting | P4 |
-| `AUTHORIZATION_BRANCH_MS` | `300` | starting | P5 |
-| `WORKSPACE_SCOPE_BRANCH_MS` | `280` | starting | P6 |
-| `TASK_EVIDENCE_BRANCH_MS` | `260` | starting | P7 |
-| `SETUP_RING_FILL_MS` | `480` | starting | P-R2 |
-| `SETUP_RING_FOV_FILL` | `3` | starting | P-R2 |
-| `HIERARCHY_REDUCED_SNAP` | `true` | product | R5 |
-| `CAMERA_LERP_MS` | `700` | starting | R3 |
-| `FOV_BOOST_NARROW` | `4` | starting | R7 |
+| `SEAT_OPEN_LIFT` | `0.28` | starting | R2 |
+| `CHILD_STEP_Y` | `0.22` | starting | R2 |
+| `CHILD_STEP_R` | `-0.14` | starting | R2 |
+| `CAMERA_LERP_MS` | `700` | measured | R3/R5 |
+| `OPEN_DURATION_MS` | `520` | starting | R5 |
+| `CLOSE_DURATION_MS` | `420` | starting | R5 |
+| `HIERARCHY_REDUCED_SNAP` | `true` | contract | R5 |
+| `WORKSPACE_R_MIN` | `4.35` | measured | R2 |
+| `WORKSPACE_R_MAX` | `5.95` | measured | R2 |
+| `SEAT_R_MIN` | `4.25` | measured | R2 |
+| `SEAT_R_MAX` | `6.45` | measured | R2 |
+| `REDUCED_MOTION_K` | `0.35` | measured | R5/R8 |
+| `FOV_BOOST_NARROW` | `+4` | measured | R7 |
+| `ROUGH_LIGHT` | `0.48` | measured | R10 |
+| `REFL_DARK` | `0.54` | measured | R10 |
 | `RING_R0_ZIP_SCALE` | `0.22` | starting | R0 ZipSkills crown |
-| `RING_R1_SCALE` | `1.18` | starting | R1 |
-| `RING_R2_SCALE` | `1.42` | starting | R2 |
+| `RING_R1_SCALE` | `1.18` | starting | R1 ring |
+| `RING_R2_SCALE` | `1.42` | starting | R2 ring |
 | `NAV_ZOOM_MIN` | `0.72` | starting | R4 nav |
 | `NAV_ZOOM_MAX` | `2.0` | V0.5 Vision ~200% | R4 nav |
 | `NAV_ZOOM_REDUCED_MIN` | `0.9` | starting | R4/R5 |
 | `NAV_ZOOM_REDUCED_MAX` | `1.2` | starting | R4/R5 |
-| `SEAT_R_MAX` | `6.45` | measured | R2 |
+| `SETUP_RING_FILL_MS` | `480` | starting | R2/R3 camera-fill |
+| `SETUP_RING_FOV_FILL` | `3` | starting | R7 camera-fill |
+| `ZIPSKILLS_BRANCH_MS` | `300` | starting | R0 ZipSkills branch |
+
+Full measured table remains authoritative on `main` history; amend rows in the same PR when values change.
+
+---
+
+## 10. Design principle
+
+**Shared roots, living numbers. Docs hold the numbers. Skills execute them. Authority never rides the camera. Leaves stay inside the machine.**
+
+---
+
+## Concentric ring map (pointer)
+
+Full map: `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`.
+
+| Ring | Name | Role |
+|------|------|------|
+| R0 | Workspace core | Shared work surface; `WORKSPACE_ZIPSKILLS` (optional equip — not required platform config) |
+| R1 | Backend display | Platform rules/docs + animated connection threads |
+| R2 | Setup / config | Configuration branches; login/register mechanical presentation |
+| R3 | Seat ring | Web AI Seats (Seat Shell Hierarchy v1); `SEAT_TOOLKIT` optional seat-scoped bundles |
 
 R0 ZipSkills inner crown and R1/R2 radius multipliers are **named** (`RING_R0_ZIP_SCALE`, `RING_R1_SCALE`, `RING_R2_SCALE`) in this table and in `hero-hierarchy-runtime.js`. Status **starting** until measured in-browser; amend §9 + code together. Do not invent private radius tables outside this doc.
 
-## V0.5
-
-`NAV_ZOOM_MAX` raised from `1.55` to `2.0` so free zoom can approach ~200% of default while subject lock (Cam-6) still holds look-at.
+**Note:** Workspace ZipSkills and Seat Toolkit are **not required** setups. Users may assign skills/toolkits outside the platform; presentation stubs must not imply entitlement or mandatory bind.
