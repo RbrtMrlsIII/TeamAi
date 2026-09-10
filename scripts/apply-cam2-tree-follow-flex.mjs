@@ -1,6 +1,7 @@
 /**
- * Idempotent Cam-2+3+4 + depth + plate-scale + DOM soft-hide + action-map flex wire.
+ * Idempotent Cam-2+3+4+5/6 + depth + plate-scale + DOM soft-hide + action-map flex wire.
  * Prefer public/_flex_src parts; else pre-loader SHA; then patch.
+ * Cam-6 (Issue #212): mandatory selected-seat look-at while seat shell open.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -49,7 +50,7 @@ function applyPatches(t) {
     changed = true;
   }
   const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
-  const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  const base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
+  const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
   if (t.includes(oldNav)) { t = t.replace(oldNav, newNav); changed = true; }
   if (t.includes('if (hierarchyRuntime.openParentId) return;\n  const delta = Math.sign(event.deltaY)')) {
     t = t.replace('if (hierarchyRuntime.openParentId) return;\n  const delta = Math.sign(event.deltaY)', 'const delta = Math.sign(event.deltaY)');
@@ -111,6 +112,35 @@ function applyPatches(t) {
     t = t.replace(/document\.querySelectorAll\('\[data-camera\]'\)\.forEach\(button=>button\.addEventListener\('click',\(\)=>setCamera\([^)]+\)\)\);/, `document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>{const id=button.dataset.camera||button.getAttribute('data-camera');const hierarchyOpen=Boolean(hierarchyRuntime&&hierarchyRuntime.openParentId);const resolved=resolveDomCameraAction(id,{hierarchyOpen});if(resolved.allowed&&resolved.effectiveCameraId)setCamera(resolved.effectiveCameraId);}));`);
     changed = true;
   }
+  // Cam-5/6 import — selected seat look-at authority (Issue #212)
+  if (!t.includes("from './hero-cam5-selected-tree-center.js'")) {
+    if (t.includes("from './hero-cam4-edge-swipe.js';")) {
+      t = t.replace("from './hero-cam4-edge-swipe.js';", "from './hero-cam4-edge-swipe.js';\nimport { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';");
+      changed = true;
+    } else if (t.includes("from './hero-cam3-tree-center-zoom.js';")) {
+      t = t.replace("from './hero-cam3-tree-center-zoom.js';", "from './hero-cam3-tree-center-zoom.js';\nimport { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';");
+      changed = true;
+    } else if (t.includes("from './hero-cam2-tree-follow.js';")) {
+      t = t.replace("from './hero-cam2-tree-follow.js';", "from './hero-cam2-tree-follow.js';\nimport { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';");
+      changed = true;
+    }
+  }
+  // Cam-6: mandatory selected-seat look-at while seat shell open (Issue #212)
+  if (!t.includes('seatDock') && t.includes('function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;')) {
+    t = t.replace(
+      "function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
+      "function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatOpen=typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&String(hierarchyRuntime.openParentId).includes('SEAT_SHELL');const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),seatOpen?{force:true}:{}):null;if(seatDock)next=seatDock;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
+    );
+    changed = true;
+  }
+  // Upgrade applyNav if already applied without force seatDock
+  if (t.includes('baseDockForTree({ cameraId }, table)') && !t.includes("resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE'")) {
+    t = t.replace(
+      'const base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });',
+      "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });",
+    );
+    changed = true;
+  }
   return { t, changed };
 }
 
@@ -145,4 +175,4 @@ async function loadBase() {
 const t = await loadBase();
 const { t: next, changed } = applyPatches(t);
 writeFileSync(path, next);
-console.log(changed ? 'Cam-2/3/4 flex applied' : 'Cam-2/3/4 flex already applied');
+console.log(changed ? 'Cam-2/3/4/6 flex applied' : 'Cam-2/3/4/6 flex already applied');
