@@ -1,6 +1,6 @@
 /**
- * V2.3 shell + V2.4 theme polish (Vision).
- * Owner: frontend/spatial/theme-root.js via documentElement only.
+ * V2.3–V2.5 settings shell (Vision).
+ * Owner: theme-root via documentElement only (theme, motion, UI scale).
  * Presentation only · no 029-released claim · Issue #214
  */
 import {
@@ -12,6 +12,8 @@ import {
   readStoredMode,
   resolveMode,
   initializeTheme,
+  readScale,
+  applyUiScale,
 } from '../frontend/spatial/theme-root.js';
 
 export const SETTINGS_SHELL_ID = 'hero-settings-shell';
@@ -52,6 +54,12 @@ export function buildSettingsShellPanel() {
     <div class="hero-settings-panel__row">
       <button type="button" data-settings-motion="full">Motion full</button>
       <button type="button" data-settings-motion="reduced">Motion reduced</button>
+    </div>
+    <div class="hero-settings-panel__row hero-settings-panel__scale">
+      <label for="hero-ui-scale">UI scale
+        <input id="hero-ui-scale" type="range" min="0.85" max="1.35" step="0.05" data-settings-scale />
+      </label>
+      <span data-settings-scale-value aria-live="polite">100%</span>
     </div>
   `;
   return panel;
@@ -105,6 +113,11 @@ export function syncSettingsShellPressed(root = document) {
   for (const btn of panel.querySelectorAll('[data-settings-motion]')) {
     btn.setAttribute('aria-pressed', btn.getAttribute('data-settings-motion') === motion ? 'true' : 'false');
   }
+  const scale = readScale();
+  const input = panel.querySelector('[data-settings-scale]');
+  if (input) input.value = String(scale);
+  const label = panel.querySelector('[data-settings-scale-value]');
+  if (label) label.textContent = Math.round(scale * 100) + '%';
 }
 
 export function mountSettingsShell(root = document) {
@@ -138,7 +151,7 @@ export function mountSettingsShell(root = document) {
     root.documentElement?.setAttribute?.('data-settings-open', open ? '1' : '0');
     root.dispatchEvent(
       new CustomEvent('teamai:settings-shell', {
-        detail: { open, source: 'v2.4-settings-shell', presentationOnly: true },
+        detail: { open, source: 'v2.5-settings-shell', presentationOnly: true },
         bubbles: true,
       }),
     );
@@ -151,6 +164,22 @@ export function mountSettingsShell(root = document) {
     const motion = t.getAttribute('data-settings-motion');
     if (theme) applyThemeMode(theme);
     if (motion) applyMotion(motion);
+  });
+
+  panel.addEventListener('input', (event) => {
+    const t = event.target;
+    if (!(t instanceof Element)) return;
+    if (!t.hasAttribute('data-settings-scale')) return;
+    const next = applyUiScale(t.value);
+    persistTheme({ scale: next });
+    const label = panel.querySelector('[data-settings-scale-value]');
+    if (label) label.textContent = Math.round(next * 100) + '%';
+    document.dispatchEvent(
+      new CustomEvent('teamai:ui-scale', {
+        detail: { scale: next, source: 'v2.5-settings-shell', presentationOnly: true },
+        bubbles: true,
+      }),
+    );
   });
 
   return btn;

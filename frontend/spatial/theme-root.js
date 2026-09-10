@@ -3,6 +3,7 @@ const MODE_KEY = "teamai.theme.mode";
 const SOURCE_KEY = "teamai.theme.source";
 const MOTION_KEY = "teamai.theme.motion";
 const DENSITY_KEY = "teamai.theme.density";
+const SCALE_KEY = "teamai.ui.scale";
 
 function osMode() {
   if (typeof window === "undefined") return "dark";
@@ -32,6 +33,21 @@ export function readDensity() {
   return window.localStorage.getItem(DENSITY_KEY) === "compact" ? "compact" : "default";
 }
 
+export function readScale() {
+  if (typeof window === "undefined") return 1;
+  const value = Number(window.localStorage.getItem(SCALE_KEY));
+  if (!Number.isFinite(value)) return 1;
+  return Math.min(1.35, Math.max(0.85, value));
+}
+
+export function applyUiScale(scale) {
+  const root = document.documentElement;
+  const next = Math.min(1.35, Math.max(0.85, Number(scale) || 1));
+  root.setAttribute("data-ui-scale", String(next));
+  root.style.setProperty("--ui-scale", String(next));
+  return next;
+}
+
 export function resolveMode(source, stored) {
   return source === "os" ? osMode() : (stored ?? "dark");
 }
@@ -54,6 +70,7 @@ export function persistTheme(partial) {
   }
   if (partial.motion) localStorage.setItem(MOTION_KEY, partial.motion);
   if (partial.density) localStorage.setItem(DENSITY_KEY, partial.density);
+  if (partial.scale != null) localStorage.setItem(SCALE_KEY, String(partial.scale));
 }
 
 export function watchOsTheme(onMode) {
@@ -74,4 +91,5 @@ export function initializeTheme() {
     motion: readMotion(),
     density: readDensity(),
   });
+  applyUiScale(readScale());
 }
