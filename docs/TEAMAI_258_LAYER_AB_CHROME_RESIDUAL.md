@@ -41,3 +41,7 @@
 ## Later on #258
 
 CAM-R1–R3 seat look-at · CHR-R3–R6 polish absorption · ENT-R4 Playwright
+
+## Governance
+
+Spatial `public/` change requires sync of `MASTERPLAN.md`, `docs/TEAMAI_029_CURRENT_STATE_MAP.md`, `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` (verify-active-index coupling).
