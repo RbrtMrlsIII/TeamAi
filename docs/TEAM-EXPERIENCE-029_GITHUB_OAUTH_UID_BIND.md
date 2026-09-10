@@ -1,6 +1,6 @@
 # TEAM-EXPERIENCE-029 — GitHub OAuth mint of UID ↔ installation_id (Conn-3)
 
-**Status:** CONTRACT · Edge path implemented on branch; operator deploy logged in USER_MANUAL_DEPLOYMENT.md  
+**Status:** IMPLEMENTED · operator-confirmed installation success · callback return fix pending verification  
 **Not a Hero live bind.** **No 029 production-release claim.**
 
 ## Purpose
@@ -18,6 +18,27 @@ User clicks Connect GitHub (normal UI — not 3D)
 
 Conn-2 webhooks **only look up** this map. Conn-3 is the **only** allowed first-write of the index from product flows.
 
+## Current operator evidence
+
+The GitHub App installation has been **successfully completed through the real GitHub installation flow**, including installation by another user. The operator reports the connected Supabase history as the durable external evidence trail.
+
+A separate CLI `curl` attempt returned **HTTP 401**. This is classified as a **CLI/test-path discrepancy** and does not downgrade the successful GitHub App installation evidence.
+
+## Current browser integration boundary
+
+The real remaining problem is the post-install return path. The prior GET callback rendered an HTML response directly from the Edge function, leaving the browser on the worker/callback page rather than returning to the TeamAi website.
+
+The bounded implementation change is now:
+
+```text
+GitHub install callback GET
+  → Edge does not write UID state
+  → HTTP 303 to canonical TeamAi Hero destination
+  → optional install/setup/error context is carried in query parameters
+```
+
+Tracked as **Issue #244**. The fix is complete at source-contract level only until the user performs the real browser deployment/test.
+
 ## Ownership
 
 | Concern | Owner |
@@ -26,6 +47,7 @@ Conn-2 webhooks **only look up** this map. Conn-3 is the **only** allowed first-
 | Install + OAuth consent | GitHub (user) |
 | First bind write | Supabase Edge trusted execution |
 | Secrets (client_id / client_secret / PEM) | Edge env / trusted store — never browser |
+| Post-install return destination | TeamAi canonical web route |
 | Seat may use Connection | Equip + scope + health + tool policy (later) |
 
 ## Non-goals
@@ -33,7 +55,8 @@ Conn-2 webhooks **only look up** this map. Conn-3 is the **only** allowed first-
 - Hero keyboard **C** is not OAuth
 - Webhook payload must not mint UID
 - No Postgres domain column
-- No invented callback URL in docs before Edge is deployed (log real URL only in `docs/USER_MANUAL_DEPLOYMENT.md` after deploy)
+- No automatic completion claim from App installation alone
+- No 029 production release claim from the redirect fix alone
 
 ## Implementation checklist
 
@@ -42,10 +65,19 @@ Conn-2 webhooks **only look up** this map. Conn-3 is the **only** allowed first-
 3. [x] Contract tests on branch
 4. [x] Skill `ws.github.oauth-uid-bind`
 5. [x] Operator manual consolidated into `docs/USER_MANUAL_DEPLOYMENT.md`
+6. [x] GitHub App installation completed in the real GitHub flow (operator-confirmed)
+7. [x] CLI 401 classified separately from product installation evidence
+8. [x] GET callback changed from terminal HTML page to HTTP 303 canonical TeamAi return
+9. [ ] Deploy the revised Edge function
+10. [ ] Real browser proof: install → callback → TeamAi return
+11. [ ] Verify durable UID ↔ installation mapping after the revised flow
+12. [ ] Conn-3 / 029 acceptance decision after the complete evidence packet
 
 ## See also
 
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md` (Conn-2)
 - `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md` (Conn-1)
+- `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
+- `docs/CHECKPOINT_BACKEND_OPERATOR_STATE_2026-09-10.md`
 - `docs/USER_MANUAL_DEPLOYMENT.md`
 - `src/backend/github-installation.ts`
