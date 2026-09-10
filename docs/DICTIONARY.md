@@ -3,7 +3,7 @@
 **Audience:** every session (including new ones)  
 **Purpose:** plain-language meanings for complex tabs, 3D Hero parts, and product terms  
 **Authority:** Product Law remains higher than this dictionary  
-**Date:** 2026-09-08
+**Date:** 2026-09-10
 
 Jump to: [Command Deck & fields](#command-deck--fields-f0f7) · [3D Hero](#3d-hero--spatial-parts) · [Seats & connection](#seats--provider-connection) · [Backend](#backend--authority) · [Chronology](./CHRONOLOGY.md)
 
@@ -87,7 +87,7 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 
 **Flow:** Firebase login → draft provider key → **Save** (Edge encrypts) → **Test Connection** (server) → Activate (backend).
 
-**See also:** `docs/USER_MANUAL_DEPLOY_AND_SEATS.md`, `docs/TEAM-EXPERIENCE-029_SEAT_PROVIDER_KEY_BIND.md`, `docs/TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md`
+**See also:** `docs/USER_MANUAL_DEPLOYMENT.md`, `docs/TEAM-EXPERIENCE-029_SEAT_PROVIDER_KEY_BIND.md`, `docs/TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md`, `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
 
 ---
 
@@ -104,7 +104,7 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 | **ORUCAVEAM** | How a command may be executed safely | A second Product Law |
 | **Field** | Dev responsibility area (Backend, Frontend, …) | Web AI Seat |
 
-**See also:** `PRODUCT_LAW.md`, `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`
+**See also:** `PRODUCT_LAW.md`, `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`, `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
 
 ---
 
@@ -118,7 +118,8 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 | Hero / spatial canvas | [3D Hero](#3d-hero--spatial-parts) |
 | Inspection / camera labels | [Inspection spine](#inspection-spine-chronological-visual-stages) |
 | Status strip / health dial | [F4 Status](#command-deck--fields-f0f7) |
-| Deploy / secrets | [USER_MANUAL_DEPLOY_AND_SEATS](./USER_MANUAL_DEPLOY_AND_SEATS.md) |
+| Deploy / secrets | [USER_MANUAL_DEPLOYMENT](./USER_MANUAL_DEPLOYMENT.md) |
+| Backend live reality | [Live reality ledger](./TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md) |
 | “What did we decide when?” | [CHRONOLOGY](./CHRONOLOGY.md) |
 
 ---
@@ -128,6 +129,7 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 | Doc | Role |
 |-----|------|
 | [CHRONOLOGY.md](./CHRONOLOGY.md) | Ordered thoughts / gates / slices |
-| [USER_MANUAL_DEPLOY_AND_SEATS.md](./USER_MANUAL_DEPLOY_AND_SEATS.md) | Deploy & seat assignment |
+| [USER_MANUAL_DEPLOYMENT.md](./USER_MANUAL_DEPLOYMENT.md) | Canonical deploy + operator setup guide |
+| [TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md](./TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md) | Connected-runtime + manual-setup evidence bridge |
 | [AGENT_SLICE_EXECUTION.md](./AGENT_SLICE_EXECUTION.md) | How agents close a slice |
 | `PRODUCT_LAW.md` | Highest product authority |
