@@ -1,3 +1,8 @@
+/**
+ * Hero aura / theme lighting sync + V3.3 entrance atmosphere.
+ * Owners: #hero-canvas + .hero-aura-* (Layer A backdrop).
+ * Presentation only · no second WebGL · no 029-released claim.
+ */
 import { mapHeroThemeLighting } from '../frontend/spatial/hero-theme-lighting-adapter.js';
 
 const shell = document.querySelector('.hero-shell');
@@ -15,10 +20,15 @@ if (shell) {
     const reducedMotion = root.dataset.motion === 'reduced'
       || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
+    // V3.3 — Layer A entrance atmosphere (gentle backdrop; not demanding interaction)
+    const layer = shell.dataset.heroLayer || 'entrance';
+    const entranceAtmosphere = layer === 'entrance' && !shell.dataset.openParentId;
+    const atmosphereBoost = entranceAtmosphere ? 0.12 : 0;
+
     const semantic = {
       themeMode,
       themeSource,
-      atmosphere: clamp01(.48 + density * .28),
+      atmosphere: clamp01(.48 + density * .28 + atmosphereBoost),
       surface: clamp01(.58 + density * .12),
       focus: clamp01(state === 'FOCUS' ? .72 : state === 'ACTIVE' || state === 'CONTRIBUTE' ? .9 : 0),
       signal: clamp01(state === 'CONTRIBUTE' ? 1 : state === 'ABSORB' || state === 'REFLECT' ? .78 : 0),
@@ -28,8 +38,11 @@ if (shell) {
     const lighting = mapHeroThemeLighting(semantic);
 
     shell.dataset.seats = String(n);
+    shell.dataset.atmosphere = entranceAtmosphere ? 'gentle' : 'machine';
+    shell.dataset.atmosphereMotion = reducedMotion ? 'static' : 'drift';
     shell.style.setProperty('--hero-density', String(density));
     shell.style.setProperty('--hero-seat-glow', String(.10 + density * .13));
+    shell.style.setProperty('--hero-atmosphere', String(semantic.atmosphere));
     shell.style.setProperty('--hero-light-fill', String(lighting.environmentalFillIntensity));
     shell.style.setProperty('--hero-light-key', String(lighting.keyLight.intensity));
     shell.style.setProperty('--hero-light-grazing', String(lighting.grazingRimStrength));
@@ -54,6 +67,7 @@ if (shell) {
   motionMedia?.addEventListener?.('change', onMotionOrTheme);
   const observer = new MutationObserver(onMotionOrTheme);
   observer.observe(root, { attributes: true, attributeFilter: ['data-theme-mode', 'data-theme-source', 'data-motion'] });
+  observer.observe(shell, { attributes: true, attributeFilter: ['data-hero-layer', 'data-state'] });
   const timer = window.setInterval(sync, 240);
 
   window.addEventListener('beforeunload', () => {
