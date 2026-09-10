@@ -1,0 +1,63 @@
+/* #258 residual — ENT-R2/R3 + CHR-R1/R2 (presentation only · no 029-released claim)
+ * Adjust existing layer/chrome owners. Does not set data-hero-machine-ui (hierarchy absorption).
+ */
+
+/* ENT-R2 — machine layer retires entrance-primary brand (overrides soft 0.42) */
+.hero-shell[data-hero-layer="machine"] .hero-copy {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 220ms ease, visibility 220ms ease;
+}
+.hero-shell[data-hero-layer="entrance"] .hero-copy {
+  opacity: 1;
+  visibility: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-shell[data-hero-layer="machine"] .hero-copy { transition: none; }
+}
+
+/* ENT-R3 — Return control only on machine layer */
+.hero-shell[data-hero-layer="entrance"] [data-hero-layer-return] {
+  display: none !important;
+}
+.hero-shell[data-hero-layer="machine"] [data-hero-layer-return] {
+  display: inline-flex !important;
+}
+
+/* CHR-R2 — soft-hide legacy seat-stack module column on machine; keep machine-nav + settings */
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__module,
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__note,
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__handoff,
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__distinction {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0);
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Entrance: de-emphasize stack chips so Layer A is not a config wall */
+.hero-shell[data-hero-layer="entrance"] .seat-stack > .seat-stack__module {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* CHR-R1 — machine-nav + settings stay primary when machine */
+.hero-shell[data-hero-layer="machine"] .machine-nav,
+.hero-shell[data-hero-layer="machine"] .hero-settings-shell {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Demote camera docks slightly in machine layer */
+.hero-shell[data-hero-layer="machine"] .hero-controls .control-row button[data-camera] {
+  opacity: 0.72;
+}

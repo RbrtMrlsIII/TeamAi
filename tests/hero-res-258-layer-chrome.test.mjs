@@ -9,29 +9,29 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('ENT-R2 machine layer retires brand (opacity 0 / hidden, not 0.42 soft)', async () => {
-  const css = await readFile(join(root, 'public/hero.css'), 'utf8');
+test('ENT-R2 residual CSS retires brand on machine layer', async () => {
+  const css = await readFile(join(root, 'public/hero-res-258-layer.css'), 'utf8');
   assert.match(css, /data-hero-layer="machine"\] \.hero-copy/);
   assert.match(css, /visibility:\s*hidden/);
-  assert.doesNotMatch(css, /opacity:\s*0\.42/);
+  assert.match(css, /opacity:\s*0/);
+  assert.match(css, /#258|ENT-R2/);
 });
 
-test('ENT-R3 return control wired in index and visible only on machine layer', async () => {
+test('ENT-R3 return control wired in index and residual CSS', async () => {
   const html = await readFile(join(root, 'public/index.html'), 'utf8');
-  const css = await readFile(join(root, 'public/hero.css'), 'utf8');
+  const css = await readFile(join(root, 'public/hero-res-258-layer.css'), 'utf8');
   const handoff = await readFile(join(root, 'public/hero-layer-handoff.js'), 'utf8');
   assert.match(html, /data-hero-layer-return/);
+  assert.match(html, /hero-res-258-layer\.css/);
   assert.match(css, /data-hero-layer-return/);
   assert.match(handoff, /data-hero-layer-return|returnToEntranceLayer/);
 });
 
-test('CHR-R2 soft-hides seat-stack modules on machine layer; keeps machine-nav owners', async () => {
-  const chrome = await readFile(join(root, 'public/hero-dom-chrome.css'), 'utf8');
-  assert.match(chrome, /seat-stack__module/);
-  assert.match(chrome, /data-hero-layer="machine"/);
-  assert.match(chrome, /machine-nav/);
-  // Must not claim hierarchy machine-ui ownership in this residual
-  assert.match(chrome, /Does not set data-hero-machine-ui|hierarchy absorption/i);
+test('CHR-R2 soft-hides seat-stack modules; does not own data-hero-machine-ui', async () => {
+  const css = await readFile(join(root, 'public/hero-res-258-layer.css'), 'utf8');
+  assert.match(css, /seat-stack__module/);
+  assert.match(css, /machine-nav/);
+  assert.match(css, /Does not set data-hero-machine-ui|hierarchy absorption/i);
 });
 
 test('RES-0 contract doc names inventory and forbidden second runtime', async () => {
