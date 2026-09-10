@@ -1,11 +1,11 @@
 schema: 1
-manifest_version: 2026-09-10.1
+manifest_version: 2026-09-10.2
 
 active_frontier:
   spatial:
-    current: V3.3
+    current: V3.5
     gate: SP-07
-    status: NEXT_AUTHORIZED
+    status: COMPLETE
   backend:
     team_backend_001:
       status: ENDORSED_BOUNDED
@@ -14,10 +14,12 @@ active_frontier:
       conn3_browser_proof: PENDING
 
 claims:
-  SPATIAL-V3.3:
-    state: NEXT_AUTHORIZED
+  SPATIAL-V3.5:
+    state: COMPLETE
     evidence:
-      - docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md
+      - docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md
+      - docs/CHECKPOINT_TEAM-EXPERIENCE-029_V3_5_FAR_ENVIRONMENT_2026-09-10.md
+      - docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md
     indexes:
       - MASTERPLAN.md
       - docs/TEAMAI_029_CURRENT_STATE_MAP.md
@@ -70,13 +72,13 @@ coupling:
   skill_wiring:
     - skills/
 
-historical_existing_immutable:
+historical_evidence_immutable:
   - docs/evidence/
   - docs/project-guide/HandOver-
   - docs/project-guide/Endorsement
 
 rules:
-  historical_existing_immutable: true
+  historical_evidence_immutable: true
   active_indexes_must_agree: true
   implementation_claim_requires_evidence: true
   validation_requires_current_index: true
