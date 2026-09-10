@@ -4,6 +4,7 @@ const SOURCE_KEY = "teamai.theme.source";
 const MOTION_KEY = "teamai.theme.motion";
 const DENSITY_KEY = "teamai.theme.density";
 const SCALE_KEY = "teamai.ui.scale";
+const LANG_KEY = "teamai.ui.lang";
 
 function osMode() {
   if (typeof window === "undefined") return "dark";
@@ -48,6 +49,23 @@ export function applyUiScale(scale) {
   return next;
 }
 
+export const SUPPORTED_UI_LANGS = Object.freeze(["en"]);
+
+export function readLang() {
+  if (typeof window === "undefined") return "en";
+  const value = window.localStorage.getItem(LANG_KEY);
+  if (value && SUPPORTED_UI_LANGS.includes(value)) return value;
+  return "en";
+}
+
+export function applyUiLang(lang) {
+  const root = document.documentElement;
+  const next = SUPPORTED_UI_LANGS.includes(lang) ? lang : "en";
+  root.setAttribute("data-ui-lang", next);
+  root.setAttribute("lang", next);
+  return next;
+}
+
 export function resolveMode(source, stored) {
   return source === "os" ? osMode() : (stored ?? "dark");
 }
@@ -71,6 +89,7 @@ export function persistTheme(partial) {
   if (partial.motion) localStorage.setItem(MOTION_KEY, partial.motion);
   if (partial.density) localStorage.setItem(DENSITY_KEY, partial.density);
   if (partial.scale != null) localStorage.setItem(SCALE_KEY, String(partial.scale));
+  if (partial.lang) localStorage.setItem(LANG_KEY, partial.lang);
 }
 
 export function watchOsTheme(onMode) {
@@ -92,4 +111,5 @@ export function initializeTheme() {
     density: readDensity(),
   });
   applyUiScale(readScale());
+  applyUiLang(readLang());
 }
