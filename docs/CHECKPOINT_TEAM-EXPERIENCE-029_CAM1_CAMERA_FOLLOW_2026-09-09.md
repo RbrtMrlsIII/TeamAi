@@ -16,6 +16,10 @@
 
 `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`
 
-## Next
+## Historical status
 
-Cam-2 implementation (camera follows open parent/child).
+This checkpoint records the **Cam-1 contract slice as historical provenance**. Cam-2, Cam-3, and Cam-4 implementation slices subsequently merged, and later Vision V0–V2 work refined that machinery.
+
+Agents **must not resume “Cam-2 next” from this checkpoint**. Use `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` for current camera chronology and `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` for the current pre-backend / pre-coloring execution gates.
+
+This checkpoint is not a current work queue.
