@@ -159,6 +159,37 @@ and server-only lookup:
 
 **Next authorized command:** Slice **L** — satisfied-by comments on Issues #96, #97, #98. Then N.4 `ws.authority.map` + `ws.evidence.handover`.
 
+## 12. Current 2026-09-11 Conn-3.1 / Grok continuation
+
+**Scope:** Issue #244 post-install return. Presentation-only. Not a commerce or 029-release claim.
+
+**Authoritative now:** `PRODUCT_LAW.md` → `MASTERPLAN.md` (TEAM-BACKEND-001 ENDORSED bounded; 029 still held by item 17) → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md` §15 → `skills/workspace/ws.github.oauth-uid-bind/SKILL.md` → `docs/GROK_SKILLS_ALIGNMENT.md`.
+
+**Changed this slice:** GET 303 destination trailing slash `/hero/`; Hero + Command Deck install receipt; human-only MASTERPLAN remainders flagged on existing `docs/USER_MANUAL_DEPLOYMENT.md` §10; Grok alignment frontier updated to V3.5 + Conn-3.
+
+**Proven:** source-contract tests. Not live Edge 303. Not Firestore bind re-read.
+
+**Learned:** Landing on `/hero` without a trailing slash or receipt made the merged 303 look like a dead end. Receipt must not become a second bind path.
+
+**Open / do not auto-check:**
+1. Conn-3 items 9–12 (Edge redeploy + browser proof + POST bind + acceptance) — human; `USER_MANUAL_DEPLOYMENT.md` §10.
+2. MASTERPLAN item 7 Gate 4 emulator — PARKED.
+3. MASTERPLAN item 13 real provider runtime — not authorized.
+4. MASTERPLAN item 14 broader verification matrix.
+5. MASTERPLAN item 17 029 release hold.
+6. TEAM-EXPERIENCE-029 visual-system items 1–10 — held by item 17.
+7. PR #254 ToolKit boundary docs — junk stub `# x` replaced with a pointer; merge only after checks re-run.
+
+**Chronological next for later sessions (one at a time):**
+1. Operator redeploy `teamai-github-oauth-bind` (user manual).
+2. Browser-prove install → 303 → `/hero/` receipt (Issue #244).
+3. Signed-in POST bind + Firestore index re-read.
+4. Merge PR #254 if the pointer-stub fix is green.
+5. Do **not** start MASTERPLAN 029 visual-law items 1–10 or provider runtime (13) without release/authorization.
+
+**Next authorized command:** wait for operator Edge redeploy, or if that is blocked, keep Conn-3.1 source-complete and do not invent a second deploy file.
+
+
 ## SEE ALSO
 
 - `POLICY.md`

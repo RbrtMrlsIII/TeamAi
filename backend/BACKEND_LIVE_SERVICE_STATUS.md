@@ -18,7 +18,7 @@
 | Firebase Hosting | Product Law keeps Firebase Hosting as delivery authority | **PASS** | unrelated deployment paths |
 | Vercel | policy cutoff remains non-authoritative | **PARKED / NOT A RELEASE BLOCKER** | resume without explicit approval |
 | GitHub App installation | operator-confirmed successful real install, including another-user install | **OPERATOR-CONFIRMED SUCCESS** | callback/browser return proof |
-| Conn-3 callback | merged PR #246 changes terminal HTML GET to HTTP 303 TeamAi return | **IMPLEMENTED; live deployment/browser proof pending** | source merge = live proof |
+| Conn-3 callback | GET 303 to `/hero/` plus presentation-only install receipt on source; live Edge still HTML as of 2026-09-10 | **IMPLEMENTED; live deployment/browser proof pending** | source merge = live proof |
 | Seat connection/provider surfaces | deployed functions exist; no frontend exercise path yet | **DEFERRED / WAITING FOR FRONTEND PROOF** | broken or product-complete |
 | Firebase Rules Gate 4 | reproducible harness exists, but no emulator PASS was found in repository evidence | **PARKED / NOT PROVEN** | configuration = emulator PASS |
 | External provider runtime | live task execution uses `stub-edge-runtime` | **OPEN beyond stub** | real provider integration |
@@ -43,7 +43,7 @@ Deployment inventory is live infrastructure evidence. It is not, by itself, proo
 
 `teamai-task-execute` remains explicitly `stub-edge-runtime` for the provider stage. Its authenticated task → lease → durable-result route is runtime-proven, but real external provider invocation is a separate authorization/runtime boundary.
 
-`teamai-github-oauth-bind` is live. Its authenticated POST writes the server-owned Firebase UID ↔ GitHub installation mapping. Its GET callback was changed in merged PR #246 to return HTTP 303 to the TeamAi Hero destination. The revised GET still needs live deployment and browser proof.
+`teamai-github-oauth-bind` is live. Its authenticated POST writes the server-owned Firebase UID ↔ GitHub installation mapping. Its GET callback on `main` returns HTTP 303 to `https://rbrtmrlsiii.github.io/TeamAi/hero/` and the Hero/Command Deck show a presentation-only receipt. The revised GET still needs live deployment and browser proof. Redeploy is a human-only step on `docs/USER_MANUAL_DEPLOYMENT.md` §10.
 
 The Supabase public schema currently has no application tables. This is consistent with TeamAi's authority model: Firestore `(default)` is the durable application/domain store and Supabase is the trusted Edge/webhook infrastructure.
 
@@ -124,7 +124,7 @@ The distinction remains valid even after the bounded gate was endorsed.
 
 The next bounded backend action is **not** a generic backend rewrite:
 
-1. deploy and browser-verify the already-merged Conn-3 callback fix;
+1. operator redeploys `teamai-github-oauth-bind` (human-only; `docs/USER_MANUAL_DEPLOYMENT.md` §10) and browser-verifies GET 303 + presentation receipt;
 2. keep Gate 4 parked unless an actual emulator PASS record is recovered;
 3. keep real external provider runtime separate from the proven `stub-edge-runtime` path;
 4. keep seat/provider surfaces deferred until frontend exercise exists.

@@ -164,7 +164,7 @@ Wiring path for a Grok-hosted continuation session:
 
 ## 14. 2026-09-10 Cam↔V camera chronology (Issue #232)
 
-Cam-1–Cam-4 are **architecture slices already merged**. Vision V0–V2 experience slices are merged; **current frontier is Vision V3.1** (PR #230) under `docs/VISION.md`.
+Cam-1–Cam-4 are **architecture slices already merged**. Vision V0–V3.5 experience slices are merged; **spatial frontier is V3.5 complete**. Parallel next is Conn-3 browser proof / Conn-3.1 receipt.
 
 Agents recovering camera work **must** load:
 
@@ -175,3 +175,14 @@ and the ledger:
 `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`
 
 before treating any Cam contract “next” line as current work. Do not restart Cam-2.
+
+## 15. 2026-09-11 Conn-3.1 post-install return (Issue #244)
+
+Current parallel non-spatial slice: GitHub install callback return.
+
+`skills/workspace/ws.github.oauth-uid-bind/SKILL.md`
+
+GET 303 destination is `https://rbrtmrlsiii.github.io/TeamAi/hero/`. Hero and Command Deck show a presentation-only receipt. **No browser Firestore write. No Hero live bind.**
+
+Human-only remainders (Edge redeploy, webhook Active, Gate 4 emulator, provider runtime, 029 release) stay on `docs/USER_MANUAL_DEPLOYMENT.md` §10. Do not create a second deploy file. Do not auto-check MASTERPLAN items 7, 13, 14, 17.
+

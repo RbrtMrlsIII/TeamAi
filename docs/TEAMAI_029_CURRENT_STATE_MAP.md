@@ -63,7 +63,7 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | V3.2 | MERGED | brand hero image is on `main` via PR #235 | Historical slice; do not reopen without a new discrepancy |
 | V3.3 | MERGED | Gentle Hero atmosphere on `main` via PR #247 | Historical slice |
 | V3.4 | MERGED | Get-started → machine baseline handoff on `main` via PR #249 | Historical slice |
-| V3.5 | COMPLETE | Far-environment clarity on `main` via PR #252; entrance ladder closed | Parallel next: Conn-3 browser proof (not Hero live bind) |
+| V3.5 | COMPLETE | Far-environment clarity on `main` via PR #252; entrance ladder closed | Parallel next: Conn-3.1 source receipt + operator Edge redeploy (not Hero live bind) |
 | R1/R2 mesh topology | SPECIFIED / PARTIAL | topology contract exists | Do not invent geometry without a named owner |
 
 ## 4. Current backend frontier
@@ -105,7 +105,7 @@ It stopped at **verification, external-runtime, and final-governance boundaries*
 - Gate 5B source contract is PASS and remains source-contract scope only.
 - Gate 5C bounded live PayPal Sandbox transaction/webhook and direct Firestore aggregate/event/entitlement evidence are now runtime-proven and endorsed for the recorded scope.
 - `teamai-task-execute` is live/authenticated but intentionally invokes `stub-edge-runtime`; real external provider invocation remains unproven.
-- GitHub OAuth/installation bind infrastructure is deployed; Conn-3 live deployment/browser proof remains pending and is not Hero live binding.
+- GitHub OAuth/installation bind infrastructure is deployed; Conn-3 live deployment/browser proof remains pending and is not Hero live binding. Conn-3.1 adds the `/hero/` receipt on source; Edge redeploy is human-only (`docs/USER_MANUAL_DEPLOYMENT.md` §10).
 - Bounded recovery and traceability evidence is recorded; Gate 4 emulator PASS and broader security/approval/runtime matrices remain independently bounded.
 
 This is a stopped **evidence/authorization frontier**, not a reason to restart already-completed backend implementation.

@@ -67,6 +67,25 @@
     </div>
   </header>
 
+  <aside
+    data-github-install-receipt="idle"
+    class="ta-card ta-install-receipt"
+    hidden
+    aria-hidden="true"
+    role="status"
+    aria-label="GitHub connection receipt"
+  >
+    <div class="ta-region-heading">
+      <div>
+        <p class="ta-type-label">Connection / GitHub</p>
+        <h2 class="ta-type-title" data-receipt-title>GitHub install received</h2>
+      </div>
+      <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-receipt-close aria-label="Dismiss GitHub install receipt">Close</button>
+    </div>
+    <p class="ta-type-body" data-receipt-status>Install reached TeamAi. Bind still requires a signed-in POST with a Firebase ID token.</p>
+    <p class="ta-type-meta" data-receipt-meta>Not a Hero live bind · no 029 production-release claim</p>
+  </aside>
+
   <nav data-field="F2" class="ta-nav" role="navigation" aria-label="Primary">
     <div class="ta-nav__wide" data-nav-wide>
       <button type="button" class="ta-control" data-field="F5" data-kind="nav" data-nav="deck" aria-current="page">Deck</button>
@@ -269,5 +288,6 @@
 
   <script type="module" src="./shell-nav.js"></script>
   <script type="module" src="./planning.js"></script>
+  <script type="module" src="./github-install-receipt.js"></script>
 </body>
 </html>

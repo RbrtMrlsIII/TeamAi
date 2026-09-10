@@ -9,7 +9,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **Vision V3.1–V3.5** entrance ladder **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`.
 
-**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented in PR #246; live deployment/browser proof pending** (parallel; not Hero live bind).
+**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented in PR #246; live deployment/browser proof pending** (parallel; not Hero live bind). **Conn-3.1** canonical `/hero/` return + presentation-only install receipt is the current source slice for Issue #244.
 
 ## Completed ladder (structure + skills)
 
@@ -79,6 +79,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
 | **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **Merged** (#202) |
 | **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Implemented; live deployment/browser proof pending** (parallel) |
+| **Conn-3.1** | Canonical return + receipt | GET 303 → `/hero/` + presentation-only `github=installed` banner | **Source this slice** — operator redeploy remains human-only |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
@@ -104,8 +105,8 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - Machine matrix: `public/github-app-permission-matrix.json`.
 - Skill: `skills/workspace/ws.github.app.least-privilege/SKILL.md`.
 - Conn-2 webhook map: `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md`.
-- Conn-3 OAuth mint: `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`; PR #246 source fix is merged, while live deployment/browser proof remains pending.
-- **Human-only setup steps** are logged in `docs/USER_MANUAL_DEPLOYMENT.md` (do not invent webhook/callback URLs before deploy).
+- Conn-3 OAuth mint: `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`; PR #246 source fix is merged; Conn-3.1 adds `/hero/` trailing slash + presentation receipt. Live deployment/browser proof remains pending.
+- **Human-only setup steps** are logged in `docs/USER_MANUAL_DEPLOYMENT.md` (do not invent webhook/callback URLs before deploy; do not create a second deploy file).
 - Creating the App is **not** a live Hero bind and **not** 029-released.
 
 ## Naming

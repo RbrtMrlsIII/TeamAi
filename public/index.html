@@ -80,6 +80,25 @@
         </div>
       </section>
 
+      <section
+        data-github-install-receipt="idle"
+        class="hero-install-receipt"
+        hidden
+        aria-hidden="true"
+        role="status"
+        aria-label="GitHub connection receipt"
+      >
+        <div class="hero-install-receipt__inner">
+          <div class="hero-auth-panel__topline">
+            <span class="hero-auth-panel__kicker">CONNECTION / GITHUB</span>
+            <button type="button" class="quiet" data-receipt-close>Close</button>
+          </div>
+          <h2 data-receipt-title>GitHub install received</h2>
+          <p data-receipt-status class="hero-auth-panel__status">Install reached TeamAi. Bind still requires a signed-in POST with a Firebase ID token.</p>
+          <p data-receipt-meta class="hero-auth-panel__note">Not a Hero live bind · no 029 production-release claim</p>
+        </div>
+      </section>
+
       <section id="hero-auth-panel" class="hero-auth-panel" aria-label="Authentication controls" aria-hidden="true" hidden>
         <div class="hero-auth-panel__inner" role="dialog" aria-modal="false" aria-labelledby="auth-title">
           <div class="hero-auth-panel__topline">
@@ -136,5 +155,6 @@
     <script type="module" src="./hero-inspection-spine.js"></script>
     <script type="module" src="./hero-layer-handoff.js"></script>
     <script type="module" src="./hero-auth-handoff.js"></script>
+    <script type="module" src="./hero-github-install-receipt.js"></script>
   </body>
 </html>

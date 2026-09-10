@@ -36,7 +36,7 @@ test("Conn-3 Edge requires Firebase Bearer and installationId", () => {
   assert.match(src, /status: 303/);
   assert.match(src, /location/);
   assert.match(src, /github.*installed/);
-  assert.match(src, /rbrtmrlsiii\.github\.io\/TeamAi\/hero/);
+  assert.match(src, /rbrtmrlsiii\.github\.io\/TeamAi\/hero\//);
 });
 
 test("skill and contract docs exist for Conn-3", () => {

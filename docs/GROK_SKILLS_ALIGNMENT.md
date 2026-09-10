@@ -21,7 +21,7 @@ When a Grok sandbox skill and a TeamAi repository skill disagree, **the GitHub r
 
 Do **not** reconstruct TeamAi from Grok App Builder `AGENTS.md` §0.5 (auth/db defaults, TanStack Start, Neon, Better Auth). Those rules govern **new Grok-hosted apps**, not this product.
 
-Do **not** resume “Cam-2 next” from the Cam-1 contract alone. Cam-1–Cam-4 modules are merged; current camera/chrome/entrance work is the **Vision V-series** (frontier V3.1 / PR #230 as of 2026-09-10).
+Do **not** resume “Cam-2 next” from the Cam-1 contract alone. Cam-1–Cam-4 modules are merged; Vision V3.1–V3.5 entrance ladder is **complete**. Current parallel work is **Conn-3 live deployment/browser proof** (Issue #244 / Conn-3.1 receipt), not a Hero live bind.
 
 ## 2. Hard non-transfers (Grok host → TeamAi)
 
@@ -71,9 +71,10 @@ SEAT_SKILLS and WORKSPACE_SKILLS are **optional user-assignable procedures**, no
 |-------|--------------|---------------|
 | Conn-1 | `ws.github.app-least-privilege` | Invent App permissions; grant Admin/Secrets; activate empty webhook |
 | Conn-2 | `ws.github.webhook-uid-map` | Mint UID from `sender.login`; paste PEM in chat; Hero live bind |
-| Conn-3 | `ws.github.oauth-uid-bind` (planning) | Treat keyboard C as OAuth; claim 029 released |
+| Conn-3 | `ws.github.oauth-uid-bind` | Treat keyboard C as OAuth; claim 029 released; write Firestore from the receipt |
+| Conn-3.1 | same skill + Issue **#244** | Invent a second deploy file; auto-check MASTERPLAN items 7/13/14/17 |
 
-Manual operator steps for App create, secrets, and webhook Active live only in `docs/USER_MANUAL_DEPLOYMENT.md`.
+Manual operator steps for App create, secrets, webhook Active, and **Edge redeploy of `teamai-github-oauth-bind`** live only in `docs/USER_MANUAL_DEPLOYMENT.md`.
 
 ## 5. Merge / automation behavior (Grok connector)
 
@@ -90,6 +91,7 @@ A Grok session on TeamAi **passes** this alignment when:
 - it did not add Better Auth, Neon, TanStack routes, or a second theme root;
 - it loaded TeamAi `skills/**` for the slice actually executed;
 - it did not restart Cam-2 as if unmerged;
+- it did not auto-check MASTERPLAN human-only remainders (items 7, 13, 14, 17);
 - it left NEXT_SLICES / Cam↔V ledger / HandOver current for the next session;
 - any Grok-host preview is not claimed as TeamAi production delivery.
 

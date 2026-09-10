@@ -375,3 +375,20 @@ html {
     flex: 1 1 12rem;
   }
 }
+
+.ta-install-receipt {
+  margin: var(--space-shell);
+  padding: var(--space-inset-lg);
+  display: grid;
+  gap: var(--space-stack-sm);
+}
+.ta-install-receipt[hidden] {
+  display: none;
+}
+.ta-install-receipt[data-github-install-receipt="error"] {
+  border-inline-start: .25rem solid var(--status-blocked);
+}
+.ta-install-receipt[data-github-install-receipt="shown"] {
+  border-inline-start: .25rem solid var(--status-ok);
+}
+

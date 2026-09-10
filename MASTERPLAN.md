@@ -17,7 +17,9 @@ The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/valida
 
 - Firebase Rules emulator verification (Gate 4) remains **PARKED / NOT PROVEN** because a real emulator PASS is not present in the repository evidence.
 - `teamai-task-execute` is runtime-proven only through its bounded authenticated path and still uses `stub-edge-runtime`; real external provider invocation remains **OPEN / NOT PROVEN**.
-- GitHub App installation is operator-confirmed, while Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind.
+- GitHub App installation is operator-confirmed, while Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind. Conn-3.1 on source: GET 303 lands on `/hero/` and a presentation-only receipt consumes `github=installed` (no UID write). Edge redeploy stays a human-only step on `docs/USER_MANUAL_DEPLOYMENT.md` §10.
+- Empty MASTERPLAN checks that are operator/environment setups (**items 7, 9-deploy, 13–14, 17**) stay unchecked. Do not auto-tick them. Flag them on the existing deployment manual; do not create another deploy file.
+- TEAM-EXPERIENCE-029 visual-system checklist items 1–10 remain empty because 029 is still held by item 17. Spatial V3.5 is presentation continuity, not visual-law completion.
 - Seat connection/provider surfaces are deployed but remain implementation/deployment surfaces rather than automatic product acceptance.
 - The spatial clock is independent: **Vision V3.5 complete** (entrance ladder V3.1–V3.5 merged). Next parallel work is **Conn-3 live deployment/browser proof** (not a Hero live bind), with no backend authority transferred into the Hero.
 

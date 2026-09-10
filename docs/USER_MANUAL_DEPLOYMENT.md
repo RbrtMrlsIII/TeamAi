@@ -211,3 +211,26 @@ Remaining human step: **turn App webhook Active** and confirm deliveries.
 - `PRODUCT_LAW.md` — identity ≠ provider ≠ seat ≠ entitlement
 
 **no 029-released claim**
+
+---
+
+## 10. Human-only MASTERPLAN remainders
+
+Agents must **not** auto-check these. They stay empty until an operator records evidence. Flagged here so later sessions do not invent a second deploy file.
+
+| MASTERPLAN / Conn item | Why it stays empty | Operator command |
+|------------------------|--------------------|------------------|
+| TEAM-BACKEND-001 **item 7** | Gate 4 Firebase emulator/rules is PARKED; source checks ≠ emulator PASS | Run emulator-capable verification; record a real PASS |
+| TEAM-BACKEND-001 **item 13** | Real provider/runtime invocation is not authorized as a deploy-only step | Wait for a named provider-runtime contract |
+| TEAM-BACKEND-001 **item 14** | Broader security/failure/recovery matrix still open beyond bounded recorded paths | Independent evidence packet |
+| TEAM-BACKEND-001 **item 17** | 029 release hold | All `BLOCKS_029` gates evidenced first |
+| Conn-3 checklist **item 9** | Live Edge still served HTML as of 2026-09-10; `main` source is HTTP 303 | `npx supabase functions deploy teamai-github-oauth-bind --project-ref srpgzzretfyqdsfclnuo --no-verify-jwt` |
+| Conn-3 checklist **item 10–12** | Browser return + POST bind + acceptance | After the 303 deploy: install → land on `/hero/?github=installed` → signed-in POST → Firestore re-read |
+| Webhook Active | Human App-form toggle | Turn webhook **On** after URL + secret match; confirm Recent Deliveries = 200 |
+
+Canonical destination after GET 303: `https://rbrtmrlsiii.github.io/TeamAi/hero/` (trailing slash). Receipt is presentation-only; it does not mint UID.
+
+TEAM-EXPERIENCE-029 visual-system checklist items 1–10 remain empty because 029 is still held by item 17. Spatial V3.5 is presentation continuity, not that visual-law completion.
+
+**Do not create another deployment file.**
+

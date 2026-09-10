@@ -28,8 +28,9 @@ A separate CLI `curl` attempt returned **HTTP 401**. This is classified as a **C
 
 - Live Edge served terminal HTML (“GitHub install received”) with installation id **`160609752`**, setup action `install`.
 - Page correctly deferred UID map write to signed-in **POST + Firebase token** and restated non-claims (not Hero live bind; no 029 release).
-- **`main` source** already implements GET → **HTTP 303** to `https://rbrtmrlsiii.github.io/TeamAi/hero` and does **not** mint UID on GET.
-- Therefore the remaining gap is **deploy the revised Edge**, then re-prove the browser return path — not a missing source fix.
+- **`main` source** already implements GET → **HTTP 303** to `https://rbrtmrlsiii.github.io/TeamAi/hero/` and does **not** mint UID on GET.
+- Hero and Command Deck consume `github=installed` as a presentation-only receipt (Conn-3.1). Bind remains signed-in POST + Firebase token.
+- Therefore the remaining gap is **deploy the revised Edge**, then re-prove the browser return path — not a missing source destination.
 
 Evidence record: `docs/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`.
 
@@ -72,14 +73,15 @@ Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verific
 5. [x] Operator manual consolidated into `docs/USER_MANUAL_DEPLOYMENT.md`
 6. [x] GitHub App installation completed in the real GitHub flow (operator-confirmed)
 7. [x] CLI 401 classified separately from product installation evidence
-8. [x] GET callback changed from terminal HTML page to HTTP 303 canonical TeamAi return (**source on main**)
-9. [ ] Deploy the revised Edge function (303) — **live still HTML as of 2026-09-10 screenshot**
-10. [ ] Real browser proof: install → callback → TeamAi return
+8. [x] GET callback changed from terminal HTML page to HTTP 303 canonical TeamAi return (**source on main**; destination `/hero/`)
+9. [ ] Deploy the revised Edge function (303) — **live still HTML as of 2026-09-10 screenshot** — human-only; flagged on `docs/USER_MANUAL_DEPLOYMENT.md` §10
+10. [ ] Real browser proof: install → callback → TeamAi return + presentation receipt
 11. [ ] Verify durable UID ↔ installation mapping after the revised flow
 12. [ ] Conn-3 / 029 acceptance decision after the complete evidence packet
 
 ## See also
 
+- `docs/CHECKPOINT_CONN3_RETURN_RECEIPT_2026-09-11.md`
 - `docs/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md` (Conn-2)
 - `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md` (Conn-1)

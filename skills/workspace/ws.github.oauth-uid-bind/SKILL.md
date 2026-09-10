@@ -1,7 +1,7 @@
 # WORKSPACE_SKILL — ws.github.oauth-uid-bind
 
 **Kind:** `WORKSPACE_SKILLS` · `ws.github.oauth-uid-bind`  
-**Status:** PLANNING PROCEDURE / NOT PRODUCT LAW · **runtime not shipped**
+**Status:** IMPLEMENTED PROCEDURE / NOT PRODUCT LAW · **live Edge redeploy + browser proof pending**
 
 ## WHEN TO USE
 
@@ -25,6 +25,8 @@ Firebase UID is ownership root. GitHub grants install/OAuth consent. Edge writes
 3. Call `bindGitHubInstallation` and persist index + UID-rooted record.
 4. Leave seat equip / tool invoke as separate steps after bind.
 5. Log any real callback URL only in the user manual after deploy — do not invent URLs in skills.
+6. GET must 303 to `https://rbrtmrlsiii.github.io/TeamAi/hero/` and never mint UID.
+7. Presentation receipt may consume `github=installed` on Hero/Command Deck. It must not POST, write Firestore, or claim a Hero live bind.
 
 ## DO NOT
 

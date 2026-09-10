@@ -23,7 +23,7 @@ const FIREBASE_JWKS = createRemoteJWKSet(
   new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"),
 );
 
-const HERO_HOME = "https://rbrtmrlsiii.github.io/TeamAi/hero";
+const HERO_HOME = "https://rbrtmrlsiii.github.io/TeamAi/hero/";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
