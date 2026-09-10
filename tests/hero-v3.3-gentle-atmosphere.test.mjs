@@ -29,7 +29,8 @@ test('V3.3 CSS defines gentle aura drift and reduced-motion static', async () =>
   assert.match(css, /hero-aura-drift-a/);
   assert.match(css, /hero-aura-drift-b/);
   assert.match(css, /data-atmosphere-motion="static"/);
-  assert.match(css, /prefers-reduced-motion: reduce/[\s\S]*hero-aura/);
+  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(css, /\.hero-aura\s*\{[^}]*animation:\s*none/s);
   assert.match(css, /--hero-atmosphere/);
 });
 
