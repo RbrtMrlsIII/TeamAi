@@ -1,6 +1,6 @@
 # TEAM-EXPERIENCE-029 — GitHub OAuth mint of UID ↔ installation_id (Conn-3)
 
-**Status:** IMPLEMENTED · operator-confirmed installation success · callback return fix pending verification  
+**Status:** IMPLEMENTED · operator-confirmed installation success · **live Edge still HTML callback** · **303 return on `main` source** · browser proof pending  
 **Not a Hero live bind.** **No 029 production-release claim.**
 
 ## Purpose
@@ -24,20 +24,25 @@ The GitHub App installation has been **successfully completed through the real G
 
 A separate CLI `curl` attempt returned **HTTP 401**. This is classified as a **CLI/test-path discrepancy** and does not downgrade the successful GitHub App installation evidence.
 
+### 2026-09-10 browser callback screenshot (partial)
+
+- Live Edge served terminal HTML (“GitHub install received”) with installation id **`160609752`**, setup action `install`.
+- Page correctly deferred UID map write to signed-in **POST + Firebase token** and restated non-claims (not Hero live bind; no 029 release).
+- **`main` source** already implements GET → **HTTP 303** to `https://rbrtmrlsiii.github.io/TeamAi/hero` and does **not** mint UID on GET.
+- Therefore the remaining gap is **deploy the revised Edge**, then re-prove the browser return path — not a missing source fix.
+
+Evidence record: `docs/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`.
+
 ## Current browser integration boundary
 
-The real remaining problem is the post-install return path. The prior GET callback rendered an HTML response directly from the Edge function, leaving the browser on the worker/callback page rather than returning to the TeamAi website.
-
-The bounded implementation change is now:
-
 ```text
-GitHub install callback GET
+GitHub install callback GET (intended)
   → Edge does not write UID state
   → HTTP 303 to canonical TeamAi Hero destination
   → optional install/setup/error context is carried in query parameters
 ```
 
-Tracked as **Issue #244**. The fix is complete at source-contract level only until the user performs the real browser deployment/test.
+Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verification is still open.
 
 ## Ownership
 
@@ -60,21 +65,22 @@ Tracked as **Issue #244**. The fix is complete at source-contract level only unt
 
 ## Implementation checklist
 
-1. [x] Edge `teamai-github-oauth-bind` (operator-deployed)
+1. [x] Edge `teamai-github-oauth-bind` (operator-deployed — prior revision)
 2. [x] Server-only write of index + UID-rooted record
 3. [x] Contract tests on branch
 4. [x] Skill `ws.github.oauth-uid-bind`
 5. [x] Operator manual consolidated into `docs/USER_MANUAL_DEPLOYMENT.md`
 6. [x] GitHub App installation completed in the real GitHub flow (operator-confirmed)
 7. [x] CLI 401 classified separately from product installation evidence
-8. [x] GET callback changed from terminal HTML page to HTTP 303 canonical TeamAi return
-9. [ ] Deploy the revised Edge function
+8. [x] GET callback changed from terminal HTML page to HTTP 303 canonical TeamAi return (**source on main**)
+9. [ ] Deploy the revised Edge function (303) — **live still HTML as of 2026-09-10 screenshot**
 10. [ ] Real browser proof: install → callback → TeamAi return
 11. [ ] Verify durable UID ↔ installation mapping after the revised flow
 12. [ ] Conn-3 / 029 acceptance decision after the complete evidence packet
 
 ## See also
 
+- `docs/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md` (Conn-2)
 - `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md` (Conn-1)
 - `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
