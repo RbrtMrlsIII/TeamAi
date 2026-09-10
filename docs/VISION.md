@@ -14,6 +14,7 @@ Related technical contracts (owners of detail, not competing visions):
 - `docs/TEAMAI_3D_HERO_DOM_CHROME_ABSORPTION.md`
 - `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`
 - `docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md`
+- `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`
 
 ---
 
@@ -229,6 +230,8 @@ Ordered for honest depth-first feel. Prefer adjust slices before additive entran
 | V2.3–V2.6 | Settings shell, theme, scale, language scaffold | Adjust settings |
 
 ### Phase V3 — Entrance (Layer A)
+
+**Contract:** `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md` (V3.1) — regions, owners, forbidden clashes.
 
 | ID | Intent | Class |
 |----|--------|--------|
