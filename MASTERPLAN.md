@@ -215,7 +215,19 @@ The candidate Base TeamAi capability set includes:
 7. Human approval/intervention.
 8. Coordination/readiness visibility.
 
-These are capability foundations for planning; commercial packaging remains separate.
+These are capability categories, not a commitment that every item will be an MCP server. Core TeamAi authority should remain native where appropriate; optional external integrations belong to the Tool Quality capability layer.
+
+### Skills and startup project packages
+
+TeamAi may distribute curated skill bundles, startup projects, templates, configuration packages, or initialization artifacts through project-owned ZIP/handover packages. These packages help users equip external AI applications and connect them into TeamAi.
+
+Packages do not override Product Law, user authority, provider terms, project permissions, TeamAi entitlement, or Seat authorization.
+
+ToolKit may learn only generalized lessons from TeamAi after the consuming-project evidence establishes that the lesson generalizes; TeamAi-specific assumptions do not become upstream authority automatically.
+
+### Provider/model/tool warning boundary
+
+Before modifying provider adapters, model catalogs, advanced agent runtimes, context-transfer code, tool/plugin connectors, MCP, provider-native storage, retention/disclosure behavior, or subscription/entitlement logic, the agent must re-read the governing Product Law, Masterplan residual boundaries, and the applicable planning contracts. Speculative expansion is not authorized.
 
 ### 029 completion frontier
 
