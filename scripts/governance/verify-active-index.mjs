@@ -75,7 +75,6 @@ function assertClaims(claims, markers) {
       if (index !== "MASTERPLAN.md" && !claims[marker.id].indexes.includes(index)) stop(`claim ${marker.id} appears in undeclared active index ${index}`);
     }
   }
-
   const masterplan = read("MASTERPLAN.md");
   if (!masterplan.includes("**Status:** ENDORSED for bounded recorded scope; residual evidence boundaries remain explicit.")) stop("MASTERPLAN no longer records bounded TEAM-BACKEND-001 endorsement state");
   if (!masterplan.includes("Vision V3.3 / SP-07 next")) stop("MASTERPLAN no longer records the V3.3/SP-07 frontier");
