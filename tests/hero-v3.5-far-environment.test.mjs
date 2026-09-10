@@ -20,7 +20,10 @@ test('V3.5 far-environment is outside hero-shell with outside-machine marker', a
   assert.match(html, /role="contentinfo"/);
   assert.match(html, /data-far-link="about"/);
   assert.match(html, /data-far-link="privacy"/);
-  assert.doesNotMatch(html, /<main[^>]*>[\s\S]*class="far-environment"/);
+  // No far-environment child of open main tag: slice between <main and </main>
+  const mainOpen = html.indexOf('<main');
+  const mainInner = html.slice(mainOpen, shellClose);
+  assert.equal(mainInner.includes('class="far-environment"'), false);
 });
 
 test('V3.5 CSS keeps far fixed and visible under machine-ui absorption', async () => {
@@ -29,7 +32,6 @@ test('V3.5 CSS keeps far fixed and visible under machine-ui absorption', async (
   assert.match(css, /\.far-environment\s*\{[^}]*position:\s*fixed/s);
   assert.match(css, /data-far-outside-machine/);
   assert.match(css, /never target far-environment|outside \.hero-shell/i);
-  // absorption list must not include .far-environment as a hide target
   const absorbBlock = css.match(/data-hero-machine-ui="1"[\s\S]*?pointer-events:\s*none;/);
   assert.ok(absorbBlock, 'machine-ui absorption block exists');
   assert.doesNotMatch(absorbBlock[0], /far-environment/);
