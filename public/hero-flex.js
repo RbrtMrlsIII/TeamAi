@@ -1,10 +1,10 @@
 /**
- * Hero flex loader — Cam-2…Cam-5 + prior wires applied at runtime to the
+ * Hero flex loader — Cam-2…Cam-6 + prior wires applied at runtime to the
  * pre-loader SHA base. Full static assembly: node scripts/apply-cam2-tree-follow-flex.mjs
  * Presentation only · no 029-released claim.
  */
 import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';
-import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
+import { resolveSelectedSeatDock, isSeatShellOpen } from './hero-cam5-selected-tree-center.js';
 
 const MAIN_URL =
   'https://raw.githubusercontent.com/RbrtMrlsIII/TeamAi/a2f8a3e162ff2a19acc496bff07dd6b6d7ffcdec/public/hero-flex.js';
@@ -48,7 +48,7 @@ function patchSource(src) {
   if (!t.includes('seatDock')) {
     t = t.replace(
       "function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
-      "function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount)):null;if(seatDock)next=seatDock;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
+      "function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatOpen=typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&String(hierarchyRuntime.openParentId).includes('SEAT_SHELL');const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),seatOpen?{force:true}:{}):null;if(seatDock)next=seatDock;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
     );
   }
 
@@ -67,7 +67,7 @@ function patchSource(src) {
   const table = cameras();
   let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
   if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
-    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount));
+    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });
     if (seatDock) base = seatDock;
   }
   camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
