@@ -33,6 +33,10 @@ test("Conn-3 Edge requires Firebase Bearer and installationId", () => {
   assert.doesNotMatch(src, /sender\.login/);
   assert.match(src, /teamai-devtools|conn3_oauth_bind/);
   assert.match(src, /method === "GET"|GitHub install received/);
+  assert.match(src, /status: 303/);
+  assert.match(src, /location/);
+  assert.match(src, /github.*installed/);
+  assert.match(src, /rbrtmrlsiii\.github\.io\/TeamAi\/hero/);
 });
 
 test("skill and contract docs exist for Conn-3", () => {
