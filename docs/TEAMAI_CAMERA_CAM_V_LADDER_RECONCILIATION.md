@@ -27,7 +27,7 @@ CURRENT experience path (Vision #214):
   V0 camera truth → V1 branch walk → V2 machine chrome → V3 entrance → V4 polish
 
 CURRENT FRONTIER (2026-09-10):
-  SP-02 Camera precedence matrix (Gate S3) — residual #232
+  SP-03 Cam-4 browser proof (edge / inverse / reduced-motion / look-at coexistence)
   NOT Cam-2
 ```
 
@@ -40,11 +40,11 @@ CURRENT FRONTIER (2026-09-10):
 | **Cam-1** | Hierarchy camera follow **contract** (docs) | This family of contracts | #191 | **MERGED — historical** |
 | **Cam-2** | Semantic tree dock on every open parent/child | `public/hero-cam2-tree-follow.js` · `resolveTreeCamera` · apply-cam2 flex | #192 | **MERGED — historical** |
 | **Cam-3** | Free zoom/orbit about **current tree center** while parent open | `public/hero-cam3-tree-center-zoom.js` | #193 | **MERGED — historical** |
-| **Cam-4** | Edge-drag + inverse-swipe whole-web PoV | `public/hero-cam4-edge-swipe.js` | #194 | **MERGED — historical** (unit/module strong; browser depth still open per #232 / SP-03) |
+| **Cam-4** | Edge-drag + inverse-swipe whole-web PoV | `public/hero-cam4-edge-swipe.js` | #194 | **MERGED — historical** (browser depth: SP-03) |
 | **Cam-5** | Absorb interim DOM chrome; settings UI scale path | DOM absorption + settings shell (also Vision V2) | #196–#199 + V2.* | **Partially fulfilled by later DOM/V2 work** — not a separate “next Cam” |
 | **Cam-6** | Selected-tree look-at; retire pure lock-only presets | `resolveSelectedSeatDock` + Cam-6 docs; V0.3 regression | docs + #219 | **Behavior landed; lock-only retirement continues as debt** |
 
-**Do not resume “Cam-2 next”.** If a Cam contract section still says Cam-2 is next, treat that section as **historical** and prefer this ledger + `docs/VISION.md` §6.
+**Do not resume “Cam-2 next”.** Prefer this ledger + `docs/VISION.md` §6 + spatial SP sequence.
 
 ---
 
@@ -54,117 +54,85 @@ Parent: Issue **#214** (closed) · docs PR **#215** · living ladder `docs/VISIO
 
 ### Phase V0 — Camera truth
 
-| ID | Intent | Cam owner adjusted | PR | Status |
-|----|--------|--------------------|-----|--------|
-| V0.1 | ~45° world baseline via `HERO_WIDE` | Cam-1/2 docks | #217 | **Merged** |
-| V0.2 | Close/return restores baseline dock | Close-parent / return path | #218 | **Merged** |
-| V0.3 | Subject-lock regression | Cam-5/6 look-at | #219 | **Merged** |
-| V0.4 | Free orbit/zoom about subject while open | Cam-3/4 gates | #220 | **Merged** |
-| V0.5 | Zoom ceiling (`NAV_ZOOM_MAX` 2.0) | Hierarchy §9 | #221 | **Merged** |
+| ID | Intent | PR | Status |
+|----|--------|-----|--------|
+| V0.1–V0.5 | Baseline, return, look-at, free nav, zoom ceiling | #217–#221 | **Merged** |
 
 ### Phase V1 — Branch walk
 
-| ID | Intent | Owner | PR | Status |
-|----|--------|-------|-----|--------|
-| V1.1 | Back/Next seat branch walk API | `hero-seat-branch-walk.js` | #222 | **Merged** |
-| V1.2 | Arrow Left/Right → `cycleSeatShellBranchFocus` | apply-v1.2 + hierarchy | #223 | **Merged** |
-| V1.3 | Explicit leave-tree → baseline | See §5 | — | **Classify: largely satisfied by V0.2** unless nested unwind is specified |
-| V1.4 | Optional per-face dock offset | Cam-2 docks after V0 | — | **Deferred** |
+| ID | Intent | PR | Status |
+|----|--------|-----|--------|
+| V1.1–V1.2 | Back/Next + arrows | #222–#223 | **Merged** |
+| V1.3 | leave-tree → baseline | — | **Satisfied by V0.2** |
+| V1.4 | per-face dock offset | — | **Deferred** |
 
 ### Phase V2 — Machine chrome
 
 | ID | Intent | PR | Status |
 |----|--------|-----|--------|
-| V2.1 | Parts/trees nav map data | #224 | **Merged** |
-| V2.2 | Bind map to seat-stack chrome | #225 | **Merged** |
-| V2.3 | Settings shell | #226 | **Merged** |
-| V2.4 | Theme polish on theme-root | #227 | **Merged** |
-| V2.5 | UI scale scaffold | #228 | **Merged** |
-| V2.6 | Language scaffold (`en` only) | #229 | **Merged** |
+| V2.1–V2.6 | Nav map, bind, settings, theme, scale, language | #224–#229 | **Merged** |
 
 ### Phase V3 — Entrance (Layer A)
 
 | ID | Intent | PR | Status |
 |----|--------|-----|--------|
 | **V3.1** | Entrance IA / layout contract | **#230** | **Merged** |
-| **V3.2** | Brand hero image | **#235** | **Merged** (wiring; visual endorsement separate) |
+| **V3.2** | Brand hero image | **#235** | **Merged** |
 | V3.3 | Gentle Hero atmosphere | — | **Planned** |
 | V3.4 | Get-started → machine baseline | — | **Planned** |
 | V3.5 | Far-environment links clarify | — | **Planned** |
 
-### Phase V4 — Polish (optional)
+---
 
-Tree color language, full seat smoke, reduced-motion path, mobile parity — always via existing owners first.
+## 4. Spatial SP sequence (pre-backend / pre-coloring)
+
+| ID | Intent | Status |
+|----|--------|--------|
+| SP-01 | Canonical spatial state snapshot | **Partial** (Cam↔V ledger) |
+| **SP-02** | Camera precedence matrix (Gate S3) | **Merged** (#236) |
+| **SP-03** | Cam-4 browser proof | **This slice** |
+| SP-04 | Apply-path integrity | **Next** |
+| SP-05–SP-07 | Tree readability / R1-R2 / frontier decision | Planned |
 
 ---
 
-## 4. Cam ↔ V crosswalk (agent recovery)
+## 5. V1.3 vs V0.2
 
-| If you need… | Use Cam owner | Current V status |
-|--------------|---------------|------------------|
-| Follow open tree dock | Cam-2 `resolveTreeCamera` | Landed; V0.1 tunes baseline dock |
-| Free zoom about subject | Cam-3 | Landed; V0.4/V0.5 refine gates/clamps |
-| Edge / inverse swipe | Cam-4 | Landed module; browser proof still deeper per #232 / SP-03 |
-| Selected-tree look-at | Cam-6 / `resolveSelectedSeatDock` | Landed; V0.3 regression |
-| Return home on leave | Close-parent + `HERO_WIDE` | **V0.2 merged**; do not reimplement as blank V1.3 without new nested-unwind spec |
-| Branch Back/Next | Hierarchy focus + V1.1/V1.2 | **Merged** |
-| Right-side parts list | DOM chrome + V2.1/V2.2 | **Merged** |
-| Settings / theme / scale / lang | theme-root + V2.3–V2.6 | **Merged** |
-| Public entrance layout | `public/index.html` / shell | **V3.1 + V3.2 merged** |
-| Camera precedence matrix | Gate S3 + SP-02 tests | **This residual** |
-
-**Wrong recovery path:** open Cam follow contract §8 → implement Cam-2.  
-**Right recovery path:** this ledger §3 → SP-02 / SP-03 / V3.3.
-
----
-
-## 5. V1.3 vs V0.2 (Issue #232 finding §2)
-
-| Item | Statement |
-|------|-----------|
-| **V0.2** | Close / Escape / leave open parent restores `WORLD_BASELINE_DOCK_ID` (`HERO_WIDE`) and resets free-nav home |
-| **V1.3** (Vision text) | Explicit leave-tree → baseline |
-| **Reconciliation** | Treat **basic leave-tree → baseline as SATISFIED by V0.2** |
-| **Only reopen V1.3 if** a **nested** branch/tree unwind (multi-level close without losing subject incorrectly) is specified with tests |
-| **Agent rule** | Do not schedule a full second “return baseline” implementation slice without that narrower spec |
+Basic leave-tree → baseline is **SATISFIED by V0.2**. Do not reopen without a nested-unwind spec.
 
 ---
 
 ## 6. Document authority split
 
-| Document | Role after this reconciliation |
-|----------|--------------------------------|
-| `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md` | **Historical architecture + still-valid product laws** (follow tree, center target, retire lock-only). §8 ladder marked **fulfilled / historical**. |
-| `docs/VISION.md` | **Current experience intent** + ordered V ladder |
-| **This file** | **Current execution ledger** Cam↔V + frontier |
-| `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` | Living continuity pointer; defers camera chronology here |
-| `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` | Pre-backend / pre-coloring spatial gates S0–S8 + SP-01–SP-07 |
-| `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9 | Living numbers only |
+| Document | Role |
+|----------|------|
+| Cam follow contract | Historical architecture + still-valid product laws |
+| `docs/VISION.md` | Current experience intent |
+| **This file** | Current execution ledger |
+| Spatial execution basis | Gates S0–S8 + SP-01–SP-07 |
+| NEXT_SLICES | Living continuity pointer |
 
 ---
 
-## 7. Evidence classes (do not upgrade by implication)
+## 7. Evidence classes
 
 ```text
 PLANNED → IMPLEMENTED → DEPLOYED → RUNTIME-PROVEN → LEARNED → COMPLETED
 ```
 
-| Claim | Evidence class on main (typical) |
-|-------|----------------------------------|
-| Cam-2 module dock | IMPLEMENTED + unit tests |
-| Cam-4 edge/swipe | IMPLEMENTED + module tests; browser interaction depth still SP-03 |
-| V0.2 return baseline | IMPLEMENTED + tests |
-| V3.1 entrance IA | **Merged** (#230) |
-| V3.2 brand mark wiring | **Merged** (#235); visual endorsement separate |
-| SP-02 camera precedence | IMPLEMENTED (unit matrix) when this PR merges |
-| 029 product release | **Not claimed** — TEAM-BACKEND-001 remains the release gate |
+| Claim | Evidence class |
+|-------|----------------|
+| V3.1 / V3.2 | **Merged** |
+| SP-02 precedence | **Merged** (#236) unit matrix |
+| SP-03 Cam-4 browser | IMPLEMENTED + Playwright when this PR merges |
+| 029 product release | **Not claimed** |
 
 ---
 
 ## 8. Next authorized commands
 
-1. **SP-02** camera precedence matrix (this slice) → merge when CI green.  
-2. **SP-03** Cam-4 browser proof **or** **V3.3** gentle Hero atmosphere.  
+1. **SP-03** Cam-4 browser proof (this slice) → merge when CI green.  
+2. **SP-04** apply-path integrity **or** **V3.3** gentle Hero atmosphere.  
 3. Parallel **Conn-3** stays Edge/OAuth — never Hero live bind.
 
 ---
@@ -174,20 +142,15 @@ PLANNED → IMPLEMENTED → DEPLOYED → RUNTIME-PROVEN → LEARNED → COMPLETE
 | Concern | Skill |
 |---------|--------|
 | Any change | `skills/execution/orucaveam/SKILL.md` |
-| Hierarchy open/camera numbers | `skills/frontend/spatial/hierarchy-runtime/SKILL.md` |
-| Recover which ladder is current | `skills/frontend/spatial/camera-ladder-recovery/SKILL.md` |
+| Hierarchy / camera | `skills/frontend/spatial/hierarchy-runtime/SKILL.md` |
+| Ladder recovery | `skills/frontend/spatial/camera-ladder-recovery/SKILL.md` |
 | Spatial presentation | `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
-| Grok host | `docs/GROK_SKILLS_ALIGNMENT.md` |
 
 ---
 
 ## SEE ALSO
 
-- Issue #232  
-- Issue #214 / PR #215  
-- `docs/VISION.md`  
-- `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`  
-- `docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md`  
-- `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`  
+- Issue #232 · Issue #214  
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`  
+- `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`  
 - `docs/SKILL_WIRING.md`  
