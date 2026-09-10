@@ -9,17 +9,15 @@
 
 - `resolveSelectedSeatDock(..., { force | hierarchyOpen })` — mandatory while seat shell open
 - Loader `setCamera` / `applyNavCamera` pass `{ force: true }` when `openParentId` includes `SEAT_SHELL`
-- Tests: different seats → different look-at; force centers non-SEAT ids
+- Tests cover different seats producing different look-at targets
 - Plan doc linked from Issue #212
 
-## Verify
+## Historical status
 
-```bash
-node --test tests/hero-cam5-selected-tree-center.test.mjs tests/hero-cam6-mandatory-lookat-wire.test.mjs
-```
+Cam-6 is the selected-tree look-at correction and is part of the fulfilled camera architecture. The current execution path is the Vision V-series plus the spatial reconciliation gates, not a new Cam queue.
 
-Hard-refresh Hero; open seat 0 vs seat 2 — gaze must differ and not stare at ring center.
+The historical deferred notes are superseded where later work already landed, including the V0.5 `NAV_ZOOM_MAX = 2.0` ceiling. Do not reopen those items from this checkpoint.
 
-## Deferred
+## Remaining boundary
 
-Free zoom 200% · child offsets · tree colors · seat smoke
+Browser-level seat smoke, camera precedence, and integration evidence remain governed by `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`. Tree colors/material art direction remain explicitly blocked until the pre-coloring spatial pass completes.
