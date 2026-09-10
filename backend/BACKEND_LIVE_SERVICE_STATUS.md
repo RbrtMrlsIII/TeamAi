@@ -1,72 +1,96 @@
 # TEAM-BACKEND-001 — Live Service Status
 
-**Date:** 2026-09-04  
-**Phase:** TEAM-BACKEND-001  
-**Status:** IN IMPLEMENTATION — GATE 3 PASS; GATE 5B PASS; GATE 5C IMPLEMENTED / AVAILABLE-ENVIRONMENT VERIFIED; LIVE PAYPAL RUNTIME EVIDENCE OUTSTANDING
+**Date:** 2026-09-10
+**Phase:** TEAM-BACKEND-001
+**Status:** IN IMPLEMENTATION — bounded runtime slices are live; final evidence/endorsement remains open
+
+## Boundary state
 
 | Boundary | Source contract | Live evidence | Status |
 |---|---|---|---|
-| Firebase Auth | UID ownership contract | Live Edge endpoint rejects invalid Firebase tokens with HTTP 401; valid authenticated Gate 3 execution has also been evidenced | PASS |
-| Firestore `default` | UID-rooted paths + rules baseline | Authenticated bootstrap persisted the Gate-3 hierarchy; exact nested seat document was independently read; repeat-call idempotency was verified | PASS |
-| Supabase Edge Functions | Trusted runtime/webhook boundary | `teamai-domain-bootstrap` is deployed and live; the trusted persistence slice is authenticated and evidenced | PASS |
-| PayPal | External event authority | Server-owned correlation contract and Gate-5C implementation are present; final authenticated PayPal transaction/webhook runtime proof remains outstanding | IMPLEMENTED / RUNTIME EVIDENCE OPEN |
-| GitHub | Engineering authority | `main` is the current engineering/source authority | PASS |
-| Firebase Hosting | TeamAi web delivery | Current Product Law keeps Firebase Hosting as delivery authority | PASS |
-| Vercel | Non-authoritative preview/browser-verification only | **TEMPORARY CUTOFF (2026-09-04):** disconnected/rate-limited from TeamAi GitHub repo; not a merge blocker; GitHub Actions + Playwright remain verification path | PARKED / CUTOFF |
+| Firebase Auth | UID ownership contract | Live Edge paths verify Firebase ID tokens and derive UID from verified claims | PASS for exercised slices |
+| Firestore `default` | UID-rooted paths + rules baseline | Gate-3 authenticated persistence, independent reads, and idempotency are evidenced | RUNTIME-PROVEN for bounded slices |
+| Supabase Edge Functions | Trusted runtime/webhook boundary | TeamAi Supabase project is ACTIVE_HEALTHY and multiple TeamAi Edge Functions are deployed | DEPLOYED; claim-level evidence varies by function |
+| PayPal | External event authority | Server-owned correlation + webhook implementation present; live sandbox transaction/webhook proof still open | IMPLEMENTED / RUNTIME EVIDENCE OPEN |
+| GitHub | Engineering authority | `main` remains current source authority | PASS |
+| Firebase Hosting | TeamAi web delivery | Product Law keeps Firebase Hosting as delivery authority | PASS |
+| Vercel | Non-authoritative preview/browser-verification only | Historical cutoff remains non-architectural; GitHub Actions + Playwright remain path | PARKED / NOT A RELEASE BLOCKER |
 
-## Live endpoint
+## Live Supabase cross-check — 2026-09-10
 
-Canonical Supabase project host:
-`https://srpgzzretfyqdsfclnu.supabase.co`
+The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) is `ACTIVE_HEALTHY`.
 
-Canonical TeamAi bootstrap function:
-`https://srpgzzretfyqdsfclnu.supabase.co/functions/v1/teamai-domain-bootstrap`
+Currently deployed Edge Functions include:
 
-The live function verifies Firebase ID tokens for the frozen Firebase project `team-ai-official` and derives the Firebase UID from the verified token. A request-body UID is not an ownership credential.
+- `teamai-domain-bootstrap` v18
+- `teamai-commerce-intent` v15
+- `paypal-webhook` v15
+- `teamai-paypal-webhook-v5c` v17
+- `teamai-task-execute` v8
+- `teamai-github-webhook` v3
+- `teamai-github-oauth-bind` v4
+- `teamai-seat-connection-test` v3
+- `teamai-seat-provider-bind` v3
 
-## Verified Gate 3 evidence
+Important evidence distinction: deployment inventory proves that these runtimes exist in the live Supabase project. It does **not** by itself prove every function's complete end-to-end behavior, product acceptance, or runtime-proven status.
 
-The current Gate 3 checkpoint records executable evidence for:
+`teamai-task-execute` is live but its current provider stage is explicitly `stub-edge-runtime`. This confirms the trusted authenticated task → lease → durable-result path is live, while real external provider invocation remains a separate open Masterplan item.
 
-`Firebase ID token → verified Firebase UID → Firestore TeamAi hierarchy → independent Firestore confirmation → repeat-call idempotency`
+`teamai-github-oauth-bind` is live. Its GET redirect page is intentionally presentation-only; its authenticated POST binds verified Firebase UID to a GitHub installation id in Firestore. This is a deployed Conn-3 infrastructure surface, but not proof of Hero live binding or final 029 acceptance.
 
-Evidence includes invalid-token rejection, missing-authorization rejection, successful authenticated bootstrap, independent nested-seat verification, and repeat-call idempotency.
+The Supabase **public schema currently has no tables**, which matches the TeamAi architecture rule that Firestore `(default)` is the durable application/domain store while Supabase supplies trusted Edge execution and webhook infrastructure.
 
-Source: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
+## Why backend stopped
 
-## Gate 5B / Gate 5C evidence boundary
+The backend stopped at a **verification / live-external / final-governance frontier**, not because its foundational implementation disappeared.
 
-Gate 5B is PASS for the server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation contract.
+1. **Gate 4** remains parked because emulator-capable Firebase rules execution was unavailable in the prior environment. The reproducible harness exists, but no emulator PASS is inferred.
+2. **Gate 5B** is source-contract PASS. Live payment evidence is not inferred.
+3. **Gate 5C** implementation and available-environment verification are complete. Final authenticated PayPal transaction/webhook runtime and replay evidence remain open.
+4. **Provider runtime invocation** is deliberately not the same thing as `teamai-task-execute`: the live function currently uses `stub-edge-runtime` and must not be represented as a real provider integration.
+5. **Security/failure/timeout/cancellation/recovery verification** remains open as a broader evidence matrix.
+6. **Traceability and final endorsement** remain open.
 
-Gate 5C implementation and available-environment verification are PASS/CLOSED. The current remaining evidence boundary is live PayPal transaction/webhook runtime validation, including authenticated webhook processing and replay behavior sufficient for final completion endorsement.
+This boundary is recorded so future agents do not restart completed infrastructure or pull provider/runtime work into the 3D presentation track prematurely.
 
-The remaining runtime evidence must not be represented as an architecture failure or as a missing Gate-5C source implementation.
+## Required evidence distinction
 
-## Evidence rule
+`source implementation ≠ deployment ≠ integration ≠ runtime proof ≠ completion ≠ endorsement`
 
-`Source configuration != deployment != integration != end-to-end completion.`
+The current repository and live Supabase deployment therefore support a layered state model rather than a single “backend done/not done” flag.
 
-No live PayPal transaction-success, authenticated business-webhook, or final TEAM-BACKEND-001 completion claim is made until the corresponding executable evidence and completion/endorsement record exist.
+## Next backend continuation
 
-Vercel cutoff must not be recorded as a TeamAi architecture or delivery failure.
+The current backend continuation should follow the existing Masterplan and evidence constraints:
 
-## Next executable gate
+- obtain the remaining live PayPal sandbox transaction/webhook evidence;
+- directly verify the resulting Firestore commerce state and replay/idempotency expectations;
+- complete the remaining security/recovery matrix that requires live proof;
+- reconcile Product Law → Masterplan → skill → implementation → evidence;
+- record HandOver / Endorsement only when the corresponding completion criteria are actually met.
 
-Obtain the remaining live PayPal sandbox transaction/webhook evidence without exposing credentials or tokens in chat, then reconcile the resulting runtime evidence into the Gate-5C checkpoint and final TEAM-BACKEND-001 completion/endorsement packet.
+Do not start real provider invocation merely because `teamai-task-execute` is deployed. That function remains a bounded stub-runtime proof until the provider/runtime contract and authorization/task foundations are explicitly closed.
 
-## MASTERPLAN TEAM-BACKEND-001 remainder (user-manual only)
+## Relation to 029 spatial work
 
-Agent-executable source work for TEAM-BACKEND-001 is exhausted for live infrastructure. Remaining Masterplan checkboxes **must not be ticked from source presence**. They require a human operator, a live environment, or product-owner endorsement. Flagged here on the **existing** live-service file — do **not** create a second deployment file.
+3D Hero presentation may continue on its own bounded spatial gates. It must consume backend capability/read-model contracts without becoming backend authority.
 
-| Checklist | Remainder | Who | Agent action |
-|---|---|---|---|
-| 7 | Firebase emulator / rules verification is environment-constrained / parked | Operator with emulator | Do **not** infer emulator pass, hosted pass, or production pass |
-| 13 | Provider / runtime invocation only after authorization / task contracts | Architecture + owner | Do **not** connect providers from presentation or Grok `xai-api` |
-| 14 | Security, contract, integration, failure, timeout, cancellation, recovery verification | Mix of CI + live | Source/CI may continue; live recovery proof stays open |
-| 15 | Traceability audit Product Law → plan → skill → implementation → evidence → endorsement | After remaining runtime evidence | Do not close from docs-only |
-| 16 | TEAM-BACKEND-001 completion endorsement | Product owner | HandOver + Endorsement only |
-| 17 | Release hold on TEAM-EXPERIENCE-029 | After all `BLOCKS_029` evidenced | 029 presentation may continue; **no 029-released claim** |
+Conversely, backend verification may advance without waiting for 3D color/material polish.
 
-**Operator next step (unchanged):** obtain remaining live PayPal sandbox transaction/webhook evidence, then **directly re-read Firestore** after the v13 redelivery and prove `aggregate.status=completed`, singular provider event, entitlement `active` with matching `sourceCommerceEventId`. Do not paste credentials or tokens into chat.
+The shared boundary is explicit:
 
-Vercel remains **TEMPORARY CUTOFF**. GitHub Actions + Playwright remain the verification path.
+```text
+3D representation
+      │
+      │ presentation/read-model contract
+      ▼
+trusted backend authority
+      │
+      ├─ identity
+      ├─ authorization
+      ├─ durable state
+      ├─ scheduler/task control
+      └─ provider/commercial runtime
+```
+
+No release claim should be drawn across this boundary from a green test, deployed function, or visual result alone.
