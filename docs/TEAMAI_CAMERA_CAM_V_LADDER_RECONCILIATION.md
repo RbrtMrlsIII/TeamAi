@@ -6,9 +6,9 @@
 
 ```text
 CURRENT FRONTIER (2026-09-10):
-  V3.5 Far-environment clarity (this slice)
-  Vision Phase V3 entrance ladder complete after merge
-  NOT Cam-2
+  Vision Phase V3 entrance ladder COMPLETE (V3.1–V3.5)
+  NEXT PARALLEL: Conn-3 live deployment / browser proof (not Hero live bind)
+  NOT Cam-2 · NOT auto V4 polish
 ```
 
 ## Spatial SP sequence
@@ -25,16 +25,16 @@ CURRENT FRONTIER (2026-09-10):
 | V3.2 | **Merged** (#235) |
 | V3.3 | **Merged** (#247) |
 | V3.4 | **Merged** (#249) |
-| **V3.5** | **This slice** — Far-environment clarity |
+| V3.5 | **Merged** (#252) |
 
 ## Next authorized commands
 
-1. **V3.5** (this slice) → merge when CI green.  
-2. Parallel **Conn-3** Edge/OAuth only — never Hero live bind.  
-3. Optional V4 polish requires a new frontier decision (not auto-authorized).
+1. **Conn-3** — deploy revised Edge OAuth callback + real browser proof (operator); never Hero live bind.  
+2. Optional V4 polish requires a **new frontier decision** (not auto-authorized).  
+3. Gate 4 emulator / real provider remain separate backend claims.
 
 ## SEE ALSO
 
 - `docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md`  
-- `docs/TEAMAI_3D_HERO_V3_4_GET_STARTED_HANDOFF.md`  
+- `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`  
 - `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`  
