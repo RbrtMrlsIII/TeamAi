@@ -19,7 +19,7 @@ The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/valida
 - `teamai-task-execute` is runtime-proven only through its bounded authenticated path and still uses `stub-edge-runtime`; real external provider invocation remains **OPEN / NOT PROVEN**.
 - GitHub App installation is operator-confirmed, while Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind.
 - Seat connection/provider surfaces are deployed but remain implementation/deployment surfaces rather than automatic product acceptance.
-- The spatial clock is independent: **Vision V3.5 complete** (entrance ladder V3.1–V3.5 merged). **#258 residual** in flight: Layer A/B legibility + machine chrome soft-hide (ENT-R2/R3, CHR-R1/R2 — PR #259); Cam-6 seat look-at residual still open. Next parallel work remains **Conn-3 live deployment/browser proof** (not a Hero live bind), with no backend authority transferred into the Hero.
+- The spatial clock is independent: **Vision V3.5 complete** (entrance ladder V3.1–V3.5 merged). Next parallel work is **Conn-3 live deployment/browser proof** (not a Hero live bind), with no backend authority transferred into the Hero.
 
 Historical checkpoints may retain earlier pending wording because they are evidence records. This active index is the current recovery map and must not rewrite those historical records.
 
@@ -211,34 +211,123 @@ The candidate Base TeamAi capability set includes:
 3. Task/state reporting.
 4. Authorized artifacts/files.
 5. Authorized knowledge/search.
-6. Approved research/web capability.
-7. Basic code/workspace operations when entitled and authorized.
-8. Explicit handoff to normal UI for durable configuration.
+6. Approved research/web capability where supported.
+7. Human approval/intervention.
+8. Coordination/readiness visibility.
+
+These are capability categories, not a commitment that every item will be an MCP server. Core TeamAi authority should remain native where appropriate; optional external integrations belong to the Tool Quality capability layer.
+
+### Skills and startup project packages
+
+TeamAi may distribute curated skill bundles, startup projects, templates, configuration packages, or initialization artifacts through project-owned ZIP/handover packages. These packages help users equip external AI applications and connect them into TeamAi.
+
+Packages do not override Product Law, user authority, provider terms, project permissions, TeamAi entitlement, or Seat authorization.
+
+ToolKit may learn only generalized lessons from TeamAi after the consuming-project evidence establishes that the lesson generalizes; TeamAi-specific assumptions do not become upstream authority automatically.
+
+### Provider/model/tool warning boundary
+
+Before modifying provider adapters, model catalogs, advanced agent runtimes, context-transfer code, tool/plugin connectors, MCP, provider-native storage, retention/disclosure behavior, or subscription/entitlement logic, the agent must first inspect the applicable provider/tool guard, existing roots, and current documented contract. Unknown, stale, contradictory, or potentially prohibited rules must become an explicit review/blocked condition rather than an assumption.
 
 ## TEAM-EXPERIENCE-029 — Spatial Theme and Visual System
 
-**Status:** presentation planning surface — **no 029-released claim**
+**Status:** PLANNED PRODUCT-EXPERIENCE SLICE — NOT YET IMPLEMENTED.
 
-The Spatial Theme and Visual System remains the planning checklist for entrance, machine chrome, camera subject, and presentation boundaries. Skill routing, visual-system boundary, open 029 planning questions, and the root-wiring guard continue to live here so agents do not invent parallel product authority from the Hero canvas.
+The Product Law visual requirement is:
 
-(Full historical Spatial Theme checklist, skill-routing table, 22 open questions, and root-wiring guard remain the recovery contract from main; this residual PR only adds the #258 frontier note in Active state reconciliation above.)
+`one theme setting → Dark Spatial Glassmorphism OR Light Spatial Skeuomorphism`
+
+### Chronological execution checklist
+1. [ ] Reconcile the approved visual law against existing UI roots, theme state, spatial semantics, accessibility contracts, responsive rules, and current 029 planning records.
+2. [ ] Define the shared semantic design-token and primitive roots for surfaces, depth, elevation, material treatment, borders, typography, controls, motion, focus, status feedback, and responsive behavior.
+3. [ ] Implement the single light/dark theme switch so the setting activates **Dark Spatial Glassmorphism** for Dark and **Light Spatial Skeuomorphism** for Light without duplicating theme authority.
+4. [ ] Apply the shared spatial primitives across the canonical 029 shell and first representative surfaces without introducing page-local theme authorities.
+5. [ ] Verify semantic equivalence of product behavior across both theme modes: identity, navigation, state, scheduler/readiness, approvals, forms, errors, and durable-state interactions remain unchanged by visual mode.
+6. [ ] Verify accessibility and interaction requirements across both modes, including contrast/legibility, keyboard/focus visibility, reduced-motion behavior, responsive breakpoints, and non-pointer interaction paths.
+7. [ ] Run deterministic browser verification for the exercised web scope and retain screenshots/captures only as separate GitHub evidence artifacts when useful.
+8. [ ] Record implementation commit, verification scope, workflow/run references, limitations, and any discovered root changes in HandOver.
+9. [ ] Obtain Endorsement for the completed slice and update `PRODUCT-KNOWLEDGE.md` only when the lesson is validated and reusable.
+10. [ ] Reconcile any new backend/domain requirement discovered by the visual implementation through its owning canonical contract rather than creating browser authority.
+
+### Spatial-theme checklist skill routing
+
+| Checklist | Required routing |
+|---|---|
+| 1 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/governance/product-law-change/SKILL.md` + applicable verification/audit skills |
+| 2 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 3 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 4 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable 029 UI implementation skills |
+| 5 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 6 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 7 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
+| 8 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
+| 9 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` |
+| 10 | `skills/execution/orucaveam/SKILL.md` + `skills/backend/authority-contract/SKILL.md` + applicable domain verification skills |
+
+### Visual-system boundary
+
+The spatial theme is presentation and interaction treatment. It is not a replacement for TeamAi identity, Firestore state, scheduler authority, provider entitlement, permissions, approvals, commerce truth, or durable events. A theme mode change must remain a UI-state/configuration change and must not change canonical business meaning.
 
 ## 029 questions that must be answered before or during implementation
 
-Open planning questions remain listed in the synchronized full Masterplan package and prior main index. Do not delete them when updating frontier status.
+1. How does a user connect AI applications that are operated outside TeamAi?
+2. What provider authorization/connection states are visible, testable, and recoverable?
+3. How is an external connection bound to one Workplace, Project, and AI Seat?
+4. How does the user equip each AI with skills, Base TeamAi capabilities, Tool Quality, plugins/tools/MCP, workstation scope, permissions, and approval rules?
+5. How does TeamAi distinguish provider, service/runtime, exact model/variant, connection, Seat, Team Quality, skills, Base TeamAi capabilities, Tool Quality, workstation, scopes, limits, entitlement and compliance?
+6. How does an AI completion or action make another task eligible without direct provider-to-provider control?
+7. Which durable events represent AI results, action requests, tool results, approvals, failures, retries, cancellations, recovery, and completions?
+8. How can the Scheduler explain and reproduce why the next AI/tool/human acted?
+9. How does the shared chat expose the complete relevant discussion while each AI receives a meaning-preserving authorized context packet?
+10. How can one AI explicitly consume another AI's finding, handoff, artifact, or decision without exposing private provider state?
+11. How is exactly one document-authoring path selected during planning while other AIs remain advisory?
+12. How does the selected Web AI summarizer return the discussion to the user for `APPROVE`, `EDIT`, `MORE`, or `REJECT`?
+13. How are planning decisions separated from working execution state?
+14. How are approvals, blocked actions, failures, retries, cancellation, and recovery represented visibly?
+15. What happens when a configured provider/runtime/plugin/connection becomes unavailable after configuration?
+16. How is the same semantic team/workflow preserved across spatial, standard web, mobile, and accessibility representations?
+17. Which newly discovered requirements belong in 029, which return to backend/integration gates, and which become future phases?
+18. What exact conditions move a connection/Seat from configured to Active, and what evidence is required to reactivate it after degradation or authorization loss?
+19. How does the product communicate the difference between TeamAi entitlement and external provider entitlement without implying one grants the other?
+20. Which capabilities belong to the Base TeamAi capability set, and which remain optional Tool Quality extensions or provider-owned capabilities?
+21. How are supplied skill bundles, startup projects, templates, or ZIP packages consumed without creating a competing authority or silently overwriting current project rules?
+22. How does the system preserve every user clarification and materially relevant team contribution when the shared conversation grows beyond one model's context limit?
+
+### Root-wiring guard before 029 coding
+
+Before any production UI implementation slice, reconcile the proposed UI root against its owning canonical roots. Identity, Workplace ownership, project context, provider/runtime identity, connection state, Team Quality, skills, Base TeamAi capabilities, Tool Quality, tools, task/event state, commerce, approvals, notifications, recovery, privacy, compatibility, and spatial semantics must not be redefined locally when an existing canonical root already owns the meaning.
+
+The UI is presentation and interaction over authoritative state and policy intents, not a new authority layer.
+
+### 029 completion frontier
+
+029 should be considered complete only when evidence demonstrates that the canonical UI is correctly wired to the authoritative identity/context chain, Workplace/Project/Team/Seat state, connection/capability lifecycle, Planning Team turn orchestration, user-intent preservation, summarizer handoff/user review, Working Team task/event execution, provider/runtime connection state, Team Quality and Tool Quality entitlement boundaries, skill/tool/plugin capability state, durable action/approval/recovery state, responsive/accessibility equivalents, and the spatial visual system required by Product Law.
+
+Browser verification is validation evidence only; it does not become TeamAi hosting or system-of-record authority.
+
+Any backend capability discovered during 029 must be routed through the owning backend/integration contract rather than embedded as browser authority.
+
+Detailed planning contracts:
+- `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
+- `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
+- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
+- `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `docs/VISION.md` — product experience intent (entrance, ~45° machine baseline, tree/branch camera); not a Product Law rewrite; no 029-released claim
+- `docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md`
+- `POLICY.md`
+- `docs/SKILL_WIRING.md`
 
 ## Target-project handover rule
-
-HandOver / Endorsement records are historical evidence and must not be rewritten when advancing a residual presentation slice.
+Every completed gate must surrender a target-project handover packet/ZIP in the same execution. The handover belongs to TeamAi; Universal ToolKit only provides reusable upstream process knowledge and does not own TeamAi project state.
 
 ## Current 029 product-design execution order
 
-1. Structure and hierarchy (largely merged).
-2. Camera truth and subject lock (modules merged; feel residual #258 CAM open).
-3. Entrance Layer A/B legibility (#258 ENT/CHR in PR #259).
-4. Conn-3 live deployment/browser proof (parallel; not Hero live bind).
-5. Owner visual endorsement when environment is fair.
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/frontend/spatial/UI_UX-Promax-Skill.md + applicable 029/domain skills → UI/system implementation → verification → GitHub evidence/artifacts → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
 
 ## Product experience vision (intent pointer)
 
-`docs/VISION.md` is the single experience vision home. Camera and hierarchy contracts remain the technical detail under that intent.
+Canonical human-facing experience intent for public entrance, ~45° machine baseline, selected-tree camera subject, and presentation chrome lives in:
+
+- `docs/VISION.md`
+
+It sits **below** Product Law and this Masterplan: it does not create a new law family, does not claim 029 release, and does not authorize browser-side durable domain writes. Camera and hierarchy contracts remain the technical detail under that intent.
