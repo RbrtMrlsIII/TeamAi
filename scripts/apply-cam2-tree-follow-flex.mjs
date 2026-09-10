@@ -145,6 +145,7 @@ function applyPatches(t) {
     );
     changed = true;
   }
+  // V0.2 Vision: return-to-baseline — close/return always HERO_WIDE + reset free-nav home
   if (t.includes("from './hero-cam2-tree-follow.js'") && !t.includes('WORLD_BASELINE_DOCK_ID')) {
     t = t.replace(
       "import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';",
