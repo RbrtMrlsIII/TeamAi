@@ -5,7 +5,8 @@
 <!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
 # TeamAi 029 — Current State & Continuation Map
 
-**Status:** Current active reconciliation map for AI-agent recovery (2026-09-10)
+**Status:** Current active reconciliation map for AI-agent recovery (2026-09-11)
+**Spatial residual (#258):** Layer A/B entrance legibility + chrome consolidation in PR #259 (ENT/CHR); Cam subject-lock residual still open. V3.5 claim remains COMPLETE; residual is post-V3.5 feel/chrome — **no 029-released claim**.
 **Authority:** Product Law → Masterplan → Policy/ORUCAVEAM → domain contracts → this map → implementation/evidence
 **Purpose:** flatten parallel development clocks into one incremental slice view so an agent can tell what is implemented, what is proven, what stopped, why it stopped, and what condition permits continuation.
 
@@ -64,6 +65,7 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | V3.3 | MERGED | Gentle Hero atmosphere on `main` via PR #247 | Historical slice |
 | V3.4 | MERGED | Get-started → machine baseline handoff on `main` via PR #249 | Historical slice |
 | V3.5 | COMPLETE | Far-environment clarity on `main` via PR #252; entrance ladder closed | Parallel next: Conn-3 browser proof (not Hero live bind) |
+| #258 residual | IN FLIGHT (PR #259) | ENT/CHR layer/chrome soft-hide | CAM subject-lock still open |
 | R1/R2 mesh topology | SPECIFIED / PARTIAL | topology contract exists | Do not invent geometry without a named owner |
 
 ## 4. Current backend frontier
@@ -180,7 +182,7 @@ For the current backend frontier, the bounded PayPal blocker and endorsement loo
 
 Continue the spatial clock only after the current state is reconciled against moving `main`, and only when the proposed slice has one owner set and one measurable expected output.
 
-The next spatial work should be selected from **verified gaps**, not historical Cam labels.
+The next spatial work should be selected from **verified gaps**, not historical Cam labels. **#258** residual (entrance/chrome/look-at) is the current spatial feel gap after V3.5.
 
 ## 11. Relationship to other documents
 
@@ -190,6 +192,7 @@ The next spatial work should be selected from **verified gaps**, not historical 
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` — executable spatial gates SP-01…SP-07.
 - `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` — Cam↔V chronology.
 - `docs/VISION.md` — current experience intent.
+- `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md` — #258 residual contract.
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md` — current backend evidence boundary.
 - `docs/project-guide/HandOver.md` + `Endorsement.md` — durable completion/acceptance loop.
 
