@@ -19,10 +19,22 @@ import {
 import { createHierarchyRuntime } from '../public/hero-hierarchy-runtime.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], {
-  cwd: root,
-  stdio: 'inherit',
-});
+const flexPath = join(root, 'public/hero-flex.js');
+const applyScript = join(root, 'scripts/apply-cam2-tree-follow-flex.mjs');
+
+function runApply() {
+  const r = spawnSync(process.execPath, [applyScript], {
+    cwd: root,
+    encoding: 'utf8',
+    env: process.env,
+  });
+  if (r.status !== 0) {
+    throw new Error(`apply-cam2 failed: ${r.stderr || r.stdout || r.status}`);
+  }
+  return r;
+}
+
+runApply();
 
 test('V0.1 product elevation constant is 45°', () => {
   assert.equal(DEFAULT_WORLD_ELEVATION_DEG, 45);
@@ -48,13 +60,21 @@ test('V0.1 closed hierarchy resolves to HERO_WIDE world baseline', () => {
 });
 
 test('V0.1 applied hero-flex HERO_WIDE uses p:[0,d,d] (~45°), not d*.67', async () => {
-  const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
+  // Re-apply in-test: parallel suite files can race on the shared flex path
+  // (tracked main file is a short runtime loader until apply restores the base).
+  runApply();
+  let src = await readFile(flexPath, 'utf8');
+  if (src.length < 8000 || !src.includes('function cameras()')) {
+    runApply();
+    src = await readFile(flexPath, 'utf8');
+  }
+  assert.ok(src.includes('function cameras()'), 'applied flex must include cameras() table');
   assert.match(src, /HERO_WIDE:\{p:\[0,d,d\]/);
   assert.doesNotMatch(src, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
 });
 
 test('V0.1 apply script still owns the 0.67→d,d baseline patch', async () => {
-  const apply = await readFile(join(root, 'scripts/apply-cam2-tree-follow-flex.mjs'), 'utf8');
+  const apply = await readFile(applyScript, 'utf8');
   assert.match(apply, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
   assert.match(apply, /HERO_WIDE:\{p:\[0,d,d\]/);
 });
