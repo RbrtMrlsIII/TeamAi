@@ -7,7 +7,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **V3.1** entrance IA **merged** (#230). **V3.2** brand hero image **merged** (#235). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`.
 
-**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **next** (parallel; not Hero live bind).
+**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented in PR #246; live deployment/browser proof pending** (parallel; not Hero live bind).
 
 ## Completed ladder (structure + skills)
 
@@ -72,7 +72,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **Vision V3.4+** | Get-started handoff, far links | Adjust wiring | After V3.3 |
 | **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
 | **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **Merged** (#202) |
-| **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Next** (parallel) |
+| **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Implemented; live deployment/browser proof pending** (parallel) |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
@@ -96,9 +96,9 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - GitHub App is the first real Connection behind `SEAT_CONNECTION`.
 - Fill the Create GitHub App form from `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md`.
 - Machine matrix: `public/github-app-permission-matrix.json`.
-- Skill: `skills/workspace/ws.github.app-least-privilege/SKILL.md`.
+- Skill: `skills/workspace/ws.github.app.least-privilege/SKILL.md`.
 - Conn-2 webhook map: `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md`.
-- Conn-3 OAuth mint (next): `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`.
+- Conn-3 OAuth mint: `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`; PR #246 source fix is merged, while live deployment/browser proof remains pending.
 - **Human-only setup steps** are logged in `docs/USER_MANUAL_DEPLOYMENT.md` (do not invent webhook/callback URLs before deploy).
 - Creating the App is **not** a live Hero bind and **not** 029-released.
 
