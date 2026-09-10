@@ -1,25 +1,30 @@
 # Checkpoint — Cam-6 Mandatory selected-tree look-at (2026-09-10)
 
-**Slice:** Cam-6  
-**Issue:** #212  
-**Prior:** Cam-5 module on main  
+**Slice:** Cam-6
+**Issue:** #212
+**Prior:** Cam-5 module on main
+**Status:** IMPLEMENTED CAMERA REFINEMENT / EVIDENCE FRONTIER
 **Claim:** presentation only · **no 029-released claim**
 
 ## Delivered
 
-- `resolveSelectedSeatDock(..., { force | hierarchyOpen })` — mandatory while seat shell open
-- Loader `setCamera` / `applyNavCamera` pass `{ force: true }` when `openParentId` includes `SEAT_SHELL`
-- Tests: different seats → different look-at; force centers non-SEAT ids
-- Plan doc linked from Issue #212
+- `resolveSelectedSeatDock(..., { force | hierarchyOpen })` is mandatory while a seat shell is open.
+- Loader `setCamera` / `applyNavCamera` pass `{ force: true }` when `openParentId` includes `SEAT_SHELL`.
+- Different seats resolve to different look-at targets; force mode also protects non-SEAT semantic calls.
 
-## Verify
+## Verification boundary
 
-```bash
-node --test tests/hero-cam5-selected-tree-center.test.mjs tests/hero-cam6-mandatory-lookat-wire.test.mjs
-```
+Static tests establish the selected-tree look-at contract. The remaining browser task is to prove the real Hero gaze changes with the selected seat and remains compatible with the current navigation/interaction contract.
 
-Hard-refresh Hero; open seat 0 vs seat 2 — gaze must differ and not stare at ring center.
+That browser proof is evidence for an implemented refinement. It is not a request to create another Cam slice.
 
-## Deferred
+## Deferred, separately owned
 
-Free zoom 200% · child offsets · tree colors · seat smoke
+- Free zoom 200%: governed by the existing zoom baseline / V-series evidence.
+- Child offsets: hierarchy spatial verification.
+- Tree colors/materials: later visual polish.
+- Full seat smoke: broader browser verification.
+
+## Current continuation
+
+Use `docs/TEAMAI_029_CURRENT_STATE_MAP.md` and the spatial execution basis to decide whether the evidence frontier closes, exposes a bounded defect, or reveals a genuinely new V-series slice.

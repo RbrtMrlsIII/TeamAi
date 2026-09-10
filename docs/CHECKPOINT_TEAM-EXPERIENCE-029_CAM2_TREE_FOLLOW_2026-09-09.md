@@ -1,18 +1,23 @@
 # Checkpoint — Cam-2 Tree Camera Follow (2026-09-09)
 
-**Slice:** Cam-2  
-**Prior:** Cam-1 #191 merged  
+**Slice:** Cam-2
+**Prior:** Cam-1 #191 merged
+**Status:** FULFILLED ARCHITECTURE PROVENANCE — not a future queue
 **Claim:** presentation only · **no 029-released claim**
 
 ## Delivered
 
 - `public/hero-cam2-tree-follow.js` — `resolveTreeCamera` / `TREE_CAMERA`
-- Open seat shell / child / leaf → dock on that tree (SEAT_CLOSE or DETAIL_ANCHOR)
-- Close → HERO_WIDE
-- World default elevation ~**45°** (`HERO_WIDE` p:[0,d,d])
-- User may still maneuver (scroll zoom, drag/pitch) under NAVIGATE / future Cam-3–4
-- Flex wire via `scripts/apply-cam2-tree-follow-flex.mjs` (idempotent; tests auto-run)
+- Open seat shell / child / leaf → semantic dock path where supported
+- Close → `HERO_WIDE`
+- World baseline ~45°
+- NAVIGATE remains available under the later center-zoom and edge-swipe modules
+- Flex wire via `scripts/apply-cam2-tree-follow-flex.mjs`
 
-## Next
+## Historical queue correction
 
-Cam-3 free zoom on current tree center while parent open; Cam-4 edge/inverse-swipe.
+The original checkpoint said Cam-3 was next. Cam-3 and Cam-4 have since been merged. Cam-2 is therefore retained as historical architecture lineage only.
+
+## Current continuation
+
+Use the current Cam↔V reconciliation, spatial execution basis, and current-state map. Any remaining camera work must be expressed as a verified present-day gap, not as “Cam-3 next.”
