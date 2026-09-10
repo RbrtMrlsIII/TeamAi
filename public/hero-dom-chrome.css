@@ -18,23 +18,42 @@
   text-decoration: line-through;
 }
 
-/* Far-environment chrome lives outside .hero-shell */
+/* V3.5 — Far-environment chrome lives outside .hero-shell (never machine chrome) */
 .far-environment {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem 1.25rem;
   justify-content: center;
-  padding: 0.75rem 1rem 1.25rem;
+  align-items: center;
+  padding: 0.55rem 1rem calc(0.55rem + env(safe-area-inset-bottom, 0px));
   font-size: 0.75rem;
   letter-spacing: 0.04em;
+  background: color-mix(in srgb, #f5f2ec 88%, transparent);
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  pointer-events: auto;
+}
+.far-environment[data-far-outside-machine="1"] {
+  /* Explicit contract marker: not a seat/machine region */
 }
 .far-environment a {
   color: rgba(43, 45, 42, 0.55);
   text-decoration: none;
 }
-.far-environment a:hover {
+.far-environment a:hover,
+.far-environment a:focus-visible {
   color: rgba(43, 45, 42, 0.9);
   text-decoration: underline;
+}
+/* Machine-ui absorption must never target far-environment (it is outside .hero-shell) */
+.hero-shell[data-hero-machine-ui="1"] ~ .far-environment,
+.far-environment {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* V2.2 machine nav — bound to seat-stack chrome, not a second rail */

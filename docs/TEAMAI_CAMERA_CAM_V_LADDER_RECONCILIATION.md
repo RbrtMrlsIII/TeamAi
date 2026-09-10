@@ -6,8 +6,8 @@
 
 ```text
 CURRENT FRONTIER (2026-09-10):
-  V3.4 Get-started → machine baseline handoff (this slice)
-  NEXT AFTER MERGE: V3.5 far-environment clarity
+  V3.5 Far-environment clarity (this slice)
+  Vision Phase V3 entrance ladder complete after merge
   NOT Cam-2
 ```
 
@@ -24,17 +24,17 @@ CURRENT FRONTIER (2026-09-10):
 | V3.1 | **Merged** (#230) |
 | V3.2 | **Merged** (#235) |
 | V3.3 | **Merged** (#247) |
-| **V3.4** | **This slice** — Get-started → machine baseline |
-| V3.5 | **Next** — Far-environment clarity |
+| V3.4 | **Merged** (#249) |
+| **V3.5** | **This slice** — Far-environment clarity |
 
 ## Next authorized commands
 
-1. **V3.4** (this slice) → merge when CI green.  
-2. **V3.5** far-environment clarity.  
-3. Parallel **Conn-3** Edge/OAuth only — never Hero live bind.
+1. **V3.5** (this slice) → merge when CI green.  
+2. Parallel **Conn-3** Edge/OAuth only — never Hero live bind.  
+3. Optional V4 polish requires a new frontier decision (not auto-authorized).
 
 ## SEE ALSO
 
+- `docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md`  
 - `docs/TEAMAI_3D_HERO_V3_4_GET_STARTED_HANDOFF.md`  
-- `docs/TEAMAI_3D_HERO_V3_3_GENTLE_ATMOSPHERE.md`  
 - `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`  
