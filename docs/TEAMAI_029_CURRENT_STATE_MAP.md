@@ -1,4 +1,4 @@
-<!-- teamai-claim: SPATIAL-V3.3 state=NEXT_AUTHORIZED -->
+<!-- teamai-claim: SPATIAL-V3.5 state=COMPLETE -->
 <!-- teamai-claim: BACKEND-001-ENDORSED state=ENDORSED_BOUNDED -->
 <!-- teamai-claim: BACKEND-GATE4 state=PARKED_NOT_PROVEN -->
 <!-- teamai-claim: BACKEND-PROVIDER state=STUB_ONLY -->
@@ -61,7 +61,9 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | V0–V2 | MERGED | baseline, subject lock, branch walk, machine chrome | Current experience history |
 | V3.1 | MERGED | entrance IA/layout contract is on `main` via PR #230 | Historical slice; do not reopen without a new discrepancy |
 | V3.2 | MERGED | brand hero image is on `main` via PR #235 | Historical slice; do not reopen without a new discrepancy |
-| V3.3 | CURRENT NEXT SLICE | Gentle Hero atmosphere is the current spatial frontier per SP-07 | Execute only as a bounded presentation slice after current-main reconciliation |
+| V3.3 | MERGED | Gentle Hero atmosphere on `main` via PR #247 | Historical slice |
+| V3.4 | MERGED | Get-started → machine baseline handoff on `main` via PR #249 | Historical slice |
+| V3.5 | COMPLETE | Far-environment clarity on `main` via PR #252; entrance ladder closed | Parallel next: Conn-3 browser proof (not Hero live bind) |
 | R1/R2 mesh topology | SPECIFIED / PARTIAL | topology contract exists | Do not invent geometry without a named owner |
 
 ## 4. Current backend frontier
