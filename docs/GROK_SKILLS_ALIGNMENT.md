@@ -14,11 +14,14 @@ When a Grok sandbox skill and a TeamAi repository skill disagree, **the GitHub r
 3. `POLICY.md` / ORUCAVEAM → `skills/execution/orucaveam/SKILL.md`
 4. `docs/SKILL_WIRING.md`
 5. **This file**
-6. `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` (living 029 presentation ladder)
-7. Concrete `skills/**/SKILL.md` for the current slice
-8. `docs/project-guide/HandOver.md`
+6. `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Cam architecture vs Vision V frontier — Issue #232)
+7. `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` (living 029 presentation ladder)
+8. Concrete `skills/**/SKILL.md` for the current slice (camera → `camera-ladder-recovery` first)
+9. `docs/project-guide/HandOver.md`
 
 Do **not** reconstruct TeamAi from Grok App Builder `AGENTS.md` §0.5 (auth/db defaults, TanStack Start, Neon, Better Auth). Those rules govern **new Grok-hosted apps**, not this product.
+
+Do **not** resume “Cam-2 next” from the Cam-1 contract alone. Cam-1–Cam-4 modules are merged; current camera/chrome/entrance work is the **Vision V-series** (frontier V3.1 / PR #230 as of 2026-09-10).
 
 ## 2. Hard non-transfers (Grok host → TeamAi)
 
@@ -48,6 +51,7 @@ Do **not** reconstruct TeamAi from Grok App Builder `AGENTS.md` §0.5 (auth/db d
 |------------|------|
 | Any meaningful change | `skills/execution/orucaveam/SKILL.md` (+ letter skills as needed) + `skills/tools/minimal-tool-usage/SKILL.md` |
 | 029 Hero / spatial / theme | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + companions; `skills/workspace/ws.029.presentation/SKILL.md` |
+| Camera / Cam / Vision V chronology | `skills/frontend/spatial/camera-ladder-recovery/SKILL.md` + `hierarchy-runtime` |
 | Contribution / PR / merge | `skills/workspace/ws.contribution.flow/SKILL.md` + merge gate Issue **#133** |
 | GitHub tool use | `skills/workspace/ws.tools.github/SKILL.md` |
 | GitHub App form (Conn-1) | `skills/workspace/ws.github.app-least-privilege/SKILL.md` |
@@ -85,14 +89,17 @@ A Grok session on TeamAi **passes** this alignment when:
 
 - it did not add Better Auth, Neon, TanStack routes, or a second theme root;
 - it loaded TeamAi `skills/**` for the slice actually executed;
-- it left NEXT_SLICES / HandOver current for the next session;
+- it did not restart Cam-2 as if unmerged;
+- it left NEXT_SLICES / Cam↔V ledger / HandOver current for the next session;
 - any Grok-host preview is not claimed as TeamAi production delivery.
 
 ## SEE ALSO
 
-- `docs/SKILL_WIRING.md` §8b, §13
+- `docs/SKILL_WIRING.md` §8b, §13, §14
+- `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`
 - `AI_ASSISTANT_READ_ME.md`
 - `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`
+- `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
 - `skills/workspace/ws.029.presentation/SKILL.md`
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md`
 - `docs/USER_MANUAL_DEPLOYMENT.md`
