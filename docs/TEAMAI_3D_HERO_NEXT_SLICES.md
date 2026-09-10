@@ -1,3 +1,5 @@
+<!-- teamai-claim: SPATIAL-V3.3 state=NEXT_AUTHORIZED -->
+<!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
 # TeamAi 3D Hero Next Slices
 
 Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
@@ -12,7 +14,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 ## Completed ladder (structure + skills)
 
 | Slice | Topic | Status |
-|-------|--------|--------|
+|-------|------|--------|
 | A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
 | B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
 | C | Camera orbit polish — **NAVIGATE**-only; dock wins on inspect | **Merged** (#152) |
