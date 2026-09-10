@@ -108,71 +108,138 @@ button {
   font-size: 12px;
   font-weight: 650;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(50,48,43,.07), inset 0 1px 0 rgba(255,255,255,.9);
+  box-shadow: 0 2px 8px rgba(50,48,42,.06);
 }
 button:hover { transform: translateY(-1px); }
-button.primary { background: #2f312d; color: #fff; border-color: #2f312d; }
-button.quiet { margin-left: auto; background: transparent; box-shadow: none; border-color: transparent; color: rgba(42,44,40,.62); }
+button.primary {
+  background: #2a2c29;
+  color: #f7f4ee;
+  border-color: transparent;
+}
+button.quiet {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(52,54,49,.72);
+}
 
-#state-label {
+#state-label, #seat-label {
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .13em;
-  text-transform: uppercase;
+  font-weight: 650;
+  letter-spacing: .04em;
+  color: rgba(52,54,49,.62);
 }
-#seat-label {
-  font-size: 12px;
-  color: rgba(42,44,40,.62);
+
+.hero-inspection {
+  position: absolute;
+  right: clamp(18px, 4vw, 48px);
+  top: clamp(24px, 6vh, 64px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
 }
+.hero-inspection__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  color: rgba(52,54,49,.45);
+}
+.inspection-spine {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.hero-inspection__hint {
+  max-width: 280px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgba(52,54,49,.48);
+  text-align: right;
+}
+
+.spatial-parts {
+  position: absolute;
+  left: clamp(24px, 6vw, 84px);
+  bottom: clamp(120px, 18vh, 180px);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.spatial-part {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(58,60,55,.10);
+  background: rgba(255,255,255,.55);
+  backdrop-filter: blur(22px) saturate(125%);
+  cursor: pointer;
+}
+.spatial-part__mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(42,44,40,.35);
+}
+.spatial-part__text { display: flex; flex-direction: column; }
+.spatial-part__text b { font-size: 12px; }
+.spatial-part__text small { font-size: 10px; color: rgba(52,54,49,.55); }
 
 .hero-auth-panel {
   position: absolute;
-  top: 50%;
-  right: clamp(18px, 6vw, 88px);
-  width: min(410px, calc(100vw - 36px));
-  max-height: min(720px, calc(100vh - 72px));
+  top: 24px;
+  right: 24px;
+  width: min(360px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
   overflow: auto;
-  transform: translate3d(28px, -50%, 0) scale(.985);
-  opacity: 0;
-  pointer-events: none;
   z-index: 5;
-  transition: opacity 220ms ease, transform 300ms cubic-bezier(.2,.72,.2,1);
+  border-radius: 18px;
+  border: 1px solid rgba(58,60,55,.12);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 20px 50px rgba(40,38,32,.16);
+  transform: translate3d(0,-10px,0) scale(.99);
+  transition: transform .2s ease, opacity .2s ease;
 }
-.hero-auth-panel.is-open {
-  transform: translate3d(0, -50%, 0) scale(1);
-  opacity: 1;
-  pointer-events: auto;
+.hero-auth-panel.is-open { transform: translate3d(0,0,0) scale(1); }
+.hero-auth-panel__inner { padding: 16px 18px 18px; }
+.hero-auth-panel__topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
-.hero-auth-panel__inner {
-  padding: 22px;
-  border: 1px solid rgba(58,60,55,.13);
-  border-radius: 26px;
-  background: rgba(255,255,255,.84);
-  box-shadow: 0 28px 70px rgba(67,63,56,.18), inset 0 1px 0 rgba(255,255,255,.94);
-  backdrop-filter: blur(22px) saturate(125%);
+.hero-auth-panel__kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: rgba(52,54,49,.5);
 }
-.hero-auth-panel__topline { display:flex; align-items:center; gap:12px; }
-.hero-auth-panel__kicker { font-size:10px; font-weight:800; letter-spacing:.18em; color:rgba(52,54,49,.46); }
-.hero-auth-panel h2 { margin:20px 0 14px; font-size:26px; line-height:1.05; letter-spacing:-.03em; }
-.auth-mode { display:flex; gap:6px; margin-bottom:16px; }
-.auth-mode button { background:rgba(245,242,236,.74); }
-.auth-mode button.is-active { background:#2f312d; color:#fff; border-color:#2f312d; }
-.hero-auth-panel form { display:grid; gap:12px; }
-.hero-auth-panel label { display:grid; gap:6px; font-size:11px; font-weight:700; color:rgba(42,44,40,.72); }
+.hero-auth-panel h2 { margin: 0 0 12px; font-size: 20px; }
+.auth-mode { display: flex; gap: 6px; margin-bottom: 12px; }
+.hero-auth-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
 .hero-auth-panel input {
-  width:100%;
-  padding:11px 12px;
-  border:1px solid rgba(42,44,40,.14);
-  border-radius:12px;
-  background:rgba(255,255,255,.82);
-  color:#20211f;
-  font:inherit;
-  font-size:14px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(42,44,40,.14);
+  font: inherit;
 }
-.hero-auth-panel input:focus { outline:2px solid rgba(47,49,45,.28); outline-offset:2px; }
-.hero-auth-panel form button[type="submit"] { margin-top:4px; }
-.hero-auth-panel__status { margin:14px 0 0; font-size:11px; line-height:1.45; color:rgba(52,54,49,.72); }
-.hero-auth-panel__note { margin:8px 0 0; font-size:10px; line-height:1.45; color:rgba(52,54,49,.48); }
+.hero-auth-panel__status,
+.hero-auth-panel__note {
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(52,54,49,.62);
+}
 
 .hero-note {
   position: absolute;
@@ -211,7 +278,48 @@ button.quiet { margin-left: auto; background: transparent; box-shadow: none; bor
   .hero-auth-panel.is-open { transform: translate3d(0,0,0) scale(1); }
 }
 
+/* V3.3 — Gentle Hero atmosphere (Layer A backdrop; existing .hero-aura-* owners) */
+.hero-aura {
+  position: absolute;
+  inset: -12% -8%;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 50%;
+  opacity: calc(0.22 + var(--hero-atmosphere, 0.5) * 0.28);
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+.hero-aura-a {
+  background:
+    radial-gradient(ellipse 55% 42% at 62% 40%, rgba(120, 150, 180, 0.22), transparent 68%),
+    radial-gradient(ellipse 40% 35% at 28% 62%, rgba(200, 170, 120, 0.14), transparent 70%);
+  animation: hero-aura-drift-a 28s ease-in-out infinite alternate;
+}
+.hero-aura-b {
+  background:
+    radial-gradient(ellipse 48% 38% at 48% 28%, rgba(90, 130, 160, 0.12), transparent 72%),
+    radial-gradient(ellipse 36% 30% at 72% 70%, rgba(160, 150, 130, 0.10), transparent 75%);
+  animation: hero-aura-drift-b 36s ease-in-out infinite alternate;
+}
+@keyframes hero-aura-drift-a {
+  from { transform: translate3d(-1.5%, 0.8%, 0) scale(1); }
+  to   { transform: translate3d(1.8%, -1.2%, 0) scale(1.04); }
+}
+@keyframes hero-aura-drift-b {
+  from { transform: translate3d(1.2%, -0.6%, 0) scale(1.02); }
+  to   { transform: translate3d(-1.4%, 1.0%, 0) scale(1); }
+}
+/* Entrance layer: canvas remains the single WebGL surface; auras stay behind copy (z-index) */
+.hero-shell[data-hero-layer="entrance"] #hero-canvas {
+  /* atmosphere region — do not introduce a second canvas */
+}
+.hero-shell[data-atmosphere-motion="static"] .hero-aura,
+.hero-shell[data-atmosphere="machine"] .hero-aura {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   button:hover { transform: none; }
   .hero-auth-panel { transition: none; }
+  .hero-aura { animation: none !important; opacity: 0.28; }
 }
