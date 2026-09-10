@@ -136,3 +136,8 @@ Reason-bearing states remain:
 - **No 029-released claim.**  
 - Does not amend `PRODUCT_LAW.md` text; aligns vocabulary under existing Families E/G.  
 - Merge gate #133 when landed via PR.
+
+## Related structure
+
+- `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md` — responsibility units mapped to Hero faces and skill kinds (Issue #256 · H-T1).
+- `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md` — ToolKit ↔ seat boundary.
