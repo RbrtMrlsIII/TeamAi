@@ -43,10 +43,10 @@ function parseClaims(text) {
 
 function assertManifest(text) {
   if (!/^schema:\s+1$/m.test(text)) stop('manifest schema must be 1');
-  if (!/^manifest_version:\s+2026-09-10\.1$/m.test(text)) stop('manifest version is unexpected');
-  if (!/^    current:\s+V3\.3$/m.test(text)) stop('spatial frontier must be V3.3');
+  if (!/^manifest_version:\s+2026-09-10\.2$/m.test(text)) stop('manifest version is unexpected');
+  if (!/^    current:\s+V3\.5$/m.test(text)) stop('spatial frontier must be V3.5');
   if (!/^    gate:\s+SP-07$/m.test(text)) stop('spatial gate must be SP-07');
-  if (!/^    status:\s+NEXT_AUTHORIZED$/m.test(text)) stop('spatial status must be NEXT_AUTHORIZED');
+  if (!/^    status:\s+COMPLETE$/m.test(text)) stop('spatial status must be COMPLETE');
   if (!/^  fail_closed:\s+true$/m.test(text)) stop('fail_closed must remain true');
 }
 
@@ -77,7 +77,7 @@ function assertClaims(claims, markers) {
   }
   const masterplan = read('MASTERPLAN.md');
   if (!masterplan.includes('**Status:** ENDORSED for bounded recorded scope; residual evidence boundaries remain explicit.')) stop('MASTERPLAN endorsement state is stale');
-  if (!masterplan.includes('Vision V3.3 / SP-07 next')) stop('MASTERPLAN spatial frontier is stale');
+  if (!masterplan.includes('Vision V3.5 complete')) stop('MASTERPLAN spatial frontier is stale');
 }
 
 function assertEvidence(claims) {
@@ -85,8 +85,9 @@ function assertEvidence(claims) {
     for (const evidence of claim.evidence) if (!exists(evidence)) stop('claim ' + id + ' references missing evidence: ' + evidence);
   }
   const checks = [
-    ['SPATIAL-V3.3', 'docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md', 'V3.3 — Gentle Hero atmosphere'],
-    ['SPATIAL-V3.3', 'docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md', 'NEXT AUTHORIZED SPATIAL COMMAND'],
+    ['SPATIAL-V3.5', 'docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md', 'Far-environment clarity'],
+    ['SPATIAL-V3.5', 'docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md', 'no 029-released'],
+    ['SPATIAL-V3.5', 'docs/CHECKPOINT_TEAM-EXPERIENCE-029_V3_5_FAR_ENVIRONMENT_2026-09-10.md', 'V3.5'],
     ['BACKEND-001-ENDORSED', 'handover/TEAM-BACKEND-001_2026-09-07_PayPal-Aggregate-ReRead.md', 'ENDORSED'],
     ['BACKEND-GATE4', 'docs/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md', 'PARKED'],
     ['BACKEND-PROVIDER', 'docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md', 'stub ProviderRuntime'],
