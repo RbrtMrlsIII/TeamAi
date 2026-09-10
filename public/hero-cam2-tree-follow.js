@@ -20,10 +20,33 @@ export const TREE_CAMERA = Object.freeze({
 });
 
 /**
+ * V0.1 / Vision — world machine baseline (~45°).
+ * Owner: HERO_WIDE dock in hero-flex cameras() + apply-cam2 patch (p y/z → 1).
  * Default world elevation ~45° (atan(y/z) with y≈z on HERO_WIDE base).
  * Actual p/t/f still live in hero-flex cameras(); this documents product default.
+ * Do not invent a second world camera table.
  */
 export const DEFAULT_WORLD_ELEVATION_DEG = 45;
+
+/** Canonical closed-hierarchy / return baseline dock id (Vision V0.1). */
+export const WORLD_BASELINE_DOCK_ID = 'HERO_WIDE';
+
+/**
+ * Elevation degrees from eye position looking toward origin on XZ (atan2(|y|,|z|)).
+ * Pure helper for tests and product notes — presentation only.
+ */
+export function elevationDegFromEye(p) {
+  const y = Math.abs(Number(p && p[1]) || 0);
+  const z = Math.abs(Number(p && p[2]) || 0);
+  if (y === 0 && z === 0) return 0;
+  return (Math.atan2(y, z) * 180) / Math.PI;
+}
+
+/** True when eye height/depth ratio is ~45° (within tolDeg). */
+export function isNearWorldBaselineElevation(p, tolDeg = 2) {
+  const deg = elevationDegFromEye(p);
+  return Math.abs(deg - DEFAULT_WORLD_ELEVATION_DEG) <= tolDeg;
+}
 
 /** Child ids that prefer a closer/detail dock for readability. */
 const DETAIL_CHILDREN = new Set([
