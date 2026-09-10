@@ -211,7 +211,44 @@ button.quiet { margin-left: auto; background: transparent; box-shadow: none; bor
   .hero-auth-panel.is-open { transform: translate3d(0,0,0) scale(1); }
 }
 
+/* V3.3 — Gentle Hero atmosphere (Layer A backdrop; existing .hero-aura-* owners) */
+.hero-aura {
+  position: absolute;
+  inset: -12% -8%;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 50%;
+  opacity: calc(0.22 + var(--hero-atmosphere, 0.5) * 0.28);
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+.hero-aura-a {
+  background:
+    radial-gradient(ellipse 55% 42% at 62% 40%, rgba(120, 150, 180, 0.22), transparent 68%),
+    radial-gradient(ellipse 40% 35% at 28% 62%, rgba(200, 170, 120, 0.14), transparent 70%);
+  animation: hero-aura-drift-a 28s ease-in-out infinite alternate;
+}
+.hero-aura-b {
+  background:
+    radial-gradient(ellipse 48% 38% at 48% 28%, rgba(90, 130, 160, 0.12), transparent 72%),
+    radial-gradient(ellipse 36% 30% at 72% 70%, rgba(160, 150, 130, 0.10), transparent 75%);
+  animation: hero-aura-drift-b 36s ease-in-out infinite alternate;
+}
+@keyframes hero-aura-drift-a {
+  from { transform: translate3d(-1.5%, 0.8%, 0) scale(1); }
+  to   { transform: translate3d(1.8%, -1.2%, 0) scale(1.04); }
+}
+@keyframes hero-aura-drift-b {
+  from { transform: translate3d(1.2%, -0.6%, 0) scale(1.02); }
+  to   { transform: translate3d(-1.4%, 1.0%, 0) scale(1); }
+}
+.hero-shell[data-atmosphere-motion="static"] .hero-aura,
+.hero-shell[data-atmosphere="machine"] .hero-aura {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   button:hover { transform: none; }
   .hero-auth-panel { transition: none; }
+  .hero-aura { animation: none !important; opacity: 0.28; }
 }
