@@ -1,10 +1,12 @@
 /**
  * V3.4 — Get-started → machine baseline handoff (Layer A → Layer B).
- * Owners: .hero-shell data-hero-layer · existing HERO_WIDE camera control · auth engine-open event.
+ * Owners: .hero-shell data-hero-layer · existing HERO_WIDE camera path · auth engine-open event.
  * Presentation only · one Hero instance · no second WebGL · no 029-released claim.
  *
  * Note: data-inspection-reset remains the inspection-spine camera owner — this module
  * does not intercept it. Return to entrance uses returnToEntranceLayer() or [data-hero-layer-return].
+ * Baseline camera is requested via TeamAiHero API or event — not a synthetic DOM click
+ * (avoids double-firing control handlers in e2e).
  */
 
 const WORLD_BASELINE = 'HERO_WIDE';
@@ -14,11 +16,6 @@ function shell() {
 }
 
 function requestBaselineCamera() {
-  const btn = document.querySelector(`[data-camera="${WORLD_BASELINE}"]`);
-  if (btn && typeof btn.click === 'function') {
-    btn.click();
-    return { via: 'data-camera', id: WORLD_BASELINE };
-  }
   if (typeof window.TeamAiHero?.setCamera === 'function') {
     window.TeamAiHero.setCamera(WORLD_BASELINE);
     return { via: 'TeamAiHero.setCamera', id: WORLD_BASELINE };
@@ -75,17 +72,14 @@ export function getHeroLayer() {
 }
 
 function bind() {
-  // Open engine / get-started: enter machine baseline (auth panel may still open via existing handoff)
   window.addEventListener('teamai:web-ai-hero-engine-open', () => {
     enterMachineLayer({ source: 'hero-engine-open' });
   });
 
-  // Demo turn loop also implies machine experience
   document.getElementById('demo-toggle')?.addEventListener('click', () => {
     if (getHeroLayer() !== 'machine') enterMachineLayer({ source: 'demo-toggle' });
   });
 
-  // Optional explicit return control — does not own data-inspection-reset
   document.querySelectorAll('[data-hero-layer-return]').forEach((btn) => {
     btn.addEventListener('click', () => {
       returnToEntranceLayer({ source: 'data-hero-layer-return' });
