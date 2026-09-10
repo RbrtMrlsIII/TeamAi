@@ -45,7 +45,7 @@ function patchSource(src) {
     );
   }
 
-  if (!t.includes('seatDock')) {
+  if (t.includes("function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}")) {
     t = t.replace(
       "function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
       "function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatOpen=typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&String(hierarchyRuntime.openParentId).includes('SEAT_SHELL');const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),seatOpen?{force:true}:{}):null;if(seatDock)next=seatDock;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
@@ -79,6 +79,23 @@ function patchSource(src) {
     "canvas.addEventListener('wheel', (event) => {\n  event.preventDefault();\n  if (hierarchyRuntime.openParentId) return;",
     "canvas.addEventListener('wheel', (event) => {\n  event.preventDefault();\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;",
   );
+
+  // Retire HERO_LOW_ORBIT + TURN_FOLLOW (vanish from runtime table + turn loop)
+  if (t.includes('HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},')) {
+    t = t.replace('HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},', '');
+  }
+  if (t.includes('TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},')) {
+    t = t.replace('TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},', '');
+  }
+  if (t.includes("setCamera('TURN_FOLLOW')")) {
+    t = t.replaceAll("setCamera('TURN_FOLLOW')", "setCamera('HERO_WIDE')");
+  }
+  if (t.includes('setCamera("TURN_FOLLOW")')) {
+    t = t.replaceAll('setCamera("TURN_FOLLOW")', 'setCamera("HERO_WIDE")');
+  }
+  if (t.includes("setCamera('HERO_LOW_ORBIT')")) {
+    t = t.replaceAll("setCamera('HERO_LOW_ORBIT')", "setCamera('HERO_WIDE')");
+  }
 
   return t;
 }

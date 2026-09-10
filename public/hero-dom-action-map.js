@@ -10,11 +10,9 @@ export const TREE_ALIGNED_CAMERA_IDS = Object.freeze([
   'SEAT_CLOSE',
   'DETAIL_ANCHOR',
   'WORKSPACE_CLOSE',
-  'TURN_FOLLOW',
 ]);
 
 export const LOCK_ONLY_CAMERA_IDS = Object.freeze([
-  'HERO_LOW_ORBIT',
   'TEAM_ORBIT',
   'OVERHEAD_MAP',
 ]);
@@ -38,56 +36,11 @@ export function isTreeAlignedCamera(cameraId) {
 export function resolveDomCameraAction(cameraId, ctx = {}) {
   const id = String(cameraId || '');
   const hierarchyOpen = Boolean(ctx.hierarchyOpen);
-
-  if (isLockOnlyCamera(id)) {
-    if (hierarchyOpen) {
-      return {
-        allowed: false,
-        effectiveCameraId: null,
-        retired: true,
-        freeNav: true,
-        reason: 'lock-only camera retired while hierarchy open',
-      };
-    }
-    return {
-      allowed: true,
-      effectiveCameraId: 'HERO_WIDE',
-      retired: true,
-      freeNav: true,
-      reason: 'lock-only camera mapped to HERO_WIDE + free nav',
-    };
+  if (isLockOnlyCamera(id) && hierarchyOpen) {
+    return { ok: false, reason: 'lock-only-while-tree-open', prefer: 'tree-aligned' };
   }
-
-  if (hierarchyOpen && !isTreeAlignedCamera(id)) {
-    return {
-      allowed: false,
-      effectiveCameraId: null,
-      retired: false,
-      freeNav: true,
-      reason: 'non-aligned camera blocked while hierarchy open',
-    };
+  if (isTreeAlignedCamera(id) || isLockOnlyCamera(id)) {
+    return { ok: true, cameraId: id };
   }
-
-  return {
-    allowed: true,
-    effectiveCameraId: id,
-    retired: false,
-    freeNav: false,
-    reason: 'tree-aligned or default dock',
-  };
-}
-
-export function applyResolvedCamera(cameraId, ctx = {}) {
-  const resolved = resolveDomCameraAction(cameraId, ctx);
-  if (!resolved.allowed || !resolved.effectiveCameraId) return resolved;
-  const hero = typeof window !== 'undefined' ? window.TeamAiHero : null;
-  if (hero && typeof hero.setCamera === 'function') {
-    hero.setCamera(resolved.effectiveCameraId);
-  } else if (typeof document !== 'undefined') {
-    const btn = document.querySelector(`[data-camera="${resolved.effectiveCameraId}"]`);
-    if (btn && !isLockOnlyCamera(resolved.effectiveCameraId)) {
-      btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-    }
-  }
-  return resolved;
+  return { ok: false, reason: 'unknown-camera', cameraId: id };
 }
