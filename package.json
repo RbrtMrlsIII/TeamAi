@@ -1,34 +1,24 @@
 {
-  "name": "teamai",
-  "version": "0.2.0",
+  "name": "team-ai",
+  "version": "0.1.0",
   "private": true,
-  "description": "TeamAi — Provider-Federated AI Team Workspace (Firebase + Supabase backend architecture)",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json && node build-system/scripts/copy-public.mjs",
     "seat:plate:phase2": "node scripts/apply-seat-plate-phase2.mjs",
     "seat:connection:wire": "node scripts/apply-seat-connection-wire.mjs",
     "seat:provider:wire": "node scripts/apply-seat-provider-bind-wire.mjs",
-    "test": "npm run seat:provider:wire && npm run build && node scripts/apply-cam2-tree-follow-flex.mjs && node --check public/hero-flex.js && node --test tests/*.test.mjs",
+    "test": "npm run seat:provider:wire && npm run build && node scripts/apply-cam2-tree-follow-flex.mjs && node scripts/apply-v1.2-arrow-branch-walk.mjs && node --check public/hero-flex.js && node --test tests/*.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
-    "test:unit": "npm run seat:provider:wire && npm run build && node scripts/apply-cam2-tree-follow-flex.mjs && node --test tests/*.test.mjs",
-    "test:e2e": "npm run seat:provider:wire && node scripts/apply-cam2-tree-follow-flex.mjs && playwright test",
+    "test:unit": "npm run seat:provider:wire && npm run build && node scripts/apply-cam2-tree-follow-flex.mjs && node scripts/apply-v1.2-arrow-branch-walk.mjs && node --test tests/*.test.mjs",
+    "test:e2e": "npm run seat:provider:wire && node scripts/apply-cam2-tree-follow-flex.mjs && node scripts/apply-v1.2-arrow-branch-walk.mjs && playwright test",
     "test:e2e:report": "playwright show-report",
     "project:package": "python3 build-system/scripts/project-package.py create-and-verify",
     "project:package:verify": "python3 build-system/scripts/project-package.py verify",
     "firebase:rules:gate": "bash build-system/scripts/firebase-rules-gate-004.sh",
     "build-system:audit": "python3 build-system/scripts/build-system-script-reference-audit.py",
     "backend:authority-audit": "python3 build-system/scripts/backend-authority-audit.py"
-  },
-  "dependencies": {
-    "fastify": "^5.0.0"
-  },
-  "devDependencies": {
-    "@playwright/test": "1.62.1",
-    "@types/node": "^22.0.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
   }
 }

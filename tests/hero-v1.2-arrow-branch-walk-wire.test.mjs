@@ -1,6 +1,6 @@
 /**
  * V1.2 — Arrow Left/Right wired to cycleSeatShellBranchFocus (Vision).
- * Owner: apply-cam2 + hero-seat-branch-walk · presentation only · no 029-released claim
+ * Owner: apply-v1.2 + hero-seat-branch-walk · presentation only · no 029-released claim
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,6 +11,10 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], {
+  cwd: root,
+  stdio: 'inherit',
+});
+spawnSync(process.execPath, [join(root, 'scripts/apply-v1.2-arrow-branch-walk.mjs')], {
   cwd: root,
   stdio: 'inherit',
 });
@@ -35,7 +39,7 @@ test('V1.2 Arrow path uses cycleSeatShellBranchFocus not inline list math', asyn
 });
 
 test('V1.2 apply script owns the Arrow wire', async () => {
-  const apply = await readFile(join(root, 'scripts/apply-cam2-tree-follow-flex.mjs'), 'utf8');
-  assert.match(apply, /V1\.2 Vision: Arrow/);
+  const apply = await readFile(join(root, 'scripts/apply-v1.2-arrow-branch-walk.mjs'), 'utf8');
   assert.match(apply, /cycleSeatShellBranchFocus/);
+  assert.match(apply, /V1\.2 branch walk/);
 });
