@@ -44,6 +44,7 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | 3D Hero lighting | TEAM-EXPERIENCE-029 Hero presentation | Same spatial family. Hero consumes `frontend/spatial/hero-theme-lighting-adapter.js`. **No Hero lighting/theme skill.** | Hero presentation + theme root | Static adapter/light-rig tests + Playwright | Issue #85/#96 + HandOver |
 | 3D Hero hierarchy runtime | TEAM-EXPERIENCE-029 in-machine parent/open grammar | ORUCAVEAM + `skills/frontend/spatial/hierarchy-runtime/SKILL.md` + UI_UX-Promax + motion/responsive/accessibility. Numbers from `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9. | `public/hero-flex.js` + baseline doc | Named-number static tests; R1–R10 PR table; reduced-motion readability | Issue #142 + HandOver |
 | 3D Hero Seat shell v1 | TEAM-EXPERIENCE-029 first parent fill | ORUCAVEAM + `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` + hierarchy-runtime + seat-read-model (later feed) | Hero presentation (in-machine leaves) | Part IDs, one-open, leaf-inside-shell static tests; optional open-silhouette frame | Issue #142 then Seat-open implementation issue |
+| 3D Hero camera Cam↔V recovery | TEAM-EXPERIENCE-029 camera chronology (Issue #232) | ORUCAVEAM + `skills/frontend/spatial/camera-ladder-recovery/SKILL.md` + hierarchy-runtime. Ledger: `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`. | Cam modules + Vision V ladder | Cite ledger frontier; do not restart Cam-2 | Issue #232 + HandOver |
 | Packaging | Every completed gate requiring full project package | `skills/packaging/project-package/SKILL.md` + applicable ORUCAVEAM/V/A/M skills | Project package script | Extracted-path + byte/hash equality | Full Project ZIP + manifest |
 
 ## 4. Field/domain expansion rule
@@ -159,4 +160,18 @@ Rules:
 
 Wiring path for a Grok-hosted continuation session:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → docs/GROK_SKILLS_ALIGNMENT.md → docs/TEAMAI_3D_HERO_NEXT_SLICES.md → skills/**`
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → docs/GROK_SKILLS_ALIGNMENT.md → docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md → docs/TEAMAI_3D_HERO_NEXT_SLICES.md → skills/**`
+
+## 14. 2026-09-10 Cam↔V camera chronology (Issue #232)
+
+Cam-1–Cam-4 are **architecture slices already merged**. Vision V0–V2 experience slices are merged; **current frontier is Vision V3.1** (PR #230) under `docs/VISION.md`.
+
+Agents recovering camera work **must** load:
+
+`skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
+
+and the ledger:
+
+`docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`
+
+before treating any Cam contract “next” line as current work. Do not restart Cam-2.
