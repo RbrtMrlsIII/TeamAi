@@ -1,8 +1,18 @@
 /**
- * V2.3 — Settings shell control beside machine chrome (Vision).
- * Owner: existing theme-root / settings surface — button + panel scaffold only.
- * Does not invent a second theme root. Presentation only · no 029-released claim · Issue #214
+ * V2.3 shell + V2.4 theme polish (Vision).
+ * Owner: frontend/spatial/theme-root.js via documentElement only.
+ * Presentation only · no 029-released claim · Issue #214
  */
+import {
+  applyDocumentTheme,
+  persistTheme,
+  readMotion,
+  readDensity,
+  readSource,
+  readStoredMode,
+  resolveMode,
+  initializeTheme,
+} from '../frontend/spatial/theme-root.js';
 
 export const SETTINGS_SHELL_ID = 'hero-settings-shell';
 
@@ -48,25 +58,53 @@ export function buildSettingsShellPanel() {
 }
 
 function applyThemeMode(mode) {
-  const root = document.documentElement;
-  root.setAttribute('data-theme-mode', mode === 'light' ? 'light' : 'dark');
-  root.dispatchEvent(
+  const next = mode === 'light' ? 'light' : 'dark';
+  applyDocumentTheme({
+    mode: next,
+    source: 'user',
+    motion: readMotion(),
+    density: readDensity(),
+  });
+  persistTheme({ mode: next, source: 'user' });
+  document.dispatchEvent(
     new CustomEvent('teamai:theme-mode', {
-      detail: { mode: root.getAttribute('data-theme-mode'), source: 'v2.3-settings-shell', presentationOnly: true },
+      detail: { mode: next, source: 'v2.4-settings-shell', presentationOnly: true },
       bubbles: true,
     }),
   );
+  syncSettingsShellPressed();
 }
 
 function applyMotion(motion) {
-  const root = document.documentElement;
-  root.setAttribute('data-motion', motion === 'reduced' ? 'reduced' : 'full');
-  root.dispatchEvent(
+  const next = motion === 'reduced' ? 'reduced' : 'full';
+  const source = readSource();
+  applyDocumentTheme({
+    mode: resolveMode(source, readStoredMode()),
+    source,
+    motion: next,
+    density: readDensity(),
+  });
+  persistTheme({ motion: next });
+  document.dispatchEvent(
     new CustomEvent('teamai:motion-pref', {
-      detail: { motion: root.getAttribute('data-motion'), source: 'v2.3-settings-shell', presentationOnly: true },
+      detail: { motion: next, source: 'v2.4-settings-shell', presentationOnly: true },
       bubbles: true,
     }),
   );
+  syncSettingsShellPressed();
+}
+
+export function syncSettingsShellPressed(root = document) {
+  const panel = root.getElementById?.('hero-settings-panel') || root.querySelector?.('#hero-settings-panel');
+  if (!panel) return;
+  const mode = document.documentElement.getAttribute('data-theme-mode') || 'dark';
+  const motion = document.documentElement.getAttribute('data-motion') || 'full';
+  for (const btn of panel.querySelectorAll('[data-settings-theme]')) {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-settings-theme') === mode ? 'true' : 'false');
+  }
+  for (const btn of panel.querySelectorAll('[data-settings-motion]')) {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-settings-motion') === motion ? 'true' : 'false');
+  }
 }
 
 export function mountSettingsShell(root = document) {
@@ -100,7 +138,7 @@ export function mountSettingsShell(root = document) {
     root.documentElement?.setAttribute?.('data-settings-open', open ? '1' : '0');
     root.dispatchEvent(
       new CustomEvent('teamai:settings-shell', {
-        detail: { open, source: 'v2.3-settings-shell', presentationOnly: true },
+        detail: { open, source: 'v2.4-settings-shell', presentationOnly: true },
         bubbles: true,
       }),
     );
@@ -119,7 +157,11 @@ export function mountSettingsShell(root = document) {
 }
 
 if (typeof document !== 'undefined') {
-  const boot = () => mountSettingsShell(document);
+  const boot = () => {
+    try { initializeTheme(); } catch (_) {}
+    mountSettingsShell(document);
+    syncSettingsShellPressed(document);
+  };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(boot, 0);
