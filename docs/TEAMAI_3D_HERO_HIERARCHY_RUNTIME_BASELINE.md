@@ -94,7 +94,7 @@ One open parent at a time. Presentation only.
 | `RING_R1_SCALE` | `1.18` | starting | R1 ring |
 | `RING_R2_SCALE` | `1.42` | starting | R2 ring |
 | `NAV_ZOOM_MIN` | `0.72` | starting | R4 nav |
-| `NAV_ZOOM_MAX` | `1.55` | starting | R4 nav |
+| `NAV_ZOOM_MAX` | `2.0` | V0.5 Vision ~200% | R4 nav |
 | `NAV_ZOOM_REDUCED_MIN` | `0.9` | starting | R4/R5 |
 | `NAV_ZOOM_REDUCED_MAX` | `1.2` | starting | R4/R5 |
 | `SETUP_RING_FILL_MS` | `480` | starting | R2/R3 camera-fill |

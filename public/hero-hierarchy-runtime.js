@@ -38,7 +38,7 @@ export const RING_R0_ZIP_SCALE = 0.22;
 export const RING_R1_SCALE = 1.18;
 export const RING_R2_SCALE = 1.42;
 export const NAV_ZOOM_MIN = 0.72;
-export const NAV_ZOOM_MAX = 1.55;
+export const NAV_ZOOM_MAX = 2.0; // V0.5 Vision: free zoom ceiling ~200%
 export const NAV_ZOOM_REDUCED_MIN = 0.9;
 export const NAV_ZOOM_REDUCED_MAX = 1.2;
 
