@@ -140,3 +140,32 @@
 html {
   font-size: calc(100% * var(--ui-scale, 1));
 }
+
+.hero-settings-panel__lang {
+  align-items: center;
+  gap: 0.5rem;
+}
+.hero-settings-panel__lang label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.hero-settings-panel__lang select {
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: color-mix(in srgb, Canvas 88%, transparent);
+  color: inherit;
+}
+.hero-settings-panel__lang-note {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
