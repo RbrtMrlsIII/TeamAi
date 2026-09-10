@@ -1,7 +1,8 @@
 {
-  "name": "team-ai",
-  "version": "0.1.0",
+  "name": "teamai",
+  "version": "0.2.0",
   "private": true,
+  "description": "TeamAi — Provider-Federated AI Team Workspace (Firebase + Supabase backend architecture)",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json && node build-system/scripts/copy-public.mjs",
@@ -20,5 +21,14 @@
     "firebase:rules:gate": "bash build-system/scripts/firebase-rules-gate-004.sh",
     "build-system:audit": "python3 build-system/scripts/build-system-script-reference-audit.py",
     "backend:authority-audit": "python3 build-system/scripts/backend-authority-audit.py"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
   }
 }
