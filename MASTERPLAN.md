@@ -302,6 +302,8 @@ Detailed planning contracts:
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
+- `docs/VISION.md` — product experience intent (entrance, ~45° machine baseline, tree/branch camera); not a Product Law rewrite; no 029-released claim
+- `docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 
@@ -311,3 +313,11 @@ Every completed gate must surrender a target-project handover packet/ZIP in the 
 ## Current 029 product-design execution order
 
 `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/frontend/spatial/UI_UX-Promax-Skill.md + applicable 029/domain skills → UI/system implementation → verification → GitHub evidence/artifacts → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
+
+## Product experience vision (intent pointer)
+
+Canonical human-facing experience intent for public entrance, ~45° machine baseline, selected-tree camera subject, and presentation chrome lives in:
+
+- `docs/VISION.md`
+
+It sits **below** Product Law and this Masterplan: it does not create a new law family, does not claim 029 release, and does not authorize browser-side durable domain writes. Camera and hierarchy contracts remain the technical detail under that intent.
