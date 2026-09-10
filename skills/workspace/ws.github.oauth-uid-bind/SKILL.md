@@ -12,7 +12,7 @@ Use when implementing or reviewing **Conn-3**: trusted Edge mint of `firebaseUid
 - `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md`
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md`
 - `src/backend/github-installation.ts` (`bindGitHubInstallation`)
-- `docs/USER_MANUAL_DEPLOY_AND_SEATS.md` §12
+- `docs/USER_MANUAL_DEPLOYMENT.md` (GitHub App / checklist parts)
 
 ## AUTHORITY
 
