@@ -36,3 +36,32 @@
   color: rgba(43, 45, 42, 0.9);
   text-decoration: underline;
 }
+
+/* V2.2 machine nav — bound to seat-stack chrome, not a second rail */
+.machine-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+.machine-nav__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.machine-nav__select {
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: color-mix(in srgb, Canvas 88%, transparent);
+  color: inherit;
+}
