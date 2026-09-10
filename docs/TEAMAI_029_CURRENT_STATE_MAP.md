@@ -66,22 +66,41 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | Gate 4 Firebase emulator/rules | PARKED | reproducible harness exists; emulator execution unavailable in prior environment | Operator runs emulator-capable verification and records real PASS |
 | Gate 5B commerce correlation | VERIFIED / PASS | direct source-contract validation | Do not imply live payment evidence |
 | Gate 5C commerce implementation | IMPLEMENTED / AVAILABLE-ENV VERIFIED | webhook authenticity/idempotency/durable event/entitlement projection source boundary | Remaining live PayPal transaction/webhook evidence |
-| Provider/runtime invocation | NOT STARTED | intentionally deferred by Masterplan | Authorization/task contracts plus approved provider runtime owner |
+| Provider/runtime invocation | NOT STARTED | intentionally deferred by Masterplan; live `teamai-task-execute` is still a stub runtime, not provider runtime | Authorization/task contracts + approved real-provider runtime owner |
 | Security/failure/recovery verification | OPEN | mixed source/CI/live evidence | Complete bounded matrix including live recovery where required |
 | Traceability | OPEN | not yet final | Reconcile Product Law → plan → skill → implementation → evidence → endorsement |
 | Final endorsement | OPEN | none yet | HandOver + Endorsement after remaining gates |
 
+### 4.1 Live Supabase cross-check — 2026-09-10
+
+The connected Supabase project `TeamAi` is **ACTIVE_HEALTHY**. Its current Edge Function inventory independently shows these deployed functions:
+
+- `teamai-task-execute` v8 — ACTIVE, `verify_jwt=false`; function body performs its own Firebase ID-token verification and currently executes a **stub ProviderRuntime** before durable Firestore completion.
+- `teamai-github-oauth-bind` v4 — ACTIVE; GET callback is presentation-only and POST accepts Firebase Bearer + installation id, then writes the server-owned UID ↔ GitHub installation mapping into Firestore. It is explicitly not a Hero live bind.
+- `teamai-github-webhook` v3 — ACTIVE.
+- `teamai-seat-connection-test` v3 — ACTIVE.
+- `teamai-seat-provider-bind` v3 — ACTIVE.
+- `teamai-commerce-intent` v15, `paypal-webhook` v15, and `teamai-paypal-webhook-v5c` v17 — ACTIVE.
+- `teamai-domain-bootstrap` v18 — ACTIVE.
+
+This means the **deployed backend has advanced beyond some older “next” wording in repository continuity documents**. Deployment presence alone does not upgrade a slice to RUNTIME-PROVEN or COMPLETED; the corresponding live evidence packet remains authoritative for the claim.
+
+The TeamAi Supabase database itself currently reports **no public-schema tables**. This is consistent with the repository architecture that treats Firestore `(default)` as the durable TeamAi domain store and Supabase as the trusted Edge runtime boundary, not the application system of record.
+
 ## 5. Why backend stopped
 
-The backend did not stop because its source architecture was absent. The repository records several implemented and runtime-proven bounded slices. It stopped at **external/runtime evidence boundaries** and final governance completion:
+The backend did not stop because its source architecture was absent. The repository records several implemented and runtime-proven bounded slices, and the live Supabase project confirms that multiple Edge runtimes are deployed.
+
+It stopped at **verification, external-runtime, and final-governance boundaries** rather than source implementation:
 
 - Firebase emulator/rules execution was environment-constrained and explicitly parked.
 - Gate 5B source contract passed, but live PayPal evidence was not inferred.
 - Gate 5C implementation and available-environment verification are complete, but final live PayPal transaction/webhook evidence remains open.
-- Provider/runtime invocation is deliberately deferred until authorization/task contracts and ownership are ready.
+- `teamai-task-execute` is live and authenticated but intentionally invokes `stub-edge-runtime`; real provider invocation has not been established by this function.
+- GitHub OAuth/installation bind infrastructure is deployed, but that does not mean Hero live binding or final Conn-3 product acceptance.
 - Security/recovery, traceability, and completion endorsement remain open.
 
-This is a stopped **verification/authorization frontier**, not a reason to restart already-completed backend implementation.
+This is a stopped **evidence/authorization frontier**, not a reason to restart already-completed backend implementation.
 
 ## 6. Spatial ↔ backend connection rule
 
@@ -147,7 +166,7 @@ Continue the backend clock only when the next open Masterplan item has:
 - a live/operator dependency explicitly identified when applicable;
 - no dependency on a falsely completed earlier gate.
 
-For the current backend frontier, this means the next meaningful operator-facing progress is live PayPal sandbox transaction/webhook evidence, followed by direct Firestore verification and final traceability/endorsement work. Provider runtime should remain parked until its own authorization/task foundation is genuinely ready.
+For the current backend frontier, this means the principal open evidence work is live PayPal sandbox transaction/webhook evidence, direct Firestore verification, and final traceability/endorsement. The deployed GitHub OAuth and seat-connection functions should be treated as **implemented/deployed surfaces requiring their own claim-level evidence**, not as automatic proof of full Conn-3 product completion. Real provider runtime remains parked behind authorization/task foundations.
 
 ## 10. When to continue spatial work
 
