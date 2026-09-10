@@ -18,7 +18,8 @@ When the user takes a primary get-started / open-engine action, the product move
 | Baseline camera | `[data-camera="HERO_WIDE"]` · existing Cam / hierarchy path |
 | Module | `public/hero-layer-handoff.js` |
 | Engine-open event | `teamai:web-ai-hero-engine-open` (from `hero-auth-handoff.js`) |
-| Return | `[data-inspection-reset]` → entrance layer |
+| Return | `returnToEntranceLayer()` API · optional `[data-hero-layer-return]` |
+| Inspection reset | **Remains** inspection-spine owner — **not** intercepted by this module |
 
 ## Flow
 
@@ -28,7 +29,7 @@ Layer A (entrance)
       → data-hero-layer="machine" + data-hero-machine-ui="1"
       → request HERO_WIDE baseline
       → (auth panel may still open — presentation handoff only)
-  ← Inspection Reset / returnToEntranceLayer()
+  ← returnToEntranceLayer() or [data-hero-layer-return]
       → data-hero-layer="entrance"
       → clear data-hero-machine-ui
       → HERO_WIDE again; Hero instance kept
@@ -38,7 +39,7 @@ Layer A (entrance)
 
 - Second `<canvas>` / second Three.js app  
 - Firestore / OAuth / durable auth from this module  
-- Treating auth panel as domain authority  
+- Stealing `data-inspection-reset` from inspection-spine  
 - 029-released claim  
 
 ## Tests
