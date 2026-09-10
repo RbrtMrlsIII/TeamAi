@@ -2,6 +2,9 @@
  * V3.4 — Get-started → machine baseline handoff (Layer A → Layer B).
  * Owners: .hero-shell data-hero-layer · existing HERO_WIDE camera control · auth engine-open event.
  * Presentation only · one Hero instance · no second WebGL · no 029-released claim.
+ *
+ * Note: data-inspection-reset remains the inspection-spine camera owner — this module
+ * does not intercept it. Return to entrance uses returnToEntranceLayer() or [data-hero-layer-return].
  */
 
 const WORLD_BASELINE = 'HERO_WIDE';
@@ -53,7 +56,6 @@ export function returnToEntranceLayer(opts = {}) {
   const source = opts.source || 'return';
   el.dataset.heroLayer = 'entrance';
   delete el.dataset.heroMachineUi;
-  // Keep world baseline readable on return
   const cam = requestBaselineCamera();
   window.dispatchEvent(new CustomEvent('teamai:hero-layer-change', {
     detail: {
@@ -73,7 +75,7 @@ export function getHeroLayer() {
 }
 
 function bind() {
-  // Open engine / get-started: enter machine baseline first (auth panel may still open via existing handoff)
+  // Open engine / get-started: enter machine baseline (auth panel may still open via existing handoff)
   window.addEventListener('teamai:web-ai-hero-engine-open', () => {
     enterMachineLayer({ source: 'hero-engine-open' });
   });
@@ -83,15 +85,12 @@ function bind() {
     if (getHeroLayer() !== 'machine') enterMachineLayer({ source: 'demo-toggle' });
   });
 
-  // Inspection reset → restore entrance presentation (same Hero instance)
-  document.querySelectorAll('[data-inspection-reset]').forEach((btn) => {
+  // Optional explicit return control — does not own data-inspection-reset
+  document.querySelectorAll('[data-hero-layer-return]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      returnToEntranceLayer({ source: 'inspection-reset' });
+      returnToEntranceLayer({ source: 'data-hero-layer-return' });
     });
   });
-
-  // Wide control while already on machine may stay machine; long-press not required —
-  // explicit return is inspection-reset / returnToEntranceLayer API.
 }
 
 if (typeof document !== 'undefined') {

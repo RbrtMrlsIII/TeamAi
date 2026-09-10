@@ -18,7 +18,8 @@ test('V3.4 layer handoff module exports enter/return and HERO_WIDE baseline', as
   assert.match(js, /data-hero-layer|heroLayer/);
   assert.match(js, /heroMachineUi|data-hero-machine-ui/);
   assert.match(js, /teamai:web-ai-hero-engine-open/);
-  assert.match(js, /data-inspection-reset/);
+  assert.match(js, /data-hero-layer-return/);
+  assert.match(js, /does not intercept|inspection-reset remains/i);
   assert.match(js, /no second|notSecondRuntime|presentation only/i);
   assert.doesNotMatch(js, /WebGLRenderer|THREE\.Scene|createElement\(['"]canvas['"]\)/);
   assert.doesNotMatch(js, /firestore|oauth|client_secret/i);
