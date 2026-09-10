@@ -1,4 +1,4 @@
-name: TeamAi governance
+name: TeamAi
 
 on:
   pull_request:
@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+      - name: Syntax check governance validator
+        run: node --check scripts/governance/verify-active-index.mjs
       - name: Fail closed on active-index drift
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -41,6 +43,8 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+      - name: Syntax check governance validator
+        run: node --check scripts/governance/verify-active-index.mjs
       - name: Fail closed on evidence inconsistency
         run: node scripts/governance/verify-active-index.mjs --mode=evidence
 
@@ -68,7 +72,7 @@ jobs:
             commit: process.env.COMMIT_SHA,
             base_commit: process.env.BASE_SHA || null,
             event: process.env.EVENT_NAME,
-            index_consistency: 'PASS',
+            governance_drift: 'PASS',
             evidence_consistency: 'PASS',
             active_index_freshness: 'PASS',
             historical_integrity: 'PASS',
