@@ -1,0 +1,83 @@
+schema: 1
+manifest_version: 2026-09-10.1
+
+active_frontier:
+  spatial:
+    current: V3.3
+    gate: SP-07
+    status: NEXT_AUTHORIZED
+  backend:
+    team_backend_001:
+      status: ENDORSED_BOUNDED
+      gate4: PARKED_NOT_PROVEN
+      provider_runtime: STUB_ONLY
+      conn3_browser_proof: PENDING
+
+claims:
+  SPATIAL-V3.3:
+    state: NEXT_AUTHORIZED
+    evidence:
+      - docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md
+    indexes:
+      - MASTERPLAN.md
+      - docs/TEAMAI_029_CURRENT_STATE_MAP.md
+      - docs/TEAMAI_3D_HERO_NEXT_SLICES.md
+  BACKEND-001-ENDORSED:
+    state: ENDORSED_BOUNDED
+    evidence:
+      - handover/TEAM-BACKEND-001_2026-09-07_PayPal-Aggregate-ReRead.md
+      - docs/project-guide/Endorsement.md
+    indexes:
+      - MASTERPLAN.md
+      - docs/TEAMAI_029_CURRENT_STATE_MAP.md
+  BACKEND-GATE4:
+    state: PARKED_NOT_PROVEN
+    evidence:
+      - docs/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md
+    indexes:
+      - MASTERPLAN.md
+      - docs/TEAMAI_029_CURRENT_STATE_MAP.md
+  BACKEND-PROVIDER:
+    state: STUB_ONLY
+    evidence:
+      - docs/evidence/TEAM-BACKEND-001_EDGE_RUNTIME_AUDIT_2026-09-06.md
+      - docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md
+    indexes:
+      - MASTERPLAN.md
+      - docs/TEAMAI_029_CURRENT_STATE_MAP.md
+  CONN3:
+    state: IMPLEMENTED_BROWSER_PROOF_PENDING
+    evidence:
+      - docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md
+    indexes:
+      - MASTERPLAN.md
+      - docs/TEAMAI_029_CURRENT_STATE_MAP.md
+      - docs/TEAMAI_3D_HERO_NEXT_SLICES.md
+
+canonical_indexes:
+  - MASTERPLAN.md
+  - docs/TEAMAI_029_CURRENT_STATE_MAP.md
+  - docs/TEAMAI_3D_HERO_NEXT_SLICES.md
+  - docs/SKILL_WIRING.md
+
+coupling:
+  spatial:
+    - public/
+    - skills/frontend/spatial/
+  backend:
+    - backend/
+    - supabase/
+  skill_wiring:
+    - skills/
+
+historical_existing_immutable:
+  - docs/evidence/
+  - docs/project-guide/HandOver-
+  - docs/project-guide/Endorsement
+
+rules:
+  historical_existing_immutable: true
+  active_indexes_must_agree: true
+  implementation_claim_requires_evidence: true
+  validation_requires_current_index: true
+  fail_closed: true

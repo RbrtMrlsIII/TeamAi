@@ -11,9 +11,21 @@ Every executable checklist item must resolve to concrete skill path(s) in `docs/
 ## Current chronological gate
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
+## Active state reconciliation — 2026-09-10
+
+The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/validation gate: task execution, lease contention/recovery, PayPal Sandbox commerce correlation, durable Firestore aggregate/event/entitlement re-read, traceability, and bounded Endorsement are recorded in the current evidence chain. This does **not** close every broader backend boundary.
+
+- Firebase Rules emulator verification (Gate 4) remains **PARKED / NOT PROVEN** because a real emulator PASS is not present in the repository evidence.
+- `teamai-task-execute` is runtime-proven only through its bounded authenticated path and still uses `stub-edge-runtime`; real external provider invocation remains **OPEN / NOT PROVEN**.
+- GitHub App installation is operator-confirmed, while Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind.
+- Seat connection/provider surfaces are deployed but remain implementation/deployment surfaces rather than automatic product acceptance.
+- The spatial clock is independent and resumes at **Vision V3.3 / SP-07 next**, with no backend authority transferred into the Hero.
+
+Historical checkpoints may retain earlier pending wording because they are evidence records. This active index is the current recovery map and must not rewrite those historical records.
+
 ## TEAM-BACKEND-001 — Backend Foundation
 
-**Status:** IN IMPLEMENTATION.
+**Status:** ENDORSED for bounded recorded scope; residual evidence boundaries remain explicit.
 
 ### Chronological execution checklist
 1. [x] Architecture/authority reconciliation encoded in executable service assertions.
@@ -27,11 +39,11 @@ Every executable checklist item must resolve to concrete skill path(s) in `docs/
 9. [x] Workplace → Project → Team/Solo → Seat persistence source slice implemented and live authenticated creation, independent Firestore verification, and repeat-call idempotency are evidenced.
 10. [x] Trusted Supabase Edge runtime persistence slice implemented and configured with the Firebase service-account credential as the required Supabase Edge secret; authenticated execution, independent Firestore verification, and idempotency were exercised in the available environment.
 11. [x] Gate 5B: server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation contract implemented and direct source-contract validation passed.
-12. [x] Gate 5C: webhook authenticity, idempotency/replay protection, durable commerce event handling and entitlement projection implementation plus available-environment verification are complete. **Remaining:** final live PayPal transaction/webhook runtime evidence.
+12. [x] Gate 5C: webhook authenticity, idempotency/replay protection, durable commerce event handling and entitlement projection implementation plus available-environment verification are complete, and bounded live PayPal Sandbox transaction/webhook + Firestore aggregate evidence is recorded.
 13. [ ] Provider/runtime invocation connected only after authorization/task contracts.
 14. [ ] Security, contract, integration, failure, timeout, cancellation and recovery verification complete.
-15. [ ] Traceability audit reconciled from Product Law → plan → contract/skill → implementation → evidence → endorsement.
-16. [ ] TEAM-BACKEND-001 completion endorsement recorded.
+15. [x] Traceability audit reconciled for the bounded recorded scope from Product Law → plan → contract/skill → implementation → evidence → endorsement.
+16. [x] TEAM-BACKEND-001 bounded completion endorsement recorded.
 17. [ ] Only after all `BLOCKS_029` gates are evidenced: release hold on TEAM-EXPERIENCE-029.
 
 ### Checklist skill-routing baseline
@@ -69,15 +81,13 @@ Evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evid
 
 **Important:** Gate 5B is source-contract completion only. No live PayPal transaction, webhook business processing, entitlement activation, or replay-protection completion claim is inferred from it.
 
-### Gate 5C — PASS / CLOSED (live PayPal evidence remaining)
+### Gate 5C — PASS / CLOSED for bounded recorded scope
 Gate 5C implementation and available-environment verification are complete. The canonical commerce runtime boundary verifies PayPal webhook authenticity, applies replay/idempotency controls, durably records authenticated commerce events in Firestore under the Firebase UID, and projects entitlement state only from authenticated provider events correlated to a server-owned commerce intent.
 
-The remaining evidence item is **live PayPal transaction/webhook runtime validation**. This is an external/live runtime evidence requirement, not an unfinished Gate 5C implementation. The current environment constrains that live PayPal test; it MUST NOT be represented as a failed Gate 5C architecture or implementation.
-
-Until that live PayPal evidence is captured, TEAM-BACKEND-001 final completion endorsement remains pending. No broader 5C implementation work should be reopened merely because the live external test remains outstanding.
+Bounded live PayPal Sandbox transaction/order/approval/capture, webhook delivery, redelivery handling, and direct Firestore aggregate/event/entitlement verification are now recorded in the 2026-09-06 and 2026-09-07 evidence chain. TEAM-BACKEND-001 is therefore endorsed for the bounded recorded scope. The record does not claim Gate 4 emulator PASS, real external provider invocation beyond `stub-edge-runtime`, broader scheduler/approval integration, production PayPal readiness, or full 029 release readiness.
 
 ### Current evidence boundary
-The canonical `paypal-webhook` Edge Function contains the validated Gate-5C commerce implementation boundary. Authenticated PayPal transaction/webhook end-to-end evidence and final live runtime completion evidence remain outstanding. Hosting/runtime limitations must be recorded separately from source implementation status. Any historical Gate-5C replay-race evidence gap must be described precisely rather than used to reopen the completed implementation boundary.
+The canonical `paypal-webhook` Edge Function contains the validated Gate-5C commerce implementation boundary. The bounded live PayPal Sandbox transaction/webhook path and subsequent Firestore aggregate/event/entitlement re-read are runtime-proven and endorsed for the recorded scope. Broader claims remain separately bounded: Gate 4 emulator execution is not evidenced, `teamai-task-execute` remains a stub provider runtime, real external provider invocation is not proven, Conn-3 browser/live deployment proof is pending, and 029 release remains gated by its own spatial/backend release criteria. Historical Gate-5C checkpoint wording remains historical evidence and is not rewritten here.
 
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
