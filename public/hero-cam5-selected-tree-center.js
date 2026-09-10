@@ -1,8 +1,8 @@
 /**
- * Cam-5 — Center camera on the **selected seat / tree** (presentation only).
+ * Cam-5/6 — Center camera on the **selected seat / tree** (presentation only).
  * Cam-2/3 switched camera *ids* but docks still looked at world origin [0,y,0].
- * This module places look-at `t` on the selected seat ring position.
- * Authority: TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md
+ * Cam-6 makes selected-seat look-at **mandatory** while a seat shell is open.
+ * Authority: TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md · Issue #212
  * no 029-released claim.
  */
 
@@ -48,8 +48,15 @@ export function shouldCenterOnSelectedSeat(cameraId) {
   return cameraId === 'SEAT_CLOSE' || cameraId === 'DETAIL_ANCHOR';
 }
 
-export function resolveSelectedSeatDock(cameraId, index, seatCount, profile) {
-  if (!shouldCenterOnSelectedSeat(cameraId)) return null;
+/**
+ * Resolve dock for selected seat.
+ * Cam-6: pass `{ force: true }` or `{ hierarchyOpen: true }` to center even when
+ * the camera id is not SEAT_CLOSE/DETAIL_ANCHOR (seat shell is open).
+ */
+export function resolveSelectedSeatDock(cameraId, index, seatCount, profile, opts = {}) {
+  const force = Boolean(opts.force || opts.hierarchyOpen);
+  if (!force && !shouldCenterOnSelectedSeat(cameraId)) return null;
+  // World / wide while forced open still frames the seat (not origin).
   if (cameraId === 'DETAIL_ANCHOR') {
     return dockTowardSeat(index, seatCount, profile, {
       elev: 1.95,
@@ -58,10 +65,17 @@ export function resolveSelectedSeatDock(cameraId, index, seatCount, profile) {
       lookY: 1.05,
     });
   }
+  // SEAT_CLOSE and any forced seat-shell framing
   return dockTowardSeat(index, seatCount, profile, {
     elev: 2.35,
-    distFactor: 1.38,
-    f: 36,
+    distFactor: cameraId === 'HERO_WIDE' ? 1.55 : 1.38,
+    f: cameraId === 'HERO_WIDE' ? 39 : 36,
     lookY: 0.95,
   });
+}
+
+/** True when openParentId is a seat shell parent. */
+export function isSeatShellOpen(openParentId) {
+  if (!openParentId) return false;
+  return String(openParentId).startsWith('SEAT_SHELL') || String(openParentId).includes('SEAT_SHELL');
 }
