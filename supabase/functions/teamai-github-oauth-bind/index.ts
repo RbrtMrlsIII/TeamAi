@@ -48,14 +48,6 @@ function readEnv(primary: string, aliases: string[] = []): string | null {
   return null;
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /** Browser redirect from GitHub (GET). Never writes Firestore or exposes OAuth code. */
 function redirectToTeamAi(input: {
   installationId: string | null;
