@@ -11,8 +11,8 @@ import {
 /**
  * Conn-3 — GitHub App OAuth / install bind: mint firebaseUid ↔ installation_id.
  *
- * GET  — GitHub browser redirect after install/OAuth. Friendly HTML only.
- *        Does NOT mint UID (no Firebase token on redirect).
+ * GET  — GitHub browser redirect after install/OAuth. Redirects the browser back
+ *        to the canonical TeamAi destination. Does NOT mint UID.
  * POST — Firebase Bearer + { installationId } → Firestore bind write.
  *
  * Not a Hero live bind. Keyboard C is normal-UI handoff only.
@@ -56,64 +56,22 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Browser redirect from GitHub (GET). Never writes Firestore. */
-function htmlCallbackPage(input: {
+/** Browser redirect from GitHub (GET). Never writes Firestore or exposes OAuth code. */
+function redirectToTeamAi(input: {
   installationId: string | null;
   setupAction: string | null;
-  hasCode: boolean;
   error: string | null;
 }): Response {
-  const install = input.installationId ? escapeHtml(input.installationId) : "—";
-  const setup = input.setupAction ? escapeHtml(input.setupAction) : "—";
-  const errBlock = input.error
-    ? `<p class="err">GitHub reported: <code>${escapeHtml(input.error)}</code></p>`
-    : "";
-  const codeNote = input.hasCode
-    ? `<p>Authorization code received. TeamAi will finish the bind when you are signed in (POST + Firebase token). This page does <strong>not</strong> store a UID map.</p>`
-    : `<p>No OAuth <code>code</code> in this redirect (install-only is fine). Webhook may already show this installation as <code>unbound</code> until a signed-in bind runs.</p>`;
+  const target = new URL(HERO_HOME);
+  target.searchParams.set("github", "installed");
+  if (input.installationId) target.searchParams.set("installation_id", input.installationId);
+  if (input.setupAction) target.searchParams.set("setup_action", input.setupAction);
+  if (input.error) target.searchParams.set("github_error", input.error);
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TeamAi · GitHub connection</title>
-  <style>
-    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
-    body { margin: 0; padding: 1.5rem; line-height: 1.45; }
-    main { max-width: 28rem; margin: 0 auto; }
-    h1 { font-size: 1.25rem; }
-    code { font-size: 0.9em; }
-    .ok { color: #0a7; }
-    .err { color: #c33; }
-    a.button {
-      display: inline-block; margin-top: 1rem; padding: 0.55rem 1rem;
-      border-radius: 0.4rem; background: #238636; color: #fff; text-decoration: none;
-    }
-    .meta { opacity: 0.75; font-size: 0.9rem; margin-top: 1.25rem; }
-  </style>
-</head>
-<body>
-  <main>
-    <h1 class="ok">GitHub install received</h1>
-    <p>TeamAi DevTools received the browser redirect from GitHub.</p>
-    <ul>
-      <li>Installation id: <code>${install}</code></li>
-      <li>Setup action: <code>${setup}</code></li>
-    </ul>
-    ${errBlock}
-    ${codeNote}
-    <p><strong>Next:</strong> open TeamAi signed in with Firebase. The durable UID ↔ installation map is written only by an authenticated <code>POST</code> (not by this page).</p>
-    <a class="button" href="${HERO_HOME}">Return to TeamAi</a>
-    <p class="meta">Not a Hero live bind · no production-release claim for 029 · webhook may stay <code>unbound</code> until POST bind.</p>
-  </main>
-</body>
-</html>`;
-
-  return new Response(html, {
-    status: 200,
+  return new Response(null, {
+    status: 303,
     headers: {
-      "content-type": "text/html; charset=utf-8",
+      "location": target.toString(),
       "cache-control": "no-store",
     },
   });
@@ -165,12 +123,10 @@ Deno.serve(async (req) => {
     const installationId =
       url.searchParams.get("installation_id") || url.searchParams.get("installationId");
     const setupAction = url.searchParams.get("setup_action");
-    const code = url.searchParams.get("code");
     const error = url.searchParams.get("error") || url.searchParams.get("error_description");
-    return htmlCallbackPage({
+    return redirectToTeamAi({
       installationId: installationId?.trim() || null,
       setupAction: setupAction?.trim() || null,
-      hasCode: Boolean(code?.trim()),
       error: error?.trim() || null,
     });
   }
