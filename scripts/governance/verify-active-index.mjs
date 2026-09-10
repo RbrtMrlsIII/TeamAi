@@ -75,7 +75,6 @@ function assertClaims(claims, markers) {
       if (file !== 'MASTERPLAN.md' && !claim.indexes.includes(file)) stop('claim ' + marker.id + ' is undeclared in ' + file);
     }
   }
-
   const masterplan = read('MASTERPLAN.md');
   if (!masterplan.includes('**Status:** ENDORSED for bounded recorded scope; residual evidence boundaries remain explicit.')) stop('MASTERPLAN endorsement state is stale');
   if (!masterplan.includes('Vision V3.3 / SP-07 next')) stop('MASTERPLAN spatial frontier is stale');
@@ -94,13 +93,20 @@ function assertEvidence(claims) {
     ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'POST'],
     ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'Not a Hero live bind'],
   ];
-  for (const [id, file, needle] of checks) if (!read(file).includes(needle)) stop('claim ' + id + ' evidence check failed in ' + file);
+  for (const [id, file, needle] of checks) if (!read(file).includes(needle)) stop('claim ' + id + ' evidence check failed in ' + file + ': missing ' + needle);
 }
 
 function changedRows(base) {
   if (!base) stop('base commit is required');
   const output = git(['diff', '--name-status', base + '...HEAD']);
   return output ? output.split('\n').filter(Boolean).map((row) => row.split('\t')) : [];
+}
+
+function currentBase() {
+  if (process.env.GITHUB_EVENT_NAME === 'pull_request' || process.env.GITHUB_EVENT_NAME === 'pull_request_target') {
+    try { return git(['rev-parse', 'origin/main']); } catch { return null; }
+  }
+  return process.env.BASE_SHA || process.env.GITHUB_BASE_SHA || null;
 }
 
 function assertHistorical(rows) {
@@ -143,15 +149,16 @@ function assertFresh(rows) {
 }
 
 const mode = process.argv.find((a) => a.startsWith('--mode='))?.slice(7) || 'all';
-const base = process.argv.find((a) => a.startsWith('--base='))?.slice(7) || process.env.BASE_SHA || process.env.GITHUB_BASE_SHA;
 
 try {
+  if (!exists(MANIFEST)) stop('execution-state.yml is missing');
   const manifest = read(MANIFEST);
   const claims = parseClaims(manifest);
   assertManifest(manifest);
   const markers = markerMap();
   assertClaims(claims, markers);
   if (mode === 'all' || mode === 'governance') {
+    const base = currentBase();
     const rows = changedRows(base);
     assertHistorical(rows);
     assertCoupling(rows, manifest);
