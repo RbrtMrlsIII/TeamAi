@@ -5,7 +5,7 @@
 **Authority:** Product Law remains higher than this dictionary  
 **Date:** 2026-09-08
 
-Jump to: [Command Deck & fields](#command-deck--fields-f0f7) · [3D Hero](#3d-hero--spatial-parts) · [Seats & connection](#seats--provider-connection) · [Backend](#backend--authority) · [Chronology](./CHRONOLOGY.md)
+Jump to: [Command Deck & fields](#command-deck--fields-f0f7) · [3D Hero](#3d-hero--spatial-parts) · [Seats & connection](#seats--provider-connection) · [Backend](#backend--authority) · [Current 029 spatial recovery](#current-029-spatial-recovery) · [Chronology](./CHRONOLOGY.md)
 
 ---
 
@@ -87,7 +87,7 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 
 **Flow:** Firebase login → draft provider key → **Save** (Edge encrypts) → **Test Connection** (server) → Activate (backend).
 
-**See also:** `docs/USER_MANUAL_DEPLOY_AND_SEATS.md`, `docs/TEAM-EXPERIENCE-029_SEAT_PROVIDER_KEY_BIND.md`, `docs/TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md`
+**See also:** `docs/USER_MANUAL_DEPLOYMENT.md`, `docs/TEAM-EXPERIENCE-029_SEAT_PROVIDER_KEY_BIND.md`, `docs/TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md`
 
 ---
 
@@ -108,17 +108,40 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 
 ---
 
+## Current 029 spatial recovery
+
+The **3D Hero is a presentation surface, not a backend authority**. Its tree, camera, interaction and visual state may be developed and verified before backend runtime integration, provided the slice remains presentation-only. Backend work becomes relevant when a separately authorized contract requires a trusted/durable capability; it does not retroactively make a 3D mesh authoritative.
+
+For current 029 spatial work, use these entry points in this order:
+
+1. `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` — executable pre-backend / pre-coloring gates and stop conditions.
+2. `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` — current Cam↔V chronology and frontier.
+3. `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md` — interaction/topology law.
+4. `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` — living spatial numbers.
+5. `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` — continuity pointer, not a second camera chronology.
+6. `docs/VISION.md` — current experience intent.
+
+Historical Cam/P-slice checkpoints preserve provenance. **Their `Next` section must not be treated as a current work queue.** Current work must be selected from the reconciled ledger and spatial execution basis.
+
+Spatial completion order is:
+
+`structure → camera → interaction → readability → browser evidence → spatial completion`
+
+Only after that pass is accepted should 3D color/material art direction become the next visual layer. Backend runtime and commerce/auth integration remain separately gated by the Masterplan and must not be inferred from Hero presentation progress.
+
+---
+
 ## Complex tabs → dictionary anchors
 
 | UI / tab | Dictionary section |
-|----------|--------------------|
+|----------|---------------------|
 | Seats plate | [Seats & provider connection](#seats--provider-connection) |
 | Test Connection | [Seats & provider connection](#seats--provider-connection) |
 | Provider API key panel | [Seats & provider connection](#seats--provider-connection) |
 | Hero / spatial canvas | [3D Hero](#3d-hero--spatial-parts) |
 | Inspection / camera labels | [Inspection spine](#inspection-spine-chronological-visual-stages) |
 | Status strip / health dial | [F4 Status](#command-deck--fields-f0f7) |
-| Deploy / secrets | [USER_MANUAL_DEPLOY_AND_SEATS](./USER_MANUAL_DEPLOY_AND_SEATS.md) |
+| Deploy / secrets | [USER_MANUAL_DEPLOYMENT](./USER_MANUAL_DEPLOYMENT.md) |
 | “What did we decide when?” | [CHRONOLOGY](./CHRONOLOGY.md) |
 
 ---
@@ -126,8 +149,10 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 ## Related entry points
 
 | Doc | Role |
-|-----|------|
+|------|------|
 | [CHRONOLOGY.md](./CHRONOLOGY.md) | Ordered thoughts / gates / slices |
-| [USER_MANUAL_DEPLOY_AND_SEATS.md](./USER_MANUAL_DEPLOY_AND_SEATS.md) | Deploy & seat assignment |
+| [USER_MANUAL_DEPLOYMENT.md](./USER_MANUAL_DEPLOYMENT.md) | Canonical deployment guide |
 | [AGENT_SLICE_EXECUTION.md](./AGENT_SLICE_EXECUTION.md) | How agents close a slice |
+| `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` | Current pre-backend / pre-coloring spatial execution gates |
+| `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` | Current camera/experience recovery ledger |
 | `PRODUCT_LAW.md` | Highest product authority |
