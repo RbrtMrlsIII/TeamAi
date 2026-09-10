@@ -4,10 +4,18 @@
  * Presentation only · no 029-released claim.
  */
 
-/** Product rule: free zoom remains available when a hierarchy parent is open. */
+/**
+ * V0.4 / Vision — free orbit + scroll about **current subject** while a tree is open.
+ * Owner: this module + applyNavCamera / wheel / pointer in hero-flex (via apply-cam2).
+ * Product rule: free zoom remains available when a hierarchy parent is open.
+ * Look-at stays on subject via poseAboutTreeCenter (and Cam-6 seatDock when forced).
+ */
 export function navAllowedOnOpenTree() {
   return true;
 }
+
+/** Explicit product flag for tests / docs (must stay true unless Product Law changes). */
+export const V04_FREE_NAV_ON_OPEN_TREE = true;
 
 /**
  * Pick the camera dock that represents the current tree (from Cam-2 resolve).
