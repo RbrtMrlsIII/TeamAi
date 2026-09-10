@@ -89,8 +89,8 @@ function assertEvidence(claims) {
     ['SPATIAL-V3.3', 'docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md', 'NEXT AUTHORIZED SPATIAL COMMAND'],
     ['BACKEND-001-ENDORSED', 'handover/TEAM-BACKEND-001_2026-09-07_PayPal-Aggregate-ReRead.md', 'ENDORSED'],
     ['BACKEND-GATE4', 'docs/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md', 'PARKED'],
-    ['BACKEND-PROVIDER', 'docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md', 'stub-edge-runtime'],
-    ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'POST'],
+    ['BACKEND-PROVIDER', 'docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md', 'stub ProviderRuntime'],
+    ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'Firebase ID token required'],
     ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'Not a Hero live bind'],
   ];
   for (const [id, file, needle] of checks) if (!read(file).includes(needle)) stop('claim ' + id + ' evidence check failed in ' + file + ': missing ' + needle);
