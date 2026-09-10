@@ -5,7 +5,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **V3.1** entrance IA **merged** (#230). **V3.2** brand hero image **in progress**. **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234).
+**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **V3.1** entrance IA **merged** (#230). **V3.2** brand hero image **merged** (#235). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`.
 
 **Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **next** (parallel; not Hero live bind).
 
@@ -36,7 +36,10 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | DOM map | Action map, lock-only retirement, soft-hide | **Merged** (#196–#199) |
 | Vision V0–V2 | 45° baseline, subject lock, branch walk, machine chrome | **Merged** (#217–#229) |
 | Vision V3.1 | Entrance IA / layout contract | **Merged** (#230) |
+| Vision V3.2 | Brand hero image | **Merged** (#235) |
 | Spatial basis | S0–S8 gates + SP-01–SP-07 sequence | **Merged** (#234) |
+| SP-02–SP-06 | Precedence, Cam-4 proof, apply integrity, tree matrix, R1/R2 readiness | **Merged** (#236–#242) |
+| SP-07 | Current frontier decision | **This slice** |
 | Conn-1 | GitHub App least privilege | **Merged** (#200) |
 | Conn-2 | Webhook + UID map | **Merged** (#202) |
 
@@ -64,12 +67,12 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 | **Cam-1**–**Cam-4** | Hierarchy camera **modules** | Follow tree, free zoom, edge-swipe | **Merged** — do not restart |
 | **Vision V0–V2** | Camera truth + chrome feel | Adjust Cam owners toward VISION | **Merged** |
 | **Vision V3.1** | Entrance IA / layout | Docs + markers on existing shell | **Merged** (#230) |
-| **Vision V3.2** | Brand hero image | Additive asset in entrance-brand | **This PR** |
-| **Vision V3.3+** | Atmosphere, get-started | Adjust wiring | After V3.2 |
+| **Vision V3.2** | Brand hero image | Additive asset in entrance-brand | **Merged** (#235) |
+| **Vision V3.3** | Gentle Hero atmosphere | Adjust existing Hero as Layer A backdrop | **Next authorized** |
+| **Vision V3.4+** | Get-started handoff, far links | Adjust wiring | After V3.3 |
 | **Conn-1** | GitHub App least privilege | v1 grant/never matrix + skill; form matches Product Law | **Merged** (#200) |
 | **Conn-2** | Edge webhook + UID map | HMAC Edge + Firestore `firebaseUid ↔ installation_id`; still not Hero live bind | **Merged** (#202) |
 | **Conn-3** | OAuth mint first bind | Trusted Edge after install; not Hero live bind | **Next** (parallel) |
-| **#232 residual** | Precedence matrix, Cam-4 browser depth, apply integrity | Docs/tests after Cam↔V map | Parallel with V3.x |
 | **M** | Background assets | One canvas only | No paid assets |
 | **Owner** | Visual endorsement | When environment + outer UI fair | after follow |
 
@@ -85,6 +88,7 @@ When a face or plate **covers the whole working area** (e.g. auth login/signup, 
 - **Ledger:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` — agents must not follow stale “Cam-2 next” text in the Cam-1 contract.
 - **Skill:** `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
 - **Spatial basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
+- **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`
 - **New emphasis:** full-area content → zoom/dock until contents fit (see camera-fill rule).
 
 ## Connection (Conn-1 / Conn-2 / Conn-3)
