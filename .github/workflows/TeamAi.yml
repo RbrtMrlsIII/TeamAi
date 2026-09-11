@@ -3,14 +3,14 @@ name: TeamAi
 on:
   pull_request:
   push:
-    branches: [main, fix/029-local-hero-runtime]
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   recovery-integrity:
@@ -70,63 +70,3 @@ jobs:
           path: TeamAi-Full-Project.zip
           if-no-files-found: error
           retention-days: 30
-
-  canonicalize-hero-flex:
-    name: Canonicalize committed Hero flex
-    if: ${{ (github.event_name == 'pull_request' || github.event_name == 'push') && (github.head_ref == 'fix/029-local-hero-runtime' || github.ref_name == 'fix/029-local-hero-runtime') && !contains(github.event.head_commit.message, 'chore(029): canonical Hero flex') }}
-    needs: project-tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout branch tip
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
-          fetch-depth: 1
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Assemble and validate committed Hero flex
-        run: |
-          npm run build
-          node scripts/apply-cam2-tree-follow-flex.mjs
-          node --check public/hero-flex.js
-          node - <<'NODE'
-          const fs = require('node:fs');
-          const src = fs.readFileSync('public/hero-flex.js', 'utf8');
-          const forbidden = [
-            'raw.githubusercontent.com',
-            'MAIN_URL',
-            'new Blob',
-            'URL.createObjectURL',
-            'await fetch(',
-            'function patchSource',
-          ];
-          const found = forbidden.filter((marker) => src.includes(marker));
-          if (found.length) throw new Error(`Committed Hero flex contains forbidden loader markers: ${found.join(', ')}`);
-          if (!src.includes('function cameras()')) throw new Error('Committed Hero flex is not fully assembled');
-          if (!src.includes("from './hero-cam4-edge-swipe.js'")) throw new Error('Committed Hero flex is missing Cam-4 import');
-          if (!src.includes('edgeDriftDelta')) throw new Error('Committed Hero flex is missing edge-drift behavior');
-          if (!src.includes('inverseSwipeDelta')) throw new Error('Committed Hero flex is missing proportional swipe wiring');
-          console.log(`Canonical Hero flex verified: ${src.length} bytes`);
-          NODE
-
-      - name: Commit canonical artifact and retire bridge workflow
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm -f .github/workflows/canonicalize-hero-flex.yml
-          target_ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          git add public/hero-flex.js .github/workflows/canonicalize-hero-flex.yml
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "chore(029): canonical Hero flex"
-          git push origin "HEAD:${target_ref}"
