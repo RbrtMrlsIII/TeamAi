@@ -74,4 +74,4 @@ Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy
 
 Do not select an implementation merely because an older slice is green or an old branch contains unfinished code. Read the current C0–C10 rebaseline first. When a requested change conflicts with validation, apply Issue #260: warn, account for cost/risk/output, update the contract, update dependent validation, verify, and preserve or archive the superseded baseline.
 
-<!-- residual: #274 C0-C10 experience rebaseline, historical anchors preserved 2026-09-11 -->
+<!-- residual: #274 C0-C10 experience rebaseline; final index synchronization after experience-rebaseline route/camera/test changes 2026-09-11 -->
