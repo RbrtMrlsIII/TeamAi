@@ -331,3 +331,6 @@ Canonical human-facing experience intent for public entrance, ~45° machine base
 - `docs/VISION.md`
 
 It sits **below** Product Law and this Masterplan: it does not create a new law family, does not claim 029 release, and does not authorize browser-side durable domain writes. Camera and hierarchy contracts remain the technical detail under that intent.
+
+
+<!-- teamai residual: #266 CHR-R3 + pr-squash-merge + security_inquiry Q-001–Q-005 (2026-09-11). no 029-released claim. -->

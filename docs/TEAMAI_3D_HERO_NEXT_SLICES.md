@@ -7,58 +7,43 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **Vision V3.1–V3.5** entrance ladder **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`. **#258 residual (PR #259):** **ENT-T1** entrance web **gone** on machine; **CAM-R-RETIRE**; ENT-R2/R3 + CHR-R1/R2; contract `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`. Open: ENT-T3–T5; CAM-R2/R3 after CAM-R1. **no 029-released claim**.
+**Vision #214 V0–V2** **merged** (#217–#229). **Vision V3.1–V3.5** **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** **closed**. **#258 residual / PR #259 MERGED**. **CAM-R1–R3** **merged** (#262–#264). **ENT-R4** **merged** (#265). **CHR-R3** in PR #266. **no 029-released claim**.
 
-**Governance #260** merged + **CAM-R1** subject-lock (`SEAT_CLOSE`; not TURN_FOLLOW). **no 029-released claim**.
+**Governance #260** + archive/superseded. **Security inquiry:** `docs/security_inquiry.md` (Q-001 burst API load).
 
-**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented; live deployment/browser proof pending** (parallel; not Hero live bind).
+**Conn-1** **merged** (#200). **Conn-2** **merged** (#202). **Conn-3** browser proof pending.
 
 ## Completed ladder (structure + skills)
 
 | Slice | Topic | Status |
 |-------|------|--------|
 | A | R1/R2 hit targets + focus + wheel/touch nav | **Merged** (#150) |
-| B | `RING_R1_SCALE` / `RING_R2_SCALE` in §9 + runtime | **Merged** (#151) |
-| C | Camera orbit polish — **NAVIGATE**-only; dock wins on inspect | **Merged** (#152) |
-| D | SEAT_TOOLKIT presentation stubs (optional seat-scoped) | **Merged** (#153) |
-| E | WORKSPACE_ZIPSKILLS face (optional workspace equip) | **Merged** (#155) |
-| G | #89 reduced-motion lighting contract | **Merged** (#156) |
+| B | `RING_R1_SCALE` / `RING_R2_SCALE` | **Merged** (#151) |
+| C | Camera orbit polish — **NAVIGATE**-only | **Merged** (#152) |
+| D | SEAT_TOOLKIT presentation stubs | **Merged** (#153) |
+| E | WORKSPACE_ZIPSKILLS face | **Merged** (#155) |
+| G | #89 reduced-motion lighting | **Merged** (#156) |
 | H | Legacy `MECHANISM_ZIPSKILLS` reconcile | **Merged** (#157) |
-| I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160); issue **closed** |
-| J | #88 material depth evidence + HandOver | **Merged** (#161) |
-| Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS (Zip ≠ commerce) | **Merged** (#163) |
+| I.1–I.3 | #95 cross-root skill wiring | **Merged** (#158–#160) |
+| J | #88 material depth evidence | **Merged** (#161) |
+| Taxonomy | SEAT_SKILLS / WORKSPACE_SKILLS | **Merged** (#163) |
 | N.1 | First skill bodies | **Merged** (#164) |
 | N.2 | Skill-body cascade | **Merged** (#165) |
 | K | #96–#98 lighting close-out | **Merged** (#167) |
-| L | Satisfied-by map for #96–#98 | See `docs/EVIDENCE_TEAM-EXPERIENCE-029_VERIFICATION_96_98_SATISFIED_BY.md` |
+| L | Satisfied-by map for #96–#98 | See evidence map |
 
 SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
-
-## CAM-R1 subject-lock
-
-Selected-seat subject-lock via `SEAT_CLOSE` + Cam-5/6 docks. Apply: `scripts/apply-cam-r1-subject-lock.mjs`. Contract: `docs/TEAMAI_258_CAM_R1_SUBJECT_LOCK.md`. **No TURN_FOLLOW revival.**
 
 ## Product rules that stay true
 
 - Presentation only. No durable grant from canvas.
 - No 029-released claim until backend gate + endorsement.
-- One hierarchy node at a time (depth-first).
-- Skills packages are not authority / entitlement (LAW 109).
-- GitHub Actions is not the Web AI scheduler.
-- Durable domain remains Firestore; Supabase Postgres is not TeamAi domain.
 - **NAVIGATE** free orbit/zoom; dock wins on inspect.
 - **WORKSPACE_ZIPSKILLS** is workspace-scoped, not seat-scoped.
 
-## Connection (Conn-1 / Conn-2 / Conn-3)
-
-- GitHub App is the first real Connection behind `SEAT_CONNECTION`.
-- Conn-3: trusted Edge after install; **not Hero live bind** until browser proof.
-
 ## Camera recovery
 
-- **Ledger:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`
-- **Skill:** `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
-- **Retired:** `HERO_LOW_ORBIT` and `TURN_FOLLOW` → `docs/archive/superseded/`
-- **Replacement:** `HERO_WIDE` + selected-seat subject-lock (CAM-R1)
+- Retired: `HERO_LOW_ORBIT`, `TURN_FOLLOW` → archive/superseded
+- Replacement: `HERO_WIDE` + selected-seat subject-lock
 
-<!-- residual-cam-r1 index freshness 2026-09-11: not-required + CAM-R1 -->
+<!-- residual-chr-r3 index freshness 2026-09-11T07:52Z: settings beside machine-nav + squash-merge skill + security_inquiry -->
