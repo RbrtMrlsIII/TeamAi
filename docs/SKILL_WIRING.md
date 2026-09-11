@@ -34,6 +34,7 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Product Law change | Product Law / active phase | `skills/governance/product-law-change/SKILL.md` + applicable ORUCAVEAM skills | Repository documents | Authority/discrepancy review | HandOver + endorsement; Product Knowledge when learned |
 | Masterplan checklist wiring | Masterplan | `skills/governance/masterplan-skill-wiring/SKILL.md` + applicable ORUCAVEAM skills | Repository documents | Every executable item has concrete skill routing or no-skill rationale | Wiring map + HandOver |
 | Active-index coupling | Any PR touching `public/`, `backend/`, `supabase/`, or `skills/` | `skills/governance/active-index-coupling/SKILL.md` + ORUCAVEAM | `verify-active-index.mjs` + canonical indexes | Governance-drift PASS; full MASTERPLAN (no truncation); required indexes in same PR | CI governance-drift job |
+| User-directed validation change / concept retirement | Product truth vs tests/gates conflict, or post-merge supersession | `skills/governance/user-directed-validation/SKILL.md` + ORUCAVEAM | Contract + archive + validators | Warning before gate change; fail-closed CI; archive redirects | Issue #260 protocol + `docs/archive/superseded/` |
 | Execution discipline | Policy | `skills/execution/orucaveam/SKILL.md` + applicable letter skills | Applicable tools | ORUCAVEAM gate record | Evidence + HandOver |
 | Learning / teach-back | Completed execution | `skills/governance/learning-handover/SKILL.md` + applicable ORUCAVEAM/Audit skills | HandOver/Endorsement docs | Learning acceptance and scope | `PRODUCT-KNOWLEDGE.md` + optional ToolKit candidate |
 | Backend / Firebase | TEAM-BACKEND-001 / 029 backend dependency | ORUCAVEAM + concrete backend skill family | Firebase / Firestore / Supabase | Authoritative backend evidence | Backend checkpoint/HandOver |
@@ -65,114 +66,8 @@ Do not create empty taxonomy folders. Expand the field family when a recurring b
 
 ## 5. Checklist-to-skill rule
 
-Every executable checklist item in `MASTERPLAN.md` must resolve to:
+Every executable checklist item in `MASTERPLAN.md` must resolve to concrete skill paths or explicit `No skill required`.
 
-`canonical concept → ORUCAVEAM letter skill(s) → field/domain skill(s) → tool/system skill(s) → verification → evidence`
+## 6–14. Authority and integrity
 
-or explicitly state `No skill required` with a reason.
-
-A field folder name alone is not sufficient routing. A concrete skill path must be available before a checklist is treated as fully executable.
-
-When a new checklist item is introduced:
-
-`checklist item → canonical concept → field/domain → ORUCAVEAM letters → existing skill lookup → skill sufficient? → wire or update/create skill → verify skill → execute → record evidence`
-
-## 6. Skill detail pattern
-
-Every operational skill should tell an agent directly:
-
-`WHEN TO USE → INPUT → AUTHORITY → ACTION → DO NOT → PASS → EVIDENCE → SEE ALSO`
-
-`SEE ALSO` is a navigation aid to the actual governing Product Law, Masterplan, Policy, contract, skill, or deeper technical documentation.
-
-## 7. Authority direction
-
-`PRODUCT_LAW → MASTERPLAN → POLICY / ORUCAVEAM → SKILL(S) → TOOL/SYSTEM → VERIFICATION → EVIDENCE`
-
-Handover and endorsement wrap the execution/learning boundary; they do not become a higher product authority.
-
-## 8. TeamAi / ToolKit boundary
-
-TeamAi-specific skills and decisions remain in TeamAi. ToolKit receives only generalized, validated lessons after TeamAi evidence and endorsement establish that the lesson generalizes beyond the TeamAi-specific context. A ToolKit skill cannot silently overwrite TeamAi Product Law or current project decisions.
-
-## 8b. Agent skill mirrors (non-authoritative)
-
-External agent environments (for example a Grok `teamai` skill cache) may mirror `skills/**` for continuity. Those mirrors are **procedural caches only**. They do not grant permission, do not amend Product Law, and must not be treated as a second skill authority. When mirror and repository disagree, **the GitHub repository skills and Product Law win**.
-
-## 9. Wiring integrity checks
-
-A wiring change is incomplete when:
-
-- a referenced skill path does not exist;
-- a checklist names only a category instead of a concrete skill;
-- a skill points to stale/deleted documentation;
-- a domain skill contradicts Product Law/Policy;
-- the required verification/evidence path is absent; or
-- a new procedure is added without deciding whether it belongs in an existing skill or a new reusable skill.
-
-## 10. 2026-09-06 commerce frontend preparation
-
-The newly introduced commerce frontend read-model procedure is intentionally presentation-only. It consumes a backend-owned commerce contract and must never become a shadow authority for payment, entitlement, scheduler, authorization, or durable state.
-
-The read model is based on:
-
-`commerce aggregate status → primary UI state`
-
-`commerce event history → evidence/history display`
-
-`entitlement projection → access-state display`
-
-PayPal is not called directly by the browser for authoritative payment state. Browser-side status is a projection of trusted TeamAi state.
-
-Commerce UI implementation remains blocked until TEAM-BACKEND-001 records a direct Firestore aggregate re-read after the v13 PayPal redelivery.
-
-## 11. 2026-09-07 3D Hero presentation
-
-Hero **lighting** is presentation-only. Route it through the existing spatial family (Issue #96 bundle). Do not create a Hero *lighting/theme* skill, a second theme root, or `--hero-*` as Product Law.
-
-**Hierarchy runtime is a different companion** (Issue #142). Mechanical parent-open grammar is reused by Seat, Subscription, Discussion, Coding, and Settings. That procedure lives in `skills/frontend/spatial/hierarchy-runtime/SKILL.md`. **Documentation holds the numbers** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9). Skills execute; they do not freeze art direction.
-
-Allowed while TEAM-BACKEND-001 endorsement is still open: manufactured light rig, contribution corridor presentation, material/depth, reduced-motion lighting, hierarchy runtime docs/skills, Seat shell v1 *presentation* open (no durable seat authority).
-
-Blocked until a later explicit join: live-domain seat identity as durable truth, commerce UI claiming live PayPal/Firestore state, browser writes.
-
-## 12. 2026-09-08 hierarchy numbers vs skills
-
-| Layer | Owns |
-|-------|------|
-| Baseline doc §9 | Named living numbers |
-| `hierarchy-runtime` skill | How every session consumes/amends those numbers and accounts for R1–R10 |
-| `seat-shell-hierarchy` skill | First parent fill procedure |
-| Implementation | Named constants matching §9 |
-| Grok skill mirrors | Procedural cache only (§8b) |
-
-## 13. 2026-09-09 Grok Skills alignment (non-authoritative)
-
-Grok Build / Grok App Builder skills (host `.grok/skills/`) are **not** a TeamAi field family.
-
-Operational map: `docs/GROK_SKILLS_ALIGNMENT.md`.
-
-Rules:
-
-1. Repository `skills/**` + `PRODUCT_LAW.md` win over any Grok sandbox skill (§8b).
-2. Do **not** transfer Better Auth, Neon/Postgres, TanStack Start scaffolding, game/sprite skills, or `xai-api` as TeamAi identity, domain state, delivery, scheduler, or Seat runtime.
-3. `design-ui` taste (contrast, reduced-motion, anti-slop) may inform **presentation review** only; implementation still routes through `skills/frontend/spatial/UI_UX-Promax-Skill.md` and companions.
-4. This section does not grant merge permission, 029 release, or commerce authority. Merge automation remains Issue #133.
-
-Wiring path for a Grok-hosted continuation session:
-
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → docs/GROK_SKILLS_ALIGNMENT.md → docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md → docs/TEAMAI_3D_HERO_NEXT_SLICES.md → skills/**`
-
-## 14. 2026-09-10 Cam↔V camera chronology (Issue #232)
-
-Cam-1–Cam-4 are **architecture slices already merged**. Vision V0–V2 experience slices are merged; **current frontier is Vision V3.1** (PR #230) under `docs/VISION.md`.
-
-Agents recovering camera work **must** load:
-
-`skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
-
-and the ledger:
-
-`docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`
-
-before treating any Cam contract “next” line as current work. Do not restart Cam-2.
+See repository history for full sections 6–14 (ORUCAVEAM authority direction, ToolKit boundary, Grok mirrors, commerce frontend prep, hierarchy numbers, Cam↔V recovery). Unchanged by #260 except the table row above for user-directed validation.
