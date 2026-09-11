@@ -62,24 +62,36 @@ When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidenc
 
 ---
 
-## 4. 3D Hero path (baseline + gated next)
+## 4. 3D Hero path (baseline + historical Vision lineage)
 
 | Order | Thought | Status |
 |-------|---------|--------|
 | H1 | Hero is Living Web AI Shared Workspace **presentation** | Baseline captured |
 | H2 | Mixed authored (`workspaceRing`, `seatShell`) + procedural | Baseline |
 | H3 | 1–8 seats scale one topology | Baseline |
-| H4 | Semantic cameras + inspection spine | Baseline |
-| H5 | Turn lifecycle is visual only | Baseline |
-| H6 | Light-skeuomorphic first; dark glass later | Planned (#83+) |
-| H7 | Theme-lighting adapter pure/deterministic | Gated issues #84–#98 |
-| H8 | Material refinement, task/evidence anchors | #93 open — PR #127 **conflicts with main after #92** |
-| H9 | Seat Identity Inspection | Spec held behind Masterplan gate |
-| H10 | Authorization / scope presentation (#92) | **IMPLEMENTED** on main PR #126 (`66b6c19`). Presentation-only. Not live auth authority. |
+| H4 | Semantic cameras + inspection spine | Historical Vision baseline |
+| H5 | Turn lifecycle is visual only | Historical Vision baseline |
+| H6 | Light-skeuomorphic first; dark glass later | Historical baseline / planned refinements |
+| H7 | Theme-lighting adapter pure/deterministic | Historical/gated work |
+| H8 | Material refinement, task/evidence anchors | Historical baseline |
+| H9 | Seat Identity Inspection | Historical/spec baseline |
+| H10 | Authorization / scope presentation | Implemented presentation-only; not live auth authority |
 
-**Next complex 3D work** should stay **presentation-only** and prefer **one bounded issue**.
+Recent V0–V3/V3.5, #259, CAM-R1–R3, ENT-R4 and CHR-R3 work remains implementation lineage and evidence. It is **not** by itself the final product-experience acceptance state.
 
-Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md`
+### H11 — 029 Product Experience Rebaseline
+
+The current owner-directed rebaseline is canonical planning data for the next experience shape:
+
+`docs/TEAMAI_029_EXPERIENCE_REBASELINE.md`
+
+The product shape moves from a one-shell entrance model toward:
+
+`classic website entrance → explicit 3D-world entry → authenticated/authorized full workspace`
+
+The rebaseline governs C0–C10: product-shape endorsement, canonical reconciliation, classic entrance, explicit 3D entry, coherent navigation/settings, camera-dock rationalization, world-baseline zoom-out, proportional orbit, server authorization, desktop/phone acceptance, then ProMax visual refinement.
+
+The owner-visible acceptance gap is historical evidence from the recent Vision era: mobile/desktop composition, scattered/blurred controls, camera density, zoom ceiling, inverse orbit, and undiscoverable Settings. These are not resolved merely by prior green technical slices.
 
 ---
 
@@ -91,19 +103,18 @@ Checkpoint: `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-0
 | D2 | User manual for deploy + seats | `docs/USER_MANUAL_DEPLOYMENT.md` |
 | D3 | Dictionary for complex tabs / Hero parts | `docs/DICTIONARY.md` |
 | D4 | This chronology | `docs/CHRONOLOGY.md` |
+| D5 | Product experience rebaseline | `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md` |
 
 ---
 
-## 6. Suggested next execution (after this doc)
+## 6. Current execution priority
 
-Pick **one**:
+1. **Required:** obtain/record C0 product-shape endorsement before shape-changing implementation.
+2. **Then:** reconcile active maps and indexes under Issue #260 before implementing C2–C8.
+3. **Then:** execute one observable experience outcome at a time, with desktop + phone evidence where visual behavior changes.
+4. **Only after C9 acceptance:** begin C10 ProMax refinement.
 
-1. **Required next:** rebase/resolve PR #127 onto main so #93 keeps both `setAuthorizationPresentation` (#92) and `setWorkspaceTaskPresentation` (#93). Then merge if CI green.
-2. **3D (bounded):** theme-lighting adapter **contract tests only** (issue #98 / PR #125) — no full lighting rewrite.
-3. **3D (visual):** single material/depth pass on `workspaceRing` / `seatShell` under light mode (#88) — still presentation-only.
-4. **Ops:** deploy Edge functions + secrets when ready for live seats (not required for stub/CI). Leave existing deploy docs; user-manual setups only.
-
-Vercel remains cut off. Do not create a second deployment file.
+Conn-3 browser/live proof and future security inquiries remain independent tracks. Vercel remains cut off. ToolKit/Echo learning candidates come only from validated, generalized lessons.
 
 ---
 
@@ -112,4 +123,6 @@ Vercel remains cut off. Do not create a second deployment file.
 - [Dictionary](./DICTIONARY.md)
 - [Deploy manual](./USER_MANUAL_DEPLOYMENT.md)
 - [Hero baseline](./CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md)
+- [Experience rebaseline](./TEAMAI_029_EXPERIENCE_REBASELINE.md)
+- [Experience rebase checklist](./TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST.md)
 - [Seat secret & free smoke](./TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md)
