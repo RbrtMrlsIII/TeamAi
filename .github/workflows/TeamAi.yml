@@ -73,7 +73,7 @@ jobs:
 
   canonicalize-hero-flex:
     name: Canonicalize committed Hero flex
-    if: ${{ github.event_name == 'push' && github.ref_name == 'fix/029-local-hero-runtime' && !contains(github.event.head_commit.message, 'chore(029): canonical Hero flex') }}
+    if: ${{ (github.event_name == 'pull_request' || github.event_name == 'push') && (github.head_ref == 'fix/029-local-hero-runtime' || github.ref_name == 'fix/029-local-hero-runtime') && !contains(github.event.head_commit.message, 'chore(029): canonical Hero flex') }}
     needs: project-tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -81,7 +81,7 @@ jobs:
       - name: Checkout branch tip
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
           fetch-depth: 1
 
       - name: Setup Node
@@ -125,7 +125,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           rm -f .github/workflows/canonicalize-hero-flex.yml
+          target_ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git add public/hero-flex.js .github/workflows/canonicalize-hero-flex.yml
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "chore(029): canonical Hero flex"
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin "HEAD:${target_ref}"
