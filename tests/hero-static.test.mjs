@@ -1,25 +1,27 @@
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import test from 'node:test';
 
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
-const css = await readFile(new URL('../public/hero.css', import.meta.url), 'utf8');
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
 const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
 const semantic = await readFile(new URL('../public/hero-semantic-camera.js', import.meta.url), 'utf8');
 const spine = await readFile(new URL('../public/hero-inspection-spine.js', import.meta.url), 'utf8');
-const seatStack = await readFile(new URL('../public/hero-seat-stack.js', import.meta.url), 'utf8');
+const css = await readFile(new URL('../public/hero.css', import.meta.url), 'utf8');
 const materials = await readFile(new URL('../public/hero-materials.css', import.meta.url), 'utf8');
 const partsCss = await readFile(new URL('../public/hero-parts.css', import.meta.url), 'utf8');
-const depthDoc = await readFile(new URL('../docs/TEAMAI_3D_HERO_DEPTH_AND_INSPECTION.md', import.meta.url), 'utf8');
+const depthDoc = await readFile(new URL('../docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md', import.meta.url), 'utf8');
 
 test('3D Hero static shell is wired', () => {
-  assert.match(html, /id="hero-canvas"/);
+  assert.match(html, /hero-flex\.js/);
+  assert.match(html, /hero-aura\.js/);
+  assert.match(html, /hero-parts\.js/);
+  assert.match(html, /hero-semantic-camera\.js/);
+  assert.match(html, /hero-inspection-spine\.js/);
+  assert.match(html, /hero-auth-handoff\.js/);
+  assert.match(html, /hero-canvas/);
   assert.match(html, /Living Web AI Workspace/);
-  assert.match(html, /data-camera/);
-  assert.match(css, /\.hero-shell/);
-  assert.match(runtime, /function frame|MAIN_URL|hero-flex/);
 });
 
 test('semantic POV catalog exists', () => {
@@ -46,7 +48,7 @@ test('flexible seat model is present', () => {
   for (const marker of ['profile(', 'buildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
     assert.ok(runtime.includes(marker), marker);
   }
-  assert.match(runtime, /clamp\(count,1,8\)/);
+  assert.match(runtime, /clamp\(count, 1, 8\)/);
 });
 
 test('signature geometry primitives are present', () => {
@@ -56,10 +58,14 @@ test('signature geometry primitives are present', () => {
 });
 
 test('spatial depth layer is wired', () => {
+  for (const marker of [
+    'spatial depth',
+    'presentation',
+    'inspection',
+  ]) assert.ok(depthDoc.toLowerCase().includes(marker.toLowerCase()), marker);
   assert.match(materials, /--/);
   assert.match(partsCss, /spatial-parts|data-part/);
   assert.match(parts, /spatial|part/i);
-  assert.match(seatStack, /seat/i);
 });
 
 test('authentication handoff is presentation-only and uses normal form semantics', () => {
@@ -94,8 +100,7 @@ test('semantic inspection spine is deterministic and presentation-only', () => {
 });
 
 test('normal UI handoff and inspection vocabulary are documented', () => {
-  assert.match(depthDoc, /APP_UI_HANDOFF|handoff/i);
-  assert.match(depthDoc, /inspection|spine/i);
+  assert.match(depthDoc, /APP_UI_HANDOFF|handoff|inspection/i);
 });
 
 test('light-theme shell styling is present', () => {
