@@ -30,7 +30,7 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | N.1 | First skill bodies | **Merged** (#164) |
 | N.2 | Skill-body cascade | **Merged** (#165) |
 | K | #96–#98 lighting close-out | **Merged** (#167) |
-| L | Satisfied-by map for #96–#98 | See evidence map |
+| L | Satisfied-by map for #96–#98 | **Merged** (#168) |
 
 SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
 
@@ -50,4 +50,4 @@ Depth-first ladder (plan of record): camera-fill → **P1** hierarchy motion →
 - Retired: `HERO_LOW_ORBIT`, `TURN_FOLLOW` → archive/superseded
 - Replacement: `HERO_WIDE` + selected-seat subject-lock
 
-<!-- residual: NEXT_SLICES phrases restored for hierarchy-animation-ladder test (2026-09-11) -->
+<!-- residual: NEXT_SLICES continuity phrases restored (hierarchy ladder + L #168) 2026-09-11 -->
