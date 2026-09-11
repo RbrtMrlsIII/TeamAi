@@ -364,4 +364,18 @@ Every completed gate must surrender a target-project handover packet/ZIP in the 
 
 Canonical human-facing experience intent remains in `docs/VISION.md` for historical and detailed semantic context. The owner-endorsed C0–C10 rebaseline above is the current product-shape execution baseline. `VISION.md` does not create a new authority layer, does not claim 029 release, and does not authorize browser-side durable domain writes.
 
-<!-- teamai residual: #274 C0-C10 experience rebaseline; owner-endorsed 2026-09-11; final active-index freshness after latest route/camera/test changes. -->
+## Runtime delivery hardening — #275
+
+`public/hero-flex.js` and the normal `scripts/apply-cam2-tree-follow-flex.mjs` path now use repository-owned Hero source as the ordinary runtime/build input. The browser must not depend on `raw.githubusercontent.com` for live product logic. The preserved internal patch engine remains historical implementation machinery with an emergency fallback slated for explicit cleanup after this hardening is independently verified.
+
+This is a source-delivery/authority correction only. It does not alter Firebase identity, Firestore authority, scheduler authority, provider execution, entitlement, or Product Law.
+
+<!-- teamai residual: #275 repository-owned Hero runtime delivery hardening; preserve full Masterplan body; no 029-released claim. -->
+
+## Runtime delivery hardening synchronization — #275
+
+Final implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
+
+`public/hero-flex.js` is now the committed, repository-owned, fully assembled Hero runtime artifact. Local verification recorded a 47,925-byte artifact with no browser-side remote source loader, SP-04 integrity 11/11, valid JavaScript syntax, and `hero-flex-local-runtime.test.mjs` passing 1/1.
+
+This index entry is a chronological synchronization record for the implementation commit. It does not claim 029 release, endorsement, backend authority, or production readiness. `governance-drift` remains fail-closed.

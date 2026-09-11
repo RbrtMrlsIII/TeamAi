@@ -43,35 +43,33 @@ Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy
 | Gate | Topic | State | Acceptance basis |
 |---|---|---|---|
 | C0 | Product-shape endorsement | **ENDORSED** | owner/source-of-truth decision |
-| C1 | Canonical reconciliation | **IN PR / ACTIVE** | active maps and contracts agree |
-| C2 | Classic website entrance | **IN PR / ACTIVE** | first paint reads as website on desktop + phone |
-| C3 | Explicit 3D-world entry + return | **IN PR / ACTIVE** | browser transition proof |
-| C4 | Coherent nav/menu + Settings | **IN PR / ACTIVE** | discoverable controls without scattered chrome |
-| C5 | Camera vocabulary reduction | **IN PR / ACTIVE** | understandable world baseline + contextual focus |
-| C6 | World-baseline zoom-out | **PLANNED / ACTIVE** | tree/subject can return to normal world baseline |
-| C7 | Proportional orbit | **IN PR / ACTIVE** | natural input direction + regression proof |
+| C1 | Canonical reconciliation | **MERGED / ACTIVE** | active maps and contracts agree |
+| C2 | Classic website entrance | **MERGED / FOUNDATION** | first paint + route boundary; final C9 still governs acceptance |
+| C3 | Explicit 3D-world entry + return | **MERGED / FOUNDATION** | browser transition proof |
+| C4 | Coherent nav/menu + Settings | **MERGED / FOUNDATION** | discoverable controls without scattered chrome |
+| C5 | Camera vocabulary reduction | **MERGED / FOUNDATION** | reduced world controls; further visual acceptance under C9 |
+| C6 | World-baseline zoom-out | **FOUNDATION / NEEDS PRODUCT PROOF** | tree/subject can reach normal world baseline |
+| C7 | Proportional orbit | **MERGED / FOUNDATION** | natural input direction + regression proof |
 | C8 | Authenticated full workspace | **PLANNED / BOUNDED** | server-verified identity + server authorization |
 | C9 | Product acceptance | **BLOCKING** | fresh desktop + phone evidence + owner acceptance |
 | C10 | ProMax refinement | **GATED** | only after C9 |
+
+## Runtime delivery hardening
+
+**#275:** Hero flex runtime delivery is being hardened so normal browser/build execution uses a repository-owned base source rather than a cross-origin GitHub Raw dependency. `public/_flex_src/hero-flex.base.js` is the preserved base source; `public/hero-flex.js` is the runtime entry. The standard `scripts/apply-cam2-tree-follow-flex.mjs` path now seeds from the local base before invoking the existing patch engine.
+
+The internal legacy patch engine retains an emergency remote fallback as historical implementation machinery. It is **not a valid runtime/build authority** and is the subject of explicit follow-up cleanup. Do not reintroduce remote runtime loading.
 
 ## Product rules that stay true
 
 - Presentation does not grant entitlement or durable authorization.
 - No 029-released claim until release gates + endorsement are actually evidenced.
-- Historical Vision/CAM/ENT/CHR work remains immutable lineage; current product shape may supersede its assumptions through Issue #260.
-- Retired `HERO_LOW_ORBIT` and `TURN_FOLLOW` remain archive-only and must not be silently revived.
-- `HERO_WIDE` remains the normal world baseline; selected-seat subject-lock is the contextual focus mechanism.
-- Camera orbit is now governed by the C7 proportional-direction requirement; old inverse-direction expectations are superseded.
-- Mobile is a first-class acceptance surface, not a late cleanup stage.
-- Security inquiry questions remain future backlog until their own authorized development gate is opened.
+- Repository-owned source/build artifacts are preferred over cross-origin runtime source mutation.
 
-## Camera recovery
+## #275 final runtime synchronization
 
-- Retired: `HERO_LOW_ORBIT`, `TURN_FOLLOW` → `docs/archive/superseded/`
-- Replacement direction: `HERO_WIDE` + selected-seat subject-lock + proportional orbit + world-baseline zoom-out
+`fix/029-local-hero-runtime` now contains the fully assembled repository-owned `public/hero-flex.js` at `f4547116c1df840ff56f40907e39b154765c535c`.
 
-## Agent continuation rule
+Validation recorded locally: SP-04 11/11, JavaScript syntax pass, and Hero local-runtime regression 1/1. The browser runtime must not reintroduce remote source loading.
 
-Do not select an implementation merely because an older slice is green or an old branch contains unfinished code. Read the current C0–C10 rebaseline first. When a requested change conflicts with validation, apply Issue #260: warn, account for cost/risk/output, update the contract, update dependent validation, verify, and preserve or archive the superseded baseline.
-
-<!-- residual: #274 C0-C10 experience rebaseline; final index synchronization after experience-rebaseline route/camera/test changes 2026-09-11 -->
+#275 remains pending GitHub merge validation. No 029 release claim.

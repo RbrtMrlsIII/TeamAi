@@ -94,13 +94,6 @@ import {
   getHierarchySnapshot,
   seatShellParentId,
 } from './hero-hierarchy-runtime.js';
-import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG, WORLD_BASELINE_DOCK_ID } from './hero-cam2-tree-follow.js';
-import { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree } from './hero-cam3-tree-center-zoom.js';
-import { edgePressure, edgeDriftDelta, inverseSwipeDelta, clampPitch, pointerNorm } from './hero-cam4-edge-swipe.js';
-import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
-import { depthReadableFovBoost, depthReadableFaceScale, facePlateScaleForChild } from './hero-depth-readable-faces.js';
-import { applyMachineUiChrome } from './hero-dom-chrome-absorption.js';
-import { resolveDomCameraAction } from './hero-dom-action-map.js';
 import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
 
 const canvas = document.querySelector('#hero-canvas');
@@ -165,31 +158,23 @@ function syncHierarchyFromGlobals(){
   return syncHierarchyRuntime(hierarchyRuntime, { selectedSeatIndex: selectedSeat, cameraId, reducedMotion, demo });
 }
 function getHierarchyState(){ return getHierarchySnapshot(syncHierarchyFromGlobals()); }
-function closeHierarchyParent(){ /* V0.2 close baseline */ closeHierarchyParentState(hierarchyRuntime); navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1; setCamera(typeof WORLD_BASELINE_DOCK_ID !== 'undefined' ? WORLD_BASELINE_DOCK_ID : 'HERO_WIDE'); return syncHierarchyFromGlobals(); }
+function closeHierarchyParent(){ closeHierarchyParentState(hierarchyRuntime); return syncHierarchyFromGlobals(); }
 function selectSeatShell(index){
   const i = ((Math.floor(Number(index)) % seatCount) + seatCount) % seatCount;
   selectedSeat = i;
   const now = performance.now();
   const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;
   openSeatShellParentState(hierarchyRuntime, i, { snap, nowMs: now });
+  setCamera('SEAT_CLOSE');
   syncHierarchyFromGlobals();
-  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });
-  setCamera(treeCam.cameraId);
   setState('FOCUS', 'seat-shell-select');
   return getHierarchyState();
 }
-function followHierarchyTreeCamera(){
-  const treeCam = resolveTreeCamera(hierarchyRuntime, { ring: ringFocus.ring, setupFill: getSetupRingFillAmount(hierarchyRuntime) });
-  if (treeCam.cameraId && treeCam.cameraId !== cameraId) setCamera(treeCam.cameraId);
-  return treeCam;
-}
 function returnFromSeatShell(){
-  /* V0.2 return baseline */
   const now = performance.now();
   const snap = HIERARCHY_REDUCED_SNAP && reducedMotion;
   closeHierarchyParentState(hierarchyRuntime, { snap, nowMs: now });
-  navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;
-  setCamera(typeof WORLD_BASELINE_DOCK_ID !== 'undefined' ? WORLD_BASELINE_DOCK_ID : 'HERO_WIDE');
+  setCamera('HERO_WIDE');
   syncHierarchyFromGlobals();
   setState('IDLE', 'seat-shell-close');
   return getHierarchyState();
@@ -216,7 +201,7 @@ function durations(){
 const profile=count=>{const density=(clamp(count,1,8)-1)/7;return{workspace:lerp(4.35,5.95,density),seatRadius:lerp(4.25,6.45,density),seatScale:lerp(1,.78,density),cameraDist:lerp(9.6,12.2,density),ambient:lerp(.35,.78,density),artifacts:Math.round(lerp(3,8,density))}};
 const buildSeats=count=>Array.from({length:count},(_,i)=>({id:`seat-${i+1}`,label:`Web AI Seat ${i+1}`,a:-Math.PI/2+i*(Math.PI*2/count),accent:PALETTE[i%PALETTE.length]}));
 let seats=buildSeats(seatCount);
-function cameras(){const p=profile(seatCount),d=p.cameraDist;return{HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39},TEAM_ORBIT:{p:[d*.92,d*.5,d*.14],t:[0,.78,0],f:42},SEAT_CLOSE:{p:[p.seatRadius*.78,2.3,p.seatRadius*.78],t:[0,.95,0],f:36},WORKSPACE_CLOSE:{p:[3.55,2.45,4.65],t:[0,.62,0],f:33},OVERHEAD_MAP:{p:[0,lerp(10.8,14.8,(seatCount-1)/7),.2],t:[0,.1,0],f:50},DETAIL_ANCHOR:{p:[2.45,1.9,3.05],t:[0,.82,0],f:31}}}
+function cameras(){const p=profile(seatCount),d=p.cameraDist;return{HERO_WIDE:{p:[0,d*.67,d],t:[0,.78,0],f:39},HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},TEAM_ORBIT:{p:[d*.92,d*.5,d*.14],t:[0,.78,0],f:42},SEAT_CLOSE:{p:[p.seatRadius*.78,2.3,p.seatRadius*.78],t:[0,.95,0],f:36},WORKSPACE_CLOSE:{p:[3.55,2.45,4.65],t:[0,.62,0],f:33},TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},OVERHEAD_MAP:{p:[0,lerp(10.8,14.8,(seatCount-1)/7),.2],t:[0,.1,0],f:50},DETAIL_ANCHOR:{p:[2.45,1.9,3.05],t:[0,.82,0],f:31}}}
 function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}
 let viewW = 1, viewH = 1;
 function resize(){
@@ -230,7 +215,7 @@ function responsiveFovBoost(){
   let boost = 0;
   if (aspect < 0.85) boost = FOV_BOOST_NARROW;
   else if (aspect < 1.1) boost = FOV_BOOST_NARROW / 2;
-  return depthReadableFovBoost(hierarchyRuntime, setupRingFovBoost(getSetupRingFillAmount(hierarchyRuntime), boost));
+  return setupRingFovBoost(getSetupRingFillAmount(hierarchyRuntime), boost);
 }
 function syncSetupRingCamera(){
   if (hierarchyRuntime.openParentId) return;
@@ -272,7 +257,7 @@ function drawHierarchyChildren(seat, index, t, shellY, scale) {
     const cx = seatPos(seat)[0] + Math.cos(seat.a) * (0.15 + ci * 0.02) * scale + Math.cos(seat.a + Math.PI / 2) * (ci - 2.5) * 0.12 * scale;
     const cz = seatPos(seat)[2] + Math.sin(seat.a) * (0.15 + ci * 0.02) * scale + Math.sin(seat.a + Math.PI / 2) * (ci - 2.5) * 0.12 * scale;
     const cy = shellY + 0.55 * scale + loc.y * scale;
-    const s = loc.scale * scale * (0.55 + 0.45 * amt) * facePlateScaleForChild(hierarchyRuntime, childId);
+    const s = loc.scale * scale * (0.55 + 0.45 * amt);
     const focused = hierarchyRuntime.focusedChildId === childId;
     const isConnection = childId === HIERARCHY_PART.SEAT_CONNECTION;
     const isBehavior = childId === HIERARCHY_PART.SEAT_BEHAVIOR;
@@ -339,44 +324,29 @@ function point(start,c1,c2,end,q){const u=1-q;return[u*u*u*start[0]+3*u*u*q*c1[0
 function contributionEffect(seat){if(state!=='CONTRIBUTE')return;const p=seatPos(seat),d=durations(),start=[p[0],1.03,p[2]],c1=[p[0]*.55,1.32,p[2]*.55],c2=[p[0]*.14,1.42,p[2]*.14],end=[0,1.3,0];if(reducedMotion){for(const q of[.3,.5,.7]){const[x,y,z]=point(start,c1,c2,end,q);draw(SPH,mul(T(x,y,z),S(.23,.23,.23)),M.energy,{rough:.15,emit:.25,alpha:.58})}return}const q=clamp((performance.now()-stateStart)/d.contribute,0,1);for(let i=0;i<5;i++){const tt=clamp(q-i*.06,0,1),[x,y,z]=point(start,c1,c2,end,tt),k=Math.max(.18,.34*(1-i*.13));draw(SPH,mul(T(x,y,z),S(k,k,k)),M.energy,{rough:.15,emit:.38,alpha:.82-i*.12})}}
 function environment(t){const p=profile(seatCount),count=Math.max(8,seatCount*2);for(let i=0;i<count;i++){const a=i/count*Math.PI*2+.18,x=Math.cos(a)*(p.workspace+1.6),z=Math.sin(a)*(p.workspace+1.6);draw(TORUS,mul(T(x,.06,z),S(.24,1,.24)),M.metal2,{rough:.45,emit:p.ambient*(.06+.02*Math.sin(t*.8+i))})}}
 function floor(){draw(CUBE,mul(T(0,-.32,0),S(18,.56,18)),M.floor,{rough:.95,spec:[.15,.16,.15]})}
-function updateLabels(){
-  if (hierarchyRuntime && hierarchyRuntime.openParentId) followHierarchyTreeCamera();
-  applyMachineUiChrome(shell, { hierarchyOpen: Boolean(hierarchyRuntime.openParentId) });stateLabel.textContent=state;const seat=seats[selectedSeat]||seats[0];let seatText=`${state==='IDLE'?'Next: ':''}${seat.label} · ${seatCount} seat${seatCount===1?'':'s'} unlocked`;if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){seatText=healthLeafAccessibleName(hierarchyRuntime.healthStatus)}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION){seatText=connectionFaceAccessibleName(getConnectionBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_BEHAVIOR){seatText=behaviorFaceAccessibleName(getBehaviorBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TOOLKIT){seatText=toolkitFaceAccessibleName(getToolkitBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CAPABILITIES){seatText=capabilitiesFaceAccessibleName(getCapabilitiesBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_AUTHORIZATION){seatText=authorizationFaceAccessibleName(getAuthorizationBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_WORKSPACE_SCOPE){seatText=workspaceScopeFaceAccessibleName(getWorkspaceScopeBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TASK_EVIDENCE){seatText=taskEvidenceFaceAccessibleName(getTaskEvidenceBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId){seatText=`${seat.label} · ${hierarchyRuntime.focusedChildId}`}else if(ringFocus.ring==='r2'){seatText=setupRingAccessibleName(setupRingFocusedItem(ringFocus),getSetupRingFillAmount(hierarchyRuntime))}else if(ringFocus.ring){seatText=ringFocusAccessibleName(ringFocus)}seatLabel.textContent=seatText;if(seatLabel){seatLabel.setAttribute('aria-live','polite');seatLabel.setAttribute('role','status')}demoButton.textContent=demo?'Stop turn loop':'Start turn loop';motionButton.textContent=`Reduced motion: ${reducedMotion?'on':'off'}`;shell.dataset.state=state;shell.dataset.traceCount=String(traces.length);if(hierarchyRuntime.openParentId){shell.dataset.hierarchyOpen='true';shell.dataset.focusedChild=hierarchyRuntime.focusedChildId||'';shell.dataset.focusedLeaf=hierarchyRuntime.focusedLeafId||''}else{shell.dataset.hierarchyOpen='false';shell.dataset.focusedChild='';shell.dataset.focusedLeaf=''}}
+function updateLabels(){stateLabel.textContent=state;const seat=seats[selectedSeat]||seats[0];let seatText=`${state==='IDLE'?'Next: ':''}${seat.label} · ${seatCount} seat${seatCount===1?'':'s'} unlocked`;if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){seatText=healthLeafAccessibleName(hierarchyRuntime.healthStatus)}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION){seatText=connectionFaceAccessibleName(getConnectionBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_BEHAVIOR){seatText=behaviorFaceAccessibleName(getBehaviorBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TOOLKIT){seatText=toolkitFaceAccessibleName(getToolkitBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CAPABILITIES){seatText=capabilitiesFaceAccessibleName(getCapabilitiesBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_AUTHORIZATION){seatText=authorizationFaceAccessibleName(getAuthorizationBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_WORKSPACE_SCOPE){seatText=workspaceScopeFaceAccessibleName(getWorkspaceScopeBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TASK_EVIDENCE){seatText=taskEvidenceFaceAccessibleName(getTaskEvidenceBranchAmount(hierarchyRuntime))}else if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId){seatText=`${seat.label} · ${hierarchyRuntime.focusedChildId}`}else if(ringFocus.ring==='r2'){seatText=setupRingAccessibleName(setupRingFocusedItem(ringFocus),getSetupRingFillAmount(hierarchyRuntime))}else if(ringFocus.ring){seatText=ringFocusAccessibleName(ringFocus)}seatLabel.textContent=seatText;if(seatLabel){seatLabel.setAttribute('aria-live','polite');seatLabel.setAttribute('role','status')}demoButton.textContent=demo?'Stop turn loop':'Start turn loop';motionButton.textContent=`Reduced motion: ${reducedMotion?'on':'off'}`;shell.dataset.state=state;shell.dataset.traceCount=String(traces.length);if(hierarchyRuntime.openParentId){shell.dataset.hierarchyOpen='true';shell.dataset.focusedChild=hierarchyRuntime.focusedChildId||'';shell.dataset.focusedLeaf=hierarchyRuntime.focusedLeafId||''}else{shell.dataset.hierarchyOpen='false';shell.dataset.focusedChild='';shell.dataset.focusedLeaf=''}}
 function setState(next,reason='transition'){const previous=state;state=next;stateStart=performance.now();updateLabels();window.dispatchEvent(new CustomEvent('teamai:hero-state-change',{detail:{previous,state,selectedSeat,seatId:seats[selectedSeat]?.id??null,reason,presentationOnly:true,traceCount:traces.length}}))}
 function setSeatCount(next){const count=clamp(Math.round(Number(next)||1),1,8);if(count===seatCount)return;seatCount=count;seats=buildSeats(seatCount);selectedSeat%=seatCount;traces.length=0;setCamera(cameraId);updateLabels()}
 function startLoop(){demo=true;setState('FOCUS','loop-start')}
 function stopLoop(){demo=false;contribution=0;setState('IDLE','loop-stop')}
-function cycleTurn(now){if(!demo)return;const elapsed=now-stateStart,d=durations();if(state==='FOCUS'&&elapsed>d.focus)setState('ACTIVE');else if(state==='ACTIVE'&&elapsed>d.active){contribution=0;setCamera('HERO_WIDE');setState('CONTRIBUTE','contribution-start')}else if(state==='CONTRIBUTE'){contribution=clamp(elapsed/d.contribute,0,1);if(elapsed>d.contribute){contribution=1;setState('ABSORB','workspace-absorb')}}else if(state==='ABSORB'&&elapsed>d.absorb)setState('REFLECT','workspace-reflect');else if(state==='REFLECT'&&elapsed>d.reflect){addTrace();setState('HANDOFF','trace-committed')}else if(state==='HANDOFF'&&elapsed>d.handoff){selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus');setCamera('TEAM_ORBIT')}}
-function frame(now){
-  if (edgePointerNorm && !reducedMotion && typeof shouldApplyTreeNav === 'function' && shouldApplyTreeNav(hierarchyRuntime)) {
-    const press = edgePressure(edgePointerNorm.nx, edgePointerNorm.ny);
-    if (press.px || press.py) {
-      const dt = Math.min(0.05, Math.max(0, ((typeof frame._last === 'number' ? now - frame._last : 16) / 1000)));
-      frame._last = now;
-      const drift = edgeDriftDelta(press, dt, { reducedMotion });
-      navOrbitYaw += drift.dYaw;
-      navOrbitPitch = clampPitch(navOrbitPitch + drift.dPitch);
-      applyNavCamera();
-    } else { frame._last = now; }
-  } else if (typeof now === 'number') { frame._last = now; }
-syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);floor();environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawSetupConfigRing({ profile, seatCount, reducedMotion, draw, CYL, TORUS, CUBE, T, S, RY, mul, M, focusedIndex: ringFocus.ring === 'r2' ? ringFocus.index : -1, fillAmount: getSetupRingFillAmount(hierarchyRuntime) }, now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
+function cycleTurn(now){if(!demo)return;const elapsed=now-stateStart,d=durations();if(state==='FOCUS'&&elapsed>d.focus)setState('ACTIVE');else if(state==='ACTIVE'&&elapsed>d.active){contribution=0;setCamera('TURN_FOLLOW');setState('CONTRIBUTE','contribution-start')}else if(state==='CONTRIBUTE'){contribution=clamp(elapsed/d.contribute,0,1);if(elapsed>d.contribute){contribution=1;setState('ABSORB','workspace-absorb')}}else if(state==='ABSORB'&&elapsed>d.absorb)setState('REFLECT','workspace-reflect');else if(state==='REFLECT'&&elapsed>d.reflect){addTrace();setState('HANDOFF','trace-committed')}else if(state==='HANDOFF'&&elapsed>d.handoff){selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus');setCamera('TEAM_ORBIT')}}
+function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);floor();environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawSetupConfigRing({ profile, seatCount, reducedMotion, draw, CYL, TORUS, CUBE, T, S, RY, mul, M, focusedIndex: ringFocus.ring === 'r2' ? ringFocus.index : -1, fillAmount: getSetupRingFillAmount(hierarchyRuntime) }, now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
 canvas.addEventListener('click',event=>{const r=canvas.getBoundingClientRect(),x=(event.clientX-r.left)/r.width,y=(event.clientY-r.top)/r.height;if(x>.38&&x<.62&&y>.38&&y<.58){if(!hierarchyRuntime.openParentId){clearRingFocus(ringFocus);syncSetupRingCamera();updateLabels();}return;}if(!hierarchyRuntime.openParentId&&y>0.28&&y<0.48){if(x<=0.28){cycleRingFocus(ringFocus,'r1',1);updateLabels();return;}if(x>=0.72){cycleRingFocus(ringFocus,'r2',1);syncSetupRingCamera();updateLabels();return;}}const next=(selectedSeat+1)%seatCount;selectSeatShell(next);});
 let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;
-let edgePointerNorm = null; // Cam-4
 let touchState = null;
 function applyNavCamera() {
-  if (!shouldApplyTreeNav(hierarchyRuntime)) return;
-  const table = cameras();
-  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
-  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
-    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });
-    if (seatDock) base = seatDock;
-  }
-  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
+  if (hierarchyRuntime.openParentId) return;
+  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;
+  const base = cameras().HERO_WIDE;
+  const dist = base.p[2] * navZoom;
+  const cy = base.p[1] + navOrbitPitch * 1.2;
+  const yaw = navOrbitYaw;
+  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };
   camAt = 1;
 }
 canvas.addEventListener('wheel', (event) => {
   event.preventDefault();
+  if (hierarchyRuntime.openParentId) return;
   const delta = Math.sign(event.deltaY) * 0.08;
   navZoom = clamp(navZoom + delta, NAV_ZOOM_MIN, NAV_ZOOM_MAX);
   if (reducedMotion) navZoom = clamp(navZoom, NAV_ZOOM_REDUCED_MIN, NAV_ZOOM_REDUCED_MAX);
@@ -390,14 +360,12 @@ canvas.addEventListener('pointerdown', (event) => {
 });
 canvas.addEventListener('pointermove', (event) => {
   if (!touchState || touchState.id !== event.pointerId) return;
-  const rect = canvas.getBoundingClientRect();
-  edgePointerNorm = pointerNorm(event.clientX - rect.left, event.clientY - rect.top, rect.width, rect.height);
+  if (hierarchyRuntime.openParentId) return;
   const dx = (event.clientX - touchState.x) / Math.max(1, canvas.clientWidth);
   const dy = (event.clientY - touchState.y) / Math.max(1, canvas.clientHeight);
   touchState.x = event.clientX; touchState.y = event.clientY;
-  const inv = inverseSwipeDelta(dx, dy);
-  navOrbitYaw += inv.dYaw;
-  navOrbitPitch = clampPitch(navOrbitPitch + inv.dPitch);
+  navOrbitYaw += dx * Math.PI;
+  navOrbitPitch = clamp(navOrbitPitch + dy * 1.2, -0.45, 0.55);
   if (reducedMotion) { navOrbitYaw = 0; navOrbitPitch = 0; }
   applyNavCamera();
 });
@@ -422,7 +390,7 @@ canvas.addEventListener('touchmove', (event) => {
   }
 }, { passive: false });
 canvas.addEventListener('touchend', () => { pinchStart = null; });
-document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>{const id=button.dataset.camera||button.getAttribute('data-camera');const hierarchyOpen=Boolean(hierarchyRuntime&&hierarchyRuntime.openParentId);const resolved=resolveDomCameraAction(id,{hierarchyOpen});if(resolved.allowed&&resolved.effectiveCameraId)setCamera(resolved.effectiveCameraId);}));
+document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>setCamera(button.dataset.camera)));
 demoButton?.addEventListener('click',()=>demo?stopLoop():startLoop());
 motionButton?.addEventListener('click',()=>{setReducedMotion(!reducedMotion);setCamera(cameraId);updateLabels()});
 window.addEventListener('keydown',event=>{if(event.key.toLowerCase()==='d')demo?stopLoop():startLoop();if(event.key.toLowerCase()==='m'){setReducedMotion(!reducedMotion);setCamera(cameraId)}if(/^[1-8]$/.test(event.key))setSeatCount(Number(event.key));if(event.key==='0')setSeatCount(1);if(event.key==='Enter'){if(hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION&&hierarchyRuntime.focusedLeafId!==HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){focusHierarchyLeaf(hierarchyRuntime,HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE);event.preventDefault()}else if(hierarchyRuntime.focusedLeafId===HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE){const order=[HEALTH_STATUS.UNKNOWN,HEALTH_STATUS.LOADING,HEALTH_STATUS.UNAVAILABLE];const i=order.indexOf(hierarchyRuntime.healthStatus||HEALTH_STATUS.UNKNOWN);hierarchyRuntime.healthStatus=order[(i+1)%order.length];event.preventDefault()}else if(!hierarchyRuntime.openParentId&&ringFocus.ring==='r2'){const item=setupRingFocusedItem(ringFocus);if(isSetupFullAreaItem(item)){requestSetupRingHandoff({item,targetSection:item.kind==='auth'?'auth':'setup'})}else{syncSetupRingCamera()}event.preventDefault()}else{selectSeatShell(selectedSeat);event.preventDefault()}}if(event.key==='Escape'){if(hierarchyRuntime.focusedLeafId){clearLeafFocus(hierarchyRuntime);event.preventDefault()}else if(ringFocus.ring&&!hierarchyRuntime.openParentId){clearRingFocus(ringFocus);syncSetupRingCamera();event.preventDefault()}else{returnFromSeatShell();event.preventDefault()}}if(event.key==='z'||event.key==='x'){if(!hierarchyRuntime.openParentId){cycleRingFocus(ringFocus,'r0',event.key==='z'?1:-1);event.preventDefault()}}if(event.key==='['||event.key===']'){if(!hierarchyRuntime.openParentId){cycleRingFocus(ringFocus,'r1',event.key===']'?1:-1);event.preventDefault()}}if(event.key==='{'||event.key==='}'||event.key===';'||event.key==="'"){if(!hierarchyRuntime.openParentId){cycleRingFocus(ringFocus,'r2',(event.key==='}'||event.key==="'")?1:-1);syncSetupRingCamera();event.preventDefault()}}if(event.key==='.'&&!hierarchyRuntime.openParentId){clearRingFocus(ringFocus);syncSetupRingCamera();event.preventDefault()}if((event.key==='ArrowRight'||event.key==='ArrowLeft')&&hierarchyRuntime.openParentId){const list=SEAT_SHELL_V1_CHILDREN;const cur=Math.max(0,list.indexOf(hierarchyRuntime.focusedChildId));const next=event.key==='ArrowRight'?(cur+1)%list.length:(cur-1+list.length)%list.length;focusHierarchyChild(hierarchyRuntime,list[next],{nowMs:performance.now(),snap:HIERARCHY_REDUCED_SNAP&&reducedMotion});event.preventDefault()}if((event.key==='c'||event.key==='C')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CONNECTION){requestConnectionConfigureHandoff({targetSection:'connection'});event.preventDefault()}if((event.key==='b'||event.key==='B')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_BEHAVIOR){requestBehaviorConfigureHandoff({targetSection:'behavior'});event.preventDefault()}if((event.key==='t'||event.key==='T')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TOOLKIT){requestToolkitConfigureHandoff({targetSection:'toolkit'});event.preventDefault()}if((event.key==='k'||event.key==='K')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_CAPABILITIES){requestCapabilitiesConfigureHandoff({targetSection:'capabilities'});event.preventDefault()}if((event.key==='a'||event.key==='A')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_AUTHORIZATION){requestAuthorizationConfigureHandoff({targetSection:'authorization'});event.preventDefault()}if((event.key==='w'||event.key==='W')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_WORKSPACE_SCOPE){requestWorkspaceScopeConfigureHandoff({targetSection:'workspace-scope'});event.preventDefault()}if((event.key==='e'||event.key==='E')&&hierarchyRuntime.openParentId&&hierarchyRuntime.focusedChildId===HIERARCHY_PART.SEAT_TASK_EVIDENCE){requestTaskEvidenceConfigureHandoff({targetSection:'task-evidence'});event.preventDefault()}if((event.key==='l'||event.key==='L')&&!hierarchyRuntime.openParentId&&ringFocus.ring==='r2'){const item=setupRingFocusedItem(ringFocus);requestSetupRingHandoff({item,targetSection:item&&item.kind==='auth'?'auth':'setup'});event.preventDefault()}updateLabels()});

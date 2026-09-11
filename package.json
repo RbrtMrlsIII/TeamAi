@@ -13,7 +13,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "npm run build && node dist/src/main.js",
     "start": "npm run build && node dist/src/main.js",
-    "test:unit": "npm run seat:provider:wire && npm run build && node scripts/apply-cam2-tree-follow-flex.mjs && node scripts/apply-cam-r1-subject-lock.mjs && node scripts/apply-v1.2-arrow-branch-walk.mjs && node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:unit": "npm run seat:provider:wire && npm run build && node scripts/apply-cam2-tree-follow-flex.mjs && node scripts/apply-cam-r1-subject-lock.mjs && node scripts/apply-v1.2-arrow-branch-walk.mjs && node --check public/hero-flex.js && node --test --test-concurrency=1 tests/*.test.mjs",
     "test:e2e": "npm run seat:provider:wire && node scripts/apply-cam2-tree-follow-flex.mjs && node scripts/apply-cam-r1-subject-lock.mjs && node scripts/apply-v1.2-arrow-branch-walk.mjs && playwright test",
     "test:e2e:report": "playwright show-report",
     "project:package": "python3 build-system/scripts/project-package.py create-and-verify",
