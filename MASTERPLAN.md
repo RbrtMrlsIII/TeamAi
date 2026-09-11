@@ -364,4 +364,4 @@ Every completed gate must surrender a target-project handover packet/ZIP in the 
 
 Canonical human-facing experience intent remains in `docs/VISION.md` for historical and detailed semantic context. The owner-endorsed C0–C10 rebaseline above is the current product-shape execution baseline. `VISION.md` does not create a new authority layer, does not claim 029 release, and does not authorize browser-side durable domain writes.
 
-<!-- teamai residual: #274 C0-C10 experience rebaseline; owner-endorsed 2026-09-11; C9/C10 remain product gates. -->
+<!-- teamai residual: #274 C0-C10 experience rebaseline; owner-endorsed 2026-09-11; final active-index freshness after latest route/camera/test changes. -->
