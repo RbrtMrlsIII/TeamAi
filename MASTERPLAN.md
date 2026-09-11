@@ -240,6 +240,10 @@ The Product Law visual requirement is:
 
 This section is the current chronological product-experience execution baseline. It supersedes the old one-shell entrance as the final product-shape target, while preserving the old implementation as historical evidence.
 
+### Historical Vision baseline retained
+
+**Vision V3.5 complete** remains preserved here as a historical/verification marker for the earlier Vision ladder. It does not mean the former one-shell entrance remains the current final product-shape target. The owner-endorsed C0–C10 rebaseline is now the active experience baseline.
+
 ### C0 — Product-shape endorsement
 
 **Status: ENDORSED.** The owner authorized one coherent C0–C10 execution program:
