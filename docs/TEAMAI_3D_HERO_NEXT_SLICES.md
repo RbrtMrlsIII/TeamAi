@@ -7,9 +7,9 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Vision #214 V0–V2** **merged** (#217–#229). **Vision V3.1–V3.5** **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** **closed**. **#258 residual / PR #259 MERGED**. **CAM-R1–R3** **merged** (#262–#264). **ENT-R4** **merged** (#265). **CHR-R3** in PR #266. **no 029-released claim**.
+**Vision #214 V0–V2** **merged** (#217–#229). **Vision V3.1–V3.5** **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** **closed**. **#258 residual / PR #259 MERGED**. **CAM-R1–R3** **merged** (#262–#264). **ENT-R4** **merged** (#265). **CHR-R3** **merged** (#266). **no 029-released claim**.
 
-**Governance #260** + archive/superseded. **Security inquiry:** `docs/security_inquiry.md` (Q-001 burst API load).
+**Governance #260** + archive/superseded. **Security inquiry:** `docs/security_inquiry.md` (Q-001–Q-007).
 
 **Conn-1** **merged** (#200). **Conn-2** **merged** (#202). **Conn-3** browser proof pending.
 
@@ -34,6 +34,10 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
 
+## Hierarchy animation continuity
+
+Depth-first ladder (plan of record): camera-fill → **P1** hierarchy motion → **SEAT_CONNECTION** and remaining parents → login/signup presentation handoff. See `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`.
+
 ## Product rules that stay true
 
 - Presentation only. No durable grant from canvas.
@@ -46,4 +50,4 @@ SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILL
 - Retired: `HERO_LOW_ORBIT`, `TURN_FOLLOW` → archive/superseded
 - Replacement: `HERO_WIDE` + selected-seat subject-lock
 
-<!-- residual-chr-r3 index freshness 2026-09-11T07:52Z: settings beside machine-nav + squash-merge skill + security_inquiry -->
+<!-- residual: NEXT_SLICES phrases restored for hierarchy-animation-ladder test (2026-09-11) -->
