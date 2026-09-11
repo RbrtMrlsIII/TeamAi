@@ -1,5 +1,5 @@
-/* hero.css — shell presentation (light spatial skeuomorphism baseline)
- * ENT-T1: machine layer entrance brand removal owned with residual CSS.
+/* hero shell — light spatial skeuomorphism presentation
+ * V3.3 atmosphere + ENT-T1 machine brand removal (residual #258)
  * Presentation only · no 029-released claim.
  */
 
@@ -9,7 +9,13 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #f5f2ec;
+  color: #1c1a17;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
 
 .hero-shell {
   position: relative;
@@ -42,8 +48,26 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
   pointer-events: none;
   will-change: transform, opacity;
 }
-.hero-aura-a { top: 8%; right: 6%; background: radial-gradient(circle, rgba(255, 214, 150, 0.55), transparent 70%); }
-.hero-aura-b { bottom: 4%; left: 4%; background: radial-gradient(circle, rgba(170, 200, 255, 0.35), transparent 70%); }
+.hero-aura-a {
+  top: 8%;
+  right: 6%;
+  background: radial-gradient(circle, rgba(255, 214, 150, 0.55), transparent 70%);
+  animation: hero-aura-drift-a 28s ease-in-out infinite alternate;
+}
+.hero-aura-b {
+  bottom: 4%;
+  left: 4%;
+  background: radial-gradient(circle, rgba(170, 200, 255, 0.35), transparent 70%);
+  animation: hero-aura-drift-b 36s ease-in-out infinite alternate;
+}
+@keyframes hero-aura-drift-a {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-4%, 3%) scale(1.06); }
+}
+@keyframes hero-aura-drift-b {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(5%, -2%) scale(1.08); }
+}
 
 .hero-copy {
   position: absolute;
@@ -59,9 +83,25 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
   backdrop-filter: blur(14px);
 }
 .hero-brand-mark { display: block; margin-bottom: 10px; border-radius: 14px; }
-.eyebrow { margin: 0 0 6px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6a6258; }
-.hero-copy h1 { margin: 0 0 8px; font-size: clamp(1.35rem, 2.4vw, 1.85rem); line-height: 1.15; letter-spacing: -0.02em; }
-.lede { margin: 0; color: #4a453e; line-height: 1.45; font-size: 0.95rem; }
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6a6258;
+}
+.hero-copy h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.lede {
+  margin: 0;
+  color: #4a453e;
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
 
 .spatial-parts {
   position: absolute;
@@ -87,7 +127,12 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
   box-shadow: 0 16px 40px rgba(40, 28, 12, 0.1);
   backdrop-filter: blur(14px);
 }
-.control-row, .status-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.control-row, .status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
 .status-row { margin-top: 8px; justify-content: space-between; }
 .hero-controls button, .hero-copy button {
   appearance: none;
@@ -100,7 +145,11 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
   font-size: 0.85rem;
   cursor: pointer;
 }
-.hero-controls button.primary { background: #1c1a17; color: #f7f4ee; border-color: #1c1a17; }
+.hero-controls button.primary {
+  background: #1c1a17;
+  color: #f7f4ee;
+  border-color: #1c1a17;
+}
 .hero-controls button.quiet { background: transparent; }
 #state-label, #seat-label { font-size: 0.85rem; color: #4a453e; }
 
@@ -114,9 +163,25 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
   color: rgba(40, 32, 22, 0.45);
 }
 
-.hero-inspection { position: absolute; left: 24px; bottom: 110px; z-index: 3; max-width: min(520px, calc(100vw - 48px)); }
-.hero-inspection__hint { display: block; margin-top: 6px; font-size: 11px; color: #6a6258; }
-.inspection-spine { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.hero-inspection {
+  position: absolute;
+  left: 24px;
+  bottom: 110px;
+  z-index: 3;
+  max-width: min(520px, calc(100vw - 48px));
+}
+.hero-inspection__hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6a6258;
+}
+.inspection-spine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
 
 .far-environment {
   position: relative;
@@ -160,9 +225,10 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
   font: inherit;
 }
 .hero-auth-panel__tabs { display: flex; gap: 8px; margin: 8px 0 12px; }
-.hero-auth-panel__status, .hero-auth-panel__note { font-size: 0.8rem; color: #6a6258; }
+.hero-auth-panel__status,
+.hero-auth-panel__note { font-size: 0.8rem; color: #6a6258; }
 
-/* V3.4 — machine layer presentation (same Hero; ENT-T1 full brand removal) */
+/* V3.4 / ENT-T1 — machine layer: entrance brand removed (residual CSS also forces display:none) */
 .hero-shell[data-hero-layer="machine"] .hero-copy {
   /* ENT-T1: residual CSS owns full removal; keep transition hook only */
   opacity: 0;
@@ -175,13 +241,21 @@ html, body { margin: 0; min-height: 100%; background: #f5f2ec; color: #1c1a17; f
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-shell[data-hero-layer="machine"] .hero-copy { transition: none; }
-  .hero-aura { animation: none !important; opacity: 0.28; }
+  .hero-aura {
+    animation: none !important;
+    opacity: 0.28;
+  }
 }
 
 @media (max-width: 720px) {
   .hero-copy { top: 22px; left: 20px; width: calc(100vw - 40px); }
   .spatial-parts { top: auto; bottom: 120px; right: 16px; }
-  .hero-controls { bottom: 14px; width: calc(100vw - 24px); padding: 10px; border-radius: 18px; }
+  .hero-controls {
+    bottom: 14px;
+    width: calc(100vw - 24px);
+    padding: 10px;
+    border-radius: 18px;
+  }
   .hero-inspection { left: 16px; bottom: 100px; }
   .hero-note { display: none; }
 }
