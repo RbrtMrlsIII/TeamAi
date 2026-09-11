@@ -16,38 +16,74 @@
 
 ### Q-001 — Burst / loop API load (e.g. ~10,000 requests)
 
-**Context:** What if a client (or compromised token) sends a very large number of requests in a tight loop against TeamAi APIs (Edge Functions, app HTTP surface, or provider-facing endpoints)?
+**Context:** What if a client (or compromised token) sends a very large number of requests in a tight loop against TeamAi APIs?
 
-**Question:** How should TeamAi fail closed under high request volume without collapsing Firestore quota, provider cost, or shared infrastructure?
+**Question:** How should TeamAi fail closed under high request volume?
 
-**Working answer (bounded):**
+**Working answer (bounded):** Assume hostile volume. Layered limits: Edge per-IP/per-principal rate limits (`429` + `Retry-After`); authn-bound finite quotas; idempotency; async for expensive work; Firestore project quota is not an app throttle (`docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`); entitlement short-circuits before provider spend. No claim that every route is fully limited yet.
 
-1. **Assume volume is hostile until proven otherwise.** Legitimate product flows are interactive or scheduled with backoff — not unconstrained tight loops from a single principal.
-2. **Layered limits (defense in depth):**
-   - **Edge / API gateway:** per-IP and per-principal rate limits (token bucket / sliding window) with `429` + `Retry-After`.
-   - **Authn-bound quotas:** authenticated callers get a higher but still finite budget; anonymous / public routes stay stricter.
-   - **Idempotency + dedupe:** mutating endpoints should not multiply work for identical retries.
-   - **Queue / async:** expensive work (provider invoke, bulk reads) must not run synchronously 1:1 with every HTTP hit.
-   - **Firestore awareness:** project-level Spark/Blaze quotas are not a substitute for app-level throttles — see `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`.
-3. **Cost and entitlement:** usage against Seat / subscription / provider budgets should short-circuit before provider spend; presentation UI never grants durable capacity.
-4. **Observability:** log rate-limit hits, principal id (where lawful), route class, and reject reason for recovery — without logging secrets.
-5. **Explicit non-goals of this answer:** no concrete bypass techniques; no commitment that limits are already fully implemented on every route.
+**Open follow-ups:** [ ] Route inventory [ ] Limit classes [ ] Entitlement alignment [ ] Optional `429` probe test
 
-**Open follow-ups:**
+**Related:** Firestore usage policy · entitlement architecture
 
-- [ ] Inventory which Edge routes currently enforce rate limits vs which are still open.
-- [ ] Choose canonical limit classes (public / authenticated / seat-scoped / admin).
-- [ ] Align with entitlement + usage architecture (`docs/TEAM-EXPERIENCE-029_ENTITLEMENT_AND_USAGE_LIMITS_ARCHITECTURE.md`).
-- [ ] CI or contract test that documents expected `429` behavior on a designated probe route (when implemented).
-
-**Related docs:**
-
-- `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`
-- `docs/TEAM-EXPERIENCE-029_ENTITLEMENT_AND_USAGE_LIMITS_ARCHITECTURE.md`
-- `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` (when controls change validation)
-
-**Status:** INQUIRY — not yet claimed as fully implemented across all surfaces.
+**Status:** INQUIRY
 
 ---
 
-<!-- Agents: append Q-002+ below this line. Keep numbering monotonic. -->
+### Q-002 — Malicious code in an upload section (if we ever ship one)
+
+**Context:** Future file uploads (attachments, artifacts, zip/skill packages).
+
+**Question:** What if a user uploads malicious code (malware, scripts, polyglots, zip bombs)?
+
+**Working answer (bounded):** Uploads are untrusted — never execute as server code. Store outside executable roots; non-executable content types; size/type allowlists (sniff + extension); malware scan where available; archive caps; least-privilege handlers; uploaded “skills” never grant entitlement (Product Law). No claim upload is shipped or fully hardened.
+
+**Open follow-ups:** [ ] Product decision on uploads for 029 [ ] Upload contract [ ] Reject tests
+
+**Status:** INQUIRY
+
+---
+
+### Q-003 — Crafted strings in a search field
+
+**Context:** Search/filter UI on workspace, seats, tasks, etc.
+
+**Question:** How should TeamAi handle crafted search input (injection, XSS, query abuse)?
+
+**Working answer (bounded):** Search is data, not code — no eval, no string-built queries, no unsanitized innerHTML. Server-side allowlisted filters only. Encode output safely. Rate-limit search (Q-001). No exploit payloads listed here.
+
+**Open follow-ups:** [ ] Search endpoint inventory [ ] Parameterized filters [ ] XSS regression tests
+
+**Status:** INQUIRY
+
+---
+
+### Q-004 — Self-promotion to admin by editing a JWT field
+
+**Context:** Firebase (or similar) ID tokens / JWTs on API calls.
+
+**Question:** What if someone edits a JWT field to claim admin?
+
+**Working answer (bounded):** Clients cannot mint trusted identity — signature verification fails on tamper. Never trust client-only role claims; re-check admin/membership server-side against durable Firestore/rules (UID → role). Admin is server-owned, not a browser edit. Reject bad/expired/wrong-audience tokens at the edge.
+
+**Open follow-ups:** [ ] Verify all Edge functions validate tokens [ ] Admin paths use durable role docs
+
+**Status:** INQUIRY
+
+---
+
+### Q-005 — Attacker login using “our Google auth code”
+
+**Context:** Google Sign-In / OAuth for TeamAi identity.
+
+**Question:** What if an attacker uses our Google auth client config or intercepted auth codes?
+
+**Working answer (bounded):** Auth codes are one-time and bound to client_id + redirect_uri — not a reusable password. Client IDs are public; secrets must not ship in the SPA. Protect via redirect allowlists, trusted code exchange / Firebase flow, PKCE where applicable, short TTL. Authorize by UID on durable data. No abuse recipes here.
+
+**Open follow-ups:** [ ] Redirect URI lock [ ] No client secret in frontend [ ] Revocation runbook
+
+**Status:** INQUIRY
+
+---
+
+<!-- Agents: append Q-006+ below this line. Keep numbering monotonic. -->
