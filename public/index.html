@@ -11,10 +11,58 @@
     <link rel="stylesheet" href="./hero-parts.css" />
     <link rel="stylesheet" href="./hero-seat-stack.css" />
     <link rel="stylesheet" href="./hero-dom-chrome.css" />
+    <link rel="stylesheet" href="./experience-rebaseline.css" />
   </head>
   <body>
-    <!-- V3.3: data-hero-layer=entrance — Layer A atmosphere (same Hero instance; no second WebGL) -->
-    <main class="hero-shell" data-hero-layer="entrance" aria-label="TeamAi Web AI living workspace 3D hero">
+    <main class="hero-shell" data-hero-layer="entrance" data-experience="classic" aria-label="TeamAi Web AI workspace">
+      <section class="classic-entrance" aria-label="TeamAi website entrance">
+        <nav class="classic-entrance__nav" aria-label="Primary navigation">
+          <a class="classic-entrance__brand" href="./" aria-label="TeamAi home">
+            <img src="./assets/hero-spatial/teamai_icon_2_5d.png" alt="" width="38" height="38" decoding="async" />
+            <span>TeamAi</span>
+          </a>
+          <div class="classic-entrance__menu">
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <button type="button" data-auth-open>Sign in</button>
+          </div>
+        </nav>
+
+        <div class="classic-entrance__content">
+          <p class="classic-entrance__eyebrow">WEB AI / SHARED WORKSPACE</p>
+          <h1 class="classic-entrance__title">A calmer front door for a living AI workspace.</h1>
+          <p class="classic-entrance__lede">Start with the website. Enter the spatial workspace when you are ready to work, inspect, connect, and coordinate.</p>
+          <div class="classic-entrance__actions">
+            <button type="button" class="primary classic-entrance__primary" data-world-entry="classic-world-entry">Enter 3D world</button>
+            <button type="button" class="quiet" data-auth-open>Sign in to unlock workspace features</button>
+          </div>
+        </div>
+
+        <footer class="classic-entrance__footer">
+          <span>Public entrance · presentation only</span>
+          <span><a href="#terms">Terms</a> · <a href="#privacy">Privacy</a></span>
+        </footer>
+      </section>
+
+      <nav class="world-navigation" aria-label="3D world navigation">
+        <div class="world-navigation__group">
+          <button type="button" data-classic-return="world-return">Website</button>
+          <button type="button" data-world-camera-request="HERO_WIDE">World</button>
+          <span class="world-navigation__status">3D workspace</span>
+        </div>
+        <div class="world-navigation__group">
+          <div class="world-navigation__menu">
+            <button type="button" data-world-menu-toggle aria-controls="world-menu" aria-expanded="false">Menu</button>
+            <div id="world-menu" class="world-navigation__popover">
+              <button type="button" data-auth-open>Sign in</button>
+              <button type="button" data-world-camera-request="SEAT_CLOSE">Selected seat</button>
+              <button type="button" data-world-camera-request="DETAIL_ANCHOR">Detail</button>
+              <button type="button" data-settings-open>Settings</button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <canvas id="hero-canvas" data-entrance-region="atmosphere" aria-label="Interactive 3D Web AI workspace"></canvas>
       <div class="hero-aura hero-aura-a" aria-hidden="true"></div>
       <div class="hero-aura hero-aura-b" aria-hidden="true"></div>
@@ -110,8 +158,6 @@
       <div class="hero-note" aria-hidden="true">Contribution → shared state → next eligible Seat</div>
     </main>
 
-    <!-- Far-environment only (outside hero machine shell): legal / contact / about -->
-    <!-- V3.5: far-environment stays outside .hero-shell — never machine chrome -->
     <aside
       class="far-environment"
       data-entrance-region="far"
@@ -125,6 +171,7 @@
       <a href="#privacy" data-far-link="privacy">Privacy</a>
     </aside>
 
+    <script type="module" src="./experience-rebaseline.js"></script>
     <script type="module" src="./hero-flex.js"></script>
     <script type="module" src="./hero-aura.js"></script>
     <script type="module" src="./hero-parts.js"></script>
