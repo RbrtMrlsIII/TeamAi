@@ -7,11 +7,11 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
-**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **Vision V3.1–V3.5** entrance ladder **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`. **#258 residual (PR #259):** [sync 2026-09-11T08:58Z] **ENT-T1** entrance web **gone** on machine; **CAM-R-RETIRE**; ENT-R2/R3 + CHR-R1/R2; contract `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`. Open: ENT-T3–T5; CAM-R2/R3 after CAM-R1. **no 029-released claim**.
+**Vision #214 V0–V2** camera truth / branch walk / machine chrome **merged** (#217–#229). **Vision V3.1–V3.5** entrance ladder **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** spatial gates **closed** (#236–#242 + SP-07). **Cam↔V map:** `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (Issue **#232**). **Spatial execution basis:** `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (#234). **SP-07 decision:** `docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md`. **#258 residual (PR #259):** **ENT-T1** entrance web **gone** on machine; **CAM-R-RETIRE**; ENT-R2/R3 + CHR-R1/R2; contract `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`. Open: ENT-T3–T5; CAM-R2/R3 after CAM-R1. **no 029-released claim**.
 
-**Governance #260** merged: `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` + archive/superseded. **CAM-R1** subject-lock (`SEAT_CLOSE` toward selectedSeat; not TURN_FOLLOW). **no 029-released claim**.
+**Governance #260** merged + **CAM-R1** subject-lock (`SEAT_CLOSE`; not TURN_FOLLOW). **no 029-released claim**.
 
-**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented in PR #246; live deployment/browser proof pending** (parallel; not Hero live bind).
+**Conn-1** GitHub App least-privilege matrix **merged** (#200). **Conn-2** webhook + UID map **merged** (#202). **Conn-3** OAuth mint **implemented; live deployment/browser proof pending** (parallel; not Hero live bind).
 
 ## Completed ladder (structure + skills)
 
@@ -31,6 +31,8 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 | N.2 | Skill-body cascade | **Merged** (#165) |
 | K | #96–#98 lighting close-out | **Merged** (#167) |
 | L | Satisfied-by map for #96–#98 | See `docs/EVIDENCE_TEAM-EXPERIENCE-029_VERIFICATION_96_98_SATISFIED_BY.md` |
+
+SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
 
 ## CAM-R1 subject-lock
 
@@ -59,4 +61,4 @@ Selected-seat subject-lock via `SEAT_CLOSE` + Cam-5/6 docks. Apply: `scripts/app
 - **Retired:** `HERO_LOW_ORBIT` and `TURN_FOLLOW` → `docs/archive/superseded/`
 - **Replacement:** `HERO_WIDE` + selected-seat subject-lock (CAM-R1)
 
-<!-- residual-cam-r1 index freshness 2026-09-11: full NEXT_SLICES restored + CAM-R1 -->
+<!-- residual-cam-r1 index freshness 2026-09-11: not-required + CAM-R1 -->
