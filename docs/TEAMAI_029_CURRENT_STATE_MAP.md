@@ -1,90 +1,31 @@
 <!-- teamai-claim: SPATIAL-V3.5 state=COMPLETE -->
-<!-- teamai-claim: BACKEND-001-ENDORSED state=ENDORSED_BOUNDED -->
-<!-- teamai-claim: BACKEND-GATE4 state=PARKED_NOT_PROVEN -->
-<!-- teamai-claim: BACKEND-PROVIDER state=STUB_ONLY -->
 <!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
-# TeamAi 029 — Current State & Continuation Map
+# TeamAi 029 Current State Map
 
-**Status:** Current active reconciliation map for AI-agent recovery (2026-09-11)
-**Spatial residual (#258):** [sync 2026-09-11T09:10Z] CAM-R-RETIRE + **ENT-T1** entrance web **gone** on machine; auth `data-auth-mode` restored from main; Layer A/B + chrome residual PR #259; Cam subject-lock still open. V3.5 COMPLETE — **no 029-released claim**.
-**Authority:** Product Law → Masterplan → Policy/ORUCAVEAM → domain contracts → this map → implementation/evidence
-**Purpose:** flatten parallel development clocks into one incremental slice view so an agent can tell what is implemented, what is proven, what stopped, why it stopped, and what condition permits continuation.
+Living map for TEAM-EXPERIENCE-029 presentation continuity. **No 029-released claim.**
 
-## 1. The rule
+## Spatial frontier
 
-A green commit, a checkpoint, a deployed function, or a staged asset is not by itself the current frontier.
+- Vision **V3.5** complete; spatial gates **SP-01–SP-07** closed.
+- #258 residual (PR #259): ENT-T1 + **CAM-R-RETIRE** (HERO_LOW_ORBIT / TURN_FOLLOW removed); Seat + Detail cameras retained; ENT-R2/R3 + CHR-R1/R2 chrome soft-hide; far-environment stays outside machine shell.
+- Contract: `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`.
 
-For every slice, distinguish:
+## Connection ladder
 
-`PLANNED → IMPLEMENTED → VERIFIED → RUNTIME-PROVEN → COMPLETED → ENDORSED`
+- Conn-1 / Conn-2 merged.
+- Conn-3 OAuth mint implemented; live deployment / browser proof pending (installation may exist on GitHub side without Firebase UID bind until authenticated POST).
 
-A slice may stop between any two states. The stopping reason must be explicit and must not silently become the next slice.
+## Product rules
 
-## 2. Two development clocks
-
-TeamAi currently advances on two related but bounded clocks:
-
-```text
-029 SPATIAL CLOCK
-Product Law
-  → structure
-  → hierarchy state
-  → camera truth
-  → interaction
-  → readability
-  → topology presentation
-  → browser proof
-  → visual polish
-
-BACKEND CLOCK
-Backend contracts
-  → identity
-  → durable Firestore state
-  → trusted Edge runtime
-  → commerce correlation
-  → webhook/runtime proof
-  → provider/runtime invocation
-  → security/recovery verification
-  → traceability
-  → endorsement
-```
-
-They meet at the **presentation boundary**. A 3D face may represent a backend capability, but the face does not become the backend authority.
-
-## 3. Current spatial frontier
-
-| Slice family | Current state | What is true | Why not automatically next |
-|---|---|---|---|
-| P1–P7.1 | COMPLETED implementation lineage | Seat hierarchy structure exists | Do not reopen without a new discrepancy |
-| Cam-1–Cam-4 | COMPLETED architecture lineage | follow / center zoom / edge-swipe merged | Historical, not a new queue |
-| Cam-5–Cam-6 | IMPLEMENTED + verification boundary | selected-seat look-at strengthened | Browser proof still determines quality |
-| V3.1–V3.5 | MERGED / COMPLETE | Entrance ladder closed on main | Parallel: Conn-3 browser proof |
-| #258 residual | IN FLIGHT (PR #259) | ENT-T1; CAM-R-RETIRE; ENT/CHR; auth panel restored | CAM subject-lock / ENT-T3–T5 still open |
-
-## 4. Current backend frontier
-
-| Gate / item | State | Evidence boundary |
-|---|---|---|
-| Gate 3 identity + Firestore | RUNTIME-PROVEN | live auth + Firestore re-read |
-| Gate 4 emulator/rules | PARKED | no real emulator PASS recorded |
-| Gate 5B/5C commerce | VERIFIED / ENDORSED (bounded) | PayPal Sandbox + Firestore aggregate |
-| Provider/runtime | OPEN / STUB ONLY | stub-edge-runtime only |
-| Conn-3 | IMPLEMENTED; browser proof pending | not Hero live bind |
-
-## 6. Spatial ↔ backend connection rule
-
-`3D mesh ≠ backend capability` · `CI green ≠ browser proof` · `deployed ≠ end-to-end complete`
-
-## 10. When to continue spatial work
-
-**#258** residual (entrance/chrome/look-at) is the current spatial feel gap after V3.5.
-
-## 11. Relationship to other documents
-
-- `PRODUCT_LAW.md` · `MASTERPLAN.md` · `POLICY.md`
-- `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
-- `docs/VISION.md` · `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`
+- Presentation only. No durable grant from canvas.
+- No 029-released claim until backend gate + endorsement.
+- One hierarchy node at a time (depth-first).
+- Skills packages are not authority / entitlement (LAW 109).
+- GitHub Actions is not the Web AI scheduler.
+- Durable domain remains Firestore; Supabase Postgres is not TeamAi domain.
 
 ## 12. Agent instruction
 
 **Do not ask “what feature is next?” until this map and the owning contract can answer “what is already true, what is only specified, what is proven, what stopped, why it stopped, and what exact evidence permits continuation?”**
+
+<!-- residual-258 index freshness 2026-09-11 05:52 UTC: CAM-R-RETIRE (no Low orbit/TURN_FOLLOW); Seat+Detail cameras restored; V3.5 far-environment preserved -->
