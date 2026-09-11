@@ -43,6 +43,39 @@ function toggleMenu(button, popover) {
   button.setAttribute('aria-expanded', String(open));
 }
 
+function openSettings() {
+  const btn = document.getElementById('hero-settings-shell');
+  if (btn instanceof HTMLButtonElement) {
+    btn.click();
+    return true;
+  }
+  document.dispatchEvent(new CustomEvent('teamai:settings-request', {
+    detail: { source: '029-experience-nav', presentationOnly: true },
+    bubbles: true,
+  }));
+  return false;
+}
+
+function bindAuthButtons() {
+  document.querySelectorAll('[data-auth-open]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const panel = document.getElementById('hero-auth-panel');
+      if (!panel) return;
+      panel.hidden = false;
+      panel.classList.add('is-open');
+      panel.querySelector('input')?.focus();
+    });
+  });
+  document.querySelectorAll('[data-auth-close]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const panel = document.getElementById('hero-auth-panel');
+      if (!panel) return;
+      panel.classList.remove('is-open');
+      panel.hidden = true;
+    });
+  });
+}
+
 function bind() {
   const el = shell();
   if (!el) return;
@@ -71,6 +104,12 @@ function bind() {
       }
     });
   });
+
+  document.querySelectorAll('[data-settings-open]').forEach((button) => {
+    button.addEventListener('click', openSettings);
+  });
+
+  bindAuthButtons();
 
   window.addEventListener('teamai:hero-layer-change', (event) => {
     const layer = event.detail?.layer;
