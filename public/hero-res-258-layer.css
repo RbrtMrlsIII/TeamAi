@@ -1,4 +1,4 @@
-/* #258 residual — ENT-T1 gone-not-blurred + ENT-R2/R3 + CHR-R1/R2
+/* #258 residual — ENT-T1 gone-not-blurred + ENT-R2/R3 + CHR-R1/R2/R3
  * Presentation only · no 029-released claim.
  * Adjust existing layer/chrome owners. Does not set data-hero-machine-ui.
  */
@@ -65,4 +65,23 @@
 /* Demote camera docks slightly in machine layer */
 .hero-shell[data-hero-layer="machine"] .hero-controls .control-row button[data-camera] {
   opacity: 0.72;
+}
+
+/* CHR-R3 — settings shell sits beside machine-nav (one instrument chrome strip) */
+.hero-shell[data-hero-layer="machine"] .seat-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem 0.75rem;
+}
+.hero-shell[data-hero-layer="machine"] .machine-nav,
+.hero-shell[data-hero-layer="machine"] .hero-settings-shell {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  vertical-align: middle;
+}
+.hero-shell[data-hero-layer="machine"] .hero-settings-shell {
+  margin-inline-start: 0.15rem;
 }
