@@ -19,6 +19,17 @@ Gated by `MASTERPLAN.md` · **no 029-released claim**.
 
 The earlier P/R/F/Cam/V/SP work remains valuable implementation lineage and recovery evidence. It is not automatically the current product acceptance baseline. See `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md` for the current product shape and `docs/CHRONOLOGY.md` for ordered history.
 
+| Slice | Historical continuity anchor |
+|---|---|
+| A | R1/R2 hit targets + focus + wheel/touch nav; **Merged (#150)** |
+| B | `RING_R1_SCALE` / `RING_R2_SCALE`; **Merged (#151)** |
+| C | Camera orbit polish — **NAVIGATE**-only; **Merged (#152)** |
+| D/E | SEAT_TOOLKIT + WORKSPACE_ZIPSKILLS; **Merged (#153/#155)** |
+| G | #89 **reduced-motion lighting**; **Merged (#156)** |
+| H | Legacy `MECHANISM_ZIPSKILLS` reconciliation to `WORKSPACE_ZIPSKILLS`; **Merged (#157)** |
+| I.1–I.3 | #95 cross-root skill wiring; **Merged (#158–#160)** |
+| J/K/L | Material depth + living continuity + satisfied-by evidence; **Merged (#161/#167/#168)** |
+
 SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
 
 ## Hierarchy animation continuity
