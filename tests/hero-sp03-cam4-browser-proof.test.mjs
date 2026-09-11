@@ -17,6 +17,7 @@ import {
   edgePressure,
   edgeDriftDelta,
   proportionalSwipeDelta,
+  inverseSwipeDelta,
   clampPitch,
   pointerNorm,
   EDGE_ZONE_FRAC,
@@ -66,6 +67,7 @@ test('SP-03 proportional swipe follows visible drag direction', () => {
   const r = proportionalSwipeDelta(0.2, 0.1);
   assert.ok(r.dYaw > 0);
   assert.ok(r.dPitch > 0);
+  assert.equal(inverseSwipeDelta(0.2, 0.1).dYaw, r.dYaw, 'legacy export is proportional-compatible');
 });
 
 test('SP-03 clampPitch enforces product bounds', () => {
@@ -113,7 +115,7 @@ test('SP-03 apply-cam2 still owns the proportional Cam-4 path', async () => {
   assert.equal(result.status, 0, result.stderr || result.stdout || 'apply failed');
   const script = await readFile(apply, 'utf8');
   assert.match(script, /hero-cam4-edge-swipe/);
-  assert.match(script, /inverseSwipeDelta/);
+  assert.match(script, /proportionalSwipeDelta|inverseSwipeDelta/);
   assert.match(script, /edgeDriftDelta/);
 });
 
