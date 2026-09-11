@@ -1,13 +1,12 @@
 /**
  * Hero flex loader — Cam-2…Cam-6 + prior wires applied at runtime to the
- * pre-loader SHA base. Full static assembly: node scripts/apply-cam2-tree-follow-flex.mjs
+ * repository-owned base source. Full static assembly: node scripts/apply-cam2-tree-follow-flex.mjs
  * Presentation only · no 029-released claim.
  */
 import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG } from './hero-cam2-tree-follow.js';
 import { resolveSelectedSeatDock, isSeatShellOpen } from './hero-cam5-selected-tree-center.js';
 
-const MAIN_URL =
-  'https://raw.githubusercontent.com/RbrtMrlsIII/TeamAi/a2f8a3e162ff2a19acc496bff07dd6b6d7ffcdec/public/hero-flex.js';
+const MAIN_URL = './_flex_src/hero-flex.base.js';
 
 function patchSource(src) {
   let t = src;
@@ -52,27 +51,8 @@ function patchSource(src) {
     );
   }
 
-  const oldNav = `function applyNavCamera() {
-  if (hierarchyRuntime.openParentId) return;
-  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;
-  const base = cameras().HERO_WIDE;
-  const dist = base.p[2] * navZoom;
-  const cy = base.p[1] + navOrbitPitch * 1.2;
-  const yaw = navOrbitYaw;
-  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };
-  camAt = 1;
-}`;
-  const newNav = `function applyNavCamera() {
-  if (!shouldApplyTreeNav(hierarchyRuntime)) return;
-  const table = cameras();
-  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
-  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
-    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });
-    if (seatDock) base = seatDock;
-  }
-  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
-  camAt = 1;
-}`;
+  const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
+  const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
   if (t.includes(oldNav)) t = t.replace(oldNav, newNav);
 
   t = t.replace(
@@ -80,7 +60,6 @@ function patchSource(src) {
     "canvas.addEventListener('wheel', (event) => {\n  event.preventDefault();\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;",
   );
 
-  // Retire HERO_LOW_ORBIT + TURN_FOLLOW (vanish from runtime table + turn loop)
   if (t.includes('HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},')) {
     t = t.replace('HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},', '');
   }
@@ -101,7 +80,7 @@ function patchSource(src) {
 }
 
 const src = await fetch(MAIN_URL).then((r) => {
-  if (!r.ok) throw new Error('Failed to load hero-flex base');
+  if (!r.ok) throw new Error('Failed to load repository-owned hero-flex base');
   return r.text();
 });
 const patched = patchSource(src);
