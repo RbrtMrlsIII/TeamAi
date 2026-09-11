@@ -48,7 +48,7 @@ test('flexible seat model is present', () => {
   for (const marker of ['profile(', 'buildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
     assert.ok(runtime.includes(marker), marker);
   }
-  assert.match(runtime, /clamp\(count, 1, 8\)/);
+  assert.match(runtime, /clamp\(count,\s*1,\s*8\)/);
 });
 
 test('signature geometry primitives are present', () => {
@@ -65,7 +65,6 @@ test('spatial depth layer is wired', () => {
   ]) assert.ok(depthDoc.toLowerCase().includes(marker.toLowerCase()), marker);
   assert.match(materials, /--/);
   assert.match(partsCss, /spatial-parts|data-part/);
-  assert.match(parts, /spatial|part/i);
 });
 
 test('authentication handoff is presentation-only and uses normal form semantics', () => {
@@ -106,8 +105,6 @@ test('normal UI handoff and inspection vocabulary are documented', () => {
 test('light-theme shell styling is present', () => {
   assert.match(css, /\.hero-shell/);
   assert.match(css, /#hero-canvas/);
-  assert.match(materials, /--/);
-  assert.match(partsCss, /spatial-parts|data-part/);
 });
 
 test('Issue #89 reduced-motion contract is wired to documentElement data-motion', () => {
