@@ -43,8 +43,13 @@ ToolKit
 
 Project-specific TeamAi findings remain in TeamAi. ToolKit changes do not automatically alter TeamAi. Adoption must pass TeamAi Product Law, Policy, and endorsement discipline.
 
+## Responsibility unit tree
+
+Canonical RU catalog and Hero face maps: `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md` (Issue #256 · H-T1).
+
 ## See also
 
+- `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md`
 - `docs/backend/WEB_AI_SKILL_INHERITANCE_CANONICAL.md`
 - `docs/backend/KNOWLEDGE_PRESERVATION_AND_TOOLKIT_BOUNDARY.md`
 - `docs/backend/TOOLKIT_BENCHMARK_AND_FEEDBACK.md`
