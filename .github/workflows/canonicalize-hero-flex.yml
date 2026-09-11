@@ -1,0 +1,55 @@
+name: Canonicalize Hero flex
+
+on:
+  push:
+    branches:
+      - fix/029-local-hero-runtime
+
+permissions:
+  contents: write
+
+jobs:
+  canonicalize:
+    if: ${{ !contains(github.event.head_commit.message, 'chore(029): canonical Hero flex') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch tip
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and assemble canonical Hero flex
+        run: |
+          npm run build
+          node scripts/apply-cam2-tree-follow-flex.mjs
+          node --check public/hero-flex.js
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const src = fs.readFileSync('public/hero-flex.js', 'utf8');
+          if (src.includes('raw.githubusercontent.com') || src.includes('MAIN_URL') || src.includes('new Blob') || src.includes('URL.createObjectURL') || src.includes('await fetch(')) {
+            throw new Error('Canonical hero-flex.js still contains a remote/runtime loader marker');
+          }
+          if (!src.includes('function cameras()')) throw new Error('Canonical hero-flex.js is not fully assembled');
+          if (!src.includes("./hero-cam4-edge-swipe.js")) throw new Error('Canonical hero-flex.js is missing Cam-4 wiring');
+          console.log(`Canonical hero-flex.js verified: ${src.length} bytes`);
+          NODE
+
+      - name: Commit canonical artifact and retire this workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/canonicalize-hero-flex.yml
+          git add public/hero-flex.js .github/workflows/canonicalize-hero-flex.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(029): canonical Hero flex"
+          git push origin HEAD:${GITHUB_REF_NAME}
