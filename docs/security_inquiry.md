@@ -86,4 +86,47 @@
 
 ---
 
-<!-- Agents: append Q-006+ below this line. Keep numbering monotonic. -->
+### Q-006 — Row-level security (RLS) on?
+
+**Context:** Durable domain is Firestore; some stacks also use Postgres/Supabase with RLS.
+
+**Question:** Do we have row-level security on?
+
+**Working answer (bounded):**
+
+1. **Canonical TeamAi durable domain is Cloud Firestore**, not Postgres-as-domain. Domain security is primarily **Firestore Security Rules** (+ trusted Admin/Edge paths), not Postgres RLS on a TeamAi domain DB.
+2. **Supabase Postgres** (if present) is **not** the TeamAi domain store — “RLS on” there does not cover Seat/Workplace/task authority.
+3. **Rules must enforce UID ownership/membership** for client paths; service-credential Edge must still apply application authorization.
+4. Not a claim that every collection is fully audited.
+
+**Open follow-ups:** [ ] Map client-readable vs Edge-only paths [ ] Cross-UID deny evidence [ ] Clarify any non-domain Supabase tables
+
+**Related:** Firestore rules · Firestore usage policy · backend authority
+
+**Status:** INQUIRY
+
+---
+
+### Q-007 — API body includes `isAdmin: true`
+
+**Context:** JSON bodies on Edge/app APIs may include many fields.
+
+**Question:** What if the API accepts arbitrary body fields and a user sends `isAdmin: true`?
+
+**Working answer (bounded):**
+
+1. **Never take privilege from the request body.** Roles/admin/entitlements/UID come from **verified auth + durable server state**, not client JSON.
+2. **Allowlist / schema validation** on mutating routes; strip or reject unknown keys.
+3. **Ignore or hard-reject** client `isAdmin`, `role`, `uid`, `entitlements`, `permissions` when not grounded in server truth.
+4. **Mass-assignment defense** — do not spread full body into privileged Firestore writes.
+5. Same untrusted-client rule as Q-004 (JWT).
+
+**Open follow-ups:** [ ] Schema validation on mutating Edge functions [ ] Deny-list tests for body privilege fields [ ] Review body→write spreads
+
+**Related:** Q-004 · backend authority · Edge contracts
+
+**Status:** INQUIRY
+
+---
+
+<!-- Agents: append Q-008+ below this line. Keep numbering monotonic. -->
