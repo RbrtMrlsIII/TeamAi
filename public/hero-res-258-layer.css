@@ -1,23 +1,35 @@
-/* #258 residual — ENT-R2/R3 + CHR-R1/R2 (presentation only · no 029-released claim)
- * Adjust existing layer/chrome owners. Does not set data-hero-machine-ui (hierarchy absorption).
+/* #258 residual — ENT-T1 gone-not-blurred + ENT-R2/R3 + CHR-R1/R2
+ * Presentation only · no 029-released claim.
+ * Adjust existing layer/chrome owners. Does not set data-hero-machine-ui.
  */
 
-/* ENT-R2 — machine layer retires entrance-primary brand (overrides soft 0.42) */
-.hero-shell[data-hero-layer="machine"] .hero-copy {
+/* ENT-T1 / ENT-R2 — machine: entrance web surface TOTALLY GONE (not blurred, not 0.42) */
+.hero-shell[data-hero-layer="machine"] .hero-copy,
+.hero-shell[data-hero-layer="machine"] [data-entrance-region="brand"],
+.hero-shell[data-hero-layer="machine"] .spatial-parts {
+  display: none !important;
   opacity: 0 !important;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 220ms ease, visibility 220ms ease;
-}
-.hero-shell[data-hero-layer="entrance"] .hero-copy {
-  opacity: 1;
-  visibility: visible;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-shell[data-hero-layer="machine"] .hero-copy { transition: none; }
+  visibility: hidden !important;
+  pointer-events: none !important;
+  filter: none !important;
 }
 
-/* ENT-R3 — Return control only on machine layer */
+.hero-shell[data-hero-layer="entrance"] .hero-copy,
+.hero-shell[data-hero-layer="entrance"] [data-entrance-region="brand"] {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-shell[data-hero-layer="machine"] .hero-copy,
+  .hero-shell[data-hero-layer="machine"] .spatial-parts {
+    transition: none;
+  }
+}
+
+/* ENT-R3 — Return control only on machine layer (until ENT-T5 moves it into settings) */
 .hero-shell[data-hero-layer="entrance"] [data-hero-layer-return] {
   display: none !important;
 }
@@ -25,22 +37,15 @@
   display: inline-flex !important;
 }
 
-/* CHR-R2 — soft-hide legacy seat-stack module column on machine; keep machine-nav + settings */
+/* CHR-R2 — soft-hide legacy seat-stack module column on machine */
 .hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__module,
 .hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__note,
 .hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__handoff,
 .hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__distinction {
+  display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0);
-  margin: -1px !important;
-  padding: 0 !important;
-  border: 0 !important;
 }
 
 /* Entrance: de-emphasize stack chips so Layer A is not a config wall */

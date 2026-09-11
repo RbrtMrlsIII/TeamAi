@@ -1,6 +1,7 @@
 /**
  * Map remaining DOM product actions → hierarchy / tree docks only.
  * Retire lock-only camera presets that ignore open trees.
+ * CAM-R-RETIRE: HERO_LOW_ORBIT + TURN_FOLLOW removed from existence.
  * Authority: TEAMAI_3D_HERO_DOM_CHROME_ABSORPTION.md steps 2–4
  * Presentation only · no 029-released claim.
  */
@@ -36,11 +37,56 @@ export function isTreeAlignedCamera(cameraId) {
 export function resolveDomCameraAction(cameraId, ctx = {}) {
   const id = String(cameraId || '');
   const hierarchyOpen = Boolean(ctx.hierarchyOpen);
-  if (isLockOnlyCamera(id) && hierarchyOpen) {
-    return { ok: false, reason: 'lock-only-while-tree-open', prefer: 'tree-aligned' };
+
+  if (isLockOnlyCamera(id)) {
+    if (hierarchyOpen) {
+      return {
+        allowed: false,
+        effectiveCameraId: null,
+        retired: true,
+        freeNav: true,
+        reason: 'lock-only camera retired while hierarchy open',
+      };
+    }
+    return {
+      allowed: true,
+      effectiveCameraId: 'HERO_WIDE',
+      retired: true,
+      freeNav: true,
+      reason: 'lock-only camera mapped to HERO_WIDE + free nav',
+    };
   }
-  if (isTreeAlignedCamera(id) || isLockOnlyCamera(id)) {
-    return { ok: true, cameraId: id };
+
+  if (hierarchyOpen && !isTreeAlignedCamera(id)) {
+    return {
+      allowed: false,
+      effectiveCameraId: null,
+      retired: false,
+      freeNav: true,
+      reason: 'non-aligned camera blocked while hierarchy open',
+    };
   }
-  return { ok: false, reason: 'unknown-camera', cameraId: id };
+
+  return {
+    allowed: true,
+    effectiveCameraId: id,
+    retired: false,
+    freeNav: false,
+    reason: 'tree-aligned or default dock',
+  };
+}
+
+export function applyResolvedCamera(cameraId, ctx = {}) {
+  const resolved = resolveDomCameraAction(cameraId, ctx);
+  if (!resolved.allowed || !resolved.effectiveCameraId) return resolved;
+  const hero = typeof window !== 'undefined' ? window.TeamAiHero : null;
+  if (hero && typeof hero.setCamera === 'function') {
+    hero.setCamera(resolved.effectiveCameraId);
+  } else if (typeof document !== 'undefined') {
+    const btn = document.querySelector(`[data-camera="${resolved.effectiveCameraId}"]`);
+    if (btn && !isLockOnlyCamera(resolved.effectiveCameraId)) {
+      btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    }
+  }
+  return resolved;
 }
