@@ -18,6 +18,7 @@ A remote source fetched at page load makes the product runtime depend on an exte
 - `public/hero-flex.js` now points to `./_flex_src/hero-flex.base.js` for runtime loading.
 - The stable `scripts/apply-cam2-tree-follow-flex.mjs` command path now seeds from the local base before invoking the preserved patch engine.
 - A static regression test forbids `raw.githubusercontent.com` in the runtime entry.
+- The browser/build path must be validated from the repository-owned artifact, not from a remote source.
 
 ## Remaining cleanup
 
