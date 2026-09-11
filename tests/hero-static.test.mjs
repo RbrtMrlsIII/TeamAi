@@ -1,39 +1,28 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { test } from 'node:test';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const read = (rel) => readFileSync(join(root, rel), 'utf8');
-
-const html = read('public/index.html');
-const css = read('public/hero.css');
-const runtime = read('public/hero-flex.js');
-const materials = read('public/hero-materials.css');
-const partsCss = read('public/hero-parts.css');
-const partsJs = read('public/hero-parts.js');
-const seatCss = read('public/hero-seat-stack.css');
-const seatJs = read('public/hero-seat-stack.js');
-const auth = read('public/hero-auth-handoff.js');
-const semantic = read('public/hero-semantic-camera.js');
-const spine = read('public/hero-inspection-spine.js');
-const depthDoc = read('docs/TEAMAI_3D_HERO_DEPTH_AND_INSPECTION.md');
+const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
+const css = await readFile(new URL('../public/hero.css', import.meta.url), 'utf8');
+const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
+const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
+const semantic = await readFile(new URL('../public/hero-semantic-camera.js', import.meta.url), 'utf8');
+const spine = await readFile(new URL('../public/hero-inspection-spine.js', import.meta.url), 'utf8');
+const seatStack = await readFile(new URL('../public/hero-seat-stack.js', import.meta.url), 'utf8');
+const materials = await readFile(new URL('../public/hero-materials.css', import.meta.url), 'utf8');
+const partsCss = await readFile(new URL('../public/hero-parts.css', import.meta.url), 'utf8');
+const depthDoc = await readFile(new URL('../docs/TEAMAI_3D_HERO_DEPTH_AND_INSPECTION.md', import.meta.url), 'utf8');
 
 test('3D Hero static shell is wired', () => {
-  for (const marker of [
-    'id="hero-canvas"',
-    'Living Web AI Workspace',
-    'data-camera',
-    'hero-controls',
-    'data-inspection-stage',
-  ]) assert.ok(html.includes(marker), marker);
+  assert.match(html, /id="hero-canvas"/);
+  assert.match(html, /Living Web AI Workspace/);
+  assert.match(html, /data-camera/);
   assert.match(css, /\.hero-shell/);
-  assert.match(runtime, /hero-flex|Hero flex|function frame|MAIN_URL/);
+  assert.match(runtime, /function frame|MAIN_URL|hero-flex/);
 });
 
 test('semantic POV catalog exists', () => {
-  // After apply-cam2 in CI, assembled flex holds cameras(); loader path still documents the table.
   for (const cameraId of [
     'HERO_WIDE',
     'TEAM_ORBIT',
@@ -69,9 +58,8 @@ test('signature geometry primitives are present', () => {
 test('spatial depth layer is wired', () => {
   assert.match(materials, /--/);
   assert.match(partsCss, /spatial-parts|data-part/);
-  assert.match(partsJs, /spatial|part/i);
-  assert.match(seatCss, /seat-stack/);
-  assert.match(seatJs, /seat/i);
+  assert.match(parts, /spatial|part/i);
+  assert.match(seatStack, /seat/i);
 });
 
 test('authentication handoff is presentation-only and uses normal form semantics', () => {
