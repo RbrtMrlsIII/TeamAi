@@ -2,6 +2,11 @@
 
 const shell = () => document.querySelector('.hero-shell');
 
+function isWorldRoute() {
+  const path = window.location?.pathname || '/';
+  return /\/hero\/?$/.test(path);
+}
+
 function setExperience(mode, source) {
   const el = shell();
   if (!el) return;
@@ -79,7 +84,9 @@ function bindAuthButtons() {
 function bind() {
   const el = shell();
   if (!el) return;
-  el.dataset.experience = 'classic';
+
+  // /hero/ is the explicit 3D-world destination; / is the classic public entrance.
+  el.dataset.experience = isWorldRoute() ? 'world' : 'classic';
 
   document.querySelectorAll('[data-world-entry]').forEach((button) => {
     button.addEventListener('click', () => enterWorld(button.dataset.worldEntry || 'classic-enter'));
