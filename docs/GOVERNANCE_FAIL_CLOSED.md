@@ -6,6 +6,14 @@
 
 TeamAi treats current documentation state as an input to implementation validation. Tests alone do not establish that an agent's work is valid.
 
+## User-directed validation (#260)
+
+When the user intentionally changes authorized truth, follow `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` **before** changing validators.
+
+- Post-merge merged state = **current truth** until superseded.
+- Retired concepts → `docs/archive/superseded/INDEX.md` (redirect, do not erase recovery knowledge).
+- Fail-closed CI remains mandatory; this protocol does not authorize skipping drift/evidence jobs.
+
 ## Hard laws
 
 > **LAW-A:** No implementation claim is valid unless the required active indexes are synchronized with the validating change.
@@ -60,7 +68,7 @@ The governance validator maps implementation roots to required active-index upda
 |---|---|
 | `public/` or `skills/frontend/spatial/` | `MASTERPLAN.md`, `docs/TEAMAI_029_CURRENT_STATE_MAP.md`, `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` |
 | `backend/` or `supabase/` | `MASTERPLAN.md`, `docs/TEAMAI_029_CURRENT_STATE_MAP.md`, `backend/BACKEND_LIVE_SERVICE_STATUS.md` |
-| `skills/` | `docs/SKILL_WIRING.md` |
+| `skills/` | `docs/SKILL_WIRING.md`, `MASTERPLAN.md` |
 
 A code change without its required documentation reconciliation is `AGENT-WORK-UNVALIDATED` and fails the governance check.
 
@@ -84,7 +92,7 @@ Otherwise the agent work is not merge-valid under this governance model.
 
 ## Frontier lock
 
-The current spatial frontier is machine-locked to `V3.3` / `SP-07` until a future change updates the manifest with a new authorized state and matching evidence.
+The current spatial frontier is machine-locked in `.github/teamai/execution-state.yml` (V3.5 / SP-07 COMPLETE) until a future change updates the manifest with a new authorized state and matching evidence.
 
 This prevents documentation drift from silently promoting a later slice.
 
@@ -97,7 +105,5 @@ TeamAi / governance-drift
 TeamAi / evidence-consistency
 TeamAi / agent-validation
 ```
-
-The connected GitHub identity used for TeamAi currently has push/triage/pull access but not repository administration. Therefore the final required-check switch must be performed by a repository administrator. Until that switch is enabled, the workflow can detect and fail governance drift but GitHub merge enforcement is not complete.
 
 Direct bypass of `main` remains separately controlled by the repository's existing merge-protection ruleset.
