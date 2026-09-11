@@ -47,7 +47,8 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | #258 residual / #259 | MERGED | ENT-T1; CAM-R-RETIRE; Return; CHR soft-hide | Historical current-truth baseline; product shape superseded by C0–C10 |
 | #265 / #266 | MERGED | entrance↔machine browser proof; CHR-R3 | Retained as implementation evidence, re-owned by C2–C4 |
 | **C0–C10 rebaseline / #274** | **MERGED** | classic entrance + explicit 3D entry + coherent nav + camera/auth boundary groundwork | C9 visual acceptance gates product completion; C10 ProMax remains downstream |
-| **Hero runtime delivery hardening / #275** | **IN PR** | repository-owned Hero base + local runtime entry; normal build/test path is network-independent | Build-engine fallback remains historical/internal until separately removed |
+| **Hero runtime delivery hardening / #275** | **MERGED** | repository-owned Hero runtime is now committed and normal browser/build execution no longer depends on remote runtime source | Preserve delivery hardening; do not reintroduce remote runtime loading |
+| **#278 surface reconciliation** | **ACTIVE** | GitHub Pages public root is being aligned to the owner-directed classic entrance; Command Deck is retained under `/spatial/` as workspace/transition surface; `/hero/` remains compatibility route | Acceptance requires deployed-root browser proof before C9 |
 
 **Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` → `docs/archive/superseded/` and must not be silently revived.
 
@@ -75,7 +76,7 @@ See hierarchy baseline §9, spatial execution basis, `docs/TEAMAI_029_EXPERIENCE
 
 ## 10. When to continue spatial work
 
-Follow the C0–C10 experience rebaseline. Do not create isolated camera/chrome polish that re-entrenches the superseded one-shell entrance. C9 requires desktop + phone evidence and owner acceptance before C10 ProMax refinement.
+Follow the C0–C10 experience rebaseline and #278 surface reconciliation. Do not create isolated camera/chrome polish that re-entrenches the superseded one-shell entrance. C9 requires desktop + phone evidence and owner acceptance before C10 ProMax refinement.
 
 ## 11. Related documents
 
@@ -84,12 +85,13 @@ Follow the C0–C10 experience rebaseline. Do not create isolated camera/chrome 
 - `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` · `docs/archive/superseded/INDEX.md`
 - `docs/security_inquiry.md` (future/pre-production backlog)
 - `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`
+- `docs/TEAMAI_029_DEPLOYMENT_SURFACE_MAP.md`
 - `public/_flex_src/hero-flex.base.js` · repository-owned Hero base
 - `scripts/apply-cam2-tree-follow-flex.mjs` → repository-owned wrapper for local assembly
 
 ## 12. Agent instruction
 
-Do not ask “what feature is next?” until this map answers what is true, proven, stopped, and what evidence permits continuation. For the current experience, use the C0–C10 sequence rather than reopening historical V0–V3 queues.
+Do not ask “what feature is next?” until this map answers what is true, proven, stopped, and what evidence permits continuation. For the current experience, use the C0–C10 sequence plus #278 surface ownership rather than reopening historical V0–V3 queues.
 
 <!-- residual: #275 repository-owned Hero runtime hardening; raw remote source removed from normal runtime/build entry path; internal legacy engine fallback remains slated for explicit cleanup -->
 
@@ -99,4 +101,10 @@ Implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
 
 `public/hero-flex.js` is the committed repository-owned assembled runtime. The normal browser/build path no longer depends on a remote runtime source. Local verification: SP-04 11/11, syntax check passed, `hero-flex-local-runtime.test.mjs` 1/1.
 
-This is still an open PR until GitHub validation and merge complete. The internal legacy patch-engine fallback remains historical/internal follow-up work and must not become runtime authority.
+#275 is merged. No 029 release claim.
+
+## #278 surface reconciliation baseline
+
+The canonical public product surface is the classic website entrance. The Command Deck in `frontend/spatial/` is retained as the workspace/transition surface at `/spatial/`, not as the public front door. `public/` remains the canonical classic entrance + 3D-world source and is published both at the public root and at `/hero/` for compatibility until a later routing decision retires that duplicate path.
+
+This route ownership is a deployment/product-shape decision only. It does not grant authentication, entitlement, or server authorization. C8 remains separately gated by server-verified identity and authorization.
