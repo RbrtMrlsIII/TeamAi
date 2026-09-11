@@ -3,6 +3,7 @@
  * Prefer public/_flex_src parts; else pre-loader SHA; then patch.
  * Cam-6 (Issue #212): mandatory selected-seat look-at while seat shell open.
  * V0.2 (Vision #214): return-to-baseline on close — HERO_WIDE + nav home.
+ * CAM-R-RETIRE (#258): strip HERO_LOW_ORBIT + TURN_FOLLOW from cameras() and turn loop.
  * SP-04: fail loudly when expected markers are missing (no silent no-op success).
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -163,6 +164,23 @@ function applyPatches(t) {
       'function closeHierarchyParent(){ closeHierarchyParentState(hierarchyRuntime); return syncHierarchyFromGlobals(); }',
       `function closeHierarchyParent(){ /* V0.2 close baseline */ closeHierarchyParentState(hierarchyRuntime); navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1; setCamera(typeof WORLD_BASELINE_DOCK_ID !== 'undefined' ? WORLD_BASELINE_DOCK_ID : 'HERO_WIDE'); return syncHierarchyFromGlobals(); }`,
     );
+    changed = true;
+  }
+  // CAM-R-RETIRE: remove HERO_LOW_ORBIT + TURN_FOLLOW from cameras() and turn loop
+  if (t.includes('HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},')) {
+    t = t.replace('HERO_LOW_ORBIT:{p:[d*.74,d*.23,d*.78],t:[0,.78,0],f:40},', '');
+    changed = true;
+  }
+  if (t.includes('TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},')) {
+    t = t.replace('TURN_FOLLOW:{p:[4.6,2.05,5.15],t:[0,.72,0],f:35},', '');
+    changed = true;
+  }
+  if (t.includes("setCamera('TURN_FOLLOW')")) {
+    t = t.replaceAll("setCamera('TURN_FOLLOW')", "setCamera('HERO_WIDE')");
+    changed = true;
+  }
+  if (t.includes("setCamera('HERO_LOW_ORBIT')")) {
+    t = t.replaceAll("setCamera('HERO_LOW_ORBIT')", "setCamera('HERO_WIDE')");
     changed = true;
   }
   return { t, changed };
