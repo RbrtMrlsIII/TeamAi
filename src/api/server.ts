@@ -46,6 +46,19 @@ async function serveStatic(req:any, res:any, url: URL, prefix:string, root:strin
   return true;
 }
 
+async function serveRootHero(req:any, res:any, url: URL): Promise<boolean> {
+  if (req.method !== 'GET' || url.pathname !== '/') return false;
+  const resolved = path.resolve(HERO_ROOT, 'index.html');
+  try {
+    const data = await readFile(resolved);
+    res.writeHead(200, { 'content-type': MIME['.html'] });
+    res.end(data);
+  } catch {
+    json(res, 500, { error: 'root_not_available' });
+  }
+  return true;
+}
+
 async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
   return serveStatic(req, res, url, '/spatial', SPATIAL_ROOT, 'index.html');
 }
@@ -59,6 +72,7 @@ export function createApiServer(deps:ApiDependencies){
   return createServer(async(req:any,res:any)=>{
     try {
       const url=new URL(req.url??'/', 'http://localhost');
+      if (await serveRootHero(req, res, url)) return;
       if (await serveHero(req, res, url)) return;
       if (await serveSpatial(req, res, url)) return;
       if(req.method==='GET'&&url.pathname==='/health') return json(res,200,{ok:true});
