@@ -22,14 +22,15 @@
 
 | ID | Status |
 |----|--------|
-| ENT-T1 / ENT-R2 / ENT-R3 | **Merged** #259 |
+| ENT-R2 / ENT-R3 | **Merged** #259 |
 | CAM-R-RETIRE | **Merged** #259 |
 | CAM-R1–R3 | **Merged** #262–#264 |
 | ENT-R4 | **Merged** #265 |
-| CHR-R1/R2 | **Merged** #259 |
+| CHR-R1 | **Merged** #259 |
+| CHR-R2 | **Merged** #259 (soft-hide seat-stack modules on machine) |
 | CHR-R3 | **Merged** #266 |
-| Security inquiry register | `docs/security_inquiry.md` Q-001–Q-007 on main |
+| Security inquiry register | `docs/security_inquiry.md` on main |
 
-Still open if authorized: CHR-R4–R6 polish, ENT-T3–T5, Project-tests root cause on CI, security follow-ups (rate-limit inventory, rules audit).
+Still open if authorized: CHR-R4–R6 polish, ENT-T3–T5, experience rebase checklist (`docs/TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST.md`).
 
 **no 029-released claim**
