@@ -1,24 +1,70 @@
 # #258 residual — Layer A/B legibility + machine chrome consolidation
 
-**Status:** MERGED baseline via PR **#259** (`4b9a74d`) — current implementation truth until deliberately superseded.  
-**Scope:** Presentation only. No second WebGL. No backend/domain authority change. **No 029-released claim.**
+**Status:** EXECUTION (presentation) · **no 029-released claim**  
+**Date:** 2026-09-11  
+**Authority:** VISION §1 · §3 · ENTRANCE_IA · V3.4 handoff · Issue #258
 
-## Delivered in #259
+## Acceptance (ENT-R1)
 
-- **ENT-T1 / ENT-R2:** entrance brand/copy gone on `data-hero-layer="machine"` (not merely blurred).
-- **ENT-R3:** Return to entrance control present.
-- **CHR-R1/R2:** soft-hide legacy seat-stack modules on machine UI; machine-nav retained.
-- **CAM-R-RETIRE:** `HERO_LOW_ORBIT` and `TURN_FOLLOW` removed from UI, action map, and runtime existence; residual calls map to `HERO_WIDE`.
+| Layer | User must perceive | Entrance-primary | Machine-primary |
+|-------|--------------------|------------------|-----------------|
+| **A — Entrance** | Branded web face; Hero backdrop | Brand/lede, Open engine / get-started | Not a wall of seat chips |
+| **B — Machine** | Inside the instrument | Brand **retired**; get-started demoted | **One** parts/trees dropdown + settings beside it |
 
-## Archive redirects (post-merge #259)
+## Chrome inventory
 
-- `HERO_LOW_ORBIT` → `docs/archive/superseded/HERO_LOW_ORBIT.md`
-- `TURN_FOLLOW` → `docs/archive/superseded/TURN_FOLLOW.md`
-- Protocol → `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md`
-- Index → `docs/archive/superseded/INDEX.md`
+| Surface | Class | Residual action |
+|---------|-------|-----------------|
+| `.hero-copy` brand | entrance-primary | **ENT-R2** retire on `data-hero-layer=machine` |
+| `.hero-controls` Open engine / docks | mixed | Machine: demote docks; keep return path |
+| `.seat-stack__module` chips | **debt** | **CHR-R2** soft-hide when machine-nav owns parts list |
+| `.machine-nav` select | machine-primary | **CHR-R1** sole parts/trees control |
+| `.hero-settings-shell` | machine-primary | **CHR-R3** beside nav only |
+| Inspection spine | machine when open | Later CHR-R5 |
+| Far links | outside | Keep (V3.5) |
 
-## Still open (authorized residuals only)
+## This slice set (landed with residual PR)
 
-- Selected-seat subject-lock (not a TURN_FOLLOW revival)
-- ENT-T3–T5 where product authorizes further entrance/machine polish
-- Owner visual endorsement when environment is fair
+| ID | Intent |
+|----|--------|
+| RES-0 / ENT-R1 | This contract |
+| ENT-R2 | Machine layer retires brand (not 0.42 opacity) |
+| ENT-R3 | Visible Return to entrance control |
+| CHR-R1 / R2 | Dropdown remains; legacy stack modules soft-hidden |
+| CAM-R-RETIRE | HERO_LOW_ORBIT + TURN_FOLLOW removed from UI/runtime |
+
+## Forbidden
+
+- Second canvas / second theme root / second settings island  
+- Stealing `data-hero-machine-ui` ownership from hierarchy absorption  
+- 029-released claim  
+
+## Later on #258
+
+CAM-R1–R3 seat look-at · CHR-R3–R6 polish absorption · ENT-R4 Playwright · ENT get-started CTA
+
+## Governance
+
+Spatial `public/` change requires sync of `MASTERPLAN.md`, `docs/TEAMAI_029_CURRENT_STATE_MAP.md`, `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` (verify-active-index coupling).
+
+Load `skills/governance/active-index-coupling/SKILL.md` before spatial PRs.
+
+## CAM-R-RETIRE — HERO_LOW_ORBIT + TURN_FOLLOW removed
+
+**Status:** applied on residual branch (presentation only).
+
+- UI: Low orbit control removed from `public/index.html`.
+- Action map: both ids removed from tree-aligned / lock-only lists.
+- Runtime: `hero-flex.js` strips both presets from `cameras()` and maps turn-loop `setCamera('TURN_FOLLOW')` → `HERO_WIDE`.
+- Intent: turn loop must not force low/side orbit each WebAI turn; world baseline remains `HERO_WIDE` (~45°).
+- Open: seat-relative subject-lock is CAM-R1 (not a restore of TURN_FOLLOW preset).
+
+## CAM-R1 — subject-lock (implementation)
+
+**Status:** implementation PR · presentation only · post-#259 baseline
+
+- Turn-loop next FOCUS → `setCamera('SEAT_CLOSE')` (subject-lock toward `selectedSeat`)
+- `retargetSubjectLock` / `setSelectedSeat` re-resolve dock without new camera ids
+- Apply: `scripts/apply-cam-r1-subject-lock.mjs` (after cam2 flex apply)
+- Contract: `docs/TEAMAI_258_CAM_R1_SUBJECT_LOCK.md`
+- Still **not** `TURN_FOLLOW` / `HERO_LOW_ORBIT` (archive only)
