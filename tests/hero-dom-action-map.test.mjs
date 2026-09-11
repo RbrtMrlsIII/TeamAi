@@ -1,6 +1,3 @@
-/**
- * DOM action map + lock-only camera retirement tests (presentation only).
- */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -11,7 +8,8 @@ import {
 } from '../public/hero-dom-action-map.js';
 
 test('lock-only set is non-empty and disjoint from tree-aligned', () => {
-  assert.ok(LOCK_ONLY_CAMERA_IDS.length >= 3);
+  // CAM-R-RETIRE: HERO_LOW_ORBIT + TURN_FOLLOW removed; remaining lock-only >= 2
+  assert.ok(LOCK_ONLY_CAMERA_IDS.length >= 2);
   for (const id of LOCK_ONLY_CAMERA_IDS) {
     assert.ok(!TREE_ALIGNED_CAMERA_IDS.includes(id));
   }

@@ -1,6 +1,7 @@
 /**
  * Map remaining DOM product actions → hierarchy / tree docks only.
  * Retire lock-only camera presets that ignore open trees.
+ * CAM-R-RETIRE: HERO_LOW_ORBIT + TURN_FOLLOW removed from existence.
  * Authority: TEAMAI_3D_HERO_DOM_CHROME_ABSORPTION.md steps 2–4
  * Presentation only · no 029-released claim.
  */
@@ -10,11 +11,9 @@ export const TREE_ALIGNED_CAMERA_IDS = Object.freeze([
   'SEAT_CLOSE',
   'DETAIL_ANCHOR',
   'WORKSPACE_CLOSE',
-  'TURN_FOLLOW',
 ]);
 
 export const LOCK_ONLY_CAMERA_IDS = Object.freeze([
-  'HERO_LOW_ORBIT',
   'TEAM_ORBIT',
   'OVERHEAD_MAP',
 ]);

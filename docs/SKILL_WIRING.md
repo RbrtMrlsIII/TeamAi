@@ -33,6 +33,7 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 |---|---|---|---|---|---|
 | Product Law change | Product Law / active phase | `skills/governance/product-law-change/SKILL.md` + applicable ORUCAVEAM skills | Repository documents | Authority/discrepancy review | HandOver + endorsement; Product Knowledge when learned |
 | Masterplan checklist wiring | Masterplan | `skills/governance/masterplan-skill-wiring/SKILL.md` + applicable ORUCAVEAM skills | Repository documents | Every executable item has concrete skill routing or no-skill rationale | Wiring map + HandOver |
+| Active-index coupling | Any PR touching `public/`, `backend/`, `supabase/`, or `skills/` | `skills/governance/active-index-coupling/SKILL.md` + ORUCAVEAM | `verify-active-index.mjs` + canonical indexes | Governance-drift PASS; full MASTERPLAN (no truncation); required indexes in same PR | CI governance-drift job |
 | Execution discipline | Policy | `skills/execution/orucaveam/SKILL.md` + applicable letter skills | Applicable tools | ORUCAVEAM gate record | Evidence + HandOver |
 | Learning / teach-back | Completed execution | `skills/governance/learning-handover/SKILL.md` + applicable ORUCAVEAM/Audit skills | HandOver/Endorsement docs | Learning acceptance and scope | `PRODUCT-KNOWLEDGE.md` + optional ToolKit candidate |
 | Backend / Firebase | TEAM-BACKEND-001 / 029 backend dependency | ORUCAVEAM + concrete backend skill family | Firebase / Firestore / Supabase | Authoritative backend evidence | Backend checkpoint/HandOver |

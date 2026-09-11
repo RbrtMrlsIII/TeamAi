@@ -1,0 +1,68 @@
+/* #258 residual — ENT-T1 gone-not-blurred + ENT-R2/R3 + CHR-R1/R2
+ * Presentation only · no 029-released claim.
+ * Adjust existing layer/chrome owners. Does not set data-hero-machine-ui.
+ */
+
+/* ENT-T1 / ENT-R2 — machine: entrance web surface TOTALLY GONE (not blurred, not 0.42) */
+.hero-shell[data-hero-layer="machine"] .hero-copy,
+.hero-shell[data-hero-layer="machine"] [data-entrance-region="brand"],
+.hero-shell[data-hero-layer="machine"] .spatial-parts {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  filter: none !important;
+}
+
+.hero-shell[data-hero-layer="entrance"] .hero-copy,
+.hero-shell[data-hero-layer="entrance"] [data-entrance-region="brand"] {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-shell[data-hero-layer="machine"] .hero-copy,
+  .hero-shell[data-hero-layer="machine"] .spatial-parts {
+    transition: none;
+  }
+}
+
+/* ENT-R3 — Return control only on machine layer (until ENT-T5 moves it into settings) */
+.hero-shell[data-hero-layer="entrance"] [data-hero-layer-return] {
+  display: none !important;
+}
+.hero-shell[data-hero-layer="machine"] [data-hero-layer-return] {
+  display: inline-flex !important;
+}
+
+/* CHR-R2 — soft-hide legacy seat-stack module column on machine */
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__module,
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__note,
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__handoff,
+.hero-shell[data-hero-layer="machine"] .seat-stack > .seat-stack__distinction {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Entrance: de-emphasize stack chips so Layer A is not a config wall */
+.hero-shell[data-hero-layer="entrance"] .seat-stack > .seat-stack__module {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* CHR-R1 — machine-nav + settings stay primary when machine */
+.hero-shell[data-hero-layer="machine"] .machine-nav,
+.hero-shell[data-hero-layer="machine"] .hero-settings-shell {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Demote camera docks slightly in machine layer */
+.hero-shell[data-hero-layer="machine"] .hero-controls .control-row button[data-camera] {
+  opacity: 0.72;
+}

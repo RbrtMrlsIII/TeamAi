@@ -5,7 +5,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.goto('/hero/');
     await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Wide', 'Low orbit', 'Team', 'Workspace', 'Map', 'Open engine', 'Seat', 'Detail', 'Back', 'Next', 'Reset']) {
+    for (const label of ['Wide', 'Team', 'Workspace', 'Map', 'Open engine', 'Seat', 'Detail', 'Back', 'Next', 'Reset']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
     await expect(page.locator('.spatial-part')).toHaveCount(3);

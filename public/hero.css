@@ -108,94 +108,122 @@ button {
   font-size: 12px;
   font-weight: 650;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(50,48,43,.07), inset 0 1px 0 rgba(255,255,255,.9);
+  box-shadow: 0 2px 8px rgba(50,48,42,.05);
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
 }
-button:hover { transform: translateY(-1px); }
-button.primary { background: #2f312d; color: #fff; border-color: #2f312d; }
-button.quiet { margin-left: auto; background: transparent; box-shadow: none; border-color: transparent; color: rgba(42,44,40,.62); }
+button:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 6px 16px rgba(50,48,42,.08);
+}
+button.primary {
+  background: linear-gradient(180deg, #2f332e, #232621);
+  color: #f7f5ef;
+  border-color: rgba(20, 22, 18, .28);
+}
+button.primary:hover { background: linear-gradient(180deg, #3a3f39, #2a2d28); }
+button.quiet {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(42, 44, 40, .72);
+}
 
-#state-label {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-}
-#seat-label {
+#state-label, #seat-label {
   font-size: 12px;
-  color: rgba(42,44,40,.62);
+  font-weight: 650;
+  color: rgba(42, 44, 40, .72);
 }
-
-.hero-auth-panel {
-  position: absolute;
-  top: 50%;
-  right: clamp(18px, 6vw, 88px);
-  width: min(410px, calc(100vw - 36px));
-  max-height: min(720px, calc(100vh - 72px));
-  overflow: auto;
-  transform: translate3d(28px, -50%, 0) scale(.985);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 5;
-  transition: opacity 220ms ease, transform 300ms cubic-bezier(.2,.72,.2,1);
-}
-.hero-auth-panel.is-open {
-  transform: translate3d(0, -50%, 0) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-}
-.hero-auth-panel__inner {
-  padding: 22px;
-  border: 1px solid rgba(58,60,55,.13);
-  border-radius: 26px;
-  background: rgba(255,255,255,.84);
-  box-shadow: 0 28px 70px rgba(67,63,56,.18), inset 0 1px 0 rgba(255,255,255,.94);
-  backdrop-filter: blur(22px) saturate(125%);
-}
-.hero-auth-panel__topline { display:flex; align-items:center; gap:12px; }
-.hero-auth-panel__kicker { font-size:10px; font-weight:800; letter-spacing:.18em; color:rgba(52,54,49,.46); }
-.hero-auth-panel h2 { margin:20px 0 14px; font-size:26px; line-height:1.05; letter-spacing:-.03em; }
-.auth-mode { display:flex; gap:6px; margin-bottom:16px; }
-.auth-mode button { background:rgba(245,242,236,.74); }
-.auth-mode button.is-active { background:#2f312d; color:#fff; border-color:#2f312d; }
-.hero-auth-panel form { display:grid; gap:12px; }
-.hero-auth-panel label { display:grid; gap:6px; font-size:11px; font-weight:700; color:rgba(42,44,40,.72); }
-.hero-auth-panel input {
-  width:100%;
-  padding:11px 12px;
-  border:1px solid rgba(42,44,40,.14);
-  border-radius:12px;
-  background:rgba(255,255,255,.82);
-  color:#20211f;
-  font:inherit;
-  font-size:14px;
-}
-.hero-auth-panel input:focus { outline:2px solid rgba(47,49,45,.28); outline-offset:2px; }
-.hero-auth-panel form button[type="submit"] { margin-top:4px; }
-.hero-auth-panel__status { margin:14px 0 0; font-size:11px; line-height:1.45; color:rgba(52,54,49,.72); }
-.hero-auth-panel__note { margin:8px 0 0; font-size:10px; line-height:1.45; color:rgba(52,54,49,.48); }
 
 .hero-note {
   position: absolute;
-  right: clamp(18px, 5vw, 60px);
-  top: 52%;
-  transform: translateY(-50%);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .18em;
-  color: rgba(52,54,49,.40);
+  right: clamp(18px, 3vw, 36px);
+  bottom: clamp(88px, 12vh, 120px);
   z-index: 2;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: rgba(42, 44, 40, .45);
   pointer-events: none;
 }
 
-@media (max-width: 760px) {
-  body { overflow: hidden; }
-  .hero-shell { min-height: 540px; }
-  .hero-copy { top: 22px; left: 20px; width: calc(100vw - 40px); }
-  .hero-brand-mark { width: 52px; margin-bottom: 10px; }
-  h1 { max-width: 500px; font-size: clamp(34px, 11vw, 54px); }
-  .lede { font-size: 13px; max-width: 360px; }
+.hero-inspection {
+  position: absolute;
+  left: clamp(18px, 3vw, 36px);
+  bottom: clamp(88px, 12vh, 120px);
+  z-index: 3;
+  max-width: min(520px, calc(100vw - 48px));
+}
+.hero-inspection__hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(42, 44, 40, .55);
+}
+.inspection-spine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.spatial-parts {
+  position: absolute;
+  top: clamp(24px, 7vh, 76px);
+  right: clamp(18px, 3vw, 36px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.far-environment {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  padding: 14px 18px 22px;
+  font-size: 0.85rem;
+}
+.far-environment a { color: rgba(42, 44, 40, .72); text-decoration: none; }
+.far-environment a:hover { text-decoration: underline; }
+
+.hero-auth-panel {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: min(360px, calc(100vw - 48px));
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+  z-index: 6;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,252,246,.94);
+  border: 1px solid rgba(40, 32, 22, .1);
+  box-shadow: 0 24px 60px rgba(20, 16, 10, .18);
+  transform: translate3d(0,-10px,0) scale(.99);
+  transition: transform .2s ease, opacity .2s ease;
+}
+.hero-auth-panel[hidden] { display: none !important; }
+.hero-auth-panel.is-open { transform: translate3d(0,0,0) scale(1); }
+.hero-auth-panel label { display: block; margin: 10px 0; font-size: 0.85rem; }
+.hero-auth-panel input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(40, 32, 22, .14);
+  font: inherit;
+}
+.hero-auth-panel__tabs { display: flex; gap: 8px; margin: 8px 0 12px; }
+.hero-auth-panel__status,
+.hero-auth-panel__note { font-size: 0.8rem; color: rgba(42, 44, 40, .62); }
+
+@media (max-width: 720px) {
+  .hero-copy { left: 20px; top: 22px; width: calc(100vw - 40px); }
+  .spatial-parts { top: auto; bottom: 120px; right: 16px; }
   .hero-controls { bottom: 14px; width: calc(100vw - 24px); padding: 10px; border-radius: 18px; }
   .control-row { gap: 6px; }
   .control-row button { padding: 8px 9px; font-size: 11px; }
@@ -255,8 +283,11 @@ button.quiet { margin-left: auto; background: transparent; box-shadow: none; bor
 
 /* V3.4 — machine layer presentation (same Hero; entrance brand softens) */
 .hero-shell[data-hero-layer="machine"] .hero-copy {
-  opacity: 0.42;
-  transition: opacity 220ms ease;
+  /* ENT-T1: residual CSS owns full removal; keep transition hook only */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 220ms ease, visibility 220ms ease;
 }
 .hero-shell[data-hero-layer="entrance"] .hero-copy {
   opacity: 1;
