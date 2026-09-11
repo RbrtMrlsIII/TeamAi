@@ -46,7 +46,8 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | V0–V3.5 | COMPLETE | one-shell Vision lineage | Historical product-shape baseline, not final acceptance |
 | #258 residual / #259 | MERGED | ENT-T1; CAM-R-RETIRE; Return; CHR soft-hide | Historical current-truth baseline; product shape superseded by C0–C10 |
 | #265 / #266 | MERGED | entrance↔machine browser proof; CHR-R3 | Retained as implementation evidence, re-owned by C2–C4 |
-| **C0–C10 rebaseline / #274** | **IN PR** | classic entrance + explicit 3D entry + coherent nav + camera/auth boundary groundwork | C9 visual acceptance gates product completion; C10 ProMax remains downstream |
+| **C0–C10 rebaseline / #274** | **MERGED** | classic entrance + explicit 3D entry + coherent nav + camera/auth boundary groundwork | C9 visual acceptance gates product completion; C10 ProMax remains downstream |
+| **Hero runtime delivery hardening / #275** | **IN PR** | repository-owned Hero base + local runtime entry; normal build/test path is network-independent | Build-engine fallback remains historical/internal until separately removed |
 
 **Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` → `docs/archive/superseded/` and must not be silently revived.
 
@@ -83,9 +84,11 @@ Follow the C0–C10 experience rebaseline. Do not create isolated camera/chrome 
 - `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` · `docs/archive/superseded/INDEX.md`
 - `docs/security_inquiry.md` (future/pre-production backlog)
 - `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`
+- `public/_flex_src/hero-flex.base.js` · repository-owned Hero base
+- `scripts/apply-cam2-tree-follow-flex.mjs` → repository-owned wrapper for local assembly
 
 ## 12. Agent instruction
 
 Do not ask “what feature is next?” until this map answers what is true, proven, stopped, and what evidence permits continuation. For the current experience, use the C0–C10 sequence rather than reopening historical V0–V3 queues.
 
-<!-- residual: #274 C0-C10 experience rebaseline, owner-endorsed 2026-09-11; final index synchronization after experience-rebaseline route/camera test changes -->
+<!-- residual: #275 repository-owned Hero runtime hardening; raw remote source removed from normal runtime/build entry path; internal legacy engine fallback remains slated for explicit cleanup -->
