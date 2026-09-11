@@ -3,11 +3,12 @@ import { expect, test } from '@playwright/test';
 test.describe('Living Web AI Workspace Hero', () => {
   test('renders the signature geometry shell and captures the hero frame', async ({ page }, testInfo) => {
     await page.goto('/hero/');
-    await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Wide', 'Team', 'Workspace', 'Map', 'Open engine', 'Seat', 'Detail', 'Back', 'Next', 'Reset']) {
+    // C5 intentionally reduces operator-facing camera vocabulary in world mode.
+    for (const label of ['Wide', 'Open engine', 'Back', 'Next', 'Reset']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
+    await expect(page.locator('.hero-copy')).toBeHidden();
     await expect(page.locator('.spatial-part')).toHaveCount(3);
     await expect(page.locator('[data-seat-layer]')).toHaveCount(10);
     await expect(page.locator('.seat-stack__dial')).toHaveCount(1);
@@ -35,8 +36,9 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.reset());
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
 
-    await page.getByRole('button', { name: 'Workspace', exact: true }).click();
-    await page.getByRole('button', { name: 'Map', exact: true }).click();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('WORKSPACE_CLOSE'));
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('OVERHEAD_MAP'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
 
     await page.getByRole('button', { name: 'Surface shared state', exact: true }).click({ force: true });
@@ -50,8 +52,8 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.getByRole('button', { name: 'Focus active Seat', exact: true })).toHaveAttribute('aria-pressed', 'true');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
 
-    await page.getByRole('button', { name: 'Seat', exact: true }).click();
-    await page.getByRole('button', { name: 'Detail', exact: true }).click();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('DETAIL_ANCHOR'));
 
     const stackLayers = await page.evaluate(() => (window as any).TeamAiHeroSeatStack.layers().map((layer: any) => layer.id));
     expect(stackLayers).toEqual([

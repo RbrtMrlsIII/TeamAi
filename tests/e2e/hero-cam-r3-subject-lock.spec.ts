@@ -30,7 +30,7 @@ test.describe('CAM-R3 subject-lock browser proof', () => {
   });
 
   test('Seat camera activates subject-lock; Wide unlocks when closed', async ({ page }) => {
-    await page.getByRole('button', { name: 'Seat', exact: true }).click();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
     const locked = await page.evaluate(() => (window as any).TeamAiHero.getSubjectLockSnapshot());
     expect(locked.active).toBe(true);
     expect(locked.cameraId).toBe('SEAT_CLOSE');
@@ -43,7 +43,7 @@ test.describe('CAM-R3 subject-lock browser proof', () => {
     expect(after.selectedSeat).toBe(2);
     expect(after.active).toBe(true);
 
-    await page.getByRole('button', { name: 'Wide', exact: true }).click();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('HERO_WIDE'));
     const wide = await page.evaluate(() => (window as any).TeamAiHero.getSubjectLockSnapshot());
     if (!wide.shellOpen) {
       expect(wide.cameraId).toBe('HERO_WIDE');

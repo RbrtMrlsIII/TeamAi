@@ -1,6 +1,6 @@
 /**
- * Cam-4 — Edge-drag + inverse-swipe whole-web PoV (presentation only).
- * Authority: TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md §4
+ * Cam-4 — proportional edge-drag + swipe whole-web PoV (presentation only).
+ * Authority: TEAMAI_029_EXPERIENCE_REBASELINE.md C7.
  * no 029-released claim.
  */
 
@@ -9,8 +9,8 @@ export const EDGE_YAW_RATE = 0.55;
 export const EDGE_PITCH_RATE = 0.35;
 export const EDGE_PITCH_MIN = -0.45;
 export const EDGE_PITCH_MAX = 0.55;
-export const INVERSE_SWIPE_YAW = Math.PI;
-export const INVERSE_SWIPE_PITCH = 1.2;
+export const PROPORTIONAL_SWIPE_YAW = Math.PI;
+export const PROPORTIONAL_SWIPE_PITCH = 1.2;
 
 export function pointerNorm(clientX, clientY, width, height) {
   const w = Math.max(1, Number(width) || 1);
@@ -43,18 +43,21 @@ export function edgeDriftDelta(pressure, dtSec, { reducedMotion = false } = {}) 
   };
 }
 
-/** Swipe right → orbit left (inverse). */
-export function inverseSwipeDelta(dxNorm, dyNorm, {
-  yawScale = INVERSE_SWIPE_YAW,
-  pitchScale = INVERSE_SWIPE_PITCH,
+/** Natural mapping: swipe right → orbit right; swipe up → pitch up. */
+export function proportionalSwipeDelta(dxNorm, dyNorm, {
+  yawScale = PROPORTIONAL_SWIPE_YAW,
+  pitchScale = PROPORTIONAL_SWIPE_PITCH,
 } = {}) {
   const dx = Number(dxNorm) || 0;
   const dy = Number(dyNorm) || 0;
   return {
-    dYaw: -dx * yawScale,
-    dPitch: -dy * pitchScale,
+    dYaw: dx * yawScale,
+    dPitch: dy * pitchScale,
   };
 }
+
+/* Backward-named export for source compatibility only. It now uses proportional semantics. */
+export const inverseSwipeDelta = proportionalSwipeDelta;
 
 export function clampPitch(pitch) {
   const p = Number(pitch) || 0;

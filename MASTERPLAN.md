@@ -11,17 +11,16 @@ Every executable checklist item must resolve to concrete skill path(s) in `docs/
 ## Current chronological gate
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-## Active state reconciliation — 2026-09-10
+## Active state reconciliation — 2026-09-11
 
-The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/validation gate: task execution, lease contention/recovery, PayPal Sandbox commerce correlation, durable Firestore aggregate/event/entitlement re-read, traceability, and bounded Endorsement are recorded in the current evidence chain. This does **not** close every broader backend boundary.
+The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/validation gate. Its remaining boundaries stay explicit. The spatial/product-experience clock is now governed by the owner-endorsed C0–C10 rebaseline described below.
 
-- Firebase Rules emulator verification (Gate 4) remains **PARKED / NOT PROVEN** because a real emulator PASS is not present in the repository evidence.
-- `teamai-task-execute` is runtime-proven only through its bounded authenticated path and still uses `stub-edge-runtime`; real external provider invocation remains **OPEN / NOT PROVEN**.
-- GitHub App installation is operator-confirmed, while Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind.
-- Seat connection/provider surfaces are deployed but remain implementation/deployment surfaces rather than automatic product acceptance.
-- The spatial clock is independent: **Vision V3.5 complete** (entrance ladder V3.1–V3.5 merged). **#258 residual** in flight: Layer A/B legibility + machine chrome soft-hide (ENT-R2/R3, CHR-R1/R2 — PR #259); Cam-6 seat look-at residual still open. Next parallel work remains **Conn-3 live deployment/browser proof** (not a Hero live bind), with no backend authority transferred into the Hero.
-
-Historical checkpoints may retain earlier pending wording because they are evidence records. This active index is the current recovery map and must not rewrite those historical records.
+- Firebase Rules emulator verification (Gate 4) remains **PARKED / NOT PROVEN** because a real emulator PASS is not present in repository evidence.
+- `teamai-task-execute` remains runtime-proven only through its bounded authenticated path with `stub-edge-runtime`; real external provider invocation remains **OPEN / NOT PROVEN**.
+- GitHub App installation is operator-confirmed; Conn-3 callback live deployment/browser proof remains **PENDING** and is not a Hero live bind.
+- Seat connection/provider surfaces remain implementation/deployment surfaces rather than automatic product acceptance.
+- PR #259 remains an important historical implementation baseline: CAM-R-RETIRE + ENT-T1/ENT-R2/R3 + CHR soft-hide. It is **not** the final product-shape authority after the owner-directed C0–C10 rebaseline.
+- Historical checkpoints may retain earlier pending wording because they are evidence records. This active index is the current recovery map and must not rewrite historical evidence.
 
 ## TEAM-BACKEND-001 — Backend Foundation
 
@@ -231,106 +230,138 @@ Before modifying provider adapters, model catalogs, advanced agent runtimes, con
 
 ## TEAM-EXPERIENCE-029 — Spatial Theme and Visual System
 
-**Status:** PLANNED PRODUCT-EXPERIENCE SLICE — NOT YET IMPLEMENTED.
+**Status:** PLANNED PRODUCT-EXPERIENCE PROGRAM — current execution is governed by the owner-endorsed C0–C10 rebaseline.
 
 The Product Law visual requirement is:
 
 `one theme setting → Dark Spatial Glassmorphism OR Light Spatial Skeuomorphism`
 
-### Chronological execution checklist
-1. [ ] Reconcile the approved visual law against existing UI roots, theme state, spatial semantics, accessibility contracts, responsive rules, and current 029 planning records.
-2. [ ] Define the shared semantic design-token and primitive roots for surfaces, depth, elevation, material treatment, borders, typography, controls, motion, focus, status feedback, and responsive behavior.
-3. [ ] Implement the single light/dark theme switch so the setting activates **Dark Spatial Glassmorphism** for Dark and **Light Spatial Skeuomorphism** for Light without duplicating theme authority.
-4. [ ] Apply the shared spatial primitives across the canonical 029 shell and first representative surfaces without introducing page-local theme authorities.
-5. [ ] Verify semantic equivalence of product behavior across both theme modes: identity, navigation, state, scheduler/readiness, approvals, forms, errors, and durable-state interactions remain unchanged by visual mode.
-6. [ ] Verify accessibility and interaction requirements across both modes, including contrast/legibility, keyboard/focus visibility, reduced-motion behavior, responsive breakpoints, and non-pointer interaction paths.
-7. [ ] Run deterministic browser verification for the exercised web scope and retain screenshots/captures only as separate GitHub evidence artifacts when useful.
-8. [ ] Record implementation commit, verification scope, workflow/run references, limitations, and any discovered root changes in HandOver.
-9. [ ] Obtain Endorsement for the completed slice and update `PRODUCT-KNOWLEDGE.md` only when the lesson is validated and reusable.
-10. [ ] Reconcile any new backend/domain requirement discovered by the visual implementation through its owning canonical contract rather than creating browser authority.
+## TEAM-EXPERIENCE-029 — Owner-Endorsed Experience Rebaseline (C0–C10)
 
-### Spatial-theme checklist skill routing
+This section is the current chronological product-experience execution baseline. It supersedes the old one-shell entrance as the final product-shape target, while preserving the old implementation as historical evidence.
 
-| Checklist | Required routing |
-|---|---|
-| 1 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/governance/product-law-change/SKILL.md` + applicable verification/audit skills |
-| 2 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
-| 3 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
-| 4 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable 029 UI implementation skills |
-| 5 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
-| 6 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
-| 7 | `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + `skills/verification/browser-smoke/SKILL.md` |
-| 8 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` |
-| 9 | `skills/execution/orucaveam/SKILL.md` + `skills/governance/learning-handover/SKILL.md` |
-| 10 | `skills/execution/orucaveam/SKILL.md` + `skills/backend/authority-contract/SKILL.md` + applicable domain verification skills |
+### Historical Vision baseline retained
 
-### Visual-system boundary
+**Vision V3.5 complete** remains preserved here as a historical/verification marker for the earlier Vision ladder. It does not mean the former one-shell entrance remains the current final product-shape target. The owner-endorsed C0–C10 rebaseline is now the active experience baseline.
 
-The spatial theme is presentation and interaction treatment. It is not a replacement for TeamAi identity, Firestore state, scheduler authority, provider entitlement, permissions, approvals, commerce truth, or durable events. A theme mode change must remain a UI-state/configuration change and must not change canonical business meaning.
+### C0 — Product-shape endorsement
 
-## 029 questions that must be answered before or during implementation
+**Status: ENDORSED.** The owner authorized one coherent C0–C10 execution program:
 
-1. How does a user connect AI applications that are operated outside TeamAi?
-2. What provider authorization/connection states are visible, testable, and recoverable?
-3. How is an external connection bound to one Workplace, Project, and AI Seat?
-4. How does the user equip each AI with skills, Base TeamAi capabilities, Tool Quality, plugins/tools/MCP, workstation scope, permissions, and approval rules?
-5. How does TeamAi distinguish provider, service/runtime, exact model/variant, connection, Seat, Team Quality, skills, Base TeamAi capabilities, Tool Quality, workstation, scopes, limits, entitlement and compliance?
-6. How does an AI completion or action make another task eligible without direct provider-to-provider control?
-7. Which durable events represent AI results, action requests, tool results, approvals, failures, retries, cancellations, recovery, and completions?
-8. How can the Scheduler explain and reproduce why the next AI/tool/human acted?
-9. How does the shared chat expose the complete relevant discussion while each AI receives a meaning-preserving authorized context packet?
-10. How can one AI explicitly consume another AI's finding, handoff, artifact, or decision without exposing private provider state?
-11. How is exactly one document-authoring path selected during planning while other AIs remain advisory?
-12. How does the selected Web AI summarizer return the discussion to the user for `APPROVE`, `EDIT`, `MORE`, or `REJECT`?
-13. How are planning decisions separated from working execution state?
-14. How are approvals, blocked actions, failures, retries, cancellation, and recovery represented visibly?
-15. What happens when a configured provider/runtime/plugin/connection becomes unavailable after configuration?
-16. How is the same semantic team/workflow preserved across spatial, standard web, mobile, and accessibility representations?
-17. Which newly discovered requirements belong in 029, which return to backend/integration gates, and which become future phases?
-18. What exact conditions move a connection/Seat from configured to Active, and what evidence is required to reactivate it after degradation or authorization loss?
-19. How does the product communicate the difference between TeamAi entitlement and external provider entitlement without implying one grants the other?
-20. Which capabilities belong to the Base TeamAi capability set, and which remain optional Tool Quality extensions or provider-owned capabilities?
-21. How are supplied skill bundles, startup projects, templates, or ZIP packages consumed without creating a competing authority or silently overwriting current project rules?
-22. How does the system preserve every user clarification and materially relevant team contribution when the shared conversation grows beyond one model's context limit?
+`classic website entrance → explicit 3D-world entry → coherent navigation/Settings → rationalized camera language → authenticated/server-authorized full workspace → desktop + phone acceptance → ProMax refinement`
 
-### Root-wiring guard before 029 coding
+No archived camera revival. No 029 release claim.
 
-Before any production UI implementation slice, reconcile the proposed UI root against its owning canonical roots. Identity, Workplace ownership, project context, provider/runtime identity, connection state, Team Quality, skills, Base TeamAi capabilities, Tool Quality, tools, task/event state, commerce, approvals, notifications, recovery, privacy, compatibility, and spatial semantics must not be redefined locally when an existing canonical root already owns the meaning.
+### C1 — Canonical reconciliation
 
-The UI is presentation and interaction over authoritative state and policy intents, not a new authority layer.
+Reconcile `MASTERPLAN.md`, `docs/TEAMAI_029_CURRENT_STATE_MAP.md`, `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`, `docs/VISION.md`, and applicable contracts/skills so they describe the same current product shape. Historical Vision/V3.x checkpoints remain historical evidence and are not rewritten.
 
-### 029 completion frontier
+### C2 — Classic website entrance
 
-029 should be considered complete only when evidence demonstrates that the canonical UI is correctly wired to the authoritative identity/context chain, Workplace/Project/Team/Seat state, connection/capability lifecycle, Planning Team turn orchestration, user-intent preservation, summarizer handoff/user review, Working Team task/event execution, provider/runtime connection state, Team Quality and Tool Quality entitlement boundaries, skill/tool/plugin capability state, durable action/approval/recovery state, responsive/accessibility equivalents, and the spatial visual system required by Product Law.
+The public first paint must read as a conventional website. The visitor should not encounter the former 3D camera/control/configuration wall merely by arriving at the site.
 
-Browser verification is validation evidence only; it does not become TeamAi hosting or system-of-record authority.
+Acceptance: clear information hierarchy on desktop and phone; no dependency on live 3D chrome for the public entrance story.
 
-Any backend capability discovered during 029 must be routed through the owning backend/integration contract rather than embedded as browser authority.
+### C3 — Explicit 3D-world entry + return
 
-Detailed planning contracts:
-- `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
-- `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
-- `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
-- `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
-- `docs/VISION.md` — product experience intent (entrance, ~45° machine baseline, tree/branch camera); not a Product Law rewrite; no 029-released claim
-- `docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md`
-- `POLICY.md`
-- `docs/SKILL_WIRING.md`
+The 3D world becomes a deliberate destination entered by an explicit user action. Return to the classic entrance must be unambiguous and tested.
+
+Acceptance: browser path proves `classic → world → classic` while preserving the single intended Hero instance.
+
+### C4 — Coherent navigation + Settings
+
+World controls must have one intentional navigation/home surface. Settings must be discoverable from that surface and must not be scattered among floating controls or duplicated local authorities.
+
+Acceptance: the visible navigation model is understandable on desktop and phone; settings actions have an actual wired destination.
+
+### C5 — Camera vocabulary reduction
+
+Keep the meaningful world baseline and contextual subject focus. Retired/confusing operator-facing controls are removed from the active interaction vocabulary.
+
+`HERO_LOW_ORBIT` and `TURN_FOLLOW` remain archived/superseded and must not be silently revived.
+
+### C6 — World-baseline zoom-out
+
+Tree/subject navigation must be able to return to the normal world baseline instead of stopping at an arbitrary high/close position.
+
+Acceptance: a browser/runtime test demonstrates the reachable baseline and absence of a dead-end zoom clamp in the tree context.
+
+### C7 — Proportional orbit
+
+Pointer/swipe direction must map naturally to visible rotation. The old inverse behavior is superseded.
+
+Acceptance: right input produces rightward visible yaw and upward input produces the corresponding upward pitch, with regression coverage through the actual input path.
+
+### C8 — Authenticated / server-authorized full workspace
+
+The classic entrance and world preview remain presentation surfaces. Full workspace capability requires server-verified identity and server authorization. Client UI may communicate the boundary but cannot grant it.
+
+Acceptance: an actual authorized runtime proof is required before this gate is marked complete. This Masterplan change does not itself implement backend authorization.
+
+### C9 — Product acceptance
+
+C9 is a human/product gate, not just an automation gate.
+
+Required evidence:
+- fresh desktop browser evidence;
+- fresh phone browser evidence;
+- inspection of entrance clarity, world entry, navigation, Settings discoverability, camera behavior, zoom baseline, and interaction density;
+- explicit owner/source-of-truth acceptance.
+
+Green CI or Playwright alone is insufficient.
+
+### C10 — ProMax refinement
+
+Only after C9 passes. ProMax should deepen the already-correct product shape rather than compensate for structural problems.
+
+Targets:
+- stronger entrance → world transition choreography;
+- intentional motion language;
+- ambient/environmental depth;
+- lighting/material response;
+- depth and spatial cues;
+- meaningful micro-interactions;
+- restrained effects;
+- reduced-motion parity;
+- phone/mobile refinement;
+- transition continuity;
+- visual hierarchy and focus;
+- no return of scattered chrome.
+
+C10 must be judged by product-level visual evidence, not code volume or effect count.
+
+### C0–C10 execution rule
+
+`USER DECISION → ORUCAVEAM → conflict detection → validation-change warning → cost/risk/output accounting → canonical contract → implementation → validation → evidence → merge → NEW CURRENT TRUTH → later supersession → ARCHIVE + REDIRECT`
+
+The implementation must never be “made green” by weakening a validator. If the requirement changed, the validator changes to enforce the new truth with equal or stronger specificity.
+
+### Historical implementation lineage
+
+The following remain valuable and must not be mistaken for the current product-shape authority:
+
+- Vision V0–V3.5 and related spatial slices;
+- #258 / #259 residual work;
+- CAM-R1–R3 subject-lock work;
+- ENT-R4 entrance/machine proof;
+- CHR-R3 settings/nav work;
+- hierarchy animation ladder and prior camera experiments.
+
+Their evidence remains recoverable through Git history and `docs/archive/superseded/` where applicable. Future changes must use the C0–C10 baseline unless the owner explicitly supersedes it.
+
+## Security / future-development boundary
+
+`docs/security_inquiry.md` is a future/pre-production inquiry register. Questions about abusive request volume, malicious uploads, crafted search input, forged privilege fields, authentication-code abuse, session compromise, or related deployment risks are not implementation drivers for the current experience program unless a later authorized product/security phase explicitly promotes them.
 
 ## Target-project handover rule
 Every completed gate must surrender a target-project handover packet/ZIP in the same execution. The handover belongs to TeamAi; Universal ToolKit only provides reusable upstream process knowledge and does not own TeamAi project state.
 
 ## Current 029 product-design execution order
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/frontend/spatial/UI_UX-Promax-Skill.md + applicable 029/domain skills → UI/system implementation → verification → GitHub evidence/artifacts → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → applicable domain/spatial skills → implementation → verification → evidence → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
 
 ## Product experience vision (intent pointer)
 
-Canonical human-facing experience intent for public entrance, ~45° machine baseline, selected-tree camera subject, and presentation chrome lives in:
+Canonical human-facing experience intent remains in `docs/VISION.md` for historical and detailed semantic context. The owner-endorsed C0–C10 rebaseline above is the current product-shape execution baseline. `VISION.md` does not create a new authority layer, does not claim 029 release, and does not authorize browser-side durable domain writes.
 
-- `docs/VISION.md`
-
-It sits **below** Product Law and this Masterplan: it does not create a new law family, does not claim 029 release, and does not authorize browser-side durable domain writes. Camera and hierarchy contracts remain the technical detail under that intent.
-
-
-<!-- teamai residual: #266 CHR-R3 + pr-squash-merge + security_inquiry Q-001–Q-005 (2026-09-11). no 029-released claim. -->
+<!-- teamai residual: #274 C0-C10 experience rebaseline; owner-endorsed 2026-09-11; final active-index freshness after latest route/camera/test changes. -->

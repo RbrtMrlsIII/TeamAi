@@ -1,5 +1,5 @@
 /**
- * Cam-4 — edge-drag + inverse-swipe tests (presentation only).
+ * Cam-4 — edge-drag + proportional-swipe tests (presentation only).
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,7 +8,7 @@ import {
   EDGE_ZONE_FRAC,
   edgePressure,
   edgeDriftDelta,
-  inverseSwipeDelta,
+  proportionalSwipeDelta,
   clampPitch,
   pointerNorm,
   EDGE_PITCH_MIN,
@@ -36,9 +36,9 @@ test('edgeDriftDelta is zero under reduced motion', () => {
   assert.ok(edgeDriftDelta(p, 0.016, { reducedMotion: false }).dYaw < 0);
 });
 
-test('inverseSwipeDelta flips path direction', () => {
-  assert.ok(inverseSwipeDelta(0.1, 0).dYaw < 0);
-  assert.ok(inverseSwipeDelta(0, 0.1).dPitch < 0);
+test('proportionalSwipeDelta follows input direction', () => {
+  assert.ok(proportionalSwipeDelta(0.1, 0).dYaw > 0);
+  assert.ok(proportionalSwipeDelta(0, 0.1).dPitch > 0);
 });
 
 test('clampPitch respects product bounds', () => {
@@ -52,26 +52,25 @@ test('pointerNorm clamps to unit square', () => {
   assert.equal(a.ny, 1);
 });
 
-test('module and contract stay presentation-only', async () => {
+test('module and contract stay presentation-only and proportional', async () => {
   const src = await readFile(new URL('../public/hero-cam4-edge-swipe.js', import.meta.url), 'utf8');
-  assert.match(src, /Cam-4|edge|inverse-swipe|presentation only/i);
+  assert.match(src, /Cam-4|edge|proportional|presentation only/i);
   assert.doesNotMatch(src, /firestore|paypal|OAuth|scheduler/i);
   const contract = await readFile(
     new URL('../docs/TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md', import.meta.url),
     'utf8'
   );
   assert.match(contract, /Cam-4/);
-  assert.match(contract, /inverse/i);
   assert.match(contract, /edge/i);
 });
 
-test('hero-flex wires Cam-4 edge/inverse after apply', async () => {
+test('hero-flex wires Cam-4 edge/proportional after apply', async () => {
   const { spawnSync } = await import('node:child_process');
   const { fileURLToPath } = await import('node:url');
   const { dirname, join } = await import('node:path');
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
   spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /hero-cam4-edge-swipe|inverseSwipeDelta/);
+  assert.match(flex, /hero-cam4-edge-swipe|proportionalSwipeDelta/);
   assert.match(flex, /edgeDriftDelta|edgePointerNorm/);
 });
