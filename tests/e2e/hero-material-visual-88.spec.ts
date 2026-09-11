@@ -14,7 +14,8 @@ test.describe('Issue #88 material/depth visual evidence', () => {
 
     await page.goto('/hero/?seats=4');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Living Web AI Workspace' })).toBeVisible();
+    await expect(page.locator('.world-navigation')).toBeVisible();
+    await expect(page.locator('.hero-copy')).toBeHidden();
 
     // Ensure light theme attribute on documentElement (canonical)
     await page.evaluate(() => {
@@ -24,14 +25,15 @@ test.describe('Issue #88 material/depth visual evidence', () => {
     });
 
     // HERO_WIDE
-    await page.getByRole('button', { name: 'Wide', exact: true }).click();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('HERO_WIDE'));
     await page.waitForTimeout(600);
     const widePath = path.join(outDir, '88-hero-wide-light.png');
     await page.screenshot({ path: widePath, fullPage: false });
     await testInfo.attach('88-hero-wide-light', { path: widePath, contentType: 'image/png' });
 
-    // SEAT_CLOSE
-    await page.getByRole('button', { name: 'Seat', exact: true }).click();
+    // SEAT_CLOSE is intentionally exercised through the public Hero API because C5 removes
+    // the retired operator-facing camera buttons from the 029 world surface.
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
     await page.waitForTimeout(600);
     const seatPath = path.join(outDir, '88-seat-close-light.png');
     await page.screenshot({ path: seatPath, fullPage: false });
@@ -42,7 +44,7 @@ test.describe('Issue #88 material/depth visual evidence', () => {
       document.documentElement.setAttribute('data-motion', 'reduced');
       (window as any).TeamAiHero?.setReducedMotion?.(true);
     });
-    await page.getByRole('button', { name: 'Wide', exact: true }).click();
+    await page.evaluate(() => (window as any).TeamAiHero.setCamera('HERO_WIDE'));
     await page.waitForTimeout(400);
     const reducedPath = path.join(outDir, '88-hero-wide-reduced-motion.png');
     await page.screenshot({ path: reducedPath, fullPage: false });
