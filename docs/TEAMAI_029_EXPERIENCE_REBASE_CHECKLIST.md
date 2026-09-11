@@ -55,4 +55,19 @@ Do **not** reorder to “quick CSS wins” if they conflict with DEC-ENT-CLASSIC
 - This checklist does **not** authorize 029 release.
 - Merged Vision V0–V3 commits remain historical evidence; product shape may supersede one-shell entrance via DEC-ENT-CLASSIC + archive/redirect.
 
+## F. Agent data tips (recovery drive)
+
+Use these before any implementation slice under this checklist.
+
+1. **Owner phone screenshots beat CI green** for legibility (C9). A green Playwright job does not prove mobile entrance is acceptable.
+2. **Soft-hide is not removal.** Opacity 0.35 on seat-stack / chips still fails on narrow viewports. Prefer `display: none` / unmount when the product ask is “stop the soup.”
+3. **`HERO_LOW_ORBIT` id archived ≠ docks fixed.** Wide / Team / Workspace / Map / Seat / Detail may still feel like “low orbit / close” density. CAM-DOCK-1 is about **operator-facing set**, not only grep absence.
+4. **Orbit is inverse today.** Cam-4 `inverseSwipeDelta` maps swipe right → orbit left. CAM-ORBIT-1 must flip to **proportional** and update tests that encode inverse.
+5. **Zoom-out is a real gap.** Tree/subject context must be able to reach **world baseline height** (~45° / HERO_WIDE family). Do not “fix” with only a closer dock.
+6. **Settings may exist in code and still fail product.** C4 requires a **visible Settings entry** in coherent nav/menu — not an undiscoverable shell in the absolute stack.
+7. **Do not start C5–C7 camera tweaks before C0** if they entrench one-shell entrance as final shape against DEC-ENT-CLASSIC.
+8. **Security inquiry (Q-001–Q-008) is backlog** — not the current execution driver while experience rebase is open.
+9. **MASTERPLAN pointer:** after this doc is on `main`, keep a short pointer at the end of `MASTERPLAN.md` → this file so recovery sessions find C0–C10.
+10. **Presentation never grants entitlement.** AUTH-GATE-1 is server-verified session + authz, not a canvas flag.
+
 **Owner input captured:** classic entrance; auth for full 3D features; camera zoom-out to normal height; proportional rotation; nav/menu + settings; stop scattered/blurred chrome.
