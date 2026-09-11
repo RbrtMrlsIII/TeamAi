@@ -15,7 +15,7 @@ const basePath = join(root, 'public/_flex_src/hero-flex.base.js');
  *   pinned base marker a2f8a3e
  *   V0.1 HERO_WIDE:{p:[0,d*.67,d]} → HERO_WIDE:{p:[0,d,d]} baseline reconciliation
  *   V0.2 Vision: return-to-baseline / V0.2 return baseline / V0.2 close baseline
- * Runtime/build source is repository-owned and must not use raw.githubusercontent.com.
+ * Runtime/build source is repository-owned and must not use a cross-origin GitHub Raw source.
  */
 
 // Always seed from the repository-owned source before invoking the patch engine.
