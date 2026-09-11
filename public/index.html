@@ -80,12 +80,16 @@
 
       <section id="hero-auth-panel" class="hero-auth-panel" aria-label="Authentication controls" aria-hidden="true" hidden>
         <div class="hero-auth-panel__inner" role="dialog" aria-modal="false" aria-labelledby="auth-title">
-          <h2 id="auth-title">Sign in</h2>
-          <div class="hero-auth-panel__tabs" role="tablist">
-            <button type="button" data-auth-tab="signin" aria-selected="true">Sign in</button>
-            <button type="button" data-auth-tab="signup" aria-selected="false">Create account</button>
+          <div class="hero-auth-panel__topline">
+            <span class="hero-auth-panel__kicker">ENGINE / AUTH</span>
+            <button type="button" class="quiet" data-auth-close>Close</button>
           </div>
-          <form data-auth-form="signin">
+          <h2 id="auth-title" data-auth-title>Sign in to TeamAi</h2>
+          <div class="auth-mode" role="tablist" aria-label="Authentication mode">
+            <button type="button" role="tab" data-auth-mode="login" aria-selected="true">Login</button>
+            <button type="button" role="tab" data-auth-mode="signup" aria-selected="false">Sign up</button>
+          </div>
+          <form data-auth-form="login">
             <label>Email<input name="email" type="email" autocomplete="email" required /></label>
             <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
             <button type="submit" class="primary">Continue</button>
