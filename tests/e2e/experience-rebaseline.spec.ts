@@ -26,7 +26,8 @@ test.describe('029 experience rebaseline', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Enter 3D world' }).click();
     await page.getByRole('button', { name: 'Menu' }).click();
-    const settings = page.getByRole('button', { name: 'Settings', exact: true });
+    const worldNav = page.getByRole('navigation', { name: '3D world navigation' });
+    const settings = worldNav.getByRole('button', { name: 'Settings', exact: true });
     await expect(settings).toBeVisible();
     await settings.click();
     await expect(page.locator('#hero-settings-panel')).toBeVisible();
