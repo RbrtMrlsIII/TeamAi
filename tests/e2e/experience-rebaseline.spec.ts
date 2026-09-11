@@ -22,11 +22,15 @@ test.describe('029 experience rebaseline', () => {
     await expect(page.locator('#hero-canvas')).toBeVisible();
   });
 
-  test('world menu exposes Settings without reviving the retired camera controls', async ({ page }) => {
+  test('world menu exposes working Settings without reviving retired cameras', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Enter 3D world' }).click();
     await page.getByRole('button', { name: 'Menu' }).click();
-    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
+    const settings = page.getByRole('button', { name: 'Settings', exact: true });
+    await expect(settings).toBeVisible();
+    await settings.click();
+    await expect(page.locator('#hero-settings-panel')).toBeVisible();
+    await expect(page.locator('#hero-settings-panel')).toContainText(/Theme, language, and UI scale/i);
     await expect(page.getByRole('button', { name: 'Low orbit', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Turn follow', exact: true })).toHaveCount(0);
   });
