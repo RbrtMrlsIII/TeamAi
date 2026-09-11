@@ -28,13 +28,15 @@ The earlier P/R/F/Cam/V/SP work remains valuable implementation lineage and reco
 | G | #89 **reduced-motion lighting**; **Merged (#156)** |
 | H | Legacy `MECHANISM_ZIPSKILLS` reconciliation to `WORKSPACE_ZIPSKILLS`; **Merged (#157)** |
 | I.1–I.3 | #95 cross-root skill wiring; **Merged (#158–#160)** |
-| J/K/L | Material depth + living continuity + satisfied-by evidence; **Merged (#161/#167/#168)** |
+| J | #88 material depth evidence; **Merged (#161)** |
+| K | #96–#98 lighting close-out; **Merged (#167)** |
+| L | Satisfied-by map for #96–#98; **Merged (#168)** |
 
-SEAT_SKILLS / WORKSPACE_SKILLS (and Hero faces SEAT_TOOLKIT / WORKSPACE_ZIPSKILLS) are **not required** platform setups.
+The archived lineage above is retained for recovery. It does not reopen as current work unless explicitly superseded by a new owner decision.
 
 ## Hierarchy animation continuity
 
-Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy motion → **SEAT_CONNECTION** and remaining parents → login/signup presentation handoff. See `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`.
+Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy motion → **SEAT_CONNECTION** and remaining parents → login/signup presentation handoff. **NAVIGATE** remains the free-orbit interaction mode. See `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`.
 
 ## Current C0–C10 experience sequence
 
@@ -72,4 +74,4 @@ Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy
 
 Do not select an implementation merely because an older slice is green or an old branch contains unfinished code. Read the current C0–C10 rebaseline first. When a requested change conflicts with validation, apply Issue #260: warn, account for cost/risk/output, update the contract, update dependent validation, verify, and preserve or archive the superseded baseline.
 
-<!-- residual: #274 C0-C10 execution baseline 2026-09-11 -->
+<!-- residual: #274 C0-C10 experience rebaseline, historical anchors preserved 2026-09-11 -->
