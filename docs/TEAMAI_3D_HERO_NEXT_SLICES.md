@@ -29,10 +29,10 @@ The earlier P/R/F/Cam/V/SP work remains valuable implementation lineage and reco
 | H | Legacy `MECHANISM_ZIPSKILLS` reconciliation to `WORKSPACE_ZIPSKILLS`; **Merged (#157)** |
 | I.1–I.3 | #95 cross-root skill wiring; **Merged (#158–#160)** |
 | J | #88 material depth evidence; **Merged (#161)** |
-| K | #96–#98 lighting close-out; **Merged (#167)** |
-| L | Satisfied-by map for #96–#98; **Merged (#168)** |
+| K | **Merged** (#167) — #96–#98 lighting close-out |
+| L | **Merged** (#168) — satisfied-by map for #96–#98 |
 
-The archived lineage above is retained for recovery. It does not reopen as current work unless explicitly superseded by a new owner decision.
+**Continuity note:** the prior seat/workspace skill setups were **not required** platform capabilities; this remains historical knowledge and must not become entitlement or implementation authority.
 
 ## Hierarchy animation continuity
 
