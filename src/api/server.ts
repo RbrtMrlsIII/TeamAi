@@ -13,6 +13,7 @@ export interface ApiDependencies { orchestrator: ConversationOrchestrator; resol
 // Always resolve presentation assets from the repository working directory.
 const SPATIAL_ROOT = path.resolve(process.cwd(), 'frontend/spatial');
 const HERO_ROOT = path.resolve(process.cwd(), 'public');
+const FRONTEND_ROOT = path.resolve(process.cwd(), 'frontend');
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -21,6 +22,11 @@ const MIME: Record<string, string> = {
   '.mjs': 'text/javascript; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
 };
 
 function json(res:any,status:number,body:unknown){res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(body));}
@@ -59,6 +65,30 @@ async function serveRootHero(req:any, res:any, url: URL): Promise<boolean> {
   return true;
 }
 
+async function servePublicRoot(req:any, res:any, url: URL): Promise<boolean> {
+  if (req.method !== 'GET' || url.pathname === '/' || url.pathname.startsWith('/v1/') || url.pathname === '/health' || url.pathname.startsWith('/hero/') || url.pathname.startsWith('/spatial/') || url.pathname.startsWith('/frontend/')) return false;
+  const rel = url.pathname.replace(/^\/+/, '');
+  if (!rel) return false;
+  const resolved = path.resolve(HERO_ROOT, rel);
+  if (!resolved.startsWith(HERO_ROOT + path.sep)) {
+    json(res, 403, { error: 'forbidden' });
+    return true;
+  }
+  try {
+    const data = await readFile(resolved);
+    const ext = path.extname(resolved).toLowerCase();
+    res.writeHead(200, { 'content-type': MIME[ext] ?? 'application/octet-stream' });
+    res.end(data);
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+async function serveFrontend(req:any, res:any, url: URL): Promise<boolean> {
+  return serveStatic(req, res, url, '/frontend', FRONTEND_ROOT, 'index.html');
+}
+
 async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
   return serveStatic(req, res, url, '/spatial', SPATIAL_ROOT, 'index.html');
 }
@@ -75,6 +105,8 @@ export function createApiServer(deps:ApiDependencies){
       if (await serveRootHero(req, res, url)) return;
       if (await serveHero(req, res, url)) return;
       if (await serveSpatial(req, res, url)) return;
+      if (await serveFrontend(req, res, url)) return;
+      if (await servePublicRoot(req, res, url)) return;
       if(req.method==='GET'&&url.pathname==='/health') return json(res,200,{ok:true});
       if(req.method==='GET'&&url.pathname==='/v1/catalog/models'){ const userId=url.searchParams.get('userId')??'anonymous'; const provider=url.searchParams.get('provider')??undefined; const capability=url.searchParams.get('capability')??undefined; const plan=await deps.resolvePlan(userId); if(!deps.catalog) return json(res,200,{plan,models:[]}); return json(res,200,{plan,models:await deps.catalog.listModels({userPlan:plan,provider,capability})}); }
       if(req.method==='POST'&&url.pathname==='/v1/conversations'){
