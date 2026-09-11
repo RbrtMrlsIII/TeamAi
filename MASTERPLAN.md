@@ -371,3 +371,11 @@ Canonical human-facing experience intent remains in `docs/VISION.md` for histori
 This is a source-delivery/authority correction only. It does not alter Firebase identity, Firestore authority, scheduler authority, provider execution, entitlement, or Product Law.
 
 <!-- teamai residual: #275 repository-owned Hero runtime delivery hardening; preserve full Masterplan body; no 029-released claim. -->
+
+## Runtime delivery hardening synchronization — #275
+
+Final implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
+
+`public/hero-flex.js` is now the committed, repository-owned, fully assembled Hero runtime artifact. Local verification recorded a 47,925-byte artifact with no browser-side remote source loader, SP-04 integrity 11/11, valid JavaScript syntax, and `hero-flex-local-runtime.test.mjs` passing 1/1.
+
+This index entry is a chronological synchronization record for the implementation commit. It does not claim 029 release, endorsement, backend authority, or production readiness. `governance-drift` remains fail-closed.

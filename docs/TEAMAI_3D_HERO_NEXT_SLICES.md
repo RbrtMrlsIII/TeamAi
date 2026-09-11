@@ -65,3 +65,11 @@ The internal legacy patch engine retains an emergency remote fallback as histori
 - Presentation does not grant entitlement or durable authorization.
 - No 029-released claim until release gates + endorsement are actually evidenced.
 - Repository-owned source/build artifacts are preferred over cross-origin runtime source mutation.
+
+## #275 final runtime synchronization
+
+`fix/029-local-hero-runtime` now contains the fully assembled repository-owned `public/hero-flex.js` at `f4547116c1df840ff56f40907e39b154765c535c`.
+
+Validation recorded locally: SP-04 11/11, JavaScript syntax pass, and Hero local-runtime regression 1/1. The browser runtime must not reintroduce remote source loading.
+
+#275 remains pending GitHub merge validation. No 029 release claim.

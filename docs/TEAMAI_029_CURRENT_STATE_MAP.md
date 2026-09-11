@@ -92,3 +92,11 @@ Follow the C0–C10 experience rebaseline. Do not create isolated camera/chrome 
 Do not ask “what feature is next?” until this map answers what is true, proven, stopped, and what evidence permits continuation. For the current experience, use the C0–C10 sequence rather than reopening historical V0–V3 queues.
 
 <!-- residual: #275 repository-owned Hero runtime hardening; raw remote source removed from normal runtime/build entry path; internal legacy engine fallback remains slated for explicit cleanup -->
+
+## #275 final runtime synchronization
+
+Implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
+
+`public/hero-flex.js` is the committed repository-owned assembled runtime. The normal browser/build path no longer depends on a remote runtime source. Local verification: SP-04 11/11, syntax check passed, `hero-flex-local-runtime.test.mjs` 1/1.
+
+This is still an open PR until GitHub validation and merge complete. The internal legacy patch-engine fallback remains historical/internal follow-up work and must not become runtime authority.
