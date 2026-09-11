@@ -9,6 +9,7 @@ const baseUrl = new URL('../public/_flex_src/hero-flex.base.js', import.meta.url
 test('Hero flex delivery stays repository-owned', () => {
   assert.doesNotMatch(wrapper, /raw\.githubusercontent\.com/);
   assert.match(wrapper, /_flex_src\/hero-flex\.base\.js/);
-  assert.match(entry, /_flex_src\/hero-flex\.base\.js/);
+  assert.doesNotMatch(entry, /raw\.githubusercontent\.com/);
   assert.ok(statSync(baseUrl).size > 0);
+  assert.ok(entry.length > 5000, 'generated Hero flex artifact should be assembled');
 });
