@@ -88,4 +88,4 @@ Follow the C0–C10 experience rebaseline. Do not create isolated camera/chrome 
 
 Do not ask “what feature is next?” until this map answers what is true, proven, stopped, and what evidence permits continuation. For the current experience, use the C0–C10 sequence rather than reopening historical V0–V3 queues.
 
-<!-- residual: #274 C0-C10 experience rebaseline, owner-endorsed 2026-09-11; current implementation PR, C9/C10 not yet accepted -->
+<!-- residual: #274 C0-C10 experience rebaseline, owner-endorsed 2026-09-11; final index synchronization after experience-rebaseline route/camera test changes -->
