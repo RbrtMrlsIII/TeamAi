@@ -203,13 +203,11 @@
   white-space: nowrap;
 }
 
-.hero-shell[data-experience="world"] .hero-controls__cameras > button[data-camera="TEAM_ORBIT"],
-.hero-shell[data-experience="world"] .hero-controls__cameras > button[data-camera="WORKSPACE_CLOSE"],
-.hero-shell[data-experience="world"] .hero-controls__cameras > button[data-camera="OVERHEAD_MAP"],
-.hero-shell[data-experience="world"] .hero-controls__cameras > button[data-camera="SEAT_CLOSE"],
-.hero-shell[data-experience="world"] .hero-controls__cameras > button[data-camera="DETAIL_ANCHOR"] {
-  display: none;
-}
+/* C5/D (#278): Wide/Team/Workspace/Map/Seat/Detail were removed from
+   public/index.html outright -- .world-navigation is the single coherent
+   world nav now. Soft-hide (display:none) was explicitly rejected by the
+   owner ("soft-hide is not removal"), so there is no hide-rule here to
+   maintain; this comment is the only trace of the old camera wall. */
 
 .hero-shell[data-experience="world"] .hero-controls {
   width: min(620px, calc(100vw - 28px));
