@@ -4,6 +4,12 @@
 
 The handover is the durable continuation boundary between one execution and the next. It belongs to the TeamAi target project and carries both state and accepted learning.
 
+## 0. Current recovery anchor — 2026-09-12
+
+The current backend live infrastructure inventory is the eight-function Supabase census in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. The connected project currently reports exactly eight ACTIVE TeamAi Edge Functions after operator removal of the obsolete `paypal-webhook` deployment. `backend/BACKEND_LIVE_SERVICE_STATUS.md` remains the canonical claim-level backend status/evidence ledger, while `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves connected/operator context.
+
+Historical handover sections below retain their original context and evidence. They do not override the current authority chain or current live inventory. When an older handover says a gate is still pending, read that statement as a historical snapshot unless a newer current-state record confirms it remains open.
+
 ## 1. Handover must answer five things
 
 ### What is authoritative now?
@@ -113,11 +119,13 @@ The ZIP remains a derived handover artifact and never becomes a second source au
 
 TeamAi owns TeamAi handover. ToolKit may receive a generalized lesson only after the consuming-project evidence establishes that the lesson generalizes. Team-specific provider choices, pricing, exact model catalogs, or implementation assumptions must not be promoted upstream merely because they appear in a handover.
 
-## 10. Current 2026-09-06 Commerce / Backend Continuation Record
+## 10. Historical 2026-09-06 Commerce / Backend Continuation Record
+
+**Historical snapshot — not current state.**
 
 **Scope:** TEAM-BACKEND-001 bounded commerce/PayPal correction and preparation for the next frontend implementation gate.
 
-**Authority chain:** `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/execution/orucaveam/* + skills/backend/commerce-paypal/SKILL.md + skills/backend/verification-recovery/SKILL.md → implementation → verification/evidence`.
+**Authority chain at the time:** `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/execution/orucaveam/* + skills/backend/commerce-paypal/SKILL.md + skills/backend/verification-recovery/SKILL.md → implementation → verification/evidence`.
 
 **Canonical commerce model:**
 
@@ -135,29 +143,31 @@ and server-only lookup:
 
 **Proven runtime evidence:** a real PayPal Sandbox `PAYMENT.CAPTURE.COMPLETED` event was correlated to the TeamAi commerce `correlationId`, captured successfully, delivered to the isolated `teamai-paypal-webhook-v5c`, and redelivered to **ACTIVE v13** with PayPal-originated `POST` and HTTP `200`.
 
-**Learned defect:** the original v12 path persisted the event and activated the entitlement while leaving the parent commerce aggregate at `pending`. The v13 correction synchronizes the aggregate to `completed` for mapped successful payment events and performs that patch before the duplicate-event return so redelivery can repair stale aggregate state without creating another event.
+**Learned defect:** the original v12 path persisted the event and activated the entitlement while leaving the parent commerce aggregate at `pending`. The v13 correction synchronizes the aggregate to `completed` for mapped successful payment events and performs that patch before the duplicate-event return so redelivery can repair stale aggregate state without creating a second event.
 
-**Open proof gate:** directly re-read Firestore after the v13 redelivery and prove `aggregate.status=completed`, the provider event remains singular, and the entitlement remains `active` with `sourceCommerceEventId` equal to the provider event ID. Until this is observed, the isolated commerce lifecycle remains `RUNTIME-PROVEN` for delivery/HTTP-200 but not `COMPLETED`.
+**Historical open proof gate:** directly re-read Firestore after the v13 redelivery and prove `aggregate.status=completed`, the provider event remains singular, and the entitlement is `active` with `sourceCommerceEventId` equal to the provider event ID. This statement belongs to the historical snapshot and is superseded by the later 2026-09-07 bounded endorsement evidence.
 
-**Frontend continuation:** after the backend proof gate, proceed with the canonical commerce UI contract. The frontend consumes aggregate status as primary commerce state, event records as history/evidence, and entitlement as access projection. It must not call PayPal directly for authority, self-attest payment success, or write commerce state directly to Firestore.
+**Historical frontend continuation:** after the backend proof gate, proceed with the canonical commerce UI contract. The frontend consumes aggregate status as primary commerce state, event records as history/evidence, and entitlement as access projection. It must not call PayPal directly for authority, self-attest payment success, or write commerce state directly to Firestore.
 
 **Learning status:** TeamAi-scoped, evidence-backed. Not a Product Law amendment. Generalization to ToolKit remains undecided.
 
-## 11. Current 2026-09-09 Slice K / Grok alignment continuation
+## 11. Historical 2026-09-09 Slice K / Grok alignment continuation
+
+**Historical snapshot — not current state.**
 
 **Scope:** TEAM-EXPERIENCE-029 presentation continuity (Slice K) plus Grok Skills alignment. Not a commerce completion claim.
 
-**Authoritative now:** `PRODUCT_LAW.md` → `MASTERPLAN.md` (TEAM-BACKEND-001 still IN IMPLEMENTATION; 029 still held) → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md` §8b/§13 → `docs/GROK_SKILLS_ALIGNMENT.md` → `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`.
+**Authoritative at the time:** `PRODUCT_LAW.md` → `MASTERPLAN.md` (the backend and 029 statuses below were the historical state at that time) → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md` §8b/§13 → `docs/GROK_SKILLS_ALIGNMENT.md` → `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`.
 
 **Changed:** living NEXT_SLICES (N.1–N.3 merged; K this slice); Grok alignment map; SKILL_WIRING pointer; user-manual remainder flagged on existing `backend/BACKEND_LIVE_SERVICE_STATUS.md`; stale PR #162 closed as superseded.
 
-**Proven:** docs-only. CI green on this PR is necessary, not Endorsement.
+**Proven:** docs-only. CI green on this PR was necessary, not Endorsement.
 
 **Learned:** A Grok App Builder host will try to apply Better Auth / Neon / TanStack / game skills unless explicitly forbidden. Alignment belongs in a bounded map, not a second Product Law. Stale NEXT_SLICES PRs that lag merged N-slices must be closed, not merged.
 
-**Open:** live PayPal Firestore re-read (commerce COMPLETED); Firebase emulator (item 7); owner endorsement for #88/#89; Slice L issue comments; remaining skill bodies N.4/N.5.
+**Historical open items:** live PayPal Firestore re-read (commerce COMPLETED); Firebase emulator (item 7); owner endorsement for #88/#89; Slice L issue comments; remaining skill bodies N.4/N.5.
 
-**Next authorized command:** Slice **L** — satisfied-by comments on Issues #96, #97, #98. Then N.4 `ws.authority.map` + `ws.evidence.handover`.
+**Historical next command:** Slice **L** — satisfied-by comments on Issues #96, #97, #98. Then N.4 `ws.authority.map` + `ws.evidence.handover`.
 
 ## SEE ALSO
 
