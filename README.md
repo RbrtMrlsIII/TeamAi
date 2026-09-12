@@ -30,7 +30,10 @@ Before implementation decisions, read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `
 - Vercel: non-authoritative preview/browser-verification surface when connected. **Temporary cutoff (2026-09-04):** disconnected/rate-limited from the TeamAi GitHub repository — do not treat Vercel status as a merge blocker or delivery authority. Use GitHub Actions + Playwright while parked.
 - Supabase Postgres: platform infrastructure only, never TeamAi domain state.
 
-Live service status pointer: `backend/BACKEND_LIVE_SERVICE_STATUS.md` (canonical). Do not treat older copies under `docs/backend/` as current without checking the canonical file.
+## Canonical backend live-function inventory
+The directly observed current Supabase Edge Function surface is the eight-function census at `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. It is the current live infrastructure inventory snapshot. The census does not replace the backend contracts, runtime evidence, or release gates, and it must be reconciled whenever Edge Function additions, removals, renames, material restructurings, reimplementations, deployments, or responsibility changes occur.
+
+The older `backend/BACKEND_LIVE_SERVICE_STATUS.md` remains the canonical backend evidence ledger for claim-level status and historical evidence; the eight-function census is the precise current deployment inventory.
 
 ## 3D Hero truth
 The current Seat hierarchy is a **partial working mechanism**, not the complete Hero machine. Future tree/branch/division work must derive semantic identity and purpose first, then payload, expansion space, connection topology, adaptive geometry, camera/travel, interaction, contribution routing, and verification. `treeID` / `branchId` are semantic identities; prototype coordinates are not universal geometry.
