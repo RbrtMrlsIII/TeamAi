@@ -129,4 +129,33 @@
 
 ---
 
-<!-- Agents: append Q-008+ below this line. Keep numbering monotonic. -->
+### Q-008 — Lost device control; someone logged in months ago
+
+**Context:** A user loses control of a device (or previously shared a session). An attacker may have signed in **months earlier** and still have access via a long-lived session or remembered browser.
+
+**Question:** What if the user lost control of a device and someone logged into their account ~6 months ago?
+
+**Working answer (bounded):**
+
+1. **Treat old sessions as potentially hostile** until the account owner re-establishes control (IdP recovery + global session revoke).
+2. **Identity provider is the session authority** (e.g. Firebase Auth): refresh/ID tokens must be revocable; “sign out everywhere” is primary — not hoping the attacker closes the tab.
+3. **TeamAi must not invent parallel login truth** — authorize by current verified UID; no forever-valid SPA secrets that bypass the provider.
+4. **Sensitive actions should re-auth** when product ships them (billing, admin, connection secrets) — a months-old session should not be enough without step-up.
+5. **Operator recovery:** password/Google recovery outside TeamAi + revoke refresh tokens + rotate server-stored connection secrets.
+6. **Audit** auth events where lawful (sign-in, revoke) without logging secrets.
+7. **No claim** that full session-manager UI or forced max session age is already shipped.
+
+**Open follow-ups:**
+
+- [ ] Confirm IdP revoke / sign-out-all path for operators.
+- [ ] Decide max idle / absolute session policy when authorized.
+- [ ] Step-up auth for commerce / admin / secret bind.
+- [ ] Connection/token rotation runbook after compromise.
+
+**Related:** Q-004 · Q-005 · `docs/SECURITY_SESSION_ACCOUNT_RECOVERY.md` (SEC-S1)
+
+**Status:** INQUIRY + SEC-S1 posture doc
+
+---
+
+<!-- Agents: append Q-009+ below this line. Keep numbering monotonic. -->
