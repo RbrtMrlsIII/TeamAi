@@ -4,6 +4,8 @@
 
 This document is the human-readable census and construction contract for the intended 3D Hero tree system. It records semantic tree identity, tree contents, branch responsibilities, implementation anchors, expansion rules, connection requirements, and verification boundaries.
 
+The census is a **truth inventory**, not a product roadmap and not a second Masterplan. `docs/VISION.md` explains the experience meaning; `MASTERPLAN.md` governs execution order; this census records the structural state of every tree/branch/division that has actually been defined or implemented.
+
 It must never claim that a tree is complete merely because a Seat tree prototype works.
 
 ## 1. Current semantic tree families
@@ -26,19 +28,22 @@ This is the currently proven presentation hierarchy portion. It is **PARTIAL**, 
 
 This is a capability/responsibility presentation model. Skills instruct; policy and authorized contracts govern. This tree must never become entitlement or authorization.
 
-## 2. Tree identity
+## 2. Tree identity and census maintenance
 
-Every future tree must have a stable semantic `treeID` before the runtime treats it as an implementation identity. Every branch must have a stable `branchId` derived from semantic parentage.
+Every intended tree must have a stable semantic `treeID` before the runtime treats it as an implementation identity. Every branch must have a stable `branchId` derived from semantic parentage.
 
 **Identity is semantic. Coordinates do not define identity.**
 
-The current census uses provisional semantic IDs:
+The census representations are:
 
-- `TREE-DOMAIN`
-- `TREE-HERO-SEAT`
-- `TREE-SKILL-RESPONSIBILITY`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
 
-These IDs become implementation-authoritative only after their complete tree contracts are explicitly defined and verified.
+Whenever a tree/branch/division is **added, removed, renamed, materially restructured, or reimplemented**, the same governed PR must reconcile the affected census records. The agent must update the census even when the implementation is only a partial/staged reimplementation, and must preserve the truthful status rather than upgrading it because the runtime surface exists.
+
+A census change without corresponding implementation truth is a planning statement. An implementation change without a corresponding census update is governance drift.
 
 ## 3. Branches are real integrations
 
@@ -60,7 +65,7 @@ A real branch must have:
 - reduced-motion behavior;
 - verification evidence.
 
-A tree may contain broad branches, nested sub-branches, and multiple levels of depth. Do not assume a universal two-level tree.
+A tree may contain broad branches, nested sub-branches, and multiple levels of depth. Do not assume a universal two-level tree, equal heights, equal widths, or equal branch counts.
 
 ## 4. Root-to-tree construction rule
 
@@ -88,7 +93,7 @@ Never begin by copying the previous tree's coordinates and then inventing semant
 Each tree can legitimately differ in:
 
 - branch count;
-- depth;
+- recursion/depth;
 - branch width;
 - branch height;
 - radial distance;
@@ -103,7 +108,7 @@ Each tree can legitimately differ in:
 
 Current prototype geometry is a measured/starting baseline, not a universal geometry contract.
 
-A new tree must derive its spatial requirements from its actual semantic/UI payload.
+Geometry must leave enough physical room for the division's real payload and its neighboring machine topology. A branch that needs a larger configuration/accessibility surface is allowed to occupy a larger machine division.
 
 ## 6. Expansion-space contract
 
@@ -118,25 +123,23 @@ Every expanding division must reserve sufficient space to open without colliding
 
 Expansion space is therefore part of the tree's design contract, not an animation afterthought.
 
-The Hero maximum expanded state must be derived from the combined footprint of the active divisions and their payload-driven geometry.
+The Hero maximum expanded state must be derived from the combined footprint of the participating active divisions and their payload-driven geometry.
 
 ## 7. Full-turn expansion state
 
-During the final turn-loop/contribution state, the participating tree/branch expansions are expected to be **active/open** so that their connection points can form a continuous semantic wiring network.
+During the final turn-loop/contribution state, the participating tree/branch divisions are expected to be **active/open** so that their connection points can form a continuous semantic wiring network.
 
 ```text
 active WebAi turn
-→ active tree / branch
-→ participating divisions expand / remain active
-→ connection points become traversable
+→ participating tree / branch selection
+→ required divisions become active/open
+→ connection points and corridors are spatially available
 → signal follows actual wiring paths
-→ adjacent trees/branches participate
+→ connected adjacent trees/branches participate
 → signal reaches workspace center
 ```
 
-This is a product behavior requirement, not merely a visual flourish.
-
-The turn loop must not try to traverse hidden or collapsed divisions whose connection topology does not exist in the active visual state.
+The turn loop must not try to traverse hidden/collapsed divisions whose intended connection topology is unavailable in the active visual state.
 
 ## 8. Expansion animation contract
 
@@ -144,7 +147,7 @@ Expansion must not be implemented as an instantaneous visibility switch, telepor
 
 Each division requires a smooth, polished, stateful opening and closing choreography appropriate to its geometry and payload.
 
-The final timings are **not yet established**. Existing hierarchy/camera timings must be treated as living baselines rather than final animation law.
+The final timing language is **not yet established**. Existing hierarchy/camera timing values remain living implementation baselines rather than final animation law.
 
 A correct expansion animation should preserve:
 
@@ -162,7 +165,7 @@ A correct expansion animation should preserve:
 
 Camera behavior must consume semantic tree/branch identity and geometry rather than treating a named dock as the identity itself.
 
-The current baseline documents named camera docks and a measured `700 ms` lerp. This is historical/current implementation behavior, not proof of final hierarchy travel.
+The current baseline documents named camera docks and a measured `700 ms` lerp. This is current implementation evidence, not proof of final hierarchy travel.
 
 Future branch travel must support meaningful subject-to-subject spatial movement between different tree/branch identities.
 
@@ -193,6 +196,11 @@ The effect must remain valid when trees differ in geometry, depth, branch count,
 | `TREE-HERO-SEAT` | PARTIAL |
 | `TREE-SKILL-RESPONSIBILITY` | INCOMPLETE |
 | Complete multi-tree Hero machine | NOT COMPLETE |
+| Complete branch/division product payload inventory | NOT COMPLETE |
+| Complete adaptive geometry | NOT COMPLETE |
+| Full semantic connection topology | NOT COMPLETE |
+| Final turn-loop electrical choreography | NOT COMPLETE |
+| Final machine-opening choreography | NOT COMPLETE |
 
 The Seat tree is evidence of an existing mechanism. It is not evidence that all TeamAi trees, branches, divisions, wiring, and expansions are complete.
 
@@ -204,9 +212,8 @@ The Seat tree is evidence of an existing mechanism. It is not evidence that all 
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
 - `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`
 - `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md`
-- `public/hero-hierarchy-runtime.js`
-- `public/hero-seat-branch-walk.js`
-- `public/hero-seat-stack.js`
-- `public/hero-flex.js`
+- `docs/VISION.md`
+- `docs/TEAMAI_CURRENT_STATE.md`
+- `MASTERPLAN.md`
 
 This census is a design/recovery baseline. It does not itself authorize implementation or claim acceptance.
