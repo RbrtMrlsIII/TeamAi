@@ -240,3 +240,30 @@ The census implements the governance side of the living machine vision without o
 `Product Law / Vision → Masterplan context → census truth → implementation → verification → evidence`
 
 The vision remains conceptual. The Masterplan remains the execution authority. The census remains the structured truth inventory. The implementation remains subordinate to all three.
+
+## 17. Issue body / comment evidence governance
+
+The **active Issue body is the durable guide for that Issue**. Its scope, product requirements, conceptual context, acceptance conditions, dependencies, execution contract, warnings that must govern future work, and current status belong in the Issue body.
+
+**New Issue comments are evidence records, not guidance documents.** A new comment may contain only:
+
+- actual agent diagnosis output;
+- real observed or retrieved data, with enough baseline/date/commit context to interpret it;
+- warnings or discrepancies discovered from that evidence;
+- a factual record that a bounded slice was actually executed, marked **EXECUTED** (or equivalent).
+
+A new comment must not contain:
+
+- a checklist;
+- an implementation plan;
+- a recommended next-slice queue;
+- “do this next” instructions;
+- an acceptance checklist;
+- a new product requirement that has not been transferred into the Issue body or canonical product documentation;
+- a claim that an executed slice is **PROVEN** merely because it ran, merged, or appears correct.
+
+`EXECUTED` means the agent actually performed the bounded slice. `PROVEN` is a verification state and requires the applicable evidence boundary. Comments do not promote an execution to proof.
+
+Historical comments are immutable evidence. Do not rewrite historical comments merely to satisfy this newer format. When a historical comment contains guidance that remains valid, transfer that guidance into the active Issue body or the appropriate canonical repository document and preserve the old comment as historical evidence.
+
+The same rule applies to issue discussions used during recovery: discussion may reveal data or diagnosis, but future agents must follow the current Issue body and canonical repository authorities, not an old comment's instructions.
