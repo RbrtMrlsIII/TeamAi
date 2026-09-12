@@ -388,3 +388,13 @@ This index entry is a chronological synchronization record for the implementatio
 This closes the C5/D and C6/E implementation portions of #278's checklist pending CI and owner browser acceptance (the C9 gate). C7, F, and C9 remain open. No 029-released claim.
 
 C6 browser proof must open a seat tree (`selectSeatShell`) before asserting `getBaseCameraId()`: `setCamera('SEAT_CLOSE')` does not set `openParentId`, so the nav base stays `HERO_WIDE` until `applyNavCamera()` runs on an open tree. The fallback is thresholded on `navZoom >= NAV_ZOOM_MAX`, not unconditional. Positive wheel `deltaY` increases `navZoom` (zoom-out).
+
+## #282 — C2 / Phase C first-paint governance synchronization
+
+PR **#282** carries the owner-authorized first-paint reconciliation slice under #278 Phase C. The implementation hides the legacy `.hero-copy` brand in classic mode and hides the sibling `.far-environment` footer so the canonical classic entrance does not present duplicate logo/headline/footer chrome. The DOM/runtime surfaces remain available for world-mode behavior; this is presentation-only and is not a C5-style DOM removal.
+
+The corresponding unit and Playwright coverage is scoped to the classic public entrance and verifies the hide contract, desktop/phone classic first paint, one visible classic brand image, and absence of the duplicate h1. This slice does not decide `/hero/` auto-world behavior, remove remaining world chrome, alter `TEAM_ORBIT`, implement continuous zoom/tree-to-tree travel, complete C8, or advance C9/C10.
+
+This entry is the required Masterplan synchronization for the `public/` implementation change in PR #282. It records the current Phase C slice without converting CI status or documentation presence into a completion claim. The fail-closed `governance-drift` gate remains authoritative for merge readiness.
+
+No 029-released claim.
