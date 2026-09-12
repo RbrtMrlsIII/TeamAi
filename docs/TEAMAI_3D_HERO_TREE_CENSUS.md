@@ -43,7 +43,7 @@ The census representations are:
 
 Whenever a tree/branch/division is **added, removed, renamed, materially restructured, or reimplemented**, the same governed PR must reconcile the affected census records. The agent must update the census even when the implementation is only a partial/staged reimplementation, and must preserve the truthful status rather than upgrading it because the runtime surface exists.
 
-A census change without corresponding implementation truth is a planning statement. An implementation change without a corresponding census update is governance drift.
+A census change without corresponding implementation truth is a planning/design statement. An implementation change without a corresponding census update is governance drift.
 
 ## 3. Branches are real integrations
 
@@ -217,3 +217,9 @@ The Seat tree is evidence of an existing mechanism. It is not evidence that all 
 - `MASTERPLAN.md`
 
 This census is a design/recovery baseline. It does not itself authorize implementation or claim acceptance.
+
+## 13. Census ownership rule
+
+The census is maintained alongside implementation, not after the fact. When code introduces or materially changes a tree/branch/division, the corresponding census entry is part of that same PR's definition of current truth.
+
+The census is intentionally **not** the place where final product-roadmap sequence is invented. It records structural truth and known context; `MASTERPLAN.md` and Issue #278 determine execution order.
