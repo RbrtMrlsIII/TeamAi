@@ -272,14 +272,26 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await expect(page.getByRole('button', { name: 'Enter 3D world', exact: true })).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeHidden();
 
+    // #278 C: classic first paint must not stack the legacy Layer-A brand
+    // (.hero-copy) or the far-environment footer on top of classic-entrance.
+    // classic-entrance owns the single logo + Terms/Privacy; far links are
+    // outside .hero-shell and were previously always visible.
+    await expect(page.locator('.hero-copy')).toBeHidden();
+    await expect(page.locator('.far-environment')).toBeHidden();
+    await expect(page.locator('.classic-entrance__brand img')).toHaveCount(1);
+    await expect(page.getByRole('heading', { name: /Living Web AI Workspace/i })).toHaveCount(0);
+
     await page.getByRole('button', { name: 'Enter 3D world', exact: true }).click();
     await expect(page.locator('.classic-entrance')).toBeHidden();
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeVisible();
+    await expect(page.locator('.hero-copy')).toBeHidden();
 
     await page.getByRole('button', { name: 'Website', exact: true }).click();
     await expect(page.locator('.classic-entrance')).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeHidden();
+    await expect(page.locator('.hero-copy')).toBeHidden();
+    await expect(page.locator('.far-environment')).toBeHidden();
   });
 
   test('phone viewport: same entrance -> world -> return flow stays usable', async ({ page }) => {
@@ -287,6 +299,8 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await page.goto('/');
     await expect(page.locator('.classic-entrance')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Enter 3D world', exact: true })).toBeVisible();
+    await expect(page.locator('.hero-copy')).toBeHidden();
+    await expect(page.locator('.far-environment')).toBeHidden();
 
     await page.getByRole('button', { name: 'Enter 3D world', exact: true }).click();
     await expect(page.locator('#hero-canvas')).toBeVisible();
@@ -295,6 +309,7 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
 
     await page.getByRole('button', { name: 'Website', exact: true }).click();
     await expect(page.locator('.classic-entrance')).toBeVisible();
+    await expect(page.locator('.hero-copy')).toBeHidden();
   });
 
   test('/hero/ and /spatial/ compatibility routes still resolve to their declared surfaces', async ({ page }) => {

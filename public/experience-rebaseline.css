@@ -8,7 +8,15 @@
 .hero-shell[data-experience="classic"] .hero-controls,
 .hero-shell[data-experience="classic"] .hero-note,
 .hero-shell[data-experience="classic"] .hero-auth-panel,
-.hero-shell[data-experience="classic"] .world-navigation {
+.hero-shell[data-experience="classic"] .world-navigation,
+.hero-shell[data-experience="classic"] .hero-copy {
+  display: none !important;
+}
+
+/* .far-environment is a sibling AFTER .hero-shell (outside the machine).
+   Classic entrance already owns About/Contact/Terms/Privacy, so hide the
+   duplicate far footer on classic first paint. World mode keeps it. */
+.hero-shell[data-experience="classic"] ~ .far-environment {
   display: none !important;
 }
 

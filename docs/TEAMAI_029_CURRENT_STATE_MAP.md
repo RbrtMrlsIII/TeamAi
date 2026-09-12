@@ -113,3 +113,13 @@ This route ownership is a deployment/product-shape decision only. It does not gr
 ## #281 (C5/D, C6/E, G follow-up to #278)
 
 Nav-wall duplicate camera buttons removed from the DOM; `.world-navigation` is the sole world nav. `applyNavCamera()` zoom-out now falls back to `HERO_WIDE` at `NAV_ZOOM_MAX` regardless of an open tree/seat branch. Playwright coverage added for the canonical public homepage (desktop + phone) and the C6 zoom-out regression. Pending CI green and owner browser acceptance; does not itself constitute C9. No 029-released claim.
+
+## #282 (C2/Phase C first-paint reconciliation, governance synchronization)
+
+PR **#282** carries the first-paint presentation fix for the owner-observed duplicate classic entrance chrome. The change is limited to presentation-layer hiding in classic mode: `.hero-copy` is hidden so the legacy Layer-A brand does not duplicate the canonical classic brand, and the sibling `.far-environment` footer is hidden so its duplicate links do not stack over the classic entrance. The DOM/runtime world surfaces remain available for world-mode behavior; this is not a C5-style DOM removal.
+
+The associated browser/unit coverage verifies the classic root surface rather than claiming full 029 acceptance. This slice addresses the duplicate first-paint observation under #278 Phase C only. It does not decide `/hero/` auto-world behavior, remove remaining world chrome, alter `TEAM_ORBIT`, implement continuous zoom/tree-to-tree travel, complete C8, or advance C9/C10.
+
+PR #282 also synchronizes this state map as required by Active Index Coupling. CI/governance status remains the authority for whether the PR is merge-ready; this note records the intended current state and does not infer a green gate from documentation alone.
+
+No 029-released claim.

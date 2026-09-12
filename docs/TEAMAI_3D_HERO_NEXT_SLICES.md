@@ -107,3 +107,11 @@ No 029-released claim.
 Item 3 above (C6 browser verification of tree/subject zoom back to the normal world baseline) now has implementation in place: `applyNavCamera()` falls back to `HERO_WIDE` once `navZoom` reaches `NAV_ZOOM_MAX`. The duplicate camera wall from item 2's scope is also removed (C5/D). Both are pending CI green and an actual browser pass before counting toward C9 acceptance.
 
 C6 e2e must open a seat tree (`selectSeatShell` + `resetNav`) before reading `getBaseCameraId()`. `setCamera('SEAT_CLOSE')` does not set `openParentId`; the fallback is **not** unconditional — it is gated on `navZoom >= NAV_ZOOM_MAX` while a tree is open. Positive wheel `deltaY` is zoom-out. No 029-released claim.
+
+## #282 (C2 / Phase C first-paint slice)
+
+PR **#282** is the owner-authorized first-paint reconciliation slice under #278 Phase C. It hides the legacy `.hero-copy` brand in classic mode and hides the sibling `.far-environment` footer so the canonical classic entrance does not present duplicate logo/headline/footer chrome. The DOM/runtime surfaces remain available for world-mode behavior; this is presentation-only and is not a C5-style DOM removal.
+
+Validation is scoped to the classic public entrance: unit coverage asserts the CSS hide contract and Playwright coverage checks desktop/phone classic first paint for the hidden legacy surfaces, one visible classic brand image, and absence of the duplicate h1. The slice does not claim `/hero/` auto-world resolution, remaining world-chrome removal, `TEAM_ORBIT` changes, continuous zoom/tree-to-tree travel, C8, C9, or C10.
+
+#282 remains a Phase C implementation slice of #278. Its governance/index synchronization is required before the PR can pass the fail-closed `governance-drift` gate. No 029-released claim.
