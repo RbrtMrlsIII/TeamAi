@@ -1,41 +1,34 @@
 # TeamAi Backend — Live Reality Ledger
 
-**Date:** 2026-09-10  
+**Date:** 2026-09-12  
 **Status:** ACTIVE recovery / evidence ledger  
-**Purpose:** preserve backend developments that may exist outside ordinary agent-visible repository evidence, especially manually configured Firebase/Supabase state, so later frontend work does not erase or misclassify backend progress.
+**Purpose:** preserve connected backend state that may exist outside ordinary repository-visible evidence, especially manually configured Firebase/Supabase/provider state, so later agents do not erase or misclassify progress.
 
 ## 1. Why this ledger exists
 
-TeamAi is intentionally being developed on two bounded clocks:
+TeamAi advances on two bounded clocks:
 
-- the **backend clock** may advance through manual operator setup, connected provider configuration, live Edge deployment, and runtime verification;
-- the **029 spatial clock** may advance through Hero structure, camera, interaction, readability, browser proof, and visual polish.
+- the **backend clock** may advance through manual operator setup, provider configuration, live Edge deployment, and runtime verification;
+- the **029 spatial clock** may advance through Hero structure, camera, interaction, browser proof, and visual polish.
 
-These clocks do not require the same Agent to carry both responsibilities at the same time.
-
-A repository-only agent can therefore see an apparently conservative backend checklist while the actual connected infrastructure has already advanced. Conversely, live deployment can exist without satisfying the repository's claim-level completion criteria.
+These clocks are intentionally independent. A repository-only agent can therefore see less than the connected runtime, while a live deployment can exist without satisfying repository completion criteria.
 
 This ledger records the bridge:
 
 `repository intent → manual/operator action → connected runtime state → claim-level evidence → documented status`
 
-The ledger is **not** a replacement for Product Law, Masterplan, backend contracts, or evidence checkpoints. It exists to prevent live progress from disappearing between handoffs.
+It is not a replacement for Product Law, Masterplan, backend contracts, or evidence checkpoints.
 
 ## 2. Visibility model
 
 ### Repository-visible evidence
-
-Firebase work already has substantial durable evidence in the repository, including project identity, Firestore paths, rules/configuration, Gate-3 runtime evidence, Gate-4 parking conditions, and backend checkpoints. Agents should use those records as the canonical repo-side evidence rather than reopening completed Firebase architecture without a new discrepancy.
+Firebase project identity, Firestore paths, rules/configuration, Gate-3 evidence, Gate-4 parking conditions, backend checkpoints, and source contracts live in the repository.
 
 ### Connected-runtime evidence
-
-Supabase contains live TeamAi Edge Functions and deployment state that are not discoverable from repository text alone. A connected GPT session with access to the TeamAi Supabase project can inspect this layer directly.
+The connected Supabase project exposes live Edge Function inventory and deployment state that repository-only agents cannot infer.
 
 ### Operator-only/manual actions
-
-Some setup is intentionally performed by the human operator rather than delegated to an Agent. Examples include provider dashboards, credentials/secrets, external account authorization, sandbox transactions, and other actions requiring the user's authority or interaction.
-
-**Operator actions are not automatically visible to every Agent.** They must be reflected in this ledger or an appropriate evidence checkpoint before the repository can accurately describe the current state.
+Provider dashboards, credentials/secrets, external account authorization, live/sandbox transactions, and similar actions may require the operator. They are not automatically visible to every agent and must be preserved in an evidence record when material.
 
 ### Claim rule
 
@@ -44,149 +37,127 @@ Some setup is intentionally performed by the human operator rather than delegate
 `runtime proof ≠ completion`  
 `completion ≠ endorsement`
 
-The purpose of the ledger is to preserve the facts without collapsing those distinctions.
+## 3. Current connected Supabase state — 2026-09-12
 
-## 3. Current known live backend state
+Connected project: `TeamAi` (`srpgzzretfyqdsfclnuo`).
 
-The 2026-09-10 connected Supabase cross-check recorded TeamAi project `srpgzzretfyqdsfclnuo` as **ACTIVE_HEALTHY**.
+The live inventory currently contains **exactly eight ACTIVE TeamAi Edge Functions**:
 
-Observed deployed Edge Functions:
+| Runtime surface | Status | Version | Current interpretation |
+|---|---|---:|---|
+| `teamai-commerce-intent` | ACTIVE | 19 | pending commerce intent surface |
+| `teamai-domain-bootstrap` | ACTIVE | 22 | idempotent domain bootstrap |
+| `teamai-github-oauth-bind` | ACTIVE | 8 | GitHub installation/OAuth binding; not Hero live bind proof |
+| `teamai-github-webhook` | ACTIVE | 7 | GitHub webhook receipt; not Hero live bind proof |
+| `teamai-paypal-webhook-v5c` | ACTIVE | 21 | canonical live PayPal webhook |
+| `teamai-seat-connection-test` | ACTIVE | 7 | provider connectivity/health test |
+| `teamai-seat-provider-bind` | ACTIVE | 7 | encrypted provider-key binding |
+| `teamai-task-execute` | ACTIVE | 12 | authenticated task lease/execution boundary; provider remains `stub-edge-runtime` |
 
-| Runtime surface | Observed state | Current interpretation |
-|---|---|---|
-| `teamai-domain-bootstrap` v18 | ACTIVE | deployed domain bootstrap surface; claim level remains evidence-bound |
-| `teamai-commerce-intent` v15 | ACTIVE | deployed commerce-intent surface; live commerce completion is not inferred |
-| `paypal-webhook` v15 | ACTIVE | deployed canonical webhook surface; live PayPal transaction/webhook evidence remains open |
-| `teamai-paypal-webhook-v5c` v17 | ACTIVE | deployed Gate-5C-related surface; deployment does not close live evidence |
-| `teamai-task-execute` v8 | ACTIVE | authenticated task → lease → durable result path is live; provider stage is explicitly `stub-edge-runtime` |
-| `teamai-github-webhook` v3 | ACTIVE | deployed GitHub webhook surface; product-level completion remains evidence-bound |
-| `teamai-github-oauth-bind` v4 | ACTIVE | authenticated Firebase UID ↔ GitHub installation binding exists in Firestore; not Hero live binding proof |
-| `teamai-seat-connection-test` v3 | ACTIVE | deployed connection-test surface; product acceptance remains evidence-bound |
-| `teamai-seat-provider-bind` v3 | ACTIVE | deployed seat/provider binding surface; product acceptance remains evidence-bound |
+The obsolete `paypal-webhook` deployment was manually removed by the operator before this observation. It is not part of the current active surface.
 
-The same cross-check found **no public-schema tables** in the connected TeamAi Supabase database. This is consistent with the current architecture: Firestore `(default)` is the durable TeamAi domain store, while Supabase provides trusted Edge execution and webhook infrastructure.
+The precise live deployment inventory is the canonical snapshot in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. This ledger carries the wider claim/evidence context around that inventory.
 
-## 4. Backend frontier preserved for Agent recovery
+The connected Supabase public schema contains no TeamAi application tables. Firestore `(default)` remains the durable TeamAi application/domain authority.
+
+## 4. Current backend frontier
 
 | Item | Current truth | Evidence boundary | Do not infer |
 |---|---|---|---|
-| Firebase identity / Firestore bootstrap | runtime-proven bounded slices | repository checkpoints + live exercised paths | full backend completion |
-| Firebase Rules emulator Gate 4 | parked | reproducible harness; emulator execution unavailable in prior environment | emulator/hosted/production PASS |
-| Gate 5B | source-contract PASS | direct validation evidence | live payment or entitlement completion |
-| Gate 5C | implementation + available-environment verification | source + available-env evidence | live PayPal transaction/webhook completion |
-| `teamai-task-execute` | runtime-proven bounded stub path | live authenticated execution | real provider runtime |
-| GitHub OAuth/installation bind | deployed infrastructure | live function inspection + repository contract | Hero live bind / 029 acceptance |
-| Seat connection/provider surfaces | deployed infrastructure | live inventory + contract evidence | end-to-end seat product completion |
-| Security/recovery | open | remaining claim-level matrix | completion |
-| Traceability | open | Product Law → Masterplan → contract/skill → implementation → evidence | completion |
-| Final endorsement | open | HandOver + Endorsement | release claim |
+| Firebase identity / Firestore bootstrap | runtime-proven bounded slices | repository checkpoints + exercised live paths | full backend completion |
+| Firebase Rules Gate 4 | parked | reproducible harness exists; emulator PASS absent | emulator/hosted/production PASS |
+| PayPal commerce gate | bounded runtime-proven evidence exists | recorded provider sandbox/live configuration + Firestore evidence | all subscribed events semantically supported |
+| `teamai-task-execute` | authenticated bounded stub path | live execution evidence | real provider runtime |
+| GitHub OAuth/installation | deployed binding infrastructure | live function + repository evidence | Hero live bind / 029 acceptance |
+| Seat connection/provider | deployed infrastructure | live inventory | end-to-end product completion |
+| Security/recovery | open where claim-level evidence is incomplete | remaining verification matrix | completion |
+| Traceability / endorsement | separate from deployment | HandOver + Endorsement evidence | release readiness |
 
-## 5. Manual setup responsibility model
+## 5. PayPal live configuration boundary
 
-TeamAi deliberately keeps human-required external setup with the user/operator when the action requires direct account authority, provider UI interaction, secret entry, payment interaction, or another boundary the Agent should not silently perform.
+The operator reports the live PayPal webhook target as:
 
-The correct handoff pattern is:
+`https://srpgzzretfyqdsfclnuo.supabase.co/functions/v1/teamai-paypal-webhook-v5c`
+
+Environment: `live`.
+
+The provider configuration census contains 67 subscribed event labels, preserved in Issue #284 §6. The live v5c source currently maps 16 event types. Verified but unmapped events are acknowledged as `processed: false` / `unsupported_event_type`; provider subscription does not itself establish TeamAi semantic support.
+
+## 6. Manual setup responsibility
+
+The correct boundary remains:
 
 ```text
 Agent identifies missing manual boundary
         ↓
-Agent records exact required operator action
+Agent records exact operator dependency
         ↓
-User performs / authorizes external setup
+User performs / authorizes external action
         ↓
 Agent inspects connected runtime where available
         ↓
-Agent records observed state + evidence label
+Agent records observed state + evidence class
         ↓
-Repository checkpoint / ledger updated
-        ↓
-Next bounded slice becomes eligible
+Repository state is reconciled
 ```
 
-The user is therefore a **manual setup dependency and evidence source**, not a hidden implementation team that an Agent may safely assume completed every undocumented step.
+## 7. Frontend / backend independence
 
-## 6. Frontend / backend independence rule
+Frontend agents may advance bounded spatial work without backend completion when they consume only explicit presentation/read-model contracts or clearly labeled stubs.
 
-Frontend Agents should be allowed to continue making bounded spatial progress while backend work is independently advanced, provided the frontend consumes only an explicit presentation/read-model contract or a clearly labeled stub.
+Backend agents may advance approved infrastructure/evidence work without waiting for Hero polish.
 
-Backend Agents should be allowed to continue approved infrastructure/evidence work without waiting for 3D coloring, materials, or final Hero polish.
+Neither track may silently absorb the other's authority.
 
-Neither track should silently absorb the other's responsibility.
+## 8. Preservation protocol
 
-```text
-                 PRESENTATION BOUNDARY
-                        │
-          3D representation / read-model
-                        │
-                        ▼
-              trusted backend authority
-                        │
-          ┌─────────────┼─────────────┐
-          ▼             ▼             ▼
-       identity    durable state    runtime
-```
+Before a major backend refactor, provider integration, frontend/backend merge, cleanup, or deployment change that could obscure existing state, preserve:
 
-## 7. Update protocol: preserve progress before it moves
-
-Before an Agent performs a major backend refactor, provider integration, frontend/backend merge, or cleanup that could obscure historical state, it should first record:
-
-1. **Observed live state** — what the connected runtime actually reports.
-2. **Repository state** — what source/contracts/checkpoints currently claim.
-3. **Operator dependency** — which facts or actions came from manual setup.
-4. **Evidence class** — source-only, deployed, runtime-proven, external-live, completed, or endorsed.
-5. **Owner** — Agent, user/operator, provider, or explicit subsystem owner.
-6. **Stopping boundary** — why work stopped at that state.
-7. **Next authorized evidence action** — one bounded action, not a speculative feature queue.
-
-This should happen **before cleanup**, because a later "improvement" can erase the breadcrumb that explains why a deployed function, credential, binding, or manual provider state exists.
-
-## 8. GPT-only / connected inspection rule
-
-When connected backend access is available, GPT should treat live inspection as an evidence source that complements repository evidence.
-
-A connected inspection must be translated into a durable repository record when it materially changes the interpretation of an open Masterplan item. Otherwise, the knowledge dies with the session.
+- observed live state;
+- repository state;
+- operator dependency;
+- evidence class;
+- owner;
+- stopping boundary;
+- next authorized evidence action.
 
 The preferred sequence is:
 
-`inspect → compare → classify → document → only then improve`
+`inspect → compare → classify → document → improve`
 
 Never:
 
 `improve → infer → overwrite history`
 
-## 9. Current preserved discrepancy set
+## 9. Deployment/source boundary
 
-The following are intentionally preserved until claim-level reconciliation completes:
+GitHub `main` is source authority. Supabase is deployed Edge infrastructure. Firebase Firestore is durable domain state. Deployment inventory is evidence of what is live, not evidence that the corresponding product behavior is complete.
 
-- live Supabase deployment has advanced beyond some older repository “next” wording;
-- `teamai-task-execute` is deployed and authenticated but remains a stub provider runtime;
-- GitHub OAuth/installation bind is deployed but is not equivalent to Hero live binding;
-- seat connection/provider functions are deployed but deployment alone does not establish 029 product completion;
-- Gate 5C implementation is closed at the source/available-environment boundary while live PayPal evidence remains open;
-- Gate 4 remains explicitly parked rather than falsely upgraded from source/configuration evidence;
-- Firestore remains the durable application/domain authority despite the empty Supabase public schema;
-- final security/recovery, traceability, and endorsement are still distinct from implementation/deployment progress.
+Several current Supabase deployment records still contain inconsistent local checkout path shapes such as `TeamAi/TeamAi/`. This is deployment provenance evidence and remains an open reconciliation item until the deploy source/path is governed; it is not by itself proof of runtime failure.
 
-These discrepancies are **evidence distinctions, not necessarily defects**. They should remain visible until the corresponding claim is advanced or formally closed.
+## 10. Historical continuity
 
-## 10. Relationship to canonical documents
+Older deployment tables that contain `paypal-webhook` or earlier function versions remain historical snapshots where preserved. They must not be edited into false current state. The current 2026-09-12 eight-function snapshot supersedes them for live inventory purposes.
 
-- `PRODUCT_LAW.md` — product and architecture authority.
+Likewise:
+
+`source implementation ≠ deployment ≠ integration ≠ runtime proof ≠ completion ≠ endorsement`
+
+## 11. Canonical references
+
+- `PRODUCT_LAW.md` — product / architecture authority.
 - `MASTERPLAN.md` — chronological execution authority and release gate.
-- `POLICY.md` / ORUCAVEAM — action authority and execution constitution.
-- `docs/TEAMAI_029_CURRENT_STATE_MAP.md` — cross-track state model.
-- `backend/BACKEND_LIVE_SERVICE_STATUS.md` — current backend evidence boundary.
-- `docs/BACKEND_FIRST_REBASELINE_GUARD.md` — backend-first sequence and authority bridge.
-- `docs/project-guide/HandOver.md` / `Endorsement.md` — durable completion/acceptance loop.
+- `POLICY.md` / ORUCAVEAM — execution constitution.
+- `docs/SKILL_WIRING.md` — capability/skill routing.
+- `docs/TEAMAI_029_CURRENT_STATE_MAP.md` — cross-track state map.
+- `backend/BACKEND_LIVE_SERVICE_STATUS.md` — backend claim-level status.
+- `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` — current live eight-function inventory.
+- `docs/CHECKPOINT_BACKEND_EVIDENCE_RECONCILIATION_2026-09-10.md` — evidence reconciliation.
 
-When these disagree, do not silently choose the most optimistic status. Reconcile the authority chain and record the discrepancy.
+When sources disagree, reconcile the authority chain and preserve the discrepancy rather than selecting the most optimistic interpretation.
 
-## 11. Agent recovery instruction
+## 12. Agent recovery instruction
 
-> **Preserve the live truth before improving the implementation.**
->
-> Repository history tells the story of what was committed. Connected runtime inspection tells what is actually deployed. Manual operator actions tell what may exist outside Agent visibility. Completion claims require the appropriate evidence boundary.
->
-> Before changing backend or frontend architecture, reconcile all three.
+> Preserve live truth before improving implementation. Repository history tells what was committed. Connected runtime inspection tells what is deployed. Operator actions can exist outside agent visibility. Completion requires the appropriate evidence boundary.
 
-**One next authorized action:** inspect the live backend, compare it with the current Masterplan and backend status, and document any material delta before making the next improvement.
+Before changing backend or frontend architecture, reconcile those three views.
