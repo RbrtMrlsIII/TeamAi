@@ -31,13 +31,13 @@ Before meaningful implementation, reconstruct the minimum sufficient project con
 5. `docs/SKILL_WIRING.md`
 6. `/AI_ASSISTANT_READ_ME.md`
 7. `docs/TEAMAI_CURRENT_STATE.md`
-8. the applicable phase/domain contract(s)
-9. the applicable governance controls and direct skills
-10. relevant implementation roots, verification tests, evidence, `HandOver.md`, and `Endorsement.md`
+8. the relevant phase/domain contract(s)
+9. applicable governance controls and direct skills
+10. relevant implementation roots, tests, evidence, `HandOver.md`, and `Endorsement.md`
 
-Then establish current repository truth from GitHub: current branch/HEAD, latest merged baseline, relevant Issue/PR state, workflow state, and deployment state when relevant.
+Then establish current truth from GitHub itself: current branch/HEAD, latest merged baseline, relevant Issue/PR state, workflow/CI state, and deployment state when relevant.
 
-Do not trust chat memory, an old issue body, a stale PR description, a prior green run, or another agent's conclusion without revalidation against the current repository.
+Do not trust chat memory, a stale Issue body, a stale PR description, a prior green run, or another agent's conclusion without revalidation against the current repository.
 
 ## Current truth reconstruction
 
@@ -49,7 +49,7 @@ These states are not interchangeable.
 
 A merged authorized change becomes current repository truth. Earlier baselines remain historical unless explicitly superseded.
 
-Issues and PRs are work inputs and historical context, not automatically the highest authority. Before changing a canonical concept, inspect its consumers: imports, callers, state readers/writers, contracts, tests, scripts, workflows, deployment surfaces, documentation, and Skills.
+Issues and PRs are work inputs and historical context, not automatically the highest authority.
 
 ## Before any meaningful action
 
@@ -57,9 +57,9 @@ Issues and PRs are work inputs and historical context, not automatically the hig
 
 ## Mandatory governance preflight — governance, not a skill
 
-Governance is a mandatory execution gate. Skills provide bounded procedures; governance determines whether the change is admissible and whether the repository remains synchronized. Do not treat governance as optional documentation or as something to discover only after CI fails.
+Governance is a mandatory execution gate. Skills are bounded procedures; governance determines whether the change remains admissible and whether required canonical indexes and evidence surfaces remain synchronized.
 
-Before opening or updating any PR, inspect the changed paths and classify them.
+Before opening or updating any PR, classify every changed path.
 
 | Changed path | Governance field | Required same-PR reconciliation | Mandatory gate |
 |---|---|---|---|
@@ -69,50 +69,49 @@ Before opening or updating any PR, inspect the changed paths and classify them.
 | `supabase/**` | backend | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `backend/BACKEND_LIVE_SERVICE_STATUS.md` | `governance-drift` |
 | `skills/**` | Skills | `docs/SKILL_WIRING.md` + `MASTERPLAN.md` | `governance-drift` |
 
-The path-triggered table is an agent preflight rule. The detailed procedure remains `skills/governance/active-index-coupling/SKILL.md`, but the agent MUST identify and apply the governance control before pushing.
+The detailed control is `skills/governance/active-index-coupling/SKILL.md`. The agent MUST discover and apply that control from path classification before pushing; do not wait for CI to teach this rule.
 
 ### Mandatory pre-PR sequence
 
 1. List all changed paths.
-2. Detect every affected governance field; one PR may hit several fields.
+2. Detect every affected governance field; one PR may affect several.
 3. Load the required governance control(s).
 4. Read every required active index.
 5. Preserve the full `MASTERPLAN.md`; never truncate it.
 6. Preserve historical evidence; do not rewrite immutable historical records.
-7. Run the governance validator locally when possible:
-   `node scripts/governance/verify-active-index.mjs --mode=governance --base="origin/main"`
+7. Run `node scripts/governance/verify-active-index.mjs --mode=governance --base="origin/main"` locally when possible.
 8. Open/update the PR only after required reconciliation is present.
 9. Require `governance-drift = PASS` and `evidence-consistency = PASS` for merge readiness.
-10. Never substitute unit tests, Playwright, deployment success, or a green non-governance job for governance gates.
+10. Treat unit tests, Playwright, deployment success, and other green jobs as insufficient substitutes for governance gates.
 
-### Fail-closed behavior
+### Fail-closed rule
 
-The governance workflow runs `governance-drift` and `evidence-consistency` before `agent-validation`. A governance/evidence failure prevents downstream agent validation and blocks merge readiness.
+The governance workflow runs `governance-drift` and `evidence-consistency` before `agent-validation`.
 
 `governance failure → agent-validation skipped → merge blocked`
 
-Never weaken, bypass, disable, or falsify a validator merely to make a PR green. If the requirement legitimately changes, change the canonical contract and validator through the authorized path with equal or stronger specificity.
+Never weaken, bypass, disable, or falsify a validator to make a PR green. If the product requirement legitimately changes, change the canonical contract and validator through the authorized path with equal or stronger specificity.
 
 ## Verification is a layered contract
 
-Select verification from the claim being made, not from habit.
+Select validation from the claim being made:
 
 `static/syntax → unit/domain/contract → governance → integration → build/package → deterministic browser → deployed browser → authoritative backend/provider evidence → owner acceptance`
 
-A test proves only what it exercises. A browser test does not prove backend durability unless it verifies that authority. A screenshot proves only visual observation. A green workflow proves only the jobs that ran successfully for that commit. A deployment proves deployment, not full product correctness.
+A test proves only what it exercises. A browser test does not prove backend durability unless it verifies backend authority. A screenshot proves only visual observation. A green workflow proves only the jobs that passed for that commit. A deployment proves deployment, not complete product correctness.
 
-C9/product acceptance remains a human/product gate when the governing contract requires owner acceptance. Never claim evidence broader than what was actually collected.
+Never claim evidence broader than the evidence actually collected.
 
 ## Validation and evidence routing
 
-| Work class | Primary validation | Evidence boundary |
+| Work class | Validation path | Evidence boundary |
 |---|---|---|
-| Product/architecture change | authority + discrepancy review | canonical contract + HandOver/Endorsement |
+| Product/architecture | authority + discrepancy review | canonical contract + HandOver/Endorsement |
 | `public/**` / spatial | governance + focused tests + browser as required | required indexes + governance + actual browser evidence |
 | `backend/**` / `supabase/**` | governance + backend/contract tests + authoritative runtime proof as required | backend indexes + direct service evidence |
-| `skills/**` | governance + Skill wiring validation + relevant execution proof | `docs/SKILL_WIRING.md` + `MASTERPLAN.md` + Skill evidence |
+| `skills/**` | governance + Skill wiring validation + execution proof | `docs/SKILL_WIRING.md` + `MASTERPLAN.md` + Skill evidence |
 | browser-facing behavior | deterministic Playwright | exercised browser scope only |
-| project package/handover | package validator | extracted-path and byte/hash equality |
+| packaging/handover | package validator | extracted-path and byte/hash equality |
 | learned reusable procedure | evidence + learning/endorsement | `HandOver.md` → applicable Skill / this file → `PRODUCT-KNOWLEDGE.md` when validated |
 
 ## Product Law change rule
@@ -145,7 +144,9 @@ A skill never creates permission. Permission comes from direct user authorizatio
 
 ## Issue and PR operating rule
 
-Issues are work inputs, not supreme authority. Before implementing an Issue:
+Issues are work inputs, not supreme authority.
+
+Before implementing an Issue:
 
 1. Read the Issue and relevant comments.
 2. Separate requirements from historical observations.
@@ -153,7 +154,7 @@ Issues are work inputs, not supreme authority. Before implementing an Issue:
 4. Check current merged repository state.
 5. Check related merged, superseded, and open PRs.
 6. Map remaining work to the applicable field/domain and governance controls.
-7. Verify the work is not already merged elsewhere.
+7. Verify the requested work is not already merged elsewhere.
 
 Do not reopen retired behavior or duplicate completed work without new evidence and authorization.
 
@@ -167,7 +168,15 @@ For build/assembly systems also trace:
 
 `source module → assembly/build script → committed artifact → browser runtime`
 
-Inspect imports, callers, readers, writers, scripts, workflows, tests, documentation, deployment surfaces, and active Skills. Look specifically for duplicate authorities, stale aliases, shadow state, parallel runtimes, duplicate UI surfaces, misleading names, dead compatibility paths, missing tests, false-positive tests, and authority leakage.
+Inspect imports, callers, readers, writers, scripts, workflows, tests, documentation, deployment surfaces, and active Skills. Look for duplicate authorities, stale aliases, shadow state, parallel runtimes, duplicate UI surfaces, misleading names, dead compatibility paths, missing tests, false-positive tests, and authority leakage.
+
+## Learning and teach-back
+
+When an agent discovers a better, safer, clearer, more accurate, or more efficient approach, do not bury it in chat. Tie it to the executed checklist and evidence, capture it in `HandOver.md`, obtain the appropriate endorsement, then update the affected skill and/or this file. Promote to `PRODUCT-KNOWLEDGE.md` only when validated. Propose a ToolKit upstream lesson only after generalization is demonstrated.
+
+An improved procedure belongs in the relevant skill when it is reusable and bounded. This file remains the practical recovery/memory layer and must not become a second policy or product authority.
+
+Use `skills/governance/learning-handover/SKILL.md`.
 
 ## Canonical service boundaries
 
@@ -177,7 +186,7 @@ Inspect imports, callers, readers, writers, scripts, workflows, tests, documenta
 - PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
 - Firebase Hosting = current TeamAi web delivery authority.
-- GitHub Pages = validation-only static browser surface; it is not a second TeamAi source, backend, commerce, scheduler, or production-web authority.
+- GitHub Pages = validation-only static browser surface; it may publish the canonical `frontend/spatial` UI for human/browser verification but is not a second TeamAi source, backend, commerce, scheduler, or production-web authority.
 - Vercel = controlled web development, preview, and browser-verification surface; not TeamAi source, domain-state, backend, commerce, or scheduler authority.
 
 The authoritative Firebase project is `team-ai-official`.
@@ -188,13 +197,13 @@ In-machine parent/open work (Seat shell, later domain gears) must load `skills/f
 
 ## GitHub branch and deployment guard
 
-The default branch is protected by the repository ruleset and must not be bypassed. The development team must preserve its PR-based progression and deployment gate.
+The default branch is protected by the repository ruleset and must not be bypassed. The development team must preserve the repository's PR-based progression and deployment gate.
 
-For live browser validation, GitHub Pages is configured with **Source = GitHub Actions**. A dedicated Pages workflow may publish `frontend/spatial` under `/spatial/` without moving or duplicating the canonical HTML. The intended publication shape is `dist/spatial/index.html`.
+For live browser validation, GitHub Pages is configured with **Source = GitHub Actions**. A dedicated Pages workflow may publish `frontend/spatial` under the project route `/spatial/` without moving or duplicating the canonical HTML. The intended publication shape is `dist/spatial/index.html`, preserving the existing application route.
 
-When a protected/default-branch ruleset requires a successful deployment, do not disable or bypass the rule to make a change. Resolve the required deployment through the normal PR/deployment path and collect real evidence.
+When a protected/default-branch ruleset requires a successful deployment, do not disable or bypass the rule to make a change. Resolve the required Pages deployment through the normal PR/deployment path, then collect real deployment and browser evidence. Treat a ruleset that is marked Active but targets zero branches/resources as not effectively protecting the intended branch; ensure the intended target is configured.
 
-A successful GitHub Pages deployment is deployment evidence only. It does not replace deterministic Playwright CI evidence, backend verification, or Product Law authority.
+A successful GitHub Pages deployment is deployment evidence only. It does not replace deterministic Playwright CI evidence, backend verification, or Product Law authority. Do not treat a prior green Pages deployment as proof of current correctness.
 
 ## Browser verification
 
@@ -210,12 +219,12 @@ Use `skills/packaging/project-package/SKILL.md` with applicable ORUCAVEAM skills
 
 ## Automated agent operating contract
 
-Automated agents MUST treat this repository as their durable project operating context. The automation prompt is a dispatcher, not a replacement for Product Law, Masterplan, Policy, governance, Skills, or evidence.
+Automated agents MUST treat the repository as their durable project operating context. An automation prompt is a dispatcher into this authority chain, not a replacement for it.
 
 For every fresh or resumed automation session:
 
 1. Bootstrap from repository truth, not task memory alone.
-2. Re-establish current HEAD, branch, merged baseline, Issue/PR state, workflow state, and deployment state.
+2. Re-establish current HEAD, branch, merged baseline, relevant Issue/PR state, workflow state, and deployment state.
 3. Read canonical documents and applicable governance controls before changing anything.
 4. Resolve the affected field/domain before selecting Skills.
 5. Apply ORUCAVEAM to the bounded action.
@@ -223,7 +232,7 @@ For every fresh or resumed automation session:
 7. Make the smallest coherent authorized change.
 8. Run focused verification plus all mandatory governance/CI checks for the touched field.
 9. Inspect the final diff for scope, authority, historical integrity, and evidence accuracy.
-10. Preserve a durable handover containing current baseline, changes, proven behavior, limitations, and next authorized action.
+10. Preserve a durable handover with current baseline, changes, proven behavior, limitations, and next authorized action.
 
 A prompt such as “fix Issue #N” does not authorize skipping bootstrap, governance preflight, dependency analysis, Skill resolution, or verification.
 
@@ -269,14 +278,6 @@ NEXT AUTHORIZED ACTION
 ```
 
 Never call work “fixed”, “complete”, “accepted”, “production-ready”, or “released” unless the evidence supports that exact state.
-
-## Learning and teach-back
-
-When an agent discovers a better, safer, clearer, more accurate, or more efficient approach, do not bury it in chat. Tie it to the executed checklist and evidence, capture it in `HandOver.md`, obtain the appropriate endorsement, then update the affected Skill and/or this file. Promote to `PRODUCT-KNOWLEDGE.md` only when validated. Propose a ToolKit upstream lesson only after generalization is demonstrated.
-
-An improved procedure belongs in the relevant Skill when it is reusable and bounded. This file remains the practical recovery/memory layer and must not become a second policy or product authority.
-
-Use `skills/governance/learning-handover/SKILL.md`.
 
 ## Cross-session recovery
 
