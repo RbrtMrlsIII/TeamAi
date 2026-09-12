@@ -48,7 +48,7 @@ They meet at the presentation boundary. A 3D face may represent a backend capabi
 | #275 | MERGED | Hero runtime is repository-owned and normal browser/build path does not depend on remote runtime source | Do not reintroduce remote runtime loading without fresh regression evidence |
 | #281 | MERGED | six-button camera wall removed; world navigation consolidated; C6 baseline fallback implemented | Does not prove final tree travel or C9 |
 | #282 | MERGED | classic first-paint presentation reconciliation executed | Deployed visual acceptance still requires fresh browser evidence |
-| **Tree census / #283** | **OPEN BASELINE PR** | structured tree/node census and authority records are under review; issue/comment authority model is being synchronized | Must remain synchronized as tree/branch/division implementation evolves |
+| **Tree census / #283** | **MERGED BASELINE** | structured tree/node census and authority records are now part of `main` | Must remain synchronized as tree/branch/division implementation evolves |
 | **#278 current frontier** | **ACTIVE** | canonical active 029 execution ledger; current structural machine requirements are blocking C9 | Use the Issue body as the issue-specific guide; comments are evidence-only |
 
 **Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` remain retired and must not be silently recreated under aliases.
@@ -167,7 +167,21 @@ C10 is downstream expression. It must not be used to mask missing product semant
 
 ## 11. Live service cross-check
 
-**Canonical inventory:** `backend/BACKEND_LIVE_SERVICE_STATUS.md`.
+**Canonical deployment inventory:** `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`.  
+**Canonical backend claim/evidence status:** `backend/BACKEND_LIVE_SERVICE_STATUS.md`.
+
+The connected Supabase project currently has exactly eight ACTIVE TeamAi Edge Functions:
+
+- `teamai-commerce-intent` v19
+- `teamai-domain-bootstrap` v22
+- `teamai-github-oauth-bind` v8
+- `teamai-github-webhook` v7
+- `teamai-paypal-webhook-v5c` v21
+- `teamai-seat-connection-test` v7
+- `teamai-seat-provider-bind` v7
+- `teamai-task-execute` v12
+
+The obsolete `paypal-webhook` deployment was removed from the connected Supabase project by the operator and is not part of the current active surface. Historical inventories that contain it remain historical evidence only.
 
 Presentation structures remain separate from backend authority.
 
@@ -224,3 +238,7 @@ The current machine remains a **living construction baseline** until the semanti
 ## 17. Backend continuation evidence pointer (2026-09-12)
 
 Backend-track fixes are tracked in TEAM-BACKEND-002 (#284), not in this spatial map's tree/machine sections above. Canonical backend status remains `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Current backend-track item: task-lease Firestore field-preservation fix (#287) — repository-level correctness only, does not change TEAM-BACKEND-001's endorsed/bounded scope.
+
+## 18. Backend live-function inventory synchronization (2026-09-12)
+
+The exact connected-Supabase deployment inventory is frozen in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` at eight ACTIVE TeamAi Edge Functions. This map records the same current count and versions only as a recovery pointer; the census is the precise deployment inventory. The legacy `paypal-webhook` surface is absent from the connected runtime after operator deletion. Historical nine-function tables are not current state.
