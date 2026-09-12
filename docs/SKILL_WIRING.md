@@ -177,3 +177,15 @@ and the ledger:
 `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`
 
 before treating any Cam contract “next” line as current work. Do not restart Cam-2.
+
+## 15. Issue evidence routing
+
+Issue-specific guidance belongs in the active Issue body. Issue comments are evidence records only.
+
+For new comments, the allowable record types are:
+
+`DIAGNOSIS → REAL DATA → WARNING / DISCREPANCY → EXECUTED SLICE`
+
+A comment may record that a slice was executed, but it must not promote that slice to `PROVEN`. Proof is established through the appropriate verification/evidence path and reflected in the current repository state.
+
+Historical comments are immutable. Do not rewrite old comments simply to normalize their format. When old commentary contains guidance that remains valid, transfer the guidance into the active Issue body or canonical documentation and leave the old comment as historical evidence.
