@@ -4,7 +4,7 @@
 **Phase:** TEAM-BACKEND-001 / backend continuation  
 **Status:** **ENDORSED for bounded recorded scope; residual boundaries remain explicit**
 
-> **Current live-state reconciliation — 2026-09-12:** The connected Supabase project now reports exactly eight ACTIVE TeamAi Edge Functions after the operator removed the obsolete `paypal-webhook` deployment. The precise active deployment inventory is maintained in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS-2026-09-12.md` only if that file exists; otherwise use `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. Historical deployment snapshots below remain evidence and are not current inventory.
+> **Current live-state reconciliation — 2026-09-12:** The connected Supabase project now reports exactly eight ACTIVE TeamAi Edge Functions after the operator removed the obsolete `paypal-webhook` deployment. The precise active deployment inventory is maintained in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. Historical deployment snapshots remain evidence and are not current inventory.
 
 ## Current boundary state
 
@@ -100,7 +100,7 @@ No V-series/SP execution should reopen completed backend foundations merely beca
 
 ## Historical snapshot — preserved
 
-Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wording remain preserved in repository history and older evidence records. They are not the current live inventory. The active eight-function census and this section's 2026-09-12 reconciliation supersede older live inventory tables for recovery purposes.
+Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wording remain preserved in repository history and older evidence records. They are not the current live inventory. The active eight-function census and this 2026-09-12 reconciliation supersede older live inventory tables for recovery purposes.
 
 ## Required evidence distinction
 
