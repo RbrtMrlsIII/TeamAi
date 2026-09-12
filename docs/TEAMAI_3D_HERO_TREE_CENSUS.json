@@ -37,7 +37,24 @@
       "geometry": "PAYLOAD_DRIVEN",
       "expansion": "PARTIAL",
       "connection": "PENDING",
-      "turnLoop": "PENDING"
+      "turnLoop": "PENDING",
+      "configurationContract": {
+        "singleHierarchy": true,
+        "facetRule": "provider/application/service-runtime/model-variant/skills/tools/workstation/scope/permissions/approvals/limits/compliance/health are configuration facets mapped onto existing Seat branches, not a second Seat tree",
+        "lifecycle": ["Discover", "External Setup", "Import/Authorize", "Capability Test", "Bind", "Equip", "Activate", "Run", "Observe", "Degrade/Suspend", "Recover/Revalidate", "Rebind/Retire"],
+        "globalTurnPolicyOutsideSeat": true,
+        "globalTurnPolicyOwner": "TREE-ORCHESTRATION / scheduler",
+        "seatBehaviorMeaning": "Seat-local defaults and constraints only",
+        "commonSkillSource": "TEAMAI COMMON SKILL / Universal ToolKit",
+        "commonSkillDuplication": false,
+        "agentCountRule": "Agent count changes responsibility allocation and effective per-Seat skill bundles, not the common skill definitions",
+        "twoSeatRule": "Fewer Seats may carry several Responsibility Units and broader resolved skill bundles",
+        "eightSeatRule": "Up to eight Seats partition the same Responsibility Unit and common-skill substrate more finely; each Seat may resolve a different effective bundle",
+        "userSkillEditing": "DEFINED_NOT_IMPLEMENTED; user-owned skill material must remain distinct from canonical TeamAi common skills",
+        "removeAgent": "Seat lifecycle retire/remove operation; must not imply deletion of the user's root account",
+        "return": "Cross-tree navigation to public Entrance; not a Seat child",
+        "dictionary": "Complex Dictionary / User Guide (?) is a public guidance surface; not a Seat child"
+      }
     },
     {
       "treeID": "TREE-SKILL-RESPONSIBILITY",
@@ -50,9 +67,32 @@
       "geometry": "UNRESOLVED",
       "expansion": "PENDING",
       "connection": "PENDING",
-      "turnLoop": "PENDING"
+      "turnLoop": "PENDING",
+      "allocationRule": "Shared responsibility/skill definitions are allocated to participating Seats; do not fork definitions by Seat count"
     }
   ],
+  "crossTreeConfiguration": {
+    "turnConfiguration": {
+      "owner": "TREE-ORCHESTRATION / scheduler",
+      "status": "DEFINED_NOT_IMPLEMENTATION_COMPLETE",
+      "controls": ["participating Seats", "actions/turns per participating Seat", "turn order/scheduling policy", "round or stopping conditions", "summarizer selection", "resource/time limits", "turn-loop mode"],
+      "seatRelationship": "Seat-local behavior may provide defaults/constraints, but global turn policy is not a Seat branch"
+    },
+    "settings": {
+      "status": "DEFINED",
+      "categories": ["Seats", "Tree 1-8", "Branches", "Privacy Policy", "Terms", "Logout", "Return BTN"],
+      "hierarchyRule": "Settings is a navigation/control taxonomy and must reference the same semantic census identities; it is not a second machine hierarchy"
+    },
+    "dictionary": {
+      "surface": "Public Entrance Complex Dictionary / User Guide (?)",
+      "role": "Explain TeamAi vocabulary and behavior",
+      "seatHierarchy": false
+    },
+    "worldPopulation": {
+      "defaultPresentationSlots": 8,
+      "durableSeatRule": "A rendered slot is not a durable configured Seat; actual population is restored from authorized user/project state"
+    }
+  },
   "branchContract": {
     "required": [
       "branchId",
