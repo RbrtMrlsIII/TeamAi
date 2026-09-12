@@ -379,3 +379,10 @@ Final implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
 `public/hero-flex.js` is now the committed, repository-owned, fully assembled Hero runtime artifact. Local verification recorded a 47,925-byte artifact with no browser-side remote source loader, SP-04 integrity 11/11, valid JavaScript syntax, and `hero-flex-local-runtime.test.mjs` passing 1/1.
 
 This index entry is a chronological synchronization record for the implementation commit. It does not claim 029 release, endorsement, backend authority, or production readiness. `governance-drift` remains fail-closed.
+
+
+## Pages surface reconciliation — #278
+
+Canonical route ownership decided and recorded in `docs/TEAMAI_029_PAGES_SURFACE_MAP.md`: `/` now serves the classic entrance + 3D Hero (`public/`); `/hero/` kept as a compatibility path; `/spatial/` retains Command Deck as a pre-authentication staging surface, not the public front door. This is a deployment-routing decision only. It does not implement C8 server authorization, does not resolve C5/C6 camera items, and does not constitute a 029-released claim.
+
+<!-- teamai residual: #278 Pages surface reconciliation, step A+B; preserve full Masterplan body; no 029-released claim. -->

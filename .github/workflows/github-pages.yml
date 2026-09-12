@@ -45,24 +45,40 @@ jobs:
           rm -rf dist
           mkdir -p dist
 
-          # Publish spatial Command Deck at site ROOT so github.io/TeamAi/ resolves.
-          cp -R frontend/spatial/. dist/
+          # Build 3D Hero assets in place before publishing.
+          if [ -d public ]; then
+            node scripts/apply-cam2-tree-follow-flex.mjs || true
+          fi
 
-          # Keep legacy /spatial/ path working (bookmark / docs compatibility).
+          # C0 canonical public entrance: classic entrance + 3D Hero is the site ROOT.
+          # See docs/TEAMAI_029_PAGES_SURFACE_MAP.md (#278).
+          cp -R public/. dist/
+
+          # Compatibility path: keep /hero/ resolvable for existing links/e2e tests.
+          mkdir -p dist/hero
+          cp -R public/. dist/hero/
+
+          # Command Deck is repositioned off the public root (#276/#278).
+          # It stays at /spatial/ only, as a pre-authentication staging surface --
+          # NOT the public front door. Do not point "/" at this build.
           mkdir -p dist/spatial
           cp -R frontend/spatial/. dist/spatial/
 
-          # Optional: 3D Hero presentation under /hero/ (public/ self-contained).
-          if [ -d public ]; then
-            node scripts/apply-cam2-tree-follow-flex.mjs || true
-            mkdir -p dist/hero
-            cp -R public/. dist/hero/
-          fi
-
-          # Guard: root must have index.html or Pages shows 404.
+          # Guard: root must be the classic entrance, not the Command Deck.
           test -f dist/index.html
-          test -f dist/theme-root.css
-          test -f dist/shell-nav.js
+          test -f dist/hero.css
+          test -f dist/hero-flex.js
+
+          # Deterministic smoke check (#278 item B): fail the build if root
+          # content silently reverts to the Command Deck shell.
+          if ! grep -q "Enter 3D world" dist/index.html; then
+            echo "::error::Pages root is not the classic entrance (missing 'Enter 3D world' CTA). Refusing to publish." >&2
+            exit 1
+          fi
+          if grep -q "Command Deck" dist/index.html; then
+            echo "::error::Pages root still resolves to the Command Deck shell. Refusing to publish." >&2
+            exit 1
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
