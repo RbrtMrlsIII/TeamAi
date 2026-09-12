@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy TeamAi public website and workspace surfaces to GitHub Pages
+    name: Deploy TeamAi public website to GitHub Pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -59,17 +59,14 @@ jobs:
           mkdir -p dist/hero
           cp -R public/. dist/hero/
 
-          # Command Deck is retained as the future/transition workspace surface, not the public front door.
-          mkdir -p dist/spatial
-          cp -R frontend/spatial/. dist/spatial/
+          # Command Deck is retired as a published product surface. Its historical source
+          # remains repository-owned for reconstruction/history but is not deployed.
 
-          # Deterministic deployment smoke checks for the three declared surfaces.
+          # Deterministic deployment smoke checks for the published public surfaces.
           test -f dist/index.html
           test -f dist/hero/index.html
-          test -f dist/spatial/index.html
           grep -q 'Enter 3D world' dist/index.html
           grep -q 'Enter 3D world' dist/hero/index.html
-          grep -q 'TeamAi — Command Deck' dist/spatial/index.html
           test -f dist/hero/hero-flex.js
           test -f dist/hero/experience-rebaseline.js
 
