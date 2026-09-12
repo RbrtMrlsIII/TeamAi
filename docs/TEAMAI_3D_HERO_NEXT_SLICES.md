@@ -101,3 +101,9 @@ The internal legacy patch engine is historical implementation machinery. It must
 No security-inquiry item is promoted merely because it exists in `docs/security_inquiry.md`.
 
 No 029-released claim.
+
+## C5/D + C6/E implementation — #281
+
+Item 3 above (C6 browser verification of tree/subject zoom back to the normal world baseline) now has implementation in place: `applyNavCamera()` falls back to `HERO_WIDE` once `navZoom` reaches `NAV_ZOOM_MAX`. The duplicate camera wall from item 2's scope is also removed (C5/D). Both are pending CI green and an actual browser pass before counting toward C9 acceptance.
+
+C6 e2e must open a seat tree (`selectSeatShell` + `resetNav`) before reading `getBaseCameraId()`. `setCamera('SEAT_CLOSE')` does not set `openParentId`; the fallback is **not** unconditional — it is gated on `navZoom >= NAV_ZOOM_MAX` while a tree is open. Positive wheel `deltaY` is zoom-out. No 029-released claim.

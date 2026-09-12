@@ -379,3 +379,12 @@ Final implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
 `public/hero-flex.js` is now the committed, repository-owned, fully assembled Hero runtime artifact. Local verification recorded a 47,925-byte artifact with no browser-side remote source loader, SP-04 integrity 11/11, valid JavaScript syntax, and `hero-flex-local-runtime.test.mjs` passing 1/1.
 
 This index entry is a chronological synchronization record for the implementation commit. It does not claim 029 release, endorsement, backend authority, or production readiness. `governance-drift` remains fail-closed.
+
+
+## C5/D + C6/E nav-wall dedup and zoom-out baseline — #281 (follow-up to #278)
+
+`public/index.html`'s duplicate six-button camera wall (Wide/Team/Workspace/Map/Seat/Detail) has been removed from the DOM outright; `.world-navigation` is now the single coherent world nav (C5/D). `applyNavCamera()` in the Hero flex runtime now falls back to the `HERO_WIDE` world baseline once `navZoom` reaches `NAV_ZOOM_MAX`, instead of remaining pinned to whichever tree/seat close-up dock was open (C6/E). `window.TeamAiHero.getBaseCameraId()` exposes the resolved base camera for testing.
+
+This closes the C5/D and C6/E implementation portions of #278's checklist pending CI and owner browser acceptance (the C9 gate). C7, F, and C9 remain open. No 029-released claim.
+
+C6 browser proof must open a seat tree (`selectSeatShell`) before asserting `getBaseCameraId()`: `setCamera('SEAT_CLOSE')` does not set `openParentId`, so the nav base stays `HERO_WIDE` until `applyNavCamera()` runs on an open tree. The fallback is thresholded on `navZoom >= NAV_ZOOM_MAX`, not unconditional. Positive wheel `deltaY` increases `navZoom` (zoom-out).

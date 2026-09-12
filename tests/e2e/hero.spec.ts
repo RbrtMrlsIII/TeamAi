@@ -4,10 +4,15 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('renders the signature geometry shell and captures the hero frame', async ({ page }, testInfo) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    // C5 intentionally reduces operator-facing camera vocabulary in world mode.
-    for (const label of ['Wide', 'Open engine', 'Back', 'Next', 'Reset']) {
+    // C5/D (#278): the old six-button camera wall (Wide/Team/Workspace/Map/
+    // Seat/Detail) was removed from the DOM, not just hidden. World/Selected
+    // seat/Workspace/Detail now live only in the single .world-navigation menu.
+    for (const label of ['Open engine', 'Back', 'Next', 'Reset']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
+    await expect(page.locator('.hero-controls__cameras [data-camera]')).toHaveCount(0);
+    await expect(page.locator('.world-navigation')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'World', exact: true })).toBeVisible();
     await expect(page.locator('.hero-copy')).toBeHidden();
     await expect(page.locator('.spatial-part')).toHaveCount(3);
     await expect(page.locator('[data-seat-layer]')).toHaveCount(10);
@@ -15,6 +20,53 @@ test.describe('Living Web AI Workspace Hero', () => {
     const path = testInfo.outputPath('hero-wide.png');
     await page.screenshot({ path });
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
+  });
+
+  test('world-navigation menu reaches Selected seat, Workspace, and Detail without the old camera wall', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    const worldNav = page.locator('.world-navigation');
+    for (const label of ['Selected seat', 'Workspace', 'Detail', 'Settings', 'Sign in']) {
+      await expect(worldNav.getByRole('button', { name: label, exact: true })).toBeVisible();
+    }
+  });
+
+  test('C6: zoom-out from a seat close-up returns to the HERO_WIDE world baseline', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+
+    // C6 is a tree-open zoom-out. setCamera('SEAT_CLOSE') alone does not set
+    // openParentId, so applyNavCamera() keeps the closed-world HERO_WIDE dock
+    // and getBaseCameraId() never leaves it. Open a seat shell first, then
+    // resetNav() so applyNavCamera runs at navZoom=1 (below NAV_ZOOM_MAX).
+    await page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      hero.selectSeatShell(0);
+      hero.resetNav();
+    });
+    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
+    expect(hierarchy?.openParentId).toBeTruthy();
+    const zoomedIn = await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId());
+    expect(zoomedIn).not.toBe('HERO_WIDE');
+
+    // Flex maps Math.sign(deltaY)*0.08 onto navZoom. Positive deltaY increases
+    // navZoom toward NAV_ZOOM_MAX (further / zoom-out). Dispatch on the canvas
+    // so the real wheel listener runs without Playwright mouse.wheel stalls
+    // against the WebGL canvas.
+    await page.evaluate(() => {
+      const canvas = document.querySelector('#hero-canvas');
+      if (!canvas) throw new Error('missing #hero-canvas');
+      for (let i = 0; i < 20; i += 1) {
+        canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true }));
+      }
+    });
+
+    const navZoom = await page.evaluate(() => (window as any).TeamAiHero.getNavZoom());
+    const baseAtFullZoomOut = await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId());
+    expect(navZoom).toBeGreaterThanOrEqual(
+      await page.evaluate(() => (window as any).TeamAiHero.NAV_ZOOM_MAX) - 1e-6
+    );
+    expect(baseAtFullZoomOut).toBe('HERO_WIDE');
   });
 
   test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, inspection spine, auth handoff, and reduced-motion controls', async ({ page }) => {
@@ -205,5 +257,51 @@ test.describe('Living Web AI Workspace Hero', () => {
 
     await page.evaluate(() => window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-unlocked', { detail: { seatCount: 6 } })));
     await expect(page.locator('#seat-label')).toContainText('6 seats unlocked');
+  });
+});
+
+// G (#278): browser proof for the canonical public homepage, not just /hero/
+// in isolation. PR #279 made classic entrance the Pages root; these are the
+// deterministic desktop + phone checks the deployment map called for.
+test.describe('Canonical public homepage (classic entrance -> 3D world)', () => {
+  test('desktop: classic entrance is the root, and Enter 3D world reaches the coherent world nav', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await expect(page.locator('.classic-entrance')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /calmer front door/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Enter 3D world', exact: true })).toBeVisible();
+    await expect(page.locator('.world-navigation')).toBeHidden();
+
+    await page.getByRole('button', { name: 'Enter 3D world', exact: true }).click();
+    await expect(page.locator('.classic-entrance')).toBeHidden();
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await expect(page.locator('.world-navigation')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Website', exact: true }).click();
+    await expect(page.locator('.classic-entrance')).toBeVisible();
+    await expect(page.locator('.world-navigation')).toBeHidden();
+  });
+
+  test('phone viewport: same entrance -> world -> return flow stays usable', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await expect(page.locator('.classic-entrance')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Enter 3D world', exact: true })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Enter 3D world', exact: true }).click();
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await expect(page.locator('.world-navigation')).toBeVisible();
+    await expect(page.locator('.hero-controls__cameras [data-camera]')).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Website', exact: true }).click();
+    await expect(page.locator('.classic-entrance')).toBeVisible();
+  });
+
+  test('/hero/ and /spatial/ compatibility routes still resolve to their declared surfaces', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+
+    await page.goto('/spatial/');
+    await expect(page.locator('body')).not.toBeEmpty();
   });
 });

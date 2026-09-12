@@ -29,7 +29,9 @@ test('V3.4 index wires layer handoff script and keeps single canvas', async () =
   assert.match(html, /hero-layer-handoff\.js/);
   assert.match(html, /data-hero-layer="entrance"/);
   assert.match(html, /data-hero-engine-open/);
-  assert.match(html, /data-camera="HERO_WIDE"/);
+  // C5/D (#278): the standalone Wide button was removed from the DOM;
+  // the world nav's "World" button is now the sole HERO_WIDE anchor.
+  assert.match(html, /data-world-camera-request="HERO_WIDE"/);
   assert.match(html, /data-inspection-reset/);
   const canvases = html.match(/<canvas\b/gi) || [];
   assert.equal(canvases.length, 1);
