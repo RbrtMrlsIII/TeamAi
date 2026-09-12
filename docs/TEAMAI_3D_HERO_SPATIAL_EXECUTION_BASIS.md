@@ -309,3 +309,54 @@ It is the execution bridge between the existing spatial contracts and an agent's
 ## 10. Operating principle
 
 **Do not ask “what should we build next?” until we can answer “what is already true, what is only specified, what is proven, and which existing owner carries the next change?”**
+
+---
+
+## 11. Tree-machine baseline extension
+
+The existing gates and historical execution sequence above remain intact. This extension records the newer structural truth that those prior gates did not fully capture.
+
+The current Seat hierarchy is a partial mechanism. The complete Hero is a semantic machine of multiple tree families, recursive branches, real product integrations, adaptive divisions, connection topology, camera travel, and final contribution visualization.
+
+For every tree/branch/division, the semantic construction order is:
+
+`root truth → treeID / branchId → purpose/responsibility → UI/product payload → expansion/collapse states → connection topology → adaptive geometry → camera subject/travel → interaction → contribution/electricity route → verification`
+
+A branch is complete only to the level actually supported by evidence. It is not complete merely because a mesh, selector, or visible face exists.
+
+### Expansion / geometry extension
+
+Different trees may have different branch counts, recursive depth, dimensions, spacing, radial positions, angular spreads, and expansion footprints. Geometry must be derived from the semantic/UI payload and the actual physical requirements of the division.
+
+Expanded geometry must reserve space for:
+
+- the division's real content;
+- neighboring branches and divisions;
+- wiring/connection corridors;
+- camera movement and readability;
+- responsive/mobile constraints.
+
+The maximum expanded Hero state is therefore derived from the combined footprints of its active divisions, not a single universal scale factor.
+
+### Turn-loop extension
+
+The final turn-loop should be understood as a visualization of the actual machine connection graph:
+
+`active WebAi turn → active tree/branch → participating divisions active/open → connection paths available → electricity travels through connected trees/branches → workspace center`
+
+This layer remains future/not-final. It must not be implemented as disconnected decorative animation, and it must not be used to conceal missing tree/branch/connectivity work.
+
+### Expansion-motion extension
+
+Division opening and closing must be smooth, stateful mechanical transitions with readable intermediate states. Instant visibility toggles, teleports, or abrupt coordinate replacement are not the intended final product language. Current timing values remain living implementation baselines until browser evidence establishes better final motion.
+
+### Governance relationship
+
+The tree census is a **governed synchronization control** defined in `POLICY.md`, not a new Skill and not a second Masterplan. Any tree/branch/division add/remove/rename/material-restructure/reimplementation must update the four census representations in the same governed PR:
+
+`docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
+`docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
+`docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
+`docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
+
+No census status may be upgraded beyond the demonstrated implementation/verification level.

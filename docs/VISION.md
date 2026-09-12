@@ -13,6 +13,7 @@ Related technical contracts (owners of detail, not competing visions):
 - `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`
 - `docs/TEAMAI_3D_HERO_DOM_CHROME_ABSORPTION.md`
 - `docs/TEAMAI_3D_HERO_NEXT_SLICES.md`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
 - `docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md`
 - `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`
 
@@ -164,16 +165,16 @@ Beside that navigation, a **settings** control holds cross-cutting preferences, 
 - **Overall UI scale** — readability preference (presentation state only).
 - Room for further preferences later.
 
-**Owner today:** `frontend/spatial/theme-root.*`, `frontend/spatial/settings.*`, theme lighting adapter. Extend the same panel; no second settings island on the Hero canvas.
-
 Inventory is **deliberately not frozen** in this vision.
+
+**Owner today:** `frontend/spatial/theme-root.*`, `frontend/spatial/settings.*`, theme lighting adapter. Extend the same panel; no second settings island on the Hero canvas.
 
 ---
 
 ## 4. Ownership table (extend these first)
 
 | Vision desire | Existing owner (use first) | Class |
-|---------------|----------------------------|--------|
+|---------------|----------------------------|-------|
 | ~45° machine baseline | `HERO_WIDE` / world dock, Cam-1–3, camera follow contract, §9 numbers | **Adjust** |
 | Look-at selected tree | Cam-5/6, `resolveSelectedSeatDock`, apply-cam2 flex wire | **Adjust** / regression |
 | Free orbit + zoom on subject | Cam-3, Cam-4, `navZoom` clamps | **Adjust** |
@@ -205,7 +206,7 @@ Ordered for honest depth-first feel. Prefer adjust slices before additive entran
 ### Phase V0 — Camera truth
 
 | ID | Intent | Class |
-|----|--------|--------|
+|----|--------|-------|
 | V0.1 | ~45° world baseline via existing dock numbers | Adjust |
 | V0.2 | Close/return restores baseline dock | Adjust |
 | V0.3 | Subject-lock regression (Cam-6) | Test / adjust |
@@ -215,7 +216,7 @@ Ordered for honest depth-first feel. Prefer adjust slices before additive entran
 ### Phase V1 — Branch walk
 
 | ID | Intent | Class |
-|----|--------|--------|
+|----|--------|-------|
 | V1.1 | Back/Next contract on open parent | Document + map |
 | V1.2 | Wire existing controls to child cycle | Adjust |
 | V1.3 | Explicit leave-tree → baseline | Adjust |
@@ -224,7 +225,7 @@ Ordered for honest depth-first feel. Prefer adjust slices before additive entran
 ### Phase V2 — Machine chrome
 
 | ID | Intent | Class |
-|----|--------|--------|
+|----|--------|-------|
 | V2.1 | Parts/trees nav map data | Adjust existing lists |
 | V2.2 | Right dropdown using that map | Adjust shell-nav |
 | V2.3–V2.6 | Settings shell, theme, scale, language scaffold | Adjust settings |
@@ -234,7 +235,7 @@ Ordered for honest depth-first feel. Prefer adjust slices before additive entran
 **Contract:** `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md` (V3.1) — regions, owners, forbidden clashes.
 
 | ID | Intent | Class |
-|----|--------|--------|
+|----|--------|-------|
 | V3.1 | Entrance IA / layout contract | Docs then additive layout |
 | V3.2 | Brand hero image | Additive asset/region |
 | V3.3 | Gentle Hero atmosphere | Adjust wiring |
@@ -283,3 +284,46 @@ Tree color language, full seat smoke, reduced-motion path, mobile parity, vision
 5. Record checkpoint / HandOver; update NEXT_SLICES status as slices land.
 
 **Owner endorsement** of visual quality remains separate when environment and outer UI are fair enough to judge.
+
+---
+
+# 10. Tree-machine vision extension — structural baseline, not a new roadmap
+
+The current Seat hierarchy is a proven mechanism, but it is **not the completed 3D Hero machine**. The final machine is intended to contain multiple semantic tree families and can contain broad, asymmetric, and recursively nested branches. A `treeID` identifies a semantic tree; a `branchId` identifies a semantic branch by parentage and meaning. Coordinates never define identity.
+
+A branch is a real product integration, not a decorative display. Its meaning includes purpose/responsibility, product/UI payload, configuration/accessibility payload where applicable, expansion volume, adjacency clearance, connection/path ownership, camera relationship, responsive/reduced-motion behavior, and verification state.
+
+The machine should therefore be designed from semantic payload outward:
+
+`root truth → tree/branch semantics → responsibility → UI/product payload → expansion requirements → connection topology → adaptive geometry → camera/travel → interaction → contribution visualization`
+
+Different trees may legitimately require different branch counts, depths, heights, widths, radii, spacing, density, and expansion footprints. The machine must reserve physical space for the expanded payload, neighboring divisions, wiring corridors, camera travel, readability, and responsive constraints.
+
+### Turn-loop visualization
+
+The eventual turn-loop is not final animation yet. Its intended meaning is a connected electrical contribution flow: an active WebAi turn activates the relevant tree/branch divisions, their wiring becomes spatially available, and the signal travels through actual connected paths toward the central workspace. Participating expansions are expected to be active/open during this visual state so the wiring can be continuous.
+
+The effect must describe the machine's real connection topology, not a disconnected decorative path.
+
+### Expandable machine behavior
+
+Selecting a tree or branch may cause its corresponding machine division to open and reveal the product surfaces owned by that semantic unit. Opening and closing should feel like a manufactured technological mechanism changing state, with smooth stateful choreography and readable intermediate states. Instant visibility toggles, teleports, or abrupt coordinate swaps are not the intended final language.
+
+The Hero's maximum expanded footprint is derived from the active division payloads and required clearance; it is not a universal global multiplier.
+
+### Relationship to existing vision slices
+
+The historical V0–V4 ladder remains valuable continuity and recovery context. It is not a second roadmap authority. Current implementation order belongs to `MASTERPLAN.md` and the active #278 execution ledger. This section explains the intended experience meaning that future structural and visual work must preserve.
+
+### Current truth boundary
+
+- `TREE-DOMAIN` is not complete.
+- `TREE-HERO-SEAT` is partial and currently provides the strongest runtime evidence.
+- `TREE-SKILL-RESPONSIBILITY` is not complete as a rendered machine tree.
+- Full tree/branch/division connection topology is not complete.
+- Final turn-loop electrical choreography is not complete.
+- Final machine-opening animation language is not complete.
+- Current hierarchy/camera timings are living baselines, not final visual law.
+- `HERO_LOW_ORBIT` and `TURN_FOLLOW` remain retired.
+
+The structured census is maintained in `docs/TEAMAI_3D_HERO_TREE_CENSUS.*`. Changes to tree/branch/division semantics or implementation must keep that census synchronized through the governed workflow.

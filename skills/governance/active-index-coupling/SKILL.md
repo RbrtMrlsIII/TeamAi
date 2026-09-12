@@ -1,6 +1,6 @@
 ---
 name: active-index-coupling
-description: Use before any PR that changes public/, backend/, supabase/, or skills/ — enforces canonical index sync, forbids MASTERPLAN truncation, and fail-closed governance drift.
+description: Use before any PR that changes public/, backend/, supabase/, or skills/ — enforces canonical index sync, forbids MASTERPLAN truncation, fail-closed governance drift, and separates issue-body authority from comment evidence.
 ---
 
 # Active-index coupling (execution guide)
@@ -29,6 +29,21 @@ Also use when repairing a **governance-drift** CI failure from `scripts/governan
 - Product/execution: `PRODUCT_LAW.md` → `MASTERPLAN.md` → `POLICY.md` / ORUCAVEAM
 
 A skill does not authorize skipping the gate.
+
+## ISSUE BODY / COMMENT AUTHORITY
+
+The **active Issue body is the durable guide for an Issue**. Put product truth, scope, requirements, acceptance conditions, dependency relationships, warnings that must govern future work, and the execution contract in the Issue body itself.
+
+**Issue comments are evidence records, not guidance documents.** A new comment may contain only:
+
+1. agent diagnosis output;
+2. real data actually observed or retrieved, with the baseline/date/commit needed to interpret it;
+3. explicit warnings or discrepancies discovered during that observation;
+4. a record of a slice that was actually executed, clearly labeled **EXECUTED** or equivalent.
+
+A comment must **not** contain a checklist, implementation plan, recommended next-slice queue, "do this next" instructions, acceptance checklist, or a claim that an executed slice is **PROVEN**. Proof state belongs to the evidence/validation record and current Issue/PR state, not to the word "executed".
+
+Historical comments are immutable evidence. Do not rewrite old comments solely to make them conform to the new format. Treat their instructions, plans, or stale conclusions as historical context only. Transfer any still-current guidance into the active Issue body and record the correction in a new evidence-only comment.
 
 ## SCOPED FIELDS (what must change together)
 
@@ -63,7 +78,7 @@ Minimal honest update is enough (frontier residual note, claim marker consistenc
 1. `docs/SKILL_WIRING.md` (concrete skill path row)
 2. `MASTERPLAN.md` (wiring/recovery surface stays current)
 
-### Freshness (all fields)
+## Freshness (all fields)
 
 Index files in the PR must not be **older** than the implementation files they cover (`assertFresh`). Prefer **one commit** or a final commit that touches indexes **after** or **with** the code change.
 
@@ -108,6 +123,9 @@ This is intentional. The system fails **closed** so bookkeeping gaps and silent 
 - Treat green unit/Playwright tests as a substitute for governance-drift PASS.
 - Upgrade claim markers (e.g. SPATIAL-V3.5) without matching evidence and manifest state.
 - Rewrite files under `docs/evidence/` or historical HandOver/Endorsement paths.
+- Rewrite historical Issue comments solely to satisfy the new comment format.
+- Put active guidance, checklists, or next-step instructions in new Issue comments.
+- Mark an executed slice as **PROVEN** merely because it ran or merged.
 - Claim **029-released** from a residual or index-sync PR.
 - Create a second WebGL runtime, second theme root, or second settings island while fixing docs.
 - Use this skill to bypass Product Law or invent backend authority from the Hero.
@@ -117,6 +135,8 @@ This is intentional. The system fails **closed** so bookkeeping gaps and silent 
 - Every touched implementation root has its full required index set in the PR diff.
 - `MASTERPLAN.md` is full-length relative to `main` plus only intended residual lines.
 - `node scripts/governance/verify-active-index.mjs` reports PASS for governance mode against `origin/main`.
+- New Issue guidance resides in the Issue body, not in comments.
+- New comments are evidence-only and do not contain checklists or proof claims for executed work.
 - No historical evidence mutation; no 029-released claim.
 
 ## EVIDENCE

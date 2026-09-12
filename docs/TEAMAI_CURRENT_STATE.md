@@ -1,27 +1,35 @@
+<!-- teamai-claim: SPATIAL-V3.5 state=COMPLETE -->
+<!-- teamai-claim: BACKEND-001-ENDORSED state=ENDORSED_BOUNDED -->
+<!-- teamai-claim: BACKEND-GATE4 state=PARKED_NOT_PROVEN -->
+<!-- teamai-claim: BACKEND-PROVIDER state=STUB_ONLY -->
+<!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** `main` @ Hero contribution absorption ([PR #107](https://github.com/RbrtMrlsIII/TeamAi/pull/107), `903bc014…`) plus manufactured light rig (#104), authenticated `teamai-task-execute` live proof, Firestore contention/recovery run #7, PayPal Sandbox + aggregate re-read. `TEAM-BACKEND-001` remains **ENDORSED** for the bounded recorded scope.
+**Revision basis:** current `main` baseline through PR #282, plus the open governed 029 reconciliation work in PR #283.  
+**No 029-released claim.**
 
-This document is a compact operational index for agents. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
+This document is a compact recovery/index surface. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete Skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
 
 ## Authority order
 
 `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/** → implementation → verification → evidence → HandOver / Endorsement`
 
+For the 3D Hero experience, `docs/VISION.md` remains the conceptual experience home. The 3D Hero Tree Census is the structured structural-truth inventory. Issue #278 is the active 029 execution ledger.
+
 ## Current execution posture
 
-- `TEAM-BACKEND-001`: **ENDORSED for bounded recorded scope**. Live lease contention/recovery, authenticated `teamai-task-execute`, PayPal Sandbox delivery/HTTP 200, and post-v13 Firestore aggregate re-read are RUNTIME-PROVEN. Broader authenticated product-path integration remains distinct.
+- `TEAM-BACKEND-001`: **ENDORSED for bounded recorded scope**. Known residual evidence boundaries remain explicit.
 - `TEAM-BACKEND-002`: **IMPLEMENTED** on `main`.
-- `TEAM-EXPERIENCE-029`: **presentation inhabited**. Command Deck remains fixture-backed. Hero slices 1–3 (theme-lighting adapter, manufactured light rig, contribution corridor / absorb / traces) are on `main` as **presentation-only**. Issue #86 implementation is merged; formal HandOver/Endorsement for the Hero ladder may still be recorded. Seat Identity Inspection remains its own gate.
+- `TEAM-EXPERIENCE-029`: **presentation partially implemented, not released**. The Seat hierarchy mechanism exists, but the complete semantic multi-tree machine, branch/division expansion model, meaningful continuous spatial travel, full connection topology, final turn-loop contribution layer, and integrated C9 acceptance are not complete.
 - GitHub is the engineering/source authority.
 - Firebase `(default)` Firestore is the durable application/domain-state authority.
 - Firebase Auth owns identity / Firebase UID ownership.
 - Supabase Edge Functions own trusted server execution and PayPal webhook handling.
 - PayPal is external payment-provider event authority.
 - Firebase Hosting is current TeamAi web delivery authority.
-- GitHub Pages is validation-only static browser publication for the spatial UI.
-- Vercel is **paused/cut off by current policy** and must not be resumed without explicit user approval.
+- GitHub Pages is a validation-only static browser surface and is not a second TeamAi source or production-web authority.
+- Vercel remains controlled/paused according to current policy and must not be resumed without explicit authorization.
 
 ## Read/write economy
 
@@ -29,76 +37,136 @@ This document is a compact operational index for agents. It does not replace Pro
 
 Full operational detail is in `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`.
 
-## Merged implementation frontier
+## Current 029 presentation truth
 
-The 029 spatial progression on `main` remains Shell → Deck → F7 → Workplace → Seats → Planning → Working → Approvals → Artifacts → Settings, plus presentation-only Hero:
+The public product shape is:
 
-- Theme → lighting via `frontend/spatial/hero-theme-lighting-adapter.js` (one theme root only)
-- Manufactured light rig + WebGL Hero (`public/hero-flex.js`, authored meshes)
-- Lifecycle `FOCUS → ACTIVE → CONTRIBUTE → ABSORB → REFLECT → HANDOFF` with workspace traces (#107)
+```text
+/          → classic website entrance
+/hero/     → compatibility route using the public Hero source
+/spatial/  → Command Deck / workspace-transition surface
+```
 
-Hero uses the existing spatial skill family. **There is no 3D Hero lighting/theme skill and no second theme root.** Hierarchy runtime + Seat shell v1 skills exist as spatial companions; **docs hold living numbers** (`docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md` §9).
+The public root is the acceptance starting point. The current 3D Hero is presentation-only for the scope proven so far. The Command Deck remains fixture-backed where live-domain integration is not separately authorized and runtime-proven.
 
-Backend execution on `main`:
+## Current 3D Hero structural truth
 
-`ProviderRuntime gate → task execution gate → authorization + durable domain state + scheduler eligibility → Firestore lease (live-proven) → durable execution-result store (live-proven) → authenticated teamai-task-execute (live-proven) → read/write economy controls`
+The semantic machine families are:
 
-## Live PayPal commerce evidence
+```text
+TREE-DOMAIN
+  Account → Workplace → Project → Seat
 
-**Status:** bounded isolated runtime gate **RUNTIME-PROVEN**.
+TREE-HERO-SEAT
+  Seat Shell → Connection → Behavior → Toolkit → Capabilities
+  → Authorization → Workspace Scope → Task/Evidence
 
-Canonical path: `accounts/{uid}/commerce/{correlationId}` (+ events, entitlements, correlation index).
+TREE-SKILL-RESPONSIBILITY
+  ToolKit upstream → WebAi Seat responsibility
+  → skill bundle → governance/adaptation/capacity
+```
 
-Recorded 2026-09-06: correlationId `68b4ef3a-4132-46bf-8a01-43ebe97ba51e`; provider event `WH-71666988RB043112X-1WA30416DF8293903`.
+Current truth:
 
-Re-read workflow: `.github/workflows/firestore-commerce-aggregate-read.yml` — run #1 attempt 2 (`34089143256`) passed.
+- `TREE-DOMAIN` = **INCOMPLETE**.
+- `TREE-HERO-SEAT` = **PARTIAL**; this is the strongest current runtime mechanism.
+- `TREE-SKILL-RESPONSIBILITY` = **INCOMPLETE** as a rendered machine tree.
+- Complete multi-tree Hero machine = **NOT COMPLETE**.
+- Full branch/division product-payload inventory = **NOT COMPLETE**.
+- Adaptive payload-driven geometry = **NOT COMPLETE**.
+- Full semantic connection topology = **NOT COMPLETE**.
+- Final turn-loop electrical choreography = **NOT COMPLETE**.
+- Final machine-opening choreography = **NOT COMPLETE**.
 
-Evidence: `docs/evidence/TEAMAI_COMMERCE_PAYPAL_RUNTIME_PROOF_2026-09-06.md`
+The structured tree inventory is the synchronized set:
 
-## TEAM-BACKEND-001 conclusion
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
 
-Bounded recorded gates DONE / ENDORSED. Broader authenticated product-path scheduler/approval integration remains open.
+A tree/branch/division add, remove, rename, material restructure, or reimplementation requires census reconciliation in the same governed PR.
 
-## Frontend reality
+## Current camera / travel truth
 
-Spatial frontend remains fixture-backed except local theme/Hero presentation. Do not turn fixture UI into claimed live domain behavior. Hero remains presentation-only until a later gate explicitly joins live domain.
+- `HERO_LOW_ORBIT` is retired.
+- `TURN_FOLLOW` is retired.
+- Named camera docks express presentation intent; they do not define semantic tree identity.
+- Seat-level selected-subject centering exists.
+- Branch-specific subject/path resolution remains incomplete; multiple children may currently reuse the same close dock.
+- `CAMERA_LERP_MS = 700` is a measured implementation baseline, not final hierarchy-travel law.
+- Current C6 implementation can return the resolved base camera to `HERO_WIDE` at the zoom threshold, but this does not establish continuous full-motion spatial travel.
+- C7 proportional orbit logic exists in the repository; deployed desktop/mobile acceptance remains bounded by the applicable browser evidence.
 
-## Known brittle points
+## Current machine expansion truth
 
-1. Canonical-state drift.
-2. Branch accumulation.
-3. Frontend/backend contract boundary.
-4. Firestore write-authority boundary.
-5. Broader product-path scheduler/approval integration remains open.
-6. Dual API-server: `src/main.ts` launches `src/api/server.ts`; `src/server.ts` remains.
-7. Firestore commit `name` format must be resource names, not HTTPS URLs.
+The Hero is intended as an expandable technological machine. A semantic tree/branch may open a physical division and expose the product/UI payload that belongs to that semantic unit.
 
-## Rules for high-concurrency agents
+The design direction is:
 
-1. `main` is the baseline.
-2. Before reusing an old branch, compare it with current `main`.
-3. Do not merge based on branch naming or stale screenshots.
-4. A PR must identify governing Masterplan item, skill routing, verification, and limitations.
-5. Do not turn fixture UI into claimed live domain behavior.
-6. Do not create page-local Product Law, scheduler, identity, entitlement, commerce, or durable-state authority.
-7. Do not resume Vercel without explicit user approval.
-8. Do not add a 3D Hero skill.
-9. Hero 3D dependencies (theme, lighting, motion, camera, reduced-motion) stay code-bound to the single theme root and existing spatial skills — no parallel engine skill.
+`semantic identity → responsibility/payload → connection topology → adaptive geometry → camera/travel → interaction → contribution visualization`
 
-## Immediate next gate
+Branches may be recursive, broad, asymmetric, and differently sized. Prototype coordinates are not universal geometry law.
 
-Priority suggestions (pick one track):
+Expansion must reserve space for the division payload, neighboring divisions, wiring corridors, camera movement, workspace visibility, and responsive readability. Maximum expanded extent is derived from active division footprints.
 
-1. **Hero #86 evidence/HandOver** — close Issue #86 formally if acceptance criteria are met.
-2. **Seat Identity Inspection** — next 029 presentation gate after backend hold cleared.
-3. **Broader product-path** — authenticated scheduler/approval integration (larger; separate from Hero).
+Opening and closing are stateful smooth transitions. Final animation timing is not yet established.
 
-Out of scope unless explicitly approved:
+## Current turn-loop truth
 
-`browser Firestore write authority, provider-to-provider orchestration, Vercel activation, Product Law rewrite, second frontend theme/root, Turso or alternate DB, a 3D Hero skill, simultaneous full dark-glassmorphism pass as a second visual system.`
+The final turn-loop is intended to visualize semantic contribution through real machine connectivity:
 
-## Evidence language
+```text
+active WebAi turn
+→ active tree / branch
+→ participating divisions active/open
+→ connection paths available
+→ electricity travels through actual connections
+→ connected trees/branches participate
+→ workspace center
+```
 
-`PLANNED → IMPLEMENTED → DEPLOYED → RUNTIME-PROVEN → LEARNED → COMPLETED`
+The final layer is **NOT COMPLETE**. Decorative disconnected paths are not an acceptable substitute for actual connection topology.
 
-Do not upgrade a state label by implication.
+## Current backend truth
+
+`TEAM-BACKEND-001` is endorsed for its bounded recorded scope. Firebase emulator/rules verification remains **PARKED / NOT PROVEN**; the authenticated task path remains bounded by the `stub-edge-runtime`; broader external provider invocation and broader scheduler/approval product integration remain separately unproven/open. These boundaries do not become solved merely because the Hero has a presentation surface.
+
+## Current governance truth
+
+Issue-specific guidance lives in the active Issue body. For 029, that is Issue #278. New Issue comments are evidence records only: diagnosis, real observed/retrieved data, warnings/discrepancies, or a factual **EXECUTED** slice record. New comments are not a second checklist or execution plan, and `EXECUTED` is not `PROVEN`.
+
+Historical comments remain historical evidence. They are not rewritten merely to satisfy the newer protocol; active requirements are transferred into the Issue body or canonical repository documentation.
+
+## Current 029 execution boundary
+
+Issue #278 is the single active 029 product-experience ledger.
+
+Its accepted structural dependency is:
+
+`surface/entrance → coherent world chrome → semantic tree/branch/division completion → adaptive expansion/geometry → meaningful spatial travel → connection topology → turn-loop contribution layer → authenticated workspace boundary → C9 owner acceptance → C10 ProMax`
+
+C9 remains **BLOCKED** until the required structural machine, connectivity, authorization boundary, and fresh desktop/mobile product acceptance are proven. C10 remains gated behind C9.
+
+## High-concurrency agent rules
+
+1. `main` is the baseline; compare reused branches with current `main` before continuing.
+2. Read Product Law, Masterplan, Policy/ORUCAVEAM, Vision, and the current tree census before changing Hero structure.
+3. When a tree/branch/division changes, reconcile all census representations in the same governed PR.
+4. Do not treat prototype coordinates as universal geometry.
+5. Do not create a parallel tree identity system, camera registry, hierarchy runtime, theme root, or electrical animation graph.
+6. Do not turn presentation structures into domain authority, authorization, entitlement, or durable-state authority.
+7. Do not revive retired camera concepts.
+8. Match verification strength to the exact claim.
+9. Treat the Issue #278 body as the active issue-specific guide; treat new comments as evidence-only.
+10. Do not infer C9/C10 completion from one working tree, one selector, one screenshot, or green CI alone.
+
+## Current next-gate pointer
+
+Before further feature development, the repository baseline must remain internally consistent across Product Law, Masterplan, Policy/ORUCAVEAM, Vision, the Tree Census, current-state indexes, applicable contracts/Skills, and evidence. PR #283 is the current structural/governance reconciliation vehicle for that baseline and remains unmerged until its required checks are satisfied.
+
+## Completion language
+
+Do not claim `complete`, `accepted`, `released`, or `ProMax-ready` unless the evidence supports that exact state.
+
+The current 029 machine is a **living construction baseline** until semantic tree/branch/division structure, adaptive geometry, expansion behavior, meaningful spatial travel, connection topology, turn-loop visualization, workspace authorization, and owner acceptance are proven at the required scope.

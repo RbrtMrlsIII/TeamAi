@@ -1,0 +1,95 @@
+{
+  "status": "DESIGN_BASELINE_NOT_IMPLEMENTATION_COMPLETE",
+  "authority": "PRODUCT_LAW -> docs/VISION.md -> Masterplan context -> tree census -> implementation",
+  "treeIdentityRule": "treeID and branchId are semantic identities; coordinates do not define identity",
+  "censusMaintenance": {
+    "trigger": ["add", "remove", "rename", "materially_restructure", "reimplement"],
+    "sameGovernedChange": true,
+    "representations": [
+      "docs/TEAMAI_3D_HERO_TREE_CENSUS.csv",
+      "docs/TEAMAI_3D_HERO_TREE_CENSUS.json",
+      "docs/TEAMAI_3D_HERO_TREE_CENSUS.md",
+      "docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml"
+    ]
+  },
+  "treeFamilies": [
+    {
+      "treeID": "TREE-DOMAIN",
+      "status": "INCOMPLETE",
+      "class": "domain",
+      "root": ["Account", "Workplace", "Project", "Seat"],
+      "rendererAuthority": "presentation only",
+      "durableAuthorityOutsideRenderer": true,
+      "nodes": ["DOMAIN-ACCOUNT", "DOMAIN-WORKPLACE", "DOMAIN-PROJECT", "DOMAIN-SEAT"],
+      "geometry": "UNRESOLVED",
+      "expansion": "PENDING",
+      "connection": "PENDING",
+      "turnLoop": "PENDING"
+    },
+    {
+      "treeID": "TREE-HERO-SEAT",
+      "status": "PARTIAL",
+      "class": "presentation-hierarchy",
+      "root": ["Seat Shell", "Connection", "Behavior", "Toolkit", "Capabilities", "Authorization", "Workspace Scope", "Task/Evidence"],
+      "rendererAuthority": "presentation only",
+      "runtimeEvidence": ["public/hero-hierarchy-runtime.js", "public/hero-seat-branch-walk.js", "public/hero-seat-stack.js", "public/hero-flex.js"],
+      "nodes": ["SEAT_SHELL", "SEAT_CONNECTION", "SEAT_BEHAVIOR", "SEAT_TOOLKIT", "SEAT_CAPABILITIES", "SEAT_AUTHORIZATION", "SEAT_WORKSPACE_SCOPE", "SEAT_TASK_EVIDENCE"],
+      "geometry": "PAYLOAD_DRIVEN",
+      "expansion": "PARTIAL",
+      "connection": "PENDING",
+      "turnLoop": "PENDING"
+    },
+    {
+      "treeID": "TREE-SKILL-RESPONSIBILITY",
+      "status": "INCOMPLETE",
+      "class": "responsibility-capability",
+      "root": ["ToolKit upstream", "WebAi Seat responsibility", "skill bundle", "governance/adaptation/capacity"],
+      "rendererAuthority": "presentation only",
+      "durableAuthorityOutsideRenderer": true,
+      "nodes": ["SKILL-TOOLKIT", "SKILL-WEBAI-RESPONSIBILITY", "SKILL-BUNDLE", "SKILL-GOVERNANCE"],
+      "geometry": "UNRESOLVED",
+      "expansion": "PENDING",
+      "connection": "PENDING",
+      "turnLoop": "PENDING"
+    }
+  ],
+  "branchContract": {
+    "required": [
+      "branchId",
+      "parentIdentity",
+      "semanticPurpose",
+      "responsibility",
+      "uiProductPayload",
+      "expansionRegion",
+      "adjacentClearance",
+      "connectionPathOwnership",
+      "cameraRelationship",
+      "responsiveBehavior",
+      "reducedMotionBehavior",
+      "verificationEvidence"
+    ],
+    "supportsRecursiveDepth": true,
+    "geometryRule": "derive geometry from semantic/UI payload; never copy fixed prototype coordinates as universal truth"
+  },
+  "expansionContract": {
+    "maximumHeroState": "derived from combined active division footprints and payloads",
+    "requiresAdjacentClearance": true,
+    "requiresConnectionCorridors": true,
+    "turnLoopParticipatingDivisionsActive": true,
+    "animation": "smooth_stateful_non_instant",
+    "timings": "NOT_FINAL"
+  },
+  "turnLoop": {
+    "state": "PLANNED_NOT_FINAL",
+    "signalModel": "semantic electrical flow through actual connection graph",
+    "requiredExpandedState": "participating divisions active/open",
+    "path": ["active turn", "active tree/branch", "expanded participating divisions", "connected adjacent divisions", "workspace center"],
+    "decorativeDisconnectedPathsAllowed": false
+  },
+  "camera": {
+    "semanticIdentity": true,
+    "coordinatesDefineIdentity": false,
+    "current700msLerp": "implementation baseline, not final travel language",
+    "continuousTreeTravelRequired": true
+  }
+}

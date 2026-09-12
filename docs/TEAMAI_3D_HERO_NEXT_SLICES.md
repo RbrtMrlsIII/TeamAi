@@ -1,9 +1,16 @@
-<!-- teamai-claim: SPATIAL-V3.5 state=COMPLETE -->
-<!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
 # TeamAi 3D Hero Next Slices
 
-Status: living continuity for **TEAM-EXPERIENCE-029 presentation** work.  
-Gated by `MASTERPLAN.md` · **no 029-released claim**.
+**Status:** SUPERSEDED AS ACTIVE EXECUTION PLAN / HISTORICAL CONTINUITY  
+**Active 029 execution owner:** Issue **#278**  
+**Masterplan authority:** `MASTERPLAN.md`  
+**Conceptual experience authority:** `docs/VISION.md`  
+**Tree structural truth:** `docs/TEAMAI_3D_HERO_TREE_CENSUS.*`  
+**No 029-released claim.**
+
+This document preserves historical slice vocabulary and implementation lineage for recovery and traceability. It is not a second Masterplan, second Vision, or competing active checklist. Current 029 execution requirements belong to Issue #278 and `MASTERPLAN.md`.
+
+<!-- teamai-claim: SPATIAL-V3.5 state=COMPLETE -->
+<!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
 
 **P1**–**P7.1** **merged** (#174–#187). **P-R2** **merged** (#188). **P-R0** **merged** (#189). **F** **merged** (#190). **Cam-1**–**Cam-4** **merged** (#191–#194). Depth-readable faces + DOM absorption **merged** (#196–#199).
 
@@ -106,7 +113,7 @@ No 029-released claim.
 
 Item 3 above (C6 browser verification of tree/subject zoom back to the normal world baseline) now has implementation in place: `applyNavCamera()` falls back to `HERO_WIDE` once `navZoom` reaches `NAV_ZOOM_MAX`. The duplicate camera wall from item 2's scope is also removed (C5/D). Both are pending CI green and an actual browser pass before counting toward C9 acceptance.
 
-C6 e2e must open a seat tree (`selectSeatShell` + `resetNav`) before reading `getBaseCameraId()`. `setCamera('SEAT_CLOSE')` does not set `openParentId`; the fallback is **not** unconditional — it is gated on `navZoom >= NAV_ZOOM_MAX` while a tree is open. Positive wheel `deltaY` is zoom-out. No 029-released claim.
+C6 browser proof must open a seat tree (`selectSeatShell` + `resetNav`) before asserting `getBaseCameraId()`. `setCamera('SEAT_CLOSE')` does not set `openParentId`; the fallback is **not** unconditional — it is gated on `navZoom >= NAV_ZOOM_MAX` while a tree is open. Positive wheel `deltaY` is zoom-out. No 029-released claim.
 
 ## #282 (C2 / Phase C first-paint slice)
 

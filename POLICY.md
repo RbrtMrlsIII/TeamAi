@@ -190,3 +190,80 @@ Do not use recency, convenience, deployment success, or tool output alone as a r
 The execution discipline is not a second Product Law. The skill library is not a second policy. `docs/SKILL_WIRING.md` is not a second authority. Handover and endorsement do not become product authority. ToolKit does not become TeamAi authority.
 
 The purpose of the structure is to keep canonical documents clean while making execution instructions explicit, discoverable, composable, and recoverable by future agents.
+
+## 16. 3D Hero tree census governance
+
+The **3D Hero Tree Census is a governed design/recovery control**, not a second Product Law, not a second Masterplan, and not a new execution lifecycle.
+
+The census exists because the 3D Hero is evolving from a prototype Seat hierarchy into a larger semantic machine whose trees, branches, divisions, geometry, expansion state, connection topology, camera behavior, and turn-loop visualization must remain synchronized.
+
+For any change that **adds, removes, reimplements, materially restructures, or renames** a TeamAi 3D Hero tree, branch, division, connection, expansion behavior, or associated UI payload, the agent must reconcile the census in the same governed change.
+
+The minimum reconciliation is:
+
+`actual semantic change → treeID/branchId census row → implementation anchor → geometry/expansion/connection state → verification/evidence state`
+
+The census must record truth at the level that was actually established. A prototype branch must remain `PARTIAL`, `STARTING`, `PENDING`, or equivalent when the implementation/evidence does not justify completion.
+
+### Census invariants
+
+1. **Identity precedes geometry.** `treeID` and `branchId` are semantic identities; coordinates never define identity.
+2. **A branch is an integration.** A branch is incomplete if it is only a decorative mesh without semantic purpose, payload, expansion region, adjacency clearance, connection ownership, and verification.
+3. **Trees may be recursive.** A branch may contain sub-branches; the system must not assume a fixed depth or fixed branch count.
+4. **Geometry is payload-driven.** Branch height, width, radius, spacing, depth, angular spread, and expansion footprint are derived from actual semantic/UI payload and evidence rather than copied prototype coordinates.
+5. **Expansion is architectural.** Expansion space must be reserved for adjacent divisions, wiring corridors, camera travel, readability, and responsive behavior before final motion is authored.
+6. **Maximum machine expansion is derived.** The Hero's expanded footprint is determined by the participating divisions and their actual payloads, not by one universal scale factor.
+7. **Turn-loop participation is stateful.** Participating tree/branch divisions are expected to be active/open during the final turn-loop so real semantic wiring paths can be traversed.
+8. **Electricity follows topology.** Contribution/electricity effects must follow an actual semantic connection graph rather than disconnected decorative animation paths.
+9. **Expansion motion is smooth.** Opening/closing is a stateful spatial transition, not an instant visibility toggle or coordinate teleport. Final timings remain open until proven.
+10. **Current animation is not final.** Existing hierarchy/camera timings are living implementation baselines and must not be mistaken for the final turn-loop or machine-opening language.
+11. **Presentation remains presentation.** Tree/branch/division visuals never grant entitlement, authorization, scheduler authority, durable domain authority, or backend mutation authority.
+12. **Census and implementation must agree.** A change is not fully integrated when the code says one state and the census says another.
+
+### Census maintenance rule
+
+When a new tree or branch is introduced, or an existing one is reimplemented, the same PR/change must update the appropriate census representation(s):
+
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv` — compact tabular census;
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json` — machine-readable state;
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md` — human-readable semantics and context;
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml` — explicit authority/boundary representation.
+
+The update must capture **only what is known**. Do not upgrade a provisional tree or branch to complete merely because its mesh, route, or selector exists.
+
+A tree/branch change that cannot update the census because its semantic identity, authority owner, payload, or implementation anchor is unclear is a **stop-and-reconcile condition** for the affected path.
+
+### Relationship to the 3D Hero vision
+
+The census implements the governance side of the living machine vision without owning the visual design itself:
+
+`Product Law / Vision → Masterplan context → census truth → implementation → verification → evidence`
+
+The vision remains conceptual. The Masterplan remains the execution authority. The census remains the structured truth inventory. The implementation remains subordinate to all three.
+
+## 17. Issue body / comment evidence governance
+
+The **active Issue body is the durable guide for that Issue**. Its scope, product requirements, conceptual context, acceptance conditions, dependencies, execution contract, warnings that must govern future work, and current status belong in the Issue body.
+
+**New Issue comments are evidence records, not guidance documents.** A new comment may contain only:
+
+- actual agent diagnosis output;
+- real observed or retrieved data, with enough baseline/date/commit context to interpret it;
+- warnings or discrepancies discovered from that evidence;
+- a factual record that a bounded slice was actually executed, marked **EXECUTED** (or equivalent).
+
+A new comment must not contain:
+
+- a checklist;
+- an implementation plan;
+- a recommended next-slice queue;
+- “do this next” instructions;
+- an acceptance checklist;
+- a new product requirement that has not been transferred into the Issue body or canonical product documentation;
+- a claim that an executed slice is **PROVEN** merely because it ran, merged, or appears correct.
+
+`EXECUTED` means the agent actually performed the bounded slice. `PROVEN` is a verification state and requires the applicable evidence boundary. Comments do not promote an execution to proof.
+
+Historical comments are immutable evidence. Do not rewrite historical comments merely to satisfy this newer format. When a historical comment contains guidance that remains valid, transfer that guidance into the active Issue body or the appropriate canonical repository document and preserve the old comment as historical evidence.
+
+The same rule applies to issue discussions used during recovery: discussion may reveal data or diagnosis, but future agents must follow the current Issue body and canonical repository authorities, not an old comment's instructions.
