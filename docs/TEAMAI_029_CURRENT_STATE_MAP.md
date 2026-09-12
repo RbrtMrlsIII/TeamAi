@@ -5,124 +5,220 @@
 <!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
 # TeamAi 029 — Current State & Continuation Map
 
-**Status:** Current active reconciliation map for AI-agent recovery (2026-09-11)  
-**Spatial baseline:** PR **#259 merged** — CAM-R-RETIRE + ENT-T1/ENT-R2/R3 + CHR soft-hide is **historical implementation lineage**, now superseded for final product shape by the owner-directed experience rebaseline. **No 029-released claim.**  
-**Experience baseline:** Owner-endorsed C0–C10 rebaseline: **classic website entrance → explicit 3D-world entry → authenticated/authorized full workspace**, with coherent navigation/Settings, reduced camera vocabulary, world-baseline zoom-out, proportional orbit, desktop/phone acceptance, then ProMax refinement.  
-**Authority:** Product Law → Masterplan → Policy/ORUCAVEAM → `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` → `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md` → domain contracts → this map → implementation/evidence  
-**Purpose:** flatten parallel development clocks so an agent can tell what is implemented, proven, stopped, why it stopped, and what permits continuation.
+**Status:** Current active reconciliation map for AI-agent recovery  
+**Spatial baseline:** current `main` includes #281 and #282. Their implementation effects are current baseline; historical Issue/PR wording that describes them as unmerged is stale. **No 029-released claim.**  
+**Experience baseline:** owner-directed C0–C10 rebaseline extended by a pre-C9 structural requirement: complete the intended semantic tree/branch/division machine, meaningful spatial travel, connection topology, and turn-loop contribution layer before C9 acceptance.  
+**Authority:** Product Law → Masterplan → Policy/ORUCAVEAM → `docs/VISION.md` → tree/machine contracts → this map → implementation/evidence  
+**Purpose:** provide one compact recovery map so agents can tell what is implemented, proven, partial, planned, retired, and what permits continuation.
 
 ## 1. The rule
 
 A green commit, a checkpoint, a deployed function, or a staged asset is not by itself the current frontier.
 
-For every slice, distinguish:
+For every item, distinguish:
 
 `PLANNED → IMPLEMENTED → VERIFIED → RUNTIME-PROVEN → COMPLETED → ENDORSED`
 
-A slice may stop between any two states. The stopping reason must be explicit and must not silently become the next slice.
+A state may stop between these levels. The reason must be explicit and must not silently become the next requirement.
 
-**Post-merge rule (#260):** once a user-authorized change is merged to `main`, it is **current truth**. Prior baselines are historical (archive + redirect), not competing authorities.
+Once an authorized change is merged to `main`, it is current repository truth. Earlier baselines remain historical evidence or archived state unless explicitly reactivated by a new decision.
 
 ## 2. Two development clocks
 
 ```text
 029 EXPERIENCE / SPATIAL CLOCK
-Product Law → product shape → structure → hierarchy → camera → interaction → readability → browser proof → user acceptance
+Product Law → product meaning → semantic machine structure → geometry/expansion → camera/travel → connection topology → turn-loop visualization → workspace boundary → browser proof → owner acceptance
 
 BACKEND CLOCK
-Backend contracts → identity → Firestore → Edge → commerce → provider → security → endorsement
+Backend contracts → identity → Firestore → trusted Edge execution → commerce → provider/runtime → security → endorsement
 ```
 
-They meet at the **presentation boundary**. A 3D face may represent a backend capability, but the face does not become the backend authority.
+They meet at the presentation boundary. A 3D face may represent a backend capability, but the face does not become the backend authority.
 
 ## 3. Current experience / spatial frontier
 
-| Slice family | Current state | What is true | Why not automatically next |
+| Work family | Current state | What is true | Continuation boundary |
 |---|---|---|---|
-| P1–P7.1 | COMPLETED | Seat hierarchy structure exists | Do not reopen without discrepancy |
-| P-R0/P-R2/F | COMPLETED | workspace/seat presentation mechanics exist | Historical implementation strata |
-| Cam-1–Cam-4 | COMPLETED | tree follow / center zoom / edge interaction | Cam-4 semantics now superseded by C7 proportional direction |
-| Cam-5–Cam-6 / CAM-R1–R3 | MERGED | selected-seat subject-lock + browser proof | Retain as current 3D-world focus mechanism unless superseded |
-| V0–V3.5 | COMPLETE | one-shell Vision lineage | Historical product-shape baseline, not final acceptance |
-| #258 residual / #259 | MERGED | ENT-T1; CAM-R-RETIRE; Return; CHR soft-hide | Historical current-truth baseline; product shape superseded by C0–C10 |
-| #265 / #266 | MERGED | entrance↔machine browser proof; CHR-R3 | Retained as implementation evidence, re-owned by C2–C4 |
-| **C0–C10 rebaseline / #274** | **MERGED** | classic entrance + explicit 3D entry + coherent nav + camera/auth boundary groundwork | C9 visual acceptance gates product completion; C10 ProMax remains downstream |
-| **Hero runtime delivery hardening / #275** | **MERGED** | repository-owned Hero runtime is now committed and normal browser/build execution no longer depends on remote runtime source | Preserve delivery hardening; do not reintroduce remote runtime loading |
-| **#278 surface reconciliation** | **ACTIVE** | GitHub Pages public root is being aligned to the owner-directed classic entrance; Command Deck is retained under `/spatial/` as workspace/transition surface; `/hero/` remains compatibility route. PR **#281** holds C5/D nav-wall removal + C6/E zoom-out baseline; C6 e2e proof requires an open seat tree (`selectSeatShell`), not `setCamera('SEAT_CLOSE')` alone. | Acceptance requires deployed-root browser proof before C9; C6 fallback is `NAV_ZOOM_MAX`-gated, not unconditional. No 029-released claim. |
+| P1–P7.1 / P-R0 / P-R2 / F | HISTORICAL MERGED | Seat hierarchy/presentation mechanisms exist | Do not treat as proof of complete multi-tree machine |
+| Cam-1–Cam-4 | HISTORICAL FOUNDATION | Camera modules exist | Current travel contract is superseded/extended by #278 tree-machine requirements |
+| Cam-5–Cam-6 / CAM-R1–R3 | MERGED FOUNDATION | selected-seat subject-lock baseline exists | Retain unless a newer authorized spatial contract supersedes it |
+| V0–V3.5 | COMPLETE HISTORICAL LINEAGE | Earlier Vision ladder is implemented | Historical lineage, not final product acceptance |
+| #258 / #259 | MERGED HISTORICAL | camera/chrome retirement decisions remain valid history | Retired camera concepts remain retired |
+| #265 / #266 | MERGED HISTORICAL | entrance↔machine browser proof and chrome reconciliation | Re-owned by current C2–C4 contract |
+| #275 | MERGED | Hero runtime is repository-owned and normal browser/build path does not depend on remote runtime source | Do not reintroduce remote runtime loading without fresh regression evidence |
+| #281 | MERGED | six-button camera wall removed; world navigation consolidated; C6 baseline fallback implemented | Does not prove final tree travel or C9 |
+| #282 | MERGED | classic first-paint presentation reconciliation executed | Deployed visual acceptance still requires fresh browser evidence |
+| **Tree census / #283** | **OPEN BASELINE PR** | structured tree/node census and authority records are under review; issue/comment authority model is being synchronized | Must remain synchronized as tree/branch/division implementation evolves |
+| **#278 current frontier** | **ACTIVE** | canonical active 029 execution ledger; current structural machine requirements are blocking C9 | Use the Issue body as the issue-specific guide; comments are evidence-only |
 
-**Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` → `docs/archive/superseded/` and must not be silently revived.
+**Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` remain retired and must not be silently recreated under aliases.
 
-## 4. Current backend frontier
+## 4. Current tree-machine truth
+
+The complete Hero tree system is **NOT COMPLETE**.
+
+### Semantic tree families
+
+```text
+TREE-DOMAIN
+  Account → Workplace → Project → Seat
+
+TREE-HERO-SEAT
+  Seat Shell → Connection → Behavior → Toolkit → Capabilities
+  → Authorization → Workspace Scope → Task/Evidence
+
+TREE-SKILL-RESPONSIBILITY
+  ToolKit upstream → WebAi Seat responsibility
+  → skill bundle → governance/adaptation/capacity
+```
+
+Current tree status:
+
+- `TREE-DOMAIN` = **INCOMPLETE**
+- `TREE-HERO-SEAT` = **PARTIAL**; current Seat shell mechanism is the proven portion
+- `TREE-SKILL-RESPONSIBILITY` = **INCOMPLETE**
+- Complete multi-tree machine = **NOT COMPLETE**
+
+The detailed structured inventory is held in:
+
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
+
+## 5. Tree construction rule
+
+Every new or reimplemented tree/branch/division follows:
+
+`root truth → treeID / branchId → purpose/responsibility → UI/product payload → expansion requirements → connection topology → adaptive geometry → camera/travel → interaction → contribution route → verification`
+
+Coordinates do not define identity.
+
+A branch is a real integration, not a decorative mesh. Its claimed implementation state depends on semantic purpose, payload, expansion region, adjacency clearance, connection ownership, camera relationship, responsive/reduced-motion behavior, and verification evidence.
+
+Trees may be broad, recursive, asymmetric, and differently sized. Branches can contain branches. No fixed branch depth, equal height, equal width, or universal radius is implied.
+
+## 6. Expansion / machine behavior
+
+The Hero is intended to behave like an expandable technological machine.
+
+A selected tree/branch may expand its corresponding division and reveal the product surfaces belonging to that semantic unit. The geometry must reserve room for its actual payload plus adjacent divisions, wiring corridors, camera travel, and readability.
+
+Maximum Hero expansion is derived from the active participating division footprints, not from a universal scale multiplier.
+
+Opening and closing are stateful spatial transitions and must not be implemented as an instant visibility switch or teleport. Final motion timing remains a living design value.
+
+## 7. Turn-loop / contribution truth
+
+Final turn-loop animation is **NOT COMPLETE** and current timing/motion behavior is not final visual law.
+
+Target semantic flow:
+
+```text
+active WebAi turn
+→ active tree / branch
+→ participating divisions active/open
+→ connection paths spatially available
+→ electricity travels through actual wiring
+→ connected adjacent trees/branches participate
+→ workspace center
+```
+
+This is a visualization of semantic contribution topology, not a disconnected decorative effect.
+
+## 8. Camera / travel truth
+
+- `HERO_LOW_ORBIT` is retired.
+- `TURN_FOLLOW` is retired.
+- Current camera IDs are semantic presentation intents; physical coordinates remain renderer details.
+- Current named-dock / `700 ms` behavior is implementation baseline evidence, not final hierarchy travel.
+- Several hierarchy children can share `SEAT_CLOSE`; therefore changing tree identity may produce little movement today.
+- Continuous tree-to-tree travel remains required.
+- Zoom must eventually represent continuous spatial movement rather than only a threshold ID change.
+
+## 9. Current C0–C10 relationship
+
+```text
+C0 shape endorsement
+→ C1 canonical reconciliation
+→ C2–C5 surface / entrance / world foundations
+→ C6–C7 camera and spatial-travel foundation
+→ required tree / branch / division completion + adaptive geometry
+→ connection topology
+→ turn-loop contribution/electricity layer
+→ C8 authenticated workspace boundary
+→ C9 integrated desktop/mobile owner acceptance
+→ C10 ProMax expression/polish
+```
+
+C9 is intentionally **not ready** while the required tree/branch/division system or integrated turn-loop layer remains incomplete.
+
+C10 is downstream expression. It must not be used to mask missing product semantics, geometry, connectivity, camera travel, or acceptance evidence.
+
+## 10. Current backend frontier
 
 | Gate / item | State | Evidence boundary |
 |---|---|---|
 | Gate 3 identity + Firestore | RUNTIME-PROVEN | live auth + Firestore re-read |
-| Gate 4 emulator/rules | PARKED | no real emulator PASS |
+| Gate 4 emulator/rules | PARKED / NOT PROVEN | no real emulator PASS |
 | Gate 5B/5C commerce | ENDORSED (bounded) | PayPal Sandbox + Firestore |
 | Provider/runtime | STUB ONLY | stub-edge-runtime |
 | Conn-3 | IMPLEMENTED; browser proof pending | not Hero live bind |
 
-## 5. Live service cross-check
+## 11. Live service cross-check
 
-**Canonical inventory:** `backend/BACKEND_LIVE_SERVICE_STATUS.md` (do not duplicate full tables here).
+**Canonical inventory:** `backend/BACKEND_LIVE_SERVICE_STATUS.md`.
 
-## 6. Spatial ↔ backend connection rule
+Presentation structures remain separate from backend authority.
 
-`3D mesh ≠ backend capability` · `CI green ≠ browser proof` · `deployed ≠ end-to-end complete`
+## 12. Deployment / public surface truth
 
-## 7–9. Recovery / numeric / backend continuation
+Current product route ownership must be derived from deployment configuration and live browser evidence.
 
-See hierarchy baseline §9, spatial execution basis, `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md`, and `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Do not truncate recovery material without redirect.
+```text
+public/    → classic website entrance + explicit 3D world source
+/hero/     → compatibility route
+/spatial/  → Command Deck / workspace-transition surface
+```
 
-## 10. When to continue spatial work
+The public root remains the acceptance starting point. A compatibility route is not a second product authority.
 
-Follow the C0–C10 experience rebaseline and #278 surface reconciliation. Do not create isolated camera/chrome polish that re-entrenches the superseded one-shell entrance. C9 requires desktop + phone evidence and owner acceptance before C10 ProMax refinement.
+## 13. Issue / comment evidence boundary
 
-## 11. Related documents
+Issue-specific product requirements, acceptance conditions, dependencies, and future-agent guidance are maintained in **Issue #278's body**. New issue comments are **evidence-only records**: diagnosis output, actual observed data, warnings/discrepancies, or a factual record of an executed slice. New comments must not become a second checklist or execution plan, and `EXECUTED` does not mean `PROVEN`.
 
-- `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md`
-- `docs/TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST.md`
-- `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` · `docs/archive/superseded/INDEX.md`
-- `docs/security_inquiry.md` (future/pre-production backlog)
-- `docs/TEAMAI_258_LAYER_AB_CHROME_RESIDUAL.md`
-- `docs/TEAMAI_029_DEPLOYMENT_SURFACE_MAP.md`
-- `public/_flex_src/hero-flex.base.js` · repository-owned Hero base
-- `scripts/apply-cam2-tree-follow-flex.mjs` → repository-owned wrapper for local assembly
+Historical comments remain immutable evidence. When an old comment contains guidance that still matters, the current requirement is transferred to the Issue body or canonical documentation rather than treating the historical comment as active authority.
 
-## 12. Agent instruction
+## 14. Agent continuation rule
 
-Do not ask “what feature is next?” until this map answers what is true, proven, stopped, and what evidence permits continuation. For the current experience, use the C0–C10 sequence plus #278 surface ownership rather than reopening historical V0–V3 queues.
+Before changing a 3D Hero tree, branch, division, expansion, or connection behavior:
 
-<!-- residual: #275 repository-owned Hero runtime hardening; raw remote source removed from normal runtime/build entry path; internal legacy engine fallback remains slated for explicit cleanup -->
+1. Read `docs/VISION.md`.
+2. Read the tree census CSV/JSON/Markdown/XML.
+3. Read the machine interaction and relevant hierarchy contracts.
+4. Establish the exact current implementation owner and current `main` truth.
+5. Reconcile the census in the same governed PR.
+6. Do not reuse another tree's geometry without payload justification.
+7. Do not use animation to simulate missing topology.
+8. Match evidence to the exact claim.
+9. Use Issue #278 body guidance; treat new issue comments as evidence records only.
 
-## #275 final runtime synchronization
+## 15. Historical continuity
 
-Implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
+Historical records remain valuable evidence:
 
-`public/hero-flex.js` is the committed repository-owned assembled runtime. The normal browser/build path no longer depends on a remote runtime source. Local verification: SP-04 11/11, syntax check passed, `hero-flex-local-runtime.test.mjs` 1/1.
+- #258/#259 camera retirement and chrome lineage;
+- #275 runtime-delivery hardening;
+- #281 C5/D + C6 foundation;
+- #282 first-paint and agent-bootstrap reconciliation.
 
-#275 is merged. No 029 release claim.
+No historical idea is erased by this current-state map. Retired concepts require a new user/source-of-truth decision before revival.
 
-## #278 surface reconciliation baseline
+## 16. Completion language
 
-The canonical public product surface is the classic website entrance. The Command Deck in `frontend/spatial/` is retained as the workspace/transition surface at `/spatial/`, not as the public front door. `public/` remains the canonical classic entrance + 3D-world source and is published both at the public root and at `/hero/` for compatibility until a later routing decision retires that duplicate path.
+Do not claim `complete`, `accepted`, `released`, or `ProMax-ready` based on one working tree, a selector, source presence, unit tests, or green CI alone.
 
-This route ownership is a deployment/product-shape decision only. It does not grant authentication, entitlement, or server authorization. C8 remains separately gated by server-verified identity and authorization.
-
-
-## #281 (C5/D, C6/E, G follow-up to #278)
-
-Nav-wall duplicate camera buttons removed from the DOM; `.world-navigation` is the sole world nav. `applyNavCamera()` zoom-out now falls back to `HERO_WIDE` at `NAV_ZOOM_MAX` regardless of an open tree/seat branch. Playwright coverage added for the canonical public homepage (desktop + phone) and the C6 zoom-out regression. Pending CI green and owner browser acceptance; does not itself constitute C9. No 029-released claim.
-
-## #282 (C2/Phase C first-paint reconciliation, governance synchronization)
-
-PR **#282** carries the first-paint presentation fix for the owner-observed duplicate classic entrance chrome. The change is limited to presentation-layer hiding in classic mode: `.hero-copy` is hidden so the legacy Layer-A brand does not duplicate the canonical classic brand, and the sibling `.far-environment` footer is hidden so its duplicate links do not stack over the classic entrance. The DOM/runtime world surfaces remain available for world-mode behavior; this is not a C5-style DOM removal.
-
-The associated browser/unit coverage verifies the classic root surface rather than claiming full 029 acceptance. This slice addresses the duplicate first-paint observation under #278 Phase C only. It does not decide `/hero/` auto-world behavior, remove remaining world chrome, alter `TEAM_ORBIT`, implement continuous zoom/tree-to-tree travel, complete C8, or advance C9/C10.
-
-PR #282 also synchronizes this state map as required by Active Index Coupling. CI/governance status remains the authority for whether the PR is merge-ready; this note records the intended current state and does not infer a green gate from documentation alone.
-
-No 029-released claim.
+The current machine remains a **living construction baseline** until the semantic trees, branches, divisions, adaptive geometry, expansion behavior, connection topology, travel model, turn-loop visual layer, workspace boundary, and owner acceptance are proven at the required level.
 
 
 ## 17. Backend continuation evidence pointer (2026-09-12)

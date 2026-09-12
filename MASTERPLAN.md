@@ -380,24 +380,83 @@ Final implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
 
 This index entry is a chronological synchronization record for the implementation commit. It does not claim 029 release, endorsement, backend authority, or production readiness. `governance-drift` remains fail-closed.
 
-
 ## C5/D + C6/E nav-wall dedup and zoom-out baseline — #281 (follow-up to #278)
 
 `public/index.html`'s duplicate six-button camera wall (Wide/Team/Workspace/Map/Seat/Detail) has been removed from the DOM outright; `.world-navigation` is now the single coherent world nav (C5/D). `applyNavCamera()` in the Hero flex runtime now falls back to the `HERO_WIDE` world baseline once `navZoom` reaches `NAV_ZOOM_MAX`, instead of remaining pinned to whichever tree/seat close-up dock was open (C6/E). `window.TeamAiHero.getBaseCameraId()` exposes the resolved base camera for testing.
 
 This closes the C5/D and C6/E implementation portions of #278's checklist pending CI and owner browser acceptance (the C9 gate). C7, F, and C9 remain open. No 029-released claim.
 
-C6 browser proof must open a seat tree (`selectSeatShell`) before asserting `getBaseCameraId()`: `setCamera('SEAT_CLOSE')` does not set `openParentId`, so the nav base stays `HERO_WIDE` until `applyNavCamera()` runs on an open tree. The fallback is thresholded on `navZoom >= NAV_ZOOM_MAX`, not unconditional. Positive wheel `deltaY` increases `navZoom` (zoom-out).
+C6 browser proof must open a seat tree (`selectSeatShell` + `resetNav`) before asserting `getBaseCameraId()`: `setCamera('SEAT_CLOSE')` does not set `openParentId`, so the nav base stays `HERO_WIDE` until `applyNavCamera()` runs on an open tree. The fallback is thresholded on `navZoom >= NAV_ZOOM_MAX`, not unconditional. Positive wheel `deltaY` increases `navZoom` (zoom-out).
 
 ## #282 — C2 / Phase C first-paint governance synchronization
 
 PR **#282** carries the owner-authorized first-paint reconciliation slice under #278 Phase C. The implementation hides the legacy `.hero-copy` brand in classic mode and hides the sibling `.far-environment` footer so the canonical classic entrance does not present duplicate logo/headline/footer chrome. The DOM/runtime surfaces remain available for world-mode behavior; this is presentation-only and is not a C5-style DOM removal.
 
-The corresponding unit and Playwright coverage is scoped to the classic public entrance and verifies the hide contract, desktop/phone classic first paint, one visible classic brand image, and absence of the duplicate h1. This slice does not decide `/hero/` auto-world behavior, remove remaining world chrome, alter `TEAM_ORBIT`, implement continuous zoom/tree-to-tree travel, complete C8, or advance C9/C10.
+The corresponding browser/unit coverage is scoped to the classic public entrance and verifies the hide contract, desktop/phone classic first paint, one visible classic brand image, and absence of the duplicate h1. This slice does not decide `/hero/` auto-world behavior, remove remaining world chrome, alter `TEAM_ORBIT`, implement continuous zoom/tree-to-tree travel, complete C8, or advance C9/C10.
 
 This entry is the required Masterplan synchronization for the `public/` implementation change in PR #282. It records the current Phase C slice without converting CI status or documentation presence into a completion claim. The fail-closed `governance-drift` gate remains authoritative for merge readiness.
 
 No 029-released claim.
+
+---
+
+## Current 029 tree-machine conceptual context
+
+This section is **context, not a second Masterplan checklist**. It defines the product meaning and design constraints that the C0–C10 execution authority must preserve.
+
+The current Seat hierarchy is a **partial working mechanism**. It is evidence that one semantic machine tree can operate, not evidence that the complete Hero tree system is complete.
+
+The intended Hero contains multiple semantic tree families and may contain broad, asymmetric, and recursively nested branches. A `treeID` identifies the semantic tree. A `branchId` identifies a semantic branch by parentage and meaning. Coordinates, mesh positions, ring slots, or camera docks never define semantic identity.
+
+A branch is a real product integration, not a decorative child mesh. Its intended meaning includes its purpose/responsibility, product/UI payload, feature/configuration/accessibility payload where applicable, expansion volume, adjacency clearance, connection/path ownership, camera relationship, responsive behavior, reduced-motion behavior, and evidence-backed state.
+
+The machine is therefore designed from semantics outward:
+
+```text
+root truth
+→ treeID / branchId
+→ purpose / responsibility
+→ UI / feature / configuration / accessibility payload
+→ expansion requirements
+→ connection topology
+→ adaptive geometry
+→ camera subject / travel
+→ interaction
+→ contribution visualization
+```
+
+The reverse direction is not a valid design method. Prototype coordinates must not be used to invent product meaning.
+
+Different trees may require different branch counts, recursive depth, heights, widths, radii, spacing, density, angular spread, and expansion footprints. An expanding division must reserve space for its own payload, neighboring divisions, connection/wiring corridors, camera movement, workspace visibility, and responsive readability.
+
+The maximum expanded Hero state is therefore derived from the combined footprint of the active participating divisions and their payloads, not from a universal global scale multiplier.
+
+Expansion/closure is a stateful mechanical interaction. Conceptually:
+
+`closed → preparing → opening → active/expanded → closing → closed`
+
+Instant visibility toggles, teleports, or abrupt coordinate swaps are not the intended final language. Existing timing values remain living implementation measurements/starting points until browser evidence establishes better final motion behavior.
+
+The final turn-loop is also a semantic machine behavior rather than an ornamental effect. During an active WebAi turn, participating tree/branch divisions are expected to become active/open so their connection points and wiring corridors are spatially available. Electricity then travels through the actual connection topology from the active tree/branch, through connected adjacent trees/branches, and inward to the center workspace.
+
+This requirement is intentionally downstream of structural completion. The turn-loop must not simulate connectivity that the tree/branch graph does not actually contain.
+
+Accordingly, the C0–C10 execution relationship is now understood as:
+
+`C0–C5 product/surface foundations → C6–C7 camera/travel foundation → complete required tree/branch/division semantics + adaptive geometry + expansion/adjacency model → connection topology → turn-loop contribution layer → C8 authenticated workspace → C9 integrated product acceptance → C10 ProMax expression.`
+
+The C0–C10 vocabulary remains unchanged for traceability. The additional structural requirements are a dependency clarification inside that existing execution authority, not a new phase system.
+
+ProMax is deliberately downstream. It expresses an already-correct machine through refined machine-opening choreography, material/lighting depth, transition language, electrical visual language, atmospheric depth, responsive refinement, and micro-interactions. ProMax must never be used to hide incomplete trees, branches, geometry, topology, camera travel, or acceptance evidence.
+
+The structured source for this evolving tree truth is the four-part tree census:
+
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
+
+When tree/branch/division semantics or implementation change, the census is synchronized under the governance rules in `POLICY.md` and does not replace Masterplan, Product Law, or Vision. A code change without census reconciliation is not a trustworthy current state; a census update without implementation is explicitly a design/provisional state.
 
 
 ## Backend legacy-webhook retirement — #284/#288
