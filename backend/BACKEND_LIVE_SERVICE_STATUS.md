@@ -13,7 +13,7 @@
 | Firebase Auth | live Edge paths verify Firebase ID tokens and derive UID from verified claims | **RUNTIME-PROVEN for exercised slices** | every possible auth/failure case |
 | Firestore `default` | Gate-3 authenticated persistence, independent reads, idempotency, lease contention/recovery, and durable results are recorded | **RUNTIME-PROVEN for bounded slices** | full scheduler/product integration |
 | Supabase Edge Functions | TeamAi project `srpgzzretfyqdsfclnuo` is ACTIVE_HEALTHY with deployed TeamAi functions | **DEPLOYED / function-specific evidence** | deployment alone = end-to-end completion |
-| PayPal Sandbox | real Sandbox OAuth, order, approval, capture, webhook delivery, v13 redelivery, and final Firestore re-read are recorded | **RUNTIME-PROVEN for bounded commerce gate** | production/live-mode readiness or canonical webhook cutover |
+| PayPal Sandbox | real Sandbox OAuth, order, approval, capture, webhook delivery, v13 redelivery, and final Firestore re-read are recorded | **RUNTIME-PROVEN for bounded commerce gate** | production/live-mode readiness or historical webhook endpoints |
 | GitHub | `main` is the engineering/source authority | **PASS** | Hero live binding from install alone |
 | Firebase Hosting | Product Law keeps Firebase Hosting as delivery authority | **PASS** | unrelated deployment paths |
 | Vercel | policy cutoff remains non-authoritative | **PARKED / NOT A RELEASE BLOCKER** | resume without explicit approval |
@@ -27,11 +27,12 @@
 
 The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) is `ACTIVE_HEALTHY`.
 
-Currently deployed Edge Functions include:
+The current canonical commerce webhook is `teamai-paypal-webhook-v5c`. The historical `paypal-webhook` endpoint has been retired from the repository and must not be reintroduced as an active surface because it used the superseded `accounts/{uid}/commerce/intents/{correlationId}` path shape.
+
+Currently tracked TeamAi Edge Functions include:
 
 - `teamai-domain-bootstrap` v18
 - `teamai-commerce-intent` v15
-- `paypal-webhook` v15
 - `teamai-paypal-webhook-v5c` v17
 - `teamai-task-execute` v8
 - `teamai-github-webhook` v3
