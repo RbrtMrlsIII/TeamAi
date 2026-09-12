@@ -1,15 +1,15 @@
 # TEAM-EXPERIENCE-029 — Product Experience Rebaseline
 
-**Status:** PLANNING / OWNER-DIRECTED  
-**Baseline:** current `main` after #270  
+**Status:** CURRENT PRODUCT CONTEXT / OWNER-ENDORSED  
+**Baseline:** current `main` plus the governed 029 reconciliation baseline  
 **No implementation is authorized by this document alone.**  
 **No 029 release claim.**
 
 ## Purpose
 
-This document replaces fragmented Vision cleanup with one coherent product-shape baseline. It exists because the recent Vision/camera/chrome slices produced valid technical changes while the owner-visible experience remained cluttered and structurally unclear, especially on mobile.
+This document is the product-shape and experience-context rebaseline for TeamAi 029. It explains why the earlier one-shell Vision-era composition is historical lineage and why the current experience must be judged as one coherent product from public entrance through the eventual authorized workspace.
 
-The product must now be judged by the experience a person sees and uses, not only by the existence of individual merged slices.
+The product must be judged by the experience a person sees and uses, not only by the existence of individual merged technical slices.
 
 ## 1. Current truth after the recent Vision era
 
@@ -28,64 +28,44 @@ The following are real implementation strata and must not be erased:
 
 ### User acceptance reality
 
-Despite the implementation progress, the owner-visible experience remains **not acceptable as the final 029 experience shape**.
+The earlier one-shell experience was not the final accepted product shape. Historical implementation may remain valid evidence even when its product-shape assumptions are superseded.
 
-Observed concerns:
+Current acceptance still depends on fresh product-level observation rather than on historical slice completion.
 
-1. The entrance still behaves like a combined classic website + 3D workspace rather than a clear entry experience.
-2. Mobile can show overlapping/scattered brand, configuration, chips, 3D, and controls.
-3. Camera controls remain dense and confusing even after the `HERO_LOW_ORBIT` identifier was retired.
-4. Tree/subject context cannot comfortably zoom back to the normal world baseline height.
-5. Cam-4 orbit is inverse rather than the requested proportional/natural direction.
-6. Settings exists in implementation paths but is not yet a clean, discoverable navigation destination.
-7. UI controls are distributed across floating/blurred surfaces instead of one coherent navigation model.
-8. The previous slice model over-optimized for technical completion and under-weighted phone/desktop visual acceptance.
-
-These observations are product acceptance inputs, not evidence that every earlier implementation was invalid.
-
-## 2. Product-shape decision under consideration
+## 2. Owner-endorsed product-shape direction
 
 ### DEC-ENT-CLASSIC
 
-**Proposed:** Layer A becomes a classic website entrance.
-
-It should provide the public story, navigation, links, and sign-in entry. The 3D world becomes an explicit destination reached through a deliberate action/link.
-
-The first paint must not depend on the user understanding the 3D machine before understanding the website.
+Layer A is a normal classic website entrance. It provides the public story, navigation, links, and sign-in entry. The 3D world is an explicit destination reached by a deliberate action/link.
 
 ### DEC-AUTH-GATE-3D
 
-**Proposed:** Full machine/workspace features require a signed-in, server-verified and server-authorized user state.
+Full machine/workspace capability is server-authorized. Presentation state, canvas state, local flags, or UI visibility never creates entitlement or durable authorization.
 
-Presentation state, canvas state, local flags, or UI visibility must never create entitlement or durable authorization.
-
-Anonymous look-only behavior is a separate future product decision and must not be implied by this baseline.
+Anonymous look-only behavior remains a separate future product decision and is not implied by this baseline.
 
 ### DEC-CHROME-NAV
 
-**Proposed:** navigation, settings, account access, and major workspace controls live in one coherent menu/navigation surface appropriate to the active experience.
-
-The machine should not require a permanent wall of floating controls.
+Navigation, Settings, account access, and major workspace controls belong to one coherent navigation/menu surface appropriate to the active experience. The machine must not require a permanent wall of competing floating controls.
 
 ### DEC-CAMERA-LANGUAGE
 
-**Proposed:** the active camera vocabulary is deliberately small and understandable.
+The active camera vocabulary remains deliberately small and understandable:
 
-- `HERO_WIDE` remains the normal world baseline.
-- selected-seat subject-lock remains the contextual close/focus mechanism.
+- `HERO_WIDE` is the normal world baseline.
+- selected-seat subject-lock remains the contextual focus mechanism.
 - `HERO_LOW_ORBIT` is retired.
 - `TURN_FOLLOW` is retired.
-- no hidden aliases, compatibility shims, or stale labels may recreate retired concepts.
-- tree/subject zoom may return to the normal world baseline.
-- orbit input is proportional/natural, not inverse.
+- world-baseline zoom-out remains required.
+- orbit input is proportional/natural rather than inverse.
 
 ## 3. Rebaseline principle
 
-The product is no longer allowed to advance by accumulating isolated “green slices” while the user-visible composition remains unresolved.
+The product is not allowed to advance by accumulating isolated “green slices” while the user-visible composition remains unresolved.
 
 A slice may be technically complete while the product remains experience-incomplete.
 
-Therefore:
+The acceptance sequence remains:
 
 ```text
 IMPLEMENTED
@@ -99,140 +79,35 @@ DESKTOP + MOBILE EXPERIENCE OBSERVED
 USER / SOURCE-OF-TRUTH ACCEPTED
 ```
 
-Only the final two stages establish product acceptance for this rebaseline.
+Green CI, Playwright, a passing static test, or a merged PR alone is insufficient to claim final product acceptance.
 
-Green CI, Playwright, a passing static test, or a merged PR alone is insufficient to claim experience completion.
+## 4. Canonical C0–C10 execution relationship
 
-## 4. Canonical chronological execution order
+C0 is already endorsed in the current 029 execution record. The vocabulary remains for traceability, while the active structural dependency now continues through the tree-machine requirements captured in the census and active Issue #278 body.
 
-Work one coherent outcome at a time. Do not create parallel camera/chrome tweaks that undermine an earlier product-shape decision.
+```text
+C0 shape endorsement
+→ C1 canonical reconciliation
+→ C2 classic entrance
+→ C3 explicit 3D entry
+→ C4 coherent navigation / Settings
+→ C5 rationalized world chrome / camera language
+→ C6 spatial travel foundation
+→ C7 proportional orbit foundation
+→ semantic tree / branch / division completion
+→ adaptive geometry / expansion / adjacency
+→ connection topology
+→ turn-loop contribution layer
+→ C8 authenticated workspace boundary
+→ C9 integrated product acceptance
+→ C10 ProMax expression
+```
 
-### C0 — Endorse product shape
-
-Record explicit owner endorsement for:
-
-- classic website entrance;
-- explicit entry into 3D;
-- authenticated/server-authorized full 3D features;
-- coherent navigation/menu + settings;
-- reduced camera vocabulary;
-- proportional orbit;
-- world-baseline zoom-out;
-- mobile as a first-class acceptance surface.
-
-**Gate:** no implementation of shape-changing work before C0 is recorded.
-
-### C1 — Canonical reconciliation
-
-Synchronize `MASTERPLAN.md`, current-state map, next-slices map, skill wiring, execution state, and this rebaseline so all current surfaces describe the same product shape.
-
-Historical checkpoints remain immutable.
-
-**Gate:** active docs agree; obsolete queues are redirected or archived rather than silently deleted.
-
-### C2 — ENT-CLASSIC-1: classic entrance
-
-Build the first product-visible entrance around:
-
-- clear primary story;
-- normal website information architecture;
-- sign-in/account entry;
-- explicit destination control for the 3D world;
-- no requirement for live 3D chrome to explain the landing page.
-
-**Acceptance:** first desktop and phone views read as a website before any 3D interaction begins.
-
-### C3 — ENT-CLASSIC-2: deliberate 3D entry
-
-Create the explicit handoff from the classic entrance into the 3D world.
-
-The transition should be intentional and understandable, not an accidental state flip inside the landing page.
-
-**Acceptance:** browser proof shows a clean entrance → 3D-world transition and a reliable return path.
-
-### C4 — CHROME-NAV-1: one navigation system
-
-Consolidate settings, account, parts/trees, and primary workspace controls into one coherent navigation model.
-
-Remove the need for scattered floating/blurred controls where the same action belongs in navigation.
-
-**Acceptance:** desktop and phone both show where Settings and primary navigation live without hunting.
-
-### C5 — CAM-DOCK-1: camera vocabulary reduction
-
-Audit every visible camera/action control and classify it as:
-
-- retained baseline;
-- contextual action;
-- duplicate/confusing control;
-- retired concept.
-
-The goal is not merely to remove a string. The operator-facing vocabulary itself must become understandable.
-
-**Acceptance:** a first-time user can identify the normal world view and the contextual seat focus without deciphering a camera menu wall.
-
-### C6 — CAM-ZOOM-1: restore world-scale navigation
-
-Fix the tree/subject zoom ceiling/clamp so the user can move from close context back to the normal world baseline height.
-
-Target family: `HERO_WIDE` / approximately the existing 45° world baseline, subject to the current measured spatial contract.
-
-**Acceptance:** browser interaction can zoom out from tree/subject context until the normal world is comfortably restored, without a dead-end clamp.
-
-### C7 — CAM-ORBIT-1: proportional rotation
-
-Replace inverse swipe mapping with natural proportional mapping across the active orbit path.
-
-Update implementation, unit tests, and browser acceptance together.
-
-**Acceptance:** dragging/swiping right rotates the world right from the user's perspective, and vice versa, using a predictable proportional response.
-
-### C8 — AUTH-GATE-1: authenticated full workspace
-
-Gate full machine/workspace actions behind server-verified identity and authorization.
-
-The browser may request actions, but the authoritative server boundary decides whether the user may perform them.
-
-**Acceptance:** unauthenticated presentation does not become entitlement; authenticated authorized state is required for the full feature set.
-
-### C9 — EXPERIENCE-ACCEPT-1: visual acceptance
-
-Run a deliberate desktop + phone acceptance pass covering:
-
-- classic entrance;
-- explicit 3D entry;
-- navigation/settings;
-- camera vocabulary;
-- subject lock;
-- zoom-out;
-- proportional orbit;
-- return path;
-- auth boundary.
-
-Capture owner-visible evidence for the final state.
-
-**Gate:** user/source-of-truth acceptance required. This is the product gate, not just a CI gate.
-
-### C10 — PROMAX-1: visual refinement after shape lock
-
-Only after C9 is accepted, begin deeper 3D refinement:
-
-- transition choreography;
-- ambient/environment layers;
-- lighting/material response;
-- depth cues;
-- subtle motion hierarchy;
-- micro-interactions;
-- spatial effects;
-- polished entry/exit movement;
-- reduced-motion parity;
-- mobile performance and visual balance.
-
-This phase improves the endorsed product shape rather than attempting to discover the product shape through random polish.
+C9 is not valid while the accepted product shape remains structurally incomplete.
 
 ## 5. ProMax visual direction
 
-“ProMax” means stronger visual communication, not simply more effects.
+ProMax means stronger visual communication, not simply more effects.
 
 The design target is:
 
@@ -253,9 +128,9 @@ Avoid perpetual particles, constant camera movement, simultaneous competing anim
 
 Ambient motion should remain subordinate to interaction and content hierarchy.
 
-## 6. Validation contract for this rebaseline
+## 6. Validation contract for the rebaseline
 
-Every implementation slice under C2–C10 must report:
+Every implementation slice must report:
 
 1. user-visible outcome;
 2. current contract/authority owner;
@@ -269,13 +144,13 @@ Every implementation slice under C2–C10 must report:
 10. explicit user acceptance state;
 11. residual uncertainty.
 
-When a validation changes because the owner changed the desired behavior, follow Issue #260 rather than deleting the old check silently.
+When validation changes because the owner changed the desired behavior, follow Issue #260 rather than deleting the old check silently.
 
-## 7. Archive / supersession rules for this rebaseline
+## 7. Archive / supersession rules
 
 The following remain historical and must not be silently revived:
 
-- one-shell entrance as the assumed final product shape;
+- one-shell entrance as the former final product-shape assumption;
 - `HERO_LOW_ORBIT`;
 - `TURN_FOLLOW`;
 - scattered permanent camera/control walls;
@@ -284,7 +159,7 @@ The following remain historical and must not be silently revived:
 
 A future revival requires a new explicit user/source-of-truth decision and the Issue #260 validation-change protocol.
 
-Current active docs should use compact redirects to the archive rather than flooding the active tree with repeated warnings.
+Current active documents should use compact redirects to the archive rather than flooding the active tree with repeated warnings.
 
 ## 8. Parallel work boundaries
 
@@ -297,46 +172,45 @@ These tracks may continue independently but must not redefine the experience sha
 
 No security inquiry is promoted into current implementation merely because it exists in `docs/security_inquiry.md`.
 
-No backend/provider redesign is part of C2–C10 unless a later product decision explicitly opens that authority boundary.
+No backend/provider redesign is part of the current experience shape unless a later explicit product decision opens that authority boundary.
 
-## 9. Agent recovery tips
+## 9. Agent recovery / execution tips
 
 - Start from this rebaseline plus the current active-state documents, not from an old Vision checkpoint.
 - Never treat a merged technical slice as proof that the overall experience is accepted.
 - Use owner phone/desktop evidence for visual claims.
-- Do not “solve” clutter by adding another floating control.
+- Do not solve clutter by adding another floating control.
 - Do not resurrect retired cameras to make old tests green.
-- If a test conflicts with a new user-directed requirement, issue the validation-change warning before changing it.
+- If a test conflicts with a new user-directed requirement, use the validation-change warning before changing it.
 - If content is superseded, archive the knowledge and redirect it rather than deleting institutional memory.
 - Keep historical evidence immutable.
-- Do not bundle C5–C7 camera work into C2/C3 if doing so would obscure whether the new entrance shape actually works.
+- Do not bundle unrelated camera work into entrance work if doing so obscures whether the product surface itself works.
 - Do not begin ProMax effects before the product shape passes C9.
 
 ## 10. Definition of done for the rebaseline
 
-The experience rebaseline is complete only when:
+The rebaseline is the stable product-shape context only when:
 
 - the classic entrance is clearly a website;
 - entry into 3D is explicit;
-- the 3D world has a coherent navigation system and Settings location;
+- the 3D world has one coherent navigation system and a discoverable Settings location;
 - camera vocabulary is reduced and understandable;
 - retired camera concepts remain absent;
-- tree/subject zoom can return to world baseline;
+- tree/subject zoom can return to the world baseline with acceptable transition behavior;
 - orbit is proportional;
+- required semantic trees/branches/divisions have truthful census and implementation state;
 - full workspace features respect server authorization;
 - desktop and phone acceptance evidence exists;
-- the owner accepts the visible result;
+- the owner accepts the integrated visible result;
 - historical/superseded knowledge is preserved and redirected;
-- only then is ProMax visual refinement considered the next frontier.
+- only then is ProMax refinement considered the next frontier.
 
-**Current decision status:** the original proposal captured here has since been **endorsed by the owner in the active #278 execution ledger**; this line preserves the document's historical proposal context and must not be interpreted as a current missing-endorsement state.  
+**Current decision status:** C0 product-shape direction is owner-endorsed and recorded in the active #278 execution ledger.  
 **Release status:** TEAM-EXPERIENCE-029 remains unreleased until all independent release gates are satisfied.
 
 ---
 
 ## 11. Tree-machine context extension
-
-The existing rebaseline above remains intact as the historical/contextual record. This extension records the newer owner-directed structural truth without creating a second checklist or replacing the C0–C10 execution authority.
 
 The current Seat hierarchy is a **partial working mechanism**, not evidence that the complete Hero tree system is complete. The intended Hero contains multiple semantic tree families and can contain broad, asymmetric, and recursively nested branches.
 
@@ -369,6 +243,6 @@ During the final active turn-loop, participating tree/branch divisions are expec
 
 This structural model is preparatory to ProMax. ProMax expresses an already-correct machine; it must not invent tree semantics, compensate for missing branches, or hide absent connectivity.
 
-**Structured truth inventory:** `docs/TEAMAI_3D_HERO_TREE_CENSUS.*`.
-**Conceptual vision:** `docs/VISION.md`.
+**Structured truth inventory:** `docs/TEAMAI_3D_HERO_TREE_CENSUS.*`.  
+**Conceptual vision:** `docs/VISION.md`.  
 **Execution authority:** `MASTERPLAN.md` + Issue #278.
