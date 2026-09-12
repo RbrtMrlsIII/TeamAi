@@ -158,6 +158,24 @@ Before implementing an Issue:
 
 Do not reopen retired behavior or duplicate completed work without new evidence and authorization.
 
+### Issue body / comment evidence rule
+
+The **active Issue body** is the durable issue-specific guide. Put its scope, product requirements, context, acceptance conditions, dependencies, execution contract, current status, and future-agent instructions in the body.
+
+**New Issue comments are evidence records, not guidance.** A new comment may contain only actual agent diagnosis output, real observed/retrieved data, warnings or discrepancies, and a factual record of a slice that was actually executed. An executed slice may be labeled **EXECUTED** but must not be labeled **PROVEN** merely because it ran or merged.
+
+New comments must not contain checklists, implementation plans, recommended next actions, acceptance checklists, new untransferred product requirements, or instructions that future agents are expected to follow. Those belong in the Issue body and, where appropriate, the canonical repository documents.
+
+When a comment discovers guidance that remains valid, transfer that guidance into the active Issue body or canonical document, then leave the original comment untouched as historical evidence. Historical comments are immutable context and are not rewritten solely to satisfy the new protocol.
+
+Comment truth follows the evidence boundary:
+
+`diagnosis / observed data / warning / EXECUTED slice`
+
+while proof follows the repository validation/evidence system:
+
+`verification → evidence → current state → completion / endorsement`
+
 ## Code-to-code execution requirement
 
 For every non-trivial change, trace the actual causal path:
@@ -234,9 +252,7 @@ For every fresh or resumed automation session:
 9. Inspect the final diff for scope, authority, historical integrity, and evidence accuracy.
 10. Preserve a durable handover with current baseline, changes, proven behavior, limitations, and next authorized action.
 
-A prompt such as “fix Issue #N” does not authorize skipping bootstrap, governance preflight, dependency analysis, Skill resolution, or verification.
-
-## Agent start checkpoint
+### Agent start checkpoint
 
 Before meaningful code/document changes, establish:
 
@@ -258,7 +274,7 @@ KNOWN UNCERTAINTIES
 
 If a high-impact authority, permission, canonical owner, or governance rule is unclear, stop the affected path and reconcile it instead of guessing.
 
-## Agent completion checkpoint
+### Agent completion checkpoint
 
 Preserve and report:
 
