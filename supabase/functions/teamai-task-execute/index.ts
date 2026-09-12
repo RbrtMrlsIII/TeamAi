@@ -142,15 +142,13 @@ async function leaseReadyTask(input: {
     status: "leased",
     leasedAt: now,
   });
-  const taskFields = stringFields({
-    ...(Object.fromEntries(
-      Object.entries(current).filter(([, v]) => typeof v === "string").map(([k, v]) => [k, String(v)]),
-    ) as Record<string, string>),
-    status: "leased",
-    leaseId: input.leaseId,
-    leasedBy: input.actorId,
-    updatedAt: now,
-  });
+  const taskFields: Record<string, unknown> = {
+    ...task.fields,
+    status: { stringValue: "leased" },
+    leaseId: { stringValue: input.leaseId },
+    leasedBy: { stringValue: input.actorId },
+    updatedAt: { stringValue: now },
+  };
 
   const commitResponse = await fetch(`${documentsRoot()}:commit`, {
     method: "POST",
@@ -214,7 +212,6 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
   try {
-    // Ensure service account is present early (same secret as bootstrap / shared helpers).
     readFirebaseServiceAccount();
     const uid = await verifyFirebaseUid(req);
     const body = await req.json().catch(() => ({})) as Record<string, unknown>;
@@ -241,7 +238,6 @@ Deno.serve(async (req: Request) => {
 
     const accessToken = await getFirestoreAccessToken();
 
-    // Create READY task if caller did not supply an existing one (create-only).
     if (!(typeof body.taskId === "string" && body.taskId.trim())) {
       const created = await firestoreCreate(
         taskPath,
@@ -285,7 +281,6 @@ Deno.serve(async (req: Request) => {
       }, 409);
     }
 
-    // Stub ProviderRuntime — no external provider; durable shape matches Node result store.
     const recordedAt = new Date().toISOString();
     const resultText = typeof body.prompt === "string" && body.prompt.trim()
       ? `stub:${body.prompt.trim().slice(0, 200)}`

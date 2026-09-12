@@ -457,3 +457,10 @@ The structured source for this evolving tree truth is the four-part tree census:
 - `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
 
 When tree/branch/division semantics or implementation change, the census is synchronized under the governance rules in `POLICY.md` and does not replace Masterplan, Product Law, or Vision. A code change without census reconciliation is not a trustworthy current state; a census update without implementation is explicitly a design/provisional state.
+
+
+## Backend lease-preservation fix — #284/#287
+
+`supabase/functions/teamai-task-execute/index.ts` previously rebuilt the leased task document from only the string-typed fields of the in-memory `current` object, discarding any non-string Firestore field types (numbers, booleans, maps, arrays) on every lease commit. The fix now spreads the complete raw `task.fields` Firestore typed-value map and overlays only the four lease-owned fields (`status`, `leaseId`, `leasedBy`, `updatedAt`). A regression test (`tests/backend-task-lease-preservation.test.mjs`) asserts the full-field-map pattern is present and the old filtered-rebuild pattern is gone. Scope: repository-level correctness fix only; does not change TEAM-BACKEND-001's endorsed/bounded classification.
+
+<!-- teamai residual: #284/#287 backend lease-preservation fix; preserve full Masterplan body; no 029-released claim. -->
