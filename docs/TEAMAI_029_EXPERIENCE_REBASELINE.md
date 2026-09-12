@@ -246,7 +246,7 @@ Every effect must answer a product question:
 - What currently has attention?
 - What can the user interact with?
 - What changed state?
-- Where should the eye move next?
+- Where should the user's eye move next?
 - Does the effect improve comprehension or merely add noise?
 
 Avoid perpetual particles, constant camera movement, simultaneous competing animations, excessive blur, or effects that hide UI boundaries.
@@ -329,7 +329,7 @@ The experience rebaseline is complete only when:
 - historical/superseded knowledge is preserved and redirected;
 - only then is ProMax visual refinement considered the next frontier.
 
-**Current decision status:** owner-directed proposal captured; endorsement remains a separate C0 gate.  
+**Current decision status:** the original proposal captured here has since been **endorsed by the owner in the active #278 execution ledger**; this line preserves the document's historical proposal context and must not be interpreted as a current missing-endorsement state.  
 **Release status:** TEAM-EXPERIENCE-029 remains unreleased until all independent release gates are satisfied.
 
 ---
