@@ -142,15 +142,18 @@ async function leaseReadyTask(input: {
     status: "leased",
     leasedAt: now,
   });
-  const taskFields = stringFields({
-    ...(Object.fromEntries(
-      Object.entries(current).filter(([, v]) => typeof v === "string").map(([k, v]) => [k, String(v)]),
-    ) as Record<string, string>),
-    status: "leased",
-    leaseId: input.leaseId,
-    leasedBy: input.actorId,
-    updatedAt: now,
-  });
+
+  // Preserve the complete Firestore field map when leasing. A full-document
+  // update without an update mask replaces the document, so reconstructing
+  // from decoded string fields would silently discard numbers, booleans,
+  // timestamps, maps, arrays, and any future typed fields.
+  const taskFields: Record<string, unknown> = {
+    ...task.fields,
+    status: { stringValue: "leased" },
+    leaseId: { stringValue: input.leaseId },
+    leasedBy: { stringValue: input.actorId },
+    updatedAt: { stringValue: now },
+  };
 
   const commitResponse = await fetch(`${documentsRoot()}:commit`, {
     method: "POST",
