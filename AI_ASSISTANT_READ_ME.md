@@ -20,7 +20,7 @@ Do not reconstruct current authority from chat memory when the repository contai
 
 ## Fresh-session bootstrap — assume you know nothing
 
-Every new agent/session MUST treat itself as unfamiliar with TeamAi, even when a prior agent, issue, prompt, or conversation claims to have explained it.
+Every new or resumed agent/session MUST treat itself as unfamiliar with TeamAi, even when a prior agent, prompt, issue, PR, or conversation claims to have explained the project.
 
 Before meaningful implementation, reconstruct the minimum sufficient project context in this order:
 
@@ -31,27 +31,25 @@ Before meaningful implementation, reconstruct the minimum sufficient project con
 5. `docs/SKILL_WIRING.md`
 6. `/AI_ASSISTANT_READ_ME.md`
 7. `docs/TEAMAI_CURRENT_STATE.md`
-8. the relevant phase/domain contract(s)
+8. the applicable phase/domain contract(s)
 9. the applicable governance controls and direct skills
 10. relevant implementation roots, verification tests, evidence, `HandOver.md`, and `Endorsement.md`
 
-Then determine the current repository baseline from GitHub itself: current branch/HEAD, latest merged changes, relevant Issue/PR state, relevant workflow/CI state, and current deployment state when applicable.
+Then establish current repository truth from GitHub: current branch/HEAD, latest merged baseline, relevant Issue/PR state, workflow state, and deployment state when relevant.
 
-Do not trust a remembered baseline, an old issue description, a stale PR description, a prior green run, or another agent's conclusion without revalidation against the current repository.
+Do not trust chat memory, an old issue body, a stale PR description, a prior green run, or another agent's conclusion without revalidation against the current repository.
 
 ## Current truth reconstruction
 
-For every task distinguish:
+Always distinguish:
 
 `PLANNED → IMPLEMENTED → VERIFIED → RUNTIME-PROVEN → COMPLETED → ENDORSED`
 
 These states are not interchangeable.
 
-A merged authorized change becomes current repository truth. Earlier implementation baselines remain historical unless explicitly superseded.
+A merged authorized change becomes current repository truth. Earlier baselines remain historical unless explicitly superseded.
 
-Issues and PR descriptions are work inputs and historical context, not automatically the highest authority. When an issue is stale relative to merged repository state, use the current repository state while preserving the historical record.
-
-Before changing a canonical concept, inspect its consumers: imports, callers, state readers/writers, contracts, tests, scripts, workflows, deployment surfaces, documentation, and Skills.
+Issues and PRs are work inputs and historical context, not automatically the highest authority. Before changing a canonical concept, inspect its consumers: imports, callers, state readers/writers, contracts, tests, scripts, workflows, deployment surfaces, documentation, and Skills.
 
 ## Before any meaningful action
 
@@ -59,77 +57,61 @@ Before changing a canonical concept, inspect its consumers: imports, callers, st
 
 ## Mandatory governance preflight — governance, not a skill
 
-Governance is a mandatory execution gate. Skills provide bounded procedures; governance determines whether the change is admissible and whether the repository remains synchronized. Do not treat governance as optional documentation or as something discovered only after CI fails.
+Governance is a mandatory execution gate. Skills provide bounded procedures; governance determines whether the change is admissible and whether the repository remains synchronized. Do not treat governance as optional documentation or as something to discover only after CI fails.
 
 Before opening or updating any PR, inspect the changed paths and classify them.
 
-| Changed path | Governance consequence | Required same-PR reconciliation | Mandatory gate |
+| Changed path | Governance field | Required same-PR reconciliation | Mandatory gate |
 |---|---|---|---|
-| `public/**` | spatial implementation change | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` | `governance-drift` |
-| `skills/frontend/spatial/**` | spatial implementation change | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` | `governance-drift` |
-| `backend/**` | backend implementation change | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `backend/BACKEND_LIVE_SERVICE_STATUS.md` | `governance-drift` |
-| `supabase/**` | backend implementation change | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `backend/BACKEND_LIVE_SERVICE_STATUS.md` | `governance-drift` |
-| `skills/**` | Skills change | `docs/SKILL_WIRING.md` + `MASTERPLAN.md` | `governance-drift` |
+| `public/**` | spatial | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` | `governance-drift` |
+| `skills/frontend/spatial/**` | spatial | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` | `governance-drift` |
+| `backend/**` | backend | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `backend/BACKEND_LIVE_SERVICE_STATUS.md` | `governance-drift` |
+| `supabase/**` | backend | `MASTERPLAN.md` + `docs/TEAMAI_029_CURRENT_STATE_MAP.md` + `backend/BACKEND_LIVE_SERVICE_STATUS.md` | `governance-drift` |
+| `skills/**` | Skills | `docs/SKILL_WIRING.md` + `MASTERPLAN.md` | `governance-drift` |
 
-This path-triggered table is an agent preflight rule. The complete governance procedure remains in `skills/governance/active-index-coupling/SKILL.md`, but the agent MUST know to invoke it from the changed-path classification rather than waiting for CI feedback.
+The path-triggered table is an agent preflight rule. The detailed procedure remains `skills/governance/active-index-coupling/SKILL.md`, but the agent MUST identify and apply the governance control before pushing.
 
 ### Mandatory pre-PR sequence
 
-1. List every changed path.
-2. Detect all affected governance fields; a PR may affect more than one.
-3. Load the required governance control(s), especially `skills/governance/active-index-coupling/SKILL.md` for `public/`, spatial frontend, backend, Supabase, or Skills changes.
-4. Read every required index before finalizing the implementation.
-5. Preserve the full `MASTERPLAN.md`; never truncate it to satisfy a payload or validator.
-6. Keep historical evidence immutable.
-7. Run the repository governance validator locally when possible:
+1. List all changed paths.
+2. Detect every affected governance field; one PR may hit several fields.
+3. Load the required governance control(s).
+4. Read every required active index.
+5. Preserve the full `MASTERPLAN.md`; never truncate it.
+6. Preserve historical evidence; do not rewrite immutable historical records.
+7. Run the governance validator locally when possible:
    `node scripts/governance/verify-active-index.mjs --mode=governance --base="origin/main"`
-8. Open/update the PR only after the required governance reconciliation is present.
-9. Require `governance-drift = PASS` and `evidence-consistency = PASS` before merge readiness.
-10. Do not interpret unit tests, Playwright, deployment, or a green non-governance job as a substitute for governance gates.
+8. Open/update the PR only after required reconciliation is present.
+9. Require `governance-drift = PASS` and `evidence-consistency = PASS` for merge readiness.
+10. Never substitute unit tests, Playwright, deployment success, or a green non-governance job for governance gates.
 
 ### Fail-closed behavior
 
-The repository's governance workflow runs `governance-drift` and `evidence-consistency` before `agent-validation`. If either gate fails, downstream agent validation is not allowed to proceed.
-
-Therefore:
+The governance workflow runs `governance-drift` and `evidence-consistency` before `agent-validation`. A governance/evidence failure prevents downstream agent validation and blocks merge readiness.
 
 `governance failure → agent-validation skipped → merge blocked`
 
-Never weaken, bypass, disable, or rewrite a validator merely to make a PR green. If the product requirement has legitimately changed, update the canonical contract and validator with equal or stronger specificity through the appropriate authorized path.
+Never weaken, bypass, disable, or falsify a validator merely to make a PR green. If the requirement legitimately changes, change the canonical contract and validator through the authorized path with equal or stronger specificity.
 
 ## Verification is a layered contract
 
-Verification must be selected from the claim being made, not from habit.
-
-Use the smallest sufficient stack that actually proves the claim:
+Select verification from the claim being made, not from habit.
 
 `static/syntax → unit/domain/contract → governance → integration → build/package → deterministic browser → deployed browser → authoritative backend/provider evidence → owner acceptance`
 
-A successful test proves only the behavior it exercised.
+A test proves only what it exercises. A browser test does not prove backend durability unless it verifies that authority. A screenshot proves only visual observation. A green workflow proves only the jobs that ran successfully for that commit. A deployment proves deployment, not full product correctness.
 
-A browser test does not prove durable backend authority unless it actually verifies that authority.
+C9/product acceptance remains a human/product gate when the governing contract requires owner acceptance. Never claim evidence broader than what was actually collected.
 
-A screenshot proves only what is visually observable.
-
-A green CI run proves only the jobs that ran and passed for that commit.
-
-A green deployment proves deployment, not complete product correctness.
-
-C9/product acceptance is a human/product gate and is not satisfied by green CI or Playwright alone when the governing product contract requires owner acceptance.
-
-Never claim evidence broader than the evidence actually collected.
-
-## Validation / evidence routing
-
-For common TeamAi work classes, use these routes:
+## Validation and evidence routing
 
 | Work class | Primary validation | Evidence boundary |
 |---|---|---|
-| Product/architecture change | authority + discrepancy review | Product Law / approved contract + HandOver/Endorsement |
-| `public/**` or spatial change | governance + focused tests + browser when behavior is UI/runtime | required spatial indexes + CI governance + actual browser evidence |
-| `backend/**` or `supabase/**` | governance + backend/contract tests + authoritative runtime evidence as applicable | backend indexes + direct service evidence |
-| `skills/**` | governance + Skill wiring validation + relevant execution proof | `docs/SKILL_WIRING.md` + Masterplan + Skill evidence |
-| browser-facing behavior | deterministic Playwright | exercised browser path only |
+| Product/architecture change | authority + discrepancy review | canonical contract + HandOver/Endorsement |
+| `public/**` / spatial | governance + focused tests + browser as required | required indexes + governance + actual browser evidence |
+| `backend/**` / `supabase/**` | governance + backend/contract tests + authoritative runtime proof as required | backend indexes + direct service evidence |
+| `skills/**` | governance + Skill wiring validation + relevant execution proof | `docs/SKILL_WIRING.md` + `MASTERPLAN.md` + Skill evidence |
+| browser-facing behavior | deterministic Playwright | exercised browser scope only |
 | project package/handover | package validator | extracted-path and byte/hash equality |
 | learned reusable procedure | evidence + learning/endorsement | `HandOver.md` → applicable Skill / this file → `PRODUCT-KNOWLEDGE.md` when validated |
 
@@ -161,9 +143,23 @@ Use `skills/execution/orucaveam/SKILL.md` first, then resolve only the applicabl
 
 A skill never creates permission. Permission comes from direct user authorization, an approved Masterplan item within scope, or a permitted policy-defined routine that remains inside its recorded scope. Changes to Product Law, protected canonical roots, destructive history, security/authorization boundaries, entitlement, or other high-impact architecture require the appropriate approval/reconciliation gate.
 
+## Issue and PR operating rule
+
+Issues are work inputs, not supreme authority. Before implementing an Issue:
+
+1. Read the Issue and relevant comments.
+2. Separate requirements from historical observations.
+3. Map requirements to Product Law and Masterplan state.
+4. Check current merged repository state.
+5. Check related merged, superseded, and open PRs.
+6. Map remaining work to the applicable field/domain and governance controls.
+7. Verify the work is not already merged elsewhere.
+
+Do not reopen retired behavior or duplicate completed work without new evidence and authorization.
+
 ## Code-to-code execution requirement
 
-For every non-trivial change, trace the actual causal path instead of relying on filenames or documentation alone:
+For every non-trivial change, trace the actual causal path:
 
 `user-visible behavior → route/entry → event → state → function/module → contract → API/backend → durable state → provider/external system → verification`
 
@@ -171,33 +167,7 @@ For build/assembly systems also trace:
 
 `source module → assembly/build script → committed artifact → browser runtime`
 
-Inspect imports, callers, readers, writers, scripts, workflows, tests, documentation, deployment surfaces, and active Skills that consume or describe the changed concept.
-
-Look specifically for duplicate authorities, stale aliases, shadow state, parallel runtimes, duplicate UI surfaces, misleading names, dead compatibility paths, missing tests, false-positive tests, and authority leakage.
-
-## Issue and PR operating rule
-
-Issues are work inputs, not supreme authority.
-
-Before implementing an Issue:
-
-1. Read the Issue and relevant comments.
-2. Separate requirements from historical discussion and observations.
-3. Map each requirement to Product Law and Masterplan state.
-4. Check current merged repository state.
-5. Check related merged/superseded/open PRs.
-6. Map each remaining item to the applicable field/domain and governance controls.
-7. Verify that the requested work has not already landed under another PR.
-
-Do not reopen retired behavior or duplicate already-merged work without new evidence and authorization.
-
-## Learning and teach-back
-
-When an agent discovers a better, safer, clearer, more accurate, or more efficient approach, do not bury it in chat. Tie it to the executed checklist and evidence, capture it in `HandOver.md`, obtain the appropriate endorsement, then update the affected Skill and/or this file. Promote to `PRODUCT-KNOWLEDGE.md` only when validated. Propose a ToolKit upstream lesson only after generalization is demonstrated.
-
-An improved procedure belongs in the relevant Skill when it is reusable and bounded. This file remains the practical recovery/memory layer and must not become a second policy or product authority.
-
-Use `skills/governance/learning-handover/SKILL.md`.
+Inspect imports, callers, readers, writers, scripts, workflows, tests, documentation, deployment surfaces, and active Skills. Look specifically for duplicate authorities, stale aliases, shadow state, parallel runtimes, duplicate UI surfaces, misleading names, dead compatibility paths, missing tests, false-positive tests, and authority leakage.
 
 ## Canonical service boundaries
 
@@ -207,7 +177,7 @@ Use `skills/governance/learning-handover/SKILL.md`.
 - PayPal = external payment-provider event authority.
 - GitHub = engineering/source authority.
 - Firebase Hosting = current TeamAi web delivery authority.
-- GitHub Pages = validation-only static browser surface; it may publish the canonical `frontend/spatial` UI for human/browser verification but is not a second TeamAi source, backend, commerce, scheduler, or production-web authority.
+- GitHub Pages = validation-only static browser surface; it is not a second TeamAi source, backend, commerce, scheduler, or production-web authority.
 - Vercel = controlled web development, preview, and browser-verification surface; not TeamAi source, domain-state, backend, commerce, or scheduler authority.
 
 The authoritative Firebase project is `team-ai-official`.
@@ -218,13 +188,13 @@ In-machine parent/open work (Seat shell, later domain gears) must load `skills/f
 
 ## GitHub branch and deployment guard
 
-The default branch is protected by the repository ruleset and must not be bypassed. The development team must preserve the repository's PR-based progression and deployment gate.
+The default branch is protected by the repository ruleset and must not be bypassed. The development team must preserve its PR-based progression and deployment gate.
 
-For live browser validation, GitHub Pages is configured with **Source = GitHub Actions**. A dedicated Pages workflow may publish `frontend/spatial` under the project route `/spatial/` without moving or duplicating the canonical HTML. The intended publication shape is `dist/spatial/index.html`, preserving the existing application route.
+For live browser validation, GitHub Pages is configured with **Source = GitHub Actions**. A dedicated Pages workflow may publish `frontend/spatial` under `/spatial/` without moving or duplicating the canonical HTML. The intended publication shape is `dist/spatial/index.html`.
 
-When a protected/default-branch ruleset requires a successful deployment, do not disable or bypass the rule to make a change. Resolve the required Pages deployment through the normal PR/deployment path, then collect real deployment and browser evidence. Treat a ruleset that is marked Active but targets zero branches/resources as not effectively protecting the intended branch; ensure the intended target is configured.
+When a protected/default-branch ruleset requires a successful deployment, do not disable or bypass the rule to make a change. Resolve the required deployment through the normal PR/deployment path and collect real evidence.
 
-A successful GitHub Pages deployment is deployment evidence only. It does not replace deterministic Playwright CI evidence, backend verification, or Product Law authority. Do not treat a prior green Pages deployment as proof of current correctness.
+A successful GitHub Pages deployment is deployment evidence only. It does not replace deterministic Playwright CI evidence, backend verification, or Product Law authority.
 
 ## Browser verification
 
@@ -240,22 +210,22 @@ Use `skills/packaging/project-package/SKILL.md` with applicable ORUCAVEAM skills
 
 ## Automated agent operating contract
 
-Automated agents must use the repository as their durable operating context. The automation prompt is not a replacement for TeamAi authority; it is a dispatcher into this file and the authority chain above.
+Automated agents MUST treat this repository as their durable project operating context. The automation prompt is a dispatcher, not a replacement for Product Law, Masterplan, Policy, governance, Skills, or evidence.
 
 For every fresh or resumed automation session:
 
-1. Bootstrap from the current repository, never from task memory alone.
-2. Re-establish current HEAD, branch, merged baseline, relevant Issue/PR state, workflow state, and deployment state.
-3. Read the relevant canonical documents and applicable governance controls before changing anything.
-4. Resolve Skills only after the affected field/domain is known.
+1. Bootstrap from repository truth, not task memory alone.
+2. Re-establish current HEAD, branch, merged baseline, Issue/PR state, workflow state, and deployment state.
+3. Read canonical documents and applicable governance controls before changing anything.
+4. Resolve the affected field/domain before selecting Skills.
 5. Apply ORUCAVEAM to the bounded action.
-6. Trace the implementation code-to-code and consumer-by-consumer.
+6. Trace code-to-code and consumer-to-consumer.
 7. Make the smallest coherent authorized change.
-8. Run focused verification, then all mandatory governance/CI checks for the touched field.
+8. Run focused verification plus all mandatory governance/CI checks for the touched field.
 9. Inspect the final diff for scope, authority, historical integrity, and evidence accuracy.
-10. Record a durable handover with current baseline, what changed, what was proven, limitations, and the next authorized action.
+10. Preserve a durable handover containing current baseline, changes, proven behavior, limitations, and next authorized action.
 
-Automated agents must not interpret a prompt such as “fix Issue #N” as authorization to skip project bootstrap, governance preflight, Skill resolution, dependency analysis, or verification.
+A prompt such as “fix Issue #N” does not authorize skipping bootstrap, governance preflight, dependency analysis, Skill resolution, or verification.
 
 ## Agent start checkpoint
 
@@ -277,11 +247,11 @@ EXPECTED EVIDENCE
 KNOWN UNCERTAINTIES
 ```
 
-If any high-impact authority, permission, canonical owner, or required governance rule is unclear, stop the affected path and reconcile it rather than guessing.
+If a high-impact authority, permission, canonical owner, or governance rule is unclear, stop the affected path and reconcile it instead of guessing.
 
 ## Agent completion checkpoint
 
-Report and preserve:
+Preserve and report:
 
 ```text
 WHAT CHANGED
@@ -298,7 +268,15 @@ CURRENT BASELINE / COMMIT
 NEXT AUTHORIZED ACTION
 ```
 
-Do not call a task “fixed”, “complete”, “accepted”, “production-ready”, or “released” unless the available evidence supports that exact state.
+Never call work “fixed”, “complete”, “accepted”, “production-ready”, or “released” unless the evidence supports that exact state.
+
+## Learning and teach-back
+
+When an agent discovers a better, safer, clearer, more accurate, or more efficient approach, do not bury it in chat. Tie it to the executed checklist and evidence, capture it in `HandOver.md`, obtain the appropriate endorsement, then update the affected Skill and/or this file. Promote to `PRODUCT-KNOWLEDGE.md` only when validated. Propose a ToolKit upstream lesson only after generalization is demonstrated.
+
+An improved procedure belongs in the relevant Skill when it is reusable and bounded. This file remains the practical recovery/memory layer and must not become a second policy or product authority.
+
+Use `skills/governance/learning-handover/SKILL.md`.
 
 ## Cross-session recovery
 
