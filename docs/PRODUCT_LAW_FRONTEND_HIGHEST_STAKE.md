@@ -10,7 +10,7 @@ This document records the highest-stake unresolved frontend/product question for
 
 > **What exact product experience does a user traverse from the public entrance to an authorized, configured, executable Web AI team, and what semantic 3D trees/branches/divisions represent each stage without becoming a second authority?**
 
-This is a Product Law extension, not a second roadmap and not an implementation shortcut. It exists so future agents do not optimize isolated screens while the product sequence, tree semantics, backend seam, and spatial machine remain undefined.
+This is a Product Law extension, not a second roadmap and not an implementation shortcut. It exists so future agents do not optimize isolated screens while the product sequence, tree semantics, backend seam, spatial machine, interaction language, and public information architecture remain undefined.
 
 ## 1. Canonical product experience sequence
 
@@ -291,7 +291,272 @@ The lifecycle is reusable; the geometry is not.
 
 A branch that has no semantic payload must not be enlarged merely to create visual drama.
 
-## 10. Turn-loop spatial contract
+## 10. Spatial interaction-state law
+
+Every tree, branch, division, and Seat MUST have an explicit interaction-state model. A visual treatment cannot be invented independently by each component.
+
+The minimum state vocabulary is:
+
+```text
+INACTIVE
+ACTIVE
+HOVER
+SELECTED
+FOCUS
+PRESSED / CLICKED
+OPENING
+OPEN
+CLOSING
+DISABLED / UNAVAILABLE
+ERROR / BLOCKED
+```
+
+Not every node needs every state visually, but every implemented state must have a defined semantic meaning and a defined presentation response. `CLICKED` is an input transition, not a durable state; it normally resolves into `SELECTED`, `OPENING`, an authorized action state, or an explicit blocked/error state.
+
+### State-to-presentation contract
+
+| State | Semantic meaning | Animation / transition | Camera | Lighting / ambient | Effects | Interaction |
+|---|---|---|---|---|---|---|
+| Inactive | present but not participating | low-frequency ambient motion only; no attention-seeking expansion | world/default framing | baseline ambient field | restrained particles/glow | hover/focus allowed where accessible |
+| Active | participating in current configured world state | continuous but bounded active motion | may remain in world framing or follow active subject | increased local activity | semantic status effects permitted | normal interaction |
+| Hover | pointer/focus is over an actionable or inspectable node | short reversible emphasis; never changes durable state | no automatic camera jump | local emphasis only | outline/glow/label lift as appropriate | pointer/keyboard affordance |
+| Selected | user chose the semantic node | persistent selected treatment; no flicker | camera may travel to the selected subject | selected division receives stronger local field | connection previews and payload affordances allowed | branch/division controls available |
+| Focus | keyboard/accessibility navigation target | visible focus treatment independent of pointer hover | camera movement only if needed for visibility | accessible contrast/field | no effect may be the sole focus indicator | Enter/Space/action semantics |
+| Pressed / Clicked | input was accepted | tactile micro-transition, then resolve to resulting state | no arbitrary camera movement | transient response | brief feedback only | invokes authorized presentation/action transition |
+| Opening | expansion is being staged | smooth stateful choreography, not instant coordinate swap | camera subject interpolates with expansion | ambient field follows opening region | wiring corridors/effects establish in sequence | interaction may be bounded until stable |
+| Open | payload is exposed | stable resting state with subtle living motion | subject framing accommodates full payload | full local field | semantic connections/effects visible | controls/configuration accessible |
+| Closing | payload is being retracted | smooth reversal preserving identity | camera returns or transitions to parent subject | local field contracts | connections retract semantically | interaction bounded during transition |
+| Disabled / Unavailable | known but not currently controllable | no misleading active animation | camera does not imply actionability | muted but still readable | no false-success effects | explain reason where authorized |
+| Error / Blocked | action/state cannot proceed | restrained diagnostic transition | camera remains on relevant subject | diagnostic emphasis | explicit state indicator | reason-bearing recovery/help path |
+
+### Interaction precedence
+
+The presentation state must resolve deterministically when states overlap:
+
+```text
+blocked/error reason
+    > disabled/unavailable
+    > pressed transition
+    > selected/opening/open/closing
+    > focus
+    > hover
+    > active
+    > inactive
+```
+
+This is a presentation precedence rule only. It does not change backend authorization or task state.
+
+### Effects law
+
+Effects must communicate semantics, not merely decoration. A pulse may represent activity, a connection flow may represent an actual semantic edge, an error field may represent a blocked state, and an expansion effect may represent the opening of a real payload. Decorative effects MUST NOT be used as evidence of backend execution.
+
+No effect may obscure text, controls, accessibility focus, connection topology, or the user's understanding of state.
+
+## 11. Camera capability law
+
+Camera behavior is a product capability of the spatial machine, not an incidental renderer function.
+
+The camera must conceptually support:
+
+```text
+WORLD_OVERVIEW
+TREE_FOCUS
+DIVISION_FOCUS
+EXPANSION_FOLLOW
+RETURN_TO_PARENT
+RETURN_TO_WORLD
+CONTINUOUS_TREE_TRAVEL
+RESPONSIVE_FRAMING
+REDUCED_MOTION_EQUIVALENT
+```
+
+Camera subject identity follows semantic identity, never a hard-coded coordinate. Camera travel must be continuous where the interaction calls for travel. A fixed prototype lerp duration is an implementation baseline, not Product Law.
+
+When a division expands, the camera must reserve sufficient framing for its actual payload and adjacent connection corridors. It must not zoom to an arbitrary universal distance.
+
+Camera movement MUST NOT be the only way to understand a state change. Keyboard focus, labels, semantic status, and accessible controls remain available independently.
+
+## 12. Settings surface and categorical map
+
+The top settings dropdown is **not yet the final structure**. Product Law therefore defines its semantic responsibility without freezing a premature visual layout.
+
+Its purpose is to provide a categorical map of the user's 3D world and account-level controls. The canonical conceptual categories are:
+
+| Category | Smaller contents / purpose |
+|---|---|
+| **Seats** | Overall Seats belonging to the user's authorized durable data |
+| **Tree 1–8** | The eight major world/tree slots and their semantic branches |
+| **Branches** | Smaller branches/divisions exposed by the selected trees |
+| **Privacy Policy** | Legal/privacy contents; accessible from the public entrance as well as appropriate signed-in surfaces |
+| **Terms** | Terms and conditions contents; accessible from the public entrance as well as appropriate signed-in surfaces |
+| **Logout** | Sign-out action for an authenticated session |
+| **Return** | Return to the public entrance |
+
+The category labels are a conceptual map, not a promise that the final dropdown will literally contain these exact UI rows. The final structure must remain discoverable, accessible, responsive, and consistent with the semantic tree registry.
+
+The dropdown MUST NOT become a second navigation authority. It is a control surface over the same canonical world/tree/branch identities.
+
+### Settings-to-world relationship
+
+```text
+Settings category
+      ↓
+semantic tree / branch identity
+      ↓
+selected/focused world subject
+      ↓
+authorized read model or presentation preference
+```
+
+Selecting a category may focus or expand a corresponding division, but it must not fabricate durable state or bypass the normal authorization boundary.
+
+## 13. Public entrance information architecture
+
+Privacy Policy and Terms are public legal information and therefore belong in the **Entrance information architecture**, not exclusively inside the authenticated 3D world.
+
+The public entrance must conceptually provide:
+
+```text
+PUBLIC ENTRANCE
+├── Hero / TeamAi entrance presentation
+├── About TeamAi
+├── Complex Dictionary / User Guide
+│   ├── how TeamAi works
+│   ├── account and identity
+│   ├── Workplaces / Projects / Seats
+│   ├── 3D world / trees / branches / divisions
+│   ├── configuration and settings
+│   ├── Skills / Toolkit / Capabilities
+│   ├── Connections / providers
+│   ├── authorization / readiness
+│   ├── commerce / billing / entitlements
+│   ├── turns / scheduler / turn loop
+│   ├── evidence / tasks / results / handover
+│   ├── Privacy Policy guidance
+│   └── Terms guidance
+├── Contact Us
+├── Credits
+│   ├── Agents / AI contributors
+│   ├── Anthropic / Claude
+│   ├── xAI / Grok
+│   ├── OpenAI
+│   ├── GitHub
+│   ├── Supabase
+│   ├── Firebase
+│   ├── PayPal
+│   ├── Vercel
+│   ├── Composio
+│   └── Termux
+└── Footer
+```
+
+The **Complex Dictionary** is a first-class user-guidance surface. It must be searchable and organized by the same conceptual vocabulary used by the product: account, commerce, Seats, trees, branches, configuration, connections, Skills, capabilities, authorization, turns, evidence, and other user-facing features. Its purpose is to let a user encounter a feature and then find a clear explanation of what it means, why it exists, and how it behaves.
+
+The Dictionary MUST NOT become a second Product Law authority. It translates canonical product concepts into user guidance. Legal documents remain the authoritative legal texts; the Dictionary may explain and link to them but must not silently rewrite them.
+
+### Entrance-to-world boundary
+
+The entrance is the public information and trust surface. The 3D world is the interactive product machine. They may share visual language and selected atmospheric elements, but their responsibilities remain distinct:
+
+```text
+PUBLIC ENTRANCE
+  → understand TeamAi
+  → learn how it works
+  → read legal/privacy information
+  → contact / credits
+  → choose to enter the 3D world
+
+3D WORLD
+  → inspect / restore / configure authorized team state
+  → prepare Seats
+  → establish readiness
+  → start and observe authorized team turns
+```
+
+The public entrance MUST remain usable without requiring an authenticated 3D session for public information, legal documents, contact, or credits.
+
+## 14. Entrance-to-world visual continuity
+
+The entrance may use Hero imagery, atmospheric motion, 3D previews, or a restrained world motif, but those effects must not imply that the live authenticated machine is already running.
+
+The transition into the world should communicate a deliberate change of mode:
+
+```text
+public information space
+        ↓
+user chooses 3D entry
+        ↓
+world initializes
+        ↓
+default eight-seat spatial machine
+```
+
+The world may begin with gentle rotation/ambient activity. User input takes precedence and should establish direct control without fighting the user. Exact rotation speed, camera distance, easing, lighting, particle density, and effect timing remain implementation parameters until validated against the spatial contracts and browser/device evidence.
+
+## 15. 3D division and expansion model
+
+The machine has three spatial scales:
+
+### Level 0 — World
+
+Whole machine, seat population, major navigation, workspace center, and global connection corridors.
+
+### Level 1 — Tree
+
+A selected semantic tree becomes the camera subject and gains its own expansion budget.
+
+### Level 2 — Division / Branch
+
+A selected division opens to expose its actual UI/product payload.
+
+A division's footprint is derived from:
+
+```text
+base geometry
++ content payload size
++ controls / configuration surface
++ label/readability area
++ neighboring clearance
++ connection corridor width
++ camera travel envelope
++ responsive/mobile constraints
+```
+
+Therefore:
+
+`footprint(tree) ≠ fixed radius`
+
+and
+
+`footprint(division) ≠ universal branch size`.
+
+The maximum expanded world state is the union of the active division footprints plus required connection corridors and workspace visibility margin.
+
+## 16. Expansion state machine
+
+Every expandable division uses the same semantic lifecycle while allowing different geometry:
+
+```text
+CLOSED
+  ↓
+PREPARING
+  ↓
+OPENING
+  ↓
+ACTIVE
+  ↓
+CLOSING
+  ↓
+CLOSED
+```
+
+The lifecycle is reusable; the geometry is not.
+
+`OPENING` and `CLOSING` must preserve identity, adjacency, connection continuity, camera subject, responsive readability, and reduced-motion equivalence.
+
+A branch that has no semantic payload must not be enlarged merely to create visual drama.
+
+## 17. Turn-loop spatial contract
 
 The active turn is a graph operation, not a decorative animation:
 
@@ -323,14 +588,17 @@ The spatial machine must therefore be able to answer, for every active wire:
 
 A wire without a semantic edge is decorative and cannot be used as proof of orchestration.
 
-## 11. Current frontend reality versus target
+## 18. Current frontend reality versus target
 
 | Concern | Current repository reality | Product Law target |
 |---|---|---|
 | Public entrance | classic entrance exists at `/` | remains canonical front door |
+| Entrance information | core website exists; full dictionary/contact/credits IA is not yet the complete shipped surface | public information architecture defined above |
+| Legal access | legal surfaces are not yet frozen into final entrance IA | Privacy Policy and Terms publicly reachable from entrance |
 | Explicit world entry | exists | explicit, deliberate transition |
 | Default world | Hero renderer exists and supports flexible 1–8 seats | eight-seat semantic default population |
 | 3D rotation | current Hero presentation remains implementation-specific | default world may gently rotate until user takes control; exact timing requires owned runtime evidence before freeze |
+| Settings dropdown | exists but is not final | categorical map over Seats, trees, branches, legal/account controls and return |
 | Authentication | UI handoff exists; current copy says Firebase Auth is not enabled in this build | real Firebase identity handoff |
 | Restore user seats | not proven as a shipped frontend path | authorized durable restore before live configuration |
 | Configuration | presentation shells/branches exist | consume typed authorized read models/actions |
@@ -343,7 +611,7 @@ A wire without a semantic edge is decorative and cannot be used as proof of orch
 
 The current frontend must therefore be diagnosed as a **partially built machine sitting between presentation foundation and authenticated product operation**. Future work must preserve what is already correct while closing the missing semantic and integration layers.
 
-## 12. Freeze / evolution rule
+## 19. Freeze / evolution rule
 
 Before implementation changes the frontend machine, the agent must answer:
 
@@ -357,10 +625,12 @@ What typed contract owns that seam?
 What expansion footprint does the real payload require?
 What connections must exist before visualization is legal?
 What camera subject/travel relationship is required?
+What animation/transition/effect represents each relevant interaction state?
+What does inactive/active/selected/hover/focus/pressed/open/blocked mean here?
 What is the responsive/reduced-motion equivalent?
 What evidence proves the claimed state?
 ```
 
 A change that cannot answer those questions stops for reconciliation instead of inventing a geometry-first implementation.
 
-The numbered registry, branch naming grammar, current frontend reality table, and chronological experience sequence must remain synchronized with the Tree Census and Issue #278. This extension does not authorize durable frontend writes, payment execution, provider secrets, or scheduler bypass.
+The numbered registry, branch naming grammar, interaction-state contract, camera capability law, settings categorical map, entrance information architecture, current frontend reality table, and chronological experience sequence must remain synchronized with the Tree Census and Issue #278. This extension does not authorize durable frontend writes, payment execution, provider secrets, or scheduler bypass.
