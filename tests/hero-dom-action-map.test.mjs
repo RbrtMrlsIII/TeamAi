@@ -59,9 +59,12 @@ test('hero-flex wires resolveDomCameraAction after apply', async () => {
   assert.match(flex, /hero-dom-action-map/);
 });
 
-test('index marks lock-only cameras and far-environment outside shell', async () => {
+test('index marks far-environment outside shell', async () => {
   const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
-  assert.match(html, /data-lock-only="1"/);
+  // C5/D (#278): TEAM_ORBIT/OVERHEAD_MAP (the only data-lock-only="1" markup)
+  // were removed from the DOM outright, not soft-hidden, so no lock-only
+  // marker is expected here anymore. LOCK_ONLY_CAMERA_IDS itself (tested
+  // above) still governs runtime dom-action-map behavior.
   assert.match(html, /far-environment/);
   const farIdx = html.indexOf('far-environment');
   const shellEnd = html.indexOf('</main>');

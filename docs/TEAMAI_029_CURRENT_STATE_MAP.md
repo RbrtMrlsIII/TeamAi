@@ -108,3 +108,8 @@ Implementation baseline: `f4547116c1df840ff56f40907e39b154765c535c`.
 The canonical public product surface is the classic website entrance. The Command Deck in `frontend/spatial/` is retained as the workspace/transition surface at `/spatial/`, not as the public front door. `public/` remains the canonical classic entrance + 3D-world source and is published both at the public root and at `/hero/` for compatibility until a later routing decision retires that duplicate path.
 
 This route ownership is a deployment/product-shape decision only. It does not grant authentication, entitlement, or server authorization. C8 remains separately gated by server-verified identity and authorization.
+
+
+## #281 (C5/D, C6/E, G follow-up to #278)
+
+Nav-wall duplicate camera buttons removed from the DOM; `.world-navigation` is the sole world nav. `applyNavCamera()` zoom-out now falls back to `HERO_WIDE` at `NAV_ZOOM_MAX` regardless of an open tree/seat branch. Playwright coverage added for the canonical public homepage (desktop + phone) and the C6 zoom-out regression. Pending CI green and owner browser acceptance; does not itself constitute C9. No 029-released claim.

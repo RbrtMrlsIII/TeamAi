@@ -25,8 +25,9 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('world-navigation menu reaches Selected seat, Workspace, and Detail without the old camera wall', async ({ page }) => {
     await page.goto('/hero/');
     await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    const worldNav = page.locator('.world-navigation');
     for (const label of ['Selected seat', 'Workspace', 'Detail', 'Settings', 'Sign in']) {
-      await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+      await expect(worldNav.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
   });
 

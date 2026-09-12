@@ -56,6 +56,21 @@ function applyPatches(t) {
   const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
   const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
   if (t.includes(oldNav)) { t = t.replace(oldNav, newNav); changed = true; }
+  // C6 fix (#278): once navZoom reaches NAV_ZOOM_MAX, the base dock must
+  // fall back to the world baseline (HERO_WIDE) even while a tree/seat
+  // branch is open, instead of staying pinned to that branch's close-up
+  // dock forever. Also exposes getBaseCameraId() for test/debug use.
+  const seatDockNav = "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });";
+  const seatDockNavC6 = "const atWorldBaseline = navZoom >= NAV_ZOOM_MAX - 1e-6;\n  let base = (hierarchyRuntime.openParentId && !atWorldBaseline) ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  let baseId = (atWorldBaseline || !hierarchyRuntime.openParentId) ? 'HERO_WIDE' : (cameraId || 'HERO_WIDE');\n  if (!atWorldBaseline && hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  lastNavBaseCameraId = baseId;\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });";
+  if (t.includes(seatDockNav) && !t.includes('lastNavBaseCameraId')) {
+    t = t.replace(seatDockNav, seatDockNavC6);
+    t = t.replace('function applyNavCamera() {', "let lastNavBaseCameraId = 'HERO_WIDE';\nfunction applyNavCamera() {");
+    changed = true;
+  }
+  if (t.includes('getNavZoom:()=>navZoom,') && !t.includes('getBaseCameraId:')) {
+    t = t.replace('getNavZoom:()=>navZoom,', 'getNavZoom:()=>navZoom,getBaseCameraId:()=>lastNavBaseCameraId,');
+    changed = true;
+  }
   if (t.includes('if (hierarchyRuntime.openParentId) return;\n  const delta = Math.sign(event.deltaY)')) {
     t = t.replace('if (hierarchyRuntime.openParentId) return;\n  const delta = Math.sign(event.deltaY)', 'const delta = Math.sign(event.deltaY)');
     changed = true;
