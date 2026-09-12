@@ -1,114 +1,75 @@
 # TEAM-EXPERIENCE-029 — C0–C10 Execution Record
 
-**Date:** 2026-09-12
-**Baseline:** current `main` plus governed tree-census baseline PR #283; no runtime implementation is claimed by this record.
-**Authority:** user/source-of-truth decision + Product Law + ORUCAVEAM + Issue #133 governance + current #278 product ledger + `docs/VISION.md`
+**Date:** 2026-09-11
+**Baseline:** `main` after PR #272 (`ec653fb`)
+**Authority:** user/source-of-truth decision + Product Law + ORUCAVEAM + Issue #260
 **Release:** no 029 release claim
-
-This record preserves the C0–C10 gate vocabulary while correcting the dependency model so C9 does not occur while the tree/branch/division machine remains incomplete. The execution details live in #278 and the current spatial contracts; this file is a compact C0–C10 record, not a second Product Law or second vision.
 
 ## C0 — Product-shape endorsement
 
-Owner-endorsed direction includes:
+Owner explicitly endorsed execution of C0–C10 in this session.
+
+Authorized direction:
 - classic website entrance;
 - explicit 3D-world entry;
 - coherent navigation and Settings;
-- semantic trees and branches as real machine integrations;
-- adaptive/payload-driven 3D geometry;
-- meaningful tree-to-tree spatial travel;
-- authenticated/server-authorized workspace boundary;
-- final turn-loop contribution flow through actual connections;
+- smaller camera vocabulary;
+- world-baseline zoom-out;
+- proportional orbit;
+- authenticated/server-authorized full workspace features;
 - desktop and phone as first-class acceptance surfaces;
-- ProMax only after integrated experience acceptance.
+- ProMax refinement only after experience acceptance.
 
 ## C1 — Canonical reconciliation
 
-Current meaning must agree across Product Law, Masterplan, Vision, #278, current-state maps, tree census, machine contracts, governance controls, implementation owners, and evidence. Historical slices remain historical unless explicitly superseded.
+Active planning points to the single C0–C10 sequence in `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md` and `docs/TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST.md`. Historical Vision checkpoints remain evidence, not current product acceptance.
 
 ## C2 — Classic entrance
 
-The first paint must read as a clear website experience before the user enters the machine.
+Target: first paint reads as a website, with no dependence on live 3D chrome.
 
 ## C3 — Explicit 3D entry
 
-Entering the Hero machine is a deliberate user action with a clear return path.
+Target: entering the 3D world is a deliberate user action, with a clear return path.
 
 ## C4 — Coherent navigation + Settings
 
-Navigation and Settings have designated machine/website locations; legacy scattered controls are absorbed rather than multiplied.
+Target: one visible navigation surface owns Settings/account/major workspace actions rather than scattered floating controls.
 
-## C5 — Camera vocabulary / world chrome foundation
+## C5 — Camera vocabulary reduction
 
-Retired camera concepts remain retired. The world must not expose duplicate camera walls or competing navigation authorities.
+Target: retain understandable world baseline + contextual focus; retire confusing operator-facing camera clutter. `HERO_LOW_ORBIT` and `TURN_FOLLOW` remain archive-only.
 
-## C6 — Spatial travel foundation
+## C6 — World-baseline zoom-out
 
-Tree/branch subject selection must support meaningful continuous spatial travel and zoom toward/from the world baseline. Named camera docks are implementation aids, not the definition of hierarchy travel.
+Target: tree/subject context can return to the normal world baseline without a dead-end zoom clamp.
 
-## C7 — Proportional orbit foundation
+## C7 — Proportional orbit
 
-Pointer/touch motion should produce predictable proportional orbit around the current semantic subject, with responsive and reduced-motion behavior preserved.
+Target: pointer/swipe direction maps naturally and predictably to visible world rotation.
 
-## C8 — Authenticated workspace boundary
+## C8 — Authenticated full workspace
 
-Full workspace capabilities require server-verified identity and authorization. Presentation state never becomes durable authorization or entitlement.
+Target: full machine/workspace actions require server-verified identity and server authorization. Client UI may express the boundary but is never the authority. Full completion remains gated by an actual authenticated runtime proof.
 
-## C8 is not the release gate by itself. The structural machine and turn-loop requirements below must be satisfied before C9.
+## C9 — Product acceptance
 
-## Pre-C9 structural convergence — required before C9
-
-### Tree completion
-
-The intended tree families must be semantically defined and sufficiently implemented for the product shape being accepted. The current Seat hierarchy is only partial evidence.
-
-Every tree/branch/division must have semantic identity, purpose/responsibility, product/UI payload, adaptive geometry requirements, expansion behavior, adjacent clearance, connection topology, camera relationship, and verification state as recorded by the tree census.
-
-### Machine expansion
-
-The Hero is an expandable technological machine. A selected tree/branch may open its machine division and expose its relevant features/configuration/accessibility payload. Expansion must be stateful and smooth rather than instantaneous.
-
-### Connection topology
-
-Participating divisions must expose actual semantic connection/path relationships. Final contribution animation cannot be implemented as disconnected decoration.
-
-### Turn-loop layer
-
-During the final turn-loop visual state, participating divisions are active/open so the electrical contribution path can traverse the real wiring network inward toward the workspace center.
-
-Existing animation timings remain living implementation baselines until a final visual language is proven.
-
-## C9 — Integrated product acceptance
-
-C9 is the acceptance gate for the integrated experience after the required tree/branch/division and turn-loop structure is proven sufficiently complete for the endorsed product shape.
-
-Acceptance includes:
-- classic entrance → explicit 3D entry;
-- coherent navigation / Settings;
-- complete required tree families for the accepted scope;
-- meaningful branch identity and tree-to-tree travel;
-- continuous spatial zoom/travel;
-- proportional orbit;
-- smooth machine expansion;
-- semantic turn-loop/electricity through real connection paths;
-- authenticated/server-authorized workspace boundary;
-- fresh desktop + phone evidence;
-- explicit owner/source-of-truth acceptance.
-
-CI/Playwright alone is insufficient for the final product acceptance decision.
+Target: desktop + phone evidence and explicit owner acceptance of the visible experience. CI/Playwright alone is insufficient.
 
 ## C10 — ProMax refinement
 
-Only after C9 is accepted, deepen the already-correct machine with:
-- machine-opening/closing choreography;
-- refined spatial transitions;
-- light/material expression;
-- ambient/environmental depth;
-- connection/electricity visual language;
-- micro-interactions;
-- responsive/mobile refinement;
-- reduced-motion parity;
-- polished visual hierarchy.
+Target: after C9, deepen motion choreography, atmosphere, lighting/material response, depth cues, micro-interactions, effects, reduced-motion parity, and mobile polish without recreating UI clutter.
 
-C10 must never be used to hide missing tree semantics, placeholder geometry, missing connection topology, broken camera travel, or incomplete acceptance.
+**Execution rule:** no claim of C9/C10 completion is allowed without fresh owner-visible evidence and acceptance. Security inquiry questions remain future backlog and do not drive this sequence.
 
-**Execution rule:** no C9/C10 completion claim without fresh evidence at the applicable proof level and the required owner acceptance. Historical evidence remains immutable; current state must be derived from the latest merged baseline and reconciled documents.
+---
+
+## Current structural clarification
+
+The C0–C10 vocabulary remains the established product gate vocabulary. It does not mean that the current Seat hierarchy prototype is the completed Hero machine.
+
+Before C9 can be accepted, the intended semantic tree/branch/division system must be sufficiently complete for the accepted product scope, with adaptive geometry, expansion regions, adjacency/wiring space, meaningful spatial travel, and semantic connection topology. The final turn-loop contribution visual then operates over that completed/connected structure. Participating divisions are active/open during the turn-loop so the wiring paths are physically available.
+
+The complete machine is expected to support broad and recursively nested branches, unequal geometry, payload-driven expansion, smooth mechanical opening/closing, and a maximum expanded extent derived from the active divisions. Current camera/hierarchy timings are living implementation baselines and are not the final animation language.
+
+The tree census is the structured state inventory; the Vision document is the conceptual experience home; #278 is the active 029 execution ledger; `MASTERPLAN.md` remains the execution authority. This extension is contextual and does not create a second roadmap.
