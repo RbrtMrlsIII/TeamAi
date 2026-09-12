@@ -189,3 +189,9 @@ For new comments, the allowable record types are:
 A comment may record that a slice was executed, but it must not promote that slice to `PROVEN`. Proof is established through the appropriate verification/evidence path and reflected in the current repository state.
 
 Historical comments are immutable. Do not rewrite old comments simply to normalize their format. When old commentary contains guidance that remains valid, transfer the guidance into the active Issue body or canonical documentation and leave the old comment as historical evidence.
+
+## 16. Current backend live-surface routing
+
+The precise connected-Supabase active function inventory is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. Backend current-state and claim-level status remain in `backend/BACKEND_LIVE_SERVICE_STATUS.md` and `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`.
+
+The current active TeamAi Edge Function set is exactly eight functions. The obsolete `paypal-webhook` surface is retired from the connected project and must not be wired as a current skill target. The canonical PayPal skill points to `supabase/functions/teamai-paypal-webhook-v5c/index.ts`.
