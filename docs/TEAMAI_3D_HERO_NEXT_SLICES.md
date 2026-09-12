@@ -51,7 +51,7 @@ Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy
 | C6 | World-baseline zoom-out | **FOUNDATION / NEEDS PRODUCT PROOF** | tree/subject can reach normal world baseline |
 | C7 | Proportional orbit | **MERGED / FOUNDATION** | natural input direction + regression proof |
 | C8 | Authenticated full workspace | **PLANNED / BOUNDED** | server-verified identity + server authorization |
-| C9 | Product acceptance | **BLOCKING** | fresh desktop + phone evidence from canonical public root + owner acceptance |
+| C9 | Product acceptance | **BLOCKED — TREE/MACHINE CONVERGENCE REQUIRED** | fresh desktop + phone evidence from canonical public root + owner acceptance, after required tree/branch/division and turn-loop structure is proven |
 | C10 | ProMax refinement | **GATED** | only after C9 |
 
 ## Deployment / surface reconciliation — #278
@@ -90,13 +90,7 @@ The internal legacy patch engine is historical implementation machinery. It must
 
 ## Next authorized work
 
-1. Complete #278 deployment validation: root/hero/spatial smoke checks and deployed browser proof.
-2. C4/C5 visual cleanup only after the correct public surface is being exercised.
-3. C6 browser verification of tree/subject zoom back to the normal world baseline.
-4. C7 deployed-browser confirmation of proportional orbit and removal of stale inverse naming where safe.
-5. C8 server authorization boundary only when the appropriate backend/security phase is explicitly promoted.
-6. C9 owner desktop + phone acceptance.
-7. C10 ProMax only after C9.
+Before C9, prioritize the currently open structural prerequisites in #278: complete the required semantic tree/branch/division machine, establish adaptive payload-driven geometry and expansion clearance, establish meaningful tree-to-tree spatial travel, establish semantic connection topology, and implement the first verified turn-loop contribution layer. C8 authentication remains its own authority track and must not be bypassed. C10 remains gated behind C9.
 
 No security-inquiry item is promoted merely because it exists in `docs/security_inquiry.md`.
 
