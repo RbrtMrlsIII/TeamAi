@@ -634,3 +634,30 @@ What evidence proves the claimed state?
 A change that cannot answer those questions stops for reconciliation instead of inventing a geometry-first implementation.
 
 The numbered registry, branch naming grammar, interaction-state contract, camera capability law, settings categorical map, entrance information architecture, current frontend reality table, and chronological experience sequence must remain synchronized with the Tree Census and Issue #278. This extension does not authorize durable frontend writes, payment execution, provider secrets, or scheduler bypass.
+
+## 20. Census synchronization requirement
+
+This Product Law extension is the semantic source for the newly numbered frontend/product roots and interaction vocabulary. The Tree Census remains the structural inventory and MUST be reconciled to this registry before the extension is considered fully frozen.
+
+The synchronization must preserve the existing historical `TREE-HERO-SEAT` and `TREE-SKILL-RESPONSIBILITY` records while introducing the numbered roots as the broader product machine registry. Existing implementation status remains truthful: defining a root or branch here does not claim that its 3D runtime, expansion, connection, camera, backend integration, or verification is complete.
+
+The synchronized census should record, at minimum:
+
+```text
+tree/root number + stable treeID
+branchId + parent identity
+semantic role / responsibility
+current implementation status
+UI/product payload
+backend owner/seam
+geometry status
+expansion status
+adjacency/connection status
+camera capability relationship
+interaction-state coverage
+responsive/reduced-motion behavior
+turn-loop participation
+verification evidence
+```
+
+A future implementation PR that adds, removes, renames, materially restructures, or reimplements a tree/branch/division MUST update both this Product Law-derived registry and the four census representations in the same governed change.
