@@ -50,14 +50,14 @@ The purpose of the ledger is to preserve the facts without collapsing those dist
 
 The 2026-09-10 connected Supabase cross-check recorded TeamAi project `srpgzzretfyqdsfclnuo` as **ACTIVE_HEALTHY**.
 
-Observed deployed Edge Functions:
+Observed deployed Edge Functions at that checkpoint included:
 
 | Runtime surface | Observed state | Current interpretation |
 |---|---|---|
 | `teamai-domain-bootstrap` v18 | ACTIVE | deployed domain bootstrap surface; claim level remains evidence-bound |
 | `teamai-commerce-intent` v15 | ACTIVE | deployed commerce-intent surface; live commerce completion is not inferred |
-| `paypal-webhook` v15 | ACTIVE | deployed canonical webhook surface; live PayPal transaction/webhook evidence remains open |
-| `teamai-paypal-webhook-v5c` v17 | ACTIVE | deployed Gate-5C-related surface; deployment does not close live evidence |
+| `paypal-webhook` v15 | **HISTORICAL / RETIRED FROM REPOSITORY** | superseded by `teamai-paypal-webhook-v5c`; repository cleanup must remove it from active guidance; historical deployment evidence is preserved elsewhere |
+| `teamai-paypal-webhook-v5c` v17 | ACTIVE | canonical Gate-5C-related surface; deployment does not close live evidence |
 | `teamai-task-execute` v8 | ACTIVE | authenticated task → lease → durable result path is live; provider stage is explicitly `stub-edge-runtime` |
 | `teamai-github-webhook` v3 | ACTIVE | deployed GitHub webhook surface; product-level completion remains evidence-bound |
 | `teamai-github-oauth-bind` v4 | ACTIVE | authenticated Firebase UID ↔ GitHub installation binding exists in Firestore; not Hero live binding proof |
@@ -158,11 +158,11 @@ Never:
 
 The following are intentionally preserved until claim-level reconciliation completes:
 
-- live Supabase deployment has advanced beyond some older repository “next” wording;
+- the historical `paypal-webhook` deployment was superseded by `teamai-paypal-webhook-v5c` and is now treated as retired repository surface;
 - `teamai-task-execute` is deployed and authenticated but remains a stub provider runtime;
 - GitHub OAuth/installation bind is deployed but is not equivalent to Hero live binding;
 - seat connection/provider functions are deployed but deployment alone does not establish 029 product completion;
-- Gate 5C implementation is closed at the source/available-environment boundary while live PayPal evidence remains open;
+- Gate 5C implementation is closed at the source/available-environment boundary while live PayPal evidence remains separately classified;
 - Gate 4 remains explicitly parked rather than falsely upgraded from source/configuration evidence;
 - Firestore remains the durable application/domain authority despite the empty Supabase public schema;
 - final security/recovery, traceability, and endorsement are still distinct from implementation/deployment progress.
