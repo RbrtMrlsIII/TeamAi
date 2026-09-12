@@ -44,32 +44,60 @@ Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy
 |---|---|---|---|
 | C0 | Product-shape endorsement | **ENDORSED** | owner/source-of-truth decision |
 | C1 | Canonical reconciliation | **MERGED / ACTIVE** | active maps and contracts agree |
-| C2 | Classic website entrance | **MERGED / FOUNDATION** | first paint + route boundary; final C9 still governs acceptance |
-| C3 | Explicit 3D-world entry + return | **MERGED / FOUNDATION** | browser transition proof |
+| C2 | Classic website entrance | **MERGED / FOUNDATION** | canonical public root now targets `public/`; final acceptance still C9 |
+| C3 | Explicit 3D-world entry + return | **MERGED / FOUNDATION** | browser transition proof, beginning from canonical root |
 | C4 | Coherent nav/menu + Settings | **MERGED / FOUNDATION** | discoverable controls without scattered chrome |
-| C5 | Camera vocabulary reduction | **MERGED / FOUNDATION** | reduced world controls; further visual acceptance under C9 |
+| C5 | Camera vocabulary reduction | **MERGED / FOUNDATION** | reduced world controls; final visual acceptance under C9 |
 | C6 | World-baseline zoom-out | **FOUNDATION / NEEDS PRODUCT PROOF** | tree/subject can reach normal world baseline |
 | C7 | Proportional orbit | **MERGED / FOUNDATION** | natural input direction + regression proof |
 | C8 | Authenticated full workspace | **PLANNED / BOUNDED** | server-verified identity + server authorization |
-| C9 | Product acceptance | **BLOCKING** | fresh desktop + phone evidence + owner acceptance |
+| C9 | Product acceptance | **BLOCKING** | fresh desktop + phone evidence from canonical public root + owner acceptance |
 | C10 | ProMax refinement | **GATED** | only after C9 |
+
+## Deployment / surface reconciliation — #278
+
+The current product surface is now explicitly separated from the historical deployment topology.
+
+```text
+PUBLIC ROOT
+  public/               → classic website entrance
+       ↓
+  explicit Enter 3D world
+       ↓
+  3D Hero
+
+COMPATIBILITY
+  /hero/                → same public/ source, preserved temporarily
+
+WORKSPACE / TRANSITION
+  /spatial/             → frontend/spatial Command Deck
+```
+
+The Command Deck is retained as a workspace/transition surface and is not the public front door. See `docs/TEAMAI_029_DEPLOYMENT_SURFACE_MAP.md` and Issue #278.
 
 ## Runtime delivery hardening
 
-**#275:** Hero flex runtime delivery is being hardened so normal browser/build execution uses a repository-owned base source rather than a cross-origin GitHub Raw dependency. `public/_flex_src/hero-flex.base.js` is the preserved base source; `public/hero-flex.js` is the runtime entry. The standard `scripts/apply-cam2-tree-follow-flex.mjs` path now seeds from the local base before invoking the existing patch engine.
+**#275 is MERGED.** Hero flex runtime delivery now uses repository-owned source as the ordinary runtime/build input. `public/_flex_src/hero-flex.base.js` is the preserved base source; `public/hero-flex.js` is the committed runtime entry.
 
-The internal legacy patch engine retains an emergency remote fallback as historical implementation machinery. It is **not a valid runtime/build authority** and is the subject of explicit follow-up cleanup. Do not reintroduce remote runtime loading.
+The internal legacy patch engine is historical implementation machinery. It must not be reintroduced as browser runtime authority or used to define current product truth.
 
 ## Product rules that stay true
 
 - Presentation does not grant entitlement or durable authorization.
 - No 029-released claim until release gates + endorsement are actually evidenced.
 - Repository-owned source/build artifacts are preferred over cross-origin runtime source mutation.
+- Acceptance begins at the canonical public root, not a hidden compatibility route.
 
-## #275 final runtime synchronization
+## Next authorized work
 
-`fix/029-local-hero-runtime` now contains the fully assembled repository-owned `public/hero-flex.js` at `f4547116c1df840ff56f40907e39b154765c535c`.
+1. Complete #278 deployment validation: root/hero/spatial smoke checks and deployed browser proof.
+2. C4/C5 visual cleanup only after the correct public surface is being exercised.
+3. C6 browser verification of tree/subject zoom back to the normal world baseline.
+4. C7 deployed-browser confirmation of proportional orbit and removal of stale inverse naming where safe.
+5. C8 server authorization boundary only when the appropriate backend/security phase is explicitly promoted.
+6. C9 owner desktop + phone acceptance.
+7. C10 ProMax only after C9.
 
-Validation recorded locally: SP-04 11/11, JavaScript syntax pass, and Hero local-runtime regression 1/1. The browser runtime must not reintroduce remote source loading.
+No security-inquiry item is promoted merely because it exists in `docs/security_inquiry.md`.
 
-#275 remains pending GitHub merge validation. No 029 release claim.
+No 029-released claim.

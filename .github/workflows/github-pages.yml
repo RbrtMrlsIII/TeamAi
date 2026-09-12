@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy spatial UI to GitHub Pages
+    name: Deploy TeamAi public website and workspace surfaces to GitHub Pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -45,24 +45,33 @@ jobs:
           rm -rf dist
           mkdir -p dist
 
-          # Publish spatial Command Deck at site ROOT so github.io/TeamAi/ resolves.
-          cp -R frontend/spatial/. dist/
+          # Canonical public front door: classic website entrance from public/.
+          # This makes the normal github.io/TeamAi/ surface match the owner-directed C0 shape.
+          if [ -d public ]; then
+            node scripts/apply-cam2-tree-follow-flex.mjs
+            cp -R public/. dist/
+          else
+            echo "public/ is required for the canonical public entrance" >&2
+            exit 1
+          fi
 
-          # Keep legacy /spatial/ path working (bookmark / docs compatibility).
+          # Preserve the existing 3D Hero URL as a compatibility route.
+          mkdir -p dist/hero
+          cp -R public/. dist/hero/
+
+          # Command Deck is retained as the future/transition workspace surface, not the public front door.
           mkdir -p dist/spatial
           cp -R frontend/spatial/. dist/spatial/
 
-          # Optional: 3D Hero presentation under /hero/ (public/ self-contained).
-          if [ -d public ]; then
-            node scripts/apply-cam2-tree-follow-flex.mjs || true
-            mkdir -p dist/hero
-            cp -R public/. dist/hero/
-          fi
-
-          # Guard: root must have index.html or Pages shows 404.
+          # Deterministic deployment smoke checks for the three declared surfaces.
           test -f dist/index.html
-          test -f dist/theme-root.css
-          test -f dist/shell-nav.js
+          test -f dist/hero/index.html
+          test -f dist/spatial/index.html
+          grep -q 'Enter 3D world' dist/index.html
+          grep -q 'Enter 3D world' dist/hero/index.html
+          grep -q 'TeamAi — Command Deck' dist/spatial/index.html
+          test -f dist/hero/hero-flex.js
+          test -f dist/hero/experience-rebaseline.js
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
