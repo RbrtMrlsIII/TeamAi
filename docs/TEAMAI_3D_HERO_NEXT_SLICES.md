@@ -16,7 +16,7 @@ This document preserves historical slice vocabulary and implementation lineage f
 
 **Vision #214 V0–V2** **merged** (#217–#229). **Vision V3.1–V3.5** **merged** (#230, #235, #247, #249, #252). **SP-02–SP-07** **closed**. **#258 residual / PR #259 MERGED**. **CAM-R1–R3** **merged** (#262–#264). **ENT-R4** **merged** (#265). **CHR-R3** **merged** (#266). **#267/#268** residual closeout + hierarchy continuity repair **merged**. **#270** experience rebase checklist **merged**. **#272** experience rebaseline **merged**. **No 029-released claim**.
 
-**Current product-shape baseline:** owner-endorsed C0–C10 rebaseline. Development now proceeds as **classic website entrance → explicit 3D-world entry → coherent navigation/Settings → rationalized camera language → authenticated/authorized workspace → desktop + phone acceptance → ProMax refinement**.
+**Current product-shape baseline:** owner-endorsed C0–C10 rebaseline. Development now proceeds as **classic website entrance → explicit 3D-world entry → guest/default world → authentication boundary → restored authorized workspace → coherent Settings/world-map → tree/branch/division machine → connection topology → turn-loop contribution → C9 product acceptance → C10 ProMax refinement**.
 
 **Governance #260** + archive/superseded. **Security inquiry:** `docs/security_inquiry.md` remains future/pre-production backlog, not the current experience driver.
 
@@ -45,25 +45,27 @@ The earlier P/R/F/Cam/V/SP work remains valuable implementation lineage and reco
 
 Depth-first ladder (historical plan of record): camera-fill → **P1** hierarchy motion → **SEAT_CONNECTION** and remaining parents → login/signup presentation handoff. **NAVIGATE** remains the free-orbit interaction mode. See `docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md`.
 
+This animation lineage is historical. Existing prototype motion, camera timing, effects, orbit behavior, transition choreography, and visual effects must never become an architectural constraint on the future multi-tree expansion or semantic electrical turn-loop system.
+
 ## Current C0–C10 experience sequence
 
 | Gate | Topic | State | Acceptance basis |
 |---|---|---|---|
 | C0 | Product-shape endorsement | **ENDORSED** | owner/source-of-truth decision |
 | C1 | Canonical reconciliation | **MERGED / ACTIVE** | active maps and contracts agree |
-| C2 | Classic website entrance | **MERGED / FOUNDATION** | canonical public root now targets `public/`; final acceptance still C9 |
+| C2 | Classic website entrance | **MERGED / FOUNDATION** | canonical public root targets `public/`; final acceptance still C9 |
 | C3 | Explicit 3D-world entry + return | **MERGED / FOUNDATION** | browser transition proof, beginning from canonical root |
-| C4 | Coherent nav/menu + Settings | **MERGED / FOUNDATION** | discoverable controls without scattered chrome |
-| C5 | Camera vocabulary reduction | **MERGED / FOUNDATION** | reduced world controls; final visual acceptance under C9 |
+| C4 | Coherent world controls + Settings | **MERGED / FOUNDATION / CONCEPT EXTENDED** | authenticated Settings is a categorical map; final product structure remains governed by Product Law |
+| C5 | Camera vocabulary reduction | **MERGED / FOUNDATION** | reduced world controls; retired cameras remain retired |
 | C6 | World-baseline zoom-out | **FOUNDATION / NEEDS PRODUCT PROOF** | tree/subject can reach normal world baseline |
 | C7 | Proportional orbit | **MERGED / FOUNDATION** | natural input direction + regression proof |
 | C8 | Authenticated full workspace | **PLANNED / BOUNDED** | server-verified identity + server authorization |
-| C9 | Product acceptance | **BLOCKING** | fresh desktop + phone evidence from canonical public root + owner acceptance |
+| C9 | Product acceptance | **BLOCKING** | fresh desktop + phone evidence from canonical root + owner acceptance |
 | C10 | ProMax refinement | **GATED** | only after C9 |
 
-## Deployment / surface reconciliation — #278
+## Deployment / surface reconciliation — current owner decision
 
-The current product surface is now explicitly separated from the historical deployment topology.
+The Command Deck is **fully retired as a current product/deployment surface**.
 
 ```text
 PUBLIC ROOT
@@ -71,16 +73,16 @@ PUBLIC ROOT
        ↓
   explicit Enter 3D world
        ↓
-  3D Hero
+  3D Hero / spatial machine
 
 COMPATIBILITY
-  /hero/                → same public/ source, preserved temporarily
+  /hero/                → same public/ source, temporary compatibility route
 
-WORKSPACE / TRANSITION
-  /spatial/             → frontend/spatial Command Deck
+RETIRED
+  /spatial/             → formerly published Command Deck; no current publication
 ```
 
-The Command Deck is retained as a workspace/transition surface and is not the public front door. See `docs/TEAMAI_029_DEPLOYMENT_SURFACE_MAP.md` and Issue #278.
+Historical Command Deck source, contracts, tests, and commits remain preserved as evidence/reconstruction material. They are not current UI authority and must not be republished, renamed and republished, or used as a second workspace authority. Future authenticated workspace responsibilities are owned by the spatial machine/workspace-center model.
 
 ## Runtime delivery hardening
 
@@ -94,14 +96,18 @@ The internal legacy patch engine is historical implementation machinery. It must
 - No 029-released claim until release gates + endorsement are actually evidenced.
 - Repository-owned source/build artifacts are preferred over cross-origin runtime source mutation.
 - Acceptance begins at the canonical public root, not a hidden compatibility route.
+- Tree/branch/division census entries are not assumed to be complete merely because a Seat prototype exists.
+- Undefined tree/branch/division identities must never be fabricated.
+- Existing prototype animations, effects, camera behavior, and timings are living implementation baselines and may be replaced when they conflict with the final semantic machine.
+- No future electrical/turn-loop behavior may depend on a legacy visual effect or timing choice.
 
 ## Next authorized work
 
-1. Complete #278 deployment validation: root/hero/spatial smoke checks and deployed browser proof.
-2. C4/C5 visual cleanup only after the correct public surface is being exercised.
-3. C6 browser verification of tree/subject zoom back to the normal world baseline.
-4. C7 deployed-browser confirmation of proportional orbit and removal of stale inverse naming where safe.
-5. C8 server authorization boundary only when the appropriate backend/security phase is explicitly promoted.
+1. Reconcile and populate the real tree/branch/division census from authoritative semantics before implementing new spatial nodes.
+2. Complete #278 structural tree-machine work: meaningful tree-to-tree travel, payload-driven adaptive geometry, expansion clearance, and semantic connection topology.
+3. Replace or retire prototype motion where it conflicts with the final expansion/electrical architecture; do not preserve motion merely for continuity.
+4. Establish final turn-loop contribution choreography only after actual connection topology and participating division expansion are structurally available.
+5. Complete C8 authenticated/server-authorized workspace boundary and restore path.
 6. C9 owner desktop + phone acceptance.
 7. C10 ProMax only after C9.
 
