@@ -123,3 +123,8 @@ The associated browser/unit coverage verifies the classic root surface rather th
 PR #282 also synchronizes this state map as required by Active Index Coupling. CI/governance status remains the authority for whether the PR is merge-ready; this note records the intended current state and does not infer a green gate from documentation alone.
 
 No 029-released claim.
+
+
+## 17. Backend continuation evidence pointer (2026-09-12)
+
+Backend-track fixes are tracked in TEAM-BACKEND-002 (#284), not in this spatial map's tree/machine sections above. Canonical backend status remains `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Current backend-track item: legacy PayPal webhook retired from the repository (#288) — repository-side only; live PayPal-dashboard endpoint configuration and removal of the still-deployed Supabase `paypal-webhook` function remain unconfirmed, separate evidence boundaries.

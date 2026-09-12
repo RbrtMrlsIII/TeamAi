@@ -398,3 +398,10 @@ The corresponding unit and Playwright coverage is scoped to the classic public e
 This entry is the required Masterplan synchronization for the `public/` implementation change in PR #282. It records the current Phase C slice without converting CI status or documentation presence into a completion claim. The fail-closed `governance-drift` gate remains authoritative for merge readiness.
 
 No 029-released claim.
+
+
+## Backend legacy-webhook retirement — #284/#288
+
+`supabase/functions/paypal-webhook/index.ts` (the historical commerce webhook that wrote to the superseded `accounts/{uid}/commerce/intents/{correlationId}` path shape) is removed from the repository. `teamai-paypal-webhook-v5c` is now documented as the sole repository-canonical commerce webhook. **This is a repository-side retirement only.** No connector available in this session exposes live PayPal webhook-endpoint configuration, so whether the PayPal dashboard's configured URL actually points at `teamai-paypal-webhook-v5c` remains independently unconfirmed. The corresponding live Supabase `paypal-webhook` function (v15) is deliberately left deployed until that provider-side confirmation exists, to avoid a production outage from removing a possibly-still-referenced endpoint.
+
+<!-- teamai residual: #284/#288 legacy PayPal webhook retired from repository; live provider-dashboard confirmation and Supabase function removal remain a separate, unconfirmed evidence boundary; no 029-released claim. -->
