@@ -21,7 +21,7 @@ For a successful `PAYMENT.CAPTURE.COMPLETED` event, the canonical progression is
 The aggregate patch may occur before the duplicate-event early return so safe PayPal redelivery can repair stale aggregate state without creating a second event record.
 
 ## DO NOT
-Do not let the browser self-attest payment or entitlement success. Do not create provider event state outside the canonical TeamAi domain path. Do not treat a source-contract test as live PayPal runtime proof. Do not treat F6 Status copy as payment authority. Do not treat `custom_id`, provider event IDs, or entitlement state as substitutes for the canonical aggregate document. Do not label the whole commerce lifecycle complete until aggregate, event, and entitlement state are directly verified.
+Do not let the browser self-attest payment or entitlement success. Do not create provider event state outside the canonical TeamAi domain path. Do not treat a source-contract test as live PayPal runtime proof. Do not treat F6 Status copy as payment authority. Do not treat `custom_id`, provider event IDs, or entitlement state as substitutes for the canonical aggregate document. Do not label the whole commerce lifecycle complete until aggregate, event, and entitlement state are directly verified. Do not revive the retired `supabase/functions/paypal-webhook/index.ts` endpoint or its legacy `commerce/intents/{correlationId}` path.
 
 ## PASS
 The commerce path preserves authenticated ownership, provider-event authenticity, correlation, idempotency/replay protection, canonical aggregate state, and durable entitlement projection.
@@ -38,7 +38,7 @@ Separate source-contract, available-environment, and live PayPal runtime evidenc
 - `docs/backend/FIRESTORE_DOMAIN_MODEL_V2.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `src/backend/commerce.ts`
-- `supabase/functions/paypal-webhook/index.ts`
+- `supabase/functions/teamai-paypal-webhook-v5c/index.ts`
 - `skills/backend/firestore-canonical-state/SKILL.md`
 - `skills/backend/task-event-idempotency/SKILL.md`
 - `skills/backend/verification-recovery/SKILL.md`
