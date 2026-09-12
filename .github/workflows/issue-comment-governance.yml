@@ -1,0 +1,26 @@
+name: Issue comment governance
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  evidence-only-comment:
+    if: github.event.issue.number == 278 && github.event.issue.pull_request == null && github.event.comment.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout governance validator
+        uses: actions/checkout@v7
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Validate Issue #278 comment semantics
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: node scripts/governance/verify-issue-comment.mjs
