@@ -130,3 +130,8 @@ The next bounded backend action is **not** a generic backend rewrite:
 4. keep seat/provider surfaces deferred until frontend exercise exists.
 
 For the broader 029 release hold, use the Masterplan and current evidence reconciliation rather than this historical snapshot.
+
+
+## Lease field-preservation fix — 2026-09-12 (#284/#287)
+
+`teamai-task-execute`'s lease-commit path previously kept only string-typed fields from the in-memory task snapshot when writing the lease update, silently dropping any non-string Firestore field types on every lease. This is now fixed: the lease commit spreads the complete raw Firestore `fields` map and overlays only the lease-owned keys. Covered by `tests/backend-task-lease-preservation.test.mjs`. This is a repository-level bug fix; it does not change the endorsed/bounded classification above.

@@ -219,3 +219,8 @@ No historical idea is erased by this current-state map. Retired concepts require
 Do not claim `complete`, `accepted`, `released`, or `ProMax-ready` based on one working tree, a selector, source presence, unit tests, or green CI alone.
 
 The current machine remains a **living construction baseline** until the semantic trees, branches, divisions, adaptive geometry, expansion behavior, connection topology, travel model, turn-loop visual layer, workspace boundary, and owner acceptance are proven at the required level.
+
+
+## 17. Backend continuation evidence pointer (2026-09-12)
+
+Backend-track fixes are tracked in TEAM-BACKEND-002 (#284), not in this spatial map's tree/machine sections above. Canonical backend status remains `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Current backend-track item: task-lease Firestore field-preservation fix (#287) — repository-level correctness only, does not change TEAM-BACKEND-001's endorsed/bounded scope.
