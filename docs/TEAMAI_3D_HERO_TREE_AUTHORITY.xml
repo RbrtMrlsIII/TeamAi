@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<teamaiHeroTreeAuthority version="1.0" status="design-baseline" implementationStatus="incomplete">
+<teamaiHeroTreeAuthority version="1.1" status="design-baseline" implementationStatus="incomplete">
   <authority>
     <productLaw>PRODUCT_LAW.md</productLaw>
+    <vision>docs/VISION.md</vision>
+    <executionLedger>Issue #278</executionLedger>
     <contract>docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md</contract>
     <census>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</census>
+    <machineReadableCensus>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</machineReadableCensus>
     <runtimeBaseline>docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md</runtimeBaseline>
   </authority>
+  <maintenance>
+    <trigger>add|remove|rename|materially_restructure|reimplement</trigger>
+    <sameGovernedChange>true</sameGovernedChange>
+    <representations>
+      <file>docs/TEAMAI_3D_HERO_TREE_CENSUS.csv</file>
+      <file>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</file>
+      <file>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</file>
+      <file>docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml</file>
+    </representations>
+  </maintenance>
   <rules>
     <identity>treeID and branchId are semantic identities; geometry never defines identity.</identity>
     <rootFirst>Every tree begins with authoritative root truth before geometry is designed.</rootFirst>
@@ -13,31 +26,48 @@
     <recursiveDepth>Branches may contain branches and must not be constrained to a fixed depth.</recursiveDepth>
     <adaptiveGeometry>Geometry is derived from semantic and UI payload; no universal branch height, radius, spacing, or position is assumed.</adaptiveGeometry>
     <expansionSpace>Every expanding division reserves clearance for adjacent divisions, wiring corridors, workspace visibility, and camera travel.</expansionSpace>
-    <maximumExpansion>The Hero maximum expansion state is derived from the combined footprint of participating divisions and their payload.</maximumExpansion>
+    <maximumExpansion>The Hero maximum expansion state is derived from the combined footprint of active participating divisions and their payload.</maximumExpansion>
     <turnLoopExpansion>Participating tree and branch divisions are active/open during the final turn-loop so semantic wiring paths can be traversed.</turnLoopExpansion>
     <electricalFlow>Turn-loop electricity follows actual semantic connection paths toward the workspace center.</electricalFlow>
     <smoothExpansion>Division opening and closing must use smooth stateful choreography and must not be an instant visibility or coordinate swap.</smoothExpansion>
     <timingStatus>Current prototype timings are living implementation baselines, not final animation law.</timingStatus>
-    <presentationBoundary>3D tree presentation never grants entitlement, authorization, or durable domain authority.</presentationBoundary>
+    <presentationBoundary>3D tree presentation never grants entitlement, authorization, scheduler authority, or durable domain authority.</presentationBoundary>
+    <truthfulStatus>A tree or branch remains partial/provisional/pending when semantics, payload, geometry, expansion, connection, runtime behavior, or verification is incomplete.</truthfulStatus>
   </rules>
   <treeFamilies>
     <tree id="TREE-DOMAIN" status="incomplete">
       <root>Account</root><root>Workplace</root><root>Project</root><root>Seat</root>
+      <node id="DOMAIN-ACCOUNT" status="semantic-only" />
+      <node id="DOMAIN-WORKPLACE" status="semantic-only" />
+      <node id="DOMAIN-PROJECT" status="semantic-only" />
+      <node id="DOMAIN-SEAT" status="semantic-only" />
       <authority>domain state outside renderer</authority>
     </tree>
     <tree id="TREE-HERO-SEAT" status="partial">
-      <root>Seat Shell</root><root>Connection</root><root>Behavior</root><root>Toolkit</root><root>Capabilities</root><root>Authorization</root><root>Workspace Scope</root><root>Task/Evidence</root>
+      <root>Seat Shell</root>
+      <node id="SEAT_SHELL" status="implemented-partial" />
+      <node id="SEAT_CONNECTION" status="implemented-partial" />
+      <node id="SEAT_BEHAVIOR" status="implemented-partial" />
+      <node id="SEAT_TOOLKIT" status="implemented-partial" />
+      <node id="SEAT_CAPABILITIES" status="implemented-partial" />
+      <node id="SEAT_AUTHORIZATION" status="implemented-partial" />
+      <node id="SEAT_WORKSPACE_SCOPE" status="implemented-partial" />
+      <node id="SEAT_TASK_EVIDENCE" status="implemented-partial" />
       <authority>presentation only</authority>
     </tree>
     <tree id="TREE-SKILL-RESPONSIBILITY" status="incomplete">
       <root>ToolKit upstream</root><root>WebAi Seat responsibility</root><root>skill bundle</root><root>governance</root><root>adaptation</root><root>capacity</root>
+      <node id="SKILL-TOOLKIT" status="semantic-only" />
+      <node id="SKILL-WEBAI-RESPONSIBILITY" status="semantic-only" />
+      <node id="SKILL-BUNDLE" status="semantic-only" />
+      <node id="SKILL-GOVERNANCE" status="semantic-only" />
       <authority>skill/governance boundary; presentation only</authority>
     </tree>
   </treeFamilies>
   <completion>
     <treeComplete requires="semantic,implementation,geometry,expansion,connection,verification" />
-    <heroComplete requires="all required trees complete plus integrated camera, wiring, turn-loop, and acceptance evidence" />
-    <c9BlockedUntil>tree and branch structure is proven complete and integrated turn-loop layer is proven according to the active contract</c9BlockedUntil>
+    <heroComplete requires="required trees complete plus adaptive geometry, integrated camera travel, connection topology, turn-loop choreography, and acceptance evidence" />
+    <c9BlockedUntil>required tree and branch structure is proven complete and integrated turn-loop layer is proven according to the active contract</c9BlockedUntil>
     <c10After>owner/product acceptance gate only</c10After>
   </completion>
 </teamaiHeroTreeAuthority>
