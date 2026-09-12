@@ -11,7 +11,7 @@ Every executable checklist item must resolve to concrete skill path(s) in `docs/
 ## Current chronological gate
 `TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
 
-## Active state reconciliation — 2026-09-11
+## Active state reconciliation — 2026-09-12
 
 The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/validation gate. Its remaining boundaries stay explicit. The spatial/product-experience clock is now governed by the owner-endorsed C0–C10 rebaseline described below.
 
@@ -21,6 +21,21 @@ The backend clock has crossed the bounded TEAM-BACKEND-001 implementation/valida
 - Seat connection/provider surfaces remain implementation/deployment surfaces rather than automatic product acceptance.
 - PR #259 remains an important historical implementation baseline: CAM-R-RETIRE + ENT-T1/ENT-R2/R3 + CHR soft-hide. It is **not** the final product-shape authority after the owner-directed C0–C10 rebaseline.
 - Historical checkpoints may retain earlier pending wording because they are evidence records. This active index is the current recovery map and must not rewrite historical evidence.
+
+### Current connected Supabase deployment inventory — 2026-09-12
+
+The connected TeamAi Supabase project (`srpgzzretfyqdsfclnuo`) currently reports exactly eight ACTIVE TeamAi Edge Functions. The precise inventory is frozen in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` and must remain synchronized with backend current-state records. The obsolete `paypal-webhook` deployment is absent from the connected runtime after operator deletion.
+
+- `teamai-commerce-intent` v19
+- `teamai-domain-bootstrap` v22
+- `teamai-github-oauth-bind` v8
+- `teamai-github-webhook` v7
+- `teamai-paypal-webhook-v5c` v21
+- `teamai-seat-connection-test` v7
+- `teamai-seat-provider-bind` v7
+- `teamai-task-execute` v12
+
+This inventory is deployment evidence only. It does not upgrade source implementation into runtime proof, completion, endorsement, or release readiness.
 
 ## TEAM-BACKEND-001 — Backend Foundation
 
@@ -86,7 +101,7 @@ Gate 5C implementation and available-environment verification are complete. The 
 Bounded live PayPal Sandbox transaction/order/approval/capture, webhook delivery, redelivery handling, and direct Firestore aggregate/event/entitlement verification are now recorded in the 2026-09-06 and 2026-09-07 evidence chain. TEAM-BACKEND-001 is therefore endorsed for the bounded recorded scope. The record does not claim Gate 4 emulator PASS, real external provider invocation beyond `stub-edge-runtime`, broader scheduler/approval integration, production PayPal readiness, or full 029 release readiness.
 
 ### Current evidence boundary
-The canonical `paypal-webhook` Edge Function contains the validated Gate-5C commerce implementation boundary. The bounded live PayPal Sandbox transaction/webhook path and subsequent Firestore aggregate/event/entitlement re-read are runtime-proven and endorsed for the recorded scope. Broader claims remain separately bounded: Gate 4 emulator execution is not evidenced, `teamai-task-execute` remains a stub provider runtime, real external provider invocation is not proven, Conn-3 browser/live deployment proof is pending, and 029 release remains gated by its own spatial/backend release criteria. Historical Gate-5C checkpoint wording remains historical evidence and is not rewritten here.
+The canonical `teamai-paypal-webhook-v5c` Edge Function contains the validated Gate-5C commerce implementation boundary. The bounded live PayPal Sandbox transaction/webhook path and subsequent Firestore aggregate/event/entitlement re-read are runtime-proven and endorsed for the recorded scope. Broader claims remain separately bounded: Gate 4 emulator execution is not evidenced, `teamai-task-execute` remains a stub provider runtime, real external provider invocation is not proven, Conn-3 browser/live deployment proof is pending, and 029 release remains gated by its own spatial/backend release criteria. Historical Gate-5C checkpoint wording remains historical evidence and is not rewritten here.
 
 ### Hard completion rule
 An implementation claim is complete only when its governing Product Law and Masterplan item trace through the applicable contract/skill, actual implementation, verification evidence, and completion/endorsement record. Planning text, documentation presence, deployment presence, green unit tests, or endorsement alone do not establish implementation completion.
@@ -464,3 +479,9 @@ When tree/branch/division semantics or implementation change, the census is sync
 `supabase/functions/teamai-task-execute/index.ts` previously rebuilt the leased task document from only the string-typed fields of the in-memory `current` object, discarding any non-string Firestore field types (numbers, booleans, maps, arrays) on every lease commit. The fix now spreads the complete raw `task.fields` Firestore typed-value map and overlays only the four lease-owned fields (`status`, `leaseId`, `leasedBy`, `updatedAt`). A regression test (`tests/backend-task-lease-preservation.test.mjs`) asserts the full-field-map pattern is present and the old filtered-rebuild pattern is gone. Scope: repository-level correctness fix only; does not change TEAM-BACKEND-001's endorsed/bounded classification.
 
 <!-- teamai residual: #284/#287 backend lease-preservation fix; preserve full Masterplan body; no 029-released claim. -->
+
+## Backend live-surface freeze synchronization — #284
+
+The current connected Supabase project reports exactly eight ACTIVE TeamAi Edge Functions as of 2026-09-12. The precise deployment inventory is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`; `backend/BACKEND_LIVE_SERVICE_STATUS.md` remains the claim-level backend evidence authority and `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves connected/operator context. The obsolete `paypal-webhook` deployment is no longer present in the connected runtime.
+
+This synchronization records live infrastructure truth without upgrading deployment status into product completion or endorsement. Any future Edge Function addition, removal, rename, material restructuring, reimplementation, deployment replacement, or responsibility change must reconcile the active census and backend current-state authority in the same governed change.
