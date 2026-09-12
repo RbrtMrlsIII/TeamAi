@@ -187,13 +187,14 @@ Presentation structures remain separate from backend authority.
 
 ## 12. Deployment / public surface truth
 
-Current product route ownership must be derived from deployment configuration and live browser evidence.
+Current product route ownership is:
 
 ```text
 public/    → classic website entrance + explicit 3D world source
 /hero/     → compatibility route
-/spatial/  → Command Deck / workspace-transition surface
 ```
+
+`/spatial/` is **retired**. The former Command Deck is no longer a current product/deployment surface. Its source and historical documents remain in the repository for reconstruction/history, but the published site must not deploy or present it as a workspace authority. Future authenticated workspace responsibilities are re-owned by the spatial machine/workspace-center model.
 
 The public root remains the acceptance starting point. A compatibility route is not a second product authority.
 
@@ -224,7 +225,8 @@ Historical records remain valuable evidence:
 - #258/#259 camera retirement and chrome lineage;
 - #275 runtime-delivery hardening;
 - #281 C5/D + C6 foundation;
-- #282 first-paint and agent-bootstrap reconciliation.
+- #282 first-paint and agent-bootstrap reconciliation;
+- historical Command Deck implementation/reconciliation lineage.
 
 No historical idea is erased by this current-state map. Retired concepts require a new user/source-of-truth decision before revival.
 
@@ -234,7 +236,6 @@ Do not claim `complete`, `accepted`, `released`, or `ProMax-ready` based on one 
 
 The current machine remains a **living construction baseline** until the semantic trees, branches, divisions, adaptive geometry, expansion behavior, connection topology, travel model, turn-loop visual layer, workspace boundary, and owner acceptance are proven at the required level.
 
-
 ## 17. Backend continuation evidence pointer (2026-09-12)
 
 Backend-track fixes are tracked in TEAM-BACKEND-002 (#284), not in this spatial map's tree/machine sections above. Canonical backend status remains `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Current backend-track item: task-lease Firestore field-preservation fix (#287) — repository-level correctness only, does not change TEAM-BACKEND-001's endorsed/bounded scope.
@@ -242,3 +243,11 @@ Backend-track fixes are tracked in TEAM-BACKEND-002 (#284), not in this spatial 
 ## 18. Backend live-function inventory synchronization (2026-09-12)
 
 The exact connected-Supabase deployment inventory is frozen in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` at eight ACTIVE TeamAi Edge Functions. This map records the same current count and versions only as a recovery pointer; the census is the precise deployment inventory. The legacy `paypal-webhook` surface is absent from the connected runtime after operator deletion. Historical nine-function tables are not current state.
+
+## 19. Command Deck retirement synchronization — owner-directed
+
+The former Command Deck is now a **retired product and deployment surface**. It must not be republished, renamed and republished, or used as a second workspace authority. The current authenticated workspace responsibility belongs to the center of the spatial machine defined by Product Law and Issue #278.
+
+Historical Command Deck source, documentation, tests, and commits are preserved for traceability and reconstruction. Their existence in Git is not evidence that the surface remains part of the current product.
+
+The GitHub Pages deployment no longer publishes `frontend/spatial/` as `/spatial/`.
