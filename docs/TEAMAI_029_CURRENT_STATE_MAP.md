@@ -48,7 +48,7 @@ They meet at the **presentation boundary**. A 3D face may represent a backend ca
 | #265 / #266 | MERGED | entrance↔machine browser proof; CHR-R3 | Retained as implementation evidence, re-owned by C2–C4 |
 | **C0–C10 rebaseline / #274** | **MERGED** | classic entrance + explicit 3D entry + coherent nav + camera/auth boundary groundwork | C9 visual acceptance gates product completion; C10 ProMax remains downstream |
 | **Hero runtime delivery hardening / #275** | **MERGED** | repository-owned Hero runtime is now committed and normal browser/build execution no longer depends on remote runtime source | Preserve delivery hardening; do not reintroduce remote runtime loading |
-| **#278 surface reconciliation** | **ACTIVE** | GitHub Pages public root is being aligned to the owner-directed classic entrance; Command Deck is retained under `/spatial/` as workspace/transition surface; `/hero/` remains compatibility route | Acceptance requires deployed-root browser proof before C9 |
+| **#278 surface reconciliation** | **ACTIVE** | GitHub Pages public root is being aligned to the owner-directed classic entrance; Command Deck is retained under `/spatial/` as workspace/transition surface; `/hero/` remains compatibility route. PR **#281** holds C5/D nav-wall removal + C6/E zoom-out baseline; C6 e2e proof requires an open seat tree (`selectSeatShell`), not `setCamera('SEAT_CLOSE')` alone. | Acceptance requires deployed-root browser proof before C9; C6 fallback is `NAV_ZOOM_MAX`-gated, not unconditional. No 029-released claim. |
 
 **Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` → `docs/archive/superseded/` and must not be silently revived.
 

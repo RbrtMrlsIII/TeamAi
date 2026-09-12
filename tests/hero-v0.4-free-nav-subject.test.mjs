@@ -66,3 +66,10 @@ test('V0.4 flex applyNavCamera uses shouldApplyTreeNav + poseAboutTreeCenter', a
   assert.match(src, /function applyNavCamera\(\)[\s\S]*shouldApplyTreeNav/);
   assert.match(src, /poseAboutTreeCenter\(base,\s*\{\s*navZoom,\s*navOrbitYaw,\s*navOrbitPitch\s*\}\)/);
 });
+
+test('C6 applyNavCamera falls back to HERO_WIDE only at NAV_ZOOM_MAX while a tree is open', async () => {
+  const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
+  assert.match(src, /const atWorldBaseline = navZoom >= NAV_ZOOM_MAX/);
+  assert.match(src, /openParentId && !atWorldBaseline/);
+  assert.match(src, /getBaseCameraId:\(\)=>lastNavBaseCameraId/);
+});

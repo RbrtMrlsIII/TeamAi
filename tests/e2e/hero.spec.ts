@@ -33,16 +33,33 @@ test.describe('Living Web AI Workspace Hero', () => {
 
   test('C6: zoom-out from a seat close-up returns to the HERO_WIDE world baseline', async ({ page }) => {
     await page.goto('/hero/');
-    await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+
+    // C6 is a tree-open zoom-out. setCamera('SEAT_CLOSE') alone does not set
+    // openParentId, so applyNavCamera() keeps the closed-world HERO_WIDE dock
+    // and getBaseCameraId() never leaves it. Open a seat shell first, then
+    // resetNav() so applyNavCamera runs at navZoom=1 (below NAV_ZOOM_MAX).
+    await page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      hero.selectSeatShell(0);
+      hero.resetNav();
+    });
+    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
+    expect(hierarchy?.openParentId).toBeTruthy();
     const zoomedIn = await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId());
     expect(zoomedIn).not.toBe('HERO_WIDE');
 
-    // Scroll the wheel out past NAV_ZOOM_MAX so navZoom clamps at the ceiling.
-    const canvasBox = await page.locator('#hero-canvas').boundingBox();
-    await page.mouse.move((canvasBox!.x + canvasBox!.width / 2), (canvasBox!.y + canvasBox!.height / 2));
-    for (let i = 0; i < 40; i += 1) {
-      await page.mouse.wheel(0, -120);
-    }
+    // Flex maps Math.sign(deltaY)*0.08 onto navZoom. Positive deltaY increases
+    // navZoom toward NAV_ZOOM_MAX (further / zoom-out). Dispatch on the canvas
+    // so the real wheel listener runs without Playwright mouse.wheel stalls
+    // against the WebGL canvas.
+    await page.evaluate(() => {
+      const canvas = document.querySelector('#hero-canvas');
+      if (!canvas) throw new Error('missing #hero-canvas');
+      for (let i = 0; i < 20; i += 1) {
+        canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true }));
+      }
+    });
 
     const navZoom = await page.evaluate(() => (window as any).TeamAiHero.getNavZoom());
     const baseAtFullZoomOut = await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId());
