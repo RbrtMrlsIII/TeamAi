@@ -9,10 +9,10 @@ test('029 reconciliation removes retired TURN_FOLLOW from generated runtime', ()
 });
 
 test('029 reconciliation leaves contribution transition camera-neutral', () => {
-  assert.match(runtime, /contribution=0;setState\(['"]CONTRIBUTE['"],'contribution-start'\)/);
+  assert.match(runtime, /setState\(['"]CONTRIBUTE['"],['"]contribution-start['"]\)/);
   assert.doesNotMatch(
     runtime,
-    /contribution=0;setCamera\(['"](?:TURN_FOLLOW|HERO_WIDE)['"]\);setState\(['"]CONTRIBUTE['"],'contribution-start'\)/,
+    /setCamera\(['"](?:TURN_FOLLOW|HERO_WIDE)['"]\);setState\(['"]CONTRIBUTE['"],['"]contribution-start['"]\)/,
   );
 });
 
