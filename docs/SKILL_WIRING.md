@@ -74,9 +74,30 @@ or explicitly state `No skill required` with a reason.
 
 A field folder name alone is not sufficient routing. A concrete skill path must be available before a checklist is treated as fully executable.
 
-When a new checklist item is introduced:
+### Canonical chronology routing
 
-`checklist item → canonical concept → field/domain → ORUCAVEAM letters → existing skill lookup → skill sufficient? → wire or update/create skill → verify skill → execute → record evidence`
+Because `MASTERPLAN.md` is the only chronological execution checklist, every nested item under its programs/gates must inherit or explicitly declare the Skill routing appropriate to that item's actual work class. A child slice does not become exempt from Skill wiring merely because its parent already names a domain.
+
+Recommended record shape inside the Masterplan:
+
+```text
+ITEM ID: 029.TM.04
+PARENT: TEAM-EXPERIENCE-029 / TREE MACHINE
+STATUS: PLANNED
+SKILL ROUTING: ORUCAVEAM + field/domain/tool skills
+VERIFICATION: named validation path
+EVIDENCE: named evidence surface
+```
+
+A smaller slice may reuse its parent's Skill routing when the procedure is materially identical; otherwise it must name the additional concrete Skill path(s). If no reusable Skill exists for a genuinely recurring procedure, resolve/update/create the Skill before declaring the Masterplan child executable.
+
+### No checklist escape hatch
+
+A new document must not be created as a substitute for missing Skill wiring. A procedural checklist belongs in a Skill/manual; its project execution point belongs in the Masterplan.
+
+When a historical checklist is retained for evidence or reference, it must not be promoted into a current project queue.
+
+When a validation checklist is retained, it verifies a Masterplan item but does not establish its chronological position.
 
 ## 6. Skill detail pattern
 
@@ -110,6 +131,8 @@ A wiring change is incomplete when:
 - a domain skill contradicts Product Law/Policy;
 - the required verification/evidence path is absent; or
 - a new procedure is added without deciding whether it belongs in an existing skill or a new reusable skill.
+
+A Masterplan branch is executable only after these wiring conditions are satisfied or an explicit `No skill required` rationale is recorded.
 
 ## 10. 2026-09-06 commerce frontend preparation
 

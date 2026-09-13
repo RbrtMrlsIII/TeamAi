@@ -309,3 +309,60 @@ Do not assume the previous agent's memory, local workspace, CI result, deploymen
 ## Recovery rule
 
 Preserve current authority, unresolved limitations, evidence boundaries, and next authorized action across sessions. A previous green deployment or AI answer is not proof of current correctness. Distinguish planned, implemented, verified, runtime-proven, completed, and generalized states.
+
+## Single chronological Masterplan rule — 2026-09-13
+
+`MASTERPLAN.md` is the **only canonical chronological execution checklist for TeamAi project work**. It is the execution tree for major programs, gates, implementation slices, smaller slices, validation, evidence, and current-truth updates.
+
+A new or resumed agent MUST NOT create another project-level chronological checklist, phase checklist, implementation queue, roadmap, “next slices” list, or feature-specific execution plan merely because the work is smaller or belongs to a later branch.
+
+Before adding executable work, the agent must find the nearest existing Masterplan parent and add the work beneath it:
+
+```text
+PROGRAM
+└── GATE
+    └── EXECUTION SLICE
+        ├── SMALLER SLICE
+        ├── IMPLEMENTATION
+        ├── VALIDATION
+        └── EVIDENCE / CURRENT-TRUTH UPDATE
+```
+
+A new project chronology is permitted only when the user explicitly authorizes a genuinely new program that cannot be represented as a branch of the existing execution tree. Such an authorization must reconcile the Masterplan first; it must not silently create a competing roadmap.
+
+### Checklist file classification
+
+Checklist-shaped documents must not be assumed to own chronology. Before using or creating one, classify it as:
+
+1. canonical chronology — `MASTERPLAN.md` only;
+2. reusable procedure — a Skill or operational manual;
+3. validation procedure — repeatable verification only;
+4. structural census — what exists, not when it is built;
+5. historical checkpoint — past evidence;
+6. recovery/index — cross-track orientation only.
+
+`docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` is a recovery/index view. `docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md` and similar construction documents must not become competing project chronology. If a procedural checklist is still useful, it must point back to its Masterplan parent and must not claim scheduling authority.
+
+### Chronological execution update rule
+
+When a slice is executed, update the corresponding Masterplan item with the actual state and evidence boundary. Do not create a new checklist document merely to record the slice. Use stable nested IDs when useful (for example `029.TM.04.a`) so smaller work remains visibly attached to its parent.
+
+The Masterplan checklist records execution state; it does not replace the Tree Census, Product Law, Issue evidence, or Skill procedures.
+
+### Skill-wiring gate for the chronological tree
+
+Every executable Masterplan item must have concrete routing in `docs/SKILL_WIRING.md` or an explicit `No skill required` rationale. When a new execution branch requires a recurring procedure and no suitable Skill exists, resolve the Skill gap before declaring the branch executable. Do not create a checklist document as a substitute for missing Skill wiring.
+
+### Agent selection rule
+
+When asked to “pick something from the Masterplan,” the agent must:
+
+1. re-read current `main` and the active Masterplan;
+2. identify the nearest open/authorized parent branch;
+3. confirm Issue ownership and Product Law consistency;
+4. resolve concrete Skill routing;
+5. execute only that bounded branch;
+6. update the same Masterplan item and evidence surfaces;
+7. leave other branches untouched unless the authorized slice requires them.
+
+A chronological item may grow smaller child branches as implementation becomes more concrete. This is expected and is the preferred way to preserve one execution tree.
