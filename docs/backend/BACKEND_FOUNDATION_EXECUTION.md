@@ -1,5 +1,17 @@
 # TEAM-BACKEND-001 — Backend Foundation Execution
 
+**Status:** HISTORICAL EXECUTION EVIDENCE — NOT CURRENT PROJECT CHRONOLOGY  
+**Canonical execution authority:** `MASTERPLAN.md` only (TEAM-BACKEND-001 section)  
+**Issue ledger (backend track):** #284  
+**No 029-release claim.**
+
+This document preserves the TEAM-BACKEND-001 chronological gate list as historical evidence of how the bounded backend foundation was planned and recorded. TEAM-BACKEND-001 is already **ENDORSED (bounded)** on the Masterplan surface.
+
+**Do not use this file as a second backend execution checklist or live queue.**  
+Remaining backend residuals (if any) are governed by `MASTERPLAN.md` and Issue #284, not by re-opening this document as a competing plan.
+
+---
+
 ## Purpose
 Implement the durable backend foundation required before TEAM-EXPERIENCE-029 can become executable against real backend contracts.
 
@@ -13,7 +25,7 @@ Implement the durable backend foundation required before TEAM-EXPERIENCE-029 can
 7. Trusted Supabase Edge runtime adapter.
 8. Server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation.
 9. Verified PayPal webhook + idempotency + replay protection + durable commerce events/entitlements.
-10. Provider/runtime invocation.
+10. Provider invocation.
 11. Security, integration, failure, timeout, cancellation and recovery verification.
 12. Traceability reconciliation, endorsement and completion record.
 13. Release TEAM-EXPERIENCE-029 hold only after all blocking evidence exists.
