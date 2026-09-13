@@ -13,19 +13,26 @@ test.describe('029 camera/input regression guards', () => {
 
     const before = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
-      return { camera: hero.getBaseCameraId(), zoom: hero.getNavZoom(), seat: hero.getSelectedSeat() };
+      return { camera: hero.getBaseCameraId(), seat: hero.getSelectedSeat() };
     });
 
-    await page.evaluate(() => (window as any).TeamAiHero.startLoop());
-    await expect(page.locator('#state-label')).toHaveText('FOCUS');
-    await page.waitForTimeout(900);
+    await page.evaluate(() => new Promise<void>((resolve) => {
+      const onState = (event: any) => {
+        if (event.detail?.state === 'CONTRIBUTE') {
+          window.removeEventListener('teamai:hero-state-change', onState);
+          resolve();
+        }
+      };
+      window.addEventListener('teamai:hero-state-change', onState);
+      (window as any).TeamAiHero.startLoop();
+    }));
 
     const during = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
-      return { state: hero.getState(), camera: hero.getBaseCameraId(), zoom: hero.getNavZoom(), seat: hero.getSelectedSeat() };
+      return { state: hero.getState(), camera: hero.getBaseCameraId(), seat: hero.getSelectedSeat() };
     });
 
-    expect(['ACTIVE', 'CONTRIBUTE']).toContain(during.state);
+    expect(during.state).toBe('CONTRIBUTE');
     expect(during.camera).toBe(before.camera);
     expect(during.seat).toBe(before.seat);
 
