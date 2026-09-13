@@ -28,7 +28,21 @@ if (!['created', 'edited'].includes(event.action)) {
 }
 
 const body = String(comment.body ?? '').trim().replaceAll('\r\n', '\n');
+const issueBody = String(issue.body ?? '').trim().replaceAll('\r\n', '\n');
 const errors = [];
+
+// A governance-locked issue is one contract: the issue body is the durable
+// guide, while comments are evidence records. The body must explicitly carry
+// the protocol before its comments are accepted by this validator.
+const issueBodyContract = [
+  ['## Purpose', 'issue body must contain a Purpose section before comment governance can apply'],
+  ['Issue comments are evidence records, not guidance documents.', 'issue body must explicitly define comments as evidence records'],
+  ['EXECUTED', 'issue body must define the EXECUTED evidence state'],
+  ['PROVEN', 'issue body must distinguish PROVEN from EXECUTED'],
+];
+for (const [needle, message] of issueBodyContract) {
+  if (!issueBody.includes(needle)) errors.push(message);
+}
 
 const SECTION_NAMES = ['DIAGNOSIS', 'REAL DATA', 'WARNINGS', 'EXECUTED'];
 const sectionHeader = /^(DIAGNOSIS|REAL DATA|WARNINGS|EXECUTED):\s*$/;
@@ -123,4 +137,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('issue-comment governance: PASS (strict four-section evidence format)');
+console.log('issue-comment governance: PASS (issue-body + strict four-section evidence contract)');

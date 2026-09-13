@@ -7,7 +7,17 @@ import { spawnSync } from 'node:child_process';
 
 const validator = join(process.cwd(), 'scripts/governance/verify-issue-comment.mjs');
 
-async function runValidator(body) {
+const VALID_ISSUE_BODY = `# Governance-locked issue
+
+## Purpose
+This issue is the durable guide for the bounded work.
+
+## Evidence contract
+Issue comments are evidence records, not guidance documents.
+
+EXECUTED means a bounded slice actually ran. PROVEN requires verification evidence.`;
+
+async function runValidator(body, issueBody = VALID_ISSUE_BODY) {
   const dir = await mkdtemp(join(tmpdir(), 'teamai-issue-comment-'));
   const eventPath = join(dir, 'event.json');
   await writeFile(eventPath, JSON.stringify({
@@ -16,6 +26,7 @@ async function runValidator(body) {
       number: 278,
       pull_request: null,
       labels: [{ name: 'governance-comment-lock' }],
+      body: issueBody,
     },
     comment: { user: { type: 'User' }, body },
   }));
@@ -29,9 +40,15 @@ async function runValidator(body) {
   }
 }
 
-test('accepts a strict evidence-only comment', async () => {
+test('accepts a strict evidence-only comment when the issue body carries the contract', async () => {
   const result = await runValidator(`DIAGNOSIS:\nThe observed implementation path was reviewed.\n\nREAL DATA:\nHEAD=example; workflow=governance.\n\nWARNINGS:\nNo proof claim is made here.\n\nEXECUTED:\nA bounded review slice was executed.`);
   assert.equal(result.status, 0, result.stderr);
+});
+
+test('rejects a governance comment when the issue body does not carry the evidence contract', async () => {
+  const result = await runValidator(`DIAGNOSIS:\nObserved current behavior.\n\nREAL DATA:\nHEAD=example.\n\nWARNINGS:\nNo planning language.\n\nEXECUTED:\nReview slice executed.`, '# Governance-locked issue\n\n## Purpose\nScope exists but the comment protocol is omitted.');
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /issue body must explicitly define comments as evidence records/i);
 });
 
 test('rejects a comment that hides planning guidance inside evidence prose', async () => {
