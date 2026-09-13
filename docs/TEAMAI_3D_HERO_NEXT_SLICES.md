@@ -133,3 +133,7 @@ Validation is scoped to the classic public entrance: unit coverage asserts the C
 ## Phone-overlay-collision fix — #298
 
 The overlapping/blurred idle-view screenshots reported on #278 were traced to `hero-parts.css`/`hero-seat-stack.css` breakpoints that scaled cards down without separating them horizontally at phone widths. Fixed via left/right docking separation at `<=520px` and hiding `.spatial-parts` at `<=360px`. This is a CSS positioning fix only and does not itself constitute C9 browser acceptance.
+
+## Next slice candidate: real spatial hit-testing for seat clicks (#304 follow-up)
+
+`#304` fixed the dead-center no-op zone, but the underlying click router still has no true hit-testing — every click outside the two ring-focus side bands cycles to `selectSeatShell((selectedSeat+1)%seatCount)` regardless of which seat/sphere is actually under the cursor. A follow-up slice should raycast against actual seat sphere positions so a tap opens the seat it visually landed on, not just "the next one in sequence."

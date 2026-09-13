@@ -319,4 +319,19 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await page.goto('/spatial/');
     await expect(page.locator('body')).not.toBeEmpty();
   });
+  test('center-of-canvas click opens a seat, not a no-op (#304)', async ({ page }) => {
+    await page.goto('/hero/');
+    const canvas = page.locator('#hero-canvas');
+    await expect(canvas).toBeVisible();
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('hero canvas has no bounding box');
+    // Center of the canvas is exactly the old dead-center "Zone A" band, which
+    // is also where the visible seat spheres render in HERO_WIDE. Before #304
+    // this click hit a structural no-op (syncSetupRingCamera read ring focus
+    // state that clearRingFocus had just wiped one line above).
+    await canvas.click({ position: { x: box.width * 0.5, y: box.height * 0.48 } });
+    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero?.getHierarchyState?.());
+    expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
+  });
 });
+
