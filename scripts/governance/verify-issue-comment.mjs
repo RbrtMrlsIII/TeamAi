@@ -7,9 +7,13 @@ const event = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
 const issue = event.issue ?? {};
 const comment = event.comment ?? {};
 
-// This governance rule is intentionally scoped to the active 029 issue.
-if (issue.number !== 278 || issue.pull_request) {
-  console.log('issue-comment governance: SKIP (not Issue #278)');
+// This governance rule applies to any issue explicitly opted in via the
+// governance-comment-lock label, rather than a single hardcoded issue number.
+const issueLabels = Array.isArray(issue.labels)
+  ? issue.labels.map((label) => (typeof label === 'string' ? label : label.name))
+  : [];
+if (!issueLabels.includes('governance-comment-lock') || issue.pull_request) {
+  console.log('issue-comment governance: SKIP (missing governance-comment-lock label)');
   process.exit(0);
 }
 
@@ -31,7 +35,7 @@ const sectionHeader = /^(DIAGNOSIS|REAL DATA|WARNINGS|EXECUTED):\s*$/;
 const lines = body.split('\n');
 
 if (!body) {
-  errors.push('new Issue #278 comments must not be empty');
+  errors.push('new comments on this issue must not be empty');
 }
 
 // New comments are deliberately schema-bound evidence records. This makes the
@@ -39,7 +43,7 @@ if (!body) {
 // is rejected instead of being interpreted by convention.
 if (body) {
   if (!sectionHeader.test(lines[0])) {
-    errors.push('new Issue #278 comments must begin with one of: DIAGNOSIS:, REAL DATA:, WARNINGS:, EXECUTED:');
+    errors.push('new comments on this issue must begin with one of: DIAGNOSIS:, REAL DATA:, WARNINGS:, EXECUTED:');
   }
 
   const sections = [];
@@ -109,7 +113,7 @@ if (body) {
   // positive proof claims anywhere in the comment.
   const withoutNegation = body.replace(/\b(?:not|never|un|without|pending)\s+(?:yet\s+)?(?:proven|verified|complete|accepted|endorsed|done)\b/gi, '');
   if (/\b(?:is|are|was|were|now|fully|already|has been|have been|has now been|have now been)\s+(?:runtime-)?(?:proven|verified|complete|accepted|endorsed|done)\b/i.test(withoutNegation)) {
-    errors.push('new Issue #278 comments may not claim proof/completion/acceptance; record observation only and leave proof to validation/evidence state');
+    errors.push('new comments on this issue may not claim proof/completion/acceptance; record observation only and leave proof to validation/evidence state');
   }
 }
 
