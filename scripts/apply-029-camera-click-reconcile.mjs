@@ -3,8 +3,8 @@
  *
  * Purpose: remove two behaviors proven by owner + browser smoke from the active
  * generated Hero runtime without creating a new camera or navigation authority:
- *   1) turn-loop contribution must not seize the camera;
- *   2) empty/background canvas clicks must not cycle to the next Seat.
+ *   1) turn-loop camera mutations;
+ *   2) empty/background canvas Seat cycling.
  *
  * The real semantic spatial hit-test remains a later governed slice. Until then,
  * background clicks are a safe no-op rather than an invented selection rule.
@@ -20,24 +20,36 @@ const path = new URL('../public/hero-flex.js', import.meta.url);
 let text = readFileSync(path, 'utf8');
 let changed = false;
 
-const retiredTurnCamera = "setCamera('TURN_FOLLOW')";
-if (text.includes(retiredTurnCamera)) {
-  text = text.replaceAll(retiredTurnCamera, 'void 0 /* retired TURN_FOLLOW */');
+const turnFollow = "setCamera('TURN_FOLLOW')";
+if (text.includes(turnFollow)) {
+  text = text.replaceAll(turnFollow, 'void 0 /* retired TURN_FOLLOW */');
   changed = true;
 }
 
-const contributionWideCamera = "contribution=0;setCamera('HERO_WIDE');setState('CONTRIBUTE','contribution-start')";
-if (text.includes(contributionWideCamera)) {
+const contributionCamera = "contribution=0;setCamera('HERO_WIDE');setState('CONTRIBUTE','contribution-start')";
+if (text.includes(contributionCamera)) {
   text = text.replace(
-    contributionWideCamera,
+    contributionCamera,
     "contribution=0;setState('CONTRIBUTE','contribution-start')",
   );
   changed = true;
 }
 
-const backgroundSeatCycle = /selectSeatShell\(\(selectedSeat\+1\)%seatCount\)/g;
-if (backgroundSeatCycle.test(text)) {
-  text = text.replace(backgroundSeatCycle, 'void 0 /* background click no-op */');
+const handoffCamera = "selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus');setCamera('TEAM_ORBIT')";
+if (text.includes(handoffCamera)) {
+  text = text.replace(
+    handoffCamera,
+    "selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus')",
+  );
+  changed = true;
+}
+
+const backgroundSeatCycle = "const next=(selectedSeat+1)%seatCount;selectSeatShell(next);";
+if (text.includes(backgroundSeatCycle)) {
+  text = text.replace(
+    backgroundSeatCycle,
+    'void 0 /* background click no-op; semantic hit-testing is a later governed slice */;',
+  );
   changed = true;
 }
 
