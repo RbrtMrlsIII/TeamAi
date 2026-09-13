@@ -492,3 +492,12 @@ This synchronization records live infrastructure truth without upgrading deploym
 ## Phone-viewport overlay collision fix — #298 (follow-up to #278)
 
 `.spatial-parts`/`.hero-inspection` (`public/hero-parts.css`) and `.seat-stack` (`public/hero-seat-stack.css`) each had a breakpoint chain that only scaled the cards down in place at phone widths without separating them horizontally, causing their translucent cards to visually collide at ~390-420px viewports (the overlapping/blurred screenshots reported on #278). Fixed by docking `.spatial-parts`/`.hero-inspection` to the left edge at `<=520px` (instead of centered/scaled), hiding `.spatial-parts` entirely at `<=360px`, and reinforcing the right dock of `.seat-stack` at the same breakpoint. CSS positioning only; no JS/behavior change. Pending CI and owner browser confirmation at the reported viewport width; no 029-released claim.
+
+## Canvas click Zone-A dead-zone fix — #304
+
+`public/hero-flex.js`'s canvas click handler routed clicks by fixed screen-space percentage zones rather than hit-testing. The dead-center zone (where the visible seat spheres render in `HERO_WIDE`) called `syncSetupRingCamera()` immediately after `clearRingFocus()` wiped the very state it reads, making it a structural no-op — the most visually obvious tap target on screen could never open a seat. Fixed by removing that dead branch so center clicks fall through to the existing `selectSeatShell(next)` cycle, same as every other non-ring-band click. Regression coverage added inline in the existing `tests/e2e/hero.spec.ts` interaction test (asserting a center-canvas click advances `selectedSeat` on the already-warmed-up canvas), rather than a fresh isolated test — a bare fresh-page click raced the canvas listener's own async setup and was unreliable. Repository-level interaction-correctness fix; does not change camera vocabulary, tree logic, or 029 scope.
+
+<!-- teamai residual: #304 canvas click Zone-A dead-zone fix; preserve full Masterplan body; no 029-released claim. -->
+
+
+_Correction: the fix above initially targeted `public/hero-flex.js`, which is a generated build artifact -- `scripts/apply-cam2-tree-follow-flex.mjs` overwrites it from `public/_flex_src/hero-flex.base.js` on every CI run and deploy. The real fix is applied to `hero-flex.base.js`; the generated file is kept in sync for anyone reading it directly._

@@ -4,9 +4,6 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('renders the signature geometry shell and captures the hero frame', async ({ page }, testInfo) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    // C5/D (#278): the old six-button camera wall (Wide/Team/Workspace/Map/
-    // Seat/Detail) was removed from the DOM, not just hidden. World/Selected
-    // seat/Workspace/Detail now live only in the single .world-navigation menu.
     for (const label of ['Open engine', 'Back', 'Next', 'Reset']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
@@ -34,11 +31,6 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('C6: zoom-out from a seat close-up returns to the HERO_WIDE world baseline', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-
-    // C6 is a tree-open zoom-out. setCamera('SEAT_CLOSE') alone does not set
-    // openParentId, so applyNavCamera() keeps the closed-world HERO_WIDE dock
-    // and getBaseCameraId() never leaves it. Open a seat shell first, then
-    // resetNav() so applyNavCamera runs at navZoom=1 (below NAV_ZOOM_MAX).
     await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
       hero.selectSeatShell(0);
@@ -48,11 +40,6 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(hierarchy?.openParentId).toBeTruthy();
     const zoomedIn = await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId());
     expect(zoomedIn).not.toBe('HERO_WIDE');
-
-    // Flex maps Math.sign(deltaY)*0.08 onto navZoom. Positive deltaY increases
-    // navZoom toward NAV_ZOOM_MAX (further / zoom-out). Dispatch on the canvas
-    // so the real wheel listener runs without Playwright mouse.wheel stalls
-    // against the WebGL canvas.
     await page.evaluate(() => {
       const canvas = document.querySelector('#hero-canvas');
       if (!canvas) throw new Error('missing #hero-canvas');
@@ -60,7 +47,6 @@ test.describe('Living Web AI Workspace Hero', () => {
         canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true }));
       }
     });
-
     const navZoom = await page.evaluate(() => (window as any).TeamAiHero.getNavZoom());
     const baseAtFullZoomOut = await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId());
     expect(navZoom).toBeGreaterThanOrEqual(
@@ -73,40 +59,33 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
-
     const stageEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-hero-inspection-stage', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('[data-inspection-next]')?.click();
     }));
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/15)');
     expect(await stageEvent).toMatchObject({ stage: 'SURFACE', semanticCamera: 'WORKSPACE_CLOSE', presentationOnly: true });
-
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.next());
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Active Seat (3/15)');
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.previous());
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/15)');
     await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.reset());
     await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
-
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('WORKSPACE_CLOSE'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('OVERHEAD_MAP'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
-
     await page.getByRole('button', { name: 'Surface shared state', exact: true }).click({ force: true });
     await expect(page.getByRole('button', { name: 'Surface shared state', exact: true })).toHaveAttribute('aria-pressed', 'true');
     const activePart = await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart());
     expect(activePart).toBe('surface');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('surface'))).toBe('WORKSPACE_CLOSE');
-
     await page.locator('[data-part="focus"]').dispatchEvent('click');
     await expect(page.getByRole('button', { name: 'Surface shared state', exact: true })).toHaveAttribute('aria-pressed', 'false');
     await expect(page.getByRole('button', { name: 'Focus active Seat', exact: true })).toHaveAttribute('aria-pressed', 'true');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
-
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('DETAIL_ANCHOR'));
-
     const stackLayers = await page.evaluate(() => (window as any).TeamAiHeroSeatStack.layers().map((layer: any) => layer.id));
     expect(stackLayers).toEqual([
       'identity', 'responsibility', 'connection', 'behavior', 'toolkit', 'zipskills',
@@ -117,12 +96,10 @@ test.describe('Living Web AI Workspace Hero', () => {
       'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
       'MECHANISM_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK'
     ]);
-    // Slice H: zipskills layer exposes canonical WORKSPACE_ZIPSKILLS while keeping legacy MECHANISM_* for continuity
     expect(await page.evaluate(() => {
       const z = (window as any).TeamAiHeroSeatStack.layers().find((l: any) => l.id === 'zipskills');
       return z?.canonicalSemanticCamera;
     })).toBe('WORKSPACE_ZIPSKILLS');
-
     const registryIds = await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.ids());
     expect(registryIds).toEqual([
       'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
@@ -135,7 +112,6 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_CAPABILITY'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('MECHANISM_AUTHENTICATION'))).toBe('DETAIL_ANCHOR');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSemanticCamera.resolve('APP_UI_HANDOFF'))).toBeNull();
-
     const healthEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-seat-connection-health', (event: any) => resolve(event.detail), { once: true });
       (window as any).TeamAiHeroSeatStack.setConnectionHealth('healthy');
@@ -143,14 +119,12 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('[data-seat-layer="connection"]')).toHaveAttribute('data-health', 'healthy');
     expect(await healthEvent).toMatchObject({ health: 'healthy', presentationOnly: true, durable: false });
     expect(await page.evaluate(() => (window as any).TeamAiHeroSeatStack.getConnectionHealth())).toBe('healthy');
-
     const dialEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-seat-responsibility-dial', (event: any) => resolve(event.detail), { once: true });
       (window as any).TeamAiHeroSeatStack.setResponsibilityDial(0.72);
     }));
     expect(await dialEvent).toMatchObject({ dial: 0.72, presentationOnly: true, durable: false });
     expect(await page.evaluate(() => (window as any).TeamAiHeroSeatStack.getResponsibilityDial())).toBe(0.72);
-
     const inspectionEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-semantic-camera', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('[data-seat-layer="capabilities"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -159,7 +133,6 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(await inspectionEvent).toMatchObject({
       semanticCamera: 'MECHANISM_CAPABILITY', physicalCamera: 'DETAIL_ANCHOR', source: 'seat-inspection', layer: 'capabilities', presentationOnly: true
     });
-
     const equipmentEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-seat-equipment-preview', (event: any) => resolve(event.detail), { once: true });
       (window as any).TeamAiHeroSeatStack.setEquipped('zipskills', true);
@@ -172,13 +145,11 @@ test.describe('Living Web AI Workspace Hero', () => {
       canonicalSemanticCamera: 'WORKSPACE_ZIPSKILLS',
       presentationOnly: true
     });
-
     const handoffEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-semantic-camera', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('.seat-stack__handoff')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     }));
     expect(await handoffEvent).toMatchObject({ semanticCamera: 'APP_UI_HANDOFF', physicalCamera: null, source: 'seat-normal-ui-handoff', normalUi: true, presentationOnly: true });
-
     const authEvent = page.evaluate(() => new Promise((resolve) => {
       window.addEventListener('teamai:web-ai-hero-engine-open', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('[data-hero-engine-open]')?.click();
@@ -190,7 +161,6 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(await authEvent).toMatchObject({ semanticCamera: 'MECHANISM_AUTHENTICATION', presentationOnly: true });
     expect(await page.evaluate(() => (window as any).TeamAiHeroAuthHandoff.getState())).toMatchObject({ open: true, mode: 'login' });
     expect(await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.current().id)).toBe('HERO_ORIENTATION');
-
     await page.getByRole('tab', { name: 'Sign up', exact: true }).click();
     const signupForm = page.locator('form[data-auth-form="signup"]');
     await expect(signupForm.getByLabel('Name')).toBeVisible();
@@ -200,24 +170,18 @@ test.describe('Living Web AI Workspace Hero', () => {
     await signupForm.getByLabel('Password').fill('not-sent-password');
     await signupForm.getByRole('button', { name: 'Create account', exact: true }).click();
     await expect(page.locator('#auth-status')).toContainText('Authentication is not connected yet');
-
     await page.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(page.locator('#hero-auth-panel')).toBeHidden();
-
     await page.getByRole('button', { name: 'Start turn loop', exact: true }).click();
     await expect(page.locator('#state-label')).toHaveText(/FOCUS|ACTIVE|CONTRIBUTE/);
-
     await page.getByRole('button', { name: 'Stop turn loop', exact: true }).click();
     await expect(page.locator('#state-label')).toHaveText('IDLE');
-
     await page.locator('#hero-canvas').click({ position: { x: 80, y: 420 } });
     await expect(page.locator('#state-label')).toHaveText('FOCUS');
-    // P1.1: seat-shell open focuses SEAT_CONNECTION — status label is connection-face a11y copy
     await expect(page.locator('#seat-label')).toContainText('Seat connection face');
     await expect(page.locator('#seat-label')).toContainText('Presentation only');
     const hierarchy = await page.evaluate(() => (window as any).TeamAiHero?.getHierarchyState?.());
     expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
-
     await page.getByRole('button', { name: 'Reduced motion: off', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Reduced motion: on', exact: true })).toBeVisible();
   });
@@ -248,21 +212,15 @@ test.describe('Living Web AI Workspace Hero', () => {
     await page.goto('/hero/?seats=1');
     await expect(page.locator('#seat-label')).toContainText('1 seat unlocked');
     await expect(page.locator('#state-label')).toHaveText('IDLE');
-
     await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(8));
     await expect(page.locator('#seat-label')).toContainText('8 seats unlocked');
-
     const count = await page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
     expect(count).toBe(8);
-
     await page.evaluate(() => window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-unlocked', { detail: { seatCount: 6 } })));
     await expect(page.locator('#seat-label')).toContainText('6 seats unlocked');
   });
 });
 
-// G (#278): browser proof for the canonical public homepage, not just /hero/
-// in isolation. PR #279 made classic entrance the Pages root; these are the
-// deterministic desktop + phone checks the deployment map called for.
 test.describe('Canonical public homepage (classic entrance -> 3D world)', () => {
   test('desktop: classic entrance is the root, and Enter 3D world reaches the coherent world nav', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -271,22 +229,15 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await expect(page.getByRole('heading', { name: /calmer front door/i })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Enter 3D world', exact: true })).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeHidden();
-
-    // #278 C: classic first paint must not stack the legacy Layer-A brand
-    // (.hero-copy) or the far-environment footer on top of classic-entrance.
-    // classic-entrance owns the single logo + Terms/Privacy; far links are
-    // outside .hero-shell and were previously always visible.
     await expect(page.locator('.hero-copy')).toBeHidden();
     await expect(page.locator('.far-environment')).toBeHidden();
     await expect(page.locator('.classic-entrance__brand img')).toHaveCount(1);
     await expect(page.getByRole('heading', { name: /Living Web AI Workspace/i })).toHaveCount(0);
-
     await page.getByRole('button', { name: 'Enter 3D world', exact: true }).click();
     await expect(page.locator('.classic-entrance')).toBeHidden();
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeVisible();
     await expect(page.locator('.hero-copy')).toBeHidden();
-
     await page.getByRole('button', { name: 'Website', exact: true }).click();
     await expect(page.locator('.classic-entrance')).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeHidden();
@@ -301,12 +252,10 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await expect(page.getByRole('button', { name: 'Enter 3D world', exact: true })).toBeVisible();
     await expect(page.locator('.hero-copy')).toBeHidden();
     await expect(page.locator('.far-environment')).toBeHidden();
-
     await page.getByRole('button', { name: 'Enter 3D world', exact: true }).click();
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await expect(page.locator('.world-navigation')).toBeVisible();
     await expect(page.locator('.hero-controls__cameras [data-camera]')).toHaveCount(0);
-
     await page.getByRole('button', { name: 'Website', exact: true }).click();
     await expect(page.locator('.classic-entrance')).toBeVisible();
     await expect(page.locator('.hero-copy')).toBeHidden();
@@ -315,8 +264,27 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
   test('/hero/ and /spatial/ compatibility routes still resolve to their declared surfaces', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-
     await page.goto('/spatial/');
     await expect(page.locator('body')).not.toBeEmpty();
+  });
+
+  test('center-of-canvas click reaches selectSeatShell, not a no-op (#304)', async ({ page }) => {
+    await page.goto('/hero/?seats=4');
+    const canvas = page.locator('#hero-canvas');
+    await expect(canvas).toBeVisible();
+    await page.waitForFunction(() => Boolean((window as any).TeamAiHero?.selectSeatShell));
+    const before = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
+    await page.evaluate(() => {
+      const el = document.querySelector('#hero-canvas') as HTMLElement | null;
+      if (!el) throw new Error('missing #hero-canvas');
+      const r = el.getBoundingClientRect();
+      const clientX = r.left + r.width * 0.5;
+      const clientY = r.top + r.height * 0.5;
+      el.dispatchEvent(new MouseEvent('click', { clientX, clientY, bubbles: true, cancelable: true }));
+    });
+    const after = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
+    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
+    expect(after).not.toBe(before);
+    expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
   });
 });

@@ -256,3 +256,7 @@ The GitHub Pages deployment no longer publishes `frontend/spatial/` as `/spatial
 ## #298 (phone-overlay-collision fix, follow-up to #278)
 
 Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-inspection` and `.seat-stack` by separating their breakpoint positioning (left-docked vs right-docked) at `<=520px`, with `.spatial-parts` hidden at `<=360px`. Source-level CSS fix; pending CI and an actual browser check at the reported viewport before being treated as fully resolved.
+
+## 18. Canvas click hit-zone correction (2026-09-13, #304)
+
+The dead-center click band in `public/hero-flex.js` (`syncSetupRingCamera()` called after `clearRingFocus()` had already wiped its own input) is removed. Center-of-canvas clicks — where the visible seat spheres actually render — now reach `selectSeatShell(next)` like all other non-ring-band clicks. No change to camera vocabulary or tree/hierarchy logic; interaction routing only.
