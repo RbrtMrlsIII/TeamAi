@@ -133,3 +133,7 @@ Validation is scoped to the classic public entrance: unit coverage asserts the C
 ## Phone-overlay-collision fix — #298
 
 The overlapping/blurred idle-view screenshots reported on #278 were traced to `hero-parts.css`/`hero-seat-stack.css` breakpoints that scaled cards down without separating them horizontally at phone widths. Fixed via left/right docking separation at `<=520px` and hiding `.spatial-parts` at `<=360px`. This is a CSS positioning fix only and does not itself constitute C9 browser acceptance.
+
+## SEAT_CONNECTION vertical — #306
+
+Presentation-only first vertical under #278 / machine construction note: `public/hero-connection-vertical.js` (fixture payload + one fixture edge + expanded helpers) and cam-2 subject preference for Connection when amount ≥ 0.85. Census marks `fixture-edge` / `branch-subject-partial`. Does not complete connection topology, turn-loop electricity, or flex dataset wiring (deferred follow-up). No 029-released claim.
