@@ -6,7 +6,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** current `main` baseline through PR #300 (`9988e58`). Cross-track map: `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`.  
+**Revision basis:** current `main` baseline through PR #297 (`41f2445`), including chronological guide [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301). Cross-track map: `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`.  
 **No 029-released claim.**
 
 This document is a compact recovery/index surface. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete Skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
@@ -163,7 +163,9 @@ C9 remains **BLOCKED** until the required structural machine, connectivity, auth
 
 ## Current next-gate pointer
 
-Before further feature development, the repository baseline must remain internally consistent across Product Law, Masterplan, Policy/ORUCAVEAM, Vision, the Tree Census, current-state indexes, applicable contracts/Skills, and evidence. PR #283 is the current structural/governance reconciliation vehicle for that baseline and remains unmerged until its required checks are satisfied.
+Before further feature development, the repository baseline must remain internally consistent across Product Law, Masterplan, Policy/ORUCAVEAM, Vision, the Tree Census, current-state indexes, applicable contracts/Skills, and evidence.
+
+Census baseline [#283](https://github.com/RbrtMrlsIII/TeamAi/pull/283) and Seat truth baseline [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297) are merged. Recovery map: `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`. Remaining product-experience work is owned by Issue **#278** (comments evidence-only). Do not invent a second checklist.
 
 ## Completion language
 
