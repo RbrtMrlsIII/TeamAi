@@ -24,10 +24,11 @@ test('V3.1 VISION points at entrance contract', async () => {
   assert.match(vision, /ENTRANCE_IA_LAYOUT_CONTRACT/);
 });
 
-test('V3.1 index carries entrance region markers without dropping inspection reset', async () => {
+test('V3.1 index carries entrance region markers and no retired inspection spine', async () => {
   const html = await readFile(join(root, 'public/index.html'), 'utf8');
   assert.match(html, /data-entrance-region="brand"/);
   assert.match(html, /data-entrance-region="atmosphere"/);
   assert.match(html, /data-entrance-region="far"/);
-  assert.match(html, /data-inspection-reset/);
+  assert.doesNotMatch(html, /data-inspection-reset/);
+  assert.doesNotMatch(html, /hero-inspection/);
 });
