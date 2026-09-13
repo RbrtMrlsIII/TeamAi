@@ -78,10 +78,11 @@ test('inspection spine is retired; Settings smoke owns operator camera preview',
   assert.match(spine, /RETIRED/);
   assert.match(spine, /retired: do not auto-publish/);
   assert.doesNotMatch(spine, /publish\('initial'\)/);
-  const settings = require('node:fs').readFileSync(new URL('../public/hero-settings-shell.js', import.meta.url), 'utf8');
-  assert.match(settings, /data-smoke-camera/);
-  assert.match(settings, /wireSmoke/);
-  assert.match(settings, /Look at id/);
+  assert.doesNotMatch(html, /hero-inspection/);
+  assert.doesNotMatch(html, /data-inspection-(?:stage|prev|next|reset)/);
+  assert.match(settingsShell, /data-smoke-camera/);
+  assert.match(settingsShell, /wireSmoke/);
+  assert.match(settingsShell, /Look at id/);
 });
 
 test('normal UI handoff and inspection vocabulary are documented', () => {
