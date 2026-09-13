@@ -82,7 +82,7 @@ The detailed control is `skills/governance/active-index-coupling/SKILL.md`. The 
 7. Run `node scripts/governance/verify-active-index.mjs --mode=governance --base="origin/main"` locally when possible.
 8. Open/update the PR only after required reconciliation is present.
 9. Require `governance-drift = PASS` and `evidence-consistency = PASS` for merge readiness.
-10. Treat unit tests, Playwright, deployment success, and other green jobs as insufficient substitutes for governance gates.
+10. Treat unit tests, Playwright, deployment success, and other green jobs as insufficient substitutes for governance gates and avoid using sleep commands when waiting, propmt user for ongoing verification.
 
 ### Fail-closed rule
 
