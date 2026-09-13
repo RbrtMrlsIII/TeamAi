@@ -1,4 +1,4 @@
-name: TeamAi
+name: TeamAi Governance
 
 on:
   pull_request:
