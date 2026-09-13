@@ -152,6 +152,7 @@ function assertFresh(rows) {
 }
 
 const mode = process.argv.find((a) => a.startsWith('--mode='))?.slice(7) || 'all';
+const jsonOutput = process.argv.includes('--json');
 
 try {
   if (!exists(MANIFEST)) stop('execution-state.yml is missing');
@@ -160,16 +161,39 @@ try {
   assertManifest(manifest);
   const markers = markerMap();
   assertClaims(claims, markers);
+  const verdict = {
+    governance_drift: 'SKIPPED',
+    evidence_consistency: 'SKIPPED',
+    active_index_freshness: 'SKIPPED',
+    historical_integrity: 'SKIPPED',
+  };
   if (mode === 'all' || mode === 'governance') {
     const base = currentBase();
     const rows = changedRows(base);
     assertHistorical(rows);
+    verdict.historical_integrity = 'PASS';
     assertCoupling(rows, manifest);
     assertFresh(rows);
+    verdict.active_index_freshness = 'PASS';
+    verdict.governance_drift = 'PASS';
   }
-  if (mode === 'all' || mode === 'evidence') assertEvidence(claims);
-  console.log('governance validator: PASS (' + mode + ')');
+  if (mode === 'all' || mode === 'evidence') {
+    assertEvidence(claims);
+    verdict.evidence_consistency = 'PASS';
+  }
+  if (jsonOutput) {
+    console.log(JSON.stringify({ mode, ...verdict }, null, 2));
+  } else {
+    console.log('governance validator: PASS (' + mode + ')');
+  }
 } catch (error) {
+  if (jsonOutput) {
+    console.error(JSON.stringify({
+      mode,
+      verdict: 'FAIL',
+      error: error instanceof Error ? error.message : String(error),
+    }, null, 2));
+  }
   console.error('GOVERNANCE-DRIFT: ' + (error instanceof Error ? error.message : String(error)));
   process.exitCode = 1;
 }
