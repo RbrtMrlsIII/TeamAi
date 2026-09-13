@@ -59,7 +59,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Generate agent validation packet
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Generate agent validation packet from real validator output
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           COMMIT_SHA: ${{ github.sha }}
@@ -67,19 +71,31 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .validation
+          node scripts/governance/verify-active-index.mjs --mode=governance --base="$BASE_SHA" --json > .validation/governance-verdict.json
+          node scripts/governance/verify-active-index.mjs --mode=evidence --json > .validation/evidence-verdict.json
           node <<'NODE'
           const fs = require('node:fs');
+          const governance = JSON.parse(fs.readFileSync('.validation/governance-verdict.json', 'utf8'));
+          const evidence = JSON.parse(fs.readFileSync('.validation/evidence-verdict.json', 'utf8'));
+          if (governance.verdict === 'FAIL' || evidence.verdict === 'FAIL') {
+            throw new Error('governance validator reported FAIL');
+          }
           const payload = {
             commit: process.env.COMMIT_SHA,
             base_commit: process.env.BASE_SHA || null,
             event: process.env.EVENT_NAME,
-            governance_drift: 'PASS',
-            evidence_consistency: 'PASS',
-            active_index_freshness: 'PASS',
-            historical_integrity: 'PASS',
-            validated: true,
+            governance_drift: governance.governance_drift,
+            evidence_consistency: evidence.evidence_consistency,
+            active_index_freshness: governance.active_index_freshness,
+            historical_integrity: governance.historical_integrity,
+            validated:
+              governance.governance_drift === 'PASS' &&
+              evidence.evidence_consistency === 'PASS' &&
+              governance.active_index_freshness === 'PASS' &&
+              governance.historical_integrity === 'PASS',
             verdict: 'AGENT-WORK-VALID',
           };
+          if (!payload.validated) throw new Error('agent validation packet contains a non-PASS dimension');
           fs.writeFileSync('.validation/teamai-validation.json', JSON.stringify(payload, null, 2) + '\n');
           NODE
           cat .validation/teamai-validation.json
