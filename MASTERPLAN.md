@@ -695,6 +695,7 @@ Every executable child below inherits the authority of `03.9 TREE MACHINE`, `03.
 ├── 03.9.6 Camera subject/travel
 │   └── residual 2026-09-13: setCamera uses Cam-5/6 seat look-at on shell open (#278)
 │   └── residual 2026-09-13: retire live 1–15 inspection spine; Settings smoke for exact camera id (#278)
+│   └── residual 2026-09-13: direct /hero/ load now sets data-hero-layer=machine and data-experience=world together, so world chrome is usable on first paint instead of only after client-side navigation (#278/#311)
 │   ├── semantic subject identity
 │   ├── continuous tree-to-tree travel
 │   ├── expansion-follow framing
