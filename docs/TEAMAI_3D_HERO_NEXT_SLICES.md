@@ -142,3 +142,5 @@ The overlapping/blurred idle-view screenshots reported on #278 were traced to `h
 **Residual (2026-09-13):** Seat-shell open framing uses Cam-5/6 selected-seat dock on \`setCamera\` (not only on nav). Issue #278. Cam↔V chronology unchanged.
 
 **Residual (2026-09-13):** Inspection spine retired from live UI. Settings Smoke = display-only camera id / animation. Agents extend Settings smoke + Playwright; do not resurrect a stage walker.
+
+**Residual (2026-09-13, #278/#311):** Direct `/hero/` load now sets `data-hero-layer` and `data-experience` together in `experience-rebaseline.js`'s `bind()`, so world chrome is usable on first paint instead of only after a client-side entrance-to-world transition.
