@@ -58,4 +58,4 @@ The first PR test run reached the full project suite and returned **624 passing 
 
 ## Browser regression guard
 
-`tests/e2e/029-camera-input-regressions.spec.ts` adds explicit browser-level regression coverage for the two diagnosed behaviors: preserving the selected camera during contribution while allowing zoom input, and preventing an empty-canvas click from advancing Seat selection. This test is a guard for the reconciled behavior; it does not define the eventual semantic hit-testing design.
+`tests/e2e/029-camera-input-regressions.spec.ts` adds browser-level regression coverage for the two diagnosed behaviors: preserving the selected camera and Seat during contribution, and preventing an empty-canvas click from advancing Seat selection. The guard protects the reconciled behavior; it does not define the eventual semantic hit-testing design.
