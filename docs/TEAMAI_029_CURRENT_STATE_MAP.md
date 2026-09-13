@@ -264,3 +264,7 @@ The dead-center click band in `public/hero-flex.js` (`syncSetupRingCamera()` cal
 ## 21. Seat-open camera subject (2026-09-13, #278)
 
 On seat-shell open, \`setCamera\` resolves \`camTo\` through Cam-5/6 \`resolveSelectedSeatDock\` when \`openParentId\` is a \`SEAT_SHELL\`, so the first lerp aims at the **selected seat** rather than ring-center origin. Presentation only. No 029-released claim.
+
+## 22. Inspection spine retired / Settings smoke (2026-09-13, #278)
+
+Live 1–15 inspection spine removed from operator chrome. Camera authority is hierarchy + Cam-5/6. Operator smoke lives in Settings (exact camera dock id + existing motion on/off). Presentation only. No 029-released claim.

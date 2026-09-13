@@ -41,3 +41,10 @@ Playwright test result, target environment/URL, scenario name, F0–F7 surfaces 
 - `MASTERPLAN.md`
 - `docs/SKILL_WIRING.md`
 - `skills/frontend/spatial/UI_UX-Promax-Skill.md`
+
+## SETTINGS SMOKE (2026-09-13)
+Operator smoke is mounted in Settings, not as a product stage spine.
+- Camera smoke: apply an exact physical dock id (`HERO_WIDE`, `SEAT_CLOSE`, `WORKSPACE_CLOSE`, `DETAIL_ANCHOR`) via `TeamAiHero.setCamera`.
+- Animation smoke: existing Settings motion full/reduced (on/off of motion effects).
+When adding Hero camera, motion, or hierarchy UI, add or update a Settings smoke control and a Playwright assertion. Do not recreate `hero-inspection` as navigation.
+
