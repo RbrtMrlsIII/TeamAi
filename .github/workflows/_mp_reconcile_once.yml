@@ -1,0 +1,36 @@
+name: one-time Masterplan reconcile
+on:
+  pull_request_target:
+    types: [synchronize]
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    if: github.event.pull_request.head.ref == 'fix/278-retire-spine-settings-smoke' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Patch Masterplan
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('MASTERPLAN.md')
+          t=p.read_text()
+          marker='**Boundary:** the current census is not a complete implementation census. Never fabricate future tree numbers, branch IDs, geometry, backend ownership, skill catalog entries, or completion status.\n\n### 03.9.8 — TREE-HERO-SEAT configuration/lifecycle reconciliation\n'
+          insert='''**Boundary:** the current census is not a complete implementation census. Never fabricate future tree numbers, branch IDs, geometry, backend ownership, skill catalog entries, or completion status.\n\n### 03.9.1A — Census-first population and division mapping\n\nThe first executable construction step is **census-first**: determine what the mechanical machine contains before deciding how it moves. The Tree Census owns structural inventory; this Masterplan branch owns chronological execution.\n\n```text\n03.9.1A CENSUS-FIRST MACHINE MAP\n├── 03.9.1A.1 classify each candidate root: machine / tree / instance / division / mechanism / authority\n├── 03.9.1A.2 establish semantic identity: treeID / branchId / parent / repeated-instance identity\n├── 03.9.1A.3 count direct branches, recursive sub-branches, and known maximum depth\n├── 03.9.1A.4 map responsibility, product payload, accessibility payload, and durable authority\n├── 03.9.1A.5 map population states: 1 Seat, 2 Seats, 3 Seats, 4 Seats, 5 Seats, 6 Seats, 7 Seats, 8 Seats\n├── 03.9.1A.6 define unlock presentation: entitlement input → Seat instance → mechanical insertion/reveal → accessibility/reduced motion → stable state\n└── 03.9.1A.7 reconcile CSV / JSON / MD / XML census representations\n```\n\nThe machine is one mechanical Hero with active Seat instances from **one through eight**, not eight different Hero implementations. The one-Seat configuration is the smallest useful Hero: one active WebAi Seat, its applicable divisions, and the shared workspace/chat surface. A two-Seat configuration adds a second active instance without duplicating the Seat tree definition. Increasing population adds instances; it does not invent new semantic tree definitions. Capacity, configured, eligible, active, and participating Seat states remain distinct.\n\n**No-animation-before-census rule:** expansion timing, transition roots, camera roots, lighting/effects roots, and electrical choreography remain downstream until the division census is established.\n\n**First executable construction slice:** Seat 1. Do not start with a generic Seat Shell implementation. First record the complete Seat-1 map: treeID, instance identity, all direct divisions, known sub-branches, payload, state/accessibility surfaces, and the one-Seat Hero composition.\n\n**Skill routing:** `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/hierarchy-runtime/SKILL.md` + `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` + `skills/governance/masterplan-skill-wiring/SKILL.md` + `skills/verification/browser-smoke/SKILL.md` + applicable responsive/accessibility/motion skills.\n\n### 03.9.8A — Seat-1 reference machine and outer-to-inner construction order\n\nAfter Census Slice 01 is frozen, construct **one Seat instance/division at a time**. The first completed Seat becomes the reference for reusable machine contracts, not a universal geometry template.\n\n```text\n03.9.8A SEAT-1 REFERENCE CONSTRUCTION\n├── 03.9.8A.1 map Seat-1 machine shell and minimum composition\n├── 03.9.8A.2 integrate divisions one at a time\n│   ├── SEAT_SHELL\n│   ├── SEAT_CONNECTION\n│   ├── SEAT_BEHAVIOR\n│   ├── SEAT_TOOLKIT\n│   ├── SEAT_CAPABILITIES\n│   ├── SEAT_AUTHORIZATION\n│   ├── SEAT_WORKSPACE_SCOPE\n│   └── SEAT_TASK_EVIDENCE\n├── 03.9.8A.3 after each division: payload → geometry → expansion/adjacency → transition → semantic camera → accessibility/reduced motion → applicable effects → in-page Smoke → browser evidence\n├── 03.9.8A.4 freeze Seat-1 machine contract\n├── 03.9.8A.5 validate Seat-2 through Seat-8 unlock/population instances without cloning the tree definition\n└── 03.9.8A.6 descend inward only after the outer Seat ring is reconciled: R2 Setup/Config → R1 Backend Display/Connection → R0 Workspace core\n```\n\n**Division completion gate:** census identity proven → payload proven → state model proven → geometry/clearance proven → expansion/adjacency proven → camera relationship proven → accessibility/responsive/reduced-motion proven → applicable Smoke probe proven → browser evidence recorded → census synchronized. A mesh alone never closes a division.\n\nThe outer-to-inner order is deliberate. Cross-ring topology is created only after the owning nodes and corridors exist. Turn-loop electricity remains downstream of real graph edges.\n\n### 03.9.8 — TREE-HERO-SEAT configuration/lifecycle reconciliation\n'''
+          if t.count(marker)!=1: raise SystemExit(f'marker count={t.count(marker)}')
+          p.write_text(t.replace(marker,insert,1))
+          PY
+      - name: Validate and remove one-time runner
+        run: |
+          grep -n '03.9.1A — Census-first population and division mapping' MASTERPLAN.md
+          grep -n '03.9.8A — Seat-1 reference machine and outer-to-inner construction order' MASTERPLAN.md
+          rm .github/workflows/_mp_reconcile_once.yml
+          git config user.name 'TeamAi automated reconciliation'
+          git config user.email 'team.ai.official.ph@gmail.com'
+          git add MASTERPLAN.md .github/workflows/_mp_reconcile_once.yml
+          git commit -m 'docs(029): establish census-first tree-machine execution checklist'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
