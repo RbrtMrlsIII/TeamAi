@@ -12,7 +12,11 @@ async function runValidator(body) {
   const eventPath = join(dir, 'event.json');
   await writeFile(eventPath, JSON.stringify({
     action: 'created',
-    issue: { number: 278, pull_request: null },
+    issue: {
+      number: 278,
+      pull_request: null,
+      labels: [{ name: 'governance-comment-lock' }],
+    },
     comment: { user: { type: 'User' }, body },
   }));
   try {
