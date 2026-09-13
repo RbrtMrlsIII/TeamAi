@@ -105,7 +105,7 @@ The current execution reality must also remain visible:
 - the backend has separately bounded completion and explicit residual evidence boundaries;
 - a green CI result is a validation event, not a release endorsement;
 - historical checkpoints remain historical evidence even when newer current-state records supersede their active wording;
-- issues own durable problem/execution context while comments record evidence rather than creating a competing roadmap;
+- Issues own durable problem/execution context while comments record evidence rather than creating a competing roadmap;
 - PRs are implementation/review boundaries, not replacement Product Law;
 - the structured tree census is an observation/semantic baseline and must stay synchronized as the machine evolves.
 
