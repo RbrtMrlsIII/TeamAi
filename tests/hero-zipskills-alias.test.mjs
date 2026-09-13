@@ -12,7 +12,6 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
 const camera = read('public/hero-semantic-camera.js');
-const spine = read('public/hero-inspection-spine.js');
 const stack = read('public/hero-seat-stack.js');
 const next = read('docs/TEAMAI_3D_HERO_NEXT_SLICES.md');
 const map = read('docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md');
@@ -28,10 +27,10 @@ test('canonical alias maps MECHANISM_ZIPSKILLS → WORKSPACE_ZIPSKILLS', () => {
   assert.match(camera, /aliases:\s*\(\)/);
 });
 
-test('inspection spine ZIPSKILLS stage keeps legacy id and notes canonical', () => {
-  assert.match(spine, /semanticCamera:\s*'MECHANISM_ZIPSKILLS'/);
-  assert.match(spine, /canonicalSemanticCamera:\s*'WORKSPACE_ZIPSKILLS'/);
-  assert.match(spine, /optional/i);
+test('ZipSkills semantic alias is defined without retired inspection-spine ownership', () => {
+  assert.match(camera, /MECHANISM_ZIPSKILLS:\s*'DETAIL_ANCHOR'/);
+  assert.match(camera, /WORKSPACE_ZIPSKILLS:\s*'DETAIL_ANCHOR'/);
+  assert.doesNotMatch(stack, /inspection-spine/i);
 });
 
 test('seat-stack zipskills layer is optional + workspace-scoped presentation', () => {
