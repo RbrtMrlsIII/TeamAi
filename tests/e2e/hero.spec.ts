@@ -218,6 +218,19 @@ test.describe('Living Web AI Workspace Hero', () => {
     const hierarchy = await page.evaluate(() => (window as any).TeamAiHero?.getHierarchyState?.());
     expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
 
+    // #304: the canvas click handler's dead-center "Zone A" band used to be a
+    // structural no-op (syncSetupRingCamera read ring-focus state that
+    // clearRingFocus had just wiped one line above), exactly where the
+    // visible seat spheres render. Confirm a center click now advances the
+    // seat like any other click, using this already-warmed-up canvas/page
+    // state rather than a fresh navigation.
+    const seatBeforeCenterClick = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
+    const canvasBox = await page.locator('#hero-canvas').boundingBox();
+    if (!canvasBox) throw new Error('hero canvas has no bounding box');
+    await page.locator('#hero-canvas').click({ position: { x: canvasBox.width * 0.5, y: canvasBox.height * 0.48 } });
+    const seatAfterCenterClick = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
+    expect(seatAfterCenterClick).not.toBe(seatBeforeCenterClick);
+
     await page.getByRole('button', { name: 'Reduced motion: off', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Reduced motion: on', exact: true })).toBeVisible();
   });
@@ -319,27 +332,4 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await page.goto('/spatial/');
     await expect(page.locator('body')).not.toBeEmpty();
   });
-  test('center-of-canvas click reaches selectSeatShell, not a no-op (#304)', async ({ page }) => {
-    await page.goto('/hero/');
-    const canvas = page.locator('#hero-canvas');
-    await expect(canvas).toBeVisible();
-    // hero-flex.js attaches its canvas click listener as part of its own
-    // async module setup, which finishes after window.TeamAiHero is
-    // assigned. Clicking before that point hits no listener at all.
-    await page.waitForFunction(() => Boolean((window as any).TeamAiHero));
-    const box = await canvas.boundingBox();
-    if (!box) throw new Error('hero canvas has no bounding box');
-    const before = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
-    // Center of the canvas is exactly the old dead-center "Zone A" band, which
-    // is also where the visible seat spheres render in HERO_WIDE. Before #304
-    // this click hit a structural no-op (syncSetupRingCamera read ring focus
-    // state that clearRingFocus had just wiped one line above), so
-    // selectedSeat -- set synchronously on the very first line of
-    // selectSeatShell -- never changed. Asserting on it directly avoids
-    // coupling this regression test to the hierarchy-open animation timing.
-    await canvas.click({ position: { x: box.width * 0.5, y: box.height * 0.48 } });
-    const after = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
-    expect(after).not.toBe(before);
-  });
 });
-
