@@ -2,7 +2,7 @@
 
 **Status:** RECOVERY GUIDE — current `main` vs plan vs Issues  
 **Date:** 2026-09-13  
-**HEAD this guide was written against:** `9988e58` (merge of [#300](https://github.com/RbrtMrlsIII/TeamAi/pull/300))  
+**HEAD this guide was written against:** `41f2445` (merge of [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297); also includes [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301))  
 **Not Product Law. Not a second #278 or #284 ledger. No 029-release claim.**
 
 ## Purpose
@@ -100,11 +100,7 @@ These are the **only open Issues** on 2026-09-13. Everything else is closed hist
 | **[#295](https://github.com/RbrtMrlsIII/TeamAi/issues/295)** | Open discussion (not a ledger) | Questions, disagreements, half-formed checks | Binding requirements or EXECUTED records |
 | **[#296](https://github.com/RbrtMrlsIII/TeamAi/issues/296)** | Product Knowledge promotion | Distill already-settled 029/backend learnings into `PRODUCT-KNOWLEDGE.md` | New roadmap |
 
-Open PR at time of writing:
-
-| PR | Against | Meaning |
-|---|---|---|
-| **[#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297)** | `main` (base may lag HEAD) | TREE-HERO-SEAT census truth baseline — docs only |
+Open PRs at time of writing: **none** (docs PRs [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297) and [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301) are merged).
 
 **Comment rule:** on #278 and #284, comments are evidence-only (`EXECUTED` / diagnosis / observed data). Guidance belongs in the Issue body or canonical docs. Discussion belongs on #295.
 
@@ -140,7 +136,7 @@ Open PR at time of writing:
 | **C5** camera vocabulary | Small understandable set; no operator wall | Six-button `[data-camera]` wall **removed** (#281). `HERO_LOW_ORBIT` / `TURN_FOLLOW` stay retired | Do not recreate the wall. Low-feeling poses: diagnose active path (`SEAT_CLOSE` / `TEAM_ORBIT`) | #278 |
 | **C6** zoom / travel | Return to world baseline; later **continuous** pull-back | Code fallback to `HERO_WIDE` at `NAV_ZOOM_MAX` (#281). Destination correction ≠ continuous tree travel | Branch-level subject targeting **incomplete**. Continuous travel **open** | #278 |
 | **C7** proportional orbit | Natural swipe/pointer direction | Implementation present in assembled runtime | Deployed browser acceptance still required. Stale `inverse*` names must not become authority | #278 |
-| **Tree machine** | Semantic trees/branches, payload-driven geometry, expansion lifecycle | Census baseline merged [#283](https://github.com/RbrtMrlsIII/TeamAi/pull/283). `TREE-HERO-SEAT` is **PARTIAL**. `TREE-DOMAIN` and `TREE-SKILL-RESPONSIBILITY` **INCOMPLETE**. Open census PR #297 | No invented census rows for undefined trees | #278 |
+| **Tree machine** | Semantic trees/branches, payload-driven geometry, expansion lifecycle | Census baseline merged [#283](https://github.com/RbrtMrlsIII/TeamAi/pull/283); Seat truth baseline merged [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297). `TREE-HERO-SEAT` is **PARTIAL**. `TREE-DOMAIN` and `TREE-SKILL-RESPONSIBILITY` **INCOMPLETE** | No invented census rows for undefined trees | #278 |
 | **C8** auth workspace | Firebase identity + server authorization; restore Workplace/Project/Seats | Auth UI is **presentation-only**. No client Firestore SDK in the shipped browser. Login/Sign up belong to guest gateway, not Settings | **Do not grant entitlement from flags/DOM/Hero state** | #278 + #284 |
 | **C9** acceptance | Desktop + phone + owner | Playwright covers `/` classic, `/hero/` world, phone overlay split [#298](https://github.com/RbrtMrlsIII/TeamAi/pull/298) | **BLOCKING**. CI ≠ owner acceptance | #278 |
 | **C10** ProMax | Refine a correct machine | **Not started** | Gated by C9. #83 is the later visual track, not a C10 substitute | #83 after #278 |
@@ -155,7 +151,7 @@ GitHub Pages is validation-only. Firebase Hosting remains web-delivery authority
 | `/hero/` | Hero/world compatibility | `public/` copied again under `/hero/` | Same SPA; JS treats `/hero/` as world route |
 | `/spatial/` | Retired Command Deck; historical links only | **Not published** after [#299](https://github.com/RbrtMrlsIII/TeamAi/pull/299) | Source remains in `frontend/spatial/` for history; not an active destination |
 
-Local `npm start` still serves `/spatial/` from `frontend/spatial/` for Playwright Command Deck tests. That is **local/historical compatibility**, not the public product door.
+Local `npm start` **redirects** `/spatial/` → `/hero/` (same as product law). Sub-paths under `/spatial/` may still serve static fixtures (e.g. backend-validator contract). Deck composition e2e suites are **retired/skipped**; `spatial-retired.spec.ts` is the active contract. Source under `frontend/spatial/` remains history, not a product door.
 
 Command Deck: **retired as product concept and published surface**. Useful surviving behavior must be re-owned by the spatial/world machine. Do not delete history. Do not build new work *as* Command Deck.
 
@@ -181,6 +177,8 @@ Newest last. These are merged facts, not a to-do list.
 | 2026-09-13 | [#298](https://github.com/RbrtMrlsIII/TeamAi/pull/298) | Phone overlay breakpoint split (spatial-parts vs seat-stack) |
 | 2026-09-13 | [#299](https://github.com/RbrtMrlsIII/TeamAi/pull/299) | Stop publishing `/spatial/` as a live Pages surface |
 | 2026-09-13 | [#300](https://github.com/RbrtMrlsIII/TeamAi/pull/300) | `AI_ASSISTANT_READ_ME.md` bootstrap / governance preflight |
+| 2026-09-13 | [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301) | Chronological execution guide — main vs plan vs Issues recovery map |
+| 2026-09-13 | [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297) | TREE-HERO-SEAT census truth baseline (docs/csv/json/xml) |
 
 Why “the website didn’t change” for several days: work was landing under `/hero/` while Pages root still served Command Deck. That mismatch is **closed on `main`** by #279 + #299. Remaining owner-visible gaps are machine/camera/auth/C9, not the wrong front door.
 
@@ -205,6 +203,8 @@ Why “the website didn’t change” for several days: work was landing under `
 ---
 
 ## 6. Remaining honest gaps (recovery, not a sprint board)
+
+**CI note (2026-09-13):** After #299, Playwright was red on `main` because Deck composition suites still required `[data-deck-root]` on `/spatial/`. Those suites are retired/skipped in favor of `spatial-retired.spec.ts`. That unblocks required checks; it is **not** C9 owner acceptance.
 
 Work **#278** if the gap is product-experience:
 
