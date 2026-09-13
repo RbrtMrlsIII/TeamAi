@@ -101,8 +101,8 @@ test.describe('Living Web AI Workspace Hero', () => {
     const semanticCameras = await page.evaluate(() => (window as any).TeamAiHeroSeatStack.layers().map((layer: any) => layer.semanticCamera));
     expect(semanticCameras).toEqual([
       'MECHANISM_IDENTITY', 'MECHANISM_RESPONSIBILITY', 'MECHANISM_CONNECTION', 'MECHANISM_BEHAVIOR', 'MECHANISM_SKILLS',
-      'MECHANISM_ZIPSKILLS', 'WORKSPACE_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK'
-    ].filter((id) => true));
+      'MECHANISM_ZIPSKILLS', 'MECHANISM_CAPABILITY', 'MECHANISM_AUTHORIZATION', 'MECHANISM_WORKSPACE', 'MECHANISM_TASK'
+    ]);
     expect(await page.evaluate(() => {
       const z = (window as any).TeamAiHeroSeatStack.layers().find((l: any) => l.id === 'zipskills');
       return z?.canonicalSemanticCamera;
@@ -153,7 +153,7 @@ test.describe('Living Web AI Workspace Hero', () => {
       presentationOnly: true
     });
     const handoffEvent = page.evaluate(() => new Promise((resolve) => {
-      window.addEventListener('teamai:web-ai-semantic-camera', (event: any) => resolve(event.detail), { once: true });
+      window.addEventListener('teamai:web-semantic-camera', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('.seat-stack__handoff')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     }));
     expect(await handoffEvent).toMatchObject({ semanticCamera: 'APP_UI_HANDOFF', physicalCamera: null, source: 'seat-normal-ui-handoff', normalUi: true, presentationOnly: true });
