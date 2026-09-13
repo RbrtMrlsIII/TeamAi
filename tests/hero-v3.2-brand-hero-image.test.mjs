@@ -22,10 +22,11 @@ test('V3.2 index wires brand mark into entrance-brand region', async () => {
   assert.match(html, /class="hero-brand-mark"/);
   assert.match(html, /src=".\/assets\/hero-spatial\/teamai_icon_2_5d\.png"/);
   assert.match(html, /alt="TeamAi/);
-  // Still one atmosphere canvas / far region / inspection reset
+  // The current entrance still owns atmosphere/far regions, while the legacy inspection spine is retired.
   assert.match(html, /data-entrance-region="atmosphere"/);
   assert.match(html, /data-entrance-region="far"/);
-  assert.match(html, /data-inspection-reset/);
+  assert.doesNotMatch(html, /data-inspection-reset/);
+  assert.doesNotMatch(html, /hero-inspection/);
   assert.doesNotMatch(html, /<canvas[^>]+id="(?!hero-canvas)/);
 });
 

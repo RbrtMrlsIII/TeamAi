@@ -19,7 +19,7 @@ test('V3.3 index marks entrance layer and keeps single canvas + aura nodes', asy
   const canvases = html.match(/<canvas\b/gi) || [];
   assert.equal(canvases.length, 1, 'exactly one canvas — no second WebGL');
   assert.match(html, /hero-aura\.js/);
-  assert.match(html, /inspection-spine/);
+  assert.doesNotMatch(html, /hero-inspection|data-inspection-(?:stage|prev|next|reset)/);
   assert.match(html, /motion-toggle/);
 });
 

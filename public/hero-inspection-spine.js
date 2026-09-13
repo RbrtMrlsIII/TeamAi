@@ -1,3 +1,4 @@
+/** RETIRED live UI 2026-09-13 — inspection spine is not operator navigation. Cam-5/6 + hierarchy own camera. Settings smoke owns operator camera preview. */
 const STAGES = Object.freeze([
   { id: 'HERO_ORIENTATION', label: 'Hero orientation', semanticCamera: 'HERO_WIDE' },
   { id: 'SURFACE', label: 'Shared surface', semanticCamera: 'WORKSPACE_CLOSE' },
@@ -89,4 +90,4 @@ window.TeamAiHeroInspectionSpine = Object.freeze({
   }
 });
 
-publish('initial');
+/* retired: do not auto-publish cameras */
