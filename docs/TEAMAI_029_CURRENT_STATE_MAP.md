@@ -251,3 +251,8 @@ The former Command Deck is now a **retired product and deployment surface**. It 
 Historical Command Deck source, documentation, tests, and commits are preserved for traceability and reconstruction. Their existence in Git is not evidence that the surface remains part of the current product.
 
 The GitHub Pages deployment no longer publishes `frontend/spatial/` as `/spatial/`.
+
+
+## #298 (phone-overlay-collision fix, follow-up to #278)
+
+Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-inspection` and `.seat-stack` by separating their breakpoint positioning (left-docked vs right-docked) at `<=520px`, with `.spatial-parts` hidden at `<=360px`. Source-level CSS fix; pending CI and an actual browser check at the reported viewport before being treated as fully resolved.

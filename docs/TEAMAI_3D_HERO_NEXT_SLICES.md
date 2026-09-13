@@ -128,3 +128,8 @@ PR **#282** is the owner-authorized first-paint reconciliation slice under #278 
 Validation is scoped to the classic public entrance: unit coverage asserts the CSS hide contract and Playwright coverage checks desktop/phone classic first paint for the hidden legacy surfaces, one visible classic brand image, and absence of the duplicate h1. The slice does not claim `/hero/` auto-world resolution, remaining world-chrome removal, `TEAM_ORBIT` changes, continuous zoom/tree-to-tree travel, C8, C9, or C10.
 
 #282 remains a Phase C implementation slice of #278. Its governance/index synchronization is required before the PR can pass the fail-closed `governance-drift` gate. No 029-released claim.
+
+
+## Phone-overlay-collision fix — #298
+
+The overlapping/blurred idle-view screenshots reported on #278 were traced to `hero-parts.css`/`hero-seat-stack.css` breakpoints that scaled cards down without separating them horizontally at phone widths. Fixed via left/right docking separation at `<=520px` and hiding `.spatial-parts` at `<=360px`. This is a CSS positioning fix only and does not itself constitute C9 browser acceptance.
