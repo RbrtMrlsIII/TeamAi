@@ -4,10 +4,12 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('renders the signature geometry shell and captures the hero frame', async ({ page }, testInfo) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Open engine', 'Back', 'Next', 'Reset']) {
+    for (const label of ['Open engine', 'Return to entrance', 'Start turn loop']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
     await expect(page.locator('.hero-controls__cameras [data-camera]')).toHaveCount(0);
+    await expect(page.locator('.hero-inspection')).toHaveCount(0);
+    await expect(page.locator('[data-inspection-stage], [data-inspection-prev], [data-inspection-next], [data-inspection-reset]')).toHaveCount(0);
     await expect(page.locator('.world-navigation')).toBeVisible();
     await expect(page.getByRole('button', { name: 'World', exact: true })).toBeVisible();
     await expect(page.locator('.hero-copy')).toBeHidden();
@@ -55,21 +57,28 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(baseAtFullZoomOut).toBe('HERO_WIDE');
   });
 
-  test('settings smoke camera applies exact dock id', async ({ page }) => {
-    await page.goto('/');
-    // Open settings if needed
-    const settingsBtn = page.locator('[data-settings-open], #hero-settings-shell, button:has-text("Settings")').first();
-    if (await settingsBtn.count()) await settingsBtn.click();
+  test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('.world-navigation')).toBeVisible();
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    const settingsBtn = page.locator('#world-menu [data-settings-open]');
+    await expect(settingsBtn).toBeVisible();
+    await settingsBtn.click();
     await expect(page.locator('[data-smoke-camera]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-smoke-camera]')).toHaveValue('HERO_WIDE');
     await page.locator('[data-smoke-camera]').selectOption('SEAT_CLOSE');
     await page.locator('[data-smoke-camera-apply]').click();
-    await expect(page.locator('[data-smoke-camera-status]')).toContainText('SEAT_CLOSE');
+    await expect(page.locator('[data-smoke-camera-status]')).toHaveText('looking at SEAT_CLOSE');
+    await expect(page).toHaveURL(/\/hero\/?$/);
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('SEAT_CLOSE');
+    expect(await page.evaluate(() => Boolean((window as any).TeamAiHeroInspectionSpine))).toBe(false);
   });
 
   test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, Settings smoke, auth handoff, and reduced-motion controls', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
-expect(await stageEvent).toMatchObject({ stage: 'SURFACE', semanticCamera: 'WORKSPACE_CLOSE', presentationOnly: true });
+    await expect(page.locator('.hero-inspection')).toHaveCount(0);
+    await expect(page.locator('[data-inspection-stage], [data-inspection-prev], [data-inspection-next], [data-inspection-reset]')).toHaveCount(0);
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('WORKSPACE_CLOSE'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('OVERHEAD_MAP'));
