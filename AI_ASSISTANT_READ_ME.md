@@ -31,9 +31,10 @@ Before meaningful implementation, reconstruct the minimum sufficient project con
 5. `docs/SKILL_WIRING.md`
 6. `/AI_ASSISTANT_READ_ME.md`
 7. `docs/TEAMAI_CURRENT_STATE.md`
-8. the relevant phase/domain contract(s)
-9. applicable governance controls and direct skills
-10. relevant implementation roots, tests, evidence, `HandOver.md`, and `Endorsement.md`
+8. `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` — current `main` vs plan vs live Issues
+9. the relevant phase/domain contract(s)
+10. applicable governance controls and direct skills
+11. relevant implementation roots, tests, evidence, `HandOver.md`, and `Endorsement.md`
 
 Then establish current truth from GitHub itself: current branch/HEAD, latest merged baseline, relevant Issue/PR state, workflow/CI state, and deployment state when relevant.
 

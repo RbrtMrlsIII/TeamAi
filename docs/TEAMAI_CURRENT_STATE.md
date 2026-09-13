@@ -6,7 +6,7 @@
 # TeamAi — Current State Control Index
 
 **Status:** CANONICAL RECOVERY / EXECUTION INDEX  
-**Revision basis:** current `main` baseline through PR #282, plus the open governed 029 reconciliation work in PR #283.  
+**Revision basis:** current `main` baseline through PR #300 (`9988e58`). Cross-track map: `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`.  
 **No 029-released claim.**
 
 This document is a compact recovery/index surface. It does not replace Product Law, Masterplan, Policy/ORUCAVEAM, concrete Skills, implementation contracts, verification evidence, HandOver, Endorsement, or live runtime proof.
@@ -15,7 +15,7 @@ This document is a compact recovery/index surface. It does not replace Product L
 
 `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/** → implementation → verification → evidence → HandOver / Endorsement`
 
-For the 3D Hero experience, `docs/VISION.md` remains the conceptual experience home. The 3D Hero Tree Census is the structured structural-truth inventory. Issue #278 is the active 029 execution ledger.
+For the 3D Hero experience, `docs/VISION.md` remains the conceptual experience home. The 3D Hero Tree Census is the structured structural-truth inventory. Issue #278 is the active 029 execution ledger. Issue #284 is the active backend ledger. `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` maps current `main` against the plan and those Issues.
 
 ## Current execution posture
 
@@ -43,11 +43,11 @@ The public product shape is:
 
 ```text
 /          → classic website entrance
-/hero/     → compatibility route using the public Hero source
-/spatial/  → Command Deck / workspace-transition surface
+/hero/     → compatibility route using the public Hero source (world route)
+/spatial/  → retired Command Deck; historical compatibility only, not an active destination
 ```
 
-The public root is the acceptance starting point. The current 3D Hero is presentation-only for the scope proven so far. The Command Deck remains fixture-backed where live-domain integration is not separately authorized and runtime-proven.
+The public root is the acceptance starting point. The current 3D Hero is presentation-only for the scope proven so far. Command Deck is retired as a product surface and is no longer published on GitHub Pages (`frontend/spatial/` remains repository history). Authenticated Workspace Center inside the 3D world/machine is the intended post-login destination, and is not implemented as live backend-backed UI.
 
 ## Current 3D Hero structural truth
 

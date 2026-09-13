@@ -375,6 +375,8 @@ Every completed gate must surrender a target-project handover packet/ZIP in the 
 
 `PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → applicable domain/spatial skills → implementation → verification → evidence → HandOver → Endorsement → PRODUCT-KNOWLEDGE.md → repeat`
 
+Cross-track recovery of **current `main` vs this plan vs live Issues** is `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`. It does not replace this Masterplan or Issues #278 / #284.
+
 ## Product experience vision (intent pointer)
 
 Canonical human-facing experience intent remains in `docs/VISION.md` for historical and detailed semantic context. The owner-endorsed C0–C10 rebaseline above is the current product-shape execution baseline. `VISION.md` does not create a new authority layer, does not claim 029 release, and does not authorize browser-side durable domain writes.
