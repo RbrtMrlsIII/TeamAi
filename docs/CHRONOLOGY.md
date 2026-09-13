@@ -2,7 +2,7 @@
 
 **Purpose:** one timeline of *what we decided and in what order*, so new sessions do not invent a parallel history.  
 **Not** Product Law. Link out for detail.  
-**Date:** 2026-09-08
+**Date:** 2026-09-13 (decision order; current main-vs-plan-vs-Issues map is [`TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`](./TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md))
 
 Full term definitions: [DICTIONARY.md](./DICTIONARY.md)
 
@@ -102,24 +102,29 @@ The owner-visible acceptance gap is historical evidence from the recent Vision e
 | D1 | Agent slice needs green CI + assumptions + reasons + next slice | `docs/AGENT_SLICE_EXECUTION.md` |
 | D2 | User manual for deploy + seats | `docs/USER_MANUAL_DEPLOYMENT.md` |
 | D3 | Dictionary for complex tabs / Hero parts | `docs/DICTIONARY.md` |
-| D4 | This chronology | `docs/CHRONOLOGY.md` |
+| D4 | This chronology (decision order) | `docs/CHRONOLOGY.md` |
 | D5 | Product experience rebaseline | `docs/TEAMAI_029_EXPERIENCE_REBASELINE.md` |
+| D6 | Current main vs plan vs Issues | `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` |
 
 ---
 
 ## 6. Current execution priority
 
-1. **Required:** obtain/record C0 product-shape endorsement before shape-changing implementation.
-2. **Then:** reconcile active maps and indexes under Issue #260 before implementing C2–C8.
-3. **Then:** execute one observable experience outcome at a time, with desktop + phone evidence where visual behavior changes.
-4. **Only after C9 acceptance:** begin C10 ProMax refinement.
+Do not re-open C0 as if it were unendorsed. Current `main` already has C0–C5 foundations, repository-owned Hero runtime, and classic Pages root. Remaining work is owned by live Issues, not by this historical chronology.
 
-Conn-3 browser/live proof and future security inquiries remain independent tracks. Vercel remains cut off. ToolKit/Echo learning candidates come only from validated, generalized lessons.
+1. Reconstruct current HEAD against [`TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`](./TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md).
+2. 029 remaining machine/camera/auth/C9 work: Issue **#278** (comments are evidence-only).
+3. Backend remaining gaps (provider stub, Gate 4, verification): Issue **#284**.
+4. Conn-3 browser continuation: Issue **#204**.
+5. **Only after C9 acceptance:** C10 ProMax. Issue **#83** is the later visual track, not a shortcut around #278.
+
+Conn-3 live/browser proof and future security inquiries remain independent tracks. Vercel remains cut off. Command Deck is retired as an active product surface. ToolKit/Echo learning candidates come only from validated, generalized lessons.
 
 ---
 
 ## Quick links
 
+- [Chronological execution guide (main vs plan vs Issues)](./TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md)
 - [Dictionary](./DICTIONARY.md)
 - [Deploy manual](./USER_MANUAL_DEPLOYMENT.md)
 - [Hero baseline](./CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md)
