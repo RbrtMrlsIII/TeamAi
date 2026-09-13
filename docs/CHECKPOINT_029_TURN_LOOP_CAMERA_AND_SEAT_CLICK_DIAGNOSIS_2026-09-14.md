@@ -51,3 +51,7 @@ The recommended first vertical remains the existing `TREE-HERO-SEAT → SEAT_CON
 `payload → division → OPENING/OPEN/CLOSING → clearance → semantic camera subject → one connection port/edge → minimal electricity → tests/browser/census`
 
 See `docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md` §4 and §3. The diagnostic record is not a second Masterplan.
+
+## Validation correction
+
+The first PR test run reached the full project suite and returned **624 passing / 1 failing** because the initial new camera-neutral assertion was too formatting-specific. The assertion was corrected to verify the actual invariant after deterministic runtime reconciliation. The subsequent TeamAi project suite and Governance run passed, including the Full Project ZIP verification.
