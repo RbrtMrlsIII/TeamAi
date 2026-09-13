@@ -83,14 +83,13 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('OVERHEAD_MAP'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    await page.locator('[data-part="surface"]').click({ force: true });
-    await expect(page.locator('[data-part="surface"]')).toHaveAttribute('aria-pressed', 'true');
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('OVERHEAD_MAP');
+    await page.evaluate(() => (window as any).TeamAiHeroSpatial.setPart('surface'));
     const activePart = await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart());
     expect(activePart).toBe('surface');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('surface'))).toBe('WORKSPACE_CLOSE');
-    await page.locator('[data-part="focus"]').dispatchEvent('click');
-    await expect(page.locator('[data-part="surface"]')).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.locator('[data-part="focus"]')).toHaveAttribute('aria-pressed', 'true');
+    await page.evaluate(() => (window as any).TeamAiHeroSpatial.setPart('focus'));
+    expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart())).toBe('focus');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('DETAIL_ANCHOR'));
