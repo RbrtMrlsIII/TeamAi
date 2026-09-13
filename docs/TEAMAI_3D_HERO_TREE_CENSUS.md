@@ -188,7 +188,120 @@ active turn source
 
 The effect must remain valid when trees differ in geometry, depth, branch count, and expansion footprint.
 
-## 11. Current completion truth
+## 11. TREE-HERO-SEAT truth baseline
+
+`TREE-HERO-SEAT` is the existing Seat presentation hierarchy. This section reconciles the already-defined Seat shell with the existing Seat lifecycle, Responsibility Unit, Universal/TeamAi Skill, and product orchestration contracts. **It does not create a second Seat hierarchy.**
+
+### 11.1 Existing structural branches
+
+```text
+SEAT_SHELL
+├── SEAT_CONNECTION
+├── SEAT_BEHAVIOR
+├── SEAT_TOOLKIT
+├── SEAT_CAPABILITIES
+├── SEAT_AUTHORIZATION
+├── SEAT_WORKSPACE_SCOPE
+└── SEAT_TASK_EVIDENCE
+```
+
+These branch IDs remain the structural presentation vocabulary. Deeper configuration facets may be represented as payload or recursive descendants only when they acquire a governed semantic identity. Do not invent new sibling branches merely because a configuration field exists.
+
+### 11.2 Seat configuration facets map onto the existing branches
+
+The canonical Seat is more than a model label. Existing project contracts distinguish application, provider, service/runtime, model/variant, connection, Seat, skills, tools/MCP, workstation, scope, entitlement, and authorization. The census records those as **configuration facets** of the existing Seat structure rather than a parallel tree.
+
+| Existing Seat branch | Existing configuration/lifecycle meaning |
+|---|---|
+| `SEAT_SHELL` | Seat identity/overview; provider/runtime/model identity facets; lifecycle presentation |
+| `SEAT_CONNECTION` | external provider/application relationship, OAuth/provider handoff, bind, connection test, health |
+| `SEAT_BEHAVIOR` | Seat-local behavior/defaults and constraints only; it does **not** own global team turn policy |
+| `SEAT_TOOLKIT` | resolved TeamAi/common skill and procedure equipment for this Seat; optional presentation |
+| `SEAT_CAPABILITIES` | available mechanisms, tools/plugins/MCP/model/runtime capability inventory |
+| `SEAT_AUTHORIZATION` | reason-bearing permission/approval/authorization state; presentation only, never a grant authority |
+| `SEAT_WORKSPACE_SCOPE` | workplace/project/repository/path/workstation scope |
+| `SEAT_TASK_EVIDENCE` | task/result/event/evidence continuity |
+
+The existing Seat lifecycle remains the canonical lifecycle vocabulary:
+
+`Discover → External Setup → Import/Authorize → Capability Test → Bind → Equip → Activate → Run → Observe → Degrade/Suspend → Recover/Revalidate → Rebind/Retire`
+
+A Seat may reference an external Connection, but Connection and Seat remain distinct concepts.
+
+### 11.3 TEAMAI COMMON SKILL / Universal ToolKit boundary
+
+`TEAMAI COMMON SKILL` is the project's given/common skill equipment available for Seat use. It is not a separate Seat hierarchy and is not duplicated into eight independent skill libraries.
+
+The existing Responsibility Unit model remains the allocation mechanism:
+
+```text
+TEAMAI COMMON SKILLS / Universal ToolKit
+→ Responsibility Unit catalog
+→ Seat responsibility allocation
+→ smallest sufficient applicable skill bundle
+→ capability/tool resolution
+→ authorization/policy
+→ usable Seat
+```
+
+Agent count changes **allocation**, not the underlying common skill definitions.
+
+With two unlocked Seats, a Seat may carry several Responsibility Units and therefore a broader resolved skill bundle. With up to eight unlocked Seats, the same Responsibility Unit/skill definitions are partitioned more finely across the participating Seats. This is a resource-allocation and resolution problem, not eight copies of the skill library.
+
+User-provided or user-edited skill material, when implemented, must remain distinguishable from TeamAi common skills. Editing a user-owned skill must not silently mutate the canonical TeamAi common skill authority. Skills instruct; policy, authorization, entitlement, and project contracts govern.
+
+Current truth: the common-skill/Responsibility architecture is defined, but the complete user-facing skill configuration/editor flow is **NOT IMPLEMENTATION-COMPLETE**. Do not fabricate a complete common-skill catalog or claim that all intended skills are already implemented.
+
+### 11.4 Global Turn Configuration is not a Seat branch
+
+Turn-loop policy belongs to the **overall team/orchestration configuration**, not to individual `TREE-HERO-SEAT` branches.
+
+```text
+TEAM / ORCHESTRATION CONFIGURATION
+├── participating Seats
+├── actions/turns per participating Seat
+├── turn order / scheduling policy
+├── round or stopping conditions
+├── summarizer selection
+├── resource/time limits
+└── turn-loop mode
+        ↓
+Scheduler
+        ↓
+individual Seat execution
+```
+
+`SEAT_BEHAVIOR` may expose Seat-local defaults or constraints that participate in this policy, but it must not become the owner of global turn behavior. The existing `TREE-ORCHESTRATION` / scheduler contract remains the proper semantic home for the team-wide turn configuration.
+
+This distinction is required for the product question: **how many actions each participating Seat may perform before the configured loop ends**. It must be evaluated once at the overall team configuration level and then enforced by the scheduler against each participating Seat.
+
+### 11.5 Cross-tree controls are not Seat branches
+
+The following already-defined product surfaces must remain outside `TREE-HERO-SEAT`:
+
+- `(?)` / **Complex Dictionary / User Guide**: public Entrance guidance and vocabulary surface;
+- **Return BTN**: authenticated-world navigation back to the public Entrance, not a Seat child;
+- **Logout**: authentication lifecycle operation, not Seat removal;
+- **Remove/Retire Seat/Agent**: Seat lifecycle operation that retires the configured Seat/provider binding and clears governed Seat data as specified by the durable contract; it does not imply deletion of the user's root account;
+- **Settings**: cross-cutting authenticated configuration/navigation taxonomy, not a second semantic machine hierarchy.
+
+### 11.6 Eight-seat population rule
+
+The default world presentation supports eight Seat slots, but a rendered slot is not automatically a durable configured Seat. Actual durable Seat population is restored from authorized user/project state and mapped to available world slots.
+
+All eight Seats consume the same canonical Seat configuration vocabulary and common-skill substrate. Their provider, model, connection, skill allocation, capability set, authorization, workspace scope, and readiness may differ.
+
+### 11.7 Truth/status rule for Seat census rows
+
+The census must distinguish structural existence from implementation completeness. Existing Seat faces are presentation evidence, not proof of live authenticated configuration.
+
+Use truthful states such as:
+
+`IMPLEMENTED_PARTIAL`, `STUB`, `SEMANTIC_ONLY`, `DEFINED_NOT_IMPLEMENTED`, `PENDING`, `NOT_PROVEN`.
+
+Do not upgrade a Seat branch to complete because its mesh, face, fixture, or local animation exists.
+
+## 12. Current completion truth
 
 | Tree | Current status |
 |---|---|
@@ -201,10 +314,12 @@ The effect must remain valid when trees differ in geometry, depth, branch count,
 | Full semantic connection topology | NOT COMPLETE |
 | Final turn-loop electrical choreography | NOT COMPLETE |
 | Final machine-opening choreography | NOT COMPLETE |
+| Complete Seat configuration/editor lifecycle | NOT COMPLETE |
+| Complete global turn-configuration UI/runtime | NOT COMPLETE |
 
-The Seat tree is evidence of an existing mechanism. It is not evidence that all TeamAi trees, branches, divisions, wiring, and expansions are complete.
+The Seat tree is evidence of an existing mechanism. It is not evidence that all TeamAi trees, branches, divisions, wiring, expansions, Seat configuration, common-skill resolution, or global turn configuration are complete.
 
-## 12. Primary source anchors
+## 13. Primary source anchors
 
 - `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`
 - `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md`
@@ -212,14 +327,32 @@ The Seat tree is evidence of an existing mechanism. It is not evidence that all 
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
 - `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`
 - `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md`
+- `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md`
 - `docs/VISION.md`
 - `docs/TEAMAI_CURRENT_STATE.md`
 - `MASTERPLAN.md`
+- `Issue #278 — 029 Canonical Product-Experience Baseline & Governed Execution Ledger`
 
 This census is a design/recovery baseline. It does not itself authorize implementation or claim acceptance.
 
-## 13. Census ownership rule
+## 14. Census ownership rule
 
 The census is maintained alongside implementation, not after the fact. When code introduces or materially changes a tree/branch/division, the corresponding census entry is part of that same PR's definition of current truth.
 
 The census is intentionally **not** the place where final product-roadmap sequence is invented. It records structural truth and known context; `MASTERPLAN.md` and Issue #278 determine execution order.
+
+Chronological execution remains:
+
+```text
+Product Law
+→ Masterplan / C0–C10 execution baseline
+→ applicable contracts + Skills
+→ implementation
+→ validation
+→ evidence
+→ merge
+→ new current truth
+→ census reconciliation
+```
+
+The Seat truth reconciliation in this baseline therefore changes **known structural context**, not the chronological execution authority. Any future implementation slice must update the affected census row(s) in the same governed change and must not create a second checklist or parallel Seat hierarchy.
