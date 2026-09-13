@@ -1,51 +1,13 @@
 # TEAM-BACKEND-001 — Backend Foundation Execution
 
-## Purpose
-Implement the durable backend foundation required before TEAM-EXPERIENCE-029 can become executable against real backend contracts.
+**Status:** HISTORICAL EXECUTION EVIDENCE — NOT CURRENT PROJECT CHRONOLOGY  
+**Canonical execution authority:** `MASTERPLAN.md` only (TEAM-BACKEND-001 section)  
+**Issue ledger (backend track):** #284  
+**No 029-release claim.**
 
-## Chronological gates
-1. Architecture and service-authority reconciliation.
-2. Firebase Auth UID identity boundary.
-3. Firestore `default` durable domain/application state.
-4. Account → Workplace → Project → Team/Solo → Web AI Seat relationships.
-5. Effective Web AI skill resolution.
-6. Durable task/event/job lifecycle and evidence state.
-7. Trusted Supabase Edge runtime adapter.
-8. Server-owned PayPal ↔ TeamAi ↔ Firebase UID correlation.
-9. Verified PayPal webhook + idempotency + replay protection + durable commerce events/entitlements.
-10. Provider/runtime invocation.
-11. Security, integration, failure, timeout, cancellation and recovery verification.
-12. Traceability reconciliation, endorsement and completion record.
-13. Release TEAM-EXPERIENCE-029 hold only after all blocking evidence exists.
+This document preserves the TEAM-BACKEND-001 chronological gate list as historical evidence of how the bounded backend foundation was planned and recorded. TEAM-BACKEND-001 is already **ENDORSED (bounded)** on the Masterplan surface.
 
-## Current progress
-### Completed source contracts
-- Service authority assertions.
-- Firebase UID-rooted Firestore path construction.
-- Deterministic effective-skill resolution.
-- Durable task transitions and event identity requirements.
-- Firebase project configuration source wiring.
-- UID-scoped Firestore security baseline with server-owned task/event writes.
+**Do not use this file as a second backend execution checklist or live queue.**  
+Remaining backend residuals (if any) are governed by `MASTERPLAN.md` and Issue #284, not by re-opening this document as a competing plan.
 
-### Current source implementation slice
-A `supabase/functions/teamai-domain-bootstrap` Edge Function now implements the source-level trusted persistence path for `Firebase UID → Account → Workplace → Project → Team/Solo → Web AI Seat`.
-
-The function verifies a Firebase Authentication ID token, derives the UID from the verified token, obtains a Google datastore OAuth token from a Supabase-held Firebase service-account credential, and uses Firestore REST create-if-absent writes. It never accepts a request-body UID as ownership proof.
-
-This is source implementation evidence only. The function is not marked deployed or live-verified yet.
-
-### Open
-- Live Firebase emulator/rules verification.
-- Firebase service-account secret configuration for the Edge runtime.
-- Deployment and live exercise of `teamai-domain-bootstrap` with a real Firebase ID token.
-- Firestore hierarchy and repeat-call idempotency verification.
-- Server-owned PayPal correlation/webhook mutation and entitlement projection.
-- Provider invocation.
-- E2E security/failure/recovery evidence.
-- Final traceability/endorsement.
-
-## Implementation rule
-Every completed gate must update the relevant Product Law, AI Assistant Read Me, Masterplan, domain contract, verification/evidence record, and checkpoint/endorsement surface before the gate can be marked complete.
-
-## Evidence honesty
-No source-only configuration is considered deployment evidence. No successful HTTP response is considered durable business-state evidence. No green unit test is considered end-to-end proof.
+---
