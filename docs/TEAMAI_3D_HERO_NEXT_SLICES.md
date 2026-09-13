@@ -137,3 +137,6 @@ The overlapping/blurred idle-view screenshots reported on #278 were traced to `h
 ## Next slice candidate: real spatial hit-testing for seat clicks (#304 follow-up)
 
 `#304` fixed the dead-center no-op zone, but the underlying click router still has no true hit-testing — every click outside the two ring-focus side bands cycles to `selectSeatShell((selectedSeat+1)%seatCount)` regardless of which seat/sphere is actually under the cursor. A follow-up slice should raycast against actual seat sphere positions so a tap opens the seat it visually landed on, not just "the next one in sequence."
+
+<!-- residual 2026-09-13 seat-open camera -->
+**Residual (2026-09-13):** Seat-shell open framing uses Cam-5/6 selected-seat dock on \`setCamera\` (not only on nav). Issue #278. Cam↔V chronology unchanged.

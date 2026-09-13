@@ -260,3 +260,7 @@ Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-
 ## 18. Canvas click hit-zone correction (2026-09-13, #304)
 
 The dead-center click band in `public/hero-flex.js` (`syncSetupRingCamera()` called after `clearRingFocus()` had already wiped its own input) is removed. Center-of-canvas clicks — where the visible seat spheres actually render — now reach `selectSeatShell(next)` like all other non-ring-band clicks. No change to camera vocabulary or tree/hierarchy logic; interaction routing only.
+
+## 21. Seat-open camera subject (2026-09-13, #278)
+
+On seat-shell open, \`setCamera\` resolves \`camTo\` through Cam-5/6 \`resolveSelectedSeatDock\` when \`openParentId\` is a \`SEAT_SHELL\`, so the first lerp aims at the **selected seat** rather than ring-center origin. Presentation only. No 029-released claim.

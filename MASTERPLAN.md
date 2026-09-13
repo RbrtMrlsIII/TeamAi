@@ -693,6 +693,7 @@ Every executable child below inherits the authority of `03.9 TREE MACHINE`, `03.
 │   └── OPEN/CLOSED transition verification
 │
 ├── 03.9.6 Camera subject/travel
+│   └── residual 2026-09-13: setCamera uses Cam-5/6 seat look-at on shell open (#278)
 │   ├── semantic subject identity
 │   ├── continuous tree-to-tree travel
 │   ├── expansion-follow framing
