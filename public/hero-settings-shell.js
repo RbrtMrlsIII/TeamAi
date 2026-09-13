@@ -40,6 +40,22 @@ export function buildSettingsShellButton() {
   return btn;
 }
 
+
+function wireSmoke(root = document) {
+  const panel = root.getElementById?.('hero-settings-panel') || root.querySelector?.('#hero-settings-panel');
+  if (!panel || panel.dataset.smokeWired === '1') return;
+  panel.dataset.smokeWired = '1';
+  const apply = panel.querySelector('[data-smoke-camera-apply]');
+  const select = panel.querySelector('[data-smoke-camera]');
+  const status = panel.querySelector('[data-smoke-camera-status]');
+  apply?.addEventListener('click', () => {
+    const id = select?.value || 'HERO_WIDE';
+    const hero = window.TeamAiHero;
+    if (hero && typeof hero.setCamera === 'function') hero.setCamera(id);
+    if (status) status.textContent = 'looking at ' + id;
+  });
+}
+
 export function buildSettingsShellPanel() {
   const panel = document.createElement('div');
   panel.id = 'hero-settings-panel';
@@ -72,7 +88,23 @@ export function buildSettingsShellPanel() {
       </label>
       <span class="hero-settings-panel__lang-note">Scaffold — copy catalog pending</span>
     </div>
+    <div class="hero-settings-panel__row hero-settings-panel__smoke" data-smoke-panel>
+      <p class="hero-settings-panel__kicker">Smoke (presentation)</p>
+      <p class="hero-settings-panel__note">Display-only. Does not walk product stages. Camera uses exact dock id. Animation uses motion on/off.</p>
+      <label for="hero-smoke-camera">Camera
+        <select id="hero-smoke-camera" data-smoke-camera>
+          <option value="HERO_WIDE">HERO_WIDE</option>
+          <option value="SEAT_CLOSE">SEAT_CLOSE</option>
+          <option value="WORKSPACE_CLOSE">WORKSPACE_CLOSE</option>
+          <option value="DETAIL_ANCHOR">DETAIL_ANCHOR</option>
+        </select>
+      </label>
+      <button type="button" data-smoke-camera-apply>Look at id</button>
+      <span data-smoke-camera-status aria-live="polite"></span>
+    </div>
+
   `;
+  queueMicrotask(() => wireSmoke(document));
   return panel;
 }
 

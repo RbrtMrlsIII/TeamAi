@@ -4,10 +4,12 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('renders the signature geometry shell and captures the hero frame', async ({ page }, testInfo) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    for (const label of ['Open engine', 'Back', 'Next', 'Reset']) {
+    for (const label of ['Open engine', 'Return to entrance', 'Start turn loop']) {
       await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
     }
     await expect(page.locator('.hero-controls__cameras [data-camera]')).toHaveCount(0);
+    await expect(page.locator('.hero-inspection')).toHaveCount(0);
+    await expect(page.locator('[data-inspection-stage], [data-inspection-prev], [data-inspection-next], [data-inspection-reset]')).toHaveCount(0);
     await expect(page.locator('.world-navigation')).toBeVisible();
     await expect(page.getByRole('button', { name: 'World', exact: true })).toBeVisible();
     await expect(page.locator('.hero-copy')).toBeHidden();
@@ -55,34 +57,40 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(baseAtFullZoomOut).toBe('HERO_WIDE');
   });
 
-  test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, inspection spine, auth handoff, and reduced-motion controls', async ({ page }) => {
+  test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('.world-navigation')).toBeVisible();
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    const settingsBtn = page.locator('#world-menu [data-settings-open]');
+    await expect(settingsBtn).toBeVisible();
+    await settingsBtn.click();
+    await expect(page.locator('[data-smoke-camera]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-smoke-camera]')).toHaveValue('HERO_WIDE');
+    await page.locator('[data-smoke-camera]').selectOption('SEAT_CLOSE');
+    await page.locator('[data-smoke-camera-apply]').click();
+    await expect(page.locator('[data-smoke-camera-status]')).toHaveText('looking at SEAT_CLOSE');
+    await expect(page).toHaveURL(/\/hero\/?$/);
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('SEAT_CLOSE');
+    expect(await page.evaluate(() => Boolean((window as any).TeamAiHeroInspectionSpine))).toBe(false);
+  });
+
+  test('exercises semantic POV, turn-loop, seat-focus, spatial parts, seat stack, semantic camera registry, Settings smoke, auth handoff, and reduced-motion controls', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
-    const stageEvent = page.evaluate(() => new Promise((resolve) => {
-      window.addEventListener('teamai:web-ai-hero-inspection-stage', (event: any) => resolve(event.detail), { once: true });
-      document.querySelector('[data-inspection-next]')?.click();
-    }));
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/15)');
-    expect(await stageEvent).toMatchObject({ stage: 'SURFACE', semanticCamera: 'WORKSPACE_CLOSE', presentationOnly: true });
-    await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.next());
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Active Seat (3/15)');
-    await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.previous());
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Shared surface (2/15)');
-    await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.reset());
-    await expect(page.locator('[data-inspection-stage]')).toHaveText('Hero orientation (1/15)');
+    await expect(page.locator('.hero-inspection')).toHaveCount(0);
+    await expect(page.locator('[data-inspection-stage], [data-inspection-prev], [data-inspection-next], [data-inspection-reset]')).toHaveCount(0);
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('WORKSPACE_CLOSE'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('OVERHEAD_MAP'));
     await expect(page.locator('#hero-canvas')).toBeVisible();
-    await page.getByRole('button', { name: 'Surface shared state', exact: true }).click({ force: true });
-    await expect(page.getByRole('button', { name: 'Surface shared state', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('[data-part="surface"]').click({ force: true });
+    await expect(page.locator('[data-part="surface"]')).toHaveAttribute('aria-pressed', 'true');
     const activePart = await page.evaluate(() => (window as any).TeamAiHeroSpatial.getActivePart());
     expect(activePart).toBe('surface');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('surface'))).toBe('WORKSPACE_CLOSE');
     await page.locator('[data-part="focus"]').dispatchEvent('click');
-    await expect(page.getByRole('button', { name: 'Surface shared state', exact: true })).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.getByRole('button', { name: 'Focus active Seat', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-part="surface"]')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('[data-part="focus"]')).toHaveAttribute('aria-pressed', 'true');
     expect(await page.evaluate(() => (window as any).TeamAiHeroSpatial.getCameraForPart('focus'))).toBe('SEAT_CLOSE');
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('SEAT_CLOSE'));
     await page.evaluate(() => (window as any).TeamAiHero.setCamera('DETAIL_ANCHOR'));
@@ -160,7 +168,6 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(loginForm.getByLabel('Email')).toBeVisible();
     expect(await authEvent).toMatchObject({ semanticCamera: 'MECHANISM_AUTHENTICATION', presentationOnly: true });
     expect(await page.evaluate(() => (window as any).TeamAiHeroAuthHandoff.getState())).toMatchObject({ open: true, mode: 'login' });
-    expect(await page.evaluate(() => (window as any).TeamAiHeroInspectionSpine.current().id)).toBe('HERO_ORIENTATION');
     await page.getByRole('tab', { name: 'Sign up', exact: true }).click();
     const signupForm = page.locator('form[data-auth-form="signup"]');
     await expect(signupForm.getByLabel('Name')).toBeVisible();

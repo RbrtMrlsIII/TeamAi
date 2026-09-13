@@ -64,6 +64,8 @@
         </div>
       </nav>
 
+      <div class="hero-settings-mount" data-settings-shell aria-live="polite"></div>
+
       <canvas id="hero-canvas" data-entrance-region="atmosphere" aria-label="Interactive 3D Web AI workspace"></canvas>
       <div class="hero-aura hero-aura-a" aria-hidden="true"></div>
       <div class="hero-aura hero-aura-b" aria-hidden="true"></div>
@@ -97,15 +99,6 @@
         </button>
       </section>
 
-      <section class="hero-inspection" aria-label="Inspection spine">
-        <div class="inspection-spine" aria-label="Inspection spine controls">
-          <span data-inspection-stage role="status">Hero orientation (1/15)</span>
-          <button type="button" data-inspection-prev>Back</button>
-          <button type="button" data-inspection-next class="primary">Next</button>
-          <button type="button" data-inspection-reset class="quiet">Reset</button>
-        </div>
-        <span class="hero-inspection__hint">Hero → surface → focus / Seat → identity → responsibility → connection health → behavior → skills / ZipSkills → capabilities → authorization / scope → workspace → task / evidence → normal UI</span>
-      </section>
 
       <section class="seat-stack" aria-label="Web AI Seat configuration stack">
         <!-- modules injected by seat-stack runtime -->
@@ -175,7 +168,6 @@
     <script type="module" src="./hero-seat-stack.js"></script>
     <script type="module" src="./hero-seat-stack-action-bridge.js"></script>
     <script type="module" src="./hero-semantic-camera.js"></script>
-    <script type="module" src="./hero-inspection-spine.js"></script>
     <script type="module" src="./hero-layer-handoff.js"></script>
     <script type="module" src="./hero-auth-handoff.js"></script>
   </body>

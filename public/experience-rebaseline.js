@@ -85,8 +85,15 @@ function bind() {
   const el = shell();
   if (!el) return;
 
-  // /hero/ is the explicit 3D-world destination; / is the classic public entrance.
-  el.dataset.experience = isWorldRoute() ? 'world' : 'classic';
+  // /hero/ is the direct world surface. Establish both route and presentation
+  // layer together so the world controls are usable on direct load.
+  if (isWorldRoute()) {
+    el.dataset.heroLayer = 'machine';
+    el.dataset.experience = 'world';
+  } else {
+    el.dataset.heroLayer = 'entrance';
+    el.dataset.experience = 'classic';
+  }
 
   document.querySelectorAll('[data-world-entry]').forEach((button) => {
     button.addEventListener('click', () => enterWorld(button.dataset.worldEntry || 'classic-enter'));
