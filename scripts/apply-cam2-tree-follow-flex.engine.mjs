@@ -147,7 +147,7 @@ function applyPatches(t) {
       changed = true;
     }
   }
-  if (!t.includes('seatDock') && t.includes('function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;')) {
+  if (!t.includes("const seatOpen=typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId") && t.includes('function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;')) {
     t = t.replace(
       "function setCamera(id){const next=cameras()[id]||cameras().HERO_WIDE;cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
       "function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatOpen=typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&String(hierarchyRuntime.openParentId).includes('SEAT_SHELL');const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),seatOpen?{force:true}:{}):null;if(seatDock)next=seatDock;cameraId=id;if(typeof lastNavBaseCameraId!=='undefined'){lastNavBaseCameraId=id;}camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}",
