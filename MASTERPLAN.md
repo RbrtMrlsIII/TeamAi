@@ -257,7 +257,7 @@ This section is the current chronological product-experience execution baseline.
 
 ### Historical Vision baseline retained
 
-**Vision V3.5 complete** remains preserved here as a historical/verification marker for the earlier Vision ladder. It does not mean the former one-shell entrance remains the current final product-shape target. The owner-endorsed C0–C10 rebaseline is now the active experience baseline.
+**Vision V3.5 complete** remains preserved here as a historical/verification marker for the earlier Vision ladder. It does not mean the former one-shell entrance remains the current final product-shape target. The owner-endorsed C0–C10 rebaseline is now the active product-shape execution baseline.
 
 ### C0 — Product-shape endorsement
 
@@ -630,3 +630,210 @@ Issue comments remain evidence-only; chronological planning belongs here. CI, de
 A fresh or resumed agent must first recover the current Masterplan branch before selecting work. If the desired work is not present, the agent should place the new slice under the correct existing program/gate after authority and impact review rather than creating another project chronology.
 
 The Masterplan is a living chronological tree. New work is a **branch on that tree**, not another tree.
+
+## Active nested execution tree — 2026-09-13
+
+This is the **current executable chronology inside the existing C0–C10 program**. It is not a second roadmap and it does not replace Issue #278 or the Tree Census. Each child is intentionally nested under the nearest existing gate so future agents expand this tree rather than create another checklist document.
+
+### 03.0 — Canonical product-shape sequence
+
+```text
+03.0 TEAM-EXPERIENCE-029
+├── 03.1 C0 Product-shape endorsement                         [ENDORSED]
+├── 03.2 C1 Canonical reconciliation                          [IMPLEMENTED / ongoing]
+├── 03.3 C2 Classic entrance                                  [IMPLEMENTED / evidence continues]
+├── 03.4 C3 Explicit 3D entry + Return                        [IMPLEMENTED / evidence continues]
+├── 03.5 C4 Coherent navigation + Settings                    [IMPLEMENTED / refinement open]
+├── 03.6 C5 Camera vocabulary                                [IMPLEMENTED / retired controls remain retired]
+├── 03.7 C6 Zoom-out / world baseline                         [IMPLEMENTED foundation / continuous travel open]
+├── 03.8 C7 Proportional orbit                               [IMPLEMENTED foundation / acceptance open]
+├── 03.9 TREE MACHINE                                         [ACTIVE]
+├── 03.10 TURN-LOOP CONTRIBUTION                              [BLOCKED by topology/completeness]
+├── 03.11 C8 Authenticated / server-authorized workspace      [NOT IMPLEMENTED]
+├── 03.12 C9 Desktop + phone product acceptance              [BLOCKED]
+└── 03.13 C10 ProMax                                          [BLOCKED by C9]
+```
+
+Every executable child below inherits the authority of `03.9 TREE MACHINE`, `03.10 TURN-LOOP`, `03.11 C8`, `03.12 C9`, or `03.13 C10` as applicable.
+
+### 03.9 — TREE MACHINE
+
+```text
+03.9 TREE MACHINE
+├── 03.9.1 Census / semantic identity
+│   ├── treeID / branchId truth
+│   ├── existing TREE-HERO-SEAT reconciliation              [MERGED #297]
+│   ├── four census representations synchronization
+│   └── undefined entities remain unassigned/uninvented
+│
+├── 03.9.2 Required tree definitions
+│   ├── identify next governed tree roots
+│   ├── define semantic purpose / responsibility
+│   └── record only evidenced definitions
+│
+├── 03.9.3 Branch / division structure
+│   ├── parentage and semantic branch IDs
+│   ├── recursive/deeper branch structure
+│   ├── product/UI/configuration/accessibility payload
+│   └── branch integration ownership
+│
+├── 03.9.4 Adaptive geometry
+│   ├── payload-derived dimensions
+│   ├── non-uniform tree/branch sizes
+│   ├── expansion footprint
+│   ├── adjacency clearance
+│   └── responsive/mobile constraints
+│
+├── 03.9.5 Stateful expansion
+│   ├── CLOSED
+│   ├── PREPARING
+│   ├── OPENING
+│   ├── ACTIVE/EXPANDED
+│   ├── CLOSING
+│   └── OPEN/CLOSED transition verification
+│
+├── 03.9.6 Camera subject/travel
+│   ├── semantic subject identity
+│   ├── continuous tree-to-tree travel
+│   ├── expansion-follow framing
+│   ├── return-to-parent/world
+│   └── reduced-motion equivalent
+│
+└── 03.9.7 Connection topology
+    ├── semantic edge ownership
+    ├── adjacency-derived routes
+    ├── wiring corridor reservation
+    └── topology verification before electrical effects
+```
+
+**Skill routing:** `skills/execution/orucaveam/SKILL.md` + `skills/frontend/spatial/hierarchy-runtime/SKILL.md` + `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` where Seat shell behavior is involved + applicable `UI_UX-Promax`/motion/responsive/accessibility skills + `skills/verification/browser-smoke/SKILL.md`; census-only changes also use `skills/governance/masterplan-skill-wiring/SKILL.md` and the applicable governance/validation skill.
+
+**Boundary:** the current census is not a complete implementation census. Never fabricate future tree numbers, branch IDs, geometry, backend ownership, skill catalog entries, or completion status.
+
+### 03.9.8 — TREE-HERO-SEAT configuration/lifecycle reconciliation
+
+```text
+TREE-HERO-SEAT
+├── SEAT_SHELL
+│   └── identity / overview / provider-runtime-model facets
+├── SEAT_CONNECTION
+│   ├── external provider/application relationship
+│   ├── OAuth/provider handoff
+│   ├── bind
+│   ├── connection test
+│   └── health
+├── SEAT_BEHAVIOR
+│   └── Seat-local defaults / constraints ONLY
+├── SEAT_TOOLKIT
+│   └── resolved TEAMAI COMMON SKILL / Universal ToolKit equipment
+├── SEAT_CAPABILITIES
+│   └── model/runtime/tool/plugin/MCP mechanism inventory
+├── SEAT_AUTHORIZATION
+│   └── permission / approval / reason-bearing readiness presentation
+├── SEAT_WORKSPACE_SCOPE
+│   └── workplace/project/repository/path/workstation context
+└── SEAT_TASK_EVIDENCE
+    └── task/result/event/evidence continuity
+```
+
+Configuration facets (`provider`, `application`, `service/runtime`, `model/variant`, `skills`, `tools/MCP`, `workstation`, `scope`, `permissions`, `approvals`, `limits`, `compliance`, `health`) map onto these existing branches and do not create a second hierarchy.
+
+TEAMAI COMMON SKILL / Universal ToolKit is shared. With fewer active Seats, responsibility units may be broader and each Seat's effective bundle may be broader; with up to eight active Seats, the same definitions are partitioned more finely. User-owned skill material remains distinct from canonical common skills.
+
+Global turn configuration does **not** belong here. `TREE-ORCHESTRATION / scheduler` owns participating Seats, actions/turns-per-Seat, order, stopping conditions, summarizer, limits, and loop mode.
+
+`(?)` is the public Entrance Complex Dictionary / User Guide. Settings, Return, Logout, and Seat retirement are cross-tree/product controls rather than new Seat children.
+
+### 03.10 — TURN-LOOP CONTRIBUTION
+
+```text
+03.10 TURN LOOP
+├── 03.10.1 global team turn configuration
+│   ├── participating Seats
+│   ├── actions / turns per participating Seat
+│   ├── order / scheduling policy
+│   ├── rounds / stopping conditions
+│   ├── summarizer selection
+│   ├── resource/time limits
+│   └── loop mode
+├── 03.10.2 scheduler eligibility
+├── 03.10.3 active participating divisions
+├── 03.10.4 semantic connection traversal
+├── 03.10.5 electrical animation from real graph edges
+└── 03.10.6 workspace-center arrival / durable event
+```
+
+The turn loop cannot invent connectivity. All participating divisions required by the active contribution state must be expanded/open so wiring corridors are spatially available. Electricity is a visualization of real connection topology, not a decorative substitute for missing topology.
+
+**Skill routing:** ORUCAVEAM + `skills/frontend/spatial/hierarchy-runtime/SKILL.md` + applicable animation/transition/effects/responsive/accessibility skills + backend orchestration/verification skills when the scheduler or durable event boundary is touched. No branch-specific turn-policy hierarchy may be created.
+
+### 03.11 — C8 authentication / restore / configuration
+
+```text
+03.11 C8
+├── guest world boundary
+├── Login / Sign up gateway
+├── stop guest orbit during authentication transition
+├── restore authorized user state
+├── restore Workplace / Project / Seats
+├── provider connection restoration
+├── configuration access
+├── capability / authorization evaluation
+└── readiness → scheduler eligibility
+```
+
+The shipped authentication handoff remains presentation-only until an authoritative Firebase identity/restore proof exists.
+
+**Skill routing:** ORUCAVEAM + applicable Firebase/auth/backend skills + browser verification.
+
+### 03.12 — C9 product acceptance
+
+```text
+03.12 C9
+├── desktop browser evidence
+├── phone browser evidence
+├── Entrance clarity
+├── world entry / Return
+├── Settings discoverability
+├── camera / zoom / travel
+├── interaction density
+├── accessibility / reduced motion
+└── owner acceptance
+```
+
+Green CI or Playwright alone cannot close C9.
+
+**Skill routing:** ORUCAVEAM + `skills/verification/browser-smoke/SKILL.md` + applicable spatial UI/UX, motion, responsive, accessibility, and evidence/endorsement skills.
+
+### 03.13 — C10 ProMax
+
+```text
+03.13 C10
+├── machine-opening choreography
+├── ambient/environmental depth
+├── material / lighting response
+├── electrical visual language
+├── transition continuity
+├── micro-interactions
+├── restrained effects
+├── responsive/mobile refinement
+└── reduced-motion parity
+```
+
+C10 is downstream of C9 and cannot compensate for incomplete semantic trees, topology, camera capability, or evidence.
+
+**Skill routing:** ORUCAVEAM + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + applicable motion/transition/animation/responsive/accessibility skills.
+
+### Nested execution update rule
+
+When any child above is executed, the agent updates the **same child item in this Masterplan** and its owning Issue/evidence surface. The agent does not create a new checklist document to represent a smaller implementation slice.
+
+A new child may be introduced only when the existing branch is insufficiently granular for safe execution. The new child receives the next stable nested identifier and concrete Skill routing before execution begins.
+
+No child becomes an independent roadmap. All descendants inherit the chronology and authority of their parent.
+
+### Current implementation status rule
+
+The nested tree intentionally preserves unresolved work as `OPEN`, `BLOCKED`, `NOT IMPLEMENTED`, or `NOT PROVEN`. It must never be “cleaned up” by marking work complete because a related concept exists elsewhere.
+
+When a merged PR supersedes an older child, update the same Masterplan branch to the new state and preserve the superseded implementation as historical lineage rather than opening a parallel replacement chronology.
