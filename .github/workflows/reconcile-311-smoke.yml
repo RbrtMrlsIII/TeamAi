@@ -1,0 +1,42 @@
+name: reconcile-311-smoke
+on:
+  push:
+    branches: [fix/278-retire-spine-settings-smoke]
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Reconcile
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/hero-settings-shell.js'); s=p.read_text()
+          old="""    const hero = window.TeamAiHero;\n    if (hero && typeof hero.setCamera === 'function') hero.setCamera(id);\n    if (status) status.textContent = 'looking at ' + id;"""
+          new="""    const hero = window.TeamAiHero;\n    if (hero && typeof hero.setCamera === 'function') hero.setCamera(id);\n    const snapshot = typeof hero?.getSubjectLockSnapshot === 'function' ? hero.getSubjectLockSnapshot() : null;\n    const observedId = snapshot?.cameraId || id;\n    const baseId = typeof hero?.getBaseCameraId === 'function' ? hero.getBaseCameraId() : observedId;\n    if (status) status.textContent = `requested ${id} · camera ${observedId} · base ${baseId}`;"""
+          if old not in s: raise SystemExit('Smoke target not found')
+          p.write_text(s.replace(old,new,1))
+          p=Path('tests/e2e/hero.spec.ts'); s=p.read_text()
+          s=s.replace("await expect(page.locator('[data-smoke-camera-status]')).toHaveText('looking at SEAT_CLOSE');","await expect(page.locator('[data-smoke-camera-status]')).toHaveText(/requested SEAT_CLOSE · camera SEAT_CLOSE · base HERO_WIDE/);",1)
+          s=s.replace("expect(await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('SEAT_CLOSE');","expect(await page.evaluate(() => (window as any).TeamAiHero.getSubjectLockSnapshot().cameraId)).toBe('SEAT_CLOSE');\n    expect(await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('HERO_WIDE');",1)
+          s=s.replace("page.getByRole('button', { name: 'Surface shared state', exact: true })","page.locator('[data-part=\"surface\"]')")
+          p.write_text(s)
+          notes={'MASTERPLAN.md':'\n- Residual 2026-09-13 (#311): Settings Smoke observes requested camera ID plus canonical camera/base state; legacy 1–15 inspection remains retired.\n','docs/TEAMAI_029_CURRENT_STATE_MAP.md':'\n**Residual (2026-09-13, #311):** Settings Smoke observes canonical camera state without reviving the retired inspection spine.\n','docs/TEAMAI_3D_HERO_NEXT_SLICES.md':'\n**Residual (2026-09-13, #311):** Camera Smoke observes canonical runtime camera state and current Surface semantics; no stage walker is restored.\n'}
+          for name,note in notes.items():
+              p=Path(name); t=p.read_text()
+              if note.strip() not in t: p.write_text(t.rstrip()+'\n'+note)
+          PY
+          node scripts/governance/verify-active-index.mjs --mode=governance --base HEAD~1
+          git diff --check
+          rm .github/workflows/reconcile-311-smoke.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/hero-settings-shell.js tests/e2e/hero.spec.ts MASTERPLAN.md docs/TEAMAI_029_CURRENT_STATE_MAP.md docs/TEAMAI_3D_HERO_NEXT_SLICES.md .github/workflows/reconcile-311-smoke.yml
+          git commit -m 'fix(278): reconcile Settings Smoke and active indexes'
+          git push
