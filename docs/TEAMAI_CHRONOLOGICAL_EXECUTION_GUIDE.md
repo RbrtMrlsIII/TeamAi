@@ -2,7 +2,7 @@
 
 **Status:** RECOVERY GUIDE — current `main` vs plan vs Issues  
 **Date:** 2026-09-13  
-**HEAD this guide was written against:** `41f2445` (merge of [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297); also includes [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301))  
+**HEAD this guide was written against:** `352e486` (merge of [#302](https://github.com/RbrtMrlsIII/TeamAi/pull/302); includes [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297)/[#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301))  
 **Not Product Law. Not a second #278 or #284 ledger. No 029-release claim.**
 
 ## Purpose
@@ -19,7 +19,7 @@ what is closed / superseded and must not be reopened as a competing queue?
 
 Durable product meaning stays in `PRODUCT_LAW.md`. Chronological gates stay in `MASTERPLAN.md`. 029 execution detail stays in Issue **#278**. Backend execution detail stays in Issue **#284**. This file is the **cross-track map** between those authorities and live GitHub.
 
-Older decision order lives in [`docs/CHRONOLOGY.md`](./CHRONOLOGY.md). Compact recovery index: [`docs/TEAMAI_CURRENT_STATE.md`](./TEAMAI_CURRENT_STATE.md).
+Older decision order lives in [`docs/CHRONOLOGY.md`](./CHRONOLOGY.md). Compact recovery index: [`docs/TEAMAI_CURRENT_STATE.md`](./TEAMAI_CURRENT_STATE.md). Machine layer construction (not chronology): [`docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md`](./TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md).
 
 ---
 
@@ -100,7 +100,7 @@ These are the **only open Issues** on 2026-09-13. Everything else is closed hist
 | **[#295](https://github.com/RbrtMrlsIII/TeamAi/issues/295)** | Open discussion (not a ledger) | Questions, disagreements, half-formed checks | Binding requirements or EXECUTED records |
 | **[#296](https://github.com/RbrtMrlsIII/TeamAi/issues/296)** | Product Knowledge promotion | Distill already-settled 029/backend learnings into `PRODUCT-KNOWLEDGE.md` | New roadmap |
 
-Open PRs at time of writing: **none** (docs PRs [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297) and [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301) are merged).
+Open PRs at time of writing: recovery docs only (machine-construction note). [#302](https://github.com/RbrtMrlsIII/TeamAi/pull/302) (Deck e2e retirement) is **merged**.
 
 **Comment rule:** on #278 and #284, comments are evidence-only (`EXECUTED` / diagnosis / observed data). Guidance belongs in the Issue body or canonical docs. Discussion belongs on #295.
 
@@ -136,9 +136,9 @@ Open PRs at time of writing: **none** (docs PRs [#297](https://github.com/RbrtMr
 | **C5** camera vocabulary | Small understandable set; no operator wall | Six-button `[data-camera]` wall **removed** (#281). `HERO_LOW_ORBIT` / `TURN_FOLLOW` stay retired | Do not recreate the wall. Low-feeling poses: diagnose active path (`SEAT_CLOSE` / `TEAM_ORBIT`) | #278 |
 | **C6** zoom / travel | Return to world baseline; later **continuous** pull-back | Code fallback to `HERO_WIDE` at `NAV_ZOOM_MAX` (#281). Destination correction ≠ continuous tree travel | Branch-level subject targeting **incomplete**. Continuous travel **open** | #278 |
 | **C7** proportional orbit | Natural swipe/pointer direction | Implementation present in assembled runtime | Deployed browser acceptance still required. Stale `inverse*` names must not become authority | #278 |
-| **Tree machine** | Semantic trees/branches, payload-driven geometry, expansion lifecycle | Census baseline merged [#283](https://github.com/RbrtMrlsIII/TeamAi/pull/283); Seat truth baseline merged [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297). `TREE-HERO-SEAT` is **PARTIAL**. `TREE-DOMAIN` and `TREE-SKILL-RESPONSIBILITY` **INCOMPLETE** | No invented census rows for undefined trees | #278 |
+| **Tree machine** | Semantic trees/branches, payload-driven geometry, expansion lifecycle | Census baseline merged [#283](https://github.com/RbrtMrlsIII/TeamAi/pull/283); Seat truth baseline merged [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297). `TREE-HERO-SEAT` is **PARTIAL**. `TREE-DOMAIN` and `TREE-SKILL-RESPONSIBILITY` **INCOMPLETE**. Construction note: [`TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md`](./TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md) | No invented census rows for undefined trees | #278 |
 | **C8** auth workspace | Firebase identity + server authorization; restore Workplace/Project/Seats | Auth UI is **presentation-only**. No client Firestore SDK in the shipped browser. Login/Sign up belong to guest gateway, not Settings | **Do not grant entitlement from flags/DOM/Hero state** | #278 + #284 |
-| **C9** acceptance | Desktop + phone + owner | Playwright covers `/` classic, `/hero/` world, phone overlay split [#298](https://github.com/RbrtMrlsIII/TeamAi/pull/298) | **BLOCKING**. CI ≠ owner acceptance | #278 |
+| **C9** acceptance | Desktop + phone + owner | Playwright covers `/` classic, `/hero/` world, phone overlay split [#298](https://github.com/RbrtMrlsIII/TeamAi/pull/298); Deck composition e2e retired [#302](https://github.com/RbrtMrlsIII/TeamAi/pull/302) | **BLOCKING**. CI ≠ owner acceptance | #278 |
 | **C10** ProMax | Refine a correct machine | **Not started** | Gated by C9. #83 is the later visual track, not a C10 substitute | #83 after #278 |
 
 ### 3.3 Publication / surfaces on current `main`
@@ -151,7 +151,7 @@ GitHub Pages is validation-only. Firebase Hosting remains web-delivery authority
 | `/hero/` | Hero/world compatibility | `public/` copied again under `/hero/` | Same SPA; JS treats `/hero/` as world route |
 | `/spatial/` | Retired Command Deck; historical links only | **Not published** after [#299](https://github.com/RbrtMrlsIII/TeamAi/pull/299) | Source remains in `frontend/spatial/` for history; not an active destination |
 
-Local `npm start` **redirects** `/spatial/` → `/hero/` (same as product law). Sub-paths under `/spatial/` may still serve static fixtures (e.g. backend-validator contract). Deck composition e2e suites are **retired/skipped**; `spatial-retired.spec.ts` is the active contract. Source under `frontend/spatial/` remains history, not a product door.
+Local `npm start` **redirects** `/spatial/` → `/hero/` (same as product law). Sub-paths under `/spatial/` may still serve static fixtures (e.g. backend-validator contract). Deck composition e2e suites are **retired/skipped** ([#302](https://github.com/RbrtMrlsIII/TeamAi/pull/302)); `spatial-retired.spec.ts` is the active contract. Source under `frontend/spatial/` remains history, not a product door.
 
 Command Deck: **retired as product concept and published surface**. Useful surviving behavior must be re-owned by the spatial/world machine. Do not delete history. Do not build new work *as* Command Deck.
 
@@ -179,6 +179,7 @@ Newest last. These are merged facts, not a to-do list.
 | 2026-09-13 | [#300](https://github.com/RbrtMrlsIII/TeamAi/pull/300) | `AI_ASSISTANT_READ_ME.md` bootstrap / governance preflight |
 | 2026-09-13 | [#301](https://github.com/RbrtMrlsIII/TeamAi/pull/301) | Chronological execution guide — main vs plan vs Issues recovery map |
 | 2026-09-13 | [#297](https://github.com/RbrtMrlsIII/TeamAi/pull/297) | TREE-HERO-SEAT census truth baseline (docs/csv/json/xml) |
+| 2026-09-13 | [#302](https://github.com/RbrtMrlsIII/TeamAi/pull/302) | Retire Deck composition Playwright suites; refresh guide/state |
 
 Why “the website didn’t change” for several days: work was landing under `/hero/` while Pages root still served Command Deck. That mismatch is **closed on `main`** by #279 + #299. Remaining owner-visible gaps are machine/camera/auth/C9, not the wrong front door.
 
@@ -204,7 +205,7 @@ Why “the website didn’t change” for several days: work was landing under `
 
 ## 6. Remaining honest gaps (recovery, not a sprint board)
 
-**CI note (2026-09-13):** After #299, Playwright was red on `main` because Deck composition suites still required `[data-deck-root]` on `/spatial/`. Those suites are retired/skipped in favor of `spatial-retired.spec.ts`. That unblocks required checks; it is **not** C9 owner acceptance.
+**CI note (2026-09-13):** After #299, Playwright was red on `main` because Deck composition suites still required `[data-deck-root]` on `/spatial/`. Those suites are retired/skipped in favor of `spatial-retired.spec.ts` ([#302](https://github.com/RbrtMrlsIII/TeamAi/pull/302)). That unblocks required checks; it is **not** C9 owner acceptance.
 
 Work **#278** if the gap is product-experience:
 
@@ -212,7 +213,7 @@ Work **#278** if the gap is product-experience:
 2. Authenticated restore of Workplace / Project / actual Seats. Presentation-only today.
 3. Branch-specific camera subject (seat lock exists; deeper branch targeting does not).
 4. Continuous spatial zoom-out / tree-to-tree travel (destination snap is not the final contract).
-5. Complete required trees/branches/divisions, payload-driven expansion, real connection topology, turn-loop electricity.
+5. Complete required trees/branches/divisions, payload-driven expansion, real connection topology, turn-loop electricity — see [`TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md`](./TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md).
 6. Integrated desktop + phone **owner** acceptance (C9), then C10.
 
 Work **#284** if the gap is backend:
@@ -256,6 +257,7 @@ Stop and reconcile instead of coding when:
 | Product authority | `PRODUCT_LAW.md` |
 | Chronological gates | `MASTERPLAN.md` |
 | This cross-track map | `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` |
+| Machine construction (layers, not chronology) | `docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md` |
 | Older decision order | `docs/CHRONOLOGY.md` |
 | Compact recovery index | `docs/TEAMAI_CURRENT_STATE.md` |
 | 029 ledger | Issue #278 |
