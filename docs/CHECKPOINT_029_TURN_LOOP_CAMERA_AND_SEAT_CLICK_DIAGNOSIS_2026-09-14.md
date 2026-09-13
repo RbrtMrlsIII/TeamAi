@@ -55,3 +55,7 @@ See `docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md` §4 and §3. The diagnostic re
 ## Validation correction
 
 The first PR test run reached the full project suite and returned **624 passing / 1 failing** because the initial new camera-neutral assertion was too formatting-specific. The assertion was corrected to verify the actual invariant after deterministic runtime reconciliation. The subsequent TeamAi project suite and Governance run passed, including the Full Project ZIP verification.
+
+## Browser regression guard
+
+`tests/e2e/029-camera-input-regressions.spec.ts` adds explicit browser-level regression coverage for the two diagnosed behaviors: preserving the selected camera during contribution while allowing zoom input, and preventing an empty-canvas click from advancing Seat selection. This test is a guard for the reconciled behavior; it does not define the eventual semantic hit-testing design.
