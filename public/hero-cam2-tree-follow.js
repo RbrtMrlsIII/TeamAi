@@ -92,11 +92,22 @@ export function resolveTreeCamera(state = {}, ctx = {}) {
   }
 
   if (String(openParentId).startsWith(HIERARCHY_PART.SEAT_SHELL)) {
-    if (focusedLeafId || (focusedChildId && DETAIL_CHILDREN.has(focusedChildId))) {
+    const connectionAmount = Number(ctx.connectionAmount) || 0;
+    const connectionExpanded = focusedChildId === HIERARCHY_PART.SEAT_CONNECTION && connectionAmount >= 0.85;
+    if (focusedLeafId || (focusedChildId && DETAIL_CHILDREN.has(focusedChildId)) || connectionExpanded) {
       return {
         cameraId: TREE_CAMERA.SEAT_CHILD_DETAIL,
         treeCenter: focusedLeafId || focusedChildId || 'seat-child',
         inputHint: HIERARCHY_INPUT.INSPECT,
+        subject: focusedLeafId || focusedChildId || null,
+      };
+    }
+    if (focusedChildId === HIERARCHY_PART.SEAT_CONNECTION) {
+      return {
+        cameraId: TREE_CAMERA.SEAT_CHILD_NEAR,
+        treeCenter: HIERARCHY_PART.SEAT_CONNECTION,
+        inputHint: HIERARCHY_INPUT.INSPECT,
+        subject: HIERARCHY_PART.SEAT_CONNECTION,
       };
     }
     if (focusedChildId) {
@@ -104,12 +115,14 @@ export function resolveTreeCamera(state = {}, ctx = {}) {
         cameraId: TREE_CAMERA.SEAT_CHILD_NEAR,
         treeCenter: focusedChildId,
         inputHint: HIERARCHY_INPUT.INSPECT,
+        subject: focusedChildId,
       };
     }
     return {
       cameraId: TREE_CAMERA.SEAT_SHELL,
       treeCenter: openParentId,
       inputHint: HIERARCHY_INPUT.INSPECT,
+      subject: openParentId,
     };
   }
 
