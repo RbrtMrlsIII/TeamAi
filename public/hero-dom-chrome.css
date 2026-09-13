@@ -188,3 +188,44 @@ html {
   font-size: 0.7rem;
   opacity: 0.7;
 }
+
+/* Dedicated Settings diagnostic surface. It must not share the seat-stack
+   stacking context, because that layer is intentionally occupied by machine
+   presentation. The menu still opens this panel through the Settings button. */
+.hero-settings-mount {
+  position: absolute;
+  top: 78px;
+  right: clamp(18px, 3vw, 36px);
+  z-index: 12;
+  width: min(360px, calc(100vw - 36px));
+  pointer-events: none;
+}
+.hero-settings-mount .hero-settings-shell {
+  pointer-events: auto;
+  margin: 0;
+  padding: 0;
+}
+.hero-settings-mount .hero-settings-panel {
+  max-height: min(72vh, 640px);
+  overflow: auto;
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 18px 44px rgba(50,48,42,.16);
+  backdrop-filter: blur(18px) saturate(115%);
+}
+.hero-settings-mount .machine-nav__settings {
+  display: none;
+}
+@media(max-width:760px){
+  .hero-settings-mount {
+    top: 68px;
+    right: 16px;
+    width: min(320px, calc(100vw - 32px));
+  }
+}
+@media(max-width:520px){
+  .hero-settings-mount {
+    top: 64px;
+    right: 12px;
+    width: min(300px, calc(100vw - 24px));
+  }
+}
