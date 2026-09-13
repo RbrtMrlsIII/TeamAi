@@ -475,7 +475,6 @@ The structured source for this evolving tree truth is the four-part tree census:
 
 When tree/branch/division semantics or implementation change, the census is synchronized under the governance rules in `POLICY.md` and does not replace Masterplan, Product Law, or Vision. A code change without census reconciliation is not a trustworthy current state; a census update without implementation is explicitly a design/provisional state.
 
-
 ## Backend lease-preservation fix — #284/#287
 
 `supabase/functions/teamai-task-execute/index.ts` previously rebuilt the leased task document from only the string-typed fields of the in-memory `current` object, discarding any non-string Firestore field types (numbers, booleans, maps, arrays) on every lease commit. The fix now spreads the complete raw `task.fields` Firestore typed-value map and overlays only the four lease-owned fields (`status`, `leaseId`, `leasedBy`, `updatedAt`). A regression test (`tests/backend-task-lease-preservation.test.mjs`) asserts the full-field-map pattern is present and the old filtered-rebuild pattern is gone. Scope: repository-level correctness fix only; does not change TEAM-BACKEND-001's endorsed/bounded classification.
@@ -499,5 +498,135 @@ This synchronization records live infrastructure truth without upgrading deploym
 
 <!-- teamai residual: #304 canvas click Zone-A dead-zone fix; preserve full Masterplan body; no 029-released claim. -->
 
-
 _Correction: the fix above initially targeted `public/hero-flex.js`, which is a generated build artifact -- `scripts/apply-cam2-tree-follow-flex.mjs` overwrites it from `public/_flex_src/hero-flex.base.js` on every CI run and deploy. The real fix is applied to `hero-flex.base.js`; the generated file is kept in sync for anyone reading it directly._
+
+## Governance — single chronological execution spine
+
+**Purpose:** prevent TeamAi from growing a second project chronology through per-feature checklist documents.
+
+`MASTERPLAN.md` is the **only canonical chronological execution checklist for TeamAi project work**. It contains the standing programs, major gates, implementation slices, smaller executable slices, validation/evidence steps, and their chronological relationship from major to minor work.
+
+### Single chronology rule
+
+Every new executable project slice must be inserted into the appropriate existing Masterplan branch. A slice may be a major program, gate, implementation task, subtask, verification step, or evidence step, but it must have a parent in the Masterplan chronology whenever one exists.
+
+Do not create another project-level chronological checklist, phase checklist, implementation queue, roadmap, or “next slices” document merely because the work is smaller than an existing Masterplan item.
+
+### Masterplan subtree pattern
+
+Use this shape:
+
+```text
+PROGRAM
+└── GATE
+    └── EXECUTION SLICE
+        ├── SMALLER SLICE
+        ├── IMPLEMENTATION
+        ├── VALIDATION
+        └── EVIDENCE / CURRENT-TRUTH UPDATE
+```
+
+Examples inside TEAM-EXPERIENCE-029:
+
+```text
+C6/C7 camera foundation
+└── TREE MACHINE
+    ├── census / identity reconciliation
+    ├── required tree semantics
+    ├── branch semantics
+    ├── division payloads
+    ├── adaptive geometry
+    ├── expansion / adjacency
+    ├── camera subject / travel
+    └── connection topology
+        └── TURN LOOP
+            ├── global turn configuration
+            ├── participating-seat state
+            ├── active divisions
+            ├── semantic electrical traversal
+            └── workspace arrival
+```
+
+The subtree is execution order only. Structural meaning remains in Product Law and the Tree Census.
+
+### Standard executable item record
+
+Each new executable Masterplan item should identify:
+
+```text
+ITEM ID
+STATUS
+PARENT / DEPENDENCY
+GOVERNING PRODUCT-LAW CONCEPT
+OWNING ISSUE (when applicable)
+APPLICABLE SKILL ROUTING
+IMPLEMENTATION SCOPE
+VERIFICATION SCOPE
+EVIDENCE EXPECTED
+KNOWN UNCERTAINTY / BLOCKER
+```
+
+When execution advances, update the same Masterplan item rather than spawning a second checklist. Preserve the state vocabulary:
+
+`PLANNED → IMPLEMENTED → VERIFIED → RUNTIME-PROVEN → COMPLETED → ENDORSED`
+
+A checkbox marks execution status only. It does not itself establish proof or acceptance.
+
+### Checklist ownership boundaries
+
+`MASTERPLAN.md` owns **chronology**.
+
+`PRODUCT_LAW.md` owns **product meaning / architectural intent**.
+
+`docs/TEAMAI_3D_HERO_TREE_CENSUS.*` owns **structural tree/branch/division inventory**.
+
+`docs/SKILL_WIRING.md` owns **concept → Skill → tool → verification/evidence routing**.
+
+`skills/**/SKILL.md` owns **repeatable bounded procedures**.
+
+`Issue #278` / `Issue #284` own **active issue-specific scope and evidence ledger** within their domains.
+
+`PRODUCT-KNOWLEDGE.md` owns **validated, distilled learning**, not future execution order.
+
+`docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` remains a **recovery/index view** across Masterplan, current `main`, and live Issues. It must not become a second execution queue.
+
+### Checklist document disposition rule
+
+A checklist-shaped document must be classified explicitly as one of:
+
+1. **Canonical chronology** — only `MASTERPLAN.md` for project execution;
+2. **Reusable procedure** — move/retain with the relevant Skill or operational manual;
+3. **Validation procedure** — may describe repeatable verification but must not choose project chronology;
+4. **Structural census** — records what exists, not when to build it;
+5. **Historical checkpoint** — immutable/archival evidence of past execution;
+6. **Recovery/index** — navigation across current state, never a competing queue.
+
+If a proposed new checklist does not fit one of these classes, it belongs in the existing Masterplan or should not be created.
+
+### No-orphan execution rule
+
+A non-trivial implementation must reference an existing Masterplan item or explicitly state why it is bounded maintenance that does not belong in project chronology. A new issue or PR does not automatically create a new chronology.
+
+### Skill-wiring requirement
+
+Every executable Masterplan item must resolve through `docs/SKILL_WIRING.md` to concrete ORUCAVEAM and field/domain/tool/system skill paths, or explicitly state a justified `No skill required` rationale. A category/folder name alone is not routing.
+
+If the necessary recurring procedure does not yet have a suitable skill, the agent must resolve the skill gap before treating the Masterplan item as fully executable. The agent must not hide the missing procedure in a new checklist document.
+
+### Evidence completion rule
+
+Execution records must separate:
+
+`EXECUTED`
+
+from:
+
+`PROVEN / VERIFIED / RUNTIME-PROVEN / COMPLETED / ENDORSED`.
+
+Issue comments remain evidence-only; chronological planning belongs here. CI, deployment, a checkbox, or a documentation update must not be promoted beyond what the actual evidence supports.
+
+### Cross-session rule
+
+A fresh or resumed agent must first recover the current Masterplan branch before selecting work. If the desired work is not present, the agent should place the new slice under the correct existing program/gate after authority and impact review rather than creating another project chronology.
+
+The Masterplan is a living chronological tree. New work is a **branch on that tree**, not another tree.
