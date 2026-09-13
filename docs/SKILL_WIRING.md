@@ -40,7 +40,7 @@ The root dispatcher is `skills/execution/orucaveam/SKILL.md`. It composes only t
 | Backend / Firebase | TEAM-BACKEND-001 / 029 backend dependency | ORUCAVEAM + concrete backend skill family | Firebase / Firestore / Supabase | Authoritative backend evidence | Backend checkpoint/HandOver |
 | Commerce | TEAM-BACKEND-001 / 029 commerce dependency | ORUCAVEAM + `skills/backend/commerce-paypal/SKILL.md` + `skills/backend/verification-recovery/SKILL.md` | PayPal / Supabase / Firestore | Contract + runtime + direct aggregate/event/entitlement read | Commerce evidence + HandOver/endorsement |
 | Commerce UI read model | TEAM-EXPERIENCE-029 commerce frontend dependency | ORUCAVEAM + `skills/frontend/spatial/commerce-read-model/SKILL.md` + `skills/frontend/spatial/UI_UX-Promax-Skill.md` + browser verification | TeamAi frontend/read-model layer | Read-only contract, state mapping, accessibility, responsive browser verification | Commerce UI contract + evidence + HandOver |
-| Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions | CI report / trace |
+| Browser smoke | TEAM-EXPERIENCE-029 when UI exists | `skills/verification/browser-smoke/SKILL.md` + applicable ORUCAVEAM skills | Playwright | Real browser assertions, including applicable in-page Settings Smoke probes | CI report / trace |
 | Vercel web development / preview | 029 web verification | `skills/web/vercel-preview/SKILL.md` + applicable ORUCAVEAM/M skills | Vercel | Controlled deployed-browser verification (when connected; temporary cutoff is non-blocking) | CI/browser evidence |
 | Spatial UI/UX | TEAM-EXPERIENCE-029 visual experience | `skills/frontend/spatial/UI_UX-Promax-Skill.md` + motion/transition/animation/responsive/accessibility companions + applicable ORUCAVEAM skills | TeamAi frontend/theme system | Theme-mode, accessibility, responsive, and browser verification | GitHub evidence + HandOver |
 | 3D Hero lighting | TEAM-EXPERIENCE-029 Hero presentation | Same spatial family. Hero consumes `frontend/spatial/hero-theme-lighting-adapter.js`. **No Hero lighting/theme skill.** | Hero presentation + theme root | Static adapter/light-rig tests + Playwright | Issue #85/#96 + HandOver |
@@ -218,3 +218,19 @@ Historical comments are immutable. Do not rewrite old comments simply to normali
 The precise connected-Supabase active function inventory is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. Backend current-state and claim-level status remain in `backend/BACKEND_LIVE_SERVICE_STATUS.md` and `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`.
 
 The current active TeamAi Edge Function set is exactly eight functions. The obsolete `paypal-webhook` surface is retired from the connected project and must not be wired as a current skill target. The canonical PayPal skill points to `supabase/functions/teamai-paypal-webhook-v5c/index.ts`.
+
+## 17. 2026-09-13 In-page Settings Smoke / diagnostic probes
+
+The Browser Smoke skill now owns a reusable **in-page Settings Smoke** verification pattern. When a deterministic presentation or interaction probe can be performed without route navigation, agents must prefer the current page's Settings surface over creating a new navigation/stage walker.
+
+Applicable probe classes include Camera, Animation, Mesh/Asset, Interaction, State, Connection/Topology, Data/Binding, Responsive, Reduced Motion, and bounded Performance checks. The probe must identify the exact target and resulting observable state, use the existing canonical implementation path, and remain diagnostic/presentation-only unless a separate contract grants another authority.
+
+Camera Smoke is specifically constrained to the **current Cam-5/Cam-6 camera authority**. The retired 1–15 inspection spine is not an allowed fallback, registry, traversal path, or second camera authority.
+
+Agent routing for a feature change is therefore:
+
+`feature change → determine smallest deterministic in-page Smoke probe → extend existing Settings Smoke when applicable → Playwright assertion → evidence`
+
+No useful in-page probe is available → record the reason and rely on the smallest authoritative non-Smoke verification instead.
+
+This wiring does not create a new legal UI box, second theme/application root, second renderer, or backend authority.
