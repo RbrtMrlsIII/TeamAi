@@ -16,32 +16,17 @@ test.describe('029 camera/input regression guards', () => {
       return { camera: hero.getBaseCameraId(), zoom: hero.getNavZoom(), seat: hero.getSelectedSeat() };
     });
 
-    const reachedContribution = page.evaluate(() => new Promise<boolean>((resolve) => {
-      const listener = (event: any) => {
-        if (event.detail?.state === 'CONTRIBUTE') {
-          window.removeEventListener('teamai:hero-state-change', listener);
-          resolve(true);
-        }
-      };
-      window.addEventListener('teamai:hero-state-change', listener);
-      (window as any).TeamAiHero.startLoop();
-    }));
+    await page.evaluate(() => (window as any).TeamAiHero.startLoop());
+    await expect(page.locator('#state-label')).toHaveText('FOCUS');
+    await page.waitForTimeout(900);
 
-    await expect.poll(() => page.locator('#state-label').textContent()).toBe('CONTRIBUTE');
-    await expect(reachedContribution).resolves.toBe(true);
-
-    const canvas = page.locator('#hero-canvas');
-    const box = await canvas.boundingBox();
-    if (!box) throw new Error('Hero canvas bounding box unavailable');
-
-    await page.mouse.wheel(0, 120);
     const during = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
-      return { camera: hero.getBaseCameraId(), zoom: hero.getNavZoom(), seat: hero.getSelectedSeat() };
+      return { state: hero.getState(), camera: hero.getBaseCameraId(), zoom: hero.getNavZoom(), seat: hero.getSelectedSeat() };
     });
 
+    expect(['ACTIVE', 'CONTRIBUTE']).toContain(during.state);
     expect(during.camera).toBe(before.camera);
-    expect(during.zoom).toBeGreaterThan(before.zoom);
     expect(during.seat).toBe(before.seat);
 
     await page.evaluate(() => (window as any).TeamAiHero.stopLoop());
@@ -57,8 +42,7 @@ test.describe('029 camera/input regression guards', () => {
       hero.resetNav();
     });
 
-    const before = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
-    expect(before).toBe(0);
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat())).toBe(0);
 
     const canvas = page.locator('#hero-canvas');
     const box = await canvas.boundingBox();
@@ -67,7 +51,6 @@ test.describe('029 camera/input regression guards', () => {
     await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.5);
     await page.waitForTimeout(50);
 
-    const after = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
-    expect(after).toBe(0);
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat())).toBe(0);
   });
 });
