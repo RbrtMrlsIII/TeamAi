@@ -268,3 +268,7 @@ On seat-shell open, \`setCamera\` resolves \`camTo\` through Cam-5/6 \`resolveSe
 ## 22. Inspection spine retired / Settings smoke (2026-09-13, #278)
 
 Live 1–15 inspection spine removed from operator chrome. Camera authority is hierarchy + Cam-5/6. Operator smoke lives in Settings (exact camera dock id + existing motion on/off). Presentation only. No 029-released claim.
+
+## 23. Direct /hero/ load sets world layer + experience together (2026-09-13, #278/#311)
+
+`public/experience-rebaseline.js`'s `bind()` previously set only `data-experience` from the route. It now sets `data-hero-layer` (`machine`/`entrance`) alongside `data-experience` (`world`/`classic`) in the same branch, so a direct load of `/hero/` establishes both attributes together and world controls are usable on first paint instead of only after a client-side `/` → `/hero/` transition. Presentation only. No 029-released claim.
