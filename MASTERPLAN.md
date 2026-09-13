@@ -485,3 +485,8 @@ When tree/branch/division semantics or implementation change, the census is sync
 The current connected Supabase project reports exactly eight ACTIVE TeamAi Edge Functions as of 2026-09-12. The precise deployment inventory is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`; `backend/BACKEND_LIVE_SERVICE_STATUS.md` remains the claim-level backend evidence authority and `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves connected/operator context. The obsolete `paypal-webhook` deployment is no longer present in the connected runtime.
 
 This synchronization records live infrastructure truth without upgrading deployment status into product completion or endorsement. Any future Edge Function addition, removal, rename, material restructuring, reimplementation, deployment replacement, or responsibility change must reconcile the active census and backend current-state authority in the same governed change.
+
+
+## Phone-viewport overlay collision fix — #298 (follow-up to #278)
+
+`.spatial-parts`/`.hero-inspection` (`public/hero-parts.css`) and `.seat-stack` (`public/hero-seat-stack.css`) each had a breakpoint chain that only scaled the cards down in place at phone widths without separating them horizontally, causing their translucent cards to visually collide at ~390-420px viewports (the overlapping/blurred screenshots reported on #278). Fixed by docking `.spatial-parts`/`.hero-inspection` to the left edge at `<=520px` (instead of centered/scaled), hiding `.spatial-parts` entirely at `<=360px`, and reinforcing the right dock of `.seat-stack` at the same breakpoint. CSS positioning only; no JS/behavior change. Pending CI and owner browser confirmation at the reported viewport width; no 029-released claim.
