@@ -256,3 +256,7 @@ The GitHub Pages deployment no longer publishes `frontend/spatial/` as `/spatial
 ## #298 (phone-overlay-collision fix, follow-up to #278)
 
 Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-inspection` and `.seat-stack` by separating their breakpoint positioning (left-docked vs right-docked) at `<=520px`, with `.spatial-parts` hidden at `<=360px`. Source-level CSS fix; pending CI and an actual browser check at the reported viewport before being treated as fully resolved.
+
+## 20. SEAT_CONNECTION vertical synchronization (2026-09-13, #306)
+
+`TREE-HERO-SEAT` / `SEAT_CONNECTION` gained a presentation fixture payload and a single parent-child fixture edge module (`public/hero-connection-vertical.js`) plus camera subject preference when the connection branch is expanded (`public/hero-cam2-tree-follow.js`). Census connection/camera status columns were updated honestly (`fixture-edge`, `branch-subject-partial`). Not live provider bind; not full topology; not C9 acceptance.
