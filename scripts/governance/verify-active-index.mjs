@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { assertCensusSync } from './census-sync-contract.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = '.github/teamai/execution-state.yml';
@@ -135,6 +136,7 @@ function assertCoupling(rows, manifest) {
   if (!manifest.includes('    - public/')) stop('manifest coupling missing public root');
   if (!manifest.includes('    - backend/')) stop('manifest coupling missing backend root');
   if (!manifest.includes('    - skills/frontend/spatial/')) stop('manifest coupling missing spatial skill root');
+  assertCensusSync(rows);
 }
 
 function assertFresh(rows) {
