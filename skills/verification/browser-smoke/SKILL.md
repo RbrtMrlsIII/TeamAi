@@ -42,9 +42,45 @@ Playwright test result, target environment/URL, scenario name, F0–F7 surfaces 
 - `docs/SKILL_WIRING.md`
 - `skills/frontend/spatial/UI_UX-Promax-Skill.md`
 
-## SETTINGS SMOKE (2026-09-13)
-Operator smoke is mounted in Settings, not as a product stage spine.
-- Camera smoke: apply an exact physical dock id (`HERO_WIDE`, `SEAT_CLOSE`, `WORKSPACE_CLOSE`, `DETAIL_ANCHOR`) via `TeamAiHero.setCamera`.
-- Animation smoke: existing Settings motion full/reduced (on/off of motion effects).
-When adding Hero camera, motion, or hierarchy UI, add or update a Settings smoke control and a Playwright assertion. Do not recreate `hero-inspection` as navigation.
+## SETTINGS SMOKE / IN-PAGE DIAGNOSTIC HARNESS
+Operator Smoke is a first-class **in-page diagnostic surface** mounted in the current page's Settings control/panel. It must not become a product-stage navigator and it must not become an authority for the feature it exercises.
 
+### Contract
+Every applicable Smoke probe:
+- is enabled from the current page's Settings surface;
+- stays on the current page and does not navigate as part of the smoke operation;
+- targets one deterministic feature, entity, component, or presentation state;
+- exposes the exact target identifier and observable resulting state/output;
+- uses the feature's existing canonical implementation path;
+- remains presentation/diagnostic only unless a separately authorized contract says otherwise;
+- has a deterministic cleanup/restoration expectation where the probe changes transient presentation state.
+
+### Probe classes
+
+| Smoke | For what? | Desired output |
+|---|---|---|
+| Camera Test | Exact camera/dock target | Show the exact camera ID and apply the existing Cam-5/6 camera path without route navigation |
+| Animation Test | Exact animation/trigger | Toggle the exact animation on/off and expose its ID/state |
+| Mesh/Asset Test | Exact mesh/model/asset | Show or highlight the exact asset ID and load/render state |
+| Interaction Test | Exact control/pointer/interaction | Trigger the exact interaction and show the resulting state/event |
+| State Test | Exact UI/machine state | Force the exact state, expose its ID/state, then restore or report the resulting state |
+| Connection/Topology Test | Exact semantic connection | Exercise the applicable presentation path and show source → target/state without inventing topology |
+| Data/Binding Test | Exact binding/entity | Resolve and display the exact identifier/value presented by the current binding path |
+| Responsive Test | Exact viewport/layout state | Exercise the bounded viewport and expose the resulting presentation state without leaving the page |
+| Reduced Motion Test | Exact motion-equivalent state | Verify the semantic result remains available while nonessential motion is suppressed |
+| Performance Test | Exact bounded render/update path | Show the bounded metric/result needed for the claim without navigation |
+
+### Camera
+Camera Smoke is one probe class, not the Smoke architecture. Camera tests must use the current canonical Cam-5/6 path. Do not introduce or revive a 1–15 inspection camera registry, stage walker, traversal spine, or parallel camera authority.
+
+### Agent requirement
+When an agent adds or materially changes a UI/spatial feature, the agent must ask:
+
+> What is the smallest deterministic in-page Smoke probe that proves this feature works?
+
+When such a probe is applicable, the agent must add or extend the corresponding Settings Smoke control and the smallest matching Playwright assertion. The agent must choose the probe class from the feature semantics rather than defaulting automatically to Camera Test.
+
+If no useful deterministic in-page probe exists, record why the feature is not smokeable rather than fabricating a meaningless control.
+
+### Retirement boundary
+The former `hero-inspection` / 1–15 stage spine is retired. Settings Smoke replaces its operator diagnostic convenience without recreating stage navigation. Historical inspection code/docs may remain as explicitly historical evidence, but active product/runtime/test paths must not depend on the retired spine.
