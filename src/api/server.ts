@@ -90,6 +90,18 @@ async function serveFrontend(req:any, res:any, url: URL): Promise<boolean> {
 }
 
 async function serveSpatial(req:any, res:any, url: URL): Promise<boolean> {
+  // Command Deck retirement (PR #293, Product Law amendment): the
+  // /spatial/ root index must never again present Command Deck as a
+  // live product surface -- it redirects to the 3D world instead.
+  // Sub-paths under /spatial/ (standalone presentation-contract
+  // fixtures used by other tests) are still served as static assets
+  // from frontend/spatial/ for now; only the deck's own entry point
+  // is retired here. frontend/spatial/ itself is untouched history.
+  if (req.method === 'GET' && (url.pathname === '/spatial' || url.pathname === '/spatial/')) {
+    res.writeHead(302, { location: '/hero/' });
+    res.end();
+    return true;
+  }
   return serveStatic(req, res, url, '/spatial', SPATIAL_ROOT, 'index.html');
 }
 
