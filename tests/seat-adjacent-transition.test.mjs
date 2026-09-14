@@ -47,8 +47,8 @@ test('adjacent transition composes independent semantic geometries', () => {
   assert.equal(transition.targetDivisionId, 'SEAT_TOOLKIT');
   assert.equal(transition.expansion.sourceDivisionId, 'SEAT_BEHAVIOR');
   assert.equal(transition.expansion.targetDivisionId, 'SEAT_TOOLKIT');
-  assert.equal(transition.wiring.from.divisionId, 'SEAT_BEHAVIOR');
-  assert.equal(transition.wiring.to.divisionId, 'SEAT_TOOLKIT');
+  assert.equal(transition.wiring.from.divisionId, source.id);
+  assert.equal(transition.wiring.to.divisionId, target.id);
   assert.equal(transition.wiring.from.port.x, source.port.x);
   assert.equal(transition.wiring.to.port.z, target.port.z);
   assert.equal(transition.presentationOnly, true);
@@ -73,15 +73,21 @@ test('adjacent transition keeps the source-before-target sequencing contract', (
     targetAmount: 0,
   });
 
+  assert.equal(initial.wiring.id, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING');
+  assert.equal(initial.wiring.from.divisionId, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY');
+  assert.equal(initial.wiring.to.divisionId, 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY');
+
   const early = advanceAdjacentDivisionTransition(initial, 120);
   assert.equal(early.sourceAmount, 0.5);
   assert.equal(early.targetAmount, 0);
   assert.equal(early.phase, 'CLOSING_SOURCE');
+  assert.equal(early.wiring.id, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING');
 
   const late = advanceAdjacentDivisionTransition(initial, 360);
   assert.equal(late.sourceAmount, 0);
   assert.equal(late.targetAmount, 0.5);
   assert.equal(late.phase, 'OPENING_ADJACENT');
+  assert.equal(late.wiring.id, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING');
 });
 
 test('adjacent transition fails closed when geometry or identity is missing', () => {
