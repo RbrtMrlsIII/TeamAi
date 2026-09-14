@@ -48,6 +48,9 @@ jobs:
 
           if [ -d public ]; then
             node scripts/apply-cam2-tree-follow-flex.mjs
+            node scripts/apply-cam-r1-subject-lock.mjs
+            node scripts/apply-v1.2-arrow-branch-walk.mjs
+            node scripts/apply-029-division-interactive-arrow.mjs
             node scripts/apply-029-camera-click-reconcile.mjs
             node scripts/apply-seat1-connection-edge-flex.mjs
             cp -R public/. dist/
