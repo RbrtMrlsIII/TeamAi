@@ -372,8 +372,10 @@ TREE-HERO-SEAT#0
 
 The Seat division-focus transition also preserves the previous division as the visual subject while it compacts before a new division becomes active. This is presentation state only and does not delete or reset the previous Seat's user configuration/payload.
 
-Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge identity and division-focus compaction are implemented; final adaptive geometry, final expansion-animation language, and final turn-loop electrical choreography remain intentionally open.
+Seat-1 now also has a payload-driven geometry descriptor for the `SEAT_CONNECTION` division. The descriptor derives width, depth, height, and corridor thickness from semantic/UI payload density and accepts an explicit workspace target. Its corridor is owned by `TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY` and is reserved for adjacent divisions and the Workspace Center.
 
-The edge is presentation-only and does not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
+Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge identity, division-focus compaction, and the first payload-driven geometry/corridor contract are implemented; final adaptive geometry, final expansion-animation language, complete inter-division topology, and final turn-loop electrical choreography remain intentionally open.
+
+The edge and geometry are presentation-only and do not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
 
 This section records current structural evidence only. `MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.

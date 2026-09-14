@@ -38,6 +38,17 @@
       "expansion": "PARTIAL",
       "connection": "SEAT1_REFERENCE_EDGE_IMPLEMENTED_PARTIAL",
       "turnLoop": "PENDING",
+      "seat1ConnectionGeometry": {
+        "geometryId": "TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY",
+        "status": "IMPLEMENTED_PARTIAL",
+        "dimensions": "derived from payload density/labels/controls",
+        "corridor": {
+          "reservedFor": ["adjacent-divisions", "workspace-center"],
+          "ownership": "TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY"
+        },
+        "finalAdaptiveGeometry": "NOT_FINAL",
+        "finalElectricalChoreography": "NOT_FINAL"
+      },
       "configurationContract": {
         "singleHierarchy": true,
         "facetRule": "provider/application/service-runtime/model-variant/skills/tools/workstation/scope/permissions/approvals/limits/compliance/health are configuration facets mapped onto existing Seat branches, not a second Seat tree",

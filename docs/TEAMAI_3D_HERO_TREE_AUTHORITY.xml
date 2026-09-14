@@ -100,6 +100,6 @@
     <c9BlockedUntil>required tree and branch structure is proven complete and integrated turn-loop layer is proven according to the active contract</c9BlockedUntil>
     <c10After>owner/product acceptance gate only</c10After>
   </completion>
-  <!-- 029 Seat-1 vertical: semantic port/edge implemented partially; overall tree remains partial. -->
-  <seat1ConnectionVertical edgeId="TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER" status="implemented-partial" presentationOnly="true" />
+  <!-- 029 Seat-1 vertical: semantic port/edge + payload-driven geometry/corridor implemented partially; overall tree remains partial. -->
+  <seat1ConnectionVertical edgeId="TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER" geometryId="TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY" status="implemented-partial" presentationOnly="true" geometryStatus="payload-driven" corridorReservedFor="adjacent-divisions|workspace-center" finalGeometry="not-final" finalElectricalChoreography="not-final" />
 </teamaiHeroTreeAuthority>
