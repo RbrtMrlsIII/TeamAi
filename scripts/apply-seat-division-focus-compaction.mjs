@@ -42,7 +42,7 @@ function patchRuntime() {
   if (!oldBlock.includes(transitionNeedle)) throw new Error('focusChild validation anchor missing');
   let rewrittenBlock = oldBlock.replace(
     transitionNeedle,
-    transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && opts.nowMs != null && state.phase === HIERARCHY_PHASE.OPEN) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
+    transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && opts.nowMs != null && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
   );
   const duplicateDeclarations = "  state.focusedLeafId = null;\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);";
   if (!rewrittenBlock.includes(duplicateDeclarations)) throw new Error('focusChild original declaration anchor missing');
@@ -118,9 +118,14 @@ function patchHero(path) {
     if (!text.includes(importNeedle)) return false;
     text = text.replace(importNeedle, '  tickHierarchyPose,\n  tickDivisionFocusTransition,\n  tickConnectionBranch,');
   }
-  const frameNeedle = 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();';
+  const frameNeedle = 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();';
+  const fallbackNeedle = 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();';
   if (text.includes(frameNeedle)) {
-    text = text.replace(frameNeedle, 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickDivisionFocusTransition(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();');
+    text = text.replace(frameNeedle, 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);tickDivisionFocusTransition(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();');
+  } else if (text.includes(fallbackNeedle)) {
+    text = text.replace(fallbackNeedle, 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickDivisionFocusTransition(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();');
+  } else {
+    throw new Error('Hero frame anchor missing');
   }
   writeFileSync(path, text);
   return true;
