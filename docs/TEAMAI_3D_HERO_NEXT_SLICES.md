@@ -144,3 +144,7 @@ The overlapping/blurred idle-view screenshots reported on #278 were traced to `h
 **Residual (2026-09-13):** Inspection spine retired from live UI. Settings Smoke = display-only camera id / animation. Agents extend Settings smoke + Playwright; do not resurrect a stage walker.
 
 **Residual (2026-09-13, #278/#311):** Direct `/hero/` load now sets `data-hero-layer` and `data-experience` together in `experience-rebaseline.js`'s `bind()`, so world chrome is usable on first paint instead of only after a client-side entrance-to-world transition.
+
+**Residual (2026-09-14, #314/#315):** The #304 “next-slice candidate” above is **superseded as intended behavior**. Background/empty canvas clicks must remain inert; they must not cycle Seats. True hit-testing may still be designed later, but it is not authorized as a generic click-cycle replacement. No 029-released claim.
+
+**Residual (2026-09-14, #314 TODO #8):** Main merge-gate diagnosis is recorded in `docs/CHECKPOINT_029_MAIN_MERGE_GATE_DIAGNOSIS_2026-09-14.md`. Classification: `REQUIRES GOVERNED RECONCILIATION / CONTROL GAP CANDIDATE`. GitHub currently requires `governance-drift`, `evidence-consistency`, and `agent-validation` (plus PR-only, non-fast-forward, CodeQL). Playwright and `Project tests + canonical package` execute but are not GitHub-required. Canonical owner for any ruleset change is Issue **#133**. Do not edit the ruleset from #314/#278. No 029-released claim.
