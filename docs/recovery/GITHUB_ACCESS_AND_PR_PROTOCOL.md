@@ -124,6 +124,15 @@ GitHub connector/API is preferred for repository inspection, source edits, commi
 ### Manual-intervention rule
 When a user must intervene in Termux, the Development AI must provide the exact working directory, exact branch, exact files, exact commands, exact intended commit, and exact post-push verification. The user must not have to infer which checkout or branch is authoritative.
 
+## Validation alignment rule
+Validators are governing signals and evidence gates, not obstacles to be weakened for convenience. When a validator fails:
+
+`failure → identify the violated contract → inspect Product Law / Masterplan / applicable contract / current implementation / validator intent → determine which layer is wrong → align that layer → rerun the validator`
+
+Do **not** weaken, broaden, disable, skip, delete, or falsify a validator merely to obtain a green result. A validator expectation may be changed only when the governing authority or current product truth has genuinely changed and the validator is demonstrably stale; the change must be explicit, traceable, and synchronized with the governing documentation.
+
+A green validator is evidence of the exact behavior it tests, not automatic proof of unrelated product completion. A failing validator is not itself permission to redefine Product Law, Masterplan, or architectural truth.
+
 ## Large-file and binary rule
 The canonical TeamAi project ZIP is the complete preservation/recovery artifact. GitHub is the durable engineering/source-control surface for code and repository-managed records.
 
