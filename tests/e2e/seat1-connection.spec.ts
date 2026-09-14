@@ -54,20 +54,12 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
 
     await page.keyboard.press('ArrowRight');
 
-    await expect.poll(async () => page.evaluate(() => ({
-      phase: (window as any).TeamAiHero.getHierarchyState?.().phase,
-      connectionAmount: (window as any).TeamAiHero.getConnectionBranchAmount?.(),
-      behaviorAmount: (window as any).TeamAiHero.getBehaviorBranchAmount?.(),
-    })), { timeout: 5000 }).toMatchObject({
-      connectionAmount: expect.any(Number),
-      behaviorAmount: expect.any(Number),
-    });
-
-    await expect.poll(async () => page.evaluate(() => ({
-      phase: (window as any).TeamAiHero.getHierarchyState?.().phase,
-      connectionAmount: (window as any).TeamAiHero.getConnectionBranchAmount?.(),
-      behaviorAmount: (window as any).TeamAiHero.getBehaviorBranchAmount?.(),
-    })), { timeout: 5000 }).toSatisfy((state) => state.phase === 'division_closing' && state.connectionAmount > 0 && state.behaviorAmount > 0);
+    await expect.poll(async () => page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return hero.getHierarchyState?.().phase === 'division_closing'
+        && hero.getConnectionBranchAmount?.() > 0
+        && hero.getBehaviorBranchAmount?.() > 0;
+    }), { timeout: 5000 }).toBe(true);
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -78,6 +70,6 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(0);
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(1);
-    await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat behavior face (expanded). Do/Do not presentation only; not durable policy. Press B for normal UI.');
+    await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat behavior face (expanded). Do/Dont presentation only; not durable policy. Press B for normal UI.');
   });
 });
