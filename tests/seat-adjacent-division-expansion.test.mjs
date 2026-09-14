@@ -32,17 +32,27 @@ test('adjacent expansion derives both division envelopes from semantic geometry'
   assert.equal(adjacentExpansionCollidesWithCorridor(envelope), false);
 });
 
-test('adjacent expansion moves source to compact while target opens', () => {
+test('adjacent expansion compacts the source before opening the target', () => {
   const source = geometry({ x: 1, y: 0.8, z: 0 }, Math.PI, ['Connection']);
   const target = geometry({ x: 1, y: 0.8, z: 0.9 }, -Math.PI / 2, ['Behavior']);
   const base = buildAdjacentDivisionExpansionEnvelope({ sourceGeometry: source, targetGeometry: target });
-  const halfway = advanceAdjacentDivisionExpansion(base, 120, 240);
 
-  assert.equal(halfway.phase, 'OPENING_ADJACENT');
-  assert.equal(halfway.sourceAmount, 0.5);
-  assert.equal(halfway.targetAmount, 0.5);
+  const halfwayClose = advanceAdjacentDivisionExpansion(base, 120, 240, 240);
+  assert.equal(halfwayClose.phase, 'CLOSING_SOURCE');
+  assert.equal(halfwayClose.sourceAmount, 0.5);
+  assert.equal(halfwayClose.targetAmount, 0);
 
-  const done = advanceAdjacentDivisionExpansion(base, 240, 240);
+  const compacted = advanceAdjacentDivisionExpansion(base, 240, 240, 240);
+  assert.equal(compacted.phase, 'OPENING_ADJACENT');
+  assert.equal(compacted.sourceAmount, 0);
+  assert.equal(compacted.targetAmount, 0);
+
+  const halfwayOpen = advanceAdjacentDivisionExpansion(base, 360, 240, 240);
+  assert.equal(halfwayOpen.phase, 'OPENING_ADJACENT');
+  assert.equal(halfwayOpen.sourceAmount, 0);
+  assert.equal(halfwayOpen.targetAmount, 0.5);
+
+  const done = advanceAdjacentDivisionExpansion(base, 480, 240, 240);
   assert.equal(done.phase, 'ACTIVE');
   assert.equal(done.sourceAmount, 0);
   assert.equal(done.targetAmount, 1);
