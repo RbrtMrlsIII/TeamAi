@@ -29,11 +29,6 @@ export function buildAdjacentDivisionGeometry({
   return buildSeatDivisionGeometry({ center, angle, radialDistance, payload, workspaceTarget, id: divisionId });
 }
 
-/**
- * Resolve one semantic adjacent transition from descriptors supplied by the
- * caller. The mechanism is reusable across Seats and branch pairs; callers
- * decide which transitions are actually active in the current product slice.
- */
 export function buildAdjacentDivisionTransition({
   seatIndex,
   sourceDivisionId,
@@ -81,6 +76,8 @@ export function buildAdjacentDivisionTransition({
     seatIndex,
     sourceDivisionId,
     targetDivisionId,
+    sourceGeometry,
+    targetGeometry,
     sourceAmount: source,
     targetAmount: target,
     phase: target > 0 ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
@@ -98,13 +95,16 @@ export function advanceAdjacentDivisionTransition(state, elapsedMs, sourceDurati
     targetAmount: clamp(state.targetAmount, 0, 1),
   }, elapsedMs, sourceDurationMs, targetDurationMs);
   if (!next) return null;
-  return buildAdjacentDivisionTransition({
-    seatIndex: next.seatIndex,
-    sourceDivisionId: next.sourceDivisionId,
-    targetDivisionId: next.targetDivisionId,
-    sourceGeometry: next.sourceGeometry,
-    targetGeometry: next.targetGeometry,
-    sourceAmount: next.sourceAmount,
-    targetAmount: next.targetAmount,
-  });
+  return {
+    ...buildAdjacentDivisionTransition({
+      seatIndex: next.seatIndex,
+      sourceDivisionId: next.sourceDivisionId,
+      targetDivisionId: next.targetDivisionId,
+      sourceGeometry: next.sourceGeometry,
+      targetGeometry: next.targetGeometry,
+      sourceAmount: next.sourceAmount,
+      targetAmount: next.targetAmount,
+    }),
+    phase: next.phase,
+  };
 }
