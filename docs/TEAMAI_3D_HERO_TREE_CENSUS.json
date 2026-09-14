@@ -52,6 +52,13 @@
           "rule": "derive from source/target semantic ports; fail closed when either port is missing",
           "presentationOnly": true
         },
+        "adjacentDivisionExpansion": {
+          "status": "IMPLEMENTED_PARTIAL",
+          "identity": "TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_EXPANSION",
+          "rule": "derive source/target expansion envelopes from semantic geometry and preserve the owned corridor during source-compacts/target-opens transition",
+          "timingStatus": "IMPLEMENTATION_BASELINE_NOT_FINAL",
+          "presentationOnly": true
+        },
         "finalAdaptiveGeometry": "NOT_FINAL",
         "finalElectricalChoreography": "NOT_FINAL"
       },
@@ -67,7 +74,7 @@
         "agentCountRule": "Agent count changes responsibility allocation and effective per-Seat skill bundles, not the common skill definitions",
         "twoSeatRule": "Fewer Seats may carry several Responsibility Units and broader resolved skill bundles",
         "eightSeatRule": "Up to eight Seats partition the same Responsibility Unit and common-skill substrate more finely; each Seat may resolve a different effective bundle",
-        "userSkillEditing": "DEFINED_NOT_IMPLEMENTED; user-owned skill material must remain distinct from canonical TeamAi common skills",
+        "userSkillEditing": "DEFINED_NOT_IMPLEMENTED; user-owned skill material must remain distinct from canonical common skills",
         "removeAgent": "Seat lifecycle retire/remove operation; must not imply deletion of the user's root account",
         "return": "Cross-tree navigation to public Entrance; not a Seat child",
         "dictionary": "Complex Dictionary / User Guide (?) is a public guidance surface; not a Seat child"
