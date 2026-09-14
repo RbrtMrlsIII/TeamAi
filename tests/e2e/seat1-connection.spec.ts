@@ -54,12 +54,24 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
 
     await page.keyboard.press('ArrowRight');
 
-    await expect.poll(async () => page.evaluate(() => {
+    const forwardClosingSnapshot = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
-      return hero.getHierarchyState?.().phase === 'division_closing'
-        && hero.getConnectionBranchAmount?.() > 0
-        && hero.getBehaviorBranchAmount?.() > 0;
-    }), { timeout: 5000 }).toBe(true);
+      const state = hero.getHierarchyState?.();
+      return {
+        state,
+        connectionAmount: hero.getConnectionBranchAmount?.(),
+        behaviorAmount: hero.getBehaviorBranchAmount?.(),
+      };
+    });
+
+    expect(forwardClosingSnapshot.state).toMatchObject({
+      phase: 'division_closing',
+      focusedChildId: 'SEAT_CONNECTION',
+      divisionClosingChildId: 'SEAT_CONNECTION',
+      divisionPendingChildId: 'SEAT_BEHAVIOR',
+    });
+    expect(forwardClosingSnapshot.connectionAmount).toBeGreaterThan(0);
+    expect(forwardClosingSnapshot.behaviorAmount).toBe(0);
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -71,5 +83,30 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(0);
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(1);
     await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat behavior face (expanded). Do/Dont presentation only; not durable policy. Press B for normal UI.');
+
+    await page.keyboard.press('ArrowLeft');
+
+    const reverseClosingSnapshot = await page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return hero.getHierarchyState?.();
+    });
+
+    expect(reverseClosingSnapshot).toMatchObject({
+      phase: 'division_closing',
+      focusedChildId: 'SEAT_BEHAVIOR',
+      divisionClosingChildId: 'SEAT_BEHAVIOR',
+      divisionPendingChildId: 'SEAT_CONNECTION',
+    });
+
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
+      phase: 'open',
+      focusedChildId: 'SEAT_CONNECTION',
+      divisionClosingChildId: null,
+      divisionPendingChildId: null,
+    });
+
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(0);
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
+    await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat connection face (expanded). Presentation only; not live bind. Press C to configure seat in normal UI.');
   });
 });
