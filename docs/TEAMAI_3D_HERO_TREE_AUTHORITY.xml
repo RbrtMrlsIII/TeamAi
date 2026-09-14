@@ -1,99 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<teamaiHeroTreeAuthority version="1.2" status="design-baseline" implementationStatus="incomplete">
-  <authority>
-    <productLaw>PRODUCT_LAW.md</productLaw>
-    <vision>docs/VISION.md</vision>
-    <executionLedger>Issue #278</executionLedger>
-    <contract>docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md</contract>
-    <census>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</census>
-    <machineReadableCensus>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</machineReadableCensus>
-    <runtimeBaseline>docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md</runtimeBaseline>
-  </authority>
-  <maintenance>
-    <trigger>add|remove|rename|materially_restructure|reimplement</trigger>
-    <sameGovernedChange>true</sameGovernedChange>
-    <representations>
-      <file>docs/TEAMAI_3D_HERO_TREE_CENSUS.csv</file>
-      <file>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</file>
-      <file>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</file>
-      <file>docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml</file>
-    </representations>
-  </maintenance>
-  <rules>
-    <identity>treeID and branchId are semantic identities; geometry never defines identity.</identity>
-    <rootFirst>Every tree begins with authoritative root truth before geometry is designed.</rootFirst>
-    <branchPurpose>Every branch is a real integration with purpose, UI payload, expansion space, connection ownership, and verification.</branchPurpose>
-    <recursiveDepth>Branches may contain branches and must not be constrained to a fixed depth.</recursiveDepth>
-    <adaptiveGeometry>Geometry is derived from semantic and UI payload; no universal branch height, radius, spacing, or position is assumed.</adaptiveGeometry>
-    <expansionSpace>Every expanding division reserves clearance for adjacent divisions, wiring corridors, workspace visibility, and camera travel.</expansionSpace>
-    <maximumExpansion>The Hero maximum expansion state is derived from the combined footprint of active participating divisions and their payload.</maximumExpansion>
-    <turnLoopExpansion>Participating tree and branch divisions are active/open during the final turn-loop so semantic wiring paths can be traversed.</turnLoopExpansion>
-    <electricalFlow>Turn-loop electricity follows actual semantic connection paths toward the workspace center.</electricalFlow>
-    <smoothExpansion>Division opening and closing must use smooth stateful choreography and must not be an instant visibility or coordinate swap.</smoothExpansion>
-    <timingStatus>Current prototype timings are living implementation baselines, not final animation law.</timingStatus>
-    <presentationBoundary>3D tree presentation never grants entitlement, authorization, scheduler authority, or durable domain authority.</presentationBoundary>
-    <truthfulStatus>A tree or branch remains partial/provisional/pending when semantics, payload, geometry, expansion, connection, runtime behavior, or verification is incomplete.</truthfulStatus>
-    <singleSeatHierarchy>TREE-HERO-SEAT remains the single Seat presentation hierarchy; configuration facets map onto existing branches and do not create a second Seat tree.</singleSeatHierarchy>
-    <globalTurnBoundary>Global participating-seat count, actions/turns per Seat, ordering, stopping conditions, summarizer, and loop limits belong to TREE-ORCHESTRATION/scheduler, not TREE-HERO-SEAT.</globalTurnBoundary>
-    <commonSkillBoundary>TEAMAI COMMON SKILL / Universal ToolKit definitions remain shared; Seat count changes Responsibility Unit allocation and effective bundles, not the common definitions.</commonSkillBoundary>
-    <crossTreeControls>Complex Dictionary, Settings, Return, and Logout remain cross-tree/product controls and are not Seat branches.</crossTreeControls>
-  </rules>
-  <treeFamilies>
-    <tree id="TREE-DOMAIN" status="incomplete">
-      <root>Account</root><root>Workplace</root><root>Project</root><root>Seat</root>
-      <node id="DOMAIN-ACCOUNT" status="semantic-only" />
-      <node id="DOMAIN-WORKPLACE" status="semantic-only" />
-      <node id="DOMAIN-PROJECT" status="semantic-only" />
-      <node id="DOMAIN-SEAT" status="semantic-only" />
-      <authority>domain state outside renderer</authority>
-    </tree>
-    <tree id="TREE-HERO-SEAT" status="partial">
-      <root>Seat Shell</root>
-      <node id="SEAT_SHELL" status="implemented-partial" />
-      <node id="SEAT_CONNECTION" status="implemented-partial" />
-      <node id="SEAT_BEHAVIOR" status="implemented-partial" meaning="seat-local behavior/defaults and constraints only" />
-      <node id="SEAT_TOOLKIT" status="implemented-partial" meaning="resolved TeamAi common skill/toolkit presentation" />
-      <node id="SEAT_CAPABILITIES" status="implemented-partial" />
-      <node id="SEAT_AUTHORIZATION" status="implemented-partial" />
-      <node id="SEAT_WORKSPACE_SCOPE" status="implemented-partial" />
-      <node id="SEAT_TASK_EVIDENCE" status="implemented-partial" />
-      <authority>presentation only</authority>
-      <configuration>
-        <facets>provider|application|service-runtime|model-variant|skills|tools-MCP|workstation|scope|permissions|approvals|limits|compliance|health</facets>
-        <lifecycle>Discover|External Setup|Import/Authorize|Capability Test|Bind|Equip|Activate|Run|Observe|Degrade/Suspend|Recover/Revalidate|Rebind/Retire</lifecycle>
-        <commonSkillSource>TEAMAI COMMON SKILL / Universal ToolKit</commonSkillSource>
-        <twoSeatAllocation>Fewer Seats may carry several Responsibility Units and broader effective bundles.</twoSeatAllocation>
-        <eightSeatAllocation>Up to eight Seats partition the same Responsibility Unit/common-skill definitions more finely.</eightSeatAllocation>
-        <userSkillEditing status="defined-not-implemented">User-owned skill material remains distinct from canonical common skills.</userSkillEditing>
-        <removeAgent>Retire/remove the Seat and governed bindings; do not delete the user's root account.</removeAgent>
-      </configuration>
-    </tree>
-    <tree id="TREE-SKILL-RESPONSIBILITY" status="incomplete">
-      <root>ToolKit upstream</root><root>WebAi Seat responsibility</root><root>skill bundle</root><root>governance</root><root>adaptation</root><root>capacity</root>
-      <node id="SKILL-TOOLKIT" status="semantic-only" />
-      <node id="SKILL-WEBAI-RESPONSIBILITY" status="semantic-only" />
-      <node id="SKILL-BUNDLE" status="semantic-only" />
-      <node id="SKILL-GOVERNANCE" status="semantic-only" />
-      <authority>skill/governance boundary; presentation only</authority>
-      <allocationRule>Agent count changes Responsibility Unit allocation, not the underlying common skill catalog.</allocationRule>
-    </tree>
-  </treeFamilies>
-  <crossTreeConfiguration>
-    <turnConfiguration owner="TREE-ORCHESTRATION/scheduler" status="defined-not-implementation-complete">
-      <control>participating Seats</control>
-      <control>actions/turns per participating Seat</control>
-      <control>turn order/scheduling policy</control>
-      <control>round or stopping conditions</control>
-      <control>summarizer selection</control>
-      <control>resource/time limits</control>
-      <control>turn-loop mode</control>
-    </turnConfiguration>
-    <settings status="defined">
-      <category>Seats</category><category>Tree 1-8</category><category>Branches</category><category>Privacy Policy</category><category>Terms</category><category>Logout</category><category>Return BTN</category>
-      <rule>Settings references the same semantic census identities and is not a second machine hierarchy.</rule>
-    </settings>
-    <dictionary surface="Public Entrance Complex Dictionary / User Guide (?)" role="Explain TeamAi vocabulary and behavior" />
-  </crossTreeConfiguration>
+<teamaiHeroTreeAuthority>
+  <meta status="DESIGN_BASELINE_NOT_IMPLEMENTATION_COMPLETE" authority="PRODUCT_LAW -> MASTERPLAN -> docs/VISION.md -> contracts -> implementation -> verification" />
+  <tree id="TREE-HERO-SEAT" status="partial" rendererAuthority="presentation-only" />
   <completion>
     <treeComplete requires="semantic,implementation,geometry,expansion,connection,verification" />
     <heroComplete requires="required trees complete plus adaptive geometry, integrated camera travel, connection topology, turn-loop choreography, and acceptance evidence" />
@@ -104,4 +12,5 @@
   <seat1ConnectionVertical edgeId="TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER" geometryId="TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY" status="implemented-partial" presentationOnly="true" geometryStatus="payload-driven" corridorReservedFor="adjacent-divisions|workspace-center" finalGeometry="not-final" finalElectricalChoreography="not-final" />
   <seat1AdjacentDivisionWiring identity="TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_WIRING" status="implemented-partial" presentationOnly="true" sourceTarget="semantic-port-to-semantic-port" failClosed="missing-source-or-target-port" rendererConsumption="implemented-partial" rendererPath="SEAT_CONNECTION-to-SEAT_BEHAVIOR-presentation" finalElectricalTopology="not-final" />
   <seat1AdjacentDivisionExpansion identity="TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_EXPANSION" status="implemented-partial" presentationOnly="true" timingStatus="implementation-baseline-not-final" corridorOwner="TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY" transition="source-compacts-fully|target-opens" targetClosedUntilSourceZero="true" preservesUserConfiguration="true" finalAnimation="not-final" />
+  <adjacentDivisionTransitionPrimitive status="implemented-partial" identityPattern="TREE-HERO-SEAT#{seatIndex}:{sourceDivisionId}:{targetDivisionId}:ADJACENT_TRANSITION" activeFixture="TREE-HERO-SEAT#0:SEAT_CONNECTION→SEAT_BEHAVIOR" reusable="true" presentationOnly="true" finalAnimation="not-final" finalElectricalTopology="not-final" />
 </teamaiHeroTreeAuthority>
