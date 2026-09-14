@@ -5,6 +5,7 @@
  */
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || 0));
+const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
@@ -36,32 +37,36 @@ export function buildSeatDivisionGeometry({
 } = {}) {
   const measured = measureDivisionPayload(payload);
   const payloadScale = clamp(1 + (measured.surfaceUnits - 1) * 0.08, 0.9, 1.55) * measured.density;
-  const width = baseWidth * payloadScale;
-  const depth = baseDepth * clamp(1 + (measured.controlCount - 1) * 0.06, 0.9, 1.35);
-  const height = baseHeight * clamp(1 + measured.labelCount * 0.045, 1, 1.25);
-  const corridorRadius = Math.max(0.025, clearance * 0.42);
+  const width = normalize(baseWidth * payloadScale);
+  const depth = normalize(baseDepth * clamp(1 + (measured.controlCount - 1) * 0.06, 0.9, 1.35));
+  const height = normalize(baseHeight * clamp(1 + measured.labelCount * 0.045, 1, 1.25));
+  const corridorRadius = normalize(Math.max(0.025, clearance * 0.42));
   const normal = { x: Math.cos(angle), y: 0, z: Math.sin(angle) };
   const port = {
-    x: center.x + normal.x * (depth * 0.5),
-    y: center.y,
-    z: center.z + normal.z * (depth * 0.5),
+    x: normalize(center.x + normal.x * (depth * 0.5)),
+    y: normalize(center.y),
+    z: normalize(center.z + normal.z * (depth * 0.5)),
   };
   const start = { ...port };
   const end = {
-    x: Number(workspaceTarget.x) || 0,
-    y: Number(workspaceTarget.y) || 0,
-    z: Number(workspaceTarget.z) || 0,
+    x: normalize(Number(workspaceTarget.x) || 0),
+    y: normalize(Number(workspaceTarget.y) || 0),
+    z: normalize(Number(workspaceTarget.z) || 0),
   };
   const dx = end.x - start.x;
   const dz = end.z - start.z;
-  const corridorLength = Math.max(0.02, Math.hypot(dx, dz));
+  const corridorLength = normalize(Math.max(0.02, Math.hypot(dx, dz)));
 
   return {
     id: SEAT1_CONNECTION_GEOMETRY_ID,
     semantic: 'SEAT_CONNECTION',
-    center: { x: Number(center.x) || 0, y: Number(center.y) || 0, z: Number(center.z) || 0 },
+    center: {
+      x: normalize(Number(center.x) || 0),
+      y: normalize(Number(center.y) || 0),
+      z: normalize(Number(center.z) || 0),
+    },
     dimensions: { width, depth, height },
-    clearance,
+    clearance: normalize(clearance),
     payload: measured,
     port,
     corridor: {
@@ -69,11 +74,11 @@ export function buildSeatDivisionGeometry({
       end,
       length: corridorLength,
       radius: corridorRadius,
-      yaw: Math.atan2(dz, dx),
+      yaw: normalize(Math.atan2(dz, dx)),
       owner: SEAT1_CONNECTION_GEOMETRY_ID,
       reservedFor: ['adjacent-divisions', 'workspace-center'],
     },
-    radialDistance: Number(radialDistance) || 0,
+    radialDistance: normalize(Number(radialDistance) || 0),
   };
 }
 
@@ -82,8 +87,8 @@ export function connectionCorridorPoint(geometry, amount = 0) {
   const a = geometry?.corridor?.start || geometry?.port || { x: 0, y: 0, z: 0 };
   const b = geometry?.corridor?.end || { x: 0, y: 0, z: 0 };
   return {
-    x: a.x + (b.x - a.x) * t,
-    y: a.y + (b.y - a.y) * t,
-    z: a.z + (b.z - a.z) * t,
+    x: normalize(a.x + (b.x - a.x) * t),
+    y: normalize(a.y + (b.y - a.y) * t),
+    z: normalize(a.z + (b.z - a.z) * t),
   };
 }
