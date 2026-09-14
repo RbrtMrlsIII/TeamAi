@@ -52,6 +52,44 @@ export function buildAdjacentDivisionWiring({
   };
 }
 
+/**
+ * Build the currently valid visual handoff path for a sequential division transition.
+ * The source branch may compact before the target opens, so this frame keeps the
+ * target endpoint semantically anchored while never making the target branch active early.
+ */
+export function buildAdjacentDivisionWiringFrame({
+  wiring,
+  sourceAmount = 0,
+  targetAmount = 0,
+  phase = 'REST',
+} = {}) {
+  if (!wiring?.from?.port || !wiring?.to?.port) return null;
+
+  const source = clamp(sourceAmount, 0, 1);
+  const target = clamp(targetAmount, 0, 1);
+  const handoff = phase === 'CLOSING_SOURCE' || phase === 'OPENING_ADJACENT' || phase === 'ACTIVE';
+  if (!handoff) return null;
+
+  const sourcePoint = wiring.from.projected || wiring.from.port;
+  const targetPoint = wiring.to.port;
+  const progress = target > 0 ? target : source;
+
+  return {
+    id: wiring.id,
+    semantic: 'ADJACENT_DIVISION_WIRING_FRAME',
+    phase,
+    sourceAmount: normalize(source),
+    targetAmount: normalize(target),
+    activeTarget: target > 0,
+    from: { ...sourcePoint },
+    to: { ...targetPoint },
+    progress: normalize(progress),
+    radius: normalize(wiring.corridor?.radius || 0.025),
+    yaw: normalize(wiring.corridor?.yaw || 0),
+    presentationOnly: true,
+  };
+}
+
 export function adjacentDivisionWiringPoint(wiring, amount = 0) {
   const t = clamp(amount, 0, 1);
   const a = wiring?.from?.projected || wiring?.from?.port || { x: 0, y: 0, z: 0 };
