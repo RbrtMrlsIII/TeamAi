@@ -38,10 +38,13 @@ function patchRuntime() {
   const oldBlock = text.slice(start, end);
   const transitionNeedle = "  if (!SEAT_SHELL_V1_CHILDREN.includes(childId)) return state;";
   if (!oldBlock.includes(transitionNeedle)) throw new Error('focusChild validation anchor missing');
-  const rewrittenBlock = oldBlock.replace(
+  let rewrittenBlock = oldBlock.replace(
     transitionNeedle,
     transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && state.phase === HIERARCHY_PHASE.OPEN) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
   );
+  const duplicateDeclarations = "  state.focusedLeafId = null;\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);";
+  if (!rewrittenBlock.includes(duplicateDeclarations)) throw new Error('focusChild original declaration anchor missing');
+  rewrittenBlock = rewrittenBlock.replace(duplicateDeclarations, "  state.focusedLeafId = null;");
   if (rewrittenBlock === oldBlock) throw new Error('focusChild transition insertion failed');
   text = text.slice(0, start) + rewrittenBlock + text.slice(end);
 
