@@ -1,11 +1,19 @@
 /**
- * 029 adjacent-division expansion envelope.
+ * 031 semantic adjacent-division expansion envelope.
  * Presentation-only geometry/state contract. Timing is an implementation baseline, not final animation law.
  */
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || 0));
 const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_ADJACENT_EXPANSION_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_EXPANSION';
+
+export function adjacentDivisionExpansionIdentity({ seatIndex = 0, sourceDivisionId, targetDivisionId } = {}) {
+  const seat = Number.isInteger(seatIndex) && seatIndex >= 0 ? seatIndex : 0;
+  if (!sourceDivisionId || !targetDivisionId) {
+    throw new Error('adjacent expansion requires source and target division identities');
+  }
+  return `TREE-HERO-SEAT#${seat}:${sourceDivisionId}:${targetDivisionId}:ADJACENT_EXPANSION`;
+}
 
 function axisBounds(center, halfWidth, halfDepth) {
   return {
@@ -17,17 +25,28 @@ function axisBounds(center, halfWidth, halfDepth) {
 }
 
 export function buildAdjacentDivisionExpansionEnvelope({
+  seatIndex = 0,
+  sourceDivisionId,
+  targetDivisionId,
   sourceGeometry,
   targetGeometry,
   sourceAmount = 1,
   targetAmount = 0,
   corridorRadius = 0.025,
   adjacencyGap = 0.08,
+  id,
 } = {}) {
   if (!sourceGeometry?.port || !targetGeometry?.port) {
     throw new Error('adjacent expansion requires source and target semantic ports');
   }
 
+  const resolvedSourceDivisionId = sourceDivisionId || sourceGeometry.id;
+  const resolvedTargetDivisionId = targetDivisionId || targetGeometry.id;
+  const expansionId = id || adjacentDivisionExpansionIdentity({
+    seatIndex,
+    sourceDivisionId: resolvedSourceDivisionId,
+    targetDivisionId: resolvedTargetDivisionId,
+  });
   const sourceScale = clamp(sourceAmount, 0, 1);
   const targetScale = clamp(targetAmount, 0, 1);
   const sourceWidth = (Number(sourceGeometry?.dimensions?.width) || 0) * 0.5 * sourceScale;
@@ -46,10 +65,11 @@ export function buildAdjacentDivisionExpansionEnvelope({
   };
 
   return {
-    id: SEAT1_ADJACENT_EXPANSION_ID,
+    id: expansionId,
     semantic: 'ADJACENT_DIVISION_EXPANSION',
-    sourceDivisionId: sourceGeometry.id,
-    targetDivisionId: targetGeometry.id,
+    seatIndex,
+    sourceDivisionId: resolvedSourceDivisionId,
+    targetDivisionId: resolvedTargetDivisionId,
     sourceAmount: normalize(sourceScale),
     targetAmount: normalize(targetScale),
     sourceBounds,
@@ -72,10 +92,10 @@ export function adjacentExpansionCollidesWithCorridor(envelope) {
 }
 
 /**
- * Advance the bounded adjacency sequence in two phases:
+ * Advance the adjacency sequence in two phases:
  * 1) source division compacts while target remains closed;
  * 2) only after source compaction completes may target expansion begin.
- * This is the current Seat-1 interaction contract, not final animation law.
+ * This timing remains an implementation baseline, not final animation law.
  */
 export function advanceAdjacentDivisionExpansion(state, elapsedMs, sourceDurationMs = 240, targetDurationMs = 240) {
   if (!state) return null;
