@@ -71,5 +71,25 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(0);
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(1);
     await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat behavior face (expanded). Do/Dont presentation only; not durable policy. Press B for normal UI.');
+
+    await page.keyboard.press('ArrowLeft');
+
+    await expect.poll(async () => page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return hero.getHierarchyState?.().phase === 'division_closing'
+        && hero.getHierarchyState?.().divisionClosingChildId === 'SEAT_BEHAVIOR'
+        && hero.getHierarchyState?.().divisionPendingChildId === 'SEAT_CONNECTION';
+    }), { timeout: 5000 }).toBe(true);
+
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
+      phase: 'open',
+      focusedChildId: 'SEAT_CONNECTION',
+      divisionClosingChildId: null,
+      divisionPendingChildId: null,
+    });
+
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(0);
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
+    await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat connection face (expanded). Presentation only; not live bind. Press C to configure seat in normal UI.');
   });
 });
