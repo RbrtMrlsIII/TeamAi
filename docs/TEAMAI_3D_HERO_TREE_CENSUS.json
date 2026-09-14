@@ -55,7 +55,7 @@
         "adjacentDivisionExpansion": {
           "status": "IMPLEMENTED_PARTIAL",
           "identity": "TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_EXPANSION",
-          "rule": "derive source/target expansion envelopes from semantic geometry and preserve the owned corridor during source-compacts/target-opens transition",
+          "rule": "derive source/target expansion envelopes from semantic geometry, preserve the owned corridor, and enforce source-compacts-fully-before-target-opens sequencing",
           "timingStatus": "IMPLEMENTATION_BASELINE_NOT_FINAL",
           "presentationOnly": true
         },
