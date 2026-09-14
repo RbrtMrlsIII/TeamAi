@@ -11,6 +11,30 @@
 
 Validation is a guardrail, not the steering wheel.
 
+## Truth-transition rule for tests and gates
+
+When an authorized product decision changes behavior that an existing test or validator encodes, classify the failure before changing any assertion:
+
+```text
+failing validation
+      ↓
+compare implementation ↔ current authorized contract
+      ↓
+┌───────────────────────────────┬────────────────────────────────┐
+│ implementation drift          │ intentional truth transition  │
+│ → fix implementation          │ → update contract first      │
+│ → keep the gate strict        │ → then adapt tests / gates    │
+└───────────────────────────────┴────────────────────────────────┘
+```
+
+For an intentional truth transition, the replacement test MUST assert the new authorized invariant, not merely broaden or weaken the old assertion. The superseded behavior remains historical evidence and MUST NOT remain normative merely because an older test encoded it.
+
+Required audit trail:
+
+`old assertion → reason for change → authoritative contract update → new invariant → updated test/gate → verification evidence`
+
+A passing test is not sufficient evidence of correctness when its expectation has been relaxed without a corresponding contract change.
+
 ## Post-merge rule (new current truth)
 
 Once a **user-authorized** change is **merged to `main`**, it becomes **current implementation truth** until deliberately superseded.
