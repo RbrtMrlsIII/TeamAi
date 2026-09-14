@@ -23,7 +23,7 @@ test('changing division focus enters a closing transition instead of deleting th
   openSeatShellParent(state, 0, { snap: true, nowMs: 0 });
   focusChild(state, HIERARCHY_PART.SEAT_CONNECTION, { snap: true, nowMs: 0 });
 
-  focusChild(state, HIERARCHY_PART.SEAT_BEHAVIOR, { nowMs: 100, snap: false });
+  focusChild(state, HIERARCHY_PART.SEAT_BEHAVIOR, { nowMs: 100, snap: false, interactive: true });
 
   assert.equal(state.phase, HIERARCHY_PHASE.DIVISION_CLOSING);
   assert.equal(state.focusedChildId, HIERARCHY_PART.SEAT_CONNECTION);
@@ -37,7 +37,7 @@ test('old division compacts fully, then pending division becomes active', () => 
   const state = createHierarchyRuntime();
   openSeatShellParent(state, 0, { snap: true, nowMs: 0 });
   focusChild(state, HIERARCHY_PART.SEAT_CONNECTION, { snap: true, nowMs: 0 });
-  focusChild(state, HIERARCHY_PART.SEAT_BEHAVIOR, { nowMs: 100, snap: false });
+  focusChild(state, HIERARCHY_PART.SEAT_BEHAVIOR, { nowMs: 100, snap: false, interactive: true });
 
   tickDivisionFocusTransition(state, 100 + DIVISION_FOCUS_CLOSE_MS / 2, false);
   assert.equal(state.phase, HIERARCHY_PHASE.DIVISION_CLOSING);
@@ -59,7 +59,7 @@ test('reduced motion compacts and switches division without touching user config
   state.userConfig = { provider: 'firebase-test-account', saved: true };
   openSeatShellParent(state, 0, { snap: true, nowMs: 0 });
   focusChild(state, HIERARCHY_PART.SEAT_CONNECTION, { snap: true, nowMs: 0 });
-  focusChild(state, HIERARCHY_PART.SEAT_BEHAVIOR, { nowMs: 50, snap: false });
+  focusChild(state, HIERARCHY_PART.SEAT_BEHAVIOR, { nowMs: 50, snap: false, interactive: true });
 
   tickDivisionFocusTransition(state, 50, true);
 
