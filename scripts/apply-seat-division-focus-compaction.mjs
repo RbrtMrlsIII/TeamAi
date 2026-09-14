@@ -40,7 +40,7 @@ function patchRuntime() {
   if (!oldBlock.includes(transitionNeedle)) throw new Error('focusChild validation anchor missing');
   const rewrittenBlock = oldBlock.replace(
     transitionNeedle,
-    transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (state.focusedChildId && state.focusedChildId !== childId && !snap && state.phase === HIERARCHY_PHASE.OPEN) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
+    transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && state.phase === HIERARCHY_PHASE.OPEN) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
   );
   if (rewrittenBlock === oldBlock) throw new Error('focusChild transition insertion failed');
   text = text.slice(0, start) + rewrittenBlock + text.slice(end);
@@ -67,7 +67,7 @@ export function tickDivisionFocusTransition(state, nowMs, reducedMotion = false)
     state.divisionPendingChildId = null;
     resetDivisionBranchAmounts(state);
     state.phase = HIERARCHY_PHASE.OPEN;
-    return focusChild(state, pending, { nowMs: now, snap: true });
+    return focusChild(state, pending, { nowMs: now, snap: true, allowTransition: false });
   }
   const progress = Math.min((now - (state.divisionCloseStartMs ?? now)) / DIVISION_FOCUS_CLOSE_MS, 1);
   const amount = 1 - smoothstep(progress);
@@ -87,7 +87,7 @@ export function tickDivisionFocusTransition(state, nowMs, reducedMotion = false)
     state.divisionPendingChildId = null;
     resetDivisionBranchAmounts(state);
     state.phase = HIERARCHY_PHASE.OPEN;
-    return focusChild(state, pending, { nowMs: now, snap: false });
+    return focusChild(state, pending, { nowMs: now, snap: false, allowTransition: false });
   }
   return state;
 }
