@@ -41,6 +41,9 @@ jobs:
       - name: Apply Seat division focus compaction
         run: node scripts/apply-seat-division-focus-compaction.mjs
 
+      - name: Apply Seat-1 connection edge
+        run: node scripts/apply-seat1-connection-edge-flex.mjs
+
       - name: Run Playwright browser verification
         run: npm run test:e2e
 
