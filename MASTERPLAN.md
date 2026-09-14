@@ -840,3 +840,10 @@ No child becomes an independent roadmap. All descendants inherit the chronology 
 The nested tree intentionally preserves unresolved work as `OPEN`, `BLOCKED`, `NOT IMPLEMENTED`, or `NOT PROVEN`. It must never be “cleaned up” by marking work complete because a related concept exists elsewhere.
 
 When a merged PR supersedes an older child, update the same Masterplan branch to the new state and preserve the superseded implementation as historical lineage rather than opening a parallel replacement chronology.
+
+## Main merge-gate diagnosis — #314 TODO #8
+
+`docs/CHECKPOINT_029_MAIN_MERGE_GATE_DIAGNOSIS_2026-09-14.md` records the live GitHub `main` ruleset `Main Merging AI Protection` (`22304846`). GitHub currently requires `governance-drift`, `evidence-consistency`, and `agent-validation`, plus PR-only, non-fast-forward, and CodeQL. Playwright and `Project tests + canonical package` execute but are not GitHub-required. Classification: `REQUIRES GOVERNED RECONCILIATION / CONTROL GAP CANDIDATE`. Canonical owner for any ruleset change is Issue **#133**. This entry does not change the ruleset, does not complete TEAM-BACKEND-001, and makes no 029-released claim.
+
+<!-- teamai residual: #314 TODO #8 main merge-gate diagnosis; preserve full Masterplan body; no 029-released claim. -->
+
