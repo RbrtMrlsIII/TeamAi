@@ -374,8 +374,10 @@ The Seat division-focus transition also preserves the previous division as the v
 
 Seat-1 now also has a payload-driven geometry descriptor for the `SEAT_CONNECTION` division. The descriptor derives width, depth, height, and corridor thickness from semantic/UI payload density and accepts an explicit workspace target. Its corridor is owned by `TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY` and is reserved for adjacent divisions and the Workspace Center.
 
-Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge identity, division-focus compaction, and the first payload-driven geometry/corridor contract are implemented; final adaptive geometry, final expansion-animation language, complete inter-division topology, and final turn-loop electrical choreography remain intentionally open.
+The Seat-1 connection corridor now also exposes a reusable **adjacent-division wiring seam**. The seam consumes a source and target division's stable semantic connection ports, derives the traversal length and orientation from those ports, and fails closed when either port is absent. It is presentation-only topology scaffolding and does not yet establish complete inter-division topology or final turn-loop electrical choreography.
 
-The edge and geometry are presentation-only and do not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
+Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge identity, division-focus compaction, the first payload-driven geometry/corridor contract, and the adjacent-division wiring seam are implemented; final adaptive geometry, final expansion-animation language, complete inter-division topology, and final turn-loop electrical choreography remain intentionally open.
+
+The edge, geometry, and adjacency seam are presentation-only and do not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
 
 This section records current structural evidence only. `MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
