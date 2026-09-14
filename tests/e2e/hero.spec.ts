@@ -153,7 +153,7 @@ test.describe('Living Web AI Workspace Hero', () => {
       presentationOnly: true
     });
     const handoffEvent = page.evaluate(() => new Promise((resolve) => {
-      window.addEventListener('teamai:web-semantic-camera', (event: any) => resolve(event.detail), { once: true });
+      window.addEventListener('teamai:web-ai-semantic-camera', (event: any) => resolve(event.detail), { once: true });
       document.querySelector('.seat-stack__handoff')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     }));
     expect(await handoffEvent).toMatchObject({ semanticCamera: 'APP_UI_HANDOFF', physicalCamera: null, source: 'seat-normal-ui-handoff', normalUi: true, presentationOnly: true });
