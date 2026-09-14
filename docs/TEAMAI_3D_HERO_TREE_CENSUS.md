@@ -271,7 +271,7 @@ Scheduler
 individual Seat execution
 ```
 
-`SEAT_BEHAVIOR` may expose Seat-local defaults or constraints that participate in this policy, but it must not become the owner of global turn behavior. The existing `TREE-ORCHESTRATION` / scheduler contract remains the proper semantic home for the team-wide turn configuration.
+`SEAT_BEHAVIOR` may expose Seat-local defaults or constraints that participate in this policy, but it must not become the owner of global team turn behavior. The existing `TREE-ORCHESTRATION` / scheduler contract remains the proper semantic home for the team-wide turn configuration.
 
 This distinction is required for the product question: **how many actions each participating Seat may perform before the configured loop ends**. It must be evaluated once at the overall team configuration level and then enforced by the scheduler against each participating Seat.
 
@@ -381,3 +381,7 @@ Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge iden
 The edge, geometry, and adjacency seam are presentation-only and do not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
 
 This section records current structural evidence only. `MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
+
+### Seat-1 adjacent expansion envelope
+
+The adjacent-division expansion envelope is now a bounded implementation baseline. It derives source and target expansion bounds from their semantic geometry descriptors and preserves the Seat-1 connection corridor as shared space during the source-compacts/target-opens transition. The transition timing is explicitly not final animation law, and the complete inter-division topology and final turn-loop choreography remain open.
