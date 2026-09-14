@@ -22,15 +22,11 @@ if (!text.includes("from './seat-adjacent-division-expansion.js';")) {
   text = text.replace(branchAnchor, `${branchAnchor}\nimport { advanceAdjacentDivisionExpansion } from './seat-adjacent-division-expansion.js';`);
 }
 
-const frameNeedle = 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();';
-if (!text.includes(frameNeedle)) {
-  const fallbackNeedle = 'tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);syncHierarchyFromGlobals();';
-  if (!text.includes(fallbackNeedle)) throw new Error('canonical Hero frame seam missing');
-  const injected = `${fallbackNeedle.replace('syncHierarchyFromGlobals();','')}if (hierarchyRuntime.selectedSeatIndex === 0 && hierarchyRuntime.phase === 'division_closing' && hierarchyRuntime.divisionClosingChildId === HIERARCHY_PART.SEAT_CONNECTION && hierarchyRuntime.divisionPendingChildId === HIERARCHY_PART.SEAT_BEHAVIOR) { const expansion = advanceAdjacentDivisionExpansion({ sourceAmount: hierarchyRuntime.connectionBranchAmount || 1, targetAmount: hierarchyRuntime.behaviorBranchAmount || 0 }, now - (hierarchyRuntime.divisionCloseStartMs || now), 240); hierarchyRuntime.connectionBranchAmount = expansion.sourceAmount; hierarchyRuntime.behaviorBranchAmount = expansion.targetAmount; }syncHierarchyFromGlobals();`;
-  text = text.replace(fallbackNeedle, injected);
-} else {
-  const injected = `tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);if (hierarchyRuntime.selectedSeatIndex === 0 && hierarchyRuntime.phase === 'division_closing' && hierarchyRuntime.divisionClosingChildId === HIERARCHY_PART.SEAT_CONNECTION && hierarchyRuntime.divisionPendingChildId === HIERARCHY_PART.SEAT_BEHAVIOR) { const expansion = advanceAdjacentDivisionExpansion({ sourceAmount: hierarchyRuntime.connectionBranchAmount || 1, targetAmount: hierarchyRuntime.behaviorBranchAmount || 0 }, now - (hierarchyRuntime.divisionCloseStartMs || now), 240); hierarchyRuntime.connectionBranchAmount = expansion.sourceAmount; hierarchyRuntime.behaviorBranchAmount = expansion.targetAmount; }syncHierarchyFromGlobals();`;
-  text = text.replace(frameNeedle, injected);
+const expansionGuard = "if (hierarchyRuntime.selectedSeatIndex === 0 && hierarchyRuntime.phase === 'division_closing' && hierarchyRuntime.divisionClosingChildId === HIERARCHY_PART.SEAT_CONNECTION && hierarchyRuntime.divisionPendingChildId === HIERARCHY_PART.SEAT_BEHAVIOR) { const expansion = advanceAdjacentDivisionExpansion({ sourceAmount: hierarchyRuntime.connectionBranchAmount || 1, targetAmount: hierarchyRuntime.behaviorBranchAmount || 0 }, now - (hierarchyRuntime.divisionCloseStartMs || now), 240); hierarchyRuntime.connectionBranchAmount = expansion.sourceAmount; hierarchyRuntime.behaviorBranchAmount = expansion.targetAmount; }";
+if (!text.includes(expansionGuard)) {
+  const framePattern = /tickTaskEvidenceBranch\(hierarchyRuntime,now,reducedMotion\);(?:(?:tick[A-Za-z]+\([^;]+\);)*)syncHierarchyFromGlobals\(\);/;
+  if (!framePattern.test(text)) throw new Error('canonical Hero frame seam missing');
+  text = text.replace(framePattern, (frame) => frame.replace('syncHierarchyFromGlobals();', `${expansionGuard}syncHierarchyFromGlobals();`));
 }
 
 writeFileSync(heroPath, text);
