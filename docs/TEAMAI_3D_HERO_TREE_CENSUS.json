@@ -36,7 +36,7 @@
       "nodes": ["SEAT_SHELL", "SEAT_CONNECTION", "SEAT_BEHAVIOR", "SEAT_TOOLKIT", "SEAT_CAPABILITIES", "SEAT_AUTHORIZATION", "SEAT_WORKSPACE_SCOPE", "SEAT_TASK_EVIDENCE"],
       "geometry": "PAYLOAD_DRIVEN",
       "expansion": "PARTIAL",
-      "connection": "PENDING",
+      "connection": "SEAT1_REFERENCE_EDGE_IMPLEMENTED_PARTIAL",
       "turnLoop": "PENDING",
       "configurationContract": {
         "singleHierarchy": true,
