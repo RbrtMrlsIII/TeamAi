@@ -158,3 +158,7 @@ References: PR #323 (division compaction/edge baseline) and PR #325 (visible lab
 ## Next structural rule
 
 Future Seat divisions reuse the **semantic construction grammar** proven by Seat-1, not its geometry/timing as a universal template. Each new division must independently establish its payload, footprint, clearance, connection ownership, camera relationship, responsive/reduced-motion behavior, and evidence. Division focus changes close the previously expanded division before activating the new one and must never delete the previous Seat's persisted/user-owned configuration.
+
+## Seat-1 reverse-focus synchronization — #330
+
+Historical continuity note: PR #330 extends the bounded Seat-1 visible-label synchronization to both forward and reverse settled division focus. It does not create a new execution plan or alter the document's historical-continuity role. Reference: PR #330.

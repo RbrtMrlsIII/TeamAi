@@ -854,3 +854,7 @@ The first active `TREE-HERO-SEAT` vertical is **Seat-1 → `SEAT_CONNECTION`**. 
 The vertical is **IMPLEMENTED / RUNTIME-PROVEN for the bounded recorded behavior**, but it is not the final tree-machine acceptance. Final expansion choreography, adaptive payload-derived geometry, complete connection topology, final turn-loop electrical animation, C8 workspace authorization, and C9 product acceptance remain downstream/open requirements.
 
 Browser/e2e evidence and regressions belong to the owning PR/evidence records. This synchronization is a chronology/current-truth update only; it does not create a second Masterplan or upgrade Seat-1 into complete multi-tree product acceptance.
+
+## Seat-1 reverse-focus synchronization — #330
+
+PR #330 closes the bounded Seat-1 reverse-focus presentation gap: when division focus returns from `SEAT_BEHAVIOR` to `SEAT_CONNECTION`, the visible DOM label now follows the settled semantic division state in both directions. This is presentation synchronization only; it does not redefine tree identity, geometry law, camera authority, topology, provider/auth/domain behavior, C8, C9, or C10. No 029-released claim.
