@@ -40,12 +40,12 @@ if (!text.includes('function drawSeat1ConnectionEdge(')) {
   text = text.slice(0, at) + fn + text.slice(at);
 }
 
-const callAnchor = '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);\\n    }';
+const callAnchor = '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);\n    }';
 if (!text.includes(callAnchor)) throw new Error('connection draw call anchor missing');
 if (!text.includes('drawSeat1ConnectionEdge({ draw, CUBE, T, S, RY, M, cx, cy, cz, seatAngle: seat.a });')) {
   text = text.replace(
     callAnchor,
-    '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);\\n      if (index === 0) drawSeat1ConnectionEdge({ draw, CUBE, T, S, RY, M, cx, cy, cz, seatAngle: seat.a });\\n    }',
+    '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);\n      if (index === 0) drawSeat1ConnectionEdge({ draw, CUBE, T, S, RY, M, cx, cy, cz, seatAngle: seat.a });\n    }',
   );
 }
 
