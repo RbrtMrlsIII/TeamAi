@@ -385,3 +385,5 @@ This section records current structural evidence only. `MASTERPLAN.md` and Issue
 ### Seat-1 adjacent expansion envelope
 
 The adjacent-division expansion envelope is now a bounded implementation baseline. It derives source and target expansion bounds from their semantic geometry descriptors and preserves the Seat-1 connection corridor as shared space. During focus transition, the source division must compact fully while the target division remains closed; only after the source reaches zero may the target begin expanding. The transition timing is explicitly not final animation law, and the complete inter-division topology and final turn-loop choreography remain open.
+
+The canonical Seat renderer now consumes the governed adjacent-division wiring seam for the bounded `SEAT_CONNECTION` ↔ `SEAT_BEHAVIOR` presentation path. The rendered segment is derived from the semantic ports and current branch geometry; it does not constitute final electrical or complete inter-division topology.

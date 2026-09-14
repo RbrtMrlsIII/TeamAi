@@ -50,7 +50,8 @@
           "status": "IMPLEMENTED_PARTIAL",
           "identity": "TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_WIRING",
           "rule": "derive from source/target semantic ports; fail closed when either port is missing",
-          "presentationOnly": true
+          "presentationOnly": true,
+          "rendererConsumption": "implemented-partial; canonical Seat renderer consumes the semantic adjacency seam for the bounded Connection-to-Behavior presentation path"
         },
         "adjacentDivisionExpansion": {
           "status": "IMPLEMENTED_PARTIAL",
