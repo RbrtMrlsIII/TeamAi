@@ -16,8 +16,6 @@ const expansionBrowser = join(root, 'public/seat-adjacent-division-expansion.js'
 let text = readFileSync(heroPath, 'utf8');
 copyFileSync(expansionSource, expansionBrowser);
 
-const importAnchor = '  tickDivisionFocusTransition,';
-if (!text.includes(importAnchor)) throw new Error('division transition import anchor missing');
 if (!text.includes("from './seat-adjacent-division-expansion.js';")) {
   const branchAnchor = "import { drawSetupConfigRing } from './hero-r2-setup-ring.js';";
   if (!text.includes(branchAnchor)) throw new Error('hero module import anchor missing');
