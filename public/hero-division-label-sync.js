@@ -1,9 +1,11 @@
 /**
- * 029 Seat division visible-label synchronization.
- * Keeps the visible Hero label aligned with the already-published hierarchy runtime.
+ * 030 Seat division visible-label synchronization.
+ * Keeps the visible Hero label aligned with the already-published hierarchy runtime
+ * for both directions of the bounded Seat-1 division focus path.
  * Presentation only. No domain/provider writes.
  */
 
+const CONNECTION_LABEL = 'Seat connection face (expanded). Presentation only; not live bind. Press C to configure seat in normal UI.';
 const BEHAVIOR_LABEL = 'Seat behavior face (expanded). Do/Dont presentation only; not durable policy. Press B for normal UI.';
 
 function syncSeatDivisionLabel() {
@@ -12,7 +14,11 @@ function syncSeatDivisionLabel() {
   if (!hero || !label || typeof hero.getHierarchyState !== 'function') return;
 
   const state = hero.getHierarchyState();
-  if (state?.openParentId && state.focusedChildId === 'SEAT_BEHAVIOR' && Number(state.behaviorBranchAmount) >= 0.85) {
+  if (!state?.openParentId) return;
+
+  if (state.focusedChildId === 'SEAT_CONNECTION' && Number(state.connectionBranchAmount) >= 0.85) {
+    label.textContent = CONNECTION_LABEL;
+  } else if (state.focusedChildId === 'SEAT_BEHAVIOR' && Number(state.behaviorBranchAmount) >= 0.85) {
     label.textContent = BEHAVIOR_LABEL;
   }
 }
