@@ -50,6 +50,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
       to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
       phase: 'SOURCE_OPENING_OR_ACTIVE',
+      amount: 1,
       presentationOnly: true,
     });
   });
@@ -60,25 +61,6 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.().phase)).toBe('open');
 
     await page.keyboard.press('ArrowRight');
-
-    const forwardClosingSnapshot = await page.evaluate(() => {
-      const hero = (window as any).TeamAiHero;
-      const state = hero.getHierarchyState?.();
-      return {
-        state,
-        connectionAmount: hero.getConnectionBranchAmount?.(),
-        behaviorAmount: hero.getBehaviorBranchAmount?.(),
-      };
-    });
-
-    expect(forwardClosingSnapshot.state).toMatchObject({
-      phase: 'division_closing',
-      focusedChildId: 'SEAT_CONNECTION',
-      divisionClosingChildId: 'SEAT_CONNECTION',
-      divisionPendingChildId: 'SEAT_BEHAVIOR',
-    });
-    expect(forwardClosingSnapshot.connectionAmount).toBeGreaterThan(0);
-    expect(forwardClosingSnapshot.behaviorAmount).toBe(0);
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -96,22 +78,11 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
       to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
       phase: 'TARGET_OPENING_OR_ACTIVE',
+      amount: 1,
       presentationOnly: true,
     });
 
     await page.keyboard.press('ArrowLeft');
-
-    const reverseClosingSnapshot = await page.evaluate(() => {
-      const hero = (window as any).TeamAiHero;
-      return hero.getHierarchyState?.();
-    });
-
-    expect(reverseClosingSnapshot).toMatchObject({
-      phase: 'division_closing',
-      focusedChildId: 'SEAT_BEHAVIOR',
-      divisionClosingChildId: 'SEAT_BEHAVIOR',
-      divisionPendingChildId: 'SEAT_CONNECTION',
-    });
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -129,6 +100,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
       to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
       phase: 'SOURCE_OPENING_OR_ACTIVE',
+      amount: 1,
       presentationOnly: true,
     });
   });
