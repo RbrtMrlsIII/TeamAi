@@ -103,4 +103,5 @@
   <!-- 029 Seat-1 vertical: semantic port/edge + payload-driven geometry/corridor + adjacent-division seam implemented partially; overall tree remains partial. -->
   <seat1ConnectionVertical edgeId="TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER" geometryId="TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY" status="implemented-partial" presentationOnly="true" geometryStatus="payload-driven" corridorReservedFor="adjacent-divisions|workspace-center" finalGeometry="not-final" finalElectricalChoreography="not-final" />
   <seat1AdjacentDivisionWiring identity="TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_WIRING" status="implemented-partial" presentationOnly="true" sourceTarget="semantic-port-to-semantic-port" failClosed="missing-source-or-target-port" />
+  <seat1AdjacentDivisionExpansion identity="TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_EXPANSION" status="implemented-partial" presentationOnly="true" timingStatus="implementation-baseline-not-final" corridorOwner="TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY" transition="source-compacts|target-opens" preservesUserConfiguration="true" finalAnimation="not-final" />
 </teamaiHeroTreeAuthority>
