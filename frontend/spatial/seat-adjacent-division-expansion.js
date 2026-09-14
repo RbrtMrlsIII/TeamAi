@@ -64,21 +64,43 @@ export function buildAdjacentDivisionExpansionEnvelope({
 export function adjacentExpansionCollidesWithCorridor(envelope) {
   const corridor = envelope?.corridor;
   if (!corridor) return true;
-  const x = (Number(corridor.start?.x) || 0);
-  const z = (Number(corridor.start?.z) || 0);
+  const x = Number(corridor.start?.x) || 0;
+  const z = Number(corridor.start?.z) || 0;
   const b = envelope?.targetBounds;
   if (!b) return true;
   return x >= b.minX && x <= b.maxX && z >= b.minZ && z <= b.maxZ;
 }
 
-export function advanceAdjacentDivisionExpansion(state, elapsedMs, durationMs = 240) {
+/**
+ * Advance the bounded adjacency sequence in two phases:
+ * 1) source division compacts while target remains closed;
+ * 2) only after source compaction completes may target expansion begin.
+ * This is the current Seat-1 interaction contract, not final animation law.
+ */
+export function advanceAdjacentDivisionExpansion(state, elapsedMs, sourceDurationMs = 240, targetDurationMs = 240) {
   if (!state) return null;
-  const t = clamp((Number(elapsedMs) || 0) / Math.max(1, Number(durationMs) || 240), 0, 1);
-  const amount = normalize(t);
+  const sourceDuration = Math.max(1, Number(sourceDurationMs) || 240);
+  const targetDuration = Math.max(1, Number(targetDurationMs) || 240);
+  const elapsed = Math.max(0, Number(elapsedMs) || 0);
+
+  if (elapsed < sourceDuration) {
+    const t = clamp(elapsed / sourceDuration, 0, 1);
+    const sourceAmount = normalize(1 - t);
+    return {
+      ...state,
+      sourceAmount,
+      targetAmount: 0,
+      phase: 'CLOSING_SOURCE',
+    };
+  }
+
+  const targetElapsed = elapsed - sourceDuration;
+  const targetT = clamp(targetElapsed / targetDuration, 0, 1);
+  const targetAmount = normalize(targetT);
   return {
     ...state,
-    sourceAmount: normalize(1 - amount),
-    targetAmount: amount,
-    phase: t >= 1 ? 'ACTIVE' : 'OPENING_ADJACENT',
+    sourceAmount: 0,
+    targetAmount,
+    phase: targetT >= 1 ? 'ACTIVE' : 'OPENING_ADJACENT',
   };
 }
