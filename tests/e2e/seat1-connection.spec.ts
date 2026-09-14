@@ -54,6 +54,13 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
 
     await page.keyboard.press('ArrowRight');
 
+    await expect.poll(async () => page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return hero.getHierarchyState?.().phase === 'division_closing'
+        && hero.getConnectionBranchAmount?.() > 0
+        && hero.getBehaviorBranchAmount?.() > 0;
+    }), { timeout: 5000 }).toBe(true);
+
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
       focusedChildId: 'SEAT_BEHAVIOR',
