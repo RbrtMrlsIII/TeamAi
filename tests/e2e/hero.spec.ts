@@ -182,12 +182,10 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('#state-label')).toHaveText(/FOCUS|ACTIVE|CONTRIBUTE/);
     await page.getByRole('button', { name: 'Stop turn loop', exact: true }).click();
     await expect(page.locator('#state-label')).toHaveText('IDLE');
+    const clickBefore = await page.evaluate(() => ({ seat: (window as any).TeamAiHero.getSelectedSeat(), state: (window as any).TeamAiHero.getState() }));
     await page.locator('#hero-canvas').click({ position: { x: 80, y: 420 } });
-    await expect(page.locator('#state-label')).toHaveText('FOCUS');
-    await expect(page.locator('#seat-label')).toContainText('Seat connection face');
-    await expect(page.locator('#seat-label')).toContainText('Presentation only');
-    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero?.getHierarchyState?.());
-    expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
+    const clickAfter = await page.evaluate(() => ({ seat: (window as any).TeamAiHero.getSelectedSeat(), state: (window as any).TeamAiHero.getState() }));
+    expect(clickAfter).toEqual(clickBefore);
     await page.getByRole('button', { name: 'Reduced motion: off', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Reduced motion: on', exact: true })).toBeVisible();
   });
@@ -274,12 +272,12 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
     await expect(page.locator('body')).not.toBeEmpty();
   });
 
-  test('center-of-canvas click reaches selectSeatShell, not a no-op (#304)', async ({ page }) => {
+  test('center-of-canvas background click is inert until semantic spatial hit-testing is governed (#304 superseded)', async ({ page }) => {
     await page.goto('/hero/?seats=4');
     const canvas = page.locator('#hero-canvas');
     await expect(canvas).toBeVisible();
     await page.waitForFunction(() => Boolean((window as any).TeamAiHero?.selectSeatShell));
-    const before = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
+    const before = await page.evaluate(() => ({ seat: (window as any).TeamAiHero.getSelectedSeat(), state: (window as any).TeamAiHero.getState() }));
     await page.evaluate(() => {
       const el = document.querySelector('#hero-canvas') as HTMLElement | null;
       if (!el) throw new Error('missing #hero-canvas');
@@ -288,9 +286,7 @@ test.describe('Canonical public homepage (classic entrance -> 3D world)', () => 
       const clientY = r.top + r.height * 0.5;
       el.dispatchEvent(new MouseEvent('click', { clientX, clientY, bubbles: true, cancelable: true }));
     });
-    const after = await page.evaluate(() => (window as any).TeamAiHero.getSelectedSeat());
-    const hierarchy = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
-    expect(after).not.toBe(before);
-    expect(hierarchy?.openParentId || hierarchy?.focusedChildId).toBeTruthy();
+    const after = await page.evaluate(() => ({ seat: (window as any).TeamAiHero.getSelectedSeat(), state: (window as any).TeamAiHero.getState() }));
+    expect(after).toEqual(before);
   });
 });
