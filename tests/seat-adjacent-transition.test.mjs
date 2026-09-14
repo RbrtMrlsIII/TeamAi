@@ -45,8 +45,12 @@ test('adjacent transition composes independent semantic geometries', () => {
   assert.equal(transition.seatIndex, 2);
   assert.equal(transition.sourceDivisionId, 'SEAT_BEHAVIOR');
   assert.equal(transition.targetDivisionId, 'SEAT_TOOLKIT');
-  assert.equal(transition.expansion.sourceDivisionId, source.id);
-  assert.equal(transition.wiring.to.divisionId, target.id);
+  assert.equal(transition.expansion.sourceDivisionId, 'SEAT_BEHAVIOR');
+  assert.equal(transition.expansion.targetDivisionId, 'SEAT_TOOLKIT');
+  assert.equal(transition.wiring.from.divisionId, 'SEAT_BEHAVIOR');
+  assert.equal(transition.wiring.to.divisionId, 'SEAT_TOOLKIT');
+  assert.equal(transition.wiring.from.port.x, source.port.x);
+  assert.equal(transition.wiring.to.port.z, target.port.z);
   assert.equal(transition.presentationOnly, true);
 });
 
