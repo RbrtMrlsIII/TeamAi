@@ -56,6 +56,18 @@ jobs:
             exit 1
           fi
 
+          # Some repository-owned browser ESM modules are intentionally served from the
+          # top-level /frontend/spatial/ path. They are referenced by public/ Hero modules
+          # and therefore must be part of the published Pages artifact even though the
+          # Command Deck itself remains retired as a product surface.
+          if [ -d frontend/spatial ]; then
+            mkdir -p dist/frontend/spatial
+            cp -R frontend/spatial/. dist/frontend/spatial/
+          else
+            echo "frontend/spatial/ is required for browser ESM presentation modules" >&2
+            exit 1
+          fi
+
           # Preserve the existing 3D Hero URL as a compatibility route.
           mkdir -p dist/hero
           cp -R public/. dist/hero/
@@ -70,6 +82,8 @@ jobs:
           grep -q 'Enter 3D world' dist/hero/index.html
           test -f dist/hero/hero-flex.js
           test -f dist/hero/experience-rebaseline.js
+          test -f dist/frontend/spatial/theme-root.js
+          test -f dist/frontend/spatial/hero-theme-lighting-adapter.js
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
