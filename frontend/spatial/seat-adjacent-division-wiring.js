@@ -43,10 +43,17 @@ export function buildAdjacentDivisionWiring({
   const dx = targetPort.x - sourceAtAmount.x;
   const dz = targetPort.z - sourceAtAmount.z;
   const length = normalize(Math.max(0.02, Math.hypot(dx, dz)));
+  const isHistoricalSeatOneFixture = seatIndex === 0
+    && resolvedSourceDivisionId === 'SEAT_CONNECTION'
+    && resolvedTargetDivisionId === 'SEAT_BEHAVIOR';
   const wiringId = id || (
-    sourceDivisionId || targetDivisionId || seatIndex !== 0
-      ? adjacentDivisionWiringIdentity({ seatIndex, sourceDivisionId: resolvedSourceDivisionId, targetDivisionId: resolvedTargetDivisionId })
-      : SEAT1_ADJACENCY_WIRING_ID
+    isHistoricalSeatOneFixture
+      ? SEAT1_ADJACENCY_WIRING_ID
+      : adjacentDivisionWiringIdentity({
+        seatIndex,
+        sourceDivisionId: resolvedSourceDivisionId,
+        targetDivisionId: resolvedTargetDivisionId,
+      })
   );
 
   return {
@@ -54,12 +61,12 @@ export function buildAdjacentDivisionWiring({
     semantic: 'ADJACENT_DIVISION_WIRING',
     seatIndex,
     from: {
-      divisionId: resolvedSourceDivisionId,
+      divisionId: sourceGeometry.id,
       port: { ...sourceGeometry.port },
       projected: sourceAtAmount,
     },
     to: {
-      divisionId: resolvedTargetDivisionId,
+      divisionId: targetGeometry.id,
       port: { ...targetPort },
     },
     corridor: {
