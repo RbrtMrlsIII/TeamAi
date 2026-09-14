@@ -55,7 +55,7 @@ This animation lineage is historical. Existing prototype motion, camera timing, 
 | C1 | Canonical reconciliation | **MERGED / ACTIVE** | active maps and contracts agree |
 | C2 | Classic website entrance | **MERGED / FOUNDATION** | canonical public root targets `public/`; final acceptance still C9 |
 | C3 | Explicit 3D-world entry + return | **MERGED / FOUNDATION** | browser transition proof, beginning from canonical root |
-| C4 | Coherent world controls + Settings | **MERGED / FOUNDATION / CONCEPT EXTENDED** | authenticated Settings is a categorical map; final product structure remains governed by Product Law |
+| C4 | Coherent navigation + Settings | **MERGED / FOUNDATION / CONCEPT EXTENDED** | authenticated Settings is a categorical map; final product structure remains governed by Product Law |
 | C5 | Camera vocabulary reduction | **MERGED / FOUNDATION** | reduced world controls; retired cameras remain retired |
 | C6 | World-baseline zoom-out | **FOUNDATION / NEEDS PRODUCT PROOF** | tree/subject can reach normal world baseline |
 | C7 | Proportional orbit | **MERGED / FOUNDATION** | natural input direction + regression proof |
@@ -148,3 +148,13 @@ The overlapping/blurred idle-view screenshots reported on #278 were traced to `h
 **Residual (2026-09-14, #314/#315):** The #304 “next-slice candidate” above is **superseded as intended behavior**. Background/empty canvas clicks must remain inert; they must not cycle Seats. True hit-testing may still be designed later, but it is not authorized as a generic click-cycle replacement. No 029-released claim.
 
 **Residual (2026-09-14, #314 TODO #8):** Main merge-gate diagnosis is recorded in `docs/CHECKPOINT_029_MAIN_MERGE_GATE_DIAGNOSIS_2026-09-14.md`. Classification: `REQUIRES GOVERNED RECONCILIATION / CONTROL GAP CANDIDATE`. GitHub currently requires `governance-drift`, `evidence-consistency`, and `agent-validation` (plus PR-only, non-fast-forward, CodeQL). Playwright and `Project tests + canonical package` execute but are not GitHub-required. Canonical owner for any ruleset change is Issue **#133**. Do not edit the ruleset from #314/#278. No 029-released claim.
+
+## Current Seat-1 `SEAT_CONNECTION` vertical — #323 / #325
+
+Seat-1 is the first active vertical beneath `TREE-HERO-SEAT`. The bounded implementation establishes semantic `SEAT_CONNECTION` identity, a connection edge toward `WORKSPACE_CENTER`, stateful division compaction on interactive focus change, and presentation-only synchronization of the visible face label with settled hierarchy state. Previous Seat configuration/payload is preserved during compaction. The vertical is `IMPLEMENTED / RUNTIME-PROVEN` for these bounded behaviors, but this does not close the whole tree-machine program, final expansion animation, final electrical/turn-loop animation, C8, or C9.
+
+References: PR #323 (division compaction/edge baseline) and PR #325 (visible label synchronization). Browser proof remains evidence for the bounded claims, not a 029 release claim.
+
+## Next structural rule
+
+Future Seat divisions reuse the **semantic construction grammar** proven by Seat-1, not its geometry/timing as a universal template. Each new division must independently establish its payload, footprint, clearance, connection ownership, camera relationship, responsive/reduced-motion behavior, and evidence. Division focus changes close the previously expanded division before activating the new one and must never delete the previous Seat's persisted/user-owned configuration.

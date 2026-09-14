@@ -255,20 +255,14 @@ The GitHub Pages deployment no longer publishes `frontend/spatial/` as `/spatial
 
 ## #298 (phone-overlay-collision fix, follow-up to #278)
 
-Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-inspection` and `.seat-stack` by separating their breakpoint positioning (left-docked vs right-docked) at `<=520px`, with `.spatial-parts` hidden at `<=360px`. Source-level CSS fix; pending CI and an actual browser check at the reported viewport before being treated as fully resolved.
+Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-inspection` and `.seat-stack` by separating their breakpoint positioning (left-docked vs right-docked) at `<=520px`, with `.spatial-parts` hidden at `<=360px`. Source-level CSS fix; pending CI and owner browser confirmation at the reported viewport width.
 
-## 18. Canvas click hit-zone correction (2026-09-13, #304)
+## Current Seat-1 `SEAT_CONNECTION` vertical — #323 / #325
 
-The dead-center click band in `public/hero-flex.js` (`syncSetupRingCamera()` called after `clearRingFocus()` had already wiped its own input) is removed. Center-of-canvas clicks — where the visible seat spheres actually render — now reach `selectSeatShell(next)` like all other non-ring-band clicks. No change to camera vocabulary or tree/hierarchy logic; interaction routing only.
+Seat-1 is the first active vertical beneath `TREE-HERO-SEAT`. The bounded implementation establishes semantic `SEAT_CONNECTION` identity, a connection edge toward `WORKSPACE_CENTER`, stateful division compaction on interactive focus change, and presentation-only synchronization of the visible face label with settled hierarchy state. Previous Seat configuration/payload is preserved during compaction. The vertical is `IMPLEMENTED / RUNTIME-PROVEN` for these bounded behaviors, but this does not close the whole tree-machine program, final expansion animation, final electrical/turn-loop animation, C8, or C9.
 
-## 21. Seat-open camera subject (2026-09-13, #278)
+References: PR #323 (division compaction/edge baseline) and PR #325 (visible label synchronization). Browser proof remains evidence for the bounded claims, not a 029 release claim.
 
-On seat-shell open, \`setCamera\` resolves \`camTo\` through Cam-5/6 \`resolveSelectedSeatDock\` when \`openParentId\` is a \`SEAT_SHELL\`, so the first lerp aims at the **selected seat** rather than ring-center origin. Presentation only. No 029-released claim.
+## Next structural rule
 
-## 22. Inspection spine retired / Settings smoke (2026-09-13, #278)
-
-Live 1–15 inspection spine removed from operator chrome. Camera authority is hierarchy + Cam-5/6. Operator smoke lives in Settings (exact camera dock id + existing motion on/off). Presentation only. No 029-released claim.
-
-## 23. Direct /hero/ load sets world layer + experience together (2026-09-13, #278/#311)
-
-`public/experience-rebaseline.js`'s `bind()` previously set only `data-experience` from the route. It now sets `data-hero-layer` (`machine`/`entrance`) alongside `data-experience` (`world`/`classic`) in the same branch, so a direct load of `/hero/` establishes both attributes together and world controls are usable on first paint instead of only after a client-side `/` → `/hero/` transition. Presentation only. No 029-released claim.
+Future Seat divisions reuse the **semantic construction grammar** proven by Seat-1, not its geometry/timing as a universal template. Each new division must independently establish its payload, footprint, clearance, connection ownership, camera relationship, responsive/reduced-motion behavior, and evidence. Division focus changes close the previously expanded division before activating the new one and must never delete the previous Seat's persisted/user-owned configuration.

@@ -3,6 +3,7 @@
  * Loaded after hero-seat-stack.js. Presentation only · no 029-released claim.
  */
 import { applyResolvedCamera } from './hero-dom-action-map.js';
+import './hero-division-label-sync.js';
 
 window.addEventListener('teamai:web-ai-seat-inspection', (event) => {
   const camera = event.detail?.layer?.camera;
