@@ -38,6 +38,9 @@ jobs:
       - name: Apply Cam-2 hero-flex tree follow wire
         run: node scripts/apply-cam2-tree-follow-flex.mjs
 
+      - name: Apply Seat division focus compaction
+        run: node scripts/apply-seat-division-focus-compaction.mjs
+
       - name: Run Playwright browser verification
         run: npm run test:e2e
 
