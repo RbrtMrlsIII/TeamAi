@@ -43,6 +43,87 @@ GitHub access does not grant Product Law authority. TeamAi Product Law and gover
 ## Canonical artifact anti-duplication
 Before creating any file, search for existing artifacts with the same or overlapping responsibility. Especially inspect workflows, README/AI entrypoints, recovery manifests, policies, architecture specs, verification protocols, and checkpoint/handover records. Update the canonical artifact instead of creating a parallel copy.
 
+## Termux clean-checkout / manual GitHub handoff
+A dedicated Termux checkout may be used by the user for manual repository edits or uploads when the connected GitHub capability cannot safely perform the required transfer. It is an execution workspace, not a second source of truth.
+
+### Clean-checkout rule
+Use one dedicated parent directory for the TeamAi working copy. Before cloning, check whether the intended checkout already exists. Never repeatedly run `git clone ...` from inside an existing `TeamAi` checkout.
+
+Preferred pattern:
+
+```text
+~/downloads/TeamAi/
+  └── repo checkout
+```
+
+If `~/downloads/TeamAi` is already itself a Git repository, do **not** clone another `TeamAi` inside it. Choose a clean sibling path such as `~/downloads/TeamAi-manual` or reuse the existing checkout after confirming its branch and remote.
+
+After cloning, immediately verify:
+
+```bash
+git status
+git branch --show-current
+git remote -v
+git log -1 --oneline
+```
+
+The branch, remote, and latest commit must match the exact PR/issue being worked on before any edit is made.
+
+### Dedicated manual PR checkout rule
+When a PR needs a user-side edit, use the PR's exact feature branch:
+
+```bash
+git clone -b <feature-branch> https://github.com/RbrtMrlsIII/TeamAi.git <checkout-dir>
+cd <checkout-dir>
+git status
+git branch --show-current
+```
+
+Do not edit `main` when the change belongs to an open feature PR. Do not upload or push from a stale historical branch merely because its directory name looks familiar.
+
+### Safe upload/push sequence
+Before editing:
+
+```bash
+git status
+```
+
+After editing, inspect the exact diff before committing:
+
+```bash
+git diff --check
+git diff -- <changed-files>
+git status
+```
+
+Only stage files intentionally changed for the current PR:
+
+```bash
+git add <changed-files>
+git commit -m "<scoped message>"
+git push origin <feature-branch>
+```
+
+Never use a broad `git add .` when the checkout may contain recovery artifacts, generated files, nested repositories, temporary downloads, or unrelated experiments.
+
+After pushing, verify:
+
+```bash
+git log -1 --oneline
+git status
+```
+
+The working tree should be clean, and the pushed commit must be the exact PR head.
+
+### Duplicate-check rule
+Before cloning, creating a directory, or uploading a file, inspect the parent directory and repository state. A `TeamAi/TeamAi` or `TeamAi/TeamAi/TeamAi` structure is an execution smell, not a second repository. Stop, verify remotes/branches, and remove or quarantine only the accidental nested checkout when its contents are confirmed redundant.
+
+### Tool-boundary rule
+GitHub connector/API is preferred for repository inspection, source edits, commits, PRs, CI, reviews, and merges. Browser Use is reserved for read/write interaction with the actual deployed web product when browser behavior must be validated. Do not require Browser Use authentication merely to reach GitHub when the GitHub connector is already authorized.
+
+### Manual-intervention rule
+When a user must intervene in Termux, the Development AI must provide the exact working directory, exact branch, exact files, exact commands, exact intended commit, and exact post-push verification. The user must not have to infer which checkout or branch is authoritative.
+
 ## Large-file and binary rule
 The canonical TeamAi project ZIP is the complete preservation/recovery artifact. GitHub is the durable engineering/source-control surface for code and repository-managed records.
 
