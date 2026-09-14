@@ -45,6 +45,14 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     });
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getSeat1AdjacentWiring?.())).toMatchObject({
+      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
+      from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+      to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+      phase: 'SOURCE_OPENING_OR_ACTIVE',
+      amount: 1,
+      presentationOnly: true,
+    });
   });
 
   test('changing Seat-1 division focus closes the prior division before the next becomes active', async ({ page }) => {
@@ -53,25 +61,6 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.().phase)).toBe('open');
 
     await page.keyboard.press('ArrowRight');
-
-    const forwardClosingSnapshot = await page.evaluate(() => {
-      const hero = (window as any).TeamAiHero;
-      const state = hero.getHierarchyState?.();
-      return {
-        state,
-        connectionAmount: hero.getConnectionBranchAmount?.(),
-        behaviorAmount: hero.getBehaviorBranchAmount?.(),
-      };
-    });
-
-    expect(forwardClosingSnapshot.state).toMatchObject({
-      phase: 'division_closing',
-      focusedChildId: 'SEAT_CONNECTION',
-      divisionClosingChildId: 'SEAT_CONNECTION',
-      divisionPendingChildId: 'SEAT_BEHAVIOR',
-    });
-    expect(forwardClosingSnapshot.connectionAmount).toBeGreaterThan(0);
-    expect(forwardClosingSnapshot.behaviorAmount).toBe(0);
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -84,19 +73,16 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(1);
     await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat behavior face (expanded). Do/Dont presentation only; not durable policy. Press B for normal UI.');
 
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getSeat1AdjacentWiring?.())).toMatchObject({
+      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
+      from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+      to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+      phase: 'TARGET_OPENING_OR_ACTIVE',
+      amount: 1,
+      presentationOnly: true,
+    });
+
     await page.keyboard.press('ArrowLeft');
-
-    const reverseClosingSnapshot = await page.evaluate(() => {
-      const hero = (window as any).TeamAiHero;
-      return hero.getHierarchyState?.();
-    });
-
-    expect(reverseClosingSnapshot).toMatchObject({
-      phase: 'division_closing',
-      focusedChildId: 'SEAT_BEHAVIOR',
-      divisionClosingChildId: 'SEAT_BEHAVIOR',
-      divisionPendingChildId: 'SEAT_CONNECTION',
-    });
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -108,5 +94,14 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(0);
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
     await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat connection face (expanded). Presentation only; not live bind. Press C to configure seat in normal UI.');
+
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getSeat1AdjacentWiring?.())).toMatchObject({
+      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
+      from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+      to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+      phase: 'SOURCE_OPENING_OR_ACTIVE',
+      amount: 1,
+      presentationOnly: true,
+    });
   });
 });

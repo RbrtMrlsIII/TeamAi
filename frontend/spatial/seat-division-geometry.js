@@ -34,6 +34,7 @@ export function buildSeatDivisionGeometry({
   baseHeight = 0.08,
   clearance = 0.16,
   workspaceTarget = { x: 0, y: 0.5, z: 0 },
+  id = SEAT1_CONNECTION_GEOMETRY_ID,
 } = {}) {
   const measured = measureDivisionPayload(payload);
   const payloadScale = clamp(1 + (measured.surfaceUnits - 1) * 0.08, 0.9, 1.55) * measured.density;
@@ -58,8 +59,8 @@ export function buildSeatDivisionGeometry({
   const corridorLength = normalize(Math.max(0.02, Math.hypot(dx, dz)));
 
   return {
-    id: SEAT1_CONNECTION_GEOMETRY_ID,
-    semantic: 'SEAT_CONNECTION',
+    id,
+    semantic: id.includes('SEAT_BEHAVIOR') ? 'SEAT_BEHAVIOR' : 'SEAT_CONNECTION',
     center: {
       x: normalize(Number(center.x) || 0),
       y: normalize(Number(center.y) || 0),
@@ -75,7 +76,7 @@ export function buildSeatDivisionGeometry({
       length: corridorLength,
       radius: corridorRadius,
       yaw: normalize(Math.atan2(dz, dx)),
-      owner: SEAT1_CONNECTION_GEOMETRY_ID,
+      owner: id,
       reservedFor: ['adjacent-divisions', 'workspace-center'],
     },
     radialDistance: normalize(Number(radialDistance) || 0),
