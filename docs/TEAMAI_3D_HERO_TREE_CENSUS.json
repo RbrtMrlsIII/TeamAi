@@ -46,6 +46,12 @@
           "reservedFor": ["adjacent-divisions", "workspace-center"],
           "ownership": "TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY"
         },
+        "adjacentDivisionWiring": {
+          "status": "IMPLEMENTED_PARTIAL",
+          "identity": "TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENT_WIRING",
+          "rule": "derive from source/target semantic ports; fail closed when either port is missing",
+          "presentationOnly": true
+        },
         "finalAdaptiveGeometry": "NOT_FINAL",
         "finalElectricalChoreography": "NOT_FINAL"
       },
