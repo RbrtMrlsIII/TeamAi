@@ -3,9 +3,9 @@
  * 029 Seat division focus-compaction patch.
  *
  * Presentation/runtime wiring only. A focused Seat division compacts before the
- * next division becomes active on the timestamped interactive focus path.
- * Legacy programmatic focusChild() callers without a timestamp retain their
- * immediate state semantics. No domain/config persistence is touched.
+ * next division becomes active on the explicit interactive focus path.
+ * Legacy programmatic focusChild() callers remain deterministic. No domain/config
+ * persistence is touched.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -42,7 +42,7 @@ function patchRuntime() {
   if (!oldBlock.includes(transitionNeedle)) throw new Error('focusChild validation anchor missing');
   let rewrittenBlock = oldBlock.replace(
     transitionNeedle,
-    transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && opts.nowMs != null && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
+    transitionNeedle + "\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);\n  if (opts.interactive === true && state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && opts.nowMs != null && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)) {\n    state.divisionClosingChildId = state.focusedChildId;\n    state.divisionPendingChildId = childId;\n    state.divisionCloseStartMs = now;\n    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;\n    state.focusedLeafId = null;\n    return state;\n  }",
   );
   const duplicateDeclarations = "  state.focusedLeafId = null;\n  const now = opts.nowMs ?? 0;\n  const snap = Boolean(opts.snap);";
   if (!rewrittenBlock.includes(duplicateDeclarations)) throw new Error('focusChild original declaration anchor missing');
