@@ -47,21 +47,21 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
   });
 
-  test('changing Seat-1 division focus compacts the prior division before activating the next', async ({ page }) => {
+  test('changing Seat-1 division focus closes the prior division before the next becomes active', async ({ page }) => {
     await page.goto('/hero/');
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.().phase)).toBe('open');
 
     await page.keyboard.press('ArrowRight');
 
-    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.())).toMatchObject({
-      phase: 'division_closing',
-      focusedChildId: 'SEAT_CONNECTION',
-      divisionClosingChildId: 'SEAT_CONNECTION',
-      divisionPendingChildId: 'SEAT_BEHAVIOR',
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
+      phase: 'open',
+      focusedChildId: 'SEAT_BEHAVIOR',
+      divisionClosingChildId: null,
+      divisionPendingChildId: null,
     });
 
-    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.().focusedChildId), { timeout: 5000 }).toBe('SEAT_BEHAVIOR');
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(0);
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(0);
   });
 });
