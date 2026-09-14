@@ -72,12 +72,12 @@ test('adjacent transition keeps the source-before-target sequencing contract', (
   const early = advanceAdjacentDivisionTransition(initial, 120);
   assert.equal(early.sourceAmount, 0.5);
   assert.equal(early.targetAmount, 0);
-  assert.equal(early.phase, 'SOURCE_OPENING_OR_ACTIVE');
+  assert.equal(early.phase, 'CLOSING_SOURCE');
 
   const late = advanceAdjacentDivisionTransition(initial, 360);
   assert.equal(late.sourceAmount, 0);
   assert.equal(late.targetAmount, 0.5);
-  assert.equal(late.phase, 'TARGET_OPENING_OR_ACTIVE');
+  assert.equal(late.phase, 'OPENING_ADJACENT');
 });
 
 test('adjacent transition fails closed when geometry or identity is missing', () => {
