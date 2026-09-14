@@ -847,3 +847,10 @@ When a merged PR supersedes an older child, update the same Masterplan branch to
 
 <!-- teamai residual: #314 TODO #8 main merge-gate diagnosis; preserve full Masterplan body; no 029-released claim. -->
 
+## Seat-1 SEAT_CONNECTION vertical — #323 / #325 synchronization
+
+The first active `TREE-HERO-SEAT` vertical is **Seat-1 → `SEAT_CONNECTION`**. PR #323 establishes the bounded structural vertical: a semantic connection edge owned by `TREE-HERO-SEAT#0:SEAT_CONNECTION`, targeting `WORKSPACE_CENTER`, with stateful division compaction when interactive focus changes. The previously focused division compacts before the next division becomes active; this presentation transition does not delete or rewrite the prior Seat's user configuration/payload. PR #325 adds visible-label synchronization so the DOM label follows the settled semantic division state.
+
+The vertical is **IMPLEMENTED / RUNTIME-PROVEN for the bounded recorded behavior**, but it is not the final tree-machine acceptance. Final expansion choreography, adaptive payload-derived geometry, complete connection topology, final turn-loop electrical animation, C8 workspace authorization, and C9 product acceptance remain downstream/open requirements.
+
+Browser/e2e evidence and regressions belong to the owning PR/evidence records. This synchronization is a chronology/current-truth update only; it does not create a second Masterplan or upgrade Seat-1 into complete multi-tree product acceptance.
