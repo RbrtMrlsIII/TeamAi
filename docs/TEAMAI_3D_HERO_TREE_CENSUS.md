@@ -356,3 +356,24 @@ Product Law
 ```
 
 The Seat truth reconciliation in this baseline therefore changes **known structural context**, not the chronological execution authority. Any future implementation slice must update the affected census row(s) in the same governed change and must not create a second checklist or parallel Seat hierarchy.
+
+## 15. Seat-1 `SEAT_CONNECTION` vertical
+
+Seat 1 now has a bounded `SEAT_CONNECTION` vertical with a stable semantic connection-port identity and an explicit semantic edge toward the shared Workspace Center.
+
+```text
+TREE-HERO-SEAT#0
+└── SEAT_CONNECTION
+    ├── stable port
+    │   └── TREE-HERO-SEAT#0:SEAT_CONNECTION:PORT
+    └── semantic edge
+        └── TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER
+```
+
+The Seat division-focus transition also preserves the previous division as the visual subject while it compacts before a new division becomes active. This is presentation state only and does not delete or reset the previous Seat's user configuration/payload.
+
+Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge identity and division-focus compaction are implemented; final adaptive geometry, final expansion-animation language, and final turn-loop electrical choreography remain intentionally open.
+
+The edge is presentation-only and does not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
+
+This section records current structural evidence only. `MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
