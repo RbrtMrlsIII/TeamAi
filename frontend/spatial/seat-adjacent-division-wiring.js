@@ -43,13 +43,14 @@ export function buildAdjacentDivisionWiring({
   const dx = targetPort.x - sourceAtAmount.x;
   const dz = targetPort.z - sourceAtAmount.z;
   const length = normalize(Math.max(0.02, Math.hypot(dx, dz)));
+  const wiringId = id || (
+    sourceDivisionId || targetDivisionId || seatIndex !== 0
+      ? adjacentDivisionWiringIdentity({ seatIndex, sourceDivisionId: resolvedSourceDivisionId, targetDivisionId: resolvedTargetDivisionId })
+      : SEAT1_ADJACENCY_WIRING_ID
+  );
 
   return {
-    id: id || adjacentDivisionWiringIdentity({
-      seatIndex,
-      sourceDivisionId: resolvedSourceDivisionId,
-      targetDivisionId: resolvedTargetDivisionId,
-    }),
+    id: wiringId,
     semantic: 'ADJACENT_DIVISION_WIRING',
     seatIndex,
     from: {
