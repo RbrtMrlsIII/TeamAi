@@ -54,16 +54,24 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
 
     await page.keyboard.press('ArrowRight');
 
-    await expect.poll(async () => page.evaluate(() => {
+    const forwardClosingSnapshot = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
       const state = hero.getHierarchyState?.();
-      return state?.phase === 'division_closing'
-        && state?.focusedChildId === 'SEAT_CONNECTION'
-        && state?.divisionClosingChildId === 'SEAT_CONNECTION'
-        && state?.divisionPendingChildId === 'SEAT_BEHAVIOR'
-        && hero.getConnectionBranchAmount?.() > 0
-        && hero.getBehaviorBranchAmount?.() === 0;
-    }), { timeout: 5000 }).toBe(true);
+      return {
+        state,
+        connectionAmount: hero.getConnectionBranchAmount?.(),
+        behaviorAmount: hero.getBehaviorBranchAmount?.(),
+      };
+    });
+
+    expect(forwardClosingSnapshot.state).toMatchObject({
+      phase: 'division_closing',
+      focusedChildId: 'SEAT_CONNECTION',
+      divisionClosingChildId: 'SEAT_CONNECTION',
+      divisionPendingChildId: 'SEAT_BEHAVIOR',
+    });
+    expect(forwardClosingSnapshot.connectionAmount).toBeGreaterThan(0);
+    expect(forwardClosingSnapshot.behaviorAmount).toBe(0);
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
@@ -78,12 +86,17 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
 
     await page.keyboard.press('ArrowLeft');
 
-    await expect.poll(async () => page.evaluate(() => {
+    const reverseClosingSnapshot = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
-      return hero.getHierarchyState?.().phase === 'division_closing'
-        && hero.getHierarchyState?.().divisionClosingChildId === 'SEAT_BEHAVIOR'
-        && hero.getHierarchyState?.().divisionPendingChildId === 'SEAT_CONNECTION';
-    }), { timeout: 5000 }).toBe(true);
+      return hero.getHierarchyState?.();
+    });
+
+    expect(reverseClosingSnapshot).toMatchObject({
+      phase: 'division_closing',
+      focusedChildId: 'SEAT_BEHAVIOR',
+      divisionClosingChildId: 'SEAT_BEHAVIOR',
+      divisionPendingChildId: 'SEAT_CONNECTION',
+    });
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.()), { timeout: 5000 }).toMatchObject({
       phase: 'open',
