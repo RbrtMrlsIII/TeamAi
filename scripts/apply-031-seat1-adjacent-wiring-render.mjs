@@ -17,21 +17,18 @@ const expansionSource = join(root, 'frontend/spatial/seat-adjacent-division-expa
 const expansionBrowser = join(root, 'public/seat-adjacent-division-expansion.js');
 const transitionSource = join(root, 'frontend/spatial/seat-adjacent-transition.js');
 const transitionBrowser = join(root, 'public/seat-adjacent-transition.js');
-const geometrySource = join(root, 'frontend/spatial/seat-division-geometry.js');
-const geometryBrowser = join(root, 'public/seat-division-geometry.js');
 
 let text = readFileSync(heroPath, 'utf8');
 copyFileSync(wiringSource, wiringBrowser);
 copyFileSync(expansionSource, expansionBrowser);
 copyFileSync(transitionSource, transitionBrowser);
-copyFileSync(geometrySource, geometryBrowser);
 
 const importAnchor = "import { drawSetupConfigRing } from './hero-r2-setup-ring.js';";
 if (!text.includes("from './seat-adjacent-transition.js';")) {
   if (!text.includes(importAnchor)) throw new Error('Hero module import anchor missing');
   text = text.replace(
     importAnchor,
-    `${importAnchor}\nimport { buildAdjacentDivisionTransition } from './seat-adjacent-transition.js';`,
+    `${importAnchor}\nimport { buildAdjacentDivisionTransition, buildAdjacentDivisionGeometry } from './seat-adjacent-transition.js';`,
   );
 }
 
@@ -46,10 +43,10 @@ if (!text.includes('function drawSeat1AdjacentDivisionWiring(')) {
 
 const callAnchor = '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);';
 if (!text.includes(callAnchor)) throw new Error('branch render anchor missing');
-if (!text.includes('drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, cx, cy, cz, seat, shellY, scale, seatAngle: seat.a')); {
+if (!text.includes('drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, seat, seatIndex: index, shellY, scale, seatAngle: seat.a')) {
   text = text.replace(
     callAnchor,
-    `${callAnchor}\n      if (index === 0) {\n        const sourceAmount = getConnectionBranchAmount(hierarchyRuntime);\n        const targetAmount = getBehaviorBranchAmount(hierarchyRuntime);\n        const seatCenter = seatPos(seat);\n        const behaviorLoc = childLocalPosition(seat.a, profile(seatCount).seatRadius * 0.22, 1, targetAmount);\n        const behaviorCx = seatCenter[0] + Math.cos(seat.a) * 0.17 * scale + Math.cos(seat.a + Math.PI / 2) * -1.5 * 0.12 * scale;\n        const behaviorCz = seatCenter[2] + Math.sin(seat.a) * 0.17 * scale + Math.sin(seat.a + Math.PI / 2) * -1.5 * 0.12 * scale;\n        const behaviorCy = shellY + 0.55 * scale + behaviorLoc.y * scale;\n        const sourceGeometry = buildSeatDivisionGeometry({ center: { x: cx, y: cy, z: cz }, angle: seat.a, radialDistance: Math.hypot(cx, cz), payload: { labels: ['Connection', 'Health'], controls: ['configure'] }, workspaceTarget: { x: 0, y: 0.5, z: 0 }, id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY' });\n        const targetGeometry = buildSeatDivisionGeometry({ center: { x: behaviorCx, y: behaviorCy, z: behaviorCz }, angle: seat.a + Math.PI, radialDistance: Math.hypot(cx, cz), payload: { labels: ['Behavior'], controls: ['configure'] }, workspaceTarget: { x: 0, y: 0.5, z: 0 }, id: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY' });\n        drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, seat, seatIndex: index, shellY, scale, seatAngle: seat.a, sourceDivisionId: 'SEAT_CONNECTION', targetDivisionId: 'SEAT_BEHAVIOR', sourceAmount, targetAmount, sourceGeometry, targetGeometry });\n      }`,
+    `${callAnchor}\n      if (index === 0) {\n        const sourceAmount = getConnectionBranchAmount(hierarchyRuntime);\n        const targetAmount = getBehaviorBranchAmount(hierarchyRuntime);\n        const seatCenter = seatPos(seat);\n        const behaviorLoc = childLocalPosition(seat.a, profile(seatCount).seatRadius * 0.22, 1, targetAmount);\n        const behaviorCx = seatCenter[0] + Math.cos(seat.a) * 0.17 * scale + Math.cos(seat.a + Math.PI / 2) * -1.5 * 0.12 * scale;\n        const behaviorCz = seatCenter[2] + Math.sin(seat.a) * 0.17 * scale + Math.sin(seat.a + Math.PI / 2) * -1.5 * 0.12 * scale;\n        const behaviorCy = shellY + 0.55 * scale + behaviorLoc.y * scale;\n        const sourceGeometry = buildAdjacentDivisionGeometry({ center: { x: cx, y: cy, z: cz }, angle: seat.a, radialDistance: Math.hypot(cx, cz), payload: { labels: ['Connection', 'Health'], controls: ['configure'] }, workspaceTarget: { x: 0, y: 0.5, z: 0 }, divisionId: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY' });\n        const targetGeometry = buildAdjacentDivisionGeometry({ center: { x: behaviorCx, y: behaviorCy, z: behaviorCz }, angle: seat.a + Math.PI, radialDistance: Math.hypot(cx, cz), payload: { labels: ['Behavior'], controls: ['configure'] }, workspaceTarget: { x: 0, y: 0.5, z: 0 }, divisionId: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY' });\n        drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, seat, seatIndex: index, shellY, scale, seatAngle: seat.a, sourceDivisionId: 'SEAT_CONNECTION', targetDivisionId: 'SEAT_BEHAVIOR', sourceAmount, targetAmount, sourceGeometry, targetGeometry });\n      }`,
   );
 }
 
