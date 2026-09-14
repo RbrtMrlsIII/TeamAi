@@ -1,5 +1,5 @@
 /**
- * 029 adjacent-division wiring contract.
+ * 031 semantic adjacent-division wiring contract.
  * Presentation-only: joins two semantic division geometry descriptors.
  * No provider, authorization, scheduler, or durable-domain authority.
  */
@@ -10,20 +10,34 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_ADJACENCY_WIRING_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING';
 
+export function adjacentDivisionWiringIdentity({ seatIndex = 0, sourceDivisionId, targetDivisionId } = {}) {
+  const seat = Number.isInteger(seatIndex) && seatIndex >= 0 ? seatIndex : 0;
+  if (!sourceDivisionId || !targetDivisionId) {
+    throw new Error('adjacent division wiring requires source and target division identities');
+  }
+  return `TREE-HERO-SEAT#${seat}:${sourceDivisionId}:${targetDivisionId}:ADJACENCY_WIRING`;
+}
+
 function pointDistance(a, b) {
   return Math.hypot((b.x || 0) - (a.x || 0), (b.z || 0) - (a.z || 0));
 }
 
 export function buildAdjacentDivisionWiring({
+  seatIndex = 0,
+  sourceDivisionId,
+  targetDivisionId,
   sourceGeometry,
   targetGeometry,
   clearance = 0.16,
   amount = 1,
+  id,
 } = {}) {
   if (!sourceGeometry?.port || !targetGeometry?.port) {
     throw new Error('adjacent division wiring requires source and target semantic ports');
   }
 
+  const resolvedSourceDivisionId = sourceDivisionId || sourceGeometry.id;
+  const resolvedTargetDivisionId = targetDivisionId || targetGeometry.id;
   const sourceAtAmount = connectionCorridorPoint(sourceGeometry, clamp(amount, 0, 1));
   const targetPort = targetGeometry.port;
   const dx = targetPort.x - sourceAtAmount.x;
@@ -31,15 +45,20 @@ export function buildAdjacentDivisionWiring({
   const length = normalize(Math.max(0.02, Math.hypot(dx, dz)));
 
   return {
-    id: SEAT1_ADJACENCY_WIRING_ID,
+    id: id || adjacentDivisionWiringIdentity({
+      seatIndex,
+      sourceDivisionId: resolvedSourceDivisionId,
+      targetDivisionId: resolvedTargetDivisionId,
+    }),
     semantic: 'ADJACENT_DIVISION_WIRING',
+    seatIndex,
     from: {
-      divisionId: sourceGeometry.id,
+      divisionId: resolvedSourceDivisionId,
       port: { ...sourceGeometry.port },
       projected: sourceAtAmount,
     },
     to: {
-      divisionId: targetGeometry.id,
+      divisionId: resolvedTargetDivisionId,
       port: { ...targetPort },
     },
     corridor: {
