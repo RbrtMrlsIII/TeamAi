@@ -11,11 +11,18 @@ export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [] }
     return createMachineTransition({ seatIndex, source, target, expansion: edge.expansion || {}, wiring: edge.wiring || wiring });
   });
   const validTransitions = transitions.filter(Boolean);
+  const expandedPartMap = new Map(parts.map((part) => [part.semanticId, part]));
+  for (const transition of validTransitions) {
+    expandedPartMap.set(transition.sourceDivisionId, transition.sourceGeometry);
+    expandedPartMap.set(transition.targetDivisionId, transition.targetGeometry);
+  }
+  const expandedParts = [...expandedPartMap.values()];
   return Object.freeze({
     seatIndex: Number(seatIndex),
     parts: Object.freeze(parts),
+    renderedParts: Object.freeze(expandedParts),
     transitions: Object.freeze(validTransitions),
-    subject: deriveMachineSubject(parts),
+    subject: deriveMachineSubject(expandedParts),
   });
 }
 
