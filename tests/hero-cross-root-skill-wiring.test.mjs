@@ -21,22 +21,25 @@ test('accessibility skill requires non-color status and keyboard', () => {
 
 test('SKILL_WIRING names explicit spatial companion routes', () => {
   const wiring = read('docs/SKILL_WIRING.md');
-  assert.match(wiring, /hierarchy-runtime/);
-  assert.match(wiring, /motion\/SKILL\.md/);
-  assert.match(wiring, /transition\/SKILL\.md/);
-  assert.match(wiring, /responsive\/SKILL\.md/);
-  assert.match(wiring, /accessibility\/SKILL\.md/);
-  assert.match(wiring, /No Hero lighting\/theme skill/i);
+  for (const route of [
+    'hierarchy-runtime/SKILL.md',
+    'seat-shell-hierarchy/SKILL.md',
+    'motion/SKILL.md',
+    'transition/SKILL.md',
+    'responsive/SKILL.md',
+    'accessibility/SKILL.md',
+  ]) assert.match(wiring, new RegExp(route.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')));
+  assert.match(wiring, /no Hero lighting\/theme skill/i);
 });
 
-test('matrix forbids second roots and Hero lighting skill', () => {
+test('matrix forbids second roots and Hero lighting Skill', () => {
   const doc = read('docs/TEAMAI_3D_HERO_CROSS_ROOT_SKILL_WIRING_MATRIX.md');
   assert.match(doc, /does \*\*not\*\* invent a second/i);
   assert.match(doc, /no\*\* Hero lighting skill/i);
 });
 
-test('I.1 is docs+tests only — no hero-flex change required in matrix', () => {
+test('I.1 remains documentation/verification-only and does not require hero runtime changes', () => {
   const matrix = read('docs/TEAMAI_3D_HERO_CROSS_ROOT_SKILL_WIRING_MATRIX.md');
   assert.match(matrix, /I\.1/);
-  assert.match(matrix, /docs\+tests/i);
+  assert.match(matrix, /No runtime \/ hero-flex change in this slice/i);
 });
