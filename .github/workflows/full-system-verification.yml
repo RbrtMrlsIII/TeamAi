@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Validate TeamAi recovery records
         shell: bash
         run: |
@@ -38,6 +40,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
@@ -66,7 +70,7 @@ jobs:
       - name: Upload Full Project ZIP verification artifact
         uses: actions/upload-artifact@v4
         with:
-          name: full-project-${{ github.sha }}
+          name: full-project-${{ github.event.pull_request.head.sha || github.sha }}
           path: TeamAi-Full-Project.zip
           if-no-files-found: error
           retention-days: 30
