@@ -1,5 +1,5 @@
 schema: 1
-manifest_version: 2026-09-15.1
+manifest_version: 2026-09-15.2
 
 active_frontier:
   repository:
@@ -62,6 +62,32 @@ canonical_indexes:
   - docs/SKILL_WIRING.md
   - AI_ASSISTANT_READ_ME.md
   - PRODUCT-KNOWLEDGE.md
+  - docs/project-guide/Endorsement.md
+
+authoritative_roots:
+  product_law: PRODUCT_LAW.md
+  execution_checklist: MASTERPLAN.md
+  active_frontier: NEXT_SLICES.md
+  execution_policy: POLICY.md
+  skill_routing: docs/SKILL_WIRING.md
+  live_session: AI_ASSISTANT_READ_ME.md
+  knowledge: PRODUCT-KNOWLEDGE.md
+  acceptance: docs/project-guide/Endorsement.md
+  archive: docs/archive/
+
+workspace:
+  branch_prefixes:
+    - frontend/
+    - backend/
+    - governance/
+    - verification/
+    - docs/
+    - recovery/
+    - delivery/
+  temporary_prefixes:
+    - tmp/
+  workflow_naming: responsibility_specific
+  auto_branch_deletion: false
 
 coupling:
   frontend:
@@ -75,17 +101,6 @@ coupling:
   governance:
     - build-system/
     - .github/workflows/
-
-authoritative_roots:
-  product_law: PRODUCT_LAW.md
-  execution_checklist: MASTERPLAN.md
-  active_frontier: NEXT_SLICES.md
-  execution_policy: POLICY.md
-  skill_routing: docs/SKILL_WIRING.md
-  live_session: AI_ASSISTANT_READ_ME.md
-  knowledge: PRODUCT-KNOWLEDGE.md
-  acceptance: docs/project-guide/Endorsement.md
-  archive: docs/archive/
 
 historical_existing_immutable:
   - docs/archive/
