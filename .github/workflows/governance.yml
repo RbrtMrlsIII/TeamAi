@@ -99,7 +99,7 @@ jobs:
       - agent-validation
     runs-on: ubuntu-latest
     steps:
-      - name: Require an approval on the exact current PR head
+      - name: Require an approval on the exact current PR head and block auto-merge
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -109,6 +109,14 @@ jobs:
         run: |
           set -euo pipefail
           gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
+          gh api "/repos/${REPO}/pulls/${PR_NUMBER}" > /tmp/pr.json
+          auto_merge=$(jq -r 'if .auto_merge == null then "false" else "true" end' /tmp/pr.json)
+          echo "auto_merge_enabled=$auto_merge"
+          if [ "$auto_merge" = "true" ]; then
+            echo "REVIEW_READINESS=FAIL"
+            echo "TeamAi policy forbids auto-merge for product changes."
+            exit 1
+          fi
           approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author)] | length' /tmp/reviews.json)
           echo "exact_head_approvals=$approved"
           if [ "$approved" -lt 1 ]; then
