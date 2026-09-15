@@ -6,7 +6,7 @@
 When an authorized user/product decision changes behavior encoded by a test, validator, active index, acceptance rule, or retired concept.
 
 ## AUTHORITY
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md`
 
 ## ACTION
 1. Observe the failure or requested truth change.
@@ -31,8 +31,8 @@ The canonical contract, implementation, validation, and evidence agree on the ne
 Record the changed contract, exact verification, scope, and limitation in the owning PR/evidence record and the current session file.
 
 ## SEE ALSO
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Masterplan/MASTERPLAN.md`
 - `POLICY.md`
 - `skills/governance/repository-synchronization/SKILL.md`
 - `docs/archive/`
