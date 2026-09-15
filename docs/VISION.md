@@ -1,7 +1,7 @@
 # TeamAi Product Vision — Entrance, Mechanical 3D Hero, Semantic Machine, and Experience
 
 **Status:** Product intent (living) · **single vision home**  
-**Authority order:** `PRODUCT_LAW.md` → `MASTERPLAN.md` → **this document** → camera / hierarchy / DOM / theme / tree contracts → implementation slices  
+**Authority order:** `Product_Law/PRODUCT_LAW.md` → `Masterplan/MASTERPLAN.md` → **this document** → camera / hierarchy / DOM / theme / tree contracts → implementation slices  
 **Claim:** presentation and experience intent only · **not** a Product Law rewrite · **no 029-released claim**
 
 This is the **single product-experience vision** for the public entrance, the mechanical 3D Hero, the semantic tree/branch/division machine, camera subject and travel, machine chrome, unlock/accessibility language, and presentation behavior. New ideas are amended here rather than published as a second vision.
@@ -12,12 +12,11 @@ Related technical contracts (owners of detail, not competing visions):
 - `docs/TEAMAI_3D_HERO_CAM6_MANDATORY_SELECTED_TREE_LOOKAT.md`
 - `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`
 - `docs/TEAMAI_3D_HERO_DOM_CHROME_ABSORPTION.md`
-- `NEXT_SLICES.md` (sole current execution frontier)
+- `Masterplan/NEXT_SLICES.md` (sole current execution frontier)
 - `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
 - `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
 - `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
-- `docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md`
 - `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`
 - `docs/PRODUCT_LAW_FRONTEND_HIGHEST_STAKE.md`
 
