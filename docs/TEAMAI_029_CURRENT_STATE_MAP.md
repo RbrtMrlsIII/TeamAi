@@ -270,3 +270,11 @@ Future Seat divisions reuse the **semantic construction grammar** proven by Seat
 ## Seat-1 reverse-focus synchronization — #330
 
 The bounded Seat-1 vertical now has bidirectional settled-focus label synchronization. `SEAT_BEHAVIOR → SEAT_CONNECTION` returns the visible label to the settled `SEAT_CONNECTION` presentation state after the prior division compacts. This remains presentation-only and does not alter semantic topology, persisted configuration, backend authority, C8, or C9. Reference: PR #330.
+
+## 03.9 TREE MACHINE — frontend foundation / PR #344
+
+PR **#344** adds an independent frontend foundation from `main`: a renderer-neutral machine scene model, canonical semantic transition object, geometry-derived subject footprint, named camera / semantic target separation, an opt-in inspection preview, live geometry mutation, and reverse semantic-pair test coverage.
+
+Current state is **IMPLEMENTED / TEMPO / EVIDENCE ONLY**. It does not replace the production Hero, does not complete the tree census, does not establish connection topology, and does not satisfy C8/C9/C10 or any full machine-promotion gate by itself.
+
+The slice is governed by the Machine Hero qualification law and uses the frontend machine-builder, semantic-transition auditor, camera-authority auditor, and browser-smoke procedures. The implementation is deliberately isolated so future production rendering can be migrated toward semantic state rather than static camera coordinates.
