@@ -19,6 +19,18 @@ export const CENSUS_GOVERNED_PATHS = [
   'public/hero-seat-stack.js',
 ];
 
+// Renderer-neutral machine proof modules do not add or alter census tree
+// semantics. Their machine-scene evidence is carried by the owning evidence
+// record and machine proof matrix; structural census edits remain mandatory
+// whenever a tree/branch/division identity or payload actually changes.
+export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
+  'frontend/spatial/machine-hero-scene.js',
+  'public/machine-hero-scene.js',
+  'public/machine-hero-preview.js',
+  'public/machine-hero-preview.css',
+  'public/machine-hero-webgl.js',
+]);
+
 export function changedPaths(rows) {
   return rows.flatMap((parts) => {
     const status = parts[0] ?? '';
@@ -28,7 +40,7 @@ export function changedPaths(rows) {
 }
 
 export function requiresCensusSync(rows) {
-  const paths = changedPaths(rows);
+  const paths = changedPaths(rows).filter((file) => !CENSUS_PRESENTATION_ONLY_PATHS.has(file));
   return paths.some((file) => CENSUS_GOVERNED_PATHS.some((prefix) => file === prefix || file.startsWith(prefix)));
 }
 
