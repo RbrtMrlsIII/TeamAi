@@ -6,7 +6,7 @@ TeamAi is a human-controlled multi-AI discussion and execution orchestrator. Ext
 
 `PRODUCT_LAW.md → MASTERPLAN.md → NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → Skills → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md → Endorsement → PRODUCT-KNOWLEDGE.md`
 
-Each active document has one job. Do not create parallel roadmaps, current-state indexes, handover manuals, or governance constitutions.
+Each active document has exactly one job. Do not create parallel roadmaps, current-state indexes, live handover manuals, or competing governance constitutions.
 
 ## Authority roles
 
@@ -14,35 +14,41 @@ Each active document has one job. Do not create parallel roadmaps, current-state
 - `MASTERPLAN.md` — executable chronology/checklist.
 - `NEXT_SLICES.md` — one current execution frontier.
 - `POLICY.md` — ORUCAVEAM execution discipline.
-- `docs/SKILL_WIRING.md` — routing map.
-- `skills/**/SKILL.md` — bounded procedures.
-- `AI_ASSISTANT_READ_ME.md` — live session/recovery/handover/validation state.
-- `docs/project-guide/Endorsement.md` — acceptance records.
-- `PRODUCT-KNOWLEDGE.md` — validated reusable concepts and lessons.
-- `docs/archive/` — historical material only.
+- `docs/SKILL_WIRING.md` — Skill routing only.
+- `skills/**/SKILL.md` — bounded reusable procedures.
+- `AI_ASSISTANT_READ_ME.md` — live session, recovery, handover, validation, and endorsement state.
+- `docs/project-guide/Endorsement.md` — acceptance records only.
+- `PRODUCT-KNOWLEDGE.md` — validated reusable concepts and lessons only.
+- `docs/archive/` — historical material, never current authority.
 
-## Project history
+## History
 
-The repository evolved from a provider-federated AI workspace foundation through backend durability and commerce boundaries, then into the owner-endorsed 029 product-experience rebaseline. The current frontend frontier is rebuilding the monolithic 3D Hero as a semantic machine candidate without replacing production until evidence and product acceptance support the change.
+TeamAi evolved from a provider-federated AI workspace foundation through durable backend, commerce, connection, and recovery boundaries into the current 029 product-experience rebaseline. Historical checkpoints, decisions, evidence, and retired operating guides remain preserved in Git history and the archive; they are not current instructions.
 
-## Current project state
+## Current project
 
-The active 029 product-experience ledger is Issue **#278**. Merge-gate ownership remains Issue **#133**. The machine replacement candidate is PR **#344**. Repository foundation cleanup is PR **#346**. PR **#343** was closed as superseded and did not merge.
+The project is governed by the active Product Law and the canonical execution chain above. The 029 product-experience work is progressing toward a semantic modular machine that can replace the current monolithic 3D Hero only after the governed evidence and owner acceptance are complete.
 
-The machine candidate is presentation-only. It must not become backend, authorization, scheduler, entitlement, commerce, or durable-state authority.
+The machine direction is intentionally modular: branches/connections/modules own geometry, UI surface, ports, cameras, expansion, and presentation state. Presentation code does not become backend, scheduler, authorization, commerce, entitlement, or durable-state authority.
 
-## Future project path
+Current live task/frontier, session state, active Issues, and PRs are always read from `NEXT_SLICES.md` and `AI_ASSISTANT_READ_ME.md`, not frozen into this README.
 
-`semantic product model → adaptive machine → real topology → turn-loop contribution → authenticated workspace → C9 owner acceptance → ProMax refinement`
+## Future
 
-The new machine earns promotion through explicit evidence. Green CI is necessary evidence, not automatic product acceptance.
+`semantic product model → adaptive machine → real topology → turn-loop contribution → authenticated workspace → owner acceptance → ProMax refinement`
+
+The repository is designed to grow by adding validated coverage, capabilities, skills, and workspace adapters without multiplying constitutions or sources of truth.
 
 ## Development flow
 
-`Issue/body → Product Law → Masterplan → ORUCAVEAM/Skill → draft PR → implementation → verification → evidence → ready-for-review → authorized merge → new current truth`
+`Issue → Product Law → Masterplan → NEXT_SLICES → ORUCAVEAM/Skill → draft PR → implementation → verification/evidence → canonical synchronization → ready-for-review → authorized merge → new current truth`
 
-Substantive changes start as draft PRs. Auto-merge is not the product execution policy.
+Substantive changes start as draft PRs. Auto-merge is not the product execution policy. One implementation slice is not required to equal one PR or one merge.
 
-## Archive rule
+## Workspace hygiene
 
-Retired operating material is preserved under `docs/archive/`. The repository does not use an `OBSOLETE_FILES.md` registry. Historical documents are not current instructions.
+Use purpose-specific branches and workflow names. Historical branches may remain when they carry rollback/provenance value; they are not active work unless they own a current PR/Issue. New durable branches should use clear purpose prefixes such as `frontend/`, `backend/`, `governance/`, `verification/`, or `docs/`. Workflows should describe responsibility, not use vague product-wide names.
+
+## Archive
+
+Retired operating material is preserved under `docs/archive/`. Do not create or revive `OBSOLETE_FILES.md`. Archive documents are consulted only for historical recovery and must never be cited as current instructions.
