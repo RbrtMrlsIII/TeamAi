@@ -23,24 +23,20 @@ const silhouetteDimensions = {
   arc: { x: 2.05, y: 0.92, z: 1.46, seam: 0.24 }, diamond: { x: 1.72, y: 1.08, z: 1.72, seam: 0.26 }, blade: { x: 1.96, y: 0.98, z: 1.28, seam: 0.24 },
 };
 const makeCamera = (branchId, position, target, seatIndex = null, role = 'branch') => Object.freeze({ cameraId: `BRANCH_CAMERA_${branchId}`, branchId, seatIndex, role, position: { ...position }, target: { ...target }, fov: role === 'hub' ? 38 : 34 });
+const cameraForPart = (part, angle) => makeCamera(part.branchId, polar(part.kind === 'hub' ? 10.2 : 7.6, angle, part.level + (part.kind === 'hub' ? 5.1 : 2.9)), part.center, part.seatIndex, part.kind === 'hub' ? 'hub' : 'branch');
 export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, expanded = false } = {}) {
   const count = Math.min(MAX_SEAT_COUNT, Math.max(MIN_SEAT_COUNT, Math.floor(Number(seatCount) || DEFAULT_SEAT_COUNT)));
   const hub = { id: 'machine-hub-core', branchId: 'HUB-CORE', kind: 'hub', level: 0.42, center: { x: 0, y: 0.42, z: 0 }, dimensions: { x: 2.6, y: 0.78, z: 2.6 }, silhouette: 'hex', seam: 0.26, port: { x: 0, y: 0.42, z: 1.45 }, uiStyle: 'command-core', expanded: true };
-  hub.uiSurface = makeUiSurface(hub, hub.uiStyle, 0.72);
-  hub.camera = makeCamera('HUB-CORE', { x: 0, y: 5.8, z: 8.4 }, hub.center, null, 'hub');
+  hub.uiSurface = makeUiSurface(hub, hub.uiStyle, 0.72); hub.camera = cameraForPart(hub, Math.PI / 2);
   const inner = Array.from({ length: count }, (_, seatIndex) => {
     const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(expanded ? 4.55 : 4.05, angle, level), dims = silhouetteDimensions.pod, branchId = `BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`;
     const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: polar(expanded ? 1.02 : 0.92, angle, level) };
-    part.uiSurface = makeUiSurface(part, part.uiStyle, 1);
-    part.camera = makeCamera(branchId, polar(7.6, angle, level + 2.9), center, seatIndex);
-    return part;
+    part.uiSurface = makeUiSurface(part, part.uiStyle); part.camera = cameraForPart(part, angle); return part;
   });
   const outer = outerProfiles.map((profile, outerIndex) => {
     const angle = TAU * (outerIndex * count / OUTER_COUNT + 0.5) / count, center = polar(expanded ? 7.15 : 6.45, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
     const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: polar(1.12, angle, profile.height) };
-    part.uiSurface = makeUiSurface(part, part.uiStyle, profile.uiScale);
-    part.camera = makeCamera(profile.branchId, polar(10.2, angle, profile.height + 4.1), center);
-    return part;
+    part.uiSurface = makeUiSurface(part, part.uiStyle, profile.uiScale); part.camera = cameraForPart(part, angle); return part;
   });
   const parts = [hub, ...inner, ...outer], byBranch = new Map(parts.map((part) => [part.branchId, part])), connections = [];
   for (const pod of inner) connections.push({ id: `${pod.branchId}:HUB`, sourceBranchId: 'HUB-CORE', targetBranchId: pod.branchId, sourcePort: hub.port, targetPort: pod.port, kind: 'inner-spoke', route: [hub.port, { x: pod.center.x * 0.52, y: Math.max(hub.level, pod.level) + 0.22, z: pod.center.z * 0.52 }, pod.port] });
@@ -52,3 +48,4 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
   return Object.freeze({ seatCount: count, hub, parts: Object.freeze(parts), connections: Object.freeze(connections), cameras: Object.freeze(parts.map((part) => part.camera)), byBranch });
 }
 export function getBranchCamera(core, branchId) { return core?.byBranch?.get(branchId)?.camera || null; }
+export function resolveBranchCamera(core, branchId) { const part = core?.byBranch?.get(branchId); if (!part?.camera) return null; return Object.freeze({ ...part.camera, target: { ...part.center } }); }
