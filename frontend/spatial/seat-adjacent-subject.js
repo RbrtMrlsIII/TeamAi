@@ -41,7 +41,9 @@ export function buildAdjacentDivisionSubject({
   expansion,
   wiring,
 } = {}) {
-  if (!sourceGeometry || !targetGeometry) throw new Error('semantic subject requires source and target geometry');
+  if (!sourceGeometry?.center || !sourceGeometry?.dimensions || !targetGeometry?.center || !targetGeometry?.dimensions) {
+    throw new Error('semantic subject requires source and target geometry');
+  }
   if (!sourceGeometry.port || !targetGeometry.port) throw new Error('semantic subject requires source and target semantic ports');
 
   const sourceAmount = Math.max(0, Math.min(1, Number(expansion?.sourceAmount) || 0));
