@@ -75,7 +75,8 @@ test('field wiring and Skill wiring remain separate responsibilities', () => {
   assert.match(fieldWiring, /Backend & Runtime/);
   assert.match(fieldWiring, /Frontend & Experience/);
   assert.match(skillWiring, /skills\/governance\/machine-builder\/SKILL\.md/);
-  assert.doesNotMatch(skillWiring, /docs\/skills\//);
+  assert.match(skillWiring, /active `docs\/skills\/`/);
+  assert.match(skillWiring, /single skills tree/i);
 });
 
 test('validation changes preserve an explicit old-invariant to replacement record', () => {
