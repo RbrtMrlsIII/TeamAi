@@ -56,7 +56,17 @@ test.describe('Modular branch connection core', () => {
     await expect(inspector.locator('[data-inspector-density-value]')).toHaveText('74%');
   });
 
-  test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) =>
+  test('keyboard focus can traverse branches and activate one', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
+    const canvas = page.locator('canvas[aria-label="3D modular branch connection core"]');
+    await canvas.focus();
+    await canvas.press('ArrowRight');
+    await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-02');
+    await canvas.press('Enter');
+    await expect(page.locator('[data-core-state]')).toContainText('opening');
+  });
+
+  test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
