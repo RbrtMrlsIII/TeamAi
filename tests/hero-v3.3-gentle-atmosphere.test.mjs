@@ -1,10 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, readFileSync } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const read = (p) => readFileSync(join(root, p), 'utf8');
 
 test('V3.3 document remains a historical contract record', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_V3_3_GENTLE_ATMOSPHERE.md'), 'utf8');
