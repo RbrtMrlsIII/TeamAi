@@ -251,6 +251,6 @@ This subsection is a current implementation reconciliation, not a pricing, packa
 
 ## 13. Relationship to existing canonical documents
 
-This is a planning contract under `docs/` and does not override `PRODUCT_LAW.md`.
+This is a planning contract under `docs/` and does not override `Product_Law/PRODUCT_LAW.md`.
 
-`MASTERPLAN.md` and `TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md` remain the phase-planning authorities. `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md` refines the connection/Seat state model. This document adds the commercial/capability vocabulary and preserves the new discussion so later implementation can be traced without reconstructing it from chat history.
+`Masterplan/MASTERPLAN.md` and `TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md` remain the phase-planning authorities. `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md` refines the connection/Seat state model. This document adds the commercial/capability vocabulary and preserves the new discussion so later implementation can be traced without reconstructing it from chat history.
