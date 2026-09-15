@@ -2,6 +2,8 @@
 
 **Role:** routing only. It does not define Product Law, chronology, acceptance, or permission.
 
+The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are reusable procedures only; they are never a source of Product Law, permission, identity, scheduler, entitlement, durable-state, or merge authority.
+
 ## Authority path
 
 `Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
@@ -66,10 +68,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 ## Forbidden active routing surfaces
 
-- root `PRODUCT_LAW.md`
-- root `MASTERPLAN.md`
-- root `NEXT_SLICES.md`
-- active `docs/skills/`
-- active `docs/project-guide/HandOver.md`
-- active `docs/project-guide/Endorsement.md`
-- `OBSOLETE_FILES.md`
+The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md`.
