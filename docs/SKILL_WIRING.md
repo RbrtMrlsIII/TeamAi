@@ -1,47 +1,70 @@
 # SKILL_WIRING — active routing map
 
-**Role:** navigation only. It does not grant authority or define project chronology.
+**Role:** routing only. It does not define Product Law, chronology, acceptance, or permission.
 
-## Canonical execution path
+## Authority path
 
-`PRODUCT_LAW.md → MASTERPLAN.md → NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → implementation → verification → evidence → AI_ASSISTANT_READ_ME.md → Endorsement → PRODUCT-KNOWLEDGE.md`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
 
-## Core routing
+## Development fields
 
-| Work class | Route |
-|---|---|
-| Any substantive work | `skills/execution/orucaveam/SKILL.md` + applicable domain Skill |
-| Repository/document synchronization | `skills/governance/repository-synchronization/SKILL.md` |
-| Product Law change | `skills/governance/product-law-change/SKILL.md` |
-| Masterplan/Skill wiring | `skills/governance/masterplan-skill-wiring/SKILL.md` |
-| Frontend/spatial | explicit companion routes below + browser verification |
-| Backend/runtime | applicable `skills/backend/**` + authoritative runtime evidence |
-| Verification | `skills/verification/**` |
-| Packaging | `skills/packaging/project-package/SKILL.md` |
-| Learning/endorsement | `skills/governance/learning-handover/SKILL.md` |
+| Field | Primary Skill family | Main verification |
+|---|---|---|
+| Product & Governance | `skills/governance/**` + ORUCAVEAM | governance validators |
+| Backend & Runtime | `skills/backend/**` | backend/runtime verification |
+| Frontend & Experience | `skills/frontend/**` | tests + browser verification |
+| Integration & Contracts | applicable backend/frontend contract Skills | contract/integration tests |
+| Verification & CI/Browser | `skills/verification/**` | CI/browser/evidence |
+| Documentation, Knowledge & Session | `skills/governance/learning-handover/**` + synchronization | synchronization/audit |
+| Recovery, History & Reconciliation | applicable recovery/workspace Skills | recovery verification |
+| Delivery & Operations | applicable delivery/tool Skills | delivery verification |
 
-## Spatial companion routes
+## Governance routing
 
-- Hierarchy runtime: `skills/frontend/spatial/hierarchy-runtime/SKILL.md`
-- Camera ladder: `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
-- Motion: `skills/frontend/spatial/motion/SKILL.md`
-- Transition/animation: `skills/frontend/spatial/transition/SKILL.md`
-- Responsive: `skills/frontend/spatial/responsive/SKILL.md`
-- Accessibility: `skills/frontend/spatial/accessibility/SKILL.md`
-- Workspace ring/ZipSkills: `skills/frontend/spatial/workspace-ring/SKILL.md` + `skills/frontend/spatial/workspace-zipskills/SKILL.md`
-- Machine replacement: `skills/frontend/spatial/**` only where a named companion exists; renderer modules remain presentation-only.
-- Hero lighting/theme remains governed by existing material/theme contracts; do **not** create a second Hero lighting Skill root.
+- Repository synchronization: `skills/governance/repository-synchronization/SKILL.md`
+- User-directed validation changes: `skills/governance/user-directed-validation/SKILL.md`
+- Product Law change: `skills/governance/product-law-change/SKILL.md`
+- Masterplan/Skill routing: `skills/governance/masterplan-skill-wiring/SKILL.md`
+- Machine builder: `skills/governance/machine-builder/SKILL.md`
+- Learning/session continuity: `skills/governance/learning-handover/SKILL.md`
+
+Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
+
+## Machine Hero routing
+
+PR #344 is the machine replacement candidate. Its routing is:
+
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md → repository-synchronization → machine-builder → applicable frontend/spatial Skills → verification/browser evidence`
+
+The machine builder owns the construction procedure. It does not own product semantics, backend authority, authorization, scheduler selection, entitlement, or promotion.
+
+Relevant spatial companions are selected only when required:
+
+- `skills/frontend/spatial/hierarchy-runtime/SKILL.md`
+- `skills/frontend/spatial/motion/SKILL.md`
+- `skills/frontend/spatial/transition/SKILL.md`
+- `skills/frontend/spatial/responsive/SKILL.md`
+- `skills/frontend/spatial/accessibility/SKILL.md`
+- `skills/frontend/spatial/camera-ladder-recovery/SKILL.md`
+- `skills/frontend/spatial/workspace-ring/SKILL.md`
+- `skills/frontend/spatial/workspace-zipskills/SKILL.md`
 
 ## Routing rule
 
-Every executable `MASTERPLAN.md` item names its governing concept and resolves to concrete Skill path(s) or explicitly records `No skill required` with rationale.
+Every executable `Masterplan/MASTERPLAN.md` item must resolve to concrete Skill path(s), or explicitly state `No skill required` with rationale. A folder name alone is not routing.
 
-Skills are bounded procedures. A missing Skill is an execution gap, not permission to invent a new authority.
-
-## Current machine routing
-
-Machine replacement work uses ORUCAVEAM + the applicable frontend spatial/motion/transition/responsive/accessibility Skills + browser verification. The machine renderer remains presentation-only.
+A missing reusable Skill is an execution gap. Do not create a governance document as a substitute for a Skill.
 
 ## History rule
 
-Historical guides, retired checklists, and superseded procedures do not appear in active routing. They live under `docs/archive/` and may be consulted only for historical recovery.
+Retired procedures live under `docs/archive/` only. Historical handover evidence may remain under `handover/`. Neither is active routing.
+
+## Forbidden active routing surfaces
+
+- root `PRODUCT_LAW.md`
+- root `MASTERPLAN.md`
+- root `NEXT_SLICES.md`
+- active `docs/skills/`
+- active `docs/project-guide/HandOver.md`
+- active `docs/project-guide/Endorsement.md`
+- `OBSOLETE_FILES.md`
