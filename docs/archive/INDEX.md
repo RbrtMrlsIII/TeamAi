@@ -26,6 +26,7 @@ The 2026-09-15 governance foundation retires these active operating surfaces and
 - `GOVERNANCE_FAIL_CLOSED_legacy_2026-09-15.md` — previous governance procedure.
 - `GOVERNANCE_USER_DIRECTED_VALIDATION_legacy_2026-09-15.md` — previous validation-transition procedure.
 - `TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST_legacy_2026-09-15.md` — previous 029 checklist.
+- `CHECKPOINT_029_PAGES_ASSET_INTEGRITY_DIAGNOSIS_2026-09-14.md` — historical Pages deployment-integrity diagnosis and browser evidence scope.
 
 Other historical material remains in its existing archive strata, including `docs/archive/superseded/` and evidence-specific folders. Those records remain historical and are not reintroduced into active routing.
 
