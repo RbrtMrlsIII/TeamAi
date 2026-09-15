@@ -29,8 +29,6 @@ test('V3.4 index wires layer handoff script and keeps single canvas', async () =
   assert.match(html, /hero-layer-handoff\.js/);
   assert.match(html, /data-hero-layer="entrance"/);
   assert.match(html, /data-hero-engine-open/);
-  // C5/D (#278): the standalone Wide button was removed from the DOM;
-  // the world nav's "World" button is now the sole HERO_WIDE anchor.
   assert.match(html, /data-world-camera-request="HERO_WIDE"/);
   assert.doesNotMatch(html, /data-inspection-reset/);
   assert.doesNotMatch(html, /hero-inspection/);
@@ -38,27 +36,27 @@ test('V3.4 index wires layer handoff script and keeps single canvas', async () =
   assert.equal(canvases.length, 1);
 });
 
-test('V3.4 docs name Layer A→B contract and forbid second runtime', async () => {
+test('V3.4 docs remain a historical contract record', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_V3_4_GET_STARTED_HANDOFF.md'), 'utf8');
   assert.match(doc, /V3\.4/);
   assert.match(doc, /HERO_WIDE/);
   assert.match(doc, /data-hero-layer/);
   assert.match(doc, /no second WebGL/i);
   assert.match(doc, /no 029-released/);
-  assert.match(doc, /V3\.5/);
 });
 
-test('V3.4 entrance contract still defines get-started handoff steps', async () => {
+test('V3.4 entrance contract remains a historical implementation record', async () => {
   const contract = await readFile(join(root, 'docs/ENTRANCE_IA_LAYOUT_CONTRACT.md'), 'utf8');
   assert.match(contract, /Get-started handoff/);
   assert.match(contract, /data-hero-layer="machine"/);
   assert.match(contract, /HERO_WIDE/);
-  assert.match(contract, /V3\.4/);
+  assert.match(contract, /V3\.4|history|historical/i);
 });
 
-test('V3.4 VISION lists get-started machine baseline as adjust handoff', async () => {
-  const vision = await readFile(join(root, 'docs/VISION.md'), 'utf8');
-  assert.match(vision, /V3\.4/);
-  assert.match(vision, /Get-started → machine baseline/);
-  assert.match(vision, /Adjust handoff/);
+test('V3.4 is not the current product frontier', async () => {
+  const vision = await readFile(join(root, 'docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md'), 'utf8');
+  const next = await readFile(join(root, 'Masterplan/NEXT_SLICES.md'), 'utf8');
+  assert.doesNotMatch(vision, /V3\.4.*Get-started.*Adjust handoff/i);
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
+  assert.match(next, /^## Current blocker$/m);
 });
