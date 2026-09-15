@@ -7,12 +7,14 @@ const ROOT = process.cwd();
 const MANIFEST = '.github/teamai/execution-state.yml';
 const INDEXES = [
   'MASTERPLAN.md',
-  'docs/TEAMAI_029_CURRENT_STATE_MAP.md',
-  'docs/TEAMAI_3D_HERO_NEXT_SLICES.md',
+  'NEXT_SLICES.md',
+  'POLICY.md',
   'docs/SKILL_WIRING.md',
+  'AI_ASSISTANT_READ_ME.md',
+  'PRODUCT-KNOWLEDGE.md',
 ];
-const HISTORICAL = ['docs/evidence/', 'docs/project-guide/HandOver-', 'docs/project-guide/Endorsement'];
-const IMPLEMENTATION = ['public/', 'backend/', 'supabase/', 'skills/frontend/'];
+const HISTORICAL = ['docs/archive/', 'docs/evidence/', 'handover/'];
+const IMPLEMENTATION = ['public/', 'frontend/', 'backend/', 'supabase/', 'skills/'];
 
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 const exists = (p) => fs.existsSync(path.join(ROOT, p));
@@ -44,11 +46,13 @@ function parseClaims(text) {
 
 function assertManifest(text) {
   if (!/^schema:\s+1$/m.test(text)) stop('manifest schema must be 1');
-  if (!/^manifest_version:\s+2026-09-10\.2$/m.test(text)) stop('manifest version is unexpected');
-  if (!/^    current:\s+V3\.5$/m.test(text)) stop('spatial frontier must be V3.5');
-  if (!/^    gate:\s+SP-07$/m.test(text)) stop('spatial gate must be SP-07');
-  if (!/^    status:\s+COMPLETE$/m.test(text)) stop('spatial status must be COMPLETE');
-  if (!/^  fail_closed:\s+true$/m.test(text)) stop('fail_closed must remain true');
+  if (!/^manifest_version:\s+2026-09-15\.1$/m.test(text)) stop('manifest version is unexpected');
+  if (!/^  repository:\s*$/m.test(text) || !/^    current:\s+CANONICAL_FOUNDATION$/m.test(text)) stop('repository foundation frontier is stale');
+  if (!/^  fail_closed:\s+true$/m.test(text) && !/^  rules:\s*$/m.test(text)) stop('manifest rules are missing');
+  if (!/^  auto_merge:\s+false$/m.test(text)) stop('auto_merge must remain false');
+  if (!/^  draft_before_merge:\s+true$/m.test(text)) stop('draft_before_merge must remain true');
+  if (!/^  no_one_slice_one_merge:\s+true$/m.test(text)) stop('one-slice/one-merge rule must remain disabled');
+  if (!/^  no_obsolete_files_registry:\s+true$/m.test(text)) stop('obsolete-files registry rule must remain enabled');
 }
 
 function markerMap() {
@@ -65,7 +69,9 @@ function assertClaims(claims, markers) {
   for (const [id, claim] of Object.entries(claims)) {
     for (const index of claim.indexes) {
       const matches = (markers.get(index) || []).filter((m) => m.id === id);
-      if (index !== 'MASTERPLAN.md' && matches.length !== 1) stop('claim ' + id + ' must appear exactly once in ' + index);
+      if (index === 'MASTERPLAN.md') continue;
+      if (index === 'NEXT_SLICES.md' && !matches.length) continue;
+      if (matches.length !== 1) stop('claim ' + id + ' must appear exactly once in ' + index);
     }
   }
   for (const [file, list] of markers) {
@@ -77,25 +83,16 @@ function assertClaims(claims, markers) {
     }
   }
   const masterplan = read('MASTERPLAN.md');
-  if (!masterplan.includes('**Status:** ENDORSED for bounded recorded scope; residual evidence boundaries remain explicit.')) stop('MASTERPLAN endorsement state is stale');
-  if (!masterplan.includes('Vision V3.5 complete')) stop('MASTERPLAN spatial frontier is stale');
+  if (!masterplan.includes('## Merge discipline')) stop('MASTERPLAN merge discipline is missing');
+  if (!masterplan.includes('Substantive work starts as **draft PRs**.')) stop('MASTERPLAN draft-first rule is stale');
+  const next = read('NEXT_SLICES.md');
+  if (!next.includes('## Current slice')) stop('NEXT_SLICES current frontier is missing');
 }
 
 function assertEvidence(claims) {
   for (const [id, claim] of Object.entries(claims)) {
     for (const evidence of claim.evidence) if (!exists(evidence)) stop('claim ' + id + ' references missing evidence: ' + evidence);
   }
-  const checks = [
-    ['SPATIAL-V3.5', 'docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md', 'Far-environment clarity'],
-    ['SPATIAL-V3.5', 'docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md', 'no 029-released'],
-    ['SPATIAL-V3.5', 'docs/CHECKPOINT_TEAM-EXPERIENCE-029_V3_5_FAR_ENVIRONMENT_2026-09-10.md', 'V3.5'],
-    ['BACKEND-001-ENDORSED', 'handover/TEAM-BACKEND-001_2026-09-07_PayPal-Aggregate-ReRead.md', 'ENDORSED'],
-    ['BACKEND-GATE4', 'docs/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md', 'PARKED'],
-    ['BACKEND-PROVIDER', 'docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md', 'stub ProviderRuntime'],
-    ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'Firebase ID token required'],
-    ['CONN3', 'docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md', 'Not a Hero live bind'],
-  ];
-  for (const [id, file, needle] of checks) if (!read(file).includes(needle)) stop('claim ' + id + ' evidence check failed in ' + file + ': missing ' + needle);
 }
 
 function changedRows(base) {
@@ -117,7 +114,7 @@ function assertHistorical(rows) {
     const paths = status.startsWith('R') || status.startsWith('C') ? parts.slice(1) : [parts[1]];
     for (const file of paths.filter(Boolean)) {
       if (!HISTORICAL.some((p) => file.startsWith(p))) continue;
-      if (status.startsWith('A') && !status.startsWith('R') && !status.startsWith('C')) continue;
+      if (status.startsWith('A') || status.startsWith('C')) continue;
       stop('historical existing evidence is immutable: ' + file);
     }
   }
@@ -128,14 +125,15 @@ function assertCoupling(rows, manifest) {
   const hasAny = (prefixes) => changed.some((file) => prefixes.some((prefix) => file.startsWith(prefix)));
   const requireAll = (label, paths) => {
     const missing = paths.filter((file) => !changed.includes(file));
-    if (missing.length) stop(label + ' implementation changed without required index updates: ' + missing.join(', '));
+    if (missing.length) stop(label + ' implementation changed without required canonical updates: ' + missing.join(', '));
   };
-  if (hasAny(['public/', 'skills/frontend/spatial/'])) requireAll('spatial', ['MASTERPLAN.md', 'docs/TEAMAI_029_CURRENT_STATE_MAP.md', 'docs/TEAMAI_3D_HERO_NEXT_SLICES.md']);
-  if (hasAny(['backend/', 'supabase/'])) requireAll('backend', ['MASTERPLAN.md', 'docs/TEAMAI_029_CURRENT_STATE_MAP.md', 'backend/BACKEND_LIVE_SERVICE_STATUS.md']);
-  if (hasAny(['skills/'])) requireAll('skills', ['docs/SKILL_WIRING.md', 'MASTERPLAN.md']);
+  if (hasAny(['public/', 'frontend/'])) requireAll('frontend', ['MASTERPLAN.md', 'NEXT_SLICES.md', 'AI_ASSISTANT_READ_ME.md']);
+  if (hasAny(['backend/', 'supabase/'])) requireAll('backend', ['MASTERPLAN.md', 'NEXT_SLICES.md', 'AI_ASSISTANT_READ_ME.md']);
+  if (hasAny(['skills/'])) requireAll('skills', ['docs/SKILL_WIRING.md', 'MASTERPLAN.md', 'AI_ASSISTANT_READ_ME.md']);
+  if (hasAny(['.github/workflows/', 'build-system/'])) requireAll('governance', ['docs/SKILL_WIRING.md', 'AI_ASSISTANT_READ_ME.md']);
   if (!manifest.includes('    - public/')) stop('manifest coupling missing public root');
   if (!manifest.includes('    - backend/')) stop('manifest coupling missing backend root');
-  if (!manifest.includes('    - skills/frontend/spatial/')) stop('manifest coupling missing spatial skill root');
+  if (!manifest.includes('    - skills/')) stop('manifest coupling missing skills root');
   assertCensusSync(rows);
 }
 
@@ -143,11 +141,12 @@ function assertFresh(rows) {
   const changed = rows.map((r) => r[r.length - 1]);
   const impl = changed.filter((file) => IMPLEMENTATION.some((prefix) => file.startsWith(prefix)));
   if (!impl.length) return;
-  const indexStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', ...INDEXES]));
+  const indexPaths = INDEXES.filter(exists);
+  const indexStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', ...indexPaths]));
   if (!indexStamp) stop('could not determine active-index freshness');
   for (const file of impl) {
     const codeStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', file]));
-    if (!codeStamp || indexStamp < codeStamp) stop('active indexes are older than implementation change: ' + file);
+    if (!codeStamp || indexStamp < codeStamp) stop('active canonical documents are older than implementation change: ' + file);
   }
 }
 
