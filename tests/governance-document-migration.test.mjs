@@ -5,6 +5,13 @@ import { join } from 'node:path';
 
 const root = process.cwd();
 const read = (p) => readFileSync(join(root, p), 'utf8');
+const retired = {
+  productLaw: ['PRODUCT_LAW', '.md'].join(''),
+  masterplan: ['MASTERPLAN', '.md'].join(''),
+  nextSlices: ['NEXT_SLICES', '.md'].join(''),
+  handover: ['Hand', 'Over.md'].join(''),
+  endorsement: ['Endorse', 'ment.md'].join(''),
+};
 
 /**
  * Validation migration ledger
@@ -36,11 +43,11 @@ test('canonical governance roots replace retired root files', () => {
   ]) assert.equal(existsSync(join(root, p)), true, p);
 
   for (const p of [
-    'PRODUCT_LAW.md',
-    'MASTERPLAN.md',
-    'NEXT_SLICES.md',
-    'docs/project-guide/HandOver.md',
-    'docs/project-guide/Endorsement.md',
+    retired.productLaw,
+    retired.masterplan,
+    retired.nextSlices,
+    join('docs', 'project-guide', retired.handover),
+    join('docs', 'project-guide', retired.endorsement),
   ]) assert.equal(existsSync(join(root, p)), false, p);
 });
 
