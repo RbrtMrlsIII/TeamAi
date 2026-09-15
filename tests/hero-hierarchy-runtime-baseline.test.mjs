@@ -11,18 +11,21 @@ const runtimeSkill = read('skills/frontend/spatial/hierarchy-runtime/SKILL.md');
 const seatSkill = read('skills/frontend/spatial/seat-shell-hierarchy/SKILL.md');
 const baseline = read('docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md');
 
-test('R1–R10 remain the shared root set', () => {
-  for (const root of ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10']) {
-    assert.ok(baseline.includes(root), root);
-    assert.ok(runtimeSkill.includes(root), `skill ${root}`);
+test('R0–R3 remain the currently defined shared ring set', () => {
+  for (const ring of ['R0', 'R1', 'R2', 'R3']) {
+    assert.ok(baseline.includes(ring), ring);
+    assert.ok(runtimeSkill.includes(ring), `skill ${ring}`);
   }
+  assert.match(baseline, /R1\/R2.*planned|R1\/R2.*specified/i);
+  assert.match(baseline, /R3.*Seat Ring/i);
 });
 
 test('skill wiring points at the canonical spatial and machine-builder routes', () => {
   assert.match(wiring, /skills\/governance\/machine-builder\/SKILL\.md/);
   assert.match(wiring, /skills\/frontend\/spatial\/hierarchy-runtime\/SKILL\.md/);
   assert.match(wiring, /skills\/frontend\/spatial\/seat-shell-hierarchy\/SKILL\.md/);
-  assert.match(wiring, /active `docs\/skills\/`/);
+  assert.match(wiring, /## Forbidden active routing surfaces/);
+  assert.match(wiring, /legacy `docs\/skills\/` namespace/);
   assert.match(wiring, /single skills tree/i);
   assert.match(spatialReadme, /hierarchy-runtime\/SKILL\.md/);
   assert.match(spatialReadme, /seat-shell-hierarchy\/SKILL\.md/);
