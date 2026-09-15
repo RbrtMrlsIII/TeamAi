@@ -86,7 +86,8 @@ function assertClaims(claims, markers) {
   }
   const masterplan = read('MASTERPLAN.md');
   if (!masterplan.includes('## Merge discipline')) stop('MASTERPLAN merge discipline is missing');
-  if (!masterplan.includes('Substantive work starts as **draft PRs**.')) stop('MASTERPLAN draft-first rule is stale');
+  if (!/- \[ \] Substantive work starts as a draft PR\./.test(masterplan)) stop('MASTERPLAN draft-first checklist is stale');
+  if (!/- \[ \] No auto-merge is used for product changes\./.test(masterplan)) stop('MASTERPLAN auto-merge rule is stale');
   const next = read('NEXT_SLICES.md');
   if (!next.includes('## Current slice')) stop('NEXT_SLICES current frontier is missing');
   if ((next.match(/^## Current slice$/gm) || []).length !== 1) stop('NEXT_SLICES must contain exactly one current frontier');
