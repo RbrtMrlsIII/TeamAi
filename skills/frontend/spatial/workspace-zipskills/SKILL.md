@@ -13,7 +13,7 @@ description: WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS optional crown on R0 workspa
 - Keyboard z/x cycle, G handoff
 
 ## AUTHORITY
-1. PRODUCT_LAW.md Family J (presentation only)
+1. Product_Law/PRODUCT_LAW.md Family J (presentation only)
 2. Concentric Ring Map — R0 hosts WORKSPACE_ZIPSKILLS; not R3 seats
 3. Hierarchy Runtime Baseline section 9 (RING_R0_ZIP_SCALE, ZIPSKILLS_BRANCH_MS)
 4. workspace-ring skill + hierarchy-runtime skill
@@ -26,7 +26,7 @@ description: WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS optional crown on R0 workspa
 4. Camera presentation id WORKSPACE_ZIPSKILLS (physical dock DETAIL_ANCHOR); legacy MECHANISM_ZIPSKILLS same dock.
 5. Handoff via requestZipskillsConfigureHandoff / teamai:app-ui-handoff — normal UI only; no durable grant from canvas.
 6. Accessible names: optional, not required, not seat child, presentation only, not entitlement.
-7. Amend section 9 when branch timing changes and reconcile `NEXT_SLICES.md` when execution frontier changes.
+7. Amend section 9 when branch timing changes and reconcile `Masterplan/NEXT_SLICES.md` when execution frontier changes.
 
 ## DO NOT
 - Place ZipSkills as seat authority or required setup.
@@ -45,5 +45,6 @@ description: WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS optional crown on R0 workspa
 - skills/frontend/spatial/workspace-ring/SKILL.md
 - skills/frontend/spatial/hierarchy-runtime/SKILL.md
 - docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md
-- NEXT_SLICES.md
+- Masterplan/NEXT_SLICES.md
+- Product_Law/PRODUCT_LAW.md
 - AI_ASSISTANT_READ_ME.md
