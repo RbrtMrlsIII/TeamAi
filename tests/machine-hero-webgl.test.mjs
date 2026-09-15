@@ -47,14 +47,16 @@ test('WebGL projector keeps named camera identity separate from semantic subject
   assert.match(source, /graph\.subject/);
 });
 
-test('magnificent renderer is downstream of the same semantic graph', () => {
-  assert.match(magnificent, /\.\/machine-hero-graph\.js/);
-  assert.match(magnificent, /createMachineGraph/);
-  assert.match(magnificent, /graph\.renderedParts/);
-  assert.match(magnificent, /graph\.transitions/);
-  assert.match(magnificent, /resolveMachineCamera/);
+test('magnificent renderer is downstream of the shared 15-module machine core', () => {
+  assert.match(magnificent, /\.\/machine-core-layout-runtime\.js/);
+  assert.match(magnificent, /\.\/machine-core-animation\.js/);
+  assert.match(magnificent, /createBranchConnectionCore/);
+  assert.match(magnificent, /resolveBranchCamera/);
+  assert.match(magnificent, /createMachineAnimation/);
+  assert.match(magnificent, /scene\.parts/);
+  assert.match(magnificent, /scene\.connections/);
   assert.match(magnificent, /requestAnimationFrame/);
-  assert.match(magnificent, /ringPoints/);
+  assert.match(magnificent, /createGradientRing/);
   assert.match(magnificentPage, /data-machine-magnificent/);
   assert.match(magnificentPage, /prototype · not production/);
 });
