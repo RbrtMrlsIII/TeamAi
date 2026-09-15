@@ -13,10 +13,12 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const heroPath = join(root, 'public/hero-flex.js');
 const subjectSource = join(root, 'frontend/spatial/seat-adjacent-subject.js');
 const subjectBrowser = join(root, 'public/seat-adjacent-subject.js');
-const cameraAdapter = join(root, 'public/hero-cam7-semantic-subject.js');
+const cameraAdapterSource = join(root, 'frontend/spatial/hero-cam7-semantic-subject.js');
+const cameraAdapterBrowser = join(root, 'public/hero-cam7-semantic-subject.js');
 
 let text = readFileSync(heroPath, 'utf8');
 copyFileSync(subjectSource, subjectBrowser);
+copyFileSync(cameraAdapterSource, cameraAdapterBrowser);
 
 const cameraImport = "import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG, WORLD_BASELINE_DOCK_ID } from './hero-cam2-tree-follow.js';";
 if (!text.includes("from './hero-cam7-semantic-subject.js';")) {
