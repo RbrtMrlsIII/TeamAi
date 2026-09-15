@@ -66,7 +66,7 @@ test.describe('Modular branch connection core', () => {
 
   test('real Hero shell can opt into the machine candidate without changing default Hero mode', async ({ page }) => {
     await page.goto('/hero/');
-    await expect(page.locator('.hero-shell')).toHaveAttribute('data-experience', 'classic');
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-experience', 'world');
     await expect(page.locator('#hero-canvas')).toBeVisible();
     await page.goto('/hero/?machine-candidate=1');
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-machine-candidate', '1');
