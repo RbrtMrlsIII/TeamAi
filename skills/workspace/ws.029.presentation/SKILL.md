@@ -2,7 +2,7 @@
 
 **Kind:** `WORKSPACE_SKILLS` · `ws.029.presentation`  
 **Status:** OPERATING PROCEDURE / NOT PRODUCT LAW  
-**Authority:** `PRODUCT_LAW.md` · `MASTERPLAN.md` TEAM-EXPERIENCE-029 gate · skill-kinds contract
+**Authority:** `Product_Law/PRODUCT_LAW.md` · `Masterplan/MASTERPLAN.md` TEAM-EXPERIENCE-029 gate · skill-kinds contract
 
 ## WHEN TO USE
 
@@ -10,8 +10,8 @@ Use when any Seat, agent, or contributor works on TEAM-EXPERIENCE-029 presentati
 
 ## INPUT
 
-- Current `MASTERPLAN.md` checklist item
-- `NEXT_SLICES.md` active frontier
+- Current `Masterplan/MASTERPLAN.md` checklist item
+- `Masterplan/NEXT_SLICES.md` active frontier
 - Issue / PR scope claiming 029 work
 - Whether the change is presentation-only or claims runtime orchestration / entitlement
 
@@ -28,7 +28,7 @@ This Skill states operating procedure for 029 presentation boundaries. It does n
 5. Skills and Zip packages remain optional; not required setups.
 6. Record evidence in current session state and owning evidence records; do not treat green CI as Product Law endorsement.
 7. If scope needs domain write, provider invocation, or commerce mutation, route to backend/Masterplan gates.
-8. Update `NEXT_SLICES.md` when the current frontier changes and `AI_ASSISTANT_READ_ME.md` for substantive session state.
+8. Update `Masterplan/NEXT_SLICES.md` when the current frontier changes and `AI_ASSISTANT_READ_ME.md` for substantive session state.
 
 ## DO NOT
 
@@ -49,6 +49,7 @@ PR body / boundaries, tests, checkpoint/evidence record, and current session sta
 ## SEE ALSO
 
 - `docs/TEAM-EXPERIENCE-029_SEAT_AND_WORKSPACE_SKILL_KINDS.md`
-- `MASTERPLAN.md`
-- `NEXT_SLICES.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Masterplan/MASTERPLAN.md`
+- `Masterplan/NEXT_SLICES.md`
 - `AI_ASSISTANT_READ_ME.md`
