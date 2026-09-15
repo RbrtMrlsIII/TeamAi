@@ -464,7 +464,7 @@ Accordingly, the C0–C10 execution relationship is now understood as:
 
 The C0–C10 vocabulary remains unchanged for traceability. The additional structural requirements are a dependency clarification inside that existing execution authority, not a new phase system.
 
-ProMax is deliberately downstream. It expresses an already-correct machine through refined machine-opening choreography, material/lighting depth, transition language, electrical visual language, atmospheric depth, responsive refinement, and micro-interactions. ProMax must never be used to hide incomplete trees, branches, geometry, topology, camera travel, or acceptance evidence.
+ProMax is deliberately downstream. It expresses an already-correct machine through refined machine-opening choreography, material/lighting depth, electrical visual language, atmospheric depth, responsive refinement, and micro-interactions. ProMax must never be used to hide incomplete trees, branches, geometry, topology, camera travel, or acceptance evidence.
 
 The structured source for this evolving tree truth is the four-part tree census:
 
@@ -477,7 +477,7 @@ When tree/branch/division semantics or implementation change, the census is sync
 
 ## Backend lease-preservation fix — #284/#287
 
-`supabase/functions/teamai-task-execute/index.ts` previously rebuilt the leased task document from only the string-typed fields of the in-memory `current` object, discarding any non-string Firestore field types (numbers, booleans, maps, arrays) on every lease commit. The fix now spreads the complete raw `task.fields` Firestore typed-value map and overlays only the four lease-owned fields (`status`, `leaseId`, `leasedBy`, `updatedAt`). A regression test (`tests/backend-task-lease-preservation.test.mjs`) asserts the full-field-map pattern is present and the old filtered-rebuild pattern is gone. Scope: repository-level correctness fix only; does not change TEAM-BACKEND-001's endorsed/bounded classification.
+`supabase/functions/teamai-task-execute/index.ts` previously rebuilt the leased task document from only the string-typed fields of the in-memory `current` object, discarding any non-string Firestore field types (numbers, booleans, maps, arrays) on every lease commit. The fix now spreads the complete raw `task.fields` Firestore typed-value map and overlays only the four lease-owned fields (`status`, `leaseId`, `leasedBy`, `updatedAt`). A regression test (`tests/backend-task-lease-preservation.test.mjs`) asserts the full-field-map pattern is present and the old filtered-rebuild pattern is gone. Scope: repository-level correctness fix only; does not change TEAM-BACKEND-001's endorsed/bounded scope.
 
 <!-- teamai residual: #284/#287 backend lease-preservation fix; preserve full Masterplan body; no 029-released claim. -->
 
@@ -858,3 +858,13 @@ Browser/e2e evidence and regressions belong to the owning PR/evidence records. T
 ## Seat-1 reverse-focus synchronization — #330
 
 PR #330 closes the bounded Seat-1 reverse-focus presentation gap: when division focus returns from `SEAT_BEHAVIOR` to `SEAT_CONNECTION`, the visible DOM label now follows the settled semantic division state in both directions. This is presentation synchronization only; it does not redefine tree identity, geometry law, camera authority, topology, provider/auth/domain behavior, C8, C9, or C10. No 029-released claim.
+
+## 03.9 TREE MACHINE — standalone machine Hero foundation / PR #344
+
+PR **#344** is a standalone frontend implementation slice from `main`. It introduces a renderer-neutral machine scene model, canonical semantic transition object, geometry-derived subject footprint, named-camera/semantic-target separation, an opt-in machine preview, geometry mutation inspection, reverse semantic-pair coverage, and the dedicated `npm run test:machine` gate.
+
+This slice is **IMPLEMENTED / TEMPO / EVIDENCE ONLY**. It does not replace the production Hero, does not establish complete tree census truth, does not satisfy M1–M6 by itself, and does not constitute C9/C10 acceptance.
+
+Applicable skill routing: `skills/frontend/machine-hero-builder/SKILL.md`, `skills/frontend/spatial/camera-authority-auditor/SKILL.md`, `skills/frontend/spatial/semantic-transition-auditor/SKILL.md`, and `skills/verification/browser-smoke/SKILL.md` where browser evidence is required.
+
+The standalone foundation is intentionally isolated so the future renderer can consume semantic machine state without inheriting camera identity from static coordinates. Promotion remains subject to the governed Machine Hero law and proof matrix.
