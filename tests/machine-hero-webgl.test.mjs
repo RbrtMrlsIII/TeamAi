@@ -6,6 +6,8 @@ const source = await readFile(new URL('../public/machine-hero-webgl.js', import.
 const payload = await readFile(new URL('../public/machine-hero-payload.js', import.meta.url), 'utf8');
 const graph = await readFile(new URL('../public/machine-hero-graph.js', import.meta.url), 'utf8');
 const page = await readFile(new URL('../public/machine-hero-preview.html', import.meta.url), 'utf8');
+const magnificent = await readFile(new URL('../public/machine-hero-magnificent.js', import.meta.url), 'utf8');
+const magnificentPage = await readFile(new URL('../public/machine-hero-magnificent.html', import.meta.url), 'utf8');
 
 test('WebGL machine preview is opt-in and separate from production canvas', () => {
   assert.match(source, /get\('machine-preview'\)/);
@@ -45,7 +47,21 @@ test('WebGL projector keeps named camera identity separate from semantic subject
   assert.match(source, /graph\.subject/);
 });
 
+test('magnificent renderer is downstream of the same semantic graph', () => {
+  assert.match(magnificent, /\.\/machine-hero-graph\.js/);
+  assert.match(magnificent, /createMachineGraph/);
+  assert.match(magnificent, /graph\.renderedParts/);
+  assert.match(magnificent, /graph\.transitions/);
+  assert.match(magnificent, /resolveMachineCamera/);
+  assert.match(magnificent, /requestAnimationFrame/);
+  assert.match(magnificent, /ringPoints/);
+  assert.match(magnificentPage, /data-machine-magnificent/);
+  assert.match(magnificentPage, /prototype · not production/);
+});
+
 test('WebGL preview has no provider, auth, or durable-state authority', () => {
   assert.doesNotMatch(source, /firebase|supabase|paypal|oauth|authorization/i);
   assert.doesNotMatch(source, /fetch\(|XMLHttpRequest|localStorage|indexedDB/);
+  assert.doesNotMatch(magnificent, /firebase|supabase|paypal|oauth|authorization/i);
+  assert.doesNotMatch(magnificent, /fetch\(|XMLHttpRequest|localStorage|indexedDB/);
 });
