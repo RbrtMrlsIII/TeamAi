@@ -1,20 +1,28 @@
-## TeamAi PR trace
+## Repository change contract
 
-- Governing Product Law concept: <!-- path/section -->
-- Masterplan item or bounded maintenance objective: <!-- item -->
+- Governing Product Law concept: <!-- canonical path/section -->
+- Masterplan checklist item: <!-- parent item -->
+- Owning Issue: <!-- issue -->
 - Skill routing: <!-- concrete paths from docs/SKILL_WIRING.md -->
-- ORUCAVEAM scope: <!-- applicable letters -->
-- Implementation scope: <!-- what actually changes -->
-- Verification: <!-- tests / browser / evidence -->
-- Limitations or external dependencies: <!-- exact boundary -->
-- Presentation-only or authority-crossing: <!-- state clearly -->
-- Reused old branch? <!-- no / branch name + main comparison -->
+- ORUCAVEAM: <!-- applicable letters -->
+- Claimed scope: <!-- exact behavior/change -->
+- Verification/evidence: <!-- exact scope -->
+- Limitations: <!-- exact unproven boundary -->
 
-### Required declarations
+## Canonical synchronization
 
-- [ ] Current `main` was used as the baseline or the branch was explicitly reconciled against it.
-- [ ] No Product Law / scheduler / identity / entitlement / commerce / durable-state authority was created locally.
-- [ ] Fixture data is explicitly presentation-only where applicable.
-- [ ] Vercel was not resumed or treated as an authority without explicit user approval.
-- [ ] Verification exercised the behavior actually claimed.
-- [ ] Implementation state is distinguished from runtime-proven/completed state.
+- [ ] `AI_ASSISTANT_READ_ME.md` updated for this substantive session.
+- [ ] `MASTERPLAN.md` updated when execution order/checklist state changed.
+- [ ] `NEXT_SLICES.md` updated when the active frontier changed.
+- [ ] `docs/SKILL_WIRING.md` updated when Skills/routing changed.
+- [ ] `PRODUCT-KNOWLEDGE.md` updated only for validated reusable learning.
+- [ ] Historical evidence was preserved; no stale active guide was created.
+
+## Safety / authority
+
+- [ ] PR starts as **Draft** until required evidence is complete.
+- [ ] No auto-merge is enabled or relied upon.
+- [ ] No validator was weakened to obtain green CI.
+- [ ] No Product Law, identity, authorization, scheduler, entitlement, commerce, or durable-state authority was created in presentation code.
+- [ ] Retired material is under `docs/archive/`; no `OBSOLETE_FILES.md` registry exists.
+- [ ] Current `main` was compared/reconciled before implementation.
