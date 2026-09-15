@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { assertCensusSync } from './census-sync-contract.mjs';
+import { assertCensusSync, CENSUS_PRESENTATION_ONLY_PATHS } from './census-sync-contract.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = '.github/teamai/execution-state.yml';
@@ -141,7 +141,7 @@ function assertCoupling(rows, manifest) {
 
 function assertFresh(rows) {
   const changed = rows.map((r) => r[r.length - 1]);
-  const impl = changed.filter((file) => IMPLEMENTATION.some((prefix) => file.startsWith(prefix)));
+  const impl = changed.filter((file) => IMPLEMENTATION.some((prefix) => file.startsWith(prefix)) && !CENSUS_PRESENTATION_ONLY_PATHS.has(file));
   if (!impl.length) return;
   const indexStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', ...INDEXES]));
   if (!indexStamp) stop('could not determine active-index freshness');
