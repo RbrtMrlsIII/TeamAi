@@ -58,6 +58,7 @@ export function mountMachineWebGLPreview(root = globalThis.document) {
   const projection = gl.getUniformLocation(prog, 'u_projection'), view = gl.getUniformLocation(prog, 'u_view'), model = gl.getUniformLocation(prog, 'u_model'), color = gl.getUniformLocation(prog, 'u_color');
   const vertexBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer); gl.bufferData(gl.ARRAY_BUFFER, CUBE, gl.STATIC_DRAW);
   const indexBuffer = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, INDICES, gl.STATIC_DRAW);
+  const wiringBuffer = gl.createBuffer();
   let offset = 0; const projectionMatrix = new Float32Array(16), viewMatrix = new Float32Array(16), modelMatrixValue = new Float32Array(16);
   const transition = () => createMachineTransition({ seatIndex: 0, source: SOURCE, target: { ...TARGET, center: { x: TARGET.center.x + offset, y: TARGET.center.y, z: TARGET.center.z + offset * 0.3 }, port: { x: TARGET.port.x + offset, y: TARGET.port.y, z: TARGET.port.z + offset * 0.3 } }, expansion: { sourceAmount: 0.88, targetAmount: 0.66 }, wiring: { id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING' } });
   function draw() {
@@ -65,10 +66,23 @@ export function mountMachineWebGLPreview(root = globalThis.document) {
     canvas.width = Math.max(1, Math.floor(width * dpr)); canvas.height = Math.max(1, Math.floor(height * dpr)); gl.viewport(0,0,canvas.width,canvas.height); gl.enable(gl.DEPTH_TEST); gl.clearColor(0.055,0.05,0.04,0.02); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
     const t = transition(), camera = resolveMachineCamera({ cameraId: 'SEAT_CLOSE', subject: t.subject, viewport: { width, height }, distance: 6.8 });
     const target = [camera.target.x,camera.target.y,camera.target.z], eye = [target[0]+4.8,target[1]+3.1,target[2]+5.4];
-    perspective(projectionMatrix, Math.PI/3, width/Math.max(1,height), 0.1, 100); lookAt(viewMatrix, eye, target); gl.useProgram(prog); gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position,3,gl.FLOAT,false,0,0); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexBuffer); gl.uniformMatrix4fv(projection,false,projectionMatrix); gl.uniformMatrix4fv(view,false,viewMatrix);
-    const renderPart = (part,tint) => { modelMatrix(modelMatrixValue,[part.center.x,part.center.y,part.center.z],[part.dimensions.x/2,part.dimensions.y/2,part.dimensions.z/2]); gl.uniformMatrix4fv(model,false,modelMatrixValue); gl.uniform4f(color,...tint,1); gl.drawElements(gl.TRIANGLES,INDICES.length,gl.UNSIGNED_SHORT,0); };
+    perspective(projectionMatrix, Math.PI/3, width/Math.max(1,height), 0.1, 100); lookAt(viewMatrix, eye, target); gl.useProgram(prog);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexBuffer); gl.uniformMatrix4fv(projection,false,projectionMatrix); gl.uniformMatrix4fv(view,false,viewMatrix);
+    const renderPart = (part,tint) => { gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position,3,gl.FLOAT,false,0,0); modelMatrix(modelMatrixValue,[part.center.x,part.center.y,part.center.z],[part.dimensions.x/2,part.dimensions.y/2,part.dimensions.z/2]); gl.uniformMatrix4fv(model,false,modelMatrixValue); gl.uniform4f(color,...tint,1); gl.drawElements(gl.TRIANGLES,INDICES.length,gl.UNSIGNED_SHORT,0); };
     renderPart(t.sourceGeometry,[0.43,0.50,0.57]); renderPart(t.targetGeometry,[0.64,0.57,0.47]);
-    modelMatrix(modelMatrixValue,[t.subject.center.x,t.subject.center.y+0.03,t.subject.center.z],[(t.subject.max.x-t.subject.min.x)/2,0.03,(t.subject.max.z-t.subject.min.z)/2]); gl.uniformMatrix4fv(model,false,modelMatrixValue); gl.uniform4f(color,0.74,0.27,0.12,0.72); gl.drawElements(gl.TRIANGLES,INDICES.length,gl.UNSIGNED_SHORT,0);
+
+    if (t.wiring) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, wiringBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        t.wiring.sourcePort.x, t.wiring.sourcePort.y, t.wiring.sourcePort.z,
+        t.wiring.targetPort.x, t.wiring.targetPort.y, t.wiring.targetPort.z,
+      ]), gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position,3,gl.FLOAT,false,0,0);
+      gl.uniformMatrix4fv(model,false,new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]));
+      gl.uniform4f(color,0.82,0.38,0.18,1); gl.drawArrays(gl.LINES,0,2);
+    }
+
+    modelMatrix(modelMatrixValue,[t.subject.center.x,t.subject.center.y+0.03,t.subject.center.z],[(t.subject.max.x-t.subject.min.x)/2,0.03,(t.subject.max.z-t.subject.min.z)/2]); gl.uniformMatrix4fv(model,false,modelMatrixValue); gl.uniform4f(color,0.74,0.27,0.12,0.72); gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position,3,gl.FLOAT,false,0,0); gl.drawElements(gl.TRIANGLES,INDICES.length,gl.UNSIGNED_SHORT,0);
   }
   panel.querySelector('[data-machine-webgl-nudge]').addEventListener('click',()=>{ offset = offset ? 0 : 1.05; panel.querySelector('[data-machine-webgl-state]').textContent = offset ? 'geometry moved · target moved' : 'subject returned to base geometry'; draw(); });
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(draw).observe(canvas); draw(); return panel;
