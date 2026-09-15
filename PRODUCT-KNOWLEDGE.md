@@ -1,7 +1,7 @@
 # PRODUCT-KNOWLEDGE — validated concepts
 
 **Role:** distilled, reusable TeamAi concepts and evidence-backed lessons.  
-**Not:** current session state, roadmap, Issue log, PR log, deployment inventory, or authority source.
+**Not:** session-specific state, roadmap, Issue log, PR log, deployment inventory, or authority source.
 
 ## Stable concepts
 
@@ -27,7 +27,7 @@ A test proves only the behavior it exercises. When truth intentionally changes, 
 Canonical documents each have one job. Repeating the same rule across multiple active files creates drift risk. Historical material belongs in `docs/archive/` and is not a current source.
 
 ### Session continuity
-Current-session state must be explicit, compact, and updated at every substantive transition. Historical handovers should not become a second live operating manual.
+Session-specific state must be explicit, compact, and updated at every substantive transition. Historical handovers should not become a second live operating manual.
 
 ### 3D machine
 Semantic identity precedes payload, payload precedes geometry, geometry precedes expansion/topology, topology precedes camera and animation. Coordinates and camera presets do not define product identity.
