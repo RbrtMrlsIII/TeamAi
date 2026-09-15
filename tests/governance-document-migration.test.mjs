@@ -44,6 +44,20 @@ test('canonical governance roots replace retired root files', () => {
   ]) assert.equal(existsSync(join(root, p)), false, p);
 });
 
+test('authority manifest is machine-readable and names one owner per canonical role', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  const owners = Object.entries(manifest.active_authorities || {});
+  assert.equal(manifest.schema, 1);
+  assert.equal(manifest.status, 'ACTIVE');
+  assert.equal(new Set(owners.map(([, spec]) => spec.path)).size, owners.length);
+  assert.equal(manifest.active_authorities.product_law.path, 'Product_Law/PRODUCT_LAW.md');
+  assert.equal(manifest.active_authorities.masterplan.path, 'Masterplan/MASTERPLAN.md');
+  assert.equal(manifest.active_authorities.current_slice.path, 'Masterplan/NEXT_SLICES.md');
+  assert.equal(manifest.skill_model.canonical_glob, 'skills/**/SKILL.md');
+  assert.equal(manifest.promotion_model.draft_first, true);
+  assert.equal(manifest.promotion_model.auto_merge, false);
+});
+
 test('current slice uses the required six-section contract', () => {
   const text = read('Masterplan/NEXT_SLICES.md');
   for (const h of ['## Current Slice', '## Status', '## Objective', '## Dependencies', '## Verification', '## Current blocker']) {
@@ -72,4 +86,15 @@ test('validation changes preserve an explicit old-invariant to replacement recor
   assert.match(policy, /Why the old invariant is obsolete\/retained/);
   assert.match(policy, /Replacement invariant/);
   assert.match(session, /VALIDATION CHANGE WARNING/);
+});
+
+test('promotion boundaries keep #344 and #346 separate', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  const skillWiring = read('docs/SKILL_WIRING.md');
+  const session = read('AI_ASSISTANT_READ_ME.md');
+  assert.equal(manifest.promotion_model.governance_pr, 346);
+  assert.equal(manifest.promotion_model.machine_hero_pr, 344);
+  assert.match(skillWiring, /#344/);
+  assert.match(skillWiring, /promotion/i);
+  assert.match(session, /#344.*Draft and not promoted/i);
 });
