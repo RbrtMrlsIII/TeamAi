@@ -1,6 +1,6 @@
 /**
  * V3.5 — Far-environment clarity.
- * Outside .hero-shell · never machine chrome · no 029-released claim.
+ * Historical slice record. Outside .hero-shell · never machine chrome · no 029 release claim.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +10,7 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('V3.5 far-environment is outside hero-shell with outside-machine marker', async () => {
+test('V3.5 far-environment remains outside hero-shell', async () => {
   const html = await readFile(join(root, 'public/index.html'), 'utf8');
   const shellClose = html.indexOf('</main>');
   const farIdx = html.indexOf('class="far-environment"');
@@ -20,13 +20,12 @@ test('V3.5 far-environment is outside hero-shell with outside-machine marker', a
   assert.match(html, /role="contentinfo"/);
   assert.match(html, /data-far-link="about"/);
   assert.match(html, /data-far-link="privacy"/);
-  // No far-environment child of open main tag: slice between <main and </main>
   const mainOpen = html.indexOf('<main');
   const mainInner = html.slice(mainOpen, shellClose);
   assert.equal(mainInner.includes('class="far-environment"'), false);
 });
 
-test('V3.5 CSS keeps far fixed and visible under machine-ui absorption', async () => {
+test('V3.5 CSS keeps far fixed and outside machine-ui absorption', async () => {
   const css = await readFile(join(root, 'public/hero-dom-chrome.css'), 'utf8');
   assert.match(css, /V3\.5/);
   assert.match(css, /\.far-environment\s*\{[^}]*position:\s*fixed/s);
@@ -37,7 +36,7 @@ test('V3.5 CSS keeps far fixed and visible under machine-ui absorption', async (
   assert.doesNotMatch(absorbBlock[0], /far-environment/);
 });
 
-test('V3.5 docs name outside-machine contract', async () => {
+test('V3.5 contract remains historical evidence for the outside-machine invariant', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md'), 'utf8');
   assert.match(doc, /V3\.5/);
   assert.match(doc, /outside/i);
@@ -45,12 +44,13 @@ test('V3.5 docs name outside-machine contract', async () => {
   assert.match(doc, /hero-shell/);
 });
 
-test('V3.5 VISION and entrance contract keep far outside machine', async () => {
-  const vision = await readFile(join(root, 'docs/VISION.md'), 'utf8');
+test('V3.5 no longer owns current product execution', async () => {
+  const vision = await readFile(join(root, 'docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md'), 'utf8');
   const contract = await readFile(join(root, 'docs/ENTRANCE_IA_LAYOUT_CONTRACT.md'), 'utf8');
-  assert.match(vision, /V3\.5/);
-  assert.match(vision, /Far-environment|far-environment/i);
-  assert.match(contract, /entrance-far/);
-  assert.match(contract, /far-environment/);
-  assert.match(contract, /Treating far-environment as inside-machine chrome/);
+  const next = await readFile(join(root, 'Masterplan/NEXT_SLICES.md'), 'utf8');
+  assert.match(vision, /single product-experience vision/i);
+  assert.doesNotMatch(vision, /V3\.5.*Far-environment.*adjust/i);
+  assert.match(contract, /entrance-far|far-environment/i);
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
+  assert.match(next, /^## Current blocker$/m);
 });
