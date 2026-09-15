@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 test.describe('Modular branch connection core', () => {
   test('renders the isolated 15-part ten-seat core and supports animated expansion', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
+    await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     await expect(page.getByText('BRANCH CONNECTION CORE')).toBeVisible();
     await expect(page.getByText('15 modules · 10 seats · 4 outer housings · 1 hub')).toBeVisible();
     const canvas = page.locator('canvas[aria-label="3D modular branch connection core"]');
@@ -25,12 +26,14 @@ test.describe('Modular branch connection core', () => {
 
   test('renders eight seats through the same parameterized core', async ({ page }) => {
     await page.goto('/machine-core-preview.html?seats=8');
+    await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     await expect(page.locator('[data-core-count]')).toHaveText('13 modules · 8 seats · 4 outer housings · 1 hub');
     await expect(page.locator('[data-core-state]')).toContainText('collapsed · 0% · 13 independent modules');
   });
 
   test('clicking the machine selects the semantic branch instead of cycling indexes', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
+    await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     const canvas = page.locator('canvas[aria-label="3D modular branch connection core"]');
     const box = await canvas.boundingBox();
     expect(box).not.toBeNull();
@@ -42,6 +45,7 @@ test.describe('Modular branch connection core', () => {
   test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/machine-core-preview.html');
+    await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     await expect(page.locator('canvas[aria-label="3D modular branch connection core"]')).toBeVisible();
     const camera = page.getByLabel('Branch camera');
     const expand = page.getByRole('button', { name: 'Expand', exact: true });
@@ -56,6 +60,7 @@ test.describe('Modular branch connection core', () => {
   test('reduced-motion preserves semantic open and close states without a travel animation', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/machine-core-preview.html');
+    await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     const status = page.locator('[data-core-state]');
     await expect(status).toContainText('reduced-motion collapsed · 0%');
     await page.getByRole('button', { name: 'Expand', exact: true }).click();
@@ -78,6 +83,7 @@ test.describe('Modular branch connection core', () => {
 
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
+    await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
     await expect(page.locator('[data-camera]')).toHaveCount(0);
     await expect(page.locator('text=BRANCH CONNECTION CORE')).toBeVisible();
