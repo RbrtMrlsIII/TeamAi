@@ -16,8 +16,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
 const baseline = await readFile(new URL('../docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md', import.meta.url), 'utf8');
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-const next = await readFile(new URL('../NEXT_SLICES.md', import.meta.url), 'utf8');
+const next = await readFile(new URL('../Masterplan/NEXT_SLICES.md', import.meta.url), 'utf8');
 
+/** Validation migration: old invariant = named zoom bounds + singular current frontier. Disposition = RETAINED. Replacement = same semantic checks against the new canonical Masterplan/NEXT_SLICES.md location. */
 test('nav zoom bounds match §9', () => {
   assert.equal(NAV_ZOOM_MIN, 0.72);
   assert.equal(NAV_ZOOM_MAX, 2.0);
@@ -35,7 +36,7 @@ test('hero-flex uses Cam-3 tree-center nav + named zoom bounds', () => {
 });
 
 test('next slices exposes one current frontier', () => {
-  assert.equal((next.match(/^## Current slice$/gm) || []).length, 1);
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
   assert.match(next, /Governance Foundation|machine replacement/i);
   assert.match(next, /draft/i);
 });
