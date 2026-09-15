@@ -2,11 +2,11 @@
  * TEAM-EXPERIENCE-029 Slice H — MECHANISM_ZIPSKILLS ↔ WORKSPACE_ZIPSKILLS alias
  * Presentation only. No 029-released claim.
  */
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { test } from 'node:test';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -42,9 +42,9 @@ test('seat-stack zipskills layer is optional + workspace-scoped presentation', (
   assert.match(stack, /not a required setup/i);
 });
 
-test('docs prefer WORKSPACE_ZIPSKILLS and record Slice H', () => {
-  assert.match(next, /WORKSPACE_ZIPSKILLS/);
-  assert.match(next, /MECHANISM_ZIPSKILLS/);
+test('current slice does not become a semantic-machine history index', () => {
+  assert.match(next, /Repository Governance Foundation Reconciliation/i);
+  assert.doesNotMatch(next, /WORKSPACE_ZIPSKILLS|MECHANISM_ZIPSKILLS|Slice H/);
   assert.match(map, /WORKSPACE_ZIPSKILLS/);
 });
 
