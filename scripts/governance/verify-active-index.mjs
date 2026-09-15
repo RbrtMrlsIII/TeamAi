@@ -47,12 +47,14 @@ function parseClaims(text) {
 
 function assertManifest(text) {
   if (!/^schema:\s+1$/m.test(text)) stop('manifest schema must be 1');
-  if (!/^manifest_version:\s+2026-09-15\.1$/m.test(text)) stop('manifest version is unexpected');
+  const version = text.match(/^manifest_version:\s+(\d{4}-\d{2}-\d{2}\.\d+)$/m)?.[1];
+  if (!version) stop('manifest version is missing or malformed');
   if (!/^  repository:\s*$/m.test(text) || !/^    current:\s+CANONICAL_FOUNDATION$/m.test(text)) stop('repository foundation frontier is stale');
   if (!/^  auto_merge:\s+false$/m.test(text)) stop('auto_merge must remain false');
   if (!/^  draft_before_merge:\s+true$/m.test(text)) stop('draft_before_merge must remain true');
   if (!/^  no_one_slice_one_merge:\s+true$/m.test(text)) stop('one-slice/one-merge rule must remain disabled');
   if (!/^  no_obsolete_files_registry:\s+true$/m.test(text)) stop('obsolete-files registry rule must remain enabled');
+  if (!/^workspace:\s*$/m.test(text) || !/^  workflow_naming:\s+responsibility_specific$/m.test(text)) stop('workspace naming contract is stale');
 }
 
 function markerMap() {
@@ -87,6 +89,7 @@ function assertClaims(claims, markers) {
   if (!masterplan.includes('Substantive work starts as **draft PRs**.')) stop('MASTERPLAN draft-first rule is stale');
   const next = read('NEXT_SLICES.md');
   if (!next.includes('## Current slice')) stop('NEXT_SLICES current frontier is missing');
+  if ((next.match(/^## Current slice$/gm) || []).length !== 1) stop('NEXT_SLICES must contain exactly one current frontier');
 }
 
 function assertEvidence(claims) {
