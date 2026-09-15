@@ -36,6 +36,7 @@ export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'public/machine-core-visual.js',
   'public/machine-core.css',
   'public/machine-core-preview.html',
+  'public/hero-machine-proof.js',
 ]);
 
 export function changedPaths(rows) {
