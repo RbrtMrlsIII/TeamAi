@@ -2,11 +2,7 @@ export const MACHINE_HERO_VERSION = 'M1-preview';
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
 function finitePoint(point, fallback = { x: 0, y: 0, z: 0 }) {
   if (!point) return { ...fallback };
-  return {
-    x: Number.isFinite(Number(point.x)) ? Number(point.x) : fallback.x,
-    y: Number.isFinite(Number(point.y)) ? Number(point.y) : fallback.y,
-    z: Number.isFinite(Number(point.z)) ? Number(point.z) : fallback.z,
-  };
+  return { x: Number.isFinite(Number(point.x)) ? Number(point.x) : fallback.x, y: Number.isFinite(Number(point.y)) ? Number(point.y) : fallback.y, z: Number.isFinite(Number(point.z)) ? Number(point.z) : fallback.z };
 }
 function dimensions(value, fallback = { x: 1, y: 1, z: 1 }) {
   const source = value || fallback;
@@ -27,11 +23,18 @@ export function deriveMachineSubject(parts, padding = 0.12) {
   const pad = Math.max(0, Number(padding) || 0);
   return { kind: 'semantic-subject', sourcePartIds: candidates.map(({ id }) => id), min: { x: bounds.minX - pad, y: bounds.minY - pad, z: bounds.minZ - pad }, max: { x: bounds.maxX + pad, y: bounds.maxY + pad, z: bounds.maxZ + pad }, center: { x: (bounds.minX + bounds.maxX) / 2, y: (bounds.minY + bounds.maxY) / 2, z: (bounds.minZ + bounds.maxZ) / 2 } };
 }
+export function deriveMachineWiring(source, target, metadata = null) {
+  const sourcePort = finitePoint(source?.port, null);
+  const targetPort = finitePoint(target?.port, null);
+  if (!source?.port || !target?.port) return null;
+  return Object.freeze({ id: metadata?.id ?? `${source.semanticId}->${target.semanticId}`, sourceDivisionId: source.semanticId, targetDivisionId: target.semanticId, sourcePort, targetPort, kind: metadata?.kind ?? 'semantic-connection' });
+}
 export function createMachineTransition({ seatIndex = 0, source, target, expansion = {}, wiring = null } = {}) {
   if (!source?.semanticId || !target?.semanticId) throw new Error('machine transition requires source and target semantics');
   const sourcePart = makeMachinePart({ ...source, active: true }); const targetPart = makeMachinePart(target);
   const subject = deriveMachineSubject([sourcePart, targetPart]);
-  return Object.freeze({ seatIndex: Number(seatIndex), sourceDivisionId: sourcePart.semanticId, targetDivisionId: targetPart.semanticId, sourceGeometry: sourcePart, targetGeometry: targetPart, sourcePort: sourcePart.port, targetPort: targetPart.port, expansion: { sourceAmount: clamp(expansion.sourceAmount, 0, 1), targetAmount: clamp(expansion.targetAmount, 0, 1) }, wiring: wiring ? { ...wiring } : null, subject });
+  const derivedWiring = deriveMachineWiring(sourcePart, targetPart, wiring);
+  return Object.freeze({ seatIndex: Number(seatIndex), sourceDivisionId: sourcePart.semanticId, targetDivisionId: targetPart.semanticId, sourceGeometry: sourcePart, targetGeometry: targetPart, sourcePort: sourcePart.port, targetPort: targetPart.port, expansion: { sourceAmount: clamp(expansion.sourceAmount, 0, 1), targetAmount: clamp(expansion.targetAmount, 0, 1) }, wiring: derivedWiring, subject });
 }
 export function resolveMachineCamera({ cameraId = 'HERO_WIDE', subject = null, viewport = { width: 1, height: 1 }, distance = 8 } = {}) {
   const target = finitePoint(subject?.center); const width = Math.max(1, Number(viewport.width) || 1); const height = Math.max(1, Number(viewport.height) || 1);
