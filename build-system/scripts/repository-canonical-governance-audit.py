@@ -10,47 +10,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 AUTHORITY_MANIFEST = ".github/teamai/authority-manifest.yml"
-CANONICAL_ROOTS = {
-    "Product_Law/PRODUCT_LAW.md",
-    "Product_Law/WIRING.md",
-    "Masterplan/MASTERPLAN.md",
-    "Masterplan/NEXT_SLICES.md",
-    "POLICY.md",
-    "docs/SKILL_WIRING.md",
-    "AI_ASSISTANT_READ_ME.md",
-    "PRODUCT-KNOWLEDGE.md",
-    AUTHORITY_MANIFEST,
-}
-FORBIDDEN_ACTIVE = {
-    "PRODUCT_LAW.md",
-    "MASTERPLAN.md",
-    "NEXT_SLICES.md",
-    "docs/project-guide/HandOver.md",
-    "docs/project-guide/Endorsement.md",
-    "docs/project-guide/AI_ASSISTANT_READ_ME.md",
-    "docs/TEAMAI_3D_HERO_NEXT_SLICES.md",
-    "docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md",
-    "docs/TEAMAI_CURRENT_STATE.md",
-    "docs/AGENT_CURRENT_STATE_AND_BRANCH_RULES.md",
-    "docs/AGENT_SLICE_EXECUTION.md",
-    "docs/GOVERNANCE_FAIL_CLOSED.md",
-    "docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md",
-}
-FORBIDDEN_DIRS = {"docs/skills"}
-HISTORICAL_PREFIXES = ("docs/archive/", "docs/evidence/", "handover/")
-REQUIRED_MANIFEST_PATHS = {
-    "Product_Law/PRODUCT_LAW.md",
-    "Product_Law/WIRING.md",
-    "Masterplan/MASTERPLAN.md",
-    "Masterplan/NEXT_SLICES.md",
-    "POLICY.md",
-    "docs/SKILL_WIRING.md",
-    "skills/",
-    "AI_ASSISTANT_READ_ME.md",
-    "PRODUCT-KNOWLEDGE.md",
-    "docs/archive/",
-    "handover/",
-}
 
 
 def fail(message: str) -> None:
@@ -81,6 +40,34 @@ def event_payload() -> dict:
         return {}
 
 
+def load_manifest() -> dict:
+    if not exists(AUTHORITY_MANIFEST):
+        fail(f"missing canonical authority manifest: {AUTHORITY_MANIFEST}")
+    try:
+        manifest = json.loads(read(AUTHORITY_MANIFEST))
+    except json.JSONDecodeError as exc:
+        fail(f"authority manifest must be JSON-compatible YAML: {exc}")
+    if manifest.get("schema") != 1 or manifest.get("status") != "ACTIVE":
+        fail("authority manifest must declare schema 1 and ACTIVE status")
+    return manifest
+
+
+def manifest_sets(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[str, ...]]:
+    active = {
+        spec.get("path")
+        for spec in (manifest.get("active_authorities") or {}).values()
+        if isinstance(spec, dict) and spec.get("path") and not str(spec["path"]).endswith("/")
+    }
+    forbidden = set(manifest.get("forbidden_active_surfaces") or [])
+    forbidden_dirs = set(manifest.get("forbidden_parallel_namespaces") or [])
+    historical = tuple(
+        spec.get("path")
+        for spec in (manifest.get("historical_surfaces") or {}).values()
+        if isinstance(spec, dict) and spec.get("path")
+    )
+    return active, forbidden, forbidden_dirs, historical
+
+
 def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
     pr = payload.get("pull_request") or {}
     return (
@@ -91,7 +78,7 @@ def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
 
 def proof_target(payload: dict) -> str:
     body = ((payload.get("pull_request") or {}).get("body") or "").strip()
-    match = re.search(r"^##?\s+Draft proof target\s*$([\s\S]*?)(?=^##?\s|\Z)", body, re.MULTILINE)
+    match = re.search(r"^###\s+Draft proof target\s*$([\s\S]*?)(?=^###\s|\Z)", body, re.MULTILINE)
     return match.group(1).strip() if match else ""
 
 
@@ -101,32 +88,41 @@ def changed_paths(base: str | None, head: str | None) -> set[str]:
     return {p for p in run("git", "diff", "--name-only", f"{base}...{head}").splitlines() if p.strip()}
 
 
-def assert_manifest() -> None:
-    if not exists(AUTHORITY_MANIFEST):
-        fail(f"missing canonical authority manifest: {AUTHORITY_MANIFEST}")
-    text = read(AUTHORITY_MANIFEST)
-    if "status: ACTIVE" not in text:
-        fail("authority manifest must be ACTIVE")
-    for required in REQUIRED_MANIFEST_PATHS:
-        if required not in text:
-            fail(f"authority manifest missing canonical path/namespace: {required}")
-    if "docs/skills" not in text or "forbidden_parallel_namespaces:" not in text:
-        fail("authority manifest must explicitly forbid docs/skills")
-    if "draft_first: true" not in text or "auto_merge: false" not in text:
-        fail("authority manifest must declare draft-first and no-auto-merge policy")
-    if "pr_scope: BASE...HEAD" not in text:
+def assert_manifest(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[str, ...]]:
+    active, forbidden, forbidden_dirs, historical = manifest_sets(manifest)
+    if len(active) < 8:
+        fail("authority manifest defines too few active file authorities")
+    for required in {
+        "Product_Law/PRODUCT_LAW.md",
+        "Product_Law/WIRING.md",
+        "Masterplan/MASTERPLAN.md",
+        "Masterplan/NEXT_SLICES.md",
+        "POLICY.md",
+        "docs/SKILL_WIRING.md",
+        "AI_ASSISTANT_READ_ME.md",
+        "PRODUCT-KNOWLEDGE.md",
+    }:
+        if required not in active:
+            fail(f"authority manifest missing active authority: {required}")
+    if "docs/skills" not in forbidden_dirs:
+        fail("authority manifest must forbid docs/skills")
+    promotion = manifest.get("promotion_model") or {}
+    if promotion.get("draft_first") is not True or promotion.get("auto_merge") is not False:
+        fail("authority manifest must declare draft-first and no-auto-merge")
+    validation = manifest.get("validation_model") or {}
+    if validation.get("pr_scope") != "BASE...HEAD":
         fail("authority manifest must declare BASE...HEAD governance scope")
+    return active, forbidden, forbidden_dirs, historical
 
 
-def assert_roots() -> None:
-    assert_manifest()
-    for rel in CANONICAL_ROOTS:
+def assert_roots(active: set[str], forbidden: set[str], forbidden_dirs: set[str]) -> None:
+    for rel in active:
         if not exists(rel):
-            fail(f"missing canonical root: {rel}")
-    for rel in FORBIDDEN_ACTIVE:
+            fail(f"missing active authority path: {rel}")
+    for rel in forbidden:
         if exists(rel):
             fail(f"forbidden active retired root still exists: {rel}")
-    for rel in FORBIDDEN_DIRS:
+    for rel in forbidden_dirs:
         if (ROOT / rel).exists():
             fail(f"parallel procedure namespace exists: {rel}")
     for p in ROOT.rglob("OBSOLETE_FILES.md"):
@@ -174,20 +170,57 @@ def assert_roles() -> None:
             fail(f"PRODUCT-KNOWLEDGE.md contains volatile session context: {pattern}")
 
 
-def assert_active_reference_policy() -> None:
+def assert_active_reference_policy(forbidden: set[str], historical: tuple[str, ...], manifest_path: str) -> None:
     for p in ROOT.rglob("*"):
         if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
             continue
         rel = p.relative_to(ROOT).as_posix()
-        if rel.startswith(HISTORICAL_PREFIXES) or rel == AUTHORITY_MANIFEST:
+        if rel.startswith(historical) or rel == manifest_path:
             continue
         try:
             body = p.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        for target in FORBIDDEN_ACTIVE:
+        for target in forbidden:
             if target in body:
                 fail(f"active reference points to retired path {target}: {rel}")
+
+
+def assert_skill_boundaries(manifest: dict) -> None:
+    skill_model = manifest.get("skill_model") or {}
+    required = skill_model.get("required_shape") or []
+    if required != ["WHEN TO USE", "AUTHORITY", "ACTION", "DO NOT", "PASS"]:
+        fail("authority manifest skill_model.required_shape is not canonical")
+    for rel in [
+        "skills/governance/repository-synchronization/SKILL.md",
+        "skills/governance/machine-builder/SKILL.md",
+    ]:
+        body = read(rel)
+        for heading in required:
+            if f"## {heading}" not in body:
+                fail(f"{rel} is missing required Skill section: {heading}")
+        authority = body.lower()
+        if "procedural only" not in authority:
+            fail(f"{rel} must declare itself procedural only")
+        if "product law" not in authority or "permission" not in authority or "merge" not in authority:
+            fail(f"{rel} must explicitly deny Product Law/permission/merge authority")
+
+
+def assert_workspace_policy(manifest: dict, payload: dict) -> None:
+    workspace = manifest.get("workspace_model") or {}
+    prefixes = tuple(workspace.get("allowed_branch_prefixes") or [])
+    protected = workspace.get("protected_branch")
+    vague = set(workspace.get("vague_branch_names_forbidden") or [])
+    pr = payload.get("pull_request") or {}
+    branch = ((pr.get("head") or {}).get("ref")) or ""
+    if pr and not branch:
+        fail("pull request head branch is missing")
+    if branch and branch in vague:
+        fail(f"vague branch name is forbidden: {branch}")
+    if branch and not any(branch.startswith(prefix) for prefix in prefixes):
+        fail(f"PR branch does not use an allowed responsibility prefix: {branch}")
+    if protected != "main":
+        fail("workspace policy must protect main as the production branch")
 
 
 def assert_proof_target(payload: dict, paths: set[str]) -> None:
@@ -195,8 +228,7 @@ def assert_proof_target(payload: dict, paths: set[str]) -> None:
     if not target:
         fail("Draft PR must contain a 'Draft proof target' section describing what the PR is trying to prove")
     target_lower = target.lower()
-    required_terms = ("governance", "canonical", "reconciliation", "migration")
-    if not any(word in target_lower for word in required_terms):
+    if not any(word in target_lower for word in ("governance", "canonical", "reconciliation", "migration")):
         fail("Draft proof target does not describe the governance/canonical migration being proven")
     if "Product_Law/" in target and not any(p.startswith("Product_Law/") for p in paths):
         fail("proof target names Product_Law but PR does not change Product_Law")
@@ -228,12 +260,16 @@ def assert_historical_paths(paths: set[str]) -> None:
 
 def main() -> None:
     payload = event_payload()
+    manifest = load_manifest()
+    active, forbidden, forbidden_dirs, historical = assert_manifest(manifest)
     base, head = pr_base_head(payload)
     paths = changed_paths(base, head)
-    assert_roots()
+    assert_roots(active, forbidden, forbidden_dirs)
     assert_current_slice()
     assert_roles()
-    assert_active_reference_policy()
+    assert_active_reference_policy(forbidden, historical, AUTHORITY_MANIFEST)
+    assert_skill_boundaries(manifest)
+    assert_workspace_policy(manifest, payload)
     assert_historical_paths(paths)
     if payload.get("pull_request"):
         assert_proof_target(payload, paths)
@@ -245,6 +281,8 @@ def main() -> None:
     print("proof_target_source=github.event.pull_request.body")
     print("authority_manifest=.github/teamai/authority-manifest.yml")
     print("active_vs_historical=explicit")
+    print("skill_authority_boundary=enforced")
+    print("workspace_branch_policy=enforced")
 
 
 if __name__ == "__main__":
