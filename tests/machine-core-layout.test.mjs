@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createBranchConnectionCore, getBranchCamera } from '../frontend/spatial/machine-core-layout.js';
+import { createBranchConnectionCore, getBranchCamera, resolveBranchCamera } from '../frontend/spatial/machine-core-layout.js';
 
 test('branch connection core defaults to ten seats with one hub and four distinct outer housings', () => {
   const core = createBranchConnectionCore();
@@ -28,6 +28,17 @@ test('all branches and hub have independent camera profiles', () => {
   const seats = core.parts.filter((part) => part.kind === 'inner-pod');
   assert.deepEqual(seats.map((part) => part.seatIndex), [0,1,2,3,4,5,6,7,8,9]);
   for (const part of core.parts) assert.equal(getBranchCamera(core, part.branchId).branchId, part.branchId);
+});
+
+test('branch camera target follows current branch geometry without changing identity', () => {
+  const base = createBranchConnectionCore({ seatCount: 10, expanded: false });
+  const expanded = createBranchConnectionCore({ seatCount: 10, expanded: true });
+  const branchId = 'BRANCH-SEAT-06';
+  const baseCamera = resolveBranchCamera(base, branchId);
+  const expandedCamera = resolveBranchCamera(expanded, branchId);
+  assert.equal(baseCamera.cameraId, `BRANCH_CAMERA_${branchId}`);
+  assert.equal(expandedCamera.cameraId, baseCamera.cameraId);
+  assert.notDeepEqual(expandedCamera.target, baseCamera.target);
 });
 
 test('every module owns a UI surface suited to its geometry and style', () => {
