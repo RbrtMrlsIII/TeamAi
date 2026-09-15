@@ -1,17 +1,18 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Machine Hero foundation', () => {
-  test('opens the standalone 3D machine preview and follows geometry', async ({ page }) => {
+  test('opens the standalone 3D machine preview and follows expansion geometry', async ({ page }) => {
     await page.goto('/machine-hero-preview.html?machine-preview=webgl');
     await expect(page.getByText('TeamAi Machine Hero')).toBeVisible();
     await expect(page.locator('canvas[aria-label="Interactive Machine Hero WebGL preview"]')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Move geometry', exact: true })).toBeVisible();
     const status = page.locator('[data-machine-webgl-state]');
-    await expect(status).toHaveText('payload-driven subject + wiring');
-    await page.getByRole('button', { name: 'Move geometry', exact: true }).click();
-    await expect(status).toHaveText('payload geometry moved · subject + wiring moved');
-    await page.getByRole('button', { name: 'Move geometry', exact: true }).click();
-    await expect(status).toHaveText('payload subject returned to base geometry');
+    await expect(status).toHaveText('collapsed semantic graph');
+    await page.getByRole('button', { name: 'Expand divisions', exact: true }).click();
+    await expect(status).toHaveText('divisions expanded · subject + wiring recomputed');
+    await page.getByRole('button', { name: 'Move toolkit', exact: true }).click();
+    await expect(status).toHaveText('toolkit geometry moved · subject + wiring moved');
+    await page.getByRole('button', { name: 'Expand divisions', exact: true }).click();
+    await expect(status).toHaveText('collapsed semantic graph');
   });
 
   test('remains an isolated preview surface', async ({ page }) => {
