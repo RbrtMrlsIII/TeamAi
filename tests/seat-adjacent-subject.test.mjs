@@ -99,7 +99,7 @@ test('subject footprint follows mutated semantic geometry', () => {
   });
 
   assert.notEqual(a.center.z, b.center.z);
-  assert.notEqual(a.bounds.minZ, b.bounds.minZ);
+  assert.notEqual(a.bounds.maxZ, b.bounds.maxZ);
 });
 
 test('subject remains attached to the active source while target is closed', () => {
