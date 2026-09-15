@@ -1,0 +1,95 @@
+schema: 1
+status: ACTIVE
+purpose: >-
+  Machine-readable ownership map for the active TeamAi repository governance graph.
+  This manifest maps each responsibility to exactly one active owner and separates
+  operational instructions from historical material.
+
+active_authorities:
+  product_law:
+    path: Product_Law/PRODUCT_LAW.md
+    role: product truth and field requirements
+  product_law_wiring:
+    path: Product_Law/WIRING.md
+    role: development-field purpose and routing
+  masterplan:
+    path: Masterplan/MASTERPLAN.md
+    role: complete executable checklist
+  current_slice:
+    path: Masterplan/NEXT_SLICES.md
+    role: exactly one current slice
+  policy:
+    path: POLICY.md
+    role: ORUCAVEAM execution policy
+  skill_wiring:
+    path: docs/SKILL_WIRING.md
+    role: procedural routing only
+  skills:
+    path: skills/
+    role: reusable procedures under SKILL.md
+  session:
+    path: AI_ASSISTANT_READ_ME.md
+    role: current session, handover, endorsement, and validation-change state
+  knowledge:
+    path: PRODUCT-KNOWLEDGE.md
+    role: durable validated learning without volatile session context
+
+historical_surfaces:
+  archive:
+    path: docs/archive/
+    role: immutable historical documentation, never active routing
+  evidence:
+    path: docs/evidence/
+    role: historical or claim-scoped evidence, never authority by itself
+  handover:
+    path: handover/
+    role: historical handover evidence, not an operating manual
+
+forbidden_active_surfaces:
+  - PRODUCT_LAW.md
+  - MASTERPLAN.md
+  - NEXT_SLICES.md
+  - docs/project-guide/HandOver.md
+  - docs/project-guide/Endorsement.md
+  - docs/project-guide/AI_ASSISTANT_READ_ME.md
+  - docs/TEAMAI_3D_HERO_NEXT_SLICES.md
+  - docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md
+  - docs/TEAMAI_CURRENT_STATE.md
+  - docs/AGENT_CURRENT_STATE_AND_BRANCH_RULES.md
+  - docs/AGENT_SLICE_EXECUTION.md
+  - docs/GOVERNANCE_FAIL_CLOSED.md
+  - docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md
+
+forbidden_parallel_namespaces:
+  - docs/skills
+
+promotion_model:
+  draft_first: true
+  auto_merge: false
+  one_slice_one_merge: false
+  green_ci_alone_authorizes_merge: false
+  machine_hero_pr: 344
+  governance_pr: 346
+  merge_gate_owner_issue: 133
+
+skill_model:
+  canonical_glob: skills/**/SKILL.md
+  required_shape:
+    - WHEN TO USE
+    - AUTHORITY
+    - ACTION
+    - DO NOT
+    - PASS
+  authority_rule: >-
+    A Skill is procedural only. It cannot create Product Law, permission, identity,
+    entitlement, scheduler, commerce, durable-state, or merge authority.
+
+validation_model:
+  pr_scope: BASE...HEAD
+  proof_target_source: pull_request.body::Draft proof target
+  invariant_migration: >-
+    Every changed validation assertion must identify the old invariant as retained,
+    obsolete, or replaced and state the replacement invariant when applicable.
+  active_reference_policy: >-
+    Historical surfaces may preserve old names for provenance; active surfaces may not
+    route contributors to forbidden retired paths.
