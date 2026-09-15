@@ -27,6 +27,15 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-core-state]')).toContainText('collapsed · 0% · 13 independent modules');
   });
 
+  test('clicking the machine selects the semantic branch instead of cycling indexes', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
+    const canvas = page.locator('canvas[aria-label="3D modular branch connection core"]');
+    const box = await canvas.boundingBox();
+    expect(box).not.toBeNull();
+    await canvas.click({ position: { x: (box?.width || 0) / 2 + 135, y: (box?.height || 0) / 2 } });
+    await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-01');
+  });
+
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
