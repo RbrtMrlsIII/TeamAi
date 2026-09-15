@@ -83,7 +83,8 @@ test('field wiring and Skill wiring remain separate responsibilities', () => {
   assert.match(fieldWiring, /Backend & Runtime/);
   assert.match(fieldWiring, /Frontend & Experience/);
   assert.match(skillWiring, /skills\/governance\/machine-builder\/SKILL\.md/);
-  assert.match(skillWiring, /active `docs\/skills\/`/);
+  assert.match(skillWiring, /## Forbidden active routing surfaces/);
+  assert.match(skillWiring, /legacy `docs\/skills\/` namespace/);
   assert.match(skillWiring, /single skills tree/i);
   assert.equal(manifest.skill_model.canonical_glob, 'skills/**/SKILL.md');
   assert.equal(existsSync(join(root, 'docs/skills')), false);
