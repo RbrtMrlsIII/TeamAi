@@ -1,0 +1,36 @@
+name: _tmp 031 census sync
+on:
+  push:
+    branches:
+      - feat/031-generalize-adjacent-transition
+    paths:
+      - 'frontend/spatial/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/_tmp-031-census-sync.yml'
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/feat/031-generalize-adjacent-transition'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconcile Markdown census
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('docs/TEAMAI_3D_HERO_TREE_CENSUS.md')
+          s = p.read_text()
+          marker = '\nThe reusable adjacent-division transition primitive is now implemented as a presentation-only semantic mechanism parameterized by Seat and source/target division identity; Seat-1 Connection→Behavior remains the only active fixture and final animation/electrical topology remain open.\n'
+          if marker.strip() not in s:
+              p.write_text(s.rstrip() + marker)
+          PY
+      - name: Commit census reconciliation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/TEAMAI_3D_HERO_TREE_CENSUS.md
+          git diff --cached --quiet && exit 0
+          git commit -m '031: reconcile human-readable Hero census'
+          git push
