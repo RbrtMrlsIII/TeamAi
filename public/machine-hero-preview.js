@@ -12,7 +12,7 @@ function mount() {
   const panel = document.createElement('aside');
   panel.className = 'machine-hero-preview';
   panel.dataset.machineHeroPreview = '1';
-  panel.innerHTML = '<div class="machine-hero-preview__header"><strong>Machine prototype</strong><span>semantic camera</span></div><div class="machine-hero-preview__controls"><button type="button" data-machine-nudge>Move target geometry</button><output data-machine-state>subject follows geometry</output></div>';
+  panel.innerHTML = '<div class="machine-hero-preview__header"><strong>Machine prototype</strong><span>semantic camera</span></div><div class="machine-hero-preview__controls"><button type="button" data-machine-nudge>Move target geometry</button><output class="machine-hero-preview__readout" data-machine-state>subject follows geometry</output></div>';
   const canvas = makeCanvas();
   panel.append(canvas);
   host.append(panel);
@@ -22,7 +22,7 @@ function mount() {
   const buildTransition = () => createMachineTransition({
     seatIndex: 0,
     source: BASE_SOURCE,
-    target: { ...BASE_TARGET, center: { x: BASE_TARGET.center.x + offset, y: BASE_TARGET.center.y, z: BASE_TARGET.center.z + offset * 0.3 } },
+    target: { ...BASE_TARGET, center: { x: BASE_TARGET.center.x + offset, y: BASE_TARGET.center.y, z: BASE_TARGET.center.z + offset * 0.3 }, port: { ...BASE_TARGET.port, x: BASE_TARGET.port.x + offset, z: BASE_TARGET.port.z + offset * 0.3 } },
     expansion: { sourceAmount: 0.88, targetAmount: 0.66 },
     wiring: { id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING' },
   });
