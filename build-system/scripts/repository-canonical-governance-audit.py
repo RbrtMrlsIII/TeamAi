@@ -158,7 +158,7 @@ def assert_roles() -> None:
     session = read("AI_ASSISTANT_READ_ME.md")
     knowledge = read("PRODUCT-KNOWLEDGE.md")
 
-    if not re.search(r"single Product Law|single Product Law authority|single.*Product Law", law, re.IGNORECASE):
+    if not re.search(r"single Product Law|single Product Law authority|single.*Product Law|highest product authority|Canonical Front Door", law, re.IGNORECASE):
         fail("Product_Law/PRODUCT_LAW.md does not declare the single Product Law authority")
     if "Development fields" not in wiring or "Product & Governance" not in wiring:
         fail("Product_Law/WIRING.md does not define development-field purposes")
