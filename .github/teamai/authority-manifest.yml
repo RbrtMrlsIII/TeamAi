@@ -43,6 +43,12 @@
     "governance_pr": 346,
     "merge_gate_owner_issue": 133
   },
+  "workspace_model": {
+    "allowed_branch_prefixes": ["frontend/", "backend/", "governance/", "verification/", "docs/", "recovery/", "delivery/", "tmp/"],
+    "protected_branch": "main",
+    "main_change_mode": "PR_ONLY",
+    "vague_branch_names_forbidden": ["TeamAi", "teamai", "default"]
+  },
   "skill_model": {
     "canonical_glob": "skills/**/SKILL.md",
     "required_shape": ["WHEN TO USE", "AUTHORITY", "ACTION", "DO NOT", "PASS"],
