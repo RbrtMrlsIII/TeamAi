@@ -56,6 +56,7 @@ async function mountHeroMachineCandidate(root = globalThis.document) {
   if (!hero || !productionCanvas || root.querySelector('[data-hero-machine-candidate]')) return null;
 
   productionCanvas.hidden = true;
+  productionCanvas.style.setProperty('display', 'none', 'important');
   hero.dataset.machineCandidate = '1';
   for (const selector of ['.classic-entrance','.hero-copy','.spatial-parts','.seat-stack','.hero-controls','.world-navigation','.hero-settings-mount']) {
     const node = root.querySelector(selector);
