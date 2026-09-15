@@ -19,14 +19,14 @@ test('animation ladder doc exists with camera-fill and P1', () => {
   assert.match(doc, /no 029-released claim/i);
 });
 
-test('NEXT_SLICES records depth-first ladder and not required skills', () => {
-  const next = read('docs/TEAMAI_3D_HERO_NEXT_SLICES.md');
-  assert.match(next, /depth-first/i);
-  assert.match(next, /P1/);
-  assert.match(next, /SEAT_CONNECTION/);
-  assert.match(next, /login\/signup|login/i);
-  assert.match(next, /not required/i);
-  assert.match(next, /NAVIGATE/);
-  assert.match(next, /#150|#152/);
-  assert.match(next, /WORKSPACE_ZIPSKILLS/);
+test('NEXT_SLICES exposes one current frontier while ladder retains history', () => {
+  const next = read('NEXT_SLICES.md');
+  const ladder = read('docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md');
+  assert.equal((next.match(/^## Current slice$/gm) || []).length, 1);
+  assert.match(next, /Governance Foundation|machine replacement/i);
+  assert.match(ladder, /depth-first/i);
+  assert.match(ladder, /P1/);
+  assert.match(ladder, /SEAT_CONNECTION/);
+  assert.match(ladder, /NAVIGATE/);
+  assert.match(ladder, /WORKSPACE_ZIPSKILLS/);
 });
