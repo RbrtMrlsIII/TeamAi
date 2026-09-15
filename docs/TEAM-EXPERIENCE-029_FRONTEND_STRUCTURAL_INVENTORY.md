@@ -1,27 +1,27 @@
 # TEAM-EXPERIENCE-029 — Frontend Structural Inventory
 
-**Status:** PRE-IMPLEMENTATION INVENTORY / RECONCILIATION RECORD  
+**Status:** PRE-IMPLEMENTATION / IMPLEMENTATION-BASELINE RECONCILIATION RECORD  
 **Authority:** Derived inventory for 029 planning; does not create UI or domain authority.
 
 ## Purpose
 
 Record the frontend structures that actually exist before permanent Spatial Theme roots, field numbers, or page-local visual contracts are introduced.
 
-This inventory is deliberately structural rather than visual. It answers **what frontend roots exist, where they live, and which existing mechanism owns them** before theme implementation begins.
+This inventory is deliberately structural rather than visual. It answers **what frontend roots exist, where they live, and which existing mechanism owns them** before theme implementation continues.
 
 ## Governing rule
 
 Do not invent a frontend field, root number, theme provider, token namespace, component hierarchy, or breakpoint scale solely because it is expected to exist in the future.
 
-A permanent Spatial Theme root may be created only after the existing frontend structure has been inspected and reconciled against:
+A permanent Spatial Theme root may be created or changed only after the existing frontend structure has been inspected and reconciled against:
 
-`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → spatial coordinator + bounded companion Skills`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → spatial coordinator + bounded companion Skills`
 
 ## Inventory method
 
 Before each implementation slice:
 
-1. Inspect the current repository tree and actual frontend sources (if any).
+1. Inspect the current repository tree and actual frontend sources.
 2. Identify HTML entrypoints/templates, CSS/style sources, JS/TS modules, shared components, layout shells, existing theme state, token declarations, responsive rules, accessibility behavior, and browser-facing entrypoints.
 3. Trace each discovered visual/state mechanism to its owning root.
 4. Record discrepancies such as duplicate theme state, duplicated token namespaces, page-local breakpoint systems, conflicting selectors, stale references, or structural coupling.
@@ -42,17 +42,19 @@ Use these categories while inspecting real code:
 | Field root | A real functional UI structure found in source, not a predicted future page. |
 | Verification surface | Browser-facing route or test target used by Playwright; never a visual authority. |
 
-## Current source reality (2026-09-04 hygiene)
+## Current source reality (2026-09-15 reconciliation)
 
-**No frontend application roots exist on `main` yet.** There is no `frontend/` tree, no `theme-root` CSS/TS, and no HTML shell. `build-system/` contains audit and packaging scripts only — it is **not** a frontend source tree.
+The repository now contains a real `frontend/spatial/` source tree used by the current 029 implementation and its browser verification. `frontend/spatial/` contains repository-owned spatial modules including the theme root and Hero theme/light adapter. It is an implementation surface, not Product Law authority.
 
-Field identity **F0–F7** is assigned for implementation review in `TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md` while legal boxes remain only Shell · Panel · Card · Control · Navigation. Status (F6) and Modal (F7) are system surfaces.
+The earlier baseline claim that there was “no frontend application roots” is historical and must not be reused as current-state truth.
 
-**First implementation root:** a single theme-root under the spatial path (presentation foundation only). Do not invent speculative page fields before that root exists.
+Field identity **F0–F7** remains an implementation-review taxonomy. It does not create new Product Law fields by itself. Status (F6) and Modal (F7) remain system surfaces within the existing 029 presentation model.
+
+The current implementation root is the single spatial theme/runtime foundation already present in `frontend/spatial/`. New page fields must not be invented without a real source structure and an authorized slice.
 
 ## Spatial Theme constraint
 
-The final TeamAi visual environment will use one unified theme root:
+The final TeamAi visual environment uses one unified theme root:
 
 - Dark → **Dark Spatial Glassmorphism / Command Space**.
 - Light → **Light Spatial Skeuomorphism / Instrument Space**.
@@ -93,4 +95,4 @@ Every populated inventory entry should identify the source path(s), owning root/
 
 ## Next inventory boundary
 
-After theme-root lands, re-run this inventory against the real files and record owning roots. Until then, treat “no frontend roots” as the factual baseline.
+After any material spatial runtime change, re-run this inventory against the real files and update the owning roots. The baseline must always describe the current repository tree, never a superseded pre-frontend state.
