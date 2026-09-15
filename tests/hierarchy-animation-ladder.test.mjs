@@ -20,11 +20,13 @@ test('animation ladder doc exists with camera-fill and P1', () => {
   assert.match(doc, /no 029-released claim/i);
 });
 
-test('NEXT_SLICES exposes one current frontier while ladder retains history', () => {
+test('current slice is singular while ladder retains historical execution detail', () => {
   const next = read('Masterplan/NEXT_SLICES.md');
   const ladder = read('docs/TEAMAI_3D_HERO_HIERARCHY_ANIMATION_LADDER.md');
   assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
-  assert.match(next, /Governance Foundation|machine replacement/i);
+  for (const heading of ['## Status', '## Objective', '## Dependencies', '## Verification', '## Current blocker']) {
+    assert.match(next, new RegExp(`^${heading}$`, 'm'));
+  }
   assert.match(ladder, /depth-first/i);
   assert.match(ladder, /P1/);
   assert.match(ladder, /SEAT_CONNECTION/);
