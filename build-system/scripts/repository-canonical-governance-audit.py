@@ -52,8 +52,8 @@ def load_manifest() -> dict:
         manifest = json.loads(read(AUTHORITY_MANIFEST))
     except json.JSONDecodeError as exc:
         fail(f"authority manifest must be JSON-compatible YAML: {exc}")
-    if manifest.get("schema") != 1 or manifest.get("status") != "ACTIVE":
-        fail("authority manifest must declare schema 1 and ACTIVE status")
+    if manifest.get("schema") != 2 or manifest.get("status") != "ACTIVE":
+        fail("authority manifest must declare schema 2 and ACTIVE status")
     return manifest
 
 
@@ -117,6 +117,9 @@ def assert_manifest(manifest: dict) -> tuple[set[str], set[str], set[str], tuple
     validation = manifest.get("validation_model") or {}
     if validation.get("pr_scope") != "BASE...HEAD":
         fail("authority manifest must declare BASE...HEAD governance scope")
+    blocking = manifest.get("blocking_model") or {}
+    if blocking.get("validation_rewire_is_non_blocking") is not True:
+        fail("authority manifest must explicitly classify validation rewiring as non-blocking")
     return active, forbidden, forbidden_dirs, historical
 
 
@@ -180,7 +183,7 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[str, .
         if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
             continue
         rel = p.relative_to(ROOT).as_posix()
-        if rel.startswith(historical) or rel == manifest_path:
+        if any(rel == prefix.rstrip("/") or rel.startswith(prefix.rstrip("/") + "/") for prefix in historical) or rel == manifest_path:
             continue
         try:
             body = p.read_text(encoding="utf-8")
@@ -296,6 +299,7 @@ def main() -> None:
     print("active_vs_historical=explicit")
     print("skill_authority_boundary=enforced")
     print("workspace_branch_policy=enforced")
+    print("validation_rewire=explicitly_classified_non_blocking")
 
 
 if __name__ == "__main__":
