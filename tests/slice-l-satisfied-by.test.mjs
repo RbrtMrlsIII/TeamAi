@@ -8,6 +8,7 @@ import { test } from 'node:test';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
+/** Validation migration: old invariant = L evidence map remains authoritative evidence and the active frontier stays singular. Disposition = RETAINED. Replacement = same evidence assertions, with the current frontier sourced from Masterplan/NEXT_SLICES.md. */
 test('L evidence map exists and forbids close/re-implement claims', () => {
   const p = 'docs/EVIDENCE_TEAM-EXPERIENCE-029_VERIFICATION_96_98_SATISFIED_BY.md';
   assert.ok(existsSync(join(root, p)));
@@ -21,8 +22,8 @@ test('L evidence map exists and forbids close/re-implement claims', () => {
 });
 
 test('NEXT_SLICES stays singular and current', () => {
-  const next = read('NEXT_SLICES.md');
-  assert.equal((next.match(/^## Current slice$/gm) || []).length, 1);
+  const next = read('Masterplan/NEXT_SLICES.md');
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
   assert.match(next, /Governance Foundation|machine replacement/i);
   assert.match(next, /draft/i);
 });
