@@ -93,6 +93,26 @@ test('blocker model separates one substantive blocker from validation-rewire deb
   assert.ok(Array.isArray(blockers.merge_blockers));
 });
 
+test('validation ownership routes checks to domain owners', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  const ownership = manifest.validation_ownership || {};
+  for (const key of [
+    'governance_graph',
+    'document_migration',
+    'spatial_topology',
+    'skill_routing',
+    'machine_contract',
+    'session_state',
+    'browser_behavior',
+    'backend_authority',
+  ]) {
+    assert.ok(ownership[key]?.owner, key);
+    assert.ok(ownership[key]?.scope, key);
+  }
+  assert.match(ownership.spatial_topology.owner, /CONCENTRIC_RING_MAP/i);
+  assert.match(ownership.skill_routing.owner, /SKILL_WIRING/i);
+});
+
 test('current slice uses the required six-section contract', () => {
   const text = read('Masterplan/NEXT_SLICES.md');
   for (const h of ['## Current Slice', '## Status', '## Objective', '## Dependencies', '## Verification', '## Current blocker']) {
