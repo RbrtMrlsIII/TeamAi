@@ -1,79 +1,69 @@
 # POLICY — ORUCAVEAM execution discipline
 
-**Authority boundary:** `PRODUCT_LAW.md` defines product meaning and protected architecture. This file defines execution discipline only.
+**Role:** execution policy only. Product meaning belongs to `Product_Law/PRODUCT_LAW.md`. Procedures belong to `skills/**/SKILL.md`. Current slice belongs to `Masterplan/NEXT_SLICES.md`.
 
 ## ORUCAVEAM
 
-`O — Objective → R — Restrictions → U — User Authority → C — Canonical Authority → A — Action → V — Verification → E — Efficiency → A — Audit → M — Minimalistic Efficiency / Resource Use`
+`O → R → U → C → A → V → E → A → M`
 
-### O — Objective
-State the bounded outcome before acting.
+- **O — Objective:** exact authorized outcome.
+- **R — Restrictions:** protected boundaries, dependencies, and prohibited shortcuts.
+- **U — User Authority:** user decision, scope, and explicit permission.
+- **C — Canonical Authority:** resolve meaning from Product Law, then checklist/current slice and owning Issue.
+- **A — Action:** smallest coherent change satisfying the authorized objective.
+- **V — Verification:** test the behavior actually claimed.
+- **E — Efficiency:** avoid duplicate documents, redundant tools, speculative refactors, and unnecessary runtime work.
+- **A — Audit:** reconcile code, contracts, Skills, indexes, evidence, and current state.
+- **M — Minimalistic Efficiency / Resource Use:** final implementation and evidence surface is no larger than required.
 
-### R — Restrictions
-Identify what must not be changed, bypassed, inferred, exposed, or revived.
+## Governance
 
-### U — User Authority
-Confirm the action is directly authorized or explicitly covered by an approved project routine.
+- `Product_Law/PRODUCT_LAW.md` is the single product authority.
+- `Product_Law/WIRING.md` owns field purposes and navigation only.
+- `Masterplan/MASTERPLAN.md` is the ordered checklist.
+- `Masterplan/NEXT_SLICES.md` is exactly one current slice with six required sections.
+- `docs/SKILL_WIRING.md` owns Skill routing.
+- Reusable procedures live only under `skills/**/SKILL.md`.
+- `AI_ASSISTANT_READ_ME.md` owns current session, recovery, handover, endorsement decisions, and validation-change guidance.
+- `PRODUCT-KNOWLEDGE.md` owns durable validated concepts only.
+- `docs/archive/` and `handover/` are historical storage only.
+- Active `HandOver.md`, active `Endorsement.md`, a parallel Skill namespace, and `OBSOLETE_FILES.md` are forbidden.
 
-### C — Canonical Authority
-Identify which Product Law concept, service, state store, repository surface, or external authority owns the meaning involved.
+## PR discipline
 
-### A — Action
-Perform the smallest coherent authorized change. Do not create a competing authority, duplicate chronology, or shadow state.
+- Substantive work starts as a **Draft PR**.
+- Required checks, evidence, canonical synchronization, and review-readiness must pass before ready-for-review.
+- **Auto-merge is not used or relied upon for product changes.**
+- A PR may contain multiple related commits and multiple checklist items.
+- One slice is not required to equal one PR or one merge.
+- `main` changes through governed PRs only.
 
-### V — Verification
-Choose evidence that matches the claim: syntax/static → unit/contract → governance → integration → build/package → browser → deployed/runtime → owner acceptance.
+## Validation-change protocol
 
-### E — Efficiency
-Reuse authoritative evidence where scope is unchanged. Prefer targeted reads, bounded changes, deterministic tests, safe/idempotent retries, and one coherent PR over fragmented churn.
+When a request conflicts with an existing validation surface:
 
-### A — Audit
-Leave enough trace for another agent to reconstruct the decision, changed paths, evidence, limitations, and current truth.
+```text
+VALIDATION CHANGE WARNING
+Protected old invariant:
+Authorized new rule:
+Why the old invariant is obsolete/retained:
+Replacement invariant:
+Implementation impact:
+Validation impact:
+Evidence/browser impact:
+Residual uncertainty:
+```
 
-### M — Minimalistic Efficiency / Resource Use
-Use the minimum sufficient authoritative tool/resource operations while never skipping a verification or evidence step required to establish trust.
+Then execute:
 
-## Canonical document discipline
+`warning → authority reconciliation → implementation → replacement validation → evidence → session update`
 
-- `PRODUCT_LAW.md` = product meaning and architecture authority.
-- `MASTERPLAN.md` = executable chronology/checklist only.
-- `NEXT_SLICES.md` = one active frontier only.
-- `POLICY.md` = ORUCAVEAM only.
-- `docs/SKILL_WIRING.md` = routing map only.
-- `skills/**/SKILL.md` = bounded reusable procedure.
-- `AI_ASSISTANT_READ_ME.md` = live session recovery, handover, validation, and endorsement state.
-- `PRODUCT-KNOWLEDGE.md` = validated reusable concepts and lessons without live-session context.
-- `docs/project-guide/Endorsement.md` = acceptance record only.
-- `docs/archive/` = historical material; never current authority.
+Never weaken a validator merely to obtain green CI. Existing tests must be classified as retained, obsolete, or replaced before their assertions are changed.
 
-## Session synchronization
+## Evidence discipline
 
-Every substantive PR must reconcile the active documents affected by its change in the same PR. At minimum, implementation changes update `AI_ASSISTANT_READ_ME.md`; changes to execution order update `MASTERPLAN.md` and `NEXT_SLICES.md`; Skill changes update `docs/SKILL_WIRING.md`.
+Distinguish:
 
-Historical evidence is preserved, not rewritten. Retired material is archived and redirected.
+`specified ≠ implemented ≠ verified ≠ runtime-proven ≠ completed ≠ accepted`
 
-## Workspace and workflow naming
-
-New durable branches MUST use a purpose-specific prefix that names responsibility, such as `frontend/`, `backend/`, `governance/`, `verification/`, `docs/`, `recovery/`, or `delivery/`. Temporary branches MUST be clearly disposable (`tmp/` or equivalent) and MUST NOT become current authority or long-lived product history without a recorded reason.
-
-Workflow display names MUST state responsibility and verification purpose. Avoid vague names such as `TeamAi`, `AI`, `Build`, or `Test` when a precise responsibility can be stated. Existing workflow files may retain stable filenames when changing them would create unnecessary integration churn; the visible workflow name is the operational identity.
-
-Open PRs should correspond to an active responsibility, governed issue, or explicit historical/recovery need. When a PR is superseded, close it with the successor PR/decision recorded; do not leave parallel “future” implementations open.
-
-Existing historical branches are not automatically deleted. A branch is eligible for deletion only when it has no open PR/Issue dependency, carries no unique recovery/provenance value, and the owner has authorized cleanup or a governed workspace cleanup explicitly covers it.
-
-## Merge discipline
-
-Substantive product changes start as **draft PRs**. Merge requires the applicable required checks, evidence, reconciliation, and explicit review readiness. Auto-merge is not an execution policy. One slice does not imply one PR or one merge.
-
-## Validation-change rule
-
-When a validation fails, classify it first:
-
-`implementation drift → fix implementation`
-
-or
-
-`intentional authorized truth change → update canonical contract first → update validation → verify new truth`
-
-Never weaken a validator solely to obtain green CI.
+A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
