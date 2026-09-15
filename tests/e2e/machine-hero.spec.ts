@@ -1,26 +1,22 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Machine Hero foundation', () => {
-  test('opens the standalone 3D machine preview and follows expansion geometry', async ({ page }) => {
-    await page.goto('/machine-hero-preview.html?machine-preview=webgl');
-    await expect(page.getByText('TeamAi Machine Hero')).toBeVisible();
-    await expect(page.locator('canvas[aria-label="Interactive Machine Hero WebGL preview"]')).toBeVisible();
-    const status = page.locator('[data-machine-webgl-state]');
-    await expect(status).toHaveText('collapsed semantic graph');
-    await page.getByRole('button', { name: 'Expand divisions', exact: true }).click();
-    await expect(status).toHaveText('divisions expanded · subject + wiring recomputed');
-    await page.getByRole('button', { name: 'Move toolkit', exact: true }).click();
-    await expect(status).toHaveText('toolkit geometry moved · subject + wiring moved');
-    await page.getByRole('button', { name: 'Expand divisions', exact: true }).click();
-    await expect(status).toHaveText('collapsed semantic graph');
+  test('magnificent renderer exposes the complete 15-module machine', async ({ page }) => {
+    await page.goto('/machine-hero-magnificent.html?machine-preview=magnificent');
+    await expect(page.getByText('The Hero as a living machine')).toBeVisible();
+    await expect(page.getByText('10 seats / 4 outer branches')).toBeVisible();
+    await expect(page.locator('canvas[aria-label="Magnificent TeamAi modular machine core WebGL preview"]')).toBeVisible();
+    await page.getByRole('button', { name: 'Expand machine', exact: true }).click();
+    await expect(page.getByText('semantic divisions expanded')).toBeVisible();
+    await page.getByRole('button', { name: 'Reset', exact: true }).click();
+    await expect(page.getByText('base geometry')).toBeVisible();
   });
 
-  test('remains an isolated preview surface', async ({ page }) => {
-    await page.goto('/machine-hero-preview.html?machine-preview=webgl');
+  test('remains isolated from the production Hero surface', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
     await expect(page.locator('[data-hero-engine-open]')).toHaveCount(0);
     await expect(page.locator('[data-world-camera-request]')).toHaveCount(0);
-    await expect(page).toHaveURL(/machine-hero-preview\.html\?machine-preview=webgl$/);
   });
 
   test('M6 assembled Hero proof follows semantic subject after geometry mutation', async ({ page }) => {
