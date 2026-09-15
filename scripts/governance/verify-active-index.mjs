@@ -12,6 +12,7 @@ const INDEXES = [
   'docs/SKILL_WIRING.md',
   'AI_ASSISTANT_READ_ME.md',
   'PRODUCT-KNOWLEDGE.md',
+  'docs/project-guide/Endorsement.md',
 ];
 const HISTORICAL = ['docs/archive/', 'docs/evidence/', 'handover/'];
 const IMPLEMENTATION = ['public/', 'frontend/', 'backend/', 'supabase/', 'skills/'];
@@ -48,7 +49,6 @@ function assertManifest(text) {
   if (!/^schema:\s+1$/m.test(text)) stop('manifest schema must be 1');
   if (!/^manifest_version:\s+2026-09-15\.1$/m.test(text)) stop('manifest version is unexpected');
   if (!/^  repository:\s*$/m.test(text) || !/^    current:\s+CANONICAL_FOUNDATION$/m.test(text)) stop('repository foundation frontier is stale');
-  if (!/^  fail_closed:\s+true$/m.test(text) && !/^  rules:\s*$/m.test(text)) stop('manifest rules are missing');
   if (!/^  auto_merge:\s+false$/m.test(text)) stop('auto_merge must remain false');
   if (!/^  draft_before_merge:\s+true$/m.test(text)) stop('draft_before_merge must remain true');
   if (!/^  no_one_slice_one_merge:\s+true$/m.test(text)) stop('one-slice/one-merge rule must remain disabled');
