@@ -56,7 +56,7 @@ test('canonical governance roots replace retired root files', () => {
 test('authority manifest is machine-readable and names one owner per canonical role', () => {
   const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
   const owners = Object.entries(manifest.active_authorities || {});
-  assert.equal(manifest.schema, 1);
+  assert.equal(manifest.schema, 2);
   assert.equal(manifest.status, 'ACTIVE');
   assert.equal(new Set(owners.map(([, spec]) => spec.path)).size, owners.length);
   assert.equal(manifest.active_authorities.product_law.path, 'Product_Law/PRODUCT_LAW.md');
@@ -81,6 +81,16 @@ test('authority manifest records the validation migrations instead of deleting t
     assert.equal(disposition.get(old)?.disposition, 'OBSOLETE', old);
     assert.equal(disposition.get(old)?.new, replacement, old);
   }
+});
+
+test('blocker model separates one substantive blocker from validation-rewire debt', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  const blockers = manifest.blocking_model;
+  assert.ok(blockers.single_substantive_blocker);
+  assert.equal(blockers.validation_rewire_is_non_blocking, true);
+  assert.match(blockers.validation_rewire_definition, /underlying product\/runtime invariant remains valid/i);
+  assert.match(blockers.single_substantive_blocker, /current-authority contradiction/i);
+  assert.ok(Array.isArray(blockers.merge_blockers));
 });
 
 test('current slice uses the required six-section contract', () => {
