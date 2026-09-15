@@ -11,6 +11,8 @@ test.describe('Modular branch connection core', () => {
     await expect(status).toContainText('collapsed · 0%');
     await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-06');
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-06');
+    await expect(page.locator('[data-branch-inspector]')).toContainText('BRANCH-SEAT-06');
+    await expect(page.locator('[data-branch-inspector]')).toContainText('seat-configuration');
     await page.getByLabel('Branch camera').selectOption('BRANCH-OUTER-BETA');
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-BETA');
     await page.getByRole('button', { name: 'Expand', exact: true }).click();
@@ -34,6 +36,7 @@ test.describe('Modular branch connection core', () => {
     expect(box).not.toBeNull();
     await canvas.click({ position: { x: (box?.width || 0) / 2 + 135, y: (box?.height || 0) / 2 } });
     await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-01');
+    await expect(page.locator('[data-branch-inspector]')).toContainText('BRANCH-SEAT-01');
   });
 
   test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
