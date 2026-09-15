@@ -1,8 +1,8 @@
 # TeamAi Product Law Execution Constitution
 
-Status: GOVERNING EXECUTION RULES / REAL
+Status: SUBORDINATE EXECUTION PROPOSAL / REAL WITHIN THIS PR ONLY
 
-This constitution governs how product-law, implementation, evidence, and promotion decisions are handled in TeamAi.
+This constitution proposes execution rules for product-law, implementation, evidence, and promotion decisions in TeamAi. It is subordinate to `PRODUCT_LAW.md`, `MASTERPLAN.md`, `POLICY.md` / ORUCAVEAM, applicable governed decisions, and Issue #278 as the active 029 execution ledger. Nothing in this document amends, supersedes, reinterprets, or self-authorizes a change to those authorities. A conflict is a stop-promotion condition and must be resolved at the existing higher authority.
 
 ## 1. Truth hierarchy
 
@@ -44,7 +44,9 @@ A component may move from TEMPO to ACCEPTED only when:
 - evidence is reproducible;
 - authority ownership is explicit;
 - no unresolved contradictory evidence exists;
-- and the promotion is recorded as a governed project decision.
+- and the promotion is recorded as a governed project decision at the existing higher authority.
+
+These rules do not independently authorize promotion.
 
 ## 5. Machine-specific rule
 
