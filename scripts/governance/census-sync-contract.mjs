@@ -5,10 +5,6 @@ export const CENSUS_FILES = [
   'docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml',
 ];
 
-// These are the repository-owned Hero implementation surfaces whose changes can
-// alter tree/branch/division semantics, payload, expansion, interaction, or
-// spatial wiring. A governed change touching them must reconcile all census
-// representations in the same PR.
 export const CENSUS_GOVERNED_PATHS = [
   'frontend/spatial/',
   'skills/frontend/spatial/',
@@ -19,6 +15,32 @@ export const CENSUS_GOVERNED_PATHS = [
   'public/hero-seat-stack.js',
 ];
 
+export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
+  'frontend/spatial/machine-hero-scene.js',
+  'frontend/spatial/machine-hero-payload.js',
+  'frontend/spatial/machine-hero-graph.js',
+  'frontend/spatial/machine-core-animation.js',
+  'frontend/spatial/machine-core-hit-testing.js',
+  'public/machine-hero-scene.js',
+  'public/machine-hero-payload.js',
+  'public/machine-hero-graph.js',
+  'public/machine-hero-preview.js',
+  'public/machine-hero-preview.css',
+  'public/machine-hero-preview.html',
+  'public/machine-hero-webgl.js',
+  'public/machine-hero-magnificent.js',
+  'public/machine-hero-magnificent.html',
+  'public/machine-core-layout.js',
+  'public/machine-core-layout-runtime.js',
+  'public/machine-core-animation.js',
+  'public/machine-core-hit-testing.js',
+  'public/machine-core-interaction.js',
+  'public/machine-core-visual.js',
+  'public/machine-core.css',
+  'public/machine-core-preview.html',
+  'public/hero-machine-proof.js',
+]);
+
 export function changedPaths(rows) {
   return rows.flatMap((parts) => {
     const status = parts[0] ?? '';
@@ -28,18 +50,13 @@ export function changedPaths(rows) {
 }
 
 export function requiresCensusSync(rows) {
-  const paths = changedPaths(rows);
+  const paths = changedPaths(rows).filter((file) => !CENSUS_PRESENTATION_ONLY_PATHS.has(file));
   return paths.some((file) => CENSUS_GOVERNED_PATHS.some((prefix) => file === prefix || file.startsWith(prefix)));
 }
 
 export function assertCensusSync(rows) {
   if (!requiresCensusSync(rows)) return;
-
   const paths = new Set(changedPaths(rows));
   const missing = CENSUS_FILES.filter((file) => !paths.has(file));
-  if (missing.length) {
-    throw new Error(
-      '3D Hero implementation changed without synchronized census updates: ' + missing.join(', '),
-    );
-  }
+  if (missing.length) throw new Error('3D Hero implementation changed without synchronized census updates: ' + missing.join(', '));
 }

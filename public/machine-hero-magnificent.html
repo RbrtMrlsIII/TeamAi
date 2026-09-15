@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TeamAi · Magnificent Machine Core</title>
+<style>
+html,body{margin:0;min-height:100%;background:#080b12;color:#eef3fb;font-family:Inter,system-ui,sans-serif}body{min-height:100vh;display:grid;place-items:center;overflow:hidden}main{width:min(1180px,96vw);height:min(760px,92vh);position:relative;border:1px solid rgba(255,255,255,.1);border-radius:30px;overflow:hidden;background:radial-gradient(circle at 50% 44%,rgba(49,78,120,.34),transparent 42%),linear-gradient(145deg,#0c1018,#05070b);box-shadow:0 35px 100px rgba(0,0,0,.45)}canvas{display:block;width:100%;height:100%}.hud{position:absolute;inset:24px;pointer-events:none}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.65}.title{margin-top:7px;font-size:clamp(24px,4vw,44px);font-weight:650;letter-spacing:-.03em}.law{margin-top:8px;max-width:540px;font-size:13px;line-height:1.55;opacity:.72}.badge{position:absolute;right:0;top:0;padding:8px 11px;border:1px solid rgba(255,255,255,.11);border-radius:999px;background:rgba(255,255,255,.05);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.controls{position:absolute;left:0;bottom:0;display:flex;gap:10px;pointer-events:auto}.controls button{padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#eef3fb;cursor:pointer}.controls output{align-self:center;font-size:11px;opacity:.65}
+</style>
+</head>
+<body>
+<main>
+<canvas data-machine-magnificent aria-label="Magnificent TeamAi modular machine core WebGL preview"></canvas>
+<div class="hud"><div class="eyebrow">modular machine / 10 seats / 4 outer branches</div><div class="title">The Hero as a living machine</div><div class="law">Branch identity is semantic. Expansion changes physical geometry. Ports drive the lattice. Branch cameras follow their live subjects. Configuration surfaces stay inside their owning module.</div><div class="badge">prototype · not production</div><div class="controls"><button type="button" data-expand>Expand machine</button><button type="button" data-reset>Reset</button><output data-state>base geometry</output></div></div>
+</main>
+<script type="module">
+import { mountMagnificentMachine } from './machine-hero-magnificent.js';
+const controller=mountMagnificentMachine();
+document.querySelector('[data-expand]').addEventListener('click',()=>{controller?.setExpanded(true);document.querySelector('[data-state]').textContent='semantic divisions expanded'});
+document.querySelector('[data-reset]').addEventListener('click',()=>{controller?.setExpanded(false);document.querySelector('[data-state]').textContent='base geometry'});
+</script>
+</body>
+</html>

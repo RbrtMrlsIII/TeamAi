@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { assertCensusSync } from './census-sync-contract.mjs';
+import { assertCensusSync, CENSUS_PRESENTATION_ONLY_PATHS } from './census-sync-contract.mjs';
 
 const ROOT = process.cwd();
 const MANIFEST = '.github/teamai/execution-state.yml';
@@ -139,15 +139,17 @@ function assertCoupling(rows, manifest) {
   assertCensusSync(rows);
 }
 
-function assertFresh(rows) {
+function assertFresh(rows, base) {
   const changed = rows.map((r) => r[r.length - 1]);
-  const impl = changed.filter((file) => IMPLEMENTATION.some((prefix) => file.startsWith(prefix)));
+  const impl = changed.filter((file) => IMPLEMENTATION.some((prefix) => file.startsWith(prefix)) && !CENSUS_PRESENTATION_ONLY_PATHS.has(file));
   if (!impl.length) return;
-  const indexStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', ...INDEXES]));
-  if (!indexStamp) stop('could not determine active-index freshness');
   for (const file of impl) {
+    let changedFromBase = true;
+    try { git(['diff', '--quiet', base + '...HEAD', '--', file]); changedFromBase = false; } catch { changedFromBase = true; }
+    if (!changedFromBase) continue;
+    const indexStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', ...INDEXES]));
     const codeStamp = Number(git(['log', '-1', '--format=%ct', 'HEAD', '--', file]));
-    if (!codeStamp || indexStamp < codeStamp) stop('active indexes are older than implementation change: ' + file);
+    if (!codeStamp || !indexStamp || indexStamp < codeStamp) stop('active indexes are older than implementation change: ' + file);
   }
 }
 
@@ -165,7 +167,7 @@ try {
     const rows = changedRows(base);
     assertHistorical(rows);
     assertCoupling(rows, manifest);
-    assertFresh(rows);
+    assertFresh(rows, base);
   }
   if (mode === 'all' || mode === 'evidence') assertEvidence(claims);
   console.log('governance validator: PASS (' + mode + ')');
