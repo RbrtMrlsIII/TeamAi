@@ -19,6 +19,12 @@ const silhouetteDimensions = {
 };
 const makeCamera = (branchId, position, target, seatIndex = null, role = 'branch') => Object.freeze({ cameraId: `BRANCH_CAMERA_${branchId}`, branchId, seatIndex, role, position: { ...position }, target: { ...target }, fov: role === 'hub' ? 38 : 34 });
 const cameraForPart = (part, angle) => makeCamera(part.branchId, polar(part.kind === 'hub' ? 10.2 : 7.6, angle, part.level + (part.kind === 'hub' ? 5.1 : 2.9)), part.center, part.seatIndex, part.kind === 'hub' ? 'hub' : 'branch');
+const outerAngle = (count, outerIndex) => {
+  const quadrant = TAU * outerIndex / OUTER_COUNT;
+  const step = TAU / count;
+  const nearestSeatIndex = Math.floor(quadrant / step);
+  return (nearestSeatIndex + 0.5) * step;
+};
 export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, expanded = false, expansionAmount = null } = {}) {
   const count = Math.min(MAX_SEAT_COUNT, Math.max(MIN_SEAT_COUNT, Math.floor(Number(seatCount) || DEFAULT_SEAT_COUNT)));
   const amount = expansionAmount == null ? (expanded ? 1 : 0) : clamp01(expansionAmount);
@@ -33,9 +39,9 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
     part.uiSurface = makeUiSurface(part, part.uiStyle); part.camera = cameraForPart(part, angle); return part;
   });
   const outer = outerProfiles.map((profile, outerIndex) => {
-    const angle = TAU * (outerIndex * count / OUTER_COUNT + 0.5) / count, center = polar(outerRadius, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
+    const angle = outerAngle(count, outerIndex), center = polar(outerRadius, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
     const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: polar(1.12, angle, profile.height) };
-    part.uiSurface = makeUiSurface(part, part.uiStyle, profile.uiScale); part.camera = cameraForPart(part, angle); return part;
+    part.uiSurface = makeUiSurface(part, profile.uiStyle, profile.uiScale); part.camera = cameraForPart(part, angle); return part;
   });
   const parts = [hub, ...inner, ...outer], byBranch = new Map(parts.map((part) => [part.branchId, part])), connections = [];
   for (const pod of inner) connections.push({ id: `${pod.branchId}:HUB`, sourceBranchId: 'HUB-CORE', targetBranchId: pod.branchId, sourcePort: hub.port, targetPort: pod.port, kind: 'inner-spoke', route: [hub.port, { x: pod.center.x * 0.52, y: Math.max(hub.level, pod.level) + 0.22, z: pod.center.z * 0.52 }, pod.port] });
