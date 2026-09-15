@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "status": "ACTIVE",
   "purpose": "Machine-readable ownership map for the active TeamAi repository governance graph.",
   "active_authorities": {
@@ -60,7 +60,19 @@
     "pr_scope": "BASE...HEAD",
     "proof_target_source": "pull_request.body::Draft proof target",
     "invariant_migration": "Every changed validation assertion must identify the old invariant as retained, obsolete, or replaced and state the replacement invariant when applicable.",
-    "active_reference_policy": "Historical surfaces may preserve old names for provenance; active surfaces may not route contributors to forbidden retired paths."
+    "active_reference_policy": "Historical surfaces may preserve old names for provenance; active surfaces may not route contributors to forbidden retired paths.",
+    "evidence_head_policy": "Governance, Full-System, Security, Browser, and evidence jobs must identify the same PR head before their results are admissible."
+  },
+  "blocking_model": {
+    "single_substantive_blocker": "An unresolved current-authority contradiction that changes the active governance graph or prevents the declared Draft proof target from being true.",
+    "validation_rewire_is_non_blocking": true,
+    "validation_rewire_definition": "A failing assertion, fixture, wording check, path check, or validator expectation whose underlying product/runtime invariant remains valid but has not yet been re-anchored to the new canonical owner.",
+    "merge_blockers": [
+      "current-authority contradiction",
+      "real product/runtime/security regression introduced by #346",
+      "fresh verification missing for the same PR head",
+      "declared proof target not demonstrated"
+    ]
   },
   "invariant_migrations": [
     {"old": "root Product Law path", "disposition": "OBSOLETE", "new": "Product_Law/PRODUCT_LAW.md"},
