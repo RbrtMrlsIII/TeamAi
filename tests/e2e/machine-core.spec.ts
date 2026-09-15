@@ -36,6 +36,20 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-01');
   });
 
+  test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/machine-core-preview.html');
+    await expect(page.locator('canvas[aria-label="3D modular branch connection core"]')).toBeVisible();
+    const camera = page.getByLabel('Branch camera');
+    const expand = page.getByRole('button', { name: 'Expand', exact: true });
+    await expect(camera).toBeVisible();
+    await expect(expand).toBeVisible();
+    await camera.selectOption('BRANCH-SEAT-10');
+    await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-10');
+    await expand.click();
+    await expect(page.locator('[data-core-state]')).toContainText('opening');
+  });
+
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
