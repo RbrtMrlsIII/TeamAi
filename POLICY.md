@@ -52,6 +52,16 @@ Every substantive PR must reconcile the active documents affected by its change 
 
 Historical evidence is preserved, not rewritten. Retired material is archived and redirected.
 
+## Workspace and workflow naming
+
+New durable branches MUST use a purpose-specific prefix that names responsibility, such as `frontend/`, `backend/`, `governance/`, `verification/`, `docs/`, `recovery/`, or `delivery/`. Temporary branches MUST be clearly disposable (`tmp/` or equivalent) and MUST NOT become current authority or long-lived product history without a recorded reason.
+
+Workflow display names MUST state responsibility and verification purpose. Avoid vague names such as `TeamAi`, `AI`, `Build`, or `Test` when a precise responsibility can be stated. Existing workflow files may retain stable filenames when changing them would create unnecessary integration churn; the visible workflow name is the operational identity.
+
+Open PRs should correspond to an active responsibility, governed issue, or explicit historical/recovery need. When a PR is superseded, close it with the successor PR/decision recorded; do not leave parallel “future” implementations open.
+
+Existing historical branches are not automatically deleted. A branch is eligible for deletion only when it has no open PR/Issue dependency, carries no unique recovery/provenance value, and the owner has authorized cleanup or a governed workspace cleanup explicitly covers it.
+
 ## Merge discipline
 
 Substantive product changes start as **draft PRs**. Merge requires the applicable required checks, evidence, reconciliation, and explicit review readiness. Auto-merge is not an execution policy. One slice does not imply one PR or one merge.
