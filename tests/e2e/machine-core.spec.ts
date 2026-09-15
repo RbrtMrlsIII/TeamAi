@@ -64,6 +64,18 @@ test.describe('Modular branch connection core', () => {
     await expect(status).toContainText('reduced-motion collapsed · 0%');
   });
 
+  test('real Hero shell can opt into the machine candidate without changing default Hero mode', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-experience', 'classic');
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await page.goto('/hero/?machine-candidate=1');
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-machine-candidate', '1');
+    await expect(page.locator('#hero-canvas')).toBeHidden();
+    await expect(page.locator('[data-hero-machine-candidate]')).toBeVisible();
+    await expect(page.locator('[data-machine-core-visual]')).toBeVisible();
+    await expect(page.getByText('15 modules · 10 seats · 4 outer housings · 1 hub')).toBeVisible();
+  });
+
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
