@@ -8,30 +8,27 @@ export function createMachineAnimation({ duration = 900, initial = 'collapsed' }
   let targetAmount = currentAmount;
   let startedAt = null;
   let state = currentAmount === 1 ? 'expanded' : 'collapsed';
-
-  const settleState = (amount) => amount === 0 ? 'collapsed' : amount === 1 ? 'expanded' : (targetAmount > amount ? 'opening' : 'closing');
-
+  const settled = (amount) => amount === 0 ? 'collapsed' : amount === 1 ? 'expanded' : targetAmount > amount ? 'opening' : 'closing';
   return Object.freeze({
     getState() { return state; },
     setTarget(next, now = null) {
+      if (now !== null && startedAt !== null) this.sample(now);
       const nextAmount = next === 'expanded' ? 1 : 0;
-      if (now != null) this.sample(now);
       startAmount = currentAmount;
       targetAmount = nextAmount;
-      startedAt = null;
+      startedAt = now === null ? startedAt : Number(now);
       if (targetAmount > currentAmount) state = 'opening';
       else if (targetAmount < currentAmount) state = 'closing';
-      else state = settleState(currentAmount);
+      else state = settled(currentAmount);
     },
     sample(now) {
       const timestamp = Number(now) || 0;
       if (startedAt === null) startedAt = timestamp;
-      const elapsed = Math.max(0, timestamp - startedAt);
-      const travel = Math.min(1, elapsed / ms);
+      const travel = Math.min(1, Math.max(0, timestamp - startedAt) / ms);
       const linear = startAmount + (targetAmount - startAmount) * travel;
       currentAmount = ease(linear);
       const done = travel >= 1;
-      state = done ? settleState(currentAmount) : (targetAmount > startAmount ? 'opening' : 'closing');
+      state = done ? settled(currentAmount) : (targetAmount > startAmount ? 'opening' : 'closing');
       if (done) startAmount = currentAmount = targetAmount;
       return Object.freeze({ amount: currentAmount, state, done });
     },
