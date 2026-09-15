@@ -48,6 +48,7 @@
     "allowed_branch_prefixes": ["frontend/", "backend/", "governance/", "verification/", "docs/", "recovery/", "delivery/"],
     "protected_branch": "main",
     "main_change_mode": "PR_ONLY",
+    "historical_branch_inventory_allowed": true,
     "vague_branch_names_forbidden": ["TeamAi", "teamai", "default", "noop-again", "tmp-check", "tmp-final-noop", "tmp-gate5b-check", "tmp-gate5b-validation", "tmp-gate5c-start", "tmp-noop-verify-5b", "tmp-noop-verify-5c", "tmp-please-stop", "tmp-recover", "tmp-stop", "tmp-unused-2"]
   },
   "skill_model": {
@@ -60,5 +61,20 @@
     "proof_target_source": "pull_request.body::Draft proof target",
     "invariant_migration": "Every changed validation assertion must identify the old invariant as retained, obsolete, or replaced and state the replacement invariant when applicable.",
     "active_reference_policy": "Historical surfaces may preserve old names for provenance; active surfaces may not route contributors to forbidden retired paths."
-  }
+  },
+  "invariant_migrations": [
+    {"old": "root Product Law path", "disposition": "OBSOLETE", "new": "Product_Law/PRODUCT_LAW.md"},
+    {"old": "root Masterplan path", "disposition": "OBSOLETE", "new": "Masterplan/MASTERPLAN.md"},
+    {"old": "root current-slice path", "disposition": "OBSOLETE", "new": "Masterplan/NEXT_SLICES.md"},
+    {"old": "live HandOver.md manual", "disposition": "OBSOLETE", "new": "AI_ASSISTANT_READ_ME.md + historical handover"},
+    {"old": "active Endorsement.md", "disposition": "OBSOLETE", "new": "Issue/PR/evidence-scoped acceptance decision + AI_ASSISTANT_READ_ME.md"},
+    {"old": "docs/skills parallel procedure namespace", "disposition": "OBSOLETE", "new": "single skills/**/SKILL.md tree"},
+    {"old": "last-commit governance inference", "disposition": "OBSOLETE", "new": "PR BASE...HEAD diff + Draft proof target"},
+    {"old": "green CI alone authorizes merge", "disposition": "OBSOLETE", "new": "Draft + verification + reconciliation + review readiness"},
+    {"old": "one slice means one merge", "disposition": "OBSOLETE", "new": "multi-commit/multi-slice PRs permitted"},
+    {"old": "R1-R10 shared root assertion", "disposition": "OBSOLETE", "new": "R0-R3 ring map owns current topology; Skills do not own ring constants"},
+    {"old": "historical V3.x document as current frontier", "disposition": "OBSOLETE", "new": "Masterplan/NEXT_SLICES.md owns current frontier"},
+    {"old": "fixture/module filename existence as semantic proof", "disposition": "OBSOLETE", "new": "retained semantic contract + owner-level verification"},
+    {"old": "historical session start guide as active entrypoint", "disposition": "OBSOLETE", "new": "AI_ASSISTANT_READ_ME.md"}
+  ]
 }
