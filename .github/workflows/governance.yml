@@ -1,4 +1,4 @@
-name: TeamAi Governance
+name: Repository Governance Integrity
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: teamai-governance-${{ github.ref }}
+  group: repository-governance-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,8 +26,15 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
-      - name: Syntax check governance validator
-        run: node --check scripts/governance/verify-active-index.mjs
+      - name: Syntax check governance validators
+        run: |
+          node --check scripts/governance/verify-active-index.mjs
+          python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
+      - name: Enforce canonical repository foundation
+        env:
+          TEAMAI_PR_DRAFT: ${{ github.event.pull_request.draft || 'true' }}
+          TEAMAI_PROMOTION_REVIEWED: ${{ vars.TEAMAI_PROMOTION_REVIEWED || '' }}
+        run: python3 build-system/scripts/repository-canonical-governance-audit.py
       - name: Fail closed on active-index drift
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -44,8 +51,10 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
-      - name: Syntax check governance validator
-        run: node --check scripts/governance/verify-active-index.mjs
+      - name: Syntax check governance validators
+        run: |
+          node --check scripts/governance/verify-active-index.mjs
+          python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
       - name: Fail closed on evidence inconsistency
         run: node scripts/governance/verify-active-index.mjs --mode=evidence
 
@@ -86,6 +95,6 @@ jobs:
       - name: Publish validation packet
         uses: actions/upload-artifact@v4
         with:
-          name: teamai-validation-${{ github.sha }}
+          name: repository-validation-${{ github.sha }}
           path: .validation/teamai-validation.json
           if-no-files-found: error
