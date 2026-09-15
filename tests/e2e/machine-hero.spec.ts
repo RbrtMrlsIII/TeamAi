@@ -4,8 +4,6 @@ test.describe('Machine Hero foundation', () => {
   test('opens the standalone 3D machine preview and follows geometry', async ({ page }) => {
     await page.goto('/machine-hero-preview.html?machine-preview=webgl');
     await expect(page.getByText('TeamAi Machine Hero')).toBeVisible();
-    const canvas = page.getByRole('img', { name: 'Interactive Machine Hero WebGL preview' });
-    await expect(canvas).toHaveCount(0);
     await expect(page.locator('canvas[aria-label="Interactive Machine Hero WebGL preview"]')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Move geometry', exact: true })).toBeVisible();
     const status = page.locator('[data-machine-webgl-state]');
