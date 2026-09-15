@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const source = await readFile(new URL('../public/machine-hero-webgl.js', import.meta.url), 'utf8');
 const payload = await readFile(new URL('../public/machine-hero-payload.js', import.meta.url), 'utf8');
+const graph = await readFile(new URL('../public/machine-hero-graph.js', import.meta.url), 'utf8');
 const page = await readFile(new URL('../public/machine-hero-preview.html', import.meta.url), 'utf8');
 
 test('WebGL machine preview is opt-in and separate from production canvas', () => {
@@ -13,18 +14,27 @@ test('WebGL machine preview is opt-in and separate from production canvas', () =
   assert.match(page, /mountMachineWebGLPreview/);
 });
 
-test('WebGL projector resolves its browser payload dependency', () => {
+test('WebGL projector resolves its browser payload and graph dependencies', () => {
   assert.match(source, /\.\/machine-hero-payload\.js/);
-  assert.match(payload, /export function createMachineTransitionFromPayload/);
+  assert.match(source, /\.\/machine-hero-graph\.js/);
+  assert.match(payload, /createMachineTransitionFromPayload/);
+  assert.match(graph, /createMachineGraph/);
 });
 
-test('WebGL projector consumes semantic subject, camera identity, and wiring route', () => {
-  assert.match(source, /createMachineTransitionFromPayload/);
-  assert.match(source, /resolveMachineCamera/);
-  assert.match(source, /cameraId:\s*'SEAT_CLOSE'/);
-  assert.match(source, /subject/);
-  assert.match(source, /t\.wiring\.route/);
+test('WebGL projector renders multiple semantic parts and wiring routes', () => {
+  assert.match(source, /SEAT_CONNECTION/);
+  assert.match(source, /SEAT_BEHAVIOR/);
+  assert.match(source, /SEAT_TOOLKIT/);
+  assert.match(source, /createMachineGraph/);
+  assert.match(source, /graph\.transitions/);
+  assert.match(source, /transition\.wiring\.route/);
   assert.match(source, /gl\.LINE_STRIP/);
+});
+
+test('WebGL projector keeps named camera identity separate from semantic subject', () => {
+  assert.match(source, /resolveMachineCamera/);
+  assert.match(source, /cameraId:'SEAT_CLOSE'/);
+  assert.match(source, /graph\.subject/);
 });
 
 test('WebGL preview has no provider, auth, or durable-state authority', () => {
