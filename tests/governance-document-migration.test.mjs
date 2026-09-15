@@ -14,8 +14,8 @@ const read = (p) => readFileSync(join(root, p), 'utf8');
  * root Masterplan path                 OBSOLETE          Masterplan/MASTERPLAN.md
  * root Next Slices path                OBSOLETE          Masterplan/NEXT_SLICES.md
  * live HandOver.md manual              OBSOLETE          AI_ASSISTANT_READ_ME.md + history
- * live Endorsement.md                 OBSOLETE          session + evidence + PR record
- * docs/skills parallel procedures      OBSOLETE          skills/**/SKILL.md only
+ * live Endorsement.md                  OBSOLETE          session + evidence + PR record
+ * docs/skills parallel procedures      OBSOLETE          single skills tree only
  * last-commit sync inference           OBSOLETE          full PR BASE...HEAD diff
  * green CI => merge readiness          OBSOLETE          Draft + evidence + reconciliation + review readiness
  * one slice => one merge               OBSOLETE          multi-commit/multi-slice PRs allowed
