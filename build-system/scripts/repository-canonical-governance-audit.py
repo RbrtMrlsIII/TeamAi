@@ -1,25 +1,30 @@
 #!/usr/bin/env python3
-"""Fail-closed audit for TeamAi's small canonical document chain."""
+"""Fail-closed audit of TeamAi's canonical governance graph and PR proof target."""
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-REQUIRED = [
+CANONICAL_ROOTS = {
+    "Product_Law/PRODUCT_LAW.md",
+    "Product_Law/WIRING.md",
+    "Masterplan/MASTERPLAN.md",
+    "Masterplan/NEXT_SLICES.md",
+    "POLICY.md",
+    "docs/SKILL_WIRING.md",
+    "AI_ASSISTANT_READ_ME.md",
+    "PRODUCT-KNOWLEDGE.md",
+}
+FORBIDDEN_ACTIVE = {
     "PRODUCT_LAW.md",
     "MASTERPLAN.md",
     "NEXT_SLICES.md",
-    "POLICY.md",
-    "PRODUCT-KNOWLEDGE.md",
-    "AI_ASSISTANT_READ_ME.md",
-    "docs/SKILL_WIRING.md",
-    "docs/project-guide/Endorsement.md",
-]
-FORBIDDEN = [
     "docs/project-guide/HandOver.md",
+    "docs/project-guide/Endorsement.md",
     "docs/project-guide/AI_ASSISTANT_READ_ME.md",
     "docs/TEAMAI_3D_HERO_NEXT_SLICES.md",
     "docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md",
@@ -28,87 +33,183 @@ FORBIDDEN = [
     "docs/AGENT_SLICE_EXECUTION.md",
     "docs/GOVERNANCE_FAIL_CLOSED.md",
     "docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md",
-]
+}
+FORBIDDEN_DIRS = {"docs/skills"}
+HISTORICAL_PREFIXES = ("docs/archive/", "docs/evidence/", "handover/")
+
+
+def fail(message: str) -> None:
+    print("REPOSITORY_CANONICAL_GOVERNANCE_AUDIT=FAIL")
+    print(message)
+    raise SystemExit(1)
+
+
+def run(*args: str) -> str:
+    return subprocess.check_output(list(args), cwd=ROOT, text=True).strip()
+
+
+def exists(rel: str) -> bool:
+    return (ROOT / rel).is_file()
+
 
 def read(rel: str) -> str:
     return (ROOT / rel).read_text(encoding="utf-8")
 
-def fail(msg: str) -> None:
-    print(f"REPOSITORY_CANONICAL_GOVERNANCE_AUDIT=FAIL\n{msg}")
-    raise SystemExit(1)
 
-def changed_paths() -> set[str]:
+def event_payload() -> dict:
+    event_path = os.getenv("GITHUB_EVENT_PATH")
+    if not event_path:
+        return {}
     try:
-        head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-        parents = subprocess.check_output(["git", "rev-list", "--parents", "-n", "1", head], cwd=ROOT, text=True).strip().split()
-        if len(parents) >= 3:
-            base, pr_head = parents[1], parents[2]
-            out = subprocess.check_output(["git", "diff", "--name-only", base, pr_head], cwd=ROOT, text=True)
-        else:
-            parent = parents[1] if len(parents) == 2 else f"{head}^"
-            out = subprocess.check_output(["git", "diff", "--name-only", parent, head], cwd=ROOT, text=True)
-        return {p.strip() for p in out.splitlines() if p.strip()}
-    except (subprocess.CalledProcessError, IndexError):
-        return set()
+        return json.loads(Path(event_path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
 
-for rel in REQUIRED:
-    if not (ROOT / rel).is_file():
-        fail(f"missing required active document: {rel}")
-for rel in FORBIDDEN:
-    if (ROOT / rel).exists():
-        fail(f"forbidden duplicate/retired active document still exists: {rel}")
 
-for path in ROOT.rglob("OBSOLETE_FILES.md"):
-    if "node_modules" not in path.parts:
-        fail("OBSOLETE_FILES.md is forbidden; use docs/archive/ instead")
+def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
+    pr = payload.get("pull_request") or {}
+    return (
+        ((pr.get("base") or {}).get("sha")) or os.getenv("BASE_SHA"),
+        ((pr.get("head") or {}).get("sha")) or os.getenv("GITHUB_SHA"),
+    )
 
-master = read("MASTERPLAN.md")
-next_slices = read("NEXT_SLICES.md")
-policy = read("POLICY.md")
-knowledge = read("PRODUCT-KNOWLEDGE.md")
-assistant = read("AI_ASSISTANT_READ_ME.md")
 
-if master.count("## ") > 8:
-    fail("MASTERPLAN.md is no longer checklist-sized")
-if "## Current slice" not in next_slices or next_slices.count("## Current slice") != 1:
-    fail("NEXT_SLICES.md must contain exactly one current-slice section")
-if "ORUCAVEAM" not in policy or "O — Objective" not in policy or "M — Minimalistic Efficiency" not in policy:
-    fail("POLICY.md is missing the canonical ORUCAVEAM spine")
-if "second Product Law" in policy:
-    fail("POLICY.md must remain execution discipline, not a second constitution")
+def proof_target(payload: dict) -> str:
+    body = ((payload.get("pull_request") or {}).get("body") or "").strip()
+    match = re.search(r"^###\s+Draft proof target\s*$([\s\S]*?)(?=^###\s|\Z)", body, re.MULTILINE)
+    return match.group(1).strip() if match else ""
 
-for pattern in (
-    r"\bCurrent session\b",
-    r"\bIssue\s+#\d+",
-    r"\bPR\s+#\d+",
-    r"\bHEAD\b",
-    r"\b(?:current|latest|active)\s+(?:branch|deployment)(?:\s+(?:state|status|inventory|tip|head))?\b",
-    r"\b\d{4}-\d{2}-\d{2}\b",
-):
-    if re.search(pattern, knowledge, flags=re.IGNORECASE):
-        fail(f"PRODUCT-KNOWLEDGE.md contains live-session/current-state context matching {pattern!r}")
 
-if "Last given prompt:" not in assistant or "Current governance PR:" not in assistant:
-    fail("AI_ASSISTANT_READ_ME.md is missing the live-session anchor")
-if "Draft-first merge discipline" not in assistant:
-    fail("AI_ASSISTANT_READ_ME.md is missing the draft-first merge rule")
+def changed_paths(base: str | None, head: str | None) -> set[str]:
+    if not base or not head:
+        fail("PR base/head SHAs are required; governance cannot infer PR scope from a last commit")
+    return {p for p in run("git", "diff", "--name-only", f"{base}...{head}").splitlines() if p.strip()}
 
-paths = changed_paths()
-substantive_prefixes = ("public/", "frontend/", "backend/", "supabase/", "skills/", ".github/workflows/", "build-system/")
-substantive = any(p.startswith(substantive_prefixes) for p in paths)
-if substantive:
-    required = {"AI_ASSISTANT_READ_ME.md"}
-    if any(p.startswith(("skills/", ".github/workflows/")) for p in paths):
-        required.add("docs/SKILL_WIRING.md")
-    if any(p.startswith(("public/", "frontend/", "backend/", "supabase/")) for p in paths):
-        required.add("MASTERPLAN.md")
-        required.add("NEXT_SLICES.md")
-    missing = sorted(required - paths)
-    if missing:
-        fail("substantive change missing same-PR canonical reconciliation: " + ", ".join(missing))
 
-if os.getenv("TEAMAI_PR_DRAFT") == "false" and os.getenv("TEAMAI_PROMOTION_REVIEWED") != "true":
-    fail("ready-for-review/merge state requires explicit promotion review marker")
+def assert_roots() -> None:
+    for rel in CANONICAL_ROOTS:
+        if not exists(rel):
+            fail(f"missing canonical root: {rel}")
+    for rel in FORBIDDEN_ACTIVE:
+        if exists(rel):
+            fail(f"forbidden active retired root still exists: {rel}")
+    for rel in FORBIDDEN_DIRS:
+        if (ROOT / rel).exists():
+            fail(f"parallel procedure namespace exists: {rel}")
+    for p in ROOT.rglob("OBSOLETE_FILES.md"):
+        if "node_modules" not in p.parts and ".git" not in p.parts:
+            fail(f"OBSOLETE_FILES.md is forbidden: {p.relative_to(ROOT)}")
 
-print("REPOSITORY_CANONICAL_GOVERNANCE_AUDIT=PASS")
-print(f"changed_paths={len(paths)}")
+
+def assert_current_slice() -> None:
+    text = read("Masterplan/NEXT_SLICES.md")
+    headers = ["## Current Slice", "## Status", "## Objective", "## Dependencies", "## Verification", "## Current blocker"]
+    for header in headers:
+        if not re.search(rf"^{re.escape(header)}$", text, re.MULTILINE):
+            fail(f"Masterplan/NEXT_SLICES.md missing required section: {header}")
+    if len(re.findall(r"^## Current Slice$", text, re.MULTILINE)) != 1:
+        fail("Masterplan/NEXT_SLICES.md must contain exactly one current slice")
+    if re.search(r"^##\s+(Immediate sequence|Queue)$", text, re.MULTILINE):
+        fail("Masterplan/NEXT_SLICES.md contains a roadmap/queue section")
+    if re.search(r"^\d+\.\s+", text, re.MULTILINE):
+        fail("Masterplan/NEXT_SLICES.md contains numbered queue content")
+
+
+def assert_roles() -> None:
+    law = read("Product_Law/PRODUCT_LAW.md")
+    wiring = read("Product_Law/WIRING.md")
+    master = read("Masterplan/MASTERPLAN.md")
+    policy = read("POLICY.md")
+    skills = read("docs/SKILL_WIRING.md")
+    session = read("AI_ASSISTANT_READ_ME.md")
+    knowledge = read("PRODUCT-KNOWLEDGE.md")
+
+    if not re.search(r"single Product Law|single Product Law authority|single.*Product Law", law, re.IGNORECASE):
+        fail("Product_Law/PRODUCT_LAW.md does not declare the single Product Law authority")
+    if "Development fields" not in wiring or "Product & Governance" not in wiring:
+        fail("Product_Law/WIRING.md does not define development-field purposes")
+    if "checklist" not in master.lower() or "Product_Law/PRODUCT_LAW.md" not in master:
+        fail("Masterplan/MASTERPLAN.md is not wired as the checklist under Product Law")
+    if "ORUCAVEAM" not in policy or "M — Minimalistic Efficiency / Resource Use" not in policy:
+        fail("POLICY.md is missing the canonical ORUCAVEAM spine")
+    if "skills/governance/repository-synchronization/SKILL.md" not in skills or "skills/governance/machine-builder/SKILL.md" not in skills:
+        fail("Skill wiring is missing governance or machine-builder routes")
+    if "Last given prompt:" not in session or "#346" not in session or "VALIDATION CHANGE WARNING" not in session:
+        fail("AI_ASSISTANT_READ_ME.md is missing current-session or validation-change state")
+    for pattern in (r"\bCurrent session\b", r"\bIssue\s+#\d+\b", r"\bPR\s+#\d+\b", r"\bHEAD\b", r"\b\d{4}-\d{2}-\d{2}\b"):
+        if re.search(pattern, knowledge, re.IGNORECASE):
+            fail(f"PRODUCT-KNOWLEDGE.md contains volatile session context: {pattern}")
+
+
+def active_reference_scan() -> None:
+    for p in ROOT.rglob("*"):
+        if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
+            continue
+        rel = p.relative_to(ROOT).as_posix()
+        if rel in CANONICAL_ROOTS or rel.startswith(HISTORICAL_PREFIXES):
+            continue
+        try:
+            body = p.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        for target in FORBIDDEN_ACTIVE:
+            if target in body:
+                fail(f"active reference points to retired path {target}: {rel}")
+
+
+def assert_proof_target(payload: dict, paths: set[str]) -> None:
+    target = proof_target(payload)
+    if not target:
+        fail("Draft PR must contain a 'Draft proof target' section describing what the PR is trying to prove")
+    target_lower = target.lower()
+    if not any(word in target_lower for word in ("governance", "canonical", "reconciliation", "migration")):
+        fail("Draft proof target does not describe the governance/canonical migration being proven")
+    if "Product_Law/" in target and not any(p.startswith("Product_Law/") for p in paths):
+        fail("proof target names Product_Law but PR does not change Product_Law")
+
+    governance_change = any(
+        p.startswith(("Product_Law/", "Masterplan/", "docs/SKILL_WIRING.md", "POLICY.md", "AI_ASSISTANT_READ_ME.md", ".github/", "build-system/", "scripts/governance/", "skills/governance/"))
+        for p in paths
+    )
+    if governance_change:
+        required = {
+            "Product_Law/WIRING.md",
+            "Masterplan/MASTERPLAN.md",
+            "Masterplan/NEXT_SLICES.md",
+            "POLICY.md",
+            "docs/SKILL_WIRING.md",
+            "AI_ASSISTANT_READ_ME.md",
+        }
+        missing = sorted(required - paths)
+        if missing:
+            fail("governance PR target is missing canonical synchronization paths: " + ", ".join(missing))
+
+
+def assert_historical_paths(paths: set[str]) -> None:
+    if "docs/project-guide/HandOver.md" in paths:
+        fail("HandOver.md must be retired, not modified")
+    if "docs/project-guide/Endorsement.md" in paths:
+        fail("Endorsement.md must be retired, not modified")
+
+
+def main() -> None:
+    payload = event_payload()
+    base, head = pr_base_head(payload)
+    paths = changed_paths(base, head)
+    assert_roots()
+    assert_current_slice()
+    assert_roles()
+    active_reference_scan()
+    assert_historical_paths(paths)
+    if payload.get("pull_request"):
+        assert_proof_target(payload, paths)
+    print("REPOSITORY_CANONICAL_GOVERNANCE_AUDIT=PASS")
+    print(f"pr_base={base}")
+    print(f"pr_head={head}")
+    print(f"changed_paths={len(paths)}")
+    print("delta_source=git diff BASE...HEAD")
+    print("proof_target_source=github.event.pull_request.body")
+
+
+if __name__ == "__main__":
+    main()
