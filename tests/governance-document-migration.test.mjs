@@ -26,6 +26,8 @@ const retired = {
  * last-commit sync inference           OBSOLETE          full PR BASE...HEAD diff
  * green CI => merge readiness          OBSOLETE          Draft + evidence + reconciliation + review readiness
  * one slice => one merge               OBSOLETE          multi-commit/multi-slice PRs allowed
+ * R1-R10 shared root assertion         OBSOLETE          R0-R3 ring-map ownership
+ * historical V-series as current       OBSOLETE          Masterplan/NEXT_SLICES.md current frontier
  * semantic machine checks              RETAINED          current machine invariants remain explicit
  */
 
@@ -63,6 +65,22 @@ test('authority manifest is machine-readable and names one owner per canonical r
   assert.equal(manifest.skill_model.canonical_glob, 'skills/**/SKILL.md');
   assert.equal(manifest.promotion_model.draft_first, true);
   assert.equal(manifest.promotion_model.auto_merge, false);
+});
+
+test('authority manifest records the validation migrations instead of deleting the old invariants silently', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  const migrations = manifest.invariant_migrations || [];
+  const disposition = new Map(migrations.map((item) => [item.old, item]));
+  for (const [old, replacement] of [
+    ['root Product Law path', 'Product_Law/PRODUCT_LAW.md'],
+    ['root Masterplan path', 'Masterplan/MASTERPLAN.md'],
+    ['root current-slice path', 'Masterplan/NEXT_SLICES.md'],
+    ['R1-R10 shared root assertion', 'R0-R3 ring map owns current topology; Skills do not own ring constants'],
+    ['historical V3.x document as current frontier', 'Masterplan/NEXT_SLICES.md owns current frontier'],
+  ]) {
+    assert.equal(disposition.get(old)?.disposition, 'OBSOLETE', old);
+    assert.equal(disposition.get(old)?.new, replacement, old);
+  }
 });
 
 test('current slice uses the required six-section contract', () => {
