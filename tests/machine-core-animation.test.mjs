@@ -23,6 +23,23 @@ test('machine animation opens and closes continuously', () => {
   assert.equal(closed.amount, 0);
 });
 
+test('interrupted animation reverses from its current physical amount', () => {
+  const animation = createMachineAnimation({ duration: 1000 });
+  animation.restart(0);
+  animation.setTarget('expanded');
+  const midOpen = animation.sample(400);
+  assert.equal(midOpen.state, 'opening');
+  assert.ok(midOpen.amount > 0 && midOpen.amount < 1);
+  animation.setTarget('collapsed');
+  animation.restart(400);
+  const midClose = animation.sample(650);
+  assert.equal(midClose.state, 'closing');
+  assert.ok(midClose.amount < midOpen.amount);
+  const closed = animation.sample(1400);
+  assert.equal(closed.state, 'collapsed');
+  assert.equal(closed.amount, 0);
+});
+
 test('radius interpolation is deterministic', () => {
   assert.equal(interpolateBranchRadius(4, 8, 0), 4);
   assert.equal(interpolateBranchRadius(4, 8, 0.5), 6);
