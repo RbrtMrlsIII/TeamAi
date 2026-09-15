@@ -1,4 +1,4 @@
-name: GitHub Pages
+name: Spatial Validation Delivery
 
 on:
   push:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy TeamAi public website to GitHub Pages
+    name: Deploy validation website to GitHub Pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages
