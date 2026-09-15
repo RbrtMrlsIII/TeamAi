@@ -828,9 +828,9 @@ Phase 0 is the clean development-entry gate. It verifies the active repository b
 
 The following is a document traceability path, not a replacement for the law-to-law conceptual model above:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → docs/project-guide/HandOver.md → docs/project-guide/Endorsement.md → PRODUCT-KNOWLEDGE.md`
+`PRODUCT_LAW.md → MASTERPLAN.md → NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md → docs/project-guide/Endorsement.md → PRODUCT-KNOWLEDGE.md`
 
-`AI_ASSISTANT_READ_ME.md` provides practical agent-entry/recovery guidance across this chain.
+`AI_ASSISTANT_READ_ME.md` owns the live continuation/recovery boundary; historical handover material lives in `docs/archive/`.
 
 Lower-level documents MUST NOT silently redefine Product Law. A change to a canonical concept requires reconciliation against the existing law family and connected flow before editing.
 
