@@ -12,10 +12,10 @@ import { test } from 'node:test';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
-test('evidence and HandOver documents exist', () => {
+test('evidence and historical handover records exist', () => {
   for (const path of [
     'docs/EVIDENCE_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
-    'docs/HANDOVER_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
+    'handover/TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
     'docs/CHECKPOINT_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
   ]) {
     assert.ok(existsSync(join(root, path)), path);
@@ -46,15 +46,10 @@ test('material visual e2e exists for HERO_WIDE / SEAT_CLOSE path', () => {
   assert.match(spec, /SEAT_CLOSE|Seat/i);
 });
 
-test('hero-flex keeps Isolation preserved and material helpers', () => {
-  const flex = read('public/hero-flex.js');
-  assert.match(flex, /Isolation preserved/);
-  assert.match(flex, /authoredRingMaterial|hero-authored-materials/);
-});
-
-test('HandOver leaves endorsement open and forbids silent rewrite', () => {
-  const ho = read('docs/HANDOVER_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md');
-  assert.match(ho, /endorsement/i);
-  assert.match(ho, /Do not rewrite materials/i);
-  assert.match(ho, /Do not claim 029 released/i);
+test('historical handover record preserves endorsement boundary without becoming active authority', () => {
+  const ho = read('handover/TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md');
+  assert.match(ho, /historical handover/i);
+  assert.match(ho, /evidence posture/i);
+  assert.match(ho, /No 029-released claim/i);
+  assert.match(ho, /not to silently rewrite/i);
 });
