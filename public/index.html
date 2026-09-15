@@ -12,163 +12,42 @@
     <link rel="stylesheet" href="./hero-seat-stack.css" />
     <link rel="stylesheet" href="./hero-dom-chrome.css" />
     <link rel="stylesheet" href="./experience-rebaseline.css" />
+    <style>
+      .machine-hero-preview{position:fixed;inset:auto 18px 18px auto;z-index:50;width:min(420px,calc(100vw - 36px));padding:10px;border:1px solid rgba(55,49,42,.22);border-radius:16px;background:rgba(255,252,246,.95);box-shadow:0 18px 50px rgba(55,49,42,.16);backdrop-filter:blur(16px)}
+      .machine-hero-preview__header{display:flex;justify-content:space-between;gap:12px;margin:2px 4px 8px;font:600 12px/1.2 system-ui,sans-serif;color:#37312a}.machine-hero-preview__header span{opacity:.6;font-weight:500}.machine-hero-preview__canvas{display:block;width:100%;height:250px;border-radius:11px}@media(max-width:640px){.machine-hero-preview{inset:auto 10px 10px;width:auto}}
+    </style>
   </head>
   <body>
     <main class="hero-shell" data-hero-layer="entrance" data-experience="classic" aria-label="TeamAi Web AI workspace">
       <section class="classic-entrance" aria-label="TeamAi website entrance">
         <nav class="classic-entrance__nav" aria-label="Primary navigation">
-          <a class="classic-entrance__brand" href="./" aria-label="TeamAi home">
-            <img src="./assets/hero-spatial/teamai_icon_2_5d.png" alt="" width="38" height="38" decoding="async" />
-            <span>TeamAi</span>
-          </a>
-          <div class="classic-entrance__menu">
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-            <button type="button" data-auth-open>Sign in</button>
-          </div>
+          <a class="classic-entrance__brand" href="./" aria-label="TeamAi home"><img src="./assets/hero-spatial/teamai_icon_2_5d.png" alt="" width="38" height="38" decoding="async" /><span>TeamAi</span></a>
+          <div class="classic-entrance__menu"><a href="#about">About</a><a href="#contact">Contact</a><button type="button" data-auth-open>Sign in</button></div>
         </nav>
-
         <div class="classic-entrance__content">
-          <p class="classic-entrance__eyebrow">WEB AI / SHARED WORKSPACE</p>
-          <h1 class="classic-entrance__title">A calmer front door for a living AI workspace.</h1>
+          <p class="classic-entrance__eyebrow">WEB AI / SHARED WORKSPACE</p><h1 class="classic-entrance__title">A calmer front door for a living AI workspace.</h1>
           <p class="classic-entrance__lede">Start with the website. Enter the spatial workspace when you are ready to work, inspect, connect, and coordinate.</p>
-          <div class="classic-entrance__actions">
-            <button type="button" class="primary classic-entrance__primary" data-world-entry="classic-world-entry">Enter 3D world</button>
-            <button type="button" class="quiet" data-auth-open>Sign in to unlock workspace features</button>
-          </div>
+          <div class="classic-entrance__actions"><button type="button" class="primary classic-entrance__primary" data-world-entry="classic-world-entry">Enter 3D world</button><button type="button" class="quiet" data-auth-open>Sign in to unlock workspace features</button></div>
         </div>
-
-        <footer class="classic-entrance__footer">
-          <span>Public entrance · presentation only</span>
-          <span><a href="#terms">Terms</a> · <a href="#privacy">Privacy</a></span>
-        </footer>
+        <footer class="classic-entrance__footer"><span>Public entrance · presentation only</span><span><a href="#terms">Terms</a> · <a href="#privacy">Privacy</a></span></footer>
       </section>
 
       <nav class="world-navigation" aria-label="3D world navigation">
-        <div class="world-navigation__group">
-          <button type="button" data-classic-return="world-return">Website</button>
-          <button type="button" data-world-camera-request="HERO_WIDE">World</button>
-          <span class="world-navigation__status">3D workspace</span>
-        </div>
-        <div class="world-navigation__group">
-          <div class="world-navigation__menu">
-            <button type="button" data-world-menu-toggle aria-controls="world-menu" aria-expanded="false">Menu</button>
-            <div id="world-menu" class="world-navigation__popover">
-              <button type="button" data-auth-open>Sign in</button>
-              <button type="button" data-world-camera-request="SEAT_CLOSE">Selected seat</button>
-              <button type="button" data-world-camera-request="WORKSPACE_CLOSE">Workspace</button>
-              <button type="button" data-world-camera-request="DETAIL_ANCHOR">Detail</button>
-              <button type="button" data-settings-open>Settings</button>
-            </div>
-          </div>
-        </div>
+        <div class="world-navigation__group"><button type="button" data-classic-return="world-return">Website</button><button type="button" data-world-camera-request="HERO_WIDE">World</button><span class="world-navigation__status">3D workspace</span></div>
+        <div class="world-navigation__group"><div class="world-navigation__menu"><button type="button" data-world-menu-toggle aria-controls="world-menu" aria-expanded="false">Menu</button><div id="world-menu" class="world-navigation__popover"><button type="button" data-auth-open>Sign in</button><button type="button" data-world-camera-request="SEAT_CLOSE">Selected seat</button><button type="button" data-world-camera-request="WORKSPACE_CLOSE">Workspace</button><button type="button" data-world-camera-request="DETAIL_ANCHOR">Detail</button><button type="button" data-settings-open>Settings</button></div></div></div>
       </nav>
 
       <div class="hero-settings-mount" data-settings-shell aria-live="polite"></div>
-
       <canvas id="hero-canvas" data-entrance-region="atmosphere" aria-label="Interactive 3D Web AI workspace"></canvas>
-      <div class="hero-aura hero-aura-a" aria-hidden="true"></div>
-      <div class="hero-aura hero-aura-b" aria-hidden="true"></div>
-
-      <div class="hero-copy" data-entrance-region="brand">
-        <img
-          class="hero-brand-mark"
-          src="./assets/hero-spatial/teamai_icon_2_5d.png"
-          alt="TeamAi — networked Web AI workspace mark"
-          width="72"
-          height="72"
-          decoding="async"
-        />
-        <p class="eyebrow">TEAMAI / WEB AI</p>
-        <h1>Living Web AI Workspace</h1>
-        <p class="lede">A shared workspace made visible as participating Web AI Seats contribute, absorb, and hand off.</p>
-      </div>
-
-      <section class="spatial-parts" aria-label="Workspace spatial parts">
-        <button class="spatial-part" data-part="surface" aria-pressed="false">
-          <span class="spatial-part__mark" aria-hidden="true"></span>
-          <span class="spatial-part__text"><b>Surface</b><small>shared state</small></span>
-        </button>
-        <button class="spatial-part" data-part="focus" aria-pressed="false">
-          <span class="spatial-part__mark" aria-hidden="true"></span>
-          <span class="spatial-part__text"><b>Focus</b><small>active Seat</small></span>
-        </button>
-        <button class="spatial-part" data-part="history" aria-pressed="false">
-          <span class="spatial-part__mark" aria-hidden="true"></span>
-          <span class="spatial-part__text"><b>Trace</b><small>persistent artifact</small></span>
-        </button>
-      </section>
-
-
-      <section class="seat-stack" aria-label="Web AI Seat configuration stack">
-        <!-- modules injected by seat-stack runtime -->
-      </section>
-
-      <div class="hero-controls" role="group" aria-label="Hero controls">
-        <div class="hero-controls__cameras">
-          <button data-hero-engine-open class="primary">Open engine</button>
-          <button type="button" data-hero-layer-return class="quiet">Return to entrance</button>
-          <button id="demo-toggle" class="primary">Start turn loop</button>
-        </div>
-        <div class="hero-controls__status">
-          <span id="state-label">IDLE</span>
-          <span id="seat-label">Next: Web AI Seat 1</span>
-          <button id="motion-toggle" class="quiet">Reduced motion: off</button>
-        </div>
-      </div>
-
-      <section id="hero-auth-panel" hidden class="hero-auth-panel" aria-label="Authentication handoff">
-        <div class="hero-auth-panel__inner">
-          <header>
-            <h2>Authentication</h2>
-            <button type="button" class="quiet" data-auth-close>Close</button>
-          </header>
-          <div role="tablist">
-            <button type="button" role="tab" data-auth-mode="login" aria-selected="true">Login</button>
-            <button type="button" role="tab" data-auth-mode="signup" aria-selected="false">Sign up</button>
-          </div>
-          <form data-auth-form="login">
-            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
-            <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
-            <button type="submit" class="primary">Continue</button>
-          </form>
-          <form data-auth-form="signup" hidden>
-            <label>Name<input name="name" type="text" autocomplete="name" required /></label>
-            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
-            <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" required /></label>
-            <button type="submit" class="primary">Create account</button>
-          </form>
-          <p id="auth-status" class="hero-auth-panel__status" role="status">Firebase Authentication connection is not enabled in this build yet.</p>
-          <p class="hero-auth-panel__note">Credential authority belongs to the authenticated application layer. This Hero only presents the handoff surface.</p>
-        </div>
-      </section>
-
+      <div class="hero-aura hero-aura-a" aria-hidden="true"></div><div class="hero-aura hero-aura-b" aria-hidden="true"></div>
+      <div class="hero-copy" data-entrance-region="brand"><img class="hero-brand-mark" src="./assets/hero-spatial/teamai_icon_2_5d.png" alt="TeamAi — networked Web AI workspace mark" width="72" height="72" decoding="async" /><p class="eyebrow">TEAMAI / WEB AI</p><h1>Living Web AI Workspace</h1><p class="lede">A shared workspace made visible as participating Web AI Seats contribute, absorb, and hand off.</p></div>
+      <section class="spatial-parts" aria-label="Workspace spatial parts"><button class="spatial-part" data-part="surface" aria-pressed="false"><span class="spatial-part__mark" aria-hidden="true"></span><span class="spatial-part__text"><b>Surface</b><small>shared state</small></span></button><button class="spatial-part" data-part="focus" aria-pressed="false"><span class="spatial-part__mark" aria-hidden="true"></span><span class="spatial-part__text"><b>Focus</b><small>active Seat</small></span></button><button class="spatial-part" data-part="history" aria-pressed="false"><span class="spatial-part__mark" aria-hidden="true"></span><span class="spatial-part__text"><b>Trace</b><small>persistent artifact</small></span></button></section>
+      <section class="seat-stack" aria-label="Web AI Seat configuration stack"></section>
+      <div class="hero-controls" role="group" aria-label="Hero controls"><div class="hero-controls__cameras"><button data-hero-engine-open class="primary">Open engine</button><button type="button" data-hero-layer-return class="quiet">Return to entrance</button><button id="demo-toggle" class="primary">Start turn loop</button></div><div class="hero-controls__status"><span id="state-label">IDLE</span><span id="seat-label">Next: Web AI Seat 1</span><button id="motion-toggle" class="quiet">Reduced motion: off</button></div></div>
+      <section id="hero-auth-panel" hidden class="hero-auth-panel" aria-label="Authentication handoff"><div class="hero-auth-panel__inner"><header><h2>Authentication</h2><button type="button" class="quiet" data-auth-close>Close</button></header><div role="tablist"><button type="button" role="tab" data-auth-mode="login" aria-selected="true">Login</button><button type="button" role="tab" data-auth-mode="signup" aria-selected="false">Sign up</button></div><form data-auth-form="login"><label>Email<input name="email" type="email" autocomplete="email" required /></label><label>Password<input name="password" type="password" autocomplete="current-password" required /></label><button type="submit" class="primary">Continue</button></form><form data-auth-form="signup" hidden><label>Name<input name="name" type="text" autocomplete="name" required /></label><label>Email<input name="email" type="email" autocomplete="email" required /></label><label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" required /></label><button type="submit" class="primary">Create account</button></form><p id="auth-status" class="hero-auth-panel__status" role="status">Firebase Authentication connection is not enabled in this build yet.</p><p class="hero-auth-panel__note">Credential authority belongs to the authenticated application layer. This Hero only presents the handoff surface.</p></div></section>
       <div class="hero-note" aria-hidden="true">Contribution → shared state → next eligible Seat</div>
     </main>
-
-    <aside
-      class="far-environment"
-      data-entrance-region="far"
-      data-far-outside-machine="1"
-      role="contentinfo"
-      aria-label="Site environment — outside the machine"
-    >
-      <a href="#about" data-far-link="about">About</a>
-      <a href="#contact" data-far-link="contact">Contact</a>
-      <a href="#terms" data-far-link="terms">Terms</a>
-      <a href="#privacy" data-far-link="privacy">Privacy</a>
-    </aside>
-
-    <script type="module" src="./experience-rebaseline.js"></script>
-    <script type="module" src="./hero-flex.js"></script>
-    <script type="module" src="./hero-aura.js"></script>
-    <script type="module" src="./hero-parts.js"></script>
-    <script type="module" src="./hero-machine-nav-bind.js"></script>
-    <script type="module" src="./hero-settings-shell.js"></script>
-    <script type="module" src="./hero-seat-stack.js"></script>
-    <script type="module" src="./hero-seat-stack-action-bridge.js"></script>
-    <script type="module" src="./hero-semantic-camera.js"></script>
-    <script type="module" src="./hero-layer-handoff.js"></script>
-    <script type="module" src="./hero-auth-handoff.js"></script>
+    <aside class="far-environment" data-entrance-region="far" data-far-outside-machine="1" role="contentinfo" aria-label="Site environment — outside the machine"><a href="#about" data-far-link="about">About</a><a href="#contact" data-far-link="contact">Contact</a><a href="#terms" data-far-link="terms">Terms</a><a href="#privacy" data-far-link="privacy">Privacy</a></aside>
+    <script type="module" src="./experience-rebaseline.js"></script><script type="module" src="./hero-flex.js"></script><script type="module" src="./hero-aura.js"></script><script type="module" src="./hero-parts.js"></script><script type="module" src="./hero-machine-nav-bind.js"></script><script type="module" src="./hero-settings-shell.js"></script><script type="module" src="./hero-seat-stack.js"></script><script type="module" src="./hero-seat-stack-action-bridge.js"></script><script type="module" src="./hero-semantic-camera.js"></script><script type="module" src="./hero-layer-handoff.js"></script><script type="module" src="./hero-auth-handoff.js"></script><script type="module" src="./machine-hero-preview.js"></script>
   </body>
 </html>
