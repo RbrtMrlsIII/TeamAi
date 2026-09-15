@@ -108,3 +108,5 @@ export function advanceAdjacentDivisionTransition(state, elapsedMs, sourceDurati
     phase: next.phase,
   };
 }
+
+// 031: shared semantic transition remains the only active fixture for now.
