@@ -22,6 +22,13 @@ function pointDistance(a, b) {
   return Math.hypot((b.x || 0) - (a.x || 0), (b.z || 0) - (a.z || 0));
 }
 
+function inferDivisionId(geometryId, seatIndex, fallback) {
+  if (!geometryId) return fallback;
+  const match = String(geometryId).match(/^TREE-HERO-SEAT#(\d+):([^:]+):GEOMETRY$/);
+  if (!match) return geometryId;
+  return Number(match[1]) === seatIndex ? match[2] : geometryId;
+}
+
 export function buildAdjacentDivisionWiring({
   seatIndex = 0,
   sourceDivisionId,
@@ -36,8 +43,8 @@ export function buildAdjacentDivisionWiring({
     throw new Error('adjacent division wiring requires source and target semantic ports');
   }
 
-  const resolvedSourceDivisionId = sourceDivisionId || sourceGeometry.id;
-  const resolvedTargetDivisionId = targetDivisionId || targetGeometry.id;
+  const resolvedSourceDivisionId = sourceDivisionId || inferDivisionId(sourceGeometry.id, seatIndex, sourceGeometry.id);
+  const resolvedTargetDivisionId = targetDivisionId || inferDivisionId(targetGeometry.id, seatIndex, targetGeometry.id);
   const sourceAtAmount = connectionCorridorPoint(sourceGeometry, clamp(amount, 0, 1));
   const targetPort = targetGeometry.port;
   const dx = targetPort.x - sourceAtAmount.x;
