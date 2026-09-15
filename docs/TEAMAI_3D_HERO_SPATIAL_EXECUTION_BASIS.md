@@ -1,7 +1,7 @@
 # TeamAi 3D Hero — Spatial Execution Basis
 
 **Status:** SPATIAL CONTRACT / GATE VOCABULARY — NOT PROJECT CHRONOLOGY  
-**Canonical execution authority:** `MASTERPLAN.md` only (nested under 03.9 TREE MACHINE / C0–C10)  
+**Canonical execution authority:** `Masterplan/MASTERPLAN.md` only (nested under the governed tree-machine checklist)  
 **Active 029 ledger:** Issue #278  
 **No 029-release claim.**
 
@@ -11,7 +11,7 @@ This document converts spatial product intent into concrete verification-oriente
 Executable spatial slices must be nested under the Masterplan single chronological spine; this file constrains how those slices are verified.
 
 **Status:** Working execution basis for the pre-backend / pre-coloring spatial pass  
-**Authority:** `PRODUCT_LAW.md` → `MASTERPLAN.md` → `docs/VISION.md` → machine / camera contracts → this execution basis → concrete skills / implementation / verification  
+**Authority:** `Product_Law/PRODUCT_LAW.md` → `Masterplan/MASTERPLAN.md` → `docs/VISION.md` → machine / camera contracts → this execution basis → concrete skills / implementation / verification  
 **Scope:** hierarchy structure, camera truth, tree interaction, readability, machine topology, execution evidence  
 **Explicitly out of scope for this pass:** backend runtime work, commerce/auth/domain integration, 3D color/material art-direction polishing
 
