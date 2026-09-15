@@ -33,7 +33,19 @@ test('inner pods are evenly spaced around the hub and have explicit gaps', () =>
   assert.ok(pods.every((part) => part.seam > 0));
 });
 
-test('outer modules sit between inner pods and connect into the lattice', () => {
+test('outer modules interleave between the seat-pod angles', () => {
+  const core = createBranchConnectionCore();
+  const pods = core.parts.filter((part) => part.kind === 'inner-pod');
+  const outer = core.parts.filter((part) => part.kind === 'outer-housing');
+  const podAngles = pods.map((part) => (Math.atan2(part.center.z, part.center.x) + Math.PI * 2) % (Math.PI * 2)).sort((a,b) => a-b);
+  for (const part of outer) {
+    const angle = (Math.atan2(part.center.z, part.center.x) + Math.PI * 2) % (Math.PI * 2);
+    const nearest = Math.min(...podAngles.map((podAngle) => Math.abs(angle - podAngle)));
+    assert.ok(Math.abs(nearest - Math.PI / 8) < 0.02);
+  }
+});
+
+test('outer modules sit beyond the inner ring and connect into the lattice', () => {
   const core = createBranchConnectionCore();
   const outer = core.parts.filter((part) => part.kind === 'outer-housing');
   assert.ok(outer.every((part) => Math.hypot(part.center.x, part.center.z) > 6));
