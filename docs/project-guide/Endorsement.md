@@ -10,6 +10,8 @@
 - **State:** `IMPLEMENTED | DEPLOYED | RUNTIME-PROVEN | LEARNED | COMPLETED | ENDORSED`.
 - **Decision:** `ACCEPT | ACCEPT-WITH-LIMITATION | REJECT | SUPERSEDE`.
 
+<!-- teamai-claim: BACKEND-001-ENDORSED state=ENDORSED_BOUNDED -->
+
 ## Rules
 
 A green test is evidence, not endorsement. Endorsement cannot create permission, authority, backend truth, entitlement, or release status. Reopening a meaningful architecture or canonical-root change requires fresh verification and a new acceptance record.
