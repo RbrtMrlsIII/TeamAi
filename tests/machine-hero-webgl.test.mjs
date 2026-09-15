@@ -28,7 +28,15 @@ test('WebGL projector renders multiple semantic parts and wiring routes', () => 
   assert.match(source, /createMachineGraph/);
   assert.match(source, /graph\.transitions/);
   assert.match(source, /transition\.wiring\.route/);
+  assert.match(source, /graph\.renderedParts/);
   assert.match(source, /gl\.LINE_STRIP/);
+});
+
+test('WebGL preview exposes a real expansion state transition', () => {
+  assert.match(source, /data-machine-webgl-expand/);
+  assert.match(source, /expanded=!expanded/);
+  assert.match(source, /sourceAmount:0,targetAmount:1/);
+  assert.match(source, /divisions expanded/);
 });
 
 test('WebGL projector keeps named camera identity separate from semantic subject', () => {
