@@ -14,9 +14,10 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-core-state]')).toHaveText('collapsed lattice · 15 independent modules');
   });
 
-  test('the layout remains parameterized for eight seats', async ({ page }) => {
-    await page.goto('/machine-core-preview.html');
-    await expect(page.locator('[data-core-count]')).toHaveText('15 modules · 10 seats · 4 outer housings · 1 hub');
+  test('renders eight seats through the same parameterized core', async ({ page }) => {
+    await page.goto('/machine-core-preview.html?seats=8');
+    await expect(page.locator('[data-core-count]')).toHaveText('13 modules · 8 seats · 4 outer housings · 1 hub');
+    await expect(page.locator('[data-core-state]')).toHaveText('collapsed lattice · 13 independent modules');
   });
 
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
