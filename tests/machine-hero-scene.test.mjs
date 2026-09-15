@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createMachineTransition, deriveMachineSubject, resolveMachineCamera } from '../frontend/spatial/machine-hero-scene.js';
+import { createMachineScene, createMachineTransition, deriveMachineSubject, resolveMachineCamera } from '../frontend/spatial/machine-hero-scene.js';
 
 const source={id:'s0',semanticId:'SEAT_CONNECTION',center:{x:-1,y:.5,z:0},dimensions:{x:2,y:1,z:1.4},port:{x:0,y:.5,z:0}};
 const target={id:'s1',semanticId:'SEAT_BEHAVIOR',center:{x:1,y:.5,z:0},dimensions:{x:1.6,y:1,z:1.2},port:{x:1,y:.5,z:0}};
@@ -13,4 +13,5 @@ test('wiring follows moved semantic target port',()=>{const movedTarget={...targ
 test('missing semantic port fails closed for wiring',()=>{const t=createMachineTransition({source,target:{...target,port:null}});assert.equal(t.wiring,null);});
 test('same camera algorithm works for a different semantic pair',()=>{const forward=createMachineTransition({source,target});const alternate=createMachineTransition({seatIndex:0,source:reverseSource,target:reverseTarget});const a=resolveMachineCamera({cameraId:'SEAT_CLOSE',subject:forward.subject});const b=resolveMachineCamera({cameraId:'SEAT_CLOSE',subject:alternate.subject});assert.equal(a.cameraId,b.cameraId);assert.notDeepEqual(a.target,b.target);});
 test('camera identity stays named while target follows subject',()=>{const a=createMachineTransition({source,target});const b=createMachineTransition({source,target:{...target,center:{x:3.25,y:.5,z:1.5}}});const c=resolveMachineCamera({cameraId:'SEAT_CLOSE',subject:a.subject});const d=resolveMachineCamera({cameraId:c.cameraId,subject:b.subject});assert.equal(c.cameraId,'SEAT_CLOSE');assert.equal(d.cameraId,'SEAT_CLOSE');assert.notDeepEqual(d.target,c.target);});
+test('scene graph normalizes parts and transitions under one immutable machine object',()=>{const scene=createMachineScene({seatIndex:0,parts:[source,target],transitions:[{source,target}]});assert.equal(scene.parts.length,2);assert.equal(scene.transitions.length,1);assert.ok(scene.subject);assert.equal(scene.transitions[0].sourceDivisionId,'SEAT_CONNECTION');assert.equal(scene.transitions[0].targetDivisionId,'SEAT_BEHAVIOR');assert.equal(Object.isFrozen(scene),true);assert.equal(Object.isFrozen(scene.parts),true);assert.equal(Object.isFrozen(scene.transitions),true);});
 test('invalid transition fails closed',()=>assert.throws(()=>createMachineTransition({source,target:{...target,semanticId:null}})));
