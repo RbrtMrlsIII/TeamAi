@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -42,7 +42,6 @@ def changed_paths() -> set[str]:
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
         parents = subprocess.check_output(["git", "rev-list", "--parents", "-n", "1", head], cwd=ROOT, text=True).strip().split()
         if len(parents) >= 3:
-            # PR merge ref: first parent = base, second parent = PR head.
             base, pr_head = parents[1], parents[2]
             out = subprocess.check_output(["git", "diff", "--name-only", base, pr_head], cwd=ROOT, text=True)
         else:
@@ -59,7 +58,6 @@ for rel in FORBIDDEN:
     if (ROOT / rel).exists():
         fail(f"forbidden duplicate/retired active document still exists: {rel}")
 
-# No obsolete-files registry: the archive directory is the only archive entrypoint.
 for path in ROOT.rglob("OBSOLETE_FILES.md"):
     if "node_modules" not in path.parts:
         fail("OBSOLETE_FILES.md is forbidden; use docs/archive/ instead")
@@ -76,11 +74,20 @@ if "## Current slice" not in next_slices or next_slices.count("## Current slice"
     fail("NEXT_SLICES.md must contain exactly one current-slice section")
 if "ORUCAVEAM" not in policy or "O — Objective" not in policy or "M — Minimalistic Efficiency" not in policy:
     fail("POLICY.md is missing the canonical ORUCAVEAM spine")
-if "PRODUCT-LAW" in policy and "second Product Law" in policy:
-    fail("policy must remain execution discipline, not a second constitution")
-for banned in ("Current session", "Issue #", "PR #", "HEAD", "branch", "deployment"):
-    if banned in knowledge:
-        fail(f"PRODUCT-KNOWLEDGE.md contains live-session context: {banned}")
+if "second Product Law" in policy:
+    fail("POLICY.md must remain execution discipline, not a second constitution")
+
+for pattern in (
+    r"\bCurrent session\b",
+    r"\bIssue\s+#\d+",
+    r"\bPR\s+#\d+",
+    r"\bHEAD\b",
+    r"\b(?:current|latest|active)\s+(?:branch|deployment)(?:\s+(?:state|status|inventory|tip|head))?\b",
+    r"\b\d{4}-\d{2}-\d{2}\b",
+):
+    if re.search(pattern, knowledge, flags=re.IGNORECASE):
+        fail(f"PRODUCT-KNOWLEDGE.md contains live-session/current-state context matching {pattern!r}")
+
 if "Last given prompt:" not in assistant or "Current governance PR:" not in assistant:
     fail("AI_ASSISTANT_READ_ME.md is missing the live-session anchor")
 if "Draft-first merge discipline" not in assistant:
@@ -100,7 +107,6 @@ if substantive:
     if missing:
         fail("substantive change missing same-PR canonical reconciliation: " + ", ".join(missing))
 
-# Promotion safety: a ready PR must carry an explicit promotion note in the event/CI environment.
 if os.getenv("TEAMAI_PR_DRAFT") == "false" and os.getenv("TEAMAI_PROMOTION_REVIEWED") != "true":
     fail("ready-for-review/merge state requires explicit promotion review marker")
 
