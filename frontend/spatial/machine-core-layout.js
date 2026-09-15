@@ -4,14 +4,9 @@ const DEFAULT_SEAT_COUNT = 10;
 const MIN_SEAT_COUNT = 2;
 const MAX_SEAT_COUNT = 16;
 const OUTER_COUNT = 4;
+const clamp01 = (value) => Math.min(1, Math.max(0, Number(value) || 0));
 const seatLevel = (seatIndex) => 0.60 + ((seatIndex * 0.17) % 0.31);
-const makeUiSurface = (part, style, scale = 1) => Object.freeze({
-  style,
-  anchor: { ...part.center, y: part.level + part.dimensions.y * 0.46 },
-  width: part.dimensions.x * 0.66 * scale,
-  depth: part.dimensions.z * 0.54 * scale,
-  clearance: part.seam * 1.8,
-});
+const makeUiSurface = (part, style, scale = 1) => Object.freeze({ style, anchor: { ...part.center, y: part.level + part.dimensions.y * 0.46 }, width: part.dimensions.x * 0.66 * scale, depth: part.dimensions.z * 0.54 * scale, clearance: part.seam * 1.8 });
 const outerProfiles = [
   { branchId: 'BRANCH-OUTER-ALPHA', height: 0.94, silhouette: 'fin', uiStyle: 'outer-fin', uiScale: 0.78 },
   { branchId: 'BRANCH-OUTER-BETA', height: 1.08, silhouette: 'arc', uiStyle: 'outer-arc', uiScale: 0.82 },
@@ -24,17 +19,21 @@ const silhouetteDimensions = {
 };
 const makeCamera = (branchId, position, target, seatIndex = null, role = 'branch') => Object.freeze({ cameraId: `BRANCH_CAMERA_${branchId}`, branchId, seatIndex, role, position: { ...position }, target: { ...target }, fov: role === 'hub' ? 38 : 34 });
 const cameraForPart = (part, angle) => makeCamera(part.branchId, polar(part.kind === 'hub' ? 10.2 : 7.6, angle, part.level + (part.kind === 'hub' ? 5.1 : 2.9)), part.center, part.seatIndex, part.kind === 'hub' ? 'hub' : 'branch');
-export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, expanded = false } = {}) {
+export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, expanded = false, expansionAmount = null } = {}) {
   const count = Math.min(MAX_SEAT_COUNT, Math.max(MIN_SEAT_COUNT, Math.floor(Number(seatCount) || DEFAULT_SEAT_COUNT)));
+  const amount = expansionAmount == null ? (expanded ? 1 : 0) : clamp01(expansionAmount);
+  const innerRadius = 4.05 + (4.55 - 4.05) * amount;
+  const podPortRadius = 0.92 + (1.02 - 0.92) * amount;
+  const outerRadius = 6.45 + (7.15 - 6.45) * amount;
   const hub = { id: 'machine-hub-core', branchId: 'HUB-CORE', kind: 'hub', level: 0.42, center: { x: 0, y: 0.42, z: 0 }, dimensions: { x: 2.6, y: 0.78, z: 2.6 }, silhouette: 'hex', seam: 0.26, port: { x: 0, y: 0.42, z: 1.45 }, uiStyle: 'command-core', expanded: true };
   hub.uiSurface = makeUiSurface(hub, hub.uiStyle, 0.72); hub.camera = cameraForPart(hub, Math.PI / 2);
   const inner = Array.from({ length: count }, (_, seatIndex) => {
-    const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(expanded ? 4.55 : 4.05, angle, level), dims = silhouetteDimensions.pod, branchId = `BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`;
-    const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: polar(expanded ? 1.02 : 0.92, angle, level) };
+    const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(innerRadius, angle, level), dims = silhouetteDimensions.pod, branchId = `BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`;
+    const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: polar(podPortRadius, angle, level) };
     part.uiSurface = makeUiSurface(part, part.uiStyle); part.camera = cameraForPart(part, angle); return part;
   });
   const outer = outerProfiles.map((profile, outerIndex) => {
-    const angle = TAU * (outerIndex * count / OUTER_COUNT + 0.5) / count, center = polar(expanded ? 7.15 : 6.45, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
+    const angle = TAU * (outerIndex * count / OUTER_COUNT + 0.5) / count, center = polar(outerRadius, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
     const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: polar(1.12, angle, profile.height) };
     part.uiSurface = makeUiSurface(part, part.uiStyle, profile.uiScale); part.camera = cameraForPart(part, angle); return part;
   });
@@ -45,7 +44,7 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
     connections.push({ id: `${housing.branchId}:HUB`, sourceBranchId: 'HUB-CORE', targetBranchId: housing.branchId, sourcePort: hub.port, targetPort: housing.port, kind: 'outer-spine', route: [hub.port, { x: housing.center.x * 0.35, y: housing.level + 0.26, z: housing.center.z * 0.35 }, housing.port] });
     for (const pod of new Set([left, right])) connections.push({ id: `${housing.branchId}:${pod.branchId}`, sourceBranchId: housing.branchId, targetBranchId: pod.branchId, sourcePort: housing.port, targetPort: pod.port, kind: 'lattice-link', route: [housing.port, { x: (housing.center.x + pod.center.x) / 2, y: Math.max(housing.level, pod.level) + 0.36, z: (housing.center.z + pod.center.z) / 2 }, pod.port] });
   });
-  return Object.freeze({ seatCount: count, hub, parts: Object.freeze(parts), connections: Object.freeze(connections), cameras: Object.freeze(parts.map((part) => part.camera)), byBranch });
+  return Object.freeze({ seatCount: count, expansionAmount: amount, hub, parts: Object.freeze(parts), connections: Object.freeze(connections), cameras: Object.freeze(parts.map((part) => part.camera)), byBranch });
 }
 export function getBranchCamera(core, branchId) { return core?.byBranch?.get(branchId)?.camera || null; }
 export function resolveBranchCamera(core, branchId) { const part = core?.byBranch?.get(branchId); if (!part?.camera) return null; return Object.freeze({ ...part.camera, target: { ...part.center } }); }
