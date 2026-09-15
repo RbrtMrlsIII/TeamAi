@@ -7,11 +7,11 @@ test.describe('Machine Hero foundation', () => {
     await expect(page.locator('canvas[aria-label="Interactive Machine Hero WebGL preview"]')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Move geometry', exact: true })).toBeVisible();
     const status = page.locator('[data-machine-webgl-state]');
-    await expect(status).toHaveText('subject + wiring follow geometry');
+    await expect(status).toHaveText('payload-driven subject + wiring');
     await page.getByRole('button', { name: 'Move geometry', exact: true }).click();
-    await expect(status).toHaveText('geometry moved · target moved');
+    await expect(status).toHaveText('payload geometry moved · subject + wiring moved');
     await page.getByRole('button', { name: 'Move geometry', exact: true }).click();
-    await expect(status).toHaveText('subject returned to base geometry');
+    await expect(status).toHaveText('payload subject returned to base geometry');
   });
 
   test('remains an isolated preview surface', async ({ page }) => {
