@@ -44,6 +44,26 @@ export function interpolateBranchRadius(collapsed, expanded, amount) {
   return Number(collapsed) + (Number(expanded) - Number(collapsed)) * a;
 }
 
+export function interpolateCamera(from, to, amount) {
+  if (!from || !to) return null;
+  const a = ease(clamp(amount));
+  const lerp = (left, right) => Number(left) + (Number(right) - Number(left)) * a;
+  const point = (left, right) => ({
+    x: lerp(left.x, right.x),
+    y: lerp(left.y, right.y),
+    z: lerp(left.z, right.z),
+  });
+  return Object.freeze({
+    cameraId: to.cameraId,
+    branchId: to.branchId,
+    seatIndex: to.seatIndex ?? null,
+    role: to.role,
+    fov: lerp(from.fov ?? 35, to.fov ?? 35),
+    position: Object.freeze(point(from.position, to.position)),
+    target: Object.freeze(point(from.target, to.target)),
+  });
+}
+
 export function deriveAnimationFrame(core, amount) {
   if (!core) return null;
   const radiusScale = interpolateBranchRadius(1, 1.12, amount);
