@@ -1,12 +1,12 @@
 schema: 1
-manifest_version: 2026-09-15.2
+manifest_version: 2026-09-15.3
 
 active_frontier:
   repository:
     current: CANONICAL_FOUNDATION
     status: IN_RECONCILIATION
   spatial:
-    current: MACHINE-REPLACEMENT-CANDIDATE
+    current: MACHINE_REPLACEMENT_CANDIDATE
     status: DRAFT_NOT_PROMOTED
   backend:
     team_backend_001:
@@ -15,65 +15,66 @@ active_frontier:
       provider_runtime: STUB_ONLY
       conn3_browser_proof: PENDING
 
+canonical_roots:
+  product_law: Product_Law/PRODUCT_LAW.md
+  product_law_wiring: Product_Law/WIRING.md
+  masterplan: Masterplan/MASTERPLAN.md
+  next_slices: Masterplan/NEXT_SLICES.md
+  policy: POLICY.md
+  skill_wiring: docs/SKILL_WIRING.md
+  session: AI_ASSISTANT_READ_ME.md
+  knowledge: PRODUCT-KNOWLEDGE.md
+  archive: docs/archive/
+  historical_handover: handover/
+
 claims:
-  SPATIAL-V3.5:
-    state: COMPLETE
+  SPATIAL-V3.5-BASELINE:
+    state: HISTORICAL_COMPLETE
     evidence:
       - docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md
       - docs/CHECKPOINT_TEAM-EXPERIENCE-029_V3_5_FAR_ENVIRONMENT_2026-09-10.md
       - docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md
     indexes:
-      - MASTERPLAN.md
-      - NEXT_SLICES.md
-      - docs/SKILL_WIRING.md
+      - Product_Law/PRODUCT_LAW.md
+      - AI_ASSISTANT_READ_ME.md
   BACKEND-001-ENDORSED:
     state: ENDORSED_BOUNDED
     evidence:
       - handover/TEAM-BACKEND-001_2026-09-07_PayPal-Aggregate-ReRead.md
-      - docs/project-guide/Endorsement.md
     indexes:
-      - MASTERPLAN.md
-      - docs/project-guide/Endorsement.md
+      - Masterplan/MASTERPLAN.md
+      - AI_ASSISTANT_READ_ME.md
   BACKEND-GATE4:
     state: PARKED_NOT_PROVEN
     evidence:
       - docs/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md
     indexes:
-      - MASTERPLAN.md
+      - Masterplan/MASTERPLAN.md
+      - AI_ASSISTANT_READ_ME.md
   BACKEND-PROVIDER:
     state: STUB_ONLY
     evidence:
       - docs/evidence/TEAM-BACKEND-001_EDGE_RUNTIME_AUDIT_2026-09-06.md
       - docs/TEAM-BACKEND-001_TASK_EXECUTE_EDGE.md
     indexes:
-      - MASTERPLAN.md
+      - Masterplan/MASTERPLAN.md
+      - AI_ASSISTANT_READ_ME.md
   CONN3:
     state: IMPLEMENTED_BROWSER_PROOF_PENDING
     evidence:
       - docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md
     indexes:
-      - MASTERPLAN.md
-      - NEXT_SLICES.md
-
-canonical_indexes:
-  - MASTERPLAN.md
-  - NEXT_SLICES.md
-  - POLICY.md
-  - docs/SKILL_WIRING.md
-  - AI_ASSISTANT_READ_ME.md
-  - PRODUCT-KNOWLEDGE.md
-  - docs/project-guide/Endorsement.md
-
-authoritative_roots:
-  product_law: PRODUCT_LAW.md
-  execution_checklist: MASTERPLAN.md
-  active_frontier: NEXT_SLICES.md
-  execution_policy: POLICY.md
-  skill_routing: docs/SKILL_WIRING.md
-  live_session: AI_ASSISTANT_READ_ME.md
-  knowledge: PRODUCT-KNOWLEDGE.md
-  acceptance: docs/project-guide/Endorsement.md
-  archive: docs/archive/
+      - Masterplan/MASTERPLAN.md
+      - Masterplan/NEXT_SLICES.md
+      - AI_ASSISTANT_READ_ME.md
+  MACHINE-PR-344:
+    state: DRAFT_NOT_PROMOTED
+    evidence:
+      - .github/teamai/execution-state.yml
+    indexes:
+      - Masterplan/MASTERPLAN.md
+      - Masterplan/NEXT_SLICES.md
+      - AI_ASSISTANT_READ_ME.md
 
 workspace:
   branch_prefixes:
@@ -84,12 +85,19 @@ workspace:
     - docs/
     - recovery/
     - delivery/
-  temporary_prefixes:
     - tmp/
   workflow_naming: responsibility_specific
-  auto_branch_deletion: false
+  pr_only_main_changes: true
+  draft_before_merge: true
+  auto_merge: false
+  no_one_slice_one_merge: true
+  no_obsolete_files_registry: true
 
 coupling:
+  product_law:
+    - Product_Law/
+  masterplan:
+    - Masterplan/
   frontend:
     - public/
     - frontend/
@@ -99,8 +107,9 @@ coupling:
   skills:
     - skills/
   governance:
-    - build-system/
     - .github/workflows/
+    - build-system/
+    - scripts/governance/
 
 historical_existing_immutable:
   - docs/archive/
@@ -111,9 +120,19 @@ rules:
   historical_existing_immutable: true
   active_indexes_must_agree: true
   implementation_claim_requires_evidence: true
-  validation_requires_current_index: true
+  validation_uses_pr_base_head: true
+  validation_uses_draft_pr_proof_target: true
   draft_before_merge: true
   auto_merge: false
   no_one_slice_one_merge: true
   no_obsolete_files_registry: true
   fail_closed: true
+
+canonical_indexes:
+  - Product_Law/WIRING.md
+  - Masterplan/MASTERPLAN.md
+  - Masterplan/NEXT_SLICES.md
+  - POLICY.md
+  - docs/SKILL_WIRING.md
+  - AI_ASSISTANT_READ_ME.md
+  - PRODUCT-KNOWLEDGE.md
