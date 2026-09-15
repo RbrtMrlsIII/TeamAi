@@ -14,9 +14,12 @@ This slice is a standalone frontend proof surface. It does not replace the produ
 - Wiring contains an explicit intermediate corridor waypoint.
 - Camera identity remains named while its target follows the derived semantic subject.
 - A different valid semantic pair uses the same camera algorithm.
+- Division expansion is now a real geometry operation: expansion changes dimensions and position, and ports move with the expanded footprint.
+- The graph's rendered parts and subject bounds consume the expanded transition geometry.
+- The standalone WebGL renderer draws the expanded machine divisions and recomputed semantic wiring routes.
 - A standalone WebGL preview renders the machine parts, semantic wiring corridor, and subject footprint.
 - Geometry mutation moves the semantic target, subject, camera target, and wiring endpoints together.
-- Playwright covers the standalone preview URL, WebGL canvas presence, geometry mutation readout, and isolation from the production Hero surface.
+- Playwright covers the standalone preview URL, WebGL canvas presence, expansion-state transition, geometry mutation, and isolation from the production Hero surface.
 
 ## Explicit non-claims
 
@@ -30,4 +33,4 @@ This slice is a standalone frontend proof surface. It does not replace the produ
 
 ## Entry surface
 
-The prototype has its own HTML page: `public/machine-hero-preview.html`. The production `public/index.html` is intentionally unchanged by this slice.
+The prototype has its own HTML page: `public/machine-hero-preview.html`. The production `public/index.html` remains outside the standalone machine runtime contract.
