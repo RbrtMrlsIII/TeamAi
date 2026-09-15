@@ -1,3 +1,262 @@
+<!-- teamai-claim: SPATIAL-V3.5 state=COMPLETE -->
+<!-- teamai-claim: BACKEND-001-ENDORSED state=ENDORSED_BOUNDED -->
+<!-- teamai-claim: BACKEND-GATE4 state=PARKED_NOT_PROVEN -->
+<!-- teamai-claim: BACKEND-PROVIDER state=STUB_ONLY -->
+<!-- teamai-claim: CONN3 state=IMPLEMENTED_BROWSER_PROOF_PENDING -->
+# TeamAi 029 — Current State & Continuation Map
+
+**Status:** Current active reconciliation map for AI-agent recovery  
+**Spatial baseline:** current `main` includes #281 and #282. Their implementation effects are current baseline; historical Issue/PR wording that describes them as unmerged is stale. **No 029-released claim.**  
+**Experience baseline:** owner-directed C0–C10 rebaseline extended by a pre-C9 structural requirement: complete the intended semantic tree/branch/division machine, meaningful spatial travel, connection topology, and turn-loop contribution layer before C9 acceptance.  
+**Authority:** Product Law → Masterplan → Policy/ORUCAVEAM → `docs/VISION.md` → tree/machine contracts → this map → implementation/evidence  
+**Purpose:** provide one compact recovery map so agents can tell what is implemented, proven, partial, planned, retired, and what permits continuation.
+
+## 1. The rule
+
+A green commit, a checkpoint, a deployed function, or a staged asset is not by itself the current frontier.
+
+For every item, distinguish:
+
+`PLANNED → IMPLEMENTED → VERIFIED → RUNTIME-PROVEN → COMPLETED → ENDORSED`
+
+A state may stop between these levels. The reason must be explicit and must not silently become the next requirement.
+
+Once an authorized change is merged to `main`, it is current repository truth. Earlier baselines remain historical evidence or archived state unless explicitly reactivated by a new decision.
+
+## 2. Two development clocks
+
+```text
+029 EXPERIENCE / SPATIAL CLOCK
+Product Law → product meaning → semantic machine structure → geometry/expansion → camera/travel → connection topology → turn-loop visualization → workspace boundary → browser proof → owner acceptance
+
+BACKEND CLOCK
+Backend contracts → identity → Firestore → trusted Edge execution → commerce → provider/runtime → security → endorsement
+```
+
+They meet at the presentation boundary. A 3D face may represent a backend capability, but the face does not become the backend authority.
+
+## 3. Current experience / spatial frontier
+
+| Work family | Current state | What is true | Continuation boundary |
+|---|---|---|---|
+| P1–P7.1 / P-R0 / P-R2 / F | HISTORICAL MERGED | Seat hierarchy/presentation mechanisms exist | Do not treat as proof of complete multi-tree machine |
+| Cam-1–Cam-4 | HISTORICAL FOUNDATION | Camera modules exist | Current travel contract is superseded/extended by #278 tree-machine requirements |
+| Cam-5–Cam-6 / CAM-R1–R3 | MERGED FOUNDATION | selected-seat subject-lock baseline exists | Retain unless a newer authorized spatial contract supersedes it |
+| V0–V3.5 | COMPLETE HISTORICAL LINEAGE | Earlier Vision ladder is implemented | Historical lineage, not final product acceptance |
+| #258 / #259 | MERGED HISTORICAL | camera/chrome retirement decisions remain valid history | Retired camera concepts remain retired |
+| #265 / #266 | MERGED HISTORICAL | entrance↔machine browser proof and chrome reconciliation | Re-owned by current C2–C4 contract |
+| #275 | MERGED | Hero runtime is repository-owned and normal browser/build path does not depend on remote runtime source | Do not reintroduce remote runtime loading without fresh regression evidence |
+| #281 | MERGED | six-button camera wall removed; world navigation consolidated; C6 baseline fallback implemented | Does not prove final tree travel or C9 |
+| #282 | MERGED | classic first-paint presentation reconciliation executed | Deployed visual acceptance still requires fresh browser evidence |
+| **Tree census / #283** | **MERGED BASELINE** | structured tree/node census and authority records are now part of `main` | Must remain synchronized as tree/branch/division implementation evolves |
+| **#278 current frontier** | **ACTIVE** | canonical active 029 execution ledger; current structural machine requirements are blocking C9 | Use the Issue body as the issue-specific guide; comments are evidence-only |
+
+**Retired cameras:** `HERO_LOW_ORBIT` / `TURN_FOLLOW` remain retired and must not be silently recreated under aliases.
+
+## 4. Current tree-machine truth
+
+The complete Hero tree system is **NOT COMPLETE**.
+
+### Semantic tree families
+
+```text
+TREE-DOMAIN
+  Account → Workplace → Project → Seat
+
+TREE-HERO-SEAT
+  Seat Shell → Connection → Behavior → Toolkit → Capabilities
+  → Authorization → Workspace Scope → Task/Evidence
+
+TREE-SKILL-RESPONSIBILITY
+  ToolKit upstream → WebAi Seat responsibility
+  → skill bundle → governance/adaptation/capacity
+```
+
+Current tree status:
+
+- `TREE-DOMAIN` = **INCOMPLETE**
+- `TREE-HERO-SEAT` = **PARTIAL**; current Seat shell mechanism is the proven portion
+- `TREE-SKILL-RESPONSIBILITY` = **INCOMPLETE**
+- Complete multi-tree machine = **NOT COMPLETE**
+
+The detailed structured inventory is held in:
+
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
+
+## 5. Tree construction rule
+
+Every new or reimplemented tree/branch/division follows:
+
+`root truth → treeID / branchId → purpose/responsibility → UI/product payload → expansion requirements → connection topology → adaptive geometry → camera/travel → interaction → contribution route → verification`
+
+Coordinates do not define identity.
+
+A branch is a real integration, not a decorative mesh. Its claimed implementation state depends on semantic purpose, payload, expansion region, adjacency clearance, connection ownership, camera relationship, responsive/reduced-motion behavior, and verification evidence.
+
+Trees may be broad, recursive, asymmetric, and differently sized. Branches can contain branches. No fixed branch depth, equal height, equal width, or universal radius is implied.
+
+## 6. Expansion / machine behavior
+
+The Hero is intended to behave like an expandable technological machine.
+
+A selected tree/branch may expand its corresponding division and reveal the product surfaces belonging to that semantic unit. The geometry must reserve room for its actual payload plus adjacent divisions, wiring corridors, camera travel, and readability.
+
+Maximum Hero expansion is derived from the active participating division footprints, not from a universal scale multiplier.
+
+Opening and closing are stateful spatial transitions and must not be implemented as an instant visibility switch or teleport. Final motion timing remains a living design value.
+
+## 7. Turn-loop / contribution truth
+
+Final turn-loop animation is **NOT COMPLETE** and current timing/motion behavior is not final visual law.
+
+Target semantic flow:
+
+```text
+active WebAi turn
+→ active tree / branch
+→ participating divisions active/open
+→ connection paths spatially available
+→ electricity travels through actual wiring
+→ connected adjacent trees/branches participate
+→ workspace center
+```
+
+This is a visualization of semantic contribution topology, not a disconnected decorative effect.
+
+## 8. Camera / travel truth
+
+- `HERO_LOW_ORBIT` is retired.
+- `TURN_FOLLOW` is retired.
+- Current camera IDs are semantic presentation intents; physical coordinates remain renderer details.
+- Current named-dock / `700 ms` behavior is implementation baseline evidence, not final hierarchy travel.
+- Several hierarchy children can share `SEAT_CLOSE`; therefore changing tree identity may produce little movement today.
+- Continuous tree-to-tree travel remains required.
+- Zoom must eventually represent continuous spatial movement rather than only a threshold ID change.
+
+## 9. Current C0–C10 relationship
+
+```text
+C0 shape endorsement
+→ C1 canonical reconciliation
+→ C2–C5 surface / entrance / world foundations
+→ C6–C7 camera and spatial-travel foundation
+→ required tree / branch / division completion + adaptive geometry
+→ connection topology
+→ turn-loop contribution/electricity layer
+→ C8 authenticated workspace boundary
+→ C9 integrated desktop/mobile owner acceptance
+→ C10 ProMax expression/polish
+```
+
+C9 is intentionally **not ready** while the required tree/branch/division system or integrated turn-loop layer remains incomplete.
+
+C10 is downstream expression. It must not be used to mask missing product semantics, geometry, connectivity, camera travel, or acceptance evidence.
+
+## 10. Current backend frontier
+
+| Gate / item | State | Evidence boundary |
+|---|---|---|
+| Gate 3 identity + Firestore | RUNTIME-PROVEN | live auth + Firestore re-read |
+| Gate 4 emulator/rules | PARKED / NOT PROVEN | no real emulator PASS |
+| Gate 5B/5C commerce | ENDORSED (bounded) | PayPal Sandbox + Firestore |
+| Provider/runtime | STUB ONLY | stub-edge-runtime |
+| Conn-3 | IMPLEMENTED; browser proof pending | not Hero live bind |
+
+## 11. Live service cross-check
+
+**Canonical deployment inventory:** `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`.  
+**Canonical backend claim/evidence status:** `backend/BACKEND_LIVE_SERVICE_STATUS.md`.
+
+The connected Supabase project currently has exactly eight ACTIVE TeamAi Edge Functions:
+
+- `teamai-commerce-intent` v19
+- `teamai-domain-bootstrap` v22
+- `teamai-github-oauth-bind` v8
+- `teamai-github-webhook` v7
+- `teamai-paypal-webhook-v5c` v21
+- `teamai-seat-connection-test` v7
+- `teamai-seat-provider-bind` v7
+- `teamai-task-execute` v12
+
+The obsolete `paypal-webhook` deployment was removed from the connected Supabase project by the operator and is not part of the current active surface. Historical inventories that contain it remain historical evidence only.
+
+Presentation structures remain separate from backend authority.
+
+## 12. Deployment / public surface truth
+
+Current product route ownership is:
+
+```text
+public/    → classic website entrance + explicit 3D world source
+/hero/     → compatibility route
+```
+
+`/spatial/` is **retired**. The former Command Deck is no longer a current product/deployment surface. Its source and historical documents remain in the repository for reconstruction/history, but the published site must not deploy or present it as a workspace authority. Future authenticated workspace responsibilities are re-owned by the spatial machine/workspace-center model.
+
+The public root remains the acceptance starting point. A compatibility route is not a second product authority.
+
+## 13. Issue / comment evidence boundary
+
+Issue-specific product requirements, acceptance conditions, dependencies, and future-agent guidance are maintained in **Issue #278's body**. New issue comments are **evidence-only records**: diagnosis output, actual observed data, warnings/discrepancies, or a factual record of an executed slice. New comments must not become a second checklist or execution plan, and `EXECUTED` does not mean `PROVEN`.
+
+Historical comments remain immutable evidence. When an old comment contains guidance that still matters, the current requirement is transferred to the Issue body or canonical documentation rather than treating the historical comment as active authority.
+
+## 14. Agent continuation rule
+
+Before changing a 3D Hero tree, branch, division, expansion, or connection behavior:
+
+1. Read `docs/VISION.md`.
+2. Read the tree census CSV/JSON/Markdown/XML.
+3. Read the machine interaction and relevant hierarchy contracts.
+4. Establish the exact current implementation owner and current `main` truth.
+5. Reconcile the census in the same governed PR.
+6. Do not reuse another tree's geometry without payload justification.
+7. Do not use animation to simulate missing topology.
+8. Match evidence to the exact claim.
+9. Use Issue #278 body guidance; treat new issue comments as evidence records only.
+
+## 15. Historical continuity
+
+Historical records remain valuable evidence:
+
+- #258/#259 camera retirement and chrome lineage;
+- #275 runtime-delivery hardening;
+- #281 C5/D + C6 foundation;
+- #282 first-paint and agent-bootstrap reconciliation;
+- historical Command Deck implementation/reconciliation lineage.
+
+No historical idea is erased by this current-state map. Retired concepts require a new user/source-of-truth decision before revival.
+
+## 16. Completion language
+
+Do not claim `complete`, `accepted`, `released`, or `ProMax-ready` based on one working tree, a selector, source presence, unit tests, or green CI alone.
+
+The current machine remains a **living construction baseline** until the semantic trees, branches, divisions, adaptive geometry, expansion behavior, connection topology, travel model, turn-loop visual layer, workspace boundary, and owner acceptance are proven at the required level.
+
+## 17. Backend continuation evidence pointer (2026-09-12)
+
+Backend-track fixes are tracked in TEAM-BACKEND-002 (#284), not in this spatial map's tree/machine sections above. Canonical backend status remains `backend/BACKEND_LIVE_SERVICE_STATUS.md`. Current backend-track item: task-lease Firestore field-preservation fix (#287) — repository-level correctness only, does not change TEAM-BACKEND-001's endorsed/bounded scope.
+
+## 18. Backend live-function inventory synchronization (2026-09-12)
+
+The exact connected-Supabase deployment inventory is frozen in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` at eight ACTIVE TeamAi Edge Functions. This map records the same current count and versions only as a recovery pointer; the census is the precise deployment inventory. The legacy `paypal-webhook` surface is absent from the connected runtime after operator deletion. Historical nine-function tables are not current state.
+
+## 19. Command Deck retirement synchronization — owner-directed
+
+The former Command Deck is now a **retired product and deployment surface**. It must not be republished, renamed and republished, or used as a second workspace authority. The current authenticated workspace responsibility belongs to the center of the spatial machine defined by Product Law and Issue #278.
+
+Historical Command Deck source, documentation, tests, and commits are preserved for traceability and reconstruction. Their existence in Git is not evidence that the surface remains part of the current product.
+
+The GitHub Pages deployment no longer publishes `frontend/spatial/` as `/spatial/`.
+
+
+## #298 (phone-overlay-collision fix, follow-up to #278)
+
+Fixed the reported phone-width visual collision between `.spatial-parts`/`.hero-inspection` and `.seat-stack` by separating their breakpoint positioning (left-docked vs right-docked) at `<=520px`, with `.spatial-parts` hidden at `<=360px`. Source-level CSS fix; pending CI and owner browser confirmation at the reported viewport width.
+
 ## Current Seat-1 `SEAT_CONNECTION` vertical — #323 / #325
 
 Seat-1 is the first active vertical beneath `TREE-HERO-SEAT`. The bounded implementation establishes semantic `SEAT_CONNECTION` identity, a connection edge toward `WORKSPACE_CENTER`, stateful division compaction on interactive focus change, and presentation-only synchronization of the visible face label with settled hierarchy state. Previous Seat configuration/payload is preserved during compaction. The vertical is `IMPLEMENTED / RUNTIME-PROVEN` for these bounded behaviors, but this does not close the whole tree-machine program, final expansion animation, final electrical/turn-loop animation, C8, or C9.
@@ -14,12 +273,10 @@ The bounded Seat-1 vertical now has bidirectional settled-focus label synchroniz
 
 ## 03.9 TREE MACHINE — frontend foundation / PR #344
 
-PR **#344** adds an independent frontend foundation from `main`: a renderer-neutral machine scene model, canonical semantic transition object, geometry-derived subject footprint, named camera / semantic target separation, an opt-in inspection preview, live geometry mutation, and reverse semantic-pair test coverage.
+PR **#344** adds an independent frontend foundation from `main`: a renderer-neutral machine scene model, canonical semantic transition object, payload-derived geometry, semantic wiring corridor, named camera / semantic target separation, standalone WebGL preview, and assembled-Hero M6 proof bridge.
 
 Current state is **IMPLEMENTED / TEMPO / EVIDENCE ONLY**. It does not replace the production Hero, does not complete the tree census, does not establish connection topology, and does not satisfy C8/C9/C10 or any full machine-promotion gate by itself.
 
-The slice is governed by the Machine Hero qualification law and uses the frontend machine-builder, semantic-transition auditor, camera-authority auditor, and browser-smoke procedures. The implementation is deliberately isolated so future production rendering can be migrated toward semantic state rather than static camera coordinates.
-
 ### M6 assembled-Hero proof bridge
 
-PR #344 also adds an opt-in `?machine-proof=1` browser proof bridge to the assembled Hero. It reuses the payload → semantic transition → subject → named camera target chain and exposes a controlled geometry mutation. The default Hero path remains presentation-equivalent and the bridge does not claim production renderer replacement or machine promotion; it exists solely to make the M6 evidence path executable.
+The opt-in `?machine-proof=1` browser surface reuses payload → semantic transition → subject → named camera target and exposes controlled geometry mutation on the real Hero page. The default Hero path remains presentation-equivalent. M6 remains pending until fresh browser CI proves the full assembled transition and baseline return.
