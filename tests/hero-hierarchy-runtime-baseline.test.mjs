@@ -14,8 +14,8 @@ const ringMap = read('docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md');
 
 test('R0–R3 remain the currently defined shared ring set', () => {
   for (const ring of ['R0', 'R1', 'R2', 'R3']) {
-    assert.ok(baseline.includes(ring), ring);
-    assert.ok(ringMap.includes(new RegExp(`\\b${ring}\\b`).test(ringMap)), `ring map ${ring}`);
+    assert.match(baseline, new RegExp(`\\b${ring}\\b`), `baseline ${ring}`);
+    assert.match(ringMap, new RegExp(`\\b${ring}\\b`), `ring map ${ring}`);
   }
   assert.match(baseline, /R1\/R2.*planned|R1\/R2.*specified/i);
   assert.match(baseline, /R3.*Seat Ring/i);
