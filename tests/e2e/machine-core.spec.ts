@@ -53,6 +53,17 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-core-state]')).toContainText('opening');
   });
 
+  test('reduced-motion preserves semantic open and close states without a travel animation', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/machine-core-preview.html');
+    const status = page.locator('[data-core-state]');
+    await expect(status).toContainText('reduced-motion collapsed · 0%');
+    await page.getByRole('button', { name: 'Expand', exact: true }).click();
+    await expect(status).toContainText('reduced-motion expanded · 100%');
+    await page.getByRole('button', { name: 'Reset', exact: true }).click();
+    await expect(status).toContainText('reduced-motion collapsed · 0%');
+  });
+
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
