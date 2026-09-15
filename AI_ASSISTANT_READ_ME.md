@@ -22,12 +22,12 @@ Issues, PRs, branches, workflow output, Skills, and archives operate below Produ
 
 ## Current truth
 
-- `PRODUCT_LAW.md` remains the highest product authority. Its semantics were preserved while its document traceability was aligned with the canonical foundation.
-- `MASTERPLAN.md` is now checklist/chronology only.
+- `PRODUCT_LAW.md` remains the highest product authority. Its semantics are preserved; its document traceability now points to the canonical active chain.
+- `MASTERPLAN.md` is checklist/chronology only.
 - `NEXT_SLICES.md` owns one current frontier only.
-- `POLICY.md` owns ORUCAVEAM execution discipline only.
+- `POLICY.md` owns ORUCAVEAM execution discipline and workspace naming discipline only.
 - `docs/SKILL_WIRING.md` owns routing only.
-- `AI_ASSISTANT_READ_ME.md` owns live continuation/recovery/session validation state.
+- `AI_ASSISTANT_READ_ME.md` owns live continuation/recovery/session state.
 - `PRODUCT-KNOWLEDGE.md` owns validated reusable concepts only, never volatile session state.
 - `docs/project-guide/Endorsement.md` records acceptance only.
 - Historical handover/current-state/agent/governance operating guides are retired from active use and preserved under `docs/archive/`.
@@ -37,15 +37,18 @@ Issues, PRs, branches, workflow output, Skills, and archives operate below Produ
 
 ## This session — executed reconciliation
 
-- Consolidated the active governance/document chain into a small canonical set.
-- Archived/retired duplicate current-state, handover, agent-execution, and governance procedure surfaces from active routing.
-- Rewired active Skills, Vision, and Grok alignment to `NEXT_SLICES.md` and `AI_ASSISTANT_READ_ME.md`.
+- Consolidated active governance/documentation into the canonical chain above.
+- Archived/retired duplicate handover, current-state, chronology, agent-execution, and governance-procedure surfaces from active routing.
+- Rewired active Skills, Vision, Grok alignment, and navigation tests to canonical roots.
 - Added fail-closed repository canonical-document synchronization audit.
-- Added a repository synchronization Skill and removed duplicate governance procedures from active routing.
-- Renamed broad CI workflow identities to responsibility-specific names: Repository Governance Integrity, Repository Full-System Verification, Security Static Analysis, Canonical Browser Verification, Spatial Validation Delivery.
-- Tightened pull-request template for draft-first/same-PR canonical synchronization/no-auto-merge discipline.
-- Updated active navigation tests to stop using `NEXT_SLICES.md` as a historical ledger.
-- Closed superseded legacy Hero and governance issues/PRs without deleting their Git history.
+- Added repository synchronization Skill and removed duplicate active governance procedures.
+- Added workspace branch naming and workflow responsibility naming discipline.
+- Renamed workflow identities to: `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, `Canonical Browser Verification`, `Spatial Validation Delivery`.
+- Tightened PR template for draft-first, same-PR canonical synchronization, no-auto-merge, and authority-boundary checks.
+- Closed superseded legacy Hero and governance Issues/PRs while preserving Git history.
+- Closed the superseded #343 governance proposal; #346 is now the single governance foundation draft.
+- Corrected archive validation to allow moving a live document into `docs/archive/` while preventing mutation of already-archived evidence.
+- Corrected canonical marker validation to include Endorsement and to validate the declared manifest version shape rather than a fixed revision.
 
 ## Required session workflow
 
@@ -86,6 +89,12 @@ Never weaken a validator to obtain a green result.
 ## Draft-first merge discipline
 
 Substantive product work starts as a draft PR. Conversion to ready-for-review is a promotion action after required checks, evidence, reconciliation, and review readiness. Auto-merge is not a product execution policy.
+
+## Workspace discipline
+
+New durable branches use purpose-specific prefixes: `frontend/`, `backend/`, `governance/`, `verification/`, `docs/`, `recovery/`, or `delivery/`. Temporary branches use a disposable prefix such as `tmp/`. Existing historical branches are not deleted automatically; cleanup requires no open dependency and no unique recovery/provenance value.
+
+Workflow names state responsibility and verification purpose. Avoid vague names such as `TeamAi`, `AI`, `Build`, or `Test` when a precise responsibility can be stated. Stable workflow filenames may remain unchanged when renaming them would create needless integration churn.
 
 ## Handover rule
 
