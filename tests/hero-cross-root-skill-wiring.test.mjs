@@ -29,7 +29,8 @@ test('SKILL_WIRING names explicit spatial companion routes', () => {
     'responsive/SKILL.md',
     'accessibility/SKILL.md',
   ]) assert.match(wiring, new RegExp(route.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')));
-  assert.match(wiring, /no Hero lighting\/theme skill/i);
+  assert.match(wiring, /Hero lighting\/theme is not a Skill/i);
+  assert.match(wiring, /Do not create a Hero lighting Skill/i);
 });
 
 test('matrix forbids second roots and Hero lighting Skill', () => {
