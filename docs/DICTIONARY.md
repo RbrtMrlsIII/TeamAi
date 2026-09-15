@@ -104,7 +104,7 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 | **ORUCAVEAM** | How a command may be executed safely | A second Product Law |
 | **Field** | Dev responsibility area (Backend, Frontend, …) | Web AI Seat |
 
-**See also:** `PRODUCT_LAW.md`, `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`, `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
+**See also:** `Product_Law/PRODUCT_LAW.md`, `docs/TEAM-BACKEND-002_READ_WRITE_ECONOMY.md`, `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
 
 ---
 
@@ -132,4 +132,4 @@ Each stage is **presentation**. AUTHORIZATION on the spine does **not** grant pe
 | [USER_MANUAL_DEPLOYMENT.md](./USER_MANUAL_DEPLOYMENT.md) | Canonical deploy + operator setup guide |
 | [TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md](./TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md) | Connected-runtime + manual-setup evidence bridge |
 | [AGENT_SLICE_EXECUTION.md](./AGENT_SLICE_EXECUTION.md) | How agents close a slice |
-| `PRODUCT_LAW.md` | Highest product authority |
+| `Product_Law/PRODUCT_LAW.md` | Highest product authority |
