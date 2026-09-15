@@ -1,10 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, readFileSync } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const read = (p) => readFileSync(join(root, p), 'utf8');
 
 test('V3.4 entrance contract remains a historical implementation record', async () => {
   const contract = await readFile(join(root, 'docs/ENTRANCE_IA_LAYOUT_CONTRACT.md'), 'utf8');
