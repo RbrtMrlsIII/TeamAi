@@ -15,7 +15,7 @@ Do not invent a frontend field, root number, theme provider, token namespace, co
 
 A permanent Spatial Theme root may be created only after the existing frontend structure has been inspected and reconciled against:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → spatial coordinator + bounded companion skills`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → spatial coordinator + bounded companion Skills`
 
 ## Inventory method
 
@@ -57,7 +57,7 @@ The final TeamAi visual environment will use one unified theme root:
 - Dark → **Dark Spatial Glassmorphism / Command Space**.
 - Light → **Light Spatial Skeuomorphism / Instrument Space**.
 
-The unified theme root owns the shared semantic token vocabulary and delegates bounded procedures to companion skills. It must not become a duplicate source of domain, identity, scheduler, commerce, approval, or durable-state authority.
+The unified theme root owns the shared semantic token vocabulary and delegates bounded procedures to companion Skills. It must not become a duplicate source of domain, identity, scheduler, commerce, approval, or durable-state authority.
 
 ## Companion routing constraint
 
@@ -70,7 +70,7 @@ The Spatial coordinator routes bounded concerns without absorbing them:
 - `skills/frontend/spatial/accessibility/SKILL.md` — contrast/focus/keyboard/reduced motion.
 - `skills/verification/browser-smoke/SKILL.md` — Playwright browser verification.
 
-No second Spatial Playwright skill is permitted.
+No second Spatial Playwright Skill is permitted.
 
 ## Discrepancy classes to check
 
