@@ -60,6 +60,8 @@ export function buildAdjacentDivisionWiring({
     id: wiringId,
     semantic: 'ADJACENT_DIVISION_WIRING',
     seatIndex,
+    sourceDivisionId: resolvedSourceDivisionId,
+    targetDivisionId: resolvedTargetDivisionId,
     from: {
       divisionId: sourceGeometry.id,
       port: { ...sourceGeometry.port },
