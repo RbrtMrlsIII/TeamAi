@@ -5,10 +5,6 @@ export const CENSUS_FILES = [
   'docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml',
 ];
 
-// These are the repository-owned Hero implementation surfaces whose changes can
-// alter tree/branch/division semantics, payload, expansion, interaction, or
-// spatial wiring. A governed change touching them must reconcile all census
-// representations in the same PR.
 export const CENSUS_GOVERNED_PATHS = [
   'frontend/spatial/',
   'skills/frontend/spatial/',
@@ -19,10 +15,6 @@ export const CENSUS_GOVERNED_PATHS = [
   'public/hero-seat-stack.js',
 ];
 
-// Renderer-neutral machine proof modules do not add or alter census tree
-// semantics. Their machine-scene evidence is carried by the owning evidence
-// record and machine proof matrix; structural census edits remain mandatory
-// whenever a tree/branch/division identity or payload actually changes.
 export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'frontend/spatial/machine-hero-scene.js',
   'frontend/spatial/machine-hero-payload.js',
@@ -36,6 +28,12 @@ export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'public/machine-hero-webgl.js',
   'public/machine-hero-magnificent.js',
   'public/machine-hero-magnificent.html',
+  'frontend/spatial/machine-core-layout.js',
+  'public/machine-core-layout.js',
+  'public/machine-core-layout-runtime.js',
+  'public/machine-core-visual.js',
+  'public/machine-core.css',
+  'public/machine-core-preview.html',
 ]);
 
 export function changedPaths(rows) {
@@ -53,12 +51,7 @@ export function requiresCensusSync(rows) {
 
 export function assertCensusSync(rows) {
   if (!requiresCensusSync(rows)) return;
-
   const paths = new Set(changedPaths(rows));
   const missing = CENSUS_FILES.filter((file) => !paths.has(file));
-  if (missing.length) {
-    throw new Error(
-      '3D Hero implementation changed without synchronized census updates: ' + missing.join(', '),
-    );
-  }
+  if (missing.length) throw new Error('3D Hero implementation changed without synchronized census updates: ' + missing.join(', '));
 }
