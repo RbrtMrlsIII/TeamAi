@@ -5,7 +5,7 @@
 
 Current truth lives in:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → NEXT_SLICES.md → POLICY.md → docs/SKILL_WIRING.md → skills/** → implementation/verification → AI_ASSISTANT_READ_ME.md → Endorsement → PRODUCT-KNOWLEDGE.md`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md → docs/SKILL_WIRING.md → skills/** → implementation/verification → AI_ASSISTANT_READ_ME.md`
 
 ## Repository-foundation reconciliation set
 
@@ -17,6 +17,7 @@ The 2026-09-15 governance foundation retires these active operating surfaces and
 - `PRODUCT-KNOWLEDGE_legacy_2026-09-15.md` — previous mixed knowledge/session material.
 - `AI_ASSISTANT_READ_ME_legacy_2026-09-15.md` — previous live-session guide.
 - `HandOver_legacy_2026-09-15.md` — previous live handover manual.
+- `Endorsement_legacy_2026-09-15.md` — previous acceptance-record document.
 - `project-guide-AI_ASSISTANT_READ_ME_legacy_2026-09-15.md` — duplicate project-guide session guide.
 - `TEAMAI_CURRENT_STATE_legacy_2026-09-15.md` — previous broad current-state index.
 - `TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE_legacy_2026-09-15.md` — previous cross-track chronology/recovery guide.
@@ -33,5 +34,5 @@ Other historical material remains in its existing archive strata, including `doc
 - Preserve historical material; do not rewrite it into current state.
 - Do not use archive documents as active instructions.
 - Do not create or revive `OBSOLETE_FILES.md`.
-- Do not create another active roadmap, current-state index, handover manual, or governance constitution.
-- When a new truth supersedes an active document, update the active owner and add a historical archive record rather than editing the old record into compliance.
+- Do not create another active roadmap, current-state index, handover manual, Endorsement file, or governance constitution.
+- When a new truth supersedes an active document, update the active owner and preserve the previous record historically rather than editing history into compliance.
