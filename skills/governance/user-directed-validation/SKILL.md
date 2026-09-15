@@ -1,32 +1,38 @@
 # Skill: user-directed-validation
 
-**Status:** Active governance skill (Issue #260)  
-**When to use:** User request conflicts with tests, Playwright, governance validators, CI gates, active indexes, skills routing, acceptance criteria, or evidence requirements — or when retiring a product concept after merge.
+**Status:** Active governance procedure
 
-## Authority
+## WHEN TO USE
+When an authorized user/product decision changes behavior encoded by a test, validator, active index, acceptance rule, or retired concept.
 
-- `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md` (canonical)
-- `docs/GOVERNANCE_FAIL_CLOSED.md`
-- `docs/archive/superseded/INDEX.md`
-- Product Law / ORUCAVEAM
+## AUTHORITY
+`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md`
 
-## Action
+## ACTION
+1. Observe the failure or requested truth change.
+2. Classify implementation drift versus intentional authorized truth change.
+3. If the contract changed, update the owning canonical document first.
+4. Reconcile affected active documents in the same PR.
+5. Update validation to assert the new invariant strictly.
+6. Preserve superseded evidence under `docs/archive/` when appropriate.
+7. Record the exact result and limitation in `AI_ASSISTANT_READ_ME.md`.
 
-1. Classify **A** (drift) vs **B** (intentional truth change).
-2. If validation surfaces must change → emit **VALIDATION CHANGE WARNING** before edits.
-3. Update **contract + active indexes** with implementation (no index truncation).
-4. Update validation to enforce the **new** truth (e.g. assert absence of retired cameras).
-5. On retirement: add archive record + INDEX row + compact active redirect.
-6. After merge: treat merged state as **current truth** until deliberately superseded.
+## DO NOT
+- Weaken a validator just to obtain green CI.
+- Rewrite immutable historical evidence.
+- Resurrect retired behavior for old-test compatibility.
+- Create another governance contract when `POLICY.md` or this Skill is sufficient.
+- Treat a passing validator as authority over Product Law.
 
-## Do not
+## PASS
+The canonical contract, implementation, validation, and evidence agree on the new authorized truth, and governance remains fail-closed.
 
-- Weaken or skip `governance-drift` / `evidence-consistency` to go green.
-- Resurrect archived concepts to satisfy old tests.
-- Rewrite historical evidence.
-- Delete recovery/numeric contracts without retain **or** redirect.
-- Self-authorize high-impact validation-boundary changes (need human/source-of-truth approval; PR #132).
+## EVIDENCE
+Record the changed contract, exact verification, scope, and limitation in the owning PR/evidence record and the current session file.
 
-## Pass
-
-Warning recorded; contracts and gates agree; CI fail-closed still holds; archive/redirect present when concepts are retired.
+## SEE ALSO
+- `PRODUCT_LAW.md`
+- `MASTERPLAN.md`
+- `POLICY.md`
+- `skills/governance/repository-synchronization/SKILL.md`
+- `docs/archive/`
