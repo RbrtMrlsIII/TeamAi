@@ -6,7 +6,7 @@
 ## Stable concepts
 
 ### Authority
-Human authority is highest. `PRODUCT_LAW.md` owns product meaning and protected architecture. Lower layers cannot elevate themselves through recency, convenience, tooling, or test output.
+Human authority is highest. `Product_Law/PRODUCT_LAW.md` owns product meaning and protected architecture. Lower layers cannot elevate themselves through recency, convenience, tooling, or test output.
 
 ### Separation
 `application ≠ provider ≠ runtime ≠ model ≠ connection ≠ Seat ≠ skill ≠ capability/tool ≠ workspace ≠ entitlement ≠ authorization`.
@@ -21,13 +21,13 @@ A Skill is reusable procedure, not permission. Better procedure does not expand 
 A Git branch is a contribution surface, not product authority. `main` is the assembled repository state.
 
 ### Validation
-A test proves only the behavior it exercises. When truth intentionally changes, change the canonical contract first and then make validation strict against the new truth.
+A test proves only the behavior it exercises. When truth intentionally changes, change the canonical contract first and then make validation strict against the new truth. Before changing a validator or test, preserve the old invariant explicitly as retained or obsolete and define the replacement invariant.
 
 ### Documentation
-Canonical documents each have one job. Repeating the same rule across multiple active files creates drift risk. Historical material belongs in `docs/archive/` and is not a current source.
+Canonical documents each have one job. Repeating the same rule across multiple active files creates drift risk. Historical material belongs in `docs/archive/` and `handover/` and is not a current source.
 
 ### Session continuity
-Session-specific state must be explicit, compact, and updated at every substantive transition. Historical handovers should not become a second live operating manual.
+Session-specific state must be explicit, compact, and updated at every substantive transition. `AI_ASSISTANT_READ_ME.md` is the live continuity boundary. Historical handover material is not an active operating manual.
 
 ### 3D machine
 Semantic identity precedes payload, payload precedes geometry, geometry precedes expansion/topology, topology precedes camera and animation. Coordinates and camera presets do not define product identity.
@@ -42,6 +42,7 @@ Green CI is evidence, not automatic promotion. Product acceptance is a separate 
 
 - Duplicate active roadmaps.
 - Duplicate active session guides.
+- Parallel Skill namespaces.
 - Validators edited merely to turn red to green.
 - Static documents carrying current state forever without an update rule.
 - Provider/tool/Skill output treated as authority.
