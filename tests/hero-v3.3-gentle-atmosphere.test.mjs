@@ -1,6 +1,6 @@
 /**
- * V3.3 — Gentle Hero atmosphere (Layer A backdrop).
- * Adjust existing #hero-canvas + .hero-aura-* · no second WebGL · no 029-released claim.
+ * V3.3 — Gentle Hero atmosphere (historical Layer A presentation record).
+ * One Hero runtime · no second WebGL · no 029 release claim.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +10,7 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('V3.3 index marks entrance layer and keeps single canvas + aura nodes', async () => {
+test('V3.3 index still preserves the single-canvas entrance invariant', async () => {
   const html = await readFile(join(root, 'public/index.html'), 'utf8');
   assert.match(html, /data-hero-layer="entrance"/);
   assert.match(html, /data-entrance-region="atmosphere"/);
@@ -23,7 +23,7 @@ test('V3.3 index marks entrance layer and keeps single canvas + aura nodes', asy
   assert.match(html, /motion-toggle/);
 });
 
-test('V3.3 CSS defines gentle aura drift and reduced-motion static', async () => {
+test('V3.3 CSS retains gentle atmosphere and reduced-motion behavior', async () => {
   const css = await readFile(join(root, 'public/hero.css'), 'utf8');
   assert.match(css, /\.hero-aura\s*\{/);
   assert.match(css, /hero-aura-drift-a/);
@@ -34,7 +34,7 @@ test('V3.3 CSS defines gentle aura drift and reduced-motion static', async () =>
   assert.match(css, /--hero-atmosphere/);
 });
 
-test('V3.3 hero-aura.js sets gentle atmosphere data and motion flags', async () => {
+test('V3.3 hero-aura.js remains presentation-only', async () => {
   const js = await readFile(join(root, 'public/hero-aura.js'), 'utf8');
   assert.match(js, /data-hero-layer|heroLayer|entrance/);
   assert.match(js, /atmosphere.*gentle|dataset\.atmosphere/);
@@ -45,20 +45,19 @@ test('V3.3 hero-aura.js sets gentle atmosphere data and motion flags', async () 
   assert.doesNotMatch(js, /WebGLRenderer|THREE\.Scene/);
 });
 
-test('V3.3 docs name owners and forbid second runtime', async () => {
+test('V3.3 document remains a historical contract record', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_V3_3_GENTLE_ATMOSPHERE.md'), 'utf8');
   assert.match(doc, /V3\.3/);
   assert.match(doc, /no second WebGL/i);
   assert.match(doc, /hero-aura/);
   assert.match(doc, /no 029-released/);
-  assert.match(doc, /V3\.4/);
 });
 
-test('V3.3 VISION and entrance contract still authorize atmosphere adjust', async () => {
-  const vision = await readFile(join(root, 'docs/VISION.md'), 'utf8');
-  const contract = await readFile(join(root, 'docs/ENTRANCE_IA_LAYOUT_CONTRACT.md'), 'utf8');
-  assert.match(vision, /V3\.3/);
-  assert.match(vision, /Gentle Hero atmosphere/i);
-  assert.match(contract, /entrance-atmosphere/);
-  assert.match(contract, /no second WebGL/i);
+test('V3.3 no longer owns the current frontier', async () => {
+  const vision = await readFile(join(root, 'docs/TEAMAI_VISION_IN_AUTHORITY_CHAIN.md'), 'utf8');
+  const next = await readFile(join(root, 'Masterplan/NEXT_SLICES.md'), 'utf8');
+  assert.match(vision, /single product-experience vision/i);
+  assert.match(vision, /no 029-released claim/i);
+  assert.doesNotMatch(vision, /V3\.3.*Gentle Hero atmosphere adjust/i);
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
 });
