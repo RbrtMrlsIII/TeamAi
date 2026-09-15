@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createMachineAnimation, deriveAnimationFrame, interpolateBranchRadius } from '../frontend/spatial/machine-core-animation.js';
+import { createMachineAnimation, deriveAnimationFrame, interpolateBranchRadius, interpolateCamera } from '../frontend/spatial/machine-core-animation.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 
 test('machine animation opens and closes continuously', () => {
@@ -44,6 +44,20 @@ test('radius interpolation is deterministic', () => {
   assert.equal(interpolateBranchRadius(4, 8, 0), 4);
   assert.equal(interpolateBranchRadius(4, 8, 0.5), 6);
   assert.equal(interpolateBranchRadius(4, 8, 1), 8);
+});
+
+test('semantic camera handoff interpolates movement while retaining destination identity', () => {
+  const from = { cameraId: 'BRANCH_CAMERA_HUB-CORE', branchId: 'HUB-CORE', role: 'hub', fov: 38, position: { x: 10, y: 5, z: 0 }, target: { x: 0, y: 0, z: 0 } };
+  const to = { cameraId: 'BRANCH_CAMERA_BRANCH-SEAT-06', branchId: 'BRANCH-SEAT-06', role: 'branch', fov: 34, position: { x: -2, y: 3, z: 8 }, target: { x: -1, y: 0.6, z: 3 } };
+  const mid = interpolateCamera(from, to, 0.5);
+  assert.equal(mid.cameraId, to.cameraId);
+  assert.equal(mid.branchId, to.branchId);
+  assert.ok(mid.position.x > to.position.x && mid.position.x < from.position.x);
+  assert.ok(mid.target.z > from.target.z && mid.target.z < to.target.z);
+  const end = interpolateCamera(from, to, 1);
+  assert.deepEqual(end.position, to.position);
+  assert.deepEqual(end.target, to.target);
+  assert.equal(end.fov, to.fov);
 });
 
 test('animation frame annotates every module without changing identity', () => {
