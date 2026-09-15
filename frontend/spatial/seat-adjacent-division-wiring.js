@@ -52,7 +52,7 @@ export function buildAdjacentDivisionWiring({
   const length = normalize(Math.max(0.02, Math.hypot(dx, dz)));
   const isHistoricalSeatOneFixture = seatIndex === 0
     && resolvedSourceDivisionId === 'SEAT_CONNECTION'
-    && resolvedTargetDivisionId === 'SEAT_BEHAVIOR';
+    && (!targetDivisionId || resolvedTargetDivisionId === 'SEAT_CONNECTION' || resolvedTargetDivisionId === 'SEAT_BEHAVIOR');
   const wiringId = id || (
     isHistoricalSeatOneFixture
       ? SEAT1_ADJACENCY_WIRING_ID
