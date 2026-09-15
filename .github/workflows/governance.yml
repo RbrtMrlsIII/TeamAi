@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - governance/fail-closed-index-enforcement-2026-09-10
 
 permissions:
   contents: read
@@ -16,7 +15,7 @@ concurrency:
 
 jobs:
   governance-drift:
-    name: governance-drift
+    name: canonical-governance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -28,20 +27,17 @@ jobs:
           node-version: 24
       - name: Syntax check governance validators
         run: |
-          node --check scripts/governance/verify-active-index.mjs
+          node --check scripts/governance/verify-evidence-integrity.mjs
           python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
-      - name: Enforce canonical repository foundation
-        env:
-          TEAMAI_PR_DRAFT: ${{ github.event.pull_request.draft || 'true' }}
-          TEAMAI_PROMOTION_REVIEWED: ${{ vars.TEAMAI_PROMOTION_REVIEWED || '' }}
-        run: python3 build-system/scripts/repository-canonical-governance-audit.py
-      - name: Fail closed on active-index drift
+      - name: Prove draft PR target against full PR delta
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: node scripts/governance/verify-active-index.mjs --mode=governance --base="$BASE_SHA"
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python3 build-system/scripts/repository-canonical-governance-audit.py
 
   evidence-consistency:
-    name: evidence-consistency
+    name: evidence-integrity
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -51,12 +47,8 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
-      - name: Syntax check governance validators
-        run: |
-          node --check scripts/governance/verify-active-index.mjs
-          python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
-      - name: Fail closed on evidence inconsistency
-        run: node scripts/governance/verify-active-index.mjs --mode=evidence
+      - name: Verify evidence boundaries
+        run: node scripts/governance/verify-evidence-integrity.mjs
 
   agent-validation:
     name: agent-validation
@@ -84,8 +76,6 @@ jobs:
             event: process.env.EVENT_NAME,
             governance_drift: 'PASS',
             evidence_consistency: 'PASS',
-            active_index_freshness: 'PASS',
-            historical_integrity: 'PASS',
             validated: true,
             verdict: 'AGENT-WORK-VALID',
           };
