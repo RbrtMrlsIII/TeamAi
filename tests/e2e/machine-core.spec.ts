@@ -66,6 +66,18 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-core-state]')).toContainText('opening');
   });
 
+  test('rapid branch-camera changes remain continuous', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
+    const camera = page.getByLabel('Branch camera');
+    const status = page.locator('[data-core-state]');
+    await camera.selectOption('BRANCH-SEAT-08');
+    await page.waitForTimeout(140);
+    await camera.selectOption('BRANCH-OUTER-GAMMA');
+    await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-GAMMA');
+    await page.waitForTimeout(750);
+    await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-GAMMA');
+  });
+
   test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/machine-core-preview.html');
@@ -105,7 +117,7 @@ test.describe('Modular branch connection core', () => {
     await expect(page.getByText('15 modules · 10 seats · 4 outer housings · 1 hub')).toBeVisible();
   });
 
-  test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
+  test('has no production Hero surface or legacy tree navigation', async ({ page }) =>
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
