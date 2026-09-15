@@ -42,7 +42,21 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-branch-inspector]')).toContainText('BRANCH-SEAT-01');
   });
 
-  test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
+  test('selected branch exposes local configuration controls', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
+    await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-03');
+    const inspector = page.locator('[data-branch-inspector]');
+    await expect(inspector).toContainText('BRANCH-SEAT-03');
+    await inspector.getByLabel('Branch intensity').fill('88');
+    await expect(inspector.getByLabel('Branch intensity')).toHaveValue('88');
+    await expect(inspector.locator('[data-inspector-intensity-value]')).toHaveText('88%');
+    await inspector.getByLabel('Branch configuration profile').selectOption('precision');
+    await expect(inspector).toContainText('precision');
+    await inspector.getByLabel('Branch density').fill('74');
+    await expect(inspector.locator('[data-inspector-density-value]')).toHaveText('74%');
+  });
+
+  test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) =>
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
