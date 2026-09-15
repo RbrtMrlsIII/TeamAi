@@ -4,13 +4,14 @@ const polar = (radius, angle, y = 0) => ({ x: Math.cos(angle) * radius, y, z: Ma
 const DEFAULT_SEAT_COUNT = 10;
 const MIN_SEAT_COUNT = 2;
 const MAX_SEAT_COUNT = 16;
+const OUTER_COUNT = 4;
 const seatLevel = (seatIndex) => 0.60 + ((seatIndex * 0.17) % 0.31);
 
 const outerProfiles = [
-  { branchId: 'BRANCH-OUTER-ALPHA', angleOffset: 0.5, height: 0.94, silhouette: 'fin' },
-  { branchId: 'BRANCH-OUTER-BETA', angleOffset: 1.5, height: 1.08, silhouette: 'arc' },
-  { branchId: 'BRANCH-OUTER-GAMMA', angleOffset: 2.5, height: 0.98, silhouette: 'diamond' },
-  { branchId: 'BRANCH-OUTER-DELTA', angleOffset: 3.5, height: 1.16, silhouette: 'blade' },
+  { branchId: 'BRANCH-OUTER-ALPHA', height: 0.94, silhouette: 'fin' },
+  { branchId: 'BRANCH-OUTER-BETA', height: 1.08, silhouette: 'arc' },
+  { branchId: 'BRANCH-OUTER-GAMMA', height: 0.98, silhouette: 'diamond' },
+  { branchId: 'BRANCH-OUTER-DELTA', height: 1.16, silhouette: 'blade' },
 ];
 
 const silhouetteDimensions = {
@@ -46,19 +47,18 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
     const level = seatLevel(seatIndex);
     const center = polar(expanded ? 4.55 : 4.05, angle, level);
     const dims = silhouetteDimensions.pod;
+    const branchId = `BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`;
     return {
       id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`,
-      branchId: `BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`,
-      seatIndex,
-      kind: 'inner-pod', level, center, dimensions: { ...dims },
+      branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims },
       silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration',
       port: polar(expanded ? 1.02 : 0.92, angle, level),
-      camera: makeCamera(`BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`, polar(7.6, angle, level + 2.9), center, seatIndex),
+      camera: makeCamera(branchId, polar(7.6, angle, level + 2.9), center, seatIndex),
     };
   });
 
-  const outer = outerProfiles.map((profile) => {
-    const angle = TAU * profile.angleOffset / 4;
+  const outer = outerProfiles.map((profile, outerIndex) => {
+    const angle = TAU * (outerIndex * count / OUTER_COUNT + 0.5) / count;
     const center = polar(expanded ? 7.15 : 6.45, angle, profile.height);
     const dims = silhouetteDimensions[profile.silhouette];
     return {
@@ -79,9 +79,9 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
     route: [hub.port, { x: pod.center.x * 0.52, y: Math.max(hub.level, pod.level) + 0.22, z: pod.center.z * 0.52 }, pod.port],
   });
   outer.forEach((housing, index) => {
-    const base = Math.round(index * count / outer.length);
+    const base = Math.floor(index * count / OUTER_COUNT + 0.5);
     const left = inner[base % count];
-    const right = inner[(base + Math.max(1, Math.round(count / outer.length))) % count];
+    const right = inner[(base + 1) % count];
     connections.push({ id: `${housing.branchId}:HUB`, sourceBranchId: 'HUB-CORE', targetBranchId: housing.branchId, sourcePort: hub.port, targetPort: housing.port, kind: 'outer-spine', route: [hub.port, { x: housing.center.x * 0.35, y: housing.level + 0.26, z: housing.center.z * 0.35 }, housing.port] });
     for (const pod of new Set([left, right])) connections.push({ id: `${housing.branchId}:${pod.branchId}`, sourceBranchId: housing.branchId, targetBranchId: pod.branchId, sourcePort: housing.port, targetPort: pod.port, kind: 'lattice-link', route: [housing.port, { x: (housing.center.x + pod.center.x) / 2, y: Math.max(housing.level, pod.level) + 0.36, z: (housing.center.z + pod.center.z) / 2 }, pod.port] });
   });
