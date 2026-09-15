@@ -14,9 +14,9 @@ test('WebGL machine preview is opt-in and separate from production canvas', () =
   assert.match(page, /mountMachineWebGLPreview/);
 });
 
-test('WebGL projector resolves its browser payload and graph dependencies', () => {
-  assert.match(source, /\.\/machine-hero-payload\.js/);
+test('WebGL projector resolves its browser graph dependency and graph resolves payload dependency', () => {
   assert.match(source, /\.\/machine-hero-graph\.js/);
+  assert.match(graph, /\.\/machine-hero-scene\.js/);
   assert.match(payload, /createMachineTransitionFromPayload/);
   assert.match(graph, /createMachineGraph/);
 });
