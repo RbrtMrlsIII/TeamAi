@@ -30,6 +30,20 @@ test('all branches and hub have independent camera profiles', () => {
   for (const part of core.parts) assert.equal(getBranchCamera(core, part.branchId).branchId, part.branchId);
 });
 
+test('every module owns a UI surface suited to its geometry and style', () => {
+  const core = createBranchConnectionCore();
+  for (const part of core.parts) {
+    assert.ok(part.uiStyle);
+    assert.ok(part.uiSurface);
+    assert.ok(part.uiSurface.width > 0);
+    assert.ok(part.uiSurface.depth > 0);
+    assert.ok(part.uiSurface.clearance >= part.seam);
+    assert.equal(part.uiSurface.anchor.y > part.level, true);
+  }
+  assert.equal(core.hub.uiSurface.style, 'command-core');
+  assert.equal(new Set(core.parts.filter((part) => part.kind === 'outer-housing').map((part) => part.uiSurface.style)).size, 4);
+});
+
 test('inner pods are evenly spaced around the hub and have explicit gaps', () => {
   const core = createBranchConnectionCore();
   const pods = core.parts.filter((part) => part.kind === 'inner-pod');
