@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+// The machine candidate is intentionally verified on every PR synchronization.
 test.describe('Modular branch connection core', () => {
   test('renders the isolated 15-part ten-seat core and supports animated expansion', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
@@ -132,7 +133,7 @@ test.describe('Modular branch connection core', () => {
     await expect(page.getByText('15 modules · 10 seats · 4 outer housings · 1 hub')).toBeVisible();
   });
 
-  test('has no production Hero surface or legacy tree navigation', async ({ page }) =>
+  test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
     await expect(page.locator('.machine-core-shell')).toHaveAttribute('data-core-boot', 'ready');
     await expect(page.locator('#hero-canvas')).toHaveCount(0);
