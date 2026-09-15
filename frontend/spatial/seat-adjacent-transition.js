@@ -1,11 +1,12 @@
 /**
  * 031 semantic adjacent-division transition resolver.
- * Presentation-only reusable mechanism. It composes the existing geometry,
- * expansion, and wiring contracts without activating a new tree/branch pair.
+ * Presentation-only reusable mechanism. It composes geometry, expansion,
+ * wiring, and the semantic subject without activating a new tree/branch pair.
  */
 import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
 import { buildAdjacentDivisionExpansionEnvelope, advanceAdjacentDivisionExpansion } from './seat-adjacent-division-expansion.js';
 import { buildAdjacentDivisionWiring } from './seat-adjacent-division-wiring.js';
+import { buildAdjacentDivisionSubject } from './seat-adjacent-subject.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || 0));
 
@@ -17,14 +18,7 @@ export function adjacentTransitionIdentity({ seatIndex, sourceDivisionId, target
   return `TREE-HERO-SEAT#${seat}:${sourceDivisionId}:${targetDivisionId}:ADJACENT_TRANSITION`;
 }
 
-export function buildAdjacentDivisionGeometry({
-  center,
-  angle,
-  radialDistance,
-  payload,
-  workspaceTarget,
-  divisionId,
-} = {}) {
+export function buildAdjacentDivisionGeometry({ center, angle, radialDistance, payload, workspaceTarget, divisionId } = {}) {
   if (!divisionId) throw new Error('adjacent division geometry requires a division identity');
   return buildSeatDivisionGeometry({ center, angle, radialDistance, payload, workspaceTarget, id: divisionId });
 }
@@ -40,35 +34,22 @@ export function buildAdjacentDivisionTransition({
   clearance = 0.16,
   corridorRadius = 0.025,
 } = {}) {
-  if (!sourceGeometry || !targetGeometry) {
-    throw new Error('adjacent transition requires source and target geometry');
-  }
-  if (!sourceGeometry.port || !targetGeometry.port) {
-    throw new Error('adjacent transition requires source and target semantic ports');
-  }
+  if (!sourceGeometry || !targetGeometry) throw new Error('adjacent transition requires source and target geometry');
+  if (!sourceGeometry.port || !targetGeometry.port) throw new Error('adjacent transition requires source and target semantic ports');
 
   const identity = adjacentTransitionIdentity({ seatIndex, sourceDivisionId, targetDivisionId });
   const source = clamp(sourceAmount, 0, 1);
   const target = clamp(targetAmount, 0, 1);
   const expansion = buildAdjacentDivisionExpansionEnvelope({
-    seatIndex,
-    sourceDivisionId,
-    targetDivisionId,
-    sourceGeometry,
-    targetGeometry,
-    sourceAmount: source,
-    targetAmount: target,
-    corridorRadius,
-    adjacencyGap: clearance,
+    seatIndex, sourceDivisionId, targetDivisionId, sourceGeometry, targetGeometry,
+    sourceAmount: source, targetAmount: target, corridorRadius, adjacencyGap: clearance,
   });
   const wiring = buildAdjacentDivisionWiring({
-    seatIndex,
-    sourceDivisionId,
-    targetDivisionId,
-    sourceGeometry,
-    targetGeometry,
-    clearance,
-    amount: source,
+    seatIndex, sourceDivisionId, targetDivisionId, sourceGeometry, targetGeometry,
+    clearance, amount: source,
+  });
+  const subject = buildAdjacentDivisionSubject({
+    seatIndex, sourceDivisionId, targetDivisionId, sourceGeometry, targetGeometry, expansion, wiring,
   });
 
   return {
@@ -78,11 +59,14 @@ export function buildAdjacentDivisionTransition({
     targetDivisionId,
     sourceGeometry,
     targetGeometry,
+    sourcePort: { ...sourceGeometry.port },
+    targetPort: { ...targetGeometry.port },
     sourceAmount: source,
     targetAmount: target,
     phase: target > 0 ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
     expansion,
     wiring,
+    subject,
     presentationOnly: true,
   };
 }
@@ -109,4 +93,4 @@ export function advanceAdjacentDivisionTransition(state, elapsedMs, sourceDurati
   };
 }
 
-// 031: shared semantic transition remains the only active fixture for now.
+// 031: Seat-1 Connection→Behavior remains the only active production fixture.
