@@ -2,20 +2,20 @@
 
 **Status:** OPERATING MAP / NOT PRODUCT LAW  
 **Date:** 2026-09-15  
-**Authority:** `PRODUCT_LAW.md` → `MASTERPLAN.md` → `NEXT_SLICES.md` → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md`  
+**Authority:** `Product_Law/PRODUCT_LAW.md` → `Masterplan/MASTERPLAN.md` → `Masterplan/NEXT_SLICES.md` → `POLICY.md` / ORUCAVEAM → `docs/SKILL_WIRING.md`  
 **Purpose:** Tell a Grok Build / Grok App Builder session how to continue TeamAi without importing the sandbox’s default stack as a second architecture.
 
 When a Grok sandbox skill and a TeamAi repository skill disagree, **the GitHub repository wins**. Grok skill folders are a **procedural cache / host environment**, never Product Law, never identity, never durable state, never commerce.
 
 ## 1. Recovery order for a Grok session on TeamAi
 
-1. `PRODUCT_LAW.md`
-2. `MASTERPLAN.md`
-3. `NEXT_SLICES.md` (sole active frontier)
-4. `POLICY.md` / ORUCAVEAM → `skills/execution/orucaveam/SKILL.md`
-5. `docs/SKILL_WIRING.md`
-6. **This file**
-7. `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md` (technical camera ledger when relevant)
+1. `Product_Law/PRODUCT_LAW.md`
+2. `Product_Law/WIRING.md`
+3. `Masterplan/MASTERPLAN.md`
+4. `Masterplan/NEXT_SLICES.md` (sole active frontier)
+5. `POLICY.md` / ORUCAVEAM → `skills/execution/orucaveam/SKILL.md`
+6. `docs/SKILL_WIRING.md`
+7. **This file**
 8. Concrete `skills/**/SKILL.md` for the current slice
 9. `AI_ASSISTANT_READ_ME.md` for current session/recovery state
 
@@ -75,16 +75,17 @@ A Grok session on TeamAi passes this alignment when:
 
 - it did not add a competing auth/database/theme/runtime architecture;
 - it loaded the TeamAi Skills for the slice actually executed;
-- it used `NEXT_SLICES.md` as the current frontier rather than historical roadmap files;
+- it used `Masterplan/NEXT_SLICES.md` as the current frontier rather than historical roadmap files;
 - it left `AI_ASSISTANT_READ_ME.md` current for the session;
-- historical continuity records remain under `docs/archive/` and are not used as active instructions;
+- historical continuity records remain under `docs/archive/` and `handover/` and are not used as active instructions;
 - any Grok-host preview is not claimed as TeamAi production delivery.
 
 ## SEE ALSO
 
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
-- `NEXT_SLICES.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Product_Law/WIRING.md`
+- `Masterplan/MASTERPLAN.md`
+- `Masterplan/NEXT_SLICES.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 - `AI_ASSISTANT_READ_ME.md`
