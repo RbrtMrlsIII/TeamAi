@@ -13,7 +13,7 @@ const read = (p) => readFileSync(join(root, p), 'utf8');
 
 const camera = read('public/hero-semantic-camera.js');
 const stack = read('public/hero-seat-stack.js');
-const next = read('docs/TEAMAI_3D_HERO_NEXT_SLICES.md');
+const next = read('Masterplan/NEXT_SLICES.md');
 const map = read('docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md');
 
 test('SEMANTIC_CAMERAS includes both MECHANISM_ZIPSKILLS and WORKSPACE_ZIPSKILLS', () => {
@@ -49,7 +49,6 @@ test('docs prefer WORKSPACE_ZIPSKILLS and record Slice H', () => {
 });
 
 test('presentation-only: ZipSkills alias does not assert entitlement grants', () => {
-  // Denial language ("not required setup") is OK; fail only on positive entitlement assignment.
   assert.doesNotMatch(camera, /entitlement\s*=\s*true/i);
   assert.doesNotMatch(camera, /grantsPermission:\s*true/);
   assert.match(stack, /presentationOnly:\s*true/);
