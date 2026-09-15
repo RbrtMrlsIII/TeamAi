@@ -16,6 +16,7 @@ This slice is a standalone frontend proof surface. It does not replace the produ
 - A different valid semantic pair uses the same camera algorithm.
 - A standalone WebGL preview renders the machine parts, semantic wiring corridor, and subject footprint.
 - Geometry mutation moves the semantic target, subject, camera target, and wiring endpoints together.
+- Playwright covers the standalone preview URL, WebGL canvas presence, geometry mutation readout, and isolation from the production Hero surface.
 
 ## Explicit non-claims
 
