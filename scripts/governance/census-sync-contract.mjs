@@ -32,6 +32,7 @@ export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'public/machine-hero-magnificent.html',
   'public/machine-core-layout.js',
   'public/machine-core-layout-runtime.js',
+  'public/machine-core-animation.js',
   'public/machine-core-interaction.js',
   'public/machine-core-visual.js',
   'public/machine-core.css',
