@@ -25,9 +25,11 @@ export const CENSUS_GOVERNED_PATHS = [
 // whenever a tree/branch/division identity or payload actually changes.
 export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'frontend/spatial/machine-hero-scene.js',
+  'frontend/spatial/machine-hero-payload.js',
   'public/machine-hero-scene.js',
   'public/machine-hero-preview.js',
   'public/machine-hero-preview.css',
+  'public/machine-hero-preview.html',
   'public/machine-hero-webgl.js',
 ]);
 
