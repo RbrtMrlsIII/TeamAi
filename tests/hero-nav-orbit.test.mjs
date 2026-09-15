@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
@@ -16,7 +15,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
 const baseline = await readFile(new URL('../docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md', import.meta.url), 'utf8');
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-const next = await readFile(new URL('../docs/TEAMAI_3D_HERO_NEXT_SLICES.md', import.meta.url), 'utf8');
+const next = await readFile(new URL('../NEXT_SLICES.md', import.meta.url), 'utf8');
 
 test('nav zoom bounds match §9', () => {
   assert.equal(NAV_ZOOM_MIN, 0.72);
@@ -34,11 +33,10 @@ test('hero-flex uses Cam-3 tree-center nav + named zoom bounds', () => {
   assert.doesNotMatch(hero, /clamp\(navZoom \+ delta, 0\.72, 1\.55\)/);
 });
 
-test('next slices ladder records A/B merged and C next', () => {
-  assert.match(next, /#150/);
-  assert.match(next, /#151/);
-  assert.match(next, /NAVIGATE/);
-  assert.match(next, /not required/i);
+test('next slices exposes one current frontier', () => {
+  assert.equal((next.match(/^## Current slice$/gm) || []).length, 1);
+  assert.match(next, /Governance Foundation|machine replacement/i);
+  assert.match(next, /draft/i);
 });
 
 test('HIERARCHY_INPUT exposes NAVIGATE', () => {
