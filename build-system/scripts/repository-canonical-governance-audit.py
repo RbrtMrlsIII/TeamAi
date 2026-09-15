@@ -9,6 +9,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+AUTHORITY_MANIFEST = ".github/teamai/authority-manifest.yml"
 CANONICAL_ROOTS = {
     "Product_Law/PRODUCT_LAW.md",
     "Product_Law/WIRING.md",
@@ -18,6 +19,7 @@ CANONICAL_ROOTS = {
     "docs/SKILL_WIRING.md",
     "AI_ASSISTANT_READ_ME.md",
     "PRODUCT-KNOWLEDGE.md",
+    AUTHORITY_MANIFEST,
 }
 FORBIDDEN_ACTIVE = {
     "PRODUCT_LAW.md",
@@ -36,6 +38,19 @@ FORBIDDEN_ACTIVE = {
 }
 FORBIDDEN_DIRS = {"docs/skills"}
 HISTORICAL_PREFIXES = ("docs/archive/", "docs/evidence/", "handover/")
+REQUIRED_MANIFEST_PATHS = {
+    "Product_Law/PRODUCT_LAW.md",
+    "Product_Law/WIRING.md",
+    "Masterplan/MASTERPLAN.md",
+    "Masterplan/NEXT_SLICES.md",
+    "POLICY.md",
+    "docs/SKILL_WIRING.md",
+    "skills/",
+    "AI_ASSISTANT_READ_ME.md",
+    "PRODUCT-KNOWLEDGE.md",
+    "docs/archive/",
+    "handover/",
+}
 
 
 def fail(message: str) -> None:
@@ -76,7 +91,7 @@ def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
 
 def proof_target(payload: dict) -> str:
     body = ((payload.get("pull_request") or {}).get("body") or "").strip()
-    match = re.search(r"^###\s+Draft proof target\s*$([\s\S]*?)(?=^###\s|\Z)", body, re.MULTILINE)
+    match = re.search(r"^##?\s+Draft proof target\s*$([\s\S]*?)(?=^##?\s|\Z)", body, re.MULTILINE)
     return match.group(1).strip() if match else ""
 
 
@@ -86,7 +101,25 @@ def changed_paths(base: str | None, head: str | None) -> set[str]:
     return {p for p in run("git", "diff", "--name-only", f"{base}...{head}").splitlines() if p.strip()}
 
 
+def assert_manifest() -> None:
+    if not exists(AUTHORITY_MANIFEST):
+        fail(f"missing canonical authority manifest: {AUTHORITY_MANIFEST}")
+    text = read(AUTHORITY_MANIFEST)
+    if "status: ACTIVE" not in text:
+        fail("authority manifest must be ACTIVE")
+    for required in REQUIRED_MANIFEST_PATHS:
+        if required not in text:
+            fail(f"authority manifest missing canonical path/namespace: {required}")
+    if "docs/skills" not in text or "forbidden_parallel_namespaces:" not in text:
+        fail("authority manifest must explicitly forbid docs/skills")
+    if "draft_first: true" not in text or "auto_merge: false" not in text:
+        fail("authority manifest must declare draft-first and no-auto-merge policy")
+    if "pr_scope: BASE...HEAD" not in text:
+        fail("authority manifest must declare BASE...HEAD governance scope")
+
+
 def assert_roots() -> None:
+    assert_manifest()
     for rel in CANONICAL_ROOTS:
         if not exists(rel):
             fail(f"missing canonical root: {rel}")
@@ -141,12 +174,12 @@ def assert_roles() -> None:
             fail(f"PRODUCT-KNOWLEDGE.md contains volatile session context: {pattern}")
 
 
-def active_reference_scan() -> None:
+def assert_active_reference_policy() -> None:
     for p in ROOT.rglob("*"):
         if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
             continue
         rel = p.relative_to(ROOT).as_posix()
-        if rel in CANONICAL_ROOTS or rel.startswith(HISTORICAL_PREFIXES):
+        if rel.startswith(HISTORICAL_PREFIXES) or rel == AUTHORITY_MANIFEST:
             continue
         try:
             body = p.read_text(encoding="utf-8")
@@ -162,7 +195,8 @@ def assert_proof_target(payload: dict, paths: set[str]) -> None:
     if not target:
         fail("Draft PR must contain a 'Draft proof target' section describing what the PR is trying to prove")
     target_lower = target.lower()
-    if not any(word in target_lower for word in ("governance", "canonical", "reconciliation", "migration")):
+    required_terms = ("governance", "canonical", "reconciliation", "migration")
+    if not any(word in target_lower for word in required_terms):
         fail("Draft proof target does not describe the governance/canonical migration being proven")
     if "Product_Law/" in target and not any(p.startswith("Product_Law/") for p in paths):
         fail("proof target names Product_Law but PR does not change Product_Law")
@@ -199,7 +233,7 @@ def main() -> None:
     assert_roots()
     assert_current_slice()
     assert_roles()
-    active_reference_scan()
+    assert_active_reference_policy()
     assert_historical_paths(paths)
     if payload.get("pull_request"):
         assert_proof_target(payload, paths)
@@ -209,6 +243,8 @@ def main() -> None:
     print(f"changed_paths={len(paths)}")
     print("delta_source=git diff BASE...HEAD")
     print("proof_target_source=github.event.pull_request.body")
+    print("authority_manifest=.github/teamai/authority-manifest.yml")
+    print("active_vs_historical=explicit")
 
 
 if __name__ == "__main__":
