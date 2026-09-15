@@ -41,6 +41,7 @@ The machine builder owns the construction procedure. It does not own product sem
 Relevant spatial companions are selected only when required:
 
 - `skills/frontend/spatial/hierarchy-runtime/SKILL.md`
+- `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md`
 - `skills/frontend/spatial/motion/SKILL.md`
 - `skills/frontend/spatial/transition/SKILL.md`
 - `skills/frontend/spatial/responsive/SKILL.md`
@@ -54,6 +55,10 @@ Relevant spatial companions are selected only when required:
 Every executable `Masterplan/MASTERPLAN.md` item must resolve to concrete Skill path(s), or explicitly state `No skill required` with rationale. A folder name alone is not routing.
 
 A missing reusable Skill is an execution gap. Do not create a governance document as a substitute for a Skill.
+
+## Non-Skill boundary
+
+Hero lighting/theme is not a Skill. It is owned by the canonical presentation adapter and theme root. Do not create a Hero lighting Skill.
 
 ## History rule
 
