@@ -156,5 +156,14 @@
     "coordinatesDefineIdentity": false,
     "current700msLerp": "implementation baseline, not final travel language",
     "continuousTreeTravelRequired": true
+  },
+  "adjacentDivisionTransitionPrimitive": {
+    "status": "IMPLEMENTED_PARTIAL",
+    "identityPattern": "TREE-HERO-SEAT#{seatIndex}:{sourceDivisionId}:{targetDivisionId}:ADJACENT_TRANSITION",
+    "activeFixture": "TREE-HERO-SEAT#0:SEAT_CONNECTION→SEAT_BEHAVIOR",
+    "reusable": true,
+    "presentationOnly": true,
+    "finalAnimation": "NOT_FINAL",
+    "finalElectricalTopology": "NOT_FINAL"
   }
 }
