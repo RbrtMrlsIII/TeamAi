@@ -34,6 +34,8 @@ export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'public/machine-hero-preview.css',
   'public/machine-hero-preview.html',
   'public/machine-hero-webgl.js',
+  'public/machine-hero-magnificent.js',
+  'public/machine-hero-magnificent.html',
 ]);
 
 export function changedPaths(rows) {
