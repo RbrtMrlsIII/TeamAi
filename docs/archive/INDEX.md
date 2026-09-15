@@ -28,6 +28,7 @@ The 2026-09-15 governance foundation retires these active operating surfaces and
 - `TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST_legacy_2026-09-15.md` — previous 029 checklist.
 - `CHECKPOINT_029_PAGES_ASSET_INTEGRITY_DIAGNOSIS_2026-09-14.md` — historical Pages deployment-integrity diagnosis and browser evidence scope.
 - `CHECKPOINT_029_MAIN_MERGE_GATE_DIAGNOSIS_2026-09-14.md` — historical main-merge-gate control-plane diagnosis and ruleset evidence.
+- `START_HERE_FOR_NEW_SESSIONS.legacy.md` — retired duplicate session entrypoint, superseded by `AI_ASSISTANT_READ_ME.md`.
 
 Other historical material remains in its existing archive strata, including `docs/archive/superseded/` and evidence-specific folders. Those records remain historical and are not reintroduced into active routing.
 
