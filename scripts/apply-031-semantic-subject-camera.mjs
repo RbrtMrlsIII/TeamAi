@@ -37,9 +37,21 @@ if (!text.includes('semanticSubjectCameraTargetApplied')) {
   const setCameraPattern = /function setCamera\(id\)\{[\s\S]*?\}\nlet viewW/;
   const match = text.match(setCameraPattern);
   if (!match) throw new Error('setCamera replacement boundary missing');
-  const replacement = `function setCamera(id){\n  const table=cameras();\n  const semanticSubject=typeof hierarchyRuntime!=='undefined'?hierarchyRuntime.seat1AdjacentSubject:null;\n  const resolved=resolveHeroCameraState({requestedCameraId:id,hierarchyCameraId:typeof hierarchyRuntime!=='undefined'?hierarchyRuntime.cameraId:null,subject:semanticSubject,fallbackTarget:table[id]?.t||table.HERO_WIDE?.t});\n  let next=table[resolved.cameraId]||table.HERO_WIDE;\n  if(typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&typeof resolveSelectedSeatDock==='function'){\n    const seatDock=resolveSelectedSeatDock(resolved.cameraId,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),{force:true});\n    if(seatDock)next=seatDock;\n  }\n  const semanticCameraTargeted=Boolean(semanticSubject);\n  if(semanticCameraTargeted)next=applySemanticSubjectCameraTarget(next,semanticSubject);\n  cameraId=resolved.cameraId;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();\n  if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=resolved.cameraId;hierarchyRuntime.semanticSubjectCameraTargetApplied=semanticCameraTargeted;}\n}\nlet viewW`;
+  const replacement = `let explicitCameraOverride = false;\nfunction setCamera(id, options = {}){\n  const table=cameras();\n  const semanticSubject=typeof hierarchyRuntime!=='undefined'?hierarchyRuntime.seat1AdjacentSubject:null;\n  const resolved=resolveHeroCameraState({requestedCameraId:id,hierarchyCameraId:typeof hierarchyRuntime!=='undefined'?hierarchyRuntime.cameraId:null,subject:semanticSubject,fallbackTarget:table[id]?.t||table.HERO_WIDE?.t});\n  let next=table[resolved.cameraId]||table.HERO_WIDE;\n  if(typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&typeof resolveSelectedSeatDock==='function'){\n    const seatDock=resolveSelectedSeatDock(resolved.cameraId,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),{force:true});\n    if(seatDock)next=seatDock;\n  }\n  const semanticCameraTargeted=Boolean(semanticSubject);\n  if(semanticCameraTargeted)next=applySemanticSubjectCameraTarget(next,semanticSubject);\n  cameraId=resolved.cameraId;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();\n  explicitCameraOverride = !options.internal;\n  if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=resolved.cameraId;hierarchyRuntime.semanticSubjectCameraTargetApplied=semanticCameraTargeted;hierarchyRuntime.explicitCameraOverride=explicitCameraOverride;}\n}\nlet viewW`;
   text = text.replace(setCameraPattern, replacement);
 }
+
+if (text.includes('function followHierarchyTreeCamera') && !text.includes('explicitCameraOverride) return null;')) {
+  text = text.replace(
+    'function followHierarchyTreeCamera(){',
+    'function followHierarchyTreeCamera(){\n  if (explicitCameraOverride) return null;',
+  );
+}
+
+text = text.replace(
+  'setCamera(treeCam.cameraId);',
+  'setCamera(treeCam.cameraId,{ internal: true });',
+);
 
 if (!text.includes('hierarchyRuntime.seat1AdjacentSubject=transition.subject')) {
   const anchor = '  hierarchyRuntime.seat1AdjacentWiring = {';
@@ -52,12 +64,12 @@ if (!text.includes('hierarchyRuntime.seat1AdjacentSubject=transition.subject')) 
 if (!text.includes('hierarchyRuntime.seat1AdjacentSubject=null')) {
   const clear = '    hierarchyRuntime.seat1AdjacentWiring = null;';
   if (!text.includes(clear)) throw new Error('adjacent wiring clear anchor missing');
-  text = text.replace(clear, `${clear}\n    hierarchyRuntime.seat1AdjacentTransition=null;\n    hierarchyRuntime.seat1AdjacentSubject=null;\n    hierarchyRuntime.semanticSubjectCameraTargetApplied=false;`);
+  text = text.replace(clear, `${clear}\n    hierarchyRuntime.seat1AdjacentTransition=null;\n    hierarchyRuntime.seat1AdjacentSubject=null;\n    hierarchyRuntime.semanticSubjectCameraTargetApplied=false;\n    explicitCameraOverride=false;\n    hierarchyRuntime.explicitCameraOverride=false;`);
 }
 
 const apiAnchor = 'getSeat1AdjacentWiring:()=>hierarchyRuntime.seat1AdjacentWiring || null,';
 if (text.includes(apiAnchor) && !text.includes('getSeat1AdjacentSubject:()=>hierarchyRuntime.seat1AdjacentSubject || null,')) {
-  text = text.replace(apiAnchor, `${apiAnchor}\ngetSeat1AdjacentSubject:()=>hierarchyRuntime.seat1AdjacentSubject || null,\ngetSemanticSubjectCameraTargetApplied:()=>Boolean(hierarchyRuntime.semanticSubjectCameraTargetApplied),`);
+  text = text.replace(apiAnchor, `${apiAnchor}\ngetSeat1AdjacentSubject:()=>hierarchyRuntime.seat1AdjacentSubject || null,\ngetSemanticSubjectCameraTargetApplied:()=>Boolean(hierarchyRuntime.semanticSubjectCameraTargetApplied),\ngetExplicitCameraOverride:()=>Boolean(explicitCameraOverride),`);
 }
 
 writeFileSync(heroPath, text);
