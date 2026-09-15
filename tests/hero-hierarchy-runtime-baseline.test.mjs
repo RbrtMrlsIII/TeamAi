@@ -69,10 +69,11 @@ test('R1–R10 remain the shared root set', () => {
   }
 });
 
-test('skill wiring points at the new companions', () => {
+test('skill wiring points at the canonical spatial and machine-builder routes', () => {
+  assert.match(wiring, /skills\/governance\/machine-builder\/SKILL\.md/);
   assert.match(wiring, /skills\/frontend\/spatial\/hierarchy-runtime\/SKILL\.md/);
   assert.match(wiring, /skills\/frontend\/spatial\/seat-shell-hierarchy\/SKILL\.md/);
-  assert.match(wiring, /Issue #142/);
+  assert.doesNotMatch(wiring, /docs\/skills\//);
   assert.match(spatialReadme, /hierarchy-runtime\/SKILL\.md/);
   assert.match(spatialReadme, /seat-shell-hierarchy\/SKILL\.md/);
 });
