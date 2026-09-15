@@ -54,6 +54,8 @@ test.describe('Modular branch connection core', () => {
     await expect(inspector).toContainText('precision');
     await inspector.getByLabel('Branch density').fill('74');
     await expect(inspector.locator('[data-inspector-density-value]')).toHaveText('74%');
+    await expect(page.locator('canvas[aria-label="3D modular branch connection core"]')).toHaveAttribute('data-config-profile', 'precision');
+    await expect(page.locator('canvas[aria-label="3D modular branch connection core"]')).toHaveAttribute('data-config-density', '74');
   });
 
   test('keyboard focus can traverse branches and activate one', async ({ page }) => {
@@ -76,6 +78,19 @@ test.describe('Modular branch connection core', () => {
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-GAMMA');
     await page.waitForTimeout(750);
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-GAMMA');
+  });
+
+  test('rapid expansion reversal recovers to a settled machine', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
+    const status = page.locator('[data-core-state]');
+    const expand = page.getByRole('button', { name: 'Expand', exact: true });
+    const reset = page.getByRole('button', { name: 'Reset', exact: true });
+    await expand.click();
+    await expect(status).toContainText('opening');
+    await page.waitForTimeout(150);
+    await reset.click();
+    await expect(status).toContainText('closing');
+    await expect(status).toContainText('collapsed · 0%', { timeout: 3000 });
   });
 
   test('phone viewport keeps the machine, camera control, and expansion controls usable', async ({ page }) => {
