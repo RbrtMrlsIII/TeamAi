@@ -70,6 +70,7 @@ test('current slice uses the required six-section contract', () => {
 test('field wiring and Skill wiring remain separate responsibilities', () => {
   const fieldWiring = read('Product_Law/WIRING.md');
   const skillWiring = read('docs/SKILL_WIRING.md');
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
   assert.match(fieldWiring, /Development fields/);
   assert.match(fieldWiring, /Product & Governance/);
   assert.match(fieldWiring, /Backend & Runtime/);
@@ -77,6 +78,8 @@ test('field wiring and Skill wiring remain separate responsibilities', () => {
   assert.match(skillWiring, /skills\/governance\/machine-builder\/SKILL\.md/);
   assert.match(skillWiring, /active `docs\/skills\/`/);
   assert.match(skillWiring, /single skills tree/i);
+  assert.equal(manifest.skill_model.canonical_glob, 'skills/**/SKILL.md');
+  assert.equal(existsSync(join(root, 'docs/skills')), false);
 });
 
 test('validation changes preserve an explicit old-invariant to replacement record', () => {
