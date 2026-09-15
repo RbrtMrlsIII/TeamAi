@@ -6,7 +6,7 @@ description: WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS optional crown on R0 workspa
 # Workspace ZipSkills (R0 crown) — P-R0
 
 ## WHEN TO USE
-- WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS faces on the **workspace tree** (R0 inner crown)
+- WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS faces on the workspace tree (R0 inner crown)
 - Optional branch expand when R0 is focused
 - MECHANISM_ZIPSKILLS legacy alias reconcile
 - Governance equip presentation (team-lead / shared / branch-before-main)
@@ -26,13 +26,14 @@ description: WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS optional crown on R0 workspa
 4. Camera presentation id WORKSPACE_ZIPSKILLS (physical dock DETAIL_ANCHOR); legacy MECHANISM_ZIPSKILLS same dock.
 5. Handoff via requestZipskillsConfigureHandoff / teamai:app-ui-handoff — normal UI only; no durable grant from canvas.
 6. Accessible names: optional, not required, not seat child, presentation only, not entitlement.
-7. Amend section 9 when branch timing changes.
+7. Amend section 9 when branch timing changes and reconcile `NEXT_SLICES.md` when execution frontier changes.
 
 ## DO NOT
 - Place ZipSkills as seat authority or required setup.
 - Write OAuth, keys, Firestore, or entitlement from the Hero.
 - Claim 029 released.
 - Treat optional equip as merge/governance authority.
+- Restore retired frontier documents.
 
 ## PASS
 - Not in seat children; optional=true fixtures
@@ -42,5 +43,7 @@ description: WORKSPACE_ZIPSKILLS / WORKSPACE_SKILLS optional crown on R0 workspa
 
 ## SEE ALSO
 - skills/frontend/spatial/workspace-ring/SKILL.md
+- skills/frontend/spatial/hierarchy-runtime/SKILL.md
 - docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md
-- docs/TEAMAI_3D_HERO_NEXT_SLICES.md (P-R0)
+- NEXT_SLICES.md
+- AI_ASSISTANT_READ_ME.md
