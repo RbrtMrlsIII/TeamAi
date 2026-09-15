@@ -1,5 +1,5 @@
 schema: 1
-manifest_version: 2026-09-15.3
+manifest_version: 2026-09-15.4
 
 active_frontier:
   repository:
@@ -85,7 +85,6 @@ workspace:
     - docs/
     - recovery/
     - delivery/
-    - tmp/
   workflow_naming: responsibility_specific
   pr_only_main_changes: true
   draft_before_merge: true
