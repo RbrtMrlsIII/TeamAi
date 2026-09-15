@@ -11,21 +11,24 @@ export function createMachineAnimation({ duration = 900, initial = 'collapsed' }
     getState() { return state; },
     setTarget(next) {
       target = next === 'expanded' ? 1 : 0;
-      state = target > start ? 'opening' : target < start ? 'closing' : state;
+      if (target > start) state = 'opening';
+      else if (target < start) state = 'closing';
     },
     sample(now) {
-      if (!startedAt) startedAt = Number(now) || 0;
-      const elapsed = Math.max(0, (Number(now) || 0) - startedAt);
+      const timestamp = Number(now) || 0;
+      if (!startedAt) startedAt = timestamp;
+      const elapsed = Math.max(0, timestamp - startedAt);
       const progress = clamp(start + (target - start) * Math.min(1, elapsed / ms));
       const amount = ease(progress);
-      if (amount === 0) state = 'collapsed';
-      if (amount === 1) state = 'expanded';
-      if (progress === target) start = target;
-      return Object.freeze({ amount, state, done: progress === target });
+      const moving = progress !== target;
+      if (moving) state = target > start ? 'opening' : 'closing';
+      else if (amount === 0) state = 'collapsed';
+      else if (amount === 1) state = 'expanded';
+      if (!moving) start = target;
+      return Object.freeze({ amount, state, done: !moving });
     },
     restart(now = 0) {
       startedAt = Number(now) || 0;
-      start = start === target ? target : start;
     },
   });
 }
