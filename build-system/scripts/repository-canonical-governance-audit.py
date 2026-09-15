@@ -145,7 +145,6 @@ def assert_current_slice() -> None:
 
 
 def assert_roles() -> None:
-    law = read("Product_Law/PRODUCT_LAW.md")
     wiring = read("Product_Law/WIRING.md")
     master = read("Masterplan/MASTERPLAN.md")
     policy = read("POLICY.md")
@@ -153,10 +152,10 @@ def assert_roles() -> None:
     session = read("AI_ASSISTANT_READ_ME.md")
     knowledge = read("PRODUCT-KNOWLEDGE.md")
 
-    if not re.search(r"single Product Law|single Product Law authority|single.*Product Law", law, re.IGNORECASE):
-        fail("Product_Law/PRODUCT_LAW.md does not declare the single Product Law authority")
-    if "Development fields" not in wiring or "Product & Governance" not in wiring:
-        fail("Product_Law/WIRING.md does not define development-field purposes")
+    if not re.search(r"Product_Law/PRODUCT_LAW\.md", wiring, re.IGNORECASE):
+        fail("Product_Law/WIRING.md does not point to the canonical Product Law")
+    if not re.search(r"single Product Law|sole Product Law|only Product Law", wiring, re.IGNORECASE):
+        fail("Product_Law/WIRING.md does not declare the single Product Law ownership")
     if "checklist" not in master.lower() or "Product_Law/PRODUCT_LAW.md" not in master:
         fail("Masterplan/MASTERPLAN.md is not wired as the checklist under Product Law")
     if "ORUCAVEAM" not in policy or "M — Minimalistic Efficiency / Resource Use" not in policy:
@@ -223,6 +222,20 @@ def assert_workspace_policy(manifest: dict, payload: dict) -> None:
         fail("workspace policy must protect main as the production branch")
 
 
+def assert_pr_controls(payload: dict) -> None:
+    pr = payload.get("pull_request") or {}
+    if not pr:
+        return
+    if pr.get("auto_merge") is not None:
+        fail("TeamAi policy forbids auto-merge on substantive pull requests")
+    head = ((pr.get("head") or {}).get("sha"))
+    body = (pr.get("body") or "")
+    if not head:
+        fail("pull request head SHA is missing")
+    if "Draft proof target" not in body:
+        fail("Draft PR proof target is mandatory")
+
+
 def assert_proof_target(payload: dict, paths: set[str]) -> None:
     target = proof_target(payload)
     if not target:
@@ -270,6 +283,7 @@ def main() -> None:
     assert_active_reference_policy(forbidden, historical, AUTHORITY_MANIFEST)
     assert_skill_boundaries(manifest)
     assert_workspace_policy(manifest, payload)
+    assert_pr_controls(payload)
     assert_historical_paths(paths)
     if payload.get("pull_request"):
         assert_proof_target(payload, paths)
@@ -283,6 +297,7 @@ def main() -> None:
     print("active_vs_historical=explicit")
     print("skill_authority_boundary=enforced")
     print("workspace_branch_policy=enforced")
+    print("auto_merge_policy=enforced")
 
 
 if __name__ == "__main__":
