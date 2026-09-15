@@ -8,8 +8,26 @@
   <link rel="stylesheet" href="./machine-core.css">
 </head>
 <body>
-  <main class="machine-core-shell" aria-label="Modular branch connection core preview"></main>
-  <script type="module" src="./machine-core-visual.js"></script>
-  <script type="module" src="./machine-core-interaction.js"></script>
+  <main class="machine-core-shell" aria-label="Modular branch connection core preview" data-core-boot="pending">
+    <noscript>JavaScript is required to render the modular branch connection core.</noscript>
+  </main>
+  <script type="module">
+    const root = document.querySelector('.machine-core-shell');
+    const showBootError = (error) => {
+      if (!root) return;
+      root.dataset.coreBoot = 'error';
+      const message = error instanceof Error ? error.message : String(error);
+      root.innerHTML = `<section role="alert" style="max-width:720px;padding:24px;border:1px solid rgba(210,220,230,.2);border-radius:16px;background:rgba(14,18,22,.88);color:#dfe7ec;font:13px/1.5 system-ui,sans-serif"><strong>Machine core failed to boot</strong><p style="opacity:.7;margin:10px 0 0">${message.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}</p></section>`;
+      console.error('machine-core-preview boot failed', error);
+    };
+    try {
+      await import('./machine-core-visual.js');
+      await import('./machine-core-interaction.js');
+      if (root) root.dataset.coreBoot = 'ready';
+    } catch (error) {
+      showBootError(error);
+      throw error;
+    }
+  </script>
 </body>
 </html>
