@@ -24,10 +24,11 @@ export function deriveMachineSubject(parts, padding = 0.12) {
   return { kind: 'semantic-subject', sourcePartIds: candidates.map(({ id }) => id), min: { x: bounds.minX - pad, y: bounds.minY - pad, z: bounds.minZ - pad }, max: { x: bounds.maxX + pad, y: bounds.maxY + pad, z: bounds.maxZ + pad }, center: { x: (bounds.minX + bounds.maxX) / 2, y: (bounds.minY + bounds.maxY) / 2, z: (bounds.minZ + bounds.maxZ) / 2 } };
 }
 export function deriveMachineWiring(source, target, metadata = null) {
-  const sourcePort = finitePoint(source?.port, null);
-  const targetPort = finitePoint(target?.port, null);
   if (!source?.port || !target?.port) return null;
-  return Object.freeze({ id: metadata?.id ?? `${source.semanticId}->${target.semanticId}`, sourceDivisionId: source.semanticId, targetDivisionId: target.semanticId, sourcePort, targetPort, kind: metadata?.kind ?? 'semantic-connection' });
+  const sourcePort = finitePoint(source.port);
+  const targetPort = finitePoint(target.port);
+  const waypoint = { x: targetPort.x, y: Math.max(sourcePort.y, targetPort.y) + 0.28, z: sourcePort.z + (targetPort.z - sourcePort.z) * 0.5 };
+  return Object.freeze({ id: metadata?.id ?? `${source.semanticId}->${target.semanticId}`, sourceDivisionId: source.semanticId, targetDivisionId: target.semanticId, sourcePort, targetPort, route: Object.freeze([sourcePort, Object.freeze(waypoint), targetPort]), kind: metadata?.kind ?? 'semantic-connection' });
 }
 export function createMachineTransition({ seatIndex = 0, source, target, expansion = {}, wiring = null } = {}) {
   if (!source?.semanticId || !target?.semanticId) throw new Error('machine transition requires source and target semantics');
