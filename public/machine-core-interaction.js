@@ -13,6 +13,7 @@ function bind() {
   const requested = Number(params.get('seats'));
   const count = Number.isFinite(requested) ? Math.min(16, Math.max(2, Math.floor(requested))) : 10;
   const core = createBranchConnectionCore({ seatCount: count });
+  const branches = core.parts.filter((part) => part.kind !== 'hub');
   const inspector = document.createElement('aside');
   inspector.className = 'machine-core-inspector';
   inspector.setAttribute('aria-label', 'Selected branch configuration');
@@ -88,6 +89,14 @@ function bind() {
     select.dispatchEvent(new Event('change', { bubbles: true }));
     canvas.dataset.selectedBranch = branch.branchId;
     renderInspector(branch.branchId);
+    canvas.focus({ preventScroll: true });
+  }
+
+  function selectByOffset(offset) {
+    const current = branches.findIndex((part) => part.branchId === canvas.dataset.selectedBranch);
+    const start = current < 0 ? 0 : current;
+    const next = branches[(start + offset + branches.length) % branches.length];
+    selectBranch(next);
   }
 
   canvas.addEventListener('click', (event) => {
@@ -105,6 +114,28 @@ function bind() {
     if (!branchId) return;
     canvas.dispatchEvent(new CustomEvent('machine:branch-open', { detail: { branchId } }));
     panel.querySelector('[data-core-expand]')?.click();
+  });
+
+  canvas.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      selectByOffset(1);
+      return;
+    }
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      selectByOffset(-1);
+      return;
+    }
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      const branchId = canvas.dataset.selectedBranch;
+      const branch = core.byBranch.get(branchId);
+      if (branch) {
+        canvas.dispatchEvent(new CustomEvent('machine:branch-open', { detail: { branchId } }));
+        panel.querySelector('[data-core-expand]')?.click();
+      }
+    }
   });
 
   select.addEventListener('change', () => renderInspector(select.value));
