@@ -115,10 +115,15 @@ function currentBase() {
 function assertHistorical(rows) {
   for (const parts of rows) {
     const status = parts[0];
-    const paths = status.startsWith('R') || status.startsWith('C') ? parts.slice(1) : [parts[1]];
-    for (const file of paths.filter(Boolean)) {
+    const isRename = status.startsWith('R');
+    const isCopy = status.startsWith('C');
+    const paths = isRename || isCopy ? parts.slice(1) : [parts[1]];
+    for (let i = 0; i < paths.length; i += 1) {
+      const file = paths[i];
       if (!HISTORICAL.some((p) => file.startsWith(p))) continue;
-      if (status.startsWith('A') || status.startsWith('C')) continue;
+      // New archive destinations are allowed. Existing historical paths remain immutable.
+      if ((isRename || isCopy) && i === paths.length - 1 && file.startsWith('docs/archive/')) continue;
+      if (status.startsWith('A') || isCopy) continue;
       stop('historical existing evidence is immutable: ' + file);
     }
   }
