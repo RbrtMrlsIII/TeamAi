@@ -6,7 +6,7 @@ const PAYLOAD = {
   source: { id: 'hero-proof-source', semanticId: 'SEAT_CONNECTION', center: { x: -1.15, y: 0.55, z: 0 }, port: { x: -0.28, y: 0.7, z: 0 }, labels: ['Connection'], controls: 2, density: 2 },
   target: { id: 'hero-proof-target', semanticId: 'SEAT_BEHAVIOR', center: { x: 1.05, y: 0.55, z: 0.15 }, port: { x: 0.32, y: 0.7, z: 0.15 }, labels: ['Behavior', 'Defaults'], controls: 3, density: 3 },
   expansion: { sourceAmount: 0.88, targetAmount: 0.66 },
-  wiring: { id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING' },
+  wiring: { id: 'MACHINE-BRANCH-SEAT-01:SEAT_CONNECTION:ADJACENCY_WIRING' },
 };
 
 export function mountHeroMachineProof(root = globalThis.document) {
@@ -47,7 +47,44 @@ export function mountHeroMachineProof(root = globalThis.document) {
   return panel;
 }
 
-if (new URLSearchParams(globalThis.location?.search || '').has('machine-proof')) {
-  if (globalThis.document?.readyState === 'loading') globalThis.document.addEventListener('DOMContentLoaded', () => mountHeroMachineProof(), { once: true });
-  else if (globalThis.document) mountHeroMachineProof();
+async function mountHeroMachineCandidate(root = globalThis.document) {
+  if (!root?.querySelector) return null;
+  const params = new URLSearchParams(globalThis.location?.search || '');
+  if (!params.has('machine-candidate')) return null;
+  const hero = root.querySelector('.hero-shell');
+  const productionCanvas = root.querySelector('#hero-canvas');
+  if (!hero || !productionCanvas || root.querySelector('[data-hero-machine-candidate]')) return null;
+
+  productionCanvas.hidden = true;
+  hero.dataset.machineCandidate = '1';
+  for (const selector of ['.classic-entrance','.hero-copy','.spatial-parts','.seat-stack','.hero-controls','.world-navigation','.hero-settings-mount']) {
+    const node = root.querySelector(selector);
+    if (node) node.hidden = true;
+  }
+
+  const style = root.createElement('link');
+  style.rel = 'stylesheet';
+  style.href = './machine-core.css';
+  root.head?.append(style);
+
+  const shell = root.createElement('section');
+  shell.className = 'machine-core-shell';
+  shell.dataset.heroMachineCandidate = '1';
+  shell.setAttribute('aria-label', 'TeamAi modular machine Hero candidate');
+  shell.style.cssText = 'position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:transparent;';
+  hero.append(shell);
+
+  await import('./machine-core-visual.js');
+  await import('./machine-core-interaction.js');
+  return shell;
+}
+
+if (globalThis.document) {
+  const run = () => {
+    const params = new URLSearchParams(globalThis.location?.search || '');
+    if (params.has('machine-candidate')) void mountHeroMachineCandidate();
+    if (params.has('machine-proof')) mountHeroMachineProof();
+  };
+  if (globalThis.document.readyState === 'loading') globalThis.document.addEventListener('DOMContentLoaded', run, { once: true });
+  else run();
 }
