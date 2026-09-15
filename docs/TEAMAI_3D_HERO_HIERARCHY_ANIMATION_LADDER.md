@@ -26,9 +26,11 @@ The Hero should feel like a **growing machine**, not only a list of labels:
 
 Login/signup **presentation** in the machine does not replace Firebase Auth or invent entitlement.
 
-## 3. Slice order
+## 3. Execution relationship
 
-See `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` — start **P1 `SEAT_CONNECTION`**.
+The current execution frontier is owned only by `Masterplan/NEXT_SLICES.md`. This ladder preserves depth-first presentation and motion detail and never becomes a current-slice queue. Historical P1 `SEAT_CONNECTION` ordering remains here for continuity; current authorization comes from `Masterplan/NEXT_SLICES.md` and the owning Issue/PR.
+
+`NAVIGATE` and `INSPECT` are runtime input states defined by the canonical hierarchy runtime. They are not execution-frontier authority.
 
 ## 4. Per-slice checklist
 
@@ -42,4 +44,4 @@ See `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` — start **P1 `SEAT_CONNECTION`**.
 
 ## 5. Boundaries
 
-Presentation only · one open parent · skills optional · merge gate #133
+Presentation only · one open parent · concrete Skills selected through `docs/SKILL_WIRING.md` · merge gate #133
