@@ -18,4 +18,4 @@ Advance the Seat-1 `SEAT_CONNECTION` vertical so an adjacent division can expand
 
 This is **not a final animation law**. The current `240 ms` transition is an implementation baseline only. It does not establish final easing, branch choreography, turn-loop electricity, complete inter-tree topology, or a complete Seat tree.
 
-The census remains the structural authority and must be reconciled in the same governed change. `MASTERPLAN.md` and Issue #278 remain execution authorities. This checkpoint is not a second `MASTERPLAN.md`.
+The tree census remains the structural authority and must be reconciled in the same governed change. `Product_Law/PRODUCT_LAW.md`, `Masterplan/MASTERPLAN.md`, and Issue #278 remain their respective authority/execution surfaces. This checkpoint is evidence only, not a second Product Law or Masterplan.

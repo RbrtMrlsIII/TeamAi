@@ -1,10 +1,10 @@
 # TeamAi 3D Hero Verification Ladder
 
-Status: continuity/planning knowledge. Active TEAM-EXPERIENCE-029 implementation remains gated by `MASTERPLAN.md`.
+Status: continuity/planning knowledge. Active TEAM-EXPERIENCE-029 implementation remains gated by `Masterplan/MASTERPLAN.md`.
 
 ## Governing chain
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → frontend spatial skills → bounded GitHub Issue → implementation → verification → evidence → HandOver / Endorsement → PRODUCT-KNOWLEDGE.md`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → frontend spatial Skills → bounded GitHub Issue → implementation → verification → evidence → AI_ASSISTANT_READ_ME.md → PRODUCT-KNOWLEDGE.md`
 
 ## Verification philosophy
 

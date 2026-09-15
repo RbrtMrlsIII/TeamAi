@@ -1,53 +1,57 @@
-name: TeamAi Governance
+name: Repository Governance Integrity
 
 on:
   pull_request:
   push:
     branches:
       - main
-      - governance/fail-closed-index-enforcement-2026-09-10
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
-  group: teamai-governance-${{ github.ref }}
+  group: repository-governance-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   governance-drift:
-    name: governance-drift
+    name: canonical-governance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 24
-      - name: Syntax check governance validator
-        run: node --check scripts/governance/verify-active-index.mjs
-      - name: Fail closed on active-index drift
+      - name: Syntax check governance validators
+        run: |
+          node --check scripts/governance/verify-evidence-integrity.mjs
+          python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
+      - name: Prove draft PR target against full PR delta
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: node scripts/governance/verify-active-index.mjs --mode=governance --base="$BASE_SHA"
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 build-system/scripts/repository-canonical-governance-audit.py
 
   evidence-consistency:
-    name: evidence-consistency
+    name: evidence-integrity
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 24
-      - name: Syntax check governance validator
-        run: node --check scripts/governance/verify-active-index.mjs
-      - name: Fail closed on evidence inconsistency
-        run: node scripts/governance/verify-active-index.mjs --mode=evidence
+      - name: Verify evidence boundaries
+        run: node scripts/governance/verify-evidence-integrity.mjs
 
   agent-validation:
     name: agent-validation
@@ -59,10 +63,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Generate agent validation packet
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
@@ -75,8 +80,6 @@ jobs:
             event: process.env.EVENT_NAME,
             governance_drift: 'PASS',
             evidence_consistency: 'PASS',
-            active_index_freshness: 'PASS',
-            historical_integrity: 'PASS',
             validated: true,
             verdict: 'AGENT-WORK-VALID',
           };
@@ -86,6 +89,42 @@ jobs:
       - name: Publish validation packet
         uses: actions/upload-artifact@v4
         with:
-          name: teamai-validation-${{ github.sha }}
+          name: repository-validation-${{ github.event.pull_request.head.sha || github.sha }}
           path: .validation/teamai-validation.json
           if-no-files-found: error
+
+  review-readiness:
+    name: review-readiness
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    needs:
+      - governance-drift
+      - evidence-consistency
+      - agent-validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require an approval on the exact current PR head and block auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
+          gh api "/repos/${REPO}/pulls/${PR_NUMBER}" > /tmp/pr.json
+          auto_merge=$(jq -r 'if .auto_merge == null then "false" else "true" end' /tmp/pr.json)
+          echo "auto_merge_enabled=$auto_merge"
+          if [ "$auto_merge" = "true" ]; then
+            echo "REVIEW_READINESS=FAIL"
+            echo "TeamAi policy forbids auto-merge for product changes."
+            exit 1
+          fi
+          approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author)] | length' /tmp/reviews.json)
+          echo "exact_head_approvals=$approved"
+          if [ "$approved" -lt 1 ]; then
+            echo "REVIEW_READINESS=FAIL"
+            echo "No non-author approval exists for the exact current PR head $HEAD_SHA."
+            exit 1
+          fi
+          echo "REVIEW_READINESS=PASS"

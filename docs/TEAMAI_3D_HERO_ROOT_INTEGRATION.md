@@ -1,6 +1,6 @@
 # TeamAi 3D Hero — Cross-Root Integration Contract
 
-Status: planning/continuity knowledge. Active TEAM-EXPERIENCE-029 implementation remains gated by `MASTERPLAN.md`.
+Status: planning/continuity knowledge. Active TEAM-EXPERIENCE-029 implementation remains gated by `Masterplan/MASTERPLAN.md`.
 
 ## Purpose
 

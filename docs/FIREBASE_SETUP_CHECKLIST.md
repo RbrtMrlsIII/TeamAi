@@ -1,8 +1,8 @@
 # Firebase Setup Checklist
 
 **Status:** HISTORICAL / OPERATOR SETUP EVIDENCE — NOT PROJECT CHRONOLOGY  
-**Canonical execution authority:** `MASTERPLAN.md` only  
-**Current Firebase project identity:** `team-ai-official` (see Product Law / backend skills)  
+**Canonical execution authority:** `Masterplan/MASTERPLAN.md`  
+**Current Firebase project identity:** `team-ai-official` (see `Product_Law/PRODUCT_LAW.md` / backend skills)  
 **No 029-release claim.**
 
 This file records an earlier human-controlled Firebase setup checklist. It is retained as recovery/operator evidence only.

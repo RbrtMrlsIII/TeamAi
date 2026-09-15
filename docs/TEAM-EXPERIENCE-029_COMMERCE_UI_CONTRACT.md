@@ -1,12 +1,12 @@
 # TEAM-EXPERIENCE-029 — Commerce UI Read-Model Contract
 
 **Status:** `IMPLEMENTATION-READY PLANNING CONTRACT / NOT PRODUCT LAW`
-**Date:** 2026-09-06
+**Date:** 2026-09-15
 **Purpose:** Define the frontend/backend seam for commerce UI implementation without moving payment, entitlement, authorization, or durable-state authority into the browser.
 
 ## 1. Authority chain
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → 029 planning contracts + commerce/frontend skills → implementation → browser verification → evidence → HandOver / Endorsement`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Policy / ORUCAVEAM → docs/SKILL_WIRING.md → 029 planning contracts + commerce/frontend Skills → implementation → browser verification → evidence → AI_ASSISTANT_READ_ME.md`
 
 This document refines the 029 presentation contract. It does not redefine Product Law, pricing, subscription tiers, provider terms, or backend authority.
 
@@ -164,8 +164,8 @@ The visual contract itself is implementation-ready and can be built against a ty
 
 ## SEE ALSO
 
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Masterplan/MASTERPLAN.md`
 - `docs/SKILL_WIRING.md`
 - `docs/TEAM-EXPERIENCE-029_PLANNING_CONTRACT.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`

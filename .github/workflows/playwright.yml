@@ -1,4 +1,4 @@
-name: Playwright browser verification
+name: Canonical Browser Verification
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: playwright-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  group: canonical-browser-${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -18,8 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Checkout
+      - name: Checkout exact PR head
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -51,7 +53,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-verification-${{ github.sha }}
+          name: browser-verification-${{ github.sha }}
           path: |
             playwright-report/
             test-results/

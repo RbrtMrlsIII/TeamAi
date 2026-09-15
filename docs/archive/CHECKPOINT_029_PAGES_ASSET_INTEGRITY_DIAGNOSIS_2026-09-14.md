@@ -27,4 +27,4 @@ The browser suite adds direct HTTP checks for both paths and a Hero-page respons
 
 The former Command Deck remains retired. Publishing these modules does **not** republish `frontend/spatial/index.html` as a product surface; only the repository-owned browser ESM dependency path required by the current Hero runtime is carried into the Pages artifact.
 
-This checkpoint records diagnosis and verification scope. It does not replace `MASTERPLAN.md`, Issue #278, Product Law, Vision, or spatial contracts.
+This checkpoint records historical diagnosis and verification scope. It does not replace `Masterplan/MASTERPLAN.md`, Issue #278, `Product_Law/PRODUCT_LAW.md`, Vision, or spatial contracts. Its archive location is non-authoritative.

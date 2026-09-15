@@ -207,7 +207,7 @@ Before any 029 implementation slice, reconcile the proposed UI root against its 
 
 Apply the project execution discipline:
 
-`inspect authority → inspect applicable ORUCAVEAM letter skills → inspect field/domain skills → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update handover/endorsement`
+`inspect authority → inspect applicable ORUCAVEAM letter skills → inspect field/domain skills → inspect existing roots/implementation → classify proposal vs decision vs required change → reconcile conflicts → obtain required approval → implement smallest canonical change → verify → record evidence → update session state`
 
 UI is a presentation and interaction layer over authoritative state and policy intents. A new page-local rule is invalid when an existing canonical root already owns the meaning.
 
@@ -253,12 +253,13 @@ Planning documents may define these boundaries, but implementation and runtime s
 
 ## SEE ALSO
 
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Masterplan/MASTERPLAN.md`
+- `Masterplan/NEXT_SLICES.md`
 - `docs/TEAM-EXPERIENCE-029_CONTEXT_AND_ORCHESTRATION_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`
 - `docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`
 - `docs/TEAM-EXPERIENCE-029_COMMERCE_UI_CONTRACT.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
-- `docs/project-guide/HandOver.md`
+- `AI_ASSISTANT_READ_ME.md`

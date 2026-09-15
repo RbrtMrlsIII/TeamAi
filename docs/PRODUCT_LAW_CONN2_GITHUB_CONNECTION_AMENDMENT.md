@@ -1,17 +1,23 @@
 # Product Law amendment — Conn-2 GitHub Connection map
 
-**Status:** Proposed amendment text for incorporation into `PRODUCT_LAW.md`  
+**Status:** HISTORICAL AMENDMENT RECORD — INCORPORATED INTO CANONICAL PRODUCT LAW  
+**Canonical authority:** `Product_Law/PRODUCT_LAW.md`  
+**Canonical field wiring:** `Product_Law/WIRING.md`  
 **Slice:** Conn-2 · Issue #201  
 **Does not claim 029 production release.**
 
-## Family B — service table (additions)
+This document preserves the historical Conn-2 amendment record. It is not an active Product Law source, not a second law, and not a current execution queue. Its normative concepts are carried by the canonical Product Law family.
+
+## Historical amendment content
+
+### Family B — service table (historical additions)
 
 | Platform / surface | Canonical role | Authority boundary |
 |---|---|---|
 | Supabase Edge Functions | Trusted server execution, including PayPal webhook receipt **and GitHub App webhook receipt (HMAC)** | Trusted execution authority; not domain-state authority |
 | GitHub | Repository/source/change history; **GitHub App installations are Connections under user consent** | Engineering/source authority; **installation map lives in Firestore under Firebase UID, not Postgres domain tables** |
 
-## Family C / LAW 104 — GitHub App Connection map
+### Family C / LAW 104 — GitHub App Connection map
 
 Durable binding of `installation_id` to the owning Firebase UID is stored in Cloud Firestore as **server-owned** state:
 
@@ -32,18 +38,20 @@ Webhook receipt verifies HMAC on Edge and **looks up** an existing map. It must 
 | AP-GH-006 | PEM / secrets in TeamChat / Hero / browser writes | Trusted secret store / Edge env |
 | AP-GH-007 | Mint UID from webhook `sender.login` | Lookup index only; Conn-3 OAuth mints |
 
-## Masterplan ladder
+## Historical execution ladder
 
-| Item | Status |
-|------|--------|
+| Item | Historical status |
+|------|-------------------|
 | Conn-1 least-privilege matrix | On main (#200) |
-| Conn-2 webhook + UID map | This PR |
-| Conn-3 OAuth first bind | Next |
-| Seat equip + tool policy | After Connection usable |
+| Conn-2 webhook + UID map | This historical amendment |
+| Conn-3 OAuth first bind | Follow-on work |
+| Seat equip + tool policy | Follow-on work |
 
-## See also
+## Active replacements
 
-- `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md`
-- `skills/workspace/ws.github.webhook-uid-map/SKILL.md`
-- `src/backend/github-installation.ts`
-- `supabase/functions/teamai-github-webhook/index.ts`
+- Product meaning and normative service boundaries: `Product_Law/PRODUCT_LAW.md`
+- Development-field routing: `Product_Law/WIRING.md`
+- Current chronological execution: `Masterplan/MASTERPLAN.md`
+- Current frontier: `Masterplan/NEXT_SLICES.md`
+- Operational procedure: applicable `skills/**/SKILL.md`
+- Historical amendment evidence: this file only

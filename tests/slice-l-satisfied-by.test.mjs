@@ -8,6 +8,7 @@ import { test } from 'node:test';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
+/** Validation migration: old invariant = L evidence map remains authoritative evidence and the active frontier stays singular. Disposition = RETAINED. Replacement = same evidence assertions, with the current frontier sourced from Masterplan/NEXT_SLICES.md. */
 test('L evidence map exists and forbids close/re-implement claims', () => {
   const p = 'docs/EVIDENCE_TEAM-EXPERIENCE-029_VERIFICATION_96_98_SATISFIED_BY.md';
   assert.ok(existsSync(join(root, p)));
@@ -20,14 +21,11 @@ test('L evidence map exists and forbids close/re-implement claims', () => {
   assert.match(doc, /hero-theme-lighting-adapter/);
 });
 
-test('NEXT_SLICES marks K merged and points L', () => {
-  const next = read('docs/TEAMAI_3D_HERO_NEXT_SLICES.md');
-  assert.match(next, /K .*\*\*Merged\*\* \(#167\)/);
-  assert.match(next, /#150/);
-  assert.match(next, /#151/);
-  assert.match(next, /NAVIGATE/);
-  assert.match(next, /WORKSPACE_ZIPSKILLS/);
-  assert.match(next, /#89|reduced-motion lighting/i);
+test('NEXT_SLICES stays singular and current', () => {
+  const next = read('Masterplan/NEXT_SLICES.md');
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
+  assert.match(next, /Governance Foundation|machine replacement/i);
+  assert.match(next, /draft/i);
 });
 
 test('adapter and fixtures still on main tree', () => {
