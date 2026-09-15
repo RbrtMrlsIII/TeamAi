@@ -7,17 +7,21 @@ test.describe('Modular branch connection core', () => {
     await expect(page.getByText('15 modules · 10 seats · 4 outer housings · 1 hub')).toBeVisible();
     const canvas = page.locator('canvas[aria-label="3D modular branch connection core"]');
     await expect(canvas).toBeVisible();
-    await expect(page.locator('[data-core-state]')).toHaveText('collapsed lattice · 15 independent modules');
+    await expect(page.locator('[data-core-state]')).toContainText('collapsed lattice · 15 independent modules');
+    await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-06');
+    await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-06');
+    await page.getByLabel('Branch camera').selectOption('BRANCH-OUTER-BETA');
+    await expect(page.locator('[data-core-state]')).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-BETA');
     await page.getByRole('button', { name: 'Expand', exact: true }).click();
-    await expect(page.locator('[data-core-state]')).toHaveText('expanded lattice · 15 independent modules');
+    await expect(page.locator('[data-core-state]')).toContainText('expanded lattice · 15 independent modules');
     await page.getByRole('button', { name: 'Reset', exact: true }).click();
-    await expect(page.locator('[data-core-state]')).toHaveText('collapsed lattice · 15 independent modules');
+    await expect(page.locator('[data-core-state]')).toContainText('collapsed lattice · 15 independent modules');
   });
 
   test('renders eight seats through the same parameterized core', async ({ page }) => {
     await page.goto('/machine-core-preview.html?seats=8');
     await expect(page.locator('[data-core-count]')).toHaveText('13 modules · 8 seats · 4 outer housings · 1 hub');
-    await expect(page.locator('[data-core-state]')).toHaveText('collapsed lattice · 13 independent modules');
+    await expect(page.locator('[data-core-state]')).toContainText('collapsed lattice · 13 independent modules');
   });
 
   test('has no production Hero surface or legacy tree navigation', async ({ page }) => {
