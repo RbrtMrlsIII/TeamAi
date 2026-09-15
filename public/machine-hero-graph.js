@@ -10,11 +10,19 @@ export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [] }
     const wiring = deriveMachineWiring(source, target, { id: edge.id, kind: edge.kind });
     return createMachineTransition({ seatIndex, source, target, expansion: edge.expansion || {}, wiring: edge.wiring || wiring });
   });
+  const validTransitions = transitions.filter(Boolean);
+  const expandedPartMap = new Map(parts.map((part) => [part.semanticId, part]));
+  for (const transition of validTransitions) {
+    expandedPartMap.set(transition.sourceDivisionId, transition.sourceGeometry);
+    expandedPartMap.set(transition.targetDivisionId, transition.targetGeometry);
+  }
+  const renderedParts = [...expandedPartMap.values()];
   return Object.freeze({
     seatIndex: Number(seatIndex),
     parts: Object.freeze(parts),
-    transitions: Object.freeze(transitions.filter(Boolean)),
-    subject: deriveMachineSubject(parts),
+    renderedParts: Object.freeze(renderedParts),
+    transitions: Object.freeze(validTransitions),
+    subject: deriveMachineSubject(renderedParts),
   });
 }
 
