@@ -1,4 +1,4 @@
-name: TeamAi
+name: Repository Full-System Verification
 
 on:
   pull_request:
@@ -66,7 +66,7 @@ jobs:
       - name: Upload Full Project ZIP verification artifact
         uses: actions/upload-artifact@v4
         with:
-          name: teamai-full-project-${{ github.sha }}
+          name: full-project-${{ github.sha }}
           path: TeamAi-Full-Project.zip
           if-no-files-found: error
           retention-days: 30
