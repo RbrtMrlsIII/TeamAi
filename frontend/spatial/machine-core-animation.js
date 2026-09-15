@@ -3,32 +3,41 @@ const ease = (t) => t * t * (3 - 2 * t);
 
 export function createMachineAnimation({ duration = 900, initial = 'collapsed' } = {}) {
   const ms = Math.max(1, Number(duration) || 900);
-  let state = initial === 'expanded' ? 'expanded' : 'collapsed';
-  let start = state === 'expanded' ? 1 : 0;
-  let target = start;
-  let startedAt = 0;
+  let currentAmount = initial === 'expanded' ? 1 : 0;
+  let startAmount = currentAmount;
+  let targetAmount = currentAmount;
+  let startedAt = null;
+  let state = currentAmount === 1 ? 'expanded' : 'collapsed';
+
+  const settleState = (amount) => amount === 0 ? 'collapsed' : amount === 1 ? 'expanded' : (targetAmount > amount ? 'opening' : 'closing');
+
   return Object.freeze({
     getState() { return state; },
-    setTarget(next) {
-      target = next === 'expanded' ? 1 : 0;
-      if (target > start) state = 'opening';
-      else if (target < start) state = 'closing';
+    setTarget(next, now = null) {
+      const nextAmount = next === 'expanded' ? 1 : 0;
+      if (now != null) this.sample(now);
+      startAmount = currentAmount;
+      targetAmount = nextAmount;
+      startedAt = null;
+      if (targetAmount > currentAmount) state = 'opening';
+      else if (targetAmount < currentAmount) state = 'closing';
+      else state = settleState(currentAmount);
     },
     sample(now) {
       const timestamp = Number(now) || 0;
-      if (!startedAt) startedAt = timestamp;
+      if (startedAt === null) startedAt = timestamp;
       const elapsed = Math.max(0, timestamp - startedAt);
-      const progress = clamp(start + (target - start) * Math.min(1, elapsed / ms));
-      const amount = ease(progress);
-      const moving = progress !== target;
-      if (moving) state = target > start ? 'opening' : 'closing';
-      else if (amount === 0) state = 'collapsed';
-      else if (amount === 1) state = 'expanded';
-      if (!moving) start = target;
-      return Object.freeze({ amount, state, done: !moving });
+      const travel = Math.min(1, elapsed / ms);
+      const linear = startAmount + (targetAmount - startAmount) * travel;
+      currentAmount = ease(linear);
+      const done = travel >= 1;
+      state = done ? settleState(currentAmount) : (targetAmount > startAmount ? 'opening' : 'closing');
+      if (done) startAmount = currentAmount = targetAmount;
+      return Object.freeze({ amount: currentAmount, state, done });
     },
     restart(now = 0) {
       startedAt = Number(now) || 0;
+      startAmount = currentAmount;
     },
   });
 }
