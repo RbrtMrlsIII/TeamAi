@@ -26,6 +26,7 @@ export const CENSUS_GOVERNED_PATHS = [
 export const CENSUS_PRESENTATION_ONLY_PATHS = new Set([
   'frontend/spatial/machine-hero-scene.js',
   'frontend/spatial/machine-hero-payload.js',
+  'frontend/spatial/machine-hero-graph.js',
   'public/machine-hero-scene.js',
   'public/machine-hero-payload.js',
   'public/machine-hero-preview.js',
