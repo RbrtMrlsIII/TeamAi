@@ -1,0 +1,32 @@
+# Machine Hero frontend foundation
+
+Status: **IMPLEMENTED / TEMPO / EVIDENCE ONLY**
+
+PR: #344
+
+This slice is a standalone frontend proof surface. It does not replace the production Hero and does not claim machine promotion.
+
+## Proven by implementation/tests
+
+- Canonical semantic transition object contains Seat index, source/target semantic identity, source/target geometry, semantic ports, expansion, wiring, and derived subject.
+- Subject footprint is derived from geometry bounds rather than camera coordinates.
+- Semantic wiring is derived from source/target ports and fails closed when either port is missing.
+- Wiring contains an explicit intermediate corridor waypoint.
+- Camera identity remains named while its target follows the derived semantic subject.
+- A different valid semantic pair uses the same camera algorithm.
+- A standalone WebGL preview renders the machine parts, semantic wiring corridor, and subject footprint.
+- Geometry mutation moves the semantic target, subject, camera target, and wiring endpoints together.
+
+## Explicit non-claims
+
+- No production WebGL renderer replacement.
+- No complete tree/branch/division census.
+- No final connection topology.
+- No turn-loop electrical completion.
+- No authenticated workspace completion.
+- No C9/C10 product acceptance.
+- No M1-M6 promotion.
+
+## Entry surface
+
+The prototype has its own HTML page: `public/machine-hero-preview.html`. The production `public/index.html` is intentionally unchanged by this slice.
