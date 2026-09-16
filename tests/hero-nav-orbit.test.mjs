@@ -39,7 +39,7 @@ test('current slice lives under Masterplan and exposes required contract', () =>
   for (const heading of ['## Status', '## Objective', '## Dependencies', '## Verification', '## Current blocker']) {
     assert.match(next, new RegExp(`^${heading}$`, 'm'));
   }
-  assert.match(next, /Governance Foundation|machine replacement/i);
+  assert.match(next, /TEAM-EXPERIENCE-029|post-#346/i);
 });
 
 test('HIERARCHY_INPUT exposes NAVIGATE', () => {
