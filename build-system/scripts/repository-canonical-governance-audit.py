@@ -196,15 +196,13 @@ def is_historical_path(rel: str, historical: tuple[tuple[str, str], ...]) -> boo
 
 
 def retired_path_is_active_reference(body: str, target: str) -> bool:
-    """Return true only when a retired basename is used as an actual file/path reference.
-
-    Bare canonical basenames often appear in descriptive authority prose. Those mentions
-    are not routing. Active links and explicit path-bearing fields remain fail-closed.
-    """
+    """Return true only when a retired basename is used as an actual file/path reference."""
     token = re.escape(target)
     patterns = (
         rf"\]\(\s*\./?{token}(?:[?#][^\s)]*)?\s*\)",
-        rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?$",
+        rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
+        rf"(?im)(?<![\w./-])/(?:{token})(?:[?#][^\s)\]]*)?",
+        rf"(?im)(?<![\w./-])\./(?:{token})(?:[?#][^\s)\]]*)?",
     )
     return any(re.search(pattern, body) for pattern in patterns)
 
@@ -222,12 +220,6 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[
             continue
         for target in forbidden:
             if target in RETIRED_TOKEN_ALLOW_PREFIX:
-                prefix = RETIRED_TOKEN_ALLOW_PREFIX[target]
-                for match in re.finditer(re.escape(target), body):
-                    start = match.start()
-                    context = body[max(0, start - len(prefix)):start]
-                    if context == prefix:
-                        continue
                 if retired_path_is_active_reference(body, target):
                     fail(f"active reference points to retired path {target}: {rel}")
             elif target in body:
@@ -332,7 +324,6 @@ def main() -> None:
     print("historical_surface_matching=path_and_prefix")
     print("skill_authority_boundary=enforced")
     print("workspace_branch_policy=enforced")
-    print("validation_rewire=explicitly_classified_non_blocking")
 
 
 if __name__ == "__main__":
