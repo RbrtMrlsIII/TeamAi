@@ -18,7 +18,8 @@
     "archive": {"path": "docs/archive/", "role": "immutable historical documentation, never active routing"},
     "evidence": {"path": "docs/evidence/", "role": "historical or claim-scoped evidence, never authority by itself"},
     "handover": {"path": "handover/", "role": "historical handover evidence, not an operating manual"},
-    "checkpoints": {"prefix": "docs/CHECKPOINT_", "role": "dated checkpoint snapshots, historical evidence, never active routing"}
+    "checkpoints": {"prefix": "docs/CHECKPOINT_", "role": "dated checkpoint snapshots, historical evidence, never active routing"},
+    "evidence_records": {"prefix": "docs/EVIDENCE_", "role": "dated or claim-scoped evidence records, historical evidence, never active routing"}
   },
   "forbidden_active_surfaces": ["PRODUCT_LAW.md","MASTERPLAN.md","NEXT_SLICES.md","docs/project-guide/HandOver.md","docs/project-guide/Endorsement.md","docs/project-guide/AI_ASSISTANT_READ_ME.md","docs/TEAMAI_3D_HERO_NEXT_SLICES.md","docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md","docs/TEAMAI_CURRENT_STATE.md","docs/TEAMAI_PROJECT_WIDE_CENSUS.md","docs/AGENT_CURRENT_STATE_AND_BRANCH_RULES.md","docs/AGENT_SLICE_EXECUTION.md","docs/GOVERNANCE_FAIL_CLOSED.md","docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md"],
   "forbidden_parallel_namespaces": ["docs/skills"],
