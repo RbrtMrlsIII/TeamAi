@@ -2,7 +2,7 @@
 
 **Status:** CANONICAL OPERATING POLICY
 **Scope:** TeamAi web development, preview, browser-level verification, and relevant end-to-end web flows
-**Authority:** This policy refines execution procedure; it does not override `PRODUCT_LAW.md`, `MASTERPLAN.md`, or backend/domain authority.
+**Authority:** This policy refines execution procedure; it does not override `Product_Law/PRODUCT_LAW.md`, `Masterplan/MASTERPLAN.md`, or backend/domain authority.
 
 ## 1. Purpose
 
