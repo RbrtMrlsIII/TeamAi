@@ -72,6 +72,14 @@ test('authority manifest is machine-readable and names one owner per canonical r
   assert.equal(manifest.promotion_model.auto_merge, false);
 });
 
+test('historical surfaces distinguish directory paths from filename prefixes', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  assert.equal(manifest.historical_surfaces.archive.path, 'docs/archive/');
+  assert.equal(manifest.historical_surfaces.handover.path, 'handover/');
+  assert.equal(manifest.historical_surfaces.checkpoints.prefix, 'docs/CHECKPOINT_');
+  assert.equal(manifest.historical_surfaces.checkpoints.path, undefined);
+});
+
 test('authority manifest records the validation migrations instead of deleting the old invariants silently', () => {
   const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
   const migrations = manifest.invariant_migrations || [];
