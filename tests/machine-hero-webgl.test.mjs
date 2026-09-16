@@ -5,7 +5,8 @@ import { readFile } from 'node:fs/promises';
 const source = await readFile(new URL('../public/machine-hero-webgl.js', import.meta.url), 'utf8');
 const payload = await readFile(new URL('../public/machine-hero-payload.js', import.meta.url), 'utf8');
 const graph = await readFile(new URL('../public/machine-hero-graph.js', import.meta.url), 'utf8');
-const page = await readFile(new URL('../public/machine-hero-preview.html', import.meta.url), 'utf8');
+const page = await readFile(new URL('../public/machine-core-preview.html', import.meta.url), 'utf8');
+const fallback = await readFile(new URL('../public/machine-core-semantic-fallback.js', import.meta.url), 'utf8');
 const magnificent = await readFile(new URL('../public/machine-hero-magnificent.js', import.meta.url), 'utf8');
 const magnificentPage = await readFile(new URL('../public/machine-hero-magnificent.html', import.meta.url), 'utf8');
 
@@ -14,6 +15,15 @@ test('WebGL machine preview is opt-in and separate from production canvas', () =
   assert.match(source, /mountMachineWebGLPreview/);
   assert.match(source, /data-machine-hero-webgl/);
   assert.match(page, /mountMachineWebGLPreview/);
+});
+
+test('machine preview has a semantic fallback independent of WebGL availability', () => {
+  assert.match(page, /machine-core-semantic-fallback\.js/);
+  assert.match(fallback, /createBranchConnectionCore/);
+  assert.match(fallback, /createMachineAnimation/);
+  assert.match(fallback, /data-core-count/);
+  assert.match(fallback, /data-core-camera/);
+  assert.match(fallback, /reduced-motion/);
 });
 
 test('WebGL projector resolves its browser graph dependency and graph resolves payload dependency', () => {
