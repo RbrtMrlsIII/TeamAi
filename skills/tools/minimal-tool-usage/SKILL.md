@@ -16,7 +16,7 @@ Objective, canonical authority, required evidence, available tool/service, curre
 4. Reuse already verified state/evidence when it still covers the same pinned scope.
 5. Batch coherent changes when doing so preserves reviewability and does not hide independent risk.
 6. Perform deterministic checks before expensive hosted/browser/deployment verification when appropriate.
-7. Use deliberate Vercel/browser operations only when web verification adds required evidence.
+7. Use deliberate browser operations only when web verification adds required evidence.
 8. Avoid destructive retries and duplicate writes; use idempotency where supported.
 9. Confirm important authoritative writes with targeted read-back when required.
 10. Avoid unnecessary context transfers and repeated external requests.
@@ -27,7 +27,7 @@ M applies across domain skills. Examples include:
 
 - **Firebase/Firestore:** targeted canonical reads, minimal fields, bounded queries, required write plus read-back rather than repeated broad reads.
 - **GitHub:** fetch only the files/commits/PR state needed for the decision, reuse pinned evidence, and avoid redundant repository scans.
-- **Vercel/browser:** make one coherent web change and one deliberate verification deployment/run when browser evidence is actually required.
+- **Browser verification:** make one coherent web change and one deliberate verification run when browser evidence is actually required.
 - **Supabase/PayPal:** perform only the trusted operations required by the applicable contract and preserve idempotency/replay controls.
 - **Spatial/UI:** inspect the coordinator skill and F0–F7 map once; do not restyle every composition separately when the theme root owns the change.
 - **Tests/builds:** run the smallest relevant deterministic checks first, then expand only when the evidence boundary requires it.

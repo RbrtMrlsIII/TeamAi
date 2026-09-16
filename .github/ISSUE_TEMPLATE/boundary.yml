@@ -10,7 +10,7 @@ body:
     id: boundary
     attributes:
       label: Boundary in question
-      description: What authority or system is at risk (GitHub, Firebase Hosting, Firestore, Supabase, PayPal, Vercel, etc.)?
+      description: What authority or system is at risk (GitHub, Firebase Hosting, Firestore, Supabase, PayPal, etc.)?
     validations:
       required: true
   - type: textarea
