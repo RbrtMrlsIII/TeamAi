@@ -4,15 +4,15 @@
 
 ## Current Slice
 
-Repository Governance Foundation Reconciliation
+Post-#346 session and control-plane reconciliation
 
 ## Status
 
-IN PROGRESS — PR #346 DRAFT
+IN PROGRESS — Draft session-truth PR
 
 ## Objective
 
-Complete the governance migration so future development can expand or replace the 3D Hero without reviving stale authorities, regressing protected invariants, or losing evidence. Establish `Product_Law/` and `Masterplan/` as the canonical roots, retire live `HandOver.md` and `Endorsement.md`, unify Skill routing, reconcile Issue #133, and make governance validation prove the whole draft PR target.
+Make the live session and current-slice documents match repository truth after #346 and #348 merged. #346 is not an open Draft. #344 remains Draft and unpromoted. Leftover control-plane and delivery work is the frontier, not "finish 346".
 
 ## Dependencies
 
@@ -23,22 +23,21 @@ Complete the governance migration so future development can expand or replace th
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 - `skills/governance/repository-synchronization/SKILL.md`
-- `skills/governance/machine-builder/SKILL.md`
+- Issue #347
 - Issue #133
 - Issue #278
 - PR #344 remains Draft and unpromoted
+- PR #349 is a leftover Vercel Draft and is not current delivery authority while `vercel.json` already exists on `main` via #348
 
 ## Verification
 
-- canonical root and retired-reference audit
-- PR base/head synchronization audit
-- governance validator tests
-- migration invariant tests
-- project tests plus typecheck/build/backend authority verification
-- exact-head browser verification for any user-visible claim
+- canonical six-surface synchronization
+- `build-system/scripts/repository-canonical-governance-audit.py`
+- document-migration tests
+- no runtime, Hero replacement, C8, C9, or C10 claim
 
 ## Current blocker
 
-Fresh exact-head verification for #346 is not yet green. The latest completed workflow quartet was attached to the prior workflow SHA rather than the PR's current head, so it is not admissible as current-head proof. Migration-layer assertions and stale active-document authority pointers have been the known validation debt; no backend/typecheck/security/browser regression has been demonstrated. Continue reconciling the active graph until Governance Integrity and Full-System Verification both pass on the same current PR head. Do not promote or merge #344 from this slice.
+Session files on `main` still describe #346 as Draft. That is the recovery trap this slice closes. After merge, leftover Issue #347 control-plane items, #349 stale/draft overlap, and #344 promotion gates remain; they are not this slice. Do not promote #344 from this slice.
 
-<!-- #348 canonical synchronization marker: proof-target surface -->
+<!-- session-reconciliation marker: post-346 truth -->
