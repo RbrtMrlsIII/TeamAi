@@ -20,6 +20,7 @@ This slice is a standalone frontend proof surface. It does not replace the produ
 - A standalone WebGL preview renders the machine parts, semantic wiring corridor, and subject footprint.
 - Geometry mutation moves the semantic target, subject, camera target, and wiring endpoints together.
 - Playwright covers the standalone preview URL, WebGL canvas presence, expansion-state transition, geometry mutation, and isolation from the production Hero surface.
+- When WebGL is unavailable, the preview still materializes the semantic machine state, branch camera controls, module count, and open/close state without pretending a renderer is active.
 
 ## Explicit non-claims
 
@@ -33,4 +34,4 @@ This slice is a standalone frontend proof surface. It does not replace the produ
 
 ## Entry surface
 
-The prototype has its own HTML page: `public/machine-hero-preview.html`. The production `public/index.html` remains outside the standalone machine runtime contract.
+The canonical standalone preview page is `public/machine-core-preview.html`. The production `public/index.html` remains outside the standalone machine runtime contract.
