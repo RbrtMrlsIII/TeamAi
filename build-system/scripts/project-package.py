@@ -19,7 +19,7 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[2]
 
 BLOCKED_DIRS = {
-    ".git", ".next", ".vercel", ".firebase", ".turbo", ".cache",
+    ".git", ".next", ".firebase", ".turbo", ".cache",
     "node_modules", "dist", "out", "coverage", "playwright-report",
     "test-results", "artifacts", "screenshots", "captures", "tmp", "temp",
 }
@@ -29,7 +29,7 @@ BLOCKED_FILE_NAMES = {
 }
 ARTIFACT_IMAGE_MARKERS = (
     "screenshot", "screen-shot", "capture", "evidence-image",
-    "browser-capture", "playwright", "visual-test", "vercel-preview",
+    "browser-capture", "playwright", "visual-test",
 )
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}
 

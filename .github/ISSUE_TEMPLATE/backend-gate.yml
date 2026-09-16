@@ -39,5 +39,5 @@ body:
     attributes:
       label: Forbidden shortcuts
       options:
-        - label: Will not move domain state to browser/Vercel/F6/F7
+        - label: Will not move domain state to browser/F6/F7
         - label: Will not treat preview success as architecture acceptance

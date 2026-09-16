@@ -13,7 +13,7 @@ Supabase Edge Functions are the trusted server runtime. They are not TeamAi doma
 Keep trusted operations on the Edge Function boundary. Preserve webhook authenticity and idempotency controls.
 
 ## DO NOT
-Do not move trusted execution into the browser, a Vercel preview, or an F7 Modal handler.
+Do not move trusted execution into the browser or an F7 Modal handler.
 
 ## PASS
 Trusted operations remain on the Edge Function and reject unauthorized callers.

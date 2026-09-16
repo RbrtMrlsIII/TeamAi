@@ -69,3 +69,4 @@ Distinguish:
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
 
 <!-- #348 canonical synchronization marker: proof-target surface -->
+<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->

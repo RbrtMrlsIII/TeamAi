@@ -87,3 +87,4 @@
 - [ ] Historical records remain immutable and out of active routing.
 
 <!-- #348 canonical synchronization marker: proof-target surface -->
+<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->
