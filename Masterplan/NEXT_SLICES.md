@@ -4,15 +4,15 @@
 
 ## Current Slice
 
-Repository Governance Foundation Reconciliation
+Post-merge delivery verification and TEAM-EXPERIENCE-029 continuation
 
 ## Status
 
-IN PROGRESS — PR #346 DRAFT
+IN PROGRESS — #346 and #348 merged; #344 remains Draft
 
 ## Objective
 
-Complete the governance migration so future development can expand or replace the 3D Hero without reviving stale authorities, regressing protected invariants, or losing evidence. Establish `Product_Law/` and `Masterplan/` as the canonical roots, retire live `HandOver.md` and `Endorsement.md`, unify Skill routing, reconcile Issue #133, and make governance validation prove the whole draft PR target.
+Maintain canonical repository/session truth after the merged governance foundation (#346) and post-merge delivery/runtime change (#348). Verify the production delivery path, retire stale recovery references, keep the Machine Hero candidate isolated and unpromoted, and continue TEAM-EXPERIENCE-029 from the canonical Masterplan frontier without reviving retired authorities.
 
 ## Dependencies
 
@@ -26,19 +26,17 @@ Complete the governance migration so future development can expand or replace th
 - `skills/governance/machine-builder/SKILL.md`
 - Issue #133
 - Issue #278
+- Issue #347
 - PR #344 remains Draft and unpromoted
 
 ## Verification
 
-- canonical root and retired-reference audit
-- PR base/head synchronization audit
-- governance validator tests
-- migration invariant tests
-- project tests plus typecheck/build/backend authority verification
-- exact-head browser verification for any user-visible claim
+- canonical authority and retired-reference audit
+- current session/control-plane documentation consistency
+- production Vercel runtime verification for `/`, `/health`, `/hero/`, and `/spatial/`
+- exact-head browser verification for #344 only after its own current-head gates are established
+- project tests, typecheck/build, security, and governance evidence for any substantive change
 
 ## Current blocker
 
-Fresh exact-head verification for #346 is not yet green. The latest completed workflow quartet was attached to the prior workflow SHA rather than the PR's current head, so it is not admissible as current-head proof. Migration-layer assertions and stale active-document authority pointers have been the known validation debt; no backend/typecheck/security/browser regression has been demonstrated. Continue reconciling the active graph until Governance Integrity and Full-System Verification both pass on the same current PR head. Do not promote or merge #344 from this slice.
-
-<!-- #348 canonical synchronization marker: proof-target surface -->
+Production route-content verification remains dependent on the authenticated Vercel runtime/browser path. PR #344 also has independent machine-core Playwright failures and must remain Draft until fresh current-head browser evidence proves the candidate contract. Continue 029 work only from this canonical frontier; do not promote #344 from this slice.

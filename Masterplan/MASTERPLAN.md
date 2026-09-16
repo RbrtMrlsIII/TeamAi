@@ -2,7 +2,7 @@
 
 **Authority:** `Product_Law/PRODUCT_LAW.md`  
 **Role:** chronology and executable checklist only.  
-**Current governing program:** repository foundation reconciliation before Machine Hero promotion.
+**Current governing program:** post-merge delivery verification, then TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
 
 ## Repository foundation
 
@@ -16,18 +16,22 @@
 - [x] Active `HandOver.md` and `Endorsement.md` are retired; historical records are preserved.
 - [x] Parallel `docs/skills/` procedure namespace is retired.
 - [x] `OBSOLETE_FILES.md` registry remains forbidden.
-- [ ] Eliminate every active reference to retired governance roots.
+- [ ] Eliminate every remaining active reference to retired governance roots.
 - [ ] Reconcile all remaining governance validators to non-overlapping bounded responsibilities.
-- [ ] Governance audit proves the Draft PR's declared proof target against the complete PR `base...head` diff.
-- [ ] Issue #133 and repository control-plane required contexts agree on Draft → ready-for-review → authorized merge.
-- [ ] Fresh governance/project/security/browser CI is green at the final #346 head.
+- [x] Governance audit proves governed PR proof targets against the complete PR `base...head` diff.
+- [x] Issue #133 and repository control-plane lifecycle agree on Draft → ready-for-review → authorized merge.
+- [x] #346 governance foundation was merged through the normal GitHub path.
+- [x] #348 post-merge governance and explicit Vercel Node runtime entrypoint were merged through the normal GitHub path.
+- [x] Canonical session/current-slice/masterplan records have been aligned with the merged #346/#348 state on the recovery branch.
 
 ## Workspace and delivery
 
 - [x] Existing durable branch naming policy is responsibility-specific.
 - [x] Workflow display names describe their actual responsibility.
 - [ ] Review open branches and retain only those with active Issue/PR ownership or unique provenance/recovery value.
-- [ ] Keep main changes behind governed PRs.
+- [x] Keep main changes behind governed PRs.
+- [ ] Verify production `/`, `/health`, `/hero/`, and `/spatial/` through an authenticated runtime/browser path where required by the Vercel project configuration.
+- [ ] Close or otherwise retire stale delivery-only PR interpretations after their landed changes are reflected on `main`.
 
 ## TEAM-BACKEND-001
 
@@ -58,7 +62,7 @@
 - [ ] Responsive and reduced-motion behavior is validated.
 - [ ] Fresh browser evidence is accepted.
 - [ ] Production-versus-candidate comparison is accepted.
-- [ ] Governance prerequisites from #346 are complete.
+- [ ] Final governance-currentness prerequisite is recorded on the candidate.
 - [ ] Explicit promotion decision is recorded before replacing the production adapter.
 
 ## Validation-change discipline
@@ -68,22 +72,20 @@
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
 - [ ] No validator is weakened merely to obtain green CI.
 
-## Governance reconciliation — Issue #347 / PR #346
+## Post-#346 / Post-#348 control-plane reconciliation — Issue #347
 
-- [ ] Revalidate PR #346 against current `main` and reconcile the base/head relationship before any readiness claim.
-- [ ] Remove all active retired-root references and prove the canonical governance graph against the complete PR diff.
-- [ ] Reconcile validator ownership and preserve each unrelated protection while changing truth.
-- [ ] Reconcile Issue #133 with the actual repository control-plane gate configuration.
-- [ ] Mechanically enforce Draft-first for substantive PRs while keeping normal validation active on Drafts.
-- [ ] Complete final #346 governance/project/security/browser evidence at the exact head.
-- [ ] Record #346 ready-for-review only after the issue slice checklist and supporting governance evidence are current.
-- [ ] Merge #346 through the normal authorized GitHub merge path only after ready-for-review requirements are satisfied.
+- [x] PR #346 is merged and no longer treated as an active migration vessel.
+- [x] PR #348 is merged and its Vercel Node runtime entrypoint is on `main`.
+- [x] Issue #347 now describes the post-merge state without reopening #346.
+- [x] Align all canonical session/current-slice records with the merged state.
+- [ ] Retire the stale PR #349 delivery-only interpretation after the current recovery documentation lands.
+- [ ] Complete authenticated production runtime verification and park any Vercel configuration-dependent limitation explicitly.
+- [ ] Re-diff PR #344 against the current `main`, keep it Draft, and establish fresh exact-head machine evidence before any readiness or promotion decision.
+- [ ] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
 
 ## Session synchronization
 
 - [x] `AI_ASSISTANT_READ_ME.md` is the live session/recovery/handover/endorsement-decision surface.
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
-- [ ] Every substantive session updates the canonical surface whose state changed.
+- [x] Current session/masterplan/current-slice records were synchronized for the merged #346/#348 state.
 - [ ] Historical records remain immutable and out of active routing.
-
-<!-- #348 canonical synchronization marker: proof-target surface -->

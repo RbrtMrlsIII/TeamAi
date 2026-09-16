@@ -5,13 +5,13 @@
 ## Session anchor
 
 - Last given prompt: **1**
-- Session date: **2026-09-15**
-- Governance PR: **#346** `governance/repository-foundation` — Draft
-- Current #346 head: **see PR #346 live head; do not hard-code a commit SHA here**
+- Session date: **2026-09-16**
+- Governance PR: **#346** `governance/repository-foundation` — **merged** into `main`
+- Post-merge governance/delivery PR: **#348** — **merged** into `main`
 - Machine Hero candidate: **#344** `feat/machine-hero-foundation` — Draft and not promoted
 - Active 029 ledger: **#278**
-- Governance issue: **#133**, reconciled to draft-first/no-auto-merge policy
-- Main baseline for #346: `e14e9be670866c13d565f4b47dda30bebe4c51c8`
+- Governance issue: **#347** — post-#346 reconciliation and delivery-truth checklist
+- Current main baseline: **#348 merge commit `a714271e9ed91fcfbbab9c88160107cc38bf7d01`**
 
 ## Canonical authority path
 
@@ -34,7 +34,8 @@
 
 ## Current reconciliation work
 
-- #346 remains the repository governance migration vessel and remains Draft until its current proof target is review-ready.
+- #346 is **merged** and is no longer an active migration vessel.
+- #348 is **merged** and establishes the explicit Vercel Node runtime entrypoint on `main`.
 - #344 remains the new 3D Hero replacement candidate and remains Draft.
 - Product Law is canonical under `Product_Law/` without semantic truncation.
 - The complete Masterplan is under `Masterplan/`; only `Masterplan/NEXT_SLICES.md` owns the current frontier.
@@ -85,6 +86,4 @@ Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and
 
 ## Next governance gate
 
-#346 is not review-ready until active references to retired roots are eliminated, obsolete validators/procedures no longer appear in active routing, Issue #133 and the repository control plane agree, the governance migration tests pass, and fresh governance/full-system/security/browser evidence agrees on the same live head.
-
-<!-- #348 canonical synchronization marker: proof-target surface -->
+The active post-merge control-plane frontier is tracked in Issue #347. #344 remains Draft until its own current-head project/browser evidence and product acceptance gates are proven. No production Hero replacement is authorized by this session surface.
