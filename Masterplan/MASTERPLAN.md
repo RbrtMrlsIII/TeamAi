@@ -1,6 +1,6 @@
 # MASTERPLAN — active execution checklist
 
-**Authority:** `Product_Law/PRODUCT_Law.md`  
+**Authority:** `Product_Law/PRODUCT_LAW.md`  
 **Role:** chronology and executable checklist only.  
 **Current governing program:** repository foundation reconciliation before Machine Hero promotion.
 
