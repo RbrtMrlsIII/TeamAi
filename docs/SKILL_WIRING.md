@@ -71,3 +71,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md`.
 
 <!-- #348 canonical synchronization marker: proof-target surface -->
+<!-- #349 post-merge recovery synchronization: routing remains procedural-only; session truth is not delegated to Skills. -->
