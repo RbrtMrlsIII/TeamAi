@@ -3,22 +3,22 @@ import { branchAtRingAngle } from './machine-core-hit-testing.js';
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || min));
 
+function parseSeatCount(){const raw=new URLSearchParams(globalThis.location?.search||'').get('seats');const requested=raw==null||raw.trim()===''?10:Number(raw);return Number.isFinite(requested)?Math.min(16,Math.max(2,Math.floor(requested))):10;}
+
 function bind() {
   const panel = document.querySelector('[data-machine-core-visual]');
   const canvas = panel?.querySelector('canvas');
   const select = panel?.querySelector('[data-core-camera]');
   if (!canvas || !select || select.dataset.machineInteractionBound) return;
   select.dataset.machineInteractionBound = '1';
-  const params = new URLSearchParams(globalThis.location?.search || '');
-  const requested = Number(params.get('seats'));
-  const count = Number.isFinite(requested) ? Math.min(16, Math.max(2, Math.floor(requested))) : 10;
-  const core = createBranchConnectionCore({ seatCount: count });
+  const core = createBranchConnectionCore({ seatCount: parseSeatCount() });
   const branches = core.parts.filter((part) => part.kind !== 'hub');
   const inspector = document.createElement('aside');
   inspector.className = 'machine-core-inspector';
   inspector.setAttribute('aria-label', 'Selected branch configuration');
   inspector.dataset.branchInspector = '1';
   inspector.innerHTML = '<span class="machine-core-inspector__role">Command hub</span><strong>HUB-CORE</strong>';
+
   panel.append(inspector);
 
   const branchState = new Map();
