@@ -3,7 +3,7 @@ name: Repository Full-System Verification
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, governance/repository-foundation]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
