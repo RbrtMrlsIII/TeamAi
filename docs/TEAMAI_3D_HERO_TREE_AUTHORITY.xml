@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <teamaiHeroTreeAuthority version="1.2" status="design-baseline" implementationStatus="incomplete">
   <authority>
-    <productLaw>PRODUCT_LAW.md</productLaw>
+    <productLaw>Product_Law/PRODUCT_LAW.md</productLaw>
     <vision>docs/VISION.md</vision>
     <executionLedger>Issue #278</executionLedger>
     <contract>docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md</contract>
