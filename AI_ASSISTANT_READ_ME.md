@@ -7,7 +7,7 @@
 - Last given prompt: **1**
 - Session date: **2026-09-15**
 - Governance PR: **#346** `governance/repository-foundation` — Draft
-- Current #346 head: `a611eb61dfd7532235efe7b812c8de42491fc80a`
+- Current #346 head: **see PR #346 live head; this pointer must never be hard-coded here**
 - Machine Hero candidate: **#344** `feat/machine-hero-foundation` — Draft and not promoted
 - Active 029 ledger: **#278**
 - Governance issue: **#133**, reconciled to draft-first/no-auto-merge policy
@@ -43,7 +43,7 @@
 - Issue #133 now separates Draft/ready-for-review/merge states, rejects auto-merge as product execution policy, permits multi-commit/multi-slice PRs, and requires validation-change reconciliation.
 - The governance audit proves the PR's declared proof target against the complete `base...head` delta rather than the last commit.
 - Exact-head governance, full-system, and browser workflows are used so verification evidence is tied to the actual PR head rather than a synthetic merge ref.
-- The current CI queue must be evaluated only for the exact recorded #346 head above.
+- The current CI queue must be evaluated only for the live PR #346 head, as reported by GitHub, not from a copied SHA in this file.
 
 ## Validation-change guide
 
