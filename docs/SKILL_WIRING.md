@@ -6,7 +6,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 
 ## Authority path
 
-`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
+`Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → owning Issue → PR → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
 
 ## Development fields
 
@@ -32,11 +32,19 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 
 Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
 
+## Validation lifecycle routing
+
+Draft PRs continue substantive validation. Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime evidence remain active against the exact PR head. `review-readiness` may be skipped on Draft by lifecycle design.
+
+Ready-for-review PRs retain current exact-head substantive evidence and additionally enter `review-readiness`, which evaluates review/authorization conditions. Merge candidates require current passing required checks and normal review/merge authorization.
+
+A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
+
 ## Machine Hero routing
 
-PR #344 is the machine replacement candidate. Its routing is:
+PR #353 is the current merged machine candidate. Its routing is:
 
-`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md → repository-synchronization → machine-builder → applicable frontend/spatial Skills → verification/browser evidence`
+`Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md → repository-synchronization → machine-builder → applicable frontend/spatial Skills → verification/browser evidence`
 
 The machine builder owns the construction procedure. It does not own product semantics, backend authority, authorization, scheduler selection, entitlement, or promotion.
 
@@ -70,5 +78,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md`.
 
-<!-- #348 canonical synchronization marker: proof-target surface -->
-<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->
+<!-- #352 validation-lifecycle synchronization: Draft substantive validation remains active; review-readiness is promotion-stage; skipped downstream is not pass. -->
