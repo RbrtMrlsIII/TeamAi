@@ -1,7 +1,7 @@
 # Product Law Amendment — Guest Authentication Transition Freeze
 
 **Status:** NORMATIVE PRODUCT-LAW AMENDMENT / FROZEN OWNER-DIRECTED BEHAVIOR  
-**Parent authority:** `PRODUCT_LAW.md`  
+**Parent authority:** `Product_Law/PRODUCT_LAW.md`  
 **Related frontend contract:** `docs/PRODUCT_LAW_FRONTEND_GUEST_AUTH_AND_ENTRANCE_CONTRACT.md`  
 **Current experience ledger:** Issue #278  
 **No 029-release claim.**
