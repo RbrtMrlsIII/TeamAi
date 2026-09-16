@@ -23,6 +23,7 @@
     try {
       await import('./machine-core-visual.js');
       await import('./machine-core-interaction.js');
+      await import('./machine-core-semantic-fallback.js');
       if (root) root.dataset.coreBoot = 'ready';
     } catch (error) {
       showBootError(error);
