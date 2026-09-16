@@ -7,6 +7,8 @@ Use before and during any substantive TeamAi change that can affect current stat
 Changed paths, governing Product Law concept, Masterplan parent, owning Issue, current PR state, verification scope, and affected canonical documents.
 
 ## AUTHORITY
+This Skill is **procedural only**. It has no Product Law, permission, identity, entitlement, scheduler, commerce, durable-state, or merge authority.
+
 `Product_Law/PRODUCT_LAW.md` → `Masterplan/MASTERPLAN.md` → `POLICY.md / ORUCAVEAM` → `docs/SKILL_WIRING.md` → this Skill and other applicable Skills.
 
 ## ACTION
