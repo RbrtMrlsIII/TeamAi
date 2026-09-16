@@ -1,8 +1,8 @@
-name: CodeQL
+name: Security Static Analysis
 
 on:
   push:
-    branches: [main]
+    branches: [main, governance/repository-foundation]
   pull_request:
     branches: [main]
   schedule:

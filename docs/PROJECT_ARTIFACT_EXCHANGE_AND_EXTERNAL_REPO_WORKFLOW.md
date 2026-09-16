@@ -58,7 +58,7 @@ If the destination cannot be reached or authorized, the user receives a human-in
 
 ## Canonical references
 
-- `PRODUCT_LAW.md`
+- `Product_Law/PRODUCT_LAW.md`
 - `POLICY.md`
 - `docs/FIREBASE_MIGRATION_AND_CUTOVER_PLAN.md`
 - `docs/FIREBASE_SETUP_CHECKLIST.md`

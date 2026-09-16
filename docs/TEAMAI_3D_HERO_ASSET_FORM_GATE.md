@@ -1,6 +1,6 @@
 # TeamAi 3D Hero — Asset Form Gate
 
-Status: planning/continuity only. Asset Function/Form/Runtime gates remain distinct; active TEAM-EXPERIENCE-029 implementation remains governed by `MASTERPLAN.md`.
+Status: planning/continuity only. Asset Function/Form/Runtime gates remain distinct; active TEAM-EXPERIENCE-029 implementation remains governed by `Masterplan/MASTERPLAN.md`.
 
 ## Asset family
 

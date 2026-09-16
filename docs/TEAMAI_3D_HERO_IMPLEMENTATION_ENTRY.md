@@ -2,11 +2,11 @@
 
 **Status:** CURRENT IMPLEMENTATION ENTRY / 029 STRUCTURAL WORK HELD BY ISSUE #278
 
-This document is the implementation entry point for the 3D Hero. It does not create a second roadmap. `PRODUCT_LAW.md` remains product authority, `MASTERPLAN.md` remains execution authority, `POLICY.md` governs execution, `docs/VISION.md` carries conceptual experience intent, and Issue #278 is the active 029 product-experience execution ledger.
+This document is the implementation entry point for the 3D Hero. It does not create a second roadmap. `Product_Law/PRODUCT_LAW.md` remains product authority, `Masterplan/MASTERPLAN.md` remains execution authority, `POLICY.md` governs execution, `docs/VISION.md` carries conceptual experience intent, and Issue #278 is the active 029 product-experience execution ledger.
 
 **Machine construction (how layers connect):** `docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md` — construction checklist for tree / division / topology / camera / electricity. Not a second chronology.
 
-**Recovery map (main vs plan vs Issues):** `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`.
+**Recovery map (main vs plan vs Issues):** `AI_ASSISTANT_READ_ME.md` for current session/recovery state, `Masterplan/NEXT_SLICES.md` for the sole current frontier, and Issue #278 for the 029 execution ledger.
 
 ## Current implementation truth
 
@@ -18,7 +18,7 @@ The current backend state is `TEAM-BACKEND-001 — ENDORSED / BOUNDED RECORDED S
 
 Before modifying the Hero, recover current truth from:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md → docs/VISION.md → Issue #278 body → docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md → docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md → docs/TEAMAI_029_CURRENT_STATE_MAP.md → tree census/contracts → applicable Skills → actual implementation`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md → docs/VISION.md → Issue #278 body → AI_ASSISTANT_READ_ME.md → docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md → tree census/contracts → applicable Skills → actual implementation`
 
 Do not use this historical entry file, an old Issue comment, a stale branch name, or a prior green run as a substitute for current repository state.
 

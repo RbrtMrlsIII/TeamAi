@@ -8,7 +8,7 @@ The handover belongs to **TeamAi**, the consuming/target project. Universal Tool
 ## Required handover contents
 Each gate handover must contain, at minimum:
 
-- current `PRODUCT_LAW.md`, `MASTERPLAN.md`, and `AI_ASSISTANT_READ_ME.md`;
+- current `Product_Law/PRODUCT_LAW.md`, `Masterplan/MASTERPLAN.md`, and `AI_ASSISTANT_READ_ME.md`;
 - current backend contracts and relevant source files;
 - validation/evidence records;
 - checkpoint and human-readable handover record;

@@ -71,7 +71,7 @@ The connected Supabase public schema contains no TeamAi application tables. Fire
 | GitHub OAuth/installation | deployed binding infrastructure | live function + repository evidence | Hero live bind / 029 acceptance |
 | Seat connection/provider | deployed infrastructure | live inventory | end-to-end product completion |
 | Security/recovery | open where claim-level evidence is incomplete | remaining verification matrix | completion |
-| Traceability / endorsement | separate from deployment | HandOver + Endorsement evidence | release readiness |
+| Traceability / endorsement | separate from deployment | historical HandOver + Endorsement evidence | release readiness |
 
 ## 5. PayPal live configuration boundary
 
@@ -145,8 +145,8 @@ Likewise:
 
 ## 11. Canonical references
 
-- `PRODUCT_LAW.md` — product / architecture authority.
-- `MASTERPLAN.md` — chronological execution authority and release gate.
+- `Product_Law/PRODUCT_LAW.md` — product / architecture authority.
+- `Masterplan/MASTERPLAN.md` — chronological execution authority and release gate.
 - `POLICY.md` / ORUCAVEAM — execution constitution.
 - `docs/SKILL_WIRING.md` — capability/skill routing.
 - `docs/TEAMAI_029_CURRENT_STATE_MAP.md` — cross-track state map.

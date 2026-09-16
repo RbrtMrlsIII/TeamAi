@@ -4,7 +4,7 @@
 
 This document is the human-readable census and construction contract for the intended 3D Hero tree system. It records semantic tree identity, tree contents, branch responsibilities, implementation anchors, expansion rules, connection requirements, and verification boundaries.
 
-The census is a **truth inventory**, not a product roadmap and not a second Masterplan. `docs/VISION.md` explains the experience meaning; `MASTERPLAN.md` governs execution order; this census records the structural state of every tree/branch/division that has actually been defined or implemented.
+The census is a **truth inventory**, not a product roadmap and not a second Masterplan. `docs/VISION.md` explains the experience meaning; `Masterplan/MASTERPLAN.md` governs execution order; this census records the structural state of every tree/branch/division that has actually been defined or implemented.
 
 It must never claim that a tree is complete merely because a Seat tree prototype works.
 
@@ -329,8 +329,8 @@ The Seat tree is evidence of an existing mechanism. It is not evidence that all 
 - `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md`
 - `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md`
 - `docs/VISION.md`
-- `docs/TEAMAI_CURRENT_STATE.md`
-- `MASTERPLAN.md`
+- `AI_ASSISTANT_READ_ME.md`
+- `Masterplan/MASTERPLAN.md`
 - `Issue #278 — 029 Canonical Product-Experience Baseline & Governed Execution Ledger`
 
 This census is a design/recovery baseline. It does not itself authorize implementation or claim acceptance.
@@ -339,7 +339,7 @@ This census is a design/recovery baseline. It does not itself authorize implemen
 
 The census is maintained alongside implementation, not after the fact. When code introduces or materially changes a tree/branch/division, the corresponding census entry is part of that same PR's definition of current truth.
 
-The census is intentionally **not** the place where final product-roadmap sequence is invented. It records structural truth and known context; `MASTERPLAN.md` and Issue #278 determine execution order.
+The census is intentionally **not** the place where final product-roadmap sequence is invented. It records structural truth and known context; `Masterplan/MASTERPLAN.md` and Issue #278 determine execution order.
 
 Chronological execution remains:
 
@@ -380,7 +380,7 @@ Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge iden
 
 The edge, geometry, and adjacency seam are presentation-only and do not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
 
-This section records current structural evidence only. `MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
+This section records current structural evidence only. `Masterplan/MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
 
 ### Seat-1 adjacent expansion envelope
 

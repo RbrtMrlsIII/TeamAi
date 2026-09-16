@@ -3,7 +3,7 @@
 **Status:** CANONICAL PRODUCT-LAW FIELD COMPANION
 **Parent authority:** `Product_Law/PRODUCT_LAW.md`
 
-This document gives the operational definitions behind the connected-platform authorities named by Product Law. It does not create a new authority layer and MUST NOT override `Product_Law/PRODUCT_LAW.md`.
+This document gives the operational definitions behind the connected-platform authorities named by Product Law. It is subordinate field material, does not create a new authority layer, and MUST NOT override `Product_Law/PRODUCT_LAW.md`.
 
 ## Platform map
 
@@ -55,9 +55,7 @@ GitHub Actions MUST NOT be treated as a general orchestration authority for the 
 
 ## Firestore usage and resilience consequence
 
-Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. Firebase's current no-cost Standard-edition allowance is 50,000 document reads/day, 20,000 document writes/day, 20,000 document deletes/day, 1 GiB stored data, and 10 GiB/month outbound transfer. Spark provides the no-cost quota but not pay-as-you-go overage; current Firebase documentation says exceeding Spark quota for a product can shut that product off for the remainder of the applicable billing period. Quota is project-level.
-
-TeamAi should reduce unnecessary Firestore usage rather than replace Firestore authority: targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference are preferred optimization mechanisms. Any alternate durable domain store requires explicit Product Law/architecture reconciliation. See `docs/FIRESTORE_USAGE_AND_RESILIENCE_POLICY.md`.
+Cloud Firestore `(default)` remains the canonical durable TeamAi domain/application store. TeamAi should reduce unnecessary Firestore usage rather than replace Firestore authority: targeted reads, bounded queries, cursor pagination, safe client caching/offline persistence, selective realtime listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference are preferred optimization mechanisms. Any alternate durable domain store requires explicit Product Law/architecture reconciliation.
 
 ## TeamAi policy consequence
 

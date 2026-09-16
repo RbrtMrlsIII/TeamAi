@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-14
 **Status:** IMPLEMENTED / NOT FINAL
-**Owner:** Issue #278 / `03.9 TREE MACHINE` in `MASTERPLAN.md`
+**Owner:** Issue #278 / `03.9 TREE MACHINE` in `Masterplan/MASTERPLAN.md`
 **Scope:** Seat-1 `SEAT_CONNECTION` presentation geometry and connection-corridor contract.
 
 ## Objective

@@ -1,10 +1,10 @@
 # TeamAi GitHub App — least-privilege matrix (v1)
 
 **Status:** PLANNING / OPERATING CONTRACT · **not Product Law** · **not a live bind** · **no 029-released claim**  
-**Date:** 2026-09-09  
+**Date:** 2026-09-15  
 **Governs:** how to fill the GitHub *Create GitHub App* form for TeamAi.
 
-GitHub remains **engineering/source/change authority** (`PRODUCT_LAW.md` Family B).  
+GitHub remains **engineering/source/change authority** (`Product_Law/PRODUCT_LAW.md` Family B).  
 A GitHub App installation is a **Connection**, not a Seat, not entitlement, not scheduler (`docs/TEAM-EXPERIENCE-029_AI_CONNECTION_SEAT_CAPABILITY_LIFECYCLE.md`).
 
 Machine-readable twin: `public/github-app-permission-matrix.json`.
@@ -50,7 +50,7 @@ Actions **write** is not required for v1 and is more privilege than the product 
 | GitHub form name | Access | Why |
 |---|---|---|
 | **Metadata** | Read-only | Mandatory |
-| **Contents** | Read and write | Create `feat/*` branches and commits. Not a license to push `main`. |
+| **Contents** | Read and write | Create feature branches and commits. Not a license to push `main`. |
 | **Pull requests** | Read and write | Open / update / comment on PRs. The only mutation path. |
 | **Issues** | Read and write | TeamChat ↔ GitHub issues / comments. |
 | **Checks** | Read-only | See CI on the health leaf. |
@@ -139,7 +139,7 @@ Presentation never invents a healthy = entitled badge.
 
 ## Related
 
-- `PRODUCT_LAW.md` Family B / C / E
+- `Product_Law/PRODUCT_LAW.md` Family B / C / E
 - `skills/workspace/ws.tools.github/SKILL.md`
 - `skills/workspace/ws.github.app-least-privilege/SKILL.md`
 - `skills/workspace/ws.secrets.boundary/SKILL.md`

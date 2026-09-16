@@ -260,7 +260,7 @@ This contract is complete only when implementation evidence can show that the ac
 
 ## 17. Relationship to canonical authority
 
-`PRODUCT_LAW.md` remains authoritative. This contract refines the 029 planning vocabulary and must not override Product Law, backend authority, provider terms, or the user's decisions.
+`Product_Law/PRODUCT_LAW.md` remains authoritative. This contract refines the 029 planning vocabulary and must not override Product Law, backend authority, provider terms, or the user's decisions.
 
 Related contract:
 `docs/TEAM-EXPERIENCE-029_COMMERCIAL_AND_CAPABILITY_MODEL.md`

@@ -3,7 +3,7 @@
 **Canonical single file:** `docs/USER_MANUAL_DEPLOYMENT.md`  
 **Supersedes (deleted):** `USER_MANUAL_DEPLOY_AND_SEATS.md`, `USER_MANUAL_GITHUB_APP_SETUP.md`, `OPERATOR_DEPLOY_CHECKLIST.md`  
 **Status:** OPERATING GUIDE · **no 029 production-release claim**  
-**Authority:** Product Law (identity ≠ provider ≠ seat ≠ entitlement)
+**Authority:** Product Law (`Product_Law/PRODUCT_LAW.md`) (identity ≠ provider ≠ seat ≠ entitlement)
 
 | Identity | Value |
 |----------|--------|
@@ -39,8 +39,6 @@ Human logs in (Firebase) → Workplace/Project → Seat
 **Credential order (probes):** stub → seat key → platform env → stub fallback.
 
 Operators must **not** paste personal agent keys into every seat.
-
----
 
 ## 2. Supabase secrets
 
@@ -118,8 +116,6 @@ List: `npx supabase functions list --project-ref srpgzzretfyqdsfclnuo`
 9. PEM private key → trusted store only (never chat/Hero/git).
 
 Detail matrix: `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md`.
-
----
 
 ## 5. Master checklist (order)
 
@@ -208,6 +204,6 @@ Remaining human step: **turn App webhook Active** and confirm deliveries.
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md` — Conn-2
 - `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md` — Conn-3
 - `docs/TEAM-EXPERIENCE-029_SEAT_PROVIDER_KEY_BIND.md` — seat keys
-- `PRODUCT_LAW.md` — identity ≠ provider ≠ seat ≠ entitlement
+- `Product_Law/PRODUCT_LAW.md` — identity ≠ provider ≠ seat ≠ entitlement
 
 **no 029-released claim**

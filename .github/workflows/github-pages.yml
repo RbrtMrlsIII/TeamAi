@@ -1,4 +1,4 @@
-name: GitHub Pages
+name: GitHub Pages Spatial Deployment
 
 on:
   push:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy TeamAi public website to GitHub Pages
+    name: Deploy validation website to GitHub Pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -26,11 +26,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
 
       - name: Apply Seats plate wires (phase2 + connection + provider bind)
         shell: bash

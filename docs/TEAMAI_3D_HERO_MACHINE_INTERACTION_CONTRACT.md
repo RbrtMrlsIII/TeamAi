@@ -1,7 +1,7 @@
 # TeamAi 3D Hero — Machine Interaction Contract
 
 **Status:** Design lock for hierarchy / in-machine configuration  
-**Authority:** PRODUCT_LAW.md → this contract → spatial depth model → implementation  
+**Authority:** `Product_Law/PRODUCT_LAW.md` → this contract → spatial depth model → implementation  
 **Related:** `docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md`, `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`, Seat Shell Hierarchy v1 sheet, `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`, `docs/VISION.md`
 
 ## 1. Intent
@@ -122,4 +122,4 @@ For every tree/branch/division add/remove/rename/material restructure/reimplemen
 - `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
 - `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
 
-The census records actual demonstrated state and does not grant implementation authority. `POLICY.md` defines the governance synchronization requirement; `MASTERPLAN.md` defines execution order; `docs/VISION.md` defines conceptual experience intent.
+The census records actual demonstrated state and does not grant implementation authority. `POLICY.md` defines the governance synchronization requirement; `Masterplan/MASTERPLAN.md` defines execution order; `docs/VISION.md` defines conceptual experience intent.

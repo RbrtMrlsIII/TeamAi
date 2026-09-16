@@ -1,55 +1,59 @@
-# TeamAi — Durable Engineering Anchor
+# TeamAi — repository front door
 
-TeamAi is a human-controlled multi-AI discussion and execution orchestrator.
+TeamAi is a human-controlled multi-AI discussion and execution orchestrator. External AI providers remain external; TeamAi owns the participation, authorization, durable state, orchestration, verification, and product boundaries it defines.
 
-## Current execution order
-`TEAM-EXPERIENCE-028 → PHASE 0 CLEAN BASELINE → TEAM-BACKEND-001 → TEAM-EXPERIENCE-029`
+## Repository truth chain
 
-## Current execution frontier
-`TEAM-EXPERIENCE-029 — STRUCTURAL / PRESENTATION BASELINE`
+`Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → owning Issue/PR → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
 
-**Backend state:** `TEAM-BACKEND-001 — ENDORSED / BOUNDED RECORDED SCOPE`.
-Its remaining boundaries are explicitly recorded: Firebase emulator/rules execution is still parked/not proven in the available evidence; `teamai-task-execute` remains bounded to `stub-edge-runtime`; broader external provider invocation and broader scheduler/approval integration remain open. These residuals do not make the backend gate “in implementation.”
+Each active surface has exactly one job. Do not create parallel roadmaps, current-state manuals, Product Laws, live handover manuals, Endorsement files, Skill namespaces, governance constitutions, machine-law files, or `OBSOLETE_FILES.md`.
 
-**029 boundary:** full TEAM-EXPERIENCE-029 release remains held until the independent release gates are evidenced and accepted. Current Hero work is presentation/experience work and must not write Firestore, invoke providers, charge PayPal, mutate entitlements, or move backend authority into the renderer.
+## Authority roles
 
-Before implementation decisions, read `PRODUCT_LAW.md` → `MASTERPLAN.md` → `POLICY.md` → `docs/SKILL_WIRING.md` → applicable governance/contracts/skills. For current 029 structural truth also read the active #278 execution ledger and the synchronized 3D Hero tree census when present.
+- `Product_Law/PRODUCT_LAW.md` — product meaning, protected architecture, boundaries, and development fields.
+- `Product_Law/WIRING.md` — development-field purposes and Product Law navigation only.
+- `Masterplan/MASTERPLAN.md` — complete ordered execution checklist.
+- `Masterplan/NEXT_SLICES.md` — exactly one current execution slice.
+- `POLICY.md` — ORUCAVEAM execution discipline and change/validation rules.
+- `docs/SKILL_WIRING.md` — routes work to the single Skill system.
+- `skills/**/SKILL.md` — bounded reusable procedures, never permission.
+- `AI_ASSISTANT_READ_ME.md` — current session, recovery, handover, endorsement decision, and validation-change state.
+- `PRODUCT-KNOWLEDGE.md` — validated reusable concepts only, never volatile session state.
+- `docs/archive/` — retired/historical operating material.
+- `handover/` — historical handover evidence, not active instructions.
 
-## Execution discipline
-`ORUCAVEAM = Objective → Restrictions → User Authority → Canonical Authority → Action → Verification → Efficiency → Audit → Minimalistic Efficiency / Resource Use`
+## History
 
-`ORUCAVEAM` is the single execution discipline. Each letter resolves to direct reusable skills, which are composed with field/domain skills according to the Masterplan item.
+TeamAi evolved through provider-federated workspace foundations, durable Firebase/Firestore state, trusted backend execution, commerce/connection boundaries, browser verification, and the 029 product-experience rebaseline. Historical evidence and retired operating guides are preserved for provenance. They are not current instructions.
 
-## Backend authority
-- Firebase Auth: identity / Firebase UID ownership.
-- Firestore `default`: TeamAi durable application/domain state.
-- Supabase Edge Functions: trusted server runtime and PayPal webhook boundary.
-- PayPal: external payment-event authority.
-- GitHub: engineering/source authority.
-- Firebase Hosting: current web delivery.
-- Vercel: non-authoritative preview/browser-verification surface when connected. **Temporary cutoff (2026-09-04):** disconnected/rate-limited from the TeamAi GitHub repository — do not treat Vercel status as a merge blocker or delivery authority. Use GitHub Actions + Playwright while parked.
-- Supabase Postgres: platform infrastructure only, never TeamAi domain state.
+## Current project
 
-## Canonical backend live-function inventory
-The directly observed current Supabase Edge Function surface is the eight-function census at `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. It is the current live infrastructure inventory snapshot. The census does not replace the backend contracts, runtime evidence, or release gates, and it must be reconciled whenever Edge Function additions, removals, renames, material restructurings, reimplementations, deployments, or responsibility changes occur.
+TEAM-EXPERIENCE-029 is moving from the previous monolithic 3D Hero toward a semantic modular machine. PR #344 is the current replacement candidate and remains Draft. It is not promoted by the governance PR.
 
-The older `backend/BACKEND_LIVE_SERVICE_STATUS.md` remains the canonical backend evidence ledger for claim-level status and historical evidence; the eight-function census is the precise current deployment inventory.
+Machine construction follows:
 
-## 3D Hero truth
-The current Seat hierarchy is a **partial working mechanism**, not the complete Hero machine. Future tree/branch/division work must derive semantic identity and purpose first, then payload, expansion space, connection topology, adaptive geometry, camera/travel, interaction, contribution routing, and verification. `treeID` / `branchId` are semantic identities; prototype coordinates are not universal geometry.
+`semantic identity → payload → expansion footprint → connection topology → adaptive geometry → transition → semantic subject → camera relationship → rendering`
 
-The synchronized tree census, when present, is maintained with every governed add/remove/rename/material restructuring/reimplementation of trees, branches, divisions, associated connection behavior, or semantic UI payload:
+Prototype coordinates, old animation timing, mesh indexes, and retired camera identifiers do not define future machine semantics.
 
-- `docs/TEAMAI_3D_HERO_TREE_CENSUS.csv`
-- `docs/TEAMAI_3D_HERO_TREE_CENSUS.json`
-- `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
-- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
+## Future
 
-## Implementation completion
-An implementation is complete only when Product Law → Masterplan → Policy/ORUCAVEAM → applicable skill(s) → actual implementation → verification evidence → completion/endorsement is traceable. Documentation or deployment alone does not establish completion.
+`semantic product model → adaptive machine → real topology → turn-loop contribution → authenticated workspace → owner acceptance → ProMax refinement`
 
-## Team boundary
-Development AI builds TeamAi. Web/Feature AI operates inside the product. Universal ToolKit is upstream-only for generalized validated lessons and never overrides TeamAi authority.
+The repository is designed to add validated capabilities without multiplying sources of truth.
 
-## Issue/comment boundary
-The active Issue body is the durable issue-specific guide. New Issue comments are evidence records: diagnosis, real observed/retrieved data, warnings/discrepancies, and factual `EXECUTED` slice records only. Future-agent guidance, plans, checklists, and proof claims belong in the Issue body/canonical evidence system, not new comments. Historical comments remain immutable evidence.
+## Development flow
+
+`Issue → Product Law → Masterplan → current slice → ORUCAVEAM/Skill → Draft PR → implementation → verification/evidence → canonical synchronization → ready-for-review → authorized merge → new current truth`
+
+Substantive changes start as Draft PRs. Auto-merge is not used or relied upon for product changes. A PR may contain multiple related commits and checklist items; one slice is not required to equal one PR or one merge.
+
+## Workspace hygiene
+
+New durable branches use responsibility-specific prefixes such as `frontend/`, `backend/`, `governance/`, `verification/`, `docs/`, `recovery/`, or `delivery/`. Temporary work may use `tmp/`. Workflow names describe their responsibility rather than using vague product-wide names.
+
+Historical branches are retained when they provide provenance or recovery value. Branch deletion is a separate cleanup decision and is not treated as part of a documentation migration.
+
+## Archive
+
+Retired operating material is preserved under `docs/archive/`. Historical handover evidence may remain under `handover/`. Do not create or revive `OBSOLETE_FILES.md`. Archive material is consulted only for historical recovery.

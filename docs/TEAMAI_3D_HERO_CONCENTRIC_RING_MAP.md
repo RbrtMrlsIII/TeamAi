@@ -2,8 +2,8 @@
 
 **Status:** Spec baseline (docs first) — not fully implemented in meshes  
 **Date:** 2026-09-08  
-**Authority:** PRODUCT_LAW.md (Family J presentation) → Machine Interaction Contract → Hierarchy Runtime Baseline → this map  
-**Skills:** teamai-project → hierarchy-runtime · seat-shell-hierarchy (Seat ring only)  
+**Authority:** `Product_Law/PRODUCT_LAW.md` (Family J presentation) → Machine Interaction Contract → Hierarchy Runtime Baseline → this map  
+**Skills:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md` · `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` (Seat ring only)  
 
 ## 1. Status of the ring map
 

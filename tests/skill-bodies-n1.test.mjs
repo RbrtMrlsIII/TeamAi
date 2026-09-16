@@ -1,6 +1,6 @@
 /**
  * Slice N.1 — first SEAT_SKILLS / WORKSPACE_SKILLS bodies
- * No 029-released claim. Skills ≠ authorization.
+ * No 029 release claim. Skills ≠ authorization.
  */
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
@@ -31,11 +31,11 @@ test('N.1 skill bodies have standard shape', () => {
   }
 });
 
-test('ws.029.presentation forbids 029-released claim', () => {
+test('ws.029.presentation forbids 029 release claims', () => {
   const body = read('skills/workspace/ws.029.presentation/SKILL.md');
   assert.match(body, /WORKSPACE_SKILLS/);
-  assert.match(body, /029-released/i);
-  assert.match(body, /Do not claim/i);
+  assert.match(body, /Do not claim 029 released/i);
+  assert.match(body, /not .*release|not .*released/i);
 });
 
 test('seat.planning.summarize is not mutation authority', () => {

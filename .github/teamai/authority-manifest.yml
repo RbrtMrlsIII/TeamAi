@@ -1,0 +1,48 @@
+{
+  "schema": 2,
+  "status": "ACTIVE",
+  "purpose": "Machine-readable ownership map for the active TeamAi repository governance graph.",
+  "active_authorities": {
+    "product_law": {"path": "Product_Law/PRODUCT_LAW.md", "role": "product truth and field requirements"},
+    "product_law_wiring": {"path": "Product_Law/WIRING.md", "role": "development-field purpose and routing"},
+    "connected_platform": {"path": "Product_Law/CONNECTED_PLATFORM.md", "role": "connected-platform field companion; subordinate to Product Law"},
+    "masterplan": {"path": "Masterplan/MASTERPLAN.md", "role": "complete executable checklist"},
+    "current_slice": {"path": "Masterplan/NEXT_SLICES.md", "role": "exactly one current slice"},
+    "policy": {"path": "POLICY.md", "role": "ORUCAVEAM execution policy"},
+    "skill_wiring": {"path": "docs/SKILL_WIRING.md", "role": "procedural routing only"},
+    "skills": {"path": "skills/", "role": "reusable procedures under SKILL.md"},
+    "session": {"path": "AI_ASSISTANT_READ_ME.md", "role": "current session, handover, endorsement, and validation-change state"},
+    "knowledge": {"path": "PRODUCT-KNOWLEDGE.md", "role": "durable validated learning without volatile session context"}
+  },
+  "historical_surfaces": {
+    "archive": {"path": "docs/archive/", "role": "immutable historical documentation, never active routing"},
+    "evidence": {"path": "docs/evidence/", "role": "historical or claim-scoped evidence, never authority by itself"},
+    "handover": {"path": "handover/", "role": "historical handover evidence, not an operating manual"},
+    "checkpoints": {"prefix": "docs/CHECKPOINT_", "role": "dated checkpoint snapshots, historical evidence, never active routing"},
+    "evidence_records": {"prefix": "docs/EVIDENCE_", "role": "dated or claim-scoped evidence records, historical evidence, never active routing"}
+  },
+  "forbidden_active_surfaces": ["PRODUCT_LAW.md","MASTERPLAN.md","NEXT_SLICES.md","docs/project-guide/HandOver.md","docs/project-guide/Endorsement.md","docs/project-guide/AI_ASSISTANT_READ_ME.md","docs/TEAMAI_3D_HERO_NEXT_SLICES.md","docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md","docs/TEAMAI_CURRENT_STATE.md","docs/TEAMAI_PROJECT_WIDE_CENSUS.md","docs/AGENT_CURRENT_STATE_AND_BRANCH_RULES.md","docs/AGENT_SLICE_EXECUTION.md","docs/GOVERNANCE_FAIL_CLOSED.md","docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md"],
+  "forbidden_parallel_namespaces": ["docs/skills"],
+  "promotion_model": {"draft_first": true,"auto_merge": false,"one_slice_one_merge": false,"green_ci_alone_authorizes_merge": false,"machine_hero_pr": 344,"governance_pr": 346,"merge_gate_owner_issue": 133},
+  "workspace_model": {"allowed_branch_prefixes": ["frontend/","backend/","governance/","verification/","docs/","recovery/","delivery/"],"protected_branch": "main","main_change_mode": "PR_ONLY","historical_branch_inventory_allowed": true,"vague_branch_names_forbidden": ["TeamAi","teamai","default","noop-again","tmp-check","tmp-final-noop","tmp-gate5b-check","tmp-gate5b-validation","tmp-gate5c-start","tmp-noop-verify-5b","tmp-noop-verify-5c","tmp-please-stop","tmp-recover","tmp-stop","tmp-unused-2"]},
+  "skill_model": {"canonical_glob": "skills/**/SKILL.md","required_shape": ["WHEN TO USE","AUTHORITY","ACTION","DO NOT","PASS"],"authority_rule": "A Skill is procedural only. It cannot create Product Law, permission, identity, entitlement, scheduler, commerce, durable-state, or merge authority."},
+  "validation_model": {"pr_scope": "BASE...HEAD","proof_target_source": "pull_request.body::Draft proof target","invariant_migration": "Every changed validation assertion must identify the old invariant as retained, obsolete, or replaced and state the replacement invariant when applicable.","active_reference_policy": "Historical surfaces may preserve old names for provenance; active surfaces may not route contributors to forbidden retired paths.","evidence_head_policy": "Governance, Full-System, Security, Browser, and evidence jobs must identify the same PR head before their results are admissible."},
+  "blocking_model": {"single_substantive_blocker": "An unresolved current-authority contradiction that changes the active governance graph or prevents the declared Draft proof target from being true.","validation_rewire_is_non_blocking": true,"validation_rewire_definition": "A failing assertion, fixture, wording check, path check, or validator expectation whose underlying product/runtime invariant remains valid but has not yet been re-anchored to the new canonical owner.","merge_blockers": ["current-authority contradiction","real product/runtime/security regression introduced by #346","fresh verification missing for the same PR head","declared proof target not demonstrated"]},
+  "validation_ownership": {"governance_graph": {"owner": "build-system/scripts/repository-canonical-governance-audit.py","scope": "authority paths, PR proof target, active-vs-historical routing"},"document_migration": {"owner": "tests/governance-document-migration.test.mjs","scope": "old invariant disposition and canonical document roots"},"spatial_topology": {"owner": "docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md","scope": "R0-R3 topology; Skills do not own ring constants"},"skill_routing": {"owner": "docs/SKILL_WIRING.md","scope": "procedural routing and forbidden parallel namespaces"},"machine_contract": {"owner": "skills/governance/machine-builder/SKILL.md","scope": "machine construction sequence and authority boundary"},"session_state": {"owner": "AI_ASSISTANT_READ_ME.md","scope": "current session, handover, endorsement, and validation-change continuity"},"browser_behavior": {"owner": "Canonical Browser Verification","scope": "observable browser behavior; never Product Law ownership"},"backend_authority": {"owner": "backend authority contract/tests","scope": "durable domain authority and runtime seams"}},
+  "invariant_migrations": [
+    {"old": "root Product Law path","disposition": "OBSOLETE","new": "Product_Law/PRODUCT_LAW.md"},
+    {"old": "root Masterplan path","disposition": "OBSOLETE","new": "Masterplan/MASTERPLAN.md"},
+    {"old": "root current-slice path","disposition": "OBSOLETE","new": "Masterplan/NEXT_SLICES.md"},
+    {"old": "live HandOver.md manual","disposition": "OBSOLETE","new": "AI_ASSISTANT_READ_ME.md + historical handover"},
+    {"old": "active Endorsement.md","disposition": "OBSOLETE","new": "Issue/PR/evidence-scoped acceptance decision + AI_ASSISTANT_READ_ME.md"},
+    {"old": "docs/skills parallel procedure namespace","disposition": "OBSOLETE","new": "single skills/**/SKILL.md tree"},
+    {"old": "last-commit governance inference","disposition": "OBSOLETE","new": "PR BASE...HEAD diff + Draft proof target"},
+    {"old": "green CI alone authorizes merge","disposition": "OBSOLETE","new": "Draft + verification + reconciliation + review readiness"},
+    {"old": "one slice means one merge","disposition": "OBSOLETE","new": "multi-commit/multi-slice PRs permitted"},
+    {"old": "R1-R10 shared root assertion","disposition": "OBSOLETE","new": "R0-R3 ring map owns current topology; Skills do not own ring constants"},
+    {"old": "historical V3.x document as current frontier","disposition": "OBSOLETE","new": "Masterplan/NEXT_SLICES.md owns current frontier"},
+    {"old": "fixture/module filename existence as semantic proof","disposition": "OBSOLETE","new": "retained semantic contract + owner-level verification"},
+    {"old": "historical session start guide as active entrypoint","disposition": "OBSOLETE","new": "AI_ASSISTANT_READ_ME.md"},
+    {"old": "docs/PRODUCT_LAW_CONNECTED_PLATFORM_AUTHORITY.md as Product-Law parent","disposition": "MOVED","new": "Product_Law/CONNECTED_PLATFORM.md subordinate to Product_Law/PRODUCT_LAW.md"}
+  ]
+}

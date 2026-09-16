@@ -1,7 +1,7 @@
 # TEAM-EXPERIENCE-029 — C0–C10 Execution Record
 
 **Status:** EXECUTION RECORD / EVIDENCE — NOT A COMPETING CHECKLIST  
-**Canonical execution authority:** `MASTERPLAN.md` only  
+**Canonical execution authority:** `Masterplan/MASTERPLAN.md` only  
 **Active 029 ledger:** Issue #278  
 **No 029-release claim.**
 
@@ -29,7 +29,7 @@ Owner-endorsed direction recorded in active Issue #278:
 
 ## C1 — Canonical reconciliation
 
-The active 029 product execution authority is **Issue #278**. Historical C0–C10 checklist/rebaseline records remain preserved as lineage and evidence but are not a competing active execution plan. `MASTERPLAN.md` remains the canonical execution authority; `docs/VISION.md` remains the conceptual product-experience home; `POLICY.md` governs execution discipline and census/comment governance.
+The active 029 product execution authority is **Issue #278**. Historical C0–C10 checklist/rebaseline records remain preserved as lineage and evidence but are not a competing active execution plan. `Masterplan/MASTERPLAN.md` remains the canonical execution authority; `docs/VISION.md` remains the conceptual product-experience home; `POLICY.md` governs execution discipline and census/comment governance.
 
 ## C2 — Classic entrance
 
@@ -41,6 +41,6 @@ Explicit enter/return paths exist as foundation; product acceptance remains C9.
 
 ## C4–C10
 
-See MASTERPLAN nested C0–C10 sequence and Issue #278 for current status. This record is evidence only.
+See Masterplan nested C0–C10 sequence and Issue #278 for current status. This record is evidence only.
 
 No 029 release claim.

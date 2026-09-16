@@ -2,7 +2,7 @@
 
 **Status:** PLANNING CONTRACT / structure guide · **not** Product Law amendment  
 **Issue:** [#256](https://github.com/RbrtMrlsIII/TeamAi/issues/256)  
-**Authority:** `PRODUCT_LAW.md` (skills ≠ authorization) · `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md` (#254) · Hierarchy Runtime Baseline · LAW 109  
+**Authority:** `Product_Law/PRODUCT_LAW.md` (skills ≠ authorization) · `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md` (#254) · Hierarchy Runtime Baseline · LAW 109  
 **No 029-released claim.** Hero faces remain **presentation only**.
 
 ## 1. Objective (ORUCAVEAM-O)

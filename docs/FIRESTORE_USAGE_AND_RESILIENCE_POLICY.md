@@ -1,7 +1,7 @@
 # TeamAi — Firestore Usage & Resilience Policy
 
 **Status:** CANONICAL PRODUCT-LAW COMPANION
-**Parent authority:** `PRODUCT_LAW.md`
+**Parent authority:** `Product_Law/PRODUCT_LAW.md`
 
 This document defines how TeamAi should use Cloud Firestore without confusing its no-cost quota with the application's architectural authority. It does not replace Firestore as the canonical TeamAi durable domain/application state store.
 

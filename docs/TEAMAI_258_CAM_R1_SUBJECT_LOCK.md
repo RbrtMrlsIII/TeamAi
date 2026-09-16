@@ -1,7 +1,7 @@
 # CAM-R1 — Selected-seat subject-lock (post-#259)
 
 **Status:** IMPLEMENTATION (presentation only) · **no 029-released claim**  
-**Authority:** Issue #258 residual · PR #259 baseline · `docs/GOVERNANCE_USER_DIRECTED_VALIDATION.md`  
+**Authority:** Issue #258 residual · PR #259 baseline · `skills/governance/user-directed-validation/SKILL.md`  
 **Does not revive:** `TURN_FOLLOW`, `HERO_LOW_ORBIT` → `docs/archive/superseded/`
 
 ## Intent

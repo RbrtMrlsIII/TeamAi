@@ -3,7 +3,7 @@
 **Status:** CONSTRUCTION CONTRACT / NOT A SECOND CHRONOLOGY  
 **Date:** 2026-09-13  
 **Ledger:** Issue **#278** (029 product-experience)  
-**Recovery map:** `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`  
+**Recovery map:** `Masterplan/MASTERPLAN.md` + `Masterplan/NEXT_SLICES.md`  
 **No 029-release claim.**
 
 ## What this is
@@ -12,9 +12,10 @@ A short **how layers connect** note for establishing trees, branches, divisions,
 
 It does **not** replace:
 
-- `PRODUCT_LAW.md` / `docs/PRODUCT_LAW_FRONTEND_HIGHEST_STAKE.md`
-- `MASTERPLAN.md` (C0–C10 order)
-- `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Product_Law/FRONTEND_EXPERIENCE.md` (subordinate Frontend & Experience field contract)
+- `Masterplan/MASTERPLAN.md`
+- `Masterplan/NEXT_SLICES.md`
 - Issue **#278** body (active 029 ledger)
 - `docs/TEAMAI_3D_HERO_TREE_CENSUS.*` (structural inventory)
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` (spatial gates)
@@ -201,13 +202,16 @@ Command Deck is **retired** as a product door. Useful behavior is re-owned under
 
 | Need | Open |
 |---|---|
-| Program order / main vs plan | `docs/TEAMAI_CHRONOLOGICAL_EXECUTION_GUIDE.md` |
-| Compact recovery | `docs/TEAMAI_CURRENT_STATE.md` |
+| Product meaning | `Product_Law/PRODUCT_LAW.md` |
+| Field routing | `Product_Law/WIRING.md` |
+| Program order / execution checklist | `Masterplan/MASTERPLAN.md` |
+| Current slice | `Masterplan/NEXT_SLICES.md` |
+| Session state | `AI_ASSISTANT_READ_ME.md` |
 | Census | `docs/TEAMAI_3D_HERO_TREE_CENSUS.md` (+ csv/json/xml) |
 | Spatial gates | `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` |
 | Interaction law | `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md` |
 | Implementation entry | `docs/TEAMAI_3D_HERO_IMPLEMENTATION_ENTRY.md` |
-| Highest-stake sequence | `docs/PRODUCT_LAW_FRONTEND_HIGHEST_STAKE.md` |
+| Frontend field contract | `Product_Law/FRONTEND_EXPERIENCE.md` |
 | 029 ledger | Issue #278 |
 | Backend ledger | Issue #284 |
 | Later visual track | Issue #83 (after structure) |

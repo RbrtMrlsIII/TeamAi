@@ -11,13 +11,13 @@ This slice reconciles what is already implemented; it does not rebuild the front
 
 ## Canonical roots
 
-- Product meaning: `PRODUCT_LAW.md`
-- Chronological execution: `MASTERPLAN.md`
+- Product meaning: `Product_Law/PRODUCT_LAW.md`
+- Chronological execution: `Masterplan/MASTERPLAN.md`
 - Execution discipline: `POLICY.md` / ORUCAVEAM
 - Skill routing: `docs/SKILL_WIRING.md`
 - Spatial UI procedure: `skills/frontend/spatial/UI_UX-Promax-Skill.md`
 - Browser verification: `skills/verification/browser-smoke/SKILL.md`
-- Current-state navigation: `docs/TEAMAI_CURRENT_STATE.md`
+- Current-state navigation: `Masterplan/NEXT_SLICES.md` for current execution; `AI_ASSISTANT_READ_ME.md` for current session state
 
 ## Reconciled facts
 
@@ -42,7 +42,7 @@ The Command Deck must therefore:
 - Responsive refinements for narrow/mobile widths without horizontal overflow.
 - Status/evidence presentation refinement without changing semantic meaning.
 - Deterministic Playwright verification updates where the visible contract changes.
-- Synchronization of Masterplan/current-state wording with what is actually merged.
+- Synchronization of Masterplan/current-slice wording with what is actually merged.
 
 ## Explicitly excluded
 

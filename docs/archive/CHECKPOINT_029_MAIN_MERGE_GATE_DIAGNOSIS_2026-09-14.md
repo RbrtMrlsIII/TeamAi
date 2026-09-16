@@ -10,7 +10,7 @@
 
 Investigate whether GitHub's active protection/ruleset for `main` actually enforces the repository's documented PR and validation discipline.
 
-This checkpoint is **not a secondary `MASTERPLAN.md`**, not a replacement for Product Law, Vision, Issue #278, Issue #284, Policy/ORUCAVEAM, Skill Wiring, or the governance validator. It records control-plane evidence only. It does **not** modify the GitHub ruleset.
+This checkpoint is **not a secondary `Masterplan/MASTERPLAN.md`**, not a replacement for Product Law, Vision, Issue #278, Issue #284, Policy/ORUCAVEAM, Skill Wiring, or the governance validator. It records control-plane evidence only. It does **not** modify the GitHub ruleset.
 
 ## Observed GitHub ruleset
 
@@ -74,7 +74,7 @@ That is broader than the GitHub-required context list. Relative to Issue #133, G
 
 ### Agent / contribution procedure
 
-`docs/AGENT_SLICE_EXECUTION.md`, `skills/governance/pr-squash-merge/SKILL.md`, and `skills/workspace/ws.contribution.flow/SKILL.md` still require agents not to merge on failed applicable verification. GitHub Actions is a verification surface, not product authority (`PRODUCT_LAW.md`).
+`docs/AGENT_SLICE_EXECUTION.md`, `skills/governance/pr-squash-merge/SKILL.md`, and `skills/workspace/ws.contribution.flow/SKILL.md` still require agents not to merge on failed applicable verification. GitHub Actions is a verification surface, not product authority (`Product_Law/PRODUCT_LAW.md`).
 
 ## Hidden-enforcement question
 
@@ -148,8 +148,8 @@ This slice implements none of A–C.
 
 ## Related authorities
 
-- `PRODUCT_LAW.md`
-- `MASTERPLAN.md`
+- `Product_Law/PRODUCT_LAW.md`
+- `Masterplan/MASTERPLAN.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
 - `docs/GOVERNANCE_FAIL_CLOSED.md`

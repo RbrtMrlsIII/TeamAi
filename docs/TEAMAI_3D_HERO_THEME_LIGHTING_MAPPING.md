@@ -1,6 +1,6 @@
 # TeamAi 3D Hero — Theme-to-Spatial Mapping
 
-Status: planning/implementation-entry knowledge. Active TEAM-EXPERIENCE-029 implementation remains gated by `MASTERPLAN.md`.
+Status: planning/implementation-entry knowledge. Active TEAM-EXPERIENCE-029 implementation remains governed by `Masterplan/MASTERPLAN.md`.
 
 ## Canonical source
 

@@ -1,18 +1,20 @@
 # TeamAi — GitHub Issues as development memory
 
 **Status:** OPERATING CONTRACT / NOT PRODUCT LAW
-**Date:** 2026-09-07
+**Date:** 2026-09-15
 
-GitHub Issues are durable, scoped development definitions. They sit **under Product Law** and beside implementation/verification; they do not grant permission, amend authority by themselves, or replace Product Law, architecture, policy, skills, or PR review.
+GitHub Issues are durable, scoped development definitions. They sit **under Product Law** and beside implementation/verification; they do not grant permission, amend authority by themselves, or replace Product Law, architecture, policy, Skills, or PR review.
 
-See also: `docs/AGENT_SLICE_EXECUTION.md` (green CI + audit + next-slice checkpoint).
+See also: `Masterplan/MASTERPLAN.md`, `Masterplan/NEXT_SLICES.md`, `docs/SKILL_WIRING.md`, and `AI_ASSISTANT_READ_ME.md`.
 
 ## Authority and development order
 
 ```text
-PRODUCT_LAW.md
+Product_Law/PRODUCT_LAW.md
     ↓
-Architecture / governing docs
+Masterplan/MASTERPLAN.md
+    ↓
+POLICY.md / ORUCAVEAM + applicable Skill(s)
     ↓
 GitHub Issue
     ↓
@@ -24,14 +26,15 @@ Tests / CI / evidence
 Use this distinction consistently:
 
 - **Product Law** = what must remain true across the product.
-- **Architecture / policy / skills** = how the system is governed and constrained.
-- **Issue** = what one bounded piece of that product truth means for the current development slice, including acceptance criteria and verification.
+- **Masterplan** = the complete executable checklist and current development order.
+- **Policy / Skills** = how work is governed and procedurally executed.
+- **Issue** = what one bounded piece of that product truth means for a development slice, including acceptance criteria and verification.
 - **PR** = the proposed code/documentation change.
 - **Tests / CI / evidence** = proof that the implementation satisfies the Issue without violating higher authority.
 
 An Issue may make Product Law more concrete for one feature. It must **not silently create a new Product Law**.
 
-When implementation reveals a genuinely new product invariant, stop and reconcile the higher-level authority first; update Product Law only through the repository's normal governed process, then continue the Issue.
+When implementation reveals a genuinely new product invariant, stop and reconcile the higher-level authority first; update Product Law only through the repository's governed process, then continue the Issue.
 
 ## Issue body vs comments
 
@@ -40,15 +43,9 @@ When implementation reveals a genuinely new product invariant, stop and reconcil
 | **Issue body** | Stable definition: objective, acceptance criteria, out of scope, verification. Edit the body when the **definition** of done changes. |
 | **Comments** | Chronological evidence trail: gate open/closed, CI links, merge SHAs, limitations, next checkpoint. **Do not** treat comments as a second Product Law. |
 
-**You do not need to avoid comments.** Prefer:
+Prefer one clear evidence comment when a PR lands or a gate clears, and one next-checkpoint comment when work pauses. Avoid chat-like noise and duplicate status posts.
 
-1. One clear **evidence comment** when a PR lands or a gate clears.  
-2. One **next-checkpoint** comment when work pauses.  
-3. Avoid chat-like noise and duplicate status posts.
-
-Comments are **not** something that must be “re-updated” on every small talk turn. If acceptance criteria change, **edit the Issue body**; if only progress happened, **add a comment** (or close the Issue with an evidence comment).
-
-Closing an Issue means the **bounded acceptance criteria** are met (or explicitly abandoned). It does not auto-endorse a whole Masterplan milestone.
+Closing an Issue means its bounded acceptance criteria are met (or explicitly abandoned). It does not auto-endorse a whole Masterplan milestone.
 
 ## When to open an Issue
 
@@ -89,13 +86,14 @@ Use area labels such as `area:hero`, `area:web-ai`, `area:seat`, `area:orchestra
 A future development session should begin with:
 
 ```text
-Read Product Law
-→ identify the active milestone / Issue
-→ read its acceptance criteria and authority boundary
+Read Product_Law/PRODUCT_LAW.md
+→ identify the active Masterplan item / Issue
+→ read Masterplan/NEXT_SLICES.md for the current slice
+→ read the Issue's acceptance criteria and authority boundary
 → inspect the current implementation
 → make the smallest compliant change
 → run the Issue's verification
-→ update PR / Issue evidence (comment)
+→ update the PR / Issue evidence
 → continue from the next implementation checkpoint
 ```
 
@@ -108,7 +106,7 @@ Link a PR to an Issue only when the PR actually advances or resolves that durabl
 ## Authority reminder
 
 ```text
-PRODUCT_LAW → architecture / policy / skills → Issue → implementation → verification → evidence
+Product_Law → Masterplan → Policy / Skills → Issue → implementation → verification → evidence
 ```
 
 The Issue can make higher-level rules specific. It cannot outrank them.

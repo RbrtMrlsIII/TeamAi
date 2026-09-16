@@ -1,7 +1,7 @@
 # TeamAi 029 — Deployment Surface Map
 
 **Status:** ACTIVE planning/reconciliation contract for Issue #278.  
-**Authority:** subordinate to `PRODUCT_LAW.md`, `MASTERPLAN.md`, and ORUCAVEAM.  
+**Authority:** subordinate to `Product_Law/PRODUCT_LAW.md`, `Masterplan/MASTERPLAN.md`, and ORUCAVEAM.  
 **Scope:** GitHub Pages route ownership for the public TeamAi experience.  
 **No 029-released claim.**
 

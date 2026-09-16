@@ -245,4 +245,4 @@ This structural model is preparatory to ProMax. ProMax expresses an already-corr
 
 **Structured truth inventory:** `docs/TEAMAI_3D_HERO_TREE_CENSUS.*`.  
 **Conceptual vision:** `docs/VISION.md`.  
-**Execution authority:** `MASTERPLAN.md` + Issue #278.
+**Execution authority:** `Masterplan/MASTERPLAN.md` + Issue #278.

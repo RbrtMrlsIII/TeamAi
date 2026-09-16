@@ -1,7 +1,7 @@
 # TeamAi — Full Project ZIP & Artifact Policy
 
 **Status:** CANONICAL PROJECT-PACKAGING POLICY
-**Authority:** This policy operationalizes `PRODUCT_LAW.md` and `AI_ASSISTANT_READ_ME.md`. It does not create a competing source authority.
+**Authority:** This policy operationalizes `Product_Law/PRODUCT_LAW.md` and `AI_ASSISTANT_READ_ME.md`. It does not create a competing source authority.
 
 ## 1. Full Project ZIP is a first-class project state
 

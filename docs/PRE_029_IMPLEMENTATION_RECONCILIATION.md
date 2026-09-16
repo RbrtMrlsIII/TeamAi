@@ -10,7 +10,7 @@ It distinguishes:
 - implementation that is actually present in the repository;
 - implementation that remains future execution work.
 
-`PRODUCT_LAW.md` remains the product authority. `MASTERPLAN.md` remains the chronological
+`Product_Law/PRODUCT_LAW.md` remains the product authority. `Masterplan/MASTERPLAN.md` remains the chronological
 execution/dependency map. `ENDORSEMENT.md` contains explicit human approval evidence.
 
 ## Current human authorization

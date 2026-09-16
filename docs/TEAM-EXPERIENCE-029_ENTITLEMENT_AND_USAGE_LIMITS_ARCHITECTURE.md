@@ -2,7 +2,7 @@
 
 **Status:** PLANNING / ARCHITECTURE SUPPORT — **not** pricing authority  
 **Numbers:** intentionally **unset** (`TBD`) until product packaging approval  
-**Authority:** `PRODUCT_LAW.md` · commercial capability model · Firestore usage policy  
+**Authority:** `Product_Law/PRODUCT_LAW.md` · commercial capability model · Firestore usage policy  
 **No 029-released claim.**
 
 ## 1. Purpose

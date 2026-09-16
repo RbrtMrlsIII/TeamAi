@@ -1,6 +1,6 @@
 /**
- * SP-07 — Current frontier decision after SP-01–SP-06.
- * Locks one current spatial slice and one next authorized command.
+ * SP-07 — Historical frontier decision after SP-01–SP-06.
+ * Preserves spatial invariants without owning the live execution frontier.
  * Presentation only · no 029-released claim.
  */
 import test from 'node:test';
@@ -29,22 +29,22 @@ test('SP-07 closes spatial SP sequence as merged or satisfied', async () => {
   assert.match(doc, /Satisfied|Merged/);
 });
 
-test('SP-07 names exactly one current spatial slice: V3.3 Gentle Hero atmosphere', async () => {
+test('SP-07 preserves its historical V3.3 decision record', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md'), 'utf8');
   assert.match(doc, /V3\.3/);
   assert.match(doc, /Gentle Hero atmosphere|gentle Hero atmosphere/i);
   assert.match(doc, /entrance-atmosphere|Layer A/i);
-  assert.match(doc, /No second runtime|no second WebGL|no second runtime/i);
+  assert.match(doc, /No second runtime|no second WebGL/i);
 });
 
-test('SP-07 records one next authorized command pointing at V3.3', async () => {
+test('SP-07 history records its prior authorized command without claiming current authority', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md'), 'utf8');
   assert.match(doc, /NEXT AUTHORIZED SPATIAL COMMAND/);
   assert.match(doc, /V3\.3/);
   assert.match(doc, /Adjust existing/i);
 });
 
-test('SP-07 forbids backend and color polish in this decision', async () => {
+test('SP-07 forbids backend and color polish in this historical decision', async () => {
   const doc = await readFile(join(root, 'docs/TEAMAI_3D_HERO_SP07_FRONTIER_DECISION.md'), 'utf8');
   assert.match(doc, /Leave backend|backend.*untouched|Explicitly untouched/i);
   assert.match(doc, /color\/material|color.*polishing|art-direction/i);
@@ -59,11 +59,14 @@ test('SP-07 reclassifies Cam-2 restart and V1.3 as closed/satisfied', async () =
   assert.match(doc, /V0\.2/);
 });
 
-test('VISION still lists V3.3 as Gentle Hero atmosphere adjust', async () => {
+test('living VISION points to canonical roots and defers current execution to Masterplan', async () => {
   const vision = await readFile(join(root, 'docs/VISION.md'), 'utf8');
-  assert.match(vision, /V3\.3/);
-  assert.match(vision, /Gentle Hero atmosphere/i);
-  assert.match(vision, /Adjust wiring/i);
+  const next = await readFile(join(root, 'Masterplan/NEXT_SLICES.md'), 'utf8');
+  assert.match(vision, /Product_Law\/PRODUCT_LAW\.md/);
+  assert.match(vision, /Masterplan\/MASTERPLAN\.md/);
+  assert.match(vision, /Masterplan\/NEXT_SLICES\.md/);
+  assert.doesNotMatch(vision, /V3\.3.*Gentle Hero atmosphere adjust/i);
+  assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
 });
 
 test('Entrance contract still owns entrance-atmosphere region', async () => {
