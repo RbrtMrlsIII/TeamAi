@@ -9,8 +9,8 @@ Finish and reconcile the already-inhabited Command Deck without introducing a ne
 
 ## Canonical boundaries
 
-- `PRODUCT_LAW.md` remains product authority.
-- `MASTERPLAN.md` remains chronological execution authority.
+- `Product_Law/PRODUCT_LAW.md` remains product authority.
+- `Masterplan/MASTERPLAN.md` remains chronological execution authority.
 - The existing `frontend/spatial/theme-root.css` remains the single visual root.
 - F0-F7 remain field identities; the five reusable legal boxes remain Shell, Panel, Card, Control, Navigation.
 - F6 remains a controlled status surface and F7 remains the single shared E4 modal surface.
