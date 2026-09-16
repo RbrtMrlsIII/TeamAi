@@ -73,7 +73,10 @@ def manifest_sets(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[t
         prefix = spec.get("prefix")
         if bool(path) == bool(prefix):
             fail(f"historical surface must declare exactly one of path or prefix: {name}")
-        historical_entries.append(("path", str(path) if path else str(prefix)))
+        if prefix:
+            historical_entries.append(("prefix", str(prefix)))
+        else:
+            historical_entries.append(("path", str(path)))
     return active, forbidden, forbidden_dirs, tuple(historical_entries)
 
 
