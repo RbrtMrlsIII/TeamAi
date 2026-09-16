@@ -8,7 +8,7 @@ This document is a continuity record for the Living Web AI Shared Workspace Hero
 
 Execution remains:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → applicable spatial skills → GitHub Issue → implementation → verification → evidence → HandOver / Endorsement → PRODUCT-KNOWLEDGE.md`
+`Product_Law/PRODUCT_LAW.md → Masterplan/MASTERPLAN.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → applicable spatial skills → GitHub Issue → implementation → verification → evidence → HandOver / Endorsement → PRODUCT-KNOWLEDGE.md`
 
 ## Spatial premise
 
