@@ -57,7 +57,7 @@ def load_manifest() -> dict:
     return manifest
 
 
-def manifest_sets(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[str, ...]]:
+def manifest_sets(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[tuple[str, str], ...]]:
     active = {
         spec.get("path")
         for spec in (manifest.get("active_authorities") or {}).values()
@@ -65,12 +65,16 @@ def manifest_sets(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[s
     }
     forbidden = set(manifest.get("forbidden_active_surfaces") or [])
     forbidden_dirs = set(manifest.get("forbidden_parallel_namespaces") or [])
-    historical = tuple(
-        spec.get("path")
-        for spec in (manifest.get("historical_surfaces") or {}).values()
-        if isinstance(spec, dict) and spec.get("path")
-    )
-    return active, forbidden, forbidden_dirs, historical
+    historical_entries: list[tuple[str, str]] = []
+    for name, spec in (manifest.get("historical_surfaces") or {}).items():
+        if not isinstance(spec, dict):
+            fail(f"historical surface must be an object: {name}")
+        path = spec.get("path")
+        prefix = spec.get("prefix")
+        if bool(path) == bool(prefix):
+            fail(f"historical surface must declare exactly one of path or prefix: {name}")
+        historical_entries.append(("path", str(path) if path else str(prefix)))
+    return active, forbidden, forbidden_dirs, tuple(historical_entries)
 
 
 def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
@@ -93,7 +97,7 @@ def changed_paths(base: str | None, head: str | None) -> set[str]:
     return {p for p in run("git", "diff", "--name-only", f"{base}...{head}").splitlines() if p.strip()}
 
 
-def assert_manifest(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[str, ...]]:
+def assert_manifest(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[tuple[str, str], ...]]:
     active, forbidden, forbidden_dirs, historical = manifest_sets(manifest)
     if len(active) < 8:
         fail("authority manifest defines too few active file authorities")
@@ -178,12 +182,22 @@ def assert_roles() -> None:
             fail(f"PRODUCT-KNOWLEDGE.md contains volatile session context: {pattern}")
 
 
-def assert_active_reference_policy(forbidden: set[str], historical: tuple[str, ...], manifest_path: str) -> None:
+def is_historical_path(rel: str, historical: tuple[tuple[str, str], ...]) -> bool:
+    for kind, value in historical:
+        normalized = value.rstrip("/")
+        if kind == "path" and (rel == normalized or rel.startswith(normalized + "/")):
+            return True
+        if kind == "prefix" and rel.startswith(value):
+            return True
+    return False
+
+
+def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[str, str], ...], manifest_path: str) -> None:
     for p in ROOT.rglob("*"):
         if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
             continue
         rel = p.relative_to(ROOT).as_posix()
-        if any(rel == prefix.rstrip("/") or rel.startswith(prefix.rstrip("/") + "/") for prefix in historical) or rel == manifest_path:
+        if is_historical_path(rel, historical) or rel == manifest_path:
             continue
         try:
             body = p.read_text(encoding="utf-8")
@@ -297,6 +311,7 @@ def main() -> None:
     print("proof_target_source=github.event.pull_request.body")
     print("authority_manifest=.github/teamai/authority-manifest.yml")
     print("active_vs_historical=explicit")
+    print("historical_surface_matching=path_and_prefix")
     print("skill_authority_boundary=enforced")
     print("workspace_branch_policy=enforced")
     print("validation_rewire=explicitly_classified_non_blocking")
