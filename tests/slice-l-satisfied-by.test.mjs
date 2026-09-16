@@ -24,7 +24,7 @@ test('L evidence map exists and forbids close/re-implement claims', () => {
 test('NEXT_SLICES stays singular and current', () => {
   const next = read('Masterplan/NEXT_SLICES.md');
   assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
-  assert.match(next, /Governance Foundation|machine replacement/i);
+  assert.match(next, /TEAM-EXPERIENCE-029|post-#346/i);
   assert.match(next, /draft/i);
 });
 
