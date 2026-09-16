@@ -86,7 +86,7 @@ def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
 
 def proof_target(payload: dict) -> str:
     body = ((payload.get("pull_request") or {}).get("body") or "").strip()
-    match = re.search(r"^###\s+Draft proof target\s*$([\s\S]*?)(?=^###\s|\Z)", body, re.MULTILINE)
+    match = re.search(r"^###{1,2}\s+Draft proof target\s*$([\s\S]*?)(?=^###{1,2}\s|\Z)", body, re.MULTILINE)
     return match.group(1).strip() if match else ""
 
 
