@@ -4,15 +4,15 @@
 
 ## Current Slice
 
-Repository Governance Foundation Reconciliation
+Post-#346/#348 control-plane reconciliation, then TEAM-EXPERIENCE-029 progression
 
 ## Status
 
-IN PROGRESS — PR #346 DRAFT
+IN PROGRESS — #346, #348, #351, and #353 merged; #352 governance reconciliation remains active
 
 ## Objective
 
-Complete the governance migration so future development can expand or replace the 3D Hero without reviving stale authorities, regressing protected invariants, or losing evidence. Establish `Product_Law/` and `Masterplan/` as the canonical roots, retire live `HandOver.md` and `Endorsement.md`, unify Skill routing, reconcile Issue #133, and make governance validation prove the whole draft PR target.
+Maintain canonical repository/session truth after the merged governance and delivery changes, harden the Draft-versus-Ready validation lifecycle, and continue TEAM-EXPERIENCE-029 from the canonical frontier without reviving retired authorities or provider-specific delivery dependencies.
 
 ## Dependencies
 
@@ -26,20 +26,19 @@ Complete the governance migration so future development can expand or replace th
 - `skills/governance/machine-builder/SKILL.md`
 - Issue #133
 - Issue #278
-- PR #344 remains Draft and unpromoted
+- Issue #347
+- PR #353 is the merged machine candidate and remains non-production
 
 ## Verification
 
-- canonical root and retired-reference audit
-- PR base/head synchronization audit
-- governance validator tests
-- migration invariant tests
-- project tests plus typecheck/build/backend authority verification
-- exact-head browser verification for any user-visible claim
+- canonical authority and retired-reference audit
+- current session/control-plane documentation consistency
+- validation lifecycle checks for Draft and Ready states
+- exact-head project, security, and browser verification for substantive changes
+- migration invariant tests and full project verification
 
 ## Current blocker
 
-Fresh exact-head verification for #346 is not yet green. The latest completed workflow quartet was attached to the prior workflow SHA rather than the PR's current head, so it is not admissible as current-head proof. Migration-layer assertions and stale active-document authority pointers have been the known validation debt; no backend/typecheck/security/browser regression has been demonstrated. Continue reconciling the active graph until Governance Integrity and Full-System Verification both pass on the same current PR head. Do not promote or merge #344 from this slice.
+Complete the post-merge control-plane reconciliation without reintroducing retired authorities or treating skipped downstream validation as proof. TEAM-EXPERIENCE-029 remains incomplete at C8/C9/C10, and the merged #353 machine candidate still requires the remaining product acceptance gates before any production Hero replacement decision.
 
-<!-- #348 canonical synchronization marker: proof-target surface -->
-<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->
+<!-- #352 validation-lifecycle synchronization: substantive Draft validation remains active; review-readiness is promotion-stage; skipped downstream jobs are not proof of pass. -->
