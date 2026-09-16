@@ -2,7 +2,7 @@
 
 **Status:** VALIDATED EXECUTION LEARNING / APPEND-ONLY KNOWLEDGE DELTA
 **Parent knowledge authority:** `PRODUCT-KNOWLEDGE.md`
-**Product authority:** `PRODUCT_LAW.md`
+**Product authority:** `Product_Law/PRODUCT_LAW.md`
 **Execution ledger:** Issue #278
 
 This file records durable lessons from the current implementation and reconciliation program. It is subordinate to `PRODUCT-KNOWLEDGE.md` and must not become a second authority.
