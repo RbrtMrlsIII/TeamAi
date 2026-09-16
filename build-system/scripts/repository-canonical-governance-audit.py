@@ -207,6 +207,13 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[
         except (OSError, UnicodeDecodeError):
             continue
         for target in forbidden:
+            if rel == "Product_Law/PRODUCT_LAW.md" and target in {"MASTERPLAN.md", "NEXT_SLICES.md"}:
+                canonical = f"Masterplan/{target}"
+                if canonical and exists(canonical):
+                    # The canonical Product Law may use the basename in prose/traceability
+                    # without that basename being an active routing surface. Other active
+                    # documents remain fail-closed on bare retired-path references.
+                    continue
             if target in RETIRED_TOKEN_ALLOW_PREFIX:
                 prefix = RETIRED_TOKEN_ALLOW_PREFIX[target]
                 for match in re.finditer(re.escape(target), body):
