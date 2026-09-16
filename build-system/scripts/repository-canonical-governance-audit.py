@@ -195,12 +195,22 @@ def is_historical_path(rel: str, historical: tuple[tuple[str, str], ...]) -> boo
     return False
 
 
+def retired_path_is_active_reference(body: str, target: str) -> bool:
+    """Return true only when a retired basename is used as an actual file/path reference.
+
+    Bare canonical basenames often appear in descriptive authority prose. Those mentions
+    are not routing. Active links and explicit path-bearing fields remain fail-closed.
+    """
+    token = re.escape(target)
+    patterns = (
+        rf"\]\(\s*\./?{token}(?:[?#][^\s)]*)?\s*\)",
+        rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?$",
+        rf"(?im)\b(?:https?://[^\s/]+|/|\./)\s*{token}(?:[?#][^\s)\]]*)?",
+    )
+    return any(re.search(pattern, body) for pattern in patterns)
+
+
 def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[str, str], ...], manifest_path: str) -> None:
-    canonical_files = {
-        "Product_Law/PRODUCT_LAW.md",
-        "Masterplan/MASTERPLAN.md",
-        "Masterplan/NEXT_SLICES.md",
-    }
     for p in ROOT.rglob("*"):
         if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
             continue
@@ -213,16 +223,13 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[
             continue
         for target in forbidden:
             if target in RETIRED_TOKEN_ALLOW_PREFIX:
-                if rel in canonical_files:
-                    # Canonical governance files may use canonical basenames in
-                    # prose/traceability without creating active routing.
-                    continue
                 prefix = RETIRED_TOKEN_ALLOW_PREFIX[target]
                 for match in re.finditer(re.escape(target), body):
                     start = match.start()
                     context = body[max(0, start - len(prefix)):start]
                     if context == prefix:
                         continue
+                if retired_path_is_active_reference(body, target):
                     fail(f"active reference points to retired path {target}: {rel}")
             elif target in body:
                 fail(f"active reference points to retired path {target}: {rel}")
