@@ -156,5 +156,15 @@
     "coordinatesDefineIdentity": false,
     "current700msLerp": "implementation baseline, not final travel language",
     "continuousTreeTravelRequired": true
+  },
+  "frontendFoundation": {
+    "pr": 344,
+    "status": "IMPLEMENTED_TEMPO_EVIDENCE_ONLY",
+    "sceneModel": "frontend/spatial/machine-hero-scene.js",
+    "preview": "public/machine-hero-preview.js",
+    "test": "tests/machine-hero-scene.test.mjs",
+    "machineTestCommand": "npm run test:machine",
+    "productionRendererReplacement": false,
+    "promotion": "requires governed Machine Hero M1-M6 proof and decision"
   }
 }

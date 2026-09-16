@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#12100d">
+  <title>TeamAi · Branch Connection Core</title>
+  <link rel="stylesheet" href="./machine-core.css">
+</head>
+<body>
+  <main class="machine-core-shell" aria-label="Modular branch connection core preview" data-core-boot="pending">
+    <noscript>JavaScript is required to render the modular branch connection core.</noscript>
+  </main>
+  <script type="module">
+    import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
+
+    const root = document.querySelector('.machine-core-shell');
+    const showBootError = (error) => {
+      if (!root) return;
+      root.dataset.coreBoot = 'error';
+      const message = error instanceof Error ? error.message : String(error);
+      root.innerHTML = `<section role="alert" style="max-width:720px;padding:24px;border:1px solid rgba(210,220,230,.2);border-radius:16px;background:rgba(14,18,22,.88);color:#dfe7ec;font:13px/1.5 system-ui,sans-serif"><strong>Machine core failed to boot</strong><p style="opacity:.7;margin:10px 0 0">${message.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}</p></section>`;
+      console.error('machine-core-preview boot failed', error);
+    };
+
+    function whenDomReady() {
+      if (document.readyState !== 'loading') return Promise.resolve();
+      return new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
+    }
+
+    function hydrateSemanticFallback() {
+      const panel = document.querySelector('[data-machine-core-visual]');
+      if (!panel) return;
+      const params = new URLSearchParams(globalThis.location?.search || '');
+      const requested = Number(params.get('seats'));
+      const seatCount = Number.isFinite(requested) ? Math.min(16, Math.max(2, Math.floor(requested))) : 10;
+      const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true;
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
+      const count = panel.querySelector('[data-core-count]');
+      const camera = panel.querySelector('[data-core-camera]');
+      const state = panel.querySelector('[data-core-state]');
+      const expand = panel.querySelector('[data-core-expand]');
+      const reset = panel.querySelector('[data-core-reset]');
+
+      if (count && !count.textContent.trim()) {
+        count.textContent = `${scene.parts.length} modules · ${scene.seatCount} seats · 4 outer housings · 1 hub`;
+      }
+      if (camera && camera.options.length === 0) {
+        for (const item of scene.cameras) {
+          const option = document.createElement('option');
+          option.value = item.branchId;
+          option.textContent = `${item.branchId.replace('BRANCH-', '')} · ${item.cameraId}`;
+          camera.append(option);
+        }
+        camera.value = 'HUB-CORE';
+      }
+
+      const updateCameraState = () => {
+        const selected = camera?.value || 'HUB-CORE';
+        const branchCamera = resolveBranchCamera(scene, selected) || scene.cameras[0];
+        if (state) state.textContent = `${reducedMotion ? 'reduced-motion ' : ''}${state.dataset.machineMotionState || 'collapsed'} · ${state.dataset.machineAmount || '0'}% · ${scene.parts.length} independent modules · camera ${branchCamera.cameraId}`;
+      };
+      const setMotionState = (next) => {
+        if (!state) return;
+        state.dataset.machineMotionState = next === 'expanded' ? 'expanded' : 'collapsed';
+        state.dataset.machineAmount = next === 'expanded' ? '100' : '0';
+        updateCameraState();
+      };
+
+      if (state && !state.dataset.machineMotionState) {
+        state.dataset.machineMotionState = 'collapsed';
+        state.dataset.machineAmount = '0';
+        updateCameraState();
+      }
+      if (camera && !camera.dataset.machineSemanticFallbackBound) {
+        camera.dataset.machineSemanticFallbackBound = '1';
+        camera.addEventListener('change', updateCameraState);
+      }
+      if (expand && !expand.dataset.machineSemanticFallbackBound) {
+        expand.dataset.machineSemanticFallbackBound = '1';
+        expand.addEventListener('click', () => {
+          if (reducedMotion) setMotionState('expanded');
+          else {
+            if (state) state.dataset.machineMotionState = 'opening';
+            updateCameraState();
+            globalThis.setTimeout(() => setMotionState('expanded'), 900);
+          }
+        });
+      }
+      if (reset && !reset.dataset.machineSemanticFallbackBound) {
+        reset.dataset.machineSemanticFallbackBound = '1';
+        reset.addEventListener('click', () => {
+          if (reducedMotion) setMotionState('collapsed');
+          else {
+            if (state) state.dataset.machineMotionState = 'closing';
+            updateCameraState();
+            globalThis.setTimeout(() => setMotionState('collapsed'), 900);
+          }
+        });
+      }
+    }
+
+    async function boot() {
+      await whenDomReady();
+      try {
+        await import('./machine-core-visual.js');
+        await import('./machine-core-interaction.js');
+        await import('./machine-core-semantic-fallback.js');
+        const { mountMachineWebGLPreview } = await import('./machine-hero-webgl.js');
+        if (new URLSearchParams(globalThis.location.search).get('machine-preview') === 'webgl') {
+          mountMachineWebGLPreview();
+        }
+        hydrateSemanticFallback();
+        if (root) root.dataset.coreBoot = 'ready';
+      } catch (error) {
+        showBootError(error);
+        hydrateSemanticFallback();
+        if (root) root.dataset.coreBoot = 'ready';
+        throw error;
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>
