@@ -7,7 +7,7 @@
 - Last given prompt: **1**
 - Session date: **2026-09-15**
 - Governance PR: **#346** `governance/repository-foundation` — Draft
-- Current #346 head: `13bc959ec3c097743cb5e21ca90b0eebc506a8e4`
+- Current #346 head: `e852afda80281206b97d3747cf2ba923c3d93b21`
 - Machine Hero candidate: **#344** `feat/machine-hero-foundation` — Draft and not promoted
 - Active 029 ledger: **#278**
 - Governance issue: **#133**, reconciled to draft-first/no-auto-merge policy
