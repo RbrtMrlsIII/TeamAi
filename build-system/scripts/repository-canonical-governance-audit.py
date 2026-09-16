@@ -10,11 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 AUTHORITY_MANIFEST = ".github/teamai/authority-manifest.yml"
-RETIRED_TOKEN_ALLOW_PREFIX = {
-    "PRODUCT_LAW.md": "Product_Law/",
-    "MASTERPLAN.md": "Masterplan/",
-    "NEXT_SLICES.md": "Masterplan/",
-}
+RETIRED_BASENAME_ALLOWLIST = {"PRODUCT_LAW.md", "MASTERPLAN.md", "NEXT_SLICES.md"}
 
 
 def fail(message: str) -> None:
@@ -195,15 +191,22 @@ def is_historical_path(rel: str, historical: tuple[tuple[str, str], ...]) -> boo
     return False
 
 
-def retired_path_is_active_reference(body: str, target: str) -> bool:
-    """Return true only when a retired basename is used as an actual file/path reference."""
+def retired_reference_is_active(body: str, target: str) -> bool:
+    """Detect actual routing to a retired path, not a bare historical-name mention."""
     token = re.escape(target)
-    patterns = (
-        rf"\]\(\s*\./?{token}(?:[?#][^\s)]*)?\s*\)",
-        rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
-        rf"(?im)(?<![\w./-])/(?:{token})(?:[?#][^\s)\]]*)?",
-        rf"(?im)(?<![\w./-])\./(?:{token})(?:[?#][^\s)\]]*)?",
-    )
+    basename = target in RETIRED_BASENAME_ALLOWLIST
+    if basename:
+        patterns = (
+            rf"\]\(\s*(?:\.\/)?{token}(?:[?#][^\s)]*)?\s*\)",
+            rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
+            rf"(?im)(?:href|src)\s*=\s*[\"'](?:\.\/)?{token}(?:[?#][^\s\"']*)?[\"']",
+        )
+    else:
+        patterns = (
+            rf"\]\(\s*(?:\.\/)?{token}(?:[?#][^\s)]*)?\s*\)",
+            rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
+            rf"(?im)(?:href|src)\s*=\s*[\"'](?:\.\/)?{token}(?:[?#][^\s\"']*)?[\"']",
+        )
     return any(re.search(pattern, body) for pattern in patterns)
 
 
@@ -219,10 +222,7 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[
         except (OSError, UnicodeDecodeError):
             continue
         for target in forbidden:
-            if target in RETIRED_TOKEN_ALLOW_PREFIX:
-                if retired_path_is_active_reference(body, target):
-                    fail(f"active reference points to retired path {target}: {rel}")
-            elif target in body:
+            if retired_reference_is_active(body, target):
                 fail(f"active reference points to retired path {target}: {rel}")
 
 
