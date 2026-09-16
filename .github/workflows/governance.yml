@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   governance-drift:
-    name: canonical-governance
+    name: governance-drift
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -71,7 +71,7 @@ jobs:
         run: python3 build-system/scripts/repository-canonical-governance-audit.py
 
   evidence-consistency:
-    name: evidence-integrity
+    name: evidence-consistency
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
