@@ -68,6 +68,17 @@
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
 - [ ] No validator is weakened merely to obtain green CI.
 
+## Governance reconciliation — Issue #347 / PR #346
+
+- [ ] Revalidate PR #346 against current `main` and reconcile the base/head relationship before any readiness claim.
+- [ ] Remove all active retired-root references and prove the canonical governance graph against the complete PR diff.
+- [ ] Reconcile validator ownership and preserve each unrelated protection while changing truth.
+- [ ] Reconcile Issue #133 with the actual repository control-plane gate configuration.
+- [ ] Mechanically enforce Draft-first for substantive PRs while keeping normal validation active on Drafts.
+- [ ] Complete final #346 governance/project/security/browser evidence at the exact head.
+- [ ] Record #346 ready-for-review only after the issue slice checklist and supporting governance evidence are current.
+- [ ] Merge #346 through the normal authorized GitHub merge path only after ready-for-review requirements are satisfied.
+
 ## Session synchronization
 
 - [x] `AI_ASSISTANT_READ_ME.md` is the live session/recovery/handover/endorsement-decision surface.
