@@ -4,13 +4,14 @@
 
 ## Session anchor
 
-- Last given prompt: **durable evidence + #353 machine-core repair**
-- Session date: **2026-09-16**
-- Governance PR: **#346** `governance/repository-foundation` — merged
-- Machine Hero candidate: **#353** `frontend/machine-hero-foundation-current` — Draft, not promoted
+- Last given prompt: **1**
+- Session date: **2026-09-15**
+- Governance PR: **#346** `governance/repository-foundation` — Draft
+- Current #346 head: **see PR #346 live head; do not hard-code a commit SHA here**
+- Machine Hero candidate: **#344** `feat/machine-hero-foundation` — Draft and not promoted
 - Active 029 ledger: **#278**
 - Governance issue: **#133**, reconciled to draft-first/no-auto-merge policy
-- Current main baseline: **a714271e9ed91fcfbbab9c88160107cc38bf7d01**
+- Main baseline for #346: `e14e9be670866c13d565f4b47dda30bebe4c51c8`
 
 ## Canonical authority path
 
@@ -31,37 +32,18 @@
 - Active `HandOver.md`, `Endorsement.md`, and `OBSOLETE_FILES.md` are forbidden.
 - `docs/skills/` is not an active Skill namespace.
 
-## Durable evidence rule
-
-Every substantive implementation slice must leave a durable evidence record in its owning PR or Issue before the slice is considered complete. Chat is transient investigation only and is never the sole repository memory.
-
-Each record must preserve:
-
-```text
-SLICE EVIDENCE RECORD
-Slice / objective:
-Exact base + head:
-Observed symptoms:
-Evidence collected (tests/browser/runtime/git):
-Root-cause diagnosis:
-Discrepancies / contradictions:
-Implementation applied:
-Validation impact:
-Verification result:
-Remaining uncertainty / blockers:
-Next authorized slice:
-```
-
-Future sessions must be able to reconstruct the active slice from GitHub without relying on chat history. Negative, blocked, or inconclusive findings must also be recorded. Exact commit/head and validation scope are mandatory for material findings. Do not compress distinct failures into generic status or manufacture green evidence.
-
 ## Current reconciliation work
 
-- #346 is merged and is no longer an active governance vessel.
-- #348 is merged and established the Node runtime entry correction later followed by removal of Vercel as an active delivery dependency.
-- #353 is the current 10-seat modular machine Hero candidate and remains Draft until exact-head implementation/browser/security evidence and required review conditions are satisfied.
-- Product Law remains canonical under `Product_Law/` without semantic truncation.
+- #346 remains the repository governance migration vessel and remains Draft until its current proof target is review-ready.
+- #344 remains the new 3D Hero replacement candidate and remains Draft.
+- Product Law is canonical under `Product_Law/` without semantic truncation.
 - The complete Masterplan is under `Masterplan/`; only `Masterplan/NEXT_SLICES.md` owns the current frontier.
-- Historical records remain provenance only.
+- `HandOver.md` and `Endorsement.md` are retired from active use; historical records remain only for provenance.
+- Governance procedures route through the single `skills/**/SKILL.md` system, including repository synchronization and machine builder.
+- Issue #133 separates Draft/ready-for-review/merge states, rejects auto-merge as product execution policy, permits multi-commit/multi-slice PRs, and requires validation-change reconciliation.
+- The governance audit proves the PR's declared proof target against the complete `base...head` delta rather than the latest commit alone.
+- Exact-head governance, full-system, and browser workflows are used so verification evidence is tied to the actual PR head rather than a synthetic merge ref.
+- The live PR head in GitHub is the source of truth for the current verification commit.
 
 ## Validation-change guide
 
@@ -85,17 +67,24 @@ Then:
 
 Never weaken validation merely to make CI green.
 
-## #353 current verified slice
+## Handover
 
-At head **4809f127b8eb7a09985e34b8816902548bda5434**, the exact-head required validation set passed:
+There is no live `HandOver.md`. Current continuation and recovery state belongs here. Historical handover evidence may remain under `handover/` or `docs/archive/` and is not current instruction.
 
-- Repository Governance Integrity: PASS
-- Repository Full-System Verification: PASS
-- Security Static Analysis: PASS
-- Canonical Browser Verification: PASS
+## Endorsement decision
 
-Browser verification completed successfully after the machine-core default seat-count correction in the visual, interaction, and semantic fallback consumers. The prior 40-pass/5-fail browser result was tied to head `f9da716d...` and is historical for this slice, not current proof.
+There is no active `Endorsement.md`. Acceptance decisions are recorded against the exact Issue/PR/evidence scope and reflected here for continuity. A green workflow is not an endorsement.
 
-The remaining inline `machine-core-preview.html` parser duplication is a tracked cleanup concern; it was not the source of the final browser failure and no test was weakened to obtain the green result.
+## Machine boundary
 
-<!-- Durable evidence contract established during #353 -->
+PR #344 is the machine replacement candidate. Its semantic path is:
+
+`semantic identity → payload → expansion footprint → connection topology → adaptive geometry → transition → semantic subject → camera relationship → rendering`
+
+Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and decorative effects are not universal machine authority. #344 does not become backend, authorization, scheduler, entitlement, commerce, or durable-state authority.
+
+## Next governance gate
+
+#346 is not review-ready until active references to retired roots are eliminated, obsolete validators/procedures no longer appear in active routing, Issue #133 and the repository control plane agree, the governance migration tests pass, and fresh governance/full-system/security/browser evidence agrees on the same live head.
+
+<!-- #348 canonical synchronization marker: proof-target surface -->
