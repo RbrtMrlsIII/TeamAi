@@ -56,7 +56,7 @@ Residual uncertainty:
 
 Then execute:
 
-`warning → authority reconciliation → implementation → replacement validation → evidence → session update`
+`warning → authority reconciliation → implementation → replacement validation → verification → evidence → session update`
 
 Never weaken a validator merely to obtain green CI. Existing tests must be classified as retained, obsolete, or replaced before their assertions are changed.
 
@@ -67,3 +67,5 @@ Distinguish:
 `specified ≠ implemented ≠ verified ≠ runtime-proven ≠ completed ≠ accepted`
 
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
+
+<!-- #348 canonical synchronization marker: proof-target surface -->

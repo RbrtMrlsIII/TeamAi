@@ -34,3 +34,5 @@ Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checkli
 ## No parallel authority
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
+
+<!-- #348 canonical synchronization marker: proof-target surface -->
