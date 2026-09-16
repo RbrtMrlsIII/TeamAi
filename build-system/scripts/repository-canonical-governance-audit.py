@@ -205,7 +205,6 @@ def retired_path_is_active_reference(body: str, target: str) -> bool:
     patterns = (
         rf"\]\(\s*\./?{token}(?:[?#][^\s)]*)?\s*\)",
         rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?$",
-        rf"(?im)\b(?:https?://[^\s/]+|/|\./)\s*{token}(?:[?#][^\s)\]]*)?",
     )
     return any(re.search(pattern, body) for pattern in patterns)
 
