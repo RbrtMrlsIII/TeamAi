@@ -9,6 +9,8 @@ Current slice; owning Issue/PR; relevant Product Law field; semantic tree/branch
 ## AUTHORITY
 `Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → this Skill → implementation`
 
+This Skill is procedural only. It does not create or grant Product Law authority, permission to change governed product behavior, or merge authority.
+
 ## ACTION
 1. Establish semantic identity and purpose before choosing coordinates.
 2. Define UI/configuration/accessibility payload.
