@@ -29,6 +29,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 - Masterplan/Skill routing: `skills/governance/masterplan-skill-wiring/SKILL.md`
 - Machine builder: `skills/governance/machine-builder/SKILL.md`
 - Learning/session continuity: `skills/governance/learning-handover/SKILL.md`
+- Collab / independent review: `skills/governance/collab-review/SKILL.md`
 
 Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
 
