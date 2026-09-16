@@ -85,53 +85,23 @@ workspace:
     - docs/
     - recovery/
     - delivery/
-  workflow_naming: responsibility_specific
-  pr_only_main_changes: true
-  draft_before_merge: true
-  auto_merge: false
-  no_one_slice_one_merge: true
-  no_obsolete_files_registry: true
+  protected_branch: main
+  main_change_mode: PR_ONLY
+  historical_branch_inventory_allowed: true
 
-coupling:
-  product_law:
-    - Product_Law/
-  masterplan:
-    - Masterplan/
-  frontend:
-    - public/
-    - frontend/
-  backend:
-    - backend/
-    - supabase/
-  skills:
-    - skills/
-  governance:
-    - .github/workflows/
-    - build-system/
-    - scripts/governance/
-
-historical_existing_immutable:
-  - docs/archive/
-  - docs/evidence/
-  - handover/
-
-rules:
-  historical_existing_immutable: true
-  active_indexes_must_agree: true
-  implementation_claim_requires_evidence: true
-  validation_uses_pr_base_head: true
-  validation_uses_draft_pr_proof_target: true
-  draft_before_merge: true
-  auto_merge: false
-  no_one_slice_one_merge: true
-  no_obsolete_files_registry: true
-  fail_closed: true
-
-canonical_indexes:
-  - Product_Law/WIRING.md
-  - Masterplan/MASTERPLAN.md
-  - Masterplan/NEXT_SLICES.md
-  - POLICY.md
-  - docs/SKILL_WIRING.md
-  - AI_ASSISTANT_READ_ME.md
-  - PRODUCT-KNOWLEDGE.md
+validation:
+  scope: BASE...HEAD
+  proof_target: pull_request.body::Draft proof target
+  old_invariant_disposition_required: true
+  required_dispositions:
+    - RETAINED
+    - OBSOLETE
+    - REPLACED
+    - MOVED
+  evidence_same_head_required: true
+  validation_rewire_is_non_blocking: true
+  merge_blockers:
+    - unresolved current-authority contradiction
+    - real introduced product/runtime/security regression
+    - missing fresh verification on the same PR head
+    - declared proof target not demonstrated
