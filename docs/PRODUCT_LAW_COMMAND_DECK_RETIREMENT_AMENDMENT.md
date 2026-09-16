@@ -1,7 +1,7 @@
 # Product Law Amendment — Command Deck Retirement
 
 **Status:** NORMATIVE PRODUCT-LAW AMENDMENT / OWNER-DIRECTED RETIREMENT
-**Parent authority:** `PRODUCT_LAW.md`
+**Parent authority:** `Product_Law/PRODUCT_LAW.md`
 **Execution ledger:** Issue #278
 **Related frontend baseline:** `docs/PRODUCT_LAW_FRONTEND_HIGHEST_STAKE.md`
 **No 029-release claim.**
