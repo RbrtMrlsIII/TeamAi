@@ -79,7 +79,7 @@ The package MUST exclude untracked generated content such as:
 
 - screenshots and browser captures;
 - generated visual evidence images;
-- Vercel/Firebase preview output;
+- preview output;
 - build output (`dist/`, `.next/`, `out/`);
 - dependency trees (`node_modules/`);
 - test/coverage reports;
@@ -96,7 +96,7 @@ The builder uses the tracked-file set, so ordinary untracked artifacts are natur
 
 Artifact images are forbidden in the Full Project ZIP.
 
-An image that is a genuine product/source asset may remain part of the canonical tracked tree when it is intentionally required by the product. Generated screenshots, browser captures, UI evidence images, temporary diagrams, Vercel previews, test captures, and similar artifact imagery are not source assets and MUST NOT be committed or packaged.
+An image that is a genuine product/source asset may remain part of the canonical tracked tree when it is intentionally required by the product. Generated screenshots, browser captures, UI evidence images, temporary diagrams, test captures, and similar artifact imagery are not source assets and MUST NOT be committed or packaged.
 
 When classification is ambiguous, treat the image as a packaging blocker until the TeamAi Development Team classifies it explicitly and, when appropriate, moves it to a canonical source-asset location with source-asset intent.
 
@@ -114,7 +114,7 @@ The Full Project ZIP is the preferred handoff/editing unit for **coherent bulk c
 
 `canonical repository state → Full Project ZIP → full edit → package verification → one coherent repository change/PR`
 
-This minimizes fragmented commits and reduces accidental external preview/deployment churn.
+This minimizes fragmented commits and reduces accidental external deployment churn.
 
 The ZIP does not authorize bypassing GitHub review. After bulk editing, the resulting project tree MUST return to GitHub as the source/change authority through the normal branch/PR workflow.
 
@@ -134,9 +134,9 @@ This enforcement is deliberately separate from ordinary implementation execution
 
 For TEAM-EXPERIENCE-029, the preferred sequence is:
 
-`approved 029 baseline → full project package → coherent implementation edit → package/tree verification → GitHub CI → controlled Vercel web verification when useful → review → merge`
+`approved 029 baseline → full project package → coherent implementation edit → package/tree verification → GitHub CI → browser verification when useful → review → merge`
 
-Vercel may be used for relevant web development, preview, browser interaction, or end-to-end verification across the web surface. It is **not limited to UI-only work**, but it remains non-authoritative for hosting/delivery, backend/domain state, commerce, scheduler authority, architecture acceptance, or completion.
+Browser verification may be used for relevant web development, preview, browser interaction, or end-to-end verification across the web surface. It remains non-authoritative for hosting/delivery, backend/domain state, commerce, scheduler authority, architecture acceptance, or completion.
 
 ## 11. Relationship to authoritative platforms
 
@@ -144,7 +144,6 @@ Vercel may be used for relevant web development, preview, browser interaction, o
 - GitHub Actions = engineering verification/execution surface.
 - Firestore `(default)` = canonical durable TeamAi domain/application state.
 - Firebase Hosting = current TeamAi web delivery authority.
-- Vercel = controlled non-authoritative web development/preview/browser-verification surface.
 - Supabase Edge Functions = trusted server execution.
 - PayPal = external payment-event authority.
 - Founder Pulse = read-only operational observation.

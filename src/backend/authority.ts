@@ -5,7 +5,6 @@ export type AuthorityService =
   | 'paypal'
   | 'github'
   | 'firebase-hosting'
-  | 'vercel'
   | 'supabase-storage';
 
 export type DomainStateAuthority =

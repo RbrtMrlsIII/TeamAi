@@ -17,31 +17,10 @@ This document gives the operational definitions behind the connected-platform au
 | PayPal | External payment events used by TeamAi's server-owned commerce correlation and entitlement projection. | External payment-event authority; TeamAi retains its correlation/projection rules. |
 | GitHub | Source repository, commits, pull requests, issues, reviews, and engineering history. | Engineering/source/change authority. |
 | GitHub Actions | Run CI validation, authority audits, tests, recovery checks, and other repository automation. | Verification/execution surface for engineering workflows; it does not replace GitHub source authority or TeamAi runtime authority. |
-| Vercel | Controlled web development, preview, and browser verification for relevant web work. | Non-authoritative web development/preview/browser-verification surface only. |
 | Founder Pulse | Read-only observation of Issue flow and delivery patterns for product-operations visibility. | Observation/management layer only; no mutation or authorization authority. |
 | External AI applications/providers | Models/runtimes that participate in the Web AI Team through authorized connections and Seats. | Provider ownership remains external; TeamAi owns its connection, policy, Seat, orchestration, and durable-state boundary. |
 | MCP/tools/plugins/integrations | Bounded capabilities exposed to authorized Web AI Seats. | Capability/integration surface only. |
 | Universal ToolKit | Upstream knowledge/process repository receiving validated generalized lessons. | Upstream knowledge surface only; never TeamAi state or authority. |
-
-## Deployment-to-Vercel relationship
-
-A Git commit or pull request is first a GitHub engineering/review event. It causes Vercel deployment activity only when an applicable Vercel deployment mechanism is configured and enabled, such as a connected Vercel Project with Git integration, a deployment hook, or an explicit Vercel deployment command/API call.
-
-With Vercel Git integration, repository events can automatically create preview or production-related deployments according to the Vercel Project's branch/environment configuration. Vercel records the Git metadata associated with the resulting deployment, including the triggering commit SHA/ref and, where applicable, the pull-request identifier.
-
-Therefore the causal model is:
-
-`commit/push → Git repository event → configured Vercel trigger → Vercel build/deployment → controlled preview/deployment surface → browser verification`
-
-and not:
-
-`commit → Vercel automatically`
-
-or
-
-`pull request → Vercel automatically`.
-
-The repository event alone has no TeamAi authority over Vercel. A Vercel Project and its configuration are the external control points that determine whether the event consumes Vercel deployment activity.
 
 ## GitHub Actions distinction
 
@@ -49,7 +28,7 @@ GitHub source/review state and GitHub Actions execution state are related but di
 
 `GitHub repository / commit / PR → GitHub Actions workflow → CI execution/result → engineering evidence`
 
-A green GitHub Actions run proves only the checks actually executed by that workflow. It does not prove Vercel browser behavior, Firebase runtime behavior, PayPal live behavior, or deployment success unless those exact checks were explicitly exercised and their evidence is recorded.
+A green GitHub Actions run proves only the checks actually executed by that workflow. It does not prove Firebase runtime behavior, PayPal live behavior, or deployment success unless those exact checks were explicitly exercised and their evidence is recorded.
 
 GitHub Actions MUST NOT be treated as a general orchestration authority for the Web AI Team. Product/runtime orchestration remains owned by TeamAi's scheduler and trusted execution boundaries.
 
@@ -59,13 +38,13 @@ Cloud Firestore `(default)` remains the canonical durable TeamAi domain/applicat
 
 ## TeamAi policy consequence
 
-Automatic Vercel deployment behavior remains outside the default engineering path. Browser verification is invoked when web development/verification requires it, while Vercel remains a controlled non-authoritative web development/preview/browser-verification surface. A non-web commit or pull request must not be treated as a justification for preview creation.
+Browser verification is invoked through the supported browser tooling or local/static serving path when web development or verification requires it. Deployment behavior remains explicit and provider-specific rather than being assumed from a repository event.
 
-A Vercel deployment is an environment artifact. A browser integrity run is verification evidence. Neither becomes Product Law, backend proof, commerce proof, or TeamAi delivery authority.
+A browser integrity run is verification evidence. It does not become Product Law, backend proof, commerce proof, or TeamAi delivery authority.
 
 ## Founder Pulse consequence
 
-Founder Pulse can observe the GitHub Issue flow that surrounds this work, but it does not initiate Vercel activity. A Pulse report can identify delivery friction or repeated preview-related churn as an operational observation; the TeamAi Development Team must reconcile that observation against Product Law and the canonical Vercel policy before making any change.
+Founder Pulse can observe the GitHub Issue flow that surrounds this work. It does not initiate deployments or runtime activity. A Pulse report can identify delivery friction or repeated verification churn as an operational observation; the TeamAi Development Team must reconcile that observation against Product Law and the canonical verification policy before making any change.
 
 GitLab support in Founder Pulse is capability of the observation skill, not adoption of GitLab as a TeamAi architecture/control-plane dependency.
 
