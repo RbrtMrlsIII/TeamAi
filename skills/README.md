@@ -10,7 +10,7 @@ Skills are direct operational instructions for bounded classes of work. They are
 
 ## Skill contract
 
-Every skill should state:
+Every skill must state:
 
 `WHEN TO USE → INPUT → AUTHORITY → ACTION → DO NOT → PASS → EVIDENCE → SEE ALSO`
 
