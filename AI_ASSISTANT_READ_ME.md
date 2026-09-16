@@ -5,13 +5,13 @@
 ## Session anchor
 
 - Last given prompt: **1**
-- Session date: **2026-09-15**
-- Governance PR: **#346** `governance/repository-foundation` — Draft
-- Current #346 head: **see PR #346 live head; do not hard-code a commit SHA here**
-- Machine Hero candidate: **#344** `feat/machine-hero-foundation` — Draft and not promoted
+- Session date: **2026-09-17**
+- Governance foundation: **#346 merged** into `main`
+- Post-#346 control-plane: **#352** — active reconciliation and validation-lifecycle hardening
+- Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Active 029 ledger: **#278**
-- Governance issue: **#133**, reconciled to draft-first/no-auto-merge policy
-- Main baseline for #346: `e14e9be670866c13d565f4b47dda30bebe4c51c8`
+- Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
+- Current main baseline: **#351 merge `e61c3b9880cc5669e5764e0207a8adc4ba533e5f`**, with #353 already merged before this governance slice
 
 ## Canonical authority path
 
@@ -32,18 +32,28 @@
 - Active `HandOver.md`, `Endorsement.md`, and `OBSOLETE_FILES.md` are forbidden.
 - `docs/skills/` is not an active Skill namespace.
 
-## Current reconciliation work
+## Current control-plane state
 
-- #346 remains the repository governance migration vessel and remains Draft until its current proof target is review-ready.
-- #344 remains the new 3D Hero replacement candidate and remains Draft.
-- Product Law is canonical under `Product_Law/` without semantic truncation.
-- The complete Masterplan is under `Masterplan/`; only `Masterplan/NEXT_SLICES.md` owns the current frontier.
-- `HandOver.md` and `Endorsement.md` are retired from active use; historical records remain only for provenance.
-- Governance procedures route through the single `skills/**/SKILL.md` system, including repository synchronization and machine builder.
-- Issue #133 separates Draft/ready-for-review/merge states, rejects auto-merge as product execution policy, permits multi-commit/multi-slice PRs, and requires validation-change reconciliation.
-- The governance audit proves the PR's declared proof target against the complete `base...head` delta rather than the latest commit alone.
-- Exact-head governance, full-system, and browser workflows are used so verification evidence is tied to the actual PR head rather than a synthetic merge ref.
-- The live PR head in GitHub is the source of truth for the current verification commit.
+- #346 and #348 are merged and no longer active migration vessels.
+- #351 Vercel retirement is merged; Vercel is no longer an active delivery/provider surface.
+- #353 is the current merged machine candidate implementation and remains non-production.
+- #352 owns the remaining post-merge control-plane reconciliation and validation-lifecycle hardening.
+- Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
+- Historical records remain provenance, not current instruction.
+
+## Validation lifecycle guide
+
+| PR state | Active validation | Promotion/review gate |
+|---|---|---|
+| **Draft** | Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime checks continue against the exact PR head. | `review-readiness` may be skipped by lifecycle design. A skipped job is not a pass. |
+| **Ready for review** | Substantive exact-head validation remains current. | `review-readiness` evaluates review and authorization conditions, including required independent approval. |
+| **Merge candidate** | Required checks and evidence remain current on the exact head. | Normal governed GitHub review/merge path only; no auto-merge. |
+
+A downstream **skipped** job is never evidence that the underlying requirement passed. Recovery must inspect the controlling upstream job and the exact current head.
+
+## Durable evidence / session continuity
+
+Chat is transient. A substantive slice is not considered durably recoverable until its owning PR/Issue contains the observed data, exact baseline/head, diagnosis, discrepancy, implementation result, verification state, residual uncertainty, and explicit execution disposition. The PR/Issue record is the durable investigation ledger; this file is the current session/recovery pointer.
 
 ## Validation-change guide
 
@@ -63,7 +73,7 @@ Residual uncertainty:
 
 Then:
 
-`warning → authority reconciliation → implementation → replacement validation → verification → evidence → session update`
+`warning → authority reconciliation → implementation → replacement validation → verification → evidence → durable PR/Issue record → session update`
 
 Never weaken validation merely to make CI green.
 
@@ -77,15 +87,12 @@ There is no active `Endorsement.md`. Acceptance decisions are recorded against t
 
 ## Machine boundary
 
-PR #344 is the machine replacement candidate. Its semantic path is:
+PR #353 is the current merged machine candidate. Its semantic path is:
 
 `semantic identity → payload → expansion footprint → connection topology → adaptive geometry → transition → semantic subject → camera relationship → rendering`
 
-Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and decorative effects are not universal machine authority. #344 does not become backend, authorization, scheduler, entitlement, commerce, or durable-state authority.
+Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and decorative effects are not universal machine authority. #353 does not become backend, authorization, scheduler, entitlement, commerce, or durable-state authority.
 
 ## Next governance gate
 
-#346 is not review-ready until active references to retired roots are eliminated, obsolete validators/procedures no longer appear in active routing, Issue #133 and the repository control plane agree, the governance migration tests pass, and fresh governance/full-system/security/browser evidence agrees on the same live head.
-
-<!-- #348 canonical synchronization marker: proof-target surface -->
-<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->
+#352 owns the current post-merge control-plane reconciliation. The next product frontier remains TEAM-EXPERIENCE-029 in Issue #278. No Hero promotion or 029 release claim is implied by merged #353 alone.
