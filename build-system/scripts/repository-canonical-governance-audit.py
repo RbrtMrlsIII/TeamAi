@@ -196,6 +196,11 @@ def is_historical_path(rel: str, historical: tuple[tuple[str, str], ...]) -> boo
 
 
 def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[str, str], ...], manifest_path: str) -> None:
+    canonical_files = {
+        "Product_Law/PRODUCT_LAW.md",
+        "Masterplan/MASTERPLAN.md",
+        "Masterplan/NEXT_SLICES.md",
+    }
     for p in ROOT.rglob("*"):
         if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts:
             continue
@@ -208,14 +213,9 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[
             continue
         for target in forbidden:
             if target in RETIRED_TOKEN_ALLOW_PREFIX:
-                canonical_path = {
-                    "PRODUCT_LAW.md": "Product_Law/PRODUCT_LAW.md",
-                    "MASTERPLAN.md": "Masterplan/MASTERPLAN.md",
-                    "NEXT_SLICES.md": "Masterplan/NEXT_SLICES.md",
-                }[target]
-                if rel == canonical_path:
-                    # The canonical file may use its own basename in descriptive
-                    # prose or traceability text. That is not active routing.
+                if rel in canonical_files:
+                    # Canonical governance files may use canonical basenames in
+                    # prose/traceability without creating active routing.
                     continue
                 prefix = RETIRED_TOKEN_ALLOW_PREFIX[target]
                 for match in re.finditer(re.escape(target), body):
