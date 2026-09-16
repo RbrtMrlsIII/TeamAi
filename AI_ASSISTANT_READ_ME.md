@@ -86,3 +86,5 @@ Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and
 ## Next governance gate
 
 #346 is not review-ready until active references to retired roots are eliminated, obsolete validators/procedures no longer appear in active routing, Issue #133 and the repository control plane agree, the governance migration tests pass, and fresh governance/full-system/security/browser evidence agrees on the same live head.
+
+<!-- #348 canonical synchronization marker: proof-target surface -->

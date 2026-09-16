@@ -85,3 +85,5 @@
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
 - [ ] Every substantive session updates the canonical surface whose state changed.
 - [ ] Historical records remain immutable and out of active routing.
+
+<!-- #348 canonical synchronization marker: proof-target surface -->
