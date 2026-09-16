@@ -24,17 +24,48 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 24
+
+      - name: Resolve governed PR proof base
+        id: proof-context
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+          REF_NAME: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base_sha="$PR_BASE_SHA"
+          else
+            base_sha="$(gh api --method GET \
+              "/repos/${REPO}/pulls" \
+              -f state=open \
+              -f head="${OWNER}:${REF_NAME}" \
+              --jq '.[0].base.sha')"
+          fi
+          if [ -z "$base_sha" ] || [ "$base_sha" = "null" ]; then
+            echo "No open PR base SHA could be resolved for governed branch ${REF_NAME}."
+            exit 1
+          fi
+          echo "base_sha=$base_sha" >> "$GITHUB_OUTPUT"
+          echo "proof_base_sha=$base_sha"
+
       - name: Syntax check governance validators
         run: |
           node --check scripts/governance/verify-evidence-integrity.mjs
           python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
+
       - name: Prove draft PR target against full PR delta
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          BASE_SHA: ${{ steps.proof-context.outputs.base_sha }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
           GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 build-system/scripts/repository-canonical-governance-audit.py
@@ -67,7 +98,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Generate agent validation packet
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
