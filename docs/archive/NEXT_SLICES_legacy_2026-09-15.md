@@ -139,7 +139,7 @@ The overlapping/blurred idle-view screenshots reported on #278 were traced to `h
 `#304` fixed the dead-center no-op zone, but the underlying click router still has no true hit-testing — every click outside the two ring-focus side bands cycles to `selectSeatShell((selectedSeat+1)%seatCount)` regardless of which seat/sphere is actually under the cursor. A follow-up slice should raycast against actual seat sphere positions so a tap opens the seat it visually landed on, not just "the next one in sequence."
 
 <!-- residual 2026-09-13 seat-open camera -->
-**Residual (2026-09-13):** Seat-shell open framing uses Cam-5/6 selected-seat dock on \`setCamera\` (not only on nav). Issue #278. Cam↔V chronology unchanged.
+**Residual (2026-09-13):** Seat-shell open framing uses Cam-5/6 selected-seat dock on `setCamera` (not only on nav). Issue #278. Cam↔V chronology unchanged.
 
 **Residual (2026-09-13):** Inspection spine retired from live UI. Settings Smoke = display-only camera id / animation. Agents extend Settings smoke + Playwright; do not resurrect a stage walker.
 
@@ -162,3 +162,9 @@ Future Seat divisions reuse the **semantic construction grammar** proven by Seat
 ## Seat-1 reverse-focus synchronization — #330
 
 Historical continuity note: PR #330 extends the bounded Seat-1 visible-label synchronization to both forward and reverse settled division focus. It does not create a new execution plan or alter the document's historical-continuity role. Reference: PR #330.
+
+## Frontend machine foundation — PR #344
+
+PR **#344** is recorded here only as implementation lineage. It introduces a renderer-neutral machine scene model, canonical semantic transition object, geometry-derived subject footprint, named-camera/semantic-target separation, an opt-in machine preview, geometry mutation inspection, and reverse semantic-pair test coverage.
+
+Status remains **IMPLEMENTED / TEMPO / EVIDENCE ONLY**. This record does not replace the Masterplan, does not satisfy complete machine acceptance, and does not claim C9/C10. The authoritative chronological placement is in `MASTERPLAN.md` under `03.9 TREE MACHINE`.
