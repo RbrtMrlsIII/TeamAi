@@ -1,6 +1,8 @@
 import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
 import { createMachineAnimation } from './machine-core-animation.js';
 
+function parseSeatCount(){const raw=new URLSearchParams(globalThis.location?.search||'').get('seats');const requested=raw==null||raw.trim()===''?10:Number(raw);return Number.isFinite(requested)?Math.min(16,Math.max(2,Math.floor(requested))):10;}
+
 function mountSemanticFallback() {
   const panel = document.querySelector('[data-machine-core-visual]');
   if (!panel) return null;
@@ -12,9 +14,7 @@ function mountSemanticFallback() {
   if (!countNode || !cameraSelect || !stateNode || !expandButton || !resetButton) return null;
   if (countNode.textContent?.trim()) return panel;
 
-  const requested = Number(new URLSearchParams(globalThis.location?.search || '').get('seats'));
-  const seatCount = Number.isFinite(requested) ? Math.min(16, Math.max(2, Math.floor(requested))) : 10;
-  const core = createBranchConnectionCore({ seatCount });
+  const core = createBranchConnectionCore({ seatCount: parseSeatCount() });
   countNode.textContent = `${core.parts.length} modules · ${core.seatCount} seats · 4 outer housings · 1 hub`;
 
   cameraSelect.innerHTML = '';
