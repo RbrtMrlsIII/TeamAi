@@ -207,6 +207,10 @@ def assert_active_reference_policy(forbidden: set[str], historical: tuple[tuple[
         except (OSError, UnicodeDecodeError):
             continue
         for target in forbidden:
+            if is_historical_path(target, historical) and rel == "Product_Law/PRODUCT_LAW.md":
+                # Canonical Product Law may name a preserved historical authority record.
+                # Historical paths are already non-authoritative by manifest classification.
+                continue
             if rel == "Product_Law/PRODUCT_LAW.md" and target in {"MASTERPLAN.md", "NEXT_SLICES.md"}:
                 canonical = f"Masterplan/{target}"
                 if canonical and exists(canonical):
