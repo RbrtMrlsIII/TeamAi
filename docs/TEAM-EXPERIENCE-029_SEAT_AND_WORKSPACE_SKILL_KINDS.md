@@ -1,7 +1,7 @@
 # TEAM-EXPERIENCE-029 — Seat skills, workspace skills, Zip packages, commerce
 
 **Status:** PLANNING CONTRACT / naming harden — **not** Product Law amendment  
-**Authority:** `PRODUCT_LAW.md` Families E, F, G, H · MASTERPLAN context model · LAW 109 (skills ≠ authorization)  
+**Authority:** `Product_Law/PRODUCT_LAW.md` Families E, F, G, H · `Masterplan/MASTERPLAN.md` context model · LAW 109 (skills ≠ authorization)  
 **Purpose:** One vocabulary so Hero faces, settings presets, and future runtime do not invent competing meanings.
 
 ## 1. Hard naming decision (noise reduction)
@@ -134,7 +134,7 @@ Reason-bearing states remain:
 
 - Presentation / planning continuity only in this slice.  
 - **No 029-released claim.**  
-- Does not amend `PRODUCT_LAW.md` text; aligns vocabulary under existing Families E/G.  
+- Does not amend `Product_Law/PRODUCT_LAW.md` text; aligns vocabulary under existing Families E/G.  
 - Merge gate #133 when landed via PR.
 
 ## Related structure
