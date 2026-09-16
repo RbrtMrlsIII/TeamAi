@@ -39,4 +39,4 @@ Complete the governance migration so future development can expand or replace th
 
 ## Current blocker
 
-Fresh exact-head verification for #346 is not yet green. The latest completed failures were migration-layer assertions and stale active-document authority pointers, not backend/typecheck/security/browser regressions. Continue reconciling the active graph until Governance Integrity and Full-System Verification both pass on the same current PR head. Do not promote or merge #344 from this slice.
+Fresh exact-head verification for #346 is not yet green. The latest completed workflow quartet was attached to the prior workflow SHA rather than the PR's current head, so it is not admissible as current-head proof. Migration-layer assertions and stale active-document authority pointers have been the known validation debt; no backend/typecheck/security/browser regression has been demonstrated. Continue reconciling the active graph until Governance Integrity and Full-System Verification both pass on the same current PR head. Do not promote or merge #344 from this slice.
