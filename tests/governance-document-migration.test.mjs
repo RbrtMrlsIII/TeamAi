@@ -14,24 +14,17 @@ const retired = {
   connectedPlatform: 'docs/PRODUCT_LAW_CONNECTED_PLATFORM_AUTHORITY.md',
 };
 
-/**
- * Validation migration ledger
- *
- * OLD INVARIANT                         DISPOSITION       REPLACEMENT
- * root Product Law path                OBSOLETE          Product_Law/PRODUCT_LAW.md
- * root Masterplan path                 OBSOLETE          Masterplan/MASTERPLAN.md
- * root Next Slices path                OBSOLETE          Masterplan/NEXT_SLICES.md
- * live HandOver.md manual              OBSOLETE          AI_ASSISTANT_READ_ME.md + history
- * legacy Endorsement manual            OBSOLETE          session + evidence + PR record
- * docs/skills parallel procedures      OBSOLETE          single skills tree only
- * last-commit sync inference           OBSOLETE          full PR BASE...HEAD diff
- * green CI => merge readiness          OBSOLETE          Draft + evidence + reconciliation + review readiness
- * one slice => one merge               OBSOLETE          multi-commit/multi-slice PRs allowed
- * R1-R10 shared root assertion         OBSOLETE          R0-R3 ring-map ownership
- * historical V-series as current       OBSOLETE          Masterplan/NEXT_SLICES.md current frontier
- * connected-platform companion path    MOVED             Product_Law/CONNECTED_PLATFORM.md
- * semantic machine checks              RETAINED          current machine invariants remain explicit
- */
+test('historical surfaces distinguish directory paths from filename prefixes', () => {
+  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
+  assert.equal(manifest.historical_surfaces.archive.path, 'docs/archive/');
+  assert.equal(manifest.historical_surfaces.evidence.path, 'docs/evidence/');
+  assert.equal(manifest.historical_surfaces.handover.path, 'handover/');
+  assert.equal(manifest.historical_surfaces.checkpoints.prefix, 'docs/CHECKPOINT_');
+  assert.equal(manifest.historical_surfaces.evidence_records.prefix, 'docs/EVIDENCE_');
+  assert.equal(manifest.historical_surfaces.checkpoints.path, undefined);
+  assert.equal(manifest.historical_surfaces.evidence_records.path, undefined);
+  assert.equal(existsSync(join(root, 'docs/skills')), false);
+});
 
 test('canonical governance roots replace retired root files', () => {
   for (const p of [
@@ -70,14 +63,6 @@ test('authority manifest is machine-readable and names one owner per canonical r
   assert.equal(manifest.skill_model.canonical_glob, 'skills/**/SKILL.md');
   assert.equal(manifest.promotion_model.draft_first, true);
   assert.equal(manifest.promotion_model.auto_merge, false);
-});
-
-test('historical surfaces distinguish directory paths from filename prefixes', () => {
-  const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
-  assert.equal(manifest.historical_surfaces.archive.path, 'docs/archive/');
-  assert.equal(manifest.historical_surfaces.handover.path, 'handover/');
-  assert.equal(manifest.historical_surfaces.checkpoints.prefix, 'docs/CHECKPOINT_');
-  assert.equal(manifest.historical_surfaces.checkpoints.path, undefined);
 });
 
 test('authority manifest records the validation migrations instead of deleting the old invariants silently', () => {
