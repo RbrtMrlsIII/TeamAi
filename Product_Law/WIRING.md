@@ -19,6 +19,14 @@
 | Recovery, History & Reconciliation | Archives, historical provenance, restoration, migration safety |
 | Delivery & Operations | Deployment configuration and operational delivery surfaces |
 
+## Canonical field companions
+
+| Companion | Ownership | Rule |
+|---|---|---|
+| `Product_Law/FRONTEND_EXPERIENCE.md` | Frontend & Experience | Subordinate field contract; may elaborate Product Law but cannot override it. |
+| `Product_Law/CONNECTED_PLATFORM.md` | Backend & Runtime / Delivery & Operations | Connected-platform roles, evidence boundaries, and non-authority boundaries; subordinate to Product Law. |
+| `Product_Law/WIRING.md` | Product & Governance | Routes fields and companions only; cannot create new authority. |
+
 ## Authority boundaries
 
 Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checklist execution. `Masterplan/NEXT_SLICES.md` owns one current slice. Skills own reusable procedures. Issues own bounded workstream context. PRs own implementation/review boundaries. Verification proves claims. `AI_ASSISTANT_READ_ME.md` owns current session state, handover, endorsement decisions, and validation-change records. `PRODUCT-KNOWLEDGE.md` owns durable validated concepts. `docs/archive/` and `handover/` are historical storage only.
