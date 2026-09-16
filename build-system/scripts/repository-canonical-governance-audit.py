@@ -194,19 +194,11 @@ def is_historical_path(rel: str, historical: tuple[tuple[str, str], ...]) -> boo
 def retired_reference_is_active(body: str, target: str) -> bool:
     """Detect actual routing to a retired path, not a bare historical-name mention."""
     token = re.escape(target)
-    basename = target in RETIRED_BASENAME_ALLOWLIST
-    if basename:
-        patterns = (
-            rf"\]\(\s*(?:\.\/)?{token}(?:[?#][^\s)]*)?\s*\)",
-            rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
-            rf"(?im)(?:href|src)\s*=\s*[\"'](?:\.\/)?{token}(?:[?#][^\s\"']*)?[\"']",
-        )
-    else:
-        patterns = (
-            rf"\]\(\s*(?:\.\/)?{token}(?:[?#][^\s)]*)?\s*\)",
-            rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
-            rf"(?im)(?:href|src)\s*=\s*[\"'](?:\.\/)?{token}(?:[?#][^\s\"']*)?[\"']",
-        )
+    patterns = (
+        rf"\]\(\s*(?:\.\/)?{token}(?:[?#][^\s)]*)?\s*\)",
+        rf"(?im)^\s*(?:path|file|source|target|href|route)\s*[:=]\s*[\"'`]?\./?{token}(?:[?#][^\s\"'`]*)?[\"'`]?\s*$",
+        rf"(?im)(?:href|src)\s*=\s*[\"'](?:\.\/)?{token}(?:[?#][^\s\"']*)?[\"']",
+    )
     return any(re.search(pattern, body) for pattern in patterns)
 
 
@@ -292,10 +284,9 @@ def assert_proof_target(payload: dict, paths: set[str]) -> None:
 
 
 def assert_historical_paths(paths: set[str]) -> None:
-    if "docs/project-guide/HandOver.md" in paths:
-        fail("HandOver.md must be retired, not modified")
-    if "docs/project-guide/Endorsement.md" in paths:
-        fail("Endorsement.md must be retired, not modified")
+    for path in ("docs/project-guide/HandOver.md", "docs/project-guide/Endorsement.md"):
+        if path in paths and exists(path):
+            fail(f"{path} must be retired, not modified")
 
 
 def main() -> None:
