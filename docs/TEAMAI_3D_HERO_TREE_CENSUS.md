@@ -78,3 +78,312 @@ ROOT TRUTH
 → responsibility
 → UI/product payload
 → expansion/collapse states
+→ connection graph
+→ adaptive geometry
+→ camera subject / travel path
+→ interaction
+→ contribution/electricity routing
+→ verification
+```
+
+Never begin by copying the previous tree's coordinates and then inventing semantics around them.
+
+## 5. Geometry is payload-driven
+
+Each tree can legitimately differ in:
+
+- branch count;
+- recursion/depth;
+- branch width;
+- branch height;
+- radial distance;
+- angular spread;
+- vertical separation;
+- label density;
+- feature density;
+- control density;
+- configuration surface size;
+- accessibility surface size;
+- expansion footprint.
+
+Current prototype geometry is a measured/starting baseline, not a universal geometry contract.
+
+Geometry must leave enough physical room for the division's real payload and its neighboring machine topology. A branch that needs a larger configuration/accessibility surface is allowed to occupy a larger machine division.
+
+## 6. Expansion-space contract
+
+Every expanding division must reserve sufficient space to open without colliding with:
+
+- adjacent branches;
+- adjacent trees;
+- wiring/connection corridors;
+- camera travel paths;
+- workspace visibility;
+- other active UI surfaces.
+
+Expansion space is therefore part of the tree's design contract, not an animation afterthought.
+
+The Hero maximum expanded state must be derived from the combined footprint of the participating active divisions and their payload-driven geometry.
+
+## 7. Full-turn expansion state
+
+During the final turn-loop/contribution state, the participating tree/branch divisions are expected to be **active/open** so that their connection points can form a continuous semantic wiring network.
+
+```text
+active WebAi turn
+→ participating tree / branch selection
+→ required divisions become active/open
+→ connection points and corridors are spatially available
+→ signal follows actual wiring paths
+→ connected adjacent trees/branches participate
+→ signal reaches workspace center
+```
+
+The turn loop must not try to traverse hidden/collapsed divisions whose intended connection topology is unavailable in the active visual state.
+
+## 8. Expansion animation contract
+
+Expansion must not be implemented as an instantaneous visibility switch, teleport, or abrupt coordinate replacement.
+
+Each division requires a smooth, polished, stateful opening and closing choreography appropriate to its geometry and payload.
+
+The final timing language is **not yet established**. Existing hierarchy/camera timing values remain living implementation baselines rather than final animation law.
+
+A correct expansion animation should preserve:
+
+- semantic continuity;
+- spatial continuity;
+- connection continuity;
+- readable intermediate states;
+- adjacent-division clearance;
+- stable camera subject relationship;
+- responsive/mobile coherence;
+- reduced-motion semantic equivalence;
+- deterministic verification.
+
+## 9. Camera relationship
+
+Camera behavior must consume semantic tree/branch identity and geometry rather than treating a named dock as the identity itself.
+
+The current baseline documents named camera docks and a measured `700 ms` lerp. This is current implementation evidence, not proof of final hierarchy travel.
+
+Future branch travel must support meaningful subject-to-subject spatial movement between different tree/branch identities.
+
+## 10. Electrical connection model
+
+The final contribution animation must represent an actual connection graph.
+
+A participating node/branch therefore needs a stable connection/path point before the final electrical choreography is authored.
+
+The expected semantic model is:
+
+```text
+active turn source
+→ branch connection
+→ intermediate connected divisions
+→ adjacent trees/branches
+→ inward path
+→ workspace destination
+```
+
+The effect must remain valid when trees differ in geometry, depth, branch count, and expansion footprint.
+
+## 11. TREE-HERO-SEAT truth baseline
+
+`TREE-HERO-SEAT` is the existing Seat presentation hierarchy. This section reconciles the already-defined Seat shell with the existing Seat lifecycle, Responsibility Unit, Universal/TeamAi Skill, and product orchestration contracts. **It does not create a second Seat hierarchy.**
+
+### 11.1 Existing structural branches
+
+```text
+SEAT_SHELL
+├── SEAT_CONNECTION
+├── SEAT_BEHAVIOR
+├── SEAT_TOOLKIT
+├── SEAT_CAPABILITIES
+├── SEAT_AUTHORIZATION
+├── SEAT_WORKSPACE_SCOPE
+└── SEAT_TASK_EVIDENCE
+```
+
+These branch IDs remain the structural presentation vocabulary. Deeper configuration facets may be represented as payload or recursive descendants only when they acquire a governed semantic identity. Do not invent new sibling branches merely because a configuration field exists.
+
+### 11.2 Seat configuration facets map onto the existing branches
+
+The canonical Seat is more than a model label. Existing project contracts distinguish application, provider, service/runtime, model/variant, connection, Seat, skills, tools/MCP, workstation, scope, entitlement, and authorization. The census records those as **configuration facets** of the existing Seat structure rather than a parallel tree.
+
+| Existing Seat branch | Existing configuration/lifecycle meaning |
+|---|---|
+| `SEAT_SHELL` | Seat identity/overview; provider/runtime/model identity facets; lifecycle presentation |
+| `SEAT_CONNECTION` | external provider/application relationship, OAuth/provider handoff, bind, connection test, health |
+| `SEAT_BEHAVIOR` | Seat-local behavior/defaults and constraints only; it does **not** own global team turn policy |
+| `SEAT_TOOLKIT` | resolved TeamAi/common skill and procedure equipment for this Seat; optional presentation |
+| `SEAT_CAPABILITIES` | available mechanisms, tools/plugins/MCP/model/runtime capability inventory |
+| `SEAT_AUTHORIZATION` | reason-bearing permission/approval/authorization state; presentation only, never a grant authority |
+| `SEAT_WORKSPACE_SCOPE` | workplace/project/repository/path/workstation scope |
+| `SEAT_TASK_EVIDENCE` | task/result/event/evidence continuity |
+
+The existing Seat lifecycle remains the canonical lifecycle vocabulary:
+
+`Discover → External Setup → Import/Authorize → Capability Test → Bind → Equip → Activate → Run → Observe → Degrade/Suspend → Recover/Revalidate → Rebind/Retire`
+
+A Seat may reference an external Connection, but Connection and Seat remain distinct concepts.
+
+### 11.3 TEAMAI COMMON SKILL / Universal ToolKit boundary
+
+`TEAMAI COMMON SKILL` is the project's given/common skill equipment available for Seat use. It is not a separate Seat hierarchy and is not duplicated into eight independent skill libraries.
+
+The existing Responsibility Unit model remains the allocation mechanism:
+
+```text
+TEAMAI COMMON SKILLS / Universal ToolKit
+→ Responsibility Unit catalog
+→ Seat responsibility allocation
+→ smallest sufficient applicable skill bundle
+→ capability/tool resolution
+→ authorization/policy
+→ usable Seat
+```
+
+Agent count changes **allocation**, not the underlying common skill definitions.
+
+With two unlocked Seats, a Seat may carry several Responsibility Units and therefore a broader resolved skill bundle. With up to eight unlocked Seats, the same Responsibility Unit/skill definitions are partitioned more finely across the participating Seats. This is a resource-allocation and resolution problem, not eight copies of the skill library.
+
+User-provided or user-edited skill material, when implemented, must remain distinguishable from TeamAi common skills. Editing a user-owned skill must not silently mutate the canonical TeamAi common skill authority. Skills instruct; policy, authorization, entitlement, and project contracts govern.
+
+Current truth: the common-skill/Responsibility architecture is defined, but the complete user-facing skill configuration/editor flow is **NOT IMPLEMENTATION-COMPLETE**. Do not fabricate a complete common-skill catalog or claim that all intended skills are already implemented.
+
+### 11.4 Global Turn Configuration is not a Seat branch
+
+Turn-loop policy belongs to the **overall team/orchestration configuration**, not to individual `TREE-HERO-SEAT` branches.
+
+```text
+TEAM / ORCHESTRATION CONFIGURATION
+├── participating Seats
+├── actions/turns per participating Seat
+├── turn order / scheduling policy
+├── round or stopping conditions
+├── summarizer selection
+├── resource/time limits
+└── turn-loop mode
+        ↓
+Scheduler
+        ↓
+individual Seat execution
+```
+
+`SEAT_BEHAVIOR` may expose Seat-local defaults or constraints that participate in this policy, but it must not become the owner of global team turn behavior. The existing `TREE-ORCHESTRATION` / scheduler contract remains the proper semantic home for the team-wide turn configuration.
+
+This distinction is required for the product question: **how many actions each participating Seat may perform before the configured loop ends**. It must be evaluated once at the overall team configuration level and then enforced by the scheduler against each participating Seat.
+
+### 11.5 Cross-tree controls are not Seat branches
+
+The following already-defined product surfaces must remain outside `TREE-HERO-SEAT`:
+
+- `(?)` / **Complex Dictionary / User Guide**: public Entrance guidance and vocabulary surface;
+- **Return BTN**: authenticated-world navigation back to the public Entrance, not a Seat child;
+- **Logout**: authentication lifecycle operation, not Seat removal;
+- **Remove/Retire Seat/Agent**: Seat lifecycle operation that retires the configured Seat/provider binding and clears governed Seat data as specified by the durable contract; it does not imply deletion of the user's root account;
+- **Settings**: cross-cutting authenticated configuration/navigation taxonomy, not a second semantic machine hierarchy.
+
+### 11.6 Eight-seat population rule
+
+The default world presentation supports eight Seat slots, but a rendered slot is not automatically a durable configured Seat. Actual durable Seat population is restored from authorized user/project state and mapped to available world slots.
+
+All eight Seats consume the same canonical Seat configuration vocabulary and common-skill substrate. Their provider, model, connection, skill allocation, capability set, authorization, workspace scope, and readiness may differ.
+
+### 11.7 Truth/status rule for Seat census rows
+
+The census must distinguish structural existence from implementation completeness. Existing Seat faces are presentation evidence, not proof of live authenticated configuration.
+
+Use truthful states such as:
+
+`IMPLEMENTED_PARTIAL`, `STUB`, `SEMANTIC_ONLY`, `DEFINED_NOT_IMPLEMENTED`, `PENDING`, `NOT_PROVEN`.
+
+Do not upgrade a Seat branch to complete because its mesh, face, fixture, or local animation exists.
+
+## 12. Current completion truth
+
+| Tree | Current status |
+|---|---|
+| `TREE-DOMAIN` | INCOMPLETE |
+| `TREE-HERO-SEAT` | PARTIAL |
+| `TREE-SKILL-RESPONSIBILITY` | INCOMPLETE |
+| Complete multi-tree Hero machine | NOT COMPLETE |
+| Complete branch/division product payload inventory | NOT COMPLETE |
+| Complete adaptive geometry | NOT COMPLETE |
+| Full semantic connection topology | NOT COMPLETE |
+| Final turn-loop electrical choreography | NOT COMPLETE |
+| Final machine-opening choreography | NOT COMPLETE |
+| Complete Seat configuration/editor lifecycle | NOT COMPLETE |
+| Complete global turn-configuration UI/runtime | NOT COMPLETE |
+
+The Seat tree is evidence of an existing mechanism. It is not evidence that all TeamAi trees, branches, divisions, wiring, expansions, Seat configuration, common-skill resolution, or global turn configuration are complete.
+
+## 13. Primary source anchors
+
+- `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`
+- `docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md`
+- `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`
+- `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
+- `docs/TEAMAI_3D_HERO_SEAT_SHELL_HIERARCHY_V1.md`
+- `docs/WEB_AI_SEAT_RESPONSIBILITY_TREE.md`
+- `docs/WEB_AI_SEAT_TOOLKIT_BOUNDARY.md`
+- `docs/VISION.md`
+- `AI_ASSISTANT_READ_ME.md`
+- `Masterplan/MASTERPLAN.md`
+- `Issue #278 — 029 Canonical Product-Experience Baseline & Governed Execution Ledger`
+
+This census is a design/recovery baseline. It does not itself authorize implementation or claim acceptance.
+
+## 14. Census ownership rule
+
+The census is maintained alongside implementation, not after the fact. When code introduces or materially changes a tree/branch/division, the corresponding census entry is part of that same PR's definition of current truth.
+
+The census is intentionally **not** the place where final product-roadmap sequence is invented. It records structural truth and known context; `Masterplan/MASTERPLAN.md` and Issue #278 determine execution order.
+
+Chronological execution remains:
+
+```text
+Product Law
+→ Masterplan / C0–C10 execution baseline
+→ applicable contracts + Skills
+→ implementation
+→ validation
+→ evidence
+→ merge
+→ new current truth
+→ census reconciliation
+```
+
+The Seat truth reconciliation in this baseline therefore changes **known structural context**, not the chronological execution authority. Any future implementation slice must update the affected census row(s) in the same governed change and must not create a second checklist or parallel Seat hierarchy.
+
+## 15. Seat-1 `SEAT_CONNECTION` vertical
+
+Seat 1 now has a bounded `SEAT_CONNECTION` vertical with a stable semantic connection-port identity and an explicit semantic edge toward the shared Workspace Center.
+
+```text
+TREE-HERO-SEAT#0
+└── SEAT_CONNECTION
+    ├── stable port
+    │   └── TREE-HERO-SEAT#0:SEAT_CONNECTION:PORT
+    └── semantic edge
+        └── TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER
+```
+
+The Seat division-focus transition also preserves the previous division as the visual subject while it compacts before a new division becomes active. This is presentation state only and does not delete or reset the previous Seat's user configuration/payload.
+
+Seat-1 now also has a payload-driven geometry descriptor for the `SEAT_CONNECTION` division. The descriptor derives width, depth, height, and corridor thickness from semantic/UI payload density and accepts an explicit workspace target. Its corridor is owned by `TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY` and is reserved for adjacent divisions and the Workspace Center.
+
+The Seat-1 connection corridor now also exposes a reusable **adjacent-division wiring seam**. The seam consumes a source and target division's stable semantic connection ports, derives the traversal length and orientation from those ports, and fails closed when either port is absent. It is presentation-only topology scaffolding and does not yet establish complete inter-division topology or final turn-loop electrical choreography.
+
+Current Seat-1 vertical status remains **IMPLEMENTED_PARTIAL**. Stable edge identity, division-focus compaction, the first payload-driven geometry/corridor contract, and the adjacent-division wiring seam are implemented; final adaptive geometry, final expansion-animation language, complete inter-division topology, and final turn-loop electrical choreography remain intentionally open.
+
+The edge, geometry, and adjacency seam are presentation-only and do not grant authorization, entitlement, provider execution, scheduler authority, or durable-domain write authority.
+
+This section records current structural evidence only. `Masterplan/MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
+
+### Seat-1 adjacent expansion envelope
+
+The adjacent-division expansion envelope is now a bounded implementation baseline. It derives source and target expansion bounds from their semantic geometry descriptors and preserves the Seat-1 connection corridor as shared space. During focus transition, the source division must compact fully while the target division remains closed; only after the source reaches zero may the target begin expanding. The transition timing is explicitly not final animation law, and the complete inter-division topology and final turn-loop choreography remain open.
+
+The canonical Seat renderer now consumes the governed adjacent-division wiring seam for the bounded `SEAT_CONNECTION` ↔ `SEAT_BEHAVIOR` presentation path. The rendered segment is derived from the semantic ports and current branch geometry; it does not constitute final electrical or complete inter-division topology.
