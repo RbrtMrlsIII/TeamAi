@@ -99,7 +99,7 @@ The owner-visible acceptance gap is historical evidence from the recent Vision e
 
 | Order | Thought |
 |-------|---------|
-| D1 | Agent slice needs green CI + assumptions + reasons + next slice | `docs/AGENT_SLICE_EXECUTION.md` |
+| D1 | Current execution procedure is governed by Policy/ORUCAVEAM and applicable Skills; evidence is recorded on the owning Issue/PR | `POLICY.md`, `docs/SKILL_WIRING.md`, owning Issue/PR |
 | D2 | User manual for deploy + seats | `docs/USER_MANUAL_DEPLOYMENT.md` |
 | D3 | Dictionary for complex tabs / Hero parts | `docs/DICTIONARY.md` |
 | D4 | This chronology (decision order) | `docs/CHRONOLOGY.md` |
