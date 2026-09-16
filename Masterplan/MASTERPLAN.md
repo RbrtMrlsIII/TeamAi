@@ -1,6 +1,6 @@
 # MASTERPLAN — active execution checklist
 
-**Authority:** `Product_Law/PRODUCT_LAW.md`  
+**Authority:** `Product_Law/PRODUCT_Law.md`  
 **Role:** chronology and executable checklist only.  
 **Current governing program:** repository foundation reconciliation before Machine Hero promotion.
 
@@ -21,6 +21,21 @@
 - [ ] Governance audit proves the Draft PR's declared proof target against the complete PR `base...head` diff.
 - [ ] Issue #133 and repository control-plane required contexts agree on Draft → ready-for-review → authorized merge.
 - [ ] Fresh governance/project/security/browser CI is green at the final #346 head.
+
+## Governance reconciliation goal — Issue #347 / PR #346
+
+- [x] Open Issue #347 as the single slice checklist for the current governance/control-plane reconciliation.
+- [ ] Revalidate and reconcile PR #346 against current `main` before readiness.
+- [ ] Reconcile the `Product_Law/CONNECTED_PLATFORM.md` add/rename conflict explicitly.
+- [ ] Remove active references to retired governance roots and prove the complete base/head audit is clean.
+- [ ] Reconcile validator ownership and complete-diff proof semantics.
+- [ ] Reconcile Issue #133 with actual repository control-plane required contexts.
+- [ ] Re-enable and verify the `Main Merging AI Protection` ruleset only after its contract is correct.
+- [ ] Enforce substantive Draft PR first while retaining ordinary validation on Drafts.
+- [ ] Establish explicit Vercel deployment behavior: no Draft-push preview builds, Ready-for-Review preview deployment, `main` production deployment.
+- [ ] Record the Vercel manual/operator procedure and preserve the operator-controlled fallback when dashboard access is unavailable.
+- [ ] Freshly validate #346 at its exact final head before Ready for Review.
+- [ ] Only after #346 governance closure, re-diff and freshly verify PR #344.
 
 ## Workspace and delivery
 
