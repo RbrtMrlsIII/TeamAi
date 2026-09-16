@@ -828,7 +828,7 @@ Phase 0 is the clean development-entry gate. It verifies the active repository b
 
 The following is a document traceability path, not a replacement for the law-to-law conceptual model above:
 
-`PRODUCT_LAW.md → MASTERPLAN.md → NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md → docs/project-guide/Endorsement.md → PRODUCT-KNOWLEDGE.md`
+`PRODUCT_LAW.md → MASTERPLAN.md → NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → skills/**/SKILL.md → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md → historical endorsement record → PRODUCT-KNOWLEDGE.md`
 
 `AI_ASSISTANT_READ_ME.md` owns the live continuation/recovery boundary; historical handover material lives in `docs/archive/`.
 
