@@ -66,7 +66,7 @@ Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`
 | PR state | Active validation | Promotion/review gate |
 |---|---|---|
 | **Draft** | Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime checks continue against the exact PR head. | `review-readiness` may be skipped by lifecycle design. A skipped job is not a pass. |
-| **Ready for review** | Substantive exact-head validation remains current. | `review-readiness` evaluates review and authorization conditions, including required independent approval. |
+| **Ready for review** | Substantive exact-head validation remains current. | `review-readiness` evaluates review and authorization conditions, including required independent approval, and remains pending while that approval is absent. |
 | **Merge candidate** | Required checks and evidence remain current on the exact head. | Normal governed GitHub review/merge path only; no auto-merge. |
 
 A downstream **skipped** job is never evidence that the underlying requirement passed. Recovery must inspect the controlling upstream job and the exact current head.
@@ -112,12 +112,12 @@ Each reviewer has an independent secret/model binding:
 | Reviewer | Secret alias | OpenRouter model | Automatic stage |
 |---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | 3 |
 
-The operational cost audit on 2026-09-17 found the configured Nemotron route is free, while the configured OpenAI, Poolside, DeepSeek, and Qwen routes are paid on OpenRouter. Poolside and DeepSeek have separate free variants, but changing model identity is a governed validation change. GPT-5.6 Sol is not free, and no free route is assumed for the configured Qwen slug.
+The reviewer routes are now explicit `:free` OpenRouter variants selected on 2026-09-17 to keep the governed reviewer path within the zero-credit constraint while preserving deterministic provider identity. Cost class and provider data-use terms remain separate considerations.
 
 ### Historical automatic sequence evidence
 
