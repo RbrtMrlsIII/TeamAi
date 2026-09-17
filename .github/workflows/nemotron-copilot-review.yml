@@ -85,10 +85,6 @@ jobs:
           echo "title<<EOF" >> "$GITHUB_OUTPUT"
           cat /tmp/title >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
-          if [[ "$(cat /tmp/draft)" == "true" && "$GITHUB_EVENT_NAME" != "workflow_dispatch" && "$GITHUB_EVENT_NAME" != "issue_comment" ]]; then
-            echo "Automatic Nemotron review is disabled for Draft PRs; use /nemotron or explicit workflow dispatch."
-            exit 0
-          fi
 
       - name: Checkout exact PR head
         uses: actions/checkout@v4
@@ -137,40 +133,44 @@ jobs:
           set -euo pipefail
           test -n "$OPENROUTER_API_KEY"
           python - <<'PY'
-          import json, os
+          import json
+          import os
           from pathlib import Path
+
           packet = Path('/tmp/review.txt').read_text()
-          system = '''You are the independent advisory reviewer for the TeamAi repository.
-
-Review the supplied pull request against repository truth and the changed code only.
-Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.
-Never invent requirements. Never recommend weakening a validator or bypassing governance.
-Distinguish defects, governance gaps, evidence gaps, and non-blocking observations.
-Do not claim a test passed unless the supplied packet proves it.
-Do not treat a model-generated approval as human authorization.
-
-Return concise Markdown with exactly these sections:
-## Verdict
-Use one of: APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.
-## Blocking findings
-Bullets with file/path evidence where possible. Say "None" if none.
-## Governance and evidence
-Check authority/index synchronization and evidence boundaries.
-## Verification gaps
-List missing proof that matters to the PR's claims.
-## Non-blocking observations
-Optional bullets.
-## Review basis
-State that this is model-generated advisory analysis and identify any truncation or missing context.'''
+          system = "\n".join([
+              "You are the independent advisory reviewer for the TeamAi repository.",
+              "",
+              "Review the supplied pull request against repository truth and the changed code only.",
+              "Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.",
+              "Never invent requirements. Never recommend weakening a validator or bypassing governance.",
+              "Distinguish defects, governance gaps, evidence gaps, and non-blocking observations.",
+              "Do not claim a test passed unless the supplied packet proves it.",
+              "Do not treat a model-generated approval as human authorization.",
+              "",
+              "Return concise Markdown with exactly these sections:",
+              "## Verdict",
+              "Use one of: APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.",
+              "## Blocking findings",
+              "Bullets with file/path evidence where possible. Say None if none.",
+              "## Governance and evidence",
+              "Check authority/index synchronization and evidence boundaries.",
+              "## Verification gaps",
+              "List missing proof that matters to the PR's claims.",
+              "## Non-blocking observations",
+              "Optional bullets.",
+              "## Review basis",
+              "State that this is model-generated advisory analysis and identify any truncation or missing context.",
+          ])
           user = 'Repository PR review packet:\n\n' + packet
           payload = {
-            'model': os.environ['MODEL'],
-            'messages': [
-              {'role': 'system', 'content': system},
-              {'role': 'user', 'content': user},
-            ],
-            'temperature': 0.1,
-            'max_tokens': 5000,
+              'model': os.environ['MODEL'],
+              'messages': [
+                  {'role': 'system', 'content': system},
+                  {'role': 'user', 'content': user},
+              ],
+              'temperature': 0.1,
+              'max_tokens': 5000,
           }
           Path('/tmp/payload.json').write_text(json.dumps(payload))
           PY
@@ -195,8 +195,8 @@ State that this is model-generated advisory analysis and identify any truncation
             echo '<!-- teamai-nemotron-review -->'
             echo '# Nemotron Copilot Review'
             echo
-            echo "Model: \\`$MODEL\`"
-            echo "Exact PR head: \\`${{ steps.meta.outputs.head }}\`"
+            echo "Model: \`$MODEL\`"
+            echo "Exact PR head: \`${{ steps.meta.outputs.head }}\`"
             echo
             cat /tmp/review.md
           } > /tmp/comment.md
