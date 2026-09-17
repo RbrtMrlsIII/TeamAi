@@ -4,7 +4,7 @@
 
 ## Session anchor
 
-- Last given prompt: **Nemotron Copilot Review wiring**
+- Last given prompt: **Nemotron execution-aware review gate**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
@@ -81,7 +81,7 @@ Never weaken validation merely to make CI green.
 
 ## Model-assisted review
 
-`skills/governance/nemotron-copilot-review/SKILL.md` and `.github/workflows/nemotron-copilot-review.yml` provide bounded model-assisted PR review through OpenRouter/Nemotron. The workflow checks out the exact PR head, constructs a bounded diff packet, posts advisory findings, and keeps approval behind an explicit authorized workflow dispatch. The model is not a Product Law source, merge authority, or replacement for required CI, browser/runtime evidence, review-readiness, or human authorization.
+`skills/governance/nemotron-copilot-review/SKILL.md` and `.github/workflows/nemotron-copilot-review.yml` provide bounded model-assisted PR review through OpenRouter/Nemotron. The workflow checks out the exact PR head, waits for required exact-head Governance, Full-System, Security, and Browser/Runtime validators to complete successfully, collects their execution evidence plus current governing documents and owning Issue state, then invokes the model. Pending, failed, stale, or head-mismatched execution evidence blocks model invocation. The workflow posts advisory findings and keeps approval behind an explicit authorized workflow dispatch. The model is not a Product Law source, merge authority, or replacement for required CI, browser/runtime evidence, review-readiness, or human authorization.
 
 The configured model is `nvidia/nemotron-3-ultra-550b-a55b:free`. This is operational configuration and may change independently of Product Law.
 
@@ -103,4 +103,4 @@ Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and
 
 ## Next governance gate
 
-The next product frontier remains TEAM-EXPERIENCE-029 in Issue #278. No Hero promotion or 029 release claim is implied by merged #353 alone. Model-assisted review is now available as bounded advisory evidence, but required repository gates and human authorization remain decisive.
+The next product frontier remains TEAM-EXPERIENCE-029 in Issue #278. No Hero promotion or 029 release claim is implied by merged #353 alone. Model-assisted review is available as bounded advisory evidence only after required exact-head validators pass; required repository gates and human authorization remain decisive.

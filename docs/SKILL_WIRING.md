@@ -41,6 +41,10 @@ Ready-for-review PRs retain current exact-head substantive evidence and addition
 
 A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
 
+### Nemotron execution gate
+
+Model-assisted review is downstream of the substantive validator set, even though GitHub Actions starts workflows concurrently. The Nemotron workflow polls the exact PR head and requires successful completion of `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` before invoking the external model. Pending, failed, missing, or head-mismatched execution evidence fails closed. The model packet then receives current governing-file context, the owning Issue state, and exact-head check-run evidence.
+
 ## Machine Hero routing
 
 PR #353 is the current merged machine candidate and remains non-production. Its routing is:
@@ -81,3 +85,4 @@ The following classes are forbidden as active routing: retired root Product Law,
 
 <!-- #352 validation-lifecycle synchronization: Draft substantive validation remains active; review-readiness is promotion-stage; skipped downstream is not pass. -->
 <!-- #357 Nemotron copilot review: model-assisted review is advisory and promotion-gated; it never replaces repository validation or human authority. -->
+<!-- #361 execution-aware review: Nemotron invocation is downstream of exact-head validator success and current governing/Issue context. -->
