@@ -45,11 +45,12 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - branch-aware camera subject/travel evidence using semantic identities rather than named coordinate docks
 - desktop and phone browser proof, including reduced-motion behavior
 - canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
-- review-readiness lifecycle re-evaluation reflects submitted/dismissed reviews without changing exact-head human-approval semantics
+- `review-readiness` remains pending until an independent non-author human approval exists on the exact current PR head, rather than failing on absence of approval
 - automatic advisory sequence order is `Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 - there is no automatic interval before Nemotron; the 150-second timer begins only after the Nemotron turn completes
 - the second-stage OpenAI and Poolside reviewers execute concurrently after the first 150-second barrier
 - the third-stage DeepSeek and Qwen reviewers execute concurrently after the second 150-second barrier
+- automatic reviewer bindings use explicit deterministic `:free` routes for Nemotron, OpenAI, Poolside, DeepSeek, and Qwen
 - the sequence starts only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event and never on `synchronize`
 - a durable sequence claim is recorded before the first automatic model call
 - every reviewer stage rechecks the original triggering head and fails closed if it changed
@@ -59,6 +60,6 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 
 ## Current blocker
 
-The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. The separate #367 governance repair must pass its own exact-head validation before the repository can reliably reflect late review approvals. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted. #368's staged advisory-review pipeline remains governance-incomplete until its five-reviewer configuration, canonical 1→2→2 stage order, 150-second inter-stage barriers, provider execution evidence, owning Issue binding, and promotion-stage trigger behavior are all verified on the current head.
+The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. #368's governance implementation now carries the explicit 1→2→2 reviewer state machine, skip/cancel-safe barriers, explicit free model routes, and a human readiness gate that waits for exact-head independent approval instead of failing merely because approval is absent. The remaining #368 runtime sequence proof still requires a fresh eligible verification vehicle because its original automatic sequence claim was already consumed on the historical head. The separate #367 repair remains pending on its own governed path. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted.
 
 <!-- Post-#361 reconciliation: control-plane state synchronized to merge commit 6c8f650bf978e47650246af67291a26fe83c4934; current frontier is runtime proof of the generalized machine topology/geometry path. -->
