@@ -26,7 +26,7 @@ permissions:
   actions: read
 
 jobs:
-  free_router:
+  ling:
     if: >-
       (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'ling') ||
       (github.event_name == 'issue_comment' &&
@@ -68,7 +68,7 @@ jobs:
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
 
-  deepseek:
+  dots3_primary:
     if: >-
       (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3-primary') ||
       (github.event_name == 'issue_comment' &&
@@ -89,7 +89,7 @@ jobs:
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
 
-  qwen:
+  dots3_secondary:
     if: >-
       (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3-secondary') ||
       (github.event_name == 'issue_comment' &&
