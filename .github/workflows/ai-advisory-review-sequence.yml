@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          for marker in "$MARKER" "$NEMOTRON_MARKER" "$OPENAI_MARKER" "$POOLSIDE_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
+          for marker in "$MARKER" "$NEMOTRON_MARKER" "$FREE_ROUTER_MARKER" "$POOLSIDE_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
             if jq -e --arg marker "$marker" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
               echo 'should_run=false' >> "$GITHUB_OUTPUT"
               echo "Automatic AI review sequence already claimed or partially completed for PR #$PR."
@@ -171,7 +171,7 @@ jobs:
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen')"
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -303,7 +303,7 @@ jobs:
             exit 1
           }
 
-      - name: Wait 2 minutes 30 seconds after OpenAI and Poolside turn
+      - name: Wait 2 minutes 30 seconds after OpenRouter Free Router and Poolside turn
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
