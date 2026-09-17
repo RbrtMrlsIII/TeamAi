@@ -85,7 +85,7 @@ jobs:
           grep -Fq 'needs: [ling, poolside]' "$workflow"
           grep -Fq 'needs: delay_to_third_stage' "$workflow"
           grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"
-          grep -Fq "if: always() && (needs.ling.result == 'success' || needs.free_router.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
+          grep -Fq "if: always() && (needs.ling.result == 'success' || needs.ling.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
           grep -Fq 'model: nvidia/nemotron-3.5-lightning:free' "$workflow"
