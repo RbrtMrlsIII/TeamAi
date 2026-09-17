@@ -131,13 +131,13 @@ jobs:
       - agent-validation
     runs-on: ubuntu-latest
     steps:
-      - name: Require an approval on the exact current PR head and block auto-merge
+      - name: Require a human approval on the exact current PR head and block auto-merge
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
@@ -149,11 +149,11 @@ jobs:
             echo "TeamAi policy forbids auto-merge for product changes."
             exit 1
           fi
-          approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author)] | length' /tmp/reviews.json)
-          echo "exact_head_approvals=$approved"
+          approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author) | select(.user.type != "Bot")] | length' /tmp/reviews.json)
+          echo "exact_head_human_approvals=$approved"
           if [ "$approved" -lt 1 ]; then
             echo "REVIEW_READINESS=FAIL"
-            echo "No non-author approval exists for the exact current PR head $HEAD_SHA."
+            echo "No non-author human approval exists for the exact current PR head $HEAD_SHA."
             exit 1
           fi
           echo "REVIEW_READINESS=PASS"
