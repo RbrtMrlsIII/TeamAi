@@ -146,3 +146,7 @@ PR #353 is the current merged machine candidate, and #361 is the current merged 
 ## Next product frontier
 
 The next substantive 029 slice is **runtime proof of the generalized semantic topology/adaptive geometry path**: prove the current machine candidate against real renderer consumption, multiple payload densities, transition/interruption behavior, branch-aware subject targeting, responsive/reduced-motion behavior, and the canonical live/public boundary. Then reconcile evidence and census state. No Hero promotion or 029 release claim is implied.
+
+### Current governance hardening note
+
+The required `Draft proof target` section remains part of PR #368's durable proof contract because the repository canonical governance audit validates that section on each eligible PR-head run.
