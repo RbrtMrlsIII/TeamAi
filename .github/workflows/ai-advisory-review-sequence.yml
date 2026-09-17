@@ -194,12 +194,32 @@ jobs:
 
   delay_to_second_stage:
     needs: nemotron
-    if: always() && needs.nemotron.result != 'cancelled'
+    if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
     steps:
+      - name: Reconfirm exact head before starting the stage-1 barrier
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed before stage-1 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft before stage-1 interval; later automatic stages are blocked."
+            exit 1
+          }
+
       - name: Wait 2 minutes 30 seconds after Nemotron turn
         env:
           GH_TOKEN: ${{ github.token }}
@@ -213,6 +233,11 @@ jobs:
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
             echo "PR head changed during stage-1 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft during stage-1 interval; later automatic stages are blocked."
             exit 1
           }
 
@@ -252,13 +277,13 @@ jobs:
 
   delay_to_third_stage:
     needs: [openai, poolside]
-    if: always() && needs.openai.result != 'cancelled' && needs.poolside.result != 'cancelled'
+    if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
     steps:
-      - name: Wait 2 minutes 30 seconds after OpenAI and Poolside turn
+      - name: Reconfirm exact head before starting the stage-2 barrier
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -269,13 +294,33 @@ jobs:
           set -euo pipefail
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed before stage-3 interval: expected $HEAD, found $current_head."
+            echo "PR head changed before stage-2 interval: expected $HEAD, found $current_head."
             exit 1
           }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft before stage-2 interval; later automatic stages are blocked."
+            exit 1
+          }
+
+      - name: Wait 2 minutes 30 seconds after OpenAI and Poolside turn
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
           sleep "$REVIEW_INTERVAL_SECONDS"
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
             echo "PR head changed during stage-2 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft during stage-2 interval; later automatic stages are blocked."
             exit 1
           }
 
