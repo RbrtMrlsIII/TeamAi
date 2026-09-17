@@ -27,7 +27,7 @@
 - [x] #352 post-#346 control-plane reconciliation and validation-lifecycle hardening was merged.
 - [x] #353 machine candidate was merged as non-production baseline.
 - [x] #361 semantic connection topology/adaptive clearance slice was merged into `main`; broader runtime proof remains open.
-- [ ] #367 review-readiness late-approval retrigger is implemented on a compliant branch; exact-head verification and governed merge remain pending.
+- [x] Review-readiness late-approval retrigger is implemented on the current mainline governance control plane; submitted/dismissed human reviews re-evaluate exact-head readiness without changing authorization semantics.
 - [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
 - [x] Model reviewer workflows are execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
