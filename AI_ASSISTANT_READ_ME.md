@@ -109,7 +109,7 @@ The #370 runtime execution did not justify weakening validation. Its provider st
 
 ## Model-assisted review
 
-`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint with the explicit stage sequence **Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)**. There is no automatic interval before Nemotron. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` provides deliberate manual routing for Ling 3.0 Flash, Poolside, and the two Dots3-Note Preview slots. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
+`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint with the explicit stage sequence **Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview**. There is no automatic interval before Nemotron. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron Ultra entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` provides deliberate manual routing for Ling 3.0 Flash, Poolside, Laguna, and Dots3-Note Preview. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
 
 Automatic review begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not consume automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim comment is written before Nemotron. Every reviewer receives the same original triggering head SHA and fails closed if that head changes before invocation.
 
@@ -119,11 +119,11 @@ Each reviewer has an independent secret/model binding:
 
 | Reviewer | Secret alias | OpenRouter model | Automatic stage |
 |---|---|---|---:|
-| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3.5-lightning:free` | 1 |
+| Nemotron Ultra | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
 | Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | 2 |
-| Dots3-Note Preview (primary) | `OPENROUTER_API_KEY_DEEPSEEK` | `dots-studio/dots-3-note-preview:free` | 3 |
-| Dots3-Note Preview (secondary) | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | 3 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-xs-2.1:free` | 2 |
+| Laguna | `OPENROUTER_API_KEY_DEEPSEEK` | `poolside/laguna-s-2.1:free` | 3 |
+| Dots3-Note Preview | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | 3 |
 
 The active reviewer routes are explicit pinned free OpenRouter bindings. Secret names are aliases only and do not encode reviewer/model identity. Dots3-Note Preview is intentionally used despite the Preview label and is currently listed by OpenRouter as going away September 30, 2026. Cost class and provider data-use terms remain separate considerations.
 
