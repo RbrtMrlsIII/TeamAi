@@ -1,8 +1,9 @@
-import { createMachineTransition, makeMachinePart, deriveMachineSubject, deriveMachineWiring } from './machine-hero-scene.js';
+import { createMachineTransition, deriveMachineSubject, deriveMachineWiring } from './machine-hero-scene.js';
+import { deriveMachinePartFromPayload } from './machine-hero-payload.js';
 import { validateMachineGraphTopology } from './machine-hero-topology.js';
 
 export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [], clearance = 0.16 } = {}) {
-  const parts = divisions.map((division) => makeMachinePart({ ...division, active: Boolean(division.active) }));
+  const parts = divisions.map((division) => deriveMachinePartFromPayload({ ...division, active: Boolean(division.active) }));
   const bySemanticId = new Map(parts.map((part) => [part.semanticId, part]));
   const transitions = edges.map((edge) => {
     const source = bySemanticId.get(edge.sourceDivisionId);
