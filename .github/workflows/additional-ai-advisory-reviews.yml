@@ -80,7 +80,7 @@ jobs:
     with:
       reviewer: Laguna
       reviewer_slug: laguna
-      model: dots-studio/dots-3-note-preview:free
+      model: poolside/laguna-s-2.1:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
       automatic_marker: '<!-- teamai-laguna-auto-review -->'
