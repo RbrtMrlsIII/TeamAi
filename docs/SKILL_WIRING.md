@@ -30,7 +30,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 - Machine builder: `skills/governance/machine-builder/SKILL.md`
 - Learning/session continuity: `skills/governance/learning-handover/SKILL.md`
 - Shared model-assisted PR review: `skills/governance/ai-advisory-review/SKILL.md`
-- Nemotron-specific legacy/configuration procedure: `skills/governance/nemotron-copilot-review/SKILL.md`
+- Nemotron-specific review/approval boundary: `skills/governance/nemotron-copilot-review/SKILL.md`
 
 Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
 
@@ -44,17 +44,34 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 
 ### Advisory reviewer execution gate
 
-Model-assisted review is downstream of the substantive validator set, even though GitHub Actions starts workflows concurrently. Each controlled reviewer workflow polls the exact PR head and requires successful completion of `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` via the required exact-head check-runs before invoking the external model. Pending, failed, missing, or head-mismatched execution evidence fails closed. The model packet receives current governing-file context, the owning Issue state, and exact-head check-run evidence.
+The reusable advisory-review runner is downstream of the substantive validator set. For every invocation it polls the exact PR head and accepts only successful completion of the required exact-head check-runs before invoking the external model. The packet receives current governing-file context, the owning Issue state, exact-head execution evidence, and the complete bounded diff.
 
-### Reviewer quota discipline
+### Automatic reviewer sequence
 
-Automatic model review is bounded per reviewer: one automatic review is allowed per PR for each configured reviewer. The automatic path may fire only on the first eligible non-draft lifecycle event (`opened`, `reopened`, or `ready_for_review`) for that reviewer, and later automatic attempts are suppressed by a reviewer-specific automatic marker. `synchronize` is intentionally not an automatic model trigger. Later-head analysis uses an explicit reviewer command such as `/qwen` or `/deepseek`, or authorized workflow dispatch, so normal repository velocity does not silently consume provider quota.
+The automatic review lifecycle is one ordered dependency chain, not a matrix:
 
-The current additional reviewer aliases are `qwen` → `OPENROUTER_API_KEY_GWEN` → `qwen/qwen3.8-max-0902` and `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK` → `deepseek/deepseek-v4.1-flash`. `GWEN` is a configured secret alias for Qwen, not a distinct Product Law entity.
+`Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen`
 
-### Nemotron execution gate
+The sequence is entered only from the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not invoke models automatically. `synchronize` never restarts the chain. A durable sequence-claim comment is recorded before the first model call, and any head change causes the next exact-head runner to fail closed so no later stage reviews stale code.
 
-The existing Nemotron workflow remains its own controlled advisory surface. It uses the same substantive exact-head validation boundary and the existing `OPENROUTER_API_KEY` secret with the configured Nemotron model. Its one-automatic-review budget is preserved independently from the additional reviewer workflows.
+### Manual reviewer routing
+
+Later-head analysis remains deliberate:
+
+- `/nemotron` → `nemotron-copilot-review.yml`
+- `/deepseek` or `/qwen` → `additional-ai-advisory-reviews.yml`
+
+Authorized workflow dispatch provides the same reviewer-specific control. Manual review is not a second automatic allowance.
+
+### Reviewer configuration
+
+| Reviewer | Secret | Model |
+|---|---|---|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` |
+
+`GWEN` is retained as the supplied secret alias for Qwen. It is not a separate provider/model identity.
 
 ## Canonical live-site routing reference
 
