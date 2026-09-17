@@ -4,16 +4,16 @@
 
 ## Session anchor
 
-- Last given prompt: **post-#361 control-plane reconciliation and next 029 frontier**
+- Last given prompt: **resume the forgotten governance lifecycle fix after #361 and continue the 029 frontier**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
-- Governance review fix: **#362 open**; late-approval retrigger remains a separate governance PR
+- Governance review fix: **#362 closed/superseded; #367 open** on `governance/review-readiness-late-approval-retrigger`
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Semantic topology/adaptive clearance: **#361 merged** into `main` as `6c8f650bf978e47650246af67291a26fe83c4934`
 - Active 029 ledger: **#278**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current `main` baseline: **`6c8f650bf978e47650246af67291a26fe83c4934`**, merge of #361
+- Current `main` baseline: **`c4bb03d0feeafd919c582657741751f12a40a6a6`**, post-#361 reconciliation
 
 ## Canonical authority path
 
@@ -41,7 +41,8 @@
 - #352 is merged; its post-#346 reconciliation and validation-lifecycle changes are part of `main`.
 - #353 is the current merged machine candidate implementation and remains non-production.
 - #361 is merged; it generalizes semantic machine connection topology and payload-adaptive clearance validation while preserving the bounded presentation/evidence boundary.
-- #362 is an open governance fix for late review approvals; it does not change what counts as human authorization.
+- #362 is closed/superseded because its implementation branch violated the current responsibility-prefix rule and its base was stale; its late-approval diagnosis and intended fix are carried forward by #367.
+- #367 is the active governance repair for `review-readiness` lifecycle re-evaluation on submitted/dismissed human reviews. It does not change what counts as human authorization.
 - Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
 - Historical records remain provenance, not current instruction.
 
@@ -98,6 +99,8 @@ Never weaken validation merely to make CI green.
 ## Model-assisted review
 
 `skills/governance/nemotron-copilot-review/SKILL.md` and `.github/workflows/nemotron-copilot-review.yml` provide bounded model-assisted PR review through OpenRouter/Nemotron. The workflow checks out the exact PR head, waits for required exact-head Governance, Full-System, Security, and Browser/Runtime validators to complete successfully, collects their execution evidence plus current governing documents and owning Issue state, then invokes the model. Pending, failed, stale, or head-mismatched execution evidence blocks model invocation. The workflow posts advisory findings and keeps approval behind an explicit authorized workflow dispatch. The model is not a Product Law source, merge authority, or replacement for required CI, browser/runtime evidence, review-readiness, or human authorization.
+
+Automatic Nemotron review is intentionally limited to one automatic invocation per PR. Draft PRs do not consume the automatic allowance; an accidentally non-draft `opened` PR or a `ready_for_review` PR may consume it once. Later `synchronize` pushes do not automatically invoke the model. A later-head re-review must be deliberate through `/nemotron` or authorized workflow dispatch.
 
 The configured model is `nvidia/nemotron-3-ultra-550b-a55b:free`. This is operational configuration and may change independently of Product Law.
 
