@@ -15,7 +15,13 @@ This Skill does not create Product Law, grant merge authority, replace human rev
 5. Never infer passing evidence from skipped jobs, stale workflow attempts, synthetic merge refs, or local assumptions.
 6. Never recommend weakening a validator merely to obtain green CI.
 7. Post the model result as advisory evidence tied to the exact head.
-8. Approval is an explicit promotion action only. It is never automatic on ordinary PR events. An authorized workflow dispatch may request approval after the model returns `APPROVE`; repository branch protection and human governance remain authoritative.
+8. Approval is an explicit, separately authorized model action only. It is never automatic on ordinary PR events, and a model-generated approval never satisfies TeamAi's human review-readiness requirement. An authorized workflow dispatch may request the model approval after the model returns `APPROVE`; repository branch protection and human governance remain authoritative.
+
+## Lifecycle policy
+
+- Draft PRs are not automatically sent to Nemotron. A collaborator may invoke `/nemotron`, or an authorized workflow dispatch may run a controlled review against the exact current head.
+- Ready-for-review PRs are automatically reviewed on the `ready_for_review` event and re-reviewed on subsequent non-draft `synchronize`/`reopened` events.
+- Every automatic review is advisory and must identify the exact PR head. A later head change invalidates the previous model analysis for promotion purposes.
 
 ## Security boundaries
 
@@ -32,4 +38,4 @@ The workflow currently targets `nvidia/nemotron-3-ultra-550b-a55b:free` through 
 
 ## Evidence contract
 
-Every review comment must identify the exact PR head. A model review is advisory evidence only. A green model verdict does not substitute for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, review-readiness, or human authorization.
+Every review comment must identify the exact PR head. A model review is advisory evidence only. A green model verdict or model-generated approval does not substitute for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, review-readiness, or human authorization.
