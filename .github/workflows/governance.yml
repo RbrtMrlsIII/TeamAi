@@ -66,7 +66,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected='Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)'
+          trap 'echo "Governance reviewer check failed at line ${LINENO}: ${BASH_COMMAND}"' ERR
+           expected='Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
           grep -Fq "$expected" "$workflow"
