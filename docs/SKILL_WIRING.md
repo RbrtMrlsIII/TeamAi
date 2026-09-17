@@ -52,13 +52,13 @@ A reusable runner transport/parser repair is a Verification & CI/Browser impleme
 
 The automatic review lifecycle is one ordered three-stage cohort sequence, not a matrix:
 
-`Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)`
+`Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview`
 
 There is no automatic interval before Nemotron. Nemotron is the frontline reviewer and starts only after the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the substantive exact-head validation gate.
 
 After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. Ling 3.0 Flash and Poolside then execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so GitHub's implicit upstream-success behavior cannot suppress an allowed failure cohort.
 
-After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does not open that barrier. Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) then execute concurrently against the same original triggering head.
+After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does not open that barrier. Laguna and Dots3-Note Preview then execute concurrently against the same original triggering head.
 
 A reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, stage reordering, or early launch. The inter-stage barrier is time-and-head controlled. A PR-head change during a barrier fails closed and prevents later automatic stages from reviewing stale code.
 
@@ -68,8 +68,8 @@ The sequence is entered only from the first eligible non-draft `opened`, `reopen
 
 Later-head analysis remains deliberate:
 
-- `/nemotron` → `nemotron-copilot-review.yml`
-- `/ling`, `/poolside`, `/dots3-primary`, or `/dots3-secondary` → `additional-ai-advisory-reviews.yml`
+- `/nemotron-ultra` → `nemotron-copilot-review.yml`
+- `/ling`, `/poolside`, `/laguna`, or `/dots3` → `additional-ai-advisory-reviews.yml`
 
 Authorized workflow dispatch provides the same reviewer-specific control. Manual review is not a second automatic allowance.
 
@@ -77,11 +77,11 @@ Authorized workflow dispatch provides the same reviewer-specific control. Manual
 
 | Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
 |---|---|---|---|---:|
-| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3.5-lightning:free` | **Free** | 1 |
+| Nemotron Ultra | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
 | Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | **Free** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
-| Dots3-Note Preview (primary) | `OPENROUTER_API_KEY_DEEPSEEK` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
-| Dots3-Note Preview (secondary) | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-xs-2.1:free` | **Free** | 2 |
+| Laguna | `OPENROUTER_API_KEY_DEEPSEEK` | `poolside/laguna-s-2.1:free` | **Free** | 3 |
+| Dots3-Note Preview | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
 
 This cost classification was externally audited on 2026-09-17. All five active reviewer routes are pinned `:free` bindings. Secret names remain aliases only and are intentionally decoupled from reviewer/model identity.
 
