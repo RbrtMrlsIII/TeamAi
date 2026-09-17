@@ -29,6 +29,10 @@
 - `docs/archive/` and `handover/` are historical storage only.
 - Active `HandOver.md`, active `Endorsement.md`, a parallel Skill namespace, and `OBSOLETE_FILES.md` are forbidden.
 
+## Canonical public live-site validation
+
+For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/`. The `TeamAi` path casing is the canonical recorded target. Browser/network hostname lowercasing is normal URL handling. Vercel and guessed/retired routes are not live acceptance targets.
+
 ## PR discipline
 
 - Substantive work starts as a **Draft PR**.
@@ -85,4 +89,4 @@ Distinguish:
 
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
 
-<!-- #349 post-#346 recovery synchronization: post-merge governance truth is canonical; no provider-specific delivery surface is authoritative. -->
+<!-- #355 documentation reconciliation: canonical public live-site target is GitHub Pages only; see AI_ASSISTANT_READ_ME.md for the exact URL and current evidence. -->
