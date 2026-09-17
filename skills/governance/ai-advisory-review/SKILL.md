@@ -27,23 +27,27 @@ The resulting packet must include exact-head check-run evidence, current governi
 
 ## Automatic review sequence
 
-The automatic lifecycle is one ordered sequence per PR, not a parallel matrix:
+The automatic lifecycle is one ordered **three-stage cohort sequence** per PR, not a matrix and not a timer-driven fan-out:
 
-`Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen`
+`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 
-The sequence is entered only by the first eligible non-draft `pull_request` lifecycle event among `opened`, `reopened`, or `ready_for_review`. Draft PRs consume no automatic model calls. `synchronize` never restarts the sequence.
+There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer and its turn begins only after the first eligible non-draft `pull_request` event has passed the substantive exact-head validation gate.
 
-A durable sequence-claim marker is written before the first model invocation. That claim is the quota boundary for the PR's automatic sequence. If the initial head changes during an interval, the next reviewer fails its exact-head guard and later automatic stages do not run. This prevents a later stage from reviewing a stale revision.
+After the Nemotron turn reaches a terminal non-cancelled result, the workflow waits 150 seconds and starts OpenAI and Poolside concurrently. After both second-stage reviewers reach terminal non-cancelled results, the workflow waits another 150 seconds and starts DeepSeek and Qwen concurrently.
 
-Each stage uses its own provider secret and model identity. A missing key fails that stage closed and never falls through to another provider secret. A reviewer verdict does not determine whether the next stage runs; only successful execution of the previous reviewer stage and exact-head freshness permit progression.
+Reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, reordering, or an early launch of another reviewer. The inter-stage barrier is time-and-head controlled, not verdict controlled. If the PR head changes during a wait or between stages, the barrier fails closed and later automatic stages do not run. Each reusable runner independently revalidates the original triggering head before model invocation.
 
-The interval is a shared orchestration contract across the sequence workflow, `POLICY.md`, `docs/SKILL_WIRING.md`, and this Skill. Governance validation should reject drift between those surfaces.
+A durable sequence-claim marker is written before Nemotron. That claim is the quota boundary for the PR's single automatic sequence. `synchronize` never restarts the automatic sequence, and Draft PRs consume no automatic model calls.
+
+Each reviewer uses an independent provider secret and model identity. A missing key fails that reviewer closed and never falls through to another provider secret.
 
 ## Manual re-review
 
 Reviewer-specific commands remain available for deliberate later-head analysis:
 
 - `/nemotron`
+- `/openai`
+- `/poolside`
 - `/deepseek`
 - `/qwen`
 
@@ -60,10 +64,12 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 
 ## Reviewer configuration
 
-| Reviewer | Secret | OpenRouter model | Automatic order |
+| Reviewer | Secret | OpenRouter model | Automatic stage |
 |---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 2 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
 
 `GWEN` is retained as the configured secret alias supplied by the repository owner; the model/provider represented by that alias is Qwen. This distinction is intentional until the secret name is normalized.
@@ -72,4 +78,4 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 
 Every reviewer comment must identify the exact PR head and invocation class. A model review is advisory evidence only. A model verdict or model-generated approval never substitutes for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, `review-readiness`, or human authorization. Required substantive validators must pass before automatic model invocation.
 
-The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance. The sequence's ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
+The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
