@@ -42,12 +42,17 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - **Governance Integrity is a substantive validation surface and runs on Draft PRs.** It is not a merge-only check.
 - `review-readiness` is a promotion-stage check. It may be skipped while a PR is Draft by design and must not be interpreted as a passed gate.
 - When a PR becomes Ready for review, the required validation set must be current on the exact head and `review-readiness` must evaluate the review/authorization conditions.
+- A `pull_request_review` submission or dismissal may re-trigger `review-readiness` so late approval or dismissal state is reflected without changing the exact-head authorization rule.
 - A skipped downstream job is never evidence that the skipped condition passed.
 - Required checks, evidence, canonical synchronization, and review-readiness must pass before ready-for-review.
 - **Auto-merge is not used or relied upon for product changes.**
 - A PR may contain multiple related commits and multiple checklist items.
 - One slice is not required to equal one PR or one merge.
 - `main` changes through governed PRs only.
+
+### Nemotron quota discipline
+
+Nemotron automatic review is treated as a scarce verification resource. The controlled workflow permits at most one **automatic** Nemotron review per PR, using the first eligible non-draft lifecycle event (`opened`, `reopened`, or `ready_for_review`) that occurs before any prior automatic review marker exists. `synchronize` pushes do not automatically consume another model request. Later-head re-review remains available only through an intentional `/nemotron` invocation or authorized `workflow_dispatch`. This protects provider quota without weakening substantive validators or review evidence requirements.
 
 ## Validation-stage model
 
