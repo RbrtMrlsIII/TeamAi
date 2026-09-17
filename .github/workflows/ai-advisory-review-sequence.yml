@@ -1,0 +1,154 @@
+name: AI Advisory Review Sequence
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: ai-review-sequence-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  REVIEW_INTERVAL_SECONDS: '300'
+  SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
+  NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
+  DEEPSEEK_AUTO_MARKER: '<!-- teamai-deepseek-auto-review -->'
+  QWEN_AUTO_MARKER: '<!-- teamai-qwen-auto-review -->'
+
+jobs:
+  eligibility:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      should_run: ${{ steps.gate.outputs.should_run }}
+    steps:
+      - name: Gate one automatic review sequence per PR
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          MARKER: ${{ env.SEQUENCE_MARKER }}
+          LEGACY_NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
+          DEEPSEEK_MARKER: ${{ env.DEEPSEEK_AUTO_MARKER }}
+          QWEN_MARKER: ${{ env.QWEN_AUTO_MARKER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          for marker in "$MARKER" "$LEGACY_NEMOTRON_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
+            if jq -e --arg marker "$marker" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+              echo 'should_run=false' >> "$GITHUB_OUTPUT"
+              echo "Automatic AI review sequence already claimed or partially completed for PR #$PR."
+              exit 0
+            fi
+          done
+          echo 'should_run=true' >> "$GITHUB_OUTPUT"
+          echo "PR #$PR is eligible for its first automatic advisory review sequence."
+
+  claim:
+    needs: eligibility
+    if: needs.eligibility.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+    outputs:
+      claimed: ${{ steps.claim.outputs.claimed }}
+    steps:
+      - name: Claim the automatic sequence before any model call
+        id: claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          MARKER: ${{ env.SEQUENCE_MARKER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+            echo 'claimed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 5 minutes → DeepSeek → 5 minutes → Qwen')"
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
+          echo 'claimed=true' >> "$GITHUB_OUTPUT"
+
+  nemotron:
+    needs: claim
+    if: needs.claim.outputs.claimed == 'true'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Nemotron
+      reviewer_slug: nemotron
+      model: nvidia/nemotron-3-ultra-550b-a55b:free
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-nemotron-auto-review -->'
+      manual_marker: '<!-- teamai-nemotron-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY }}
+
+  delay_to_deepseek:
+    needs: nemotron
+    if: needs.nemotron.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait configured interval before DeepSeek
+        run: sleep "${REVIEW_INTERVAL_SECONDS}"
+
+  deepseek:
+    needs: delay_to_deepseek
+    if: needs.delay_to_deepseek.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: DeepSeek
+      reviewer_slug: deepseek
+      model: deepseek/deepseek-v4.1-flash
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
+      manual_marker: '<!-- teamai-deepseek-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
+
+  delay_to_qwen:
+    needs: deepseek
+    if: needs.deepseek.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait configured interval before Qwen
+        run: sleep "${REVIEW_INTERVAL_SECONDS}"
+
+  qwen:
+    needs: delay_to_qwen
+    if: needs.delay_to_qwen.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Qwen
+      reviewer_slug: qwen
+      model: qwen/qwen3.8-max-0902
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-qwen-auto-review -->'
+      manual_marker: '<!-- teamai-qwen-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
