@@ -42,6 +42,7 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - **Governance Integrity is a substantive validation surface and runs on Draft PRs.** It is not a merge-only check.
 - `review-readiness` is a promotion-stage check. It may be skipped while a PR is Draft by design and must not be interpreted as a passed gate.
 - When a PR becomes Ready for review, the required validation set must be current on the exact head and `review-readiness` must evaluate the review/authorization conditions.
+- A `pull_request_review` submission or dismissal may re-trigger `review-readiness` so late approval or dismissal state is reflected without changing the exact-head authorization rule.
 - A skipped downstream job is never evidence that the skipped condition passed.
 - Required checks, evidence, canonical synchronization, and review-readiness must pass before ready-for-review.
 - **Auto-merge is not used or relied upon for product changes.**

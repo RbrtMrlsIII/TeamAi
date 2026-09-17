@@ -41,6 +41,8 @@ Ready-for-review PRs retain current exact-head substantive evidence and addition
 
 A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
 
+The `pull_request_review` trigger is lifecycle plumbing for re-evaluating `review-readiness` after submitted or dismissed reviews. It does not create permission, replace human authorization, or relax exact-head required-check gates.
+
 ### Nemotron execution gate
 
 Model-assisted review is downstream of the substantive validator set, even though GitHub Actions starts workflows concurrently. The Nemotron workflow polls the exact PR head and requires successful completion of `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` before invoking the external model. Pending, failed, missing, or head-mismatched execution evidence fails closed. The model packet then receives current governing-file context, the owning Issue state, and exact-head check-run evidence.

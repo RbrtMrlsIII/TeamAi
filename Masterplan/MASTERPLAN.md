@@ -27,6 +27,7 @@
 - [x] #352 post-#346 control-plane reconciliation and validation-lifecycle hardening was merged.
 - [x] #353 machine candidate was merged as non-production baseline.
 - [x] #361 semantic connection topology/adaptive clearance slice was merged into `main`; broader runtime proof remains open.
+- [x] #367 review-readiness late-approval retrigger is implemented as a governance lifecycle fix; it changes reevaluation timing only and preserves human authorization and exact-head required checks.
 - [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
 - [x] Nemotron review invocation is execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
 - [x] Nemotron review packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
@@ -90,7 +91,7 @@
 - [x] PR #353 is merged and is now the current machine candidate baseline rather than an open Draft PR.
 - [x] PR #361 is merged and its semantic topology/adaptive-clearance state is now the current machine implementation baseline.
 - [x] Align all canonical session/current-slice/masterplan records with the merged state after #361.
-- [ ] Retire stale PR #349/#352 interpretations after the landed content is reflected on `main`.
+- [ ] Retire stale PR #349/#352 interpretations after the landed changes are reflected on `main`.
 - [ ] Resolve remaining active retired-root references and validator responsibility overlaps.
 - [ ] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
 

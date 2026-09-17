@@ -41,4 +41,8 @@ Do not create another Product Law, current-state ledger, Masterplan, live HandOv
 
 Model-assisted review is part of Verification & CI/Browser only. A Nemotron review is evidence of analysis, not a new authority layer or acceptance mechanism. The Nemotron workflow is downstream of required exact-head validator execution and must receive execution evidence, governing context, and owning Issue state before model invocation.
 
+## Review-readiness lifecycle boundary
+
+`review-readiness` is a Verification & CI/Browser promotion-stage gate. A `pull_request_review` submission or dismissal may cause it to re-evaluate the same exact-head validation and authorization state. This trigger changes lifecycle reevaluation only: it does not grant authorization, replace human review, or weaken exact-head required-check requirements.
+
 <!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->

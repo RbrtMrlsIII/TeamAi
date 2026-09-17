@@ -8,7 +8,7 @@ TEAM-EXPERIENCE-029 — runtime proof of semantic topology, adaptive geometry, a
 
 ## Status
 
-IN PROGRESS — #346, #348, #351, #352, #353, and #361 are merged; #353 remains a non-production candidate; #362 is a separate open governance fix for late review approvals.
+IN PROGRESS — #346, #348, #351, #352, #353, and #361 are merged; #353 remains a non-production candidate; #367 is a separate governance prerequisite for late review-approval re-evaluation.
 
 ## Objective
 
@@ -31,6 +31,7 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - Issue #347
 - PR #353 merged machine candidate baseline
 - PR #361 merged semantic topology/adaptive clearance baseline
+- PR #367 governance lifecycle correction for late review approval re-evaluation
 - Canonical live-site URL: `https://RbrtMrlsIII.github.io/TeamAi/`
 
 ## Verification
@@ -42,10 +43,11 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - branch-aware camera subject/travel evidence using semantic identities rather than named coordinate docks
 - desktop and phone browser proof, including reduced-motion behavior
 - canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
+- review-readiness lifecycle re-evaluation reflects submitted/dismissed reviews without changing exact-head human-approval semantics
 - Tree Census reconciliation after runtime behavior is actually proven
 
 ## Current blocker
 
-The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted.
+The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. The separate #367 governance repair must pass its own exact-head validation before the repository can reliably reflect late review approvals. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted.
 
 <!-- Post-#361 reconciliation: control-plane state synchronized to merge commit 6c8f650bf978e47650246af67291a26fe83c4934; current frontier is runtime proof of the generalized machine topology/geometry path. -->
