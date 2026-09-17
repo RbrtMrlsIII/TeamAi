@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
+import { createMachineGraph } from '../public/machine-hero-graph.js';
+import { MACHINE_HERO_RUNTIME_CASE_IDS, resolveMachineRuntimeCase } from '../public/machine-hero-payload.js';
 
 const source = await readFile(new URL('../public/machine-hero-webgl.js', import.meta.url), 'utf8');
 const payload = await readFile(new URL('../public/machine-hero-payload.js', import.meta.url), 'utf8');
@@ -26,29 +28,50 @@ test('machine preview has a semantic fallback independent of WebGL availability'
   assert.match(fallback, /reduced-motion/);
 });
 
-test('WebGL projector resolves its browser graph dependency and graph resolves payload dependency', () => {
+test('WebGL projector resolves its shared semantic payload and graph dependencies', () => {
   assert.match(source, /\.\/machine-hero-graph\.js/);
+  assert.match(source, /\.\/machine-hero-payload\.js/);
   assert.match(graph, /\.\/machine-hero-scene\.js/);
   assert.match(payload, /createMachineTransitionFromPayload/);
   assert.match(graph, /createMachineGraph/);
 });
 
-test('WebGL projector renders multiple semantic parts and wiring routes', () => {
-  assert.match(source, /SEAT_CONNECTION/);
-  assert.match(source, /SEAT_BEHAVIOR/);
-  assert.match(source, /SEAT_TOOLKIT/);
-  assert.match(source, /createMachineGraph/);
+test('shared runtime payload cases cover multiple semantic densities and remain topologically valid', () => {
+  assert.deepEqual(MACHINE_HERO_RUNTIME_CASE_IDS, ['balanced', 'dense', 'sparse']);
+  const observedWidths = [];
+  for (const caseId of MACHINE_HERO_RUNTIME_CASE_IDS) {
+    const runtimeCase = resolveMachineRuntimeCase(caseId);
+    const runtimeGraph = createMachineGraph(runtimeCase);
+    assert.ok(runtimeGraph.topology.valid, `${caseId}: ${runtimeGraph.topology.reasons.join(',')}`);
+    assert.equal(runtimeGraph.transitions.length, runtimeCase.edges.length);
+    for (const transition of runtimeGraph.transitions) {
+      assert.equal(transition.wiring.route[0].x, transition.sourcePort.x);
+      assert.equal(transition.wiring.route.at(-1).x, transition.targetPort.x);
+      assert.ok(transition.topology.valid, `${caseId}:${transition.sourceDivisionId}->${transition.targetDivisionId}`);
+    }
+    const totalWidth = runtimeCase.divisions.reduce((sum, division) => sum + division.labels.length + division.controls + division.density, 0);
+    observedWidths.push(totalWidth);
+    assert.ok(runtimeGraph.subject);
+    assert.ok(runtimeGraph.subject.max.x > runtimeGraph.subject.min.x);
+  }
+  assert.ok(new Set(observedWidths).size > 1, 'runtime cases must carry different payload loads');
+});
+
+test('WebGL projector renders semantic parts and wiring routes from the selected runtime case', () => {
+  assert.match(source, /MACHINE_HERO_RUNTIME_CASE_IDS/);
+  assert.match(source, /resolveMachineRuntimeCase/);
   assert.match(source, /graph\.transitions/);
   assert.match(source, /transition\.wiring\.route/);
   assert.match(source, /graph\.renderedParts/);
   assert.match(source, /gl\.LINE_STRIP/);
 });
 
-test('WebGL preview exposes a real expansion state transition', () => {
+test('WebGL preview exposes semantic case switching and real expansion state transition', () => {
+  assert.match(source, /data-machine-webgl-case/);
+  assert.match(source, /caseIndex=\(caseIndex\+1\)%MACHINE_HERO_RUNTIME_CASE_IDS\.length/);
   assert.match(source, /data-machine-webgl-expand/);
   assert.match(source, /expanded=!expanded/);
-  assert.match(source, /sourceAmount:0,targetAmount:1/);
-  assert.match(source, /divisions expanded/);
+  assert.match(source, /sourceAmount:1,targetAmount:1/);
 });
 
 test('WebGL projector keeps named camera identity separate from semantic subject', () => {
