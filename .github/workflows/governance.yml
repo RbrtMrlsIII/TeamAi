@@ -60,31 +60,44 @@ jobs:
           node --check scripts/governance/verify-evidence-integrity.mjs
           python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
 
-      - name: Verify advisory reviewer interval consistency
+      - name: Verify advisory reviewer stage consistency
         shell: bash
         run: |
           set -euo pipefail
-          expected='Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen'
+          expected='Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
           grep -Fq "$expected" "$workflow"
+          grep -Fq 'reviewer: Nemotron' "$workflow"
+          grep -Fq 'reviewer: OpenAI' "$workflow"
+          grep -Fq 'reviewer: Poolside' "$workflow"
+          grep -Fq 'reviewer: DeepSeek' "$workflow"
+          grep -Fq 'reviewer: Qwen' "$workflow"
+          grep -Fq 'needs: delay_to_second_stage' "$workflow"
+          grep -Fq 'needs: [openai, poolside]' "$workflow"
+          grep -Fq 'needs: delay_to_third_stage' "$workflow"
           for path in \
             'POLICY.md' \
             'docs/SKILL_WIRING.md' \
             'skills/governance/ai-advisory-review/SKILL.md' \
             'Masterplan/MASTERPLAN.md' \
-            'AI_ASSISTANT_READ_ME.md'; do
+            'AI_ASSISTANT_READ_ME.md' \
+            'Product_Law/WIRING.md'; do
             test -f "$path"
             grep -Fq "$expected" "$path" || {
-              echo "Advisory reviewer interval drift detected in $path"
+              echo "Advisory reviewer stage drift detected in $path"
               exit 1
             }
             if grep -Fq '5-minute interval' "$path"; then
               echo "Retired 5-minute interval wording remains in $path"
               exit 1
             fi
+            if grep -Fq 'Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen' "$path"; then
+              echo "Retired three-stage sequence wording remains in $path"
+              exit 1
+            fi
           done
-          echo "Advisory reviewer interval is synchronized at 150 seconds across workflow and canonical governance surfaces."
+          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits."
 
       - name: Prove draft PR target against full PR delta
         env:
