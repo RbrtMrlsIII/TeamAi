@@ -29,13 +29,15 @@ The resulting packet must include exact-head check-run evidence, current governi
 
 The automatic lifecycle is one ordered sequence per PR, not a parallel matrix:
 
-`Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen`
+`Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen`
 
 The sequence is entered only by the first eligible non-draft `pull_request` lifecycle event among `opened`, `reopened`, or `ready_for_review`. Draft PRs consume no automatic model calls. `synchronize` never restarts the sequence.
 
 A durable sequence-claim marker is written before the first model invocation. That claim is the quota boundary for the PR's automatic sequence. If the initial head changes during an interval, the next reviewer fails its exact-head guard and later automatic stages do not run. This prevents a later stage from reviewing a stale revision.
 
 Each stage uses its own provider secret and model identity. A missing key fails that stage closed and never falls through to another provider secret. A reviewer verdict does not determine whether the next stage runs; only successful execution of the previous reviewer stage and exact-head freshness permit progression.
+
+The interval is a shared orchestration contract across the sequence workflow, `POLICY.md`, `docs/SKILL_WIRING.md`, and this Skill. Governance validation should reject drift between those surfaces.
 
 ## Manual re-review
 
