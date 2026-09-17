@@ -35,7 +35,7 @@ There is **no automatic interval before Nemotron**. Nemotron is the frontline re
 
 After the Nemotron turn reaches a `success` or `failure` execution result, the workflow waits 150 seconds and starts Ling 3.0 Flash and Poolside concurrently. A `skipped` or `cancelled` Nemotron job does not open the barrier and cannot start stage 2.
 
-After both second-stage reviewers reach `success` or `failure` execution results, the workflow waits another 150 seconds and starts Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) concurrently. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does not open the barrier and cannot start stage 3.
+After both second-stage reviewers reach `success` or `failure` execution results, the workflow waits another 150 seconds and starts Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) concurrently. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does not open the barrier and cannot start stage 3.
 
 Reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, reordering, or an early launch of another reviewer. The inter-stage barrier is time-and-head controlled, not verdict controlled. If the PR head changes during a wait or between stages, the barrier fails closed and later automatic stages do not run. Each reusable runner independently revalidates the original triggering head before model invocation.
 
