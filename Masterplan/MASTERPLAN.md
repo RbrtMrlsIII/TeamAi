@@ -29,9 +29,10 @@
 - [x] #361 semantic connection topology/adaptive clearance slice was merged into `main`; broader runtime proof remains open.
 - [ ] #367 review-readiness late-approval retrigger is implemented on a compliant branch; exact-head verification and governed merge remain pending.
 - [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
-- [x] Nemotron review invocation is execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
-- [x] Nemotron packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
-- [x] Automatic Nemotron review is quota-protected at one automatic review per PR; later-head re-review remains explicit.
+- [x] Model reviewer workflows are execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
+- [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
+- [x] Automatic model review is quota-protected to one automatic invocation per configured reviewer per PR; later-head re-review remains explicit.
+- [x] Additional reviewer aliases are registered: `qwen` → `OPENROUTER_API_KEY_GWEN`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`.
 
 ## Workspace and delivery
 
@@ -82,6 +83,7 @@
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
 - [x] No validator is weakened merely to obtain green CI.
 - [x] Nemotron review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
+- [x] Additional model reviewers reuse the same substantive exact-head boundary rather than weakening or bypassing validators.
 
 ## Post-#346 control-plane reconciliation — Issue #347
 
@@ -101,6 +103,7 @@
 - [x] `AI_ASSISTANT_READ_ME.md` is the live session/recovery/handover/endorsement-decision surface.
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
 - [x] Current session/masterplan/current-slice records are synchronized with the post-#361 merged baseline and canonical live-site validation target.
-- [x] Nemotron Copilot Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
-- [x] Nemotron review documentation and workflow record that required validators must pass before model invocation.
+- [x] Shared AI Advisory Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
+- [x] Nemotron Copilot Review procedure remains registered and constrained to advisory/promotion-gated use.
+- [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per reviewer.
 - [ ] Historical records remain immutable and out of active routing.
