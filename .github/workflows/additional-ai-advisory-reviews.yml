@@ -12,8 +12,8 @@ on:
         options:
           - ling
           - poolside
-          - dots3-primary
-          - dots3-secondary
+          - laguna
+          - dots3
       pr_number:
         description: Pull request number to review
         required: true
@@ -59,7 +59,7 @@ jobs:
     with:
       reviewer: Poolside
       reviewer_slug: poolside
-      model: poolside/laguna-s-2.1:free
+      model: poolside/laguna-xs-2.1:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
       automatic_marker: '<!-- teamai-poolside-auto-review -->'
@@ -68,44 +68,44 @@ jobs:
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
 
-  dots3_primary:
+  laguna:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3-primary') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'laguna') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/dots3-primary'))
+       startsWith(github.event.comment.body, '/laguna'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Dots3-Note Preview (primary)
-      reviewer_slug: dots3-primary
+      reviewer: Laguna
+      reviewer_slug: laguna
       model: dots-studio/dots-3-note-preview:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-dots3-primary-auto-review -->'
-      manual_marker: '<!-- teamai-dots3-primary-review -->'
+      automatic_marker: '<!-- teamai-laguna-auto-review -->'
+      manual_marker: '<!-- teamai-laguna-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
 
-  dots3_secondary:
+  dots3:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3-secondary') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/dots3-secondary'))
+       startsWith(github.event.comment.body, '/dots3'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Dots3-Note Preview (secondary)
-      reviewer_slug: dots3-secondary
+      reviewer: Dots3-Note Preview
+      reviewer_slug: dots3
       model: dots-studio/dots-3-note-preview:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-dots3-secondary-auto-review -->'
-      manual_marker: '<!-- teamai-dots3-secondary-review -->'
+      automatic_marker: '<!-- teamai-dots3-auto-review -->'
+      manual_marker: '<!-- teamai-dots3-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
