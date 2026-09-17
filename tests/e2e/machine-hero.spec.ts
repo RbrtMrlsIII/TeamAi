@@ -44,8 +44,10 @@ test.describe('Machine Hero foundation', () => {
     await expect(preview.locator('[data-machine-webgl-state]')).toContainText('dense semantic payload');
     const canvas = preview.locator('canvas[aria-label="Interactive Machine Hero WebGL semantic payload preview"]');
     await expect(canvas).toBeVisible();
-    await expect(canvas).toHaveJSProperty('width', expect.any(Number));
-    await expect.poll(() => canvas.evaluate((node) => ({ width: node.width, height: node.height, webgl: Boolean(node.getContext('webgl')) }))).toEqual(expect.objectContaining({ webgl: true }));
+    const canvasSize = await canvas.evaluate((node) => ({ width: node.width, height: node.height }));
+    expect(canvasSize.width).toBeGreaterThan(0);
+    expect(canvasSize.height).toBeGreaterThan(0);
+    await expect.poll(() => canvas.evaluate((node) => Boolean(node.getContext('webgl')))).toBe(true);
 
     await preview.getByRole('button', { name: 'Next payload case', exact: true }).click();
     await expect(preview.locator('[data-machine-webgl-state]')).toContainText('sparse semantic payload');
