@@ -41,6 +41,8 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - Required checks and applicable browser/runtime evidence remain active on Draft PRs.
 - **Governance Integrity is a substantive validation surface and runs on Draft PRs.** It is not a merge-only check.
 - `review-readiness` is a promotion-stage check. It may be skipped while a PR is Draft by design and must not be interpreted as a passed gate.
+- **A Draft PR must remain Draft while its required substantive validations are still running or incomplete. Marking a Draft PR Ready for review is a governance promotion action only after the required substantive validation set has completed successfully on the exact current head.**
+- GitHub may technically permit a user to click **Ready for review** before those checks finish; TeamAi automation must treat that transition as pending and must not claim or invoke an automatic model review until the required exact-head substantive validators are complete and successful.
 - When a PR becomes Ready for review, the required validation set must be current on the exact head and `review-readiness` must evaluate the review/authorization conditions.
 - A `pull_request_review` submission or dismissal may re-trigger `review-readiness` so late approval or dismissal state is reflected without changing the exact-head authorization rule.
 - A skipped downstream job is never evidence that the skipped condition passed.
@@ -54,15 +56,15 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 
 Model-assisted advisory review is treated as a scarce verification resource. The automatic path is one ordered sequence per PR:
 
-`Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen`
+`Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen`
 
-The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim marker is recorded before the first model call so an already-claimed PR cannot silently begin another automatic sequence.
+The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event **after the required substantive validation set has completed successfully on that exact PR head**. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. The automatic sequence gate polls the required validator check-runs while they are pending and fails closed on missing, failed, timed-out, stale, or head-mismatched evidence. A durable sequence-claim marker is recorded only after that validation gate passes and before the first model call.
 
 Each reviewer has its own provider secret and model identity. The sequence carries the original triggering PR head into every stage. If the head changes during an interval or between stages, the next stage fails the exact-head guard and remaining automatic stages do not run. Missing reviewer secrets fail closed and never fall through to another provider.
 
 Manual `/nemotron`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
 
-Current additional reviewer aliases are `qwen` backed by secret `OPENROUTER_API_KEY_GWEN` and `deepseek` backed by `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` secret name is retained as an owner-supplied alias for the Qwen provider/model configuration until normalized.
+Current additional reviewer aliases are `qwen` backed by secret `OPENROUTER_API_KEY_GWEN` and `deepseek` backed by secret `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` secret name is retained as an owner-supplied alias for the Qwen provider/model configuration until normalized.
 
 ## Validation-stage model
 
@@ -71,7 +73,7 @@ Use this lifecycle when interpreting CI:
 | PR state | Expected validation role |
 |---|---|
 | **Draft** | Run substantive Governance Integrity, evidence-consistency, agent validation, Full-System, Security, and applicable Browser/Runtime verification against the exact PR head. Promotion authorization is not yet evaluated. |
-| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. |
+| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. The automatic AI sequence may begin only after the substantive validation set has completed successfully. |
 | **Merge candidate** | All required checks must be current and passing on the exact head; no automation may substitute for the repository's normal merge/review path. |
 
 A validation that is skipped because of lifecycle gating is **not** equivalent to a passing validation. When a check is intentionally skipped, the owning workflow or PR record should make the reason explicit.
@@ -100,7 +102,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 ## Model-assisted review
 
-The shared AI Advisory Review Skill plus model-specific manual wrappers and the automatic sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before every automatic stage, the reusable reviewer runner waits for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. Missing, pending, failed, stale, or head-mismatched validator evidence fails the reviewer path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Repository branch protection and human governance remain authoritative.
+The shared AI Advisory Review Skill plus model-specific manual wrappers and the automatic sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before every automatic stage, the reusable reviewer runner waits for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. The automatic sequence adds a pre-claim gate so a Ready-for-review transition occurring while validations are still running does not start or claim the model sequence prematurely. Missing, pending, failed, stale, or head-mismatched validator evidence fails the reviewer path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Repository branch protection and human governance remain authoritative.
 
 ## Evidence discipline
 
