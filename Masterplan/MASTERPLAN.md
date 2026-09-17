@@ -25,6 +25,8 @@
 - [x] #348 post-merge governance change was merged through the normal GitHub path.
 - [x] Canonical session/current-slice/masterplan records have been aligned with the merged #346/#348 state on the recovery branch.
 - [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
+- [x] Nemotron review invocation is execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
+- [x] Nemotron review packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 
 ## Workspace and delivery
 
@@ -72,7 +74,8 @@
 - [x] Tests changed by governance migration document old invariant, disposition, and replacement invariant.
 - [ ] Every validator change has the same old-invariant/new-invariant evidence record.
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
-- [ ] No validator is weakened merely to obtain green CI.
+- [x] No validator is weakened merely to obtain green CI.
+- [x] Nemotron review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
 
 ## Post-#346 control-plane reconciliation — Issue #347
 
@@ -92,4 +95,5 @@
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
 - [x] Current session/masterplan/current-slice records were synchronized for the merged #346/#348 state.
 - [x] Nemotron Copilot Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
+- [x] Nemotron review documentation and workflow now record that required validators must pass before model invocation.
 - [ ] Historical records remain immutable and out of active routing.
