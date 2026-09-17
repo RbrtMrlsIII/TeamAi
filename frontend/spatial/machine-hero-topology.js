@@ -11,8 +11,9 @@ function pointEqual(a, b, epsilon = EPSILON) {
 
 function boundsFor(part) {
   if (!part?.center || !part?.dimensions) return null;
-  const values = [part.center.x, part.center.y, part.center.z, part.dimensions.x, part.dimensions.y, part.dimensions.z];
-  if (!values.every(finite) || values.some((value) => Number(value) <= 0 && values.indexOf(value) >= 3)) return null;
+  const centerValues = [part.center.x, part.center.y, part.center.z];
+  const dimensionValues = [part.dimensions.x, part.dimensions.y, part.dimensions.z];
+  if (!centerValues.every(finite) || !dimensionValues.every(finite) || dimensionValues.some((value) => Number(value) <= 0)) return null;
   return {
     min: {
       x: Number(part.center.x) - Number(part.dimensions.x) / 2,
@@ -102,12 +103,12 @@ export function validateMachineGraphTopology(graph, { clearance = 0.16 } = {}) {
   if (semanticIds.length !== uniqueSemanticIds.size) reasons.push('DUPLICATE_SEMANTIC_ID');
 
   for (const transition of transitions) {
-    const source = parts.find((part) => part.semanticId === transition?.sourceDivisionId);
-    const target = parts.find((part) => part.semanticId === transition?.targetDivisionId);
+    const source = transition?.sourceGeometry || parts.find((part) => part.semanticId === transition?.sourceDivisionId);
+    const target = transition?.targetGeometry || parts.find((part) => part.semanticId === transition?.targetDivisionId);
     if (!source) reasons.push(`MISSING_SOURCE:${transition?.sourceDivisionId || 'unknown'}`);
     if (!target) reasons.push(`MISSING_TARGET:${transition?.targetDivisionId || 'unknown'}`);
     if (source && target) {
-      const validation = validateMachineConnectionTopology(source, target, transition.wiring, { clearance });
+      const validation = transition.topology || validateMachineConnectionTopology(source, target, transition.wiring, { clearance });
       if (!validation.valid) reasons.push(...validation.reasons.map((reason) => `${transition.sourceDivisionId}->${transition.targetDivisionId}:${reason}`));
     }
   }
