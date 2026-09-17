@@ -46,3 +46,5 @@ Do not infer provider success from configuration text, a green non-review valida
 ## Safety boundary
 
 No product/runtime feature is being changed. No paid model route is intentionally invoked. No reviewer is manually replayed on PR #368. No validator is weakened. No automatic sequence restart is permitted on later `synchronize` events.
+
+**Validation vehicle correction:** the PR body must use the repository's literal `### Draft proof target` contract before the vehicle can become eligible.
