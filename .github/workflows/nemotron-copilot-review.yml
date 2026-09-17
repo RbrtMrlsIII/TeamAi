@@ -34,7 +34,7 @@ jobs:
     with:
       reviewer: Nemotron
       reviewer_slug: nemotron
-      model: nvidia/nemotron-3-ultra-550b-a55b:free
+      model: nvidia/nemotron-3.5-lightning:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
       automatic_marker: '<!-- teamai-nemotron-auto-review -->'
