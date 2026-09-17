@@ -66,11 +66,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-                     expected='Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)'
+                     expected='Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
           grep -Fq "$expected" "$workflow"
-          grep -Fq 'reviewer: Nemotron' "$workflow"
+          grep -Fq 'reviewer: Nemotron Ultra' "$workflow"
           grep -Fq 'reviewer: Ling 3.0 Flash' "$workflow"
           grep -Fq 'reviewer: Poolside' "$workflow"
            grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"
@@ -78,14 +78,14 @@ jobs:
            grep -Fq 'secrets.OPENROUTER_API_KEY_POOLSIDE }}' "$workflow"
            grep -Fq 'secrets.OPENROUTER_API_KEY_DEEPSEEK }}' "$workflow"
            grep -Fq 'secrets.OPENROUTER_API_KEY_GWEN }}' "$workflow"
-          grep -Fq 'reviewer: Dots3-Note Preview (primary)' "$workflow"
-          grep -Fq 'reviewer: Dots3-Note Preview (secondary)' "$workflow"
-           test "$(grep -Fc 'reviewer_slug: nemotron' "$workflow")" -eq 1
+          grep -Fq 'reviewer: Laguna' "$workflow"
+          grep -Fq 'reviewer: Dots3-Note Preview' "$workflow"
+           test "$(grep -Fc 'reviewer_slug: nemotron-ultra' "$workflow")" -eq 1
            test "$(grep -Fc 'reviewer_slug: ling' "$workflow")" -eq 1
            test "$(grep -Fc 'reviewer_slug: poolside' "$workflow")" -eq 1
-           test "$(grep -Fc 'reviewer_slug: dots3-primary' "$workflow")" -eq 1
-           test "$(grep -Fc 'reviewer_slug: dots3-secondary' "$workflow")" -eq 1
-           if grep -Fq 'model: openrouter/free' "$workflow" || grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow" || grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow" || grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"; then
+           test "$(grep -Fc 'reviewer_slug: laguna' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: dots3' "$workflow")" -eq 1
+           if grep -Fq 'model: openrouter/free' "$workflow" || grep -Fq 'model: nvidia/nemotron-3.5-lightning:free' "$workflow" || grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow" || grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"; then
              echo "Retired reviewer model binding remains in the active sequence workflow."
              exit 1
            fi
@@ -97,11 +97,12 @@ jobs:
           grep -Fq "if: always() && (needs.ling.result == 'success' || needs.ling.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
-          grep -Fq 'model: nvidia/nemotron-3.5-lightning:free' "$workflow"
+          grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
           grep -Fq 'model: inclusionai/ling-3.0-flash:free' "$workflow"
-          grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
+          grep -Fq 'model: poolside/laguna-xs-2.1:free' "$workflow'
+           grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
           grep -Fq 'model: dots-studio/dots-3-note-preview:free' "$workflow"
-          test "$(grep -Fc 'model: dots-studio/dots-3-note-preview:free' "$workflow")" -eq 2
+          test "$(grep -Fc 'model: dots-studio/dots-3-note-preview:free' "$workflow")" -eq 1
           if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
             echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
             exit 1
