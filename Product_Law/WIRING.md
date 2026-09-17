@@ -35,4 +35,7 @@ Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checkli
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
+Model-assisted review is part of Verification & CI/Browser only. A Nemotron review is evidence of analysis, not a new authority layer or acceptance mechanism.
+
 <!-- #349 post-#346 recovery synchronization: canonical authority remains Product_Law; session truth remains in the session/masterplan surfaces. -->
+<!-- #357 Nemotron copilot review: model-assisted review remains subordinate to Product Law, Policy, repository gates, and human authorization. -->
