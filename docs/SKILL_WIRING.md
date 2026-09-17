@@ -29,6 +29,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 - Masterplan/Skill routing: `skills/governance/masterplan-skill-wiring/SKILL.md`
 - Machine builder: `skills/governance/machine-builder/SKILL.md`
 - Learning/session continuity: `skills/governance/learning-handover/SKILL.md`
+- Model-assisted PR review: `skills/governance/nemotron-copilot-review/SKILL.md`
 
 Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
 
@@ -76,6 +77,7 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 ## Forbidden active routing surfaces
 
-The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md`.
+The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md` registry.
 
 <!-- #352 validation-lifecycle synchronization: Draft substantive validation remains active; review-readiness is promotion-stage; skipped downstream is not pass. -->
+<!-- #357 Nemotron copilot review: model-assisted review is advisory and promotion-gated; it never replaces repository validation or human authority. -->

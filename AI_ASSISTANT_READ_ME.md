@@ -4,14 +4,14 @@
 
 ## Session anchor
 
-- Last given prompt: **1**
+- Last given prompt: **Nemotron Copilot Review wiring**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
-- Post-#346 control-plane: **#352** — active reconciliation and validation-lifecycle hardening
+- Post-#346 control-plane: **#352 merged** into `main`
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Active 029 ledger: **#278**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current main baseline: **#351 merge `e61c3b9880cc5669e5764e0207a8adc4ba533e5f`**, with #353 already merged before this governance slice
+- Current main baseline: **`daf182b5022a3ca32d8b617e26cd2d5d04105d53`**, merge of #352
 
 ## Canonical authority path
 
@@ -36,8 +36,8 @@
 
 - #346 and #348 are merged and no longer active migration vessels.
 - #351 Vercel retirement is merged; Vercel is no longer an active delivery/provider surface.
+- #352 is merged; its post-#346 reconciliation and validation-lifecycle changes are part of `main`.
 - #353 is the current merged machine candidate implementation and remains non-production.
-- #352 owns the remaining post-merge control-plane reconciliation and validation-lifecycle hardening.
 - Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
 - Historical records remain provenance, not current instruction.
 
@@ -79,6 +79,12 @@ Then:
 
 Never weaken validation merely to make CI green.
 
+## Model-assisted review
+
+`skills/governance/nemotron-copilot-review/SKILL.md` and `.github/workflows/nemotron-copilot-review.yml` provide bounded model-assisted PR review through OpenRouter/Nemotron. The workflow checks out the exact PR head, constructs a bounded diff packet, posts advisory findings, and keeps approval behind an explicit authorized workflow dispatch. The model is not a Product Law source, merge authority, or replacement for required CI, browser/runtime evidence, review-readiness, or human authorization.
+
+The configured model is `nvidia/nemotron-3-ultra-550b-a55b:free`. This is operational configuration and may change independently of Product Law.
+
 ## Handover
 
 There is no live `HandOver.md`. Current continuation and recovery state belongs here. Historical handover evidence may remain under `handover/` or `docs/archive/` and is not current instruction.
@@ -97,4 +103,4 @@ Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and
 
 ## Next governance gate
 
-#352 owns the current post-merge control-plane reconciliation. The next product frontier remains TEAM-EXPERIENCE-029 in Issue #278. No Hero promotion or 029 release claim is implied by merged #353 alone.
+The next product frontier remains TEAM-EXPERIENCE-029 in Issue #278. No Hero promotion or 029 release claim is implied by merged #353 alone. Model-assisted review is now available as bounded advisory evidence, but required repository gates and human authorization remain decisive.
