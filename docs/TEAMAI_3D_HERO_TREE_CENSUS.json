@@ -60,6 +60,12 @@
           "timingStatus": "IMPLEMENTATION_BASELINE_NOT_FINAL",
           "presentationOnly": true
         },
+        "topologyValidation": {
+          "status": "TEST_LEVEL_CURRENT_HEAD",
+          "checks": ["semantic identity", "source/target ports", "route endpoints", "finite route points", "AABB clearance"],
+          "failureMode": "FAIL_CLOSED",
+          "fullInterDivisionTopology": "NOT_COMPLETE"
+        },
         "finalAdaptiveGeometry": "NOT_FINAL",
         "finalElectricalChoreography": "NOT_FINAL"
       },
@@ -119,20 +125,7 @@
     }
   },
   "branchContract": {
-    "required": [
-      "branchId",
-      "parentIdentity",
-      "semanticPurpose",
-      "responsibility",
-      "uiProductPayload",
-      "expansionRegion",
-      "adjacentClearance",
-      "connectionPathOwnership",
-      "cameraRelationship",
-      "responsiveBehavior",
-      "reducedMotionBehavior",
-      "verificationEvidence"
-    ],
+    "required": ["branchId", "parentIdentity", "semanticPurpose", "responsibility", "uiProductPayload", "expansionRegion", "adjacentClearance", "connectionPathOwnership", "cameraRelationship", "responsiveBehavior", "reducedMotionBehavior", "verificationEvidence"],
     "supportsRecursiveDepth": true,
     "geometryRule": "derive geometry from semantic/UI payload; never copy fixed prototype coordinates as universal truth"
   },

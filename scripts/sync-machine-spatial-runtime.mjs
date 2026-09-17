@@ -6,6 +6,8 @@ const files = [
   'machine-hero-scene.js',
   'machine-hero-graph.js',
   'machine-hero-payload.js',
+  'machine-hero-adaptive-geometry.js',
+  'machine-hero-topology.js',
 ];
 
 for (const file of files) {

@@ -29,6 +29,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 - Masterplan/Skill routing: `skills/governance/masterplan-skill-wiring/SKILL.md`
 - Machine builder: `skills/governance/machine-builder/SKILL.md`
 - Learning/session continuity: `skills/governance/learning-handover/SKILL.md`
+- Model-assisted PR review: `skills/governance/nemotron-copilot-review/SKILL.md`
 
 Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
 
@@ -40,9 +41,9 @@ Ready-for-review PRs retain current exact-head substantive evidence and addition
 
 A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
 
-## Canonical live-site routing reference
+### Nemotron execution gate
 
-For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. PR/candidate validation remains exact-head CI/browser evidence; the public URL is the sole live-site acceptance target. Do not route live validation to Vercel or guessed/retired alternate paths.
+Model-assisted review is downstream of the substantive validator set, even though GitHub Actions starts workflows concurrently. The Nemotron workflow polls the exact PR head and requires successful completion of `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` before invoking the external model. Pending, failed, missing, or head-mismatched execution evidence fails closed. The model packet then receives current governing-file context, the owning Issue state, and exact-head check-run evidence.
 
 ## Machine Hero routing
 
@@ -80,6 +81,8 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 ## Forbidden active routing surfaces
 
-The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md`.
+The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md` registry.
 
-<!-- #355 documentation reconciliation: canonical public live-site target is GitHub Pages only; candidate validation remains exact-head. -->
+<!-- #352 validation-lifecycle synchronization: Draft substantive validation remains active; review-readiness is promotion-stage; skipped downstream is not pass. -->
+<!-- #357 Nemotron copilot review: model-assisted review is advisory and promotion-gated; it never replaces repository validation or human authority. -->
+<!-- #361 execution-aware review: Nemotron invocation is downstream of exact-head validator success and current governing/Issue context. -->

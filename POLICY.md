@@ -29,10 +29,6 @@
 - `docs/archive/` and `handover/` are historical storage only.
 - Active `HandOver.md`, active `Endorsement.md`, a parallel Skill namespace, and `OBSOLETE_FILES.md` are forbidden.
 
-## Canonical public live-site validation
-
-For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/`. The `TeamAi` path casing is the canonical recorded target. Browser/network hostname lowercasing is normal URL handling. Vercel and guessed/retired routes are not live acceptance targets.
-
 ## PR discipline
 
 - Substantive work starts as a **Draft PR**.
@@ -81,12 +77,18 @@ Then execute:
 
 Never weaken a validator merely to obtain green CI. Existing tests must be classified as retained, obsolete, or replaced before their assertions are changed.
 
+## Model-assisted review
+
+The Nemotron Copilot Review Skill and workflow are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before invoking the model, the workflow must wait for the required exact-head `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` workflows to complete successfully. Missing, pending, failed, stale, or head-mismatched validator evidence fails the model-review path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. An approval submission is disabled on ordinary PR events and requires an explicit authorized workflow dispatch; repository branch protection and human governance remain authoritative.
+
 ## Evidence discipline
 
 Distinguish:
 
 `specified ≠ implemented ≠ verified ≠ runtime-proven ≠ completed ≠ accepted`
 
-A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
+A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority. A model review may analyze evidence but cannot manufacture missing execution proof or treat an open Issue as resolved.
 
-<!-- #355 documentation reconciliation: canonical public live-site target is GitHub Pages only; see AI_ASSISTANT_READ_ME.md for the exact URL and current evidence. -->
+<!-- #349 post-#346 recovery synchronization: post-merge governance truth is canonical; no provider-specific delivery surface is authoritative. -->
+<!-- #357 Nemotron copilot review: model assistance is bounded verification only and cannot replace governance or human authorization. -->
+<!-- #361 execution-aware review: Nemotron is downstream of required exact-head validator success and current governance/Issue context. -->

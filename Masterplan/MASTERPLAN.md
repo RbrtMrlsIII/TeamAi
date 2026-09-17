@@ -2,7 +2,7 @@
 
 **Authority:** `Product_Law/PRODUCT_LAW.md`  
 **Role:** chronology and executable checklist only.  
-**Current governing program:** TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
+**Current governing program:** post-merge control-plane reconciliation, then TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
 
 ## Repository foundation
 
@@ -23,9 +23,10 @@
 - [x] Draft PRs continue substantive validation; `review-readiness` is promotion-stage and is not evidence when skipped.
 - [x] #346 governance foundation was merged through the normal GitHub path.
 - [x] #348 post-merge governance change was merged through the normal GitHub path.
-- [x] #351 Vercel retirement was merged; Vercel is no longer an active delivery/provider surface.
-- [x] #352 post-#346 control-plane reconciliation and validation-lifecycle hardening was merged.
-- [x] Canonical session/current-slice/masterplan records are aligned with the merged baseline.
+- [x] Canonical session/current-slice/masterplan records have been aligned with the merged #346/#348 state on the recovery branch.
+- [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
+- [x] Nemotron review invocation is execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
+- [x] Nemotron review packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 
 ## Workspace and delivery
 
@@ -33,8 +34,7 @@
 - [x] Workflow display names describe their actual responsibility.
 - [ ] Review open branches and retain only those with active Issue/PR ownership or unique provenance/recovery value.
 - [x] Keep main changes behind governed PRs.
-- [x] Verify the public application delivery route through the canonical GitHub Pages entrance with real browser evidence.
-- [x] Canonical live-site test target is documented as `https://RbrtMrlsIII.github.io/TeamAi/`.
+- [ ] Verify application delivery routes through the current canonical hosting/runtime path using authenticated browser/runtime evidence where required.
 - [ ] Close or otherwise retire stale delivery-only PR interpretations after their landed changes are reflected on `main`.
 
 ## TEAM-BACKEND-001
@@ -74,24 +74,26 @@
 - [x] Tests changed by governance migration document old invariant, disposition, and replacement invariant.
 - [ ] Every validator change has the same old-invariant/new-invariant evidence record.
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
-- [ ] No validator is weakened merely to obtain green CI.
+- [x] No validator is weakened merely to obtain green CI.
+- [x] Nemotron review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
 
 ## Post-#346 control-plane reconciliation — Issue #347
 
 - [x] PR #346 is merged and no longer treated as an active migration vessel.
 - [x] PR #348 is merged and no longer treated as an active migration vessel.
-- [x] PR #351 Vercel retirement is merged and Vercel is no longer an active delivery dependency.
-- [x] PR #352 control-plane reconciliation is merged and current control-plane truth is documented.
 - [x] PR #353 is merged and is now the current machine candidate baseline rather than an open Draft PR.
 - [x] Issue #347 describes the post-merge state without reopening #346.
-- [x] Canonical session/current-slice/masterplan records are aligned with the merged state.
-- [x] Canonical live GitHub Pages URL is verified and recorded for live-site testing.
+- [x] Align all canonical session/current-slice records with the merged state.
+- [ ] Merge the remaining canonical control-plane documentation/test reconciliation.
+- [ ] Retire stale PR #349/#352 interpretations after the landed content is reflected on `main`.
 - [ ] Resolve remaining active retired-root references and validator responsibility overlaps.
-- [x] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
+- [ ] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
 
 ## Session synchronization
 
 - [x] `AI_ASSISTANT_READ_ME.md` is the live session/recovery/handover/endorsement-decision surface.
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
-- [x] Current session/masterplan/current-slice records are synchronized with the merged baseline and live-site URL.
+- [x] Current session/masterplan/current-slice records were synchronized for the merged #346/#348 state.
+- [x] Nemotron Copilot Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
+- [x] Nemotron review documentation and workflow now record that required validators must pass before model invocation.
 - [ ] Historical records remain immutable and out of active routing.
