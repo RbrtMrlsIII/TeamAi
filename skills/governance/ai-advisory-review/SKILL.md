@@ -25,16 +25,27 @@ GitHub Actions validator workflows run concurrently, so reviewer workflows perfo
 
 The resulting packet must include exact-head check-run evidence, current governing-file contents at that head, and live Issue state resolved from an explicit Issue reference in the PR. Missing or materially truncated governance, Issue, or execution context forces `ADVISORY_ONLY` rather than `APPROVE`.
 
-## Lifecycle and quota policy
+## Automatic review sequence
 
-- **Draft PRs:** do not automatically invoke an advisory model reviewer. Deliberate reviewer commands or authorized workflow dispatch remain available.
-- **Accidentally non-draft PRs:** an `opened` pull-request event may consume one automatic review allowance for each configured reviewer after exact-head substantive validators pass.
-- **Ready-for-review PRs:** a `ready_for_review` event may consume one automatic review allowance for each configured reviewer when no earlier automatic review marker exists.
-- **One automatic review per reviewer per PR:** automatic reviews are not triggered by `synchronize` events and do not repeat merely because a PR receives additional commits.
-- **Manual re-review:** reviewer-specific issue-comment commands or authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic allowance.
-- **Reopen events:** a reviewer can participate automatically only while that reviewer's automatic marker is absent.
-- **Head freshness:** a later head makes prior model analysis stale for promotion purposes, but does not itself trigger another automatic review.
-- The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance.
+The automatic lifecycle is one ordered sequence per PR, not a parallel matrix:
+
+`Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen`
+
+The sequence is entered only by the first eligible non-draft `pull_request` lifecycle event among `opened`, `reopened`, or `ready_for_review`. Draft PRs consume no automatic model calls. `synchronize` never restarts the sequence.
+
+A durable sequence-claim marker is written before the first model invocation. That claim is the quota boundary for the PR's automatic sequence. If the initial head changes during an interval, the next reviewer fails its exact-head guard and later automatic stages do not run. This prevents a later stage from reviewing a stale revision.
+
+Each stage uses its own provider secret and model identity. A missing key fails that stage closed and never falls through to another provider secret. A reviewer verdict does not determine whether the next stage runs; only successful execution of the previous reviewer stage and exact-head freshness permit progression.
+
+## Manual re-review
+
+Reviewer-specific commands remain available for deliberate later-head analysis:
+
+- `/nemotron`
+- `/deepseek`
+- `/qwen`
+
+Authorized `workflow_dispatch` paths provide the equivalent explicit control. Manual review is outside the automatic sequence allowance and may target the current exact head.
 
 ## Security boundaries
 
@@ -47,15 +58,16 @@ The resulting packet must include exact-head check-run evidence, current governi
 
 ## Reviewer configuration
 
-The current controlled additional-reviewer workflow uses:
-
-| Reviewer alias | Secret | OpenRouter model |
-|---|---|---|
-| `qwen` | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` |
-| `deepseek` | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` |
+| Reviewer | Secret | OpenRouter model | Automatic order |
+|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 2 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
 
 `GWEN` is retained as the configured secret alias supplied by the repository owner; the model/provider represented by that alias is Qwen. This distinction is intentional until the secret name is normalized.
 
 ## Evidence contract
 
 Every reviewer comment must identify the exact PR head and invocation class. A model review is advisory evidence only. A model verdict or model-generated approval never substitutes for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, `review-readiness`, or human authorization. Required substantive validators must pass before automatic model invocation.
+
+The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance. The sequence's ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
