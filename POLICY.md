@@ -90,6 +90,10 @@ Free model routes can also carry provider-specific logging or training terms. Re
 
 Manual `/nemotron`, `/openai`, `/poolside`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
 
+### Runtime-repair evidence boundary
+
+A reusable advisory-review transport or parser repair is a Verification & CI/Browser implementation concern, not a new authority layer. Configuration presence, static workflow consistency, and successful non-provider validators do not constitute provider runtime proof. The runtime-proof claim requires a fresh eligible exact-head lifecycle event after the repaired runner is governed and merged, with observed provider invocation and stage/barrier evidence. The diagnostic #370 parser failure and stale-head containment remain historical evidence for that specific proof vehicle.
+
 ## Validation-stage model
 
 Use this lifecycle when interpreting CI:
