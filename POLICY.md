@@ -60,7 +60,7 @@ Model-assisted advisory review is treated as a scarce verification resource. The
 
 There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer. It starts only when the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the required substantive exact-head validation gate.
 
-After Nemotron reaches a `success` or `failure` execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. A `skipped` or `cancelled` Nemotron job does **not** open the barrier and must not start stage 2. OpenRouter Free Router and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head.
+After Nemotron reaches a `success` or `failure` execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. A `skipped` or `cancelled` Nemotron job does **not** open the barrier and must not start stage 2. OpenRouter Free Router and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always()` against the successful barrier so an allowed Nemotron `failure` cannot be converted into an implicit upstream-success skip.
 
 After both second-stage reviewers reach a `success` or `failure` execution result, the sequence waits another 150 seconds before starting the third-stage pair. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does **not** open the barrier and must not start stage 3. DeepSeek and Qwen are peer reviewers in that stage and execute concurrently against the same original triggering head.
 

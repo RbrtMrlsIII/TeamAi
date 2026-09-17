@@ -51,9 +51,9 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - `review-readiness` remains pending until an independent non-author human approval exists on the exact current PR head, rather than failing on absence of approval
 - automatic advisory sequence order is `Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 - there is no automatic interval before Nemotron; the 150-second timer begins only after the Nemotron turn completes
-- the second-stage OpenRouter Free Router and Poolside reviewers execute concurrently after the first 150-second barrier
+- the second-stage OpenRouter Free Router and Poolside reviewers execute concurrently after the first 150-second barrier, and their downstream conditions explicitly use `always()` so an allowed Nemotron `failure` cannot suppress the cohort
 - the third-stage DeepSeek and Qwen reviewers execute concurrently after the second 150-second barrier
-- automatic reviewer bindings use explicit deterministic `:free` routes for Nemotron, OpenRouter Free Router, Poolside, DeepSeek, and Qwen
+- automatic reviewer bindings use explicit pinned `:free` routes for Nemotron, Poolside, DeepSeek, and Qwen, plus the intentionally non-deterministic `openrouter/free` route for OpenRouter Free Router
 - the sequence starts only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event and never on `synchronize`
 - a durable sequence claim is recorded before the first automatic model call
 - every reviewer stage rechecks the original triggering head and fails closed if it changed

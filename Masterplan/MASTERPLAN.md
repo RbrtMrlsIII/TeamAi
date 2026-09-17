@@ -36,6 +36,7 @@
 - [x] #368 ordered advisory reviewer orchestration was merged into `main` with the explicit 1→2→2 cohort state machine, exact-head guards, durable sequence claim, and explicit free model bindings, with the OpenRouter Free Router slot intentionally non-deterministic.
 - [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its Nemotron stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
 - [ ] #371 reusable reviewer provider-invocation repair is validated and merged before fresh provider runtime proof is re-attempted.
+- [ ] Stage-2 continuation is explicitly guarded with `always() && needs.delay_to_second_stage.result == 'success'` so an allowed Nemotron `failure` does not suppress the Free Router + Poolside cohort.
 - [ ] Automatic advisory review sequence is runtime-verified as `Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen` on the first eligible non-draft PR lifecycle event.
 
 ## Workspace and delivery

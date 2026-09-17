@@ -74,6 +74,7 @@ jobs:
           grep -Fq 'reviewer: DeepSeek' "$workflow"
           grep -Fq 'reviewer: Qwen' "$workflow"
           grep -Fq 'needs: delay_to_second_stage' "$workflow"
+          grep -Fq "if: always() && needs.delay_to_second_stage.result == 'success'" "$workflow"
           grep -Fq 'needs: [free_router, poolside]' "$workflow"
           grep -Fq 'needs: delay_to_third_stage' "$workflow"
           grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"

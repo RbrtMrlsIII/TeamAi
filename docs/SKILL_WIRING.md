@@ -56,7 +56,7 @@ The automatic review lifecycle is one ordered three-stage cohort sequence, not a
 
 There is no automatic interval before Nemotron. Nemotron is the frontline reviewer and starts only after the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the substantive exact-head validation gate.
 
-After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. OpenRouter Free Router and Poolside then execute concurrently against the same original triggering head.
+After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. OpenRouter Free Router and Poolside then execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so GitHub's implicit upstream-success behavior cannot suppress an allowed failure cohort.
 
 After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does not open that barrier. DeepSeek and Qwen then execute concurrently against the same original triggering head.
 

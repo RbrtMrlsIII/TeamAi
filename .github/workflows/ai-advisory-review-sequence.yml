@@ -243,7 +243,7 @@ jobs:
 
   free_router:
     needs: delay_to_second_stage
-    if: needs.delay_to_second_stage.result == 'success'
+    if: always() && needs.delay_to_second_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: OpenRouter Free Router
@@ -260,7 +260,7 @@ jobs:
 
   poolside:
     needs: delay_to_second_stage
-    if: needs.delay_to_second_stage.result == 'success'
+    if: always() && needs.delay_to_second_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: Poolside

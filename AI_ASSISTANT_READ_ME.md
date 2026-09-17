@@ -50,7 +50,7 @@
 - #368 is merged; it carries the explicit 1→2→2 automatic advisory reviewer sequence, skip/cancel-safe cohort barriers, explicit free model routes, with the OpenRouter Free Router slot intentionally non-deterministic, exact-head guards, and durable one-sequence claim.
 - #369 is the execution ledger for the remaining #368 runtime-proof boundary.
 - #370 is the first fresh post-#368 proof vehicle. Its exact-head validation gate and durable sequence claim passed. Nemotron reached the runner and exposed a Bash parser fault before provider transport. The stage-1 barrier later detected a deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #370 remains diagnostic evidence, not runtime proof of provider execution.
-- #371 is the reusable-runner repair. It replaces the brittle provider-call shell path, rebinds the former stage-2 OpenAI slot to OpenRouter Free Router, and fixes stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. It must satisfy the repository canonical six-file synchronization rule and governed validation before merge.
+- #371 is the reusable-runner repair. It replaces the brittle provider-call shell path, rebinds the former stage-2 OpenAI slot to OpenRouter Free Router, and fixes stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. It must satisfy the repository canonical six-file synchronization rule and governed validation before merge.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -125,7 +125,7 @@ Each reviewer has an independent secret/model binding:
 | DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | 3 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | 3 |
 
-The reviewer routes are now explicit `:free` OpenRouter variants selected on 2026-09-17 to keep the governed reviewer path within the zero-credit constraint while preserving deterministic provider identity. Cost class and provider data-use terms remain separate considerations.
+The reviewer routes are now explicit free OpenRouter routes selected to keep the governed reviewer path within the zero-credit constraint. Pinned routes preserve deterministic model identity; the OpenRouter Free Router intentionally selects the model at execution time. Cost class and provider data-use terms remain separate considerations.
 
 ### Historical automatic sequence evidence
 

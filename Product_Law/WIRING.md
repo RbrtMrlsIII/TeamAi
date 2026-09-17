@@ -49,7 +49,7 @@ The controlled advisory reviewer procedure permits one automatic review sequence
 
 There is no automatic interval before Nemotron. OpenRouter Free Router and Poolside are peers in the second stage and execute concurrently. DeepSeek and Qwen are peers in the third stage and execute concurrently. `synchronize` never restarts the automatic sequence. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch.
 
-A reviewer/provider failure is recorded as execution evidence and does not authorize secret substitution, stage reordering, or a retry through another provider. A PR-head change fails the current stage and prevents the sequence from proceeding with stale code.
+A reviewer/provider failure is recorded as execution evidence and does not authorize secret substitution, stage reordering, or a retry through another provider. A PR-head change fails the current stage and prevents the sequence from proceeding with stale code. The second-stage reviewer jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so an allowed Nemotron `failure` still reaches the OpenRouter Free Router + Poolside cohort.
 
 The current configured reviewer aliases are `nemotron` → `OPENROUTER_API_KEY`, `free-router` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, and `qwen` → `OPENROUTER_API_KEY_GWEN`. These aliases and provider bindings are verification/runtime configuration, not new Product Law identities.
 
