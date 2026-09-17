@@ -80,6 +80,11 @@ jobs:
           grep -Fq "if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
+          grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
+          grep -Fq 'model: openai/gpt-oss-120b:free' "$workflow"
+          grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
+          grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow"
+          grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"
           if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
             echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
             exit 1
@@ -113,7 +118,7 @@ jobs:
               exit 1
             fi
           done
-          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits and explicit success/failure barriers."
+          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free model routes."
 
       - name: Prove draft PR target against full PR delta
         env:
