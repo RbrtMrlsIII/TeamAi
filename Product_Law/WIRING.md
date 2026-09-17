@@ -41,4 +41,8 @@ Do not create another Product Law, current-state ledger, Masterplan, live HandOv
 
 Model-assisted review is part of Verification & CI/Browser only. A Nemotron review is evidence of analysis, not a new authority layer or acceptance mechanism. The Nemotron workflow is downstream of required exact-head validator execution and must receive execution evidence, governing context, and owning Issue state before model invocation.
 
+## Nemotron automatic-review boundary
+
+The controlled Nemotron procedure uses at most one automatic model review per pull request. Automatic review is intended for the first eligible non-draft lifecycle event and does not re-run merely because a PR receives more commits. Later-head review is an explicit verification action through `/nemotron` or authorized workflow dispatch. This is quota protection and lifecycle control only; it does not change Product Law, human authorization, or substantive validation requirements.
+
 <!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->
