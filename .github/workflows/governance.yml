@@ -80,6 +80,15 @@ jobs:
            grep -Fq 'api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}' "$workflow"
           grep -Fq 'reviewer: Dots3-Note Preview (primary)' "$workflow"
           grep -Fq 'reviewer: Dots3-Note Preview (secondary)' "$workflow"
+           test "$(grep -Fc 'reviewer_slug: nemotron' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: ling' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: poolside' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: dots3-primary' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: dots3-secondary' "$workflow")" -eq 1
+           if grep -Fq 'model: openrouter/free' "$workflow" || grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow" || grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow" || grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"; then
+             echo "Retired reviewer model binding remains in the active sequence workflow."
+             exit 1
+           fi
           grep -Fq 'needs: delay_to_second_stage' "$workflow"
           grep -Fq "if: always() && needs.delay_to_second_stage.result == 'success'" "$workflow"
           grep -Fq 'needs: [ling, poolside]' "$workflow"
