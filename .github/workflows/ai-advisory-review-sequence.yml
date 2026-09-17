@@ -19,7 +19,7 @@ env:
   VALIDATION_POLL_SECONDS: '15'
   VALIDATION_TIMEOUT_SECONDS: '1800'
   SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
-  NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
+  NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-ultra-auto-review -->'
   LING_AUTO_MARKER: '<!-- teamai-ling-auto-review -->'
   POOLSIDE_AUTO_MARKER: '<!-- teamai-poolside-auto-review -->'
   LAGUNA_AUTO_MARKER: '<!-- teamai-laguna-auto-review -->'
@@ -181,13 +181,13 @@ jobs:
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: Nemotron Ultra
-      reviewer_slug: nemotron
+      reviewer_slug: nemotron-ultra
       model: nvidia/nemotron-3-ultra-550b-a55b:free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
-      automatic_marker: '<!-- teamai-nemotron-auto-review -->'
-      manual_marker: '<!-- teamai-nemotron-review -->'
+      automatic_marker: '<!-- teamai-nemotron-ultra-auto-review -->'
+      manual_marker: '<!-- teamai-nemotron-ultra-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY }}
@@ -265,7 +265,7 @@ jobs:
     with:
       reviewer: Poolside
       reviewer_slug: poolside
-      model: poolside/laguna-s-2.1:free
+      model: poolside/laguna-xs-2.1:free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
