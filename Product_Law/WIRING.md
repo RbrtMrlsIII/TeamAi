@@ -39,10 +39,12 @@ The canonical public live-site validation target is `https://RbrtMrlsIII.github.
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
-Model-assisted review is part of Verification & CI/Browser only. A Nemotron review is evidence of analysis, not a new authority layer or acceptance mechanism. The Nemotron workflow is downstream of required exact-head validator execution and must receive execution evidence, governing context, and owning Issue state before model invocation.
+Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and must receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
 
-## Nemotron automatic-review boundary
+## Reviewer lifecycle boundary
 
-The controlled Nemotron procedure uses at most one automatic model review per pull request. Automatic review is intended for the first eligible non-draft lifecycle event and does not re-run merely because a PR receives more commits. Later-head review is an explicit verification action through `/nemotron` or authorized workflow dispatch. This is quota protection and lifecycle control only; it does not change Product Law, human authorization, or substantive validation requirements.
+The controlled advisory reviewer procedure permits one automatic model review per configured reviewer per pull request. Automatic review is intended for the first eligible non-draft lifecycle event and does not re-run merely because a PR receives more commits. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch. This is quota/resource protection and lifecycle control only; it does not change Product Law, human authorization, or substantive validation requirements.
+
+The current additional reviewer configuration uses `qwen` with secret alias `OPENROUTER_API_KEY_GWEN` and `deepseek` with `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` name is an owner-supplied secret alias for the Qwen provider/model configuration, not a separate Product Law identity.
 
 <!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->
