@@ -116,3 +116,5 @@ With the public GitHub Pages entrance restored and verified, the active product 
 `semantic tree truth → payload → connection topology → expansion geometry / clearance / adjacency → stable semantic connection port → branch-aware camera subject → workspace-directed semantic edge → minimal presentation signal → reduced-motion equivalent → desktop + mobile proof → census reconciliation`
 
 No Hero promotion or 029 release claim is implied by the live-site verification or merged #353 alone.
+
+<!-- #355: PR body uses ### Draft proof target so governance audit can parse the proof contract. -->
