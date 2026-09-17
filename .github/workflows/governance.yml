@@ -76,6 +76,18 @@ jobs:
           grep -Fq 'needs: delay_to_second_stage' "$workflow"
           grep -Fq 'needs: [openai, poolside]' "$workflow"
           grep -Fq 'needs: delay_to_third_stage' "$workflow"
+          grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"
+          grep -Fq "if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
+          grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
+          grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
+          if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
+            echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
+            exit 1
+          fi
+          if grep -Fq "needs.openai.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
+            echo "Skipped/cancelled fallthrough remains in the stage-3 barrier."
+            exit 1
+          fi
           for path in \
             'POLICY.md' \
             'docs/SKILL_WIRING.md' \
@@ -96,8 +108,12 @@ jobs:
               echo "Retired three-stage sequence wording remains in $path"
               exit 1
             fi
+            if grep -Fq 'terminal non-cancelled' "$path" || grep -Fq 'completed non-cancelled' "$path"; then
+              echo "Ambiguous non-cancelled barrier wording remains in $path"
+              exit 1
+            fi
           done
-          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits."
+          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits and explicit success/failure barriers."
 
       - name: Prove draft PR target against full PR delta
         env:
