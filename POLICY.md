@@ -54,17 +54,35 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 
 ### Model-review sequence discipline
 
-Model-assisted advisory review is treated as a scarce verification resource. The automatic path is one ordered sequence per PR:
+Model-assisted advisory review is treated as a scarce verification resource. The automatic path is one ordered three-stage cohort sequence per PR:
 
-`Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen`
+`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 
-The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event **after the required substantive validation set has completed successfully on that exact PR head**. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. The automatic sequence gate polls the required validator check-runs while they are pending and fails closed on missing, failed, timed-out, stale, or head-mismatched evidence. A durable sequence-claim marker is recorded only after that validation gate passes and before the first model call.
+There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer. It starts only when the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the required substantive exact-head validation gate.
 
-Each reviewer has its own provider secret and model identity. The sequence carries the original triggering PR head into every stage. If the head changes during an interval or between stages, the next stage fails the exact-head guard and remaining automatic stages do not run. Missing reviewer secrets fail closed and never fall through to another provider.
+After Nemotron reaches a terminal non-cancelled execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. OpenAI and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head.
 
-Manual `/nemotron`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
+After both second-stage reviewers reach terminal non-cancelled execution results, the sequence waits another 150 seconds before starting the third-stage pair. DeepSeek and Qwen are peer reviewers in that stage and execute concurrently against the same original triggering head.
 
-Current additional reviewer aliases are `qwen` backed by secret `OPENROUTER_API_KEY_GWEN` and `deepseek` backed by secret `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` secret name is retained as an owner-supplied alias for the Qwen provider/model configuration until normalized.
+The inter-stage waits are **cohort barriers**, not reviewer timers. A provider failure is execution evidence and does not cause another provider to substitute for it, reorder the stages, or launch early. The sequence may proceed to the next cohort after a non-cancelled provider failure, but only while exact-head freshness remains intact. A PR-head change during a wait or between stages fails closed and prevents later automatic stages from reviewing stale code.
+
+The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event **after the required substantive validation set has completed successfully on that exact PR head**. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. The automatic sequence gate polls the required validator check-runs while they are pending and fails closed on missing, failed, timed-out, stale, or head-mismatched evidence. A durable sequence-claim marker is recorded only after that validation gate passes and before Nemotron starts.
+
+Each reviewer has its own provider secret and model identity. Missing reviewer secrets fail the affected stage closed and never fall through to another reviewer secret.
+
+Manual `/nemotron`, `/openai`, `/poolside`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
+
+Current reviewer bindings are:
+
+| Reviewer | Secret alias | OpenRouter model | Stage |
+|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
+
+The supplied `GWEN` secret name is retained as an owner-provided alias for the Qwen configuration. It is not a separate provider identity.
 
 ## Validation-stage model
 
@@ -104,7 +122,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 The shared AI Advisory Review Skill plus model-specific manual wrappers and the automatic sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before every automatic stage, the reusable reviewer runner waits for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. The automatic sequence adds a pre-claim gate so a Ready-for-review transition occurring while validations are still running does not start or claim the model sequence prematurely. Missing, pending, failed, stale, or head-mismatched validator evidence fails the reviewer path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Repository branch protection and human governance remain authoritative.
 
-The ordered sequence timing is a synchronized governance invariant across `ai-advisory-review-sequence.yml`, this Policy, `docs/SKILL_WIRING.md`, `skills/governance/ai-advisory-review/SKILL.md`, `Masterplan/MASTERPLAN.md`, and `AI_ASSISTANT_READ_ME.md`. Drift in the declared interval is a governance inconsistency and must fail validation rather than being silently normalized by one surface.
+The staged reviewer timing is a synchronized governance invariant across `ai-advisory-review-sequence.yml`, this Policy, `docs/SKILL_WIRING.md`, `skills/governance/ai-advisory-review/SKILL.md`, `Masterplan/MASTERPLAN.md`, `Masterplan/NEXT_SLICES.md`, `Product_Law/WIRING.md`, and `AI_ASSISTANT_READ_ME.md`. Drift in the declared stage order, cohort membership, or 150-second inter-stage waits is a governance inconsistency and must fail validation rather than being silently normalized by one surface.
 
 ## Evidence discipline
 
