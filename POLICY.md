@@ -86,7 +86,7 @@ Current binding status as audited 2026-09-17:
 
 The cost classification is an OpenRouter model-route audit on 2026-09-17. The `:free` suffix denotes the explicit free model route. Provider identity and billing class are separate, and the configured reviewer routes are now deliberately deterministic free variants rather than the previously audited paid routes.
 
-Free model routes are also not automatically privacy-neutral. The currently listed free routes can carry provider-specific logging or training terms. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
+Free model routes can also carry provider-specific logging or training terms. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
 
 Manual `/nemotron`, `/openai`, `/poolside`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
 
