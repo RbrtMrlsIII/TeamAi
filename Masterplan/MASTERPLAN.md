@@ -31,9 +31,9 @@
 - [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
 - [x] Model reviewer workflows are execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
-- [x] Automatic model review is quota-protected to one automatic invocation per configured reviewer per PR; later-head re-review remains explicit.
-- [x] Additional reviewer aliases are registered: `qwen` → `OPENROUTER_API_KEY_GWEN`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`.
-- [ ] Automatic advisory review sequence is runtime-verified as `Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen` on the first eligible non-draft PR lifecycle event.
+- [x] Automatic model review is quota-protected to one automatic invocation sequence per PR; later-head re-review remains explicit.
+- [x] Additional reviewer aliases are registered: `qwen` → `OPENROUTER_API_KEY_GWEN`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, `openai` → `OPENROUTER_API_KEY_OPENAI`, and `poolside` → `OPENROUTER_API_KEY_POOLSIDE`.
+- [ ] Automatic advisory review sequence is runtime-verified as `Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen` on the first eligible non-draft PR lifecycle event.
 
 ## Workspace and delivery
 
@@ -107,5 +107,5 @@
 - [x] Current session/masterplan/current-slice records are synchronized with the post-#361 merged baseline and canonical live-site validation target.
 - [x] Shared AI Advisory Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
 - [x] Nemotron Copilot Review procedure remains registered and constrained to advisory/promotion-gated use.
-- [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per reviewer.
+- [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per sequence.
 - [ ] Historical records remain immutable and out of active routing.
