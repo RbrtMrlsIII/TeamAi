@@ -48,30 +48,36 @@ The reusable advisory-review runner is downstream of the substantive validator s
 
 ### Automatic reviewer sequence
 
-The automatic review lifecycle is one ordered dependency chain, not a matrix:
+The automatic review lifecycle is one ordered three-stage cohort sequence, not a matrix:
 
-`Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen`
+`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 
-The sequence is entered only from the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not invoke models automatically. `synchronize` never restarts the chain. A durable sequence-claim comment is recorded before the first model call, and any head change causes the next exact-head runner to fail closed so no later stage reviews stale code.
+There is no automatic interval before Nemotron. Nemotron is the frontline reviewer and starts only after the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the substantive exact-head validation gate.
 
-The declared interval is an orchestration contract shared by the sequence workflow, `POLICY.md`, this routing map, and the `skills/governance/ai-advisory-review/SKILL.md`; these surfaces must remain synchronized.
+After Nemotron reaches a terminal non-cancelled result, a 150-second barrier precedes the second-stage pair. OpenAI and Poolside then execute concurrently against the same original triggering head. After both second-stage reviewers reach terminal non-cancelled results, a second 150-second barrier precedes the third-stage pair. DeepSeek and Qwen then execute concurrently against the same original triggering head.
+
+A reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, stage reordering, or early launch. The inter-stage barrier is time-and-head controlled. A PR-head change during a barrier fails closed and prevents later automatic stages from reviewing stale code.
+
+The sequence is entered only from the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not invoke models automatically. `synchronize` never restarts the chain. A durable sequence-claim comment is recorded before Nemotron starts.
 
 ### Manual reviewer routing
 
 Later-head analysis remains deliberate:
 
 - `/nemotron` → `nemotron-copilot-review.yml`
-- `/deepseek` or `/qwen` → `additional-ai-advisory-reviews.yml`
+- `/openai`, `/poolside`, `/deepseek`, or `/qwen` → `additional-ai-advisory-reviews.yml`
 
 Authorized workflow dispatch provides the same reviewer-specific control. Manual review is not a second automatic allowance.
 
 ### Reviewer configuration
 
-| Reviewer | Secret | Model |
-|---|---|---|
-| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` |
+| Reviewer | Secret | OpenRouter model | Automatic stage |
+|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
 
 `GWEN` is retained as the supplied secret alias for Qwen. It is not a separate provider/model identity.
 
