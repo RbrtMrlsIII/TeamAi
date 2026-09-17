@@ -53,6 +53,8 @@ test('WebGL preview uses the shared stateful animation engine for expansion and 
   assert.match(source, /opening/);
   assert.match(source, /closing/);
   assert.match(source, /reduced-motion/);
+  assert.match(source, /frame\.state/);
+  assert.match(source, /frame\.amount/);
   assert.match(source, /sourceAmount:0,targetAmount:amount/);
   assert.doesNotMatch(source, /expanded=!expanded/);
   assert.doesNotMatch(source, /expanded\?\{\.\.\.edge/);
