@@ -38,7 +38,7 @@ Governance Skills are procedures only. They cannot authorize an action outside P
 
 Draft PRs continue substantive validation. Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime evidence remain active against the exact PR head. `review-readiness` may be skipped on Draft by lifecycle design.
 
-Ready-for-review PRs retain current exact-head substantive evidence and additionally enter `review-readiness`, which evaluates review/authorization conditions. Merge candidates require current passing required checks and normal review/merge authorization.
+Ready-for-review PRs retain current exact-head substantive evidence and additionally enter `review-readiness`, which evaluates review/authorization conditions. While an independent human approval for the exact current head is absent, `review-readiness` remains pending rather than failing. Merge candidates require current passing required checks and normal review/merge authorization.
 
 A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
 
@@ -76,12 +76,12 @@ Authorized workflow dispatch provides the same reviewer-specific control. Manual
 | Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
 |---|---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | **Paid** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | **Paid** | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | **Paid** | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | **Paid** | 3 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | **Free** | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
 
-This cost classification was externally audited on 2026-09-17. `:free` routes are a distinct model route, not a billing property of the provider name. Known free alternatives include `poolside/laguna-s-2.1:free` and `deepseek/deepseek-v4-flash:free`, but model substitution is a governed validation change and is not implicit. No free route is assumed for `qwen/qwen3.8-max-0902`, and `openai/gpt-5.6-sol` is paid.
+This cost classification was externally audited on 2026-09-17. These explicit `:free` routes are distinct model routes, and the configured reviewer identities remain deterministic. The routes were selected to keep the governed reviewer path within the zero-credit constraint without using the nondeterministic `openrouter/free` router.
 
 Free model routes can also have provider-specific data-use terms, so “free” does not automatically mean suitable for confidential repository review packets.
 
