@@ -24,6 +24,7 @@ Maintain canonical repository/session truth after the merged governance and deli
 - `docs/SKILL_WIRING.md`
 - `skills/governance/repository-synchronization/SKILL.md`
 - `skills/governance/machine-builder/SKILL.md`
+- `skills/governance/nemotron-copilot-review/SKILL.md`
 - Issue #133
 - Issue #278
 - Issue #347
@@ -36,9 +37,11 @@ Maintain canonical repository/session truth after the merged governance and deli
 - validation lifecycle checks for Draft and Ready states
 - exact-head project, security, and browser verification for substantive changes
 - migration invariant tests and full project verification
+- model-assisted review may provide advisory findings, but never substitutes for required repository gates
 
 ## Current blocker
 
 Complete the post-merge control-plane reconciliation without reintroducing retired authorities or treating skipped downstream validation as proof. TEAM-EXPERIENCE-029 remains incomplete at C8/C9/C10, and the merged #353 machine candidate still requires the remaining product acceptance gates before any production Hero replacement decision.
 
 <!-- #352 validation-lifecycle synchronization: substantive Draft validation remains active; review-readiness is promotion-stage; skipped downstream jobs are not proof of pass. -->
+<!-- #357 Nemotron copilot review: advisory model review is a verification aid, not an authority or merge substitute. -->
