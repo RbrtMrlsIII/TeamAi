@@ -60,29 +60,35 @@ Model-assisted advisory review is treated as a scarce verification resource. The
 
 There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer. It starts only when the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the required substantive exact-head validation gate.
 
-After Nemotron reaches a terminal non-cancelled execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. OpenAI and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head.
+After Nemotron reaches a `success` or `failure` execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. A `skipped` or `cancelled` Nemotron job does **not** open the barrier and must not start stage 2. OpenAI and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head.
 
-After both second-stage reviewers reach terminal non-cancelled execution results, the sequence waits another 150 seconds before starting the third-stage pair. DeepSeek and Qwen are peer reviewers in that stage and execute concurrently against the same original triggering head.
+After both second-stage reviewers reach a `success` or `failure` execution result, the sequence waits another 150 seconds before starting the third-stage pair. A `skipped` or `cancelled` OpenAI or Poolside job does **not** open the barrier and must not start stage 3. DeepSeek and Qwen are peer reviewers in that stage and execute concurrently against the same original triggering head.
 
-The inter-stage waits are **cohort barriers**, not reviewer timers. A provider failure is execution evidence and does not cause another provider to substitute for it, reorder the stages, or launch early. The sequence may proceed to the next cohort after a non-cancelled provider failure, but only while exact-head freshness remains intact. A PR-head change during a wait or between stages fails closed and prevents later automatic stages from reviewing stale code.
+The inter-stage waits are **cohort barriers**, not reviewer timers. A provider failure is execution evidence and does not cause another provider to substitute for it, reorder the stages, or launch early. The sequence may proceed to the next cohort after an allowed provider failure, but only while the completed reviewer job result is `success` or `failure` and exact-head freshness remains intact. A PR-head change during a wait or between stages fails closed and prevents later automatic stages from reviewing stale code.
 
 The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event **after the required substantive validation set has completed successfully on that exact PR head**. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. The automatic sequence gate polls the required validator check-runs while they are pending and fails closed on missing, failed, timed-out, stale, or head-mismatched evidence. A durable sequence-claim marker is recorded only after that validation gate passes and before Nemotron starts.
 
 Each reviewer has its own provider secret and model identity. Missing reviewer secrets fail the affected stage closed and never fall through to another reviewer secret.
 
+### Reviewer billing boundary
+
+The automatic review path must not be treated as cost-free merely because the reviewer name identifies a provider. Pricing is determined by the configured OpenRouter model route. With a zero-credit OpenRouter account, paid model bindings must not be invoked. Free variants are rate-limited and remain separately subject to their provider data-use terms.
+
+Current binding status as audited 2026-09-17:
+
+| Reviewer | Secret alias | Current OpenRouter model | Cost class | Stage |
+|---|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | **Paid** | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | **Paid** | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | **Paid** | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | **Paid** | 3 |
+
+Known free alternatives exist for Poolside as `poolside/laguna-s-2.1:free` and for DeepSeek as `deepseek/deepseek-v4-flash:free`, but changing the configured model identity is a validation-change decision and must not be performed silently. No exact free variant is assumed for the configured Qwen slug, and GPT-5.6 Sol is not a free OpenRouter model.
+
+Free model routes are also not automatically privacy-neutral. The currently listed free Nemotron route explicitly warns that free-endpoint usage is logged and should not contain confidential information or personal data; the Poolside free route states that inputs and outputs may be used to train and improve its models. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
+
 Manual `/nemotron`, `/openai`, `/poolside`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
-
-Current reviewer bindings are:
-
-| Reviewer | Secret alias | OpenRouter model | Stage |
-|---|---|---|---:|
-| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
-
-The supplied `GWEN` secret name is retained as an owner-provided alias for the Qwen configuration. It is not a separate provider identity.
 
 ## Validation-stage model
 
