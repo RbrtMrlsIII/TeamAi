@@ -53,7 +53,7 @@ A reviewer/provider failure is recorded as execution evidence and does not autho
 
 The current configured reviewer aliases are `nemotron` → `OPENROUTER_API_KEY`, `free-router` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, and `qwen` → `OPENROUTER_API_KEY_GWEN`. These aliases and provider bindings are verification/runtime configuration, not new Product Law identities.
 
-`review-readiness` is the separate human promotion/authorization gate. On a non-draft PR with current exact-head substantive evidence, absence of an independent non-author human approval is a **pending** state, not a failure. A passing readiness state requires such approval on the exact current head and no prohibited auto-merge state.
+`review-readiness` is the separate human promotion/authorization gate. On a non-draft PR with current exact-head substantive evidence, absence of an independent non-author human approval is a **pending** state, not a failure. A passing readiness state requires such approval on the exact current head and no prohibited auto-merge state. Submitted or dismissed human review events may re-trigger this gate so late approval state is re-evaluated without changing authorization semantics.
 
 ## Reviewer runner repair boundary
 
