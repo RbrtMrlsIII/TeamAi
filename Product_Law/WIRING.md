@@ -55,4 +55,8 @@ The current configured reviewer aliases are `nemotron` → `OPENROUTER_API_KEY`,
 
 `review-readiness` is the separate human promotion/authorization gate. On a non-draft PR with current exact-head substantive evidence, absence of an independent non-author human approval is a **pending** state, not a failure. A passing readiness state requires such approval on the exact current head and no prohibited auto-merge state.
 
+## Reviewer runner repair boundary
+
+Implementation repairs to the reusable advisory-review runner belong to Verification & CI/Browser and do not create new Product Law authority. Runtime proof must distinguish configured routing from actual provider invocation. The fresh #370 vehicle demonstrated that exact-head gating and stale-head containment were live, while also exposing a parser defect before provider transport. The isolated #371 repair therefore remains a verification/runtime concern until a fresh governed execution proves the repaired provider path.
+
 <!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->
