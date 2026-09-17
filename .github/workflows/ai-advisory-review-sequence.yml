@@ -20,10 +20,10 @@ env:
   VALIDATION_TIMEOUT_SECONDS: '1800'
   SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
   NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
-  DEEPSEEK_AUTO_MARKER: '<!-- teamai-deepseek-auto-review -->'
-  QWEN_AUTO_MARKER: '<!-- teamai-qwen-auto-review -->'
   OPENAI_AUTO_MARKER: '<!-- teamai-openai-auto-review -->'
   POOLSIDE_AUTO_MARKER: '<!-- teamai-poolside-auto-review -->'
+  DEEPSEEK_AUTO_MARKER: '<!-- teamai-deepseek-auto-review -->'
+  QWEN_AUTO_MARKER: '<!-- teamai-qwen-auto-review -->'
 
 jobs:
   eligibility:
@@ -43,16 +43,16 @@ jobs:
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
           MARKER: ${{ env.SEQUENCE_MARKER }}
-          LEGACY_NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
-          DEEPSEEK_MARKER: ${{ env.DEEPSEEK_AUTO_MARKER }}
-          QWEN_MARKER: ${{ env.QWEN_AUTO_MARKER }}
+          NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
           OPENAI_MARKER: ${{ env.OPENAI_AUTO_MARKER }}
           POOLSIDE_MARKER: ${{ env.POOLSIDE_AUTO_MARKER }}
+          DEEPSEEK_MARKER: ${{ env.DEEPSEEK_AUTO_MARKER }}
+          QWEN_MARKER: ${{ env.QWEN_AUTO_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          for marker in "$MARKER" "$LEGACY_NEMOTRON_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER" "$OPENAI_MARKER" "$POOLSIDE_MARKER"; do
+          for marker in "$MARKER" "$NEMOTRON_MARKER" "$OPENAI_MARKER" "$POOLSIDE_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
             if jq -e --arg marker "$marker" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
               echo 'should_run=false' >> "$GITHUB_OUTPUT"
               echo "Automatic AI review sequence already claimed or partially completed for PR #$PR."
@@ -97,14 +97,12 @@ jobs:
             draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
             if [[ "$current_head" != "$HEAD" ]]; then
               echo "PR head changed during validation gate: expected $HEAD, found $current_head."
-              echo "Failing closed; the synchronized head must establish a new deliberate review point."
               exit 1
             fi
             if [[ "$draft_state" != "false" ]]; then
               echo "PR is no longer non-draft during validation gate; automatic reviewer sequence will not start."
               exit 1
             fi
-
             checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100")"
             pending=0
             failed=0
@@ -125,7 +123,6 @@ jobs:
                 failed=$((failed + 1))
               fi
             done
-
             if (( failed > 0 )); then
               echo "Required substantive validation failed. Automatic reviewer sequence will not start."
               exit 1
@@ -138,7 +135,6 @@ jobs:
               echo "Timed out waiting for required substantive validators on exact head $HEAD."
               exit 1
             fi
-            echo "Validation still running or incomplete; polling again in ${POLL_SECONDS}s."
             sleep "$POLL_SECONDS"
           done
 
@@ -175,7 +171,7 @@ jobs:
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → DeepSeek + Qwen → 2 minutes 30 seconds → OpenAI + Poolside')"
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -198,52 +194,13 @@ jobs:
 
   delay_to_second_stage:
     needs: nemotron
-    if: needs.nemotron.result == 'success'
+    if: always() && needs.nemotron.result != 'cancelled'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - name: Wait 2 minutes 30 seconds after Nemotron completes
-        run: sleep "${REVIEW_INTERVAL_SECONDS}"
-
-  deepseek:
-    needs: delay_to_second_stage
-    if: needs.delay_to_second_stage.result == 'success'
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: DeepSeek
-      reviewer_slug: deepseek
-      model: deepseek/deepseek-v4.1-flash
-      pr_number: ${{ github.event.pull_request.number }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      invocation_class: automatic
-      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
-      manual_marker: '<!-- teamai-deepseek-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
-
-  qwen:
-    needs: delay_to_second_stage
-    if: needs.delay_to_second_stage.result == 'success'
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Qwen
-      reviewer_slug: qwen
-      model: qwen/qwen3.8-max-0902
-      pr_number: ${{ github.event.pull_request.number }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      invocation_class: automatic
-      automatic_marker: '<!-- teamai-qwen-auto-review -->'
-      manual_marker: '<!-- teamai-qwen-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
-
-  second_stage_barrier:
-    needs: [deepseek, qwen]
-    if: needs.deepseek.result == 'success' && needs.qwen.result == 'success'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Confirm the first reviewer pair completed before the final interval
+      - name: Wait 2 minutes 30 seconds after Nemotron turn
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -252,23 +209,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          sleep "$REVIEW_INTERVAL_SECONDS"
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
-            echo "Exact-head guard failed after DeepSeek/Qwen: expected $HEAD, found $current_head."
+            echo "PR head changed during stage-1 interval: expected $HEAD, found $current_head."
             exit 1
           }
 
-  delay_to_third_stage:
-    needs: second_stage_barrier
-    if: needs.second_stage_barrier.result == 'success'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait 2 minutes 30 seconds after the first reviewer pair completes
-        run: sleep "${REVIEW_INTERVAL_SECONDS}"
-
   openai:
-    needs: delay_to_third_stage
-    if: needs.delay_to_third_stage.result == 'success'
+    needs: delay_to_second_stage
+    if: needs.delay_to_second_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: OpenAI
@@ -284,8 +234,8 @@ jobs:
       api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
 
   poolside:
-    needs: delay_to_third_stage
-    if: needs.delay_to_third_stage.result == 'success'
+    needs: delay_to_second_stage
+    if: needs.delay_to_second_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: Poolside
@@ -299,3 +249,66 @@ jobs:
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
+
+  delay_to_third_stage:
+    needs: [openai, poolside]
+    if: always() && needs.openai.result != 'cancelled' && needs.poolside.result != 'cancelled'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Wait 2 minutes 30 seconds after OpenAI and Poolside turn
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed before stage-3 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          sleep "$REVIEW_INTERVAL_SECONDS"
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed during stage-2 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+
+  deepseek:
+    needs: delay_to_third_stage
+    if: needs.delay_to_third_stage.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: DeepSeek
+      reviewer_slug: deepseek
+      model: deepseek/deepseek-v4.1-flash
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
+      manual_marker: '<!-- teamai-deepseek-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
+
+  qwen:
+    needs: delay_to_third_stage
+    if: needs.delay_to_third_stage.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Qwen
+      reviewer_slug: qwen
+      model: qwen/qwen3.8-max-0902
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-qwen-auto-review -->'
+      manual_marker: '<!-- teamai-qwen-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
