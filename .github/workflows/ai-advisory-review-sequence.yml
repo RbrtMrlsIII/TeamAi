@@ -22,8 +22,8 @@ env:
   NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
   LING_AUTO_MARKER: '<!-- teamai-ling-auto-review -->'
   POOLSIDE_AUTO_MARKER: '<!-- teamai-poolside-auto-review -->'
-  DOTS3_PRIMARY_AUTO_MARKER: '<!-- teamai-dots3-primary-auto-review -->'
-  DOTS3_SECONDARY_AUTO_MARKER: '<!-- teamai-dots3-secondary-auto-review -->'
+  LAGUNA_AUTO_MARKER: '<!-- teamai-laguna-auto-review -->'
+  DOTS3_AUTO_MARKER: '<!-- teamai-dots3-auto-review -->'
 
 jobs:
   eligibility:
@@ -46,13 +46,13 @@ jobs:
           NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
           LING_MARKER: ${{ env.LING_AUTO_MARKER }}
           POOLSIDE_MARKER: ${{ env.POOLSIDE_AUTO_MARKER }}
-          DOTS3_PRIMARY_MARKER: ${{ env.DOTS3_PRIMARY_AUTO_MARKER }}
-          DOTS3_SECONDARY_MARKER: ${{ env.DOTS3_SECONDARY_AUTO_MARKER }}
+          LAGUNA_MARKER: ${{ env.LAGUNA_AUTO_MARKER }}
+          DOTS3_MARKER: ${{ env.DOTS3_AUTO_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          for marker in "$MARKER" "$NEMOTRON_MARKER" "$LING_MARKER" "$POOLSIDE_MARKER" "$DOTS3_PRIMARY_MARKER" "$DOTS3_SECONDARY_MARKER"; do
+          for marker in "$MARKER" "$NEMOTRON_MARKER" "$LING_MARKER" "$POOLSIDE_MARKER" "$LAGUNA_MARKER" "$DOTS3_MARKER"; do
             if jq -e --arg marker "$marker" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
               echo 'should_run=false' >> "$GITHUB_OUTPUT"
               echo "Automatic AI review sequence already claimed or partially completed for PR #$PR."
@@ -171,7 +171,7 @@ jobs:
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)')"
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -180,9 +180,9 @@ jobs:
     if: needs.claim.outputs.claimed == 'true'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Nemotron
+      reviewer: Nemotron Ultra
       reviewer_slug: nemotron
-      model: nvidia/nemotron-3.5-lightning:free
+      model: nvidia/nemotron-3-ultra-550b-a55b:free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
@@ -324,36 +324,36 @@ jobs:
             exit 1
           }
 
-  dots3_primary:
+  laguna:
     needs: delay_to_third_stage
     if: always() && needs.delay_to_third_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Dots3-Note Preview (primary)
-      reviewer_slug: dots3-primary
-      model: dots-studio/dots-3-note-preview:free
+      reviewer: Laguna
+      reviewer_slug: laguna
+      model: poolside/laguna-s-2.1:free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
-      automatic_marker: '<!-- teamai-dots3-primary-auto-review -->'
-      manual_marker: '<!-- teamai-dots3-primary-review -->'
+      automatic_marker: '<!-- teamai-laguna-auto-review -->'
+      manual_marker: '<!-- teamai-laguna-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
 
-  dots3_secondary:
+  dots3:
     needs: delay_to_third_stage
     if: always() && needs.delay_to_third_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Dots3-Note Preview (secondary)
-      reviewer_slug: dots3-secondary
+      reviewer: Dots3-Note Preview
+      reviewer_slug: dots3
       model: dots-studio/dots-3-note-preview:free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
-      automatic_marker: '<!-- teamai-dots3-secondary-auto-review -->'
-      manual_marker: '<!-- teamai-dots3-secondary-review -->'
+      automatic_marker: '<!-- teamai-dots3-auto-review -->'
+      manual_marker: '<!-- teamai-dots3-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
