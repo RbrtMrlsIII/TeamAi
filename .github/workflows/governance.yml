@@ -139,8 +139,10 @@ jobs:
 
       - name: Prove draft PR target against full PR delta
         env:
+          GH_TOKEN: ${{ github.token }}
           BASE_SHA: ${{ steps.proof-context.outputs.base_sha }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 build-system/scripts/repository-canonical-governance-audit.py
 
