@@ -100,7 +100,7 @@ Never weaken validation merely to make CI green.
 
 ## Model-assisted review
 
-`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint, with the explicit order **Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen**. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` remains the deliberate manual Qwen/DeepSeek entrypoint. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
+`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint, with the explicit order **Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen**. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` remains the deliberate manual Qwen/DeepSeek entrypoint. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
 
 Automatic review begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not consume automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim comment is written before the first model call. Every stage receives the original triggering head SHA and fails closed if the PR head changes before that stage. The sequence therefore never lets a later reviewer silently analyze a newer or stale revision.
 
@@ -112,7 +112,21 @@ Each reviewer has an independent secret/model binding:
 | DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 2 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
 
-`GWEN` is retained exactly as the owner-supplied secret name and is treated as an alias for Qwen. There is no separate Product Law identity named Gwen. OpenRouter currently exposes the Qwen3.8 Max (0902) and DeepSeek V4.1 Flash model families. citeturn264406search0turn264406search1
+`GWEN` is retained exactly as the owner-supplied secret name and is treated as an alias for Qwen. There is no separate Product Law identity named Gwen. OpenRouter currently exposes the Qwen3.8 Max (0902) and DeepSeek V4.1 Flash model families.
+
+### Observed automatic sequence run #2
+
+Exact PR head: `4477854a425453c2754a50bad941f81113ee5655`.
+
+- `eligibility` passed.
+- `validation_gate` passed with all seven required substantive exact-head validators successful.
+- `claim` passed and recorded the durable automatic-sequence marker.
+- Nemotron completed and posted an advisory review. Its verdict was `APPROVE`, but its review text contained a stale 5-minute interval description and is not treated as authority.
+- The first 2-minute-30-second delay completed.
+- DeepSeek completed and posted `CHANGES_REQUESTED`, identifying the real canonical-surface interval contradiction.
+- The second 2-minute-30-second delay completed.
+- Qwen reached the model-call stage but failed after three attempts; no advisory comment was posted. The prior runner did not expose the sanitized provider error response, so the exact HTTP/provider cause remains unverified and is being corrected without weakening fail-closed behavior.
+- Human collaborator review independently requested changes for the same interval contradiction and Qwen failure.
 
 Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret. Manual reviewer commands remain deliberate later-head paths and are separate from the automatic sequence allowance.
 
