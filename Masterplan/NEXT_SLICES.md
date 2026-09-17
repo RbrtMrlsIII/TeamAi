@@ -8,7 +8,7 @@ TEAM-EXPERIENCE-029 — runtime proof of semantic topology, adaptive geometry, a
 
 ## Status
 
-IN PROGRESS — #346, #348, #351, #352, #353, #361, and #368 are merged; #353 remains a non-production candidate; #367 is a separate governance prerequisite for late review-approval re-evaluation; #370 established live fail-closed sequence containment but exposed a reusable-runner parser fault before provider transport; #371 is the isolated runner repair and canonical synchronization slice, with fresh provider runtime proof still pending.
+IN PROGRESS — #346, #348, #351, #352, #353, #361, and #368 are merged; #353 remains a non-production candidate; the current main governance control plane re-evaluates late review-approval state on submitted/dismissed review events; #370 established live fail-closed sequence containment but exposed a reusable-runner parser fault before provider transport; #371 is the isolated runner repair and canonical synchronization slice, with fresh provider runtime proof still pending.
 
 ## Objective
 
@@ -33,7 +33,7 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - Issue #369 runtime-proof execution ledger
 - PR #353 merged machine candidate baseline
 - PR #361 merged semantic topology/adaptive clearance baseline
-- PR #367 governance lifecycle correction for late review approval re-evaluation
+- Current main governance lifecycle correction for late review approval re-evaluation
 - PR #368 ordered advisory reviewer orchestration and quota control
 - PR #370 diagnostic fresh runtime-proof vehicle
 - PR #371 reusable reviewer provider-invocation repair
