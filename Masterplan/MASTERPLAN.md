@@ -24,6 +24,7 @@
 - [x] #346 governance foundation was merged through the normal GitHub path.
 - [x] #348 post-merge governance change was merged through the normal GitHub path.
 - [x] Canonical session/current-slice/masterplan records have been aligned with the merged #346/#348 state on the recovery branch.
+- [x] Model-assisted PR review is routed through a bounded governance Skill and remains advisory unless explicitly authorized for promotion.
 
 ## Workspace and delivery
 
@@ -90,4 +91,5 @@
 - [x] `AI_ASSISTANT_READ_ME.md` is the live session/recovery/handover/endorsement-decision surface.
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
 - [x] Current session/masterplan/current-slice records were synchronized for the merged #346/#348 state.
+- [x] Nemotron Copilot Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
 - [ ] Historical records remain immutable and out of active routing.
