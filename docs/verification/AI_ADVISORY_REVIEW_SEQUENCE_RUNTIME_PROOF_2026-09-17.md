@@ -48,3 +48,5 @@ Do not infer provider success from configuration text, a green non-review valida
 No product/runtime feature is being changed. No paid model route is intentionally invoked. No reviewer is manually replayed on PR #368. No validator is weakened. No automatic sequence restart is permitted on later `synchronize` events.
 
 **Validation vehicle correction:** the PR body uses the repository's literal `### Draft proof target` contract and explicitly states the governance/canonical migration being proven before eligibility.
+
+**Runtime containment note:** this proof head is intentionally invalidated if the PR head changes during a sequence barrier, preventing later reviewer stages from running against stale proof evidence.
