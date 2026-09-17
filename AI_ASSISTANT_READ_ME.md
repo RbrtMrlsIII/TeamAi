@@ -4,7 +4,7 @@
 
 ## Session anchor
 
-- Last given prompt: **resolve the controlled advisory reviewer lifecycle after adding OpenAI and Poolside**
+- Last given prompt: **review the next runtime-proof execution slice deeply before execution; do not repeat surface-level mistakes**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
@@ -12,9 +12,12 @@
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Semantic topology/adaptive clearance: **#361 merged** into `main` as `6c8f650bf978e47650246af67291a26fe83c4934`
 - Active 029 ledger: **#278**
+- Runtime-proof execution ledger: **#369**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current `main` baseline: **`c4bb03d0feeafd919c582657741751f12a40a6a6`**, post-#361 reconciliation
-- Active governance implementation PR: **#368** on `governance/nemotron-review-budget`, currently non-draft and unmerged
+- Current `main` baseline: **`f35f31221b232076506ad9f67f8f23f5c9c77725`**, post-#368 merge
+- Ordered advisory reviewer orchestration: **#368 merged** into `main`
+- Fresh runtime-proof vehicle: **#370** recorded live sequence-claim/head-guard evidence, then exposed a reusable-runner parser fault before provider transport; its later stages were blocked by the exact-head barrier after the proof head changed
+- Current runner repair: **#371 open** on `governance/repair-advisory-review-runner-shell-quoting-20260917`
 
 ## Canonical authority path
 
@@ -44,9 +47,10 @@
 - #361 is merged; it generalizes semantic machine connection topology and payload-adaptive clearance validation while preserving the bounded presentation/evidence boundary.
 - #362 is closed/superseded because its implementation branch violated the current responsibility-prefix rule and its base was stale; its late-approval diagnosis and intended fix are carried forward by #367.
 - #367 is the active governance repair for `review-readiness` lifecycle re-evaluation on submitted/dismissed human reviews. It does not change what counts as human authorization.
-- Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
-- Issue #133 remains the governing lifecycle contract for draft-first, review, and promotion discipline.
-- #368 is the active governance slice for staged model-assisted PR review and remains unmerged.
+- #368 is merged; it carries the explicit 1→2→2 automatic advisory reviewer sequence, skip/cancel-safe cohort barriers, deterministic free model routes, exact-head guards, and durable one-sequence claim.
+- #369 is the execution ledger for the remaining #368 runtime-proof boundary.
+- #370 is the first fresh post-#368 proof vehicle. Its exact-head validation gate and durable sequence claim passed. Nemotron reached the runner and exposed a Bash parser fault before provider transport. The stage-1 barrier later detected a deliberate proof-head invalidation and prevented OpenAI, Poolside, DeepSeek, and Qwen from running. #370 remains diagnostic evidence, not runtime proof of provider execution.
+- #371 is the isolated reusable-runner repair. It replaces the brittle provider-call shell path while preserving sequence topology, exact-head guards, deterministic free routes, retry behavior, and the advisory posting contract. It must satisfy the repository canonical six-file synchronization rule and governed validation before merge.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -99,6 +103,10 @@ Then:
 
 Never weaken validation merely to make CI green.
 
+## Current validation-change record
+
+The #370 runtime execution did not justify weakening validation. Its provider stage exposed a reusable-runner parser defect before external transport. The replacement rule in #371 is implementation hardening only: preserve the exact-head validator gate, the durable one-sequence claim, the same explicit free model bindings, the same retry count, and the same advisory-output contract while moving provider transport into a less fragile standard-library HTTP path. Runtime provider proof remains a separate claim that can be made only from a fresh eligible execution after #371 is governed and merged.
+
 ## Model-assisted review
 
 `skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint with the explicit stage sequence **Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen**. There is no automatic interval before Nemotron. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` provides deliberate manual routing for OpenAI, Poolside, DeepSeek, and Qwen. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
@@ -123,7 +131,7 @@ The reviewer routes are now explicit `:free` OpenRouter variants selected on 202
 
 The earlier run on exact head `4477854a425453c2754a50bad941f81113ee5655` is preserved as historical evidence. It executed the former reviewer order, passed the exact-head validation gate, completed Nemotron and DeepSeek, then failed during the Qwen model call. The old automatic sequence comment and Nemotron review also contained obsolete timing wording. They remain immutable evidence for that old head and are not current implementation instruction.
 
-The current #368 implementation has changed the authorized orchestration invariant to the 1→2→2 cohort sequence. Because the automatic sequence claim for #368 was already consumed on the historical head, its updated automatic sequence cannot be runtime-reverified by simply synchronizing #368. Runtime proof of the new sequence must use a fresh eligible verification PR/head or another explicitly governed test vehicle; manual reviewer commands remain available for current-head provider verification.
+The current #368 implementation changed the authorized orchestration invariant to the 1→2→2 cohort sequence. Because the automatic sequence claim for #368 was already consumed on the historical head, its updated automatic sequence cannot be runtime-reverified by simply synchronizing #368. #370 was therefore created as a fresh vehicle. Its execution proved the validation gate, durable claim, and stale-head barrier, but the provider invocation path failed before transport. #371 is the isolated repair; a new provider runtime-proof vehicle must be used only after that repair is governed and merged.
 
 Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret.
 
@@ -149,4 +157,4 @@ The next substantive 029 slice is **runtime proof of the generalized semantic to
 
 ### Current governance hardening note
 
-The required `Draft proof target` section remains part of PR #368's durable proof contract because the repository canonical governance audit validates that section on each eligible PR-head run.
+The required `Draft proof target` section remains part of the canonical proof contract. Governance PRs that touch the advisory-review control plane must also synchronize the six canonical records required by `repository-canonical-governance-audit.py`; this is a fail-closed documentation/governance contract, not a reason to weaken the audit.
