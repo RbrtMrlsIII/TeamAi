@@ -98,11 +98,18 @@ Never weaken validation merely to make CI green.
 
 ## Model-assisted review
 
-`skills/governance/nemotron-copilot-review/SKILL.md` and `.github/workflows/nemotron-copilot-review.yml` provide bounded model-assisted PR review through OpenRouter/Nemotron. The workflow checks out the exact PR head, waits for required exact-head Governance, Full-System, Security, and Browser/Runtime validators to complete successfully, collects their execution evidence plus current governing documents and owning Issue state, then invokes the model. Pending, failed, stale, or head-mismatched execution evidence blocks model invocation. The workflow posts advisory findings and keeps approval behind an explicit authorized workflow dispatch. The model is not a Product Law source, merge authority, or replacement for required CI, browser/runtime evidence, review-readiness, or human authorization.
+`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/nemotron-copilot-review.yml` retains the controlled OpenRouter/Nemotron reviewer, while `.github/workflows/additional-ai-advisory-reviews.yml` adds the configured Qwen and DeepSeek advisory reviewers. These workflows check out the exact PR head, wait for required exact-head Governance, Full-System, Security, and Browser/Runtime validators to complete successfully, collect their execution evidence plus current governing documents and owning Issue state, then invoke the configured model. Pending, failed, stale, or head-mismatched execution evidence blocks model invocation. Model output remains advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization.
 
-Automatic Nemotron review is intentionally limited to one automatic invocation per PR. Draft PRs do not consume the automatic allowance; an accidentally non-draft `opened` PR or a `ready_for_review` PR may consume it once. Later `synchronize` pushes do not automatically invoke the model. A later-head re-review must be deliberate through `/nemotron` or authorized workflow dispatch.
+Automatic review is deliberately quota-bounded per reviewer. Draft PRs do not consume automatic allowance. For each configured reviewer, an accidentally non-draft `opened` PR or a `ready_for_review` PR may consume one automatic invocation. Later `synchronize` pushes do not automatically invoke any reviewer. Later-head re-review is deliberate through reviewer-specific commands (`/qwen` or `/deepseek` for the additional reviewers, `/nemotron` for Nemotron) or authorized workflow dispatch.
 
-The configured model is `nvidia/nemotron-3-ultra-550b-a55b:free`. This is operational configuration and may change independently of Product Law.
+Additional reviewer configuration currently is:
+
+| Reviewer | Secret alias | OpenRouter model |
+|---|---|---|
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` |
+
+`GWEN` is retained exactly as the owner-supplied secret name and is treated as an alias for the Qwen provider/model configuration. There is no separate Product Law identity named Gwen. The OpenRouter model configuration is operational and can change independently of Product Law.
 
 ## Handover
 
