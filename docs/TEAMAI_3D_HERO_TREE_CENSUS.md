@@ -382,6 +382,10 @@ The edge, geometry, and adjacency seam are presentation-only and do not grant au
 
 This section records current structural evidence only. `Masterplan/MASTERPLAN.md` and Issue #278 remain the execution authorities. This census is not a second Masterplan.
 
+### Seat-1 topology validation boundary
+
+The bounded Seat-1 connection path now has **TEST_LEVEL_CURRENT_HEAD** topology validation for semantic identity, source/target ports, route endpoints, finite route points, and AABB clearance. Missing or malformed topology fails closed. This validates the bounded reference edge only and does not upgrade `SEAT_CONNECTION` beyond **IMPLEMENTED_PARTIAL** or establish complete inter-division topology/final electrical choreography.
+
 ### Seat-1 adjacent expansion envelope
 
 The adjacent-division expansion envelope is now a bounded implementation baseline. It derives source and target expansion bounds from their semantic geometry descriptors and preserves the Seat-1 connection corridor as shared space. During focus transition, the source division must compact fully while the target division remains closed; only after the source reaches zero may the target begin expanding. The transition timing is explicitly not final animation law, and the complete inter-division topology and final turn-loop choreography remain open.
