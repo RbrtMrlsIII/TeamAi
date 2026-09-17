@@ -85,11 +85,26 @@ def pr_base_head(payload: dict) -> tuple[str | None, str | None]:
 
 
 def proof_target(payload: dict) -> str:
-    body = ((payload.get("pull_request") or {}).get("body") or "").strip()
+    pr = payload.get("pull_request") or {}
+    body = ""
+    number = pr.get("number")
+    repository = os.getenv("GITHUB_REPOSITORY")
+    token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
+    if number and repository and token:
+        try:
+            body = run(
+                "gh",
+                "api",
+                f"repos/{repository}/pulls/{number}",
+                "--jq",
+                ".body",
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            body = ""
+    if not body:
+        body = (pr.get("body") or "").strip()
     match = re.search(r"^###{1,2}\s+Draft proof target\s*$([\s\S]*?)(?=^###{1,2}\s|\Z)", body, re.MULTILINE)
     return match.group(1).strip() if match else ""
-
-
 def changed_paths(base: str | None, head: str | None) -> set[str]:
     if not base or not head:
         fail("PR base/head SHAs are required; governance cannot infer PR scope from a last commit")
