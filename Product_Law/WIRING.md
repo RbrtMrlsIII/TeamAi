@@ -45,13 +45,13 @@ Model-assisted review is part of Verification & CI/Browser only. A model review 
 
 The controlled advisory reviewer procedure permits one automatic review sequence per pull request across the configured reviewer roster. The sequence begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event after substantive exact-head validators pass. The sequence is staged as:
 
-`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
+`Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 
-There is no automatic interval before Nemotron. OpenAI and Poolside are peers in the second stage and execute concurrently. DeepSeek and Qwen are peers in the third stage and execute concurrently. `synchronize` never restarts the automatic sequence. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch.
+There is no automatic interval before Nemotron. OpenRouter Free Router and Poolside are peers in the second stage and execute concurrently. DeepSeek and Qwen are peers in the third stage and execute concurrently. `synchronize` never restarts the automatic sequence. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch.
 
 A reviewer/provider failure is recorded as execution evidence and does not authorize secret substitution, stage reordering, or a retry through another provider. A PR-head change fails the current stage and prevents the sequence from proceeding with stale code.
 
-The current configured reviewer aliases are `nemotron` → `OPENROUTER_API_KEY`, `openai` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, and `qwen` → `OPENROUTER_API_KEY_GWEN`. These aliases and provider bindings are verification/runtime configuration, not new Product Law identities.
+The current configured reviewer aliases are `nemotron` → `OPENROUTER_API_KEY`, `free-router` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, and `qwen` → `OPENROUTER_API_KEY_GWEN`. These aliases and provider bindings are verification/runtime configuration, not new Product Law identities.
 
 `review-readiness` is the separate human promotion/authorization gate. On a non-draft PR with current exact-head substantive evidence, absence of an independent non-author human approval is a **pending** state, not a failure. A passing readiness state requires such approval on the exact current head and no prohibited auto-merge state.
 

@@ -10,7 +10,7 @@ on:
         required: true
         type: choice
         options:
-          - openai
+          - free-router
           - poolside
           - deepseek
           - qwen
@@ -26,23 +26,23 @@ permissions:
   actions: read
 
 jobs:
-  openai:
+  free_router:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'openai') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'free-router') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/openai'))
+       startsWith(github.event.comment.body, '/free-router'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: OpenAI
-      reviewer_slug: openai
-      model: openai/gpt-oss-120b:free
+      reviewer: OpenRouter Free Router
+      reviewer_slug: free-router
+      model: openrouter/free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-openai-auto-review -->'
-      manual_marker: '<!-- teamai-openai-review -->'
+      automatic_marker: '<!-- teamai-free-router-auto-review -->'
+      manual_marker: '<!-- teamai-free-router-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}

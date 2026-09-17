@@ -64,24 +64,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected='Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen'
+          expected='Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
           grep -Fq "$expected" "$workflow"
           grep -Fq 'reviewer: Nemotron' "$workflow"
-          grep -Fq 'reviewer: OpenAI' "$workflow"
+          grep -Fq 'reviewer: OpenRouter Free Router' "$workflow"
           grep -Fq 'reviewer: Poolside' "$workflow"
           grep -Fq 'reviewer: DeepSeek' "$workflow"
           grep -Fq 'reviewer: Qwen' "$workflow"
           grep -Fq 'needs: delay_to_second_stage' "$workflow"
-          grep -Fq 'needs: [openai, poolside]' "$workflow"
+          grep -Fq 'needs: [free_router, poolside]' "$workflow"
           grep -Fq 'needs: delay_to_third_stage' "$workflow"
           grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"
-          grep -Fq "if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
+          grep -Fq "if: always() && (needs.free_router.result == 'success' || needs.free_router.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
           grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
-          grep -Fq 'model: openai/gpt-oss-120b:free' "$workflow"
+          grep -Fq 'model: openrouter/free' "$workflow"
           grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
           grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow"
           grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"
@@ -89,7 +89,7 @@ jobs:
             echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
             exit 1
           fi
-          if grep -Fq "needs.openai.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
+          if grep -Fq "needs.free_router.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
             echo "Skipped/cancelled fallthrough remains in the stage-3 barrier."
             exit 1
           fi
@@ -118,7 +118,7 @@ jobs:
               exit 1
             fi
           done
-          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free model routes."
+          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free routes, including the intentionally non-deterministic OpenRouter Free Router."
 
       - name: Prove draft PR target against full PR delta
         env:
