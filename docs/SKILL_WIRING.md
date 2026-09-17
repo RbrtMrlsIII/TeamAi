@@ -46,6 +46,8 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 
 The reusable advisory-review runner is downstream of the substantive validator set. For every invocation it polls the exact PR head and accepts only successful completion of the required exact-head check-runs before invoking the external model. The packet receives current governing-file context, the owning Issue state, exact-head execution evidence, and the complete bounded diff.
 
+A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by fresh exact-head execution after the repaired path is governed and merged; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
+
 ### Automatic reviewer sequence
 
 The automatic review lifecycle is one ordered three-stage cohort sequence, not a matrix:
@@ -127,4 +129,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md` registry.
 
-<!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; runtime proof remains the active 029 frontier. -->
+<!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; #370/#371 runner runtime-proof investigation is a bounded Verification & CI/Browser concern. -->
