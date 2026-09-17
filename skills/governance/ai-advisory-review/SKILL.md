@@ -74,7 +74,7 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 | DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
 
-The billing classification is an operational snapshot audited 2026-09-17. The `:free` suffix denotes a distinct free model route; provider names themselves do not imply free API access. These routes were selected explicitly to keep the governed reviewer path within the zero-credit constraint while retaining deterministic provider identity.
+The billing classification is an operational snapshot audited 2026-09-17. The `:free` suffix denotes the explicit free model route. Provider identity and billing class are separate, and the configured reviewer routes are deterministic free variants selected for the zero-credit constraint.
 
 Free routes can have provider-specific data-use terms, so cost status and repository-confidentiality suitability must be evaluated separately.
 
