@@ -68,6 +68,8 @@ Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`
 
 A downstream **skipped** job is never evidence that the underlying requirement passed. Recovery must inspect the controlling upstream job and the exact current head.
 
+A submitted or dismissed `pull_request_review` may re-trigger `review-readiness`, but that lifecycle event cannot make pending or failed exact-head substantive checks pass; the gate remains fail-closed until those checks are successful.
+
 ## Durable evidence / session continuity
 
 Chat is transient. A substantive slice is not considered durably recoverable until its owning PR/Issue contains the observed data, exact baseline/head, diagnosis, discrepancy, implementation result, verification state, residual uncertainty, and explicit execution disposition. The PR/Issue record is the durable investigation ledger; this file is the current session/recovery pointer.
