@@ -398,8 +398,8 @@ jobs:
             echo "$marker"
             echo "# $REVIEWER Advisory Review"
             echo
-            echo "Model: \`$MODEL\""
-            echo "Exact PR head: \`$HEAD\""
+            printf 'Model: `%s`\n' "$MODEL"
+            printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
             echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
             echo
