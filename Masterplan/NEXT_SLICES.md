@@ -37,7 +37,7 @@ Maintain canonical repository/session truth after the merged governance and deli
 - validation lifecycle checks for Draft and Ready states
 - exact-head project, security, and browser verification for substantive changes
 - migration invariant tests and full project verification
-- model-assisted review may provide advisory findings, but never substitutes for required repository gates
+- model-assisted review may provide advisory findings only after the required exact-head validator workflows complete successfully; pending or failed execution evidence must block model invocation
 
 ## Current blocker
 
@@ -45,3 +45,4 @@ Complete the post-merge control-plane reconciliation without reintroducing retir
 
 <!-- #352 validation-lifecycle synchronization: substantive Draft validation remains active; review-readiness is promotion-stage; skipped downstream jobs are not proof of pass. -->
 <!-- #357 Nemotron copilot review: advisory model review is a verification aid, not an authority or merge substitute. -->
+<!-- #361 execution-aware review: model invocation is downstream of required exact-head validator success and current Issue/governance context. -->
