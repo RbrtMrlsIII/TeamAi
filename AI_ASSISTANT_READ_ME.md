@@ -45,6 +45,7 @@
 - #362 is closed/superseded because its implementation branch violated the current responsibility-prefix rule and its base was stale; its late-approval diagnosis and intended fix are carried forward by #367.
 - #367 is the active governance repair for `review-readiness` lifecycle re-evaluation on submitted/dismissed human reviews. It does not change what counts as human authorization.
 - Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
+- Issue #133 remains the governing lifecycle contract for draft-first, review, and promotion discipline.
 - #368 is the active governance slice for ordered model-assisted PR review and remains Draft/unmerged.
 - Historical records remain provenance, not current instruction.
 
@@ -127,6 +128,8 @@ Exact PR head: `4477854a425453c2754a50bad941f81113ee5655`.
 - The second 2-minute-30-second delay completed.
 - Qwen reached the model-call stage but failed after three attempts; no advisory comment was posted. The prior runner did not expose the sanitized provider error response, so the exact HTTP/provider cause remains unverified and is being corrected without weakening fail-closed behavior.
 - Human collaborator review independently requested changes for the same interval contradiction and Qwen failure.
+
+The next deliberate Qwen verification must use a later exact head or explicit manual review path because the automatic sequence allowance is intentionally one sequence per PR.
 
 Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret. Manual reviewer commands remain deliberate later-head paths and are separate from the automatic sequence allowance.
 
