@@ -31,8 +31,12 @@
 
 Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checklist execution. `Masterplan/NEXT_SLICES.md` owns one current slice. Skills own reusable procedures. Issues own bounded workstream context. PRs own implementation/review boundaries. Verification proves claims. `AI_ASSISTANT_READ_ME.md` owns current session state, handover, endorsement decisions, and validation-change records. `PRODUCT-KNOWLEDGE.md` owns durable validated concepts. `docs/archive/` and `handover/` are historical storage only.
 
+## Live delivery reference
+
+The canonical public live-site validation target is `https://RbrtMrlsIII.github.io/TeamAi/`. This is a delivery/verification reference only and does not create product authority or change the hosting architecture contract.
+
 ## No parallel authority
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
-<!-- #349 post-#346 recovery synchronization: canonical authority remains Product_Law; session truth remains in the session/masterplan surfaces. -->
+<!-- #355 documentation reconciliation: canonical public live-site target is recorded as GitHub Pages only; exact testing guidance lives in AI_ASSISTANT_READ_ME.md. -->
