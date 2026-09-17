@@ -79,14 +79,14 @@ Current binding status as audited 2026-09-17:
 | Reviewer | Secret alias | Current OpenRouter model | Cost class | Stage |
 |---|---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | **Paid** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | **Paid** | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | **Paid** | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | **Paid** | 3 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | **Free** | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
 
-Known free alternatives exist for Poolside as `poolside/laguna-s-2.1:free` and for DeepSeek as `deepseek/deepseek-v4-flash:free`, but changing the configured model identity is a validation-change decision and must not be performed silently. No exact free variant is assumed for the configured Qwen slug, and GPT-5.6 Sol is not a free OpenRouter model.
+The cost classification is an OpenRouter model-route audit on 2026-09-17. The `:free` suffix denotes the explicit free model route. Provider identity and billing class are separate, and the configured reviewer routes are now deliberately deterministic free variants rather than the previously audited paid routes.
 
-Free model routes are also not automatically privacy-neutral. The currently listed free Nemotron route explicitly warns that free-endpoint usage is logged and should not contain confidential information or personal data; the Poolside free route states that inputs and outputs may be used to train and improve its models. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
+Free model routes are also not automatically privacy-neutral. The currently listed free routes can carry provider-specific logging or training terms. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
 
 Manual `/nemotron`, `/openai`, `/poolside`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
 
@@ -97,7 +97,7 @@ Use this lifecycle when interpreting CI:
 | PR state | Expected validation role |
 |---|---|
 | **Draft** | Run substantive Governance Integrity, evidence-consistency, agent validation, Full-System, Security, and applicable Browser/Runtime verification against the exact PR head. Promotion authorization is not yet evaluated. |
-| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. The automatic AI sequence may begin only after the substantive validation set has completed successfully. Human approval may still be pending at this stage. |
+| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. The automatic AI sequence may begin only after the substantive validation set has completed successfully. Human approval may still be pending at this stage. `review-readiness` remains pending while that independent approval is absent. |
 | **Merge candidate** | All required checks, evidence, canonical synchronization, and review-readiness must be current and passing on the exact head; no automation may substitute for the repository's normal merge/review path. |
 
 A validation that is skipped because of lifecycle gating is **not** equivalent to a passing validation. When a check is intentionally skipped, the owning workflow or PR record should make the reason explicit.
