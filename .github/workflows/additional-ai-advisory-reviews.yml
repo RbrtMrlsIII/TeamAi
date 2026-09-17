@@ -10,10 +10,10 @@ on:
         required: true
         type: choice
         options:
-          - free-router
+          - ling
           - poolside
-          - deepseek
-          - qwen
+          - dots3-primary
+          - dots3-secondary
       pr_number:
         description: Pull request number to review
         required: true
@@ -28,21 +28,21 @@ permissions:
 jobs:
   free_router:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'free-router') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'ling') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/free-router'))
+       startsWith(github.event.comment.body, '/ling'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: OpenRouter Free Router
-      reviewer_slug: free-router
-      model: openrouter/free
+      reviewer: Ling 3.0 Flash
+      reviewer_slug: ling
+      model: inclusionai/ling-3.0-flash:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-free-router-auto-review -->'
-      manual_marker: '<!-- teamai-free-router-review -->'
+      automatic_marker: '<!-- teamai-ling-auto-review -->'
+      manual_marker: '<!-- teamai-ling-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
@@ -70,42 +70,42 @@ jobs:
 
   deepseek:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'deepseek') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3-primary') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/deepseek'))
+       startsWith(github.event.comment.body, '/dots3-primary'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: DeepSeek
-      reviewer_slug: deepseek
-      model: deepseek/deepseek-v4-flash:free
+      reviewer: Dots3-Note Preview (primary)
+      reviewer_slug: dots3-primary
+      model: dots-studio/dots-3-note-preview:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
-      manual_marker: '<!-- teamai-deepseek-review -->'
+      automatic_marker: '<!-- teamai-dots3-primary-auto-review -->'
+      manual_marker: '<!-- teamai-dots3-primary-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
 
   qwen:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'qwen') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3-secondary') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/qwen'))
+       startsWith(github.event.comment.body, '/dots3-secondary'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Qwen
-      reviewer_slug: qwen
-      model: qwen/qwen3-coder:free
+      reviewer: Dots3-Note Preview (secondary)
+      reviewer_slug: dots3-secondary
+      model: dots-studio/dots-3-note-preview:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-qwen-auto-review -->'
-      manual_marker: '<!-- teamai-qwen-review -->'
+      automatic_marker: '<!-- teamai-dots3-secondary-auto-review -->'
+      manual_marker: '<!-- teamai-dots3-secondary-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
