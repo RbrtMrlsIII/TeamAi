@@ -29,6 +29,12 @@
 - `docs/archive/` and `handover/` are historical storage only.
 - Active `HandOver.md`, active `Endorsement.md`, a parallel Skill namespace, and `OBSOLETE_FILES.md` are forbidden.
 
+## Canonical public live-site validation
+
+For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/`. Preserve the `TeamAi` path casing in recorded evidence. Browser/network hostname lowercasing is normal URL handling. Vercel and guessed/retired routes are not live acceptance targets. Public live-site validation is evidence only and does not change Product Law, hosting authority, or promotion status.
+
+**Verified 2026-09-17:** HTTP `200 OK`; title `TeamAi — Web AI Living Workspace`; visible landing content; `Enter 3D world` present; GitHub Pages 404 absent; redirect count `0`.
+
 ## PR discipline
 
 - Substantive work starts as a **Draft PR**.
@@ -89,6 +95,4 @@ Distinguish:
 
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority. A model review may analyze evidence but cannot manufacture missing execution proof or treat an open Issue as resolved.
 
-<!-- #349 post-#346 recovery synchronization: post-merge governance truth is canonical; no provider-specific delivery surface is authoritative. -->
-<!-- #357 Nemotron copilot review: model assistance is bounded verification only and cannot replace governance or human authorization. -->
-<!-- #361 execution-aware review: Nemotron is downstream of required exact-head validator success and current governance/Issue context. -->
+<!-- #361 reconciliation: merged semantic topology/adaptive clearance; runtime-proof frontier remains open. -->

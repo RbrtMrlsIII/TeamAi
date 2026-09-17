@@ -31,12 +31,14 @@
 
 Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checklist execution. `Masterplan/NEXT_SLICES.md` owns one current slice. Skills own reusable procedures. Issues own bounded workstream context. PRs own implementation/review boundaries. Verification proves claims. `AI_ASSISTANT_READ_ME.md` owns current session state, handover, endorsement decisions, and validation-change records. `PRODUCT-KNOWLEDGE.md` owns durable validated concepts. `docs/archive/` and `handover/` are historical storage only.
 
+## Live delivery reference
+
+The canonical public live-site validation target is `https://RbrtMrlsIII.github.io/TeamAi/`. This is a delivery/verification reference only and does not create product authority, override Firebase Hosting delivery authority, or change the hosting architecture contract.
+
 ## No parallel authority
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
 Model-assisted review is part of Verification & CI/Browser only. A Nemotron review is evidence of analysis, not a new authority layer or acceptance mechanism. The Nemotron workflow is downstream of required exact-head validator execution and must receive execution evidence, governing context, and owning Issue state before model invocation.
 
-<!-- #349 post-#346 recovery synchronization: canonical authority remains Product_Law; session truth remains in the session/masterplan surfaces. -->
-<!-- #357 Nemotron copilot review: model-assisted review remains subordinate to Product Law, Policy, repository gates, and human authorization. -->
-<!-- #361 execution-aware review: Nemotron invocation is fail-closed until required exact-head validators complete successfully. -->
+<!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->

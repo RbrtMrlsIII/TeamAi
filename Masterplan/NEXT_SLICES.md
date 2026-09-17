@@ -4,15 +4,15 @@
 
 ## Current Slice
 
-Post-#346/#348 control-plane reconciliation, then TEAM-EXPERIENCE-029 progression
+TEAM-EXPERIENCE-029 — runtime proof of semantic topology, adaptive geometry, and transition behavior
 
 ## Status
 
-IN PROGRESS — #346, #348, #351, and #353 merged; #352 governance reconciliation remains active
+IN PROGRESS — #346, #348, #351, #352, #353, and #361 are merged; #353 remains a non-production candidate; #362 is a separate open governance fix for late review approvals.
 
 ## Objective
 
-Maintain canonical repository/session truth after the merged governance and delivery changes, harden the Draft-versus-Ready validation lifecycle, and continue TEAM-EXPERIENCE-029 from the canonical frontier without reviving retired authorities or provider-specific delivery dependencies.
+Prove that the generalized semantic connection/topology and payload-adaptive geometry introduced by #361 survive real renderer consumption, not only isolated tests. Extend runtime evidence across multiple semantic cases and payload densities, transition/interruption behavior, branch-aware subject targeting, responsive/reduced-motion behavior, and the canonical public/live boundary without promoting the candidate or closing C8/C9/C10.
 
 ## Dependencies
 
@@ -25,24 +25,27 @@ Maintain canonical repository/session truth after the merged governance and deli
 - `skills/governance/repository-synchronization/SKILL.md`
 - `skills/governance/machine-builder/SKILL.md`
 - `skills/governance/nemotron-copilot-review/SKILL.md`
+- applicable spatial hierarchy/transition/responsive/accessibility Skills
 - Issue #133
 - Issue #278
 - Issue #347
-- PR #353 is the merged machine candidate and remains non-production
+- PR #353 merged machine candidate baseline
+- PR #361 merged semantic topology/adaptive clearance baseline
+- Canonical live-site URL: `https://RbrtMrlsIII.github.io/TeamAi/`
 
 ## Verification
 
-- canonical authority and retired-reference audit
-- current session/control-plane documentation consistency
-- validation lifecycle checks for Draft and Ready states
-- exact-head project, security, and browser verification for substantive changes
-- migration invariant tests and full project verification
-- model-assisted review may provide advisory findings only after the required exact-head validator workflows complete successfully; pending or failed execution evidence must block model invocation
+- test-level generalized topology and adaptive-geometry suites remain green on exact heads
+- real renderer consumption of semantic source/target ports and connection routes across multiple payload densities
+- runtime AABB clearance and adjacency evidence across multiple semantic cases
+- transition and interruption state evidence with no topology fabrication during closed/closing states
+- branch-aware camera subject/travel evidence using semantic identities rather than named coordinate docks
+- desktop and phone browser proof, including reduced-motion behavior
+- canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
+- Tree Census reconciliation after runtime behavior is actually proven
 
 ## Current blocker
 
-Complete the post-merge control-plane reconciliation without reintroducing retired authorities or treating skipped downstream validation as proof. TEAM-EXPERIENCE-029 remains incomplete at C8/C9/C10, and the merged #353 machine candidate still requires the remaining product acceptance gates before any production Hero replacement decision.
+The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted.
 
-<!-- #352 validation-lifecycle synchronization: substantive Draft validation remains active; review-readiness is promotion-stage; skipped downstream jobs are not proof of pass. -->
-<!-- #357 Nemotron copilot review: advisory model review is a verification aid, not an authority or merge substitute. -->
-<!-- #361 execution-aware review: model invocation is downstream of required exact-head validator success and current Issue/governance context. -->
+<!-- Post-#361 reconciliation: control-plane state synchronized to merge commit 6c8f650bf978e47650246af67291a26fe83c4934; current frontier is runtime proof of the generalized machine topology/geometry path. -->

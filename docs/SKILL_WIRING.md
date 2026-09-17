@@ -45,6 +45,10 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 
 Model-assisted review is downstream of the substantive validator set, even though GitHub Actions starts workflows concurrently. The Nemotron workflow polls the exact PR head and requires successful completion of `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` before invoking the external model. Pending, failed, missing, or head-mismatched execution evidence fails closed. The model packet then receives current governing-file context, the owning Issue state, and exact-head check-run evidence.
 
+## Canonical live-site routing reference
+
+For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. Preserve the `TeamAi` path casing in recorded evidence. Public live-site validation is separate from PR/candidate validation, which remains exact-head CI/browser evidence.
+
 ## Machine Hero routing
 
 PR #353 is the current merged machine candidate and remains non-production. Its routing is:
@@ -83,6 +87,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md` registry.
 
-<!-- #352 validation-lifecycle synchronization: Draft substantive validation remains active; review-readiness is promotion-stage; skipped downstream is not pass. -->
-<!-- #357 Nemotron copilot review: model-assisted review is advisory and promotion-gated; it never replaces repository validation or human authority. -->
-<!-- #361 execution-aware review: Nemotron invocation is downstream of exact-head validator success and current governing/Issue context. -->
+<!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; runtime proof remains the active 029 frontier. -->
