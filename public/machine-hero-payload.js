@@ -17,7 +17,7 @@ export const MACHINE_HERO_RUNTIME_CASES = Object.freeze({
     label: 'balanced semantic payload',
     seatIndex: 0,
     divisions: Object.freeze([
-      { id: 'seat-0-connection', semanticId: 'SEAT_CONNECTION', kind: 'division', center: { x: -3.2, y: 0.55, z: 0 }, port: { x: -2.25, y: 0.7, z: 0 }, labels: ['Connection', 'Provider health'], controls: 2, density: 2 },
+      { id: 'seat-0-connection', semanticId: 'SEAT_CONNECTION', kind: 'division', center: { x: -3.2, y: 0.55, z: 0 }, port: { x: -2.4, y: 0.7, z: 0 }, labels: ['Connection', 'Provider health'], controls: 2, density: 2 },
       { id: 'seat-0-behavior', semanticId: 'SEAT_BEHAVIOR', kind: 'division', center: { x: 0, y: 0.55, z: 0.1 }, port: { x: 0.7, y: 0.7, z: 0.1 }, labels: ['Behavior', 'Defaults'], controls: 3, density: 3 },
       { id: 'seat-0-toolkit', semanticId: 'SEAT_TOOLKIT', kind: 'division', center: { x: 3.2, y: 0.55, z: 0.35 }, port: { x: 3.9, y: 0.7, z: 0.35 }, labels: ['Toolkit', 'Skills'], controls: 4, density: 5 },
     ]),
@@ -30,7 +30,7 @@ export const MACHINE_HERO_RUNTIME_CASES = Object.freeze({
     label: 'dense semantic payload',
     seatIndex: 0,
     divisions: Object.freeze([
-      { id: 'seat-0-connection', semanticId: 'SEAT_CONNECTION', kind: 'division', center: { x: -6, y: 0.55, z: -0.2 }, port: { x: -4.65, y: 0.72, z: -0.2 }, labels: ['Connection', 'Provider health', 'OAuth', 'Latency'], controls: 4, density: 4 },
+      { id: 'seat-0-connection', semanticId: 'SEAT_CONNECTION', kind: 'division', center: { x: -6, y: 0.55, z: -0.2 }, port: { x: -4.9, y: 0.72, z: -0.2 }, labels: ['Connection', 'Provider health', 'OAuth', 'Latency'], controls: 4, density: 4 },
       { id: 'seat-0-behavior', semanticId: 'SEAT_BEHAVIOR', kind: 'division', center: { x: -2, y: 0.55, z: 0.3 }, port: { x: -1.05, y: 0.72, z: 0.3 }, labels: ['Behavior', 'Defaults', 'Policies'], controls: 5, density: 6 },
       { id: 'seat-0-toolkit', semanticId: 'SEAT_TOOLKIT', kind: 'division', center: { x: 2, y: 0.55, z: 0 }, port: { x: 2.95, y: 0.72, z: 0 }, labels: ['Toolkit', 'Skills', 'Adapters', 'Checks'], controls: 6, density: 8 },
       { id: 'seat-0-capabilities', semanticId: 'SEAT_CAPABILITIES', kind: 'division', center: { x: 6, y: 0.55, z: 0.4 }, port: { x: 6.95, y: 0.72, z: 0.4 }, labels: ['Capabilities', 'Tools', 'Limits'], controls: 7, density: 10 },
@@ -45,9 +45,9 @@ export const MACHINE_HERO_RUNTIME_CASES = Object.freeze({
     label: 'sparse semantic payload',
     seatIndex: 0,
     divisions: Object.freeze([
-      { id: 'seat-0-connection', semanticId: 'SEAT_CONNECTION', kind: 'division', center: { x: -3.4, y: 0.55, z: -0.2 }, port: { x: -2.4, y: 0.7, z: -0.2 }, labels: ['Connection'], controls: 1, density: 0 },
-      { id: 'seat-0-toolkit', semanticId: 'SEAT_TOOLKIT', kind: 'division', center: { x: 0, y: 0.55, z: 0.55 }, port: { x: 0.85, y: 0.7, z: 0.55 }, labels: ['Toolkit'], controls: 1, density: 1 },
-      { id: 'seat-0-capabilities', semanticId: 'SEAT_CAPABILITIES', kind: 'division', center: { x: 3.5, y: 0.55, z: -0.1 }, port: { x: 4.45, y: 0.7, z: -0.1 }, labels: ['Capabilities'], controls: 2, density: 1 },
+      { id: 'seat-0-connection', semanticId: 'SEAT_CONNECTION', kind: 'division', center: { x: -3.4, y: 0.55, z: -0.2 }, port: { x: -2.85, y: 0.7, z: -0.2 }, labels: ['Connection'], controls: 1, density: 0 },
+      { id: 'seat-0-toolkit', semanticId: 'SEAT_TOOLKIT', kind: 'division', center: { x: 0, y: 0.55, z: 0.55 }, port: { x: 0.6, y: 0.7, z: 0.55 }, labels: ['Toolkit'], controls: 1, density: 1 },
+      { id: 'seat-0-capabilities', semanticId: 'SEAT_CAPABILITIES', kind: 'division', center: { x: 3.5, y: 0.55, z: -0.1 }, port: { x: 4.15, y: 0.7, z: -0.1 }, labels: ['Capabilities'], controls: 2, density: 1 },
     ]),
     edges: Object.freeze([
       { id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION→SEAT_TOOLKIT', sourceDivisionId: 'SEAT_CONNECTION', targetDivisionId: 'SEAT_TOOLKIT', expansion: { sourceAmount: 0, targetAmount: 0 } },
