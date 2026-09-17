@@ -43,10 +43,10 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - `review-readiness` is a promotion-stage check. It may be skipped while a PR is Draft by design and must not be interpreted as a passed gate.
 - **A Draft PR must remain Draft while its required substantive validations are still running or incomplete. Marking a Draft PR Ready for review is a governance promotion action only after the required substantive validation set has completed successfully on the exact current head.**
 - GitHub may technically permit a user to click **Ready for review** before those checks finish; TeamAi automation must treat that transition as pending and must not claim or invoke an automatic model review until the required exact-head substantive validators are complete and successful.
-- When a PR becomes Ready for review, the required validation set must be current on the exact head and `review-readiness` must evaluate the review/authorization conditions.
+- When a PR becomes Ready for review, the required substantive validation set must be current on the exact head and `review-readiness` evaluates the review/authorization conditions for the promotion/merge path.
 - A `pull_request_review` submission or dismissal may re-trigger `review-readiness` so late approval or dismissal state is reflected without changing the exact-head authorization rule.
 - A skipped downstream job is never evidence that the skipped condition passed.
-- Required checks, evidence, canonical synchronization, and review-readiness must pass before ready-for-review.
+- **Required checks, evidence, canonical synchronization, and review-readiness must all pass before the PR is treated as a merge candidate or authorized for merge.** They are not a prerequisite for the Ready-for-review transition itself, because `review-readiness` is evaluated after that transition.
 - **Auto-merge is not used or relied upon for product changes.**
 - A PR may contain multiple related commits and multiple checklist items.
 - One slice is not required to equal one PR or one merge.
@@ -73,8 +73,8 @@ Use this lifecycle when interpreting CI:
 | PR state | Expected validation role |
 |---|---|
 | **Draft** | Run substantive Governance Integrity, evidence-consistency, agent validation, Full-System, Security, and applicable Browser/Runtime verification against the exact PR head. Promotion authorization is not yet evaluated. |
-| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. The automatic AI sequence may begin only after the substantive validation set has completed successfully. |
-| **Merge candidate** | All required checks must be current and passing on the exact head; no automation may substitute for the repository's normal merge/review path. |
+| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. The automatic AI sequence may begin only after the substantive validation set has completed successfully. Human approval may still be pending at this stage. |
+| **Merge candidate** | All required checks, evidence, canonical synchronization, and review-readiness must be current and passing on the exact head; no automation may substitute for the repository's normal merge/review path. |
 
 A validation that is skipped because of lifecycle gating is **not** equivalent to a passing validation. When a check is intentionally skipped, the owning workflow or PR record should make the reason explicit.
 
