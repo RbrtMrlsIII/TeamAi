@@ -50,9 +50,17 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - One slice is not required to equal one PR or one merge.
 - `main` changes through governed PRs only.
 
-### Model-review quota discipline
+### Model-review sequence discipline
 
-Model-assisted advisory review is treated as a scarce verification resource. Each configured reviewer may consume at most one **automatic** model review per PR, using the first eligible non-draft lifecycle event (`opened`, `reopened`, or `ready_for_review`) that occurs before that reviewer's automatic marker exists. `synchronize` pushes do not automatically consume another model request. Later-head re-review remains available only through the deliberate reviewer-specific command or authorized `workflow_dispatch` path. This protects provider quota without weakening substantive validators or review evidence requirements.
+Model-assisted advisory review is treated as a scarce verification resource. The automatic path is one ordered sequence per PR:
+
+`Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen`
+
+The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim marker is recorded before the first model call so an already-claimed PR cannot silently begin another automatic sequence.
+
+Each reviewer has its own provider secret and model identity. The sequence carries the original triggering PR head into every stage. If the head changes during an interval or between stages, the next stage fails the exact-head guard and remaining automatic stages do not run. Missing reviewer secrets fail closed and never fall through to another provider.
+
+Manual `/nemotron`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
 
 Current additional reviewer aliases are `qwen` backed by secret `OPENROUTER_API_KEY_GWEN` and `deepseek` backed by `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` secret name is retained as an owner-supplied alias for the Qwen provider/model configuration until normalized.
 
@@ -92,7 +100,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 ## Model-assisted review
 
-The shared AI Advisory Review Skill and configured model-specific workflows are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before automatic invocation, the workflow must wait for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. Missing, pending, failed, stale, or head-mismatched validator evidence fails the model-review path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Model approval, where a workflow exposes it, requires an explicit authorized action; repository branch protection and human governance remain authoritative.
+The shared AI Advisory Review Skill plus model-specific manual wrappers and the automatic sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before every automatic stage, the reusable reviewer runner waits for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. Missing, pending, failed, stale, or head-mismatched validator evidence fails the reviewer path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Repository branch protection and human governance remain authoritative.
 
 ## Evidence discipline
 
