@@ -33,7 +33,9 @@ The automatic lifecycle is one ordered **three-stage cohort sequence** per PR, n
 
 There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer and its turn begins only after the first eligible non-draft `pull_request` event has passed the substantive exact-head validation gate.
 
-After the Nemotron turn reaches a terminal non-cancelled result, the workflow waits 150 seconds and starts OpenAI and Poolside concurrently. After both second-stage reviewers reach terminal non-cancelled results, the workflow waits another 150 seconds and starts DeepSeek and Qwen concurrently.
+After the Nemotron turn reaches a `success` or `failure` execution result, the workflow waits 150 seconds and starts OpenAI and Poolside concurrently. A `skipped` or `cancelled` Nemotron job does not open the barrier and cannot start stage 2.
+
+After both second-stage reviewers reach `success` or `failure` execution results, the workflow waits another 150 seconds and starts DeepSeek and Qwen concurrently. A `skipped` or `cancelled` OpenAI or Poolside job does not open the barrier and cannot start stage 3.
 
 Reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, reordering, or an early launch of another reviewer. The inter-stage barrier is time-and-head controlled, not verdict controlled. If the PR head changes during a wait or between stages, the barrier fails closed and later automatic stages do not run. Each reusable runner independently revalidates the original triggering head before model invocation.
 
@@ -64,15 +66,17 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 
 ## Reviewer configuration
 
-| Reviewer | Secret | OpenRouter model | Automatic stage |
-|---|---|---|---:|
-| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
+| Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
+|---|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | **Paid** | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | **Paid** | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | **Paid** | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | **Paid** | 3 |
 
-`GWEN` is retained as the configured secret alias supplied by the repository owner; the model/provider represented by that alias is Qwen. This distinction is intentional until the secret name is normalized.
+The billing classification is an operational snapshot audited 2026-09-17. The `:free` suffix denotes a distinct free model route; provider names themselves do not imply free API access. Known free variants include `poolside/laguna-s-2.1:free` and `deepseek/deepseek-v4-flash:free`, but changing the configured model identity is a governed validation change and is not implicit.
+
+Free routes can have provider-specific data-use terms, so cost status and repository-confidentiality suitability must be evaluated separately.
 
 ## Evidence contract
 
