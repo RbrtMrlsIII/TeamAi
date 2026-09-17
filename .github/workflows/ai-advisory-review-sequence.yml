@@ -277,7 +277,7 @@ jobs:
 
   delay_to_third_stage:
     needs: [ling, poolside]
-    if: always() && (needs.ling.result == 'success' || needs.free_router.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
+    if: always() && (needs.ling.result == 'success' || needs.ling.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: read
