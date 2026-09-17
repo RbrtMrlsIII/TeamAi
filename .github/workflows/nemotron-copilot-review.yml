@@ -85,6 +85,12 @@ jobs:
           echo "head=$(cat /tmp/head.sha)" >> "$GITHUB_OUTPUT"
           echo "base=$(cat /tmp/base.sha)" >> "$GITHUB_OUTPUT"
 
+      - name: Checkout exact PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.meta.outputs.head }}
+          fetch-depth: 0
+
       - name: Wait for substantive exact-head validators
         id: validation-gate
         env:
@@ -163,6 +169,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           HEAD: ${{ steps.meta.outputs.head }}
+          REQUIRED_CHECKS: ${{ env.REQUIRED_CHECKS }}
         shell: bash
         run: |
           set -euo pipefail
@@ -180,7 +187,7 @@ jobs:
               | . as $by_name
               | $required[]
               | $by_name[.]
-              | [ .name, .status, (.conclusion // ""), .html_url ]
+              | [ .name, .status, (.conclusion // ""), .html_url, (.output.title // ""), (.output.summary // "") ]
               | @tsv
             ' /tmp/check-runs.json
           } > /tmp/execution-evidence.txt
@@ -214,6 +221,7 @@ jobs:
           python - <<'PY'
           import os
           from pathlib import Path
+
           files = [
               'Product_Law/PRODUCT_LAW.md',
               'Product_Law/WIRING.md',
@@ -222,12 +230,21 @@ jobs:
               'POLICY.md',
               'docs/SKILL_WIRING.md',
               'skills/governance/nemotron-copilot-review/SKILL.md',
+              'skills/governance/machine-builder/SKILL.md',
+              'skills/frontend/spatial/hierarchy-runtime/SKILL.md',
+              'skills/frontend/spatial/seat-shell-hierarchy/SKILL.md',
+              'skills/frontend/spatial/transition/SKILL.md',
+              'docs/TEAMAI_3D_HERO_TREE_CENSUS.md',
           ]
           budget = int(os.environ['MAX_CHARS'])
           chunks, used = [], 0
           for path in files:
               marker = f'=== GOVERNING FILE: {path} ===\n'
-              text = Path(path).read_text(encoding='utf-8') if Path(path).is_file() else '[MISSING AT EXACT PR HEAD]\n'
+              file_path = Path(path)
+              if not file_path.is_file():
+                  text = '[MISSING AT EXACT PR HEAD]\n'
+              else:
+                  text = file_path.read_text(encoding='utf-8')
               chunk = marker + text + ('\n' if not text.endswith('\n') else '')
               if used + len(chunk) > budget:
                   remaining = max(0, budget - used)
@@ -278,30 +295,28 @@ jobs:
 
       - name: Ask Nemotron
         env:
-          OPENROUTER_API_KEY: ${{ github.token }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           MODEL: ${{ env.MODEL }}
         shell: bash
         run: |
           set -euo pipefail
-          # The actual OpenRouter secret is injected by the repository secret through the command below.
-          # Keep the environment contract explicit and fail closed if it is absent.
-          OPENROUTER_KEY="${{ secrets.OPENROUTER_API_KEY }}"
-          test -n "$OPENROUTER_KEY"
+          test -n "$OPENROUTER_API_KEY"
           python - <<'PY'
           import json, os
           from pathlib import Path
           packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
           system = '\n'.join([
               'You are the independent advisory reviewer for the TeamAi repository.',
-              'The packet contains exact-head execution evidence, governing documents, owning Issue state, and the PR diff.',
+              'The packet contains exact-head execution evidence, governing documents and applicable Skills, owning Issue state, the current Tree Census, and the PR diff.',
               'The workflow has already blocked invocation until every required substantive exact-head check completed successfully.',
               'Review repository truth, product logic, governing rules, documentation, Issue state, execution evidence, and changed code.',
               'Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.',
               'Never invent requirements or recommend weakening governance or validators.',
               'Never treat a PR claim as execution proof when the packet disagrees.',
-              'Never treat an open Issue as resolved merely because a PR satisfies one slice.',
+              'Never treat an open Issue as resolved merely because a PR satisfies one slice. Report the actual Issue state and checklist/completion evidence present in the packet.',
               'Skipped, stale, unrelated, or head-mismatched checks are not passing evidence.',
-              'If material execution/governance/Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
+              'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
+              'If material execution, governance, applicable-Skill, census, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
               '',
               'Return exactly these sections:',
               '## Verdict',
@@ -324,7 +339,6 @@ jobs:
           Path('/tmp/payload.json').write_text(json.dumps(payload), encoding='utf-8')
           PY
 
-          export OPENROUTER_API_KEY="$OPENROUTER_KEY"
           status=''
           for attempt in 1 2 3; do
             status="$(curl -sS --connect-timeout 20 --max-time 180 -o /tmp/response.json -w '%{http_code}' \
