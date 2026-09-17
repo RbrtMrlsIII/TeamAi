@@ -97,7 +97,7 @@ jobs:
             echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
             exit 1
           fi
-          if grep -Fq "needs.free_router.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
+          if grep -Fq "needs.ling.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
             echo "Skipped/cancelled fallthrough remains in the stage-3 barrier."
             exit 1
           fi
