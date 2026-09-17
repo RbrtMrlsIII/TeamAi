@@ -4,7 +4,7 @@
 
 ## Session anchor
 
-- Last given prompt: **resume the forgotten governance lifecycle fix after #361 and continue the 029 frontier**
+- Last given prompt: **implement the ordered advisory model review pipeline after adding Qwen and DeepSeek OpenRouter secrets**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
@@ -14,6 +14,7 @@
 - Active 029 ledger: **#278**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
 - Current `main` baseline: **`c4bb03d0feeafd919c582657741751f12a40a6a6`**, post-#361 reconciliation
+- Active governance implementation PR: **#368** on `governance/nemotron-review-budget`, currently Draft and unmerged
 
 ## Canonical authority path
 
@@ -44,6 +45,7 @@
 - #362 is closed/superseded because its implementation branch violated the current responsibility-prefix rule and its base was stale; its late-approval diagnosis and intended fix are carried forward by #367.
 - #367 is the active governance repair for `review-readiness` lifecycle re-evaluation on submitted/dismissed human reviews. It does not change what counts as human authorization.
 - Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
+- #368 is the active governance slice for ordered model-assisted PR review and remains Draft/unmerged.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -98,18 +100,21 @@ Never weaken validation merely to make CI green.
 
 ## Model-assisted review
 
-`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/nemotron-copilot-review.yml` retains the controlled OpenRouter/Nemotron reviewer, while `.github/workflows/additional-ai-advisory-reviews.yml` adds the configured Qwen and DeepSeek advisory reviewers. These workflows check out the exact PR head, wait for required exact-head Governance, Full-System, Security, and Browser/Runtime validators to complete successfully, collect their execution evidence plus current governing documents and owning Issue state, then invoke the configured model. Pending, failed, stale, or head-mismatched execution evidence blocks model invocation. Model output remains advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization.
+`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint, with the explicit order **Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen**. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` remains the deliberate manual Qwen/DeepSeek entrypoint. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
 
-Automatic review is deliberately quota-bounded per reviewer. Draft PRs do not consume automatic allowance. For each configured reviewer, an accidentally non-draft `opened` PR or a `ready_for_review` PR may consume one automatic invocation. Later `synchronize` pushes do not automatically invoke any reviewer. Later-head re-review is deliberate through reviewer-specific commands (`/qwen` or `/deepseek` for the additional reviewers, `/nemotron` for Nemotron) or authorized workflow dispatch.
+Automatic review begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not consume automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim comment is written before the first model call. Every stage receives the original triggering head SHA and fails closed if the PR head changes before that stage. The sequence therefore never lets a later reviewer silently analyze a newer or stale revision.
 
-Additional reviewer configuration currently is:
+Each reviewer has an independent secret/model binding:
 
-| Reviewer | Secret alias | OpenRouter model |
-|---|---|---|
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` |
+| Reviewer | Secret alias | OpenRouter model | Automatic stage |
+|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 2 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
 
-`GWEN` is retained exactly as the owner-supplied secret name and is treated as an alias for the Qwen provider/model configuration. There is no separate Product Law identity named Gwen. The OpenRouter model configuration is operational and can change independently of Product Law.
+`GWEN` is retained exactly as the owner-supplied secret name and is treated as an alias for Qwen. There is no separate Product Law identity named Gwen. OpenRouter currently exposes the Qwen3.8 Max (0902) and DeepSeek V4.1 Flash model families. citeturn264406search0turn264406search1
+
+Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret. Manual reviewer commands remain deliberate later-head paths and are separate from the automatic sequence allowance.
 
 ## Handover
 
