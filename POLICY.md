@@ -77,6 +77,10 @@ Then execute:
 
 Never weaken a validator merely to obtain green CI. Existing tests must be classified as retained, obsolete, or replaced before their assertions are changed.
 
+## Model-assisted review
+
+The Nemotron Copilot Review Skill and workflow are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. An approval submission is disabled on ordinary PR events and requires an explicit authorized workflow dispatch; repository branch protection and human governance remain authoritative.
+
 ## Evidence discipline
 
 Distinguish:
@@ -86,3 +90,4 @@ Distinguish:
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
 
 <!-- #349 post-#346 recovery synchronization: post-merge governance truth is canonical; no provider-specific delivery surface is authoritative. -->
+<!-- #357 Nemotron copilot review: model assistance is bounded verification only and cannot replace governance or human authorization. -->
