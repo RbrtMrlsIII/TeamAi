@@ -301,10 +301,18 @@ jobs:
           set -euo pipefail
           test -n "$OPENROUTER_API_KEY"
           python - <<'PY'
-          import json, os
+          import json
+          import os
+          import sys
+          import time
+          import urllib.error
+          import urllib.request
           from pathlib import Path
-          packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
+
+          api_key = os.environ['OPENROUTER_API_KEY']
+          model = os.environ['MODEL']
           reviewer = os.environ['REVIEWER']
+          packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
           system = '\n'.join([
               f'You are the independent advisory {reviewer} reviewer for the TeamAi repository.',
               'The packet contains exact-head execution evidence, governing documents and applicable Skills, owning Issue state, the current Tree Census, and the PR diff.',
@@ -328,7 +336,7 @@ jobs:
               '## Review basis',
           ])
           payload = {
-              'model': os.environ['MODEL'],
+              'model': model,
               'messages': [
                   {'role': 'system', 'content': system},
                   {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
@@ -336,42 +344,75 @@ jobs:
               'temperature': 0.1,
               'max_tokens': 5000,
           }
-          Path('/tmp/payload.json').write_text(json.dumps(payload), encoding='utf-8')
+          body = json.dumps(payload).encode('utf-8')
+          Path('/tmp/payload.json').write_bytes(body)
+          Path('/tmp/review.md').unlink(missing_ok=True)
+
+          for attempt in range(1, 4):
+              request = urllib.request.Request(
+                  'https://openrouter.ai/api/v1/chat/completions',
+                  data=body,
+                  method='POST',
+              )
+              request.add_header('Authorization', f'Bearer {api_key}')
+              request.add_header('Content-Type', 'application/json')
+              request.add_header('HTTP-Referer', 'https://github.com/' + os.environ.get('GITHUB_REPOSITORY', 'RbrtMrlsIII/TeamAi'))
+              request.add_header('X-Title', f'TeamAi {reviewer} Advisory Review')
+
+              status = None
+              raw = b''
+              headers = {}
+              try:
+                  with urllib.request.urlopen(request, timeout=180) as response:
+                      status = int(response.status)
+                      raw = response.read()
+                      headers = dict(response.headers.items())
+              except urllib.error.HTTPError as exc:
+                  status = int(exc.code)
+                  raw = exc.read()
+                  headers = dict(exc.headers.items()) if exc.headers else {}
+              except (urllib.error.URLError, TimeoutError) as exc:
+                  print(f'{reviewer} provider transport failure: {exc.__class__.__name__}: {exc}; attempt={attempt}', file=sys.stderr)
+                  if attempt < 3:
+                      time.sleep(attempt * 4)
+                      continue
+                  break
+
+              request_id = headers.get('x-request-id') or headers.get('x-openrouter-request-id') or 'unreported'
+              print(f'{reviewer} provider response: http_status={status} attempt={attempt} request_id={request_id}', file=sys.stderr)
+              Path('/tmp/response.json').write_bytes(raw)
+
+              try:
+                  data = json.loads(raw.decode('utf-8')) if raw else {}
+              except (UnicodeDecodeError, json.JSONDecodeError):
+                  data = {}
+
+              if status is not None and 200 <= status < 300:
+                  choices = data.get('choices') or [] if isinstance(data, dict) else []
+                  message = choices[0].get('message') if choices and isinstance(choices[0], dict) else {}
+                  content = message.get('content') if isinstance(message, dict) else None
+                  if isinstance(content, str) and content.strip():
+                      Path('/tmp/review.md').write_text(content, encoding='utf-8')
+                      sys.exit(0)
+                  response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
+                  print(f'{reviewer} provider returned a successful HTTP status without review content: response_keys={response_keys}.', file=sys.stderr)
+              else:
+                  error = data.get('error') if isinstance(data, dict) else None
+                  error = error if isinstance(error, dict) else {}
+                  diagnostic = {
+                      'error_code': error.get('code'),
+                      'error_type': error.get('type'),
+                      'error_message': error.get('message') or (data.get('message') if isinstance(data, dict) else None),
+                      'provider': ((error.get('metadata') or {}).get('provider_name') if isinstance(error.get('metadata'), dict) else None),
+                  }
+                  print(f'{reviewer} provider diagnostic: {json.dumps(diagnostic, sort_keys=True)}', file=sys.stderr)
+
+              if attempt < 3:
+                  time.sleep(attempt * 4)
+
+          print(f'{reviewer} review request failed after 3 attempts. No review was posted.', file=sys.stderr)
+          sys.exit(1)
           PY
-          : > /tmp/response.json
-          : > /tmp/response.headers
-          for attempt in 1 2 3; do
-            set +e
-            status="$(curl -sS --connect-timeout 20 --max-time 180 -D /tmp/response.headers -o /tmp/response.json -w '%{http_code}' \
-              https://openrouter.ai/api/v1/chat/completions \
-              -H "Authorization: Bearer $OPENROUTER_API_KEY" \
-              -H 'Content-Type: application/json' \
-              -H "HTTP-Referer: https://github.com/${{ github.repository }}" \
-              -H "X-Title: TeamAi $REVIEWER Advisory Review" \
-              --data-binary @/tmp/payload.json)
-            curl_exit=$?
-            set -e
-            request_id="$(awk 'BEGIN{IGNORECASE=1} /^x-request-id:/{gsub("\r", "", $2); print $2; exit} /^x-openrouter-request-id:/{gsub("\r", "", $2); print $2; exit}' /tmp/response.headers 2>/dev/null || true)"
-            if [[ "$curl_exit" -ne 0 ]]; then
-              echo "$REVIEWER provider transport failure: curl_exit=$curl_exit attempt=$attempt" >&2
-            else
-              echo "$REVIEWER provider response: http_status=$status attempt=$attempt request_id=${request_id:-unreported}" >&2
-            fi
-            if [[ "$status" =~ ^2[0-9][0-9]$ ]]; then
-              jq -r '.choices[0].message.content // empty' /tmp/response.json > /tmp/review.md
-              if test -s /tmp/review.md; then
-                exit 0
-              fi
-              success_shape="$(jq -c '{error_code: (.error.code // null), error_type: (.error.type // null), error_message: (.error.message // .message // null), response_keys: (keys | join(","))}' /tmp/response.json 2>/dev/null || true)"
-              echo "$REVIEWER provider returned a successful HTTP status without review content: ${success_shape:-non-json response}." >&2
-            else
-              diagnostic="$(jq -c '{error_code: (.error.code // null), error_type: (.error.type // null), error_message: (.error.message // .message // null), provider: (.error.metadata.provider_name // null)}' /tmp/response.json 2>/dev/null || true)"
-              echo "$REVIEWER provider diagnostic: ${diagnostic:-non-json or empty response body}." >&2
-            fi
-            if [[ "$attempt" -lt 3 ]]; then sleep $((attempt * 4)); fi
-          done
-          echo "$REVIEWER review request failed after 3 attempts. No review was posted." >&2
-          exit 1
 
       - name: Post advisory review
         env:

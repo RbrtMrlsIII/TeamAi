@@ -46,17 +46,19 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 
 The reusable advisory-review runner is downstream of the substantive validator set. For every invocation it polls the exact PR head and accepts only successful completion of the required exact-head check-runs before invoking the external model. The packet receives current governing-file context, the owning Issue state, exact-head execution evidence, and the complete bounded diff.
 
+A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by fresh exact-head execution after the repaired path is governed and merged; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
+
 ### Automatic reviewer sequence
 
 The automatic review lifecycle is one ordered three-stage cohort sequence, not a matrix:
 
-`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
+`Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 
 There is no automatic interval before Nemotron. Nemotron is the frontline reviewer and starts only after the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the substantive exact-head validation gate.
 
-After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. OpenAI and Poolside then execute concurrently against the same original triggering head.
+After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. OpenRouter Free Router and Poolside then execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so GitHub's implicit upstream-success behavior cannot suppress an allowed failure cohort.
 
-After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` OpenAI or Poolside job does not open that barrier. DeepSeek and Qwen then execute concurrently against the same original triggering head.
+After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does not open that barrier. DeepSeek and Qwen then execute concurrently against the same original triggering head.
 
 A reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, stage reordering, or early launch. The inter-stage barrier is time-and-head controlled. A PR-head change during a barrier fails closed and prevents later automatic stages from reviewing stale code.
 
@@ -67,7 +69,7 @@ The sequence is entered only from the first eligible non-draft `opened`, `reopen
 Later-head analysis remains deliberate:
 
 - `/nemotron` → `nemotron-copilot-review.yml`
-- `/openai`, `/poolside`, `/deepseek`, or `/qwen` → `additional-ai-advisory-reviews.yml`
+- `/free-router`, `/poolside`, `/deepseek`, or `/qwen` → `additional-ai-advisory-reviews.yml`
 
 Authorized workflow dispatch provides the same reviewer-specific control. Manual review is not a second automatic allowance.
 
@@ -76,12 +78,12 @@ Authorized workflow dispatch provides the same reviewer-specific control. Manual
 | Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
 |---|---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | **Free** | 2 |
+| OpenRouter Free Router | `OPENROUTER_API_KEY_OPENAI` | `openrouter/free` | **Free** | 2 |
 | Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
 | DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
 
-This cost classification was externally audited on 2026-09-17. These explicit `:free` routes are distinct model routes, and the configured reviewer identities remain deterministic. The routes were selected to keep the governed reviewer path within the zero-credit constraint without using the nondeterministic `openrouter/free` router.
+This cost classification was externally audited on 2026-09-17. The configured pinned routes remain deterministic; the OpenRouter Free Router slot is intentionally non-deterministic. The route change keeps that reviewer call within the zero-credit constraint and makes model identity an execution-time property.
 
 Free model routes can also have provider-specific data-use terms, so “free” does not automatically mean suitable for confidential repository review packets.
 
@@ -127,4 +129,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md` registry.
 
-<!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; runtime proof remains the active 029 frontier. -->
+<!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; #370/#371 runner runtime-proof investigation is a bounded Verification & CI/Browser concern. -->

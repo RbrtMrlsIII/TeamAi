@@ -29,13 +29,13 @@ The resulting packet must include exact-head check-run evidence, current governi
 
 The automatic lifecycle is one ordered **three-stage cohort sequence** per PR, not a matrix and not a timer-driven fan-out:
 
-`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
+`Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
 
 There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer and its turn begins only after the first eligible non-draft `pull_request` event has passed the substantive exact-head validation gate.
 
-After the Nemotron turn reaches a `success` or `failure` execution result, the workflow waits 150 seconds and starts OpenAI and Poolside concurrently. A `skipped` or `cancelled` Nemotron job does not open the barrier and cannot start stage 2.
+After the Nemotron turn reaches a `success` or `failure` execution result, the workflow waits 150 seconds and starts OpenRouter Free Router and Poolside concurrently. A `skipped` or `cancelled` Nemotron job does not open the barrier and cannot start stage 2.
 
-After both second-stage reviewers reach `success` or `failure` execution results, the workflow waits another 150 seconds and starts DeepSeek and Qwen concurrently. A `skipped` or `cancelled` OpenAI or Poolside job does not open the barrier and cannot start stage 3.
+After both second-stage reviewers reach `success` or `failure` execution results, the workflow waits another 150 seconds and starts DeepSeek and Qwen concurrently. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does not open the barrier and cannot start stage 3.
 
 Reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, reordering, or an early launch of another reviewer. The inter-stage barrier is time-and-head controlled, not verdict controlled. If the PR head changes during a wait or between stages, the barrier fails closed and later automatic stages do not run. Each reusable runner independently revalidates the original triggering head before model invocation.
 
@@ -48,7 +48,7 @@ Each reviewer uses an independent provider secret and model identity. A missing 
 Reviewer-specific commands remain available for deliberate later-head analysis:
 
 - `/nemotron`
-- `/openai`
+- `/free-router`
 - `/poolside`
 - `/deepseek`
 - `/qwen`
@@ -69,12 +69,12 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 | Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
 |---|---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | **Free** | 2 |
+| OpenRouter Free Router | `OPENROUTER_API_KEY_OPENAI` | `openrouter/free` | **Free** | 2 |
 | Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
 | DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
 
-The billing classification is an operational snapshot audited 2026-09-17. The `:free` suffix denotes the explicit free model route. Provider identity and billing class are separate, and the configured reviewer routes are deterministic free variants selected for the zero-credit constraint.
+The billing classification is an operational snapshot audited 2026-09-17. Pinned `:free` routes remain deterministic. The OpenRouter Free Router is deliberately non-deterministic and selects an available free model at execution time, while remaining inside the zero-credit constraint.
 
 Free routes can have provider-specific data-use terms, so cost status and repository-confidentiality suitability must be evaluated separately.
 

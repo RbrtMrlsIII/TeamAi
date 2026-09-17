@@ -20,7 +20,7 @@ env:
   VALIDATION_TIMEOUT_SECONDS: '1800'
   SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
   NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
-  OPENAI_AUTO_MARKER: '<!-- teamai-openai-auto-review -->'
+  FREE_ROUTER_AUTO_MARKER: '<!-- teamai-free-router-auto-review -->'
   POOLSIDE_AUTO_MARKER: '<!-- teamai-poolside-auto-review -->'
   DEEPSEEK_AUTO_MARKER: '<!-- teamai-deepseek-auto-review -->'
   QWEN_AUTO_MARKER: '<!-- teamai-qwen-auto-review -->'
@@ -44,7 +44,7 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           MARKER: ${{ env.SEQUENCE_MARKER }}
           NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
-          OPENAI_MARKER: ${{ env.OPENAI_AUTO_MARKER }}
+          FREE_ROUTER_MARKER: ${{ env.FREE_ROUTER_AUTO_MARKER }}
           POOLSIDE_MARKER: ${{ env.POOLSIDE_AUTO_MARKER }}
           DEEPSEEK_MARKER: ${{ env.DEEPSEEK_AUTO_MARKER }}
           QWEN_MARKER: ${{ env.QWEN_AUTO_MARKER }}
@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          for marker in "$MARKER" "$NEMOTRON_MARKER" "$OPENAI_MARKER" "$POOLSIDE_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
+          for marker in "$MARKER" "$NEMOTRON_MARKER" "$FREE_ROUTER_MARKER" "$POOLSIDE_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
             if jq -e --arg marker "$marker" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
               echo 'should_run=false' >> "$GITHUB_OUTPUT"
               echo "Automatic AI review sequence already claimed or partially completed for PR #$PR."
@@ -171,7 +171,7 @@ jobs:
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen')"
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -241,26 +241,26 @@ jobs:
             exit 1
           }
 
-  openai:
+  free_router:
     needs: delay_to_second_stage
-    if: needs.delay_to_second_stage.result == 'success'
+    if: always() && needs.delay_to_second_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: OpenAI
-      reviewer_slug: openai
-      model: openai/gpt-oss-120b:free
+      reviewer: OpenRouter Free Router
+      reviewer_slug: free-router
+      model: openrouter/free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
-      automatic_marker: '<!-- teamai-openai-auto-review -->'
-      manual_marker: '<!-- teamai-openai-review -->'
+      automatic_marker: '<!-- teamai-free-router-auto-review -->'
+      manual_marker: '<!-- teamai-free-router-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
 
   poolside:
     needs: delay_to_second_stage
-    if: needs.delay_to_second_stage.result == 'success'
+    if: always() && needs.delay_to_second_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: Poolside
@@ -276,8 +276,8 @@ jobs:
       api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
 
   delay_to_third_stage:
-    needs: [openai, poolside]
-    if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
+    needs: [free_router, poolside]
+    if: always() && (needs.free_router.result == 'success' || needs.free_router.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -303,7 +303,7 @@ jobs:
             exit 1
           }
 
-      - name: Wait 2 minutes 30 seconds after OpenAI and Poolside turn
+      - name: Wait 2 minutes 30 seconds after OpenRouter Free Router and Poolside turn
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -326,7 +326,7 @@ jobs:
 
   deepseek:
     needs: delay_to_third_stage
-    if: needs.delay_to_third_stage.result == 'success'
+    if: always() && needs.delay_to_third_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: DeepSeek
@@ -343,7 +343,7 @@ jobs:
 
   qwen:
     needs: delay_to_third_stage
-    if: needs.delay_to_third_stage.result == 'success'
+    if: always() && needs.delay_to_third_stage.result == 'success'
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: Qwen
