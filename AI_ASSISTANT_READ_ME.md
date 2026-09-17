@@ -105,7 +105,7 @@ Never weaken validation merely to make CI green.
 
 Automatic review begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not consume automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim comment is written before Nemotron. Every reviewer receives the same original triggering head SHA and fails closed if that head changes before invocation.
 
-Stage 2 contains two independent reviewers that start together after the first 150-second barrier. Stage 3 contains two independent reviewers that start together after the second 150-second barrier. A provider failure does not substitute another reviewer or reorder the cohorts; it remains explicit execution evidence. The next cohort may begin after the completed non-cancelled stage while exact-head freshness remains intact.
+Stage 2 contains two independent reviewers that start together after the first 150-second barrier. Stage 3 contains two independent reviewers that start together after the second 150-second barrier. A provider failure does not substitute another reviewer or reorder the cohorts; it remains evidence. A later stage may start only when its upstream reviewer jobs have a `success` or `failure` result. `skipped` and `cancelled` do not open an inter-stage barrier.
 
 Each reviewer has an independent secret/model binding:
 
@@ -117,7 +117,7 @@ Each reviewer has an independent secret/model binding:
 | DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | 3 |
 | Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | 3 |
 
-`GWEN` is retained exactly as the owner-supplied secret name and is treated as an alias for the Qwen configuration. There is no separate Product Law identity named Gwen.
+The operational cost audit on 2026-09-17 found the configured Nemotron route is free, while the configured OpenAI, Poolside, DeepSeek, and Qwen routes are paid on OpenRouter. Poolside and DeepSeek have separate free variants, but changing model identity is a governed validation change. GPT-5.6 Sol is not free, and no free route is assumed for the configured Qwen slug.
 
 ### Historical automatic sequence evidence
 
