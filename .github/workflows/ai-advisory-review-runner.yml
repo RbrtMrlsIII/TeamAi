@@ -338,18 +338,35 @@ jobs:
           }
           Path('/tmp/payload.json').write_text(json.dumps(payload), encoding='utf-8')
           PY
-          status=''
+          : > /tmp/response.json
+          : > /tmp/response.headers
           for attempt in 1 2 3; do
-            status="$(curl -sS --connect-timeout 20 --max-time 180 -o /tmp/response.json -w '%{http_code}' \
+            set +e
+            status="$(curl -sS --connect-timeout 20 --max-time 180 -D /tmp/response.headers -o /tmp/response.json -w '%{http_code}' \
               https://openrouter.ai/api/v1/chat/completions \
               -H "Authorization: Bearer $OPENROUTER_API_KEY" \
               -H 'Content-Type: application/json' \
               -H "HTTP-Referer: https://github.com/${{ github.repository }}" \
               -H "X-Title: TeamAi $REVIEWER Advisory Review" \
-              --data-binary @/tmp/payload.json || true)"
+              --data-binary @/tmp/payload.json)
+            curl_exit=$?
+            set -e
+            request_id="$(awk 'BEGIN{IGNORECASE=1} /^x-request-id:/{gsub("\r", "", $2); print $2; exit} /^x-openrouter-request-id:/{gsub("\r", "", $2); print $2; exit}' /tmp/response.headers 2>/dev/null || true)"
+            if [[ "$curl_exit" -ne 0 ]]; then
+              echo "$REVIEWER provider transport failure: curl_exit=$curl_exit attempt=$attempt" >&2
+            else
+              echo "$REVIEWER provider response: http_status=$status attempt=$attempt request_id=${request_id:-unreported}" >&2
+            fi
             if [[ "$status" =~ ^2[0-9][0-9]$ ]]; then
               jq -r '.choices[0].message.content // empty' /tmp/response.json > /tmp/review.md
-              test -s /tmp/review.md && exit 0
+              if test -s /tmp/review.md; then
+                exit 0
+              fi
+              success_shape="$(jq -c '{error_code: (.error.code // null), error_type: (.error.type // null), error_message: (.error.message // .message // null), response_keys: (keys | join(","))}' /tmp/response.json 2>/dev/null || true)"
+              echo "$REVIEWER provider returned a successful HTTP status without review content: ${success_shape:-non-json response}." >&2
+            else
+              diagnostic="$(jq -c '{error_code: (.error.code // null), error_type: (.error.type // null), error_message: (.error.message // .message // null), provider: (.error.metadata.provider_name // null)}' /tmp/response.json 2>/dev/null || true)"
+              echo "$REVIEWER provider diagnostic: ${diagnostic:-non-json or empty response body}." >&2
             fi
             if [[ "$attempt" -lt 3 ]]; then sleep $((attempt * 4)); fi
           done
@@ -381,8 +398,8 @@ jobs:
             echo "$marker"
             echo "# $REVIEWER Advisory Review"
             echo
-            echo "Model: \`$MODEL\`"
-            echo "Exact PR head: \`$HEAD\`"
+            echo "Model: \`$MODEL\""
+            echo "Exact PR head: \`$HEAD\""
             echo "Invocation class: $INVOCATION"
             echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
             echo
