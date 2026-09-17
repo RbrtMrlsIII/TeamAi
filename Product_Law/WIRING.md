@@ -43,8 +43,14 @@ Model-assisted review is part of Verification & CI/Browser only. A model review 
 
 ## Reviewer lifecycle boundary
 
-The controlled advisory reviewer procedure permits one automatic model review per configured reviewer per pull request. Automatic review is intended for the first eligible non-draft lifecycle event and does not re-run merely because a PR receives more commits. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch. This is quota/resource protection and lifecycle control only; it does not change Product Law, human authorization, or substantive validation requirements.
+The controlled advisory reviewer procedure permits one automatic review sequence per pull request across the configured reviewer roster. The sequence begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event after substantive exact-head validators pass. The sequence is staged as:
 
-The current additional reviewer configuration uses `qwen` with secret alias `OPENROUTER_API_KEY_GWEN` and `deepseek` with `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` name is an owner-supplied secret alias for the Qwen provider/model configuration, not a separate Product Law identity.
+`Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
+
+There is no automatic interval before Nemotron. OpenAI and Poolside are peers in the second stage and execute concurrently. DeepSeek and Qwen are peers in the third stage and execute concurrently. `synchronize` never restarts the automatic sequence. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch.
+
+A reviewer/provider failure is recorded as execution evidence and does not authorize secret substitution, stage reordering, or a retry through another provider. A PR-head change fails the current stage and prevents the sequence from proceeding with stale code.
+
+The current configured reviewer aliases are `nemotron` → `OPENROUTER_API_KEY`, `openai` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, and `qwen` → `OPENROUTER_API_KEY_GWEN`. These aliases and provider bindings are verification/runtime configuration, not new Product Law identities.
 
 <!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->
