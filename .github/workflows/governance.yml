@@ -99,8 +99,10 @@ jobs:
           grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
           grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
           grep -Fq 'model: inclusionai/ling-3.0-flash:free' "$workflow"
-          grep -Fq 'model: poolside/laguna-xs-2.1:free' "$workflow'
+          grep -Fq 'model: poolside/laguna-xs-2.1:free' "$workflow"
            grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
+           test "$(grep -Fc 'model: poolside/laguna-xs-2.1:free' "$workflow")" -eq 1
+           test "$(grep -Fc 'model: poolside/laguna-s-2.1:free' "$workflow")" -eq 1
           grep -Fq 'model: dots-studio/dots-3-note-preview:free' "$workflow"
           test "$(grep -Fc 'model: dots-studio/dots-3-note-preview:free' "$workflow")" -eq 1
           if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
