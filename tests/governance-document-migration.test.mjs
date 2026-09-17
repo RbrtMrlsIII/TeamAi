@@ -130,8 +130,9 @@ test('field wiring and Skill wiring remain separate responsibilities', () => {
   assert.match(fieldWiring, /Backend & Runtime/);
   assert.match(fieldWiring, /Frontend & Experience/);
   assert.match(skillWiring, /skills\/governance\/machine-builder\/SKILL\.md/);
-  assert.match(skillWiring, /## Forbidden active routing surfaces/);
-  assert.match(skillWiring, /legacy `docs\/skills\/` namespace/);
+  assert.match(skillWiring, /## Validation lifecycle routing/);
+  assert.match(skillWiring, /docs\/skills/);
+  assert.match(skillWiring, /forbidden as active routing/i);
   assert.match(skillWiring, /single skills tree/i);
   assert.equal(manifest.skill_model.canonical_glob, 'skills/**/SKILL.md');
   assert.equal(existsSync(join(root, 'docs/skills')), false);
@@ -147,13 +148,13 @@ test('validation changes preserve an explicit old-invariant to replacement recor
   assert.match(session, /VALIDATION CHANGE WARNING/);
 });
 
-test('promotion boundaries keep #344 and #346 separate', () => {
+test('promotion boundaries keep merged governance and machine candidate separate', () => {
   const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
   const skillWiring = read('docs/SKILL_WIRING.md');
   const session = read('AI_ASSISTANT_READ_ME.md');
   assert.equal(manifest.promotion_model.governance_pr, 346);
-  assert.equal(manifest.promotion_model.machine_hero_pr, 344);
-  assert.match(skillWiring, /#344/);
+  assert.equal(manifest.promotion_model.machine_hero_pr, 353);
+  assert.match(skillWiring, /#353/);
   assert.match(skillWiring, /promotion/i);
-  assert.match(session, /#344.*Draft and not promoted/i);
+  assert.match(session, /#353.*merged.*main/i);
 });

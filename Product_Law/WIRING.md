@@ -35,5 +35,4 @@ Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checkli
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
-<!-- #348 canonical synchronization marker: proof-target surface -->
-<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->
+<!-- #349 post-#346 recovery synchronization: canonical authority remains Product_Law; session truth remains in the session/masterplan surfaces. -->

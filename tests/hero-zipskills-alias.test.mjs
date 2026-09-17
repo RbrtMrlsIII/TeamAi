@@ -1,6 +1,15 @@
 /**
  * TEAM-EXPERIENCE-029 Slice H — MECHANISM_ZIPSKILLS ↔ WORKSPACE_ZIPSKILLS alias
  * Presentation only. No 029-released claim.
+ *
+ * VALIDATION CHANGE WARNING
+ * Protected old invariant: NEXT_SLICES owned one current slice and did not become a semantic-machine history index.
+ * Authorized new rule: the current slice title is allowed to change as execution advances, while the one-current-slice
+ * structure and separation from semantic-machine history remain protected.
+ * Why the old invariant is obsolete/retained: the literal title "Repository Governance Foundation Reconciliation"
+ * became historical after #346 and #348 merged; freezing that wording would make the test reject truthful session state.
+ * Replacement invariant: NEXT_SLICES exposes the canonical current-slice contract and does not contain ZipSkills/semantic-
+ * machine history identifiers in the current-slice surface.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -43,7 +52,9 @@ test('seat-stack zipskills layer is optional + workspace-scoped presentation', (
 });
 
 test('current slice does not become a semantic-machine history index', () => {
-  assert.match(next, /Repository Governance Foundation Reconciliation/i);
+  assert.match(next, /## Current Slice/i);
+  assert.match(next, /## Status/i);
+  assert.match(next, /IN PROGRESS/i);
   assert.doesNotMatch(next, /WORKSPACE_ZIPSKILLS|MECHANISM_ZIPSKILLS|Slice H/);
   assert.match(map, /WORKSPACE_ZIPSKILLS/);
 });

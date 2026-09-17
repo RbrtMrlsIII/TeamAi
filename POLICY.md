@@ -32,11 +32,28 @@
 ## PR discipline
 
 - Substantive work starts as a **Draft PR**.
+- Required checks and applicable browser/runtime evidence remain active on Draft PRs.
+- **Governance Integrity is a substantive validation surface and runs on Draft PRs.** It is not a merge-only check.
+- `review-readiness` is a promotion-stage check. It may be skipped while a PR is Draft by design and must not be interpreted as a passed gate.
+- When a PR becomes Ready for review, the required validation set must be current on the exact head and `review-readiness` must evaluate the review/authorization conditions.
+- A skipped downstream job is never evidence that the skipped condition passed.
 - Required checks, evidence, canonical synchronization, and review-readiness must pass before ready-for-review.
 - **Auto-merge is not used or relied upon for product changes.**
 - A PR may contain multiple related commits and multiple checklist items.
 - One slice is not required to equal one PR or one merge.
 - `main` changes through governed PRs only.
+
+## Validation-stage model
+
+Use this lifecycle when interpreting CI:
+
+| PR state | Expected validation role |
+|---|---|
+| **Draft** | Run substantive Governance Integrity, evidence-consistency, agent validation, Full-System, Security, and applicable Browser/Runtime verification against the exact PR head. Promotion authorization is not yet evaluated. |
+| **Ready for review** | Reconfirm exact-head substantive validation and run `review-readiness`, including the repository's independent review/authorization requirements. |
+| **Merge candidate** | All required checks must be current and passing on the exact head; no automation may substitute for the repository's normal merge/review path. |
+
+A validation that is skipped because of lifecycle gating is **not** equivalent to a passing validation. When a check is intentionally skipped, the owning workflow or PR record should make the reason explicit.
 
 ## Validation-change protocol
 
@@ -68,5 +85,4 @@ Distinguish:
 
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority.
 
-<!-- #348 canonical synchronization marker: proof-target surface -->
-<!-- #351 canonical synchronization marker: retired Vercel integration removed from active governance/delivery surfaces. -->
+<!-- #349 post-#346 recovery synchronization: post-merge governance truth is canonical; no provider-specific delivery surface is authoritative. -->
