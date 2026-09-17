@@ -6,6 +6,7 @@ const safeCount = (value) => Math.max(0, Number.isFinite(Number(value)) ? Number
  * Derive an expansion envelope from semantic/UI payload rather than a universal
  * width/height/depth multiplier. The constants here are bounded design-policy
  * coefficients, while the resulting footprint is payload-dependent.
+ * PR #357 body uses ### Draft proof target for governance audit parsing.
  */
 export function deriveMachineExpansionProfile(part = {}, { clearance = 0.16 } = {}) {
   const base = part?.dimensions || { x: 1, y: 1, z: 1 };
