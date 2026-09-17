@@ -1,0 +1,210 @@
+name: Nemotron Copilot Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number to review
+        required: true
+        type: string
+      approve:
+        description: Submit an approval after the review. Use only for an explicitly authorized PR.
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: nemotron-review-${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number }}
+  cancel-in-progress: true
+
+env:
+  MODEL: nvidia/nemotron-3-ultra-550b-a55b:free
+  MAX_DIFF_CHARS: '120000'
+
+jobs:
+  review:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.user.type != 'Bot' &&
+       startsWith(github.event.comment.body, '/nemotron'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+          ISSUE_PR_URL: ${{ github.event.issue.pull_request.url }}
+          INPUT_PR: ${{ inputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            echo "number=$EVENT_PR" >> "$GITHUB_OUTPUT"
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "number=$INPUT_PR" >> "$GITHUB_OUTPUT"
+          else
+            pr_number="$(gh api "$ISSUE_PR_URL" --jq '.number')"
+            echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Read PR metadata
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR" > /tmp/pr.json
+          jq -r '.head.sha' /tmp/pr.json > /tmp/head.sha
+          jq -r '.base.sha' /tmp/pr.json > /tmp/base.sha
+          jq -r '.title' /tmp/pr.json > /tmp/title
+          jq -r '.body // ""' /tmp/pr.json > /tmp/body
+          echo "head=$(cat /tmp/head.sha)" >> "$GITHUB_OUTPUT"
+          echo "base=$(cat /tmp/base.sha)" >> "$GITHUB_OUTPUT"
+          echo "title<<EOF" >> "$GITHUB_OUTPUT"
+          cat /tmp/title >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.meta.outputs.head }}
+          fetch-depth: 0
+
+      - name: Build bounded review packet
+        env:
+          BASE: ${{ steps.meta.outputs.base }}
+          HEAD: ${{ steps.meta.outputs.head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '=== PR ==='
+            cat /tmp/title
+            echo
+            echo '=== BODY ==='
+            cat /tmp/body
+            echo
+            echo '=== CHANGED FILES ==='
+            git diff --name-status "$BASE...$HEAD"
+            echo
+            echo '=== DIFF ==='
+            git diff --unified=60 "$BASE...$HEAD"
+          } > /tmp/review.txt
+          if (( $(wc -c < /tmp/review.txt) > MAX_DIFF_CHARS )); then
+            head -c "$MAX_DIFF_CHARS" /tmp/review.txt > /tmp/review.bounded
+            mv /tmp/review.bounded /tmp/review.txt
+            printf '\n[REVIEW PACKET TRUNCATED AT %s CHARS]\n' "$MAX_DIFF_CHARS" >> /tmp/review.txt
+          fi
+
+      - name: Ask Nemotron
+        id: model
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          MODEL: ${{ env.MODEL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$OPENROUTER_API_KEY"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          packet = Path('/tmp/review.txt').read_text()
+          system = '''You are the independent advisory reviewer for the TeamAi repository.
+
+Review the supplied pull request against repository truth and the changed code only.
+Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.
+Never invent requirements. Never recommend weakening a validator or bypassing governance.
+Distinguish defects, governance gaps, evidence gaps, and non-blocking observations.
+Do not claim a test passed unless the supplied packet proves it.
+Do not approve a PR solely because it is small or tests appear green.
+
+Return concise Markdown with exactly these sections:
+## Verdict
+Use one of: APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.
+## Blocking findings
+Bullets with file/path evidence where possible. Say "None" if none.
+## Governance and evidence
+Check authority/index synchronization and evidence boundaries.
+## Verification gaps
+List missing proof that matters to the PR's claims.
+## Non-blocking observations
+Optional bullets.
+## Review basis
+State that this is model-generated advisory analysis and identify any truncation or missing context.'''
+          user = 'Repository PR review packet:\n\n' + packet
+          payload = {
+            'model': os.environ['MODEL'],
+            'messages': [
+              {'role': 'system', 'content': system},
+              {'role': 'user', 'content': user},
+            ],
+            'temperature': 0.1,
+            'max_tokens': 5000,
+          }
+          Path('/tmp/payload.json').write_text(json.dumps(payload))
+          PY
+          curl --fail-with-body -sS https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H 'Content-Type: application/json' \
+            -H "HTTP-Referer: https://github.com/${{ github.repository }}" \
+            -H 'X-Title: TeamAi Nemotron Copilot Review' \
+            --data-binary @/tmp/payload.json > /tmp/response.json
+          jq -r '.choices[0].message.content // empty' /tmp/response.json > /tmp/review.md
+          test -s /tmp/review.md
+
+      - name: Post advisory review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '<!-- teamai-nemotron-review -->'
+            echo '# Nemotron Copilot Review'
+            echo
+            echo "Model: \\`$MODEL\`"
+            echo "Exact PR head: \\`${{ steps.meta.outputs.head }}\`"
+            echo
+            cat /tmp/review.md
+          } > /tmp/comment.md
+          gh pr comment "$PR" --repo "$REPO" --body-file /tmp/comment.md
+
+      - name: Optional explicit approval
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.approve == true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q '^## Verdict$' /tmp/review.md && grep -q '^APPROVE$' /tmp/review.md; then
+            gh api --method POST "repos/$REPO/pulls/$PR/reviews" \
+              -f body='Nemotron Copilot Review: APPROVE. This approval is model-generated and is subject to TeamAi human governance and branch-protection rules.' \
+              -f event='APPROVE'
+          else
+            echo 'Nemotron did not return APPROVE; no approval submitted.'
+            exit 1
+          fi
