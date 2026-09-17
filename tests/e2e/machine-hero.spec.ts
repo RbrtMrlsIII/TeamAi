@@ -36,4 +36,22 @@ test.describe('Machine Hero foundation', () => {
     expect(resetTarget).toEqual(initialTarget);
     expect(await page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('HERO_WIDE');
   });
+
+  test('WebGL preview consumes the shared semantic payload case matrix', async ({ page }) => {
+    await page.goto('/machine-core-preview.html?machine-preview=webgl&machine-case=dense');
+    const preview = page.locator('[data-machine-hero-webgl]');
+    await expect(preview).toBeVisible();
+    await expect(preview.locator('[data-machine-webgl-state]')).toContainText('dense semantic payload');
+    const canvas = preview.locator('canvas[aria-label="Interactive Machine Hero WebGL semantic payload preview"]');
+    await expect(canvas).toBeVisible();
+    await expect(canvas).toHaveJSProperty('width', expect.any(Number));
+    await expect.poll(() => canvas.evaluate((node) => ({ width: node.width, height: node.height, webgl: Boolean(node.getContext('webgl')) }))).toEqual(expect.objectContaining({ webgl: true }));
+
+    await preview.getByRole('button', { name: 'Next payload case', exact: true }).click();
+    await expect(preview.locator('[data-machine-webgl-state]')).toContainText('sparse semantic payload');
+
+    await preview.getByRole('button', { name: 'Expand divisions', exact: true }).click();
+    await expect(preview.locator('[data-machine-webgl-state]')).toContainText('expanded');
+    await expect(preview.locator('[data-machine-webgl-state]')).toContainText('topology valid');
+  });
 });
