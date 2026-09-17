@@ -8,7 +8,7 @@ TEAM-EXPERIENCE-029 — runtime proof of semantic topology, adaptive geometry, a
 
 ## Status
 
-IN PROGRESS — #346, #348, #351, #352, #353, and #361 are merged; #353 remains a non-production candidate; #367 is a separate governance prerequisite for late review-approval re-evaluation.
+IN PROGRESS — #346, #348, #351, #352, #353, and #361 are merged; #353 remains a non-production candidate; #367 is a separate governance prerequisite for late review-approval re-evaluation; reviewer quota controls are now extended to the additional advisory reviewer lanes.
 
 ## Objective
 
@@ -24,6 +24,7 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - `docs/SKILL_WIRING.md`
 - `skills/governance/repository-synchronization/SKILL.md`
 - `skills/governance/machine-builder/SKILL.md`
+- `skills/governance/ai-advisory-review/SKILL.md`
 - `skills/governance/nemotron-copilot-review/SKILL.md`
 - applicable spatial hierarchy/transition/responsive/accessibility Skills
 - Issue #133
@@ -44,7 +45,9 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - desktop and phone browser proof, including reduced-motion behavior
 - canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
 - review-readiness lifecycle re-evaluation reflects submitted/dismissed reviews without changing exact-head human-approval semantics
-- automatic Nemotron review is limited to one automatic invocation per PR; deliberate later-head re-review is manual
+- automatic review for each configured advisory reviewer is limited to one automatic invocation per PR; deliberate later-head re-review is manual
+- reviewer-specific quota guards use separate stable automatic markers and do not consume another reviewer's allowance
+- the `OPENROUTER_API_KEY_GWEN` alias maps to the configured Qwen model, while `OPENROUTER_API_KEY_DEEPSEEK` maps to DeepSeek
 - Tree Census reconciliation after runtime behavior is actually proven
 
 ## Current blocker
