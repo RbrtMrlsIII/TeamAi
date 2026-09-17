@@ -15,7 +15,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REVIEW_INTERVAL_SECONDS: '300'
+  REVIEW_INTERVAL_SECONDS: '150'
+  VALIDATION_POLL_SECONDS: '15'
+  VALIDATION_TIMEOUT_SECONDS: '1800'
   SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
   NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
   DEEPSEEK_AUTO_MARKER: '<!-- teamai-deepseek-auto-review -->'
@@ -56,9 +58,79 @@ jobs:
           echo 'should_run=true' >> "$GITHUB_OUTPUT"
           echo "PR #$PR is eligible for its first automatic advisory review sequence."
 
-  claim:
+  validation_gate:
     needs: eligibility
     if: needs.eligibility.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    steps:
+      - name: Wait for required substantive validation to finish before sequence claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          POLL_SECONDS: ${{ env.VALIDATION_POLL_SECONDS }}
+          TIMEOUT_SECONDS: ${{ env.VALIDATION_TIMEOUT_SECONDS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            "governance-drift"
+            "evidence-consistency"
+            "agent-validation"
+            "Recovery integrity"
+            "Project tests + canonical package"
+            "CodeQL analyze (javascript-typescript)"
+            "Playwright browser verification"
+          )
+          deadline=$((SECONDS + TIMEOUT_SECONDS))
+          while true; do
+            current_head="$(gh api "repos/$REPO/pulls/${{ github.event.pull_request.number }}" --jq '.head.sha')"
+            if [[ "$current_head" != "$HEAD" ]]; then
+              echo "PR head changed during validation gate: expected $HEAD, found $current_head."
+              echo "Failing closed; the synchronized head must establish a new deliberate review point."
+              exit 1
+            fi
+
+            checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100")"
+            pending=0
+            failed=0
+            missing=0
+            for name in "${required[@]}"; do
+              conclusion="$(jq -r --arg name "$name" '[.check_runs[] | select(.name == $name)] | sort_by(.completed_at // "") | last | .conclusion // "MISSING"' <<< "$checks")"
+              status="$(jq -r --arg name "$name" '[.check_runs[] | select(.name == $name)] | sort_by(.started_at // "") | last | .status // "MISSING"' <<< "$checks")"
+              echo "$name: status=$status conclusion=$conclusion"
+              if [[ "$conclusion" == "MISSING" ]]; then
+                missing=$((missing + 1))
+              elif [[ "$status" != "completed" ]]; then
+                pending=$((pending + 1))
+              elif [[ "$conclusion" != "success" ]]; then
+                failed=$((failed + 1))
+              fi
+            done
+
+            if (( failed > 0 )); then
+              echo "Required substantive validation failed. Automatic reviewer sequence will not start."
+              exit 1
+            fi
+            if (( missing == 0 && pending == 0 )); then
+              echo "All required substantive validators passed on exact head $HEAD."
+              exit 0
+            fi
+            if (( SECONDS >= deadline )); then
+              echo "Timed out waiting for required substantive validators on exact head $HEAD."
+              exit 1
+            fi
+            echo "Validation still running or incomplete; polling again in ${POLL_SECONDS}s."
+            sleep "$POLL_SECONDS"
+          done
+
+  claim:
+    needs: [eligibility, validation_gate]
+    if: needs.eligibility.outputs.should_run == 'true' && needs.validation_gate.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -66,7 +138,7 @@ jobs:
     outputs:
       claimed: ${{ steps.claim.outputs.claimed }}
     steps:
-      - name: Claim the automatic sequence before any model call
+      - name: Claim the automatic sequence only after validations pass
         id: claim
         env:
           GH_TOKEN: ${{ github.token }}
@@ -77,12 +149,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          if [[ "$current_head" != "$HEAD" ]]; then
+            echo "Head changed before sequence claim: expected $HEAD, found $current_head."
+            echo 'claimed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
           if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 5 minutes → DeepSeek → 5 minutes → Qwen')"
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -108,7 +186,7 @@ jobs:
     if: needs.nemotron.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Wait configured interval before DeepSeek
+      - name: Wait 2 minutes 30 seconds before DeepSeek
         run: sleep "${REVIEW_INTERVAL_SECONDS}"
 
   deepseek:
@@ -133,7 +211,7 @@ jobs:
     if: needs.deepseek.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Wait configured interval before Qwen
+      - name: Wait 2 minutes 30 seconds before Qwen
         run: sleep "${REVIEW_INTERVAL_SECONDS}"
 
   qwen:
