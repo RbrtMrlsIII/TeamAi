@@ -33,6 +33,7 @@
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 - [x] Automatic model review is quota-protected to one automatic invocation per configured reviewer per PR; later-head re-review remains explicit.
 - [x] Additional reviewer aliases are registered: `qwen` → `OPENROUTER_API_KEY_GWEN`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`.
+- [ ] Automatic advisory review sequence is runtime-verified as `Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen` on the first eligible non-draft PR lifecycle event.
 
 ## Workspace and delivery
 
@@ -84,6 +85,7 @@
 - [x] No validator is weakened merely to obtain green CI.
 - [x] Nemotron review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
 - [x] Additional model reviewers reuse the same substantive exact-head boundary rather than weakening or bypassing validators.
+- [ ] Ordered multi-review orchestration is runtime-verified without weakening or bypassing the existing reviewer gate.
 
 ## Post-#346 control-plane reconciliation — Issue #347
 
