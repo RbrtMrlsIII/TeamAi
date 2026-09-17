@@ -29,11 +29,15 @@ The resulting packet includes exact-head check-run evidence, current governing-f
 
 ## Lifecycle policy
 
-- Draft PRs are not automatically sent to Nemotron. A collaborator may invoke `/nemotron`, or an authorized workflow dispatch may run a controlled review against the exact current head.
-- Ready-for-review PRs are automatically reviewed on the `ready_for_review` event and re-reviewed on subsequent non-draft `synchronize`/`reopened` events.
-- Automatic review is blocked until the required substantive exact-head check-runs pass.
-- `review-readiness` remains a separate promotion-stage human authorization gate and is not a prerequisite for the model's advisory analysis.
-- Every automatic review is advisory and must identify the exact PR head. A later head change invalidates the previous model analysis for promotion purposes.
+- **Draft PRs:** do not automatically invoke Nemotron. A collaborator may invoke `/nemotron`, or an authorized workflow dispatch may run a controlled review against the exact current head.
+- **Accidentally non-draft PRs:** an `opened` pull-request event may consume the single automatic review allowance for that PR after the exact-head substantive validators pass. This provides a safety net for future sessions that accidentally open a PR as Ready instead of Draft.
+- **Ready-for-review PRs:** a `ready_for_review` event may consume the single automatic review allowance when no earlier automatic Nemotron review has been posted.
+- **One automatic review per PR:** automatic reviews are intentionally not triggered by `synchronize` events and do not repeat merely because a PR receives additional commits. The workflow records its automatic review with the stable `<!-- teamai-nemotron-review -->` marker and suppresses later automatic attempts for that PR, regardless of head SHA.
+- **Manual re-review:** `/nemotron` issue-comment invocation and explicit `workflow_dispatch` remain available for a deliberate review of a later exact head. This is the controlled way to spend additional model quota on a changed revision.
+- **Reopen events:** reopening a PR can participate only while no prior automatic Nemotron review exists; once the marker exists, reopening does not consume another automatic review allowance.
+- **Automatic review gate:** an automatic review is blocked until the required substantive exact-head check-runs pass.
+- **Review-readiness:** remains a separate promotion-stage human authorization gate and is not a prerequisite for the model's advisory analysis.
+- Every model review is advisory and must identify the exact PR head. A later head change makes the previous model analysis stale for promotion purposes, but does not itself trigger another automatic review.
 
 ## Security boundaries
 
@@ -51,3 +55,5 @@ The workflow currently targets `nvidia/nemotron-3-ultra-550b-a55b:free` through 
 ## Evidence contract
 
 Every review comment must identify the exact PR head. A model review is advisory evidence only. A green model verdict or model-generated approval does not substitute for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, review-readiness, or human authorization. Required substantive validators must pass before the model is invoked; `review-readiness` remains a separate human authorization gate.
+
+The automatic-review budget is a quota-protection mechanism, not an evidence claim: one automatic review per PR is the default, while deliberate manual re-review remains available when a later head materially changes the work.

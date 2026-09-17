@@ -1,0 +1,432 @@
+name: AI Advisory Review Runner
+
+on:
+  workflow_call:
+    inputs:
+      reviewer:
+        description: Reviewer display name
+        required: true
+        type: string
+      reviewer_slug:
+        description: Stable reviewer identifier
+        required: true
+        type: string
+      model:
+        description: OpenRouter model slug
+        required: true
+        type: string
+      pr_number:
+        description: Pull request number
+        required: true
+        type: string
+      expected_head:
+        description: Expected exact head SHA. Empty for a manual review that targets the current head.
+        required: false
+        default: ''
+        type: string
+      invocation_class:
+        description: automatic or manual
+        required: true
+        type: string
+      automatic_marker:
+        description: Reviewer-specific automatic marker
+        required: true
+        type: string
+      manual_marker:
+        description: Reviewer-specific manual marker
+        required: true
+        type: string
+      approve:
+        description: Permit an explicitly authorized model approval, currently Nemotron-only
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      api_key:
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: ai-review-runner-${{ inputs.reviewer_slug }}-${{ inputs.pr_number }}-${{ inputs.expected_head || 'manual' }}
+  cancel-in-progress: true
+
+env:
+  MAX_REVIEW_PACKET_CHARS: '300000'
+  MAX_GOVERNANCE_CHARS: '140000'
+  VALIDATION_POLL_SECONDS: '10'
+  VALIDATION_TIMEOUT_SECONDS: '900'
+  REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read exact PR metadata
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ inputs.pr_number }}
+          EXPECTED_HEAD: ${{ inputs.expected_head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR" > /tmp/pr.json
+          actual_head="$(jq -r '.head.sha' /tmp/pr.json)"
+          base="$(jq -r '.base.sha' /tmp/pr.json)"
+          title="$(jq -r '.title' /tmp/pr.json)"
+          body="$(jq -r '.body // ""' /tmp/pr.json)"
+          if [[ -n "$EXPECTED_HEAD" && "$actual_head" != "$EXPECTED_HEAD" ]]; then
+            echo "Exact-head guard failed: expected $EXPECTED_HEAD but current PR head is $actual_head."
+            exit 1
+          fi
+          printf '%s\n' "$actual_head" > /tmp/head.sha
+          printf '%s\n' "$base" > /tmp/base.sha
+          printf '%s\n' "$title" > /tmp/title
+          printf '%s\n' "$body" > /tmp/body
+          echo "head=$actual_head" >> "$GITHUB_OUTPUT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout exact PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.meta.outputs.head }}
+          fetch-depth: 0
+
+      - name: Wait for substantive exact-head validators
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          EXPECTED_HEAD: ${{ steps.meta.outputs.head }}
+          REQUIRED: ${{ env.REQUIRED_CHECKS }}
+          POLL_SECONDS: ${{ env.VALIDATION_POLL_SECONDS }}
+          TIMEOUT_SECONDS: ${{ env.VALIDATION_TIMEOUT_SECONDS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          start="$(date +%s)"
+          while true; do
+            current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+            [[ "$current_head" == "$EXPECTED_HEAD" ]] || {
+              echo "Exact-head guard failed: PR moved from $EXPECTED_HEAD to $current_head."
+              exit 1
+            }
+            checks="$(gh api "repos/$REPO/commits/$EXPECTED_HEAD/check-runs?per_page=100")"
+            pending=0
+            failed=0
+            : > /tmp/validation-status.txt
+            while IFS= read -r check_name; do
+              check="$(jq -c --arg name "$check_name" --arg head "$EXPECTED_HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
+              if [[ -z "$check" ]]; then
+                printf '%s\tPENDING\tmissing exact-head check\n' "$check_name" >> /tmp/validation-status.txt
+                pending=1
+                continue
+              fi
+              status="$(jq -r '.status' <<< "$check")"
+              conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
+              url="$(jq -r '.html_url' <<< "$check")"
+              if [[ "$status" == "completed" && "$conclusion" == "success" ]]; then
+                printf '%s\tPASS\t%s\n' "$check_name" "$url" >> /tmp/validation-status.txt
+              elif [[ "$status" == "completed" ]]; then
+                printf '%s\tFAIL\tconclusion=%s\t%s\n' "$check_name" "$conclusion" "$url" >> /tmp/validation-status.txt
+                failed=1
+              else
+                printf '%s\tPENDING\tstatus=%s\t%s\n' "$check_name" "$status" "$url" >> /tmp/validation-status.txt
+                pending=1
+              fi
+            done < <(jq -r '.[]' <<< "$REQUIRED")
+            cat /tmp/validation-status.txt
+            if (( failed == 1 )); then
+              echo 'VALIDATION_GATE=FAIL'
+              exit 1
+            fi
+            if (( pending == 0 )); then
+              echo 'VALIDATION_GATE=PASS'
+              break
+            fi
+            elapsed=$(( $(date +%s) - start ))
+            if (( elapsed >= TIMEOUT_SECONDS )); then
+              echo "Validation gate timed out after ${TIMEOUT_SECONDS}s."
+              exit 1
+            fi
+            sleep "$POLL_SECONDS"
+          done
+
+      - name: Collect exact-head execution evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          REQUIRED_CHECKS: ${{ env.REQUIRED_CHECKS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100" > /tmp/check-runs.json
+          test -s /tmp/check-runs.json
+          {
+            echo '=== VALIDATION GATE ==='
+            echo "head=$HEAD"
+            echo 'status=PASS'
+            echo '=== REQUIRED CHECKS ==='
+            jq -r --arg head "$HEAD" --argjson required "$REQUIRED_CHECKS" '.check_runs | map(select(.head_sha == $head)) | map({(.name): .}) | add // {} | . as $by_name | $required[] | $by_name[.] | [ .name, .status, (.conclusion // ""), .html_url, (.output.title // ""), (.output.summary // "") ] | @tsv' /tmp/check-runs.json
+          } > /tmp/execution-evidence.txt
+
+      - name: Collect governing Issue state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          issue_number="$(grep -oE 'Issue #[0-9]+' /tmp/body | head -1 | grep -oE '[0-9]+' || true)"
+          if [[ -z "$issue_number" ]]; then
+            printf '%s\n' '=== GOVERNING ISSUE ===' 'No explicit Issue reference was resolved from the PR body.' > /tmp/issue-context.txt
+            exit 0
+          fi
+          gh api "repos/$REPO/issues/$issue_number" > /tmp/issue.json
+          test -s /tmp/issue.json
+          {
+            echo "=== GOVERNING ISSUE #$issue_number ==="
+            jq -r '"title=" + .title, "state=" + .state, "closed_at=" + (.closed_at // "null"), "updated_at=" + .updated_at, "comments=" + (.comments | tostring), "sub_issues_completed=" + (.sub_issues_summary.completed | tostring), "sub_issues_total=" + (.sub_issues_summary.total | tostring), "sub_issues_percent=" + (.sub_issues_summary.percent_completed | tostring)' /tmp/issue.json
+            echo '--- Issue body ---'
+            jq -r '.body // ""' /tmp/issue.json
+          } > /tmp/issue-context.txt
+
+      - name: Collect governing repository context
+        env:
+          MAX_CHARS: ${{ env.MAX_GOVERNANCE_CHARS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          files = [
+              'Product_Law/PRODUCT_LAW.md',
+              'Product_Law/WIRING.md',
+              'Masterplan/MASTERPLAN.md',
+              'Masterplan/NEXT_SLICES.md',
+              'POLICY.md',
+              'docs/SKILL_WIRING.md',
+              'skills/governance/ai-advisory-review/SKILL.md',
+              'skills/governance/nemotron-copilot-review/SKILL.md',
+              'skills/governance/machine-builder/SKILL.md',
+              'skills/frontend/spatial/hierarchy-runtime/SKILL.md',
+              'skills/frontend/spatial/seat-shell-hierarchy/SKILL.md',
+              'skills/frontend/spatial/transition/SKILL.md',
+              'docs/TEAMAI_3D_HERO_TREE_CENSUS.md',
+          ]
+          budget = int(os.environ['MAX_CHARS'])
+          chunks, used = [], 0
+          for path in files:
+              marker = f'=== GOVERNING FILE: {path} ===\n'
+              file_path = Path(path)
+              text = file_path.read_text(encoding='utf-8') if file_path.is_file() else '[MISSING AT EXACT PR HEAD]\n'
+              chunk = marker + text + ('\n' if not text.endswith('\n') else '')
+              if used + len(chunk) > budget:
+                  remaining = max(0, budget - used)
+                  chunks.append(chunk[:remaining])
+                  chunks.append('\n[ GOVERNING CONTEXT TRUNCATED ]\n')
+                  break
+              chunks.append(chunk)
+              used += len(chunk)
+          Path('/tmp/governing-context.txt').write_text(''.join(chunks), encoding='utf-8')
+          PY
+
+      - name: Build bounded review packet
+        env:
+          BASE: ${{ steps.meta.outputs.base }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          MAX_PACKET: ${{ env.MAX_REVIEW_PACKET_CHARS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '=== PR ==='
+            cat /tmp/title
+            echo
+            echo "base=$BASE"
+            echo "head=$HEAD"
+            echo
+            cat /tmp/execution-evidence.txt
+            echo
+            cat /tmp/issue-context.txt
+            echo
+            cat /tmp/governing-context.txt
+            echo
+            echo '=== CHANGED FILES ==='
+            git diff --name-status "$BASE...$HEAD"
+            echo
+            echo '=== DIFF ==='
+            git diff --unified=60 "$BASE...$HEAD"
+          } > /tmp/review.txt
+          sed -E -i \
+            -e 's/(OPENROUTER_API_KEY|FIREBASE_[A-Z0-9_]+|SUPABASE_[A-Z0-9_]+|PAYPAL_[A-Z0-9_]+)[[:space:]]*[:=][[:space:]]*[^[:space:]"'"'"'`]+/\1=[REDACTED]/g' \
+            -e 's/(ghp_|github_pat_|sk-proj-|sk-or-v1-)[A-Za-z0-9._-]+/[REDACTED]/g' \
+            /tmp/review.txt
+          if (( $(wc -c < /tmp/review.txt) > MAX_PACKET )); then
+            head -c "$MAX_PACKET" /tmp/review.txt > /tmp/review.bounded
+            mv /tmp/review.bounded /tmp/review.txt
+            printf '\n[REVIEW PACKET TRUNCATED AT %s CHARS]\n' "$MAX_PACKET" >> /tmp/review.txt
+          fi
+
+      - name: Confirm exact head before model invocation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          EXPECTED_HEAD: ${{ steps.meta.outputs.head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$EXPECTED_HEAD" ]] || {
+            echo "Exact-head guard failed immediately before model invocation: $current_head != $EXPECTED_HEAD."
+            exit 1
+          }
+
+      - name: Ask reviewer model
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.api_key }}
+          MODEL: ${{ inputs.model }}
+          REVIEWER: ${{ inputs.reviewer }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$OPENROUTER_API_KEY"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
+          reviewer = os.environ['REVIEWER']
+          system = '\n'.join([
+              f'You are the independent advisory {reviewer} reviewer for the TeamAi repository.',
+              'The packet contains exact-head execution evidence, governing documents and applicable Skills, owning Issue state, the current Tree Census, and the PR diff.',
+              'The workflow has already blocked invocation until every required substantive exact-head check completed successfully.',
+              'Review repository truth, product logic, governing rules, documentation, Issue state, execution evidence, and changed code.',
+              'Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.',
+              'Never invent requirements or recommend weakening governance or validators.',
+              'Never treat a PR claim as execution proof when the packet disagrees.',
+              'Never treat an open Issue as resolved merely because a PR satisfies one slice. Report the actual Issue state and checklist/completion evidence present in the packet.',
+              'Skipped, stale, unrelated, or head-mismatched checks are not passing evidence.',
+              'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
+              'If material execution, governance, applicable-Skill, census, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
+              '',
+              'Return exactly these sections:',
+              '## Verdict',
+              'Use one of: APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
+              '## Blocking findings',
+              '## Governance and evidence',
+              '## Verification gaps',
+              '## Non-blocking observations',
+              '## Review basis',
+          ])
+          payload = {
+              'model': os.environ['MODEL'],
+              'messages': [
+                  {'role': 'system', 'content': system},
+                  {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
+              ],
+              'temperature': 0.1,
+              'max_tokens': 5000,
+          }
+          Path('/tmp/payload.json').write_text(json.dumps(payload), encoding='utf-8')
+          PY
+          : > /tmp/response.json
+          : > /tmp/response.headers
+          for attempt in 1 2 3; do
+            set +e
+            status="$(curl -sS --connect-timeout 20 --max-time 180 -D /tmp/response.headers -o /tmp/response.json -w '%{http_code}' \
+              https://openrouter.ai/api/v1/chat/completions \
+              -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+              -H 'Content-Type: application/json' \
+              -H "HTTP-Referer: https://github.com/${{ github.repository }}" \
+              -H "X-Title: TeamAi $REVIEWER Advisory Review" \
+              --data-binary @/tmp/payload.json)
+            curl_exit=$?
+            set -e
+            request_id="$(awk 'BEGIN{IGNORECASE=1} /^x-request-id:/{gsub("\r", "", $2); print $2; exit} /^x-openrouter-request-id:/{gsub("\r", "", $2); print $2; exit}' /tmp/response.headers 2>/dev/null || true)"
+            if [[ "$curl_exit" -ne 0 ]]; then
+              echo "$REVIEWER provider transport failure: curl_exit=$curl_exit attempt=$attempt" >&2
+            else
+              echo "$REVIEWER provider response: http_status=$status attempt=$attempt request_id=${request_id:-unreported}" >&2
+            fi
+            if [[ "$status" =~ ^2[0-9][0-9]$ ]]; then
+              jq -r '.choices[0].message.content // empty' /tmp/response.json > /tmp/review.md
+              if test -s /tmp/review.md; then
+                exit 0
+              fi
+              success_shape="$(jq -c '{error_code: (.error.code // null), error_type: (.error.type // null), error_message: (.error.message // .message // null), response_keys: (keys | join(","))}' /tmp/response.json 2>/dev/null || true)"
+              echo "$REVIEWER provider returned a successful HTTP status without review content: ${success_shape:-non-json response}." >&2
+            else
+              diagnostic="$(jq -c '{error_code: (.error.code // null), error_type: (.error.type // null), error_message: (.error.message // .message // null), provider: (.error.metadata.provider_name // null)}' /tmp/response.json 2>/dev/null || true)"
+              echo "$REVIEWER provider diagnostic: ${diagnostic:-non-json or empty response body}." >&2
+            fi
+            if [[ "$attempt" -lt 3 ]]; then sleep $((attempt * 4)); fi
+          done
+          echo "$REVIEWER review request failed after 3 attempts. No review was posted." >&2
+          exit 1
+
+      - name: Post advisory review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          REVIEWER: ${{ inputs.reviewer }}
+          MODEL: ${{ inputs.model }}
+          INVOCATION: ${{ inputs.invocation_class }}
+          AUTO_MARKER: ${{ inputs.automatic_marker }}
+          MANUAL_MARKER: ${{ inputs.manual_marker }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "Exact-head guard failed while posting review: $current_head != $HEAD."
+            exit 1
+          }
+          marker="$MANUAL_MARKER"
+          if [[ "$INVOCATION" == "automatic" ]]; then marker="$AUTO_MARKER"; fi
+          {
+            echo "$marker"
+            echo "# $REVIEWER Advisory Review"
+            echo
+            printf 'Model: `%s`\n' "$MODEL"
+            printf 'Exact PR head: `%s`\n' "$HEAD"
+            echo "Invocation class: $INVOCATION"
+            echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
+            echo
+            cat /tmp/review.md
+          } > /tmp/comment.md
+          gh pr comment "$PR" --repo "$REPO" --body-file /tmp/comment.md
+
+      - name: Optional model approval
+        if: inputs.approve == true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          REVIEWER: ${{ inputs.reviewer }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REVIEWER" == 'Nemotron' ]] || {
+            echo 'Model approval is restricted to the explicitly authorized Nemotron path.'
+            exit 1
+          }
+          if grep -q '^## Verdict$' /tmp/review.md && grep -q '^APPROVE$' /tmp/review.md; then
+            gh api --method POST "repos/$REPO/pulls/$PR/reviews" \
+              -f body="Nemotron Copilot Review: APPROVE. Exact head $HEAD. Model-generated advisory review only; TeamAi review-readiness requires separate human authorization." \
+              -f event='APPROVE'
+          else
+            echo 'Reviewer did not return APPROVE; no model approval submitted.'
+            exit 1
+          fi

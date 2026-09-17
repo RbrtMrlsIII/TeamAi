@@ -1,0 +1,111 @@
+name: Additional AI Advisory Reviews
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      reviewer:
+        description: Reviewer to invoke
+        required: true
+        type: choice
+        options:
+          - openai
+          - poolside
+          - deepseek
+          - qwen
+      pr_number:
+        description: Pull request number to review
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  openai:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'openai') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.user.type != 'Bot' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       startsWith(github.event.comment.body, '/openai'))
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: OpenAI
+      reviewer_slug: openai
+      model: openai/gpt-oss-120b:free
+      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+      invocation_class: manual
+      automatic_marker: '<!-- teamai-openai-auto-review -->'
+      manual_marker: '<!-- teamai-openai-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
+
+  poolside:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'poolside') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.user.type != 'Bot' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       startsWith(github.event.comment.body, '/poolside'))
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Poolside
+      reviewer_slug: poolside
+      model: poolside/laguna-s-2.1:free
+      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+      invocation_class: manual
+      automatic_marker: '<!-- teamai-poolside-auto-review -->'
+      manual_marker: '<!-- teamai-poolside-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
+
+  deepseek:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'deepseek') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.user.type != 'Bot' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       startsWith(github.event.comment.body, '/deepseek'))
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: DeepSeek
+      reviewer_slug: deepseek
+      model: deepseek/deepseek-v4-flash:free
+      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+      invocation_class: manual
+      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
+      manual_marker: '<!-- teamai-deepseek-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
+
+  qwen:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'qwen') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.user.type != 'Bot' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       startsWith(github.event.comment.body, '/qwen'))
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Qwen
+      reviewer_slug: qwen
+      model: qwen/qwen3-coder:free
+      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+      invocation_class: manual
+      automatic_marker: '<!-- teamai-qwen-auto-review -->'
+      manual_marker: '<!-- teamai-qwen-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}

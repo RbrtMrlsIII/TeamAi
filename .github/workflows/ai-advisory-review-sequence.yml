@@ -1,0 +1,359 @@
+name: AI Advisory Review Sequence
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: ai-review-sequence-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  REVIEW_INTERVAL_SECONDS: '150'
+  VALIDATION_POLL_SECONDS: '15'
+  VALIDATION_TIMEOUT_SECONDS: '1800'
+  SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
+  NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-auto-review -->'
+  OPENAI_AUTO_MARKER: '<!-- teamai-openai-auto-review -->'
+  POOLSIDE_AUTO_MARKER: '<!-- teamai-poolside-auto-review -->'
+  DEEPSEEK_AUTO_MARKER: '<!-- teamai-deepseek-auto-review -->'
+  QWEN_AUTO_MARKER: '<!-- teamai-qwen-auto-review -->'
+
+jobs:
+  eligibility:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      should_run: ${{ steps.gate.outputs.should_run }}
+    steps:
+      - name: Gate one automatic review sequence per PR
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          MARKER: ${{ env.SEQUENCE_MARKER }}
+          NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
+          OPENAI_MARKER: ${{ env.OPENAI_AUTO_MARKER }}
+          POOLSIDE_MARKER: ${{ env.POOLSIDE_AUTO_MARKER }}
+          DEEPSEEK_MARKER: ${{ env.DEEPSEEK_AUTO_MARKER }}
+          QWEN_MARKER: ${{ env.QWEN_AUTO_MARKER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          for marker in "$MARKER" "$NEMOTRON_MARKER" "$OPENAI_MARKER" "$POOLSIDE_MARKER" "$DEEPSEEK_MARKER" "$QWEN_MARKER"; do
+            if jq -e --arg marker "$marker" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+              echo 'should_run=false' >> "$GITHUB_OUTPUT"
+              echo "Automatic AI review sequence already claimed or partially completed for PR #$PR."
+              exit 0
+            fi
+          done
+          echo 'should_run=true' >> "$GITHUB_OUTPUT"
+          echo "PR #$PR is eligible for its first automatic advisory review sequence."
+
+  validation_gate:
+    needs: eligibility
+    if: needs.eligibility.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    steps:
+      - name: Wait for required substantive validation to finish before sequence claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          POLL_SECONDS: ${{ env.VALIDATION_POLL_SECONDS }}
+          TIMEOUT_SECONDS: ${{ env.VALIDATION_TIMEOUT_SECONDS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            "governance-drift"
+            "evidence-consistency"
+            "agent-validation"
+            "Recovery integrity"
+            "Project tests + canonical package"
+            "CodeQL analyze (javascript-typescript)"
+            "Playwright browser verification"
+          )
+          deadline=$((SECONDS + TIMEOUT_SECONDS))
+          while true; do
+            current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+            draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+            if [[ "$current_head" != "$HEAD" ]]; then
+              echo "PR head changed during validation gate: expected $HEAD, found $current_head."
+              exit 1
+            fi
+            if [[ "$draft_state" != "false" ]]; then
+              echo "PR is no longer non-draft during validation gate; automatic reviewer sequence will not start."
+              exit 1
+            fi
+            checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100")"
+            pending=0
+            failed=0
+            missing=0
+            for name in "${required[@]}"; do
+              check="$(jq -c --arg name "$name" --arg head "$HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
+              if [[ -z "$check" ]]; then
+                echo "$name: status=MISSING conclusion=MISSING"
+                missing=$((missing + 1))
+                continue
+              fi
+              status="$(jq -r '.status' <<< "$check")"
+              conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
+              echo "$name: status=$status conclusion=${conclusion:-PENDING}"
+              if [[ "$status" != "completed" ]]; then
+                pending=$((pending + 1))
+              elif [[ "$conclusion" != "success" ]]; then
+                failed=$((failed + 1))
+              fi
+            done
+            if (( failed > 0 )); then
+              echo "Required substantive validation failed. Automatic reviewer sequence will not start."
+              exit 1
+            fi
+            if (( missing == 0 && pending == 0 )); then
+              echo "All required substantive validators passed on exact head $HEAD."
+              exit 0
+            fi
+            if (( SECONDS >= deadline )); then
+              echo "Timed out waiting for required substantive validators on exact head $HEAD."
+              exit 1
+            fi
+            sleep "$POLL_SECONDS"
+          done
+
+  claim:
+    needs: [eligibility, validation_gate]
+    if: needs.eligibility.outputs.should_run == 'true' && needs.validation_gate.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    outputs:
+      claimed: ${{ steps.claim.outputs.claimed }}
+    steps:
+      - name: Claim the automatic sequence only after validations pass
+        id: claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          MARKER: ${{ env.SEQUENCE_MARKER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          if [[ "$current_head" != "$HEAD" ]]; then
+            echo "Head changed before sequence claim: expected $HEAD, found $current_head."
+            echo 'claimed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+            echo 'claimed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          body="$(printf '%s\n\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Initial exact PR head: \`$HEAD\`" 'Order: Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen')"
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
+          echo 'claimed=true' >> "$GITHUB_OUTPUT"
+
+  nemotron:
+    needs: claim
+    if: needs.claim.outputs.claimed == 'true'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Nemotron
+      reviewer_slug: nemotron
+      model: nvidia/nemotron-3-ultra-550b-a55b:free
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-nemotron-auto-review -->'
+      manual_marker: '<!-- teamai-nemotron-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY }}
+
+  delay_to_second_stage:
+    needs: nemotron
+    if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Reconfirm exact head before starting the stage-1 barrier
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed before stage-1 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft before stage-1 interval; later automatic stages are blocked."
+            exit 1
+          }
+
+      - name: Wait 2 minutes 30 seconds after Nemotron turn
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sleep "$REVIEW_INTERVAL_SECONDS"
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed during stage-1 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft during stage-1 interval; later automatic stages are blocked."
+            exit 1
+          }
+
+  openai:
+    needs: delay_to_second_stage
+    if: needs.delay_to_second_stage.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: OpenAI
+      reviewer_slug: openai
+      model: openai/gpt-oss-120b:free
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-openai-auto-review -->'
+      manual_marker: '<!-- teamai-openai-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
+
+  poolside:
+    needs: delay_to_second_stage
+    if: needs.delay_to_second_stage.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Poolside
+      reviewer_slug: poolside
+      model: poolside/laguna-s-2.1:free
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-poolside-auto-review -->'
+      manual_marker: '<!-- teamai-poolside-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
+
+  delay_to_third_stage:
+    needs: [openai, poolside]
+    if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Reconfirm exact head before starting the stage-2 barrier
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed before stage-2 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft before stage-2 interval; later automatic stages are blocked."
+            exit 1
+          }
+
+      - name: Wait 2 minutes 30 seconds after OpenAI and Poolside turn
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sleep "$REVIEW_INTERVAL_SECONDS"
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "PR head changed during stage-2 interval: expected $HEAD, found $current_head."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft during stage-2 interval; later automatic stages are blocked."
+            exit 1
+          }
+
+  deepseek:
+    needs: delay_to_third_stage
+    if: needs.delay_to_third_stage.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: DeepSeek
+      reviewer_slug: deepseek
+      model: deepseek/deepseek-v4-flash:free
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
+      manual_marker: '<!-- teamai-deepseek-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
+
+  qwen:
+    needs: delay_to_third_stage
+    if: needs.delay_to_third_stage.result == 'success'
+    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    with:
+      reviewer: Qwen
+      reviewer_slug: qwen
+      model: qwen/qwen3-coder:free
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
+      invocation_class: automatic
+      automatic_marker: '<!-- teamai-qwen-auto-review -->'
+      manual_marker: '<!-- teamai-qwen-review -->'
+      approve: false
+    secrets:
+      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}

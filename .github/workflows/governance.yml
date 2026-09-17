@@ -60,6 +60,66 @@ jobs:
           node --check scripts/governance/verify-evidence-integrity.mjs
           python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
 
+      - name: Verify advisory reviewer stage consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen'
+          workflow='.github/workflows/ai-advisory-review-sequence.yml'
+          grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
+          grep -Fq "$expected" "$workflow"
+          grep -Fq 'reviewer: Nemotron' "$workflow"
+          grep -Fq 'reviewer: OpenAI' "$workflow"
+          grep -Fq 'reviewer: Poolside' "$workflow"
+          grep -Fq 'reviewer: DeepSeek' "$workflow"
+          grep -Fq 'reviewer: Qwen' "$workflow"
+          grep -Fq 'needs: delay_to_second_stage' "$workflow"
+          grep -Fq 'needs: [openai, poolside]' "$workflow"
+          grep -Fq 'needs: delay_to_third_stage' "$workflow"
+          grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"
+          grep -Fq "if: always() && (needs.openai.result == 'success' || needs.openai.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
+          grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
+          grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
+          grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
+          grep -Fq 'model: openai/gpt-oss-120b:free' "$workflow"
+          grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
+          grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow"
+          grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"
+          if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
+            echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
+            exit 1
+          fi
+          if grep -Fq "needs.openai.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
+            echo "Skipped/cancelled fallthrough remains in the stage-3 barrier."
+            exit 1
+          fi
+          for path in \
+            'POLICY.md' \
+            'docs/SKILL_WIRING.md' \
+            'skills/governance/ai-advisory-review/SKILL.md' \
+            'Masterplan/MASTERPLAN.md' \
+            'AI_ASSISTANT_READ_ME.md' \
+            'Product_Law/WIRING.md'; do
+            test -f "$path"
+            grep -Fq "$expected" "$path" || {
+              echo "Advisory reviewer stage drift detected in $path"
+              exit 1
+            }
+            if grep -Fq '5-minute interval' "$path"; then
+              echo "Retired 5-minute interval wording remains in $path"
+              exit 1
+            fi
+            if grep -Fq 'Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen' "$path"; then
+              echo "Retired three-stage sequence wording remains in $path"
+              exit 1
+            fi
+            if grep -Fq 'terminal non-cancelled' "$path" || grep -Fq 'completed non-cancelled' "$path"; then
+              echo "Ambiguous non-cancelled barrier wording remains in $path"
+              exit 1
+            fi
+          done
+          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free model routes."
+
       - name: Prove draft PR target against full PR delta
         env:
           BASE_SHA: ${{ steps.proof-context.outputs.base_sha }}
@@ -130,8 +190,9 @@ jobs:
       - evidence-consistency
       - agent-validation
     runs-on: ubuntu-latest
+    timeout-minutes: 355
     steps:
-      - name: Require a human approval on the exact current PR head and block auto-merge
+      - name: Wait for a non-author human approval on the exact current PR head
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -140,20 +201,42 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
-          gh api "/repos/${REPO}/pulls/${PR_NUMBER}" > /tmp/pr.json
-          auto_merge=$(jq -r 'if .auto_merge == null then "false" else "true" end' /tmp/pr.json)
-          echo "auto_merge_enabled=$auto_merge"
-          if [ "$auto_merge" = "true" ]; then
-            echo "REVIEW_READINESS=FAIL"
-            echo "TeamAi policy forbids auto-merge for product changes."
-            exit 1
-          fi
-          approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author) | select(.user.type != "Bot")] | length' /tmp/reviews.json)
-          echo "exact_head_human_approvals=$approved"
-          if [ "$approved" -lt 1 ]; then
-            echo "REVIEW_READINESS=FAIL"
-            echo "No non-author human approval exists for the exact current PR head $HEAD_SHA."
-            exit 1
-          fi
-          echo "REVIEW_READINESS=PASS"
+          poll_seconds=15
+          while true; do
+            gh api "/repos/${REPO}/pulls/${PR_NUMBER}" > /tmp/pr.json
+            current_head=$(jq -r '.head.sha' /tmp/pr.json)
+            draft_state=$(jq -r '.draft' /tmp/pr.json)
+            auto_merge=$(jq -r 'if .auto_merge == null then "false" else "true" end' /tmp/pr.json)
+            echo "current_head=$current_head"
+            echo "draft=$draft_state"
+            echo "auto_merge_enabled=$auto_merge"
+
+            if [ "$current_head" != "$HEAD_SHA" ]; then
+              echo "REVIEW_READINESS=FAIL"
+              echo "Exact-head authorization state is stale: expected $HEAD_SHA, found $current_head."
+              exit 1
+            fi
+            if [ "$draft_state" != "false" ]; then
+              echo "REVIEW_READINESS=FAIL"
+              echo "PR returned to Draft; review-readiness is not a promotion gate for Draft PRs."
+              exit 1
+            fi
+            if [ "$auto_merge" = "true" ]; then
+              echo "REVIEW_READINESS=FAIL"
+              echo "TeamAi policy forbids auto-merge for product changes."
+              exit 1
+            fi
+
+            gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
+            approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author) | select(.user.type != "Bot")] | length' /tmp/reviews.json)
+            echo "exact_head_human_approvals=$approved"
+            if [ "$approved" -ge 1 ]; then
+              echo "REVIEW_READINESS=PASS"
+              echo "Independent human approval exists on the exact current PR head $HEAD_SHA."
+              exit 0
+            fi
+
+            echo "REVIEW_READINESS=WAITING"
+            echo "Waiting for a non-author human APPROVED review on exact head $HEAD_SHA."
+            sleep "$poll_seconds"
+          done

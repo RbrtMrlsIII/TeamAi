@@ -4,16 +4,17 @@
 
 ## Session anchor
 
-- Last given prompt: **post-#361 control-plane reconciliation and next 029 frontier**
+- Last given prompt: **resolve the controlled advisory reviewer lifecycle after adding OpenAI and Poolside**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
-- Governance review fix: **#362 open**; late-approval retrigger remains a separate governance PR
+- Governance review fix: **#362 closed/superseded; #367 open** on `governance/review-readiness-late-approval-retrigger`
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Semantic topology/adaptive clearance: **#361 merged** into `main` as `6c8f650bf978e47650246af67291a26fe83c4934`
 - Active 029 ledger: **#278**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current `main` baseline: **`6c8f650bf978e47650246af67291a26fe83c4934`**, merge of #361
+- Current `main` baseline: **`c4bb03d0feeafd919c582657741751f12a40a6a6`**, post-#361 reconciliation
+- Active governance implementation PR: **#368** on `governance/nemotron-review-budget`, currently non-draft and unmerged
 
 ## Canonical authority path
 
@@ -41,8 +42,11 @@
 - #352 is merged; its post-#346 reconciliation and validation-lifecycle changes are part of `main`.
 - #353 is the current merged machine candidate implementation and remains non-production.
 - #361 is merged; it generalizes semantic machine connection topology and payload-adaptive clearance validation while preserving the bounded presentation/evidence boundary.
-- #362 is an open governance fix for late review approvals; it does not change what counts as human authorization.
+- #362 is closed/superseded because its implementation branch violated the current responsibility-prefix rule and its base was stale; its late-approval diagnosis and intended fix are carried forward by #367.
+- #367 is the active governance repair for `review-readiness` lifecycle re-evaluation on submitted/dismissed human reviews. It does not change what counts as human authorization.
 - Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
+- Issue #133 remains the governing lifecycle contract for draft-first, review, and promotion discipline.
+- #368 is the active governance slice for staged model-assisted PR review and remains unmerged.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -62,7 +66,7 @@ Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`
 | PR state | Active validation | Promotion/review gate |
 |---|---|---|
 | **Draft** | Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime checks continue against the exact PR head. | `review-readiness` may be skipped by lifecycle design. A skipped job is not a pass. |
-| **Ready for review** | Substantive exact-head validation remains current. | `review-readiness` evaluates review and authorization conditions, including required independent approval. |
+| **Ready for review** | Substantive exact-head validation remains current. | `review-readiness` evaluates review and authorization conditions, including required independent approval, and remains pending while that approval is absent. |
 | **Merge candidate** | Required checks and evidence remain current on the exact head. | Normal governed GitHub review/merge path only; no auto-merge. |
 
 A downstream **skipped** job is never evidence that the underlying requirement passed. Recovery must inspect the controlling upstream job and the exact current head.
@@ -97,9 +101,31 @@ Never weaken validation merely to make CI green.
 
 ## Model-assisted review
 
-`skills/governance/nemotron-copilot-review/SKILL.md` and `.github/workflows/nemotron-copilot-review.yml` provide bounded model-assisted PR review through OpenRouter/Nemotron. The workflow checks out the exact PR head, waits for required exact-head Governance, Full-System, Security, and Browser/Runtime validators to complete successfully, collects their execution evidence plus current governing documents and owning Issue state, then invokes the model. Pending, failed, stale, or head-mismatched execution evidence blocks model invocation. The workflow posts advisory findings and keeps approval behind an explicit authorized workflow dispatch. The model is not a Product Law source, merge authority, or replacement for required CI, browser/runtime evidence, review-readiness, or human authorization.
+`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint with the explicit stage sequence **Nemotron → 2 minutes 30 seconds → OpenAI + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen**. There is no automatic interval before Nemotron. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` provides deliberate manual routing for OpenAI, Poolside, DeepSeek, and Qwen. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
 
-The configured model is `nvidia/nemotron-3-ultra-550b-a55b:free`. This is operational configuration and may change independently of Product Law.
+Automatic review begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not consume automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim comment is written before Nemotron. Every reviewer receives the same original triggering head SHA and fails closed if that head changes before invocation.
+
+Stage 2 contains two independent reviewers that start together after the first 150-second barrier. Stage 3 contains two independent reviewers that start together after the second 150-second barrier. A provider failure does not substitute another reviewer or reorder the cohorts; it remains evidence. A later stage may start only when its upstream reviewer jobs have a `success` or `failure` result. `skipped` and `cancelled` do not open an inter-stage barrier.
+
+Each reviewer has an independent secret/model binding:
+
+| Reviewer | Secret alias | OpenRouter model | Automatic stage |
+|---|---|---|---:|
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | 3 |
+
+The reviewer routes are now explicit `:free` OpenRouter variants selected on 2026-09-17 to keep the governed reviewer path within the zero-credit constraint while preserving deterministic provider identity. Cost class and provider data-use terms remain separate considerations.
+
+### Historical automatic sequence evidence
+
+The earlier run on exact head `4477854a425453c2754a50bad941f81113ee5655` is preserved as historical evidence. It executed the former reviewer order, passed the exact-head validation gate, completed Nemotron and DeepSeek, then failed during the Qwen model call. The old automatic sequence comment and Nemotron review also contained obsolete timing wording. They remain immutable evidence for that old head and are not current implementation instruction.
+
+The current #368 implementation has changed the authorized orchestration invariant to the 1→2→2 cohort sequence. Because the automatic sequence claim for #368 was already consumed on the historical head, its updated automatic sequence cannot be runtime-reverified by simply synchronizing #368. Runtime proof of the new sequence must use a fresh eligible verification PR/head or another explicitly governed test vehicle; manual reviewer commands remain available for current-head provider verification.
+
+Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret.
 
 ## Handover
 
@@ -119,4 +145,8 @@ PR #353 is the current merged machine candidate, and #361 is the current merged 
 
 ## Next product frontier
 
-The next substantive 029 slice is **runtime proof of the generalized semantic topology/adaptive geometry path**: prove the current machine candidate against real renderer consumption, multiple payload densities, transition/interruption behavior, branch-aware subject targeting, responsive and reduced-motion behavior, and the canonical live/public boundary. Then reconcile evidence and census state. No Hero promotion or 029 release claim is implied.
+The next substantive 029 slice is **runtime proof of the generalized semantic topology/adaptive geometry path**: prove the current machine candidate against real renderer consumption, multiple payload densities, transition/interruption behavior, branch-aware subject targeting, responsive/reduced-motion behavior, and the canonical live/public boundary. Then reconcile evidence and census state. No Hero promotion or 029 release claim is implied.
+
+### Current governance hardening note
+
+The required `Draft proof target` section remains part of PR #368's durable proof contract because the repository canonical governance audit validates that section on each eligible PR-head run.
