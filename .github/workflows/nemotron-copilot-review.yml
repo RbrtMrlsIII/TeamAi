@@ -2,7 +2,7 @@ name: Nemotron Copilot Review
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, reopened, ready_for_review]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -36,17 +36,53 @@ env:
   REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
 
 jobs:
+  automatic-review-eligibility:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      should_review: ${{ steps.gate.outputs.should_review }}
+    steps:
+      - name: Allow at most one automatic Nemotron review per PR
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          DRAFT: ${{ github.event.pull_request.draft }}
+          ACTION: ${{ github.event.action }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$DRAFT" == "true" ]]; then
+            echo "should_review=false" >> "$GITHUB_OUTPUT"
+            echo "Automatic Nemotron review remains off for Draft PR #$PR."
+            exit 0
+          fi
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          if jq -e 'any(.[]; (.body // "") | contains("<!-- teamai-nemotron-review -->"))' <<< "$comments" >/dev/null; then
+            echo "should_review=false" >> "$GITHUB_OUTPUT"
+            echo "PR #$PR already has an automatic Nemotron review; later heads require an explicit manual re-review."
+            exit 0
+          fi
+          echo "should_review=true" >> "$GITHUB_OUTPUT"
+          echo "PR #$PR is eligible for its single automatic Nemotron review on event '$ACTION'."
+
   review:
     if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' &&
-       github.event.pull_request.head.repo.full_name == github.repository &&
-       github.event.pull_request.draft == false) ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/nemotron'))
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'pull_request' && needs.automatic-review-eligibility.outputs.should_review == 'true') ||
+        (github.event_name == 'issue_comment' &&
+         github.event.issue.pull_request &&
+         github.event.comment.user.type != 'Bot' &&
+         contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+         startsWith(github.event.comment.body, '/nemotron'))
+      )
+    needs: [automatic-review-eligibility]
     runs-on: ubuntu-latest
     steps:
       - name: Resolve PR
@@ -111,29 +147,20 @@ jobs:
               echo "Exact-head guard failed: PR moved from $EXPECTED_HEAD to $current_head."
               exit 1
             }
-
             checks="$(gh api "repos/$REPO/commits/$EXPECTED_HEAD/check-runs?per_page=100")"
             pending=0
             failed=0
             : > /tmp/validation-status.txt
-
             while IFS= read -r check_name; do
-              check="$(jq -c --arg name "$check_name" --arg head "$EXPECTED_HEAD" '
-                [.check_runs[] | select(.name == $name and .head_sha == $head)]
-                | sort_by(.started_at // .created_at)
-                | last // empty
-              ' <<< "$checks")"
-
+              check="$(jq -c --arg name "$check_name" --arg head "$EXPECTED_HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
               if [[ -z "$check" ]]; then
                 printf '%s\tPENDING\tmissing exact-head check\n' "$check_name" >> /tmp/validation-status.txt
                 pending=1
                 continue
               fi
-
               status="$(jq -r '.status' <<< "$check")"
               conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
               url="$(jq -r '.html_url' <<< "$check")"
-
               if [[ "$status" == "completed" && "$conclusion" == "success" ]]; then
                 printf '%s\tPASS\t%s\n' "$check_name" "$url" >> /tmp/validation-status.txt
               elif [[ "$status" == "completed" ]]; then
@@ -144,9 +171,7 @@ jobs:
                 pending=1
               fi
             done < <(jq -r '.[]' <<< "$REQUIRED")
-
             cat /tmp/validation-status.txt
-
             if (( failed == 1 )); then
               echo "VALIDATION_GATE=FAIL"
               exit 1
@@ -155,7 +180,6 @@ jobs:
               echo "VALIDATION_GATE=PASS"
               break
             fi
-
             elapsed=$(( $(date +%s) - start ))
             if (( elapsed >= TIMEOUT_SECONDS )); then
               echo "Validation gate timed out after ${TIMEOUT_SECONDS}s."
@@ -180,17 +204,7 @@ jobs:
             echo "head=$HEAD"
             echo 'status=PASS'
             echo '=== REQUIRED CHECKS ==='
-            jq -r --arg head "$HEAD" --argjson required "$REQUIRED_CHECKS" '
-              .check_runs
-              | map(select(.head_sha == $head))
-              | map({(.name): .})
-              | add // {}
-              | . as $by_name
-              | $required[]
-              | $by_name[.]
-              | [ .name, .status, (.conclusion // ""), .html_url, (.output.title // ""), (.output.summary // "") ]
-              | @tsv
-            ' /tmp/check-runs.json
+            jq -r --arg head "$HEAD" --argjson required "$REQUIRED_CHECKS" '.check_runs | map(select(.head_sha == $head)) | map({(.name): .}) | add // {} | . as $by_name | $required[] | $by_name[.] | [ .name, .status, (.conclusion // ""), .html_url, (.output.title // ""), (.output.summary // "") ] | @tsv' /tmp/check-runs.json
           } > /tmp/execution-evidence.txt
 
       - name: Collect governing Issue state
@@ -223,7 +237,6 @@ jobs:
           python - <<'PY'
           import os
           from pathlib import Path
-
           files = [
               'Product_Law/PRODUCT_LAW.md',
               'Product_Law/WIRING.md',
@@ -340,7 +353,6 @@ jobs:
           }
           Path('/tmp/payload.json').write_text(json.dumps(payload), encoding='utf-8')
           PY
-
           status=''
           for attempt in 1 2 3; do
             status="$(curl -sS --connect-timeout 20 --max-time 180 -o /tmp/response.json -w '%{http_code}' \
