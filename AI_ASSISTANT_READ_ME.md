@@ -7,11 +7,11 @@
 - Last given prompt: **1**
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
-- Post-#346 control-plane: **#352** — active reconciliation and validation-lifecycle hardening
+- Post-#346 control-plane: **#352 merged** into `main` as `daf182b5022a3ca32d8b617e26cd2d5d04105d53`
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Active 029 ledger: **#278**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current main baseline: **#351 merge `e61c3b9880cc5669e5764e0207a8adc4ba533e5f`**, with #353 already merged before this governance slice
+- Current `main` baseline: **#352 merge `daf182b5022a3ca32d8b617e26cd2d5d04105d53`**
 
 ## Canonical authority path
 
@@ -37,9 +37,23 @@
 - #346 and #348 are merged and no longer active migration vessels.
 - #351 Vercel retirement is merged; Vercel is no longer an active delivery/provider surface.
 - #353 is the current merged machine candidate implementation and remains non-production.
-- #352 owns the remaining post-merge control-plane reconciliation and validation-lifecycle hardening.
+- #352 is merged and established the current validation lifecycle/control-plane baseline.
 - Issue #278 remains the active 029 product-experience ledger. C8/C9/C10 remain incomplete.
 - Historical records remain provenance, not current instruction.
+
+## Canonical live website URL
+
+**Use exactly one live-site URL for public website testing:**
+
+`https://RbrtMrlsIII.github.io/TeamAi/`
+
+This is the canonical GitHub Pages public entrance. Preserve the `TeamAi` path casing exactly as written above when recording, reviewing, or comparing browser evidence. Browser/network layers may lowercase the hostname (`rbrtmrlsiii.github.io`) as normal URL handling; this is not a different site or alternate test target.
+
+Do **not** use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`, `/3d-world.html`, or other alternate public URLs as live-site acceptance targets. Historical references may remain in provenance, but they are not current live validation targets.
+
+Live-site validation is read-only browser/runtime evidence against that exact public entrance. Candidate or PR validation is separate and must use the exact PR head and its applicable project/browser checks; do not substitute a candidate URL for the canonical public entrance.
+
+**Verified 2026-09-17:** HTTP `200 OK`; title `TeamAi — Web AI Living Workspace`; GitHub Pages 404 absent; `Enter 3D world` present; redirect count `0`. This confirms the public entrance is currently serving the intended TeamAi landing experience.
 
 ## Validation lifecycle guide
 
@@ -95,6 +109,10 @@ PR #353 is the current merged machine candidate. Its semantic path is:
 
 Prototype coordinates, old timing, mesh indexes, retired camera identifiers, and decorative effects are not universal machine authority. #353 does not become backend, authorization, scheduler, entitlement, commerce, or durable-state authority.
 
-## Next governance gate
+## Next product frontier
 
-#352 owns the current post-merge control-plane reconciliation. The next product frontier remains TEAM-EXPERIENCE-029 in Issue #278. No Hero promotion or 029 release claim is implied by merged #353 alone.
+With the public GitHub Pages entrance restored and verified, the active product frontier remains TEAM-EXPERIENCE-029 in Issue #278. The next substantive 3D slice is the semantic `SEAT_CONNECTION` path:
+
+`semantic tree truth → payload → connection topology → expansion geometry / clearance / adjacency → stable semantic connection port → branch-aware camera subject → workspace-directed semantic edge → minimal presentation signal → reduced-motion equivalent → desktop + mobile proof → census reconciliation`
+
+No Hero promotion or 029 release claim is implied by the live-site verification or merged #353 alone.
