@@ -58,7 +58,7 @@ There is no automatic interval before Nemotron. Nemotron is the frontline review
 
 After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. Ling 3.0 Flash and Poolside then execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so GitHub's implicit upstream-success behavior cannot suppress an allowed failure cohort.
 
-After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does not open that barrier. Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) then execute concurrently against the same original triggering head.
+After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does not open that barrier. Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) then execute concurrently against the same original triggering head.
 
 A reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, stage reordering, or early launch. The inter-stage barrier is time-and-head controlled. A PR-head change during a barrier fails closed and prevents later automatic stages from reviewing stale code.
 
