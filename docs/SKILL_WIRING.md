@@ -50,9 +50,11 @@ The reusable advisory-review runner is downstream of the substantive validator s
 
 The automatic review lifecycle is one ordered dependency chain, not a matrix:
 
-`Nemotron → 5-minute interval → DeepSeek → 5-minute interval → Qwen`
+`Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen`
 
 The sequence is entered only from the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not invoke models automatically. `synchronize` never restarts the chain. A durable sequence-claim comment is recorded before the first model call, and any head change causes the next exact-head runner to fail closed so no later stage reviews stale code.
+
+The declared interval is an orchestration contract shared by the sequence workflow, `POLICY.md`, this routing map, and the `skills/governance/ai-advisory-review/SKILL.md`; these surfaces must remain synchronized.
 
 ### Manual reviewer routing
 
