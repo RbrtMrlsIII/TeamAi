@@ -45,6 +45,10 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 
 Model-assisted review is downstream of the substantive validator set, even though GitHub Actions starts workflows concurrently. The Nemotron workflow polls the exact PR head and requires successful completion of `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` before invoking the external model. Pending, failed, missing, or head-mismatched execution evidence fails closed. The model packet then receives current governing-file context, the owning Issue state, and exact-head check-run evidence.
 
+### Nemotron quota discipline
+
+Automatic Nemotron review is a bounded verification resource: one automatic review is allowed per PR. The automatic path may fire on the first eligible non-draft lifecycle event (`opened`, `reopened`, or `ready_for_review`) and then suppresses later automatic attempts using the stable model-review marker. `synchronize` is intentionally not an automatic model trigger. Later-head analysis uses explicit `/nemotron` or authorized workflow dispatch so normal repository velocity does not silently consume the free-model quota.
+
 ## Canonical live-site routing reference
 
 For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. Preserve the `TeamAi` path casing in recorded evidence. Public live-site validation is separate from PR/candidate validation, which remains exact-head CI/browser evidence.
@@ -55,7 +59,7 @@ PR #353 is the current merged machine candidate and remains non-production. Its 
 
 `Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md → repository-synchronization → machine-builder → applicable frontend/spatial Skills → verification/browser evidence`
 
-The machine builder owns the construction procedure. It does not own product semantics, backend authority, authorization, scheduler selection, entitlement, or promotion.
+The machine builder owns the construction procedure. It does not own product semantics, backend authority, authorization, scheduler selection, entitlement, commerce, durable-state, or promotion.
 
 Relevant spatial companions are selected only when required:
 
