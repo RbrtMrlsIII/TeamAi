@@ -50,9 +50,11 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - One slice is not required to equal one PR or one merge.
 - `main` changes through governed PRs only.
 
-### Nemotron quota discipline
+### Model-review quota discipline
 
-Nemotron automatic review is treated as a scarce verification resource. The controlled workflow permits at most one **automatic** Nemotron review per PR, using the first eligible non-draft lifecycle event (`opened`, `reopened`, or `ready_for_review`) that occurs before any prior automatic review marker exists. `synchronize` pushes do not automatically consume another model request. Later-head re-review remains available only through an intentional `/nemotron` invocation or authorized `workflow_dispatch`. This protects provider quota without weakening substantive validators or review evidence requirements.
+Model-assisted advisory review is treated as a scarce verification resource. Each configured reviewer may consume at most one **automatic** model review per PR, using the first eligible non-draft lifecycle event (`opened`, `reopened`, or `ready_for_review`) that occurs before that reviewer's automatic marker exists. `synchronize` pushes do not automatically consume another model request. Later-head re-review remains available only through the deliberate reviewer-specific command or authorized `workflow_dispatch` path. This protects provider quota without weakening substantive validators or review evidence requirements.
+
+Current additional reviewer aliases are `qwen` backed by secret `OPENROUTER_API_KEY_GWEN` and `deepseek` backed by `OPENROUTER_API_KEY_DEEPSEEK`. The `GWEN` secret name is retained as an owner-supplied alias for the Qwen provider/model configuration until normalized.
 
 ## Validation-stage model
 
@@ -90,7 +92,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 ## Model-assisted review
 
-The Nemotron Copilot Review Skill and workflow are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before invoking the model, the workflow must wait for the required exact-head `Repository Governance Integrity`, `Repository Full-System Verification`, `Security Static Analysis`, and `Canonical Browser Verification` workflows to complete successfully. Missing, pending, failed, stale, or head-mismatched validator evidence fails the model-review path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. An approval submission is disabled on ordinary PR events and requires an explicit authorized workflow dispatch; repository branch protection and human governance remain authoritative.
+The shared AI Advisory Review Skill and configured model-specific workflows are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before automatic invocation, the workflow must wait for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. Missing, pending, failed, stale, or head-mismatched validator evidence fails the model-review path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Model approval, where a workflow exposes it, requires an explicit authorized action; repository branch protection and human governance remain authoritative.
 
 ## Evidence discipline
 
