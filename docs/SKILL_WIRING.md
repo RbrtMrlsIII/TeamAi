@@ -38,7 +38,7 @@ Governance Skills are procedures only. They cannot authorize an action outside P
 
 Draft PRs continue substantive validation. Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime evidence remain active against the exact PR head. `review-readiness` may be skipped on Draft by lifecycle design.
 
-Ready-for-review PRs retain current exact-head substantive evidence and additionally enter `review-readiness`, which evaluates review/authorization conditions. While an independent human approval for the exact current head is absent, `review-readiness` remains pending rather than failing. Merge candidates require current passing required checks and normal review/merge authorization.
+Ready-for-review PRs retain current exact-head substantive evidence and additionally enter `review-readiness`, which evaluates review/authorization conditions. Submitted or dismissed human review events may re-trigger that same exact-head evaluation. While an independent human approval for the exact current head is absent, `review-readiness` remains pending rather than failing. Merge candidates require current passing required checks and normal review/merge authorization.
 
 A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
 
