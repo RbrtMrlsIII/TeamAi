@@ -10,7 +10,7 @@ This Skill does not create Product Law, grant merge authority, replace human rev
 
 1. Resolve the exact PR number, base SHA, and head SHA.
 2. Wait for the required **substantive execution check-runs** to complete successfully for that exact head before invoking a reviewer model.
-3. Do **not** wait on `review-readiness` as part of the model gate. `review-readiness` is the separate human authorization/promotion gate and may fail legitimately while independent human approval is absent.
+3. Do **not** treat `review-readiness` as a model gate. `review-readiness` is the separate human authorization/promotion gate and remains pending while independent human approval is absent.
 4. Build the bounded review packet from exact-head PR metadata and complete `base...head` diff, current governing documents, owning Issue state, and exact-head GitHub Actions execution evidence.
 5. Apply the canonical authority path: Product Law → Masterplan → POLICY/ORUCAVEAM → Skill wiring → applicable Skills → Issue → PR.
 6. Separate implementation defects, governance discrepancies, documentation discrepancies, Issue-state discrepancies, verification gaps, and non-blocking observations.
@@ -69,12 +69,12 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 | Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
 |---|---|---|---|---:|
 | Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-5.6-sol` | **Paid** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1` | **Paid** | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4.1-flash` | **Paid** | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3.8-max-0902` | **Paid** | 3 |
+| OpenAI | `OPENROUTER_API_KEY_OPENAI` | `openai/gpt-oss-120b:free` | **Free** | 2 |
+| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
+| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
+| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
 
-The billing classification is an operational snapshot audited 2026-09-17. The `:free` suffix denotes a distinct free model route; provider names themselves do not imply free API access. Known free variants include `poolside/laguna-s-2.1:free` and `deepseek/deepseek-v4-flash:free`, but changing the configured model identity is a governed validation change and is not implicit.
+The billing classification is an operational snapshot audited 2026-09-17. The `:free` suffix denotes a distinct free model route; provider names themselves do not imply free API access. These routes were selected explicitly to keep the governed reviewer path within the zero-credit constraint while retaining deterministic provider identity.
 
 Free routes can have provider-specific data-use terms, so cost status and repository-confidentiality suitability must be evaluated separately.
 
