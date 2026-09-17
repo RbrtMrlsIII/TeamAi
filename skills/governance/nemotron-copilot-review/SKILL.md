@@ -50,7 +50,7 @@ The resulting packet includes exact-head check-run evidence, current governing-f
 
 ## Model
 
-The workflow currently targets `nvidia/nemotron-3-ultra-550b-a55b:free` through OpenRouter. The model choice is operational configuration, not product authority.
+The workflow currently targets `nvidia/nemotron-3.5-lightning:free` through OpenRouter. The model choice is operational configuration, not product authority.
 
 ## Evidence contract
 
