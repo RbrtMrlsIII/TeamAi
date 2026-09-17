@@ -60,6 +60,32 @@ jobs:
           node --check scripts/governance/verify-evidence-integrity.mjs
           python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
 
+      - name: Verify advisory reviewer interval consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen'
+          workflow='.github/workflows/ai-advisory-review-sequence.yml'
+          grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
+          grep -Fq "$expected" "$workflow"
+          for path in \
+            'POLICY.md' \
+            'docs/SKILL_WIRING.md' \
+            'skills/governance/ai-advisory-review/SKILL.md' \
+            'Masterplan/MASTERPLAN.md' \
+            'AI_ASSISTANT_READ_ME.md'; do
+            test -f "$path"
+            grep -Fq "$expected" "$path" || {
+              echo "Advisory reviewer interval drift detected in $path"
+              exit 1
+            }
+            if grep -Fq '5-minute interval' "$path"; then
+              echo "Retired 5-minute interval wording remains in $path"
+              exit 1
+            fi
+          done
+          echo "Advisory reviewer interval is synchronized at 150 seconds across workflow and canonical governance surfaces."
+
       - name: Prove draft PR target against full PR delta
         env:
           BASE_SHA: ${{ steps.proof-context.outputs.base_sha }}
