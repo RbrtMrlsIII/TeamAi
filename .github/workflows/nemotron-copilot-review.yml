@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       approve:
-        description: Submit an approval after the review. Use only for an explicitly authorized PR.
+        description: Submit a model approval after the review. This never satisfies TeamAi's human review-readiness gate.
         required: false
         default: false
         type: boolean
@@ -35,7 +35,8 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
-       github.event.pull_request.head.repo.full_name == github.repository) ||
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.draft == false) ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
@@ -77,11 +78,17 @@ jobs:
           jq -r '.base.sha' /tmp/pr.json > /tmp/base.sha
           jq -r '.title' /tmp/pr.json > /tmp/title
           jq -r '.body // ""' /tmp/pr.json > /tmp/body
+          jq -r '.draft' /tmp/pr.json > /tmp/draft
           echo "head=$(cat /tmp/head.sha)" >> "$GITHUB_OUTPUT"
           echo "base=$(cat /tmp/base.sha)" >> "$GITHUB_OUTPUT"
+          echo "draft=$(cat /tmp/draft)" >> "$GITHUB_OUTPUT"
           echo "title<<EOF" >> "$GITHUB_OUTPUT"
           cat /tmp/title >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
+          if [[ "$(cat /tmp/draft)" == "true" && "$GITHUB_EVENT_NAME" != "workflow_dispatch" && "$GITHUB_EVENT_NAME" != "issue_comment" ]]; then
+            echo "Automatic Nemotron review is disabled for Draft PRs; use /nemotron or explicit workflow dispatch."
+            exit 0
+          fi
 
       - name: Checkout exact PR head
         uses: actions/checkout@v4
@@ -140,7 +147,7 @@ Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -
 Never invent requirements. Never recommend weakening a validator or bypassing governance.
 Distinguish defects, governance gaps, evidence gaps, and non-blocking observations.
 Do not claim a test passed unless the supplied packet proves it.
-Do not approve a PR solely because it is small or tests appear green.
+Do not treat a model-generated approval as human authorization.
 
 Return concise Markdown with exactly these sections:
 ## Verdict
@@ -195,7 +202,7 @@ State that this is model-generated advisory analysis and identify any truncation
           } > /tmp/comment.md
           gh pr comment "$PR" --repo "$REPO" --body-file /tmp/comment.md
 
-      - name: Optional explicit approval
+      - name: Optional model approval
         if: >-
           github.event_name == 'workflow_dispatch' &&
           inputs.approve == true
@@ -208,9 +215,9 @@ State that this is model-generated advisory analysis and identify any truncation
           set -euo pipefail
           if grep -q '^## Verdict$' /tmp/review.md && grep -q '^APPROVE$' /tmp/review.md; then
             gh api --method POST "repos/$REPO/pulls/$PR/reviews" \
-              -f body='Nemotron Copilot Review: APPROVE. This approval is model-generated and is subject to TeamAi human governance and branch-protection rules.' \
+              -f body='Nemotron Copilot Review: APPROVE. Model-generated advisory review only; TeamAi review-readiness requires separate human authorization.' \
               -f event='APPROVE'
           else
-            echo 'Nemotron did not return APPROVE; no approval submitted.'
+            echo 'Nemotron did not return APPROVE; no model approval submitted.'
             exit 1
           fi
