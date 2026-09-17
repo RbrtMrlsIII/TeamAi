@@ -104,6 +104,8 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 The shared AI Advisory Review Skill plus model-specific manual wrappers and the automatic sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before every automatic stage, the reusable reviewer runner waits for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. The automatic sequence adds a pre-claim gate so a Ready-for-review transition occurring while validations are still running does not start or claim the model sequence prematurely. Missing, pending, failed, stale, or head-mismatched validator evidence fails the reviewer path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Repository branch protection and human governance remain authoritative.
 
+The ordered sequence timing is a synchronized governance invariant across `ai-advisory-review-sequence.yml`, this Policy, `docs/SKILL_WIRING.md`, `skills/governance/ai-advisory-review/SKILL.md`, `Masterplan/MASTERPLAN.md`, and `AI_ASSISTANT_READ_ME.md`. Drift in the declared interval is a governance inconsistency and must fail validation rather than being silently normalized by one surface.
+
 ## Evidence discipline
 
 Distinguish:
