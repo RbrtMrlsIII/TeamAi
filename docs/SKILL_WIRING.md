@@ -40,6 +40,10 @@ Ready-for-review PRs retain current exact-head substantive evidence and addition
 
 A downstream **skipped** job is never a passing validation. Recovery must inspect the controlling upstream job and exact current head.
 
+## Canonical live-site routing reference
+
+For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. PR/candidate validation remains exact-head CI/browser evidence; the public URL is the sole live-site acceptance target. Do not route live validation to Vercel or guessed/retired alternate paths.
+
 ## Machine Hero routing
 
 PR #353 is the current merged machine candidate and remains non-production. Its routing is:
@@ -78,4 +82,4 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md`.
 
-<!-- #352 validation-lifecycle synchronization: Draft substantive validation remains active; review-readiness is promotion-stage; skipped downstream is not pass. -->
+<!-- #355 documentation reconciliation: canonical public live-site target is GitHub Pages only; candidate validation remains exact-head. -->
