@@ -185,8 +185,9 @@ jobs:
       - evidence-consistency
       - agent-validation
     runs-on: ubuntu-latest
+    timeout-minutes: 355
     steps:
-      - name: Require a human approval on the exact current PR head and block auto-merge
+      - name: Wait for a non-author human approval on the exact current PR head
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -195,20 +196,42 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
-          gh api "/repos/${REPO}/pulls/${PR_NUMBER}" > /tmp/pr.json
-          auto_merge=$(jq -r 'if .auto_merge == null then "false" else "true" end' /tmp/pr.json)
-          echo "auto_merge_enabled=$auto_merge"
-          if [ "$auto_merge" = "true" ]; then
-            echo "REVIEW_READINESS=FAIL"
-            echo "TeamAi policy forbids auto-merge for product changes."
-            exit 1
-          fi
-          approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author) | select(.user.type != "Bot")] | length' /tmp/reviews.json)
-          echo "exact_head_human_approvals=$approved"
-          if [ "$approved" -lt 1 ]; then
-            echo "REVIEW_READINESS=FAIL"
-            echo "No non-author human approval exists for the exact current PR head $HEAD_SHA."
-            exit 1
-          fi
-          echo "REVIEW_READINESS=PASS"
+          poll_seconds=15
+          while true; do
+            gh api "/repos/${REPO}/pulls/${PR_NUMBER}" > /tmp/pr.json
+            current_head=$(jq -r '.head.sha' /tmp/pr.json)
+            draft_state=$(jq -r '.draft' /tmp/pr.json)
+            auto_merge=$(jq -r 'if .auto_merge == null then "false" else "true" end' /tmp/pr.json)
+            echo "current_head=$current_head"
+            echo "draft=$draft_state"
+            echo "auto_merge_enabled=$auto_merge"
+
+            if [ "$current_head" != "$HEAD_SHA" ]; then
+              echo "REVIEW_READINESS=FAIL"
+              echo "Exact-head authorization state is stale: expected $HEAD_SHA, found $current_head."
+              exit 1
+            fi
+            if [ "$draft_state" != "false" ]; then
+              echo "REVIEW_READINESS=FAIL"
+              echo "PR returned to Draft; review-readiness is not a promotion gate for Draft PRs."
+              exit 1
+            fi
+            if [ "$auto_merge" = "true" ]; then
+              echo "REVIEW_READINESS=FAIL"
+              echo "TeamAi policy forbids auto-merge for product changes."
+              exit 1
+            fi
+
+            gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" > /tmp/reviews.json
+            approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author) | select(.user.type != "Bot")] | length' /tmp/reviews.json)
+            echo "exact_head_human_approvals=$approved"
+            if [ "$approved" -ge 1 ]; then
+              echo "REVIEW_READINESS=PASS"
+              echo "Independent human approval exists on the exact current PR head $HEAD_SHA."
+              exit 0
+            fi
+
+            echo "REVIEW_READINESS=WAITING"
+            echo "Waiting for a non-author human APPROVED review on exact head $HEAD_SHA."
+            sleep "$poll_seconds"
+          done
