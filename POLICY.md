@@ -56,19 +56,19 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 
 Model-assisted advisory review is treated as a scarce verification resource. The automatic path is one ordered three-stage cohort sequence per PR:
 
-`Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
+`Nemotron → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Dots3-Note Preview (primary) + Dots3-Note Preview (secondary)`
 
 There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer. It starts only when the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the required substantive exact-head validation gate.
 
-After Nemotron reaches a `success` or `failure` execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. A `skipped` or `cancelled` Nemotron job does **not** open the barrier and must not start stage 2. OpenRouter Free Router and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always()` against the successful barrier so an allowed Nemotron `failure` cannot be converted into an implicit upstream-success skip.
+After Nemotron reaches a `success` or `failure` execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. A `skipped` or `cancelled` Nemotron job does **not** open the barrier and must not start stage 2. Ling 3.0 Flash and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always()` against the successful barrier so an allowed Nemotron `failure` cannot be converted into an implicit upstream-success skip.
 
-After both second-stage reviewers reach a `success` or `failure` execution result, the sequence waits another 150 seconds before starting the third-stage pair. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does **not** open the barrier and must not start stage 3. DeepSeek and Qwen are peer reviewers in that stage and execute concurrently against the same original triggering head.
+After both second-stage reviewers reach a `success` or `failure` execution result, the sequence waits another 150 seconds before starting the third-stage pair. A `skipped` or `cancelled` OpenRouter Free Router or Poolside job does **not** open the barrier and must not start stage 3. Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) are peer reviewers in that stage and execute concurrently against the same original triggering head.
 
 The inter-stage waits are **cohort barriers**, not reviewer timers. A provider failure is execution evidence and does not cause another provider to substitute for it, reorder the stages, or launch early. The sequence may proceed to the next cohort after an allowed provider failure, but only while the completed reviewer job result is `success` or `failure` and exact-head freshness remains intact. A PR-head change during a wait or between stages fails closed and prevents later automatic stages from reviewing stale code.
 
 The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event **after the required substantive validation set has completed successfully on that exact PR head**. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. The automatic sequence gate polls the required validator check-runs while they are pending and fails closed on missing, failed, timed-out, stale, or head-mismatched evidence. A durable sequence-claim marker is recorded only after that validation gate passes and before Nemotron starts.
 
-Each reviewer has its own provider secret and configured route. Pinned routes keep deterministic model identity; the OpenRouter Free Router intentionally selects the model at execution time. Missing reviewer secrets fail the affected stage closed and never fall through to another reviewer secret.
+Each reviewer has its own provider secret alias and configured route. Secret names are aliases only and do not determine reviewer/model identity. All five active bindings are explicit pinned `:free` routes. Missing reviewer secrets fail the affected stage closed and never fall through to another reviewer secret.
 
 ### Reviewer billing boundary
 
@@ -78,17 +78,17 @@ Current binding status as audited 2026-09-17:
 
 | Reviewer | Secret alias | Current OpenRouter model | Cost class | Stage |
 |---|---|---|---|---:|
-| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| OpenRouter Free Router | `OPENROUTER_API_KEY_OPENAI` | `openrouter/free` | **Free** | 2 |
+| Nemotron | `OPENROUTER_API_KEY` | `nvidia/nemotron-3.5-lightning:free` | **Free** | 1 |
+| Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | **Free** | 2 |
 | Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-s-2.1:free` | **Free** | 2 |
-| DeepSeek | `OPENROUTER_API_KEY_DEEPSEEK` | `deepseek/deepseek-v4-flash:free` | **Free** | 3 |
-| Qwen | `OPENROUTER_API_KEY_GWEN` | `qwen/qwen3-coder:free` | **Free** | 3 |
+| Dots3-Note Preview (primary) | `OPENROUTER_API_KEY_DEEPSEEK` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
+| Dots3-Note Preview (secondary) | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
 
-The cost classification is an OpenRouter model-route audit on 2026-09-17. The `:free` suffix denotes an explicit free model route. `openrouter/free` is also a zero-cost route, but it intentionally selects among currently available free models rather than pinning one provider/model identity.
+The cost classification is an OpenRouter model-route audit on 2026-09-18. The `:free` suffix denotes an explicit free model route. The active five-reviewer binding is fully pinned and deterministic; no dynamic `openrouter/free` router is used. Dots3-Note Preview is an intentional bounded choice despite the Preview label and is currently listed by OpenRouter as going away September 30, 2026.
 
-Free model routes can also carry provider-specific logging or training terms. `openrouter/free` additionally makes model identity an execution-time selection rather than a pinned reviewer/provider binding. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
+Free model routes can also carry provider-specific logging or training terms. Secret aliases remain decoupled from provider/model identity and are not renamed by this configuration change. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
 
-Manual `/nemotron`, `/free-router`, `/poolside`, `/deepseek`, and `/qwen` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
+Manual `/nemotron`, `/ling`, `/poolside`, `/dots3-primary`, and `/dots3-secondary` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
 
 ### Runtime-repair evidence boundary
 
