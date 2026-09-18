@@ -17,7 +17,7 @@
 - Current `main` baseline: **`af84c9af79f2933992bb00eedbc6ceed162243c8`**, post-#373 merge
 - Ordered advisory reviewer orchestration: **#368 merged** into `main`
 - Fresh runtime-proof vehicle: **#370** recorded live sequence-claim/head-guard evidence, then exposed a reusable-runner parser fault before provider transport; its later stages were blocked by the exact-head barrier after the proof head changed
-- Current runner repair: **#371 open** on `governance/repair-advisory-review-runner-shell-quoting-20260917`
+- Current runner repair: **#371 closed/merged** on `main`; provider-transport repair is part of the current validation state
 
 ## Canonical authority path
 
@@ -105,7 +105,7 @@ Never weaken validation merely to make CI green.
 
 ## Current validation-change record
 
-The #370 runtime execution did not justify weakening validation. Its provider stage exposed a reusable-runner parser defect before external transport. The replacement rule in #371 is implementation hardening only: preserve the exact-head validator gate, the durable one-sequence claim, the same explicit free model bindings, the same retry count, and the same advisory-output contract while moving provider transport into a less fragile standard-library HTTP path. Runtime provider proof remains a separate claim that can be made only from a fresh eligible execution after #371 is governed and merged.
+The #370 runtime execution did not justify weakening validation. Its provider stage exposed a reusable-runner parser defect before external transport. The replacement rule in #371 is implementation hardening only: preserve the exact-head validator gate, the durable one-sequence claim, the same explicit free model bindings, the same retry count, and the same advisory-output contract while moving provider transport into a less fragile standard-library HTTP path. Runtime provider proof remains a separate claim that requires a fresh eligible execution; #371 is already governed and merged.
 
 ## Model-assisted review
 
@@ -131,7 +131,7 @@ The active reviewer routes are explicit pinned free OpenRouter bindings. Secret 
 
 The earlier run on exact head `4477854a425453c2754a50bad941f81113ee5655` is preserved as historical evidence. It executed the former reviewer order, passed the exact-head validation gate, completed Nemotron and DeepSeek, then failed during the Qwen model call. The old automatic sequence comment and Nemotron review also contained obsolete timing wording. They remain immutable evidence for that old head and are not current implementation instruction.
 
-The current #368 implementation changed the authorized orchestration invariant to the 1→2→2 cohort sequence. Because the automatic sequence claim for #368 was already consumed on the historical head, its updated automatic sequence cannot be runtime-reverified by simply synchronizing #368. #370 was therefore created as a fresh vehicle. Its execution proved the validation gate, durable claim, and stale-head barrier, but the provider invocation path failed before transport. #371 is the isolated repair; a new provider runtime-proof vehicle must be used only after that repair is governed and merged.
+The current #368 implementation changed the authorized orchestration invariant to the 1→2→2 cohort sequence. Because the automatic sequence claim for #368 was already consumed on the historical head, its updated automatic sequence cannot be runtime-reverified by simply synchronizing #368. #370 was therefore created as a fresh vehicle. Its execution proved the validation gate, durable claim, and stale-head barrier, but the provider invocation path failed before transport. #371 is the merged repair; a new provider runtime-proof vehicle is required for fresh provider execution evidence.
 
 Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret.
 
