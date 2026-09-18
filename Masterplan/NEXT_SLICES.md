@@ -8,13 +8,18 @@ TEAM-EXPERIENCE-029 — runtime proof of semantic topology, adaptive geometry, a
 
 ## Status
 
-IN PROGRESS — #346, #348, #351, #352, #353, #361, and #368 are merged; #353 remains a non-production candidate; the current main governance control plane re-evaluates late review-approval state on submitted/dismissed review events; #370 established live fail-closed sequence containment but exposed a reusable-runner parser fault before provider transport; #371 is the isolated runner repair and canonical synchronization slice, with fresh provider runtime proof still pending.
+IN PROGRESS — #346, #348, #351, #352, #353, #361, and #368 are merged; #353 remains a non-production candidate; the current main governance control plane re-evaluates late review-approval state on submitted/dismissed review events; #370 established live fail-closed sequence containment but exposed a reusable-runner parser fault before provider transport; #371 is merged as the isolated runner repair; fresh provider runtime proof remains pending as a separate advisory infrastructure evidence gate.
 
 ## Objective
 
 Prove that the generalized semantic connection/topology and payload-adaptive geometry introduced by #361 survive real renderer consumption, not only isolated tests. Extend runtime evidence across multiple semantic cases and payload densities, transition/interruption behavior, branch-aware subject targeting, responsive/reduced-motion behavior, and the canonical public/live boundary without promoting the candidate or closing C8/C9/C10.
 
 ## Dependencies
+
+### 3D governance dependency
+
+The semantic machine proof slice is now backed by an enforced structural boundary: Tree Authority XML plus the four-file Census must remain coherent, and the existing census-sync contract is executed by Governance Integrity against the full PR diff. This is governance enforcement, not runtime proof or machine promotion.
+
 
 - `Product_Law/PRODUCT_LAW.md`
 - `Product_Law/WIRING.md`
@@ -60,11 +65,11 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - automatic reviewer secrets remain isolated: `OPENROUTER_API_KEY`, `OPENROUTER_API_KEY_OPENAI`, `OPENROUTER_API_KEY_POOLSIDE`, `OPENROUTER_API_KEY_DEEPSEEK`, and `OPENROUTER_API_KEY_GWEN`
 - deliberate later-head review remains manual via `/nemotron-ultra`, `/ling`, `/poolside`, `/laguna`, `/dots3`, or authorized dispatch
 - #370 live evidence proves the durable claim and stale-head containment, but its model stage did not reach provider transport because the reusable runner parser failed
-- #371 must complete canonical synchronization and governed validation before a fresh provider runtime-proof vehicle is eligible
+- #371 has completed canonical synchronization and governed validation; a fresh provider runtime-proof vehicle is now eligible but has not yet been executed
 - Tree Census reconciliation after runtime behavior is actually proven
 
 ## Current blocker
 
-The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. #368's governance implementation carries the explicit 1→2→2 reviewer state machine, skip/cancel-safe barriers, explicit free model routes, and a human readiness gate that waits for exact-head independent approval instead of failing merely because approval is absent. Fresh runtime execution on #370 then reached eligibility, exact-head validation, durable sequence claim, and Nemotron, but the reusable runner failed with a Bash parser error before any provider response. The stage-1 barrier later detected the deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #371 now repairs that provider-invocation implementation and must satisfy the repository's canonical six-file synchronization rule before it can be governed/merged. The separate #367 repair remains pending on its own governed path. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted.
+The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. #368's governance implementation carries the explicit 1→2→2 reviewer state machine, skip/cancel-safe barriers, explicit free model routes, and a human readiness gate that waits for exact-head independent approval instead of failing merely because approval is absent. Fresh runtime execution on #370 then reached eligibility, exact-head validation, durable sequence claim, and Nemotron, but the reusable runner failed with a Bash parser error before any provider response. The stage-1 barrier later detected the deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #371 is merged. Its provider-transport repair is current mainline behavior; fresh provider runtime proof remains unexecuted. #367 is closed/superseded; its late-approval lifecycle correction is already merged on mainline. Full cross-seat/cross-tree topology, final electrical turn-loop choreography, C8, C9, and C10 remain incomplete. The Machine Hero candidate must remain non-production until its remaining product gates are separately proven and accepted.
 
 <!-- Post-#368 reconciliation: ordered advisory reviewer orchestration is merged; #370/#371 are the bounded runtime-repair and proof frontier. -->
