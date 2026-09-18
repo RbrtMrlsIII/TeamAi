@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const files = [
-  ['seat-capacity.js', 'seat-capacity.js'],
+  'seat-capacity.js',
   'machine-hero-scene.js',
   'machine-hero-graph.js',
   'machine-hero-payload.js',
