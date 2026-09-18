@@ -16,7 +16,7 @@ Product meaning, invariants, authority boundaries, and development-field ownersh
    ↓
 02 3D WORLD ENTRY
    ↓
-03 WORLD DEFAULT / EIGHT-SEAT PRESENTATION
+03 WORLD DEFAULT / TEN-SEAT PRESENTATION
    ↓
 04 AUTHENTICATION
    ↓
@@ -122,7 +122,7 @@ Authenticated state restores the actual authorized durable Seat population, from
 
 **Tree 1–8 is a separate Settings/world-tree vocabulary and is not the Seat capacity rule.**
 
-Eight is the presentation baseline. Actual user population remains governed by authorized durable state and entitlement/authorization. A rendered slot is not itself a durable Seat identity.
+Ten is the presentation capacity. Actual user population remains governed by authorized durable state and entitlement/authorization. A rendered slot is not itself a durable Seat identity.
 
 ## 6. Frontend/backend boundary
 

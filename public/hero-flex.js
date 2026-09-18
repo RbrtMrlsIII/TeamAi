@@ -1,5 +1,5 @@
 import { HERO_AUTHORED_MESHES } from './hero-authored-meshes.js';
-import { clampSeatCount, GUEST_SEAT_COUNT } from './seat-capacity.js';
+import { clampSeatCount, GUEST_SEAT_COUNT, seatPopulationDensity } from './seat-capacity.js';
 import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial } from './hero-authored-materials.js';
 import {
   HIERARCHY_PART,
@@ -214,11 +214,11 @@ function durations(){
   const k=reducedMotion?0.35:1;
   return{ focus:700*k, active:900*k, contribute:1100*k, absorb:520*k, reflect:520*k, handoff:800*k };
 }
-const profile=count=>{const density=(clamp(count,1,8)-1)/7;return{workspace:lerp(4.35,5.95,density),seatRadius:lerp(4.25,6.45,density),seatScale:lerp(1,.78,density),cameraDist:lerp(9.6,12.2,density),ambient:lerp(.35,.78,density),artifacts:Math.round(lerp(3,8,density))}};
+const profile=count=>{const density=seatPopulationDensity(count);return{workspace:lerp(4.35,5.95,density),seatRadius:lerp(4.25,6.45,density),seatScale:lerp(1,.78,density),cameraDist:lerp(9.6,12.2,density),ambient:lerp(.35,.78,density),artifacts:Math.round(lerp(3,8,density))}};
 const buildSeats=count=>Array.from({length:count},(_,i)=>({id:`seat-${i+1}`,label:`Web AI Seat ${i+1}`,a:-Math.PI/2+i*(Math.PI*2/count),accent:PALETTE[i%PALETTE.length]}));
 let seats=buildSeats(seatCount);
-function cameras(){const p=profile(seatCount),d=p.cameraDist;return{HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39},TEAM_ORBIT:{p:[d*.92,d*.5,d*.14],t:[0,.78,0],f:42},SEAT_CLOSE:{p:[p.seatRadius*.78,2.3,p.seatRadius*.78],t:[0,.95,0],f:36},WORKSPACE_CLOSE:{p:[3.55,2.45,4.65],t:[0,.62,0],f:33},OVERHEAD_MAP:{p:[0,lerp(10.8,14.8,(seatCount-1)/7),.2],t:[0,.1,0],f:50},DETAIL_ANCHOR:{p:[2.45,1.9,3.05],t:[0,.82,0],f:31}}}
-function setCamera(id){const table=cameras();let next=table[id]||table.HERO_WIDE;if(typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&String(hierarchyRuntime.openParentId).includes('SEAT_SHELL')&&typeof resolveSelectedSeatDock==='function'){const seatDock=resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),{force:true,hierarchyOpen:true});if(seatDock)next=seatDock;}cameraId=id;camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}
+function cameras(){const p=profile(seatCount),d=p.cameraDist;return{HERO_WIDE:{p:[0,d,d],t:[0,.78,0],f:39},TEAM_ORBIT:{p:[d*.92,d*.5,d*.14],t:[0,.78,0],f:42},SEAT_CLOSE:{p:[p.seatRadius*.78,2.3,p.seatRadius*.78],t:[0,.95,0],f:36},WORKSPACE_CLOSE:{p:[3.55,2.45,4.65],t:[0,.62,0],f:33},OVERHEAD_MAP:{p:[0,lerp(10.8,14.8,seatPopulationDensity(seatCount)),.2],t:[0,.1,0],f:50},DETAIL_ANCHOR:{p:[2.45,1.9,3.05],t:[0,.82,0],f:31}}}
+function setCamera(id){let next=cameras()[id]||cameras().HERO_WIDE;const seatOpen=typeof hierarchyRuntime!=='undefined'&&hierarchyRuntime.openParentId&&String(hierarchyRuntime.openParentId).includes('SEAT_SHELL');const seatDock=typeof resolveSelectedSeatDock==='function'?resolveSelectedSeatDock(id,typeof selectedSeat==='number'?selectedSeat:0,seatCount,profile(seatCount),seatOpen?{force:true}:{}):null;if(seatDock)next=seatDock;cameraId=id;if(typeof lastNavBaseCameraId!=='undefined'){lastNavBaseCameraId=id;}camFrom=camera;camTo=next;camAt=reducedMotion?1:0;camStart=performance.now();if(typeof hierarchyRuntime!=='undefined'){hierarchyRuntime.cameraId=id;}}
 let viewW = 1, viewH = 1;
 function resize(){
   const d=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.floor(canvas.clientWidth*d)),h=Math.max(1,Math.floor(canvas.clientHeight*d));
@@ -375,19 +375,12 @@ let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;
 let edgePointerNorm = null; // Cam-4
 let touchState = null;
 let lastNavBaseCameraId = 'HERO_WIDE';
-// C6 fix (#278): at full zoom-out the base dock must return to the world
-// baseline (HERO_WIDE) instead of staying pinned to whatever tree/seat
-// close-up dock is open. Previously `base` was tree-local whenever a
-// branch was open, so navZoom only ever scaled *that* close-up shot and
-// zoom-out dead-ended at 2x a close-up instead of reaching the world view.
 function applyNavCamera() {
   if (!shouldApplyTreeNav(hierarchyRuntime)) return;
   const table = cameras();
   const atWorldBaseline = navZoom >= NAV_ZOOM_MAX - 1e-6;
-  let base = (hierarchyRuntime.openParentId && !atWorldBaseline)
-    ? baseDockForTree({ cameraId }, table)
-    : (table.HERO_WIDE || table.SEAT_CLOSE);
-  let baseId = atWorldBaseline || !hierarchyRuntime.openParentId ? 'HERO_WIDE' : (cameraId || 'HERO_WIDE');
+  let base = (hierarchyRuntime.openParentId && !atWorldBaseline) ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
+  let baseId = (atWorldBaseline || !hierarchyRuntime.openParentId) ? 'HERO_WIDE' : (cameraId || 'HERO_WIDE');
   if (!atWorldBaseline && hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
     const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });
     if (seatDock) base = seatDock;

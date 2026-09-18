@@ -54,6 +54,10 @@ test('flexible seat model is present', () => {
   assert.match(capacity, /MIN_SEAT_COUNT = 1/);
   assert.match(capacity, /MAX_SEAT_COUNT = 10/);
   assert.match(capacity, /GUEST_SEAT_COUNT = 10/);
+  assert.match(runtime, /seatPopulationDensity\(count\)/);
+  assert.match(runtime, /seatPopulationDensity\(seatCount\)/);
+  assert.doesNotMatch(runtime, /clamp\(count,1,8\)/);
+  assert.doesNotMatch(runtime, /\(seatCount-1\)\/7/);
 });
 
 test('signature geometry primitives are present', () => {

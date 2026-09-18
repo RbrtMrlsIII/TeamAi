@@ -8,7 +8,7 @@ TEAM-EXPERIENCE-029 — authority/corpus normalization, 1–10 Seat capacity, se
 
 ## Capacity / authority reconciliation
 
-The Guest World presents the full 10-seat machine capacity; authenticated state restores only the actual authorized durable population, 1–10. Tree 1–8 remains a separate world-tree vocabulary.
+The Guest World presents the full 10-seat machine capacity; authenticated state restores only the actual authorized durable population, 1–10. Tree 1–8 remains a separate world-tree vocabulary. Guest Hero `profile()` / `OVERHEAD_MAP` density now uses `seatPopulationDensity()` across 1–10 rather than `clamp(count,1,8)`.
 
 ## Status
 

@@ -192,6 +192,8 @@ The effect must remain valid when trees differ in geometry, depth, branch count,
 
 `TREE-HERO-SEAT` is the existing Seat presentation hierarchy. This section reconciles the already-defined Seat shell with the existing Seat lifecycle, Responsibility Unit, Universal/TeamAi Skill, and product orchestration contracts. **It does not create a second Seat hierarchy.**
 
+Guest Hero ring/camera density consumes `seatPopulationDensity()` across the 1–10 Seat-capacity range. **Tree 1–8 remains a separate Settings/world-tree vocabulary.**
+
 ### 11.1 Existing structural branches
 
 ```text

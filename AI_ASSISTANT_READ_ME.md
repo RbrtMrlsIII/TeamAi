@@ -164,3 +164,6 @@ The current governed 029 slice reconciles the active spatial corpus and machine 
 This slice also reconstructs the valid architectural portions of PRs #379 and #385 without reviving their stale bases or control-plane narrative: spatial authority/Census enforcement, canonical Seat Shell identity, Seat-1 Connection binding, payload-driven candidate geometry, and explicit WebGL draw-path evidence. No 029 release, acceptance, entitlement, authorization, scheduler, or merge claim is created by these changes.
 
 Verification must remain exact-head and fail closed. Historical checkpoint records are preserved under docs/archive/ and are not current routing.
+
+
+Collaborator review of Draft #386 requested two leftover 8-seat contradictions on head `4b71bca`: Product Law field-contract wording (`EIGHT-SEAT` / “Eight is the presentation baseline”) and Guest Hero density still clamping `1–8` after defaulting to 10. Those two items are closed on the follow-up head; Tree 1–8 remains a separate world-tree vocabulary. Keep #386 Draft until independent re-review. Do not merge #379 or #385.

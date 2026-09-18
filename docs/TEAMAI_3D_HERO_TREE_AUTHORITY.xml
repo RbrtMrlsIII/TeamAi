@@ -34,7 +34,7 @@
     <timingStatus>Current prototype timings are living implementation baselines, not final animation law.</timingStatus>
     <presentationBoundary>3D tree presentation never grants entitlement, authorization, scheduler authority, or durable domain authority.</presentationBoundary>
     <truthfulStatus>A tree or branch remains partial/provisional/pending when semantics, payload, geometry, expansion, connection, runtime behavior, or verification is incomplete.</truthfulStatus>
-    <singleSeatHierarchy>TREE-HERO-SEAT remains the single Seat presentation hierarchy; configuration facets map onto existing branches and do not create a second Seat tree.</singleSeatHierarchy>
+    <singleSeatHierarchy>TREE-HERO-SEAT remains the single Seat presentation hierarchy; configuration facets map onto existing branches and do not create a second Seat tree. Guest Hero density spans 1-10 via seatPopulationDensity; Tree 1-8 is a separate world-tree vocabulary.</singleSeatHierarchy>
     <globalTurnBoundary>Global participating-seat count, actions/turns per Seat, ordering, stopping conditions, summarizer, and loop limits belong to TREE-ORCHESTRATION/scheduler, not TREE-HERO-SEAT.</globalTurnBoundary>
     <commonSkillBoundary>TEAMAI COMMON SKILL / Universal ToolKit definitions remain shared; Seat count changes Responsibility Unit allocation and effective bundles, not the common definitions.</commonSkillBoundary>
     <crossTreeControls>Complex Dictionary, Settings, Return, and Logout remain cross-tree/product controls and are not Seat branches.</crossTreeControls>

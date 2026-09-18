@@ -7,6 +7,7 @@
 ## Seat population authority normalization
 
 - [x] Establish and consume the single Seat-capacity rule: minimum 1, maximum 10, Guest World presentation 10, authenticated durable population 1–10 subject to entitlement/authorization; keep Tree 1–8 separate.
+- [x] Route Guest Hero ring/camera density through `seatPopulationDensity()` / 1–10 instead of the leftover 8-seat clamp; keep Tree 1–8 as a separate world-tree vocabulary.
 
 ## Repository foundation
 
