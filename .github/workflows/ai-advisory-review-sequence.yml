@@ -88,9 +88,14 @@ jobs:
             "agent-validation"
             "Recovery integrity"
             "Project tests + canonical package"
-            "CodeQL analyze (javascript-typescript)"
             "Playwright browser verification"
           )
+          # CodeQL is configured only for pull requests targeting main. Stacked
+          # governance PRs intentionally target the governance branch, so a
+          # missing CodeQL check there must not deadlock the advisory sequence.
+          if [[ "$GITHUB_BASE_REF" == "main" ]]; then
+            required+=("CodeQL analyze (javascript-typescript)")
+          fi
           deadline=$((SECONDS + TIMEOUT_SECONDS))
           while true; do
             current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
