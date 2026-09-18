@@ -32,9 +32,7 @@
     function hydrateSemanticFallback() {
       const panel = document.querySelector('[data-machine-core-visual]');
       if (!panel) return;
-      const params = new URLSearchParams(globalThis.location?.search || '');
-      const requested = Number(params.get('seats'));
-      const seatCount = Number.isFinite(requested) ? Math.min(16, Math.max(2, Math.floor(requested))) : 10;
+      const seatCount = parseSeatCountParam();
       const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true;
       const scene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
       const count = panel.querySelector('[data-core-count]');
