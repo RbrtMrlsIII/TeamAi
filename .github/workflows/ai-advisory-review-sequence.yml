@@ -46,7 +46,6 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
           MARKER: ${{ env.SEQUENCE_MARKER }}
-          PROVIDER_STARTED_MARKER: ${{ env.PROVIDER_STARTED_MARKER }}
           COMPLETE_MARKER: ${{ env.SEQUENCE_COMPLETE_MARKER }}
           PROVIDER_STARTED_MARKER: ${{ env.PROVIDER_STARTED_MARKER }}
           NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
@@ -187,6 +186,7 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
           MARKER: ${{ env.SEQUENCE_MARKER }}
+          PROVIDER_STARTED_MARKER: ${{ env.PROVIDER_STARTED_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
