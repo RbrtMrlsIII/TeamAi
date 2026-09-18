@@ -91,6 +91,12 @@ Free model routes can also have provider-specific data-use terms, so “free” 
 
 For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. Preserve the `TeamAi` path casing in recorded evidence. Public live-site validation is separate from PR/candidate validation, which remains exact-head CI/browser evidence.
 
+## 3D world authority enforcement
+
+The Tree Authority XML and four-file Tree Census are existing subordinate structural records, not a new Skill and not a second Product Law. Their consistency, semantic identity set, and non-authority boundary are machine-checked by build-system/scripts/repository-canonical-governance-audit.py, which also executes the existing scripts/governance/census-sync-contract.mjs for PR path governance.
+
+Skills consume these records procedurally. They cannot override Product Law, define new semantic authority, grant permission, or authorize promotion/merge. Presentation-only machine proof modules remain outside census synchronization unless their change alters semantic tree/branch/division identity or structure.
+
 ## Machine Hero routing
 
 PR #353 is the current merged machine candidate and remains non-production. Its routing is:
