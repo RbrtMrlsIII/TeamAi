@@ -16,6 +16,7 @@ test('automatic advisory routing uses five parallel OpenRouter Free Router slots
   assert.match(sequence, /api_key: \$\{\{ secrets\.OPENROUTER_API_KEY \}\}/);
   assert.match(sequence, /automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-\$\{\{ matrix\.slot \}\}-outcome -->/);
   assert.doesNotMatch(sequence, /automatic_start_marker|REVIEW_INTERVAL_SECONDS|delay_to_second_stage|delay_to_third_stage|2 minutes 30 seconds|150-second/);
+  assert.match(sequence, /State: CLAIMED.*Provider budget/);
 });
 
 test('automatic sequence remains one-shot and completion accepts terminal success/failure slot outcomes', () => {
@@ -26,6 +27,9 @@ test('automatic sequence remains one-shot and completion accepts terminal succes
   assert.match(sequence, /Five parallel OpenRouter Free Router slots reached terminal execution outcomes/);
   assert.match(sequence, /outcome_marker/);
   assert.match(sequence, /Slot outcome: SUCCEEDED/);
+  assert.match(sequence, /SUCCEEDED\|PROVIDER_FAILED\|REVIEW_POST_FAILED\|PRE_PROVIDER_FAILURE/);
+  assert.match(sequence, /successful slot \$slot workflow job must publish Slot outcome: SUCCEEDED/);
+  assert.match(sequence, /failed slot \$slot workflow job cannot publish Slot outcome: SUCCEEDED/);
   assert.match(sequence, /github-actions\[bot\]/);
   assert.equal((sequence.match(/for slot in 1 2 3 4 5/g) || []).length, 1);
 });
