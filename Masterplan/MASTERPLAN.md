@@ -35,8 +35,8 @@
 - [x] Reviewer aliases are registered: `nemotron-ultra` → `OPENROUTER_API_KEY`, `ling` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `laguna` → `OPENROUTER_API_KEY_DEEPSEEK`, and `dots3` → `OPENROUTER_API_KEY_GWEN`. Secret aliases remain independent of reviewer/model identity.
 - [x] #368 ordered advisory reviewer orchestration was merged into `main` with the explicit 1→2→2 cohort state machine, exact-head guards, durable sequence claim, and explicit free model bindings; the active five-member reviewer team is now Nemotron Ultra, Ling, Poolside, Laguna, and Dots3.
 - [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its Nemotron stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
-- [ ] #371 reusable reviewer provider-invocation repair is validated and merged before fresh provider runtime proof is re-attempted.
-- [ ] Stage-2 continuation is explicitly guarded with `always() && needs.delay_to_second_stage.result == 'success'` so an allowed Nemotron `failure` does not suppress the Ling 3.0 Flash + Poolside cohort.
+- [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof remains a separate pending evidence gate.
+- [x] Ordered advisory cohort continuation is explicitly guarded with `always()` on downstream jobs while the inter-stage barriers remain fail-closed for skipped/cancelled/stale/draft conditions.
 - [ ] Automatic advisory review sequence is runtime-verified as `Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview` on the first eligible non-draft PR lifecycle event.
 
 ## Workspace and delivery
@@ -55,6 +55,15 @@
 - [ ] Firebase emulator/rules evidence remains explicitly parked until proven.
 - [ ] Real external provider invocation remains a separate proof gate.
 - [ ] Remaining security, timeout, cancellation, recovery, and integration evidence remains explicit.
+
+### 03.9.x — 3D world authority and governance enforcement
+
+- [x] Tree Authority XML remains a subordinate structural record under Product Law.
+- [x] The four Tree Census representations are one synchronized structural set.
+- [x] Governance Integrity machine-checks the Tree Authority, Census identity coherence, and explicit presentation-only boundary.
+- [x] The existing census synchronization contract is executed from the canonical governance gate against the full PR diff.
+- [ ] Runtime/browser proof remains required for topology, transition/interruption, responsive/reduced-motion behavior, and machine promotion.
+- [ ] These governance controls do not imply C8/C9/C10 completion or production Hero promotion.
 
 ## TEAM-EXPERIENCE-029 baseline
 
@@ -99,7 +108,7 @@
 - [x] PR #352 control-plane reconciliation is merged and current control-plane truth is documented.
 - [x] PR #353 is merged and is now the current machine candidate baseline rather than an open Draft PR.
 - [x] PR #361 is merged and its semantic topology/adaptive-clearance state is now the current machine implementation baseline.
-- [x] Align all canonical session/current-slice/masterplan records with the merged state after #361.
+- [x] Align all canonical session/current-slice/masterplan records with the merged state after #373 and the #371 runner repair.
 - [ ] Retire stale PR #349/#352 interpretations after the landed changes are reflected on `main`.
 - [ ] Resolve remaining active retired-root references and validator responsibility overlaps.
 - [ ] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
@@ -112,4 +121,4 @@
 - [x] Shared AI Advisory Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
 - [x] Nemotron Copilot Review procedure remains registered and constrained to advisory/promotion-gated use.
 - [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per sequence.
-- [ ] Historical records remain immutable and out of active routing.
+- [x] Historical records remain immutable and out of active routing.
