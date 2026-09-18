@@ -45,6 +45,25 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-branch-inspector]')).toContainText('BRANCH-SEAT-01');
   });
 
+  test('Seat-1 expanded shell renders the canonical connection child from existing vertical evidence', async ({ page }) => {
+    await page.goto('/machine-core-preview.html');
+    const canvas = page.locator('canvas[aria-label="3D modular branch connection core"]');
+    const status = page.locator('[data-core-state]');
+
+    await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-01');
+    await expect(canvas).not.toHaveAttribute('data-seat-connection-semantic');
+    await page.getByRole('button', { name: 'Expand', exact: true }).click();
+    await expect(status).toContainText('expanded · 100%', { timeout: 3000 });
+    await expect(canvas).toHaveAttribute('data-seat-connection-semantic', 'TREE-HERO-SEAT#0:SEAT_CONNECTION');
+    await expect(canvas).toHaveAttribute('data-seat-connection-geometry', 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY');
+    await expect(canvas).toHaveAttribute('data-seat-connection-edge', 'TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER');
+    await expect(canvas).toHaveAttribute('data-seat-connection-health', 'TREE-HERO-SEAT#0:SEAT_CONNECTION:HEALTH_FACE');
+
+    await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-02');
+    await expect(canvas).not.toHaveAttribute('data-seat-connection-semantic');
+    await expect(canvas).not.toHaveAttribute('data-seat-connection-geometry');
+  });
+
   test('selected branch exposes local configuration controls', async ({ page }) => {
     await page.goto('/machine-core-preview.html');
     await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-03');
