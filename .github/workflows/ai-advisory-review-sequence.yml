@@ -206,7 +206,7 @@ jobs:
             echo 'A current-head sequence claim already exists.'
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Exact PR head: \`$HEAD\`" 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; budget remains unused until a reviewer slot is reserved.')"
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Exact PR head: \`$HEAD\`" 'Order: Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; budget remains unused until a reviewer slot is reserved.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -394,8 +394,8 @@ jobs:
       api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
 
   sequence_complete:
-    needs: [laguna, dots3]
-    if: always()
+    needs: [claim, laguna, dots3]
+    if: always() && needs.claim.result == 'success' && needs.claim.outputs.claimed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
