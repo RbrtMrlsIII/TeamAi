@@ -35,6 +35,12 @@ Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checkli
 
 The canonical public live-site validation target is `https://RbrtMrlsIII.github.io/TeamAi/`. This is a delivery/verification reference only and does not create product authority, override Firebase Hosting delivery authority, or change the hosting architecture contract.
 
+## 3D world structural authority boundary
+
+The 3D world uses the existing Tree Authority XML and the four synchronized Tree Census representations as a subordinate structural record. They describe semantic tree identity, branch structure, implementation status, topology, geometry, and verification boundaries. They cannot override Product Law or create backend, scheduler, authorization, entitlement, durable-state, acceptance, or merge authority.
+
+The canonical Governance Integrity audit machine-checks the Tree Authority XML, Census JSON/CSV/Markdown representation set, semantic identity coherence, and the existing census synchronization contract. Renderer-neutral machine proof modules remain outside census synchronization only while they remain presentation-only and do not introduce or materially restructure a semantic tree/branch/division identity.
+
 ## No parallel authority
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
