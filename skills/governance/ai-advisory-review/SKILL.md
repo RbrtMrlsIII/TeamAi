@@ -28,7 +28,7 @@ The resulting packet must include exact-head check-run evidence, current governi
 ## Automatic review sequence
 OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
 There is no automatic interval before or between slots. The first eligible non-draft lifecycle event that passes substantive exact-head validation writes the durable one-sequence claim and fans out five reusable reviewer jobs concurrently with fail-fast disabled. Each job targets openrouter/free, receives the original triggering head, and independently revalidates that head immediately before model invocation.
-The sequence does not restart on synchronize or reopen after a claim exists. A provider failure is execution evidence for its slot and does not trigger secret substitution, retry through another slot, or automatic reordering. Sequence completion is a separate terminal check requiring all five exact-head slot output markers.
+The sequence does not restart on synchronize or reopen after a claim exists. A provider failure is execution evidence for its slot and does not trigger secret substitution, retry through another slot, or automatic reordering. Sequence completion is a separate terminal check requiring five terminal slot outcomes.
 
 ## Manual re-review
 Manual later-head review uses /openrouter-free or /free-1 through /free-5 and authorized workflow dispatch. Manual review is outside the automatic sequence allowance and uses the same openrouter/free route. Each manual invocation remains advisory and exact-head bound.

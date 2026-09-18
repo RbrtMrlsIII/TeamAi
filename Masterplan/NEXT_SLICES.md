@@ -54,7 +54,7 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - the durable sequence claim remains one automatic sequence per PR; synchronize and reopen events do not restart a prior claim
 - every slot rechecks the original triggering head and fails closed if it changes before invocation
 - each successful slot records the actual OpenRouter model and provider returned by the router
-- sequence completion requires all five exact-head slot output markers; partial provider failure remains execution evidence and cannot trigger an automatic retry or replacement slot
+- sequence completion requires five terminal slot outcomes; partial provider failure remains execution evidence and cannot trigger an automatic retry or replacement slot
 - deliberate later-head review uses /openrouter-free or /free-1 through /free-5
 - #370 live evidence proves the durable claim and stale-head containment, but its model stage did not reach provider transport because the reusable runner parser failed
 - #371 must complete canonical synchronization and governed validation before a fresh provider runtime-proof vehicle is eligible

@@ -51,7 +51,7 @@ A reusable runner transport/parser repair is a Verification & CI/Browser impleme
 ### Automatic reviewer sequence
 OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
 The sequence begins only after the first eligible non-draft opened, reopened, or ready_for_review event has passed the substantive exact-head validation gate. Five reusable reviewer jobs fan out concurrently with fail-fast disabled so one provider failure does not cancel peer slots.
-A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after all five slot jobs are terminal and all five exact-head output markers are present.
+A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after five terminal slot outcomes are present.
 
 ### Manual reviewer routing
 The active manual command is /openrouter-free, with optional slot aliases /free-1 through /free-5 for deliberate later-head review. Authorized workflow dispatch targets the same OpenRouter Free Router. The former reviewer-specific commands remain historical evidence only and are not active routing instructions.

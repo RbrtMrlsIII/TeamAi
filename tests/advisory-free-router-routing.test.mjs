@@ -17,10 +17,12 @@ test('automatic advisory routing uses five parallel OpenRouter Free Router slots
   assert.doesNotMatch(sequence, /REVIEW_INTERVAL_SECONDS|delay_to_second_stage|delay_to_third_stage|2 minutes 30 seconds|150-second/);
 });
 
-test('automatic sequence remains one-shot and completion waits for all five slot outputs', () => {
+test('automatic sequence remains one-shot and completion accepts terminal success/failure slot outcomes', () => {
   assert.match(sequence, /An automatic sequence claim already exists for PR #\$PR/);
-  assert.match(sequence, /needs: \[claim, openrouter_free\]/);
-  assert.match(sequence, /if: always\(\) && needs\.claim\.result == 'success'/);
+  assert.match(sequence, /SEQUENCE_COMPLETE_MARKER/);
+  assert.match(sequence, /repos\/\$REPO\/actions\/runs\/\$GITHUB_RUN_ID\/jobs/);
+  assert.match(sequence, /conclusion.*success.*failure/);
+  assert.match(sequence, /Five parallel OpenRouter Free Router slots reached terminal success\/failure outcomes/);
   assert.equal((sequence.match(/for slot in 1 2 3 4 5/g) || []).length, 2);
 });
 
