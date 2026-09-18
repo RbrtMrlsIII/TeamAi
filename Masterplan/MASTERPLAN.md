@@ -113,3 +113,8 @@
 - [x] Nemotron Copilot Review procedure remains registered and constrained to advisory/promotion-gated use.
 - [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per sequence.
 - [ ] Historical records remain immutable and out of active routing.
+
+
+### Validation parser alignment
+
+The repository governance audit accepts the canonical `Draft proof target` section used by governed PRs. Level-2 and level-3 Markdown headings are both valid; this repair preserves the underlying proof requirement rather than changing what the PR must prove.

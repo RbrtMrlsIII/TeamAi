@@ -60,3 +60,7 @@ The current configured reviewer aliases are `nemotron-ultra` → `OPENROUTER_API
 Implementation repairs to the reusable advisory-review runner belong to Verification & CI/Browser and do not create new Product Law authority. Runtime proof must distinguish configured routing from actual provider invocation. The fresh #370 vehicle demonstrated that exact-head gating and stale-head containment were live, while also exposing a parser defect before provider transport. The isolated #371 repair therefore remains a verification/runtime concern until a fresh governed execution proves the repaired provider path.
 
 <!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->
+
+### Validation parser alignment
+
+The governance audit's `Draft proof target` parser is aligned to the repository's canonical PR-body contract: level-2 or level-3 Markdown headings are accepted, including the established `### Draft proof target` form. This is validation implementation alignment, not a new authority layer.

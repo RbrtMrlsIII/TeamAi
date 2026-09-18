@@ -158,3 +158,10 @@ test('promotion boundaries keep merged governance and machine candidate separate
   assert.match(skillWiring, /promotion/i);
   assert.match(session, /#353.*merged.*main/i);
 });
+
+
+test('draft proof target parser accepts the canonical Markdown heading levels', () => {
+  const audit = read('build-system/scripts/repository-canonical-governance-audit.py');
+  assert.match(audit, /\^#\{2,3\}\\s\+Draft proof target/);
+  assert.doesNotMatch(audit, /\^###\{1,2\}\\s\+Draft proof target/);
+});

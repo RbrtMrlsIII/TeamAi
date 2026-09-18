@@ -158,3 +158,13 @@ The next substantive 029 slice is **runtime proof of the generalized semantic to
 ### Current governance hardening note
 
 The required `Draft proof target` section remains part of the canonical proof contract. Governance PRs that touch the advisory-review control plane must also synchronize the six canonical records required by `repository-canonical-governance-audit.py`; this is a fail-closed documentation/governance contract, not a reason to weaken the audit.
+
+## Current validation-change record — Draft proof target parser
+
+**Protected old invariant:** a Draft PR must contain a `Draft proof target` section and governance must validate it against the exact PR scope.
+
+**Authorized new rule:** the parser accepts the canonical level-2/3 Markdown heading, including the repository's established `### Draft proof target` form.
+
+**Disposition:** the prior regex accepted the wrong heading depth because `###{1,2}` denotes four/five literal hash characters in Python regex syntax. The proof requirement itself is retained; only parser alignment is corrected.
+
+**Replacement invariant:** the governance audit validates the declared Draft proof target from the exact PR body without forcing a non-canonical heading workaround.
