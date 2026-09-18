@@ -67,7 +67,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot'
+          expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq 'model: openrouter/free' "$workflow"
           grep -Fq 'strategy:' "$workflow"
@@ -88,6 +88,14 @@ jobs:
           fi
           grep -Fq 'needs: [claim, openrouter_free]' "$workflow"
           grep -Fq "if: always() && needs.claim.result == 'success'" "$workflow"
+          grep -Fq 'automatic_outcome_marker' "$workflow"
+          grep -Fq 'Publish durable automatic slot outcome' ".github/workflows/ai-advisory-review-runner.yml"
+          grep -Fq 'Return only the following compact review structure' ".github/workflows/ai-advisory-review-runner.yml"
+          grep -Fq 'Slot outcome: SUCCEEDED' ".github/workflows/ai-advisory-review-runner.yml"
+          if grep -Fq 'automatic_start_marker' "$workflow" || grep -Fq 'Reserve automatic provider invocation slot' ".github/workflows/ai-advisory-review-runner.yml"; then
+            echo "Obsolete per-slot reservation state remains in the active advisory control plane."
+            exit 1
+          fi
           for path in             'POLICY.md'             'docs/SKILL_WIRING.md'             'skills/governance/ai-advisory-review/SKILL.md'             'Masterplan/MASTERPLAN.md'             'AI_ASSISTANT_READ_ME.md'             'Product_Law/WIRING.md'; do
             test -f "$path"
             grep -Fq "$expected" "$path" || {
@@ -99,7 +107,7 @@ jobs:
               exit 1
             fi
           done
-          echo "Advisory reviewer routing is synchronized: five parallel OpenRouter Free Router slots, one shared key, no inter-slot timers, exact-head guards, one-sequence quota protection, and actual route provenance."
+          echo "Advisory reviewer control plane is synchronized: five parallel Free Router slots, one shared key, no inter-slot timers, explicit terminal slot outcomes, compact structured model evidence, exact-head guards, and one-sequence quota protection."
 
       - name: Prove draft PR target against full PR delta
         env:
