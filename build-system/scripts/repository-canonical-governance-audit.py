@@ -118,7 +118,7 @@ def changed_path_rows(base: str | None, head: str | None) -> list[list[str]]:
     if not base or not head:
         fail("PR base/head SHAs are required; governance cannot infer PR scope from a last commit")
     return [
-        line.split("\\t")
+        line.split("\t")
         for line in run("git", "diff", "--name-status", f"{base}...{head}").splitlines()
         if line.strip()
     ]
