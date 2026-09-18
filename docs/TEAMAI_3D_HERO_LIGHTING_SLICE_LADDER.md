@@ -30,7 +30,7 @@ These are already hardened by Product Law + spatial skills + CURRENT_STATE — n
 4. **Camera PoV** stays in the semantic camera registry; no orphan free-look that implies domain authority.
 5. **Dependencies are code + existing skills** — theme, lighting adapter, spatial motion companions, browser smoke — not a new engine skill and not Three.js unless Masterplan explicitly adopts it.
 6. **No domain writes** from the Hero canvas (no Firestore, no scheduler, no entitlement mutation).
-7. **Seat count 1–8** is presentation scaling; durable unlock remains domain/entitlement authority.
+7. **Seat count 1–10** is presentation scaling; durable unlock remains domain/entitlement authority.
 
 ## Slice order
 

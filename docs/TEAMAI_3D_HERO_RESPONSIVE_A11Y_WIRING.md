@@ -16,7 +16,7 @@
 | Concern | Source | Hero note |
 |---------|--------|-----------|
 | Narrow FOV | §9 `FOV_BOOST_NARROW` (`+4`) | R7 — `responsiveFovBoost` pattern |
-| Seat density 1–8 | profile / §9 workspace–seat radii | Presentation scaling only |
+| Seat density 1–10 | profile / §9 workspace–seat radii | Presentation scaling only |
 | Pointer / touch | Responsive + accessibility skills | Hover never the only path (nav already has keyboard + touch orbit) |
 | Collapse priority | Responsive skill | Keep hierarchy/open readable; do not hide status meaning |
 

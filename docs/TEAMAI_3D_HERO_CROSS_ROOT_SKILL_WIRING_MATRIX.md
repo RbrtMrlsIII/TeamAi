@@ -20,7 +20,7 @@ Integration model (from #95):
 | Motion | `skills/frontend/spatial/motion/SKILL.md` | Duration / easing / delay / reduced-motion map | Hierarchy open/close, camera lerp, ring focus; §9 named durations align conceptually | Page-local timing namespace |
 | Transition | `skills/frontend/spatial/transition/SKILL.md` | State-pair enter/exit | Theme mode, seat select, shell open/close pairs | Domain state animation |
 | Animation | `skills/frontend/spatial/animation/SKILL.md` | Multi-step choreography | Contribution corridor, optional pulses; **collapse under reduced** (G contract) | Idle decorative loops |
-| Responsive | `skills/frontend/spatial/responsive/SKILL.md` | Viewport / density adaptation | `responsiveFovBoost`, seat density 1–8, compact framing | Mobile-only business rules |
+| Responsive | `skills/frontend/spatial/responsive/SKILL.md` | Viewport / density adaptation | `responsiveFovBoost`, seat density 1–10, compact framing | Mobile-only business rules |
 | Accessibility | `skills/frontend/spatial/accessibility/SKILL.md` | Focus, keyboard, non-color status, reduced motion | Keyboard hierarchy + R0–R2 focus; aria-live presentation-only; data-motion | Second “a11y mode” product |
 | Hierarchy runtime | `skills/frontend/spatial/hierarchy-runtime/SKILL.md` | R1–R10 open-machine grammar + §9 numbers | Seat shell, docks, one-open | Entitlement from open |
 | Seat shell | `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` | First parent fill (Seat v1) | SEAT_SHELL children + health leaf | Durable seat authority |
