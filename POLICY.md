@@ -35,6 +35,14 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 
 **Verified 2026-09-17:** HTTP `200 OK`; title `TeamAi — Web AI Living Workspace`; visible landing content; `Enter 3D world` present; GitHub Pages 404 absent; redirect count `0`.
 
+## 3D world authority and census enforcement
+
+The 3D world has no independent Product Law or merge authority. Its existing Tree Authority XML, Machine Interaction Contract, implementation entry, and four-file Tree Census are subordinate structural records under Product Law, Masterplan, Policy, and the active 029 Issue.
+
+Governance Integrity must machine-check this structural record and execute the existing census synchronization contract against the full PR diff. Semantic tree/branch/division changes therefore cannot silently bypass census reconciliation. Renderer-neutral proof modules remain presentation-only exemptions unless their change alters semantic identity or structure.
+
+A passing structural audit establishes governance consistency only. It does not promote a tree, prove browser behavior, establish backend authority, satisfy C8/C9/C10, or authorize merge/acceptance.
+
 ## PR discipline
 
 - Substantive work starts as a **Draft PR**.
