@@ -57,7 +57,7 @@ test.describe('Modular branch connection core', () => {
     await expect(canvas).toHaveAttribute('data-seat-connection-semantic', 'TREE-HERO-SEAT#0:SEAT_CONNECTION');
     await expect(canvas).toHaveAttribute('data-seat-connection-geometry', 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY');
     await expect(canvas).toHaveAttribute('data-seat-connection-edge', 'TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER');
-    await expect(canvas).toHaveAttribute('data-seat-connection-health', 'TREE-HERO-SEAT#0:SEAT_CONNECTION:HEALTH_FACE');
+    await expect(canvas).toHaveAttribute('data-seat-connection-health', 'SEAT_CONNECTION_HEALTH_FACE');
 
     await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-02');
     await expect(canvas).not.toHaveAttribute('data-seat-connection-semantic');
