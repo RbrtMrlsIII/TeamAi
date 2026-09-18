@@ -2,6 +2,9 @@ name: Repository Governance Integrity
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed]
   push:
     branches:
       - main
@@ -64,33 +67,50 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected='Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen'
+                     expected='Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
           grep -Fq "$expected" "$workflow"
-          grep -Fq 'reviewer: Nemotron' "$workflow"
-          grep -Fq 'reviewer: OpenRouter Free Router' "$workflow"
+          grep -Fq 'reviewer: Nemotron Ultra' "$workflow"
+          grep -Fq 'reviewer: Ling 3.0 Flash' "$workflow"
           grep -Fq 'reviewer: Poolside' "$workflow"
-          grep -Fq 'reviewer: DeepSeek' "$workflow"
-          grep -Fq 'reviewer: Qwen' "$workflow"
+           grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"
+           grep -Fq 'secrets.OPENROUTER_API_KEY_OPENAI }}' "$workflow"
+           grep -Fq 'secrets.OPENROUTER_API_KEY_POOLSIDE }}' "$workflow"
+           grep -Fq 'secrets.OPENROUTER_API_KEY_DEEPSEEK }}' "$workflow"
+           grep -Fq 'secrets.OPENROUTER_API_KEY_GWEN }}' "$workflow"
+          grep -Fq 'reviewer: Laguna' "$workflow"
+          grep -Fq 'reviewer: Dots3-Note Preview' "$workflow"
+           test "$(grep -Fc 'reviewer_slug: nemotron-ultra' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: ling' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: poolside' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: laguna' "$workflow")" -eq 1
+           test "$(grep -Fc 'reviewer_slug: dots3' "$workflow")" -eq 1
+           if grep -Fq 'model: openrouter/free' "$workflow" || grep -Fq 'model: nvidia/nemotron-3.5-lightning:free' "$workflow" || grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow" || grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"; then
+             echo "Retired reviewer model binding remains in the active sequence workflow."
+             exit 1
+           fi
           grep -Fq 'needs: delay_to_second_stage' "$workflow"
           grep -Fq "if: always() && needs.delay_to_second_stage.result == 'success'" "$workflow"
-          grep -Fq 'needs: [free_router, poolside]' "$workflow"
+          grep -Fq 'needs: [ling, poolside]' "$workflow"
           grep -Fq 'needs: delay_to_third_stage' "$workflow"
           grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"
-          grep -Fq "if: always() && (needs.free_router.result == 'success' || needs.free_router.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
+          grep -Fq "if: always() && (needs.ling.result == 'success' || needs.ling.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
           grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
           grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
-          grep -Fq 'model: openrouter/free' "$workflow"
-          grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
-          grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow"
-          grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"
+          grep -Fq 'model: inclusionai/ling-3.0-flash:free' "$workflow"
+          grep -Fq 'model: poolside/laguna-xs-2.1:free' "$workflow"
+           grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
+           test "$(grep -Fc 'model: poolside/laguna-xs-2.1:free' "$workflow")" -eq 1
+           test "$(grep -Fc 'model: poolside/laguna-s-2.1:free' "$workflow")" -eq 1
+          grep -Fq 'model: dots-studio/dots-3-note-preview:free' "$workflow"
+          test "$(grep -Fc 'model: dots-studio/dots-3-note-preview:free' "$workflow")" -eq 1
           if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
             echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
             exit 1
           fi
-          if grep -Fq "needs.free_router.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
+          if grep -Fq "needs.ling.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
             echo "Skipped/cancelled fallthrough remains in the stage-3 barrier."
             exit 1
           fi
@@ -119,12 +139,14 @@ jobs:
               exit 1
             fi
           done
-          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free routes, including the intentionally non-deterministic OpenRouter Free Router."
+          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free routes, with pinned free model identities and stable secret aliases."
 
       - name: Prove draft PR target against full PR delta
         env:
+          GH_TOKEN: ${{ github.token }}
           BASE_SHA: ${{ steps.proof-context.outputs.base_sha }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 build-system/scripts/repository-canonical-governance-audit.py
 
@@ -185,11 +207,9 @@ jobs:
 
   review-readiness:
     name: review-readiness
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
-    needs:
-      - governance-drift
-      - evidence-consistency
-      - agent-validation
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'pull_request_review' && github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     timeout-minutes: 355
     steps:
@@ -232,8 +252,19 @@ jobs:
             approved=$(jq --arg head "$HEAD_SHA" --arg author "$PR_AUTHOR" '[.[] | select(.state == "APPROVED") | select(.commit_id == $head) | select(.user.login != $author) | select(.user.type != "Bot")] | length' /tmp/reviews.json)
             echo "exact_head_human_approvals=$approved"
             if [ "$approved" -ge 1 ]; then
+              required=(governance-drift evidence-consistency agent-validation)
+              checkruns=$(gh api --paginate "/repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100")
+              for required_check in "${required[@]}"; do
+                conclusion=$(jq -r --arg name "$required_check" --arg head "$HEAD_SHA" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .completed_at) | last | .conclusion // "missing"' <<< "$checkruns")
+                echo "required_check=${required_check} conclusion=${conclusion}"
+                if [ "$conclusion" != "success" ]; then
+                  echo "REVIEW_READINESS=FAIL"
+                  echo "Required check ${required_check} is not successful on exact head ${HEAD_SHA}."
+                  exit 1
+                fi
+              done
               echo "REVIEW_READINESS=PASS"
-              echo "Independent human approval exists on the exact current PR head $HEAD_SHA."
+              echo "Independent human approval exists on the exact current PR head $HEAD_SHA and required governance checks are green."
               exit 0
             fi
 
