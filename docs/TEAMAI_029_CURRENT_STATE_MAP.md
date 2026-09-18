@@ -86,6 +86,10 @@ The detailed structured inventory is held in:
 - `docs/TEAMAI_3D_HERO_TREE_CENSUS.md`
 - `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
 
+### Seat population authority
+
+The active Seat population rule is **1–10**: Guest World presentation exposes ten machine capacity slots observationally, while authenticated durable population restores only the authorized 1–10 Seat set. **Tree 1–8 is separate from Seat capacity.** The canonical numeric rule lives in `Product_Law/PRODUCT_LAW.md`; the machine/census records must remain synchronized with that authority.
+
 ## 5. Tree construction rule
 
 Every new or reimplemented tree/branch/division follows:
