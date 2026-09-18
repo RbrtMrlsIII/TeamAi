@@ -155,3 +155,12 @@ The required `Draft proof target` section remains part of the canonical proof co
 **Disposition:** the prior regex accepted the wrong heading depth because `###{1,2}` denotes four/five literal hash characters in Python regex syntax. The proof requirement itself is retained; only parser alignment is corrected.
 
 **Replacement invariant:** the governance audit validates the declared Draft proof target from the exact PR body without forcing a non-canonical heading workaround.
+
+
+## Validation change boundary — 2026-09-18
+
+The current governed 029 slice reconciles the active spatial corpus and machine foundation against current main. The Seat population rule is now **1–10**: the Guest World presents the full ten-seat machine capacity observationally, while authenticated state restores only the actual authorized durable population. **Tree 1–8 remains a separate world/tree vocabulary.**
+
+This slice also reconstructs the valid architectural portions of PRs #379 and #385 without reviving their stale bases or control-plane narrative: spatial authority/Census enforcement, canonical Seat Shell identity, Seat-1 Connection binding, payload-driven candidate geometry, and explicit WebGL draw-path evidence. No 029 release, acceptance, entitlement, authorization, scheduler, or merge claim is created by these changes.
+
+Verification must remain exact-head and fail closed. Historical checkpoint records are preserved under docs/archive/ and are not current routing.
