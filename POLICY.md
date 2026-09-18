@@ -54,7 +54,8 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 
 ### Model-review sequence discipline
 Model-assisted advisory review is treated as a bounded verification resource. The automatic path is one ordered five-slot sequence per PR:
-OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
 There is no inter-slot wait, cohort barrier, or named-model dependency. After the first eligible non-draft opened, reopened, or ready_for_review event passes the substantive exact-head validation gate, five independent OpenRouter Free Router jobs start in parallel against the same original triggering head. A provider failure is execution evidence for that slot and does not authorize secret substitution, retry through another slot, or a second automatic sequence.
 The durable sequence-claim marker is the quota boundary for the PR. synchronize and reopen events cannot create another automatic sequence after a prior claim exists, even when the PR head later changes. Draft PRs consume no automatic model calls. Each slot revalidates the original head before invocation and fails closed on a head change.
 
