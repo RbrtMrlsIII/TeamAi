@@ -15,7 +15,7 @@ function mountSemanticFallback() {
   if (!countNode || !cameraSelect || !stateNode || !expandButton || !resetButton) return null;
   if (countNode.textContent?.trim()) return panel;
 
-  const core = createBranchConnectionCore({ seatCount: parseSeatCount() });
+  const core = createBranchConnectionCore({ seatCount: parseSeatCountParam() });
   countNode.textContent = `${core.parts.length} modules · ${core.seatCount} seats · 4 outer housings · 1 hub`;
 
   cameraSelect.innerHTML = '';
