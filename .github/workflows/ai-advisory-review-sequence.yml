@@ -171,7 +171,7 @@ jobs:
             echo 'A durable automatic sequence claim already exists; no second sequence is permitted.'
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots using model openrouter/free with one shared OpenRouter API key.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; no inter-slot interval or staged barrier is used.')"
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots using model openrouter/free with one shared OpenRouter API key.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; no inter-slot interval or staged barrier is used.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -258,24 +258,41 @@ jobs:
               continue
             fi
 
+            outcome_state="$(sed -n 's/^Slot outcome: //p' <<< "$outcome" | head -1)"
+            case "$outcome_state" in
+              SUCCEEDED|PROVIDER_FAILED|REVIEW_POST_FAILED|PRE_PROVIDER_FAILURE)
+                ;;
+              *)
+                echo "MISMATCH: slot $slot outcome marker has an unrecognized terminal state: ${outcome_state:-<missing>}"
+                missing=$((missing + 1))
+                continue
+                ;;
+            esac
+
+            grep -Fq "Reviewer slug: `openrouter-free-$slot`" <<< "$outcome" || {
+              echo "MISMATCH: slot $slot outcome marker identifies a different reviewer slug."
+              missing=$((missing + 1))
+              continue
+            }
+
             if [[ "$conclusion" == "success" ]]; then
+              if [[ "$outcome_state" != "SUCCEEDED" ]]; then
+                echo "MISMATCH: successful slot $slot workflow job must publish Slot outcome: SUCCEEDED, found $outcome_state."
+                missing=$((missing + 1))
+                continue
+              fi
               if ! jq -e --arg marker "$review_marker" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
                 echo "MISSING: successful slot $slot has no advisory output for exact head $HEAD."
                 missing=$((missing + 1))
                 continue
               fi
-              grep -Fq "Slot outcome: SUCCEEDED" <<< "$outcome" || {
-                echo "MISMATCH: successful slot $slot outcome marker does not declare SUCCEEDED."
-                missing=$((missing + 1))
-                continue
-              }
               success_count=$((success_count + 1))
             else
-              grep -Fq "Slot outcome: " <<< "$outcome" || {
-                echo "MISMATCH: failed slot $slot outcome marker has no explicit terminal state."
+              if [[ "$outcome_state" == "SUCCEEDED" ]]; then
+                echo "MISMATCH: failed slot $slot workflow job cannot publish Slot outcome: SUCCEEDED."
                 missing=$((missing + 1))
                 continue
-              }
+              fi
               failure_count=$((failure_count + 1))
             fi
           done
