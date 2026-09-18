@@ -44,27 +44,13 @@ jobs:
           set -euo pipefail
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
 
-          if jq -e --arg marker "$SEQUENCE_COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-            echo "Sequence-complete marker already exists for exact head $HEAD."
+          if jq -e --arg marker "$SEQUENCE_COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+            echo "Execution-complete marker already exists for exact head $HEAD."
             echo 'should_run=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          complete=true
-          for slot in 1 2 3 4 5; do
-            marker="<!-- teamai-openrouter-free-slot-$slot-auto-review -->"
-            if ! jq -e --arg marker "$marker" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-              complete=false
-              break
-            fi
-          done
-          if [[ "$complete" == "true" ]]; then
-            echo "All five OpenRouter Free advisory outputs are recorded on exact head $HEAD; sequence is complete for this PR."
-            echo 'should_run=false' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+          if jq -e --arg marker "$MARKER" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker)))' <<< "$comments" >/dev/null; then
             echo "An automatic sequence claim already exists for PR #$PR. The five-call quota is frozen and synchronize/reopen events must not restart it."
             echo 'should_run=false' >> "$GITHUB_OUTPUT"
             exit 0
@@ -205,8 +191,8 @@ jobs:
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
       automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
-      automatic_start_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-provider-started -->'
       manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
+      automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-outcome -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY }}
@@ -232,7 +218,7 @@ jobs:
           set -euo pipefail
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed before completion check: expected $HEAD, found $current_head."
+            echo "PR head changed before execution-complete check: $current_head != $HEAD."
             exit 1
           }
 
@@ -244,7 +230,7 @@ jobs:
           missing=0
 
           for slot in 1 2 3 4 5; do
-            marker="<!-- teamai-openrouter-free-slot-$slot-provider-started -->"
+            outcome_marker="<!-- teamai-openrouter-free-slot-$slot-outcome -->"
             review_marker="<!-- teamai-openrouter-free-slot-$slot-auto-review -->"
             job_name="openrouter_free ($slot) / review"
             job="$(jq -c --arg name "$job_name" '[.jobs[] | select(.name == $name)] | last // empty' <<< "$jobs")"
@@ -265,34 +251,45 @@ jobs:
               continue
             fi
 
-            if ! jq -e --arg marker "$marker" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-              echo "MISSING: slot $slot provider-start marker is absent for exact head $HEAD."
+            outcome="$(jq -r --arg marker "$outcome_marker" --arg head "$HEAD" 'first(.[] | select(.user.login == "github-actions[bot]") | select((.body // "") | contains($marker) and contains(("Exact PR head: " + $head)))) | .body // empty' <<< "$comments")"
+            if [[ -z "$outcome" ]]; then
+              echo "MISSING: slot $slot durable outcome is absent for exact head $HEAD."
               missing=$((missing + 1))
               continue
             fi
 
             if [[ "$conclusion" == "success" ]]; then
-              if ! jq -e --arg marker "$review_marker" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-                echo "MISSING: successful slot $slot has no advisory output marker for exact head $HEAD."
+              if ! jq -e --arg marker "$review_marker" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+                echo "MISSING: successful slot $slot has no advisory output for exact head $HEAD."
                 missing=$((missing + 1))
                 continue
               fi
+              grep -Fq "Slot outcome: SUCCEEDED" <<< "$outcome" || {
+                echo "MISMATCH: successful slot $slot outcome marker does not declare SUCCEEDED."
+                missing=$((missing + 1))
+                continue
+              }
               success_count=$((success_count + 1))
             else
+              grep -Fq "Slot outcome: " <<< "$outcome" || {
+                echo "MISMATCH: failed slot $slot outcome marker has no explicit terminal state."
+                missing=$((missing + 1))
+                continue
+              }
               failure_count=$((failure_count + 1))
             fi
           done
 
           if (( missing > 0 )); then
-            echo "Automatic OpenRouter Free advisory sequence is incomplete: $missing slot outcome(s) are missing or not proven on exact head $HEAD."
+            echo "Automatic OpenRouter Free advisory execution is incomplete: $missing slot outcome(s) are missing, mismatched, or not proven on exact head $HEAD."
             exit 1
           fi
 
-          if jq -e --arg marker "$COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-            echo "Sequence-complete marker already exists for exact head $HEAD."
+          if jq -e --arg marker "$COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+            echo "Execution-complete marker already exists for exact head $HEAD."
             exit 0
           fi
 
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$COMPLETE_MARKER" '# Automatic OpenRouter Free Advisory Review Sequence Complete' "Exact PR head: $HEAD" "Five parallel OpenRouter Free Router slots reached terminal success/failure outcomes: $success_count review(s) posted, $failure_count provider execution failure(s) recorded as execution evidence." 'No inter-slot timers were used. A provider failure does not create a replacement call, secret substitution, or second automatic sequence.')"
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$COMPLETE_MARKER" '# Automatic OpenRouter Free Advisory Execution Complete' "Exact PR head: $HEAD" "Five parallel OpenRouter Free Router slots reached terminal execution outcomes: $success_count successful advisory output(s), $failure_count failed slot execution(s)." 'Execution completion is distinct from advisory success. A failed provider call remains durable slot evidence and does not trigger a replacement call, secret substitution, or second automatic sequence.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-          echo "Automatic OpenRouter Free advisory review sequence is complete for exact head $HEAD: successes=$success_count failures=$failure_count."
+          echo "Automatic OpenRouter Free advisory execution is complete for exact head $HEAD: successes=$success_count failures=$failure_count."
