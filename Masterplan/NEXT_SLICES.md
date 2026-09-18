@@ -16,6 +16,11 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 
 ## Dependencies
 
+### 3D governance dependency
+
+The semantic machine proof slice is now backed by an enforced structural boundary: Tree Authority XML plus the four-file Census must remain coherent, and the existing census-sync contract is executed by Governance Integrity against the full PR diff. This is governance enforcement, not runtime proof or machine promotion.
+
+
 - `Product_Law/PRODUCT_LAW.md`
 - `Product_Law/WIRING.md`
 - `Masterplan/MASTERPLAN.md`
