@@ -14,6 +14,20 @@
     "session": {"path": "AI_ASSISTANT_READ_ME.md", "role": "current session, handover, endorsement, and validation-change state"},
     "knowledge": {"path": "PRODUCT-KNOWLEDGE.md", "role": "durable validated learning without volatile session context"}
   },
+  "spatial_authority": {
+    "structural_record": "docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml",
+    "interaction_contract": "docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md",
+    "implementation_entry": "docs/TEAMAI_3D_HERO_IMPLEMENTATION_ENTRY.md",
+    "census": [
+      "docs/TEAMAI_3D_HERO_TREE_CENSUS.csv",
+      "docs/TEAMAI_3D_HERO_TREE_CENSUS.json",
+      "docs/TEAMAI_3D_HERO_TREE_CENSUS.md",
+      "docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml"
+    ],
+    "enforced_by": "build-system/scripts/repository-canonical-governance-audit.py",
+    "authority_boundary": "Subordinate structural record only; it cannot override Product Law or create backend, scheduler, authorization, entitlement, durable-state, acceptance, or merge authority.",
+    "change_policy": "Semantic tree/branch/division add/remove/rename/material-restructure/reimplementation requires the four census representations in the same governed PR. Renderer-neutral proof modules remain outside census sync unless they change semantic identity or structure."
+  },
   "historical_surfaces": {
     "archive": {"path": "docs/archive/", "role": "immutable historical documentation, never active routing"},
     "evidence": {"path": "docs/evidence/", "role": "historical or claim-scoped evidence, never authority by itself"},
