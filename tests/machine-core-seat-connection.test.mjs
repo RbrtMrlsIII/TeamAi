@@ -60,3 +60,12 @@ test('Seat-1 connection fails closed unless all canonical shell identity fields 
   }
   assert.equal(buildMachineCoreSeat1Connection({ shell: core.hub, expansionAmount: 1 }), null);
 });
+
+test('public Seat-1 connection runtime stays synchronized with the canonical frontend module', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const [frontend, publicRuntime] = await Promise.all([
+    readFile(new URL('../frontend/spatial/machine-core-seat-connection.js', import.meta.url), 'utf8'),
+    readFile(new URL('../public/machine-core-seat-connection.js', import.meta.url), 'utf8'),
+  ]);
+  assert.equal(publicRuntime, frontend);
+});

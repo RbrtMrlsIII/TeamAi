@@ -4,18 +4,18 @@
 
 ## Session anchor
 
-- Last given prompt: **review the next runtime-proof execution slice deeply before execution; do not repeat surface-level mistakes**
-- Session date: **2026-09-17**
+- Last given prompt: **re-establish PR #386 from GitHub, then perform the deep active-corpus/runtime governance pass before execution**
+- Session date: **2026-09-19**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
-- Governance review fix: **#362 closed/superseded; #367 open** on `governance/review-readiness-late-approval-retrigger`
+- Governance review fix: **#362 closed/superseded; #367 closed/unmerged**; its intended late-approval lifecycle correction is historical and is not the current advisory topology
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Semantic topology/adaptive clearance: **#361 merged** into `main` as `6c8f650bf978e47650246af67291a26fe83c4934`
 - Active 029 ledger: **#278**
 - Runtime-proof execution ledger: **#369**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current `main` baseline: **`f35f31221b232076506ad9f67f8f23f5c9c77725`**, post-#368 merge
-- Ordered advisory reviewer orchestration: **#368 merged** into `main`
+- Current `main` baseline: **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**, with #384 as the current merged advisory-control-plane change
+- Superseded advisory orchestration: **#368 merged historically; replaced on `main` by #384**
 - Fresh runtime-proof vehicle: **#370** recorded live sequence-claim/head-guard evidence, then exposed a reusable-runner parser fault before provider transport; its later stages were blocked by the exact-head barrier after the proof head changed
 - Current runner repair: **#371 closed/merged** via commit **`a31c524abfc11c592244e6c73ab5ad09e6e8fb06`**; the repair is part of the current main lineage
 
@@ -47,10 +47,10 @@
 - #361 is merged; it generalizes semantic machine connection topology and payload-adaptive clearance validation while preserving the bounded presentation/evidence boundary.
 - #362 is closed/superseded because its implementation branch violated the current responsibility-prefix rule and its base was stale; its late-approval diagnosis and intended fix are carried forward by #367.
 - The governance control plane now re-evaluates `review-readiness` on submitted/dismissed human reviews without changing what counts as human authorization.
-- #368 is merged; it carries the explicit 1→2→2 automatic advisory reviewer sequence, skip/cancel-safe cohort barriers, explicit free model routes, with the OpenRouter Free Router slot intentionally non-deterministic, exact-head guards, and durable one-sequence claim.
-- #369 is the execution ledger for the remaining #368 runtime-proof boundary.
+- #384 is merged and is the current advisory control-plane: five parallel `openrouter/free` slots, one shared `OPENROUTER_API_KEY`, no inter-slot timers or cohort barriers, exact-head rechecks, explicit terminal slot outcomes, and actual routed-model/provider provenance on successful advisory posts.
+- #369 remains open but its checklist targets the superseded #368 1→2→2 topology and is not current reviewer orchestration authority. It must not be used as evidence for #384's current topology without a new governed update.
 - #370 is the first fresh post-#368 proof vehicle. Its exact-head validation gate and durable sequence claim passed. Nemotron reached the runner and exposed a Bash parser fault before provider transport. The stage-1 barrier later detected a deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #370 remains diagnostic evidence, not runtime proof of provider execution.
-- #371 is the merged reusable-runner repair. It replaced the brittle provider-call shell path, rebound the former stage-2 OpenAI slot to OpenRouter Free Router, and fixed stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. Its merge commit is `a31c524abfc11c592244e6c73ab5ad09e6e8fb06`.
+- #371 is a merged historical runner repair and remains part of the lineage. Its old stage/cohort language is historical once #384 becomes current.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -64,6 +64,14 @@ This is the canonical GitHub Pages public entrance for live validation evidence.
 Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`, or other alternate public URLs as live acceptance targets. Candidate/PR validation remains exact-head project and browser evidence and is separate from this live-site check.
 
 **Verified 2026-09-17:** HTTP `200 OK`; title `TeamAi — Web AI Living Workspace`; visible TeamAi landing content; `Enter 3D world` present; GitHub Pages 404 absent; redirect count `0`.
+
+## Current #386 verification boundary
+
+- Current PR: **#386**, Draft, exact head **`e3f7178652b6ad3db134408beddec0a9c693db58`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
+- The collaborator `teamaiofficialph` review is historical evidence against head **`4b71bca13ae52eb15520412622d2ec9726297534`** and does not authorize the current head.
+- That review's two requested 8-seat fixes are verified closed on the follow-up head: active Frontend Experience now uses ten-seat presentation language, and Hero density/OVERHEAD_MAP now use the 1–10 `seatPopulationDensity` authority.
+- Current exact-head substantive CI is green; AI Advisory Review Sequence is lifecycle-skipped while #386 remains Draft. This is not human approval and does not authorize merge.
+- The current deep pass is checking active-document routing, stale session guidance, mirror governance, dead parser residue, and historical prototype relocation. Keep the PR Draft until independent re-review of the current head.
 
 ## Validation lifecycle guide
 
@@ -118,7 +126,7 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5. The l
 
 The earlier run on exact head `4477854a425453c2754a50bad941f81113ee5655` is preserved as historical evidence. It executed the former reviewer order, passed the exact-head validation gate, completed Nemotron and DeepSeek, then failed during the Qwen model call. The old automatic sequence comment and Nemotron review also contained obsolete timing wording. They remain immutable evidence for that old head and are not current implementation instruction.
 
-The current #368 implementation changed the authorized orchestration invariant to the 1→2→2 cohort sequence. Because the automatic sequence claim for #368 was already consumed on the historical head, its updated automatic sequence cannot be runtime-reverified by simply synchronizing #368. #370 was therefore created as a fresh vehicle. Its execution proved the validation gate, durable claim, and stale-head barrier, but the provider invocation path failed before transport. #371 is the isolated repair; a new provider runtime-proof vehicle must be used only after that repair is governed and merged.
+The earlier #368/#370 evidence belongs to the superseded 1→2→2 control-plane. PR #384 is the current advisory topology. #370 remains diagnostic history, while #371 remains historical runner hardening. Neither creates current provider-runtime proof for #384.
 
 Reviewer verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization. Missing provider secrets fail the affected stage closed and never fall through to another secret.
 

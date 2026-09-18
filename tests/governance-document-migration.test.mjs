@@ -12,6 +12,16 @@ const retired = {
   handover: ['Hand', 'Over.md'].join(''),
   endorsement: ['Endorse', 'ment.md'].join(''),
   connectedPlatform: 'docs/PRODUCT_LAW_CONNECTED_PLATFORM_AUTHORITY.md',
+  heroPrototype: [
+    'docs/TEAMAI_3D_HERO_DONE.md',
+    'docs/TEAMAI_3D_HERO_NEXT.md',
+    'docs/TEAMAI_3D_HERO_PROTOTYPE_IMPLEMENTATION.md',
+    'docs/TEAMAI_3D_HERO_PROTOTYPE_SMOKETEST.md',
+    'docs/TEAMAI_3D_HERO_PR_DESCRIPTION.md',
+    'docs/TEAMAI_3D_HERO_PR_READY.md',
+    'docs/TEAMAI_3D_HERO_PR_SUMMARY.md',
+    'docs/TEAMAI_3D_HERO_PR_CHECKLIST.md',
+  ],
 };
 
 test('historical surfaces distinguish directory paths from filename prefixes', () => {
@@ -47,7 +57,12 @@ test('canonical governance roots replace retired root files', () => {
     join('docs', 'project-guide', retired.handover),
     join('docs', 'project-guide', retired.endorsement),
     retired.connectedPlatform,
+    ...retired.heroPrototype,
   ]) assert.equal(existsSync(join(root, p)), false, p);
+  for (const p of retired.heroPrototype) {
+    const archived = p.replace('docs/', 'docs/archive/').replace(/\.md$/, '_legacy_2026-09-19.md');
+    assert.equal(existsSync(join(root, archived)), true, archived);
+  }
 });
 
 test('authority manifest is machine-readable and names one owner per canonical role', () => {

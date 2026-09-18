@@ -38,6 +38,21 @@ Dated `CHECKPOINT_*.md` snapshots formerly under active `docs/` were moved here 
 
 These records remain provenance only. Current routing must use the active authority graph and must not infer current product behavior from archived snapshots.
 
+## 2026-09-19 3D Hero prototype lifecycle archival
+
+The following prototype-era and PR-lifecycle records were moved here without content rewriting. Their original content remains immutable historical provenance and is no longer active routing:
+
+- `TEAMAI_3D_HERO_DONE_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_DONE.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_NEXT_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_NEXT.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PROTOTYPE_IMPLEMENTATION_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PROTOTYPE_IMPLEMENTATION.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PROTOTYPE_SMOKETEST_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PROTOTYPE_SMOKETEST.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_DESCRIPTION_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_DESCRIPTION.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_READY_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_READY.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_SUMMARY_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_SUMMARY.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_CHECKLIST_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_CHECKLIST.md` — preserved prototype/PR lifecycle record.
+
+They are not implementation authority. Current spatial routing uses the active Product Law, Masterplan/current slice, Tree Census/contracts, and applicable Skills.
+
 ## Rules
 
 - Preserve historical material; do not rewrite it into current state.

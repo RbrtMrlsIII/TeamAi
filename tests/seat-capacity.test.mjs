@@ -8,3 +8,12 @@ test('Seat capacity is a single 1–10 authority', () => {
 });
 test('guest/machine query parsing uses the same clamp', () => { assert.equal(parseSeatCountParam(''), 10); assert.equal(parseSeatCountParam('?seats=1'), 1); assert.equal(parseSeatCountParam('?seats=8'), 8); assert.equal(parseSeatCountParam('?seats=99'), 10); assert.equal(parseSeatCountParam('?seats=0'), 1); });
 test('population density spans the 1–10 range', () => { assert.equal(seatPopulationDensity(1),0); assert.equal(seatPopulationDensity(10),1); });
+
+test('public Seat-capacity runtime stays synchronized with the canonical frontend module', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const [frontend, publicRuntime] = await Promise.all([
+    readFile(new URL('../frontend/spatial/seat-capacity.js', import.meta.url), 'utf8'),
+    readFile(new URL('../public/seat-capacity.js', import.meta.url), 'utf8'),
+  ]);
+  assert.equal(publicRuntime, frontend);
+});
