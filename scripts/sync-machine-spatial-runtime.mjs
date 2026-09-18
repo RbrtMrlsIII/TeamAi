@@ -10,6 +10,7 @@ const files = [
   ['machine-hero-topology.js', 'machine-hero-topology.js'],
   ['machine-core-layout.js', 'machine-core-layout-runtime.js'],
   ['machine-core-semantic-map.js', 'machine-core-semantic-map.js'],
+  ['machine-core-seat-connection.js', 'machine-core-seat-connection.js'],
 ];
 
 for (const [sourceFile, publicFile] of files) {
