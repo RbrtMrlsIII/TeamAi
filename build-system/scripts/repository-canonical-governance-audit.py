@@ -250,7 +250,9 @@ def assert_spatial_authority(manifest: dict) -> None:
         )
     interaction = read(spatial["interaction_contract"]).lower()
     if "presentation-only" not in interaction and "presentation only" not in interaction:
-        fail("3D interaction contract no longer states presentation-only authority")
+        fail("3D interaction contract no longer states presentation-only behavior")
+    if "presentation authority boundary" not in interaction or "does not grant implementation authority" not in interaction:
+        fail("3D interaction contract no longer states the explicit presentation authority boundary")
     entry = read(spatial["implementation_entry"]).lower()
     if "no 029 release claim" not in entry:
         fail("3D implementation entry no longer carries the no-release boundary")
