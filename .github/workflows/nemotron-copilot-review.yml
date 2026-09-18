@@ -1,19 +1,12 @@
-name: Nemotron Copilot Review
+name: Legacy Nemotron Review Compatibility
 
 on:
-  issue_comment:
-    types: [created]
   workflow_dispatch:
     inputs:
       pr_number:
-        description: PR number to review
+        description: PR number for a compatibility free-router review
         required: true
         type: string
-      approve:
-        description: Submit a model approval after the review. This never satisfies TeamAi's human review-readiness gate.
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: read
@@ -23,22 +16,15 @@ permissions:
 
 jobs:
   review:
-    if: >-
-      (github.event_name == 'workflow_dispatch') ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/nemotron-ultra'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Nemotron Ultra
-      reviewer_slug: nemotron-ultra
-      model: nvidia/nemotron-3-ultra-550b-a55b:free
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+      reviewer: OpenRouter Free Compatibility Review
+      reviewer_slug: openrouter-free-compatibility
+      model: openrouter/free
+      pr_number: ${{ inputs.pr_number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-nemotron-ultra-auto-review -->'
-      manual_marker: '<!-- teamai-nemotron-ultra-review -->'
-      approve: ${{ github.event_name == 'workflow_dispatch' && inputs.approve || false }}
+      automatic_marker: '<!-- teamai-openrouter-free-compatibility-auto-review -->'
+      manual_marker: '<!-- teamai-openrouter-free-compatibility-review -->'
+      approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY }}

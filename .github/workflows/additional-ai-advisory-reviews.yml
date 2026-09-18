@@ -5,17 +5,13 @@ on:
     types: [created]
   workflow_dispatch:
     inputs:
-      reviewer:
-        description: Reviewer to invoke
+      slot:
+        description: Free-router review slot
         required: true
         type: choice
-        options:
-          - ling
-          - poolside
-          - laguna
-          - dots3
+        options: [free-1, free-2, free-3, free-4, free-5]
       pr_number:
-        description: Pull request number to review
+        description: PR number to review
         required: true
         type: string
 
@@ -26,86 +22,28 @@ permissions:
   actions: read
 
 jobs:
-  ling:
+  free:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'ling') ||
+      (github.event_name == 'workflow_dispatch') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/ling'))
+       (startsWith(github.event.comment.body, '/openrouter-free') ||
+        startsWith(github.event.comment.body, '/free-1') ||
+        startsWith(github.event.comment.body, '/free-2') ||
+        startsWith(github.event.comment.body, '/free-3') ||
+        startsWith(github.event.comment.body, '/free-4') ||
+        startsWith(github.event.comment.body, '/free-5')))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Ling 3.0 Flash
-      reviewer_slug: ling
-      model: inclusionai/ling-3.0-flash:free
+      reviewer: OpenRouter Free Manual
+      reviewer_slug: openrouter-free-manual
+      model: openrouter/free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-ling-auto-review -->'
-      manual_marker: '<!-- teamai-ling-review -->'
+      automatic_marker: '<!-- teamai-openrouter-free-manual-auto-review -->'
+      manual_marker: '<!-- teamai-openrouter-free-manual-review -->'
       approve: false
     secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
-
-  poolside:
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'poolside') ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/poolside'))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Poolside
-      reviewer_slug: poolside
-      model: poolside/laguna-xs-2.1:free
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-poolside-auto-review -->'
-      manual_marker: '<!-- teamai-poolside-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
-
-  laguna:
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'laguna') ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/laguna'))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Laguna
-      reviewer_slug: laguna
-      model: poolside/laguna-s-2.1:free
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-laguna-auto-review -->'
-      manual_marker: '<!-- teamai-laguna-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
-
-  dots3:
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3') ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/dots3'))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Dots3-Note Preview
-      reviewer_slug: dots3
-      model: dots-studio/dots-3-note-preview:free
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-dots3-auto-review -->'
-      manual_marker: '<!-- teamai-dots3-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
+      api_key: ${{ secrets.OPENROUTER_API_KEY }}

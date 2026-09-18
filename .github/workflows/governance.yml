@@ -67,79 +67,47 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-                     expected='Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview'
+          expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
-          grep -Fq "REVIEW_INTERVAL_SECONDS: '150'" "$workflow"
-          grep -Fq "$expected" "$workflow"
-          grep -Fq 'reviewer: Nemotron Ultra' "$workflow"
-          grep -Fq 'reviewer: Ling 3.0 Flash' "$workflow"
-          grep -Fq 'reviewer: Poolside' "$workflow"
-           grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"
-           grep -Fq 'secrets.OPENROUTER_API_KEY_OPENAI }}' "$workflow"
-           grep -Fq 'secrets.OPENROUTER_API_KEY_POOLSIDE }}' "$workflow"
-           grep -Fq 'secrets.OPENROUTER_API_KEY_DEEPSEEK }}' "$workflow"
-           grep -Fq 'secrets.OPENROUTER_API_KEY_GWEN }}' "$workflow"
-          grep -Fq 'reviewer: Laguna' "$workflow"
-          grep -Fq 'reviewer: Dots3-Note Preview' "$workflow"
-           test "$(grep -Fc 'reviewer_slug: nemotron-ultra' "$workflow")" -eq 1
-           test "$(grep -Fc 'reviewer_slug: ling' "$workflow")" -eq 1
-           test "$(grep -Fc 'reviewer_slug: poolside' "$workflow")" -eq 1
-           test "$(grep -Fc 'reviewer_slug: laguna' "$workflow")" -eq 1
-           test "$(grep -Fc 'reviewer_slug: dots3' "$workflow")" -eq 1
-           if grep -Fq 'model: openrouter/free' "$workflow" || grep -Fq 'model: nvidia/nemotron-3.5-lightning:free' "$workflow" || grep -Fq 'model: deepseek/deepseek-v4-flash:free' "$workflow" || grep -Fq 'model: qwen/qwen3-coder:free' "$workflow"; then
-             echo "Retired reviewer model binding remains in the active sequence workflow."
-             exit 1
-           fi
-          grep -Fq 'needs: delay_to_second_stage' "$workflow"
-          grep -Fq "if: always() && needs.delay_to_second_stage.result == 'success'" "$workflow"
-          grep -Fq 'needs: [ling, poolside]' "$workflow"
-          grep -Fq 'needs: delay_to_third_stage' "$workflow"
-          grep -Fq "if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')" "$workflow"
-          grep -Fq "if: always() && (needs.ling.result == 'success' || needs.ling.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')" "$workflow"
-          grep -Fq 'Reconfirm exact head before starting the stage-1 barrier' "$workflow"
-          grep -Fq 'Reconfirm exact head before starting the stage-2 barrier' "$workflow"
-          grep -Fq 'model: nvidia/nemotron-3-ultra-550b-a55b:free' "$workflow"
-          grep -Fq 'model: inclusionai/ling-3.0-flash:free' "$workflow"
-          grep -Fq 'model: poolside/laguna-xs-2.1:free' "$workflow"
-           grep -Fq 'model: poolside/laguna-s-2.1:free' "$workflow"
-           test "$(grep -Fc 'model: poolside/laguna-xs-2.1:free' "$workflow")" -eq 1
-           test "$(grep -Fc 'model: poolside/laguna-s-2.1:free' "$workflow")" -eq 1
-          grep -Fq 'model: dots-studio/dots-3-note-preview:free' "$workflow"
-          test "$(grep -Fc 'model: dots-studio/dots-3-note-preview:free' "$workflow")" -eq 1
-          if grep -Fq "needs.nemotron.result != 'cancelled'" "$workflow"; then
-            echo "Skipped/cancelled fallthrough remains in the Nemotron barrier."
+          grep -Fq 'model: openrouter/free' "$workflow"
+          grep -Fq 'strategy:' "$workflow"
+          grep -Fq 'fail-fast: false' "$workflow"
+          grep -Fq 'slot: [1, 2, 3, 4, 5]' "$workflow"
+          grep -Fq 'reviewer: OpenRouter Free Slot' "$workflow"
+          grep -Fq 'reviewer_slug: openrouter-free-' "$workflow"
+          grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"
+          test "$(grep -Fc 'model: openrouter/free' "$workflow")" -eq 1
+          test "$(grep -Fc 'openrouter-free-' "$workflow")" -ge 3
+          if grep -Fq 'REVIEW_INTERVAL_SECONDS' "$workflow" || grep -Fq 'delay_to_second_stage' "$workflow" || grep -Fq 'delay_to_third_stage' "$workflow"; then
+            echo "Retired inter-slot interval/barrier logic remains in the active sequence workflow."
             exit 1
           fi
-          if grep -Fq "needs.ling.result != 'cancelled'" "$workflow" || grep -Fq "needs.poolside.result != 'cancelled'" "$workflow"; then
-            echo "Skipped/cancelled fallthrough remains in the stage-3 barrier."
+          if grep -Fq 'nvidia/nemotron' "$workflow" || grep -Fq 'inclusionai/ling' "$workflow" || grep -Fq 'poolside/laguna' "$workflow" || grep -Fq 'dots-studio/dots-3' "$workflow"; then
+            echo "Named-model reviewer bindings remain in the active sequence workflow."
             exit 1
           fi
-          for path in \
-            'POLICY.md' \
-            'docs/SKILL_WIRING.md' \
-            'skills/governance/ai-advisory-review/SKILL.md' \
-            'Masterplan/MASTERPLAN.md' \
-            'AI_ASSISTANT_READ_ME.md' \
-            'Product_Law/WIRING.md'; do
+          grep -Fq 'needs: [claim, openrouter_free]' "$workflow"
+          grep -Fq "if: always() && needs.claim.result == 'success'" "$workflow"
+          grep -Fq 'automatic_outcome_marker' "$workflow"
+          grep -Fq 'Publish durable automatic slot outcome' ".github/workflows/ai-advisory-review-runner.yml"
+          grep -Fq 'Return only the following compact review structure' ".github/workflows/ai-advisory-review-runner.yml"
+          grep -Fq 'Slot outcome: SUCCEEDED' ".github/workflows/ai-advisory-review-runner.yml"
+          if grep -Fq 'automatic_start_marker' "$workflow" || grep -Fq 'Reserve automatic provider invocation slot' ".github/workflows/ai-advisory-review-runner.yml"; then
+            echo "Obsolete per-slot reservation state remains in the active advisory control plane."
+            exit 1
+          fi
+          for path in             'POLICY.md'             'docs/SKILL_WIRING.md'             'skills/governance/ai-advisory-review/SKILL.md'             'Masterplan/MASTERPLAN.md'             'AI_ASSISTANT_READ_ME.md'             'Product_Law/WIRING.md'; do
             test -f "$path"
             grep -Fq "$expected" "$path" || {
-              echo "Advisory reviewer stage drift detected in $path"
+              echo "Advisory reviewer routing drift detected in $path"
               exit 1
             }
-            if grep -Fq '5-minute interval' "$path"; then
-              echo "Retired 5-minute interval wording remains in $path"
-              exit 1
-            fi
-            if grep -Fq 'Nemotron → 2 minutes 30 seconds → DeepSeek → 2 minutes 30 seconds → Qwen' "$path"; then
-              echo "Retired three-stage sequence wording remains in $path"
-              exit 1
-            fi
-            if grep -Fq 'terminal non-cancelled' "$path" || grep -Fq 'completed non-cancelled' "$path"; then
-              echo "Ambiguous non-cancelled barrier wording remains in $path"
+            if grep -Fq '2 minutes 30 seconds' "$path" || grep -Fq '150-second' "$path" || grep -Fq '150 seconds' "$path"; then
+              echo "Retired inter-slot timing wording remains in $path"
               exit 1
             fi
           done
-          echo "Advisory reviewer stages are synchronized: 1 → 2 → 2 with 150-second inter-stage waits, explicit success/failure barriers, and explicit free routes, with pinned free model identities and stable secret aliases."
+          echo "Advisory reviewer control plane is synchronized: five parallel Free Router slots, one shared key, no inter-slot timers, explicit terminal slot outcomes, compact structured model evidence, exact-head guards, and one-sequence quota protection."
 
       - name: Prove draft PR target against full PR delta
         env:

@@ -15,17 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REVIEW_INTERVAL_SECONDS: '150'
   VALIDATION_POLL_SECONDS: '15'
   VALIDATION_TIMEOUT_SECONDS: '1800'
   SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
   SEQUENCE_COMPLETE_MARKER: '<!-- teamai-ai-review-sequence-complete -->'
-  PROVIDER_STARTED_MARKER: '<!-- teamai-ai-review-provider-started -->'
-  NEMOTRON_AUTO_MARKER: '<!-- teamai-nemotron-ultra-auto-review -->'
-  LING_AUTO_MARKER: '<!-- teamai-ling-auto-review -->'
-  POOLSIDE_AUTO_MARKER: '<!-- teamai-poolside-auto-review -->'
-  LAGUNA_AUTO_MARKER: '<!-- teamai-laguna-auto-review -->'
-  DOTS3_AUTO_MARKER: '<!-- teamai-dots3-auto-review -->'
 
 jobs:
   eligibility:
@@ -46,45 +39,25 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
           MARKER: ${{ env.SEQUENCE_MARKER }}
-          COMPLETE_MARKER: ${{ env.SEQUENCE_COMPLETE_MARKER }}
-          PROVIDER_STARTED_MARKER: ${{ env.PROVIDER_STARTED_MARKER }}
-          NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
-          LING_MARKER: ${{ env.LING_AUTO_MARKER }}
-          POOLSIDE_MARKER: ${{ env.POOLSIDE_AUTO_MARKER }}
-          LAGUNA_MARKER: ${{ env.LAGUNA_AUTO_MARKER }}
-          DOTS3_MARKER: ${{ env.DOTS3_AUTO_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
 
-          complete=true
-          for marker in "$NEMOTRON_MARKER" "$LING_MARKER" "$POOLSIDE_MARKER" "$LAGUNA_MARKER" "$DOTS3_MARKER"; do
-            if ! jq -e --arg marker "$marker" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`"))))' <<< "$comments" >/dev/null; then
-              complete=false
-              break
-            fi
-          done
-          if [[ "$complete" == "true" ]]; then
-            echo "All five automatic reviewer outputs are recorded on exact head $HEAD; sequence is complete for this PR."
+          if jq -e --arg marker "$SEQUENCE_COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+            echo "Execution-complete marker already exists for exact head $HEAD."
             echo 'should_run=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          if jq -e --arg marker "$PROVIDER_STARTED_MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
-            echo "An automatic provider slot has already been reserved for PR #$PR. The five-call budget is now frozen; no automatic recovery is permitted."
-            echo 'should_run=false' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if jq -e --arg marker "$MARKER" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`"))))' <<< "$comments" >/dev/null; then
-            echo "An automatic sequence claim already exists for exact head $HEAD and no provider slot has started yet; this concurrent invocation must not duplicate it."
+          if jq -e --arg marker "$MARKER" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker)))' <<< "$comments" >/dev/null; then
+            echo "An automatic sequence claim already exists for PR #$PR. The five-call quota is frozen and synchronize/reopen events must not restart it."
             echo 'should_run=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo 'should_run=true' >> "$GITHUB_OUTPUT"
-          echo "PR #$PR is eligible for a quota-safe automatic advisory review sequence on exact head $HEAD."
+          echo "PR #$PR is eligible for one quota-safe five-slot OpenRouter Free advisory sequence on exact head $HEAD."
 
   validation_gate:
     needs: eligibility
@@ -114,9 +87,6 @@ jobs:
             "Project tests + canonical package"
             "Playwright browser verification"
           )
-          # CodeQL is configured only for pull requests targeting main. Stacked
-          # governance PRs intentionally target the governance branch, so a
-          # missing CodeQL check there must not deadlock the advisory sequence.
           if [[ "$GITHUB_BASE_REF" == "main" ]]; then
             required+=("CodeQL analyze (javascript-typescript)")
           fi
@@ -178,7 +148,7 @@ jobs:
     outputs:
       claimed: ${{ steps.claim.outputs.claimed }}
     steps:
-      - name: Claim the automatic sequence only after validations pass
+      - name: Claim the automatic five-slot sequence only after validations pass
         id: claim
         env:
           GH_TOKEN: ${{ github.token }}
@@ -186,7 +156,6 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
           MARKER: ${{ env.SEQUENCE_MARKER }}
-          PROVIDER_STARTED_MARKER: ${{ env.PROVIDER_STARTED_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
@@ -197,205 +166,39 @@ jobs:
             exit 0
           fi
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          if jq -e --arg marker "$PROVIDER_STARTED_MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+          if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
-            echo 'Provider invocation state already exists; automatic sequence budget is frozen.'
+            echo 'A durable automatic sequence claim already exists; no second sequence is permitted.'
             exit 0
           fi
-          if jq -e --arg marker "$MARKER" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`"))))' <<< "$comments" >/dev/null; then
-            echo 'claimed=false' >> "$GITHUB_OUTPUT"
-            echo 'A current-head sequence claim already exists.'
-            exit 0
-          fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic AI Advisory Review Sequence' "Exact PR head: \`$HEAD\`" 'Order: Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; budget remains unused until a reviewer slot is reserved.')"
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots using model openrouter/free with one shared OpenRouter API key.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; no inter-slot interval or staged barrier is used.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
-  nemotron:
+  openrouter_free:
     needs: claim
     if: needs.claim.outputs.claimed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        slot: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Nemotron Ultra
-      reviewer_slug: nemotron-ultra
-      model: nvidia/nemotron-3-ultra-550b-a55b:free
+      reviewer: OpenRouter Free Slot ${{ matrix.slot }}
+      reviewer_slug: openrouter-free-${{ matrix.slot }}
+      model: openrouter/free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
-      automatic_marker: '<!-- teamai-nemotron-ultra-auto-review -->'
-      manual_marker: '<!-- teamai-nemotron-ultra-review -->'
+      automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
+      manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
+      automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-outcome -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY }}
 
-  delay_to_second_stage:
-    needs: nemotron
-    if: always() && (needs.nemotron.result == 'success' || needs.nemotron.result == 'failure')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Reconfirm exact head before starting the stage-1 barrier
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed before stage-1 interval: expected $HEAD, found $current_head."
-            exit 1
-          }
-          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
-          [[ "$draft_state" == "false" ]] || {
-            echo "PR became draft before stage-1 interval; later automatic stages are blocked."
-            exit 1
-          }
-
-      - name: Wait 2 minutes 30 seconds after Nemotron Ultra turn
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          sleep "$REVIEW_INTERVAL_SECONDS"
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed during stage-1 interval: expected $HEAD, found $current_head."
-            exit 1
-          }
-          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
-          [[ "$draft_state" == "false" ]] || {
-            echo "PR became draft during stage-1 interval; later automatic stages are blocked."
-            exit 1
-          }
-
-  ling:
-    needs: delay_to_second_stage
-    if: always() && needs.delay_to_second_stage.result == 'success'
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Ling 3.0 Flash
-      reviewer_slug: ling
-      model: inclusionai/ling-3.0-flash:free
-      pr_number: ${{ github.event.pull_request.number }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      invocation_class: automatic
-      automatic_marker: '<!-- teamai-ling-auto-review -->'
-      manual_marker: '<!-- teamai-ling-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
-
-  poolside:
-    needs: delay_to_second_stage
-    if: always() && needs.delay_to_second_stage.result == 'success'
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Poolside
-      reviewer_slug: poolside
-      model: poolside/laguna-xs-2.1:free
-      pr_number: ${{ github.event.pull_request.number }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      invocation_class: automatic
-      automatic_marker: '<!-- teamai-poolside-auto-review -->'
-      manual_marker: '<!-- teamai-poolside-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
-
-  delay_to_third_stage:
-    needs: [ling, poolside]
-    if: always() && (needs.ling.result == 'success' || needs.ling.result == 'failure') && (needs.poolside.result == 'success' || needs.poolside.result == 'failure')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Reconfirm exact head before starting the stage-2 barrier
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed before stage-2 interval: expected $HEAD, found $current_head."
-            exit 1
-          }
-          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
-          [[ "$draft_state" == "false" ]] || {
-            echo "PR became draft before stage-2 interval; later automatic stages are blocked."
-            exit 1
-          }
-
-      - name: Wait 2 minutes 30 seconds after Ling 3.0 Flash and Poolside turn
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          sleep "$REVIEW_INTERVAL_SECONDS"
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed during stage-2 interval: expected $HEAD, found $current_head."
-            exit 1
-          }
-          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
-          [[ "$draft_state" == "false" ]] || {
-            echo "PR became draft during stage-2 interval; later automatic stages are blocked."
-            exit 1
-          }
-
-  laguna:
-    needs: delay_to_third_stage
-    if: always() && needs.delay_to_third_stage.result == 'success'
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Laguna
-      reviewer_slug: laguna
-      model: poolside/laguna-s-2.1:free
-      pr_number: ${{ github.event.pull_request.number }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      invocation_class: automatic
-      automatic_marker: '<!-- teamai-laguna-auto-review -->'
-      manual_marker: '<!-- teamai-laguna-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
-
-  dots3:
-    needs: delay_to_third_stage
-    if: always() && needs.delay_to_third_stage.result == 'success'
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: Dots3-Note Preview
-      reviewer_slug: dots3
-      model: dots-studio/dots-3-note-preview:free
-      pr_number: ${{ github.event.pull_request.number }}
-      expected_head: ${{ github.event.pull_request.head.sha }}
-      invocation_class: automatic
-      automatic_marker: '<!-- teamai-dots3-auto-review -->'
-      manual_marker: '<!-- teamai-dots3-review -->'
-      approve: false
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
-
   sequence_complete:
-    needs: [claim, laguna, dots3]
+    needs: [claim, openrouter_free]
     if: always() && needs.claim.result == 'success' && needs.claim.outputs.claimed == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -403,44 +206,107 @@ jobs:
       pull-requests: read
       issues: write
     steps:
-      - name: Verify five automatic reviewer outputs on the exact sequence head
+      - name: Verify five terminal automatic router slot outcomes on the exact sequence head
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
           COMPLETE_MARKER: ${{ env.SEQUENCE_COMPLETE_MARKER }}
-          NEMOTRON_MARKER: ${{ env.NEMOTRON_AUTO_MARKER }}
-          LING_MARKER: ${{ env.LING_AUTO_MARKER }}
-          POOLSIDE_MARKER: ${{ env.POOLSIDE_AUTO_MARKER }}
-          LAGUNA_MARKER: ${{ env.LAGUNA_AUTO_MARKER }}
-          DOTS3_MARKER: ${{ env.DOTS3_AUTO_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed before completion check: expected $HEAD, found $current_head."
+            echo "PR head changed before execution-complete check: $current_head != $HEAD."
             exit 1
           }
+
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          jobs="$(gh api "repos/$REPO/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100")"
+
+          success_count=0
+          failure_count=0
           missing=0
-          for marker in "$NEMOTRON_MARKER" "$LING_MARKER" "$POOLSIDE_MARKER" "$LAGUNA_MARKER" "$DOTS3_MARKER"; do
-            if jq -e --arg marker "$marker" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`"))))' <<< "$comments" >/dev/null; then
-              echo "PASS: reviewer marker $marker exists for exact head $HEAD."
-            else
-              echo "MISSING: reviewer marker $marker is absent for exact head $HEAD."
+
+          for slot in 1 2 3 4 5; do
+            outcome_marker="<!-- teamai-openrouter-free-slot-$slot-outcome -->"
+            review_marker="<!-- teamai-openrouter-free-slot-$slot-auto-review -->"
+            job_name="openrouter_free ($slot) / review"
+            job="$(jq -c --arg name "$job_name" '[.jobs[] | select(.name == $name)] | last // empty' <<< "$jobs")"
+
+            if [[ -z "$job" ]]; then
+              echo "MISSING: slot $slot Actions job was not found."
               missing=$((missing + 1))
+              continue
+            fi
+
+            status="$(jq -r '.status' <<< "$job")"
+            conclusion="$(jq -r '.conclusion // ""' <<< "$job")"
+            echo "Slot $slot: status=$status conclusion=${conclusion:-PENDING}"
+
+            if [[ "$status" != "completed" || ( "$conclusion" != "success" && "$conclusion" != "failure" ) ]]; then
+              echo "INCOMPLETE: slot $slot is not in an allowed terminal execution result."
+              missing=$((missing + 1))
+              continue
+            fi
+
+            outcome="$(jq -r --arg marker "$outcome_marker" --arg head "$HEAD" 'first(.[] | select(.user.login == "github-actions[bot]") | select((.body // "") | contains($marker) and contains(("Exact PR head: " + $head)))) | .body // empty' <<< "$comments")"
+            if [[ -z "$outcome" ]]; then
+              echo "MISSING: slot $slot durable outcome is absent for exact head $HEAD."
+              missing=$((missing + 1))
+              continue
+            fi
+
+            outcome_state="$(sed -n 's/^Slot outcome: //p' <<< "$outcome" | head -1)"
+            case "$outcome_state" in
+              SUCCEEDED|PROVIDER_FAILED|REVIEW_POST_FAILED|PRE_PROVIDER_FAILURE)
+                ;;
+              *)
+                echo "MISMATCH: slot $slot outcome marker has an unrecognized terminal state: ${outcome_state:-<missing>}"
+                missing=$((missing + 1))
+                continue
+                ;;
+            esac
+
+            grep -Fq "Reviewer slug: `openrouter-free-$slot`" <<< "$outcome" || {
+              echo "MISMATCH: slot $slot outcome marker identifies a different reviewer slug."
+              missing=$((missing + 1))
+              continue
+            }
+
+            if [[ "$conclusion" == "success" ]]; then
+              if [[ "$outcome_state" != "SUCCEEDED" ]]; then
+                echo "MISMATCH: successful slot $slot workflow job must publish Slot outcome: SUCCEEDED, found $outcome_state."
+                missing=$((missing + 1))
+                continue
+              fi
+              if ! jq -e --arg marker "$review_marker" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+                echo "MISSING: successful slot $slot has no advisory output for exact head $HEAD."
+                missing=$((missing + 1))
+                continue
+              fi
+              success_count=$((success_count + 1))
+            else
+              if [[ "$outcome_state" == "SUCCEEDED" ]]; then
+                echo "MISMATCH: failed slot $slot workflow job cannot publish Slot outcome: SUCCEEDED."
+                missing=$((missing + 1))
+                continue
+              fi
+              failure_count=$((failure_count + 1))
             fi
           done
+
           if (( missing > 0 )); then
-            echo "Automatic advisory sequence is incomplete: $missing reviewer output(s) missing for exact head $HEAD."
+            echo "Automatic OpenRouter Free advisory execution is incomplete: $missing slot outcome(s) are missing, mismatched, or not proven on exact head $HEAD."
             exit 1
           fi
-          if jq -e --arg marker "$COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`"))))' <<< "$comments" >/dev/null; then
-            echo "Sequence-complete marker already exists for exact head $HEAD."
+
+          if jq -e --arg marker "$COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+            echo "Execution-complete marker already exists for exact head $HEAD."
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s' "$COMPLETE_MARKER" '# Automatic AI Advisory Review Sequence Complete' "Exact PR head: \`$HEAD\`" 'All five automatic reviewer output markers are present on this exact head. Provider quota consumption is bounded to the five reserved reviewer slots.')"
+
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$COMPLETE_MARKER" '# Automatic OpenRouter Free Advisory Execution Complete' "Exact PR head: $HEAD" "Five parallel OpenRouter Free Router slots reached terminal execution outcomes: $success_count successful advisory output(s), $failure_count failed slot execution(s)." 'Execution completion is distinct from advisory success. A failed provider call remains durable slot evidence and does not trigger a replacement call, secret substitution, or second automatic sequence.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-          echo "Automatic advisory review sequence is complete for exact head $HEAD."
+          echo "Automatic OpenRouter Free advisory execution is complete for exact head $HEAD: successes=$success_count failures=$failure_count."

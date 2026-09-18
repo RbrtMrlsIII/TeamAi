@@ -17,7 +17,7 @@
 - Current `main` baseline: **`f35f31221b232076506ad9f67f8f23f5c9c77725`**, post-#368 merge
 - Ordered advisory reviewer orchestration: **#368 merged** into `main`
 - Fresh runtime-proof vehicle: **#370** recorded live sequence-claim/head-guard evidence, then exposed a reusable-runner parser fault before provider transport; its later stages were blocked by the exact-head barrier after the proof head changed
-- Current runner repair: **#371 open** on `governance/repair-advisory-review-runner-shell-quoting-20260917`
+- Current runner repair: **#371 closed/merged** via commit **`a31c524abfc11c592244e6c73ab5ad09e6e8fb06`**; the repair is part of the current main lineage
 
 ## Canonical authority path
 
@@ -50,7 +50,7 @@
 - #368 is merged; it carries the explicit 1→2→2 automatic advisory reviewer sequence, skip/cancel-safe cohort barriers, explicit free model routes, with the OpenRouter Free Router slot intentionally non-deterministic, exact-head guards, and durable one-sequence claim.
 - #369 is the execution ledger for the remaining #368 runtime-proof boundary.
 - #370 is the first fresh post-#368 proof vehicle. Its exact-head validation gate and durable sequence claim passed. Nemotron reached the runner and exposed a Bash parser fault before provider transport. The stage-1 barrier later detected a deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #370 remains diagnostic evidence, not runtime proof of provider execution.
-- #371 is the reusable-runner repair. It replaces the brittle provider-call shell path, rebinds the former stage-2 OpenAI slot to OpenRouter Free Router, and fixes stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. It must satisfy the repository canonical six-file synchronization rule and governed validation before merge.
+- #371 is the merged reusable-runner repair. It replaced the brittle provider-call shell path, rebound the former stage-2 OpenAI slot to OpenRouter Free Router, and fixed stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. Its merge commit is `a31c524abfc11c592244e6c73ab5ad09e6e8fb06`.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -108,24 +108,11 @@ Never weaken validation merely to make CI green.
 The #370 runtime execution did not justify weakening validation. Its provider stage exposed a reusable-runner parser defect before external transport. The replacement rule in #371 is implementation hardening only: preserve the exact-head validator gate, the durable one-sequence claim, the same explicit free model bindings, the same retry count, and the same advisory-output contract while moving provider transport into a less fragile standard-library HTTP path. Runtime provider proof remains a separate claim that can be made only from a fresh eligible execution after #371 is governed and merged.
 
 ## Model-assisted review
-
-`skills/governance/ai-advisory-review/SKILL.md` defines the shared bounded model-review contract. `.github/workflows/ai-advisory-review-sequence.yml` is the automatic entrypoint with the explicit stage sequence **Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview**. There is no automatic interval before Nemotron. `.github/workflows/nemotron-copilot-review.yml` remains the deliberate manual Nemotron Ultra entrypoint, while `.github/workflows/additional-ai-advisory-reviews.yml` provides deliberate manual routing for Ling 3.0 Flash, Poolside, Laguna, and Dots3-Note Preview. `.github/workflows/ai-advisory-review-runner.yml` owns the reusable exact-head validation, bounded packet, model call, advisory posting, and optional explicitly authorized Nemotron approval boundary.
-
-Automatic review begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not consume automatic model calls. `synchronize` does not restart the sequence. A durable sequence-claim comment is written before Nemotron. Every reviewer receives the same original triggering head SHA and fails closed if that head changes before invocation.
-
-Stage 2 contains two independent reviewers that start together after the first 150-second barrier. Stage 3 contains two independent reviewers that start together after the second 150-second barrier. A provider failure does not substitute another reviewer or reorder the cohorts; it remains evidence. A later stage may start only when its upstream reviewer jobs have a `success` or `failure` result. `skipped` and `cancelled` do not open an inter-stage barrier.
-
-Each reviewer has an independent secret/model binding:
-
-| Reviewer | Secret alias | OpenRouter model | Automatic stage |
-|---|---|---|---:|
-| Nemotron Ultra | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | 1 |
-| Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-xs-2.1:free` | 2 |
-| Laguna | `OPENROUTER_API_KEY_DEEPSEEK` | `poolside/laguna-s-2.1:free` | 3 |
-| Dots3-Note Preview | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | 3 |
-
-The active reviewer routes are explicit pinned free OpenRouter bindings. Secret names are aliases only and do not encode reviewer/model identity. Dots3-Note Preview is intentionally used despite the Preview label and is currently listed by OpenRouter as going away September 30, 2026. Cost class and provider data-use terms remain separate considerations.
+The active automatic advisory sequence is:
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
+The sequence starts only after substantive exact-head validators pass, writes one durable quota claim, and launches five parallel OpenRouter Free Router slots. There are no inter-slot timers or stage barriers. Each slot rechecks the original triggering head before provider invocation. Each successful provider call records the actual routed model and provider in its advisory comment. The sequence is complete only after every slot posts its exact-head marker.
+Manual later-head review uses /openrouter-free or /free-1 through /free-5. The legacy Nemotron-specific workflow is retained only as a compatibility dispatch surface and also routes through openrouter/free without model-specific approval. Model verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization.
 
 ### Historical automatic sequence evidence
 

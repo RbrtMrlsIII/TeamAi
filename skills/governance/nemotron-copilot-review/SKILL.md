@@ -1,4 +1,4 @@
-# Nemotron Copilot Review Skill
+# Legacy Named-Reviewer Compatibility Skill
 
 **Role:** reusable advisory procedure for model-assisted pull-request review through the repository's controlled GitHub Actions workflow.
 
@@ -29,14 +29,9 @@ The resulting packet includes exact-head check-run evidence, current governing-f
 
 ## Lifecycle policy
 
-- **Draft PRs:** do not automatically invoke Nemotron. A collaborator may invoke `/nemotron`, or an authorized workflow dispatch may run a controlled review against the exact current head.
-- **Accidentally non-draft PRs:** an `opened` pull-request event may consume the single automatic review allowance for that PR after the exact-head substantive validators pass. This provides a safety net for future sessions that accidentally open a PR as Ready instead of Draft.
-- **Ready-for-review PRs:** a `ready_for_review` event may consume the single automatic review allowance when no earlier automatic Nemotron review has been posted.
-- **One automatic review per PR:** automatic reviews are intentionally not triggered by `synchronize` events and do not repeat merely because a PR receives additional commits. The workflow records its automatic review with the stable `<!-- teamai-nemotron-review -->` marker and suppresses later automatic attempts for that PR, regardless of head SHA.
-- **Manual re-review:** `/nemotron` issue-comment invocation and explicit `workflow_dispatch` remain available for a deliberate review of a later exact head. This is the controlled way to spend additional model quota on a changed revision.
-- **Reopen events:** reopening a PR can participate only while no prior automatic Nemotron review exists; once the marker exists, reopening does not consume another automatic review allowance.
-- **Automatic review gate:** an automatic review is blocked until the required substantive exact-head check-runs pass.
-- **Review-readiness:** remains a separate promotion-stage human authorization gate and is not a prerequisite for the model's advisory analysis.
+- **Draft PRs:** do not automatically invoke the compatibility workflow. Manual /openrouter-free review remains available through the active advisory workflow.
+- **Legacy compatibility dispatch:** explicit workflow dispatch may invoke one free-router review against the exact current head.
+- **No model-specific approval:** the former Nemotron-only model approval path is retired because the dynamic router does not guarantee a Nemotron model.
 - Every model review is advisory and must identify the exact PR head. A later head change makes the previous model analysis stale for promotion purposes, but does not itself trigger another automatic review.
 
 ## Security boundaries
@@ -50,7 +45,7 @@ The resulting packet includes exact-head check-run evidence, current governing-f
 
 ## Model
 
-The workflow currently targets `nvidia/nemotron-3.5-lightning:free` through OpenRouter. The model choice is operational configuration, not product authority.
+The legacy compatibility workflow now routes through the OpenRouter Free Router using openrouter/free. It no longer asserts a specific model identity or permits model-specific approval.
 
 ## Evidence contract
 

@@ -53,42 +53,21 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - `main` changes through governed PRs only.
 
 ### Model-review sequence discipline
-
-Model-assisted advisory review is treated as a scarce verification resource. The automatic path is one ordered three-stage cohort sequence per PR:
-
-`Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview`
-
-There is **no automatic interval before Nemotron Ultra**. Nemotron Ultra is the frontline reviewer. It starts only when the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the required substantive exact-head validation gate.
-
-After Nemotron reaches a `success` or `failure` execution result, the sequence waits exactly 150 seconds before starting the second-stage pair. A `skipped` or `cancelled` Nemotron Ultra job does **not** open the barrier and must not start stage 2. Ling 3.0 Flash and Poolside are peer reviewers in that stage and execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always()` against the successful barrier so an allowed Nemotron `failure` cannot be converted into an implicit upstream-success skip.
-
-After both second-stage reviewers reach a `success` or `failure` execution result, the sequence waits another 150 seconds before starting the third-stage pair. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does **not** open the barrier and must not start stage 3. Laguna and Dots3-Note Preview are peer reviewers in that stage and execute concurrently against the same original triggering head.
-
-The inter-stage waits are **cohort barriers**, not reviewer timers. A provider failure is execution evidence and does not cause another provider to substitute for it, reorder the stages, or launch early. The sequence may proceed to the next cohort after an allowed provider failure, but only while the completed reviewer job result is `success` or `failure` and exact-head freshness remains intact. A PR-head change during a wait or between stages fails closed and prevents later automatic stages from reviewing stale code.
-
-The sequence can begin only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event **after the required substantive validation set has completed successfully on that exact PR head**. Draft PRs consume no automatic model calls. `synchronize` does not restart the sequence. The automatic sequence gate polls the required validator check-runs while they are pending and fails closed on missing, failed, timed-out, stale, or head-mismatched evidence. A durable sequence-claim marker is recorded only after that validation gate passes and before Nemotron starts.
-
-Each reviewer has its own provider secret alias and configured route. Secret names are aliases only and do not determine reviewer/model identity. All five active bindings are explicit pinned `:free` routes. Missing reviewer secrets fail the affected stage closed and never fall through to another reviewer secret.
+Model-assisted advisory review is treated as a bounded verification resource. The automatic path is one ordered five-slot sequence per PR:
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
+There is no inter-slot wait, cohort barrier, or named-model dependency. After the first eligible non-draft opened, reopened, or ready_for_review event passes the substantive exact-head validation gate, five independent OpenRouter Free Router jobs start in parallel against the same original triggering head. A provider failure is execution evidence for that slot and does not authorize secret substitution, retry through another slot, or a second automatic sequence.
+The durable sequence-claim marker is the quota boundary for the PR. synchronize and reopen events cannot create another automatic sequence after a prior claim exists, even when the PR head later changes. Draft PRs consume no automatic model calls. Each slot revalidates the original head before invocation and fails closed on a head change.
 
 ### Reviewer billing boundary
-
-The automatic review path must not be treated as cost-free merely because the reviewer name identifies a provider. Pricing is determined by the configured OpenRouter model route. With a zero-credit OpenRouter account, paid model bindings must not be invoked. Free variants are rate-limited and remain separately subject to their provider data-use terms.
-
-Current binding status as audited 2026-09-17:
-
-| Reviewer | Secret alias | Current OpenRouter model | Cost class | Stage |
-|---|---|---|---|---:|
-| Nemotron Ultra | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | **Free** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-xs-2.1:free` | **Free** | 2 |
-| Laguna | `OPENROUTER_API_KEY_DEEPSEEK` | `poolside/laguna-s-2.1:free` | **Free** | 3 |
-| Dots3-Note Preview | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
-
-The cost classification is an OpenRouter model-route audit on 2026-09-18. The `:free` suffix denotes an explicit free model route. The active five-reviewer binding is fully pinned and deterministic; no dynamic `openrouter/free` router is used. Dots3-Note Preview is an intentional bounded choice despite the Preview label and is currently listed by OpenRouter as going away September 30, 2026.
-
-Free model routes can also carry provider-specific logging or training terms. Secret aliases remain decoupled from provider/model identity and are not renamed by this configuration change. Repository review packets can contain source and governance material, so model-cost decisions must be kept distinct from data-handling decisions.
-
-Manual `/nemotron-ultra`, `/ling`, `/poolside`, `/laguna`, and `/dots3` commands and authorized workflow dispatch remain available for deliberate later-head review. Manual review is separate from the automatic sequence allowance. Model output and any model approval remain advisory and cannot satisfy human review-readiness or merge authorization.
+The automatic advisory path uses the OpenRouter Free Models Router for every automatic slot. The request route is openrouter/free and the actual routed model is captured from the OpenRouter response. The active automatic configuration uses one OpenRouter API key for all five slots, bounded to at most five provider HTTP requests per automatic sequence.
+| Slot | Credential | Requested route | Cost class |
+| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free |
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free |
+OpenRouter currently documents openrouter/free as a zero-priced router that selects among available free models. Free-account usage is rate-limited, so the five-request sequence remains explicitly quota-bounded. Cost status and provider data-use terms remain separate concerns.
 
 ### Runtime-repair evidence boundary
 
@@ -129,10 +108,9 @@ Then execute:
 Never weaken a validator merely to obtain green CI. Existing tests must be classified as retained, obsolete, or replaced before their assertions are changed.
 
 ## Model-assisted review
-
-The shared AI Advisory Review Skill plus model-specific manual wrappers and the automatic sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before every automatic stage, the reusable reviewer runner waits for required substantive exact-head Governance, Full-System, Security, and Browser/Runtime validator check-runs to complete successfully. The automatic sequence adds a pre-claim gate so a Ready-for-review transition occurring while validations are still running does not start or claim the model sequence prematurely. Missing, pending, failed, stale, or head-mismatched validator evidence fails the reviewer path closed. The review packet must include exact-head execution evidence, current governing context, and the owning Issue state. Repository branch protection and human governance remain authoritative.
-
-The staged reviewer timing is a synchronized governance invariant across `ai-advisory-review-sequence.yml`, this Policy, `docs/SKILL_WIRING.md`, `skills/governance/ai-advisory-review/SKILL.md`, `Masterplan/MASTERPLAN.md`, `Masterplan/NEXT_SLICES.md`, `Product_Law/WIRING.md`, and `AI_ASSISTANT_READ_ME.md`. Drift in the declared stage order, cohort membership, or 150-second inter-stage waits is a governance inconsistency and must fail validation rather than being silently normalized by one surface.
+The shared AI Advisory Review Skill plus the automatic OpenRouter Free Router sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before automatic invocation, the reviewer gate waits for the required substantive exact-head validator check-runs to complete successfully. Each automatic sequence then fans out to five parallel OpenRouter Free Router slots, records the actual routed model/provider for each successful call, and waits for all five slot jobs to reach terminal workflow state before evaluating sequence completion.
+The automatic sequence is synchronized across ai-advisory-review-sequence.yml, this Policy, docs/SKILL_WIRING.md, skills/governance/ai-advisory-review/SKILL.md, Masterplan/MASTERPLAN.md, Masterplan/NEXT_SLICES.md, Product_Law/WIRING.md, and AI_ASSISTANT_READ_ME.md. Drift in the five-slot fan-out, free-router route, quota boundary, actual-route evidence requirement, or no-interval invariant must fail validation rather than being silently normalized.
+A passing test proves only the contract it exercises. Deployment, browser output, screenshots, CI, and model analysis are evidence and do not independently change product authority.
 
 ## Evidence discipline
 

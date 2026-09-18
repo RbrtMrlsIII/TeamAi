@@ -42,24 +42,15 @@ Do not create another Product Law, current-state ledger, Masterplan, live HandOv
 Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and must receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
 
 ## Reviewer lifecycle boundary
-
-The controlled advisory reviewer procedure permits one automatic review sequence per pull request across the configured reviewer roster. The sequence begins only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event after substantive exact-head validators pass. The sequence is staged as:
-
-`Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview`
-
-There is no automatic interval before Nemotron. Ling 3.0 Flash and Poolside are peers in the second stage and execute concurrently. Dots3-Note Preview (primary) and Dots3-Note Preview (secondary) are peers in the third stage and execute concurrently. `synchronize` never restarts the automatic sequence. Later-head review is an explicit verification action through the reviewer-specific command or authorized workflow dispatch.
-
-A reviewer/provider failure is recorded as execution evidence and does not authorize secret substitution, stage reordering, or a retry through another provider. A PR-head change fails the current stage and prevents the sequence from proceeding with stale code. The second-stage reviewer jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so an allowed Nemotron `failure` still reaches the Ling 3.0 Flash + Poolside cohort.
-
-The current configured reviewer aliases are `nemotron-ultra` → `OPENROUTER_API_KEY`, `ling` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `laguna` → `OPENROUTER_API_KEY_DEEPSEEK`, and `dots3` → `OPENROUTER_API_KEY_GWEN`. These secret aliases are verification/runtime handles only. They are intentionally decoupled from reviewer/model identity and are not new Product Law identities.
-
-`review-readiness` is the separate human promotion/authorization gate. On a non-draft PR with current exact-head substantive evidence, absence of an independent non-author human approval is a **pending** state, not a failure. A passing readiness state requires such approval on the exact current head and no prohibited auto-merge state. Submitted or dismissed human review events may re-trigger this gate so late approval state is re-evaluated without changing authorization semantics.
+Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
+The controlled automatic advisory procedure permits one automatic review sequence per pull request:
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
+Five OpenRouter Free Router slots start concurrently after the substantive exact-head gate. The durable sequence claim freezes the one-sequence quota, synchronize/reopen events do not restart it, and each slot fails closed if the original triggering head changes. Completion is recognized only after all five slot outputs are recorded against that exact head.
+The requested route is openrouter/free. The actual routed model/provider returned by OpenRouter is runtime evidence and is recorded per successful slot. This operational routing does not create Product Law identities. review-readiness remains the separate human promotion/authorization gate.
 
 ## Reviewer runner repair boundary
-
-Implementation repairs to the reusable advisory-review runner belong to Verification & CI/Browser and do not create new Product Law authority. Runtime proof must distinguish configured routing from actual provider invocation. The fresh #370 vehicle demonstrated that exact-head gating and stale-head containment were live, while also exposing a parser defect before provider transport. The isolated #371 repair therefore remains a verification/runtime concern until a fresh governed execution proves the repaired provider path.
-
-<!-- #361 reconciliation: semantic topology/adaptive clearance is merged; runtime proof remains governed by the active 029 frontier. -->
+Implementation repairs to the reusable advisory-review runner belong to Verification & CI/Browser and do not create new Product Law authority. Runtime proof must distinguish configured routing from actual provider invocation. The fresh runtime vehicles that exposed the historical parser defects remain immutable evidence for those heads. The current runner records the OpenRouter response model and routing metadata so the repository does not mistake a dynamic router request for a fixed reviewer identity.
 
 ### Validation parser alignment
 
