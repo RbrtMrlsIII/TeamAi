@@ -299,12 +299,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s /tmp/provider-runtime.json
-          actual_model="$(jq -r '.actual_model' /tmp/provider-runtime.json)"
-          actual_provider="$(jq -r '.actual_provider' /tmp/provider-runtime.json)"
-          request_id="$(jq -r '.request_id' /tmp/provider-runtime.json)"
-          test -n "$actual_model"
-          test "$actual_model" != "$MODEL"
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$EXPECTED_HEAD" ]] || {
             echo "Exact-head guard failed immediately before model invocation: $current_head != $EXPECTED_HEAD."
@@ -505,6 +499,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          test -s /tmp/provider-runtime.json
+          actual_model="$(jq -r '.actual_model' /tmp/provider-runtime.json)"
+          actual_provider="$(jq -r '.actual_provider' /tmp/provider-runtime.json)"
+          request_id="$(jq -r '.request_id' /tmp/provider-runtime.json)"
+          test -n "$actual_model"
+          test "$actual_model" != "$MODEL"
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$HEAD" ]] || {
             echo "Exact-head guard failed while posting review: $current_head != $HEAD."
