@@ -283,7 +283,13 @@ Fields are consumed by Responsibility Profiles and are later resolved through wo
 ## 5. LAW FAMILY E — WEB AI SEATS, RESPONSIBILITY PROFILES, AND POPULATION
 
 ### Definition
-A **Web AI population** is the set of Web AI Seats configured for a TeamAi Workplace/Project and operating purpose. The canonical team-development baseline is **2–8 Web AI Seats**.
+A **Web AI population** is the set of Web AI Seats configured for a TeamAi Workplace/Project and operating purpose. The Seat population rule is:
+- minimum = 1 Web AI Seat;
+- maximum = 10 Web AI Seats;
+- Guest World presentation = 10 machine Seat slots;
+- authenticated durable Seat population = 1–10 authorized Seats, subject to entitlement and durable-state authority.
+
+Ten machine Seats are presentation capacity, not ten automatically fabricated durable Seats. **10 Seats ≠ Tree 1–8**.
 
 Population size changes responsibility distribution; it does not create additional product authorities.
 

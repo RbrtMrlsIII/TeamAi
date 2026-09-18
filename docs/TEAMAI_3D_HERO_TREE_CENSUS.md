@@ -246,7 +246,7 @@ TEAMAI COMMON SKILLS / Universal ToolKit
 
 Agent count changes **allocation**, not the underlying common skill definitions.
 
-With two unlocked Seats, a Seat may carry several Responsibility Units and therefore a broader resolved skill bundle. With up to eight unlocked Seats, the same Responsibility Unit/skill definitions are partitioned more finely across the participating Seats. This is a resource-allocation and resolution problem, not eight copies of the skill library.
+With two unlocked Seats, a Seat may carry several Responsibility Units and therefore a broader resolved skill bundle. With up to ten unlocked Seats, the same Responsibility Unit/skill definitions are partitioned more finely across the participating Seats. This is a resource-allocation and resolution problem, not eight copies of the skill library.
 
 User-provided or user-edited skill material, when implemented, must remain distinguishable from TeamAi common skills. Editing a user-owned skill must not silently mutate the canonical TeamAi common skill authority. Skills instruct; policy, authorization, entitlement, and project contracts govern.
 

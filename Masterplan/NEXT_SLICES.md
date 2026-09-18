@@ -4,7 +4,11 @@
 
 ## Current Slice
 
-TEAM-EXPERIENCE-029 — runtime proof of semantic topology, adaptive geometry, and transition behavior
+TEAM-EXPERIENCE-029 — authority/corpus normalization, 1–10 Seat capacity, semantic topology, adaptive geometry, and transition behavior
+
+## Capacity / authority reconciliation
+
+The Guest World presents the full 10-seat machine capacity; authenticated state restores only the actual authorized durable population, 1–10. Tree 1–8 remains a separate world-tree vocabulary.
 
 ## Status
 

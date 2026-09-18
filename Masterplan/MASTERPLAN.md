@@ -4,6 +4,10 @@
 **Role:** chronology and executable checklist only.  
 **Current governing program:** TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
 
+## Seat population authority normalization
+
+- [ ] Establish and consume the single Seat-capacity rule: minimum 1, maximum 10, Guest World presentation 10, authenticated durable population 1–10 subject to entitlement/authorization; keep Tree 1–8 separate.
+
 ## Repository foundation
 
 - [x] Product Law moved to `Product_Law/PRODUCT_LAW.md` and remains the single product authority.

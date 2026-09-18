@@ -101,7 +101,7 @@ These branches are one Seat-oriented tree, not the whole product.
 
 ## 5. World population
 
-The presentation baseline is eight semantic world slots:
+The Guest World presents the complete ten-seat machine capacity:
 
 ```text
 WORLD-01 → Seat slot 1
@@ -112,7 +112,15 @@ WORLD-05 → Seat slot 5
 WORLD-06 → Seat slot 6
 WORLD-07 → Seat slot 7
 WORLD-08 → Seat slot 8
+WORLD-09 → Seat slot 9
+WORLD-10 → Seat slot 10
 ```
+
+This is observational presentation capacity. It does not fabricate ten durable configured Seats.
+
+Authenticated state restores the actual authorized durable Seat population, from 1 through 10, into the available world slots. Entitlement, authorization, and durable-state authority remain outside the renderer.
+
+**Tree 1–8 is a separate Settings/world-tree vocabulary and is not the Seat capacity rule.**
 
 Eight is the presentation baseline. Actual user population remains governed by authorized durable state and entitlement/authorization. A rendered slot is not itself a durable Seat identity.
 
