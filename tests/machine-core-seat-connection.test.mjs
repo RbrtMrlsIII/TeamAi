@@ -32,6 +32,7 @@ test('Seat-1 connection child reuses the canonical geometry and edge identities'
   assert.equal(child.presentationOnly, true);
   assert.equal(child.geometry.corridor.owner, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY');
   assert.ok(child.geometry.corridor.length > 0);
+  assert.deepEqual(child.previewPoint, child.edge.target);
 });
 
 test('Seat-1 connection composition fails closed for every other machine-core Seat', () => {
