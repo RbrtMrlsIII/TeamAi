@@ -19,7 +19,7 @@ test('historical surfaces distinguish directory paths from filename prefixes', (
   assert.equal(manifest.historical_surfaces.archive.path, 'docs/archive/');
   assert.equal(manifest.historical_surfaces.evidence.path, 'docs/evidence/');
   assert.equal(manifest.historical_surfaces.handover.path, 'handover/');
-  assert.equal(manifest.historical_surfaces.checkpoints.prefix, 'docs/CHECKPOINT_');
+  assert.equal(manifest.historical_surfaces.checkpoints.prefix, 'docs/archive/CHECKPOINT_');
   assert.equal(manifest.historical_surfaces.evidence_records.prefix, 'docs/EVIDENCE_');
   assert.equal(manifest.historical_surfaces.checkpoints.path, undefined);
   assert.equal(manifest.historical_surfaces.evidence_records.path, undefined);

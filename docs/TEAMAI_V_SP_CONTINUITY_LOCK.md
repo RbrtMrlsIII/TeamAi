@@ -33,7 +33,7 @@ A future V/SP agent should begin with:
 
 A future backend agent should begin with:
 
-1. `docs/CHECKPOINT_BACKEND_EVIDENCE_RECONCILIATION_2026-09-10.md`;
+1. `docs/archive/CHECKPOINT_BACKEND_EVIDENCE_RECONCILIATION_2026-09-10.md`;
 2. `backend/BACKEND_LIVE_SERVICE_STATUS.md`;
 3. the relevant backend contract/evidence record;
 4. current connected runtime inspection where available.

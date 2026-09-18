@@ -18,7 +18,7 @@ Related technical contracts (owners of detail, not competing visions):
 - `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md`
 - `docs/ENTRANCE_IA_LAYOUT_CONTRACT.md`
-- `docs/PRODUCT_LAW_FRONTEND_HIGHEST_STAKE.md`
+- `Product_Law/FRONTEND_EXPERIENCE.md`
 
 ---
 

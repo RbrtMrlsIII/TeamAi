@@ -16,7 +16,7 @@ test('evidence and historical handover records exist', () => {
   for (const path of [
     'docs/EVIDENCE_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
     'handover/TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
-    'docs/CHECKPOINT_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
+    'docs/archive/CHECKPOINT_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md',
   ]) {
     assert.ok(existsSync(join(root, path)), path);
   }
