@@ -1,5 +1,5 @@
 import { HERO_AUTHORED_MESHES } from './hero-authored-meshes.js';
-import { clampSeatCount } from './seat-capacity.js';
+import { clampSeatCount, GUEST_SEAT_COUNT } from './seat-capacity.js';
 import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial } from './hero-authored-materials.js';
 import {
   HIERARCHY_PART,
@@ -159,7 +159,7 @@ function heroMaterialContext(){
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,ease=t=>t*t*(3-2*t),sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],len=a=>Math.hypot(...a),norm=a=>{const m=len(a)||1;return[a[0]/m,a[1]/m,a[2]/m]},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const I=()=>[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],mul=(a,b)=>{const r=new Array(16).fill(0);for(let c=0;c<4;c++)for(let q=0;q<4;q++)for(let k=0;k<4;k++)r[c*4+q]+=a[k*4+q]*b[c*4+k];return r},T=(x,y,z)=>{const m=I();m[12]=x;m[13]=y;m[14]=z;return m},S=(x,y,z)=>{const m=I();m[0]=x;m[5]=y;m[10]=z;return m},RY=a=>{const c=Math.cos(a),s=Math.sin(a);return[c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]},persp=(fov,asp,n,f)=>{const q=1/Math.tan(fov*Math.PI/360),nf=1/(n-f);return[q/asp,0,0,0,0,q,0,0,0,0,(f+n)*nf,-1,0,0,2*f*n*nf,0]};
 function look(e,t){const z=norm(sub(e,t)),x=norm(cross([0,1,0],z)),y=cross(z,x);return[x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-x[0]*e[0]-x[1]*e[1]-x[2]*e[2],-y[0]*e[0]-y[1]*e[1]-y[2]*e[2],-z[0]*e[0]-z[1]*e[1]-z[2]*e[2],1]}
-let camera={p:[0,6.4,9.6],t:[0,.78,0],f:39},seatCount=4,selectedSeat=0,state='IDLE',demo=false,reducedMotion=false,stateStart=performance.now(),cameraId='HERO_WIDE',camFrom=camera,camTo=camera,camStart=performance.now(),camAt=1,contribution=0;
+let camera={p:[0,6.4,9.6],t:[0,.78,0],f:39},seatCount=GUEST_SEAT_COUNT,selectedSeat=0,state='IDLE',demo=false,reducedMotion=false,stateStart=performance.now(),cameraId='HERO_WIDE',camFrom=camera,camTo=camera,camStart=performance.now(),camAt=1,contribution=0;
 const hierarchyRuntime = createHierarchyRuntime({ selectedSeatIndex: selectedSeat, cameraId });
 const ringFocus = createRingFocusState();
 function syncHierarchyFromGlobals(){
