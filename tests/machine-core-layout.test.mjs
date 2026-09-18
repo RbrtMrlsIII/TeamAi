@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createBranchConnectionCore, getBranchCamera, resolveBranchCamera } from '../frontend/spatial/machine-core-layout.js';
+import { createBranchConnectionCore, getBranchCamera, resolveBranchCamera, bindSeatShellProjection } from '../frontend/spatial/machine-core-layout.js';
 
 test('branch connection core defaults to ten seats with one hub and four distinct outer housings', () => {
   const core = createBranchConnectionCore();
@@ -13,12 +13,30 @@ test('branch connection core defaults to ten seats with one hub and four distinc
   assert.deepEqual(core.parts.filter((part) => part.kind === 'outer-housing').map((part) => part.silhouette), ['fin', 'arc', 'diamond', 'blade']);
 });
 
-test('eight-seat population remains a valid parameter without changing the renderer algorithm', () => {
+test('one-seat population is the lower bound and ten-seat population is the upper bound', () => {
+  assert.equal(createBranchConnectionCore({ seatCount: 0 }).seatCount, 1);
+  assert.equal(createBranchConnectionCore({ seatCount: 10 }).seatCount, 10);
+  assert.equal(createBranchConnectionCore({ seatCount: 16 }).seatCount, 10);
+});
+
+test('eight-seat population remains a valid parameter within the 1-10 capacity range', () => {
   const core = createBranchConnectionCore({ seatCount: 8 });
   assert.equal(core.seatCount, 8);
   assert.equal(core.parts.filter((part) => part.kind === 'inner-pod').length, 8);
   assert.equal(core.parts.length, 13);
   assert.deepEqual(core.parts.filter((part) => part.kind === 'inner-pod').map((part) => part.seatIndex), [0,1,2,3,4,5,6,7]);
+});
+
+test('Seat shells expose one canonical semantic projection and presentation boundaries', () => {
+  const core = createBranchConnectionCore();
+  const seat0 = core.byBranch.get('BRANCH-SEAT-01');
+  assert.deepEqual(seat0 && {
+    treeId: seat0.treeId, semanticId: seat0.semanticId, semanticKey: seat0.semanticKey, semanticBoundary: seat0.semanticBoundary,
+  }, { treeId: 'TREE-HERO-SEAT', semanticId: 'SEAT_SHELL', semanticKey: 'TREE-HERO-SEAT#0:SEAT_SHELL', semanticBoundary: 'presentation-only' });
+  assert.deepEqual(bindSeatShellProjection({ seatIndex: 0, branchId: 'BRANCH-SEAT-02' }), { treeId: null, semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only' });
+  assert.ok(core.parts.filter((part) => part.kind === 'inner-pod').every((part) => part.semanticId === 'SEAT_SHELL'));
+  assert.ok(core.parts.filter((part) => part.kind === 'outer-housing').every((part) => part.semanticId === null && part.semanticBoundary === 'presentation-only'));
+  assert.ok(!Object.prototype.hasOwnProperty.call(core, 'semanticRegistry'));
 });
 
 test('all branches and hub have independent camera profiles', () => {
