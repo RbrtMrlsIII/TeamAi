@@ -34,7 +34,7 @@ Animation owns choreography, Transition owns state pairs, Motion owns timing tok
 
 ## Responsive model
 
-Responsive adaptation changes framing, density, effect budget, and interaction affordances—not product meaning. The same shared workspace remains central and Seats remain distinct. 1–8 Seat scaling remains deterministic.
+Responsive adaptation changes framing, density, effect budget, and interaction affordances—not product meaning. The same shared workspace remains central and Seats remain distinct. 1–10 Seat scaling remains deterministic.
 
 ## Accessibility model
 

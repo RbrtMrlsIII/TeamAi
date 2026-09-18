@@ -7,7 +7,7 @@ Status: planning/continuity only. Asset Function/Form/Runtime gates remain disti
 The first additive authored family contains:
 
 - `workspaceRing`: shared Web AI workspace spatial centerpiece.
-- `seatShell`: reusable Web AI Seat station shell, instanced for 1–8 Seats.
+- `seatShell`: reusable Web AI Seat station shell, instanced for 1–10 Seats.
 - `contributionAnchor`: constrained Seat → shared workspace directional anchor.
 
 ## Form review
@@ -21,7 +21,7 @@ Before an authored asset is considered production-ready, verify:
 - material boundaries support light-skeomorphic manufactured form;
 - asset remains inside the Hero reserve and does not occlude the contribution corridor;
 - semantic cameras preserve readable form at wide, team, seat-close, workspace-close, and turn-follow perspectives;
-- 1–8 Seat scaling remains coherent without topology or spacing drift.
+- 1–10 Seat scaling remains coherent without topology or spacing drift.
 
 ## Runtime review
 

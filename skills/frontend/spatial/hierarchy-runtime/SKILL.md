@@ -54,7 +54,7 @@ v1: **one fully open parent at a time**.
 
 ### 4. Pose math (R2) — named formulas
 ```text
-density            = (clamp(seatCount,1,8)-1)/7
+density            = (clamp(seatCount,1,10)-1)/9
 workspaceRadius    = lerp(WORKSPACE_R_MIN, WORKSPACE_R_MAX, density)
 seatRadius         = lerp(SEAT_R_MIN, SEAT_R_MAX, density)
 seatScale          = lerp(SEAT_SCALE_MAX, SEAT_SCALE_MIN, density)
