@@ -55,3 +55,10 @@ Implementation repairs to the reusable advisory-review runner belong to Verifica
 ### Validation parser alignment
 
 The governance audit's `Draft proof target` parser is aligned to the repository's canonical PR-body contract: level-2 or level-3 Markdown headings are accepted, including the established `### Draft proof target` form. This is validation implementation alignment, not a new authority layer.
+
+
+## 3D world structural authority boundary
+
+The 3D world uses the existing Tree Authority XML and synchronized Tree Census representations as a subordinate structural record. They describe semantic tree identity, branch structure, implementation status, topology, geometry, and verification boundaries. They cannot override Product Law or create backend, scheduler, authorization, entitlement, durable-state, acceptance, or merge authority.
+
+The canonical Governance Integrity audit machine-checks the Tree Authority XML, Census JSON/CSV/Markdown representation set, semantic identity coherence, and the Census synchronization contract. Skills consume these records procedurally and cannot create a second semantic machine hierarchy.

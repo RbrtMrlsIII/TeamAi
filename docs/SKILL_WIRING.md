@@ -113,3 +113,10 @@ The following classes are forbidden as active routing: retired root Product Law,
 ### Draft proof target parser boundary
 
 Governance validation consumes the PR body's `Draft proof target` section. The accepted heading contract is level-2 or level-3 Markdown, including the canonical `### Draft proof target` form. Skills do not create this authority; they route the governed procedure.
+
+
+## 3D world authority enforcement
+
+The Tree Authority XML and four-file Tree Census are subordinate structural records, not a new Skill and not a second Product Law. Their consistency, semantic identity set, and non-authority boundary are machine-checked by `build-system/scripts/repository-canonical-governance-audit.py`, which also executes the existing `scripts/governance/census-sync-contract.mjs` against the full PR diff.
+
+Skills route implementation against these records but cannot override Product Law, define new semantic authority, grant permission, or authorize promotion/merge. Machine semantic projections must consume the canonical Census identities rather than creating a parallel hierarchy.
