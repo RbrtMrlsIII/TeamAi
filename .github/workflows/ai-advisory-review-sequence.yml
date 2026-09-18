@@ -114,7 +114,7 @@ jobs:
             pending=0
             failed=0
             missing=0
-            for name in "\${required[@]}"; do
+            for name in "${required[@]}"; do
               check="$(jq -c --arg name "$name" --arg head "$HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
               if [[ -z "$check" ]]; then
                 echo "$name: status=MISSING conclusion=MISSING"
@@ -123,7 +123,7 @@ jobs:
               fi
               status="$(jq -r '.status' <<< "$check")"
               conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
-              echo "$name: status=$status conclusion=\${conclusion:-PENDING}"
+              echo "$name: status=$status conclusion=${conclusion:-PENDING}"
               if [[ "$status" != "completed" ]]; then
                 pending=$((pending + 1))
               elif [[ "$conclusion" != "success" ]]; then
