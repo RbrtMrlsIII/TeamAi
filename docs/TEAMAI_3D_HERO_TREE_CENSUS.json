@@ -32,8 +32,16 @@
       "class": "presentation-hierarchy",
       "root": ["Seat Shell", "Connection", "Behavior", "Toolkit", "Capabilities", "Authorization", "Workspace Scope", "Task/Evidence"],
       "rendererAuthority": "presentation only",
-      "runtimeEvidence": ["public/hero-hierarchy-runtime.js", "public/hero-seat-branch-walk.js", "public/hero-seat-stack.js", "public/hero-flex.js"],
+      "runtimeEvidence": ["public/hero-hierarchy-runtime.js", "public/hero-seat-branch-walk.js", "public/hero-seat-stack.js", "public/hero-flex.js", "public/machine-core-layout-runtime.js", "public/machine-core-semantic-map.js", "public/machine-core-interaction.js"],
       "nodes": ["SEAT_SHELL", "SEAT_CONNECTION", "SEAT_BEHAVIOR", "SEAT_TOOLKIT", "SEAT_CAPABILITIES", "SEAT_AUTHORIZATION", "SEAT_WORKSPACE_SCOPE", "SEAT_TASK_EVIDENCE"],
+      "machineCoreBinding": {
+        "status": "IMPLEMENTED_PARTIAL",
+        "semanticRoot": "SEAT_SHELL",
+        "identityPattern": "TREE-HERO-SEAT#<seatIndex>:SEAT_SHELL",
+        "renderedChildren": [],
+        "childSchema": ["SEAT_CONNECTION", "SEAT_BEHAVIOR", "SEAT_TOOLKIT", "SEAT_CAPABILITIES", "SEAT_AUTHORIZATION", "SEAT_WORKSPACE_SCOPE", "SEAT_TASK_EVIDENCE"],
+        "boundary": "Each current machine-core seat module binds to the existing Seat Shell semantics; child branches remain schema-only in this candidate until their own geometry, payload, topology, and verification are implemented."
+      },
       "geometry": "PAYLOAD_DRIVEN",
       "expansion": "PARTIAL",
       "connection": "SEAT1_REFERENCE_EDGE_IMPLEMENTED_PARTIAL",
