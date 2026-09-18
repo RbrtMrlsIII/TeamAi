@@ -449,7 +449,7 @@ jobs:
 
                       def extract_section(source, heading):
                           match = re.search(
-                              rf'^## {re.escape(heading)}\\s*$\\n(.*?)(?=^## \\S|\\Z)',
+                              rf'^## {re.escape(heading)}\s*$\n(.*?)(?=^## \S|\Z)',
                               source,
                               flags=re.MULTILINE | re.DOTALL,
                           )
@@ -468,22 +468,22 @@ jobs:
                           value = value.strip()
                           if not value:
                               return 'None stated.'
-                          value = value.replace('\\r\\n', '\\n')
-                          value = re.sub(r'\\n{3,}', '\\n\\n', value)
+                          value = value.replace('\r\n', '\n')
+                          value = re.sub(r'\n{3,}', '\n\n', value)
                           if len(value) > 2000:
                               value = value[:1997].rstrip() + '...'
                           return value
 
-                      normalized = '\\n\\n'.join([
-                          f'## Verdict\\n{verdict}',
-                          f'## Blocking findings\\n{compact(sections["Blocking findings"])}',
-                          f'## Governance and evidence\\n{compact(sections["Governance and evidence"])}',
-                          f'## Verification gaps\\n{compact(sections["Verification gaps"])}',
-                          f'## Non-blocking observations\\n{compact(sections["Non-blocking observations"])}',
-                          f'## Review basis\\n{compact(sections["Review basis"])}',
+                      normalized = '\n\n'.join([
+                          f'## Verdict\n{verdict}',
+                          f'## Blocking findings\n{compact(sections["Blocking findings"])}',
+                          f'## Governance and evidence\n{compact(sections["Governance and evidence"])}',
+                          f'## Verification gaps\n{compact(sections["Verification gaps"])}',
+                          f'## Non-blocking observations\n{compact(sections["Non-blocking observations"])}',
+                          f'## Review basis\n{compact(sections["Review basis"])}',
                       ])
                       if len(normalized) > int(os.environ.get('MAX_REVIEW_CHARS', '12000')):
-                          normalized = normalized[:int(os.environ.get('MAX_REVIEW_CHARS', '12000'))].rstrip() + '\\n\\n[review output bounded by TeamAi reviewer contract]'
+                          normalized = normalized[:int(os.environ.get('MAX_REVIEW_CHARS', '12000'))].rstrip() + '\n\n[review output bounded by TeamAi reviewer contract]'
                       Path('/tmp/provider-runtime.json').write_text(json.dumps({
                           'requested_model': model,
                           'actual_model': actual_model,
