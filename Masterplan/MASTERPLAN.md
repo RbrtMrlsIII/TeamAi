@@ -6,7 +6,7 @@
 
 ## Seat population authority normalization
 
-- [ ] Establish and consume the single Seat-capacity rule: minimum 1, maximum 10, Guest World presentation 10, authenticated durable population 1–10 subject to entitlement/authorization; keep Tree 1–8 separate.
+- [x] Establish and consume the single Seat-capacity rule: minimum 1, maximum 10, Guest World presentation 10, authenticated durable population 1–10 subject to entitlement/authorization; keep Tree 1–8 separate.
 
 ## Repository foundation
 

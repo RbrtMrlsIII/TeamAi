@@ -21,6 +21,16 @@ test.describe('Living Web AI Workspace Hero', () => {
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
   });
 
+  test('Hero exposes the governed 1-10 Seat capacity', async ({ page }) => {
+    await page.goto('/hero/');
+    const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
+    expect(await count()).toBe(10);
+    await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(0));
+    expect(await count()).toBe(1);
+    await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(99));
+    expect(await count()).toBe(10);
+  });
+
   test('world-navigation menu reaches Selected seat, Workspace, and Detail without the old camera wall', async ({ page }) => {
     await page.goto('/hero/');
     await page.getByRole('button', { name: 'Menu', exact: true }).click();

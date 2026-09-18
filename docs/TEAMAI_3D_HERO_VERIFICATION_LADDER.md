@@ -40,7 +40,7 @@ A render demonstrates appearance, not product authority or backend correctness. 
 
 ### E — Responsive + reduced motion (#89)
 - wide/narrow framing preserves the same spatial hierarchy;
-- 1, 4, and 8 Seat layouts remain deterministic;
+- 1, 4, 8, and 10 Seat layouts remain deterministic;
 - semantic camera intent survives responsive framing;
 - reduced motion removes continuous choreography while retaining state.
 
