@@ -28,6 +28,7 @@ test('Seat-1 connection child reuses the canonical geometry and edge identities'
   assert.equal(child.edge.source.id, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:PORT');
   assert.equal(child.portId, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:PORT');
   assert.equal(child.healthLeaf.semanticKey, MACHINE_CORE_SEAT1_CONNECTION_HEALTH_KEY);
+  assert.equal(child.healthLeaf.semanticKey, 'SEAT_CONNECTION_HEALTH_FACE');
   assert.equal(child.healthLeaf.status, 'unknown');
   assert.equal(child.presentationOnly, true);
   assert.equal(child.geometry.corridor.owner, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY');
