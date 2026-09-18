@@ -109,7 +109,8 @@ The #370 runtime execution did not justify weakening validation. Its provider st
 
 ## Model-assisted review
 The active automatic advisory sequence is:
-OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
 The sequence starts only after substantive exact-head validators pass, writes one durable quota claim, and launches five parallel OpenRouter Free Router slots. There are no inter-slot timers or stage barriers. Each slot rechecks the original triggering head before provider invocation. Each successful provider call records the actual routed model and provider in its advisory comment. The sequence is complete only after every slot posts its exact-head marker.
 Manual later-head review uses /openrouter-free or /free-1 through /free-5. The legacy Nemotron-specific workflow is retained only as a compatibility dispatch surface and also routes through openrouter/free without model-specific approval. Model verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization.
 
