@@ -72,6 +72,10 @@ The existing machine anatomy is the interaction contract for the **partial** Sea
 
 Every machine tree uses a stable semantic `treeID`. Every branch uses a stable semantic `branchId` derived from its parentage and meaning. Mesh indexes, coordinates, camera docks, and ring positions are implementation details and never define semantic identity.
 
+### 6.2a Presentation authority boundary
+
+The 3D Hero machine is presentation-only. It may render and expose backend-owned facts, but it does not grant implementation authority, permission, entitlement, authorization, scheduler authority, durable-state authority, acceptance, or merge authority.
+
 ### 6.2 Branches are integrations
 
 A branch is a real machine/product integration. Its intended contract includes:
