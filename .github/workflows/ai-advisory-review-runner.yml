@@ -32,6 +32,11 @@ on:
         description: Reviewer-specific automatic marker
         required: true
         type: string
+      automatic_start_marker:
+        description: Durable marker reserved immediately before an automatic provider invocation
+        required: false
+        default: '<!-- teamai-ai-review-provider-started -->'
+        type: string
       manual_marker:
         description: Reviewer-specific manual marker
         required: true
@@ -300,11 +305,49 @@ jobs:
             exit 1
           }
 
+      - name: Reserve automatic provider invocation slot
+        if: inputs.invocation_class == 'automatic'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          REVIEWER: ${{ inputs.reviewer }}
+          REVIEWER_SLUG: ${{ inputs.reviewer_slug }}
+          START_MARKER: ${{ inputs.automatic_start_marker }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "Exact-head guard failed before provider-slot reservation: $current_head != $HEAD."
+            exit 1
+          }
+          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+          [[ "$draft_state" == "false" ]] || {
+            echo "PR became draft before provider-slot reservation."
+            exit 1
+          }
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          if jq -e --arg marker "$START_MARKER" --arg head "$HEAD" --arg reviewer "$REVIEWER" --arg slug "$REVIEWER_SLUG" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`")) and contains(("Reviewer: `" + $reviewer + "`")) and contains(("Reviewer slug: `" + $slug + "`"))))' <<< "$comments" >/dev/null; then
+            echo "Automatic provider slot already reserved for $REVIEWER on exact head $HEAD."
+            exit 1
+          fi
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' \
+            "$START_MARKER" \
+            "# Automatic AI Advisory Provider Slot Reserved" \
+            "Reviewer: \`$REVIEWER\`" \
+            "Reviewer slug: \`$REVIEWER_SLUG\`" \
+            "Exact PR head: \`$HEAD\`" \
+            "This reservation is durable quota state. The automatic path permits at most one provider HTTP request for this reviewer slot.")"
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
+
       - name: Ask reviewer model
         env:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
           MODEL: ${{ inputs.model }}
           REVIEWER: ${{ inputs.reviewer }}
+          INVOCATION_CLASS: ${{ inputs.invocation_class }}
         shell: bash
         run: |
           set -euo pipefail
@@ -357,7 +400,9 @@ jobs:
           Path('/tmp/payload.json').write_bytes(body)
           Path('/tmp/review.md').unlink(missing_ok=True)
 
-          for attempt in range(1, 4):
+          max_attempts = 1 if os.environ.get('INVOCATION_CLASS') == 'automatic' else 3
+
+          for attempt in range(1, max_attempts + 1):
               request = urllib.request.Request(
                   'https://openrouter.ai/api/v1/chat/completions',
                   data=body,
@@ -382,7 +427,7 @@ jobs:
                   headers = dict(exc.headers.items()) if exc.headers else {}
               except (urllib.error.URLError, TimeoutError) as exc:
                   print(f'{reviewer} provider transport failure: {exc.__class__.__name__}: {exc}; attempt={attempt}', file=sys.stderr)
-                  if attempt < 3:
+                  if attempt < max_attempts:
                       time.sleep(attempt * 4)
                       continue
                   break
@@ -416,10 +461,10 @@ jobs:
                   }
                   print(f'{reviewer} provider diagnostic: {json.dumps(diagnostic, sort_keys=True)}', file=sys.stderr)
 
-              if attempt < 3:
+              if attempt < max_attempts:
                   time.sleep(attempt * 4)
 
-          print(f'{reviewer} review request failed after 3 attempts. No review was posted.', file=sys.stderr)
+          print(f'{reviewer} review request failed after {max_attempts} provider attempt(s). No review was posted.', file=sys.stderr)
           sys.exit(1)
           PY
 
