@@ -39,6 +39,8 @@ function bind() {
       <span class="machine-core-inspector__role">${role}</span>
       <strong>${branch.branchId}</strong>
       <dl>
+        <div><dt>Semantic</dt><dd>${branch.semanticId || 'presentation-only'}</dd></div>
+        <div><dt>Semantic key</dt><dd>${branch.semanticKey || 'none'}</dd></div>
         <div><dt>Configuration</dt><dd>${state.profile}</dd></div>
         <div><dt>Level</dt><dd>${branch.level.toFixed(2)}</dd></div>
         <div><dt>Surface</dt><dd>${Math.round(branch.uiSurface.width * 100)} × ${Math.round(branch.uiSurface.depth * 100)}</dd></div>
