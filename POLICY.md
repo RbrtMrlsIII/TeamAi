@@ -143,3 +143,7 @@ Distinguish:
 A passing test proves only the contract it exercises. Deployment, browser output, screenshots, and CI are evidence and do not independently change product authority. A model review may analyze evidence but cannot manufacture missing execution proof or treat an open Issue as resolved.
 
 <!-- #361 reconciliation: merged semantic topology/adaptive clearance; runtime-proof frontier remains open. -->
+
+### Draft proof target parser boundary
+
+The `Draft proof target` is a required PR proof contract. Its parser must recognize the repository's canonical level-2/3 Markdown section heading, including `### Draft proof target`, and must not require contributors to distort the PR structure to satisfy a parser implementation detail.
