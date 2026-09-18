@@ -49,43 +49,21 @@ The reusable advisory-review runner is downstream of the substantive validator s
 A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by fresh exact-head execution after the repaired path is governed and merged; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
 
 ### Automatic reviewer sequence
-
-The automatic review lifecycle is one ordered three-stage cohort sequence, not a matrix:
-
-`Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview`
-
-There is no automatic interval before Nemotron. Nemotron is the frontline reviewer and starts only after the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event has passed the substantive exact-head validation gate.
-
-After Nemotron reaches a `success` or `failure` execution result, a 150-second barrier precedes the second-stage pair. A `skipped` or `cancelled` Nemotron job does not open that barrier. Ling 3.0 Flash and Poolside then execute concurrently against the same original triggering head. Their dependent jobs explicitly use `always() && needs.delay_to_second_stage.result == 'success'` so GitHub's implicit upstream-success behavior cannot suppress an allowed failure cohort.
-
-After both second-stage reviewers reach a `success` or `failure` execution result, a second 150-second barrier precedes the third-stage pair. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does not open that barrier. Laguna and Dots3-Note Preview then execute concurrently against the same original triggering head.
-
-A reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, stage reordering, or early launch. The inter-stage barrier is time-and-head controlled. A PR-head change during a barrier fails closed and prevents later automatic stages from reviewing stale code.
-
-The sequence is entered only from the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event. Draft PRs do not invoke models automatically. `synchronize` never restarts the chain. A durable sequence-claim comment is recorded before Nemotron starts.
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
+The sequence begins only after the first eligible non-draft opened, reopened, or ready_for_review event has passed the substantive exact-head validation gate. Five reusable reviewer jobs fan out concurrently with fail-fast disabled so one provider failure does not cancel peer slots.
+A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after all five slot jobs are terminal and all five exact-head output markers are present.
 
 ### Manual reviewer routing
-
-Later-head analysis remains deliberate:
-
-- `/nemotron-ultra` → `nemotron-copilot-review.yml`
-- `/ling`, `/poolside`, `/laguna`, or `/dots3` → `additional-ai-advisory-reviews.yml`
-
-Authorized workflow dispatch provides the same reviewer-specific control. Manual review is not a second automatic allowance.
+The active manual command is /openrouter-free, with optional slot aliases /free-1 through /free-5 for deliberate later-head review. Authorized workflow dispatch targets the same OpenRouter Free Router. The former reviewer-specific commands remain historical evidence only and are not active routing instructions.
 
 ### Reviewer configuration
-
-| Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
-|---|---|---|---|---:|
-| Nemotron Ultra | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | **Free** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-xs-2.1:free` | **Free** | 2 |
-| Laguna | `OPENROUTER_API_KEY_DEEPSEEK` | `poolside/laguna-s-2.1:free` | **Free** | 3 |
-| Dots3-Note Preview | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
-
-This cost classification was externally audited on 2026-09-17. All five active reviewer routes are pinned `:free` bindings. Secret names remain aliases only and are intentionally decoupled from reviewer/model identity.
-
-Free model routes can also have provider-specific data-use terms, so “free” does not automatically mean suitable for confidential repository review packets.
+| Reviewer | Secret | Requested route | Cost class | Automatic stage |
+| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+All five slots use the same OpenRouter Free Router route. The reusable runner must record the actual model returned by the router and the selected provider when exposed by routing metadata. Free does not imply suitable handling for confidential material; provider data-use terms remain a separate governance concern.
 
 ## Canonical live-site routing reference
 

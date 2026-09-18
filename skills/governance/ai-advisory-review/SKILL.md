@@ -26,34 +26,12 @@ GitHub Actions validator workflows run concurrently, so reviewer workflows perfo
 The resulting packet must include exact-head check-run evidence, current governing-file contents at that head, and live Issue state resolved from an explicit Issue reference in the PR. Missing or materially truncated governance, Issue, or execution context forces `ADVISORY_ONLY` rather than `APPROVE`.
 
 ## Automatic review sequence
-
-The automatic lifecycle is one ordered **three-stage cohort sequence** per PR, not a matrix and not a timer-driven fan-out:
-
-`Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview`
-
-There is **no automatic interval before Nemotron**. Nemotron is the frontline reviewer and its turn begins only after the first eligible non-draft `pull_request` event has passed the substantive exact-head validation gate.
-
-After the Nemotron Ultra turn reaches a `success` or `failure` execution result, the workflow waits 150 seconds and starts Ling 3.0 Flash and Poolside concurrently. A `skipped` or `cancelled` Nemotron job does not open the barrier and cannot start stage 2.
-
-After both second-stage reviewers reach `success` or `failure` execution results, the workflow waits another 150 seconds and starts Laguna and Dots3-Note Preview concurrently. A `skipped` or `cancelled` Ling 3.0 Flash or Poolside job does not open the barrier and cannot start stage 3.
-
-Reviewer failure inside a cohort is execution evidence and does not trigger secret substitution, reordering, or an early launch of another reviewer. The inter-stage barrier is time-and-head controlled, not verdict controlled. If the PR head changes during a wait or between stages, the barrier fails closed and later automatic stages do not run. Each reusable runner independently revalidates the original triggering head before model invocation.
-
-A durable sequence-claim marker is written before Nemotron. That claim is the quota boundary for the PR's single automatic sequence. `synchronize` never restarts the automatic sequence, and Draft PRs consume no automatic model calls.
-
-Each reviewer uses an independent provider secret and model identity. A missing key fails that reviewer closed and never falls through to another provider secret.
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
+There is no automatic interval before or between slots. The first eligible non-draft lifecycle event that passes substantive exact-head validation writes the durable one-sequence claim and fans out five reusable reviewer jobs concurrently with fail-fast disabled. Each job targets openrouter/free, receives the original triggering head, and independently revalidates that head immediately before model invocation.
+The sequence does not restart on synchronize or reopen after a claim exists. A provider failure is execution evidence for its slot and does not trigger secret substitution, retry through another slot, or automatic reordering. Sequence completion is a separate terminal check requiring all five exact-head slot output markers.
 
 ## Manual re-review
-
-Reviewer-specific commands remain available for deliberate later-head analysis:
-
-- `/nemotron-ultra`
-- `/ling`
-- `/poolside`
-- `/laguna`
-- `/dots3`
-
-Authorized `workflow_dispatch` paths provide the equivalent explicit control. Manual review is outside the automatic sequence allowance and may target the current exact head.
+Manual later-head review uses /openrouter-free or /free-1 through /free-5 and authorized workflow dispatch. Manual review is outside the automatic sequence allowance and uses the same openrouter/free route. Each manual invocation remains advisory and exact-head bound.
 
 ## Security boundaries
 
@@ -65,18 +43,13 @@ Authorized `workflow_dispatch` paths provide the equivalent explicit control. Ma
 - Model output is untrusted analysis, not executable instructions.
 
 ## Reviewer configuration
-
-| Reviewer | Secret | OpenRouter model | Cost class | Automatic stage |
-|---|---|---|---|---:|
-| Nemotron Ultra | `OPENROUTER_API_KEY` | `nvidia/nemotron-3-ultra-550b-a55b:free` | **Free** | 1 |
-| Ling 3.0 Flash | `OPENROUTER_API_KEY_OPENAI` | `inclusionai/ling-3.0-flash:free` | **Free** | 2 |
-| Poolside | `OPENROUTER_API_KEY_POOLSIDE` | `poolside/laguna-xs-2.1:free` | **Free** | 2 |
-| Laguna | `OPENROUTER_API_KEY_DEEPSEEK` | `poolside/laguna-s-2.1:free` | **Free** | 3 |
-| Dots3-Note Preview | `OPENROUTER_API_KEY_GWEN` | `dots-studio/dots-3-note-preview:free` | **Free** | 3 |
-
-The billing classification is an operational snapshot audited 2026-09-17. All five active routes are explicit `:free` model bindings. Secret names are aliases only and are intentionally decoupled from reviewer/model identity.
-
-Free routes can have provider-specific data-use terms, so cost status and repository-confidentiality suitability must be evaluated separately. Dots3-Note Preview is intentionally used despite the Preview label and is currently listed by OpenRouter as going away on September 30, 2026.
+| Reviewer slot | Secret | OpenRouter route | Cost class | Automatic stage |
+| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+OpenRouter documents openrouter/free as a dynamic router over currently available free models. Because the selected model can change, the runner must record the actual model and provider returned by the API rather than assigning a fixed reviewer identity. The one-sequence quota remains capped at five automatic HTTP requests.
 
 ## Evidence contract
 

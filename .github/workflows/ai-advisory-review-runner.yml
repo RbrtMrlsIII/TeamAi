@@ -299,6 +299,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          test -s /tmp/provider-runtime.json
+          actual_model="$(jq -r '.actual_model' /tmp/provider-runtime.json)"
+          actual_provider="$(jq -r '.actual_provider' /tmp/provider-runtime.json)"
+          request_id="$(jq -r '.request_id' /tmp/provider-runtime.json)"
+          test -n "$actual_model"
+          test "$actual_model" != "$MODEL"
           current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
           [[ "$current_head" == "$EXPECTED_HEAD" ]] || {
             echo "Exact-head guard failed immediately before model invocation: $current_head != $EXPECTED_HEAD."
@@ -410,6 +416,7 @@ jobs:
               )
               request.add_header('Authorization', f'Bearer {api_key}')
               request.add_header('Content-Type', 'application/json')
+              request.add_header('X-OpenRouter-Metadata', 'enabled')
               request.add_header('HTTP-Referer', 'https://github.com/' + os.environ.get('GITHUB_REPOSITORY', 'RbrtMrlsIII/TeamAi'))
               request.add_header('X-Title', f'TeamAi {reviewer} Advisory Review')
 
@@ -446,6 +453,22 @@ jobs:
                   message = choices[0].get('message') if choices and isinstance(choices[0], dict) else {}
                   content = message.get('content') if isinstance(message, dict) else None
                   if isinstance(content, str) and content.strip():
+                      metadata = data.get('openrouter_metadata') if isinstance(data, dict) else {}
+                      endpoints = metadata.get('endpoints') if isinstance(metadata, dict) else {}
+                      available = endpoints.get('available') if isinstance(endpoints, dict) else []
+                      selected = next((item for item in (available or []) if isinstance(item, dict) and item.get('selected') is True), {})
+                      actual_model = data.get('model') if isinstance(data, dict) else None
+                      actual_provider = selected.get('provider') if isinstance(selected, dict) else None
+                      if not isinstance(actual_model, str) or not actual_model or actual_model == model:
+                          print(f'{reviewer} provider response did not expose a routed model distinct from requested route {model}.', file=sys.stderr)
+                          sys.exit(1)
+                      Path('/tmp/provider-runtime.json').write_text(json.dumps({
+                          'requested_model': model,
+                          'actual_model': actual_model,
+                          'actual_provider': actual_provider if isinstance(actual_provider, str) and actual_provider else 'unreported',
+                          'request_id': request_id,
+                          'routing_metadata': 'enabled',
+                      }, sort_keys=True), encoding='utf-8')
                       Path('/tmp/review.md').write_text(content, encoding='utf-8')
                       sys.exit(0)
                   response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
@@ -493,7 +516,10 @@ jobs:
             echo "$marker"
             echo "# $REVIEWER Advisory Review"
             echo
-            printf 'Model: `%s`\n' "$MODEL"
+            printf 'Requested route: `%s`\n' "$MODEL"
+            printf 'Actual model: `%s`\n' "$actual_model"
+            printf 'Actual provider: `%s`\n' "$actual_provider"
+            printf 'OpenRouter request id: `%s`\n' "$request_id"
             printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
             echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
