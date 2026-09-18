@@ -291,6 +291,8 @@ The default Guest World presentation supports ten Seat slots, matching the machi
 
 All ten Seat slots consume the same canonical Seat configuration vocabulary and common-skill substrate. Their provider, model, connection, skill allocation, capability set, authorization, workspace scope, and readiness may differ.
 
+Ten Seats are distinct from the Settings/world-tree vocabulary **Tree 1–8**. The latter describes eight major world/tree slots and does not constrain Seat capacity.
+
 ### 11.7 Truth/status rule for Seat census rows
 
 The census must distinguish structural existence from implementation completeness. Existing Seat faces are presentation evidence, not proof of live authenticated configuration.
