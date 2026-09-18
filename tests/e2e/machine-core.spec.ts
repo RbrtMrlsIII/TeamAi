@@ -14,6 +14,8 @@ test.describe('Modular branch connection core', () => {
     await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-06');
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-SEAT-06');
     await expect(page.locator('[data-branch-inspector]')).toContainText('BRANCH-SEAT-06');
+    await expect(page.locator('[data-branch-inspector]')).toContainText('SEAT_SHELL');
+    await expect(page.locator('[data-branch-inspector]')).toContainText('TREE-HERO-SEAT#5:SEAT_SHELL');
     await expect(page.locator('[data-branch-inspector]')).toContainText('seat-configuration');
     await page.getByLabel('Branch camera').selectOption('BRANCH-OUTER-BETA');
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-BETA');
