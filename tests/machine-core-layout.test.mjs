@@ -21,6 +21,51 @@ test('eight-seat population remains a valid parameter without changing the rende
   assert.deepEqual(core.parts.filter((part) => part.kind === 'inner-pod').map((part) => part.seatIndex), [0,1,2,3,4,5,6,7]);
 });
 
+test('each seat module binds to the canonical TREE-HERO-SEAT shell without fabricating child geometry', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const seats = core.parts.filter((part) => part.kind === 'inner-pod');
+
+  assert.equal(core.semanticTreeId, 'TREE-HERO-SEAT');
+  assert.equal(core.semanticRegistry.length, 8);
+  assert.deepEqual(
+    core.semanticRegistry.map((definition) => definition.semanticId),
+    [
+      'SEAT_SHELL',
+      'SEAT_CONNECTION',
+      'SEAT_BEHAVIOR',
+      'SEAT_TOOLKIT',
+      'SEAT_CAPABILITIES',
+      'SEAT_AUTHORIZATION',
+      'SEAT_WORKSPACE_SCOPE',
+      'SEAT_TASK_EVIDENCE',
+    ],
+  );
+
+  assert.equal(seats.length, 10);
+  assert.equal(new Set(seats.map((part) => part.semanticKey)).size, 10);
+  for (const [seatIndex, part] of seats.entries()) {
+    assert.equal(part.treeId, 'TREE-HERO-SEAT');
+    assert.equal(part.semanticId, 'SEAT_SHELL');
+    assert.equal(part.semanticStatus, 'IMPLEMENTED_PARTIAL');
+    assert.equal(part.renderedInCore, true);
+    assert.equal(part.semanticKey, `TREE-HERO-SEAT#${seatIndex}:SEAT_SHELL`);
+    assert.deepEqual(part.childSemanticIds, [
+      'SEAT_CONNECTION',
+      'SEAT_BEHAVIOR',
+      'SEAT_TOOLKIT',
+      'SEAT_CAPABILITIES',
+      'SEAT_AUTHORIZATION',
+      'SEAT_WORKSPACE_SCOPE',
+      'SEAT_TASK_EVIDENCE',
+    ]);
+  }
+
+  assert.equal(core.hub.semanticId, null);
+  assert.equal(core.hub.semanticBoundary, 'presentation-only');
+  assert.ok(core.parts.filter((part) => part.kind === 'outer-housing').every((part) => part.semanticId === null && part.semanticBoundary === 'presentation-only'));
+  assert.ok(core.connections.filter((connection) => connection.kind === 'inner-spoke').every((connection) => connection.semanticRelation === 'tree-membership' && connection.semanticTargetId === 'SEAT_SHELL'));
+});
+
 test('all branches and hub have independent camera profiles', () => {
   const core = createBranchConnectionCore();
   assert.equal(core.cameras.length, 15);
