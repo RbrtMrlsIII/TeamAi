@@ -70,7 +70,7 @@ export function buildMachineCoreSeat1Connection({
       point: Object.freeze({ ...center }),
     }),
     amount,
-    previewPoint: Object.freeze(connectionEdgePoint(edge, amount * 0.28)),
+    previewPoint: Object.freeze(connectionEdgePoint(edge, amount)),
     presentationOnly: true,
   });
 }
