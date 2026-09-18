@@ -12,7 +12,7 @@ import {
 } from './seat-connection-edge.js';
 
 export const MACHINE_CORE_SEAT1_CONNECTION_SEMANTIC_KEY = 'TREE-HERO-SEAT#0:SEAT_CONNECTION';
-export const MACHINE_CORE_SEAT1_CONNECTION_HEALTH_KEY = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:HEALTH_FACE';
+export const MACHINE_CORE_SEAT1_CONNECTION_HEALTH_KEY = 'SEAT_CONNECTION_HEALTH_FACE';
 export const MACHINE_CORE_SEAT1_CONNECTION_PAYLOAD = Object.freeze({
   labels: Object.freeze(['Connection', 'Health']),
   controls: Object.freeze(['configure']),
