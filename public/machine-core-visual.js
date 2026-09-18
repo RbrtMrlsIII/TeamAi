@@ -49,7 +49,7 @@ function renderSeat1ConnectionChild(scene, amount, selectedBranch, now) {
   const scale = 0.78 + 0.22 * child.amount;
   let entry = buffers.get('__seat1-connection-child');
   if (!entry) {
-    const data = shapeBuffer(gl, POLYS.connection, geometry.dimensions.height);
+    const data = shapeBuffer(gl, POLYS.connection, 1);
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
