@@ -1,3 +1,7 @@
+
+https://github.com/user-attachments/assets/eaf6c8a6-aaeb-4435-99f0-611c819737f6
+Uploading 1000208482.mp4…
+
 # TeamAi — repository front door
 
 TeamAi is a human-controlled multi-AI discussion and execution orchestrator. External AI providers remain external; TeamAi owns the participation, authorization, durable state, orchestration, verification, and product boundaries it defines.
