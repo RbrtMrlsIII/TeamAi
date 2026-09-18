@@ -12,7 +12,7 @@ function bind() {
   const select = panel?.querySelector('[data-core-camera]');
   if (!canvas || !select || select.dataset.machineInteractionBound) return;
   select.dataset.machineInteractionBound = '1';
-  const core = createBranchConnectionCore({ seatCount: parseSeatCount() });
+  const core = createBranchConnectionCore({ seatCount: parseSeatCountParam() });
   const branches = core.parts.filter((part) => part.kind !== 'hub');
   const inspector = document.createElement('aside');
   inspector.className = 'machine-core-inspector';
