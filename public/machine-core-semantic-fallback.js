@@ -1,5 +1,6 @@
 import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
 import { createMachineAnimation } from './machine-core-animation.js';
+import { parseSeatCountParam } from './seat-capacity.js';
 
 function parseSeatCount(){const raw=new URLSearchParams(globalThis.location?.search||'').get('seats');const requested=raw==null||raw.trim()===''?10:Number(raw);return Number.isFinite(requested)?Math.min(16,Math.max(2,Math.floor(requested))):10;}
 

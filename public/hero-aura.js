@@ -4,6 +4,7 @@
  * Presentation only · no second WebGL · no 029-released claim.
  */
 import { mapHeroThemeLighting } from '../frontend/spatial/hero-theme-lighting-adapter.js';
+import { clampSeatCount, seatPopulationDensity } from './seat-capacity.js';
 
 const shell = document.querySelector('.hero-shell');
 const root = document.documentElement;
@@ -12,8 +13,8 @@ if (shell) {
   const clamp01 = value => Math.max(0, Math.min(1, Number(value) || 0));
 
   const sync = () => {
-    const n = Math.max(1, Math.min(8, Number(window.TeamAiHero?.getSeatCount?.()) || 1));
-    const density = (n - 1) / 7;
+    const n = clampSeatCount(window.TeamAiHero?.getSeatCount?.());
+    const density = seatPopulationDensity(n);
     const state = shell.dataset.state || 'IDLE';
     const themeMode = root.dataset.themeMode === 'dark' ? 'dark' : 'light';
     const themeSource = root.dataset.themeSource || 'default';

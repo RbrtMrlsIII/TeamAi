@@ -1,5 +1,6 @@
 import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
 import { branchAtRingAngle } from './machine-core-hit-testing.js';
+import { parseSeatCountParam } from './seat-capacity.js';
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || min));
 

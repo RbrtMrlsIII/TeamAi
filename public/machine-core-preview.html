@@ -13,6 +13,7 @@
   </main>
   <script type="module">
     import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
+    import { parseSeatCountParam } from './seat-capacity.js';
 
     const root = document.querySelector('.machine-core-shell');
     const showBootError = (error) => {
