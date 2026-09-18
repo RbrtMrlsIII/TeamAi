@@ -14,7 +14,8 @@ test('automatic advisory routing uses five parallel OpenRouter Free Router slots
   assert.match(sequence, /reviewer: OpenRouter Free Slot \$\{\{ matrix\.slot \}\}/);
   assert.match(sequence, /reviewer_slug: openrouter-free-\$\{\{ matrix\.slot \}\}/);
   assert.match(sequence, /api_key: \$\{\{ secrets\.OPENROUTER_API_KEY \}\}/);
-  assert.doesNotMatch(sequence, /REVIEW_INTERVAL_SECONDS|delay_to_second_stage|delay_to_third_stage|2 minutes 30 seconds|150-second/);
+  assert.match(sequence, /automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-\$\{\{ matrix\.slot \}\}-outcome -->/);
+  assert.doesNotMatch(sequence, /automatic_start_marker|REVIEW_INTERVAL_SECONDS|delay_to_second_stage|delay_to_third_stage|2 minutes 30 seconds|150-second/);
 });
 
 test('automatic sequence remains one-shot and completion accepts terminal success/failure slot outcomes', () => {
@@ -22,8 +23,11 @@ test('automatic sequence remains one-shot and completion accepts terminal succes
   assert.match(sequence, /SEQUENCE_COMPLETE_MARKER/);
   assert.match(sequence, /repos\/\$REPO\/actions\/runs\/\$GITHUB_RUN_ID\/jobs/);
   assert.match(sequence, /conclusion.*success.*failure/);
-  assert.match(sequence, /Five parallel OpenRouter Free Router slots reached terminal success\/failure outcomes/);
-  assert.equal((sequence.match(/for slot in 1 2 3 4 5/g) || []).length, 2);
+  assert.match(sequence, /Five parallel OpenRouter Free Router slots reached terminal execution outcomes/);
+  assert.match(sequence, /outcome_marker/);
+  assert.match(sequence, /Slot outcome: SUCCEEDED/);
+  assert.match(sequence, /github-actions\[bot\]/);
+  assert.equal((sequence.match(/for slot in 1 2 3 4 5/g) || []).length, 1);
 });
 
 test('runner records the actual routed model and provider instead of requested router identity', () => {
@@ -33,6 +37,13 @@ test('runner records the actual routed model and provider instead of requested r
   assert.match(runner, /actual_provider/);
   assert.match(runner, /Actual model/);
   assert.match(runner, /Actual provider/);
+  assert.match(runner, /MAX_REVIEW_CHARS/);
+  assert.match(runner, /max_tokens': 2200/);
+  assert.match(runner, /Return only the following compact review structure/);
+  assert.match(runner, /hidden reasoning, internal deliberation/);
+  assert.match(runner, /Publish durable automatic slot outcome/);
+  assert.match(runner, /PROVIDER_RESPONSE_FAILURE|PROVIDER_HTTP_FAILURE|PROVIDER_TRANSPORT_FAILURE/);
+  assert.doesNotMatch(runner, /Reserve automatic provider invocation slot|automatic_start_marker/);
 });
 
 test('manual reviewer paths use OpenRouter Free Router without model-specific approval', () => {
