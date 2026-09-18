@@ -38,6 +38,7 @@
     {"old": "docs/skills parallel procedure namespace","disposition": "OBSOLETE","new": "single skills/**/SKILL.md tree"},
     {"old": "last-commit governance inference","disposition": "OBSOLETE","new": "PR BASE...HEAD diff + Draft proof target"},
     {"old": "green CI alone authorizes merge","disposition": "OBSOLETE","new": "Draft + verification + reconciliation + review readiness"},
+    {"old": "Draft proof target parser accepted only non-canonical heading depth","disposition": "REPLACED","new": "canonical level-2/3 Draft proof target headings are accepted"},
     {"old": "one slice means one merge","disposition": "OBSOLETE","new": "multi-commit/multi-slice PRs permitted"},
     {"old": "R1-R10 shared root assertion","disposition": "OBSOLETE","new": "R0-R3 ring map owns current topology; Skills do not own ring constants"},
     {"old": "historical V3.x document as current frontier","disposition": "OBSOLETE","new": "Masterplan/NEXT_SLICES.md owns current frontier"},
