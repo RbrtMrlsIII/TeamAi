@@ -69,4 +69,4 @@ Verification must match the claim. Static tests establish contracts. Browser che
 
 No implementation work should begin from a blank slate when an existing owner can honestly carry the behavior. Extend the existing hierarchy/runtime/camera/theme owners first and preserve one coherent runtime path.
 
-No 029 release claim.
+**No 029-release claim.**
