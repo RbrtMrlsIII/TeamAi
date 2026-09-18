@@ -21,6 +21,11 @@ test('accepts a synchronized Hero implementation change', () => {
   assert.doesNotThrow(() => assertCensusSync(census([['M', 'public/hero-flex.js']])));
 });
 
+test('keeps renderer-neutral machine proof modules presentation-only', () => {
+  assert.equal(requiresCensusSync([['M', 'public/machine-hero-webgl.js']]), false);
+  assert.doesNotThrow(() => assertCensusSync([['M', 'public/machine-hero-webgl.js']]));
+});
+
 test('recognizes recursive spatial and spatial-skill paths', () => {
   assert.equal(requiresCensusSync([['M', 'frontend/spatial/shell-nav.js']]), true);
   assert.equal(requiresCensusSync([['M', 'skills/frontend/spatial/hierarchy-runtime/SKILL.md']]), true);
