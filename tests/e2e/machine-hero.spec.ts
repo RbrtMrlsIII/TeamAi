@@ -19,6 +19,27 @@ test.describe('Machine Hero foundation', () => {
     await expect(page.locator('[data-world-camera-request]')).toHaveCount(0);
   });
 
+  test('WebGL preview performs stateful expansion and interruption', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/machine-core-preview.html?machine-preview=webgl');
+    const preview = page.locator('[data-machine-hero-webgl]');
+    await expect(preview).toBeVisible();
+    const action = preview.getByRole('button', { name: 'Expand divisions', exact: true });
+    const state = preview.locator('[data-machine-webgl-state]');
+
+    await action.click();
+    await expect(state).toContainText('opening');
+    await page.waitForTimeout(250);
+    await expect(state).toContainText('opening');
+
+    const collapse = preview.getByRole('button', { name: 'Collapse divisions', exact: true });
+    await collapse.click();
+    await expect(state).toContainText('closing');
+    await expect.poll(async () => state.textContent()).toContain('collapsed · 0%');
+    await expect(preview.getByRole('button', { name: 'Expand divisions', exact: true })).toBeVisible();
+  });
+
+
   test('M6 assembled Hero proof follows semantic subject after geometry mutation', async ({ page }) => {
     await page.goto('/hero/?machine-proof=1');
     const proof = page.locator('[data-hero-machine-proof]');
