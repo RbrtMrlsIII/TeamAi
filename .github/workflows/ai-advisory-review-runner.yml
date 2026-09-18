@@ -112,7 +112,7 @@ jobs:
           set -euo pipefail
           base_ref="$(gh api "repos/$REPO/pulls/$PR" --jq '.base.ref')"
           if [[ "$base_ref" != "main" ]]; then
-            REQUIRED="$(jq -c 'del(.[] | select(. == \"CodeQL analyze (javascript-typescript)\"))' <<< "$REQUIRED")"
+            REQUIRED="$(jq -c 'del(.[] | select(. == "CodeQL analyze (javascript-typescript)"))' <<< "$REQUIRED")"
           fi
           start="$(date +%s)"
           while true; do
@@ -174,7 +174,7 @@ jobs:
           base_ref="$(gh api "repos/$REPO/pulls/${{ inputs.pr_number }}" --jq '.base.ref')"
           required_checks="$REQUIRED_CHECKS"
           if [[ "$base_ref" != "main" ]]; then
-            required_checks="$(jq -c 'del(.[] | select(. == \"CodeQL analyze (javascript-typescript)\"))' <<< "$required_checks")"
+            required_checks="$(jq -c 'del(.[] | select(. == "CodeQL analyze (javascript-typescript)"))' <<< "$required_checks")"
           fi
           gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100" > /tmp/check-runs.json
           test -s /tmp/check-runs.json
