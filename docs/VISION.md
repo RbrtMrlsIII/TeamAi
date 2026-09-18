@@ -129,6 +129,23 @@ The Hero is intended to be **mechanical**, not a flat 3D logo with conventional 
 
 The current architecture is still partially transitional. Legacy side stacks and floating DOM controls may exist as absorption debt. They must not be mistaken for the final spatial architecture and must not be allowed to become a second product hierarchy.
 
+
+### 1.3 User-endorsed visual reference: Hailuo mechanical machine
+
+The repository now preserves a user-endorsed visual reference for the mechanical 3D Hero at `assets/3D_Vision/hailuo.mp4`. The durable interpretation of that reference is recorded in `docs/TEAMAI_3D_HERO_VISION_REFERENCE_HAILUO.md`.
+
+The reference strengthens the intended spatial-machine direction already defined by this vision:
+
+- a central working core with surrounding structures related to it;
+- independent articulated modules rather than flat cards;
+- visible connection paths that reinforce real semantic topology;
+- transformation as part of interaction, including open/extend/rotate/retract-style state changes;
+- camera travel as part of the transformation language;
+- layered mechanical depth whose density can respond to semantic/UI payload.
+
+This is a **visual-direction endorsement**, not an implementation specification. It does not define semantic identities, geometry constants, backend state, authorization, scheduler behavior, entitlement, or release completion. The canonical contracts and evidence chain remain authoritative for those concerns.
+
+
 ## 2. Product experience: two complementary layers
 
 TeamAi presents two complementary layers. They must stay conceptually distinct so the user knows whether they are on the public website or inside the spatial machine.
