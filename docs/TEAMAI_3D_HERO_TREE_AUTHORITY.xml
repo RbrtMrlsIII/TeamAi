@@ -49,7 +49,7 @@
     </tree>
     <tree id="TREE-HERO-SEAT" status="partial">
       <root>Seat Shell</root>
-      <node id="SEAT_SHELL" status="implemented-partial" runtimeEvidence="public/machine-core-layout-runtime.js;public/machine-core-semantic-map.js;public/machine-core-interaction.js" semanticIdentity="TREE-HERO-SEAT#&lt;seatIndex&gt;:SEAT_SHELL" renderedChildren="" childSchema="SEAT_CONNECTION|SEAT_BEHAVIOR|SEAT_TOOLKIT|SEAT_CAPABILITIES|SEAT_AUTHORIZATION|SEAT_WORKSPACE_SCOPE|SEAT_TASK_EVIDENCE" />
+      <node id="SEAT_SHELL" status="implemented-partial" runtimeEvidence="public/machine-core-layout-runtime.js;public/machine-core-semantic-map.js;public/machine-core-seat-connection.js;public/machine-core-visual.js;public/machine-core-interaction.js" semanticIdentity="TREE-HERO-SEAT#&lt;seatIndex&gt;:SEAT_SHELL" renderedChildren="TREE-HERO-SEAT#0:SEAT_CONNECTION" childSchema="SEAT_CONNECTION|SEAT_BEHAVIOR|SEAT_TOOLKIT|SEAT_CAPABILITIES|SEAT_AUTHORIZATION|SEAT_WORKSPACE_SCOPE|SEAT_TASK_EVIDENCE" />
       <node id="SEAT_CONNECTION" status="implemented-partial" topologyValidation="test-level-current-head" />
       <node id="SEAT_BEHAVIOR" status="implemented-partial" meaning="seat-local behavior/defaults and constraints only" />
       <node id="SEAT_TOOLKIT" status="implemented-partial" meaning="resolved TeamAi common skill/toolkit presentation" />
