@@ -400,6 +400,8 @@ The adjacent-division expansion envelope is now a bounded implementation baselin
 
 The canonical Seat renderer now consumes the governed adjacent-division wiring seam for the bounded `SEAT_CONNECTION` ↔ `SEAT_BEHAVIOR` presentation path. The rendered segment is derived from the semantic ports and current branch geometry; it does not constitute final electrical or complete inter-division topology.
 
+The machine-core candidate now also renders the first canonical child division for Seat 1: `TREE-HERO-SEAT#0:SEAT_CONNECTION`. It reuses the existing payload-driven `SEAT_CONNECTION` geometry, stable port, Workspace Center edge, and presentation-only health leaf. The child is exposed only while Seat 1 is expanded; other machine-core Seats retain Seat Shell semantics without fabricated child geometry.
+
 ## PR-344 machine Hero candidate synchronization
 
 PR **#344** adds a renderer-neutral machine implementation/evidence candidate with a parameterized ten-seat branch-connection core, independent hub/branch modules, per-branch camera and UI-surface contracts, semantic wiring, continuous expansion, interaction, reduced-motion behavior, and an opt-in machine candidate bridge on the real Hero shell.
