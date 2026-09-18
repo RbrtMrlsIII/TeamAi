@@ -9,6 +9,7 @@
     <machineReadableCensus>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</machineReadableCensus>
     <runtimeBaseline>docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md</runtimeBaseline>
   </authority>
+  <authorityBoundary>Subordinate structural record only; it has no Product Law authority and cannot create backend, scheduler, authorization, entitlement, durable-state, acceptance, or merge authority.</authorityBoundary>
   <maintenance>
     <trigger>add|remove|rename|materially_restructure|reimplement</trigger>
     <sameGovernedChange>true</sameGovernedChange>
@@ -63,7 +64,7 @@
         <lifecycle>Discover|External Setup|Import/Authorize|Capability Test|Bind|Equip|Activate|Run|Observe|Degrade/Suspend|Recover/Revalidate|Rebind/Retire</lifecycle>
         <commonSkillSource>TEAMAI COMMON SKILL / Universal ToolKit</commonSkillSource>
         <twoSeatAllocation>Fewer Seats may carry several Responsibility Units and broader effective bundles.</twoSeatAllocation>
-        <eightSeatAllocation>Up to eight Seats partition the same Responsibility Unit/common-skill definitions more finely.</eightSeatAllocation>
+        <tenSeatAllocation>Up to ten Seats partition the same Responsibility Unit/common-skill definitions more finely.</tenSeatAllocation>
         <userSkillEditing status="defined-not-implemented">User-owned skill material remains distinct from canonical common skills.</userSkillEditing>
         <removeAgent>Retire/remove the Seat and governed bindings; do not delete the user's root account.</removeAgent>
       </configuration>

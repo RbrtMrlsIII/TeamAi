@@ -17,6 +17,9 @@ export const CENSUS_GOVERNED_PATHS = [
   'public/hero-hierarchy-runtime.js',
   'public/hero-seat-branch-walk.js',
   'public/hero-seat-stack.js',
+  'public/machine-core-layout-runtime.js',
+  'public/machine-core-seat-connection.js',
+  'public/machine-core-visual.js',
 ];
 
 // Renderer-neutral machine proof modules do not introduce or change semantic

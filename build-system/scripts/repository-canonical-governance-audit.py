@@ -2,14 +2,23 @@
 """Fail-closed audit of TeamAi's canonical governance graph and PR proof target."""
 from __future__ import annotations
 
+import csv
 import json
 import os
 import re
 import subprocess
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 AUTHORITY_MANIFEST = ".github/teamai/authority-manifest.yml"
+CENSUS_FILES = (
+    "docs/TEAMAI_3D_HERO_TREE_CENSUS.csv",
+    "docs/TEAMAI_3D_HERO_TREE_CENSUS.json",
+    "docs/TEAMAI_3D_HERO_TREE_CENSUS.md",
+    "docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml",
+)
+SPATIAL_STRUCTURAL_RECORD = "docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml"
 RETIRED_BASENAME_ALLOWLIST = {"PRODUCT_LAW.md", "MASTERPLAN.md", "NEXT_SLICES.md"}
 
 
@@ -105,10 +114,152 @@ def proof_target(payload: dict) -> str:
         body = (pr.get("body") or "").strip()
     match = re.search(r"^#{2,3}\s+Draft proof target\s*$([\s\S]*?)(?=^#{2,3}\s|\Z)", body, re.MULTILINE)
     return match.group(1).strip() if match else ""
-def changed_paths(base: str | None, head: str | None) -> set[str]:
+def changed_path_rows(base: str | None, head: str | None) -> list[list[str]]:
     if not base or not head:
         fail("PR base/head SHAs are required; governance cannot infer PR scope from a last commit")
-    return {p for p in run("git", "diff", "--name-only", f"{base}...{head}").splitlines() if p.strip()}
+    return [
+        line.split("\t")
+        for line in run("git", "diff", "--name-status", f"{base}...{head}").splitlines()
+        if line.strip()
+    ]
+
+
+def changed_paths_from_rows(rows: list[list[str]]) -> set[str]:
+    paths: set[str] = set()
+    for parts in rows:
+        status = parts[0] if parts else ""
+        if status.startswith(("R", "C")):
+            paths.update(parts[1:])
+        elif len(parts) > 1:
+            paths.add(parts[1])
+    return {path for path in paths if path}
+
+
+def changed_paths(base: str | None, head: str | None) -> set[str]:
+    return changed_paths_from_rows(changed_path_rows(base, head))
+
+
+def assert_spatial_authority(manifest: dict) -> None:
+    spatial = manifest.get("spatial_authority") or {}
+    required = {
+        "structural_record", "interaction_contract", "implementation_entry",
+        "census", "enforced_by", "authority_boundary", "change_policy",
+    }
+    missing = sorted(required - set(spatial))
+    if missing:
+        fail("authority manifest spatial_authority is missing: " + ", ".join(missing))
+    if spatial["structural_record"] != SPATIAL_STRUCTURAL_RECORD:
+        fail("spatial authority structural record is not canonical")
+    if tuple(spatial["census"]) != CENSUS_FILES:
+        fail("spatial authority census set is not canonical")
+    if spatial["enforced_by"] != "build-system/scripts/repository-canonical-governance-audit.py":
+        fail("spatial authority is not enforced by the canonical governance audit")
+    boundary = str(spatial["authority_boundary"]).lower()
+    for token in ("subordinate", "cannot override product law", "backend", "scheduler", "merge"):
+        if token not in boundary:
+            fail("spatial authority boundary is missing explicit non-authority semantics")
+    for rel in {SPATIAL_STRUCTURAL_RECORD, spatial["interaction_contract"], spatial["implementation_entry"], *CENSUS_FILES}:
+        if not exists(rel):
+            fail(f"spatial authority references missing file: {rel}")
+
+    try:
+        root = ET.parse(SPATIAL_STRUCTURAL_RECORD).getroot()
+    except (ET.ParseError, OSError) as exc:
+        fail(f"3D Tree Authority XML is not parseable: {exc}")
+    if root.tag != "teamaiHeroTreeAuthority":
+        fail("3D Tree Authority XML has unexpected root")
+    if root.findtext("./authority/productLaw") != "Product_Law/PRODUCT_LAW.md":
+        fail("3D Tree Authority XML does not point to the single Product Law root")
+    xml_boundary = (root.findtext("./authorityBoundary") or "").lower()
+    if "subordinate" not in xml_boundary or "no product law" not in xml_boundary or "merge" not in xml_boundary:
+        fail("3D Tree Authority XML does not declare its subordinate boundary")
+    representations = [n.text for n in root.findall("./maintenance/representations/file") if n.text]
+    if representations != list(CENSUS_FILES):
+        fail("3D Tree Authority XML census representations are out of sync")
+
+    try:
+        census_json = json.loads(read("docs/TEAMAI_3D_HERO_TREE_CENSUS.json"))
+    except (json.JSONDecodeError, OSError) as exc:
+        fail(f"3D Tree Census JSON is not valid: {exc}")
+    maintenance = census_json.get("censusMaintenance") or {}
+    if maintenance.get("sameGovernedChange") is not True:
+        fail("3D Tree Census JSON must require same governed change")
+    if tuple(maintenance.get("representations") or []) != CENSUS_FILES:
+        fail("3D Tree Census JSON census representations are out of sync")
+
+    try:
+        with open("docs/TEAMAI_3D_HERO_TREE_CENSUS.csv", newline="", encoding="utf-8") as fh:
+            reader = csv.DictReader(fh)
+            rows = list(reader)
+            headers = tuple(reader.fieldnames or ())
+    except (OSError, csv.Error) as exc:
+        fail(f"3D Tree Census CSV is not valid: {exc}")
+    required_headers = {
+        "tree_id", "node_id", "node_type", "parent_id", "semantic_role",
+        "status", "semantic_authority", "implementation_anchor", "ui_payload",
+        "geometry_status", "expansion_status", "adjacency_status",
+        "connection_status", "camera_status", "turn_loop_status", "notes",
+    }
+    if not required_headers.issubset(headers):
+        fail("3D Tree Census CSV is missing required structural fields")
+    csv_pairs = [(row["tree_id"], row["node_id"]) for row in rows if row.get("tree_id") and row.get("node_id")]
+    if len(csv_pairs) != len(set(csv_pairs)):
+        fail("3D Tree Census CSV contains duplicate tree/node identities")
+    csv_nodes = {node_id for _, node_id in csv_pairs}
+
+    json_nodes = set()
+    for tree in census_json.get("treeFamilies") or []:
+        tree_id = tree.get("treeID")
+        if not tree_id:
+            fail("3D Tree Census JSON contains a tree without treeID")
+        json_nodes.add(tree_id)
+        json_nodes.update(tree.get("nodes") or [])
+
+    xml_nodes = set()
+    for tree in root.findall("./treeFamilies/tree"):
+        tree_id = tree.get("id")
+        if not tree_id:
+            fail("3D Tree Authority XML contains a tree without id")
+        xml_nodes.add(tree_id)
+        for node in tree.findall("./node"):
+            node_id = node.get("id")
+            if not node_id:
+                fail(f"3D Tree Authority XML contains a node without id under {tree_id}")
+            xml_nodes.add(node_id)
+
+    if json_nodes != csv_nodes or xml_nodes != csv_nodes:
+        fail(f"3D Tree Census identity drift: csv={len(csv_nodes)} json={len(json_nodes)} xml={len(xml_nodes)}")
+    interaction = read(spatial["interaction_contract"]).lower()
+    if "presentation authority boundary" not in interaction or "does not grant implementation authority" not in interaction:
+        fail("3D interaction contract no longer states explicit presentation authority")
+    entry = read(spatial["implementation_entry"]).lower()
+    if "no 029-release claim" not in entry:
+        fail("3D implementation entry no longer carries the no-release boundary")
+
+
+def assert_census_sync_contract(rows: list[list[str]]) -> None:
+    import tempfile
+    payload = json.dumps(rows)
+    script = (
+        "import fs from 'node:fs'; "
+        "import { assertCensusSync } from './scripts/governance/census-sync-contract.mjs'; "
+        "assertCensusSync(JSON.parse(fs.readFileSync(process.argv[1], 'utf8')));"
+    )
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as fh:
+        fh.write(payload)
+        temp_path = fh.name
+    try:
+        proc = subprocess.run(
+            ["node", "--input-type=module", "-e", script, temp_path],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+        )
+    finally:
+        Path(temp_path).unlink(missing_ok=True)
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout).strip()
+        fail("3D Census synchronization contract failed: " + detail)
 
 
 def assert_manifest(manifest: dict) -> tuple[set[str], set[str], set[str], tuple[tuple[str, str], ...]]:
@@ -309,7 +460,9 @@ def main() -> None:
     manifest = load_manifest()
     active, forbidden, forbidden_dirs, historical = assert_manifest(manifest)
     base, head = pr_base_head(payload)
-    paths = changed_paths(base, head)
+    path_rows = changed_path_rows(base, head)
+    paths = changed_paths_from_rows(path_rows)
+    assert_spatial_authority(manifest)
     assert_roots(active, forbidden, forbidden_dirs)
     assert_current_slice()
     assert_roles()
@@ -317,6 +470,7 @@ def main() -> None:
     assert_skill_boundaries(manifest)
     assert_workspace_policy(manifest, payload)
     assert_historical_paths(paths)
+    assert_census_sync_contract(path_rows)
     if payload.get("pull_request"):
         assert_proof_target(payload, paths)
     print("REPOSITORY_CANONICAL_GOVERNANCE_AUDIT=PASS")
@@ -330,6 +484,9 @@ def main() -> None:
     print("historical_surface_matching=path_and_prefix")
     print("skill_authority_boundary=enforced")
     print("workspace_branch_policy=enforced")
+    print("3d_spatial_authority=machine-checked")
+    print("3d_census_sync=machine-checked")
+    print("3d_census_identity_coherence=machine-checked")
 
 
 if __name__ == "__main__":
