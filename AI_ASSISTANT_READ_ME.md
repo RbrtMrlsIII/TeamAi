@@ -17,7 +17,7 @@
 - Current `main` baseline: **`f35f31221b232076506ad9f67f8f23f5c9c77725`**, post-#368 merge
 - Ordered advisory reviewer orchestration: **#368 merged** into `main`
 - Fresh runtime-proof vehicle: **#370** recorded live sequence-claim/head-guard evidence, then exposed a reusable-runner parser fault before provider transport; its later stages were blocked by the exact-head barrier after the proof head changed
-- Current runner repair: **#371 open** on `governance/repair-advisory-review-runner-shell-quoting-20260917`
+- Current runner repair: **#371 closed/merged** via commit **`a31c524abfc11c592244e6c73ab5ad09e6e8fb06`**; the repair is part of the current main lineage
 
 ## Canonical authority path
 
@@ -50,7 +50,7 @@
 - #368 is merged; it carries the explicit 1→2→2 automatic advisory reviewer sequence, skip/cancel-safe cohort barriers, explicit free model routes, with the OpenRouter Free Router slot intentionally non-deterministic, exact-head guards, and durable one-sequence claim.
 - #369 is the execution ledger for the remaining #368 runtime-proof boundary.
 - #370 is the first fresh post-#368 proof vehicle. Its exact-head validation gate and durable sequence claim passed. Nemotron reached the runner and exposed a Bash parser fault before provider transport. The stage-1 barrier later detected a deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #370 remains diagnostic evidence, not runtime proof of provider execution.
-- #371 is the reusable-runner repair. It replaces the brittle provider-call shell path, rebinds the former stage-2 OpenAI slot to OpenRouter Free Router, and fixes stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. It must satisfy the repository canonical six-file synchronization rule and governed validation before merge.
+- #371 is the merged reusable-runner repair. It replaced the brittle provider-call shell path, rebound the former stage-2 OpenAI slot to OpenRouter Free Router, and fixed stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. Its merge commit is `a31c524abfc11c592244e6c73ab5ad09e6e8fb06`.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
