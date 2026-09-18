@@ -802,7 +802,7 @@ The authoritative `team-ai-official` Firebase project and `(default)` Firestore 
 
 Observed evidence included invalid/missing authorization rejection, valid authenticated persistence, independent nested seat-document confirmation, and successful repeat-call idempotency behavior.
 
-Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
+Detailed evidence: `docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
 
 ### Gate 5B — server-owned PayPal correlation contract — PASS
 The backend encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes pending `firebaseUid + correlationId + provider` intent; only a verified PayPal event may bind the provider event ID, with deterministic idempotency derived from that provider event.
@@ -811,7 +811,7 @@ Direct source-contract validation passed with the documented Node/TypeScript env
 
 Observed result: `GATE5B_DIRECT_TEST=PASS`.
 
-Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
+Detailed evidence: `docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
 This remains source-contract evidence, not TEAM-BACKEND-001 final completion.
 

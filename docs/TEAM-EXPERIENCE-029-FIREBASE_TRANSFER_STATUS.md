@@ -34,7 +34,7 @@ The function verifies Firebase ID tokens for the frozen `team-ai-official` proje
 - Gate 3C — exact nested Firestore document independently verified with stored values: **PASS**.
 - Gate 3D — identical authenticated repeat call returns HTTP 200 with existing-value results: **PASS**.
 
-The complete evidence record is `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
+The complete evidence record is `docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
 
 ## Gate 3 disposition
 

@@ -74,7 +74,7 @@ Canonical nested path:
 
 The same authenticated bootstrap request was executed a second time using the same identifiers. It returned HTTP 200 with existing-value results, demonstrating create-if-absent/idempotent behavior rather than recreating the records.
 
-A detailed checkpoint is recorded in `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
+A detailed checkpoint is recorded in `docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md`.
 
 ## Evidence boundary
 

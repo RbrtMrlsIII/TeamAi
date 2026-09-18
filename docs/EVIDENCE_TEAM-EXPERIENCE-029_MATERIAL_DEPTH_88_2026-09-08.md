@@ -25,7 +25,7 @@
 | Material roles | `workspaceRing`, `seatShell`, `seatShellInset` |
 | Static tests | `tests/hero-authored-materials.test.mjs` |
 | Browser visual e2e | `tests/e2e/hero-material-visual-88.spec.ts` |
-| Checkpoint | `docs/CHECKPOINT_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md` |
+| Checkpoint | `docs/archive/CHECKPOINT_TEAM-EXPERIENCE-029_MATERIAL_DEPTH_88_2026-09-08.md` |
 | Theme isolation | `document.documentElement` only; Isolation preserved; MODE_PROFILE subset |
 | Reduced-motion | #89 contract + visual frame under reduced |
 

@@ -152,7 +152,7 @@ Likewise:
 - `docs/TEAMAI_029_CURRENT_STATE_MAP.md` — cross-track state map.
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md` — backend claim-level status.
 - `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` — current live eight-function inventory.
-- `docs/CHECKPOINT_BACKEND_EVIDENCE_RECONCILIATION_2026-09-10.md` — evidence reconciliation.
+- `docs/archive/CHECKPOINT_BACKEND_EVIDENCE_RECONCILIATION_2026-09-10.md` — evidence reconciliation.
 
 When sources disagree, reconcile the authority chain and preserve the discrepancy rather than selecting the most optimistic interpretation.
 

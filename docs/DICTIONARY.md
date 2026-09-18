@@ -56,7 +56,7 @@ Jump to: [Command Deck & fields](#command-deck--fields-f0f7) · [3D Hero](#3d-he
 
 **Hero must not:** authorize, write Firestore, schedule work, call providers, or hold API keys.
 
-**See also:** `docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md`, `docs/TEAMAI_3D_HERO_NEXT.md`, issues #83–#98
+**See also:** `docs/archive/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md`, `docs/TEAMAI_3D_HERO_NEXT.md`, issues #83–#98
 
 ### Inspection spine (chronological visual stages)
 

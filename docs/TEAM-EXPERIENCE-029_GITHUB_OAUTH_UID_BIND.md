@@ -31,7 +31,7 @@ A separate CLI `curl` attempt returned **HTTP 401**. This is classified as a **C
 - **`main` source** already implements GET → **HTTP 303** to `https://rbrtmrlsiii.github.io/TeamAi/hero` and does **not** mint UID on GET.
 - Therefore the remaining gap is **deploy the revised Edge**, then re-prove the browser return path — not a missing source fix.
 
-Evidence record: `docs/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`.
+Evidence record: `docs/archive/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`.
 
 ## Current browser integration boundary
 
@@ -80,10 +80,10 @@ Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verific
 
 ## See also
 
-- `docs/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`
+- `docs/archive/CHECKPOINT_CONN3_OPERATOR_CALLBACK_EVIDENCE_2026-09-10.md`
 - `docs/TEAM-EXPERIENCE-029_GITHUB_INSTALLATION_UID_MAP.md` (Conn-2)
 - `docs/TEAMAI_GITHUB_APP_LEAST_PRIVILEGE.md` (Conn-1)
 - `docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md`
-- `docs/CHECKPOINT_BACKEND_OPERATOR_STATE_2026-09-10.md`
+- `docs/archive/CHECKPOINT_BACKEND_OPERATOR_STATE_2026-09-10.md`
 - `docs/USER_MANUAL_DEPLOYMENT.md`
 - `src/backend/github-installation.ts`
