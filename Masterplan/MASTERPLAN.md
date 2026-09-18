@@ -56,6 +56,15 @@
 - [ ] Real external provider invocation remains a separate proof gate.
 - [ ] Remaining security, timeout, cancellation, recovery, and integration evidence remains explicit.
 
+### 03.9.x — 3D world authority and governance enforcement
+
+- [x] Tree Authority XML remains a subordinate structural record under Product Law.
+- [x] The four Tree Census representations are one synchronized structural set.
+- [x] Governance Integrity machine-checks the Tree Authority, Census identity coherence, and explicit presentation-only boundary.
+- [x] The existing census synchronization contract is executed from the canonical governance gate against the full PR diff.
+- [ ] Runtime/browser proof remains required for topology, transition/interruption, responsive/reduced-motion behavior, and machine promotion.
+- [ ] These governance controls do not imply C8/C9/C10 completion or production Hero promotion.
+
 ## TEAM-EXPERIENCE-029 baseline
 
 - [x] Existing C0–C7 implementation/evidence is retained as the baseline.
