@@ -49,7 +49,8 @@ The reusable advisory-review runner is downstream of the substantive validator s
 A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by fresh exact-head execution after the repaired path is governed and merged; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
 
 ### Automatic reviewer sequence
-OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
 The sequence begins only after the first eligible non-draft opened, reopened, or ready_for_review event has passed the substantive exact-head validation gate. Five reusable reviewer jobs fan out concurrently with fail-fast disabled so one provider failure does not cancel peer slots.
 A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after five terminal slot outcomes are present.
 
