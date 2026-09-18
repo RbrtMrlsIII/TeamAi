@@ -11,7 +11,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: ai-review-sequence-\${{ github.event.pull_request.number }}
+  group: ai-review-sequence-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 env:
@@ -29,16 +29,16 @@ jobs:
       pull-requests: read
       issues: read
     outputs:
-      should_run: \${{ steps.gate.outputs.should_run }}
+      should_run: ${{ steps.gate.outputs.should_run }}
     steps:
       - name: Gate one quota-safe automatic review sequence per PR
         id: gate
         env:
-          GH_TOKEN: \${{ github.token }}
-          REPO: \${{ github.repository }}
-          PR: \${{ github.event.pull_request.number }}
-          HEAD: \${{ github.event.pull_request.head.sha }}
-          MARKER: \${{ env.SEQUENCE_MARKER }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          MARKER: ${{ env.SEQUENCE_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
@@ -78,12 +78,12 @@ jobs:
     steps:
       - name: Wait for required substantive validation to finish before sequence claim
         env:
-          GH_TOKEN: \${{ github.token }}
-          REPO: \${{ github.repository }}
-          PR: \${{ github.event.pull_request.number }}
-          HEAD: \${{ github.event.pull_request.head.sha }}
-          POLL_SECONDS: \${{ env.VALIDATION_POLL_SECONDS }}
-          TIMEOUT_SECONDS: \${{ env.VALIDATION_TIMEOUT_SECONDS }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          POLL_SECONDS: ${{ env.VALIDATION_POLL_SECONDS }}
+          TIMEOUT_SECONDS: ${{ env.VALIDATION_TIMEOUT_SECONDS }}
         shell: bash
         run: |
           set -euo pipefail
@@ -154,16 +154,16 @@ jobs:
       issues: write
       pull-requests: write
     outputs:
-      claimed: \${{ steps.claim.outputs.claimed }}
+      claimed: ${{ steps.claim.outputs.claimed }}
     steps:
       - name: Claim the automatic five-slot sequence only after validations pass
         id: claim
         env:
-          GH_TOKEN: \${{ github.token }}
-          REPO: \${{ github.repository }}
-          PR: \${{ github.event.pull_request.number }}
-          HEAD: \${{ github.event.pull_request.head.sha }}
-          MARKER: \${{ env.SEQUENCE_MARKER }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          MARKER: ${{ env.SEQUENCE_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
@@ -192,18 +192,18 @@ jobs:
         slot: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: OpenRouter Free Slot \${{ matrix.slot }}
-      reviewer_slug: openrouter-free-\${{ matrix.slot }}
+      reviewer: OpenRouter Free Slot ${{ matrix.slot }}
+      reviewer_slug: openrouter-free-${{ matrix.slot }}
       model: openrouter/free
-      pr_number: \${{ github.event.pull_request.number }}
-      expected_head: \${{ github.event.pull_request.head.sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+      expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
-      automatic_marker: '<!-- teamai-openrouter-free-slot-\${{ matrix.slot }}-auto-review -->'
-      automatic_start_marker: '<!-- teamai-openrouter-free-slot-\${{ matrix.slot }}-provider-started -->'
-      manual_marker: '<!-- teamai-openrouter-free-slot-\${{ matrix.slot }}-manual-review -->'
+      automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
+      automatic_start_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-provider-started -->'
+      manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
       approve: false
     secrets:
-      api_key: \${{ secrets.OPENROUTER_API_KEY }}
+      api_key: ${{ secrets.OPENROUTER_API_KEY }}
 
   sequence_complete:
     needs: [claim, openrouter_free]
@@ -216,11 +216,11 @@ jobs:
     steps:
       - name: Verify all five automatic router outputs on the exact sequence head
         env:
-          GH_TOKEN: \${{ github.token }}
-          REPO: \${{ github.repository }}
-          PR: \${{ github.event.pull_request.number }}
-          HEAD: \${{ github.event.pull_request.head.sha }}
-          COMPLETE_MARKER: \${{ env.SEQUENCE_COMPLETE_MARKER }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          COMPLETE_MARKER: ${{ env.SEQUENCE_COMPLETE_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
