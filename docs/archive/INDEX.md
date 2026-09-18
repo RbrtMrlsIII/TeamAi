@@ -32,6 +32,12 @@ The 2026-09-15 governance foundation retires these active operating surfaces and
 
 Other historical material remains in its existing archive strata, including `docs/archive/superseded/` and evidence-specific folders. Those records remain historical and are not reintroduced into active routing.
 
+## 2026-09-18 lifecycle reconciliation
+
+Dated `CHECKPOINT_*.md` snapshots formerly under active `docs/` were moved here without content rewriting. Four explicitly retired active records were also moved here: the Command Deck amendment, Conn-2 amendment, former frontend-highest-stake contract, and backend foundation execution guide.
+
+These records remain provenance only. Current routing must use the active authority graph and must not infer current product behavior from archived snapshots.
+
 ## Rules
 
 - Preserve historical material; do not rewrite it into current state.

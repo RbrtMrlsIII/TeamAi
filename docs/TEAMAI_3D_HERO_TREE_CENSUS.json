@@ -122,7 +122,7 @@
     "worldPopulation": {
       "defaultPresentationSlots": 10,
       "maximumPresentationSlots": 10,
-      "durableSeatRule": "A rendered slot is not a durable configured Seat; actual population is restored from authorized user/project state and must be within the authorized 1–10 Seat population"
+      "durableSeatRule": "A rendered slot is not a durable configured Seat; authenticated state restores the actual authorized durable Seat population from 1 through 10"
     }
   },
   "branchContract": {

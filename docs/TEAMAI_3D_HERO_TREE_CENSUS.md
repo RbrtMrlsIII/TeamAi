@@ -285,11 +285,11 @@ The following already-defined product surfaces must remain outside `TREE-HERO-SE
 - **Remove/Retire Seat/Agent**: Seat lifecycle operation that retires the configured Seat/provider binding and clears governed Seat data as specified by the durable contract; it does not imply deletion of the user's root account;
 - **Settings**: cross-cutting authenticated configuration/navigation taxonomy, not a second semantic machine hierarchy.
 
-### 11.6 Eight-seat population rule
+### 11.6 Ten-seat population rule
 
-The default world presentation supports eight Seat slots, but a rendered slot is not automatically a durable configured Seat. Actual durable Seat population is restored from authorized user/project state and mapped to available world slots.
+The default Guest World presentation supports ten Seat slots, matching the machine's maximum presentation capacity. A rendered slot is not automatically a durable configured Seat. Authenticated state restores the actual authorized durable Seat population from 1 through 10, subject to entitlement and authorization.
 
-All eight Seats consume the same canonical Seat configuration vocabulary and common-skill substrate. Their provider, model, connection, skill allocation, capability set, authorization, workspace scope, and readiness may differ.
+All ten Seat slots consume the same canonical Seat configuration vocabulary and common-skill substrate. Their provider, model, connection, skill allocation, capability set, authorization, workspace scope, and readiness may differ.
 
 ### 11.7 Truth/status rule for Seat census rows
 
