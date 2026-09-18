@@ -49,16 +49,16 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - desktop and phone browser proof, including reduced-motion behavior
 - canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
 - `review-readiness` remains pending until an independent non-author human approval exists on the exact current PR head, rather than failing on absence of approval
-- automatic advisory sequence order is `Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen`
+- automatic advisory sequence order is `Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview`
 - there is no automatic interval before Nemotron; the 150-second timer begins only after the Nemotron turn completes
-- the second-stage OpenRouter Free Router and Poolside reviewers execute concurrently after the first 150-second barrier, and their downstream conditions explicitly use `always()` so an allowed Nemotron `failure` cannot suppress the cohort
-- the third-stage DeepSeek and Qwen reviewers execute concurrently after the second 150-second barrier
-- automatic reviewer bindings use explicit pinned `:free` routes for Nemotron, Poolside, DeepSeek, and Qwen, plus the intentionally non-deterministic `openrouter/free` route for OpenRouter Free Router
+- the second-stage Ling 3.0 Flash and Poolside reviewers execute concurrently after the first 150-second barrier, and their downstream conditions explicitly use `always()` so an allowed Nemotron `failure` cannot suppress the cohort
+- the third-stage Laguna and Dots3-Note Preview reviewers execute concurrently after the second 150-second barrier
+- automatic reviewer bindings use explicit pinned `:free` routes for Nemotron Ultra, Ling 3.0 Flash, Poolside/Laguna XS 2.1, Laguna S 2.1, and Dots3-Note Preview; secret aliases remain stable
 - the sequence starts only on the first eligible non-draft `opened`, `reopened`, or `ready_for_review` event and never on `synchronize`
 - a durable sequence claim is recorded before the first automatic model call
 - every reviewer stage rechecks the original triggering head and fails closed if it changed
 - automatic reviewer secrets remain isolated: `OPENROUTER_API_KEY`, `OPENROUTER_API_KEY_OPENAI`, `OPENROUTER_API_KEY_POOLSIDE`, `OPENROUTER_API_KEY_DEEPSEEK`, and `OPENROUTER_API_KEY_GWEN`
-- deliberate later-head review remains manual via `/nemotron`, `/free-router`, `/poolside`, `/deepseek`, `/qwen`, or authorized dispatch
+- deliberate later-head review remains manual via `/nemotron-ultra`, `/ling`, `/poolside`, `/laguna`, `/dots3`, or authorized dispatch
 - #370 live evidence proves the durable claim and stale-head containment, but its model stage did not reach provider transport because the reusable runner parser failed
 - #371 must complete canonical synchronization and governed validation before a fresh provider runtime-proof vehicle is eligible
 - Tree Census reconciliation after runtime behavior is actually proven

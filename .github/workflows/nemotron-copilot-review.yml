@@ -29,16 +29,16 @@ jobs:
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/nemotron'))
+       startsWith(github.event.comment.body, '/nemotron-ultra'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Nemotron
-      reviewer_slug: nemotron
+      reviewer: Nemotron Ultra
+      reviewer_slug: nemotron-ultra
       model: nvidia/nemotron-3-ultra-550b-a55b:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-nemotron-auto-review -->'
-      manual_marker: '<!-- teamai-nemotron-review -->'
+      automatic_marker: '<!-- teamai-nemotron-ultra-auto-review -->'
+      manual_marker: '<!-- teamai-nemotron-ultra-review -->'
       approve: ${{ github.event_name == 'workflow_dispatch' && inputs.approve || false }}
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY }}

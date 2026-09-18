@@ -10,10 +10,10 @@ on:
         required: true
         type: choice
         options:
-          - free-router
+          - ling
           - poolside
-          - deepseek
-          - qwen
+          - laguna
+          - dots3
       pr_number:
         description: Pull request number to review
         required: true
@@ -26,23 +26,23 @@ permissions:
   actions: read
 
 jobs:
-  free_router:
+  ling:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'free-router') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'ling') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/free-router'))
+       startsWith(github.event.comment.body, '/ling'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: OpenRouter Free Router
-      reviewer_slug: free-router
-      model: openrouter/free
+      reviewer: Ling 3.0 Flash
+      reviewer_slug: ling
+      model: inclusionai/ling-3.0-flash:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-free-router-auto-review -->'
-      manual_marker: '<!-- teamai-free-router-review -->'
+      automatic_marker: '<!-- teamai-ling-auto-review -->'
+      manual_marker: '<!-- teamai-ling-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
@@ -59,7 +59,7 @@ jobs:
     with:
       reviewer: Poolside
       reviewer_slug: poolside
-      model: poolside/laguna-s-2.1:free
+      model: poolside/laguna-xs-2.1:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
       automatic_marker: '<!-- teamai-poolside-auto-review -->'
@@ -68,44 +68,44 @@ jobs:
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
 
-  deepseek:
+  laguna:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'deepseek') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'laguna') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/deepseek'))
+       startsWith(github.event.comment.body, '/laguna'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: DeepSeek
-      reviewer_slug: deepseek
-      model: deepseek/deepseek-v4-flash:free
+      reviewer: Laguna
+      reviewer_slug: laguna
+      model: poolside/laguna-s-2.1:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-deepseek-auto-review -->'
-      manual_marker: '<!-- teamai-deepseek-review -->'
+      automatic_marker: '<!-- teamai-laguna-auto-review -->'
+      manual_marker: '<!-- teamai-laguna-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
 
-  qwen:
+  dots3:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'qwen') ||
+      (github.event_name == 'workflow_dispatch' && inputs.reviewer == 'dots3') ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       startsWith(github.event.comment.body, '/qwen'))
+       startsWith(github.event.comment.body, '/dots3'))
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: Qwen
-      reviewer_slug: qwen
-      model: qwen/qwen3-coder:free
+      reviewer: Dots3-Note Preview
+      reviewer_slug: dots3
+      model: dots-studio/dots-3-note-preview:free
       pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-qwen-auto-review -->'
-      manual_marker: '<!-- teamai-qwen-review -->'
+      automatic_marker: '<!-- teamai-dots3-auto-review -->'
+      manual_marker: '<!-- teamai-dots3-review -->'
       approve: false
     secrets:
       api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}

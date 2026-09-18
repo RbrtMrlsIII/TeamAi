@@ -32,12 +32,12 @@
 - [x] Model reviewer workflows are execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 - [x] Automatic model review is quota-protected to one automatic invocation sequence per PR; later-head re-review remains explicit.
-- [x] Additional reviewer aliases are registered: `qwen` → `OPENROUTER_API_KEY_GWEN`, `deepseek` → `OPENROUTER_API_KEY_DEEPSEEK`, `free-router` → `OPENROUTER_API_KEY_OPENAI`, and `poolside` → `OPENROUTER_API_KEY_POOLSIDE`.
-- [x] #368 ordered advisory reviewer orchestration was merged into `main` with the explicit 1→2→2 cohort state machine, exact-head guards, durable sequence claim, and explicit free model bindings, with the OpenRouter Free Router slot intentionally non-deterministic.
+- [x] Reviewer aliases are registered: `nemotron-ultra` → `OPENROUTER_API_KEY`, `ling` → `OPENROUTER_API_KEY_OPENAI`, `poolside` → `OPENROUTER_API_KEY_POOLSIDE`, `laguna` → `OPENROUTER_API_KEY_DEEPSEEK`, and `dots3` → `OPENROUTER_API_KEY_GWEN`. Secret aliases remain independent of reviewer/model identity.
+- [x] #368 ordered advisory reviewer orchestration was merged into `main` with the explicit 1→2→2 cohort state machine, exact-head guards, durable sequence claim, and explicit free model bindings; the active five-member reviewer team is now Nemotron Ultra, Ling, Poolside, Laguna, and Dots3.
 - [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its Nemotron stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
 - [ ] #371 reusable reviewer provider-invocation repair is validated and merged before fresh provider runtime proof is re-attempted.
-- [ ] Stage-2 continuation is explicitly guarded with `always() && needs.delay_to_second_stage.result == 'success'` so an allowed Nemotron `failure` does not suppress the Free Router + Poolside cohort.
-- [ ] Automatic advisory review sequence is runtime-verified as `Nemotron → 2 minutes 30 seconds → OpenRouter Free Router + Poolside → 2 minutes 30 seconds → DeepSeek + Qwen` on the first eligible non-draft PR lifecycle event.
+- [ ] Stage-2 continuation is explicitly guarded with `always() && needs.delay_to_second_stage.result == 'success'` so an allowed Nemotron `failure` does not suppress the Ling 3.0 Flash + Poolside cohort.
+- [ ] Automatic advisory review sequence is runtime-verified as `Nemotron Ultra → 2 minutes 30 seconds → Ling 3.0 Flash + Poolside → 2 minutes 30 seconds → Laguna + Dots3-Note Preview` on the first eligible non-draft PR lifecycle event.
 
 ## Workspace and delivery
 
