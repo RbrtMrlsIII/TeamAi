@@ -113,6 +113,14 @@ Opening/closing is a stateful mechanical transition. It must preserve semantic c
 
 The final timing language is intentionally **not fixed**. Existing timing values remain living implementation measurements/starting values until the browser establishes a better final motion contract.
 
+
+### 6.6a Endorsed visual reference boundary
+
+The Hailuo mechanical reference is a visual-direction input for the experience, preserved at `assets/3D_Vision/hailuo.mp4`. It may guide the machine's visual vocabulary and transformation feel, including articulated modules, central-core relationships, visible connection paths, layered depth, and camera-participating transformation.
+
+It does not define semantic identity, product meaning, geometry constants, backend truth, authorization, scheduler state, entitlement, or acceptance. Implementation must continue to derive those concerns from the canonical project contracts and evidence chain.
+
+
 ### 6.6 Census governance dependency
 
 For every tree/branch/division add/remove/rename/material restructure/reimplementation, reconcile the four structured census representations in the same governed PR:
