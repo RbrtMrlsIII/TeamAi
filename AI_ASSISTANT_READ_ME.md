@@ -8,13 +8,13 @@
 - Session date: **2026-09-17**
 - Governance foundation: **#346 merged** into `main`
 - Post-#346 control-plane: **#352 merged** into `main`
-- Governance review fix: **#362 closed/superseded; #367 open** on `governance/review-readiness-late-approval-retrigger`
+- Governance review fix: **#362 and #367 closed/superseded; late-approval retrigger is now merged on `main`**
 - Machine Hero candidate: **#353 merged** into `main` and remains non-production
 - Semantic topology/adaptive clearance: **#361 merged** into `main` as `6c8f650bf978e47650246af67291a26fe83c4934`
 - Active 029 ledger: **#278**
 - Runtime-proof execution ledger: **#369**
 - Governance lifecycle authority: **#133** / `POLICY.md` / repository workflow gates
-- Current `main` baseline: **`f35f31221b232076506ad9f67f8f23f5c9c77725`**, post-#368 merge
+- Current `main` baseline: **`af84c9af79f2933992bb00eedbc6ceed162243c8`**, post-#373 merge
 - Ordered advisory reviewer orchestration: **#368 merged** into `main`
 - Fresh runtime-proof vehicle: **#370** recorded live sequence-claim/head-guard evidence, then exposed a reusable-runner parser fault before provider transport; its later stages were blocked by the exact-head barrier after the proof head changed
 - Current runner repair: **#371 open** on `governance/repair-advisory-review-runner-shell-quoting-20260917`
@@ -50,7 +50,7 @@
 - #368 is merged; it carries the explicit 1→2→2 automatic advisory reviewer sequence, skip/cancel-safe cohort barriers, explicit free model routes, with the OpenRouter Free Router slot intentionally non-deterministic, exact-head guards, and durable one-sequence claim.
 - #369 is the execution ledger for the remaining #368 runtime-proof boundary.
 - #370 is the first fresh post-#368 proof vehicle. Its exact-head validation gate and durable sequence claim passed. Nemotron reached the runner and exposed a Bash parser fault before provider transport. The stage-1 barrier later detected a deliberate proof-head invalidation and prevented OpenRouter Free Router, Poolside, DeepSeek, and Qwen from running. #370 remains diagnostic evidence, not runtime proof of provider execution.
-- #371 is the reusable-runner repair. It replaces the brittle provider-call shell path, rebinds the former stage-2 OpenAI slot to OpenRouter Free Router, and fixes stage-2/stage-3 continuation while preserving exact-head guards, retry behavior, and the advisory posting contract. It must satisfy the repository canonical six-file synchronization rule and governed validation before merge.
+- #371 is closed/landed historical advisory-runner repair; its implementation is now part of the current mainline validation state.
 - Historical records remain provenance, not current instruction.
 
 ## Canonical public live website URL
@@ -142,6 +142,12 @@ There is no live `HandOver.md`. Current continuation and recovery state belongs 
 ## Endorsement decision
 
 There is no active `Endorsement.md`. Acceptance decisions are recorded against the exact Issue/PR/evidence scope and reflected here for continuity. A green workflow is not an endorsement.
+
+## 3D authority governance enforcement
+
+The 3D world structural authority is now explicitly machine-checkable without creating a new authority root. .github/teamai/authority-manifest.yml records the subordinate Tree Authority XML, Machine Interaction Contract, implementation entry, and four-file Tree Census relationship. The canonical Governance Integrity audit validates those relationships, cross-representation semantic identity coherence, the presentation-only boundary, and the existing scripts/governance/census-sync-contract.mjs against the full PR diff.
+
+PR #373 is merged into `main` at merge commit `af84c9af79f2933992bb00eedbc6ceed162243c8`. The merged slice remains bounded to stateful WebGL transition behavior and does not establish full runtime topology proof or Hero promotion.
 
 ## Machine boundary
 
