@@ -228,6 +228,14 @@ The existing Seat lifecycle remains the canonical lifecycle vocabulary:
 
 A Seat may reference an external Connection, but Connection and Seat remain distinct concepts.
 
+### 11.2a Machine-core Seat Shell semantic binding
+
+The current 15-module machine-core candidate now consumes the existing `TREE-HERO-SEAT` semantic vocabulary at the Seat Shell root. Each rendered inner seat module retains its presentation `BRANCH-SEAT-xx` identity for geometry and camera addressing, while also carrying the canonical composite semantic identity `TREE-HERO-SEAT#<seatIndex>:SEAT_SHELL`. The binding is **IMPLEMENTED_PARTIAL**.
+
+The seven child branches (`SEAT_CONNECTION`, `SEAT_BEHAVIOR`, `SEAT_TOOLKIT`, `SEAT_CAPABILITIES`, `SEAT_AUTHORIZATION`, `SEAT_WORKSPACE_SCOPE`, `SEAT_TASK_EVIDENCE`) are carried as the Seat Shell's semantic child schema only. They are **not** being represented as fabricated machine-core geometry by this slice. Their existing partial runtime evidence remains governed by their respective census rows and contracts.
+
+The hub and four outer housing modules remain explicitly presentation-only because no canonical tree semantics were assigned to them by this slice. This preserves the root-first rule and prevents prototype geometry from becoming a new semantic authority.
+
 ### 11.3 TEAMAI COMMON SKILL / Universal ToolKit boundary
 
 `TEAMAI COMMON SKILL` is the project's given/common skill equipment available for Seat use. It is not a separate Seat hierarchy and is not duplicated into eight independent skill libraries.
