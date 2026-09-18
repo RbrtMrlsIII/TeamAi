@@ -32,10 +32,10 @@ on:
         description: Reviewer-specific automatic marker
         required: true
         type: string
-      automatic_start_marker:
-        description: Durable marker reserved immediately before an automatic provider invocation
+      automatic_outcome_marker:
+        description: Durable terminal outcome marker for an automatic reviewer slot
         required: false
-        default: '<!-- teamai-ai-review-provider-started -->'
+        default: '<!-- teamai-ai-review-slot-outcome -->'
         type: string
       manual_marker:
         description: Reviewer-specific manual marker
@@ -63,6 +63,7 @@ concurrency:
 env:
   MAX_REVIEW_PACKET_CHARS: '300000'
   MAX_GOVERNANCE_CHARS: '140000'
+  MAX_REVIEW_CHARS: '12000'
   VALIDATION_POLL_SECONDS: '10'
   VALIDATION_TIMEOUT_SECONDS: '900'
   REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
@@ -305,44 +306,8 @@ jobs:
             exit 1
           }
 
-      - name: Reserve automatic provider invocation slot
-        if: inputs.invocation_class == 'automatic'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ inputs.pr_number }}
-          REPO: ${{ github.repository }}
-          HEAD: ${{ steps.meta.outputs.head }}
-          REVIEWER: ${{ inputs.reviewer }}
-          REVIEWER_SLUG: ${{ inputs.reviewer_slug }}
-          START_MARKER: ${{ inputs.automatic_start_marker }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          [[ "$current_head" == "$HEAD" ]] || {
-            echo "Exact-head guard failed before provider-slot reservation: $current_head != $HEAD."
-            exit 1
-          }
-          draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
-          [[ "$draft_state" == "false" ]] || {
-            echo "PR became draft before provider-slot reservation."
-            exit 1
-          }
-          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          if jq -e --arg marker "$START_MARKER" --arg head "$HEAD" --arg reviewer "$REVIEWER" --arg slug "$REVIEWER_SLUG" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: `" + $head + "`")) and contains(("Reviewer: `" + $reviewer + "`")) and contains(("Reviewer slug: `" + $slug + "`"))))' <<< "$comments" >/dev/null; then
-            echo "Automatic provider slot already reserved for $REVIEWER on exact head $HEAD."
-            exit 1
-          fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' \
-            "$START_MARKER" \
-            "# Automatic AI Advisory Provider Slot Reserved" \
-            "Reviewer: \`$REVIEWER\`" \
-            "Reviewer slug: \`$REVIEWER_SLUG\`" \
-            "Exact PR head: \`$HEAD\`" \
-            "This reservation is durable quota state. The automatic path permits at most one provider HTTP request for this reviewer slot.")"
-          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-
       - name: Ask reviewer model
+        id: invoke_model
         env:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
           MODEL: ${{ inputs.model }}
@@ -355,6 +320,7 @@ jobs:
           python - <<'PY'
           import json
           import os
+          import re
           import sys
           import time
           import urllib.error
@@ -378,14 +344,20 @@ jobs:
               'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
               'If material execution, governance, applicable-Skill, census, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
               '',
-              'Return exactly these sections:',
+              'Return only the following compact review structure. Do not expose hidden reasoning, internal deliberation, or repeated self-corrections.',
               '## Verdict',
               'Use one of: APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
               '## Blocking findings',
+              'Use at most 5 concise findings; write "None" when there are none.',
               '## Governance and evidence',
+              'Use at most 5 concise evidence statements.',
               '## Verification gaps',
+              'Use at most 5 concise gaps; write "None" when there are none.',
               '## Non-blocking observations',
+              'Use at most 5 concise observations.',
               '## Review basis',
+              'Use at most 5 concise evidence-backed basis statements.',
+              'Do not write anything outside these six sections.'
           ])
           payload = {
               'model': model,
@@ -394,7 +366,7 @@ jobs:
                   {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
               ],
               'temperature': 0.1,
-              'max_tokens': 5000,
+              'max_tokens': 2200,
           }
           body = json.dumps(payload).encode('utf-8')
           Path('/tmp/payload.json').write_bytes(body)
@@ -418,6 +390,10 @@ jobs:
               raw = b''
               headers = {}
               try:
+                  Path('/tmp/provider-attempted.json').write_text(json.dumps({
+                      'attempt': attempt,
+                      'requested_model': model,
+                  }, sort_keys=True), encoding='utf-8')
                   with urllib.request.urlopen(request, timeout=180) as response:
                       status = int(response.status)
                       raw = response.read()
@@ -427,6 +403,8 @@ jobs:
                   raw = exc.read()
                   headers = dict(exc.headers.items()) if exc.headers else {}
               except (urllib.error.URLError, TimeoutError) as exc:
+                  reason = f'PROVIDER_TRANSPORT_FAILURE: {exc.__class__.__name__}: {exc}'
+                  Path('/tmp/provider-failure.txt').write_text(reason[:1200], encoding='utf-8')
                   print(f'{reviewer} provider transport failure: {exc.__class__.__name__}: {exc}; attempt={attempt}', file=sys.stderr)
                   if attempt < max_attempts:
                       time.sleep(attempt * 4)
@@ -454,8 +432,58 @@ jobs:
                       actual_model = data.get('model') if isinstance(data, dict) else None
                       actual_provider = selected.get('provider') if isinstance(selected, dict) else None
                       if not isinstance(actual_model, str) or not actual_model or actual_model == model:
-                          print(f'{reviewer} provider response did not expose a routed model distinct from requested route {model}.', file=sys.stderr)
+                          reason = f'ROUTER_PROVENANCE_FAILURE: response model did not expose a routed model distinct from requested route {model}.'
+                          Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                          print(reason, file=sys.stderr)
                           sys.exit(1)
+
+                      allowed_verdicts = {'APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY'}
+                      section_names = [
+                          'Verdict',
+                          'Blocking findings',
+                          'Governance and evidence',
+                          'Verification gaps',
+                          'Non-blocking observations',
+                          'Review basis',
+                      ]
+
+                      def extract_section(source, heading):
+                          match = re.search(
+                              rf'^## {re.escape(heading)}\\s*$\\n(.*?)(?=^## \\S|\\Z)',
+                              source,
+                              flags=re.MULTILINE | re.DOTALL,
+                          )
+                          return match.group(1).strip() if match else ''
+
+                      sections = {name: extract_section(content, name) for name in section_names}
+                      verdict_lines = [line.strip() for line in sections['Verdict'].splitlines() if line.strip()]
+                      verdict = verdict_lines[0] if verdict_lines else ''
+                      if verdict not in allowed_verdicts:
+                          reason = 'INVALID_REVIEW_FORMAT: missing or invalid Verdict section.'
+                          Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                          print(f'{reviewer} {reason}', file=sys.stderr)
+                          sys.exit(1)
+
+                      def compact(value):
+                          value = value.strip()
+                          if not value:
+                              return 'None stated.'
+                          value = value.replace('\\r\\n', '\\n')
+                          value = re.sub(r'\\n{3,}', '\\n\\n', value)
+                          if len(value) > 2000:
+                              value = value[:1997].rstrip() + '...'
+                          return value
+
+                      normalized = '\\n\\n'.join([
+                          f'## Verdict\\n{verdict}',
+                          f'## Blocking findings\\n{compact(sections["Blocking findings"])}',
+                          f'## Governance and evidence\\n{compact(sections["Governance and evidence"])}',
+                          f'## Verification gaps\\n{compact(sections["Verification gaps"])}',
+                          f'## Non-blocking observations\\n{compact(sections["Non-blocking observations"])}',
+                          f'## Review basis\\n{compact(sections["Review basis"])}',
+                      ])
+                      if len(normalized) > int(os.environ.get('MAX_REVIEW_CHARS', '12000')):
+                          normalized = normalized[:int(os.environ.get('MAX_REVIEW_CHARS', '12000'))].rstrip() + '\\n\\n[review output bounded by TeamAi reviewer contract]'
                       Path('/tmp/provider-runtime.json').write_text(json.dumps({
                           'requested_model': model,
                           'actual_model': actual_model,
@@ -463,10 +491,12 @@ jobs:
                           'request_id': request_id,
                           'routing_metadata': 'enabled',
                       }, sort_keys=True), encoding='utf-8')
-                      Path('/tmp/review.md').write_text(content, encoding='utf-8')
+                      Path('/tmp/review.md').write_text(normalized, encoding='utf-8')
                       sys.exit(0)
                   response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
-                  print(f'{reviewer} provider returned a successful HTTP status without review content: response_keys={response_keys}.', file=sys.stderr)
+                  reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'
+                  Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                  print(f'{reviewer} {reason}', file=sys.stderr)
               else:
                   error = data.get('error') if isinstance(data, dict) else None
                   error = error if isinstance(error, dict) else {}
@@ -476,16 +506,24 @@ jobs:
                       'error_message': error.get('message') or (data.get('message') if isinstance(data, dict) else None),
                       'provider': ((error.get('metadata') or {}).get('provider_name') if isinstance(error.get('metadata'), dict) else None),
                   }
+                  reason = f'PROVIDER_HTTP_FAILURE: HTTP {status}; {json.dumps(diagnostic, sort_keys=True)}'
+                  Path('/tmp/provider-failure.txt').write_text(reason[:1600], encoding='utf-8')
                   print(f'{reviewer} provider diagnostic: {json.dumps(diagnostic, sort_keys=True)}', file=sys.stderr)
 
               if attempt < max_attempts:
                   time.sleep(attempt * 4)
 
+          if not Path('/tmp/provider-failure.txt').exists():
+              Path('/tmp/provider-failure.txt').write_text(
+                  f'PROVIDER_REQUEST_FAILURE: review request failed after {max_attempts} provider attempt(s).',
+                  encoding='utf-8',
+              )
           print(f'{reviewer} review request failed after {max_attempts} provider attempt(s). No review was posted.', file=sys.stderr)
           sys.exit(1)
           PY
 
       - name: Post advisory review
+        id: post_review
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ inputs.pr_number }}
@@ -495,6 +533,7 @@ jobs:
           MODEL: ${{ inputs.model }}
           INVOCATION: ${{ inputs.invocation_class }}
           AUTO_MARKER: ${{ inputs.automatic_marker }}
+          OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
           MANUAL_MARKER: ${{ inputs.manual_marker }}
         shell: bash
         run: |
@@ -514,6 +553,7 @@ jobs:
           if [[ "$INVOCATION" == "automatic" ]]; then marker="$AUTO_MARKER"; fi
           {
             echo "$marker"
+            if [[ "$INVOCATION" == "automatic" ]]; then echo "$OUTCOME_MARKER"; fi
             echo "# $REVIEWER Advisory Review"
             echo
             printf 'Requested route: `%s`\n' "$MODEL"
@@ -522,11 +562,66 @@ jobs:
             printf 'OpenRouter request id: `%s`\n' "$request_id"
             printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
+            if [[ "$INVOCATION" == "automatic" ]]; then echo 'Slot outcome: SUCCEEDED'; fi
             echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
             echo
             cat /tmp/review.md
           } > /tmp/comment.md
           gh pr comment "$PR" --repo "$REPO" --body-file /tmp/comment.md
+
+      - name: Publish durable automatic slot outcome
+        if: always() && inputs.invocation_class == 'automatic'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
+          REVIEWER: ${{ inputs.reviewer }}
+          REVIEWER_SLUG: ${{ inputs.reviewer_slug }}
+          INVOKE_OUTCOME: ${{ steps.invoke_model.outcome }}
+          POST_OUTCOME: ${{ steps.post_review.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
+          if jq -e --arg marker "$OUTCOME_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+            echo "Durable slot outcome already recorded for $REVIEWER on exact head $HEAD."
+            exit 0
+          fi
+
+          state="PRE_PROVIDER_FAILURE"
+          attempted="false"
+          if [[ -f /tmp/provider-attempted.json ]]; then
+            attempted="true"
+          fi
+          if [[ -f /tmp/provider-runtime.json && "$POST_OUTCOME" == "success" ]]; then
+            state="SUCCEEDED"
+          elif [[ -f /tmp/provider-runtime.json ]]; then
+            state="REVIEW_POST_FAILED"
+          elif [[ "$attempted" == "true" ]]; then
+            state="PROVIDER_FAILED"
+          fi
+
+          reason="No additional diagnostic was recorded."
+          if [[ -f /tmp/provider-failure.txt ]]; then
+            reason="$(cat /tmp/provider-failure.txt)"
+          elif [[ "$state" == "PRE_PROVIDER_FAILURE" && "$INVOKE_OUTCOME" != "success" ]]; then
+            reason="Provider invocation was not reached; the reusable review job failed before the external request stage."
+          elif [[ "$state" == "REVIEW_POST_FAILED" ]]; then
+            reason="Provider response was obtained, but the advisory review could not be posted."
+          fi
+
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s' \
+            "$OUTCOME_MARKER" \
+            "# Automatic AI Advisory Slot Outcome" \
+            "Reviewer: \`$REVIEWER\`" \
+            "Reviewer slug: \`$REVIEWER_SLUG\`" \
+            "Exact PR head: \`$HEAD\`" \
+            "Slot outcome: $state" \
+            "Provider invocation attempted: $attempted" \
+            "Diagnostic: $reason")"
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
 
       - name: Optional model approval
         if: inputs.approve == true
