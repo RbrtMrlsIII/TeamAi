@@ -2,17 +2,18 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: build a clean branch ready to replace the current compressed/legacy mainline without blind inheritance of superseded structures.
+- Last given prompt: rebaseline the project after the successful clean-mainline merge, reconcile active Issue ownership, and ensure canonical session/planning records point to current main.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: 6dc96ff929d1ea874afd3dc44cad9f95fa8096c8
-- replacement branch: governance/clean-mainline-rebuild-20260919
-- current slice: GOVERNANCE — clean canonical mainline reconstruction (Issue #389)
-- open implementation vehicles: PR #391 / Issue #389 only
-- source-only / do-not-execute: #388, #386, #385, #379
+- current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
+- current slice: GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
+- active implementation slices: #278, #360, #392, #83, #284, #204, #393
+- completed reconstruction: #391 / #389
+- historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: finish the clean control-plane/corpus/session audit and prove the replacement branch before new 029 product execution
+- next allowed work: complete the current-state/session/masterplan reconciliation under #394, then proceed within the separately owned product/backend/governance slices
 - handoff rule: chat is transient; start from this snapshot plus live GitHub state and the owning Issue/PR, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
@@ -37,12 +38,12 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 ## Current replacement-branch control plane
 
-- Issue #389 is the sole active clean-mainline reconstruction vehicle.
+- Issue #389 is completed; its reconstruction is merged into main. Issue #394 is the current baseline-reconciliation vehicle.
 - #388/#386/#385/#379 are source/history only and must not be merged wholesale.
 - Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
 - The five credential aliases are OPENROUTER_API_KEY, OPENROUTER_API_KEY_OPENAI, OPENROUTER_API_KEY_POOLSIDE, OPENROUTER_API_KEY_DEEPSEEK, and OPENROUTER_API_KEY_GWEN.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
-- Latest completed provider execution before this reconciliation: exact head `b5cabce7fb9e503637a9ff42a06befef11a5bd22`, terminal slots 5/5, publishable advisory reviews 0/5, provider failures 5/5.
+- Latest verified provider execution: exact head `be9d234ee41a2771ccb737e7435dff5d3481897b`, terminal slots 5/5, publishable advisory reviews 4/5, one terminal `PROVIDER_RESPONSE_TRUNCATED`.
 - Actual model/provider is runtime evidence from OpenRouter.
 - Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
@@ -115,3 +116,18 @@ There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to 
 ## Machine boundary
 
 The merged machine candidate remains non-production. Semantic identity, payload meaning, topology ownership, adaptive geometry, transition state, camera relationship, and rendering remain distinct concerns. Renderer output cannot become backend, identity, entitlement, scheduler, acceptance, or merge authority.
+
+
+## CURRENT ISSUE OWNERSHIP
+
+- #394 = current baseline/session/Issue-topology reconciliation
+- #278 = 029 canonical product-experience execution ledger
+- #360 = 029 machine-candidate/runtime/browser/provenance slice
+- #392 = AI Seat budget, usage, handoff, shared context, and cooperation product feature
+- #83 = frontend spatial visual/material track
+- #284 = backend durable/runtime ledger
+- #204 = Conn-3 GitHub OAuth/bind integration
+- #133 = enduring validation/promotion governance contract
+- #393 = next-PR governance and advisory-review normalization
+
+Historical Issues are evidence, not active routing.
