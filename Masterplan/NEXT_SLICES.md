@@ -8,7 +8,7 @@ GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #
 
 ## Status
 
-IN PROGRESS — post-#391 current-state reconciliation. The clean-mainline reconstruction is complete; this slice verifies that canonical session/planning records and active field ownership now point at merged `main`.
+IN PROGRESS — Draft/non-production current-state reconciliation after #391. The clean-mainline reconstruction is complete; this slice verifies that canonical session/planning records and active field ownership now point at merged `main`.
 
 ## Objective
 
@@ -48,3 +48,8 @@ Rebaseline the canonical session/planning records and Issue topology against mer
 ## Current slice boundary
 
 Issue #394 owns only baseline/Issue-topology reconciliation. It does not absorb #278, #360, #284, #204, #83, #392, or #393. Each remains an independently scoped field slice. No 029 release, C9/C10, or backend completion claim is created here.
+
+
+## Current blocker
+
+This Draft reconciliation remains open until the canonical session, current-slice, and Masterplan records pass the applicable governance/validation checks and are merged. It does not absorb or replace the separately owned product, frontend, backend, or governance feature slices.
