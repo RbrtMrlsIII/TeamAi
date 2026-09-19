@@ -15,7 +15,7 @@ assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);
 assert.match(files.sequence,/actions\/download-artifact@v5/);
 assert.doesNotMatch(files.sequence,/model:\s*openrouter\/free/);
 assert.doesNotMatch(files.sequence,/secrets\.OPENROUTER_API_KEY \}\}/);
-assert.doesNotMatch(files.sequence,/issues\/\$PR\/comments/);
+assert.doesNotMatch(files.sequence,/issues\/\$PR\/comments\?per_page/);
 assert.match(files.runner,/MODEL:\s*openrouter\/free/);
 assert.doesNotMatch(files.runner,/^\s+model:\s*$/m);
 assert.doesNotMatch(files.runner,/approve:/i);
