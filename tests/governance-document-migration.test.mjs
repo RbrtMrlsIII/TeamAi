@@ -167,7 +167,8 @@ test('promotion boundaries keep merged governance and machine candidate separate
   const manifest = JSON.parse(read('.github/teamai/authority-manifest.yml'));
   const skillWiring = read('docs/SKILL_WIRING.md');
   const session = read('AI_ASSISTANT_READ_ME.md');
-  assert.equal(manifest.promotion_model.governance_pr, 346);
+  assert.equal(manifest.promotion_model.governance_pr, undefined);
+  assert.equal(manifest.promotion_model.governance_lineage_pr, 346);
   assert.equal(manifest.promotion_model.machine_hero_pr, 353);
   assert.match(skillWiring, /#353/);
   assert.match(skillWiring, /promotion/i);
