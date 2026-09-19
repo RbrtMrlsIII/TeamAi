@@ -28,6 +28,11 @@ on:
         description: automatic or manual
         required: true
         type: string
+      start_delay_seconds:
+        description: Bounded automatic slot launch delay in seconds
+        required: false
+        default: 0
+        type: number
       automatic_marker:
         description: Reviewer-specific automatic marker
         required: true
@@ -288,6 +293,19 @@ jobs:
             printf '\n[REVIEW PACKET TRUNCATED AT %s CHARS]\n' "$MAX_PACKET" >> /tmp/review.txt
           fi
 
+      - name: Apply bounded automatic launch stagger
+        if: inputs.invocation_class == 'automatic' && inputs.start_delay_seconds > 0
+        env:
+          START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$START_DELAY_SECONDS" in
+            ''|*[!0-9]*) echo "Invalid start delay: $START_DELAY_SECONDS" >&2; exit 1 ;;
+          esac
+          echo "Applying ${START_DELAY_SECONDS}s automatic slot launch stagger."
+          sleep "$START_DELAY_SECONDS"
+
       - name: Confirm exact head before model invocation
         env:
           GH_TOKEN: ${{ github.token }}
@@ -312,6 +330,7 @@ jobs:
           ALLOWED_CREDENTIAL_ALIASES: OPENROUTER_API_KEY OPENROUTER_API_KEY_OPENAI OPENROUTER_API_KEY_POOLSIDE OPENROUTER_API_KEY_DEEPSEEK OPENROUTER_API_KEY_GWEN
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
+          START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
         shell: bash
         run: |
           set -euo pipefail
@@ -464,6 +483,19 @@ jobs:
                   content = message.get('content') if isinstance(message, dict) else None
                   if isinstance(content, list):
                       content = '\n'.join(item.get('text', '') for item in content if isinstance(item, dict) and isinstance(item.get('text'), str))
+                  response_shape = {
+                      'choices_count': len(choices),
+                      'message_keys': sorted(message.keys()) if isinstance(message, dict) else [],
+                      'finish_reason': choices[0].get('finish_reason') if choices and isinstance(choices[0], dict) else None,
+                      'content_present': isinstance(content, str) and bool(content.strip()),
+                      'content_chars': len(content) if isinstance(content, str) else 0,
+                      'refusal_present': bool(message.get('refusal')) if isinstance(message, dict) else False,
+                      'tool_calls_present': bool(message.get('tool_calls')) if isinstance(message, dict) else False,
+                  }
+                  runtime_path = Path('/tmp/provider-runtime.json')
+                  runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+                  runtime['response_shape'] = response_shape
+                  runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
                   if not isinstance(content, str) or not content.strip():
                       response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
                       reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'

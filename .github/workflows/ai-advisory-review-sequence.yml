@@ -124,11 +124,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { slot: 1, credential_alias: OPENROUTER_API_KEY }
-          - { slot: 2, credential_alias: OPENROUTER_API_KEY_OPENAI }
-          - { slot: 3, credential_alias: OPENROUTER_API_KEY_POOLSIDE }
-          - { slot: 4, credential_alias: OPENROUTER_API_KEY_DEEPSEEK }
-          - { slot: 5, credential_alias: OPENROUTER_API_KEY_GWEN }
+          # Small traffic-shaping stagger: 2 seconds between slot launch targets,
+          # capped at an 8-second spread. This is deliberately not a staged barrier.
+          - { slot: 1, credential_alias: OPENROUTER_API_KEY, start_delay_seconds: 0 }
+          - { slot: 2, credential_alias: OPENROUTER_API_KEY_OPENAI, start_delay_seconds: 2 }
+          - { slot: 3, credential_alias: OPENROUTER_API_KEY_POOLSIDE, start_delay_seconds: 4 }
+          - { slot: 4, credential_alias: OPENROUTER_API_KEY_DEEPSEEK, start_delay_seconds: 6 }
+          - { slot: 5, credential_alias: OPENROUTER_API_KEY_GWEN, start_delay_seconds: 8 }
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: OpenRouter Free Slot ${{ matrix.slot }}
@@ -136,6 +138,7 @@ jobs:
       credential_alias: ${{ matrix.credential_alias }}
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
+      start_delay_seconds: ${{ matrix.start_delay_seconds }}
       invocation_class: automatic
       automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
@@ -207,14 +210,19 @@ jobs:
           open('/tmp/sequence-summary.json','w',encoding='utf-8').write(json.dumps(summary,sort_keys=True,indent=2)+'\n')
           PY
           jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // "-") provider=\(.actual_provider // "-")"' /tmp/sequence-summary.json
+          successful_slots="$(jq '[.slots[] | select(.outcome == "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
+          terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
           cat > /tmp/complete-comment.md <<'EOF'
           # Automatic OpenRouter Free Advisory Execution Complete
 
-          Exact PR head: `__HEAD__`
-          Five parallel credential-isolated slots reached terminal workflow outcomes.
+          Exact PR head: __HEAD__
+          Terminal slots: 5/5
+          Publishable advisory reviews: __SUCCESS__/5
+          Non-success terminal outcomes: __FAIL__/5
           Structured slot artifacts, not PR comments, are the orchestration state.
           Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.
           EOF
+          sed -i "s/__SUCCESS__/$successful_slots/g; s/__FAIL__/$terminal_failures/g" /tmp/complete-comment.md
           sed -i "s/__HEAD__/$HEAD/g" /tmp/complete-comment.md
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/complete-comment.md)" >/dev/null
       - name: Upload sequence summary artifact

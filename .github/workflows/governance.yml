@@ -180,15 +180,37 @@ jobs:
             if [ "$approved" -ge 1 ]; then
               required=(governance-drift evidence-consistency agent-validation)
               checkruns=$(gh api --paginate "/repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100")
+              pending=0
+              failed=0
               for required_check in "${required[@]}"; do
-                conclusion=$(jq -r --arg name "$required_check" --arg head "$HEAD_SHA" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .completed_at) | last | .conclusion // "missing"' <<< "$checkruns")
-                echo "required_check=${required_check} conclusion=${conclusion}"
+                check=$(jq -c --arg name "$required_check" --arg head "$HEAD_SHA" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .completed_at) | last // empty' <<< "$checkruns")
+                if [ -z "$check" ]; then
+                  echo "required_check=${required_check} status=missing conclusion=pending"
+                  pending=$((pending+1))
+                  continue
+                fi
+                status=$(jq -r '.status' <<< "$check")
+                conclusion=$(jq -r '.conclusion // ""' <<< "$check")
+                echo "required_check=${required_check} status=${status} conclusion=${conclusion:-PENDING}"
+                if [ "$status" != "completed" ]; then
+                  pending=$((pending+1))
+                  continue
+                fi
                 if [ "$conclusion" != "success" ]; then
-                  echo "REVIEW_READINESS=FAIL"
-                  echo "Required check ${required_check} is not successful on exact head ${HEAD_SHA}."
-                  exit 1
+                  failed=$((failed+1))
                 fi
               done
+              if [ "$failed" -gt 0 ]; then
+                echo "REVIEW_READINESS=FAIL"
+                echo "One or more required governance checks completed unsuccessfully on exact head ${HEAD_SHA}."
+                exit 1
+              fi
+              if [ "$pending" -gt 0 ]; then
+                echo "REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS"
+                echo "Required governance checks are still missing or incomplete on exact head ${HEAD_SHA}; polling again."
+                sleep "$poll_seconds"
+                continue
+              fi
               echo "REVIEW_READINESS=PASS"
               echo "Independent human approval exists on the exact current PR head $HEAD_SHA and required governance checks are green."
               exit 0

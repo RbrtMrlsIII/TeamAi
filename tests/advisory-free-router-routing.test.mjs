@@ -6,6 +6,7 @@ const root=process.cwd();
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const sequence=read('.github/workflows/ai-advisory-review-sequence.yml');
 const runner=read('.github/workflows/ai-advisory-review-runner.yml');
+const governance=read('.github/workflows/governance.yml');
 const manual=read('.github/workflows/additional-ai-advisory-reviews.yml');
 const policy=read('POLICY.md');
 const wiring=read('docs/SKILL_WIRING.md');
@@ -15,6 +16,17 @@ const session=read('AI_ASSISTANT_READ_ME.md');
 const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
 test('automatic fan-out uses five dedicated credential aliases',()=>{for(const alias of aliases) assert.match(sequence,new RegExp('credential_alias:\\s*'+alias));assert.match(sequence,/secrets\[matrix\.credential_alias\]/);assert.match(sequence,/cancel-in-progress:\s*false/);assert.doesNotMatch(sequence,/model:\s*openrouter\/free/);assert.doesNotMatch(sequence,/secrets\.OPENROUTER_API_KEY \}\}/);assert.doesNotMatch(sequence,/issues\/\$PR\/comments\?per_page/);});
 test('terminal slot outcomes are aggregated without reusable-job continue-on-error',()=>{const block=sequence.slice(sequence.indexOf('  openrouter_free:'),sequence.indexOf('  sequence_complete:'));assert.doesNotMatch(block,/continue-on-error:\s*true/);assert.match(sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);assert.match(sequence,/structured slot artifacts/i);});
+test('review-readiness distinguishes pending checks from completed failures',()=>{
+  assert.match(governance,/pending=0;\n?\s*failed=0/);
+  assert.match(governance,/status=missing conclusion=pending/);
+  assert.match(governance,/status=\"\$status\" != \"completed\"/);
+  assert.match(governance,/REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS/);
+  assert.match(governance,/if \[ \"\$failed\" -gt 0 \]/);
+});
+test('automatic fan-out uses a two-second launch stagger',()=>{
+  for(const delay of [0,2,4,6,8]) assert.match(sequence,new RegExp('start_delay_seconds:\\s*'+delay));
+  assert.match(sequence,/capped at an 8-second spread/);
+});
 test('runner hard-locks route and uses structured advisory output',()=>{assert.match(runner,/MODEL:\s*openrouter\/free/);assert.doesNotMatch(runner,/^\s+model:\s*$/m);assert.doesNotMatch(runner,/approve:/i);assert.match(runner,/response_format/);assert.match(runner,/'type': 'json_schema'/);assert.match(runner,/teamai_advisory_review/);assert.match(runner,/failure_path\.exists\(\)/);assert.match(runner,/actions\/upload-artifact@v4/);assert.doesNotMatch(runner,/automatic_outcome_marker/);});
 test('provider capability controls remain enforced',()=>{assert.match(runner,/require_parameters/);assert.match(runner,/response-healing/);assert.match(runner,/stream.*False/);});
 test('automatic sequence evidence publisher is authenticated',()=>{assert.match(sequence,/Build and publish execution evidence[\s\S]{0,500}GH_TOKEN: \$\{\{ github\.token \}\}/);assert.match(sequence,/gh api --method POST/);});
