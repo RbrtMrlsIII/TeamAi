@@ -94,7 +94,7 @@ Never weaken validation merely to make CI green.
 
 ## Current validation-change record
 
-The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication.
+The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication. The canonical governance parser's Draft-proof-target boundary was corrected from a level-2-or-3 closing lookahead to a level-2 closing lookahead so nested proof-target subsections are included; the required governance/canonical content is therefore validated rather than accidentally discarded.
 
 ## Evidence rules
 
