@@ -108,7 +108,6 @@ jobs:
   openrouter_free:
     needs: validation_gate
     if: needs.validation_gate.result == 'success'
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
