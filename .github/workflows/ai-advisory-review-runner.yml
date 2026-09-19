@@ -735,7 +735,7 @@ jobs:
             printf 'Requested route: `%s`\n' "$MODEL"
             printf 'Actual model: `%s`\n' "$actual_model"
             printf 'Actual provider: `%s`\n' "$actual_provider"
-            printf 'Model/provider provenance: `%s`\n' "$(jq -r '.provenance_status // \"unreported\"' /tmp/provider-runtime.json)"
+            printf 'Model/provider provenance: `%s`\n' "$(jq -r '.provenance_status // "unreported"' /tmp/provider-runtime.json)"
             printf 'OpenRouter request id: `%s`\n' "$request_id"
             printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
