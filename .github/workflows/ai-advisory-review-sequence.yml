@@ -237,7 +237,7 @@ jobs:
                   success+=1
               else: failure+=1
           if seen != {1,2,3,4,5}: raise SystemExit(f'Incomplete slot set: {sorted(seen)}')
-          print(json.dumps({'schema_version':1,'exact_head':head,'successful_slots':success,'failed_slots':failure,'review_quality_failures':quality_failures}, sort_keys=True))
+          print(json.dumps({'schema_version':1,'exact_head':head,'successful_slots':success,'failed_slots':failure}, sort_keys=True))
           PY
 
       - name: Build and publish execution evidence
