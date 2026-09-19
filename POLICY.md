@@ -60,13 +60,13 @@ There is no inter-slot wait, cohort barrier, or named-model dependency. After th
 The durable sequence-claim marker is the quota boundary for the PR. synchronize and reopen events cannot create another automatic sequence after a prior claim exists, even when the PR head later changes. Draft PRs consume no automatic model calls. Each slot revalidates the original head before invocation and fails closed on a head change.
 
 ### Reviewer billing boundary
-The automatic advisory path uses the OpenRouter Free Models Router for every automatic slot. The request route is openrouter/free and the actual routed model is captured from the OpenRouter response. The active automatic configuration uses one OpenRouter API key for all five slots, bounded to at most five provider HTTP requests per automatic sequence.
+The automatic advisory path uses the OpenRouter Free Models Router for every automatic slot. The request route is openrouter/free and the actual routed model is captured from the OpenRouter response. The active automatic configuration uses five distinct OpenRouter API key credentials, one per automatic slot, bounded to at most five provider HTTP requests per automatic sequence.
 | Slot | Credential | Requested route | Cost class |
 | OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free |
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free |
 OpenRouter currently documents openrouter/free as a zero-priced router that selects among available free models. Free-account usage is rate-limited, so the five-request sequence remains explicitly quota-bounded. Cost status and provider data-use terms remain separate concerns.
 
 ### Runtime-repair evidence boundary
