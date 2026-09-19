@@ -38,6 +38,10 @@ Expansion is physical state. Camera targets follow semantic geometry. Wiring fol
 ### Release discipline
 Green CI is evidence, not automatic promotion. Product acceptance is a separate decision. A safer replacement is preferred over preserving obsolete implementation merely for continuity.
 
+### AI advisory token efficiency
+
+The exact-head 2026-09-19 reviewer experiment consumed roughly 67k to 71k prompt tokens per slot. With a 4,000-token generation ceiling, three of five HTTP-200 responses ended at `finish_reason=length` before a structured review was emitted. OpenRouter currently documents a 200,000-token context window for `openrouter/free`, but context capacity is not an output guarantee. The durable pattern is: use a generous generation ceiling for resilience, constrain reasoning effort, bound visible structured output, select packet content by authority relevance, and preserve per-slot usage, finish, HTTP-status, and provenance telemetry. Workflow success and published-review count must remain separate signals.
+
 ## Anti-patterns
 
 - Duplicate active roadmaps.
