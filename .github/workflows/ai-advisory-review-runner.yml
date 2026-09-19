@@ -706,6 +706,7 @@ jobs:
               'provider_invocation_attempted': attempted,
               'review_published': post == 'success',
               'response_shape': runtime.get('response_shape'),
+              'usage_summary': runtime.get('usage_summary'),
               'diagnostic': diagnostic[:2000],
           }
           Path('/tmp/slot-result.json').write_text(
