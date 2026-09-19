@@ -360,7 +360,7 @@ jobs:
               'Use at most 5 concise observations.',
               '## Review basis',
               'Use at most 5 concise evidence-backed basis statements.',
-              'Do not write anything outside these six sections.'
+              'Return one JSON object only. The object must contain verdict, blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis. Each of the five evidence/findings fields is an array of concise strings with at most 5 items. Do not return Markdown headings, commentary, or hidden reasoning.'
           ])
           payload = {
               'model': model,
@@ -370,6 +370,26 @@ jobs:
               ],
               'temperature': 0.1,
               'max_tokens': 2200,
+              'response_format': {
+                  'type': 'json_schema',
+                  'json_schema': {
+                      'name': 'teamai_advisory_review',
+                      'strict': True,
+                      'schema': {
+                          'type': 'object',
+                          'additionalProperties': False,
+                          'properties': {
+                              'verdict': {'type': 'string', 'enum': ['APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY']},
+                              'blocking_findings': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
+                              'governance_and_evidence': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
+                              'verification_gaps': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
+                              'non_blocking_observations': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
+                              'review_basis': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
+                          },
+                          'required': ['verdict', 'blocking_findings', 'governance_and_evidence', 'verification_gaps', 'non_blocking_observations', 'review_basis'],
+                      },
+                  },
+              },
           }
           body = json.dumps(payload).encode('utf-8')
           Path('/tmp/payload.json').write_bytes(body)
