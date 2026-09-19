@@ -43,7 +43,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 - The five credential aliases are OPENROUTER_API_KEY, OPENROUTER_API_KEY_OPENAI, OPENROUTER_API_KEY_POOLSIDE, OPENROUTER_API_KEY_DEEPSEEK, and OPENROUTER_API_KEY_GWEN.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
 - Actual model/provider is runtime evidence from OpenRouter.
-- Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only.
+- Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
 - Execution completion is not advisory approval, human acceptance, merge authorization, or release.
 
