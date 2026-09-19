@@ -4,17 +4,17 @@
 
 ## Current Slice
 
-GOVERNANCE — clean canonical mainline reconstruction (Issue #389)
+GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
 
 ## Status
 
-IN PROGRESS — Draft/non-production control-plane reconstruction; product feature execution is paused while the active governance graph, session state, advisory control plane, and superseded-surface retirement are reconciled into one clean replacement branch.
+IN PROGRESS — post-#391 current-state reconciliation. The clean-mainline reconstruction is complete; this slice verifies that canonical session/planning records and active field ownership now point at merged `main`.
 
 ## Objective
 
 Current governing program: TEAM-EXPERIENCE-029 progression. The clean-mainline reconstruction is the control-plane prerequisite and does not redefine the Product Law program.
 
-Build a replacement branch from current main that preserves the working product/runtime foundation while removing accumulated governance debris. The branch must have one current session boundary, one advisory-review architecture, structured terminal workflow state, explicit retirement of superseded surfaces, and machine-checked separation between CI-green, corpus-clean, and session-current evidence.
+Rebaseline the canonical session/planning records and Issue topology against merged `main`. Preserve one current session boundary, one advisory-review architecture, separate Product/Frontend/Backend/Governance ownership, structured terminal workflow state, explicit historical supersession, and machine-checked separation between CI-green, corpus-clean, and session-current evidence.
 
 ## Dependencies
 
@@ -24,24 +24,27 @@ Build a replacement branch from current main that preserves the working product/
 - POLICY.md
 - docs/SKILL_WIRING.md
 - AI_ASSISTANT_READ_ME.md
-- Issue #389
-- Current main baseline: 6dc96ff929d1ea874afd3dc44cad9f95fa8096c8
-- Source material only: #388, #386, #385, #379
+- Issue #394
+- Current main baseline: 867944b03776f47fb01bd2cddf90ed4c70ab3b68
+- Completed reconstruction: #391 / #389
+- Active product slices: #278, #360, #392, #83, #204, #284
+- Active governance contract/cleanup: #133, #393
+- Historical/superseded control-plane lineage: #347, #368, #369, #387, #388
 - Historical execution evidence remains under docs/archive/
 
 ## Verification
 
-- exact-head branch baseline is preserved and independently inspectable
+- merged main baseline is current and independently inspectable
 - active governance surfaces agree on one authority chain
 - five credential-isolated advisory slots request only openrouter/free
 - no active model-specific reviewer or approval contract remains
 - owning Issue resolution is deterministic and required before provider invocation
 - automatic terminal state is artifact-backed and not comment-driven
-- superseded current-state and model-specific files are archived and removed from active routing
+- superseded current-state, model-specific, and issue-lineage material is historical only and not active routing
 - the Session Snapshot is explicit and machine-checkable
 - CI green, corpus clean, and session current are separate claims
 - existing product/runtime tests remain governed; no validator is weakened
 
-## Current blocker
+## Current slice boundary
 
-Do not resume 029 product/runtime feature execution until Issue #389 reaches a clean review-ready replacement boundary. Runtime provider proof is not the current slice.
+Issue #394 owns only baseline/Issue-topology reconciliation. It does not absorb #278, #360, #284, #204, #83, #392, or #393. Each remains an independently scoped field slice. No 029 release, C9/C10, or backend completion claim is created here.
