@@ -120,3 +120,8 @@ Governance validation consumes the PR body's `Draft proof target` section. The a
 The Tree Authority XML and four-file Tree Census are subordinate structural records, not a new Skill and not a second Product Law. Their consistency, semantic identity set, and non-authority boundary are machine-checked by `build-system/scripts/repository-canonical-governance-audit.py`, which also executes the existing `scripts/governance/census-sync-contract.mjs` against the full PR diff.
 
 Skills route implementation against these records but cannot override Product Law, define new semantic authority, grant permission, or authorize promotion/merge. Machine semantic projections must consume the canonical Census identities rather than creating a parallel hierarchy.
+
+
+## Current-slice consumption rule
+
+Skills route the current procedure selected for the slice; they do not own current-slice identity. The active slice must be resolved from `Masterplan/NEXT_SLICES.md`. Skill bodies and validators must not hard-code a specific Issue as the current slice when the canonical current-slice source can be read directly.
