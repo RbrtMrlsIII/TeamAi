@@ -11,6 +11,7 @@
 - next allowed work: finish the clean control-plane/corpus/session audit and prove the replacement branch before new 029 product execution
 - handoff rule: chat is transient; start from this snapshot plus live GitHub state and the owning Issue/PR, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
+- live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 ## Canonical authority path
@@ -56,6 +57,42 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 - Do not resume new 029 feature/runtime slices until Issue #389 produces the clean replacement branch.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
+## Validation lifecycle guide
+
+| PR state | Active validation | Promotion/review gate |
+|---|---|---|
+| Draft | Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime checks continue against the exact PR head. | review-readiness may be skipped by lifecycle design. A skipped job is not a pass. |
+| Ready for review | Substantive exact-head validation remains current. | review-readiness evaluates review and authorization conditions and remains pending while independent approval is absent. |
+| Merge candidate | Required checks and evidence remain current on the exact head. | Normal governed GitHub review/merge path only; no auto-merge. |
+
+A downstream skipped job is never evidence that the underlying requirement passed. Recovery must inspect the controlling upstream job and the exact current head.
+
+## Validation-change guide
+
+Before modifying a test, validator, browser assertion, workflow gate, Skill, acceptance criterion, fixture, or evidence requirement because an authorized change conflicts with it, record:
+
+```
+VALIDATION CHANGE WARNING
+Protected old invariant:
+Authorized new rule:
+Why the old invariant is obsolete/retained:
+Replacement invariant:
+Implementation impact:
+Validation impact:
+Evidence/browser impact:
+Residual uncertainty:
+```
+
+Then:
+
+`warning → authority reconciliation → implementation → replacement validation → verification → evidence → durable PR/Issue record → session update`
+
+Never weaken validation merely to make CI green.
+
+## Current validation-change record
+
+The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication.
+
 ## Evidence rules
 
 specified ≠ implemented ≠ verified ≠ runtime-proven ≠ completed ≠ accepted
@@ -68,7 +105,7 @@ There is no live HandOver.md. Future sessions start from this Session Snapshot, 
 
 ## Endorsement
 
-There is no live Endorsement.md. Acceptance decisions remain scope-bound to the applicable Issue/PR/evidence and are never inferred from a green workflow.
+There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to the applicable Issue/PR/evidence and are never inferred from a green workflow.
 
 ## Machine boundary
 
