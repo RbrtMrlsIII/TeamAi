@@ -69,7 +69,8 @@ jobs:
           set -euo pipefail
           expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; each slot uses a distinct credential alias; terminal slot outcome is explicit; actual routed model/provider recorded on successful review'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
-          grep -Fq 'model: openrouter/free' "$workflow"
+          runner='.github/workflows/ai-advisory-review-runner.yml'
+          grep -Fq 'MODEL: openrouter/free' "$runner"
           grep -Fq 'strategy:' "$workflow"
           grep -Fq 'fail-fast: false' "$workflow"
           grep -Fq 'include:' "$workflow"
@@ -83,7 +84,7 @@ jobs:
             echo "Automatic advisory sequence still passes one shared OpenRouter key."
             exit 1
           fi
-          test "$(grep -Fc 'model: openrouter/free' "$workflow")" -eq 1
+          test "$(grep -Fc 'MODEL: openrouter/free' "$runner")" -eq 1
           test "$(grep -Fc 'openrouter-free-' "$workflow")" -ge 3
           if grep -Fq 'REVIEW_INTERVAL_SECONDS' "$workflow" || grep -Fq 'delay_to_second_stage' "$workflow" || grep -Fq 'delay_to_third_stage' "$workflow"; then
             echo "Retired inter-slot interval/barrier logic remains in the active sequence workflow."
