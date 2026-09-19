@@ -94,8 +94,8 @@
     "one_slice_one_merge": false,
     "green_ci_alone_authorizes_merge": false,
     "machine_hero_pr": 353,
-    "governance_pr": 346,
-    "merge_gate_owner_issue": 133
+    "merge_gate_owner_issue": 133,
+    "governance_lineage_pr": 346
   },
   "workspace_model": {
     "allowed_branch_prefixes": [
@@ -194,6 +194,10 @@
     "backend_authority": {
       "owner": "backend authority contract/tests",
       "scope": "durable domain authority and runtime seams"
+    },
+    "advisory_configuration": {
+      "owner": "scripts/governance/verify-advisory-control-plane.mjs",
+      "scope": "manifest-driven advisory slot registry and consumer drift"
     }
   },
   "invariant_migrations": [
@@ -291,6 +295,16 @@
       "old": "active TEAMAI_029_CURRENT_STATE_MAP recovery index",
       "disposition": "MOVED",
       "new": "AI_ASSISTANT_READ_ME.md Session Snapshot"
+    },
+    {
+      "old": "4000-token advisory generation ceiling on exact-head review",
+      "disposition": "REPLACED",
+      "new": "provider/model-native generation limits + bounded structured report contract + per-slot usage/error telemetry"
+    },
+    {
+      "old": "30000-token advisory generation ceiling + low reasoning effort",
+      "disposition": "REPLACED",
+      "new": "no TeamAi-imposed generation or reasoning ceiling; provider/model-native limits remain authoritative while TeamAi preserves bounded report structure and telemetry"
     }
   ],
   "active_reference_policy": {
@@ -307,5 +321,76 @@
       "comment-driven orchestration state"
     ],
     "enforcement_owner": "scripts/governance/verify-advisory-control-plane.mjs"
+  },
+  "advisory_review": {
+    "route": "openrouter/free",
+    "packet": {
+      "max_review_packet_chars": 260000,
+      "max_governance_context_chars": 120000,
+      "max_diff_chars": 120000,
+      "selection_policy": "authority-first; include changed files and governing issue context; exclude unrelated field Skills unless the changed paths require them"
+    },
+    "quality_contract": {
+      "min_governance_and_evidence_items": 1,
+      "min_review_basis_items": 1,
+      "changes_requested_requires_finding_or_gap": true,
+      "approve_requires_no_verification_gaps": true
+    },
+    "evidence_policy": {
+      "current_head_is_authoritative": true,
+      "historical_run_ids_are_context_only": true,
+      "advisory_publication_count_is_telemetry_not_acceptance": true,
+      "generation_truncation_count_is_telemetry_not_acceptance": true,
+      "reviewer_must_not_invent_thresholds": true,
+      "review_changed_paths_first": true
+    },
+    "manual_final_review": {
+      "command": "/openrouter-free-all",
+      "slot_count": 5,
+      "purpose": "explicit provider-consuming review after PR editing has settled"
+    },
+    "automatic": {
+      "slot_count": 5,
+      "launch_interval_seconds": 2,
+      "max_spread_seconds": 8,
+      "fail_fast": false
+    },
+    "slots": [
+      {
+        "slot": 1,
+        "credential_alias": "OPENROUTER_API_KEY",
+        "start_delay_seconds": 0,
+        "manual_command": "/openrouter-free"
+      },
+      {
+        "slot": 2,
+        "credential_alias": "OPENROUTER_API_KEY_OPENAI",
+        "start_delay_seconds": 2,
+        "manual_command": "/free-2"
+      },
+      {
+        "slot": 3,
+        "credential_alias": "OPENROUTER_API_KEY_POOLSIDE",
+        "start_delay_seconds": 4,
+        "manual_command": "/free-3"
+      },
+      {
+        "slot": 4,
+        "credential_alias": "OPENROUTER_API_KEY_DEEPSEEK",
+        "start_delay_seconds": 6,
+        "manual_command": "/free-4"
+      },
+      {
+        "slot": 5,
+        "credential_alias": "OPENROUTER_API_KEY_GWEN",
+        "start_delay_seconds": 8,
+        "manual_command": "/free-5"
+      }
+    ],
+    "output_contract": {
+      "max_findings_per_section": 3,
+      "max_item_chars": 400,
+      "selection_policy": "bounded structured report for PR comments; provider/model-native generation and reasoning limits are not overridden by TeamAi"
+    }
   }
 }

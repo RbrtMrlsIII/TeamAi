@@ -45,19 +45,14 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5 and au
 
 ## Reviewer configuration
 
-| Reviewer slot | Secret alias | Requested route |
-|---|---|---|
-| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free |
-
-The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
+The authoritative slot/credential registry is `.github/teamai/authority-manifest.yml`. This Skill consumes that registry through the governed workflows and must not duplicate its alias table. The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
 
 
 ## Evidence contract
 
 Every reviewer comment must identify the exact PR head and invocation class. A model review is advisory evidence only. A model verdict or model-generated approval never substitutes for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, `review-readiness`, or human authorization. Required substantive validators must pass before automatic model invocation.
 
-The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
+The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance.
+
+### Token-efficiency contract
+The advisory workflow does not impose a universal generation or reasoning ceiling. Generation and reasoning limits remain provider/model-native and are reported through per-slot telemetry. Reviewer output is bounded to three concise items per section at 400 characters each, and packet selection is authority-first. Provider HTTP 200 with an error payload, generation-limit truncation, unavailable routed-model provenance, or other provider degradation remain classified terminal evidence; the workflow stays green when the outcome is classified, while the sequence summary reports transport, publication, provenance, completeness, and quality separately. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.

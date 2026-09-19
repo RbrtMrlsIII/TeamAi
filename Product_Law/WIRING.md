@@ -39,8 +39,6 @@ The canonical public live-site validation target is `https://RbrtMrlsIII.github.
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
-Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and must receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
-
 ## Reviewer lifecycle boundary
 Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
 The controlled automatic advisory procedure permits one automatic review sequence per pull request:
@@ -55,3 +53,14 @@ Implementation repairs to the reusable advisory-review runner belong to Verifica
 ### Validation parser alignment
 
 The governance audit's `Draft proof target` parser is aligned to the repository's canonical PR-body contract: level-2 or level-3 Markdown headings are accepted, including the established `### Draft proof target` form. This is validation implementation alignment, not a new authority layer.
+
+
+## Program-order and bounded parallel execution
+
+Product Law §15's chronological sequence is a program/release-gate ordering statement. It does not by itself prohibit bounded execution in separately owned development fields where Product Law already permits parallel work. Parallel work remains isolated by responsibility and does not create a second authority, bypass a release gate, or authorize promotion/completion claims outside the applicable Product Law, Masterplan, Issue, and human governance boundaries.
+
+This clarification belongs in Wiring as an execution-routing interpretation; it does not rewrite `Product_Law/PRODUCT_LAW.md`.
+
+## Current-slice authority consumption
+
+`Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.

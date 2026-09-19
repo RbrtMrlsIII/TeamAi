@@ -53,21 +53,15 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - `main` changes through governed PRs only.
 
 ### Model-review sequence discipline
+
+The advisory reviewer uses provider/model-native generation and reasoning controls rather than a TeamAi-imposed generation ceiling. TeamAi keeps only the structured evidence contract bounded: three concise items per section at 400 characters each, with authority-first packet selection. Provider HTTP 200, generation-limit truncation, unavailable routed-model provenance, and provider error payloads are terminal evidence states, not merge blockers; transport success, publication, provenance, completeness, and quality remain separate signals.
 Model-assisted advisory review is a bounded verification resource. The automatic path is one provider-consuming five-slot sequence per exact PR head: OpenRouter Free Router → 5 parallel credential-isolated slots → 2-second launch stagger, capped at an 8-second spread.
 The workflow run is the sequence boundary and structured terminal slot artifacts are the execution state. PR comments are publication/evidence only and are never read as orchestration state. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
 Each slot uses its dedicated credential alias, revalidates the original triggering head immediately before provider invocation, and fails closed on drift. Provider failure is terminal slot evidence and never authorizes secret substitution or replacement calls. Automatic provider failures are recorded in the structured slot artifact and do not become provider-success claims; the orchestration may complete once every slot reaches a terminal state, while sequence completion remains distinct from provider success. Automatic sequence runs serialize per PR so a duplicate lifecycle event cannot cancel a live exact-head sequence before its provider fan-out is recorded.
 
 
 ### Reviewer billing boundary
-The automatic advisory path uses openrouter/free for every slot with five distinct credential aliases. Each slot receives only its corresponding secret:
-| Slot | Credential | Requested route | Cost class |
-|---|---|---|---|
-| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free |
-Aliases are credential identifiers only. The selected model/provider is dynamic runtime evidence. Cost status and provider data-use terms remain separate concerns.
+The automatic advisory path uses the manifest-defined `openrouter/free` route and five credential-isolated slots. `.github/teamai/authority-manifest.yml` is the single source for slot identity, credential aliases, and launch timing; workflows and Skills consume or validate that registry rather than maintaining duplicate alias tables. Aliases identify credentials only. The selected model/provider is dynamic runtime evidence. Cost status and provider data-use terms remain separate concerns.
 
 
 ### Runtime-repair evidence boundary
@@ -134,3 +128,8 @@ The 3D world has no independent Product Law or merge authority. Its Tree Authori
 Governance Integrity must machine-check this structural record and execute the existing census synchronization contract against the full PR diff. Semantic tree/branch/division changes therefore cannot silently bypass Census reconciliation. Presentation-only proof modules remain outside Census synchronization only while they remain presentation-only and do not change semantic identity or structure.
 
 A passing structural audit establishes governance consistency only. It does not promote a tree, prove browser behavior, establish backend authority, satisfy C8/C9/C10, or authorize acceptance or merge.
+
+
+## Canonical current-slice consumption
+
+The current execution slice is owned exclusively by `Masterplan/NEXT_SLICES.md`. Policy and downstream validators/procedures must **consume that canonical current-slice record rather than hard-code a specific Issue number**. Historical Issue/PR identifiers may appear as evidence, but they do not become current execution authority merely by being mentioned here.
