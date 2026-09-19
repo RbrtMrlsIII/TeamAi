@@ -4,7 +4,7 @@
 
 ## Current Slice
 
-029 governance — generalize the advisory-review control plane to five credential-isolated OpenRouter Free Router slots
+TEAM-EXPERIENCE-029 — 029 governance: generalize the advisory-review control plane to five credential-isolated OpenRouter Free Router slots
 
 ## Capacity / authority reconciliation
 
@@ -12,7 +12,7 @@ The Guest World presents the full 10-seat machine capacity; authenticated state 
 
 ## Status
 
-IN PROGRESS — PR #388 / Issue #387 is the active replacement vehicle. #353 remains a non-production candidate. The advisory control plane is being reconciled to five parallel `openrouter/free` slots with five distinct credential aliases, no inter-slot barriers, exact-head guards, and runtime route provenance.
+IN PROGRESS — PR #388 / Issue #387 is the active replacement vehicle, continuing the post-#346 control-plane reconciliation. #353 remains a non-production candidate. The advisory control plane is being reconciled to five parallel `openrouter/free` slots with five distinct credential aliases, no inter-slot barriers, exact-head guards, and runtime route provenance.
 
 ## Objective
 
