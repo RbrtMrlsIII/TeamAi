@@ -67,7 +67,7 @@ Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`
 
 ## Current #386 verification boundary
 
-- Current PR: **#386**, Draft, exact head **`991e4955821bf7918a9c3d78eb475eaaa3c6ec79`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
+- Current PR: **#386**, Draft, exact head **`cbabe3403f2056f8ba91cdcd6e103802f6c56784`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
 - The collaborator `teamaiofficialph` review is historical evidence against head **`4b71bca13ae52eb15520412622d2ec9726297534`** and does not authorize the current head.
 - That review's two requested 8-seat fixes are verified closed on the follow-up head: active Frontend Experience now uses ten-seat presentation language, and Hero density/OVERHEAD_MAP now use the 1–10 `seatPopulationDensity` authority.
 - Fresh exact-head substantive CI is required for this head; the previous `e5f7b15` results are stale after this continuity-pointer commit. AI Advisory Review Sequence is lifecycle-skipped while #386 remains Draft. This is not human approval and does not authorize merge.
@@ -117,9 +117,9 @@ The #370 runtime execution did not justify weakening validation. Its provider st
 
 ## Model-assisted review
 The active automatic advisory sequence is:
-OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; each slot uses a distinct OpenRouter credential alias; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-The sequence starts only after substantive exact-head validators pass, writes one durable quota claim, and launches five parallel OpenRouter Free Router slots. There are no inter-slot timers or stage barriers. Each slot rechecks the original triggering head before provider invocation. Each successful provider call records the actual routed model and provider in its advisory comment. The sequence is complete only after every slot posts its exact-head marker.
+The sequence starts only after substantive exact-head validators pass, writes one durable quota claim, and launches five parallel OpenRouter Free Router slots with one distinct credential alias per slot. Each slot receives a distinct credential alias. There are no inter-slot timers or stage barriers. Each slot rechecks the original triggering head before provider invocation. Each successful provider call records the actual routed model and provider in its advisory comment. The sequence is complete only after every slot posts its exact-head marker.
 Manual later-head review uses /openrouter-free or /free-1 through /free-5. The legacy Nemotron-specific workflow is retained only as a compatibility dispatch surface and also routes through openrouter/free without model-specific approval. Model verdicts remain advisory and cannot create Product Law authority, merge authority, acceptance, or human review authorization.
 
 ### Historical automatic sequence evidence
