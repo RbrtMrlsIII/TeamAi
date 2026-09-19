@@ -299,7 +299,12 @@
     {
       "old": "4000-token advisory generation ceiling on exact-head review",
       "disposition": "REPLACED",
-      "new": "30000-token generation ceiling + low reasoning effort + compact structured review contract + explanatory terminal telemetry"
+      "new": "provider/model-native generation limits + bounded structured report contract + per-slot usage/error telemetry"
+    },
+    {
+      "old": "30000-token advisory generation ceiling + low reasoning effort",
+      "disposition": "REPLACED",
+      "new": "no TeamAi-imposed generation or reasoning ceiling; provider/model-native limits remain authoritative while TeamAi preserves bounded report structure and telemetry"
     }
   ],
   "active_reference_policy": {
@@ -319,16 +324,6 @@
   },
   "advisory_review": {
     "route": "openrouter/free",
-    "budget": {
-      "max_completion_tokens": 30000,
-      "reasoning": {
-        "effort": "low",
-        "exclude": true
-      },
-      "visible_output_target_tokens": 2500,
-      "max_findings_per_section": 3,
-      "max_item_chars": 400
-    },
     "packet": {
       "max_review_packet_chars": 260000,
       "max_governance_context_chars": 100000,
@@ -372,6 +367,11 @@
         "start_delay_seconds": 8,
         "manual_command": "/free-5"
       }
-    ]
+    ],
+    "output_contract": {
+      "max_findings_per_section": 3,
+      "max_item_chars": 400,
+      "selection_policy": "bounded structured report for PR comments; provider/model-native generation and reasoning limits are not overridden by TeamAi"
+    }
   }
 }
