@@ -14,7 +14,7 @@ const advisory=manifest.advisory_review || {};
 const advisorySlots=advisory.slots || [];
 const aliases=advisorySlots.map(slot=>slot.credential_alias);
 const retired=['1→2→2','150-second','2 minutes 30 seconds','one shared OpenRouter API key','comment-driven orchestration state','skills/governance/nemotron-copilot-review','.github/workflows/nemotron-copilot-review.yml','docs/TEAMAI_029_CURRENT_STATE_MAP.md'];
-assert.equal(advisory.route,'openrouter/free');
+assert.equal(advisory.route,'openrouter/free');assert.match(files.sequence,/cancel-in-progress:\s*true/);
 assert.equal(advisory.automatic?.slot_count,5);assert.equal(advisory.automatic?.launch_interval_seconds,2);assert.equal(advisory.automatic?.max_spread_seconds,8);assert.equal(advisory.automatic?.fail_fast,false);
 assert.deepEqual(advisorySlots.map(slot=>slot.slot),[1,2,3,4,5]);
 assert.deepEqual(advisorySlots.map(slot=>slot.start_delay_seconds),[0,2,4,6,8]);
