@@ -311,7 +311,7 @@ jobs:
             cat /tmp/changed-diff.txt
           } > /tmp/review.txt
           sed -E -i \
-            -e 's/(OPENROUTER_API_KEY|FIREBASE_[A-Z0-9_]+|SUPABASE_[A-Z0-9_]+|PAYPAL_[A-Z0-9_]+)[[:space:]]*[:=][[:space:]]*[^[:space:]"'"'"'`]+/\1=[REDACTED]/g' \
+            -e 's/(ADVISORY_API_KEY|FIREBASE_[A-Z0-9_]+|SUPABASE_[A-Z0-9_]+|PAYPAL_[A-Z0-9_]+)[[:space:]]*[:=][[:space:]]*[^[:space:]"'"'"'`]+/\1=[REDACTED]/g' \
             -e 's/(ghp_|github_pat_|sk-proj-|sk-or-v1-)[A-Za-z0-9._-]+/[REDACTED]/g' \
             /tmp/review.txt
           if (( $(wc -c < /tmp/review.txt) > MAX_PACKET )); then
@@ -351,7 +351,7 @@ jobs:
       - name: Ask reviewer model
         id: invoke_model
         env:
-          OPENROUTER_API_KEY: ${{ secrets.api_key }}
+          ADVISORY_API_KEY: ${{ secrets.api_key }}
           MODEL: openrouter/free
           CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           REVIEWER: ${{ inputs.reviewer }}
@@ -360,7 +360,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -n "$OPENROUTER_API_KEY"
+          test -n "$ADVISORY_API_KEY"
           python - "$CREDENTIAL_ALIAS" <<'PY'
           import json, sys
           from pathlib import Path
@@ -383,7 +383,7 @@ jobs:
           import urllib.request
           from pathlib import Path
 
-          api_key = os.environ['OPENROUTER_API_KEY']
+          api_key = os.environ['ADVISORY_API_KEY']
           model = os.environ['MODEL']
           reviewer = os.environ['REVIEWER']
           packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
