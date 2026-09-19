@@ -819,6 +819,11 @@ jobs:
 
           if runtime and post == 'success' and not failure_path.exists():
               outcome = 'SUCCEEDED'
+          elif failure_path.exists() and (
+              runtime.get('review_quality_status') == 'failed'
+              or diagnostic.startswith('REVIEW_CONTENT_QUALITY_FAILURE')
+          ):
+              outcome = 'REVIEW_QUALITY_FAILED'
           elif failure_path.exists():
               outcome = 'PROVIDER_FAILED'
           elif runtime:
