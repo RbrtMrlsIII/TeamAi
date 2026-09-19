@@ -84,6 +84,10 @@ assert.equal(existsSync(join(root, 'docs/archive/nemotron-copilot-review-workflo
 assert.equal(existsSync(join(root, 'docs/archive/nemotron-copilot-review-SKILL_legacy_2026-09-19.md')), true);
 
 assert.match(governance, /verify-advisory-control-plane\.mjs/);
+assert.match(policy, /quota boundary for the exact PR head/i);
+assert.match(policy, /later corrected PR head may establish one sequence/i);
+assert.doesNotMatch(policy, /even when the PR head later changes/);
+assert.match(skill, /same exact head never restarts/i);
 assert.doesNotMatch(governance, /one shared key/);
 
 console.log('Advisory control plane contract: PASS');

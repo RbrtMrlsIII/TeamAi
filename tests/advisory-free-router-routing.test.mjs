@@ -6,6 +6,8 @@ const read = (p) => readFileSync(p, 'utf8');
 const sequence = read('.github/workflows/ai-advisory-review-sequence.yml');
 const runner = read('.github/workflows/ai-advisory-review-runner.yml');
 const manual = read('.github/workflows/additional-ai-advisory-reviews.yml');
+const policy = read('POLICY.md');
+const skill = read('skills/governance/ai-advisory-review/SKILL.md');
 
 const aliases = [
   'OPENROUTER_API_KEY',
@@ -38,6 +40,14 @@ test('automatic sequence completion is terminal-outcome based and shell-safe', (
   assert.doesNotMatch(sequence, /grep -Fq "Reviewer slug: `openrouter-free-\$slot`"/);
   assert.ok(sequence.includes('job_name="openrouter_free ($slot, $expected_credential_alias) / review"'));
   assert.equal((sequence.match(/--arg marker "\$MARKER" --arg head "\$HEAD"/g) ?? []).length, 2);
+});
+
+test('exact-head sequence recovery is documented consistently with implementation', () => {
+  assert.match(policy, /quota boundary for the exact PR head/i);
+  assert.match(policy, /later corrected PR head may establish one sequence/i);
+  assert.doesNotMatch(policy, /even when the PR head later changes/);
+  assert.match(skill, /same exact head never restarts/i);
+  assert.match(skill, /later corrected head may establish one new automatic sequence/i);
 });
 
 test('reusable runner is route-locked and receives one credential alias', () => {
