@@ -216,6 +216,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [[ "$INVOCATION_CLASS" == "automatic" ]]; then
+            set +e
+            python - <<'PY'
+            python_rc=$?
+            set -e
+            if [[ -s /tmp/review.md ]]; then
+              echo 'review_ready=true' >> "$GITHUB_OUTPUT"
+            else
+              echo 'review_ready=false' >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
           python - <<'PY'
           import os
           from pathlib import Path
@@ -540,9 +552,6 @@ jobs:
           print(f'{reviewer} review request failed after {max_attempts} provider attempt(s). No review was posted.', file=sys.stderr)
           sys.exit(1)
           PY
-
-      - name: Post advisory review
-        id: post_review
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ inputs.pr_number }}
@@ -612,7 +621,7 @@ jobs:
           invoke = os.environ.get('INVOKE_OUTCOME', '')
           post = os.environ.get('POST_OUTCOME', '')
 
-          if runtime and post == 'success':
+          if runtime and post == 'success' and not failure_path.exists():
               outcome = 'SUCCEEDED'
           elif failure_path.exists():
               outcome = 'PROVIDER_FAILED'
