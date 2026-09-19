@@ -314,6 +314,22 @@
   },
   "advisory_review": {
     "route": "openrouter/free",
+    "budget": {
+      "max_completion_tokens": 30000,
+      "reasoning": {
+        "effort": "low",
+        "exclude": true
+      },
+      "visible_output_target_tokens": 2500,
+      "max_findings_per_section": 3,
+      "max_item_chars": 400
+    },
+    "packet": {
+      "max_review_packet_chars": 260000,
+      "max_governance_context_chars": 100000,
+      "max_diff_chars": 120000,
+      "selection_policy": "authority-first; include changed files and governing issue context; exclude unrelated field Skills unless the changed paths require them"
+    },
     "automatic": {
       "slot_count": 5,
       "launch_interval_seconds": 2,
