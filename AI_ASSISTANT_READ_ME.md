@@ -67,10 +67,10 @@ Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`
 
 ## Current #386 verification boundary
 
-- Current PR: **#386**, Draft, exact head **`e3f7178652b6ad3db134408beddec0a9c693db58`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
+- Current PR: **#386**, Draft, exact head **`e5f7b152e56853ac6e3f7d1a6684a81e0d367ebb`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
 - The collaborator `teamaiofficialph` review is historical evidence against head **`4b71bca13ae52eb15520412622d2ec9726297534`** and does not authorize the current head.
 - That review's two requested 8-seat fixes are verified closed on the follow-up head: active Frontend Experience now uses ten-seat presentation language, and Hero density/OVERHEAD_MAP now use the 1–10 `seatPopulationDensity` authority.
-- Current exact-head substantive CI is green; AI Advisory Review Sequence is lifecycle-skipped while #386 remains Draft. This is not human approval and does not authorize merge.
+- Current exact-head substantive CI is green at head `e5f7b152e56853ac6e3f7d1a6684a81e0d367ebb`; AI Advisory Review Sequence is lifecycle-skipped while #386 remains Draft. This is not human approval and does not authorize merge.
 - The current deep pass is checking active-document routing, stale session guidance, mirror governance, dead parser residue, and historical prototype relocation. Keep the PR Draft until independent re-review of the current head.
 
 ## Validation lifecycle guide
