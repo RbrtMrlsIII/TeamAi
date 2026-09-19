@@ -6,7 +6,7 @@ const root=process.cwd();
 const read=rel=>fs.readFileSync(path.join(root,rel),'utf8');
 const exists=rel=>fs.existsSync(path.join(root,rel));
 const must=rel=>assert.equal(exists(rel),true,`Missing required path: ${rel}`);
-const escapeRegExp=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\const must=rel=>assert.equal(exists(rel),true,`Missing required path: ${rel}`);');
+const escapeRegExp=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 const files={sequence:read('.github/workflows/ai-advisory-review-sequence.yml'),runner:read('.github/workflows/ai-advisory-review-runner.yml'),manual:read('.github/workflows/additional-ai-advisory-reviews.yml'),governance:read('.github/workflows/governance.yml'),policy:read('POLICY.md'),wiring:read('docs/SKILL_WIRING.md'),skill:read('skills/governance/ai-advisory-review/SKILL.md'),master:read('Masterplan/MASTERPLAN.md'),next:read('Masterplan/NEXT_SLICES.md'),session:read('AI_ASSISTANT_READ_ME.md'),productWiring:read('Product_Law/WIRING.md')};
 const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
