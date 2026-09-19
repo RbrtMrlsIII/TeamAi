@@ -380,7 +380,7 @@ jobs:
                   {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
               ],
               'temperature': 0.1,
-              'max_tokens': 2200,
+              'max_tokens': 4000,
               'provider': {'require_parameters': True},
               'plugins': [{'id': 'response-healing'}],
               'stream': False,
@@ -489,16 +489,30 @@ jobs:
                       'finish_reason': choices[0].get('finish_reason') if choices and isinstance(choices[0], dict) else None,
                       'content_present': isinstance(content, str) and bool(content.strip()),
                       'content_chars': len(content) if isinstance(content, str) else 0,
+                      'reasoning_chars': len(message.get('reasoning')) if isinstance(message, dict) and isinstance(message.get('reasoning'), str) else 0,
                       'refusal_present': bool(message.get('refusal')) if isinstance(message, dict) else False,
                       'tool_calls_present': bool(message.get('tool_calls')) if isinstance(message, dict) else False,
+                  }
+                  usage = data.get('usage') if isinstance(data, dict) and isinstance(data.get('usage'), dict) else {}
+                  completion_details = usage.get('completion_tokens_details') if isinstance(usage.get('completion_tokens_details'), dict) else {}
+                  usage_summary = {
+                      'prompt_tokens': usage.get('prompt_tokens') if isinstance(usage.get('prompt_tokens'), int) else None,
+                      'completion_tokens': usage.get('completion_tokens') if isinstance(usage.get('completion_tokens'), int) else None,
+                      'total_tokens': usage.get('total_tokens') if isinstance(usage.get('total_tokens'), int) else None,
+                      'reasoning_tokens': completion_details.get('reasoning_tokens') if isinstance(completion_details.get('reasoning_tokens'), int) else (usage.get('reasoning_tokens') if isinstance(usage.get('reasoning_tokens'), int) else None),
                   }
                   runtime_path = Path('/tmp/provider-runtime.json')
                   runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
                   runtime['response_shape'] = response_shape
+                  runtime['usage_summary'] = usage_summary
                   runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
                   if not isinstance(content, str) or not content.strip():
                       response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
-                      reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'
+                      finish_reason = choices[0].get('finish_reason') if choices and isinstance(choices[0], dict) else None
+                      if finish_reason == 'length':
+                          reason = f'PROVIDER_RESPONSE_TRUNCATED: HTTP {status} reached finish_reason=length before usable review content was produced; response_keys={response_keys}.'
+                      else:
+                          reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'
                       Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
                       print(f'{reviewer} {reason}', file=sys.stderr)
                       sys.exit(1)
