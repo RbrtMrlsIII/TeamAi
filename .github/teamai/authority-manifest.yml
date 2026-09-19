@@ -344,6 +344,11 @@
       "reviewer_must_not_invent_thresholds": true,
       "review_changed_paths_first": true
     },
+    "manual_final_review": {
+      "command": "/openrouter-free-all",
+      "slot_count": 5,
+      "purpose": "explicit provider-consuming review after PR editing has settled"
+    },
     "automatic": {
       "slot_count": 5,
       "launch_interval_seconds": 2,
