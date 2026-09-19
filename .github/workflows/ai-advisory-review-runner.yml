@@ -332,6 +332,7 @@ jobs:
             *" $CREDENTIAL_ALIAS "*) ;;
             *) echo "CREDENTIAL_ALIAS_CONFIGURATION_FAILURE: unsupported credential alias $CREDENTIAL_ALIAS" >&2; exit 1 ;;
           esac
+          set +e
           python - <<'PY'
           import json
           import os
@@ -552,6 +553,21 @@ jobs:
           print(f'{reviewer} review request failed after {max_attempts} provider attempt(s). No review was posted.', file=sys.stderr)
           sys.exit(1)
           PY
+          python_rc=$?
+          set -e
+          if [[ "$INVOCATION_CLASS" == "automatic" ]]; then
+            if [[ "$python_rc" -eq 0 && -s /tmp/review.md ]]; then
+              echo 'review_ready=true' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [[ -f /tmp/provider-failure.txt ]]; then
+              echo 'review_ready=false' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "AUTOMATIC_PROVIDER_STEP_FAILURE: reviewer runner exited $python_rc without a classified provider failure." >&2
+            exit "$python_rc"
+          fi
+          exit "$python_rc"
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ inputs.pr_number }}
