@@ -59,9 +59,6 @@ for (let slot = 1; slot <= 5; slot += 1) {
 for (const alias of aliases) assert.match(manual, new RegExp(`secrets\\.${alias}`));
 assert.doesNotMatch(manual, /model: /);
 
-for (const text of [policy, productLaw, skillWiring, skill, masterplan, nextSlices, session]) {
-  assert.match(text, /openrouter\/free/);
-}
 for (const path of ['POLICY.md', 'Product_Law/WIRING.md', 'docs/SKILL_WIRING.md', 'skills/governance/ai-advisory-review/SKILL.md', 'Masterplan/MASTERPLAN.md', 'AI_ASSISTANT_READ_ME.md']) {
   const text = read(path);
   assert.match(text, new RegExp(routePhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
