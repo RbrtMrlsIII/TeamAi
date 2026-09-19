@@ -306,12 +306,17 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
           MODEL: openrouter/free
           CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
+          ALLOWED_CREDENTIAL_ALIASES: OPENROUTER_API_KEY OPENROUTER_API_KEY_OPENAI OPENROUTER_API_KEY_POOLSIDE OPENROUTER_API_KEY_DEEPSEEK OPENROUTER_API_KEY_GWEN
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
         shell: bash
         run: |
           set -euo pipefail
           test -n "$OPENROUTER_API_KEY"
+          case " $ALLOWED_CREDENTIAL_ALIASES " in
+            *" $CREDENTIAL_ALIAS "*) ;;
+            *) echo "CREDENTIAL_ALIAS_CONFIGURATION_FAILURE: unsupported credential alias $CREDENTIAL_ALIAS" >&2; exit 1 ;;
+          esac
           python - <<'PY'
           import json
           import os
