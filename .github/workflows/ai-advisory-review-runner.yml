@@ -270,10 +270,6 @@ jobs:
               'docs/SKILL_WIRING.md',
               'skills/governance/ai-advisory-review/SKILL.md',
               'skills/governance/machine-builder/SKILL.md',
-              'skills/frontend/spatial/hierarchy-runtime/SKILL.md',
-              'skills/frontend/spatial/seat-shell-hierarchy/SKILL.md',
-              'skills/frontend/spatial/transition/SKILL.md',
-              'docs/TEAMAI_3D_HERO_TREE_CENSUS.md',
           ]
           budget = int(os.environ['MAX_CHARS'])
           chunks, used = [], 0
@@ -310,7 +306,7 @@ jobs:
           changed=Path('/tmp/changed-files.txt').read_text(encoding='utf-8').splitlines()
           diff_path=Path('/tmp/changed-diff.txt')
           diff=diff_path.read_text(encoding='utf-8')
-          max_diff=160000
+          max_diff=int(os.environ['MAX_DIFF_CHARS'])
           truncated=len(diff)>max_diff
           if truncated:
               diff_path.write_text(diff[:max_diff]+'\n[DIFF SECTION TRUNCATED BY DETERMINISTIC REVIEW-MANIFEST BOUND]\n',encoding='utf-8')
@@ -322,6 +318,7 @@ jobs:
               'evidence_files':['/tmp/execution-evidence.txt','/tmp/issue-context.txt'],
               'changed_path_count':len(changed),
               'diff_policy':{'format':'git diff --unified=40 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
+              'token_policy':{'max_completion_tokens':int(os.environ['ADVISORY_MAX_COMPLETION_TOKENS']),'reasoning_effort':os.environ['ADVISORY_REASONING_EFFORT'],'reasoning_excluded':os.environ['ADVISORY_REASONING_EXCLUDE']=='true','visible_output_target_tokens':int(os.environ['ADVISORY_VISIBLE_OUTPUT_TARGET_TOKENS']),'max_findings_per_section':int(os.environ['ADVISORY_MAX_FINDINGS']),'max_item_chars':int(os.environ['ADVISORY_MAX_ITEM_CHARS'])},
           }
           Path('/tmp/review-manifest.json').write_text(json.dumps(manifest,sort_keys=True,indent=2)+'\n',encoding='utf-8')
           PY
