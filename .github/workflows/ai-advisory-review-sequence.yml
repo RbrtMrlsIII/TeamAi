@@ -162,15 +162,13 @@ jobs:
           normalized.sort(key=lambda item:item['slot'])
           if [item['slot'] for item in normalized] != [1,2,3,4,5] or [item['start_delay_seconds'] for item in normalized] != [0,2,4,6,8]:
               raise SystemExit('Advisory slot order/delay drifted from the canonical 2-second cadence.')
-          print('matrix=' + json.dumps({'include':normalized}, separators=(',',':')))
-          print('matrix=' + json.dumps({'include':normalized}, separators=(',',':')) >> __import__('sys').stdout)
-          PY
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import json
-          from pathlib import Path
-          data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
-          slots=sorted(data['advisory_review']['slots'], key=lambda item:item['slot'])
-          print('matrix=' + json.dumps({'include':[{'slot':s['slot'],'credential_alias':s['credential_alias'],'start_delay_seconds':s['start_delay_seconds']} for s in slots]}, separators=(',',':')))
+          matrix=json.dumps({'include':normalized}, separators=(',',':'))
+          print('Resolved canonical advisory slot matrix: ' + matrix)
+          with open('/tmp/matrix.json','w',encoding='utf-8') as out:
+              out.write(matrix)
+          print('matrix=' + matrix)
+          with open(__import__('os').environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write('matrix=' + matrix + '\n')
           PY
 
   openrouter_free:
