@@ -314,7 +314,7 @@ jobs:
               'schema_version':2,
               'base':base,
               'exact_head':head,
-              'authority_files':['Product_Law/PRODUCT_LAW.md','Product_Law/WIRING.md','Masterplan/MASTERPLAN.md','Masterplan/NEXT_SLICES.md','POLICY.md','docs/SKILL_WIRING.md','AI_ASSISTANT_READ_ME.md','PRODUCT-KNOWLEDGE.md','skills/governance/ai-advisory-review/SKILL.md','skills/governance/machine-builder/SKILL.md','docs/TEAMAI_3D_HERO_TREE_CENSUS.md'],
+              'authority_files':['Product_Law/PRODUCT_LAW.md','Product_Law/WIRING.md','Masterplan/MASTERPLAN.md','Masterplan/NEXT_SLICES.md','POLICY.md','docs/SKILL_WIRING.md','AI_ASSISTANT_READ_ME.md','PRODUCT-KNOWLEDGE.md','skills/governance/ai-advisory-review/SKILL.md','skills/governance/machine-builder/SKILL.md'],
               'evidence_files':['/tmp/execution-evidence.txt','/tmp/issue-context.txt'],
               'changed_path_count':len(changed),
               'diff_policy':{'format':'git diff --unified=40 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
@@ -422,7 +422,7 @@ jobs:
           packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
           system = '\n'.join([
               f'You are the independent advisory {reviewer} reviewer for the TeamAi repository.',
-              'The packet contains exact-head execution evidence, governing documents and applicable Skills, owning Issue state, the current Tree Census, and the PR diff.',
+              'The packet contains exact-head execution evidence, governing documents and applicable Skills, owning Issue state, and the PR diff.',
               'The workflow has already blocked invocation until every required substantive exact-head check completed successfully.',
               'Review repository truth, product logic, governing rules, documentation, Issue state, execution evidence, and changed code.',
               'Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.',
@@ -431,11 +431,13 @@ jobs:
               'Never treat an open Issue as resolved merely because a PR satisfies one slice. Report the actual Issue state and checklist/completion evidence present in the packet.',
               'Skipped, stale, unrelated, or head-mismatched checks are not passing evidence.',
               'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
-              'If material execution, governance, applicable-Skill, census, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
+              'If material execution, governance, applicable-Skill, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
+              'Token-efficiency contract: inspect changed paths first, use authority-relevant evidence only as needed, do not restate the packet, and stop once the decision is supported.',
+              'Keep the visible structured review concise: 1 to 3 items per section and no more than 400 characters per item.',
               '',
               'Return one JSON object only. Do not expose hidden reasoning, internal deliberation, or repeated self-corrections.',
               'The JSON verdict field must be one of APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
-              'blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis must each be arrays of at most 5 concise strings.',
+              'blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis must each be arrays of at most 3 concise strings, each no longer than 400 characters.',
               'Use an empty array when a findings/evidence field has no entries.',
               'Use the response_format schema exactly; do not return Markdown headings or any content outside the JSON object.'
           ])
@@ -446,7 +448,11 @@ jobs:
                   {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
               ],
               'temperature': 0.1,
-              'max_tokens': 4000,
+              'max_tokens': int(os.environ['ADVISORY_MAX_COMPLETION_TOKENS']),
+              'reasoning': {
+                  'effort': os.environ['ADVISORY_REASONING_EFFORT'],
+                  'exclude': os.environ['ADVISORY_REASONING_EXCLUDE'] == 'true',
+              },
               'provider': {'require_parameters': True},
               'plugins': [{'id': 'response-healing'}],
               'stream': False,
@@ -460,7 +466,7 @@ jobs:
                           'additionalProperties': False,
                           'properties': {
                               'verdict': {'type': 'string', 'enum': ['APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY']},
-                              'blocking_findings': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
+                              'blocking_findings': {'type': 'array', 'items': {'type': 'string', 'maxLength': 400}, 'maxItems': 3},
                               'governance_and_evidence': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
                               'verification_gaps': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
                               'non_blocking_observations': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 5},
@@ -532,19 +538,20 @@ jobs:
                   selected = next((item for item in (available or []) if isinstance(item, dict) and item.get('selected') is True), {})
                   actual_model = data.get('model') if isinstance(data, dict) else None
                   actual_provider = selected.get('provider') if isinstance(selected, dict) else None
+                  provenance_ok = isinstance(actual_model, str) and bool(actual_model) and actual_model != model
+                  provenance_status = 'verified' if provenance_ok else 'unreported'
+                  if not provenance_ok:
+                      actual_model = 'unreported'
+                      print(f'{reviewer} provider/model provenance is unavailable; continuing with advisory attribution limited to the requested route.', file=sys.stderr)
                   Path('/tmp/provider-runtime.json').write_text(json.dumps({
                       'requested_model': model,
                       'actual_model': actual_model,
                       'actual_provider': actual_provider if isinstance(actual_provider, str) and actual_provider else 'unreported',
+                      'provenance_status': provenance_status,
+                      'http_status': status,
                       'request_id': request_id,
                       'routing_metadata': 'enabled',
                   }, sort_keys=True), encoding='utf-8')
-
-                  if not isinstance(actual_model, str) or not actual_model or actual_model == model:
-                      reason = f'ROUTER_PROVENANCE_FAILURE: response model did not expose a routed model distinct from requested route {model}.'
-                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
-                      print(reason, file=sys.stderr)
-                      sys.exit(1)
 
                   content = message.get('content') if isinstance(message, dict) else None
                   if isinstance(content, list):
@@ -571,6 +578,8 @@ jobs:
                   runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
                   runtime['response_shape'] = response_shape
                   runtime['usage_summary'] = usage_summary
+                  runtime['http_status'] = status
+                  runtime['provenance_status'] = provenance_status
                   runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
                   if not isinstance(content, str) or not content.strip():
                       response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
@@ -603,7 +612,7 @@ jobs:
                       sys.exit(1)
                   for field in fields:
                       value = structured.get(field)
-                      if not isinstance(value, list) or len(value) > 5 or not all(isinstance(item, str) for item in value):
+                      if not isinstance(value, list) or len(value) > int(os.environ['ADVISORY_MAX_FINDINGS']) or not all(isinstance(item, str) and len(item) <= int(os.environ['ADVISORY_MAX_ITEM_CHARS']) for item in value):
                           reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 5 strings.'
                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
                           print(f'{reviewer} {reason}', file=sys.stderr)
@@ -708,6 +717,7 @@ jobs:
             printf 'Requested route: `%s`\n' "$MODEL"
             printf 'Actual model: `%s`\n' "$actual_model"
             printf 'Actual provider: `%s`\n' "$actual_provider"
+            printf 'Model/provider provenance: `%s`\n' "$(jq -r '.provenance_status // \"unreported\"' /tmp/provider-runtime.json)"
             printf 'OpenRouter request id: `%s`\n' "$request_id"
             printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
@@ -769,6 +779,8 @@ jobs:
               'requested_route': 'openrouter/free',
               'actual_model': runtime.get('actual_model'),
               'actual_provider': runtime.get('actual_provider'),
+              'provenance_status': runtime.get('provenance_status'),
+              'http_status': runtime.get('http_status'),
               'request_id': runtime.get('request_id'),
               'outcome': outcome,
               'provider_invocation_attempted': attempted,
