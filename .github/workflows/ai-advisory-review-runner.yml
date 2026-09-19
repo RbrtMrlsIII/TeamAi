@@ -634,38 +634,38 @@ jobs:
                       Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
                       print(f'{reviewer} {reason}', file=sys.stderr)
                       sys.exit(1)
-                   for field in fields:
-                       value = structured.get(field)
-                       if not isinstance(value, list) or len(value) > int(os.environ['ADVISORY_MAX_FINDINGS']) or not all(isinstance(item, str) and len(item) <= int(os.environ['ADVISORY_MAX_ITEM_CHARS']) for item in value):
-                           reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 3 strings.'
-                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
-                           print(f'{reviewer} {reason}', file=sys.stderr)
-                           sys.exit(1)
-                   nonempty=lambda values: [item.strip() for item in values if isinstance(item, str) and item.strip()]
-                   evidence_items=nonempty(structured['governance_and_evidence'])
-                   basis_items=nonempty(structured['review_basis'])
-                   blocking_items=nonempty(structured['blocking_findings'])
-                   gap_items=nonempty(structured['verification_gaps'])
-                   quality_reason=None
-                   if len(evidence_items) < int(os.environ['ADVISORY_MIN_EVIDENCE_ITEMS']):
-                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: governance_and_evidence must contain at least one concrete statement.'
-                   elif len(basis_items) < int(os.environ['ADVISORY_MIN_REVIEW_BASIS_ITEMS']):
-                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: review_basis must contain at least one concrete statement.'
-                   elif verdict == 'CHANGES_REQUESTED' and os.environ.get('ADVISORY_CHANGES_REQUIRE_REASON') == 'true' and not (blocking_items or gap_items):
-                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: CHANGES_REQUESTED requires at least one blocking finding or verification gap.'
-                   elif verdict == 'APPROVE' and os.environ.get('ADVISORY_APPROVE_NO_GAPS') == 'true' and gap_items:
-                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: APPROVE cannot contain verification gaps.'
-                   runtime_path=Path('/tmp/provider-runtime.json')
-                   runtime=json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
-                   runtime['review_quality_status']='passed'
-                   if quality_reason:
-                       runtime['review_quality_status']='failed'
-                       runtime['review_quality_reason']=quality_reason
-                       runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
-                       Path('/tmp/provider-failure.txt').write_text(quality_reason, encoding='utf-8')
-                       print(f'{reviewer} {quality_reason}', file=sys.stderr)
-                       sys.exit(1)
-                   runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                  for field in fields:
+                      value = structured.get(field)
+                      if not isinstance(value, list) or len(value) > int(os.environ['ADVISORY_MAX_FINDINGS']) or not all(isinstance(item, str) and len(item) <= int(os.environ['ADVISORY_MAX_ITEM_CHARS']) for item in value):
+                          reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 3 strings.'
+                          Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                          print(f'{reviewer} {reason}', file=sys.stderr)
+                          sys.exit(1)
+                  nonempty=lambda values: [item.strip() for item in values if isinstance(item, str) and item.strip()]
+                  evidence_items=nonempty(structured['governance_and_evidence'])
+                  basis_items=nonempty(structured['review_basis'])
+                  blocking_items=nonempty(structured['blocking_findings'])
+                  gap_items=nonempty(structured['verification_gaps'])
+                  quality_reason=None
+                  if len(evidence_items) < int(os.environ['ADVISORY_MIN_EVIDENCE_ITEMS']):
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: governance_and_evidence must contain at least one concrete statement.'
+                  elif len(basis_items) < int(os.environ['ADVISORY_MIN_REVIEW_BASIS_ITEMS']):
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: review_basis must contain at least one concrete statement.'
+                  elif verdict == 'CHANGES_REQUESTED' and os.environ.get('ADVISORY_CHANGES_REQUIRE_REASON') == 'true' and not (blocking_items or gap_items):
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: CHANGES_REQUESTED requires at least one blocking finding or verification gap.'
+                  elif verdict == 'APPROVE' and os.environ.get('ADVISORY_APPROVE_NO_GAPS') == 'true' and gap_items:
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: APPROVE cannot contain verification gaps.'
+                  runtime_path=Path('/tmp/provider-runtime.json')
+                  runtime=json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+                  runtime['review_quality_status']='passed'
+                  if quality_reason:
+                      runtime['review_quality_status']='failed'
+                      runtime['review_quality_reason']=quality_reason
+                      runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                      Path('/tmp/provider-failure.txt').write_text(quality_reason, encoding='utf-8')
+                      print(f'{reviewer} {quality_reason}', file=sys.stderr)
+                      sys.exit(1)
+                  runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
 
                   def compact_items(items):
                       clean = [item.strip() for item in items if item.strip()]
