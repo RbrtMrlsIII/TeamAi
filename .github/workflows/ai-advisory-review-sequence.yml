@@ -180,6 +180,7 @@ jobs:
 
       - name: Build and publish execution evidence
         env:
+          GH_TOKEN: ${{ github.token }}
           HEAD: ${{ github.event.pull_request.head.sha }}
           PR: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
