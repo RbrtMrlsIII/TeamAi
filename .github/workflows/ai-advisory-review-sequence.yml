@@ -192,7 +192,7 @@ jobs:
           summary={'schema_version':1,'pr':pr,'exact_head':head,'slots':sorted(rows,key=lambda x:x['slot'])}
           open('/tmp/sequence-summary.json','w',encoding='utf-8').write(json.dumps(summary,sort_keys=True,indent=2)+'\n')
           PY
-          jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // \"-\") provider=\(.actual_provider // \"-\")"' /tmp/sequence-summary.json
+          jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // "-") provider=\(.actual_provider // "-")"' /tmp/sequence-summary.json
           cat > /tmp/complete-comment.md <<EOF
           # Automatic OpenRouter Free Advisory Execution Complete
 
