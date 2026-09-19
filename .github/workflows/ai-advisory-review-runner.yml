@@ -213,7 +213,7 @@ jobs:
             jq -r '.body // ""' /tmp/issue.json
           } > /tmp/issue-context.txt
 
-      - name: Resolve advisory budget and packet policy
+      - name: Resolve advisory output contract and packet policy
         shell: bash
         run: |
           set -euo pipefail
@@ -222,26 +222,15 @@ jobs:
           from pathlib import Path
           data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
           advisory=data.get('advisory_review') or {}
-          budget=advisory.get('budget') or {}
+          output_contract=advisory.get('output_contract') or {}
           packet=advisory.get('packet') or {}
-          if int(budget.get('max_completion_tokens',0)) < 30000:
-              raise SystemExit('Advisory max completion budget is below the governed 30000-token floor.')
-          reasoning=budget.get('reasoning') or {}
-          if reasoning.get('effort') not in {'low','minimal','none'}:
-              raise SystemExit('Advisory reasoning effort must be low, minimal, or none for token-efficient review.')
-          if reasoning.get('exclude') is not True:
-              raise SystemExit('Advisory reasoning exclusion must remain enabled.')
-          if int(budget.get('max_findings_per_section',0)) != 3:
+          if int(output_contract.get('max_findings_per_section',0)) != 3:
               raise SystemExit('Advisory review must cap each finding section at three items.')
-          if int(budget.get('max_item_chars',0)) != 400:
+          if int(output_contract.get('max_item_chars',0)) != 400:
               raise SystemExit('Advisory review item character budget drifted.')
           values={
-              'ADVISORY_MAX_COMPLETION_TOKENS': str(int(budget['max_completion_tokens'])),
-              'ADVISORY_REASONING_EFFORT': reasoning['effort'],
-              'ADVISORY_REASONING_EXCLUDE': 'true' if reasoning['exclude'] else 'false',
-              'ADVISORY_MAX_FINDINGS': str(int(budget['max_findings_per_section'])),
-              'ADVISORY_MAX_ITEM_CHARS': str(int(budget['max_item_chars'])),
-              'ADVISORY_VISIBLE_OUTPUT_TARGET_TOKENS': str(int(budget.get('visible_output_target_tokens',2500))),
+              'ADVISORY_MAX_FINDINGS': str(int(output_contract['max_findings_per_section'])),
+              'ADVISORY_MAX_ITEM_CHARS': str(int(output_contract['max_item_chars'])),
               'MAX_REVIEW_PACKET_CHARS': str(int(packet['max_review_packet_chars'])),
               'MAX_GOVERNANCE_CHARS': str(int(packet['max_governance_context_chars'])),
               'MAX_DIFF_CHARS': str(int(packet['max_diff_chars'])),
@@ -318,7 +307,8 @@ jobs:
               'evidence_files':['/tmp/execution-evidence.txt','/tmp/issue-context.txt'],
               'changed_path_count':len(changed),
               'diff_policy':{'format':'git diff --unified=40 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
-              'token_policy':{'max_completion_tokens':int(os.environ['ADVISORY_MAX_COMPLETION_TOKENS']),'reasoning_effort':os.environ['ADVISORY_REASONING_EFFORT'],'reasoning_excluded':os.environ['ADVISORY_REASONING_EXCLUDE']=='true','visible_output_target_tokens':int(os.environ['ADVISORY_VISIBLE_OUTPUT_TARGET_TOKENS']),'max_findings_per_section':int(os.environ['ADVISORY_MAX_FINDINGS']),'max_item_chars':int(os.environ['ADVISORY_MAX_ITEM_CHARS'])},
+              'generation_policy':{'owner':'provider/model','teamai_generation_ceiling':'unbounded_by_teamai','reasoning_control':'unbounded_by_teamai'},
+              'output_contract':{'max_findings_per_section':int(os.environ['ADVISORY_MAX_FINDINGS']),'max_item_chars':int(os.environ['ADVISORY_MAX_ITEM_CHARS'])},
           }
           Path('/tmp/review-manifest.json').write_text(json.dumps(manifest,sort_keys=True,indent=2)+'\n',encoding='utf-8')
           PY
@@ -448,11 +438,6 @@ jobs:
                   {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
               ],
               'temperature': 0.1,
-              'max_tokens': int(os.environ['ADVISORY_MAX_COMPLETION_TOKENS']),
-              'reasoning': {
-                  'effort': os.environ['ADVISORY_REASONING_EFFORT'],
-                  'exclude': os.environ['ADVISORY_REASONING_EXCLUDE'] == 'true',
-              },
               'provider': {'require_parameters': True},
               'plugins': [{'id': 'response-healing'}],
               'stream': False,
@@ -530,6 +515,39 @@ jobs:
                   data = {}
 
               if status is not None and 200 <= status < 300:
+                  provider_error = data.get('error') if isinstance(data, dict) else None
+                  if isinstance(provider_error, dict):
+                      error_metadata = provider_error.get('metadata') if isinstance(provider_error.get('metadata'), dict) else {}
+                      diagnostic = {
+                          'error_code': provider_error.get('code'),
+                          'error_type': provider_error.get('type'),
+                          'error_message': provider_error.get('message') or data.get('message'),
+                          'provider': error_metadata.get('provider_name'),
+                      }
+                      actual_model = data.get('model') if isinstance(data, dict) and isinstance(data.get('model'), str) else 'unreported'
+                      actual_provider = diagnostic.get('provider') or (data.get('provider') if isinstance(data.get('provider'), str) else 'unreported')
+                      provenance_status = 'verified' if actual_model and actual_model != model else 'unreported'
+                      runtime = {
+                          'requested_model': model,
+                          'actual_model': actual_model if provenance_status == 'verified' else 'unreported',
+                          'actual_provider': actual_provider,
+                          'provenance_status': provenance_status,
+                          'http_status': status,
+                          'request_id': request_id,
+                          'routing_metadata': 'enabled',
+                          'response_shape': {
+                              'choices_count': 0,
+                              'message_keys': [],
+                              'error_present': True,
+                              'error_keys': sorted(provider_error.keys()),
+                          },
+                          'usage_summary': {},
+                      }
+                      Path('/tmp/provider-runtime.json').write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                      reason = f'PROVIDER_RESPONSE_ERROR_PAYLOAD: HTTP {status} returned an error object: {json.dumps(diagnostic, sort_keys=True)}'
+                      Path('/tmp/provider-failure.txt').write_text(reason[:2000], encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
                   choices = data.get('choices') or [] if isinstance(data, dict) else []
                   message = choices[0].get('message') if choices and isinstance(choices[0], dict) else {}
                   metadata = data.get('openrouter_metadata') if isinstance(data, dict) else {}
