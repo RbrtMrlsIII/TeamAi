@@ -6,9 +6,9 @@
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 
 - main baseline: 6dc96ff929d1ea874afd3dc44cad9f95fa8096c8
-- replacement branch: rebuild/clean-mainline-20260919
+- replacement branch: governance/clean-mainline-rebuild-20260919
 - current slice: GOVERNANCE — clean canonical mainline reconstruction (Issue #389)
-- open implementation vehicles: #389 only
+- open implementation vehicles: PR #391 / Issue #389 only
 - source-only / do-not-execute: #388, #386, #385, #379
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
 - next allowed work: finish the clean control-plane/corpus/session audit and prove the replacement branch before new 029 product execution
