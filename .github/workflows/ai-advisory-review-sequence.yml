@@ -90,7 +90,19 @@ jobs:
             draft="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
             [[ "$current_head" == "$HEAD" ]] || { echo "PR head changed: $HEAD -> $current_head"; exit 1; }
             [[ "$draft" == "false" ]] || { echo "PR returned to Draft."; exit 1; }
-            checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100")"
+            checks=""
+            for attempt in 1 2 3 4 5; do
+              raw_checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100" 2>/tmp/check-runs-error || true)"
+              if printf '%s' "$raw_checks" | jq -e . >/tmp/check-runs.json 2>/tmp/check-runs-parse-error; then
+                checks="$(cat /tmp/check-runs.json)"
+                break
+              fi
+              echo "check-runs API response was not valid JSON on attempt $attempt; retrying."
+              if [[ -s /tmp/check-runs-error ]]; then cat /tmp/check-runs-error >&2; fi
+              if [[ -s /tmp/check-runs-parse-error ]]; then cat /tmp/check-runs-parse-error >&2; fi
+              sleep "$attempt"
+            done
+            [[ -n "$checks" ]] || { echo "CHECK_RUNS_API_FAILURE: unable to obtain valid check-runs JSON after 5 attempts."; exit 1; }
             pending=0; failed=0; missing=0
             for name in "${required[@]}"; do
               check="$(jq -c --arg name "$name" --arg head "$HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
