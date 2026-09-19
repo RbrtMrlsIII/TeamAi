@@ -53,7 +53,7 @@ permissions:
 
 concurrency:
   group: ai-review-runner-${{ inputs.reviewer_slug }}-${{ inputs.pr_number }}-${{ inputs.expected_head || 'manual' }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   MAX_REVIEW_CHARS: '12000'
@@ -234,6 +234,10 @@ jobs:
               'MAX_REVIEW_PACKET_CHARS': str(int(packet['max_review_packet_chars'])),
               'MAX_GOVERNANCE_CHARS': str(int(packet['max_governance_context_chars'])),
               'MAX_DIFF_CHARS': str(int(packet['max_diff_chars'])),
+               'ADVISORY_MIN_EVIDENCE_ITEMS': str(int((advisory.get('quality_contract') or {}).get('min_governance_and_evidence_items', 1))),
+               'ADVISORY_MIN_REVIEW_BASIS_ITEMS': str(int((advisory.get('quality_contract') or {}).get('min_review_basis_items', 1))),
+               'ADVISORY_CHANGES_REQUIRE_REASON': str(bool((advisory.get('quality_contract') or {}).get('changes_requested_requires_finding_or_gap', True))).lower(),
+               'ADVISORY_APPROVE_NO_GAPS': str(bool((advisory.get('quality_contract') or {}).get('approve_requires_no_verification_gaps', True))).lower(),
           }
           with open(os.environ['GITHUB_ENV'],'a',encoding='utf-8') as out:
               for key,value in values.items(): out.write(f'{key}={value}\n')
@@ -287,7 +291,7 @@ jobs:
           set -euo pipefail
           git diff --name-status "$BASE...$HEAD" > /tmp/changed-files.txt
           git diff --stat "$BASE...$HEAD" > /tmp/changed-stat.txt
-          git diff --unified=40 "$BASE...$HEAD" > /tmp/changed-diff.txt
+          git diff --unified=12 "$BASE...$HEAD" > /tmp/changed-diff.txt
           python - "$BASE" "$HEAD" <<'PY'
           import json, os
           from pathlib import Path
@@ -306,7 +310,7 @@ jobs:
               'authority_files':['Product_Law/PRODUCT_LAW.md','Product_Law/WIRING.md','Masterplan/MASTERPLAN.md','Masterplan/NEXT_SLICES.md','POLICY.md','docs/SKILL_WIRING.md','AI_ASSISTANT_READ_ME.md','PRODUCT-KNOWLEDGE.md','skills/governance/ai-advisory-review/SKILL.md','skills/governance/machine-builder/SKILL.md'],
               'evidence_files':['/tmp/execution-evidence.txt','/tmp/issue-context.txt'],
               'changed_path_count':len(changed),
-              'diff_policy':{'format':'git diff --unified=40 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
+              'diff_policy':{'format':'git diff --unified=12 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
               'generation_policy':{'owner':'provider/model','teamai_generation_ceiling':'unbounded_by_teamai','reasoning_control':'unbounded_by_teamai'},
               'output_contract':{'max_findings_per_section':int(os.environ['ADVISORY_MAX_FINDINGS']),'max_item_chars':int(os.environ['ADVISORY_MAX_ITEM_CHARS'])},
           }
@@ -428,7 +432,9 @@ jobs:
               'Return one JSON object only. Do not expose hidden reasoning, internal deliberation, or repeated self-corrections.',
               'The JSON verdict field must be one of APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
               'blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis must each be arrays of at most 3 concise strings, each no longer than 400 characters.',
-              'Use an empty array when a findings/evidence field has no entries.',
+               'Use an empty array only where the evidence is genuinely absent; governance_and_evidence and review_basis must each contain at least one concrete statement.',
+               'Never write a bare APPROVE with all evidence arrays empty. A published review must demonstrate what was inspected and why the verdict follows.',
+               'Do not claim diff or governing-context truncation unless review-manifest.json explicitly reports truncation or the packet contains a truncation marker.',
               'Use the response_format schema exactly; do not return Markdown headings or any content outside the JSON object.'
           ])
           payload = {
@@ -628,13 +634,38 @@ jobs:
                       Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
                       print(f'{reviewer} {reason}', file=sys.stderr)
                       sys.exit(1)
-                  for field in fields:
-                      value = structured.get(field)
-                      if not isinstance(value, list) or len(value) > int(os.environ['ADVISORY_MAX_FINDINGS']) or not all(isinstance(item, str) and len(item) <= int(os.environ['ADVISORY_MAX_ITEM_CHARS']) for item in value):
-                          reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 5 strings.'
-                          Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
-                          print(f'{reviewer} {reason}', file=sys.stderr)
-                          sys.exit(1)
+                   for field in fields:
+                       value = structured.get(field)
+                       if not isinstance(value, list) or len(value) > int(os.environ['ADVISORY_MAX_FINDINGS']) or not all(isinstance(item, str) and len(item) <= int(os.environ['ADVISORY_MAX_ITEM_CHARS']) for item in value):
+                           reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 3 strings.'
+                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                           print(f'{reviewer} {reason}', file=sys.stderr)
+                           sys.exit(1)
+                   nonempty=lambda values: [item.strip() for item in values if isinstance(item, str) and item.strip()]
+                   evidence_items=nonempty(structured['governance_and_evidence'])
+                   basis_items=nonempty(structured['review_basis'])
+                   blocking_items=nonempty(structured['blocking_findings'])
+                   gap_items=nonempty(structured['verification_gaps'])
+                   quality_reason=None
+                   if len(evidence_items) < int(os.environ['ADVISORY_MIN_EVIDENCE_ITEMS']):
+                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: governance_and_evidence must contain at least one concrete statement.'
+                   elif len(basis_items) < int(os.environ['ADVISORY_MIN_REVIEW_BASIS_ITEMS']):
+                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: review_basis must contain at least one concrete statement.'
+                   elif verdict == 'CHANGES_REQUESTED' and os.environ.get('ADVISORY_CHANGES_REQUIRE_REASON') == 'true' and not (blocking_items or gap_items):
+                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: CHANGES_REQUESTED requires at least one blocking finding or verification gap.'
+                   elif verdict == 'APPROVE' and os.environ.get('ADVISORY_APPROVE_NO_GAPS') == 'true' and gap_items:
+                       quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: APPROVE cannot contain verification gaps.'
+                   runtime_path=Path('/tmp/provider-runtime.json')
+                   runtime=json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+                   runtime['review_quality_status']='passed'
+                   if quality_reason:
+                       runtime['review_quality_status']='failed'
+                       runtime['review_quality_reason']=quality_reason
+                       runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                       Path('/tmp/provider-failure.txt').write_text(quality_reason, encoding='utf-8')
+                       print(f'{reviewer} {quality_reason}', file=sys.stderr)
+                       sys.exit(1)
+                   runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
 
                   def compact_items(items):
                       clean = [item.strip() for item in items if item.strip()]
@@ -800,11 +831,13 @@ jobs:
               'provenance_status': runtime.get('provenance_status'),
               'http_status': runtime.get('http_status'),
               'request_id': runtime.get('request_id'),
+               'review_quality_status': runtime.get('review_quality_status'),
               'outcome': outcome,
               'provider_invocation_attempted': attempted,
               'review_published': post == 'success',
               'response_shape': runtime.get('response_shape'),
               'usage_summary': runtime.get('usage_summary'),
+               'review_quality_reason': runtime.get('review_quality_reason'),
               'diagnostic': diagnostic[:2000],
           }
           Path('/tmp/slot-result.json').write_text(
