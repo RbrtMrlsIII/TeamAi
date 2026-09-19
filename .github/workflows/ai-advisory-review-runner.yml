@@ -7,12 +7,12 @@ on:
         description: Reviewer display name
         required: true
         type: string
-      reviewer_slug:
-        description: Stable reviewer identifier
+      credential_alias:
+        description: Non-secret credential alias used by this advisory slot
         required: true
         type: string
-      model:
-        description: OpenRouter model slug
+      reviewer_slug:
+        description: Stable reviewer identifier
         required: true
         type: string
       pr_number:
@@ -32,20 +32,10 @@ on:
         description: Reviewer-specific automatic marker
         required: true
         type: string
-      automatic_outcome_marker:
-        description: Durable terminal outcome marker for an automatic reviewer slot
-        required: false
-        default: '<!-- teamai-ai-review-slot-outcome -->'
-        type: string
       manual_marker:
         description: Reviewer-specific manual marker
         required: true
         type: string
-      approve:
-        description: Permit an explicitly authorized model approval, currently Nemotron-only
-        required: false
-        default: false
-        type: boolean
     secrets:
       api_key:
         required: true
@@ -199,10 +189,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          issue_number="$(grep -oE 'Issue #[0-9]+' /tmp/body | head -1 | grep -oE '[0-9]+' || true)"
+          issue_number="$(python - <<'PY'
+          import re
+          from pathlib import Path
+          body = Path('/tmp/body').read_text(encoding='utf-8')
+          match = re.search(r'(?im)^\s*(?:[-*]\s*)?(?:Owning|Governing)\s+Issue:\s*(?:\*\*)?#(\d+)', body)
+          print(match.group(1) if match else '')
+          PY
+          )"
           if [[ -z "$issue_number" ]]; then
-            printf '%s\n' '=== GOVERNING ISSUE ===' 'No explicit Issue reference was resolved from the PR body.' > /tmp/issue-context.txt
-            exit 0
+            echo 'PRE_PROVIDER_FAILURE: PR body must contain an explicit Owning Issue: #N or Governing Issue: #N field.' > /tmp/provider-failure.txt
+            exit 1
           fi
           gh api "repos/$REPO/issues/$issue_number" > /tmp/issue.json
           test -s /tmp/issue.json
@@ -230,7 +227,6 @@ jobs:
               'POLICY.md',
               'docs/SKILL_WIRING.md',
               'skills/governance/ai-advisory-review/SKILL.md',
-              'skills/governance/nemotron-copilot-review/SKILL.md',
               'skills/governance/machine-builder/SKILL.md',
               'skills/frontend/spatial/hierarchy-runtime/SKILL.md',
               'skills/frontend/spatial/seat-shell-hierarchy/SKILL.md',
@@ -310,13 +306,19 @@ jobs:
         id: invoke_model
         env:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
-          MODEL: ${{ inputs.model }}
+          MODEL: openrouter/free
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
+          ALLOWED_CREDENTIAL_ALIASES: OPENROUTER_API_KEY OPENROUTER_API_KEY_OPENAI OPENROUTER_API_KEY_POOLSIDE OPENROUTER_API_KEY_DEEPSEEK OPENROUTER_API_KEY_GWEN
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
         shell: bash
         run: |
           set -euo pipefail
           test -n "$OPENROUTER_API_KEY"
+          case " $ALLOWED_CREDENTIAL_ALIASES " in
+            *" $CREDENTIAL_ALIAS "*) ;;
+            *) echo "CREDENTIAL_ALIAS_CONFIGURATION_FAILURE: unsupported credential alias $CREDENTIAL_ALIAS" >&2; exit 1 ;;
+          esac
           python - <<'PY'
           import json
           import os
@@ -449,15 +451,14 @@ jobs:
 
                       def extract_section(source, heading):
                           match = re.search(
-                              rf'^## {re.escape(heading)}\s*$\n(.*?)(?=^## \S|\Z)',
+                              rf'^#{2,4}\s+{re.escape(heading)}\s*:?\s*$\n(.*?)(?=^#{2,4}\s+\S|\Z)',
                               source,
                               flags=re.MULTILINE | re.DOTALL,
                           )
-                          return match.group(1).strip() if match else ''
-
-                      sections = {name: extract_section(content, name) for name in section_names}
-                      verdict_lines = [line.strip() for line in sections['Verdict'].splitlines() if line.strip()]
-                      verdict = verdict_lines[0] if verdict_lines else ''
+                          if match:
+                              return match.group(1).strip()
+                          if heading == 'Verdict':
+                              inline = re.search(r'^\s*Verdict\s*:\s*(APPROVE|CHANGES_REQUESTED|ADVISORY_ONLY)\s*
                       if verdict not in allowed_verdicts:
                           reason = 'INVALID_REVIEW_FORMAT: missing or invalid Verdict section.'
                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
@@ -530,10 +531,10 @@ jobs:
           REPO: ${{ github.repository }}
           HEAD: ${{ steps.meta.outputs.head }}
           REVIEWER: ${{ inputs.reviewer }}
-          MODEL: ${{ inputs.model }}
+          MODEL: openrouter/free
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           INVOCATION: ${{ inputs.invocation_class }}
           AUTO_MARKER: ${{ inputs.automatic_marker }}
-          OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
           MANUAL_MARKER: ${{ inputs.manual_marker }}
         shell: bash
         run: |
@@ -553,7 +554,6 @@ jobs:
           if [[ "$INVOCATION" == "automatic" ]]; then marker="$AUTO_MARKER"; fi
           {
             echo "$marker"
-            if [[ "$INVOCATION" == "automatic" ]]; then echo "$OUTCOME_MARKER"; fi
             echo "# $REVIEWER Advisory Review"
             echo
             printf 'Requested route: `%s`\n' "$MODEL"
@@ -562,6 +562,7 @@ jobs:
             printf 'OpenRouter request id: `%s`\n' "$request_id"
             printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
+            printf 'Credential alias: `%s`\n' "$CREDENTIAL_ALIAS"
             if [[ "$INVOCATION" == "automatic" ]]; then echo 'Slot outcome: SUCCEEDED'; fi
             echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
             echo
@@ -569,80 +570,64 @@ jobs:
           } > /tmp/comment.md
           gh pr comment "$PR" --repo "$REPO" --body-file /tmp/comment.md
 
-      - name: Publish durable automatic slot outcome
+      - name: Write terminal automatic slot artifact
         if: always() && inputs.invocation_class == 'automatic'
         env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ inputs.pr_number }}
-          REPO: ${{ github.repository }}
-          HEAD: ${{ steps.meta.outputs.head }}
-          OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
+          HEAD: ${{ inputs.expected_head }}
           REVIEWER: ${{ inputs.reviewer }}
           REVIEWER_SLUG: ${{ inputs.reviewer_slug }}
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           INVOKE_OUTCOME: ${{ steps.invoke_model.outcome }}
           POST_OUTCOME: ${{ steps.post_review.outcome }}
         shell: bash
         run: |
           set -euo pipefail
-          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          if jq -e --arg marker "$OUTCOME_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-            echo "Durable slot outcome already recorded for $REVIEWER on exact head $HEAD."
-            exit 0
-          fi
+          python - <<'PY'
+                    import json, os
+                    from pathlib import Path
+                    attempted = Path('/tmp/provider-attempted.json').exists()
+                    runtime_path = Path('/tmp/provider-runtime.json')
+                    runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+                    failure_path = Path('/tmp/provider-failure.txt')
+                    diagnostic = failure_path.read_text(encoding='utf-8').strip() if failure_path.exists() else ''
+                    invoke = os.environ.get('INVOKE_OUTCOME', '')
+                    post = os.environ.get('POST_OUTCOME', '')
+                    if runtime and post == 'success':
+                        outcome = 'SUCCEEDED'
+                    elif runtime:
+                        outcome = 'REVIEW_POST_FAILED'
+                        diagnostic = diagnostic or 'Provider response was obtained, but the advisory review could not be posted.'
+                    elif attempted:
+                        outcome = 'PROVIDER_FAILED'
+                    else:
+                        outcome = 'PRE_PROVIDER_FAILURE'
+                        diagnostic = diagnostic or ('Provider invocation was not reached; review step outcome=' + (invoke or 'not-started'))
+                    tail = os.environ['REVIEWER_SLUG'].rsplit('-', 1)[-1]
+                    slot = int(tail) if tail.isdigit() else None
+                    record = {
+                        'schema_version': 1,
+                        'slot': slot,
+                        'reviewer': os.environ['REVIEWER'],
+                        'reviewer_slug': os.environ['REVIEWER_SLUG'],
+                        'credential_alias': os.environ['CREDENTIAL_ALIAS'],
+                        'expected_head': os.environ.get('HEAD', ''),
+                        'requested_route': 'openrouter/free',
+                        'actual_model': runtime.get('actual_model'),
+                        'actual_provider': runtime.get('actual_provider'),
+                        'request_id': runtime.get('request_id'),
+                        'outcome': outcome,
+                        'provider_invocation_attempted': attempted,
+                        'review_published': post == 'success',
+                        'diagnostic': diagnostic[:2000],
+                    }
+                    Path('/tmp/slot-result.json').write_text(json.dumps(record, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+          PY
 
-          state="PRE_PROVIDER_FAILURE"
-          attempted="false"
-          if [[ -f /tmp/provider-attempted.json ]]; then
-            attempted="true"
-          fi
-          if [[ -f /tmp/provider-runtime.json && "$POST_OUTCOME" == "success" ]]; then
-            state="SUCCEEDED"
-          elif [[ -f /tmp/provider-runtime.json ]]; then
-            state="REVIEW_POST_FAILED"
-          elif [[ "$attempted" == "true" ]]; then
-            state="PROVIDER_FAILED"
-          fi
-
-          reason="No additional diagnostic was recorded."
-          if [[ -f /tmp/provider-failure.txt ]]; then
-            reason="$(cat /tmp/provider-failure.txt)"
-          elif [[ "$state" == "PRE_PROVIDER_FAILURE" && "$INVOKE_OUTCOME" != "success" ]]; then
-            reason="Provider invocation was not reached; the reusable review job failed before the external request stage."
-          elif [[ "$state" == "REVIEW_POST_FAILED" ]]; then
-            reason="Provider response was obtained, but the advisory review could not be posted."
-          fi
-
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s' \
-            "$OUTCOME_MARKER" \
-            "# Automatic AI Advisory Slot Outcome" \
-            "Reviewer: \`$REVIEWER\`" \
-            "Reviewer slug: \`$REVIEWER_SLUG\`" \
-            "Exact PR head: \`$HEAD\`" \
-            "Slot outcome: $state" \
-            "Provider invocation attempted: $attempted" \
-            "Diagnostic: $reason")"
-          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-
-      - name: Optional model approval
-        if: inputs.approve == true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ inputs.pr_number }}
-          REPO: ${{ github.repository }}
-          HEAD: ${{ steps.meta.outputs.head }}
-          REVIEWER: ${{ inputs.reviewer }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          [[ "$REVIEWER" == 'Nemotron' ]] || {
-            echo 'Model approval is restricted to the explicitly authorized Nemotron path.'
-            exit 1
-          }
-          if grep -q '^## Verdict$' /tmp/review.md && grep -q '^APPROVE$' /tmp/review.md; then
-            gh api --method POST "repos/$REPO/pulls/$PR/reviews" \
-              -f body="Nemotron Copilot Review: APPROVE. Exact head $HEAD. Model-generated advisory review only; TeamAi review-readiness requires separate human authorization." \
-              -f event='APPROVE'
-          else
-            echo 'Reviewer did not return APPROVE; no model approval submitted.'
-            exit 1
-          fi
+      - name: Upload terminal automatic slot artifact
+        if: always() && inputs.invocation_class == 'automatic'
+        uses: actions/upload-artifact@v4
+        with:
+          name: teamai-advisory-slot-${{ inputs.reviewer_slug }}
+          path: /tmp/slot-result.json
+          if-no-files-found: error
+          retention-days: 14

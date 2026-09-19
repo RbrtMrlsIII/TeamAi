@@ -53,21 +53,22 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - `main` changes through governed PRs only.
 
 ### Model-review sequence discipline
-Model-assisted advisory review is treated as a bounded verification resource. The automatic path is one ordered five-slot sequence per PR:
-OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
-Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-There is no inter-slot wait, cohort barrier, or named-model dependency. After the first eligible non-draft opened, reopened, or ready_for_review event passes the substantive exact-head validation gate, five independent OpenRouter Free Router jobs start in parallel against the same original triggering head. A provider failure is execution evidence for that slot and does not authorize secret substitution, retry through another slot, or a second automatic sequence.
-The durable sequence-claim marker is the quota boundary for the PR. synchronize and reopen events cannot create another automatic sequence after a prior claim exists, even when the PR head later changes. Draft PRs consume no automatic model calls. Each slot revalidates the original head before invocation and fails closed on a head change.
+Model-assisted advisory review is a bounded verification resource. The automatic path is one provider-consuming five-slot sequence per exact PR head: OpenRouter Free Router → 5 parallel credential-isolated slots → no inter-slot interval.
+The workflow run is the sequence boundary and structured terminal slot artifacts are the execution state. PR comments are publication/evidence only and are never read as orchestration state. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
+Each slot uses its dedicated credential alias, revalidates the original triggering head immediately before provider invocation, and fails closed on drift. Provider failure is terminal slot evidence and never authorizes secret substitution or replacement calls.
+
 
 ### Reviewer billing boundary
-The automatic advisory path uses the OpenRouter Free Models Router for every automatic slot. The request route is openrouter/free and the actual routed model is captured from the OpenRouter response. The active automatic configuration uses one OpenRouter API key for all five slots, bounded to at most five provider HTTP requests per automatic sequence.
+The automatic advisory path uses openrouter/free for every slot with five distinct credential aliases. Each slot receives only its corresponding secret:
 | Slot | Credential | Requested route | Cost class |
+|---|---|---|---|
 | OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free |
-OpenRouter currently documents openrouter/free as a zero-priced router that selects among available free models. Free-account usage is rate-limited, so the five-request sequence remains explicitly quota-bounded. Cost status and provider data-use terms remain separate concerns.
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free |
+Aliases are credential identifiers only. The selected model/provider is dynamic runtime evidence. Cost status and provider data-use terms remain separate concerns.
+
 
 ### Runtime-repair evidence boundary
 
@@ -109,8 +110,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 ## Model-assisted review
 The shared AI Advisory Review Skill plus the automatic OpenRouter Free Router sequence are advisory verification aids. They may inspect an exact PR diff and post model-generated findings. They do not create authority, replace required CI, replace human review, or upgrade a claim from verified to accepted. Before automatic invocation, the reviewer gate waits for the required substantive exact-head validator check-runs to complete successfully. Each automatic sequence then fans out to five parallel OpenRouter Free Router slots, records the actual routed model/provider for each successful call, and waits for all five slot jobs to reach terminal workflow state before evaluating sequence completion.
-The automatic sequence is synchronized across ai-advisory-review-sequence.yml, this Policy, docs/SKILL_WIRING.md, skills/governance/ai-advisory-review/SKILL.md, Masterplan/MASTERPLAN.md, Masterplan/NEXT_SLICES.md, Product_Law/WIRING.md, and AI_ASSISTANT_READ_ME.md. Drift in the five-slot fan-out, free-router route, quota boundary, actual-route evidence requirement, or no-interval invariant must fail validation rather than being silently normalized.
-A passing test proves only the contract it exercises. Deployment, browser output, screenshots, CI, and model analysis are evidence and do not independently change product authority.
+The automatic advisory sequence is synchronized across the active workflow, Policy, Skill wiring, advisory Skill, Masterplan, current slice, Product Law wiring, and session snapshot. The canonical structural validator enforces five aliases, the fixed openrouter/free route, no model-specific approval inputs, artifact-backed terminal state, and retired-surface removal. A passing test proves only the contract it exercises. Deployment, browser output, screenshots, CI, and model analysis are evidence and do not independently change product authority.
 
 ## Evidence discipline
 

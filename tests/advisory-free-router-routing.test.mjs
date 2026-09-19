@@ -1,57 +1,21 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-
-const read = (p) => readFileSync(p, 'utf8');
-const sequence = read('.github/workflows/ai-advisory-review-sequence.yml');
-const runner = read('.github/workflows/ai-advisory-review-runner.yml');
-const manual = read('.github/workflows/additional-ai-advisory-reviews.yml');
-const legacy = read('.github/workflows/nemotron-copilot-review.yml');
-
-test('automatic advisory routing uses five parallel OpenRouter Free Router slots', () => {
-  assert.match(sequence, /strategy:\s*\n\s*fail-fast: false\s*\n\s*matrix:\s*\n\s*slot: \[1, 2, 3, 4, 5\]/);
-  assert.equal((sequence.match(/model: openrouter\/free/g) || []).length, 1);
-  assert.match(sequence, /reviewer: OpenRouter Free Slot \$\{\{ matrix\.slot \}\}/);
-  assert.match(sequence, /reviewer_slug: openrouter-free-\$\{\{ matrix\.slot \}\}/);
-  assert.match(sequence, /api_key: \$\{\{ secrets\.OPENROUTER_API_KEY \}\}/);
-  assert.match(sequence, /automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-\$\{\{ matrix\.slot \}\}-outcome -->/);
-  assert.doesNotMatch(sequence, /automatic_start_marker|REVIEW_INTERVAL_SECONDS|delay_to_second_stage|delay_to_third_stage|2 minutes 30 seconds|150-second/);
-  assert.match(sequence, /State: CLAIMED.*Provider budget/);
-});
-
-test('automatic sequence remains one-shot and completion accepts terminal success/failure slot outcomes', () => {
-  assert.match(sequence, /An automatic sequence claim already exists for PR #\$PR/);
-  assert.match(sequence, /SEQUENCE_COMPLETE_MARKER/);
-  assert.match(sequence, /repos\/\$REPO\/actions\/runs\/\$GITHUB_RUN_ID\/jobs/);
-  assert.match(sequence, /conclusion.*success.*failure/);
-  assert.match(sequence, /Five parallel OpenRouter Free Router slots reached terminal execution outcomes/);
-  assert.match(sequence, /outcome_marker/);
-  assert.match(sequence, /Slot outcome: SUCCEEDED/);
-  assert.match(sequence, /SUCCEEDED\|PROVIDER_FAILED\|REVIEW_POST_FAILED\|PRE_PROVIDER_FAILURE/);
-  assert.match(sequence, /successful slot \$slot workflow job must publish Slot outcome: SUCCEEDED/);
-  assert.match(sequence, /failed slot \$slot workflow job cannot publish Slot outcome: SUCCEEDED/);
-  assert.match(sequence, /github-actions\[bot\]/);
-  assert.equal((sequence.match(/for slot in 1 2 3 4 5/g) || []).length, 1);
-});
-
-test('runner records the actual routed model and provider instead of requested router identity', () => {
-  assert.match(runner, /X-OpenRouter-Metadata/);
-  assert.match(runner, /actual_model = data\.get\('model'\)/);
-  assert.match(runner, /openrouter_metadata/);
-  assert.match(runner, /actual_provider/);
-  assert.match(runner, /Actual model/);
-  assert.match(runner, /Actual provider/);
-  assert.match(runner, /MAX_REVIEW_CHARS/);
-  assert.match(runner, /max_tokens': 2200/);
-  assert.match(runner, /Return only the following compact review structure/);
-  assert.match(runner, /hidden reasoning, internal deliberation/);
-  assert.match(runner, /Publish durable automatic slot outcome/);
-  assert.match(runner, /PROVIDER_RESPONSE_FAILURE|PROVIDER_HTTP_FAILURE|PROVIDER_TRANSPORT_FAILURE/);
-  assert.doesNotMatch(runner, /Reserve automatic provider invocation slot|automatic_start_marker/);
-});
-
-test('manual reviewer paths use OpenRouter Free Router without model-specific approval', () => {
-  assert.equal((manual.match(/model: openrouter\/free/g) || []).length, 1);
-  assert.equal((legacy.match(/model: openrouter\/free/g) || []).length, 1);
-  assert.doesNotMatch(legacy, /nvidia\/nemotron|approve:.*true/);
-});
+import fs from 'node:fs';
+import path from 'node:path';
+import test from 'node:test';
+const root=process.cwd();
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const sequence=read('.github/workflows/ai-advisory-review-sequence.yml');
+const runner=read('.github/workflows/ai-advisory-review-runner.yml');
+const manual=read('.github/workflows/additional-ai-advisory-reviews.yml');
+const policy=read('POLICY.md');
+const wiring=read('docs/SKILL_WIRING.md');
+const skill=read('skills/governance/ai-advisory-review/SKILL.md');
+const next=read('Masterplan/NEXT_SLICES.md');
+const session=read('AI_ASSISTANT_READ_ME.md');
+const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
+test('automatic fan-out uses five dedicated credential aliases',()=>{for(const alias of aliases) assert.match(sequence,new RegExp('credential_alias:\\s*'+alias));assert.match(sequence,/secrets\[matrix\.credential_alias\]/);assert.doesNotMatch(sequence,/model:\s*openrouter\/free/);assert.doesNotMatch(sequence,/secrets\.OPENROUTER_API_KEY \}\}/);assert.doesNotMatch(sequence,/issues\/\$PR\/comments/);});
+test('runner hard-locks route without model-specific approval inputs',()=>{assert.match(runner,/MODEL:\s*openrouter\/free/);assert.doesNotMatch(runner,/^\s+model:\s*$/m);assert.doesNotMatch(runner,/approve:/i);assert.match(runner,/actions\/upload-artifact@v4/);assert.doesNotMatch(runner,/automatic_outcome_marker/);});
+test('manual slots map to distinct aliases',()=>{for(const alias of aliases) assert.match(manual,new RegExp('credential_alias:\\s*'+alias));});
+test('active governance surfaces teach no retired advisory topology',()=>{for(const text of [sequence,runner,manual,policy,wiring,skill,next,session]) for(const token of ['1→2→2','150-second','one shared OpenRouter API key','comment-driven orchestration state','skills/governance/nemotron-copilot-review']) assert.doesNotMatch(text,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'));});
+test('retired files are archived, not active',()=>{assert.equal(fs.existsSync(path.join(root,'docs/TEAMAI_029_CURRENT_STATE_MAP.md')),false);assert.equal(fs.existsSync(path.join(root,'.github/workflows/nemotron-copilot-review.yml')),false);assert.equal(fs.existsSync(path.join(root,'skills/governance/nemotron-copilot-review/SKILL.md')),false);assert.equal(fs.existsSync(path.join(root,'docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md')),true);});
+test('session snapshot and current slice are explicit',()=>{assert.match(session,/## SESSION SNAPSHOT/);assert.match(session,/replacement branch: rebuild\/clean-mainline-20260919/);assert.match(session,/open implementation vehicles: #389 only/);assert.match(next,/GOVERNANCE — clean canonical mainline reconstruction \(Issue #389\)/);});

@@ -39,3 +39,9 @@ Other historical material remains in its existing archive strata, including `doc
 - Do not create or revive `OBSOLETE_FILES.md`.
 - Do not create another active roadmap, current-state index, handover manual, Endorsement file, or governance constitution.
 - When a new truth supersedes an active document, update the active owner and preserve the previous record historically rather than editing history into compliance.
+
+## 2026-09-19 clean-mainline reconstruction history
+
+- TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md — former active recovery/current-state index; current session state now belongs to AI_ASSISTANT_READ_ME.md.
+- nemotron-copilot-review-workflow_legacy_2026-09-19.yml — former model-specific compatibility workflow; historical evidence only.
+- nemotron-copilot-review-SKILL_legacy_2026-09-19.md — former model-specific review procedure; historical evidence only.

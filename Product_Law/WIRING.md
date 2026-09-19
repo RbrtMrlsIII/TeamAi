@@ -46,7 +46,7 @@ Model-assisted review is part of Verification & CI/Browser only. A model review 
 The controlled automatic advisory procedure permits one automatic review sequence per pull request:
 OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-Five OpenRouter Free Router slots start concurrently after the substantive exact-head gate. The durable sequence claim freezes the one-sequence quota, synchronize/reopen events do not restart it, and each slot fails closed if the original triggering head changes. Completion is recognized only after all five slot outputs are recorded against that exact head.
+Five OpenRouter Free Router slots start concurrently after the substantive exact-head gate. The durable sequence claim freezes the one-sequence quota, synchronize/reopen events do not restart it, and each slot fails closed if the original triggering head changes. Completion is recognized only after five structured terminal slot artifacts are recorded against that exact head.
 The requested route is openrouter/free. The actual routed model/provider returned by OpenRouter is runtime evidence and is recorded per successful slot. This operational routing does not create Product Law identities. review-readiness remains the separate human promotion/authorization gate.
 
 ## Reviewer runner repair boundary

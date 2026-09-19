@@ -30,7 +30,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 - Machine builder: `skills/governance/machine-builder/SKILL.md`
 - Learning/session continuity: `skills/governance/learning-handover/SKILL.md`
 - Shared model-assisted PR review: `skills/governance/ai-advisory-review/SKILL.md`
-- Nemotron-specific review/approval boundary: `skills/governance/nemotron-copilot-review/SKILL.md`
+- former model-specific-specific review/approval boundary: `skills/governance/former model-specific-copilot-review/SKILL.md`
 
 Governance Skills are procedures only. They cannot authorize an action outside Product Law, Policy, repository permissions, or the owning Issue/PR contract.
 
