@@ -29,7 +29,6 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - `skills/governance/repository-synchronization/SKILL.md`
 - `skills/governance/machine-builder/SKILL.md`
 - `skills/governance/ai-advisory-review/SKILL.md`
-- `skills/governance/nemotron-copilot-review/SKILL.md`
 - applicable spatial hierarchy/transition/responsive/accessibility Skills
 - Issue #133
 - Issue #278
