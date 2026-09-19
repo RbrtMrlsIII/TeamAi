@@ -40,6 +40,9 @@ test('automatic sequence completion is terminal-outcome based and shell-safe', (
 
 test('reusable runner is route-locked and receives one credential alias', () => {
   assert.match(runner, /credential_alias:/);
+  for (const alias of aliases) assert.match(runner, new RegExp(alias));
+  assert.match(runner, /ALLOWED_CREDENTIAL_ALIASES/);
+  assert.match(runner, /CREDENTIAL_ALIAS_CONFIGURATION_FAILURE/);
   assert.match(runner, /MODEL: openrouter\/free/);
   assert.doesNotMatch(runner, /inputs\.model/);
   assert.doesNotMatch(runner, /approve:/);
