@@ -40,7 +40,7 @@ Green CI is evidence, not automatic promotion. Product acceptance is a separate 
 
 ### AI advisory token efficiency
 
-The recorded reviewer experiment consumed roughly 67k to 71k prompt tokens for each reviewer. With a 4,000-token generation ceiling, three of five HTTP-200 responses ended at `finish_reason=length` before a structured review was emitted. OpenRouter currently documents a 200,000-token context window for `openrouter/free`, but context capacity is not an output guarantee. The durable pattern is: use a generous generation ceiling for resilience, constrain reasoning effort, bound visible structured output, select packet content by authority relevance, and preserve per-slot usage, finish, HTTP-status, and provenance telemetry. Workflow success and published-review count must remain separate signals.
+The recorded reviewer experiments show three important facts: a 4,000-token generation ceiling caused repeated `finish_reason=length` responses; a 30,000-token ceiling still did not guarantee completion; and the first three completed slots of the uncapped exact-head experiment ended naturally with `finish_reason=stop` while consuming materially different reasoning/completion amounts. Because `openrouter/free` dynamically routes across heterogeneous free models, a fixed TeamAi generation or reasoning ceiling is not a durable invariant. The durable pattern is: keep generation/reasoning provider-native, bound only the structured report contract and packet safety, select context by authority relevance, and preserve per-slot usage, finish, HTTP-status, provenance, provider-error, and publication telemetry. Workflow success and published-review count must remain separate signals.
 
 ## Anti-patterns
 
