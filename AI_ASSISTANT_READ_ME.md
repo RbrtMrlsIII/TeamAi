@@ -67,11 +67,11 @@ Do not use Vercel URLs, retired `/spatial/` routes, guessed `/3d/`, `/3d-world/`
 
 ## Current #386 verification boundary
 
-- Current PR: **#386**, Draft, exact head **`cbabe3403f2056f8ba91cdcd6e103802f6c56784`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
+- Current PR: **#388**, Draft, exact head **`0b2b909c7a3786d5996f6409b9ed71d13c4bcb81`**, based directly on current `main` **`6dc96ff929d1ea874afd3dc44cad9f95fa8096c8`**.
 - The collaborator `teamaiofficialph` review is historical evidence against head **`4b71bca13ae52eb15520412622d2ec9726297534`** and does not authorize the current head.
 - That review's two requested 8-seat fixes are verified closed on the follow-up head: active Frontend Experience now uses ten-seat presentation language, and Hero density/OVERHEAD_MAP now use the 1–10 `seatPopulationDensity` authority.
 - Fresh exact-head substantive CI is required for this head; the previous `e5f7b15` results are stale after this continuity-pointer commit. AI Advisory Review Sequence is lifecycle-skipped while #386 remains Draft. This is not human approval and does not authorize merge.
-- This control-plane reconstruction is being carried by a fresh replacement vehicle because #386's automatic sequence claim was already consumed. Keep #386 Draft and do not solicit human review until the replacement vehicle's automatic five-key sequence completes cleanly.
+- This control-plane reconstruction is being carried by fresh replacement PR #388 because #386's automatic sequence claim was already consumed. Keep #386 Draft and do not solicit human review until the replacement vehicle's automatic five-key sequence completes cleanly.
 
 ## Validation lifecycle guide
 
