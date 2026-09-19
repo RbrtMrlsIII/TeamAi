@@ -22,102 +22,95 @@ permissions:
   actions: read
 
 jobs:
-  free_1:
-    name: OpenRouter Free Manual Slot 1
+  resolve_manual_slot:
+    name: resolve-manual-advisory-slot
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.slot == 'free-1') ||
+      (github.event_name == 'workflow_dispatch') ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
        github.event.comment.user.type != 'Bot' &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       (github.event.comment.body == '/openrouter-free' || startsWith(github.event.comment.body, '/free-1') || startsWith(github.event.comment.body, '/openrouter-free-1')))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: OpenRouter Free Manual Slot 1
-      reviewer_slug: openrouter-free-manual-1
-      credential_alias: OPENROUTER_API_KEY
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-openrouter-free-manual-1-auto-review -->'
-      manual_marker: '<!-- teamai-openrouter-free-manual-1-review -->'
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY }}
+       (github.event.comment.body == '/openrouter-free' ||
+        startsWith(github.event.comment.body, '/free-1') ||
+        startsWith(github.event.comment.body, '/free-2') ||
+        startsWith(github.event.comment.body, '/free-3') ||
+        startsWith(github.event.comment.body, '/free-4') ||
+        startsWith(github.event.comment.body, '/free-5') ||
+        startsWith(github.event.comment.body, '/openrouter-free-1') ||
+        startsWith(github.event.comment.body, '/openrouter-free-2') ||
+        startsWith(github.event.comment.body, '/openrouter-free-3') ||
+        startsWith(github.event.comment.body, '/openrouter-free-4') ||
+        startsWith(github.event.comment.body, '/openrouter-free-5')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+      pr_number: ${{ steps.resolve.outputs.pr_number }}
+    steps:
+      - name: Checkout canonical authority manifest
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.repository.default_branch || github.event.pull_request.head.sha }}
+          fetch-depth: 1
+      - name: Resolve requested slot from canonical manifest
+        id: resolve
+        shell: bash
+        env:
+          DISPATCH_SLOT: ${{ github.event_name == 'workflow_dispatch' && inputs.slot || '' }}
+          COMMENT_BODY: ${{ github.event_name == 'issue_comment' && github.event.comment.body || '' }}
+          DISPATCH_PR: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || '' }}
+          COMMENT_PR: ${{ github.event_name == 'issue_comment' && github.event.issue.number || '' }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          advisory=data.get('advisory_review') or {}
+          if advisory.get('route') != 'openrouter/free': raise SystemExit('Unexpected advisory route.')
+          slots=advisory.get('slots') or []
+          slot_by_number={int(s['slot']):s for s in slots}
+          requested=os.environ.get('DISPATCH_SLOT','').strip()
+          if not requested:
+              body=os.environ.get('COMMENT_BODY','').strip()
+              if body == '/openrouter-free': requested='free-1'
+              else:
+                  match=re.match(r'^/(?:free|openrouter-free)-(1|2|3|4|5)', body)
+                  requested=f'free-{match.group(1)}' if match else ''
+          match=re.fullmatch(r'free-([1-5])', requested)
+          if not match: raise SystemExit('Manual advisory command did not resolve to a supported free-router slot.')
+          number=int(match.group(1)); entry=slot_by_number.get(number)
+          if not entry: raise SystemExit(f'Manual advisory slot {number} is absent from the canonical registry.')
+          if entry.get('manual_command') not in {'/openrouter-free' if number == 1 else f'/free-{number}', f'/openrouter-free-{number}'}:
+              raise SystemExit(f'Manual command mapping drifted for slot {number}.')
+          pr=os.environ.get('DISPATCH_PR','').strip() or os.environ.get('COMMENT_PR','').strip()
+          if not pr: raise SystemExit('A pull request number is required for manual advisory review.')
+          matrix={'include':[{'slot':number,'credential_alias':entry['credential_alias'],'start_delay_seconds':0}]}
+          Path('/tmp/matrix.json').write_text(json.dumps(matrix,separators=(',',':')),encoding='utf-8')
+          print('matrix=' + json.dumps(matrix,separators=(',',':')))
+          print('pr_number=' + pr)
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write('matrix=' + json.dumps(matrix,separators=(',',':')) + '\n')
+              out.write('pr_number=' + pr + '\n')
+          PY
 
-  free_2:
-    name: OpenRouter Free Manual Slot 2
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.slot == 'free-2') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       (startsWith(github.event.comment.body, '/free-2') || startsWith(github.event.comment.body, '/openrouter-free-2')))
+  manual_free:
+    name: OpenRouter Free Manual Slot ${{ matrix.slot }}
+    needs: resolve_manual_slot
+    if: needs.resolve_manual_slot.result == 'success'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.resolve_manual_slot.outputs.matrix) }}
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
-      reviewer: OpenRouter Free Manual Slot 2
-      reviewer_slug: openrouter-free-manual-2
-      credential_alias: OPENROUTER_API_KEY_OPENAI
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+      reviewer: OpenRouter Free Manual Slot ${{ matrix.slot }}
+      reviewer_slug: openrouter-free-manual-${{ matrix.slot }}
+      credential_alias: ${{ matrix.credential_alias }}
+      pr_number: ${{ needs.resolve_manual_slot.outputs.pr_number }}
       invocation_class: manual
-      automatic_marker: '<!-- teamai-openrouter-free-manual-2-auto-review -->'
-      manual_marker: '<!-- teamai-openrouter-free-manual-2-review -->'
+      automatic_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-auto-review -->'
+      manual_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-review -->'
     secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_OPENAI }}
-
-  free_3:
-    name: OpenRouter Free Manual Slot 3
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.slot == 'free-3') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       (startsWith(github.event.comment.body, '/free-3') || startsWith(github.event.comment.body, '/openrouter-free-3')))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: OpenRouter Free Manual Slot 3
-      reviewer_slug: openrouter-free-manual-3
-      credential_alias: OPENROUTER_API_KEY_POOLSIDE
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-openrouter-free-manual-3-auto-review -->'
-      manual_marker: '<!-- teamai-openrouter-free-manual-3-review -->'
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_POOLSIDE }}
-
-  free_4:
-    name: OpenRouter Free Manual Slot 4
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.slot == 'free-4') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       (startsWith(github.event.comment.body, '/free-4') || startsWith(github.event.comment.body, '/openrouter-free-4')))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: OpenRouter Free Manual Slot 4
-      reviewer_slug: openrouter-free-manual-4
-      credential_alias: OPENROUTER_API_KEY_DEEPSEEK
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-openrouter-free-manual-4-auto-review -->'
-      manual_marker: '<!-- teamai-openrouter-free-manual-4-review -->'
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_DEEPSEEK }}
-
-  free_5:
-    name: OpenRouter Free Manual Slot 5
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.slot == 'free-5') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-       github.event.comment.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
-       (startsWith(github.event.comment.body, '/free-5') || startsWith(github.event.comment.body, '/openrouter-free-5')))
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
-    with:
-      reviewer: OpenRouter Free Manual Slot 5
-      reviewer_slug: openrouter-free-manual-5
-      credential_alias: OPENROUTER_API_KEY_GWEN
-      pr_number: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
-      invocation_class: manual
-      automatic_marker: '<!-- teamai-openrouter-free-manual-5-auto-review -->'
-      manual_marker: '<!-- teamai-openrouter-free-manual-5-review -->'
-    secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY_GWEN }}
+      api_key: ${{ secrets[matrix.credential_alias] }}
