@@ -38,7 +38,7 @@
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 - [x] Automatic model review is quota-protected to one automatic invocation sequence per PR; later-head re-review remains explicit.
 - [x] Automatic advisory routing is unified on the OpenRouter Free Router with five distinct OpenRouter API key credentials, one per slot; slot identity is a bounded orchestration slot, not a model identity.
-- [x] OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+- [x] OpenRouter Free Router → 5 parallel slots → no inter-slot interval; each slot uses a distinct credential alias; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
 - [x] The automatic advisory sequence is now five parallel OpenRouter Free Router slots with five distinct slot credentials, exact-head guards, durable one-sequence claim, and actual routed model/provider evidence per successful slot.
 - [x] #370 preserved historical validation-gate and stale-head evidence for the superseded named-model sequence; its former Nemotron/stage terminology is historical only.
