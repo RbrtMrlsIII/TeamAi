@@ -460,7 +460,16 @@ jobs:
                               return match.group(1).strip()
                           if heading == 'Verdict':
                               inline = re.search(
-                                  r'^\s*\*?\*?Verdict\*?\*?\s*:\s*(APPROVE|CHANGES_REQUESTED|ADVISORY_ONLY)\s*
+                                  r'^\s*\*?\*?Verdict\*?\*?\s*:\s*(APPROVE|CHANGES_REQUESTED|ADVISORY_ONLY)\s*$',
+                                  source,
+                                  flags=re.MULTILINE,
+                              )
+                              return inline.group(1).strip() if inline else ''
+                          return ''
+
+                      sections = {name: extract_section(content, name) for name in section_names}
+                      verdict_lines = [line.strip() for line in sections['Verdict'].splitlines() if line.strip()]
+                      verdict = verdict_lines[0] if verdict_lines else ''
                       if verdict not in allowed_verdicts:
                           reason = 'INVALID_REVIEW_FORMAT: missing or invalid Verdict section.'
                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
