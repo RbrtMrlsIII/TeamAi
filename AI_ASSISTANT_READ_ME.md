@@ -39,9 +39,10 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 - Issue #389 is the sole active clean-mainline reconstruction vehicle.
 - #388/#386/#385/#379 are source/history only and must not be merged wholesale.
-- Automatic advisory review is five parallel credential-isolated slots using openrouter/free.
+- Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
 - The five credential aliases are OPENROUTER_API_KEY, OPENROUTER_API_KEY_OPENAI, OPENROUTER_API_KEY_POOLSIDE, OPENROUTER_API_KEY_DEEPSEEK, and OPENROUTER_API_KEY_GWEN.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
+- Latest completed provider execution before this reconciliation: exact head `b5cabce7fb9e503637a9ff42a06befef11a5bd22`, terminal slots 5/5, publishable advisory reviews 0/5, provider failures 5/5.
 - Actual model/provider is runtime evidence from OpenRouter.
 - Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
@@ -95,7 +96,7 @@ Never weaken validation merely to make CI green.
 
 ## Current validation-change record
 
-The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication. The canonical governance parser's Draft-proof-target boundary was corrected from a level-2-or-3 closing lookahead to a level-2 closing lookahead so nested proof-target subsections are included; the required governance/canonical content is therefore validated rather than accidentally discarded.
+The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. Review-readiness distinguishes missing/in-progress checks from completed failures and waits for required checks instead of treating an absent conclusion as terminal failure. The automatic reviewer fan-out uses a bounded 2-second launch stagger to reduce burst traffic without reviving staged barriers. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication. The canonical governance parser's Draft-proof-target boundary was corrected from a level-2-or-3 closing lookahead to a level-2 closing lookahead so nested proof-target subsections are included; the required governance/canonical content is therefore validated rather than accidentally discarded.
 
 ## Evidence rules
 
