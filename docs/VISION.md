@@ -89,7 +89,7 @@ This vision is being rewritten because the current project has crossed from isol
 The current repository is an intermediate implementation, not a complete 029 release. It already contains:
 
 - the conventional public entrance and explicit entry toward the 3D world;
-- a single mechanical Hero renderer capable of a flexible population up to eight Seat slots;
+- a single mechanical Hero renderer capable of a flexible population across 1–10 Seat slots;
 - a partially proven Seat hierarchy and Seat configuration vocabulary;
 - semantic camera relationships, including selected-seat subject behavior;
 - Settings / machine chrome and an emerging in-page Smoke diagnostic surface;
