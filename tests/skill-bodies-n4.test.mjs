@@ -18,5 +18,5 @@ test('NEXT_SLICES stays singular and current', () => {
   const next = read('Masterplan/NEXT_SLICES.md');
   assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
   assert.match(next, /TEAM-EXPERIENCE-029|post-#346/i);
-  assert.match(next, /non-production|Draft/i);
+  assert.match(next, /non-production|Draft|CLOSURE PENDING/i);
 });

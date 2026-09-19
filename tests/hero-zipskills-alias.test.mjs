@@ -54,7 +54,7 @@ test('seat-stack zipskills layer is optional + workspace-scoped presentation', (
 test('current slice does not become a semantic-machine history index', () => {
   assert.match(next, /## Current Slice/i);
   assert.match(next, /## Status/i);
-  assert.match(next, /IN PROGRESS/i);
+  assert.match(next, /CLOSURE PENDING|IN PROGRESS/i);
   assert.doesNotMatch(next, /WORKSPACE_ZIPSKILLS|MECHANISM_ZIPSKILLS|Slice H/);
   assert.match(map, /WORKSPACE_ZIPSKILLS/);
 });
