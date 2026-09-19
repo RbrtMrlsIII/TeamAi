@@ -88,7 +88,7 @@ Execution state is separate from advisory content: each slot records one termina
 ## Validation-change discipline
 
 - [x] Tests changed by governance migration document old invariant, disposition, and replacement invariant.
-- [ ] Every validator change has the same old-invariant/new-invariant evidence record.
+- [x] Every validator change has the same old-invariant/new-invariant evidence record.
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
 - [x] No validator is weakened merely to obtain green CI.
 - [x] former model-specific review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
@@ -116,7 +116,7 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] Shared AI Advisory Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
 - [x] The former model-specific advisory procedure is retired; the generalized AI Advisory Review Skill is the only active model-assisted PR review procedure.
 - [x] The configured advisory workflow records required exact-head validators before provider invocation and protects each exact-head automatic sequence with structured workflow state.
-- [ ] Historical records remain immutable and out of active routing.
+- [x] Historical records remain immutable and out of active routing.
 
 
 ### Validation parser alignment
