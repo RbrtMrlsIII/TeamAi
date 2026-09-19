@@ -48,11 +48,28 @@ jobs:
     outputs:
       matrix: ${{ steps.resolve.outputs.matrix }}
       pr_number: ${{ steps.resolve.outputs.pr_number }}
+      head_sha: ${{ steps.target.outputs.head_sha }}
     steps:
-      - name: Checkout canonical authority manifest
+      - name: Read target PR head
+        id: target
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR" > /tmp/target-pr.json
+          state="$(jq -r '.state' /tmp/target-pr.json)"
+          [[ "$state" == "open" ]] || { echo "Manual advisory review requires an open pull request."; exit 1; }
+          head_sha="$(jq -r '.head.sha' /tmp/target-pr.json)"
+          test -n "$head_sha" && test "$head_sha" != "null"
+          echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR" >> "$GITHUB_OUTPUT"
+      - name: Checkout exact target PR head
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.repository.default_branch || github.event.pull_request.head.sha }}
+          ref: ${{ steps.target.outputs.head_sha }}
           fetch-depth: 1
       - name: Resolve requested slot from canonical manifest
         id: resolve
@@ -60,8 +77,7 @@ jobs:
         env:
           DISPATCH_SLOT: ${{ github.event_name == 'workflow_dispatch' && inputs.slot || '' }}
           COMMENT_BODY: ${{ github.event_name == 'issue_comment' && github.event.comment.body || '' }}
-          DISPATCH_PR: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || '' }}
-          COMMENT_PR: ${{ github.event_name == 'issue_comment' && github.event.issue.number || '' }}
+          TARGET_PR: ${{ steps.target.outputs.pr_number }}
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -85,7 +101,7 @@ jobs:
           if not entry: raise SystemExit(f'Manual advisory slot {number} is absent from the canonical registry.')
           if entry.get('manual_command') not in {'/openrouter-free' if number == 1 else f'/free-{number}', f'/openrouter-free-{number}'}:
               raise SystemExit(f'Manual command mapping drifted for slot {number}.')
-          pr=os.environ.get('DISPATCH_PR','').strip() or os.environ.get('COMMENT_PR','').strip()
+          pr=os.environ.get('TARGET_PR','').strip()
           if not pr: raise SystemExit('A pull request number is required for manual advisory review.')
           matrix={'include':[{'slot':number,'credential_alias':entry['credential_alias'],'start_delay_seconds':0}]}
           Path('/tmp/matrix.json').write_text(json.dumps(matrix,separators=(',',':')),encoding='utf-8')
@@ -109,6 +125,7 @@ jobs:
       reviewer_slug: openrouter-free-manual-${{ matrix.slot }}
       credential_alias: ${{ matrix.credential_alias }}
       pr_number: ${{ needs.resolve_manual_slot.outputs.pr_number }}
+      expected_head: ${{ needs.resolve_manual_slot.outputs.head_sha }}
       invocation_class: manual
       automatic_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-review -->'
