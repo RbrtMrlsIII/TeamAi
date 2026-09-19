@@ -192,8 +192,8 @@ jobs:
       api_key: ${{ secrets[matrix.credential_alias] }}
 
   sequence_complete:
-    needs: [openrouter_free]
-    if: always() && needs.openrouter_free.result != 'skipped'
+    needs: [openrouter_free, resolve_advisory_slots]
+    if: always() && needs.openrouter_free.result != 'skipped' && needs.resolve_advisory_slots.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -211,15 +211,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_MATRIX: ${{ needs.resolve_advisory_slots.outputs.matrix }}
         shell: bash
         run: |
           set -euo pipefail
           files=(/tmp/advisory-slots/*/slot-result.json)
           [[ "${#files[@]}" -eq 5 ]] || { echo "Expected exactly five slot artifacts; found ${#files[@]}."; exit 1; }
           python - "$HEAD" "${files[@]}" <<'PY'
-          import json, sys
+          import json, os, sys
           head=sys.argv[1]; files=sys.argv[2:]
-          expected={1:'OPENROUTER_API_KEY',2:'OPENROUTER_API_KEY_OPENAI',3:'OPENROUTER_API_KEY_POOLSIDE',4:'OPENROUTER_API_KEY_DEEPSEEK',5:'OPENROUTER_API_KEY_GWEN'}
+          expected={int(item['slot']):item['credential_alias'] for item in json.loads(os.environ['EXPECTED_MATRIX'])['include']}
           seen=set(); success=0; failure=0
           for path in files:
               data=json.load(open(path,encoding='utf-8')); slot=data.get('slot')
@@ -259,7 +260,11 @@ jobs:
           successful_slots="$(jq '[.slots[] | select(.outcome == "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
           terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
           {
-            printf '%s\n' '# Automatic OpenRouter Free Advisory Execution Complete'
+            printf '%s\n' '<!-- teamai-ai-review-current-summary -->'
+            printf '%s\n' '# Current-head OpenRouter Free Advisory Summary'
+            printf '\n'
+            printf 'This is the current-head summary. Earlier advisory comments remain immutable evidence for their original heads.\n'
+            printf 'Model verdicts are advisory analysis only and do not represent GitHub review state, merge authorization, or product acceptance.\n'
             printf '\n'
             printf 'Exact PR head: %s\n' "$HEAD"
             printf 'Terminal slots: 5/5\n'
