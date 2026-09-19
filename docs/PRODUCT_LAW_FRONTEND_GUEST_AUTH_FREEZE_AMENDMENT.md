@@ -10,7 +10,7 @@ This amendment freezes one clarification to the guest-to-authentication transiti
 
 ## Frozen behavior
 
-The guest world is an observational spatial experience. It may show the default eight-seat world with gentle automatic orbital/world motion, but a guest does not receive the authenticated world's full free-orbit, configuration, or durable-user control.
+The guest world is an observational spatial experience. It may show the default ten-seat world with gentle automatic orbital/world motion, but a guest does not receive the authenticated world's full free-orbit, configuration, or durable-user control.
 
 When the guest chooses **Login** or **Sign up** from the guest prompt:
 
