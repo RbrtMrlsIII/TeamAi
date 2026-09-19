@@ -212,16 +212,16 @@ jobs:
           jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // "-") provider=\(.actual_provider // "-")"' /tmp/sequence-summary.json
           successful_slots="$(jq '[.slots[] | select(.outcome == "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
           terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
-          cat > /tmp/complete-comment.md <<EOF
-          # Automatic OpenRouter Free Advisory Execution Complete
-
-          Exact PR head: $HEAD
-          Terminal slots: 5/5
-          Publishable advisory reviews: ${successful_slots}/5
-          Non-success terminal outcomes: ${terminal_failures}/5
-          Structured slot artifacts, not PR comments, are the orchestration state.
-          Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.
-          EOF
+          {
+            printf '%s\n' '# Automatic OpenRouter Free Advisory Execution Complete'
+            printf '\n'
+            printf 'Exact PR head: %s\n' "$HEAD"
+            printf 'Terminal slots: 5/5\n'
+            printf 'Publishable advisory reviews: %s/5\n' "$successful_slots"
+            printf 'Non-success terminal outcomes: %s/5\n' "$terminal_failures"
+            printf 'Structured slot artifacts, not PR comments, are the orchestration state.\n'
+            printf 'Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.\n'
+          } > /tmp/complete-comment.md
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/complete-comment.md)" >/dev/null
       - name: Upload sequence summary artifact
         uses: actions/upload-artifact@v4
