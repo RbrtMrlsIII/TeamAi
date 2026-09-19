@@ -98,8 +98,8 @@
     "one_slice_one_merge": false,
     "green_ci_alone_authorizes_merge": false,
     "machine_hero_pr": 353,
-    "governance_pr": 346,
-    "merge_gate_owner_issue": 133
+    "merge_gate_owner_issue": 133,
+    "governance_lineage_pr": 346
   },
   "workspace_model": {
     "allowed_branch_prefixes": [
