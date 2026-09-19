@@ -67,15 +67,22 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review'
+          expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; each slot uses a distinct credential alias; terminal slot outcome is explicit; actual routed model/provider recorded on successful review'
           workflow='.github/workflows/ai-advisory-review-sequence.yml'
           grep -Fq 'model: openrouter/free' "$workflow"
           grep -Fq 'strategy:' "$workflow"
           grep -Fq 'fail-fast: false' "$workflow"
-          grep -Fq 'slot: [1, 2, 3, 4, 5]' "$workflow"
+          grep -Fq 'include:' "$workflow"
+          for alias in OPENROUTER_API_KEY OPENROUTER_API_KEY_OPENAI OPENROUTER_API_KEY_POOLSIDE OPENROUTER_API_KEY_DEEPSEEK OPENROUTER_API_KEY_GWEN; do
+            grep -Fq "credential_alias: $alias" "$workflow"
+          done
           grep -Fq 'reviewer: OpenRouter Free Slot' "$workflow"
           grep -Fq 'reviewer_slug: openrouter-free-' "$workflow"
-          grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"
+          grep -Fq 'api_key: ${{ secrets[matrix.credential_alias] }}' "$workflow"
+          if grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"; then
+            echo "Automatic advisory sequence still passes one shared OpenRouter key."
+            exit 1
+          fi
           test "$(grep -Fc 'model: openrouter/free' "$workflow")" -eq 1
           test "$(grep -Fc 'openrouter-free-' "$workflow")" -ge 3
           if grep -Fq 'REVIEW_INTERVAL_SECONDS' "$workflow" || grep -Fq 'delay_to_second_stage' "$workflow" || grep -Fq 'delay_to_third_stage' "$workflow"; then
@@ -107,7 +114,7 @@ jobs:
               exit 1
             fi
           done
-          echo "Advisory reviewer control plane is synchronized: five parallel Free Router slots, one shared key, no inter-slot timers, explicit terminal slot outcomes, compact structured model evidence, exact-head guards, and one-sequence quota protection."
+          echo "Advisory reviewer control plane is synchronized: five parallel Free Router slots, five distinct credential aliases, no inter-slot timers, explicit terminal slot outcomes, compact structured model evidence, exact-head guards, and one-sequence quota protection."
 
       - name: Prove draft PR target against full PR delta
         env:
