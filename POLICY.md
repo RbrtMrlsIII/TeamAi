@@ -55,7 +55,7 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 ### Model-review sequence discipline
 Model-assisted advisory review is a bounded verification resource. The automatic path is one provider-consuming five-slot sequence per exact PR head: OpenRouter Free Router → 5 parallel credential-isolated slots → no inter-slot interval.
 The workflow run is the sequence boundary and structured terminal slot artifacts are the execution state. PR comments are publication/evidence only and are never read as orchestration state. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
-Each slot uses its dedicated credential alias, revalidates the original triggering head immediately before provider invocation, and fails closed on drift. Provider failure is terminal slot evidence and never authorizes secret substitution or replacement calls.
+Each slot uses its dedicated credential alias, revalidates the original triggering head immediately before provider invocation, and fails closed on drift. Provider failure is terminal slot evidence and never authorizes secret substitution or replacement calls. Automatic sequence runs serialize per PR so a duplicate lifecycle event cannot cancel a live exact-head sequence before its provider fan-out is recorded.
 
 
 ### Reviewer billing boundary
