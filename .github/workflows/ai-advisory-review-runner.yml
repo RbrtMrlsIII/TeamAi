@@ -568,6 +568,10 @@ jobs:
             exit "$python_rc"
           fi
           exit "$python_rc"
+
+      - name: Post advisory review
+        id: post_review
+        if: inputs.invocation_class != 'automatic' || steps.invoke_model.outputs.review_ready == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ inputs.pr_number }}
