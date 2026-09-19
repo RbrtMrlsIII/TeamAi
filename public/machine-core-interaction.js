@@ -4,8 +4,6 @@ import { parseSeatCountParam } from './seat-capacity.js';
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || min));
 
-function parseSeatCount(){const raw=new URLSearchParams(globalThis.location?.search||'').get('seats');const requested=raw==null||raw.trim()===''?10:Number(raw);return Number.isFinite(requested)?Math.min(16,Math.max(2,Math.floor(requested))):10;}
-
 function bind() {
   const panel = document.querySelector('[data-machine-core-visual]');
   const canvas = panel?.querySelector('canvas');
