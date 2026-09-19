@@ -8,7 +8,7 @@ GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #
 
 ## Status
 
-IN PROGRESS — Draft/non-production current-state reconciliation after #391. The clean-mainline reconstruction is complete; this slice verifies that canonical session/planning records and active field ownership now point at merged `main`.
+CLOSURE PENDING — implementation is complete in PR #395. This slice remains current only until the governed review/merge path completes and #394/#393 closure evidence is recorded.
 
 ## Objective
 
@@ -28,7 +28,8 @@ Rebaseline the canonical session/planning records and Issue topology against mer
 - Current main baseline: 867944b03776f47fb01bd2cddf90ed4c70ab3b68
 - Completed reconstruction: #391 / #389
 - Active product slices: #278, #360, #392, #83, #204, #284
-- Active governance contract/cleanup: #133, #393
+- Enduring governance contract: #133
+- #393 normalization: implemented in PR #395; closure-pending
 - Historical/superseded control-plane lineage: #347, #368, #369, #387, #388
 - Historical execution evidence remains under docs/archive/
 
@@ -47,9 +48,9 @@ Rebaseline the canonical session/planning records and Issue topology against mer
 
 ## Current slice boundary
 
-Issue #394 owns only baseline/Issue-topology reconciliation. It does not absorb #278, #360, #284, #204, #83, #392, or #393. Each remains an independently scoped field slice. No 029 release, C9/C10, or backend completion claim is created here.
+Issue #394 owns only baseline/Issue-topology reconciliation. Its implementation is complete in PR #395 and it remains current only for merge/closure bookkeeping. #393 is fully absorbed into the same PR and is not a parallel execution stream. This slice does not absorb #278, #360, #284, #204, #83, or #392, and creates no 029 release, C9/C10, or backend completion claim.
 
 
 ## Current blocker
 
-This Draft reconciliation remains open until the canonical session, current-slice, and Masterplan records pass the applicable governance/validation checks and are merged. It does not absorb or replace the separately owned product, frontend, backend, or governance feature slices.
+This reconciliation is implementation-complete on PR #395. It remains open only until the exact-head governed checks, human review/authorization, merge, and post-merge Issue closure are recorded. It does not absorb or replace the separately owned product, frontend, backend, or governance feature slices.

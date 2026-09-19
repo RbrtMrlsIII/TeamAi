@@ -55,6 +55,12 @@ Implementation repairs to the reusable advisory-review runner belong to Verifica
 The governance audit's `Draft proof target` parser is aligned to the repository's canonical PR-body contract: level-2 or level-3 Markdown headings are accepted, including the established `### Draft proof target` form. This is validation implementation alignment, not a new authority layer.
 
 
+## Program-order and bounded parallel execution
+
+Product Law §15's chronological sequence is a program/release-gate ordering statement. It does not by itself prohibit bounded execution in separately owned development fields where Product Law already permits parallel work. Parallel work remains isolated by responsibility and does not create a second authority, bypass a release gate, or authorize promotion/completion claims outside the applicable Product Law, Masterplan, Issue, and human governance boundaries.
+
+This clarification belongs in Wiring as an execution-routing interpretation; it does not rewrite `Product_Law/PRODUCT_LAW.md`.
+
 ## Current-slice authority consumption
 
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.

@@ -2,7 +2,7 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: rebaseline the project after the successful clean-mainline merge, reconcile active Issue ownership, and ensure canonical session/planning records point to current main.
+- Last given prompt: complete the current-state reconciliation, normalize the absorbed advisory-control-plane cleanup, and prepare PR #395 for governed closure without changing product/runtime logic.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
@@ -10,12 +10,13 @@
 - current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
 - current slice: GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
 - replacement branch: governance/baseline-truth-reconciliation-20260919
-- open implementation vehicles: PR #395 / Issue #394
-- active implementation slices: #278, #360, #392, #83, #284, #204, #393
+- open implementation vehicles: PR #395 / Issue #394 (closure-pending until merge)
+- active implementation slices: #278, #360, #392, #83, #284, #204
+- closure-pending governance slices: #394 / #393, both implemented in PR #395
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: complete the current-state/session/masterplan reconciliation under #394, then proceed within the separately owned product/backend/governance slices
+- next allowed work: complete the governed human-review/merge path for PR #395, then advance `Masterplan/NEXT_SLICES.md` to the next separately owned product/backend/verification slice
 - handoff rule: chat is transient; start from this snapshot plus live GitHub state and the owning Issue/PR, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
@@ -45,7 +46,8 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 - Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
 - Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
-- Latest verified provider execution: exact head `be9d234ee41a2771ccb737e7435dff5d3481897b`, terminal slots 5/5, publishable advisory reviews 4/5, one terminal `PROVIDER_RESPONSE_TRUNCATED`.
+- Previous merged-main advisory proof: exact head `be9d234ee41a2771ccb737e7435dff5d3481897b`, terminal slots 5/5, publishable advisory reviews 4/5, one terminal `PROVIDER_RESPONSE_TRUNCATED`.
+- Current PR #395 advisory evidence: workflow run `35451109816` on exact head `c2a6f11a5a2bc31fa7212ab74e66454c0a4e3a06` reached 5/5 terminal slots, 4/5 provider HTTP 2xx responses, 1/5 published reviews, 3/5 `PROVIDER_RESPONSE_TRUNCATED`, 1/5 HTTP 429 from provider `Liquid`, and 0/5 provenance gaps. Slot 5 published successfully with runtime provenance `dots-studio/dots-3-note-preview:free` via `AtlasCloud`.
 - Actual model/provider is runtime evidence from OpenRouter.
 - Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
@@ -62,7 +64,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 ## Product boundary while reconstruction is active
 
 - Preserve current machine candidate and semantic topology work already on main.
-- Do not resume new 029 feature/runtime slices until Issue #389 produces the clean replacement branch.
+- Do not advance to a new 029 feature/runtime slice until PR #395 is merged and `Masterplan/NEXT_SLICES.md` is advanced from the closure-pending #394 slice.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
 ## Validation lifecycle guide
@@ -130,6 +132,6 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 - #284 = backend durable/runtime ledger
 - #204 = Conn-3 GitHub OAuth/bind integration
 - #133 = enduring validation/promotion governance contract
-- #393 = next-PR governance and advisory-review normalization
+- #393 = governance/advisory normalization implemented in PR #395; closure-pending
 
 Historical Issues are evidence, not active routing.

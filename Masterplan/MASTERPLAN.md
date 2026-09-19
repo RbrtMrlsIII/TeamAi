@@ -1,7 +1,7 @@
 # MASTERPLAN — active execution checklist
 
 - [x] Issue #389 — clean canonical mainline reconstruction completed through PR #391 (merge `867944b03776f47fb01bd2cddf90ed4c70ab3b68`).
-- [ ] Issue #394 — rebaseline active Issue slices and canonical current-state truth after the #391 merge.
+- [x] Issue #394 — baseline/Issue-topology reconciliation implemented in PR #395; final acceptance and Issue closure remain merge-gated.
 
 **Authority:** `Product_Law/PRODUCT_LAW.md`  
 **Role:** chronology and executable checklist only.  
@@ -19,8 +19,8 @@
 - [x] Active `HandOver.md` and `Endorsement.md` are retired; historical records are preserved.
 - [x] Parallel `docs/skills/` procedure namespace is retired.
 - [x] `OBSOLETE_FILES.md` registry remains forbidden.
-- [ ] Eliminate every remaining active reference to retired governance roots.
-- [ ] Reconcile all remaining governance validators to non-overlapping bounded responsibilities.
+- [x] Eliminate every remaining active reference to retired governance roots; PR #395 archive/reference checks establish the active corpus boundary.
+- [x] Reconcile all remaining governance validators to non-overlapping bounded responsibilities; PR #395 centralizes advisory configuration and verifies consumer drift.
 - [x] Governance audit proves governed PR proof targets against the complete PR `base...head` diff.
 - [x] Issue #133 and repository control-plane lifecycle agree on Draft → ready-for-review → authorized merge.
 - [x] Draft PRs continue substantive validation; `review-readiness` is promotion-stage and is not evidence when skipped.
@@ -105,7 +105,7 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] PR #361 is merged and its semantic topology/adaptive-clearance state is now the current machine implementation baseline.
 - [x] Align all canonical session/current-slice/masterplan records with the merged state after #361.
 - [ ] Retire stale PR #349/#352 interpretations after their landed changes are reflected in the canonical history/current-state surfaces.
-- [ ] Resolve remaining active retired-root references and validator responsibility overlaps through #393.
+- [x] Resolve remaining active retired-root references and validator responsibility overlaps through #393; implemented in PR #395, with #393 closure remaining merge-gated.
 - [ ] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
 
 ## Session synchronization
@@ -131,4 +131,4 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 
 ## Current Issue topology baseline — Issue #394
 
-`main` is now the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance; #393 owns next-PR governance normalization. Superseded vehicles remain historical and must not become parallel current slices.
+`main` remains the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. The #393 governance/advisory normalization is implemented in PR #395 and is closure-pending rather than an active implementation stream. Superseded vehicles remain historical and must not become parallel current slices.
