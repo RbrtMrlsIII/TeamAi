@@ -526,7 +526,7 @@ jobs:
           REPO: ${{ github.repository }}
           HEAD: ${{ steps.meta.outputs.head }}
           REVIEWER: ${{ inputs.reviewer }}
-          MODEL: ${{ inputs.model }}
+          MODEL: openrouter/free
           INVOCATION: ${{ inputs.invocation_class }}
           AUTO_MARKER: ${{ inputs.automatic_marker }}
           OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
