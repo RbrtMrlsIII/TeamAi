@@ -9,7 +9,7 @@ on:
         description: Free-router review slot
         required: true
         type: choice
-         options: [all-free, free-1, free-2, free-3, free-4, free-5]
+        options: [all-free, free-1, free-2, free-3, free-4, free-5]
       pr_number:
         description: PR number to review
         required: true
