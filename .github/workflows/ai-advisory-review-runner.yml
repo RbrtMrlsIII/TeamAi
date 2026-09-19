@@ -327,7 +327,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
           MODEL: openrouter/free
           CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
-          ALLOWED_CREDENTIAL_ALIASES: OPENROUTER_API_KEY OPENROUTER_API_KEY_OPENAI OPENROUTER_API_KEY_POOLSIDE OPENROUTER_API_KEY_DEEPSEEK OPENROUTER_API_KEY_GWEN
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
           START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
@@ -335,10 +335,17 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$OPENROUTER_API_KEY"
-          case " $ALLOWED_CREDENTIAL_ALIASES " in
-            *" $CREDENTIAL_ALIAS "*) ;;
-            *) echo "CREDENTIAL_ALIAS_CONFIGURATION_FAILURE: unsupported credential alias $CREDENTIAL_ALIAS" >&2; exit 1 ;;
-          esac
+          python - "$CREDENTIAL_ALIAS" <<'PY'
+          import json, sys
+          from pathlib import Path
+          alias=sys.argv[1]
+          manifest=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          advisory=manifest.get('advisory_review') or {}
+          aliases={str(slot.get('credential_alias')) for slot in (advisory.get('slots') or [])}
+          if advisory.get('route') != 'openrouter/free' or alias not in aliases:
+              raise SystemExit(f'CREDENTIAL_ALIAS_CONFIGURATION_FAILURE: unsupported credential alias {alias}')
+          print(f'Credential alias {alias} validated against canonical advisory registry.')
+          PY
           set +e
           python - <<'PY'
           import json
