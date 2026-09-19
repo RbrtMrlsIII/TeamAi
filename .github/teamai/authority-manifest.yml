@@ -42,6 +42,10 @@
     "knowledge": {
       "path": "PRODUCT-KNOWLEDGE.md",
       "role": "durable validated learning without volatile session context"
+    },
+    "advisory_configuration": {
+      "path": ".github/teamai/authority-manifest.yml",
+      "role": "advisory-review slot, route, credential-alias, and launch policy"
     }
   },
   "historical_surfaces": {
@@ -194,6 +198,10 @@
     "backend_authority": {
       "owner": "backend authority contract/tests",
       "scope": "durable domain authority and runtime seams"
+    },
+    "advisory_configuration": {
+      "owner": "scripts/governance/verify-advisory-control-plane.mjs",
+      "scope": "manifest-driven advisory slot registry and consumer drift"
     }
   },
   "invariant_migrations": [
@@ -307,5 +315,46 @@
       "comment-driven orchestration state"
     ],
     "enforcement_owner": "scripts/governance/verify-advisory-control-plane.mjs"
+  },
+  "advisory_review": {
+    "route": "openrouter/free",
+    "automatic": {
+      "slot_count": 5,
+      "launch_interval_seconds": 2,
+      "max_spread_seconds": 8,
+      "fail_fast": false
+    },
+    "slots": [
+      {
+        "slot": 1,
+        "credential_alias": "OPENROUTER_API_KEY",
+        "start_delay_seconds": 0,
+        "manual_command": "/openrouter-free"
+      },
+      {
+        "slot": 2,
+        "credential_alias": "OPENROUTER_API_KEY_OPENAI",
+        "start_delay_seconds": 2,
+        "manual_command": "/free-2"
+      },
+      {
+        "slot": 3,
+        "credential_alias": "OPENROUTER_API_KEY_POOLSIDE",
+        "start_delay_seconds": 4,
+        "manual_command": "/free-3"
+      },
+      {
+        "slot": 4,
+        "credential_alias": "OPENROUTER_API_KEY_DEEPSEEK",
+        "start_delay_seconds": 6,
+        "manual_command": "/free-4"
+      },
+      {
+        "slot": 5,
+        "credential_alias": "OPENROUTER_API_KEY_GWEN",
+        "start_delay_seconds": 8,
+        "manual_command": "/free-5"
+      }
+    ]
   }
 }
