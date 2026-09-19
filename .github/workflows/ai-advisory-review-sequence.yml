@@ -258,6 +258,10 @@ jobs:
           PY
           jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // "-") provider=\(.actual_provider // "-")"' /tmp/sequence-summary.json
           successful_slots="$(jq '[.slots[] | select(.outcome == "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
+          published_reviews="$(jq '[.slots[] | select(.review_published == true)] | length' /tmp/sequence-summary.json)"
+          provider_2xx="$(jq '[.slots[] | select((.http_status // 0) >= 200 and (.http_status // 0) < 300)] | length' /tmp/sequence-summary.json)"
+          truncated_reviews="$(jq '[.slots[] | select((.response_shape.finish_reason // "") == "length")] | length' /tmp/sequence-summary.json)"
+          provenance_gaps="$(jq '[.slots[] | select((.provenance_status // "") == "unreported")] | length' /tmp/sequence-summary.json)"
           terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
           {
             printf '%s\n' '<!-- teamai-ai-review-current-summary -->'
@@ -268,7 +272,10 @@ jobs:
             printf '\n'
             printf 'Exact PR head: %s\n' "$HEAD"
             printf 'Terminal slots: 5/5\n'
-            printf 'Publishable advisory reviews: %s/5\n' "$successful_slots"
+            printf 'Provider HTTP 2xx responses: %s/5\n' "$provider_2xx"
+            printf 'Published model reviews: %s/5\n' "$published_reviews"
+            printf 'Generation-limit truncations: %s/5\n' "$truncated_reviews"
+            printf 'Model/provider provenance gaps: %s/5\n' "$provenance_gaps"
             printf 'Non-success terminal outcomes: %s/5\n' "$terminal_failures"
             printf 'Structured slot artifacts, not PR comments, are the orchestration state.\n'
             printf 'Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.\n'
