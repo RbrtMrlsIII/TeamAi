@@ -23,7 +23,7 @@ assert.match(files.runner,/actions\/upload-artifact@v4/);
 assert.doesNotMatch(files.runner,/issues\/\$PR\/comments\?per_page/);
 assert.doesNotMatch(files.runner,/automatic_outcome_marker/);
 for(const alias of aliases) assert.match(files.manual,new RegExp('credential_alias:\\s*'+alias));
-for(const [name,text] of Object.entries(files)) { if(name === 'session') continue; for(const token of retired) assert.doesNotMatch(text,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\for(const text of Object.values(files)) for(const token of retired) assert.doesNotMatch(text,new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'));'),'i')); }
+for(const [name, text] of Object.entries(files)) { if (name === 'session') continue; for (const token of retired) { const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); assert.doesNotMatch(text, new RegExp(escaped, 'i')); } }
 must('docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md');
 must('docs/archive/nemotron-copilot-review-workflow_legacy_2026-09-19.yml');
 must('docs/archive/nemotron-copilot-review-SKILL_legacy_2026-09-19.md');

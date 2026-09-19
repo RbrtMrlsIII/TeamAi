@@ -12,6 +12,8 @@ IN PROGRESS — product feature execution is paused while the active governance 
 
 ## Objective
 
+Current governing program: TEAM-EXPERIENCE-029 progression. The clean-mainline reconstruction is the control-plane prerequisite and does not redefine the Product Law program.
+
 Build a replacement branch from current main that preserves the working product/runtime foundation while removing accumulated governance debris. The branch must have one current session boundary, one advisory-review architecture, structured terminal workflow state, explicit retirement of superseded surfaces, and machine-checked separation between CI-green, corpus-clean, and session-current evidence.
 
 ## Dependencies
