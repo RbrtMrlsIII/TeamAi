@@ -4,7 +4,7 @@
 
 ## Current Slice
 
-TEAM-EXPERIENCE-029 — authority/corpus normalization, 1–10 Seat capacity, semantic topology, adaptive geometry, and transition behavior
+029 governance — generalize the advisory-review control plane to five credential-isolated OpenRouter Free Router slots
 
 ## Capacity / authority reconciliation
 
@@ -12,11 +12,11 @@ The Guest World presents the full 10-seat machine capacity; authenticated state 
 
 ## Status
 
-IN PROGRESS — #346, #348, #351, #352, #353, #361, #368, #371, #382, and #383 are merged; #353 remains a non-production candidate; the advisory control plane now targets the OpenRouter Free Router as five parallel slots with runtime route provenance; fresh provider runtime proof of the new fan-out remains pending.
+IN PROGRESS — PR #388 / Issue #387 is the active replacement vehicle. #353 remains a non-production candidate. The advisory control plane is being reconciled to five parallel `openrouter/free` slots with five distinct credential aliases, no inter-slot barriers, exact-head guards, and runtime route provenance.
 
 ## Objective
 
-Prove that the generalized semantic connection/topology and payload-adaptive geometry introduced by #361 survive real renderer consumption, not only isolated tests. Extend runtime evidence across multiple semantic cases and payload densities, transition/interruption behavior, branch-aware subject targeting, responsive/reduced-motion behavior, and the canonical public/live boundary without promoting the candidate or closing C8/C9/C10.
+Prove and reconcile the advisory-review control plane after the migration from the historical 1→2→2 topology. Every automatic slot must request only `openrouter/free`, use one distinct existing credential alias, record actual routed model/provider evidence, reach a valid terminal outcome, and participate in clean sequence completion. Manual `/free-1` through `/free-5` must bind to the corresponding credential slot. No model-specific approval or named-provider execution identity may remain active.
 
 ## Dependencies
 
@@ -44,28 +44,22 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 
 ## Verification
 
-- test-level generalized topology and adaptive-geometry suites remain green on exact heads
-- real renderer consumption of semantic source/target ports and connection routes across multiple payload densities
-- runtime AABB clearance and adjacency evidence across multiple semantic cases
-- transition and interruption state evidence with no topology fabrication during closed/closing states
-- branch-aware camera subject/travel evidence using semantic identities rather than named coordinate docks
-- desktop and phone browser proof, including reduced-motion behavior
-- canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
-- `review-readiness` remains pending until an independent non-author human approval exists on the exact current PR head, rather than failing on absence of approval
-- automatic advisory sequence is OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
-- the five slots start concurrently after the substantive exact-head validator gate and use five distinct OpenRouter API key credentials, one per slot
-- the durable sequence claim remains one automatic sequence per PR; synchronize and reopen events do not restart a prior claim
-- every slot rechecks the original triggering head and fails closed if it changes before invocation
-- each successful slot records the actual OpenRouter model and provider returned by the router
-- sequence completion requires five terminal slot outcomes; partial provider failure remains execution evidence and cannot trigger an automatic retry or replacement slot
-- deliberate later-head review uses /openrouter-free or /free-1 through /free-5
-- #370 live evidence proves the durable claim and stale-head containment, but its model stage did not reach provider transport because the reusable runner parser failed
-- #371 must complete canonical synchronization and governed validation before a fresh provider runtime-proof vehicle is eligible
-- Tree Census reconciliation after runtime behavior is actually proven
+- exact-head repository governance validation
+- automatic sequence topology proves five parallel slots with distinct credential aliases
+- all five automatic slots request the same `openrouter/free` route
+- each slot receives only its assigned secret alias and records that alias in terminal evidence
+- automatic sequence completion accepts every defined terminal slot outcome and verifies slot/credential identity
+- manual `/free-1` through `/free-5` each select the corresponding credential alias on `openrouter/free`
+- active advisory routing contains no 1→2→2 stage/barrier/timing logic and no named-model execution identity
+- active runner contains no model-specific approval path
+- historical Nemotron workflow/Skill remain preserved only under `docs/archive/`
+- human `review-readiness` remains a separate gate after automated advisory execution
+- runtime evidence must distinguish implementation, execution, advisory output, and human acceptance
 
 ## Current blocker
 
-The generalized topology/adaptive geometry code is merged and test-validated, but browser/runtime proof of the new semantic topology payload path remains bounded. The advisory control plane has moved from named free-model stages to five parallel OpenRouter Free Router slots. This removes the 150-second inter-stage timers and the fragile dependency on individual model availability while preserving exact-head validation, one-sequence quota protection, human review-readiness, and fail-closed stale-head handling. OpenRouter documents the free router as a dynamic route across currently available free models, so the runtime evidence must capture the actual model/provider returned for each slot. Fresh runtime execution is still required before claiming that the five-slot provider path is fully runtime-proven. The Machine Hero candidate remains non-production until its remaining product gates are separately proven and accepted.
+PR #388 has reconstructed the advisory-review control plane to the intended five-slot `openrouter/free` architecture with five distinct credential aliases, but the new exact-head workflow must still validate the reusable-workflow contract and execute a fresh automatic sequence cleanly. The prior #386 run is historical diagnostic evidence: it consumed its one automatic sequence and exposed the completion-gate defect plus the one-key collapse. No human reviewer should be requested until PR #388's automated advisory execution completes against its final exact head. The five existing credential values themselves are not inspectable through the GitHub repository connector; runtime execution is therefore the authoritative proof that each configured alias is usable.
+
 
 <!-- Post-#368 reconciliation: ordered advisory reviewer orchestration is merged; #370/#371 are the bounded runtime-repair and proof frontier. -->
 
