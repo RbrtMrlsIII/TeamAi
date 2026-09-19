@@ -286,13 +286,14 @@ jobs:
               5) expected_credential_alias="OPENROUTER_API_KEY_GWEN" ;;
               *) echo "MISMATCH: unknown slot $slot"; missing=$((missing + 1)); continue ;;
             esac
-            grep -Fq "Credential alias: `$expected_credential_alias`" <<< "$outcome" || {
+            expected_credential_line='Credential alias: `'"$expected_credential_alias"'`'
+            grep -Fq "$expected_credential_line" <<< "$outcome" || {
               echo "MISMATCH: slot $slot outcome is not bound to expected credential alias $expected_credential_alias."
               missing=$((missing + 1))
               continue
             }
 
-            expected_slug="Reviewer slug: `openrouter-free-${slot}`"
+            expected_slug='Reviewer slug: `openrouter-free-'"$slot"'`'
             grep -Fq "$expected_slug" <<< "$outcome" || {
               echo "MISMATCH: slot $slot outcome marker identifies a different reviewer slug."
               missing=$((missing + 1))
