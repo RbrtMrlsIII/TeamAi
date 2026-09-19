@@ -30,7 +30,37 @@ The 2026-09-15 governance foundation retires these active operating surfaces and
 - `CHECKPOINT_029_MAIN_MERGE_GATE_DIAGNOSIS_2026-09-14.md` — historical main-merge-gate control-plane diagnosis and ruleset evidence.
 - `START_HERE_FOR_NEW_SESSIONS.legacy.md` — retired duplicate session entrypoint, superseded by `AI_ASSISTANT_READ_ME.md`.
 
+## 2026-09-19 advisory control-plane retirement
+
+The former Nemotron-named compatibility workflow and Skill were removed from the active namespace after the advisory architecture was generalized to five credential-isolated `openrouter/free` slots. Their original contents are preserved verbatim here:
+
+- `nemotron-copilot-review-workflow_legacy_2026-09-19.yml` — former compatibility workflow.
+- `nemotron-copilot-review-SKILL_legacy_2026-09-19.md` — former named-reviewer compatibility Skill.
+
+They are historical provenance only and are not active routing authority.
+
 Other historical material remains in its existing archive strata, including `docs/archive/superseded/` and evidence-specific folders. Those records remain historical and are not reintroduced into active routing.
+
+## 2026-09-18 lifecycle reconciliation
+
+Dated `CHECKPOINT_*.md` snapshots formerly under active `docs/` were moved here without content rewriting. Four explicitly retired active records were also moved here: the Command Deck amendment, Conn-2 amendment, former frontend-highest-stake contract, and backend foundation execution guide.
+
+These records remain provenance only. Current routing must use the active authority graph and must not infer current product behavior from archived snapshots.
+
+## 2026-09-19 3D Hero prototype lifecycle archival
+
+The following prototype-era and PR-lifecycle records were moved here without content rewriting. Their original content remains immutable historical provenance and is no longer active routing:
+
+- `TEAMAI_3D_HERO_DONE_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_DONE.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_NEXT_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_NEXT.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PROTOTYPE_IMPLEMENTATION_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PROTOTYPE_IMPLEMENTATION.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PROTOTYPE_SMOKETEST_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PROTOTYPE_SMOKETEST.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_DESCRIPTION_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_DESCRIPTION.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_READY_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_READY.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_SUMMARY_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_SUMMARY.md` — preserved prototype/PR lifecycle record.
+- `TEAMAI_3D_HERO_PR_CHECKLIST_legacy_2026-09-19.md` ← `docs/TEAMAI_3D_HERO_PR_CHECKLIST.md` — preserved prototype/PR lifecycle record.
+
+They are not implementation authority. Current spatial routing uses the active Product Law, Masterplan/current slice, Tree Census/contracts, and applicable Skills.
 
 ## Rules
 
@@ -40,8 +70,6 @@ Other historical material remains in its existing archive strata, including `doc
 - Do not create another active roadmap, current-state index, handover manual, Endorsement file, or governance constitution.
 - When a new truth supersedes an active document, update the active owner and preserve the previous record historically rather than editing history into compliance.
 
-## 2026-09-19 clean-mainline reconstruction history
+## Clean-mainline reconstruction history
 
-- TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md — former active recovery/current-state index; current session state now belongs to AI_ASSISTANT_READ_ME.md.
-- nemotron-copilot-review-workflow_legacy_2026-09-19.yml — former model-specific compatibility workflow; historical evidence only.
-- nemotron-copilot-review-SKILL_legacy_2026-09-19.md — former model-specific review procedure; historical evidence only.
+This corpus preserves historical checkpoint, planning, and prototype records retired from active `docs/` routing during Issue #389 reconstruction. Historical records remain immutable evidence; they do not define current execution state.
