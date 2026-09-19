@@ -4,6 +4,7 @@
 
 - Last given prompt: build a clean branch ready to replace the current compressed/legacy mainline without blind inheritance of superseded structures.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
+- #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: 6dc96ff929d1ea874afd3dc44cad9f95fa8096c8
 - replacement branch: governance/clean-mainline-rebuild-20260919
