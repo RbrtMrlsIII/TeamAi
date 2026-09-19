@@ -14,6 +14,7 @@ const wiring=read('docs/SKILL_WIRING.md');
 const skill=read('skills/governance/ai-advisory-review/SKILL.md');
 const productWiring=read('Product_Law/WIRING.md');
 const next=read('Masterplan/NEXT_SLICES.md');
+const master=read('Masterplan/MASTERPLAN.md');
 const session=read('AI_ASSISTANT_READ_ME.md');
 const manifest=JSON.parse(read('.github/teamai/authority-manifest.yml'));
 const slots=manifest.advisory_review.slots;
