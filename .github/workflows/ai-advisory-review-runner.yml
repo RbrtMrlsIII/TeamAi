@@ -327,7 +327,6 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
           MODEL: openrouter/free
           CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
-          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
           START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
