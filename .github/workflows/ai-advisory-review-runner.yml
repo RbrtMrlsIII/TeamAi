@@ -216,18 +216,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "$INVOCATION_CLASS" == "automatic" ]]; then
-            set +e
-            python - <<'PY'
-            python_rc=$?
-            set -e
-            if [[ -s /tmp/review.md ]]; then
-              echo 'review_ready=true' >> "$GITHUB_OUTPUT"
-            else
-              echo 'review_ready=false' >> "$GITHUB_OUTPUT"
-            fi
-            exit 0
-          fi
           python - <<'PY'
           import os
           from pathlib import Path
