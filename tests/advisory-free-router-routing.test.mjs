@@ -14,7 +14,7 @@ const skill=read('skills/governance/ai-advisory-review/SKILL.md');
 const next=read('Masterplan/NEXT_SLICES.md');
 const session=read('AI_ASSISTANT_READ_ME.md');
 const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
-const escapeRegExp=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];');
+const escapeRegExp=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 test('automatic fan-out uses five dedicated credential aliases',()=>{for(const alias of aliases) assert.match(sequence,new RegExp('credential_alias:\\s*'+alias));assert.match(sequence,/secrets\[matrix\.credential_alias\]/);assert.match(sequence,/cancel-in-progress:\s*false/);assert.doesNotMatch(sequence,/model:\s*openrouter\/free/);assert.doesNotMatch(sequence,/secrets\.OPENROUTER_API_KEY \}\}/);assert.doesNotMatch(sequence,/issues\/\$PR\/comments\?per_page/);});
 test('terminal slot outcomes are aggregated without reusable-job continue-on-error',()=>{const block=sequence.slice(sequence.indexOf('  openrouter_free:'),sequence.indexOf('  sequence_complete:'));assert.doesNotMatch(block,/continue-on-error:\s*true/);assert.match(sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);assert.match(sequence,/structured slot artifacts/i);});
 test('governance validation isolates pull_request and pull_request_review concurrency groups',()=>{assert.match(governance,/repository-governance-\$\{\{ github\.ref \}\}-\$\{\{ github\.event_name \}\}/);});
