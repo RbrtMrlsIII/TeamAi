@@ -45,15 +45,7 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5 and au
 
 ## Reviewer configuration
 
-| Reviewer slot | Secret alias | Requested route |
-|---|---|---|
-| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free |
-
-The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
+The authoritative slot/credential registry is `.github/teamai/authority-manifest.yml`. This Skill consumes that registry through the governed workflows and must not duplicate its alias table. The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
 
 
 ## Evidence contract
