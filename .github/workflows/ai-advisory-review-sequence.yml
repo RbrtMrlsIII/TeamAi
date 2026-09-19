@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: ai-review-sequence-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   VALIDATION_POLL_SECONDS: '15'
