@@ -32,14 +32,11 @@ Prove and reconcile the advisory-review control plane after the migration from t
 - applicable spatial hierarchy/transition/responsive/accessibility Skills
 - Issue #133
 - Issue #278
-- Issue #347
-- Issue #369 runtime-proof execution ledger
-- PR #353 merged machine candidate baseline
-- PR #361 merged semantic topology/adaptive clearance baseline
+- Issue #387 five-key advisory control-plane reconstruction ledger
+- PR #388 five-key OpenRouter Free Router replacement vehicle
+- PR #384 merged five-slot Free Router topology baseline
 - Current main governance lifecycle correction for late review approval re-evaluation
-- PR #368 ordered advisory reviewer orchestration and quota control
-- PR #370 diagnostic fresh runtime-proof vehicle
-- PR #371 reusable reviewer provider-invocation repair
+- Historical PR #368/#370/#371/#375 execution and repair evidence
 - Canonical live-site URL: `https://RbrtMrlsIII.github.io/TeamAi/`
 
 ## Verification
@@ -61,7 +58,7 @@ Prove and reconcile the advisory-review control plane after the migration from t
 PR #388 has reconstructed the advisory-review control plane to the intended five-slot `openrouter/free` architecture with five distinct credential aliases, but the new exact-head workflow must still validate the reusable-workflow contract and execute a fresh automatic sequence cleanly. The prior #386 run is historical diagnostic evidence: it consumed its one automatic sequence and exposed the completion-gate defect plus the one-key collapse. No human reviewer should be requested until PR #388's automated advisory execution completes against its final exact head. The five existing credential values themselves are not inspectable through the GitHub repository connector; runtime execution is therefore the authoritative proof that each configured alias is usable.
 
 
-<!-- Post-#368 reconciliation: ordered advisory reviewer orchestration is merged; #370/#371 are the bounded runtime-repair and proof frontier. -->
+<!-- Historical: #368/#370/#371 are retained as provenance only; #387/#388 are the current advisory-control-plane frontier. -->
 
 ### Validation parser alignment
 
