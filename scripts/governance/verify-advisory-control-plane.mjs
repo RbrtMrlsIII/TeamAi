@@ -18,6 +18,7 @@ assert.equal(advisory.route,'openrouter/free');
 assert.equal(advisory.automatic?.slot_count,5);assert.equal(advisory.automatic?.launch_interval_seconds,2);assert.equal(advisory.automatic?.max_spread_seconds,8);assert.equal(advisory.automatic?.fail_fast,false);
 assert.deepEqual(advisorySlots.map(slot=>slot.slot),[1,2,3,4,5]);
 assert.deepEqual(advisorySlots.map(slot=>slot.start_delay_seconds),[0,2,4,6,8]);
+assert.ok(advisorySlots.every(slot=>typeof slot.credential_alias==='string' && slot.credential_alias.length>0));
 assert.equal(new Set(aliases).size,aliases.length);
 assert.equal(manifest.promotion_model.governance_pr,undefined);
 assert.equal(manifest.promotion_model.governance_lineage_pr,346);
@@ -27,7 +28,7 @@ assert.match(files.runner,/inputs\.invocation_class != 'automatic' \|\| steps\.i
 assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);
 assert.match(files.sequence,/actions\/download-artifact@v5/);
 assert.doesNotMatch(files.sequence,/model:\s*openrouter\/free/);
-assert.doesNotMatch(files.sequence,/secrets\.OPENROUTER_API_KEY \}\}/);
+assert.doesNotMatch(files.sequence,new RegExp('secrets\\.'+escapeRegExp(advisorySlots[0].credential_alias)+' \\}\\}'));
 assert.doesNotMatch(files.sequence,/issues\/\$PR\/comments\?per_page/);
 assert.match(files.runner,/MODEL:\s*openrouter\/free/);
 assert.doesNotMatch(files.runner,/^\s+model:\s*$/m);
