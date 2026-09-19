@@ -30,6 +30,15 @@ The 2026-09-15 governance foundation retires these active operating surfaces and
 - `CHECKPOINT_029_MAIN_MERGE_GATE_DIAGNOSIS_2026-09-14.md` — historical main-merge-gate control-plane diagnosis and ruleset evidence.
 - `START_HERE_FOR_NEW_SESSIONS.legacy.md` — retired duplicate session entrypoint, superseded by `AI_ASSISTANT_READ_ME.md`.
 
+## 2026-09-19 advisory control-plane retirement
+
+The former Nemotron-named compatibility workflow and Skill were removed from the active namespace after the advisory architecture was generalized to five credential-isolated `openrouter/free` slots. Their original contents are preserved verbatim here:
+
+- `nemotron-copilot-review-workflow_legacy_2026-09-19.yml` — former compatibility workflow.
+- `nemotron-copilot-review-SKILL_legacy_2026-09-19.md` — former named-reviewer compatibility Skill.
+
+They are historical provenance only and are not active routing authority.
+
 Other historical material remains in its existing archive strata, including `docs/archive/superseded/` and evidence-specific folders. Those records remain historical and are not reintroduced into active routing.
 
 ## 2026-09-18 lifecycle reconciliation
