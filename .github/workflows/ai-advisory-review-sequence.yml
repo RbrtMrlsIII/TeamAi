@@ -171,7 +171,7 @@ jobs:
             echo 'A durable automatic sequence claim already exists; no second sequence is permitted.'
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots using model openrouter/free with one shared OpenRouter API key.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; no inter-slot interval or staged barrier is used.')"
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots; every slot requests openrouter/free and receives its own OpenRouter credential alias.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests, one request per distinct credential slot; no inter-slot interval or staged barrier is used.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -181,11 +181,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        slot: [1, 2, 3, 4, 5]
+        include:
+          - slot: 1
+            credential_alias: OPENROUTER_API_KEY
+          - slot: 2
+            credential_alias: OPENROUTER_API_KEY_OPENAI
+          - slot: 3
+            credential_alias: OPENROUTER_API_KEY_POOLSIDE
+          - slot: 4
+            credential_alias: OPENROUTER_API_KEY_DEEPSEEK
+          - slot: 5
+            credential_alias: OPENROUTER_API_KEY_GWEN
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: OpenRouter Free Slot ${{ matrix.slot }}
       reviewer_slug: openrouter-free-${{ matrix.slot }}
+      credential_alias: ${{ matrix.credential_alias }}
       model: openrouter/free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
@@ -193,9 +204,8 @@ jobs:
       automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
       automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-outcome -->'
-      approve: false
     secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY }}
+      api_key: ${{ secrets[matrix.credential_alias] }}
 
   sequence_complete:
     needs: [claim, openrouter_free]
@@ -268,8 +278,22 @@ jobs:
                 continue
                 ;;
             esac
+            case "$slot" in
+              1) expected_credential_alias="OPENROUTER_API_KEY" ;;
+              2) expected_credential_alias="OPENROUTER_API_KEY_OPENAI" ;;
+              3) expected_credential_alias="OPENROUTER_API_KEY_POOLSIDE" ;;
+              4) expected_credential_alias="OPENROUTER_API_KEY_DEEPSEEK" ;;
+              5) expected_credential_alias="OPENROUTER_API_KEY_GWEN" ;;
+              *) echo "MISMATCH: unknown slot $slot"; missing=$((missing + 1)); continue ;;
+            esac
+            grep -Fq "Credential alias: `$expected_credential_alias`" <<< "$outcome" || {
+              echo "MISMATCH: slot $slot outcome is not bound to expected credential alias $expected_credential_alias."
+              missing=$((missing + 1))
+              continue
+            }
 
-            grep -Fq "Reviewer slug: `openrouter-free-$slot`" <<< "$outcome" || {
+            expected_slug="Reviewer slug: `openrouter-free-${slot}`"
+            grep -Fq "$expected_slug" <<< "$outcome" || {
               echo "MISMATCH: slot $slot outcome marker identifies a different reviewer slug."
               missing=$((missing + 1))
               continue
