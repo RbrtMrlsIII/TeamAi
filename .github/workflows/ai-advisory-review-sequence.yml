@@ -197,7 +197,6 @@ jobs:
       reviewer: OpenRouter Free Slot ${{ matrix.slot }}
       reviewer_slug: openrouter-free-${{ matrix.slot }}
       credential_alias: ${{ matrix.credential_alias }}
-      model: openrouter/free
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
       invocation_class: automatic
