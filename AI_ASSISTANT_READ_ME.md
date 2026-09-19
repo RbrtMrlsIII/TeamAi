@@ -101,7 +101,7 @@ A passing test proves only the contract it exercises. Never weaken a validator t
 
 ## Handover
 
-There is no live HandOver.md. Future sessions start from this Session Snapshot, then verify live GitHub branch/PR/Issue state.
+There is no live `HandOver.md`. Future sessions start from this Session Snapshot, then verify live GitHub branch/PR/Issue state.
 
 ## Endorsement
 
