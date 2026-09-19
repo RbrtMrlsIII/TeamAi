@@ -361,6 +361,9 @@ jobs:
               ],
               'temperature': 0.1,
               'max_tokens': 2200,
+              'provider': {'require_parameters': True},
+              'plugins': [{'id': 'response-healing'}],
+              'stream': False,
               'response_format': {
                   'type': 'json_schema',
                   'json_schema': {
