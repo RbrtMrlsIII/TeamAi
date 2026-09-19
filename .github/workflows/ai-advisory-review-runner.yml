@@ -213,6 +213,44 @@ jobs:
             jq -r '.body // ""' /tmp/issue.json
           } > /tmp/issue-context.txt
 
+      - name: Resolve advisory budget and packet policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          advisory=data.get('advisory_review') or {}
+          budget=advisory.get('budget') or {}
+          packet=advisory.get('packet') or {}
+          if int(budget.get('max_completion_tokens',0)) < 30000:
+              raise SystemExit('Advisory max completion budget is below the governed 30000-token floor.')
+          reasoning=budget.get('reasoning') or {}
+          if reasoning.get('effort') not in {'low','minimal','none'}:
+              raise SystemExit('Advisory reasoning effort must be low, minimal, or none for token-efficient review.')
+          if reasoning.get('exclude') is not True:
+              raise SystemExit('Advisory reasoning exclusion must remain enabled.')
+          if int(budget.get('max_findings_per_section',0)) != 3:
+              raise SystemExit('Advisory review must cap each finding section at three items.')
+          if int(budget.get('max_item_chars',0)) != 400:
+              raise SystemExit('Advisory review item character budget drifted.')
+          values={
+              'ADVISORY_MAX_COMPLETION_TOKENS': str(int(budget['max_completion_tokens'])),
+              'ADVISORY_REASONING_EFFORT': reasoning['effort'],
+              'ADVISORY_REASONING_EXCLUDE': 'true' if reasoning['exclude'] else 'false',
+              'ADVISORY_MAX_FINDINGS': str(int(budget['max_findings_per_section'])),
+              'ADVISORY_MAX_ITEM_CHARS': str(int(budget['max_item_chars'])),
+              'ADVISORY_VISIBLE_OUTPUT_TARGET_TOKENS': str(int(budget.get('visible_output_target_tokens',2500))),
+              'MAX_REVIEW_PACKET_CHARS': str(int(packet['max_review_packet_chars'])),
+              'MAX_GOVERNANCE_CHARS': str(int(packet['max_governance_context_chars'])),
+              'MAX_DIFF_CHARS': str(int(packet['max_diff_chars'])),
+          }
+          with open(os.environ['GITHUB_ENV'],'a',encoding='utf-8') as out:
+              for key,value in values.items(): out.write(f'{key}={value}\n')
+          print('Resolved advisory token and packet policy from canonical manifest.')
+          PY
+
       - name: Collect governing repository context
         env:
           MAX_CHARS: ${{ env.MAX_GOVERNANCE_CHARS }}
