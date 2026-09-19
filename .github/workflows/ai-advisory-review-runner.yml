@@ -347,20 +347,11 @@ jobs:
               'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
               'If material execution, governance, applicable-Skill, census, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
               '',
-              'Return only the following compact review structure. Do not expose hidden reasoning, internal deliberation, or repeated self-corrections.',
-              '## Verdict',
-              'Use one of: APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
-              '## Blocking findings',
-              'Use at most 5 concise findings; write "None" when there are none.',
-              '## Governance and evidence',
-              'Use at most 5 concise evidence statements.',
-              '## Verification gaps',
-              'Use at most 5 concise gaps; write "None" when there are none.',
-              '## Non-blocking observations',
-              'Use at most 5 concise observations.',
-              '## Review basis',
-              'Use at most 5 concise evidence-backed basis statements.',
-              'Return one JSON object only. The object must contain verdict, blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis. Each of the five evidence/findings fields is an array of concise strings with at most 5 items. Do not return Markdown headings, commentary, or hidden reasoning.'
+              'Return one JSON object only. Do not expose hidden reasoning, internal deliberation, or repeated self-corrections.',
+              'The JSON verdict field must be one of APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
+              'blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis must each be arrays of at most 5 concise strings.',
+              'Use an empty array when a findings/evidence field has no entries.',
+              'Use the response_format schema exactly; do not return Markdown headings or any content outside the JSON object.'
           ])
           payload = {
               'model': model,
@@ -446,89 +437,82 @@ jobs:
               if status is not None and 200 <= status < 300:
                   choices = data.get('choices') or [] if isinstance(data, dict) else []
                   message = choices[0].get('message') if choices and isinstance(choices[0], dict) else {}
+                  metadata = data.get('openrouter_metadata') if isinstance(data, dict) else {}
+                  endpoints = metadata.get('endpoints') if isinstance(metadata, dict) else {}
+                  available = endpoints.get('available') if isinstance(endpoints, dict) else []
+                  selected = next((item for item in (available or []) if isinstance(item, dict) and item.get('selected') is True), {})
+                  actual_model = data.get('model') if isinstance(data, dict) else None
+                  actual_provider = selected.get('provider') if isinstance(selected, dict) else None
+                  Path('/tmp/provider-runtime.json').write_text(json.dumps({
+                      'requested_model': model,
+                      'actual_model': actual_model,
+                      'actual_provider': actual_provider if isinstance(actual_provider, str) and actual_provider else 'unreported',
+                      'request_id': request_id,
+                      'routing_metadata': 'enabled',
+                  }, sort_keys=True), encoding='utf-8')
+
+                  if not isinstance(actual_model, str) or not actual_model or actual_model == model:
+                      reason = f'ROUTER_PROVENANCE_FAILURE: response model did not expose a routed model distinct from requested route {model}.'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(reason, file=sys.stderr)
+                      sys.exit(1)
+
                   content = message.get('content') if isinstance(message, dict) else None
-                  if isinstance(content, str) and content.strip():
-                      metadata = data.get('openrouter_metadata') if isinstance(data, dict) else {}
-                      endpoints = metadata.get('endpoints') if isinstance(metadata, dict) else {}
-                      available = endpoints.get('available') if isinstance(endpoints, dict) else []
-                      selected = next((item for item in (available or []) if isinstance(item, dict) and item.get('selected') is True), {})
-                      actual_model = data.get('model') if isinstance(data, dict) else None
-                      actual_provider = selected.get('provider') if isinstance(selected, dict) else None
-                      if not isinstance(actual_model, str) or not actual_model or actual_model == model:
-                          reason = f'ROUTER_PROVENANCE_FAILURE: response model did not expose a routed model distinct from requested route {model}.'
-                          Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
-                          print(reason, file=sys.stderr)
-                          sys.exit(1)
+                  if isinstance(content, list):
+                      content = '\n'.join(item.get('text', '') for item in content if isinstance(item, dict) and isinstance(item.get('text'), str))
+                  if not isinstance(content, str) or not content.strip():
+                      response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
+                      reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
 
-                      allowed_verdicts = {'APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY'}
-                      section_names = [
-                          'Verdict',
-                          'Blocking findings',
-                          'Governance and evidence',
-                          'Verification gaps',
-                          'Non-blocking observations',
-                          'Review basis',
-                      ]
+                  try:
+                      structured = json.loads(content)
+                      if not isinstance(structured, dict):
+                          raise ValueError('structured review root must be an object')
+                  except (TypeError, json.JSONDecodeError, ValueError) as exc:
+                      reason = f'INVALID_REVIEW_FORMAT: response was not valid JSON matching the advisory review contract: {exc}'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
 
-                      def extract_section(source, heading):
-                          match = re.search(
-                              rf'^#{2,4}\s+{re.escape(heading)}\s*:?\s*$\n(.*?)(?=^#{2,4}\s+\S|\Z)',
-                              source,
-                              flags=re.MULTILINE | re.DOTALL,
-                          )
-                          if match:
-                              return match.group(1).strip()
-                          if heading == 'Verdict':
-                              inline = re.search(
-                                  r'^\s*\*?\*?Verdict\*?\*?\s*:\s*(APPROVE|CHANGES_REQUESTED|ADVISORY_ONLY)\s*$',
-                                  source,
-                                  flags=re.MULTILINE,
-                              )
-                              return inline.group(1).strip() if inline else ''
-                          return ''
-
-                      sections = {name: extract_section(content, name) for name in section_names}
-                      verdict_lines = [line.strip() for line in sections['Verdict'].splitlines() if line.strip()]
-                      verdict = verdict_lines[0] if verdict_lines else ''
-                      if verdict not in allowed_verdicts:
-                          reason = 'INVALID_REVIEW_FORMAT: missing or invalid Verdict section.'
+                  allowed_verdicts = {'APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY'}
+                  fields = ['blocking_findings', 'governance_and_evidence', 'verification_gaps', 'non_blocking_observations', 'review_basis']
+                  verdict = structured.get('verdict')
+                  if verdict not in allowed_verdicts:
+                      reason = 'INVALID_REVIEW_FORMAT: structured verdict is missing or invalid.'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
+                  for field in fields:
+                      value = structured.get(field)
+                      if not isinstance(value, list) or len(value) > 5 or not all(isinstance(item, str) for item in value):
+                          reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 5 strings.'
                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
                           print(f'{reviewer} {reason}', file=sys.stderr)
                           sys.exit(1)
 
-                      def compact(value):
-                          value = value.strip()
-                          if not value:
-                              return 'None stated.'
-                          value = value.replace('\r\n', '\n')
-                          value = re.sub(r'\n{3,}', '\n\n', value)
-                          if len(value) > 2000:
-                              value = value[:1997].rstrip() + '...'
-                          return value
+                  def compact_items(items):
+                      clean = [item.strip() for item in items if item.strip()]
+                      if not clean:
+                          return 'None stated.'
+                      text = '\n'.join(f'- {item}' for item in clean)
+                      text = re.sub(r'\n{3,}', '\n\n', text)
+                      return text[:2000].rstrip() + ('...' if len(text) > 2000 else '')
 
-                      normalized = '\n\n'.join([
-                          f'## Verdict\n{verdict}',
-                          f'## Blocking findings\n{compact(sections["Blocking findings"])}',
-                          f'## Governance and evidence\n{compact(sections["Governance and evidence"])}',
-                          f'## Verification gaps\n{compact(sections["Verification gaps"])}',
-                          f'## Non-blocking observations\n{compact(sections["Non-blocking observations"])}',
-                          f'## Review basis\n{compact(sections["Review basis"])}',
-                      ])
-                      if len(normalized) > int(os.environ.get('MAX_REVIEW_CHARS', '12000')):
-                          normalized = normalized[:int(os.environ.get('MAX_REVIEW_CHARS', '12000'))].rstrip() + '\n\n[review output bounded by TeamAi reviewer contract]'
-                      Path('/tmp/provider-runtime.json').write_text(json.dumps({
-                          'requested_model': model,
-                          'actual_model': actual_model,
-                          'actual_provider': actual_provider if isinstance(actual_provider, str) and actual_provider else 'unreported',
-                          'request_id': request_id,
-                          'routing_metadata': 'enabled',
-                      }, sort_keys=True), encoding='utf-8')
-                      Path('/tmp/review.md').write_text(normalized, encoding='utf-8')
-                      sys.exit(0)
-                  response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
-                  reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'
-                  Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
-                  print(f'{reviewer} {reason}', file=sys.stderr)
+                  normalized = '\n\n'.join([
+                      f'## Verdict\n{verdict}',
+                      f'## Blocking findings\n{compact_items(structured["blocking_findings"])}',
+                      f'## Governance and evidence\n{compact_items(structured["governance_and_evidence"])}',
+                      f'## Verification gaps\n{compact_items(structured["verification_gaps"])}',
+                      f'## Non-blocking observations\n{compact_items(structured["non_blocking_observations"])}',
+                      f'## Review basis\n{compact_items(structured["review_basis"])}',
+                  ])
+                  if len(normalized) > int(os.environ.get('MAX_REVIEW_CHARS', '12000')):
+                      normalized = normalized[:int(os.environ.get('MAX_REVIEW_CHARS', '12000'))].rstrip() + '\n\n[review output bounded by TeamAi reviewer contract]'
+                  Path('/tmp/review.md').write_text(normalized, encoding='utf-8')
+                  sys.exit(0)
               else:
                   error = data.get('error') if isinstance(data, dict) else None
                   error = error if isinstance(error, dict) else {}
@@ -599,7 +583,7 @@ jobs:
             echo
             cat /tmp/review.md
           } > /tmp/comment.md
-          gh pr comment "$PR" --repo "$REPO" --body-file /tmp/comment.md
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/comment.md)" >/dev/null
 
       - name: Write terminal automatic slot artifact
         if: always() && inputs.invocation_class == 'automatic'
@@ -627,9 +611,11 @@ jobs:
 
           if runtime and post == 'success':
               outcome = 'SUCCEEDED'
+          elif failure_path.exists():
+              outcome = 'PROVIDER_FAILED'
           elif runtime:
               outcome = 'REVIEW_POST_FAILED'
-              diagnostic = diagnostic or 'Provider response was obtained, but the advisory review could not be posted.'
+              diagnostic = diagnostic or 'Provider response was validated, but the advisory review could not be posted.'
           elif attempted:
               outcome = 'PROVIDER_FAILED'
           else:
