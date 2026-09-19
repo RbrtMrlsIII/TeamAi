@@ -3,7 +3,7 @@ name: AI Advisory Review Sequence
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -230,14 +230,14 @@ jobs:
               if data.get('expected_head') != head: raise SystemExit(f'Slot {slot} exact-head mismatch')
               if data.get('requested_route') != 'openrouter/free': raise SystemExit(f'Slot {slot} route mismatch')
               outcome=data.get('outcome')
-              if outcome not in {'SUCCEEDED','PROVIDER_FAILED','REVIEW_POST_FAILED','PRE_PROVIDER_FAILURE'}: raise SystemExit(f'Slot {slot} invalid outcome: {outcome}')
+              if outcome not in {'SUCCEEDED','PROVIDER_FAILED','REVIEW_QUALITY_FAILED','REVIEW_POST_FAILED','PRE_PROVIDER_FAILURE'}: raise SystemExit(f'Slot {slot} invalid outcome: {outcome}')
               if outcome == 'SUCCEEDED':
                   if not data.get('provider_invocation_attempted') or not data.get('review_published'): raise SystemExit(f'Slot {slot} success lacks publication proof')
                   if not data.get('actual_model') or data.get('actual_model') == 'openrouter/free': raise SystemExit(f'Slot {slot} lacks distinct routed-model evidence')
                   success+=1
               else: failure+=1
           if seen != {1,2,3,4,5}: raise SystemExit(f'Incomplete slot set: {sorted(seen)}')
-           quality_failures=sum(1 for path in files if json.load(open(path,encoding='utf-8')).get('review_quality_status') == 'failed')
+          quality_failures=sum(1 for path in files if json.load(open(path,encoding='utf-8')).get('review_quality_status') == 'failed')
            print(json.dumps({'schema_version':1,'exact_head':head,'successful_slots':success,'failed_slots':failure,'review_quality_failures':quality_failures}, sort_keys=True))
           PY
 
@@ -278,11 +278,24 @@ jobs:
             printf 'Published model reviews: %s/5\n' "$published_reviews"
             printf 'Generation-limit truncations: %s/5\n' "$truncated_reviews"
             printf 'Model/provider provenance gaps: %s/5\n' "$provenance_gaps"
+             printf 'Advisory evidence status: %s\n' "$advisory_status"
+             printf 'Provider failures: %s/5\n' "$provider_failures"
+             printf 'Review-post failures: %s/5\n' "$review_post_failures"
+             printf 'Pre-provider failures: %s/5\n' "$pre_provider_failures"
              printf 'Review-content quality failures: %s/5\n' "$quality_failures"
             printf 'Non-success terminal outcomes: %s/5\n' "$terminal_failures"
             printf 'Structured slot artifacts, not PR comments, are the orchestration state.\n'
             printf 'Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.\n'
           } > /tmp/complete-comment.md
+           {
+             printf '%s\n' '# AI Advisory Sequence Status'
+             printf '%s\n' ''
+             printf 'Status: %s\n' "$advisory_status"
+             printf 'Exact head: %s\n' "$HEAD"
+             printf 'Provider 2xx: %s/5; published reviews: %s/5; quality failures: %s/5; provider failures: %s/5.\n' "$provider_2xx" "$published_reviews" "$quality_failures" "$provider_failures"
+             printf '%s\n' ''
+             printf '%s\n' 'This check records advisory evidence. It does not authorize merge, acceptance, or release.'
+           } >> "$GITHUB_STEP_SUMMARY"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/complete-comment.md)" >/dev/null
       - name: Upload sequence summary artifact
         uses: actions/upload-artifact@v4
