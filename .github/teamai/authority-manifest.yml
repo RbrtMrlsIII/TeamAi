@@ -58,7 +58,7 @@
       "role": "historical handover evidence, not an operating manual"
     },
     "checkpoints": {
-      "prefix": "docs/CHECKPOINT_",
+      "prefix": "docs/archive/CHECKPOINT_",
       "role": "dated checkpoint snapshots, historical evidence, never active routing"
     },
     "evidence_records": {
