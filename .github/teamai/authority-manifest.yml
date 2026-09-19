@@ -336,6 +336,14 @@
       "changes_requested_requires_finding_or_gap": true,
       "approve_requires_no_verification_gaps": true
     },
+    "evidence_policy": {
+      "current_head_is_authoritative": true,
+      "historical_run_ids_are_context_only": true,
+      "advisory_publication_count_is_telemetry_not_acceptance": true,
+      "generation_truncation_count_is_telemetry_not_acceptance": true,
+      "reviewer_must_not_invent_thresholds": true,
+      "review_changed_paths_first": true
+    },
     "automatic": {
       "slot_count": 5,
       "launch_interval_seconds": 2,
