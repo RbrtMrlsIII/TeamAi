@@ -19,9 +19,11 @@ assert.equal(advisory.automatic?.slot_count,5);assert.equal(advisory.automatic?.
 assert.deepEqual(advisorySlots.map(slot=>slot.slot),[1,2,3,4,5]);
 assert.deepEqual(advisorySlots.map(slot=>slot.start_delay_seconds),[0,2,4,6,8]);
 assert.equal(new Set(aliases).size,aliases.length);
+assert.equal(manifest.promotion_model.governance_pr,undefined);
+assert.equal(manifest.promotion_model.governance_lineage_pr,346);
 assert.match(files.sequence,/resolve_advisory_slots/);assert.match(files.sequence,/fromJSON\(needs\.resolve_advisory_slots\.outputs\.matrix\)/);assert.match(files.sequence,/credential_alias: \$\{\{ matrix\.credential_alias \}\}/);assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);assert.match(files.runner,/start_delay_seconds:/);assert.match(files.runner,/sleep \"\$START_DELAY_SECONDS\"/);assert.match(files.runner,/max_tokens.*4000/);assert.match(files.runner,/usage_summary/);for(const [name, text] of Object.entries({policy:files.policy,wiring:files.wiring,skill:files.skill,master:files.master,productWiring:files.productWiring})) assert.match(text,/2-second launch stagger/,`Timing drift in ${name}`);assert.doesNotMatch(files.sequence,/openrouter_free:[\s\S]*?continue-on-error:\s*true/);
 assert.match(files.runner,/review_ready=true/);
-assert.match(files.runner,/inputs\.invocation_class != 'automatic' \|\| steps\.invoke_model\.outputs\.review_ready == 'true'/);assert.match(files.sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);
+assert.match(files.runner,/inputs\.invocation_class != 'automatic' \|\| steps\.invoke_model\.outputs\.review_ready == 'true'/);assert.match(files.sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free, resolve_advisory_slots\]\s*\n\s+if: always\(\)/);
 assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);
 assert.match(files.sequence,/actions\/download-artifact@v5/);
 assert.doesNotMatch(files.sequence,/model:\s*openrouter\/free/);
@@ -30,12 +32,12 @@ assert.doesNotMatch(files.sequence,/issues\/\$PR\/comments\?per_page/);
 assert.match(files.runner,/MODEL:\s*openrouter\/free/);
 assert.doesNotMatch(files.runner,/^\s+model:\s*$/m);
 assert.doesNotMatch(files.runner,/approve:/i);
-assert.match(files.runner,/actions\/upload-artifact@v4/);
+assert.match(files.runner,/actions\/upload-artifact@v4/);assert.match(files.runner,/review-manifest\.json/);assert.match(files.runner,/MODEL-ADVISORY EVIDENCE ONLY/);
 assert.doesNotMatch(files.runner,/issues\/\$PR\/comments\?per_page/);
 assert.doesNotMatch(files.runner,/automatic_outcome_marker/);
 assert.match(files.manual,/resolve_manual_slot/);assert.match(files.manual,/fromJSON\(needs\.resolve_manual_slot\.outputs\.matrix\)/);assert.match(files.manual,/credential_alias: \$\{\{ matrix\.credential_alias \}\}/);assert.match(files.manual,/secrets\[matrix\.credential_alias\]/);
 for(const alias of aliases){ const escaped=escapeRegExp(alias); assert.doesNotMatch(files.sequence,new RegExp(escaped)); assert.doesNotMatch(files.manual,new RegExp(escaped)); assert.doesNotMatch(files.runner,new RegExp(escaped)); assert.doesNotMatch(files.policy,new RegExp(escaped)); assert.doesNotMatch(files.wiring,new RegExp(escaped)); assert.doesNotMatch(files.skill,new RegExp(escaped)); assert.doesNotMatch(files.session,new RegExp(escaped)); }
-for(const [name, text] of Object.entries(files)) { if (name === 'session') continue; for (const token of retired) { const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); assert.doesNotMatch(text, new RegExp(escaped, 'i')); } }
+for(const [name, text] of Object.entries(files)) { if (name === 'session' || name === 'manifest') continue; for (const token of retired) { const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); assert.doesNotMatch(text, new RegExp(escaped, 'i')); } }
 must('docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md');
 must('docs/archive/nemotron-copilot-review-workflow_legacy_2026-09-19.yml');
 must('docs/archive/nemotron-copilot-review-SKILL_legacy_2026-09-19.md');
