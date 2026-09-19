@@ -264,6 +264,31 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git diff --name-status "$BASE...$HEAD" > /tmp/changed-files.txt
+          git diff --stat "$BASE...$HEAD" > /tmp/changed-stat.txt
+          git diff --unified=40 "$BASE...$HEAD" > /tmp/changed-diff.txt
+          python - "$BASE" "$HEAD" <<'PY'
+          import json, os
+          from pathlib import Path
+          base,head=os.sys.argv[1],os.sys.argv[2]
+          changed=Path('/tmp/changed-files.txt').read_text(encoding='utf-8').splitlines()
+          diff_path=Path('/tmp/changed-diff.txt')
+          diff=diff_path.read_text(encoding='utf-8')
+          max_diff=160000
+          truncated=len(diff)>max_diff
+          if truncated:
+              diff_path.write_text(diff[:max_diff]+'\n[DIFF SECTION TRUNCATED BY DETERMINISTIC REVIEW-MANIFEST BOUND]\n',encoding='utf-8')
+          manifest={
+              'schema_version':2,
+              'base':base,
+              'exact_head':head,
+              'authority_files':['Product_Law/PRODUCT_LAW.md','Product_Law/WIRING.md','Masterplan/MASTERPLAN.md','Masterplan/NEXT_SLICES.md','POLICY.md','docs/SKILL_WIRING.md','AI_ASSISTANT_READ_ME.md','PRODUCT-KNOWLEDGE.md','skills/governance/ai-advisory-review/SKILL.md','skills/governance/machine-builder/SKILL.md','docs/TEAMAI_3D_HERO_TREE_CENSUS.md'],
+              'evidence_files':['/tmp/execution-evidence.txt','/tmp/issue-context.txt'],
+              'changed_path_count':len(changed),
+              'diff_policy':{'format':'git diff --unified=40 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
+          }
+          Path('/tmp/review-manifest.json').write_text(json.dumps(manifest,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+          PY
           {
             echo '=== PR ==='
             cat /tmp/title
@@ -275,13 +300,15 @@ jobs:
             echo
             cat /tmp/issue-context.txt
             echo
+            cat /tmp/review-manifest.json
+            echo
             cat /tmp/governing-context.txt
             echo
             echo '=== CHANGED FILES ==='
             git diff --name-status "$BASE...$HEAD"
             echo
             echo '=== DIFF ==='
-            git diff --unified=60 "$BASE...$HEAD"
+            cat /tmp/changed-diff.txt
           } > /tmp/review.txt
           sed -E -i \
             -e 's/(OPENROUTER_API_KEY|FIREBASE_[A-Z0-9_]+|SUPABASE_[A-Z0-9_]+|PAYPAL_[A-Z0-9_]+)[[:space:]]*[:=][[:space:]]*[^[:space:]"'"'"'`]+/\1=[REDACTED]/g' \
@@ -642,6 +669,8 @@ jobs:
           {
             echo "$marker"
             echo "# $REVIEWER Advisory Review"
+            echo
+            echo '> **MODEL-ADVISORY EVIDENCE ONLY**. This comment is not GitHub review state, approval, merge authorization, or product acceptance.'
             echo
             printf 'Requested route: `%s`\n' "$MODEL"
             printf 'Actual model: `%s`\n' "$actual_model"
