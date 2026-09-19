@@ -16,8 +16,9 @@ const session=read('AI_ASSISTANT_READ_ME.md');
 const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
 test('automatic fan-out uses five dedicated credential aliases',()=>{for(const alias of aliases) assert.match(sequence,new RegExp('credential_alias:\\s*'+alias));assert.match(sequence,/secrets\[matrix\.credential_alias\]/);assert.match(sequence,/cancel-in-progress:\s*false/);assert.doesNotMatch(sequence,/model:\s*openrouter\/free/);assert.doesNotMatch(sequence,/secrets\.OPENROUTER_API_KEY \}\}/);assert.doesNotMatch(sequence,/issues\/\$PR\/comments\?per_page/);});
 test('terminal slot outcomes are aggregated without reusable-job continue-on-error',()=>{const block=sequence.slice(sequence.indexOf('  openrouter_free:'),sequence.indexOf('  sequence_complete:'));assert.doesNotMatch(block,/continue-on-error:\s*true/);assert.match(sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);assert.match(sequence,/structured slot artifacts/i);});
+test('governance validation isolates pull_request and pull_request_review concurrency groups',()=>{assert.match(governance,/repository-governance-\$\{\{ github\.ref \}\}-\$\{\{ github\.event_name \}\}/);});
 test('review-readiness distinguishes pending checks from completed failures',()=>{
-  assert.match(governance,/pending=0;\n?\s*failed=0/);
+  assert.match(governance,/pending=0\s*\n\s*failed=0/);
   assert.match(governance,/status=missing conclusion=pending/);
   assert.match(governance,/status=\"\$status\" != \"completed\"/);
   assert.match(governance,/REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS/);
