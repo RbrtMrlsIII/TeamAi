@@ -59,15 +59,7 @@ Each slot uses its dedicated credential alias, revalidates the original triggeri
 
 
 ### Reviewer billing boundary
-The automatic advisory path uses openrouter/free for every slot with five distinct credential aliases. Each slot receives only its corresponding secret:
-| Slot | Credential | Requested route | Cost class |
-|---|---|---|---|
-| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free |
-Aliases are credential identifiers only. The selected model/provider is dynamic runtime evidence. Cost status and provider data-use terms remain separate concerns.
+The automatic advisory path uses the manifest-defined `openrouter/free` route and five credential-isolated slots. `.github/teamai/authority-manifest.yml` is the single source for slot identity, credential aliases, and launch timing; workflows and Skills consume or validate that registry rather than maintaining duplicate alias tables. Aliases identify credentials only. The selected model/provider is dynamic runtime evidence. Cost status and provider data-use terms remain separate concerns.
 
 
 ### Runtime-repair evidence boundary
