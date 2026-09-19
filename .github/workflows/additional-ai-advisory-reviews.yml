@@ -87,7 +87,21 @@ jobs:
           advisory=data.get('advisory_review') or {}
           if advisory.get('route') != 'openrouter/free': raise SystemExit('Unexpected advisory route.')
           slots=advisory.get('slots') or []
-          slot_by_number={int(s['slot']):s for s in slots}
+          if len(slots) != 5:
+              raise SystemExit(f'Expected five advisory slots, found {len(slots)}.')
+          normalized=[]; seen_slots=set(); seen_aliases=set()
+          for slot in slots:
+              number=slot.get('slot'); alias=slot.get('credential_alias'); delay=slot.get('start_delay_seconds')
+              if number in seen_slots or alias in seen_aliases:
+                  raise SystemExit('Advisory slot or credential alias is duplicated.')
+              if not isinstance(number,int) or not isinstance(alias,str) or not alias or not isinstance(delay,int) or delay < 0:
+                  raise SystemExit(f'Invalid advisory slot record: {slot!r}')
+              seen_slots.add(number); seen_aliases.add(alias)
+              normalized.append({'slot':number,'credential_alias':alias,'start_delay_seconds':delay})
+          normalized.sort(key=lambda item:item['slot'])
+          if [item['slot'] for item in normalized] != [1,2,3,4,5] or [item['start_delay_seconds'] for item in normalized] != [0,2,4,6,8]:
+              raise SystemExit('Advisory slot order/delay drifted from the canonical 2-second cadence.')
+          slot_by_number={int(s['slot']):s for s in normalized}
           requested=os.environ.get('DISPATCH_SLOT','').strip()
           if not requested:
               body=os.environ.get('COMMENT_BODY','').strip()
