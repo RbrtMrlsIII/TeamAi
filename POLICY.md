@@ -125,3 +125,12 @@ A passing test proves only the contract it exercises. Deployment, browser output
 ### Draft proof target parser boundary
 
 The `Draft proof target` is a required PR proof contract. Its parser must recognize the repository's canonical level-2/3 Markdown section heading, including `### Draft proof target`, and must not require contributors to distort the PR structure to satisfy a parser implementation detail.
+
+
+## 3D world authority and census enforcement
+
+The 3D world has no independent Product Law or merge authority. Its Tree Authority XML, Machine Interaction Contract, implementation entry, and four-file Tree Census are subordinate structural records under Product Law, Masterplan, Policy, and the active 029 Issue.
+
+Governance Integrity must machine-check this structural record and execute the existing census synchronization contract against the full PR diff. Semantic tree/branch/division changes therefore cannot silently bypass Census reconciliation. Presentation-only proof modules remain outside Census synchronization only while they remain presentation-only and do not change semantic identity or structure.
+
+A passing structural audit establishes governance consistency only. It does not promote a tree, prove browser behavior, establish backend authority, satisfy C8/C9/C10, or authorize acceptance or merge.

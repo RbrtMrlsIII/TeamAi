@@ -121,3 +121,8 @@ Execution state is separate from advisory content: each slot records one termina
 ### Validation parser alignment
 
 The repository governance audit accepts the canonical `Draft proof target` section used by governed PRs. Level-2 and level-3 Markdown headings are both valid; this repair preserves the underlying proof requirement rather than changing what the PR must prove.
+
+
+## Seat population authority normalization
+- [x] Establish and consume the single Seat-capacity rule: minimum 1, maximum 10, Guest World presentation 10, authenticated durable population 1–10 subject to entitlement/authorization; keep Tree 1–8 separate.
+- [x] Route Guest Hero ring/camera density through `seatPopulationDensity()` / 1–10 instead of the leftover 8-seat clamp; keep Tree 1–8 as a separate world-tree vocabulary.
