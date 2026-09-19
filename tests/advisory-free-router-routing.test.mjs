@@ -44,7 +44,7 @@ test('automatic sequence completion is terminal-outcome based and shell-safe', (
 
 test('exact-head sequence recovery is documented consistently with implementation', () => {
   assert.match(policy, /quota boundary for the exact PR head/i);
-  assert.match(policy, /later corrected PR head may establish one sequence/i);
+  assert.match(policy, /later corrected PR head may establish one (?:new )?sequence/i);
   assert.doesNotMatch(policy, /even when the PR head later changes/);
   assert.match(skill, /same exact head never restarts/i);
   assert.match(skill, /later corrected head may establish one new automatic sequence/i);

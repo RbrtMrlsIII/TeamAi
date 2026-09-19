@@ -85,7 +85,7 @@ assert.equal(existsSync(join(root, 'docs/archive/nemotron-copilot-review-SKILL_l
 
 assert.match(governance, /verify-advisory-control-plane\.mjs/);
 assert.match(policy, /quota boundary for the exact PR head/i);
-assert.match(policy, /later corrected PR head may establish one sequence/i);
+assert.match(policy, /later corrected PR head may establish one (?:new )?sequence/i);
 assert.doesNotMatch(policy, /even when the PR head later changes/);
 assert.match(skill, /same exact head never restarts/i);
 assert.doesNotMatch(governance, /one shared key/);
