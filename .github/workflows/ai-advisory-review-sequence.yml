@@ -82,7 +82,7 @@ jobs:
         run: |
           set -euo pipefail
           required=("governance-drift" "evidence-consistency" "agent-validation" "Recovery integrity" "Project tests + canonical package" "Playwright browser verification")
-          if [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then required+=("CodeQL analyze (javascript-typescript)"); fi
+          if [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then required+=("CodeQL analyze"); fi
           deadline=$((SECONDS + TIMEOUT_SECONDS))
           while true; do
             current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
