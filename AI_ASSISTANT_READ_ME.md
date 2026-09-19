@@ -6,9 +6,11 @@
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
-- main baseline: 6dc96ff929d1ea874afd3dc44cad9f95fa8096c8
-- current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
+- main baseline: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
+- current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
 - current slice: GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
+- replacement branch: governance/baseline-truth-reconciliation-20260919
+- open implementation vehicles: PR #395 / Issue #394
 - active implementation slices: #278, #360, #392, #83, #284, #204, #393
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379
