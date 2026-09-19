@@ -52,4 +52,7 @@ The authoritative slot/credential registry is `.github/teamai/authority-manifest
 
 Every reviewer comment must identify the exact PR head and invocation class. A model review is advisory evidence only. A model verdict or model-generated approval never substitutes for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, `review-readiness`, or human authorization. Required substantive validators must pass before automatic model invocation.
 
-The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
+The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance.
+
+### Token-efficiency contract
+The canonical advisory budget is 30,000 maximum completion tokens with low reasoning effort and excluded reasoning output. This is a resilience ceiling, not a consumption target. Reviewer output is bounded to three concise items per section at 400 characters each. Packet selection is authority-first. Provider HTTP 200, generation-limit truncation, or unavailable routed-model provenance remain classified terminal evidence; the workflow stays green when the outcome is classified, while the sequence summary reports the quality degradation explicitly. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
