@@ -54,7 +54,7 @@ Prove that the generalized semantic connection/topology and payload-adaptive geo
 - canonical live-site validation only against `https://RbrtMrlsIII.github.io/TeamAi/`
 - `review-readiness` remains pending until an independent non-author human approval exists on the exact current PR head, rather than failing on absence of approval
 - automatic advisory sequence is OpenRouter Free Router → 5 parallel slots → no inter-slot interval; actual routed model/provider recorded per slot
-- the five slots start concurrently after the substantive exact-head validator gate and use one shared OpenRouter API key
+- the five slots start concurrently after the substantive exact-head validator gate and use five distinct OpenRouter API key credentials, one per slot
 - the durable sequence claim remains one automatic sequence per PR; synchronize and reopen events do not restart a prior claim
 - every slot rechecks the original triggering head and fails closed if it changes before invocation
 - each successful slot records the actual OpenRouter model and provider returned by the router
