@@ -42,10 +42,6 @@
     "knowledge": {
       "path": "PRODUCT-KNOWLEDGE.md",
       "role": "durable validated learning without volatile session context"
-    },
-    "advisory_configuration": {
-      "path": ".github/teamai/authority-manifest.yml",
-      "role": "advisory-review slot, route, credential-alias, and launch policy"
     }
   },
   "historical_surfaces": {
