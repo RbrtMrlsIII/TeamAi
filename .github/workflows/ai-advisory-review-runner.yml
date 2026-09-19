@@ -190,11 +190,11 @@ jobs:
         run: |
           set -euo pipefail
           issue_number="$(python - <<'PY'
-import re
-from pathlib import Path
-body = Path('/tmp/body').read_text(encoding='utf-8')
-match = re.search(r'(?im)^\s*(?:[-*]\s*)?(?:Owning|Governing)\s+Issue:\s*(?:\*\*)?#(\d+)', body)
-print(match.group(1) if match else '')
+          import re
+          from pathlib import Path
+          body = Path('/tmp/body').read_text(encoding='utf-8')
+          match = re.search(r'(?im)^\s*(?:[-*]\s*)?(?:Owning|Governing)\s+Issue:\s*(?:\*\*)?#(\d+)', body)
+          print(match.group(1) if match else '')
 PY
           )"
           if [[ -z "$issue_number" ]]; then
