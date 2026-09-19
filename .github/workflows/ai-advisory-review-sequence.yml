@@ -117,20 +117,68 @@ jobs:
             sleep "$POLL_SECONDS"
           done
 
+  resolve_advisory_slots:
+    name: resolve-advisory-slot-registry
+    needs: eligibility
+    if: needs.eligibility.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.registry.outputs.matrix }}
+    steps:
+      - name: Checkout canonical authority manifest
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+      - name: Resolve manifest-driven advisory slot matrix
+        id: registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          advisory=data.get('advisory_review') or {}
+          automatic=advisory.get('automatic') or {}
+          slots=advisory.get('slots') or []
+          if advisory.get('route') != 'openrouter/free':
+              raise SystemExit(f"Unexpected advisory route: {advisory.get('route')!r}")
+          if automatic.get('slot_count') != 5 or automatic.get('launch_interval_seconds') != 2 or automatic.get('max_spread_seconds') != 8 or automatic.get('fail_fast') is not False:
+              raise SystemExit('Advisory automatic policy drifted from the canonical manifest.')
+          if len(slots) != 5:
+              raise SystemExit(f'Expected five advisory slots, found {len(slots)}.')
+          normalized=[]; seen_slots=set(); seen_aliases=set()
+          for slot in slots:
+              number=slot.get('slot'); alias=slot.get('credential_alias'); delay=slot.get('start_delay_seconds')
+              if number in seen_slots or alias in seen_aliases:
+                  raise SystemExit('Advisory slot or credential alias is duplicated.')
+              if not isinstance(number,int) or not isinstance(alias,str) or not isinstance(delay,int) or delay < 0:
+                  raise SystemExit(f'Invalid advisory slot record: {slot!r}')
+              seen_slots.add(number); seen_aliases.add(alias)
+              normalized.append({'slot':number,'credential_alias':alias,'start_delay_seconds':delay})
+          normalized.sort(key=lambda item:item['slot'])
+          if [item['slot'] for item in normalized] != [1,2,3,4,5] or [item['start_delay_seconds'] for item in normalized] != [0,2,4,6,8]:
+              raise SystemExit('Advisory slot order/delay drifted from the canonical 2-second cadence.')
+          print('matrix=' + json.dumps({'include':normalized}, separators=(',',':')))
+          print('matrix=' + json.dumps({'include':normalized}, separators=(',',':')) >> __import__('sys').stdout)
+          PY
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          slots=sorted(data['advisory_review']['slots'], key=lambda item:item['slot'])
+          print('matrix=' + json.dumps({'include':[{'slot':s['slot'],'credential_alias':s['credential_alias'],'start_delay_seconds':s['start_delay_seconds']} for s in slots]}, separators=(',',':')))
+          PY
+
   openrouter_free:
-    needs: validation_gate
-    if: needs.validation_gate.result == 'success'
+    needs: [eligibility, resolve_advisory_slots]
+    if: needs.eligibility.outputs.should_run == 'true' && needs.resolve_advisory_slots.result == 'success'
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          # Small traffic-shaping stagger: 2 seconds between slot launch targets,
-          # capped at an 8-second spread. This is deliberately not a staged barrier.
-          - { slot: 1, credential_alias: OPENROUTER_API_KEY, start_delay_seconds: 0 }
-          - { slot: 2, credential_alias: OPENROUTER_API_KEY_OPENAI, start_delay_seconds: 2 }
-          - { slot: 3, credential_alias: OPENROUTER_API_KEY_POOLSIDE, start_delay_seconds: 4 }
-          - { slot: 4, credential_alias: OPENROUTER_API_KEY_DEEPSEEK, start_delay_seconds: 6 }
-          - { slot: 5, credential_alias: OPENROUTER_API_KEY_GWEN, start_delay_seconds: 8 }
+      matrix: ${{ fromJSON(needs.resolve_advisory_slots.outputs.matrix) }}
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: OpenRouter Free Slot ${{ matrix.slot }}
