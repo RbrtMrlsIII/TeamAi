@@ -36,9 +36,6 @@ on:
         description: Reviewer-specific manual marker
         required: true
         type: string
-        description: Reviewer-specific manual marker
-        required: true
-        type: string
     secrets:
       api_key:
         required: true
