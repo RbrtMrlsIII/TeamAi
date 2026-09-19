@@ -7,12 +7,12 @@ on:
         description: Reviewer display name
         required: true
         type: string
-      reviewer_slug:
-        description: Stable reviewer identifier
+      credential_alias:
+        description: Non-secret credential alias used by this advisory slot
         required: true
         type: string
-      model:
-        description: OpenRouter model slug
+      reviewer_slug:
+        description: Stable reviewer identifier
         required: true
         type: string
       pr_number:
@@ -41,11 +41,6 @@ on:
         description: Reviewer-specific manual marker
         required: true
         type: string
-      approve:
-        description: Permit an explicitly authorized model approval, currently Nemotron-only
-        required: false
-        default: false
-        type: boolean
     secrets:
       api_key:
         required: true
@@ -310,7 +305,8 @@ jobs:
         id: invoke_model
         env:
           OPENROUTER_API_KEY: ${{ secrets.api_key }}
-          MODEL: ${{ inputs.model }}
+          MODEL: openrouter/free
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
         shell: bash
@@ -562,6 +558,7 @@ jobs:
             printf 'OpenRouter request id: `%s`\n' "$request_id"
             printf 'Exact PR head: `%s`\n' "$HEAD"
             echo "Invocation class: $INVOCATION"
+            printf 'Credential alias: `%s`\n' "$CREDENTIAL_ALIAS"
             if [[ "$INVOCATION" == "automatic" ]]; then echo 'Slot outcome: SUCCEEDED'; fi
             echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
             echo
@@ -579,6 +576,7 @@ jobs:
           OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
           REVIEWER: ${{ inputs.reviewer }}
           REVIEWER_SLUG: ${{ inputs.reviewer_slug }}
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           INVOKE_OUTCOME: ${{ steps.invoke_model.outcome }}
           POST_OUTCOME: ${{ steps.post_review.outcome }}
         shell: bash
@@ -617,32 +615,9 @@ jobs:
             "# Automatic AI Advisory Slot Outcome" \
             "Reviewer: \`$REVIEWER\`" \
             "Reviewer slug: \`$REVIEWER_SLUG\`" \
+            "Credential alias: \`$CREDENTIAL_ALIAS\`" \
             "Exact PR head: \`$HEAD\`" \
             "Slot outcome: $state" \
             "Provider invocation attempted: $attempted" \
             "Diagnostic: $reason")"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-
-      - name: Optional model approval
-        if: inputs.approve == true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ inputs.pr_number }}
-          REPO: ${{ github.repository }}
-          HEAD: ${{ steps.meta.outputs.head }}
-          REVIEWER: ${{ inputs.reviewer }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          [[ "$REVIEWER" == 'Nemotron' ]] || {
-            echo 'Model approval is restricted to the explicitly authorized Nemotron path.'
-            exit 1
-          }
-          if grep -q '^## Verdict$' /tmp/review.md && grep -q '^APPROVE$' /tmp/review.md; then
-            gh api --method POST "repos/$REPO/pulls/$PR/reviews" \
-              -f body="Nemotron Copilot Review: APPROVE. Exact head $HEAD. Model-generated advisory review only; TeamAi review-readiness requires separate human authorization." \
-              -f event='APPROVE'
-          else
-            echo 'Reviewer did not return APPROVE; no model approval submitted.'
-            exit 1
-          fi
