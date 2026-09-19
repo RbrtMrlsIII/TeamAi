@@ -1,5 +1,7 @@
 # MASTERPLAN — active execution checklist
 
+- [ ] Issue #389 — reconstruct a clean canonical mainline replacement before further product execution.
+
 **Authority:** `Product_Law/PRODUCT_LAW.md`  
 **Role:** chronology and executable checklist only.  
 **Current governing program:** TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
@@ -32,13 +34,13 @@
 - [x] Model reviewer workflows are execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 - [x] Automatic model review is quota-protected to one automatic invocation sequence per PR; later-head re-review remains explicit.
-- [x] Automatic advisory routing is unified on one OpenRouter API key and the OpenRouter Free Router; slot identity is a bounded orchestration slot, not a model identity.
-- [x] OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+- [x] Automatic advisory routing is unified on OpenRouter Free Router with five dedicated credential aliases; slot identity is a bounded orchestration slot, not a model identity.
+- [x] OpenRouter Free Router → 5 parallel slots → 2-second launch stagger; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-- [x] The automatic advisory sequence is now five parallel OpenRouter Free Router slots with one shared API key, exact-head guards, durable one-sequence claim, and actual routed model/provider evidence per successful slot.
-- [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its Nemotron stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
+- [x] The automatic advisory sequence is now five OpenRouter Free Router slots with five dedicated credential aliases, a nominal 2-second launch stagger, exact-head guards, durable one-sequence claim, and actual routed model/provider evidence per successful slot.
+- [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its former model-specific stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
 - [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof now targets the revised five-slot free-router path.
-- [ ] Automatic OpenRouter Free Router sequence is runtime-verified on a fresh eligible non-draft PR lifecycle event, including five parallel slot outcomes and exact-head provenance.
+- [x] Automatic OpenRouter Free Router sequence has been runtime-executed on a fresh eligible non-draft PR lifecycle event, producing five exact-head terminal slot artifacts; the completed proof at `b5cabce7fb9e503637a9ff42a06befef11a5bd22` recorded 0/5 publishable advisory reviews and 5/5 provider failures.
 
 ## Workspace and delivery
 
@@ -88,9 +90,9 @@ Execution state is separate from advisory content: each slot records one termina
 - [ ] Every validator change has the same old-invariant/new-invariant evidence record.
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
 - [x] No validator is weakened merely to obtain green CI.
-- [x] Nemotron review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
+- [x] former model-specific review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
 - [x] Additional model reviewers reuse the same substantive exact-head boundary rather than weakening or bypassing validators.
-- [ ] Dynamic five-slot advisory fan-out is runtime-verified without weakening or bypassing the existing reviewer gate.
+- [ ] Dynamic five-slot advisory fan-out is runtime-verified with the 2-second launch stagger without weakening or bypassing the existing reviewer gate.
 
 ## Post-#346 control-plane reconciliation — Issue #347
 
@@ -111,11 +113,16 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
 - [x] Current session/masterplan/current-slice records are synchronized with the post-#368 control-plane and the #370/#371 runtime-proof investigation.
 - [x] Shared AI Advisory Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
-- [x] Nemotron Copilot Review procedure remains registered and constrained to advisory/promotion-gated use.
-- [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per sequence.
+- [x] The former model-specific advisory procedure is retired; the generalized AI Advisory Review Skill is the only active model-assisted PR review procedure.
+- [x] The configured advisory workflow records required exact-head validators before provider invocation and protects each exact-head automatic sequence with structured workflow state.
 - [ ] Historical records remain immutable and out of active routing.
 
 
 ### Validation parser alignment
 
 The repository governance audit accepts the canonical `Draft proof target` section used by governed PRs. Level-2 and level-3 Markdown headings are both valid; this repair preserves the underlying proof requirement rather than changing what the PR must prove.
+
+
+## Seat population authority normalization
+- [x] Establish and consume the single Seat-capacity rule: minimum 1, maximum 10, Guest World presentation 10, authenticated durable population 1–10 subject to entitlement/authorization; keep Tree 1–8 separate.
+- [x] Route Guest Hero ring/camera density through `seatPopulationDensity()` / 1–10 instead of the leftover 8-seat clamp; keep Tree 1–8 as a separate world-tree vocabulary.

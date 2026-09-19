@@ -80,7 +80,8 @@
         "commonSkillDuplication": false,
         "agentCountRule": "Agent count changes responsibility allocation and effective per-Seat skill bundles, not the common skill definitions",
         "twoSeatRule": "Fewer Seats may carry several Responsibility Units and broader resolved skill bundles",
-        "eightSeatRule": "Up to eight Seats partition the same Responsibility Unit and common-skill substrate more finely; each Seat may resolve a different effective bundle",
+        "tenSeatRule": "Up to ten Seats partition the same Responsibility Unit and common-skill substrate more finely; each Seat may resolve a different effective bundle",
+        "presentationDensity": "Guest Hero ring/camera density uses seatPopulationDensity across MIN=1 MAX=10; Tree 1-8 is a separate world-tree vocabulary",
         "userSkillEditing": "DEFINED_NOT_IMPLEMENTED; user-owned skill material must remain distinct from canonical common skills",
         "removeAgent": "Seat lifecycle retire/remove operation; must not imply deletion of the user's root account",
         "return": "Cross-tree navigation to public Entrance; not a Seat child",
@@ -120,8 +121,9 @@
       "seatHierarchy": false
     },
     "worldPopulation": {
-      "defaultPresentationSlots": 8,
-      "durableSeatRule": "A rendered slot is not a durable configured Seat; actual population is restored from authorized user/project state"
+      "defaultPresentationSlots": 10,
+      "maximumPresentationSlots": 10,
+      "durableSeatRule": "A rendered slot is not a durable configured Seat; authenticated state restores the actual authorized durable Seat population from 1 through 10"
     }
   },
   "branchContract": {

@@ -13,6 +13,7 @@ const css = await readFile(new URL('../public/hero.css', import.meta.url), 'utf8
 const materials = await readFile(new URL('../public/hero-materials.css', import.meta.url), 'utf8');
 const partsCss = await readFile(new URL('../public/hero-parts.css', import.meta.url), 'utf8');
 const depthDoc = await readFile(new URL('../docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md', import.meta.url), 'utf8');
+const capacity = await readFile(new URL('../public/seat-capacity.js', import.meta.url), 'utf8');
 
 test('3D Hero static shell is wired', () => {
   assert.match(html, /hero-flex\.js/);
@@ -48,7 +49,15 @@ test('flexible seat model is present', () => {
   for (const marker of ['profile(', 'buildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
     assert.ok(runtime.includes(marker), marker);
   }
-  assert.match(runtime, /clamp\(count,\s*1,\s*8\)/);
+  assert.match(runtime, /clampSeatCount\(next\)/);
+  assert.match(runtime, /seatCount=GUEST_SEAT_COUNT/);
+  assert.match(capacity, /MIN_SEAT_COUNT = 1/);
+  assert.match(capacity, /MAX_SEAT_COUNT = 10/);
+  assert.match(capacity, /GUEST_SEAT_COUNT = 10/);
+  assert.match(runtime, /seatPopulationDensity\(count\)/);
+  assert.match(runtime, /seatPopulationDensity\(seatCount\)/);
+  assert.doesNotMatch(runtime, /clamp\(count,1,8\)/);
+  assert.doesNotMatch(runtime, /\(seatCount-1\)\/7/);
 });
 
 test('signature geometry primitives are present', () => {

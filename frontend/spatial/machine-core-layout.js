@@ -1,9 +1,10 @@
+import { clampSeatCount, MACHINE_DEFAULT_SEAT_COUNT } from './seat-capacity.js';
 const TAU = Math.PI * 2;
 const polar = (radius, angle, y = 0) => ({ x: Math.cos(angle) * radius, y, z: Math.sin(angle) * radius });
 const DEFAULT_SEAT_COUNT = 10;
-const MIN_SEAT_COUNT = 2;
-const MAX_SEAT_COUNT = 16;
 const OUTER_COUNT = 4;
+const TREE_HERO_SEAT = 'TREE-HERO-SEAT';
+const SEAT_SHELL = 'SEAT_SHELL';
 const clamp01 = (value) => Math.min(1, Math.max(0, Number(value) || 0));
 const seatLevel = (seatIndex) => 0.60 + ((seatIndex * 0.17) % 0.31);
 const makeUiSurface = (part, style, scale = 1) => Object.freeze({ style, anchor: { ...part.center, y: part.level + part.dimensions.y * 0.46 }, width: part.dimensions.x * 0.66 * scale, depth: part.dimensions.z * 0.54 * scale, clearance: part.seam * 1.8 });
@@ -25,22 +26,47 @@ const outerAngle = (count, outerIndex) => {
   const nearestSeatIndex = Math.floor(quadrant / step);
   return (nearestSeatIndex + 0.5) * step;
 };
+
+export function seatShellBranchId(seatIndex) {
+  return `BRANCH-SEAT-${String(Number(seatIndex) + 1).padStart(2, '0')}`;
+}
+
+/** Projection from canonical Census identity. This is not a second semantic hierarchy. */
+export function bindSeatShellProjection({ seatIndex, branchId } = {}) {
+  const index = Number.isInteger(Number(seatIndex)) ? Number(seatIndex) : NaN;
+  const expected = Number.isInteger(index) ? seatShellBranchId(index) : null;
+  if (!Number.isInteger(index) || index < 0 || branchId !== expected) {
+    return Object.freeze({
+      treeId: null,
+      semanticId: null,
+      semanticKey: null,
+      semanticBoundary: 'presentation-only',
+    });
+  }
+  return Object.freeze({
+    treeId: TREE_HERO_SEAT,
+    semanticId: SEAT_SHELL,
+    semanticKey: `${TREE_HERO_SEAT}#${index}:${SEAT_SHELL}`,
+    semanticBoundary: 'presentation-only',
+  });
+};
 export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, expanded = false, expansionAmount = null } = {}) {
-  const count = Math.min(MAX_SEAT_COUNT, Math.max(MIN_SEAT_COUNT, Math.floor(Number(seatCount) || DEFAULT_SEAT_COUNT)));
+  const count = clampSeatCount(seatCount, MACHINE_DEFAULT_SEAT_COUNT);
   const amount = expansionAmount == null ? (expanded ? 1 : 0) : clamp01(expansionAmount);
   const innerRadius = 4.05 + (4.55 - 4.05) * amount;
   const podPortRadius = 0.92 + (1.02 - 0.92) * amount;
   const outerRadius = 6.45 + (7.15 - 6.45) * amount;
-  const hub = { id: 'machine-hub-core', branchId: 'HUB-CORE', kind: 'hub', level: 0.42, center: { x: 0, y: 0.42, z: 0 }, dimensions: { x: 2.6, y: 0.78, z: 2.6 }, silhouette: 'hex', seam: 0.26, port: { x: 0, y: 0.42, z: 1.45 }, uiStyle: 'command-core', expanded: true };
+  const hub = { id: 'machine-hub-core', branchId: 'HUB-CORE', kind: 'hub', level: 0.42, center: { x: 0, y: 0.42, z: 0 }, dimensions: { x: 2.6, y: 0.78, z: 2.6 }, silhouette: 'hex', seam: 0.26, port: { x: 0, y: 0.42, z: 1.45 }, uiStyle: 'command-core', expanded: true, semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only' };
   hub.uiSurface = makeUiSurface(hub, hub.uiStyle, 0.72); hub.camera = cameraForPart(hub, Math.PI / 2);
   const inner = Array.from({ length: count }, (_, seatIndex) => {
-    const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(innerRadius, angle, level), dims = silhouetteDimensions.pod, branchId = `BRANCH-SEAT-${String(seatIndex + 1).padStart(2, '0')}`;
-    const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: polar(podPortRadius, angle, level) };
+    const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(innerRadius, angle, level), dims = silhouetteDimensions.pod, branchId = seatShellBranchId(seatIndex);
+    const semantic = bindSeatShellProjection({ seatIndex, branchId });
+    const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: polar(podPortRadius, angle, level), ...semantic };
     part.uiSurface = makeUiSurface(part, part.uiStyle); part.camera = cameraForPart(part, angle); return part;
   });
   const outer = outerProfiles.map((profile, outerIndex) => {
     const angle = outerAngle(count, outerIndex), center = polar(outerRadius, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
-    const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: polar(1.12, angle, profile.height) };
+    const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: polar(1.12, angle, profile.height), semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only' };
     part.uiSurface = makeUiSurface(part, profile.uiStyle, profile.uiScale); part.camera = cameraForPart(part, angle); return part;
   });
   const parts = [hub, ...inner, ...outer], byBranch = new Map(parts.map((part) => [part.branchId, part])), connections = [];

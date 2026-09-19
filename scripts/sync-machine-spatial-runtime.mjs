@@ -3,6 +3,10 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const files = [
+  'seat-capacity.js',
+  'seat-division-geometry.js',
+  'seat-connection-edge.js',
+  'machine-core-seat-connection.js',
   'machine-hero-scene.js',
   'machine-hero-graph.js',
   'machine-hero-payload.js',

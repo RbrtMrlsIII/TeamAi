@@ -63,7 +63,7 @@
         <lifecycle>Discover|External Setup|Import/Authorize|Capability Test|Bind|Equip|Activate|Run|Observe|Degrade/Suspend|Recover/Revalidate|Rebind/Retire</lifecycle>
         <commonSkillSource>TEAMAI COMMON SKILL / Universal ToolKit</commonSkillSource>
         <twoSeatAllocation>Fewer Seats may carry several Responsibility Units and broader effective bundles.</twoSeatAllocation>
-        <eightSeatAllocation>Up to eight Seats partition the same Responsibility Unit/common-skill definitions more finely.</eightSeatAllocation>
+        <seatAllocation>1–10 Seats may partition the same Responsibility Unit/common-skill definitions at different operational granularity. This Seat capacity rule is distinct from the Settings/world-tree vocabulary Tree 1–8.</seatAllocation>
         <userSkillEditing status="defined-not-implemented">User-owned skill material remains distinct from canonical common skills.</userSkillEditing>
         <removeAgent>Retire/remove the Seat and governed bindings; do not delete the user's root account.</removeAgent>
       </configuration>

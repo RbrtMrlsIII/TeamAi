@@ -103,7 +103,7 @@ def proof_target(payload: dict) -> str:
             body = ""
     if not body:
         body = (pr.get("body") or "").strip()
-    match = re.search(r"^#{2,3}\s+Draft proof target\s*$([\s\S]*?)(?=^#{2,3}\s|\Z)", body, re.MULTILINE)
+    match = re.search(r"^#{2,3}\s+Draft proof target\s*$([\s\S]*?)(?=^##\s|\Z)", body, re.MULTILINE)
     return match.group(1).strip() if match else ""
 def changed_paths(base: str | None, head: str | None) -> set[str]:
     if not base or not head:

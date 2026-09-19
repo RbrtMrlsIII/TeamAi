@@ -32,7 +32,7 @@ claims:
     state: HISTORICAL_COMPLETE
     evidence:
       - docs/TEAMAI_3D_HERO_V3_5_FAR_ENVIRONMENT.md
-      - docs/CHECKPOINT_TEAM-EXPERIENCE-029_V3_5_FAR_ENVIRONMENT_2026-09-10.md
+      - docs/archive/CHECKPOINT_TEAM-EXPERIENCE-029_V3_5_FAR_ENVIRONMENT_2026-09-10.md
       - docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md
     indexes:
       - Product_Law/PRODUCT_LAW.md
@@ -47,7 +47,7 @@ claims:
   BACKEND-GATE4:
     state: PARKED_NOT_PROVEN
     evidence:
-      - docs/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md
+      - docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE4_PARKED_2026-09-03.md
     indexes:
       - Masterplan/MASTERPLAN.md
       - AI_ASSISTANT_READ_ME.md

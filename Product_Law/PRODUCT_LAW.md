@@ -283,7 +283,13 @@ Fields are consumed by Responsibility Profiles and are later resolved through wo
 ## 5. LAW FAMILY E — WEB AI SEATS, RESPONSIBILITY PROFILES, AND POPULATION
 
 ### Definition
-A **Web AI population** is the set of Web AI Seats configured for a TeamAi Workplace/Project and operating purpose. The canonical team-development baseline is **2–8 Web AI Seats**.
+A **Web AI population** is the set of Web AI Seats configured for a TeamAi Workplace/Project and operating purpose. The Seat population rule is:
+- minimum = 1 Web AI Seat;
+- maximum = 10 Web AI Seats;
+- Guest World presentation = 10 machine Seat slots;
+- authenticated durable Seat population = 1–10 authorized Seats, subject to entitlement and durable-state authority.
+
+Ten machine Seats are presentation capacity, not ten automatically fabricated durable Seats. **10 Seats ≠ Tree 1–8**.
 
 Population size changes responsibility distribution; it does not create additional product authorities.
 
@@ -802,7 +808,7 @@ The authoritative `team-ai-official` Firebase project and `(default)` Firestore 
 
 Observed evidence included invalid/missing authorization rejection, valid authenticated persistence, independent nested seat-document confirmation, and successful repeat-call idempotency behavior.
 
-Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
+Detailed evidence: `docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE3_2026-09-03.md` and `docs/backend/FIREBASE_EDGE_PERSISTENCE_IMPLEMENTATION_2026-09-03.md`.
 
 ### Gate 5B — server-owned PayPal correlation contract — PASS
 The backend encodes a bounded server-owned commerce correlation contract in `src/backend/commerce.ts`. A trusted server flow establishes pending `firebaseUid + correlationId + provider` intent; only a verified PayPal event may bind the provider event ID, with deterministic idempotency derived from that provider event.
@@ -811,7 +817,7 @@ Direct source-contract validation passed with the documented Node/TypeScript env
 
 Observed result: `GATE5B_DIRECT_TEST=PASS`.
 
-Detailed evidence: `docs/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
+Detailed evidence: `docs/archive/CHECKPOINT_TEAM-BACKEND-001_GATE5B_2026-09-03.md` and `docs/evidence/GATE5B_DIRECT_VALIDATION_2026-09-03.md`.
 
 This remains source-contract evidence, not TEAM-BACKEND-001 final completion.
 

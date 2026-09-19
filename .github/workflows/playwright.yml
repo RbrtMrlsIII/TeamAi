@@ -3,7 +3,7 @@ name: Canonical Browser Verification
 on:
   pull_request:
   push:
-    branches: [main, governance/repository-foundation]
+    branches: [main]
 
 concurrency:
   group: canonical-browser-${{ github.workflow }}-${{ github.head_ref || github.ref }}

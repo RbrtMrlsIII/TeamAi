@@ -15,7 +15,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: repository-governance-${{ github.ref }}
+  group: repository-governance-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -61,53 +61,11 @@ jobs:
       - name: Syntax check governance validators
         run: |
           node --check scripts/governance/verify-evidence-integrity.mjs
+          node --check scripts/governance/verify-advisory-control-plane.mjs
           python3 -m py_compile build-system/scripts/repository-canonical-governance-audit.py
 
-      - name: Verify advisory reviewer stage consistency
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected='OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review'
-          workflow='.github/workflows/ai-advisory-review-sequence.yml'
-          grep -Fq 'model: openrouter/free' "$workflow"
-          grep -Fq 'strategy:' "$workflow"
-          grep -Fq 'fail-fast: false' "$workflow"
-          grep -Fq 'slot: [1, 2, 3, 4, 5]' "$workflow"
-          grep -Fq 'reviewer: OpenRouter Free Slot' "$workflow"
-          grep -Fq 'reviewer_slug: openrouter-free-' "$workflow"
-          grep -Fq 'secrets.OPENROUTER_API_KEY }}' "$workflow"
-          test "$(grep -Fc 'model: openrouter/free' "$workflow")" -eq 1
-          test "$(grep -Fc 'openrouter-free-' "$workflow")" -ge 3
-          if grep -Fq 'REVIEW_INTERVAL_SECONDS' "$workflow" || grep -Fq 'delay_to_second_stage' "$workflow" || grep -Fq 'delay_to_third_stage' "$workflow"; then
-            echo "Retired inter-slot interval/barrier logic remains in the active sequence workflow."
-            exit 1
-          fi
-          if grep -Fq 'nvidia/nemotron' "$workflow" || grep -Fq 'inclusionai/ling' "$workflow" || grep -Fq 'poolside/laguna' "$workflow" || grep -Fq 'dots-studio/dots-3' "$workflow"; then
-            echo "Named-model reviewer bindings remain in the active sequence workflow."
-            exit 1
-          fi
-          grep -Fq 'needs: [claim, openrouter_free]' "$workflow"
-          grep -Fq "if: always() && needs.claim.result == 'success'" "$workflow"
-          grep -Fq 'automatic_outcome_marker' "$workflow"
-          grep -Fq 'Publish durable automatic slot outcome' ".github/workflows/ai-advisory-review-runner.yml"
-          grep -Fq 'Return only the following compact review structure' ".github/workflows/ai-advisory-review-runner.yml"
-          grep -Fq 'Slot outcome: SUCCEEDED' ".github/workflows/ai-advisory-review-runner.yml"
-          if grep -Fq 'automatic_start_marker' "$workflow" || grep -Fq 'Reserve automatic provider invocation slot' ".github/workflows/ai-advisory-review-runner.yml"; then
-            echo "Obsolete per-slot reservation state remains in the active advisory control plane."
-            exit 1
-          fi
-          for path in             'POLICY.md'             'docs/SKILL_WIRING.md'             'skills/governance/ai-advisory-review/SKILL.md'             'Masterplan/MASTERPLAN.md'             'AI_ASSISTANT_READ_ME.md'             'Product_Law/WIRING.md'; do
-            test -f "$path"
-            grep -Fq "$expected" "$path" || {
-              echo "Advisory reviewer routing drift detected in $path"
-              exit 1
-            }
-            if grep -Fq '2 minutes 30 seconds' "$path" || grep -Fq '150-second' "$path" || grep -Fq '150 seconds' "$path"; then
-              echo "Retired inter-slot timing wording remains in $path"
-              exit 1
-            fi
-          done
-          echo "Advisory reviewer control plane is synchronized: five parallel Free Router slots, one shared key, no inter-slot timers, explicit terminal slot outcomes, compact structured model evidence, exact-head guards, and one-sequence quota protection."
+      - name: Verify advisory reviewer control plane
+        run: node scripts/governance/verify-advisory-control-plane.mjs
 
       - name: Prove draft PR target against full PR delta
         env:
@@ -222,15 +180,37 @@ jobs:
             if [ "$approved" -ge 1 ]; then
               required=(governance-drift evidence-consistency agent-validation)
               checkruns=$(gh api --paginate "/repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100")
+              pending=0
+              failed=0
               for required_check in "${required[@]}"; do
-                conclusion=$(jq -r --arg name "$required_check" --arg head "$HEAD_SHA" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .completed_at) | last | .conclusion // "missing"' <<< "$checkruns")
-                echo "required_check=${required_check} conclusion=${conclusion}"
+                check=$(jq -c --arg name "$required_check" --arg head "$HEAD_SHA" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .completed_at) | last // empty' <<< "$checkruns")
+                if [ -z "$check" ]; then
+                  echo "required_check=${required_check} status=missing conclusion=pending"
+                  pending=$((pending+1))
+                  continue
+                fi
+                status=$(jq -r '.status' <<< "$check")
+                conclusion=$(jq -r '.conclusion // ""' <<< "$check")
+                echo "required_check=${required_check} status=${status} conclusion=${conclusion:-PENDING}"
+                if [ "$status" != "completed" ]; then
+                  pending=$((pending+1))
+                  continue
+                fi
                 if [ "$conclusion" != "success" ]; then
-                  echo "REVIEW_READINESS=FAIL"
-                  echo "Required check ${required_check} is not successful on exact head ${HEAD_SHA}."
-                  exit 1
+                  failed=$((failed+1))
                 fi
               done
+              if [ "$failed" -gt 0 ]; then
+                echo "REVIEW_READINESS=FAIL"
+                echo "One or more required governance checks completed unsuccessfully on exact head ${HEAD_SHA}."
+                exit 1
+              fi
+              if [ "$pending" -gt 0 ]; then
+                echo "REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS"
+                echo "Required governance checks are still missing or incomplete on exact head ${HEAD_SHA}; polling again."
+                sleep "$poll_seconds"
+                continue
+              fi
               echo "REVIEW_READINESS=PASS"
               echo "Independent human approval exists on the exact current PR head $HEAD_SHA and required governance checks are green."
               exit 0

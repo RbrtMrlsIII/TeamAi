@@ -18,7 +18,7 @@ The semantic behavior of a component must remain equivalent when the visual mode
 
 Implementation follows:
 
-`Product Law → Masterplan → Policy/ORUCAVEAM → frontend spatial skill → existing UI roots/primitives → implementation → accessibility/responsive/browser verification → GitHub evidence → HandOver → Endorsement → Product Knowledge when validated`
+`Product Law → Masterplan → Policy/ORUCAVEAM → frontend spatial skill → existing UI roots/primitives → implementation → accessibility/responsive/browser verification → GitHub evidence → Session Snapshot → Product Knowledge when validated`
 
 ## Evidence boundary
 

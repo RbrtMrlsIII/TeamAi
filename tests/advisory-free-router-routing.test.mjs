@@ -1,57 +1,39 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-
-const read = (p) => readFileSync(p, 'utf8');
-const sequence = read('.github/workflows/ai-advisory-review-sequence.yml');
-const runner = read('.github/workflows/ai-advisory-review-runner.yml');
-const manual = read('.github/workflows/additional-ai-advisory-reviews.yml');
-const legacy = read('.github/workflows/nemotron-copilot-review.yml');
-
-test('automatic advisory routing uses five parallel OpenRouter Free Router slots', () => {
-  assert.match(sequence, /strategy:\s*\n\s*fail-fast: false\s*\n\s*matrix:\s*\n\s*slot: \[1, 2, 3, 4, 5\]/);
-  assert.equal((sequence.match(/model: openrouter\/free/g) || []).length, 1);
-  assert.match(sequence, /reviewer: OpenRouter Free Slot \$\{\{ matrix\.slot \}\}/);
-  assert.match(sequence, /reviewer_slug: openrouter-free-\$\{\{ matrix\.slot \}\}/);
-  assert.match(sequence, /api_key: \$\{\{ secrets\.OPENROUTER_API_KEY \}\}/);
-  assert.match(sequence, /automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-\$\{\{ matrix\.slot \}\}-outcome -->/);
-  assert.doesNotMatch(sequence, /automatic_start_marker|REVIEW_INTERVAL_SECONDS|delay_to_second_stage|delay_to_third_stage|2 minutes 30 seconds|150-second/);
-  assert.match(sequence, /State: CLAIMED.*Provider budget/);
+import fs from 'node:fs';
+import path from 'node:path';
+import test from 'node:test';
+const root=process.cwd();
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const sequence=read('.github/workflows/ai-advisory-review-sequence.yml');
+const runner=read('.github/workflows/ai-advisory-review-runner.yml');
+const governance=read('.github/workflows/governance.yml');
+const manual=read('.github/workflows/additional-ai-advisory-reviews.yml');
+const policy=read('POLICY.md');
+const wiring=read('docs/SKILL_WIRING.md');
+const skill=read('skills/governance/ai-advisory-review/SKILL.md');
+const next=read('Masterplan/NEXT_SLICES.md');
+const session=read('AI_ASSISTANT_READ_ME.md');
+const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
+test('automatic fan-out uses five dedicated credential aliases',()=>{for(const alias of aliases) assert.match(sequence,new RegExp('credential_alias:\\s*'+alias));assert.match(sequence,/secrets\[matrix\.credential_alias\]/);assert.match(sequence,/cancel-in-progress:\s*false/);assert.doesNotMatch(sequence,/model:\s*openrouter\/free/);assert.doesNotMatch(sequence,/secrets\.OPENROUTER_API_KEY \}\}/);assert.doesNotMatch(sequence,/issues\/\$PR\/comments\?per_page/);});
+test('terminal slot outcomes are aggregated without reusable-job continue-on-error',()=>{const block=sequence.slice(sequence.indexOf('  openrouter_free:'),sequence.indexOf('  sequence_complete:'));assert.doesNotMatch(block,/continue-on-error:\s*true/);assert.match(sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);assert.match(sequence,/structured slot artifacts/i);});
+test('governance validation isolates pull_request and pull_request_review concurrency groups',()=>{assert.match(governance,/repository-governance-\$\{\{ github\.ref \}\}-\$\{\{ github\.event_name \}\}/);});
+test('review-readiness distinguishes pending checks from completed failures',()=>{
+  assert.match(governance,/pending=0\s*\n\s*failed=0/);
+  assert.match(governance,/status=missing conclusion=pending/);
+  assert.match(governance,/if \[ \"\$status\" != \"completed\" \]/);
+  assert.match(governance,/REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS/);
+  assert.match(governance,/if \[ \"\$failed\" -gt 0 \]/);
 });
-
-test('automatic sequence remains one-shot and completion accepts terminal success/failure slot outcomes', () => {
-  assert.match(sequence, /An automatic sequence claim already exists for PR #\$PR/);
-  assert.match(sequence, /SEQUENCE_COMPLETE_MARKER/);
-  assert.match(sequence, /repos\/\$REPO\/actions\/runs\/\$GITHUB_RUN_ID\/jobs/);
-  assert.match(sequence, /conclusion.*success.*failure/);
-  assert.match(sequence, /Five parallel OpenRouter Free Router slots reached terminal execution outcomes/);
-  assert.match(sequence, /outcome_marker/);
-  assert.match(sequence, /Slot outcome: SUCCEEDED/);
-  assert.match(sequence, /SUCCEEDED\|PROVIDER_FAILED\|REVIEW_POST_FAILED\|PRE_PROVIDER_FAILURE/);
-  assert.match(sequence, /successful slot \$slot workflow job must publish Slot outcome: SUCCEEDED/);
-  assert.match(sequence, /failed slot \$slot workflow job cannot publish Slot outcome: SUCCEEDED/);
-  assert.match(sequence, /github-actions\[bot\]/);
-  assert.equal((sequence.match(/for slot in 1 2 3 4 5/g) || []).length, 1);
+test('automatic fan-out uses a two-second launch stagger',()=>{
+  for(const delay of [0,2,4,6,8]) assert.match(sequence,new RegExp('start_delay_seconds:\\s*'+delay));
+  assert.match(sequence,/capped at an 8-second spread/);
 });
-
-test('runner records the actual routed model and provider instead of requested router identity', () => {
-  assert.match(runner, /X-OpenRouter-Metadata/);
-  assert.match(runner, /actual_model = data\.get\('model'\)/);
-  assert.match(runner, /openrouter_metadata/);
-  assert.match(runner, /actual_provider/);
-  assert.match(runner, /Actual model/);
-  assert.match(runner, /Actual provider/);
-  assert.match(runner, /MAX_REVIEW_CHARS/);
-  assert.match(runner, /max_tokens': 2200/);
-  assert.match(runner, /Return only the following compact review structure/);
-  assert.match(runner, /hidden reasoning, internal deliberation/);
-  assert.match(runner, /Publish durable automatic slot outcome/);
-  assert.match(runner, /PROVIDER_RESPONSE_FAILURE|PROVIDER_HTTP_FAILURE|PROVIDER_TRANSPORT_FAILURE/);
-  assert.doesNotMatch(runner, /Reserve automatic provider invocation slot|automatic_start_marker/);
-});
-
-test('manual reviewer paths use OpenRouter Free Router without model-specific approval', () => {
-  assert.equal((manual.match(/model: openrouter\/free/g) || []).length, 1);
-  assert.equal((legacy.match(/model: openrouter\/free/g) || []).length, 1);
-  assert.doesNotMatch(legacy, /nvidia\/nemotron|approve:.*true/);
-});
+test('runner hard-locks route and uses structured advisory output',()=>{assert.match(runner,/MODEL:\s*openrouter\/free/);assert.doesNotMatch(runner,/^\s+model:\s*$/m);assert.doesNotMatch(runner,/approve:/i);assert.match(runner,/response_format/);assert.match(runner,/'type': 'json_schema'/);assert.match(runner,/teamai_advisory_review/);assert.match(runner,/failure_path\.exists\(\)/);assert.match(runner,/actions\/upload-artifact@v4/);assert.doesNotMatch(runner,/automatic_outcome_marker/);});
+test('terminal artifacts preserve provider response and usage diagnostics',()=>{assert.match(runner,/'response_shape': runtime\.get\('response_shape'\)/);assert.match(runner,/'usage_summary': runtime\.get\('usage_summary'\)/);assert.match(runner,/max_tokens\': 4000/);});
+test('provider capability controls remain enforced',()=>{assert.match(runner,/require_parameters/);assert.match(runner,/response-healing/);assert.match(runner,/stream.*False/);});
+test('automatic sequence evidence publisher is authenticated',()=>{assert.match(sequence,/Build and publish execution evidence[\s\S]{0,500}GH_TOKEN: \$\{\{ github\.token \}\}/);assert.match(sequence,/gh api --method POST/);});
+test('validation workflows avoid duplicate PR branch pushes',()=>{const full=fs.readFileSync(path.join(root,'.github/workflows/full-system-verification.yml'),'utf8');const browser=fs.readFileSync(path.join(root,'.github/workflows/playwright.yml'),'utf8');assert.match(full,/push:\n\s+branches: \[main\]/);assert.match(browser,/push:\n\s+branches: \[main\]/);assert.doesNotMatch(full,/governance\/repository-foundation/);assert.doesNotMatch(browser,/governance\/repository-foundation/);});
+test('manual and Skill Wiring routes map to distinct aliases',()=>{for(const alias of aliases){assert.ok(manual.includes(alias));assert.ok(wiring.includes('| '+alias+' |'));}});
+for(const text of [sequence,runner,manual,policy,wiring,skill,next]) for(const token of ['1→2→2','150-second','one shared OpenRouter API key','comment-driven orchestration state','skills/governance/nemotron-copilot-review']) { const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); assert.doesNotMatch(text,new RegExp(escaped,'i')); }
+test('retired files are archived, not active',()=>{assert.equal(fs.existsSync(path.join(root,'docs/TEAMAI_029_CURRENT_STATE_MAP.md')),false);assert.equal(fs.existsSync(path.join(root,'.github/workflows/nemotron-copilot-review.yml')),false);assert.equal(fs.existsSync(path.join(root,'skills/governance/nemotron-copilot-review/SKILL.md')),false);assert.equal(fs.existsSync(path.join(root,'docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md')),true);});
+test('session snapshot and current slice are explicit',()=>{assert.match(session,/## SESSION SNAPSHOT/);assert.match(session,/replacement branch: governance\/clean-mainline-rebuild-20260919/);assert.match(session,/open implementation vehicles: PR #391 \/ Issue #389 only/);assert.match(next,/GOVERNANCE — clean canonical mainline reconstruction \(Issue #389\)/);});

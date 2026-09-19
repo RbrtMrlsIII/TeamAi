@@ -1,4 +1,5 @@
 name: AI Advisory Review Sequence
+# Control state is structured workflow artifacts; PR comments are evidence only.
 
 on:
   pull_request:
@@ -12,52 +13,54 @@ permissions:
 
 concurrency:
   group: ai-review-sequence-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   VALIDATION_POLL_SECONDS: '15'
   VALIDATION_TIMEOUT_SECONDS: '1800'
-  SEQUENCE_MARKER: '<!-- teamai-ai-review-sequence-auto -->'
-  SEQUENCE_COMPLETE_MARKER: '<!-- teamai-ai-review-sequence-complete -->'
+  WORKFLOW_FILE: ai-advisory-review-sequence.yml
 
 jobs:
   eligibility:
-    if: github.event.pull_request.draft == false
+    name: eligibility
+    if: github.event.pull_request.draft == false && github.run_attempt == 1
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
-      issues: read
+      actions: read
     outputs:
       should_run: ${{ steps.gate.outputs.should_run }}
     steps:
-      - name: Gate one quota-safe automatic review sequence per PR
+      - name: Enforce one provider-consuming sequence per exact PR head
         id: gate
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
-          MARKER: ${{ env.SEQUENCE_MARKER }}
+          RUN_ID: ${{ github.run_id }}
         shell: bash
         run: |
           set -euo pipefail
-          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-
-          if jq -e --arg marker "$SEQUENCE_COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-            echo "Execution-complete marker already exists for exact head $HEAD."
-            echo 'should_run=false' >> "$GITHUB_OUTPUT"
+          runs="$(gh api "repos/$REPO/actions/workflows/$WORKFLOW_FILE/runs?event=pull_request&per_page=100")"
+          previous="$(jq -c --arg pr "$PR" --arg head "$HEAD" --arg run "$RUN_ID" '[.workflow_runs[] | select((.id|tostring) != $run) | select(.head_sha == $head) | select(any(.pull_requests[]?; (.number|tostring) == $pr))]' <<< "$runs")"
+          if [[ "$(jq 'length' <<< "$previous")" -eq 0 ]]; then
+            echo 'should_run=true' >> "$GITHUB_OUTPUT"
+            echo "No prior provider-consuming sequence exists for PR #$PR exact head $HEAD."
             exit 0
           fi
-
-          if jq -e --arg marker "$MARKER" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker)))' <<< "$comments" >/dev/null; then
-            echo "An automatic sequence claim already exists for PR #$PR. The five-call quota is frozen and synchronize/reopen events must not restart it."
-            echo 'should_run=false' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
+          while IFS= read -r run_id; do
+            [[ -n "$run_id" ]] || continue
+            jobs="$(gh api "repos/$REPO/actions/runs/$run_id/jobs?per_page=100")"
+            if jq -e 'any(.jobs[]?; (.name | startswith("openrouter_free (")))' <<< "$jobs" >/dev/null; then
+              echo 'should_run=false' >> "$GITHUB_OUTPUT"
+              echo "Prior automatic slot jobs already exist for PR #$PR exact head $HEAD; no second provider-consuming sequence is permitted."
+              exit 0
+            fi
+          done < <(jq -r '.[].id' <<< "$previous")
           echo 'should_run=true' >> "$GITHUB_OUTPUT"
-          echo "PR #$PR is eligible for one quota-safe five-slot OpenRouter Free advisory sequence on exact head $HEAD."
+          echo "Prior workflow attempts did not reach provider fan-out; exact-head sequence remains eligible."
 
   validation_gate:
     needs: eligibility
@@ -68,7 +71,7 @@ jobs:
       pull-requests: read
       actions: read
     steps:
-      - name: Wait for required substantive validation to finish before sequence claim
+      - name: Wait for required substantive validation on exact head
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -79,234 +82,151 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          required=(
-            "governance-drift"
-            "evidence-consistency"
-            "agent-validation"
-            "Recovery integrity"
-            "Project tests + canonical package"
-            "Playwright browser verification"
-          )
-          if [[ "$GITHUB_BASE_REF" == "main" ]]; then
-            required+=("CodeQL analyze (javascript-typescript)")
-          fi
+          required=("governance-drift" "evidence-consistency" "agent-validation" "Recovery integrity" "Project tests + canonical package" "Playwright browser verification")
+          if [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then required+=("CodeQL analyze (javascript-typescript)"); fi
           deadline=$((SECONDS + TIMEOUT_SECONDS))
           while true; do
             current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-            draft_state="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
-            if [[ "$current_head" != "$HEAD" ]]; then
-              echo "PR head changed during validation gate: expected $HEAD, found $current_head."
-              exit 1
-            fi
-            if [[ "$draft_state" != "false" ]]; then
-              echo "PR is no longer non-draft during validation gate; automatic reviewer sequence will not start."
-              exit 1
-            fi
-            checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100")"
-            pending=0
-            failed=0
-            missing=0
+            draft="$(gh api "repos/$REPO/pulls/$PR" --jq '.draft')"
+            [[ "$current_head" == "$HEAD" ]] || { echo "PR head changed: $HEAD -> $current_head"; exit 1; }
+            [[ "$draft" == "false" ]] || { echo "PR returned to Draft."; exit 1; }
+            checks=""
+            for attempt in 1 2 3 4 5; do
+              raw_checks="$(gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100" 2>/tmp/check-runs-error || true)"
+              if printf '%s' "$raw_checks" | jq -e . >/tmp/check-runs.json 2>/tmp/check-runs-parse-error; then
+                checks="$(cat /tmp/check-runs.json)"
+                break
+              fi
+              echo "check-runs API response was not valid JSON on attempt $attempt; retrying."
+              if [[ -s /tmp/check-runs-error ]]; then cat /tmp/check-runs-error >&2; fi
+              if [[ -s /tmp/check-runs-parse-error ]]; then cat /tmp/check-runs-parse-error >&2; fi
+              sleep "$attempt"
+            done
+            [[ -n "$checks" ]] || { echo "CHECK_RUNS_API_FAILURE: unable to obtain valid check-runs JSON after 5 attempts."; exit 1; }
+            pending=0; failed=0; missing=0
             for name in "${required[@]}"; do
               check="$(jq -c --arg name "$name" --arg head "$HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
-              if [[ -z "$check" ]]; then
-                echo "$name: status=MISSING conclusion=MISSING"
-                missing=$((missing + 1))
-                continue
-              fi
-              status="$(jq -r '.status' <<< "$check")"
-              conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
+              if [[ -z "$check" ]]; then echo "$name: MISSING"; missing=$((missing+1)); continue; fi
+              status="$(jq -r '.status' <<< "$check")"; conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
               echo "$name: status=$status conclusion=${conclusion:-PENDING}"
-              if [[ "$status" != "completed" ]]; then
-                pending=$((pending + 1))
-              elif [[ "$conclusion" != "success" ]]; then
-                failed=$((failed + 1))
-              fi
+              if [[ "$status" != "completed" ]]; then pending=$((pending+1)); elif [[ "$conclusion" != "success" ]]; then failed=$((failed+1)); fi
             done
-            if (( failed > 0 )); then
-              echo "Required substantive validation failed. Automatic reviewer sequence will not start."
-              exit 1
-            fi
-            if (( missing == 0 && pending == 0 )); then
-              echo "All required substantive validators passed on exact head $HEAD."
-              exit 0
-            fi
-            if (( SECONDS >= deadline )); then
-              echo "Timed out waiting for required substantive validators on exact head $HEAD."
-              exit 1
-            fi
+            (( failed == 0 )) || { echo "Required substantive validation failed."; exit 1; }
+            if (( missing == 0 && pending == 0 )); then echo "All required substantive validators passed on exact head $HEAD."; exit 0; fi
+            (( SECONDS < deadline )) || { echo "Timed out waiting for substantive validation."; exit 1; }
             sleep "$POLL_SECONDS"
           done
 
-  claim:
-    needs: [eligibility, validation_gate]
-    if: needs.eligibility.outputs.should_run == 'true' && needs.validation_gate.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
-    outputs:
-      claimed: ${{ steps.claim.outputs.claimed }}
-    steps:
-      - name: Claim the automatic five-slot sequence only after validations pass
-        id: claim
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
-          MARKER: ${{ env.SEQUENCE_MARKER }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          if [[ "$current_head" != "$HEAD" ]]; then
-            echo "Head changed before sequence claim: expected $HEAD, found $current_head."
-            echo 'claimed=false' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
-            echo 'claimed=false' >> "$GITHUB_OUTPUT"
-            echo 'A durable automatic sequence claim already exists; no second sequence is permitted.'
-            exit 0
-          fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots using model openrouter/free with one shared OpenRouter API key.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests; no inter-slot interval or staged barrier is used.')"
-          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-          echo 'claimed=true' >> "$GITHUB_OUTPUT"
-
   openrouter_free:
-    needs: claim
-    if: needs.claim.outputs.claimed == 'true'
+    needs: validation_gate
+    if: needs.validation_gate.result == 'success'
     strategy:
       fail-fast: false
       matrix:
-        slot: [1, 2, 3, 4, 5]
+        include:
+          # Small traffic-shaping stagger: 2 seconds between slot launch targets,
+          # capped at an 8-second spread. This is deliberately not a staged barrier.
+          - { slot: 1, credential_alias: OPENROUTER_API_KEY, start_delay_seconds: 0 }
+          - { slot: 2, credential_alias: OPENROUTER_API_KEY_OPENAI, start_delay_seconds: 2 }
+          - { slot: 3, credential_alias: OPENROUTER_API_KEY_POOLSIDE, start_delay_seconds: 4 }
+          - { slot: 4, credential_alias: OPENROUTER_API_KEY_DEEPSEEK, start_delay_seconds: 6 }
+          - { slot: 5, credential_alias: OPENROUTER_API_KEY_GWEN, start_delay_seconds: 8 }
     uses: ./.github/workflows/ai-advisory-review-runner.yml
     with:
       reviewer: OpenRouter Free Slot ${{ matrix.slot }}
       reviewer_slug: openrouter-free-${{ matrix.slot }}
-      model: openrouter/free
+      credential_alias: ${{ matrix.credential_alias }}
       pr_number: ${{ github.event.pull_request.number }}
       expected_head: ${{ github.event.pull_request.head.sha }}
+      start_delay_seconds: ${{ matrix.start_delay_seconds }}
       invocation_class: automatic
       automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
-      automatic_outcome_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-outcome -->'
-      approve: false
     secrets:
-      api_key: ${{ secrets.OPENROUTER_API_KEY }}
+      api_key: ${{ secrets[matrix.credential_alias] }}
 
   sequence_complete:
-    needs: [claim, openrouter_free]
-    if: always() && needs.claim.result == 'success' && needs.claim.outputs.claimed == 'true'
+    needs: [openrouter_free]
+    if: always() && needs.openrouter_free.result != 'skipped'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: write
+      pull-requests: write
+      actions: read
     steps:
-      - name: Verify five terminal automatic router slot outcomes on the exact sequence head
+      - name: Download structured terminal slot state
+        uses: actions/download-artifact@v5
+        with:
+          pattern: teamai-advisory-slot-openrouter-free-*
+          path: /tmp/advisory-slots
+          merge-multiple: false
+
+      - name: Validate five terminal slot records
         env:
           GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
-          COMPLETE_MARKER: ${{ env.SEQUENCE_COMPLETE_MARKER }}
         shell: bash
         run: |
           set -euo pipefail
-          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
-          [[ "$current_head" == "$HEAD" ]] || {
-            echo "PR head changed before execution-complete check: $current_head != $HEAD."
-            exit 1
-          }
+          files=(/tmp/advisory-slots/*/slot-result.json)
+          [[ "${#files[@]}" -eq 5 ]] || { echo "Expected exactly five slot artifacts; found ${#files[@]}."; exit 1; }
+          python - "$HEAD" "${files[@]}" <<'PY'
+          import json, sys
+          head=sys.argv[1]; files=sys.argv[2:]
+          expected={1:'OPENROUTER_API_KEY',2:'OPENROUTER_API_KEY_OPENAI',3:'OPENROUTER_API_KEY_POOLSIDE',4:'OPENROUTER_API_KEY_DEEPSEEK',5:'OPENROUTER_API_KEY_GWEN'}
+          seen=set(); success=0; failure=0
+          for path in files:
+              data=json.load(open(path,encoding='utf-8')); slot=data.get('slot')
+              if slot not in expected or slot in seen: raise SystemExit(f'Invalid or duplicate slot: {path}')
+              seen.add(slot)
+              if data.get('credential_alias') != expected[slot]: raise SystemExit(f'Slot {slot} credential mismatch')
+              if data.get('expected_head') != head: raise SystemExit(f'Slot {slot} exact-head mismatch')
+              if data.get('requested_route') != 'openrouter/free': raise SystemExit(f'Slot {slot} route mismatch')
+              outcome=data.get('outcome')
+              if outcome not in {'SUCCEEDED','PROVIDER_FAILED','REVIEW_POST_FAILED','PRE_PROVIDER_FAILURE'}: raise SystemExit(f'Slot {slot} invalid outcome: {outcome}')
+              if outcome == 'SUCCEEDED':
+                  if not data.get('provider_invocation_attempted') or not data.get('review_published'): raise SystemExit(f'Slot {slot} success lacks publication proof')
+                  if not data.get('actual_model') or data.get('actual_model') == 'openrouter/free': raise SystemExit(f'Slot {slot} lacks distinct routed-model evidence')
+                  success+=1
+              else: failure+=1
+          if seen != {1,2,3,4,5}: raise SystemExit(f'Incomplete slot set: {sorted(seen)}')
+          print(json.dumps({'schema_version':1,'exact_head':head,'successful_slots':success,'failed_slots':failure}, sort_keys=True))
+          PY
 
-          comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          jobs="$(gh api "repos/$REPO/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100")"
-
-          success_count=0
-          failure_count=0
-          missing=0
-
-          for slot in 1 2 3 4 5; do
-            outcome_marker="<!-- teamai-openrouter-free-slot-$slot-outcome -->"
-            review_marker="<!-- teamai-openrouter-free-slot-$slot-auto-review -->"
-            job_name="openrouter_free ($slot) / review"
-            job="$(jq -c --arg name "$job_name" '[.jobs[] | select(.name == $name)] | last // empty' <<< "$jobs")"
-
-            if [[ -z "$job" ]]; then
-              echo "MISSING: slot $slot Actions job was not found."
-              missing=$((missing + 1))
-              continue
-            fi
-
-            status="$(jq -r '.status' <<< "$job")"
-            conclusion="$(jq -r '.conclusion // ""' <<< "$job")"
-            echo "Slot $slot: status=$status conclusion=${conclusion:-PENDING}"
-
-            if [[ "$status" != "completed" || ( "$conclusion" != "success" && "$conclusion" != "failure" ) ]]; then
-              echo "INCOMPLETE: slot $slot is not in an allowed terminal execution result."
-              missing=$((missing + 1))
-              continue
-            fi
-
-            outcome="$(jq -r --arg marker "$outcome_marker" --arg head "$HEAD" 'first(.[] | select(.user.login == "github-actions[bot]") | select((.body // "") | contains($marker) and contains(("Exact PR head: " + $head)))) | .body // empty' <<< "$comments")"
-            if [[ -z "$outcome" ]]; then
-              echo "MISSING: slot $slot durable outcome is absent for exact head $HEAD."
-              missing=$((missing + 1))
-              continue
-            fi
-
-            outcome_state="$(sed -n 's/^Slot outcome: //p' <<< "$outcome" | head -1)"
-            case "$outcome_state" in
-              SUCCEEDED|PROVIDER_FAILED|REVIEW_POST_FAILED|PRE_PROVIDER_FAILURE)
-                ;;
-              *)
-                echo "MISMATCH: slot $slot outcome marker has an unrecognized terminal state: ${outcome_state:-<missing>}"
-                missing=$((missing + 1))
-                continue
-                ;;
-            esac
-
-            grep -Fq "Reviewer slug: `openrouter-free-$slot`" <<< "$outcome" || {
-              echo "MISMATCH: slot $slot outcome marker identifies a different reviewer slug."
-              missing=$((missing + 1))
-              continue
-            }
-
-            if [[ "$conclusion" == "success" ]]; then
-              if [[ "$outcome_state" != "SUCCEEDED" ]]; then
-                echo "MISMATCH: successful slot $slot workflow job must publish Slot outcome: SUCCEEDED, found $outcome_state."
-                missing=$((missing + 1))
-                continue
-              fi
-              if ! jq -e --arg marker "$review_marker" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-                echo "MISSING: successful slot $slot has no advisory output for exact head $HEAD."
-                missing=$((missing + 1))
-                continue
-              fi
-              success_count=$((success_count + 1))
-            else
-              if [[ "$outcome_state" == "SUCCEEDED" ]]; then
-                echo "MISMATCH: failed slot $slot workflow job cannot publish Slot outcome: SUCCEEDED."
-                missing=$((missing + 1))
-                continue
-              fi
-              failure_count=$((failure_count + 1))
-            fi
-          done
-
-          if (( missing > 0 )); then
-            echo "Automatic OpenRouter Free advisory execution is incomplete: $missing slot outcome(s) are missing, mismatched, or not proven on exact head $HEAD."
-            exit 1
-          fi
-
-          if jq -e --arg marker "$COMPLETE_MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
-            echo "Execution-complete marker already exists for exact head $HEAD."
-            exit 0
-          fi
-
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s' "$COMPLETE_MARKER" '# Automatic OpenRouter Free Advisory Execution Complete' "Exact PR head: $HEAD" "Five parallel OpenRouter Free Router slots reached terminal execution outcomes: $success_count successful advisory output(s), $failure_count failed slot execution(s)." 'Execution completion is distinct from advisory success. A failed provider call remains durable slot evidence and does not trigger a replacement call, secret substitution, or second automatic sequence.')"
-          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
-          echo "Automatic OpenRouter Free advisory execution is complete for exact head $HEAD: successes=$success_count failures=$failure_count."
+      - name: Build and publish execution evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$HEAD" "$PR" <<'PY'
+          import glob,json,sys
+          head,pr=sys.argv[1],int(sys.argv[2])
+          rows=[json.load(open(p,encoding='utf-8')) for p in glob.glob('/tmp/advisory-slots/*/slot-result.json')]
+          summary={'schema_version':1,'pr':pr,'exact_head':head,'slots':sorted(rows,key=lambda x:x['slot'])}
+          open('/tmp/sequence-summary.json','w',encoding='utf-8').write(json.dumps(summary,sort_keys=True,indent=2)+'\n')
+          PY
+          jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // "-") provider=\(.actual_provider // "-")"' /tmp/sequence-summary.json
+          successful_slots="$(jq '[.slots[] | select(.outcome == "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
+          terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
+          {
+            printf '%s\n' '# Automatic OpenRouter Free Advisory Execution Complete'
+            printf '\n'
+            printf 'Exact PR head: %s\n' "$HEAD"
+            printf 'Terminal slots: 5/5\n'
+            printf 'Publishable advisory reviews: %s/5\n' "$successful_slots"
+            printf 'Non-success terminal outcomes: %s/5\n' "$terminal_failures"
+            printf 'Structured slot artifacts, not PR comments, are the orchestration state.\n'
+            printf 'Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.\n'
+          } > /tmp/complete-comment.md
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/complete-comment.md)" >/dev/null
+      - name: Upload sequence summary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: teamai-advisory-sequence-summary-${{ github.event.pull_request.head.sha }}
+          path: /tmp/sequence-summary.json
+          if-no-files-found: error
+          retention-days: 14
