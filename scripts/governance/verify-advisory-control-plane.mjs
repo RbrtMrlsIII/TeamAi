@@ -65,7 +65,14 @@ for (const text of [policy, productLaw, skillWiring, skill, masterplan, nextSlic
 for (const path of ['POLICY.md', 'Product_Law/WIRING.md', 'docs/SKILL_WIRING.md', 'skills/governance/ai-advisory-review/SKILL.md', 'Masterplan/MASTERPLAN.md', 'AI_ASSISTANT_READ_ME.md']) {
   const text = read(path);
   assert.match(text, new RegExp(routePhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+}
+for (const path of ['POLICY.md', 'docs/SKILL_WIRING.md', 'skills/governance/ai-advisory-review/SKILL.md']) {
+  const text = read(path);
   for (const alias of aliases) assert.match(text, new RegExp(alias));
+}
+for (const path of ['Masterplan/NEXT_SLICES.md', 'AI_ASSISTANT_READ_ME.md', 'Product_Law/WIRING.md', 'Masterplan/MASTERPLAN.md']) {
+  const text = read(path);
+  assert.match(text, /five distinct (?:OpenRouter API key credentials|OpenRouter credential aliases|credential aliases)/i);
 }
 assert.doesNotMatch(skillWiring, /nemotron-copilot-review/);
 assert.doesNotMatch(masterplan, /Nemotron Copilot Review procedure remains registered/);
