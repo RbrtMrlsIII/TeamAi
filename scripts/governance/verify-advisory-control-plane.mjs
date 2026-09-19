@@ -53,7 +53,7 @@ assert.match(sequence, safeSlug);
 assert.match(sequence, safeCredential);
 assert.doesNotMatch(sequence, /grep -Fq \"Reviewer slug: `openrouter-free-\$slot`\"/);
 assert.ok(sequence.includes('job_name="openrouter_free ($slot, $expected_credential_alias) / review"'));
-assert.ok(sequence.includes('--arg marker "$MARKER" --arg head "$HEAD"'));
+assert.equal((sequence.match(/--arg marker "\$MARKER" --arg head "\$HEAD"/g) ?? []).length, 2);
 
 for (let slot = 1; slot <= 5; slot += 1) {
   assert.match(manual, new RegExp(`OpenRouter Free Manual Slot ${slot}`));

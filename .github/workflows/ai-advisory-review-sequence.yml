@@ -50,8 +50,8 @@ jobs:
             exit 0
           fi
 
-          if jq -e --arg marker "$MARKER" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker)))' <<< "$comments" >/dev/null; then
-            echo "An automatic sequence claim already exists for PR #$PR. The five-call quota is frozen and synchronize/reopen events must not restart it."
+          if jq -e --arg marker "$MARKER" --arg head "$HEAD" 'any(.[]; (.user.login == "github-actions[bot]") and ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
+            echo "An automatic sequence claim already exists for PR #$PR on this exact head. The five-call quota is frozen and this head must not restart it."
             echo 'should_run=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi

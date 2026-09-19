@@ -37,7 +37,7 @@ test('automatic sequence completion is terminal-outcome based and shell-safe', (
   assert.match(sequence, /grep -Fq "\$expected_credential_line"/);
   assert.doesNotMatch(sequence, /grep -Fq "Reviewer slug: `openrouter-free-\$slot`"/);
   assert.ok(sequence.includes('job_name="openrouter_free ($slot, $expected_credential_alias) / review"'));
-  assert.ok(sequence.includes('--arg marker "$MARKER" --arg head "$HEAD"'));
+  assert.equal((sequence.match(/--arg marker "\$MARKER" --arg head "\$HEAD"/g) ?? []).length, 2);
 });
 
 test('reusable runner is route-locked and receives one credential alias', () => {
