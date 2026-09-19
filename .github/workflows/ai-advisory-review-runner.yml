@@ -36,6 +36,9 @@ on:
         description: Reviewer-specific manual marker
         required: true
         type: string
+        description: Reviewer-specific manual marker
+        required: true
+        type: string
     secrets:
       api_key:
         required: true
@@ -190,12 +193,12 @@ jobs:
         run: |
           set -euo pipefail
           issue_number="$(python - <<'PY'
-          import re
-          from pathlib import Path
-          body = Path('/tmp/body').read_text(encoding='utf-8')
-          match = re.search(r'(?im)^\s*(?:[-*]\s*)?(?:Owning|Governing)\s+Issue:\s*(?:\*\*)?#(\d+)', body)
-          print(match.group(1) if match else '')
-          PY
+import re
+from pathlib import Path
+body = Path('/tmp/body').read_text(encoding='utf-8')
+match = re.search(r'(?im)^\s*(?:[-*]\s*)?(?:Owning|Governing)\s+Issue:\s*(?:\*\*)?#(\d+)', body)
+print(match.group(1) if match else '')
+PY
           )"
           if [[ -z "$issue_number" ]]; then
             echo 'PRE_PROVIDER_FAILURE: PR body must contain an explicit Owning Issue: #N or Governing Issue: #N field.' > /tmp/provider-failure.txt
@@ -225,6 +228,7 @@ jobs:
               'Masterplan/MASTERPLAN.md',
               'Masterplan/NEXT_SLICES.md',
               'POLICY.md',
+              'AI_ASSISTANT_READ_ME.md',
               'docs/SKILL_WIRING.md',
               'skills/governance/ai-advisory-review/SKILL.md',
               'skills/governance/machine-builder/SKILL.md',
@@ -458,7 +462,13 @@ jobs:
                           if match:
                               return match.group(1).strip()
                           if heading == 'Verdict':
-                              inline = re.search(r'^\s*Verdict\s*:\s*(APPROVE|CHANGES_REQUESTED|ADVISORY_ONLY)\s*
+                              inline = re.search(r'^\s*\*?\*?Verdict\*?\*?\s*:\s*(APPROVE|CHANGES_REQUESTED|ADVISORY_ONLY)\s*$', source, flags=re.MULTILINE)
+                              return inline.group(1).strip() if inline else ''
+                          return ''
+
+                      sections = {name: extract_section(content, name) for name in section_names}
+                      verdict_lines = [line.strip() for line in sections['Verdict'].splitlines() if line.strip()]
+                      verdict = verdict_lines[0] if verdict_lines else ''
                       if verdict not in allowed_verdicts:
                           reason = 'INVALID_REVIEW_FORMAT: missing or invalid Verdict section.'
                           Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
@@ -583,44 +593,45 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-                    import json, os
-                    from pathlib import Path
-                    attempted = Path('/tmp/provider-attempted.json').exists()
-                    runtime_path = Path('/tmp/provider-runtime.json')
-                    runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
-                    failure_path = Path('/tmp/provider-failure.txt')
-                    diagnostic = failure_path.read_text(encoding='utf-8').strip() if failure_path.exists() else ''
-                    invoke = os.environ.get('INVOKE_OUTCOME', '')
-                    post = os.environ.get('POST_OUTCOME', '')
-                    if runtime and post == 'success':
-                        outcome = 'SUCCEEDED'
-                    elif runtime:
-                        outcome = 'REVIEW_POST_FAILED'
-                        diagnostic = diagnostic or 'Provider response was obtained, but the advisory review could not be posted.'
-                    elif attempted:
-                        outcome = 'PROVIDER_FAILED'
-                    else:
-                        outcome = 'PRE_PROVIDER_FAILURE'
-                        diagnostic = diagnostic or ('Provider invocation was not reached; review step outcome=' + (invoke or 'not-started'))
-                    tail = os.environ['REVIEWER_SLUG'].rsplit('-', 1)[-1]
-                    slot = int(tail) if tail.isdigit() else None
-                    record = {
-                        'schema_version': 1,
-                        'slot': slot,
-                        'reviewer': os.environ['REVIEWER'],
-                        'reviewer_slug': os.environ['REVIEWER_SLUG'],
-                        'credential_alias': os.environ['CREDENTIAL_ALIAS'],
-                        'expected_head': os.environ.get('HEAD', ''),
-                        'requested_route': 'openrouter/free',
-                        'actual_model': runtime.get('actual_model'),
-                        'actual_provider': runtime.get('actual_provider'),
-                        'request_id': runtime.get('request_id'),
-                        'outcome': outcome,
-                        'provider_invocation_attempted': attempted,
-                        'review_published': post == 'success',
-                        'diagnostic': diagnostic[:2000],
-                    }
-                    Path('/tmp/slot-result.json').write_text(json.dumps(record, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+          import json, os
+          from pathlib import Path
+
+          attempted = Path('/tmp/provider-attempted.json').exists()
+          runtime_path = Path('/tmp/provider-runtime.json')
+          runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+          failure_path = Path('/tmp/provider-failure.txt')
+          diagnostic = failure_path.read_text(encoding='utf-8').strip() if failure_path.exists() else ''
+          invoke = os.environ.get('INVOKE_OUTCOME', '')
+          post = os.environ.get('POST_OUTCOME', '')
+          if runtime and post == 'success':
+              outcome = 'SUCCEEDED'
+          elif runtime:
+              outcome = 'REVIEW_POST_FAILED'
+              diagnostic = diagnostic or 'Provider response was obtained, but the advisory review could not be posted.'
+          elif attempted:
+              outcome = 'PROVIDER_FAILED'
+          else:
+              outcome = 'PRE_PROVIDER_FAILURE'
+              diagnostic = diagnostic or ('Provider invocation was not reached; review step outcome=' + (invoke or 'not-started'))
+          tail = os.environ['REVIEWER_SLUG'].rsplit('-', 1)[-1]
+          slot = int(tail) if tail.isdigit() else None
+          record = {
+              'schema_version': 1,
+              'slot': slot,
+              'reviewer': os.environ['REVIEWER'],
+              'reviewer_slug': os.environ['REVIEWER_SLUG'],
+              'credential_alias': os.environ['CREDENTIAL_ALIAS'],
+              'expected_head': os.environ.get('HEAD', ''),
+              'requested_route': 'openrouter/free',
+              'actual_model': runtime.get('actual_model'),
+              'actual_provider': runtime.get('actual_provider'),
+              'request_id': runtime.get('request_id'),
+              'outcome': outcome,
+              'provider_invocation_attempted': attempted,
+              'review_published': post == 'success',
+              'diagnostic': diagnostic[:2000],
+          }
+          Path('/tmp/slot-result.json').write_text(json.dumps(record, sort_keys=True, indent=2) + '\n', encoding='utf-8')
           PY
 
       - name: Upload terminal automatic slot artifact
