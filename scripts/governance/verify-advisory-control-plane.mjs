@@ -41,6 +41,8 @@ assert.match(runner, /MODEL: openrouter\/free/);
 assert.doesNotMatch(runner, /inputs\.model/);
 assert.doesNotMatch(runner, /approve:/);
 assert.doesNotMatch(runner, /Optional model approval/);
+const postReview = runner.match(/- name: Post advisory review[\s\S]*?(?=\n      - name:|$)/)?.[0] ?? '';
+assert.match(postReview, /CREDENTIAL_ALIAS: \$\{\{ inputs\.credential_alias \}\}/);
 assert.match(runner, /Credential alias: `%s/);
 assert.match(runner, /actual_model = data\.get\('model'\)/);
 assert.match(runner, /actual_provider/);
@@ -50,6 +52,8 @@ const safeCredential = /expected_credential_line='Credential alias: `'\"\$expect
 assert.match(sequence, safeSlug);
 assert.match(sequence, safeCredential);
 assert.doesNotMatch(sequence, /grep -Fq \"Reviewer slug: `openrouter-free-\$slot`\"/);
+assert.ok(sequence.includes('job_name="openrouter_free ($slot, $expected_credential_alias) / review"'));
+assert.ok(sequence.includes('--arg marker "$MARKER" --arg head "$HEAD"'));
 
 for (let slot = 1; slot <= 5; slot += 1) {
   assert.match(manual, new RegExp(`OpenRouter Free Manual Slot ${slot}`));

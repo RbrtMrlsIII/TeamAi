@@ -166,12 +166,12 @@ jobs:
             exit 0
           fi
           comments="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate)"
-          if jq -e --arg marker "$MARKER" 'any(.[]; (.body // "") | contains($marker))' <<< "$comments" >/dev/null; then
+          if jq -e --arg marker "$MARKER" --arg head "$HEAD" 'any(.[]; ((.body // "") | contains($marker) and contains(("Exact PR head: " + $head))))' <<< "$comments" >/dev/null; then
             echo 'claimed=false' >> "$GITHUB_OUTPUT"
-            echo 'A durable automatic sequence claim already exists; no second sequence is permitted.'
+            echo "A durable automatic sequence claim already exists for exact head $HEAD; no second sequence is permitted on the same head."
             exit 0
           fi
-          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots; every slot requests openrouter/free and receives its own OpenRouter credential alias.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests, one request per distinct credential slot; no inter-slot interval or staged barrier is used.')"
+          body="$(printf '%s\n\n%s\n%s\n%s\n%s\n%s' "$MARKER" '# Automatic OpenRouter Free Advisory Review Sequence' "Exact PR head: $HEAD" 'Routing: five parallel OpenRouter Free Router slots; every slot requests openrouter/free and receives its own OpenRouter credential alias.' 'State: CLAIMED' 'Provider budget: maximum 5 automatic OpenRouter HTTP requests per exact PR head, one request per distinct credential slot; no inter-slot interval or staged barrier is used.')"
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
           echo 'claimed=true' >> "$GITHUB_OUTPUT"
 
@@ -241,7 +241,15 @@ jobs:
           for slot in 1 2 3 4 5; do
             outcome_marker="<!-- teamai-openrouter-free-slot-$slot-outcome -->"
             review_marker="<!-- teamai-openrouter-free-slot-$slot-auto-review -->"
-            job_name="openrouter_free ($slot) / review"
+            case "$slot" in
+              1) expected_credential_alias="OPENROUTER_API_KEY" ;;
+              2) expected_credential_alias="OPENROUTER_API_KEY_OPENAI" ;;
+              3) expected_credential_alias="OPENROUTER_API_KEY_POOLSIDE" ;;
+              4) expected_credential_alias="OPENROUTER_API_KEY_DEEPSEEK" ;;
+              5) expected_credential_alias="OPENROUTER_API_KEY_GWEN" ;;
+              *) echo "MISMATCH: unknown slot $slot"; missing=$((missing + 1)); continue ;;
+            esac
+            job_name="openrouter_free ($slot, $expected_credential_alias) / review"
             job="$(jq -c --arg name "$job_name" '[.jobs[] | select(.name == $name)] | last // empty' <<< "$jobs")"
 
             if [[ -z "$job" ]]; then
@@ -276,14 +284,6 @@ jobs:
                 missing=$((missing + 1))
                 continue
                 ;;
-            esac
-            case "$slot" in
-              1) expected_credential_alias="OPENROUTER_API_KEY" ;;
-              2) expected_credential_alias="OPENROUTER_API_KEY_OPENAI" ;;
-              3) expected_credential_alias="OPENROUTER_API_KEY_POOLSIDE" ;;
-              4) expected_credential_alias="OPENROUTER_API_KEY_DEEPSEEK" ;;
-              5) expected_credential_alias="OPENROUTER_API_KEY_GWEN" ;;
-              *) echo "MISMATCH: unknown slot $slot"; missing=$((missing + 1)); continue ;;
             esac
             expected_credential_line='Credential alias: `'"$expected_credential_alias"'`'
             grep -Fq "$expected_credential_line" <<< "$outcome" || {

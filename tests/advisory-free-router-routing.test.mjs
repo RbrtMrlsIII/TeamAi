@@ -36,6 +36,8 @@ test('automatic sequence completion is terminal-outcome based and shell-safe', (
   assert.match(sequence, /grep -Fq "\$expected_slug"/);
   assert.match(sequence, /grep -Fq "\$expected_credential_line"/);
   assert.doesNotMatch(sequence, /grep -Fq "Reviewer slug: `openrouter-free-\$slot`"/);
+  assert.ok(sequence.includes('job_name="openrouter_free ($slot, $expected_credential_alias) / review"'));
+  assert.ok(sequence.includes('--arg marker "$MARKER" --arg head "$HEAD"'));
 });
 
 test('reusable runner is route-locked and receives one credential alias', () => {
@@ -47,6 +49,8 @@ test('reusable runner is route-locked and receives one credential alias', () => 
   assert.doesNotMatch(runner, /inputs\.model/);
   assert.doesNotMatch(runner, /approve:/);
   assert.doesNotMatch(runner, /Optional model approval/);
+  const postReview = runner.match(/- name: Post advisory review[\s\S]*?(?=\n      - name:|$)/)?.[0] ?? '';
+  assert.match(postReview, /CREDENTIAL_ALIAS: \$\{\{ inputs\.credential_alias \}\}/);
   assert.match(runner, /Credential alias: `%s/);
   assert.match(runner, /actual_model = data\.get\('model'\)/);
   assert.match(runner, /actual_provider/);

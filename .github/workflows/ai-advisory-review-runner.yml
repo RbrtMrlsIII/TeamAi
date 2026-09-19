@@ -531,6 +531,7 @@ jobs:
           HEAD: ${{ steps.meta.outputs.head }}
           REVIEWER: ${{ inputs.reviewer }}
           MODEL: openrouter/free
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
           INVOCATION: ${{ inputs.invocation_class }}
           AUTO_MARKER: ${{ inputs.automatic_marker }}
           OUTCOME_MARKER: ${{ inputs.automatic_outcome_marker }}
