@@ -28,7 +28,7 @@ The resulting packet must include exact-head check-run evidence, current governi
 ## Automatic review sequence
 OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-There is no automatic interval before or between slots. The first eligible non-draft lifecycle event that passes substantive exact-head validation writes the durable one-sequence claim and fans out five reusable reviewer jobs concurrently with fail-fast disabled. Each job targets openrouter/free, receives the original triggering head, and independently revalidates that head immediately before model invocation.
+There is no automatic interval before or between slots. The first eligible non-draft lifecycle event that passes substantive exact-head validation writes the durable one-sequence claim and fans out five reusable reviewer jobs concurrently with fail-fast disabled. Each job targets openrouter/free, receives one distinct credential alias, receives the original triggering head, and independently revalidates that head immediately before model invocation.
 The sequence does not restart on synchronize or reopen after a claim exists. A provider failure is execution evidence for its slot and does not trigger secret substitution, retry through another slot, or automatic reordering. Sequence completion is a separate terminal check requiring five terminal slot outcomes.
 
 ## Manual re-review
@@ -36,7 +36,7 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5 and au
 
 ## Security boundaries
 
-- Provider API keys are read only from GitHub Actions Secrets and are never printed.
+- OpenRouter credential values are read only from GitHub Actions Secrets and are never printed. Each automatic slot receives only its assigned credential alias.
 - PR code is checked out at the exact PR head and is not executed as part of packet construction; execution evidence comes from separate validators.
 - Fork pull requests must not receive provider secrets through automatic review triggers.
 - Manual issue-comment invocation is restricted to repository collaborators/owners/members.
@@ -46,11 +46,11 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5 and au
 ## Reviewer configuration
 | Reviewer slot | Secret | OpenRouter route | Cost class | Automatic stage |
 | OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-OpenRouter documents openrouter/free as a dynamic router over currently available free models. Because the selected model can change, the runner must record the actual model and provider returned by the API rather than assigning a fixed reviewer identity. The one-sequence quota remains capped at five automatic HTTP requests.
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free | 1 |
+OpenRouter documents openrouter/free as a dynamic router over currently available free models. Because the selected model can change, the runner must record the actual model and provider returned by the API rather than assigning a fixed reviewer identity. The one-sequence quota remains capped at five automatic HTTP requests, with one distinct credential alias per slot.
 
 ## Evidence contract
 
