@@ -237,8 +237,8 @@ jobs:
                   success+=1
               else: failure+=1
           if seen != {1,2,3,4,5}: raise SystemExit(f'Incomplete slot set: {sorted(seen)}')
-          quality_failures=sum(1 for path in files if json.load(open(path,encoding='utf-8')).get('review_quality_status') == 'failed')
-           print(json.dumps({'schema_version':1,'exact_head':head,'successful_slots':success,'failed_slots':failure,'review_quality_failures':quality_failures}, sort_keys=True))
+         quality_failures=sum(1 for path in files if json.load(open(path,encoding='utf-8')).get('review_quality_status') == 'failed')
+          print(json.dumps({'schema_version':1,'exact_head':head,'successful_slots':success,'failed_slots':failure,'review_quality_failures':quality_failures}, sort_keys=True))
           PY
 
       - name: Build and publish execution evidence
@@ -264,7 +264,12 @@ jobs:
           truncated_reviews="$(jq '[.slots[] | select((.response_shape.finish_reason // "") == "length")] | length' /tmp/sequence-summary.json)"
           provenance_gaps="$(jq '[.slots[] | select((.provenance_status // "") == "unreported")] | length' /tmp/sequence-summary.json)"
           terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
-           quality_failures="$(jq '[.slots[] | select(.review_quality_status == "failed")] | length' /tmp/sequence-summary.json)"
+          quality_failures="$(jq '[.slots[] | select(.outcome == "REVIEW_QUALITY_FAILED" or .review_quality_status == "failed")] | length' /tmp/sequence-summary.json)"
+          provider_failures="$(jq '[.slots[] | select(.outcome == "PROVIDER_FAILED")] | length' /tmp/sequence-summary.json)"
+          review_post_failures="$(jq '[.slots[] | select(.outcome == "REVIEW_POST_FAILED")] | length' /tmp/sequence-summary.json)"
+          pre_provider_failures="$(jq '[.slots[] | select(.outcome == "PRE_PROVIDER_FAILURE")] | length' /tmp/sequence-summary.json)"
+          advisory_status="HEALTHY"
+          if (( terminal_failures > 0 )); then advisory_status="DEGRADED"; fi
           {
             printf '%s\n' '<!-- teamai-ai-review-current-summary -->'
             printf '%s\n' '# Current-head OpenRouter Free Advisory Summary'
@@ -278,11 +283,11 @@ jobs:
             printf 'Published model reviews: %s/5\n' "$published_reviews"
             printf 'Generation-limit truncations: %s/5\n' "$truncated_reviews"
             printf 'Model/provider provenance gaps: %s/5\n' "$provenance_gaps"
-             printf 'Advisory evidence status: %s\n' "$advisory_status"
-             printf 'Provider failures: %s/5\n' "$provider_failures"
-             printf 'Review-post failures: %s/5\n' "$review_post_failures"
-             printf 'Pre-provider failures: %s/5\n' "$pre_provider_failures"
-             printf 'Review-content quality failures: %s/5\n' "$quality_failures"
+          printf 'Advisory evidence status: %s\n' "$advisory_status"
+          printf 'Provider failures: %s/5\n' "$provider_failures"
+          printf 'Review-post failures: %s/5\n' "$review_post_failures"
+          printf 'Pre-provider failures: %s/5\n' "$pre_provider_failures"
+          printf 'Review-content quality failures: %s/5\n' "$quality_failures"
             printf 'Non-success terminal outcomes: %s/5\n' "$terminal_failures"
             printf 'Structured slot artifacts, not PR comments, are the orchestration state.\n'
             printf 'Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.\n'
