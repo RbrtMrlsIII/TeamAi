@@ -43,7 +43,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 - Issue #389 is completed; its reconstruction is merged into main. Issue #394 is the current baseline-reconciliation vehicle.
 - #388/#386/#385/#379 are source/history only and must not be merged wholesale.
 - Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
-- The five credential aliases are OPENROUTER_API_KEY, OPENROUTER_API_KEY_OPENAI, OPENROUTER_API_KEY_POOLSIDE, OPENROUTER_API_KEY_DEEPSEEK, and OPENROUTER_API_KEY_GWEN.
+- Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
 - Latest verified provider execution: exact head `be9d234ee41a2771ccb737e7435dff5d3481897b`, terminal slots 5/5, publishable advisory reviews 4/5, one terminal `PROVIDER_RESPONSE_TRUNCATED`.
 - Actual model/provider is runtime evidence from OpenRouter.
