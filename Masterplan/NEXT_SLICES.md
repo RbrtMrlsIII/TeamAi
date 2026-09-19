@@ -8,7 +8,7 @@ GOVERNANCE — clean canonical mainline reconstruction (Issue #389)
 
 ## Status
 
-IN PROGRESS — product feature execution is paused while the active governance graph, session state, advisory control plane, and superseded-surface retirement are reconciled into one clean replacement branch.
+IN PROGRESS — Draft/non-production control-plane reconstruction; product feature execution is paused while the active governance graph, session state, advisory control plane, and superseded-surface retirement are reconciled into one clean replacement branch.
 
 ## Objective
 
