@@ -41,7 +41,7 @@
 - [x] OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
 - [x] The automatic advisory sequence is now five parallel OpenRouter Free Router slots with five distinct slot credentials, exact-head guards, durable one-sequence claim, and actual routed model/provider evidence per successful slot.
-- [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its Nemotron stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
+- [x] #370 preserved historical validation-gate and stale-head evidence for the superseded named-model sequence; its former Nemotron/stage terminology is historical only.
 - [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof now targets the revised five-slot free-router path.
 - [ ] Automatic OpenRouter Free Router sequence is runtime-verified on a fresh eligible non-draft PR lifecycle event, including five parallel slot outcomes and exact-head provenance.
 
@@ -93,8 +93,8 @@ Execution state is separate from advisory content: each slot records one termina
 - [ ] Every validator change has the same old-invariant/new-invariant evidence record.
 - [ ] Every browser-gate change names the old protected behavior and the new authorized behavior.
 - [x] No validator is weakened merely to obtain green CI.
-- [x] Nemotron review gating was changed by adding a downstream exact-head execution boundary rather than weakening any existing validator.
-- [x] Additional model reviewers reuse the same substantive exact-head boundary rather than weakening or bypassing validators.
+- [x] Reviewer model invocation is gated by a downstream exact-head execution boundary rather than by any model-specific identity.
+- [x] Additional advisory reviewers reuse the same substantive exact-head boundary rather than weakening or bypassing validators.
 - [ ] Dynamic five-slot advisory fan-out is runtime-verified without weakening or bypassing the existing reviewer gate.
 
 ## Post-#346 control-plane reconciliation — Issue #347
@@ -116,7 +116,7 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] `PRODUCT-KNOWLEDGE.md` contains durable validated concepts only.
 - [x] Current session/masterplan/current-slice records are synchronized with the post-#368 control-plane and the #370/#371 runtime-proof investigation.
 - [x] Shared AI Advisory Review procedure is registered in the active Skill routing map and constrained to advisory/promotion-gated use.
-- [x] Nemotron Copilot Review procedure remains registered and constrained to advisory/promotion-gated use.
+- [x] The former Nemotron compatibility procedure is archived; the active advisory Skill is the generalized OpenRouter Free Router procedure.
 - [x] Configured model reviewer workflows record that required validators must pass before model invocation and that automatic review is quota-protected per sequence.
 - [ ] Historical records remain immutable and out of active routing.
 
