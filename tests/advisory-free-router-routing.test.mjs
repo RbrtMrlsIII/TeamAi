@@ -56,7 +56,7 @@ test('manual reviewer commands map to distinct credential slots on the same rout
   for (let slot = 1; slot <= 5; slot += 1) {
     assert.match(manual, new RegExp('OpenRouter Free Manual Slot ' + slot));
     assert.match(manual, new RegExp('reviewer_slug: openrouter-free-manual-' + slot));
-    assert.match(manual, new RegExp('startsWith\\(github\\.event\\.comment\\.body, \'/free-' + slot + '\\)'));
+    assert.ok(manual.includes(`startsWith(github.event.comment.body, '/free-${slot}'`));
   }
   for (const alias of aliases) assert.match(manual, new RegExp('secrets\\.' + alias));
   assert.doesNotMatch(manual, /model: /);
