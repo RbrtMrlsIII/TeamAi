@@ -46,13 +46,13 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 
 The reusable advisory-review runner is downstream of the substantive validator set. For every invocation it polls the exact PR head and accepts only successful completion of the required exact-head check-runs before invoking the external model. The packet receives current governing-file context, the owning Issue state, exact-head execution evidence, and the complete bounded diff.
 
-A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by fresh exact-head execution after the repaired path is governed and merged; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
+A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by a fresh eligible exact-head execution after the repaired path is governed; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
 
 ### Automatic reviewer sequence
-OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
+OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded in each terminal slot artifact when the provider responds
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
 The sequence begins only after the first eligible non-draft opened, reopened, or ready_for_review event has passed the substantive exact-head validation gate. Five reusable reviewer jobs fan out concurrently with fail-fast disabled so one provider failure does not cancel peer slots.
-A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after five terminal slot outcomes are present.
+A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after five terminal slot outcomes are present. The runner requests structured JSON Schema output with `require_parameters: true`, `stream: false`, and the `response-healing` plugin so providers must honor the structured-output contract; malformed or empty output still fails closed.
 
 ### Manual reviewer routing
 The active manual command is /openrouter-free, with optional slot aliases /free-1 through /free-5 for deliberate later-head review. Authorized workflow dispatch targets the same OpenRouter Free Router. The former reviewer-specific commands remain historical evidence only and are not active routing instructions.
@@ -60,10 +60,10 @@ The active manual command is /openrouter-free, with optional slot aliases /free-
 ### Reviewer configuration
 | Reviewer | Secret | Requested route | Cost class | Automatic stage |
 | OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
+| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free | 2 |
+| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free | 3 |
+| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free | 4 |
+| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free | 5 |
 All five slots use the same OpenRouter Free Router route. The reusable runner must record the actual model returned by the router and the selected provider when exposed by routing metadata. Free does not imply suitable handling for confidential material; provider data-use terms remain a separate governance concern.
 
 ## Canonical live-site routing reference
