@@ -134,3 +134,8 @@ The 3D world has no independent Product Law or merge authority. Its Tree Authori
 Governance Integrity must machine-check this structural record and execute the existing census synchronization contract against the full PR diff. Semantic tree/branch/division changes therefore cannot silently bypass Census reconciliation. Presentation-only proof modules remain outside Census synchronization only while they remain presentation-only and do not change semantic identity or structure.
 
 A passing structural audit establishes governance consistency only. It does not promote a tree, prove browser behavior, establish backend authority, satisfy C8/C9/C10, or authorize acceptance or merge.
+
+
+## Canonical current-slice consumption
+
+The current execution slice is owned exclusively by `Masterplan/NEXT_SLICES.md`. Policy and downstream validators/procedures must **consume that canonical current-slice record rather than hard-code a specific Issue number**. Historical Issue/PR identifiers may appear as evidence, but they do not become current execution authority merely by being mentioned here.
