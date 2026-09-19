@@ -225,7 +225,6 @@ jobs:
               'POLICY.md',
               'docs/SKILL_WIRING.md',
               'skills/governance/ai-advisory-review/SKILL.md',
-              'skills/governance/nemotron-copilot-review/SKILL.md',
               'skills/governance/machine-builder/SKILL.md',
               'skills/frontend/spatial/hierarchy-runtime/SKILL.md',
               'skills/frontend/spatial/seat-shell-hierarchy/SKILL.md',
