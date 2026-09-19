@@ -17,7 +17,7 @@ const aliases = [
 
 test('automatic advisory routing is five parallel general Free Router slots with distinct credentials', () => {
   assert.match(sequence, /strategy:\s*\n\s*fail-fast: false\s*\n\s*matrix:\s*\n\s*include:/);
-  assert.equal((sequence.match(/model: openrouter\/free/g) || []).length, 1);
+  assert.doesNotMatch(sequence, /model: openrouter\/free/);
   assert.match(sequence, /reviewer: OpenRouter Free Slot \$\{\{ matrix\.slot \}\}/);
   assert.match(sequence, /reviewer_slug: openrouter-free-\$\{\{ matrix\.slot \}\}/);
   assert.match(sequence, /credential_alias: \$\{\{ matrix\.credential_alias \}\}/);
