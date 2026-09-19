@@ -148,6 +148,7 @@ jobs:
 
       - name: Validate five terminal slot records
         env:
+          GH_TOKEN: ${{ github.token }}
           HEAD: ${{ github.event.pull_request.head.sha }}
         shell: bash
         run: |
@@ -193,16 +194,16 @@ jobs:
           open('/tmp/sequence-summary.json','w',encoding='utf-8').write(json.dumps(summary,sort_keys=True,indent=2)+'\n')
           PY
           jq -r '.slots[] | "slot=\(.slot) alias=\(.credential_alias) outcome=\(.outcome) model=\(.actual_model // "-") provider=\(.actual_provider // "-")"' /tmp/sequence-summary.json
-          cat > /tmp/complete-comment.md <<EOF
+          cat > /tmp/complete-comment.md <<'EOF'
           # Automatic OpenRouter Free Advisory Execution Complete
 
-          Exact PR head: `$HEAD`
+          Exact PR head: `__HEAD__`
           Five parallel credential-isolated slots reached terminal workflow outcomes.
           Structured slot artifacts, not PR comments, are the orchestration state.
           Execution completion is advisory evidence only and does not imply approval, acceptance, merge authorization, or release.
           EOF
+          sed -i "s/__HEAD__/$HEAD/g" /tmp/complete-comment.md
           gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/complete-comment.md)" >/dev/null
-
       - name: Upload sequence summary artifact
         uses: actions/upload-artifact@v4
         with:
