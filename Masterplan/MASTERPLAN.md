@@ -37,10 +37,10 @@
 - [x] Model reviewer workflows are execution-gated on exact-head success of the required Governance, Full-System, Security, and Browser/Runtime validator workflows.
 - [x] Reviewer packets include current governing context and owning Issue state; pending/failed/stale required execution evidence fails the reviewer closed.
 - [x] Automatic model review is quota-protected to one automatic invocation sequence per PR; later-head re-review remains explicit.
-- [x] Automatic advisory routing is unified on one OpenRouter API key and the OpenRouter Free Router; slot identity is a bounded orchestration slot, not a model identity.
+- [x] Automatic advisory routing is unified on the OpenRouter Free Router with five distinct OpenRouter API key credentials, one per slot; slot identity is a bounded orchestration slot, not a model identity.
 - [x] OpenRouter Free Router → 5 parallel slots → no inter-slot interval; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
 Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-- [x] The automatic advisory sequence is now five parallel OpenRouter Free Router slots with one shared API key, exact-head guards, durable one-sequence claim, and actual routed model/provider evidence per successful slot.
+- [x] The automatic advisory sequence is now five parallel OpenRouter Free Router slots with five distinct slot credentials, exact-head guards, durable one-sequence claim, and actual routed model/provider evidence per successful slot.
 - [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its Nemotron stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
 - [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof now targets the revised five-slot free-router path.
 - [ ] Automatic OpenRouter Free Router sequence is runtime-verified on a fresh eligible non-draft PR lifecycle event, including five parallel slot outcomes and exact-head provenance.
