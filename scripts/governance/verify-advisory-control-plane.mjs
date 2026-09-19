@@ -8,11 +8,18 @@ const exists=rel=>fs.existsSync(path.join(root,rel));
 const must=rel=>assert.equal(exists(rel),true,`Missing required path: ${rel}`);
 const escapeRegExp=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
-const files={sequence:read('.github/workflows/ai-advisory-review-sequence.yml'),runner:read('.github/workflows/ai-advisory-review-runner.yml'),manual:read('.github/workflows/additional-ai-advisory-reviews.yml'),governance:read('.github/workflows/governance.yml'),policy:read('POLICY.md'),wiring:read('docs/SKILL_WIRING.md'),skill:read('skills/governance/ai-advisory-review/SKILL.md'),master:read('Masterplan/MASTERPLAN.md'),next:read('Masterplan/NEXT_SLICES.md'),session:read('AI_ASSISTANT_READ_ME.md'),productWiring:read('Product_Law/WIRING.md')};
-const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
+const files={sequence:read('.github/workflows/ai-advisory-review-sequence.yml'),runner:read('.github/workflows/ai-advisory-review-runner.yml'),manual:read('.github/workflows/additional-ai-advisory-reviews.yml'),governance:read('.github/workflows/governance.yml'),policy:read('POLICY.md'),wiring:read('docs/SKILL_WIRING.md'),skill:read('skills/governance/ai-advisory-review/SKILL.md'),master:read('Masterplan/MASTERPLAN.md'),next:read('Masterplan/NEXT_SLICES.md'),session:read('AI_ASSISTANT_READ_ME.md'),productWiring:read('Product_Law/WIRING.md'),manifest:read('.github/teamai/authority-manifest.yml')};
+const manifest=JSON.parse(files.manifest);
+const advisory=manifest.advisory_review || {};
+const advisorySlots=advisory.slots || [];
+const aliases=advisorySlots.map(slot=>slot.credential_alias);
 const retired=['1→2→2','150-second','2 minutes 30 seconds','one shared OpenRouter API key','comment-driven orchestration state','skills/governance/nemotron-copilot-review','.github/workflows/nemotron-copilot-review.yml','docs/TEAMAI_029_CURRENT_STATE_MAP.md'];
-for(const alias of aliases) assert.match(files.sequence,new RegExp('credential_alias:\\s*'+alias));
-assert.match(files.sequence,/fail-fast:\s*false/);assert.match(files.sequence,/cancel-in-progress:\s*false/);assert.match(files.sequence,/start_delay_seconds:\s*0/);assert.match(files.sequence,/start_delay_seconds:\s*2/);assert.match(files.sequence,/start_delay_seconds:\s*4/);assert.match(files.sequence,/start_delay_seconds:\s*6/);assert.match(files.sequence,/start_delay_seconds:\s*8/);assert.match(files.runner,/start_delay_seconds:/);assert.match(files.runner,/sleep \"\$START_DELAY_SECONDS\"/);assert.match(files.runner,/max_tokens.*4000/);assert.match(files.runner,/usage_summary/);for(const [name, text] of Object.entries({policy:files.policy,wiring:files.wiring,skill:files.skill,master:files.master,productWiring:files.productWiring})) assert.match(text,/2-second launch stagger/,`Timing drift in ${name}`);assert.doesNotMatch(files.sequence,/openrouter_free:[\s\S]*?continue-on-error:\s*true/);
+assert.equal(advisory.route,'openrouter/free');
+assert.equal(advisory.automatic?.slot_count,5);assert.equal(advisory.automatic?.launch_interval_seconds,2);assert.equal(advisory.automatic?.max_spread_seconds,8);assert.equal(advisory.automatic?.fail_fast,false);
+assert.deepEqual(advisorySlots.map(slot=>slot.slot),[1,2,3,4,5]);
+assert.deepEqual(advisorySlots.map(slot=>slot.start_delay_seconds),[0,2,4,6,8]);
+assert.equal(new Set(aliases).size,aliases.length);
+assert.match(files.sequence,/resolve_advisory_slots/);assert.match(files.sequence,/fromJSON\(needs\.resolve_advisory_slots\.outputs\.matrix\)/);assert.match(files.sequence,/credential_alias: \$\{\{ matrix\.credential_alias \}\}/);assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);assert.match(files.runner,/start_delay_seconds:/);assert.match(files.runner,/sleep \"\$START_DELAY_SECONDS\"/);assert.match(files.runner,/max_tokens.*4000/);assert.match(files.runner,/usage_summary/);for(const [name, text] of Object.entries({policy:files.policy,wiring:files.wiring,skill:files.skill,master:files.master,productWiring:files.productWiring})) assert.match(text,/2-second launch stagger/,`Timing drift in ${name}`);assert.doesNotMatch(files.sequence,/openrouter_free:[\s\S]*?continue-on-error:\s*true/);
 assert.match(files.runner,/review_ready=true/);
 assert.match(files.runner,/inputs\.invocation_class != 'automatic' \|\| steps\.invoke_model\.outputs\.review_ready == 'true'/);assert.match(files.sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);
 assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);
@@ -26,7 +33,8 @@ assert.doesNotMatch(files.runner,/approve:/i);
 assert.match(files.runner,/actions\/upload-artifact@v4/);
 assert.doesNotMatch(files.runner,/issues\/\$PR\/comments\?per_page/);
 assert.doesNotMatch(files.runner,/automatic_outcome_marker/);
-for(const alias of aliases) { assert.match(files.manual,new RegExp('credential_alias:\\s*'+alias)); assert.match(files.wiring,new RegExp('OpenRouter Free Slot.*\\\\|\\\\s*'+alias+'\\\\s*\\\\|')); }
+assert.match(files.manual,/resolve_manual_slot/);assert.match(files.manual,/fromJSON\(needs\.resolve_manual_slot\.outputs\.matrix\)/);assert.match(files.manual,/credential_alias: \$\{\{ matrix\.credential_alias \}\}/);assert.match(files.manual,/secrets\[matrix\.credential_alias\]/);
+for(const alias of aliases){ const escaped=escapeRegExp(alias); assert.doesNotMatch(files.sequence,new RegExp(escaped)); assert.doesNotMatch(files.manual,new RegExp(escaped)); assert.doesNotMatch(files.runner,new RegExp(escaped)); assert.doesNotMatch(files.policy,new RegExp(escaped)); assert.doesNotMatch(files.wiring,new RegExp(escaped)); assert.doesNotMatch(files.skill,new RegExp(escaped)); assert.doesNotMatch(files.session,new RegExp(escaped)); }
 for(const [name, text] of Object.entries(files)) { if (name === 'session') continue; for (const token of retired) { const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); assert.doesNotMatch(text, new RegExp(escaped, 'i')); } }
 must('docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md');
 must('docs/archive/nemotron-copilot-review-workflow_legacy_2026-09-19.yml');
