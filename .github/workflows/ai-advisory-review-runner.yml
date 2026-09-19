@@ -317,6 +317,15 @@ jobs:
           Path('/tmp/review-manifest.json').write_text(json.dumps(manifest,sort_keys=True,indent=2)+'\n',encoding='utf-8')
           PY
           {
+             echo '=== EVIDENCE POLICY ==='
+             echo "target_exact_head=$HEAD"
+             echo 'Current runtime evidence is only evidence explicitly tied to target_exact_head.'
+             echo 'Historical commit/run IDs, prior advisory comments, and earlier measurements are context only, never current-state proof.'
+             echo 'Advisory publication count and generation truncation count are telemetry, not acceptance thresholds.'
+             echo 'No requirement for 5/5 published advisory reviews or any specific truncation ratio exists unless an authoritative current contract explicitly says so.'
+             echo 'Reviewer findings must be supported by current changed paths or authoritative current contracts.'
+             echo 'Inspect changed paths first and do not require unrelated unchanged artifacts.'
+             echo
             echo '=== PR ==='
             cat /tmp/title
             echo
@@ -421,6 +430,12 @@ jobs:
               'Review repository truth, product logic, governing rules, documentation, Issue state, execution evidence, and changed code.',
               'Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.',
               'Never invent requirements or recommend weakening governance or validators.',
+               'Current-head evidence policy is authoritative: only evidence tied to this exact target head is current runtime proof; older run IDs and historical comments are context only.'
+               'Do not invent acceptance thresholds. The five-slot advisory sequence has no 5/5 publication threshold and no truncation-count threshold; those are telemetry signals only.'
+               'A provider HTTP success or advisory workflow success does not itself establish product acceptance, merge authorization, or Issue closure.'
+               'Do not claim secret-expression defects unless the exact current workflow source or current execution behavior demonstrates one.'
+               'Do not claim packet/diff truncation unless the current review-manifest explicitly says the relevant section is truncated or the packet contains its explicit truncation marker.'
+               'Do not require unrelated unchanged artifacts, historical censuses, or model-specific documents unless the current changed paths or authoritative contract makes them relevant.'
               'Never treat a PR claim as execution proof when the packet disagrees.',
               'Never treat an open Issue as resolved merely because a PR satisfies one slice. Report the actual Issue state and checklist/completion evidence present in the packet.',
               'Skipped, stale, unrelated, or head-mismatched checks are not passing evidence.',
