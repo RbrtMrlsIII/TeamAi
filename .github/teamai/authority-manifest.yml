@@ -295,6 +295,11 @@
       "old": "active TEAMAI_029_CURRENT_STATE_MAP recovery index",
       "disposition": "MOVED",
       "new": "AI_ASSISTANT_READ_ME.md Session Snapshot"
+    },
+    {
+      "old": "4000-token advisory generation ceiling on exact-head review",
+      "disposition": "REPLACED",
+      "new": "30000-token generation ceiling + low reasoning effort + compact structured review contract + explanatory terminal telemetry"
     }
   ],
   "active_reference_policy": {
