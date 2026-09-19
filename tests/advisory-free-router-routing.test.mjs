@@ -20,7 +20,7 @@ test('governance validation isolates pull_request and pull_request_review concur
 test('review-readiness distinguishes pending checks from completed failures',()=>{
   assert.match(governance,/pending=0\s*\n\s*failed=0/);
   assert.match(governance,/status=missing conclusion=pending/);
-  assert.match(governance,/status=\"\$status\" != \"completed\"/);
+  assert.match(governance,/if \[ \"\$status\" != \"completed\" \]/);
   assert.match(governance,/REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS/);
   assert.match(governance,/if \[ \"\$failed\" -gt 0 \]/);
 });
