@@ -1,4 +1,5 @@
 name: AI Advisory Review Sequence
+# Control state is structured workflow artifacts; PR comments are evidence only.
 
 on:
   pull_request:
