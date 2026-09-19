@@ -326,9 +326,15 @@
     "route": "openrouter/free",
     "packet": {
       "max_review_packet_chars": 260000,
-      "max_governance_context_chars": 100000,
+      "max_governance_context_chars": 120000,
       "max_diff_chars": 120000,
       "selection_policy": "authority-first; include changed files and governing issue context; exclude unrelated field Skills unless the changed paths require them"
+    },
+    "quality_contract": {
+      "min_governance_and_evidence_items": 1,
+      "min_review_basis_items": 1,
+      "changes_requested_requires_finding_or_gap": true,
+      "approve_requires_no_verification_gaps": true
     },
     "automatic": {
       "slot_count": 5,
