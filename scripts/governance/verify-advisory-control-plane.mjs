@@ -10,7 +10,9 @@ const files={sequence:read('.github/workflows/ai-advisory-review-sequence.yml'),
 const aliases=['OPENROUTER_API_KEY','OPENROUTER_API_KEY_OPENAI','OPENROUTER_API_KEY_POOLSIDE','OPENROUTER_API_KEY_DEEPSEEK','OPENROUTER_API_KEY_GWEN'];
 const retired=['1→2→2','150-second','2 minutes 30 seconds','one shared OpenRouter API key','comment-driven orchestration state','skills/governance/nemotron-copilot-review','.github/workflows/nemotron-copilot-review.yml','docs/TEAMAI_029_CURRENT_STATE_MAP.md'];
 for(const alias of aliases) assert.match(files.sequence,new RegExp('credential_alias:\\s*'+alias));
-assert.match(files.sequence,/fail-fast:\s*false/);assert.match(files.sequence,/cancel-in-progress:\s*false/);assert.doesNotMatch(files.sequence,/openrouter_free:[\s\S]*?continue-on-error:\s*true/);assert.match(files.sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);
+assert.match(files.sequence,/fail-fast:\s*false/);assert.match(files.sequence,/cancel-in-progress:\s*false/);assert.doesNotMatch(files.sequence,/openrouter_free:[\s\S]*?continue-on-error:\s*true/);
+assert.match(files.runner,/review_ready=true/);
+assert.match(files.runner,/inputs\.invocation_class != 'automatic' \|\| steps\.invoke_model\.outputs\.review_ready == 'true'/);assert.match(files.sequence,/sequence_complete:\s*\n\s+needs: \[openrouter_free\]\s*\n\s+if: always\(\)/);
 assert.match(files.sequence,/secrets\[matrix\.credential_alias\]/);
 assert.match(files.sequence,/actions\/download-artifact@v5/);
 assert.doesNotMatch(files.sequence,/model:\s*openrouter\/free/);
