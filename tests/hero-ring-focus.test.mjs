@@ -12,6 +12,7 @@ import {
 } from '../public/hero-hierarchy-runtime.js';
 
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const r1 = await readFile(new URL('../public/hero-r1-backend-display.js', import.meta.url), 'utf8');
 const r2 = await readFile(new URL('../public/hero-r2-setup-ring.js', import.meta.url), 'utf8');
 
 test('ring focus cycles R1 and R2 catalogs', () => {
@@ -50,7 +51,7 @@ test('hero-flex wires ring focus keys and click zones', () => {
 });
 
 test('draw paths react to focusedIndex / r1 focus', () => {
-  assert.match(hero, /ringFocus\.ring === 'r1'/);
+  assert.match(r1, /ringFocus\?\.ring === 'r1'/);
   assert.match(r2, /focusedIndex/);
   assert.match(r2, /focused \?/);
 });
