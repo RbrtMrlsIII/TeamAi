@@ -35,6 +35,15 @@ if (!text.includes("from './seat-adjacent-division-wiring.js';")) {
   );
 }
 
+if (!text.includes("from './seat-division-geometry.js';")) {
+  const wiringAnchor = "import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';";
+  if (!text.includes(wiringAnchor)) throw new Error('adjacent wiring import anchor missing');
+  text = text.replace(
+    wiringAnchor,
+    wiringAnchor + "\nimport { buildSeatDivisionGeometry } from './seat-division-geometry.js';",
+  );
+}
+
 if (!text.includes('function drawSeat1AdjacentDivisionWiring(')) {
   const anchor = 'function drawHealthLeaf('; 
   const at = text.indexOf(anchor);
