@@ -1,27 +1,23 @@
 /**
- * Cam-6 wire contracts on hero-flex loader — presentation only · Issue #212
+ * Cam-6 wire contracts on the Hero controller.
  */
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { test } from 'node:test';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const flex = () => readFileSync(join(root, 'public/hero-flex.js'), 'utf8');
+const flex = () => readFileSync(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 
-test('hero-flex imports resolveSelectedSeatDock', () => {
-  assert.match(flex(), /resolveSelectedSeatDock/);
-});
-
-test('hero-flex setCamera path forces seat dock when shell open', () => {
+test('Hero controller uses the canonical selected-seat subject resolver', () => {
   const src = flex();
-  assert.match(src, /force:\s*true/);
+  assert.match(src, /resolveSelectedSeatDock/);
+  assert.match(src, /function getSubjectLockSnapshot/);
+  assert.match(src, /force: true/);
   assert.match(src, /SEAT_SHELL/);
-  assert.match(src, /seatDock/);
 });
 
-test('hero-flex applyNavCamera rebases with force while open', () => {
+test('navigation remains controller-owned while rendering remains modular', () => {
   const src = flex();
-  assert.match(src, /resolveSelectedSeatDock\([\s\S]*force:\s*true/);
+  assert.match(src, /function applyNavCamera/);
+  assert.match(src, /machineWorldRenderer\.render/);
+  assert.doesNotMatch(src, /gl\.createShader|gl\.drawArrays/);
 });
