@@ -1,9 +1,7 @@
 /**
  * 029 R2 setup/config mechanical ring renderer.
- * Presentation only. Login/register are staged UI mechanisms, not authentication authority.
+ * Presentation only. The canonical Hero supplies the authoritative ring scale.
  */
-import { RING_R2_SCALE } from './hero-hierarchy-runtime.js';
-
 const TAU = Math.PI * 2;
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
@@ -20,13 +18,13 @@ export function resolveSetupConfigItems(items = DEFAULT_ITEMS) {
 
 export function deriveSetupConfigPlacements({
   workspaceRadius = 1,
-  ringScale = RING_R2_SCALE,
+  ringScale = 1,
   items = DEFAULT_ITEMS,
   angleOffset = 0.08,
   y = 0.95,
 } = {}) {
   const resolved = resolveSetupConfigItems(items);
-  const radius = Math.max(0, finite(workspaceRadius) * Math.max(0, finite(ringScale, RING_R2_SCALE)));
+  const radius = Math.max(0, finite(workspaceRadius) * Math.max(0, finite(ringScale, 1)));
   return resolved.map((item, index) => {
     const angle = -Math.PI / 2 + (index * TAU / Math.max(resolved.length, 1)) + finite(angleOffset, 0);
     return Object.freeze({
@@ -46,7 +44,7 @@ export function deriveSetupConfigPlacements({
 export function drawSetupConfigRing({
   profile,
   seatCount,
-  ringScale = RING_R2_SCALE,
+  ringScale = 1,
   items = DEFAULT_ITEMS,
   focusedIndex = -1,
   fillAmount = 0,
