@@ -4,17 +4,15 @@
 
 ## Current Slice
 
-GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
+TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 
 ## Status
 
-CLOSURE PENDING — implementation is complete in PR #395. This slice remains current only until the governed review/merge path completes and #394/#393 closure evidence is recorded.
+IMPLEMENTATION ACTIVE — PR #398 is the active Draft implementation vehicle on the governance-compliant `frontend/029-machine-world-convergence` branch. PR #397 is closed historical lineage.
 
 ## Objective
 
-Current governing program: TEAM-EXPERIENCE-029 progression. The clean-mainline reconstruction is the control-plane prerequisite and does not redefine the Product Law program.
-
-Rebaseline the canonical session/planning records and Issue topology against merged `main`. Preserve one current session boundary, one advisory-review architecture, separate Product/Frontend/Backend/Governance ownership, structured terminal workflow state, explicit historical supersession, and machine-checked separation between CI-green, corpus-clean, and session-current evidence.
+Continue converging the TeamAi Spatial World from the exact #397 implementation head without creating a second renderer or restoring the retired Hero mutation architecture. The current renderer boundary is: semantic hierarchy/controller/input state → canonical machine-world renderer source/runtime.
 
 ## Dependencies
 
@@ -24,33 +22,25 @@ Rebaseline the canonical session/planning records and Issue topology against mer
 - POLICY.md
 - docs/SKILL_WIRING.md
 - AI_ASSISTANT_READ_ME.md
-- Issue #394
-- Current main baseline: 867944b03776f47fb01bd2cddf90ed4c70ab3b68
-- Completed reconstruction: #391 / #389
-- Active product slices: #278, #360, #392, #83, #204, #284
-- Enduring governance contract: #133
-- #393 normalization: implemented in PR #395; closure-pending
-- Historical/superseded control-plane lineage: #347, #368, #369, #387, #388
-- Historical execution evidence remains under docs/archive/
+- Issue #396
+- Draft PR #398
+- Baseline main: d8b1e767898be9fe640f002d72cf7771842865b6
+- Migration source head from #397: 23a83ae166f0983b598910d616b1203ebf600096
 
 ## Verification
 
-- merged main baseline is current and independently inspectable
-- active governance surfaces agree on one authority chain
-- five credential-isolated advisory slots request only openrouter/free
-- no active model-specific reviewer or approval contract remains
-- owning Issue resolution is deterministic and required before provider invocation
-- automatic terminal state is artifact-backed and not comment-driven
-- superseded current-state, model-specific, and issue-lineage material is historical only and not active routing
-- the Session Snapshot is explicit and machine-checkable
-- CI green, corpus clean, and session current are separate claims
-- existing product/runtime tests remain governed; no validator is weakened
+- renderer/controller ownership is source-inspected
+- frontend/public machine renderer parity is maintained
+- legacy Hero mutation engine is retired
+- exact-head browser/runtime verification remains required
+- deterministic geometry and independent numerical validation remain required for spatial claims
+- governance, Full-System, Security, and Browser checks remain exact-head signals
+- PR #398 remains Draft until the substantive validation set supports the next promotion decision
 
 ## Current slice boundary
 
-Issue #394 owns only baseline/Issue-topology reconciliation. Its implementation is complete in PR #395 and it remains current only for merge/closure bookkeeping. #393 is fully absorbed into the same PR and is not a parallel execution stream. This slice does not absorb #278, #360, #284, #204, #83, or #392, and creates no 029 release, C9/C10, or backend completion claim. Product Law §15 remains unchanged and authoritative; #394 closure does not endorse TEAM-BACKEND-001 completion or reorder the governed program/release sequence.
-
+This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
 
 ## Current blocker
 
-This reconciliation is implementation-complete on PR #395. It remains open only until the exact-head governed checks, human review/authorization, merge, and post-merge Issue closure are recorded. It does not absorb or replace the separately owned product, frontend, backend, or governance feature slices.
+Fresh exact-head runtime/browser proof for the migrated renderer must complete successfully before the migration is treated as runtime-proven. Governance branch naming is no longer the blocker on #398; the remaining governance contract is canonical-spine synchronization plus exact-head proof.
