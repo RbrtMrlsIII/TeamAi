@@ -9,6 +9,11 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
+export function resolveSeatDivisionSemanticId(id) {
+  const match = String(id ?? '').match(/:((?:SEAT|WORKSPACE)_[A-Z_]+):GEOMETRY$/);
+  return match ? match[1] : null;
+}
+
 export function measureDivisionPayload(payload = {}) {
   const labels = Array.isArray(payload.labels) ? payload.labels : [];
   const controls = Array.isArray(payload.controls) ? payload.controls : [];
@@ -60,7 +65,7 @@ export function buildSeatDivisionGeometry({
 
   return {
     id,
-    semantic: id.includes('SEAT_BEHAVIOR') ? 'SEAT_BEHAVIOR' : 'SEAT_CONNECTION',
+    semantic: resolveSeatDivisionSemanticId(id) || 'UNKNOWN',
     center: {
       x: normalize(Number(center.x) || 0),
       y: normalize(Number(center.y) || 0),
