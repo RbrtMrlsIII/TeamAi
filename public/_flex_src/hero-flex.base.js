@@ -97,6 +97,7 @@ import {
 } from './hero-hierarchy-runtime.js';
 import { drawSetupConfigRing as drawSetupConfigRingModule } from './hero-r2-setup-ring.js';
 import { drawBackendDisplayRing as drawBackendDisplayRingModule } from './hero-r1-backend-display.js';
+import { drawBackendDisplayThreads as drawBackendDisplayThreadsModule } from './hero-r1-backend-threads.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import {
   createDeepSpaceField,
@@ -403,6 +404,25 @@ function drawBackendDisplayRing(t) {
     M,
   }, t);
 }
+
+function drawBackendDisplayThreads(t) {
+  return drawBackendDisplayThreadsModule({
+    profile,
+    seatCount,
+    ringScale: RING_R1_SCALE,
+    catalog: BACKEND_DISPLAY_V1,
+    ringFocus,
+    reducedMotion,
+    draw,
+    CUBE,
+    SPH,
+    T,
+    S,
+    RY,
+    mul,
+    M,
+  }, t);
+}
 function drawSeat(seat,index,t){const p=seatPos(seat),cfg=profile(seatCount),active=index===selectedSeat&&state!=='IDLE',engaged=active&&['FOCUS','ACTIVE','CONTRIBUTE'].includes(state),scale=cfg.seatScale,bob=(active?Math.sin(t*2.1)*.04:Math.sin(t*.7+index)*.012)*(reducedMotion?.2:1),hierLift=(hierarchyRuntime.openParentId===seatShellParentId(index)?SEAT_OPEN_LIFT*hierarchyRuntime.openAmount:0),y=p[1]+bob+hierLift;draw(CYL,mul(T(p[0],.27,p[2]),S(SEAT_BASE_RADIUS*scale,.44,SEAT_BASE_RADIUS*scale)),M.metal,{rough:.45,spec:[.8,.81,.77]});draw(TORUS,mul(T(p[0],.50,p[2]),S(.92*scale,1,.92*scale)),M.metal2,{rough:.3,spec:[.92,.92,.88]});{const L=heroMaterialContext(),Sm=authoredSeatShellMaterial(L),In=authoredSeatInsetMaterial(L);draw(AUTHORED_SEAT_SHELL,mul(mul(T(p[0],y,p[2]),RY(seat.a+Math.PI)),S(1.24*scale,1.12*scale,1.02*scale)),Sm.color,{rough:Sm.rough,spec:Sm.spec,emit:Sm.emit||0});draw(CYL,mul(mul(T(p[0],y+.08*scale,p[2]),RY(seat.a)),S(.98*scale,.55*scale,.98*scale)),In.color,{rough:In.rough,spec:In.spec});}draw(CYL,mul(mul(T(p[0],y+.47*scale,p[2]),RY(seat.a)),S(.62*scale,.12,.62*scale)),seat.accent,{rough:.25,spec:[.9,.9,.86],emit:engaged?.09:0});draw(TORUS,mul(T(p[0],y+.52*scale,p[2]),S(.40*scale,1,.40*scale)),engaged?M.energy:seat.accent,{rough:.22,emit:engaged?.28:.02,alpha:engaged?.88:.55});const nose=[p[0]+Math.cos(seat.a)*(.66*scale),y+.18*scale,p[2]+Math.sin(seat.a)*(.66*scale)];draw(CYL,mul(mul(T(...nose),RY(seat.a+Math.PI/2)),S(.15*scale,.45*scale,.15*scale)),M.metal2,{rough:.35,spec:[.88,.88,.84]});if(engaged){const pulse=reducedMotion?.65:.5+.5*Math.sin(t*4.2);draw(RING,mul(T(p[0],y+.66*scale,p[2]),S(.7*scale+.08*pulse,.7*scale+.08*pulse,.7*scale+.08*pulse)),M.energy,{rough:.18,emit:.12+.20*pulse,alpha:.27+.12*pulse})}drawHierarchyChildren(seat,index,t,y,scale);}
 function point(start,c1,c2,end,q){const u=1-q;return[u*u*u*start[0]+3*u*u*q*c1[0]+3*u*q*q*c2[0]+q*q*q*end[0],u*u*u*start[1]+3*u*u*q*c1[1]+3*u*q*q*c2[1]+q*q*q*end[1],u*u*u*start[2]+3*u*u*q*c1[2]+3*u*q*q*c2[2]+q*q*q*end[2]]}
 function contributionEffect(seat){if(state!=='CONTRIBUTE')return;const p=seatPos(seat),d=durations(),start=[p[0],1.03,p[2]],c1=[p[0]*.55,1.32,p[2]*.55],c2=[p[0]*.14,1.42,p[2]*.14],end=[0,1.3,0];if(reducedMotion){for(const q of[.3,.5,.7]){const[x,y,z]=point(start,c1,c2,end,q);draw(SPH,mul(T(x,y,z),S(.23,.23,.23)),M.energy,{rough:.15,emit:.25,alpha:.58})}return}const q=clamp((performance.now()-stateStart)/d.contribute,0,1);for(let i=0;i<5;i++){const tt=clamp(q-i*.06,0,1),[x,y,z]=point(start,c1,c2,end,tt),k=Math.max(.18,.34*(1-i*.13));draw(SPH,mul(T(x,y,z),S(k,k,k)),M.energy,{rough:.15,emit:.38,alpha:.82-i*.12})}}
@@ -451,7 +471,7 @@ function drawSetupConfigRing(t) {
     M,
   }, t);
 }
-function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}const worldMode=isMachineWorldLayer(shell);gl.clearColor(worldMode?M.space[0]:0,worldMode?M.space[1]:0,worldMode?M.space[2]:0,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawSetupConfigRing(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
+function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}const worldMode=isMachineWorldLayer(shell);gl.clearColor(worldMode?M.space[0]:0,worldMode?M.space[1]:0,worldMode?M.space[2]:0,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawBackendDisplayThreads(now/1000);drawSetupConfigRing(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
 canvas.addEventListener('click',event=>{
   // #304: the old dead-center 'Zone A' band (~0.38-0.62 x, 0.38-0.58 y) was a
   // structural no-op -- syncSetupRingCamera() read the focused ring item
