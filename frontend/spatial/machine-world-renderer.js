@@ -16,9 +16,11 @@ import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.
 import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
+import { drawBackendDisplayRing } from './hero-r1-backend-display.js';
+import { drawBackendDisplayThreads } from './hero-r1-backend-threads.js';
+import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
+import { BACKEND_DISPLAY_V1, RING_R1_SCALE, RING_R2_SCALE, SETUP_CONFIG_V1, NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
-import { NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
-
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -140,6 +142,61 @@ function ringPoints(count, radius, y) {
   return out;
 }
 
+function regularPolygon(sides, phase = 0) {
+  return Array.from({ length: sides }, (_, index) => {
+    const a = phase + index / sides * TAU;
+    return [Math.cos(a), Math.sin(a)];
+  });
+}
+
+const PRIMITIVE_POLYGONS = Object.freeze({
+  CUBE: POLYS.pod,
+  CYL: regularPolygon(16),
+  TORUS: regularPolygon(12),
+  SPH: regularPolygon(10),
+});
+
+const RING_MATERIALS = Object.freeze({
+  metal: Object.freeze({ color: [0.42, 0.50, 0.56], emit: 0.02 }),
+  metal2: Object.freeze({ color: [0.28, 0.36, 0.42], emit: 0.01 }),
+  glass: Object.freeze({ color: [0.58, 0.72, 0.82], emit: 0.06 }),
+  energy: Object.freeze({ color: [0.28, 0.76, 1.00], emit: 0.16 }),
+  trace: Object.freeze({ color: [0.30, 0.52, 0.66], emit: 0.03 }),
+});
+
+function translateMatrix(x, y, z) {
+  return new Float32Array([
+    1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1,
+  ]);
+}
+
+function scaleMatrix(x, y, z) {
+  return new Float32Array([
+    x,0,0,0, 0,y,0,0, 0,0,z,0, 0,0,0,1,
+  ]);
+}
+
+function rotateYMatrix(angle) {
+  const c = Math.cos(angle), s = Math.sin(angle);
+  return new Float32Array([
+    c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1,
+  ]);
+}
+
+function multiplyMatrix(a, b) {
+  const out = new Float32Array(16);
+  for (let column = 0; column < 4; column += 1) {
+    for (let row = 0; row < 4; row += 1) {
+      out[column * 4 + row] =
+        a[row] * b[column * 4] +
+        a[4 + row] * b[column * 4 + 1] +
+        a[8 + row] * b[column * 4 + 2] +
+        a[12 + row] * b[column * 4 + 3];
+    }
+  }
+  return out;
+}
+
 export function createMachineWorldRenderer({ canvas, gl } = {}) {
   if (!canvas || !gl) throw new Error('machine-world renderer requires the canonical Hero canvas and WebGL context');
 
@@ -200,6 +257,87 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
   let branchId = 'HUB-CORE';
   let lastSeat1AdjacentWiring = null;
   let disposed = false;
+  const primitiveBuffers = new Map();
+
+  function worldProfile(seatCount) {
+    const density = clamp((Math.max(1, seatCount | 0) - 1) / 9, 0, 1);
+    return {
+      workspace: 4.35 + (5.95 - 4.35) * density,
+      seatRadius: 4.25 + (6.45 - 4.25) * density,
+    };
+  }
+
+  function ensurePrimitiveBuffer(kind) {
+    const key = String(kind);
+    let entry = primitiveBuffers.get(key);
+    if (entry) return entry;
+    const polygon = PRIMITIVE_POLYGONS[key] || PRIMITIVE_POLYGONS.CUBE;
+    const data = shapeBuffer(gl, polygon, 1);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    entry = { buffer, count: data.length / 3 };
+    primitiveBuffers.set(key, entry);
+    return entry;
+  }
+
+  function ringDraw(shape, transform, material, options = {}) {
+    const entry = ensurePrimitiveBuffer(shape);
+    const color = material?.color || [0.5, 0.6, 0.7];
+    const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
+    gl.useProgram(solid);
+    gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
+    gl.enableVertexAttribArray(solidPos);
+    gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
+    gl.uniformMatrix4fv(solidP,false,projection);
+    gl.uniformMatrix4fv(solidV,false,view);
+    gl.uniformMatrix4fv(solidM,false,transform);
+    gl.uniform3f(solidColor,color[0],color[1],color[2]);
+    gl.uniform1f(solidGlow,glow);
+    gl.drawArrays(gl.TRIANGLES,0,entry.count);
+  }
+
+  function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now }) {
+    const profile = worldProfile(seatCount);
+    const common = {
+      profile: () => profile,
+      seatCount,
+      ringFocus,
+      reducedMotion,
+      draw: ringDraw,
+      CUBE: 'CUBE',
+      CYL: 'CYL',
+      TORUS: 'TORUS',
+      SPH: 'SPH',
+      T: translateMatrix,
+      S: scaleMatrix,
+      RY: rotateYMatrix,
+      mul: multiplyMatrix,
+      M: RING_MATERIALS,
+    };
+    drawBackendDisplayRing({
+      ...common,
+      ringScale: RING_R1_SCALE,
+      catalog: BACKEND_DISPLAY_V1,
+    }, now / 1000);
+    drawBackendDisplayThreads({
+      ...common,
+      ringScale: RING_R1_SCALE,
+      catalog: BACKEND_DISPLAY_V1,
+    }, now / 1000);
+    drawSetupConfigRing({
+      ...common,
+      ringScale: RING_R2_SCALE,
+      items: SETUP_CONFIG_V1,
+      focusedIndex: ringFocus?.ring === 'r2' ? ringFocus.index : -1,
+      fillAmount: setupRingFillAmount,
+    }, now / 1000);
+    canvas.dataset.machineWorldR1 = 'backend-display';
+    canvas.dataset.machineWorldR1Count = String(BACKEND_DISPLAY_V1.length);
+    canvas.dataset.machineWorldR1Threads = '2';
+    canvas.dataset.machineWorldR2 = 'setup-config';
+    canvas.dataset.machineWorldR2Count = String(SETUP_CONFIG_V1.length);
+  }
 
   function ensureBuffer(part) {
     const key = part.branchId || part.id;
@@ -454,6 +592,14 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.drawArrays(gl.POINTS,0,STAR_FIELD.length);
     gl.depthMask(true);
 
+    drawCanonicalRings({
+      seatCount,
+      ringFocus: state.ringFocus,
+      setupRingFillAmount: finite(state.setupRingFillAmount, 0),
+      reducedMotion,
+      now,
+    });
+
     for (const fog of DEEP_SPACE_NEBULA_ANCHORS) {
       const size = fog.scale;
       const faux = { id: 'environment-nebula', branchId: 'environment-nebula', kind: 'hub', center: {x:fog.position[0],y:fog.position[1],z:fog.position[2]}, dimensions: {x:size[0],y:size[1],z:size[2]}, silhouette:'hex' };
@@ -542,6 +688,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     canvas.dataset.machineWorldModules = String(scene.parts.length);
     canvas.dataset.machineWorldSeats = String(scene.seatCount);
     canvas.dataset.machineWorldRenderer = 'canonical';
+    canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
 
     return Object.freeze({
       state: sample.state,
