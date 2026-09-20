@@ -28,9 +28,9 @@ test('hero-flex frame ticks toolkit branch after hierarchy pose', () => {
   assert.ok(pose >= 0 && tk > pose);
 });
 
-test('hero-flex applies branchBoost for SEAT_TOOLKIT child', () => {
+test('canonical renderer receives TOOLKIT state from the controller', () => {
   const src = flex();
-  assert.match(src, /isToolkit/);
+  assert.match(src, /machine-world-renderer\\.js/);
   assert.match(src, /getToolkitBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
   assert.match(src, /isConnection \|\| isBehavior \|\| isToolkit/);
 });
