@@ -4,6 +4,7 @@
  * Presentation only: no provider, authorization, scheduler, or durable-domain authority.
  */
 import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
+import { deriveMachineExpansionProfile, interpolateMachineDimensions } from './machine-hero-adaptive-geometry.js';
 import {
   connectionEdgePoint,
   seat1ConnectionEdge,
@@ -17,6 +18,11 @@ export const MACHINE_CORE_SEAT1_CONNECTION_SEMANTIC_KEY = 'TREE-HERO-SEAT#0:SEAT
 export const MACHINE_CORE_SEAT1_CONNECTION_HEALTH_KEY = 'SEAT_CONNECTION_HEALTH_FACE';
 
 const clamp01 = (value) => Math.min(1, Math.max(0, Number(value) || 0));
+const SEAT1_CONNECTION_PAYLOAD = Object.freeze({
+  labels: Object.freeze(['Connection', 'Health']),
+  controls: Object.freeze(['configure']),
+  density: 'default',
+});
 
 export function isCanonicalSeat1Shell(shell) {
   return Boolean(
@@ -46,24 +52,39 @@ export function buildMachineCoreSeat1Connection({
     y: shell.level + shell.dimensions.y * 0.68 + 0.12 * amount,
     z: shell.center.z + Math.sin(angle) * 0.06 * amount,
   };
+  const divisionPayload = density === 'compact'
+    ? Object.freeze({ ...SEAT1_CONNECTION_PAYLOAD, density: 'compact' })
+    : SEAT1_CONNECTION_PAYLOAD;
   const geometry = buildSeatDivisionGeometry({
     center,
     angle,
     radialDistance,
-    payload: Object.freeze({
-      labels: Object.freeze(['Connection', 'Health']),
-      controls: Object.freeze(['configure']),
-      density: density === 'compact' ? 'compact' : 'default',
-    }),
+    payload: divisionPayload,
     workspaceTarget,
   });
+  const expansionProfile = deriveMachineExpansionProfile({
+    dimensions: geometry.dimensions,
+    payload: divisionPayload,
+  }, { clearance: geometry.clearance });
+  const adaptiveDimensions = interpolateMachineDimensions(expansionProfile, amount);
   const edge = seat1ConnectionEdge(geometry.port, geometry.corridor.end);
 
   return Object.freeze({
     semanticKey: MACHINE_CORE_SEAT1_CONNECTION_SEMANTIC_KEY,
     parentSemanticKey: MACHINE_CORE_SEAT1_SHELL_KEY,
     semanticId: 'SEAT_CONNECTION',
-    geometry,
+    geometry: Object.freeze({
+      ...geometry,
+      dimensions: Object.freeze({ ...adaptiveDimensions }),
+    }),
+    adaptive: Object.freeze({
+      collapsed: Object.freeze({ ...expansionProfile.collapsed }),
+      expanded: Object.freeze({ ...expansionProfile.expanded }),
+      current: Object.freeze({ ...adaptiveDimensions }),
+      normalizedLoad: expansionProfile.normalizedLoad,
+      contentLoad: expansionProfile.contentLoad,
+      clearance: expansionProfile.clearance,
+    }),
     edge,
     edgeId: SEAT1_CONNECTION_EDGE_ID,
     portId: SEAT1_CONNECTION_PORT_ID,

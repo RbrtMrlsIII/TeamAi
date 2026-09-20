@@ -16,6 +16,22 @@ test('Seat-1 connection child stays absent while the machine core is collapsed',
   assert.equal(buildMachineCoreSeat1Connection({ shell, expansionAmount: 0 }), null);
 });
 
+test('Seat-1 connection exposes one payload-driven adaptive expansion envelope', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
+  const shell = core.byBranch.get('BRANCH-SEAT-01');
+  const collapsed = buildMachineCoreSeat1Connection({ shell, expansionAmount: 0.25 });
+  const expanded = buildMachineCoreSeat1Connection({ shell, expansionAmount: 1 });
+  assert.ok(collapsed && expanded);
+  assert.ok(expanded.adaptive.normalizedLoad > 0);
+  for (const axis of ['x', 'y', 'z']) {
+    assert.ok(expanded.adaptive.expanded[axis] >= expanded.adaptive.collapsed[axis]);
+    assert.ok(expanded.adaptive.current[axis] >= expanded.adaptive.collapsed[axis]);
+    assert.ok(expanded.adaptive.current[axis] <= expanded.adaptive.expanded[axis]);
+  }
+  assert.deepEqual(expanded.geometry.dimensions, expanded.adaptive.current);
+  assert.notDeepEqual(expanded.adaptive.expanded, expanded.adaptive.collapsed);
+});
+
 test('Seat-1 connection child reuses canonical geometry and edge identities', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
   const shell = core.byBranch.get('BRANCH-SEAT-01');
