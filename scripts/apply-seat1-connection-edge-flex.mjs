@@ -2,7 +2,7 @@
 /**
  * 029 Seat-1 connection source synchronization.
  *
- * The canonical renderer now owns the WebGL Seat-1 connection draw path.
+ * The canonical semantic Hero renderer now owns the WebGL Seat-1 connection draw path.
  * This command no longer mutates hero-flex.js. It only mirrors the reusable
  * semantic frontend modules into public/ and verifies byte parity.
  */
