@@ -99,12 +99,14 @@ Radii increase with ring index. Exact numbers live in baseline §9 when measured
 
 Issue #396 Slice D now has concrete source owners for both intermediate rings:
 
-- R1: `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js`
+- R1 display: `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js`
+- R1 presentation threads: `frontend/spatial/hero-r1-backend-threads.js` → `public/hero-r1-backend-threads.js`
 - R2: `frontend/spatial/hero-r2-setup-ring.js` → `public/hero-r2-setup-ring.js`
 - Canonical Hero remains the single WebGL renderer and retains small wrapper seams for existing assembly/apply contracts.
 - R1/R2 placement is derived from the active workspace envelope and catalog rather than a second coordinate authority.
-- These modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
-- Full R1 service topology, complete R2 mechanical choreography, and final electricity remain later work in #396.
+- R1 threads consume declared display-face IDs, resolve missing endpoints by failing closed, and route deterministically outside the workspace center.
+- These ring modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
+- Final service/backend topology, richer mechanical R1 articulation, complete R2 choreography, and final electricity remain later work in #396.
 
 ## 7. Design principle
 
