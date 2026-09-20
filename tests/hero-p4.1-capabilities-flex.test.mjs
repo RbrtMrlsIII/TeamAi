@@ -28,9 +28,9 @@ test('hero-flex frame ticks capabilities branch after hierarchy pose', () => {
   assert.ok(pose >= 0 && caps > pose);
 });
 
-test('hero-flex applies branchBoost for SEAT_CAPABILITIES child', () => {
+test('canonical renderer receives CAPABILITIES state from the controller', () => {
   const src = flex();
-  assert.match(src, /isCapabilities/);
+  assert.match(src, /machine-world-renderer\\.js/);
   assert.match(src, /getCapabilitiesBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
   assert.match(src, /isToolkit \|\| isCapabilities/);
 });
