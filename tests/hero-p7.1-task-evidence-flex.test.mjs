@@ -28,9 +28,9 @@ test('hero-flex frame ticks task evidence branch after hierarchy pose', () => {
   assert.ok(pose >= 0 && ev > pose);
 });
 
-test('hero-flex applies branchBoost for SEAT_TASK_EVIDENCE child', () => {
+test('canonical renderer receives TASK_EVIDENCE state from the controller', () => {
   const src = flex();
-  assert.match(src, /isTaskEvidence/);
+  assert.match(src, /machine-world-renderer\\.js/);
   assert.match(src, /getTaskEvidenceBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
   assert.match(src, /isWorkspaceScope \|\| isTaskEvidence/);
 });
