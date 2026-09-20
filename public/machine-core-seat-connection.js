@@ -79,7 +79,11 @@ export function buildMachineCoreSeat1Connection({
     semanticId: 'SEAT_CONNECTION',
     geometry: Object.freeze({
       ...geometry,
-      dimensions: Object.freeze({ ...adaptiveDimensions }),
+      dimensions: Object.freeze({
+        width: adaptiveDimensions.x,
+        height: adaptiveDimensions.y,
+        depth: adaptiveDimensions.z,
+      }),
     }),
     adaptive: Object.freeze({
       collapsed: Object.freeze({ ...expansionProfile.collapsed }),

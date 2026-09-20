@@ -94,7 +94,7 @@ test('canonical Hero renders the existing Seat-1 semantic connection geometry', 
   for (const source of [hero, base]) {
     assert.match(source, /buildMachineCoreSeat1Connection/);
     assert.match(source, /TREE-HERO-SEAT#0:SEAT_SHELL/);
-    assert.match(source, /adaptive\.current/);
+    assert.match(source, /connection\.adaptive\?\.current/);
     assert.match(source, /drawSemanticSeat1Connection/);
     assert.doesNotMatch(source, /firestore|supabase|paypal|scheduler|oauth/i);
   }
