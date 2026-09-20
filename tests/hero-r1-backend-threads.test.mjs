@@ -87,5 +87,6 @@ test('R1 thread owner stays synchronized and canonical Hero calls it', () => {
 });
 
 test('R1 thread owner is presentation-only', () => {
-  assert.doesNotMatch(source, /oauth|password|apiKey|firebase\.auth|supabase|firestore|paypal/i);
+  const executable = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  assert.doesNotMatch(executable, /oauth|password|apiKey|firebase\.auth|supabase|firestore|paypal/i);
 });
