@@ -13,6 +13,15 @@ const heavy = {
   payload: { labels: ['Connection', 'Provider health', 'OAuth', 'Runtime', 'Health test'], controls: 7, density: 9 },
 };
 
+test('string payload density is part of the adaptive load model', () => {
+  const defaultProfile = deriveMachineExpansionProfile({ ...connection, payload: { ...connection.payload, density: 'default' } });
+  const compactProfile = deriveMachineExpansionProfile({ ...connection, payload: { ...connection.payload, density: 'compact' } });
+  assert.ok(defaultProfile.contentLoad > compactProfile.contentLoad);
+  assert.ok(defaultProfile.expanded.x > compactProfile.expanded.x);
+  assert.ok(defaultProfile.expanded.y > compactProfile.expanded.y);
+  assert.ok(defaultProfile.expanded.z > compactProfile.expanded.z);
+});
+
 test('expansion profile is payload-sensitive', () => {
   const a = deriveMachineExpansionProfile(connection, { clearance: 0.16 });
   const b = deriveMachineExpansionProfile(heavy, { clearance: 0.16 });
