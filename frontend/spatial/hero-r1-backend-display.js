@@ -38,6 +38,7 @@ export function drawBackendDisplayRing({
   reducedMotion,
   draw,
   CUBE,
+  CYL,
   TORUS,
   SPH,
   T,
