@@ -525,6 +525,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
   function renderElectricalEdgeFlow(edge, amount, reducedMotion, now, label = 'machine') {
     const route = resolveElectricalEdgeRoute(edge);
     if (route.length < 2) return null;
+    const activation = Math.max(0, Math.min(1, finite(amount, 0)));
     const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, (now / 1000 * 0.42) % 1));
     const point = electricalRoutePoint(route, reducedMotion ? 1 : progress);
     const prefix = reducedMotion ? route : electricalRoutePrefix(route, progress);
@@ -539,7 +540,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW);
     gl.enableVertexAttribArray(linePos);
     gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
-    gl.uniform4f(lineColor,.30,.86,1,reducedMotion ? .42 : .76);
+    gl.uniform4f(lineColor,.30,.86,1,reducedMotion ? .20 + .22 * activation : .34 + .42 * activation);
     gl.drawArrays(gl.LINE_STRIP,0,prefix.length);
 
     ringDraw(
@@ -551,8 +552,8 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       RING_MATERIALS.energy,
       {
         glow: reducedMotion ? .12 : .26,
-        emit: reducedMotion ? .16 : .30,
-        alpha: reducedMotion ? .55 : .88,
+        emit: reducedMotion ? .08 + .08 * activation : .12 + .18 * activation,
+        alpha: reducedMotion ? .36 + .19 * activation : .48 + .40 * activation,
       },
     );
 
