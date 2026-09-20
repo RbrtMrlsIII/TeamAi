@@ -111,16 +111,13 @@ test('setupRingFovBoost adds fill FOV on top of narrow boost', () => {
   assert.equal(setupRingFovBoost(1, FOV_BOOST_NARROW), FOV_BOOST_NARROW + SETUP_RING_FOV_FILL);
 });
 
-test('hero-flex wires P-R2 camera-fill, keyboard L, and FOV', () => {
+test('R2 interaction remains controller-owned and renderer-agnostic', () => {
   const src = read('public/hero-flex.js');
-  assert.match(src, /tickSetupRingFill\s*\(\s*hierarchyRuntime/);
-  assert.match(src, /syncSetupRingCamera/);
-  assert.match(src, /key===['"]l['"]/);
+  assert.match(src, /setupRingAccessibleName/);
   assert.match(src, /requestSetupRingHandoff/);
-  assert.match(src, /FOV_BOOST_NARROW/);
-  assert.match(src, /setupRingFovBoost/);
-  assert.match(src, /fillAmount:\s*getSetupRingFillAmount/);
-  assert.match(src, /Isolation preserved/);
+  assert.match(src, /key\.toLowerCase\(\) === 'l'/);
+  assert.match(src, /getSetupRingFillAmount\(hierarchyRuntime\)/);
+  assert.match(src, /machine-world-renderer\.js/);
 });
 
 test('R2 draw scales full-area plates by fillAmount', () => {
