@@ -105,6 +105,10 @@ test('assembly regenerates the canonical Hero with the continuous world camera h
   const result = spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  const engine = await readFile(new URL('../scripts/apply-cam2-tree-follow-flex.engine.mjs', import.meta.url), 'utf8');
+  assert.match(engine, /worldPullbackProgress/);
+  assert.match(engine, /blendCameraPose/);
+  assert.match(engine, /fitWorldOverviewDock/);
   assert.match(hero, /worldPullbackProgress/);
   assert.match(hero, /fitWorldOverviewDock/);
   assert.match(hero, /blendCameraPose/);
