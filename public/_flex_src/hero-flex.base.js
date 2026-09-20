@@ -393,6 +393,7 @@ function drawBackendDisplayRing(t) {
     reducedMotion,
     draw,
     CUBE,
+    CYL,
     TORUS,
     SPH,
     T,
