@@ -2,6 +2,10 @@
 
 **Role:** execution policy only. Product meaning belongs to `Product_Law/PRODUCT_LAW.md`. Procedures belong to `skills/**/SKILL.md`. Current slice belongs to `Masterplan/NEXT_SLICES.md`.
 
+## 2026-09-21 spatial PR migration checkpoint
+
+PR #398 is the active Draft implementation vehicle for Issue #396 on the responsibility-compliant branch `frontend/029-machine-world-convergence`. It was created from exact PR #397 head `23a83ae166f0983b598910d616b1203ebf600096`; #397 is closed and historical. The active spatial renderer ownership is now `frontend/spatial/machine-world-renderer.js` → `public/machine-world-renderer.js`, while `public/hero-flex.js` remains the controller boundary.
+
 ## ORUCAVEAM
 
 `O → R → U → C → A → V → E → A → M`
