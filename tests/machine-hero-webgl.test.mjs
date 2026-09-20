@@ -42,6 +42,22 @@ test('canonical renderer owns the multi-module and wiring draw path', async () =
   assert.match(renderer, /machineWorldRenderer|machine-world renderer|machine-world/);
 });
 
+test('Seat-1 child render path is owned by the canonical frame and is not recursive', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const childStart = renderer.indexOf('function renderSeat1ConnectionChild(');
+  const childEnd = renderer.indexOf('\\n  function renderSeat1AdjacentWiring', childStart);
+  assert.ok(childStart >= 0 && childEnd > childStart);
+  const childBody = renderer.slice(childStart, childEnd);
+  assert.doesNotMatch(childBody, /renderSeat1ConnectionChild\\s*\\(/);
+
+  const renderStart = renderer.indexOf('function render(timestamp = performance.now(), state = {})');
+  const renderEnd = renderer.indexOf('\\n  return Object.freeze({', renderStart);
+  assert.ok(renderStart >= 0 && renderEnd > renderStart);
+  const renderBody = renderer.slice(renderStart, renderEnd);
+  assert.equal((renderBody.match(/renderSeat1ConnectionChild\\s*\\(/g) || []).length, 1);
+  assert.match(renderBody, /renderSeat1AdjacentWiring\\(scene, effectiveCameraId, state, reducedMotion\\)/);
+});
+
 test('canonical world renderer uses the shared stateful animation engine for expansion and interruption', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /\.\/machine-core-animation\.js/);
