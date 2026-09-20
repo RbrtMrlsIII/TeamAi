@@ -2,17 +2,21 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: build a clean branch ready to replace the current compressed/legacy mainline without blind inheritance of superseded structures.
+- Last given prompt: complete the current-state reconciliation, normalize the absorbed advisory-control-plane cleanup, and prepare PR #395 for governed closure without changing product/runtime logic.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
-- main baseline: 6dc96ff929d1ea874afd3dc44cad9f95fa8096c8
-- replacement branch: governance/clean-mainline-rebuild-20260919
-- current slice: GOVERNANCE — clean canonical mainline reconstruction (Issue #389)
-- open implementation vehicles: PR #391 / Issue #389 only
-- source-only / do-not-execute: #388, #386, #385, #379
+- main baseline: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
+- current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
+- current slice: GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
+- replacement branch: governance/baseline-truth-reconciliation-20260919
+- open implementation vehicles: PR #395 / Issue #394 (closure-pending until merge)
+- active implementation slices: #278, #360, #392, #83, #284, #204
+- closure-pending governance slices: #394 / #393, both implemented in PR #395
+- completed reconstruction: #391 / #389
+- historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: finish the clean control-plane/corpus/session audit and prove the replacement branch before new 029 product execution
+- next allowed work: complete the governed human-review/merge path for PR #395, then advance `Masterplan/NEXT_SLICES.md` to the next separately owned product/backend/verification slice
 - handoff rule: chat is transient; start from this snapshot plus live GitHub state and the owning Issue/PR, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
@@ -37,12 +41,13 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 ## Current replacement-branch control plane
 
-- Issue #389 is the sole active clean-mainline reconstruction vehicle.
+- Issue #389 is completed; its reconstruction is merged into main. Issue #394 is the current baseline-reconciliation vehicle.
 - #388/#386/#385/#379 are source/history only and must not be merged wholesale.
 - Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
-- The five credential aliases are OPENROUTER_API_KEY, OPENROUTER_API_KEY_OPENAI, OPENROUTER_API_KEY_POOLSIDE, OPENROUTER_API_KEY_DEEPSEEK, and OPENROUTER_API_KEY_GWEN.
+- Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
-- Latest completed provider execution before this reconciliation: exact head `b5cabce7fb9e503637a9ff42a06befef11a5bd22`, terminal slots 5/5, publishable advisory reviews 0/5, provider failures 5/5.
+- Previous merged-main advisory proof: exact head `be9d234ee41a2771ccb737e7435dff5d3481897b`, terminal slots 5/5, publishable advisory reviews 4/5, one terminal `PROVIDER_RESPONSE_TRUNCATED`.
+- Earlier PR #395 advisory evidence (historical exact head `c2a6f11a5a2bc31fa7212ab74e66454c0a4e3a06`): workflow run `35451109816` reached 5/5 terminal slots, 4/5 provider HTTP 2xx responses, 1/5 published review, 3/5 `PROVIDER_RESPONSE_TRUNCATED`, 1/5 HTTP 429 from provider `Liquid`, and 0/5 provenance gaps. This is historical context only; fresh advisory evidence is exact-head scoped and supersedes it for current runtime state.
 - Actual model/provider is runtime evidence from OpenRouter.
 - Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
@@ -59,7 +64,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 ## Product boundary while reconstruction is active
 
 - Preserve current machine candidate and semantic topology work already on main.
-- Do not resume new 029 feature/runtime slices until Issue #389 produces the clean replacement branch.
+- Do not advance to a new 029 feature/runtime slice until PR #395 is merged and `Masterplan/NEXT_SLICES.md` is advanced from the closure-pending #394 slice.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
 ## Validation lifecycle guide
@@ -115,3 +120,18 @@ There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to 
 ## Machine boundary
 
 The merged machine candidate remains non-production. Semantic identity, payload meaning, topology ownership, adaptive geometry, transition state, camera relationship, and rendering remain distinct concerns. Renderer output cannot become backend, identity, entitlement, scheduler, acceptance, or merge authority.
+
+
+## CURRENT ISSUE OWNERSHIP
+
+- #394 = current baseline/session/Issue-topology reconciliation
+- #278 = 029 canonical product-experience execution ledger
+- #360 = 029 machine-candidate/runtime/browser/provenance slice
+- #392 = AI Seat budget, usage, handoff, shared context, and cooperation product feature
+- #83 = frontend spatial visual/material track
+- #284 = backend durable/runtime ledger
+- #204 = Conn-3 GitHub OAuth/bind integration
+- #133 = enduring validation/promotion governance contract
+- #393 = governance/advisory normalization implemented in PR #395; closure-pending
+
+Historical Issues are evidence, not active routing.

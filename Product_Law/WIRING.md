@@ -39,14 +39,12 @@ The canonical public live-site validation target is `https://RbrtMrlsIII.github.
 
 Do not create another Product Law, current-state ledger, Masterplan, live HandOver manual, Endorsement file, Skill namespace, governance constitution, machine-law document, or `OBSOLETE_FILES.md` registry.
 
-Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and must receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
-
 ## Reviewer lifecycle boundary
 Model-assisted review is part of Verification & CI/Browser only. A model review is evidence of analysis, not a new authority layer or acceptance mechanism. All configured advisory reviewer workflows are downstream of required exact-head substantive validator execution and receive exact-head execution evidence, governing context, and owning Issue state before model invocation.
-The controlled automatic advisory procedure permits one automatic review sequence per pull request:
+The controlled automatic advisory procedure permits one automatic provider-consuming review sequence per exact PR head:
 OpenRouter Free Router → 5 parallel slots → 2-second launch stagger; terminal slot outcome is explicit; actual routed model/provider recorded on successful review
-Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-Five OpenRouter Free Router slots start with a nominal 2-second launch stagger after the substantive exact-head gate, capped at an 8-second spread. The durable sequence claim freezes the one-sequence quota, synchronize/reopen events do not restart it, and each slot fails closed if the original triggering head changes. Completion is recognized only after five structured terminal slot artifacts are recorded against that exact head.
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `PROVIDER_WALL_CLOCK_TIMEOUT`, `REVIEW_QUALITY_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
+Five OpenRouter Free Router slots start with a nominal 2-second launch stagger after the substantive exact-head gate, capped at an 8-second spread. Each provider call has a 300-second wall-clock fail-closed and each reusable runner job has a 35-minute outer timeout; expiry is terminal slot evidence. The durable sequence claim binds the one-sequence quota to the exact head; ordinary synchronize edits do not launch provider-consuming review, previously claimed exact heads do not restart, and each slot fails closed if the original triggering head changes. Completion is recognized only after five structured terminal slot artifacts are recorded against that exact head.
 The requested route is openrouter/free. The actual routed model/provider returned by OpenRouter is runtime evidence and is recorded per successful slot. This operational routing does not create Product Law identities. review-readiness remains the separate human promotion/authorization gate.
 
 ## Reviewer runner repair boundary
@@ -55,3 +53,14 @@ Implementation repairs to the reusable advisory-review runner belong to Verifica
 ### Validation parser alignment
 
 The governance audit's `Draft proof target` parser is aligned to the repository's canonical PR-body contract: level-2 or level-3 Markdown headings are accepted, including the established `### Draft proof target` form. This is validation implementation alignment, not a new authority layer.
+
+
+## Program-order and bounded parallel execution
+
+Product Law §15's chronological sequence is a program/release-gate ordering statement. It does not by itself prohibit bounded execution in separately owned development fields where Product Law already permits parallel work. Parallel work remains isolated by responsibility and does not create a second authority, bypass a release gate, or authorize promotion/completion claims outside the applicable Product Law, Masterplan, Issue, and human governance boundaries.
+
+This clarification is a non-authoritative Wiring interpretation only; it does not resolve, amend, reorder, or override `Product_Law/PRODUCT_LAW.md` §15.
+
+## Current-slice authority consumption
+
+`Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.

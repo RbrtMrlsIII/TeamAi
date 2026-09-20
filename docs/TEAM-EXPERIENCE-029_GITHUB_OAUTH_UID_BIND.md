@@ -1,6 +1,6 @@
 # TEAM-EXPERIENCE-029 — GitHub OAuth mint of UID ↔ installation_id (Conn-3)
 
-**Status:** IMPLEMENTED · operator-confirmed installation success · **live Edge still HTML callback** · **303 return on `main` source** · browser proof pending  
+**Status:** IMPLEMENTED in repository · operator-confirmed installation success · **live deployed Edge still terminal text callback** · **303 return on `main` source** · browser return proof pending  
 **Not a Hero live bind.** **No 029 production-release claim.**
 
 ## Purpose
@@ -24,7 +24,7 @@ The GitHub App installation has been **successfully completed through the real G
 
 A separate CLI `curl` attempt returned **HTTP 401**. This is classified as a **CLI/test-path discrepancy** and does not downgrade the successful GitHub App installation evidence.
 
-### 2026-09-10 browser callback screenshot (partial)
+### 2026-09-10 browser callback screenshot (historical partial evidence)
 
 - Live Edge served terminal HTML (“GitHub install received”) with installation id **`160609752`**, setup action `install`.
 - Page correctly deferred UID map write to signed-in **POST + Firebase token** and restated non-claims (not Hero live bind; no 029 release).
@@ -87,3 +87,12 @@ Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verific
 - `docs/CHECKPOINT_BACKEND_OPERATOR_STATE_2026-09-10.md`
 - `docs/USER_MANUAL_DEPLOYMENT.md`
 - `src/backend/github-installation.ts`
+
+
+## Current deployment revalidation — 2026-09-19
+
+Fresh browser validation against the deployed Edge callback with installation parameters returned **HTTP 200 OK**, no `Location` header, `text/plain`, and terminal callback text at the Supabase function URL. It did not reach the TeamAi Hero. This confirms deployment drift between the repository source contract and the live deployed Edge.
+
+The repository `main` source still implements GET → HTTP 303 to the TeamAi Hero destination and does not mint UID on GET. No authenticated POST or UID bind write was exercised during this revalidation.
+
+**Current acceptance boundary:** deploy the revised Edge, re-run browser install → callback → TeamAi return, then prove the durable Firebase UID ↔ installation mapping. This remains Conn-3 work under #204 / backend baseline #284, not a governance cleanup item.

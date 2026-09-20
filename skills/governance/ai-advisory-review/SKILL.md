@@ -27,12 +27,12 @@ The resulting packet must include exact-head check-run evidence, current governi
 
 ## Automatic review sequence
 OpenRouter Free Router → 5 parallel slots → 2-second launch stagger; each slot uses a distinct credential alias; terminal slot outcome is explicit; actual routed model/provider recorded in the terminal slot artifact
-Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-There is no automatic interval before or between slots. The first eligible non-draft lifecycle event that passes substantive exact-head validation writes a durable claim for that exact head and fans out five reusable reviewer jobs concurrently with fail-fast disabled. Each job targets openrouter/free, receives one distinct credential alias, receives the original triggering head, and independently revalidates that head immediately before model invocation. Requests use `response_format.type=json_schema`, `provider.require_parameters=true`, `stream=false`, and the `response-healing` plugin.
-The sequence is serialized per PR and the same exact head never restarts after a provider-consuming fan-out has been established. A later corrected head may establish one new automatic sequence after substantive validation, while prior claims and outcomes remain immutable evidence. A provider failure is execution evidence for its slot and does not trigger secret substitution, retry through another slot, or automatic reordering. Sequence completion is a separate terminal check requiring five terminal slot outcomes.
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `PROVIDER_WALL_CLOCK_TIMEOUT`, `REVIEW_QUALITY_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
+There is no inter-stage barrier or pre-sequence timer. Each reusable reviewer job has a 35-minute outer timeout and each provider call has a 300-second wall-clock fail-closed; expiry is classified terminal evidence. The first eligible non-draft lifecycle event that passes substantive exact-head validation writes a durable claim for that exact head and fans out five reusable reviewer jobs concurrently with fail-fast disabled. Each job targets openrouter/free, receives one distinct credential alias, receives the original triggering head, and independently revalidates that head immediately before model invocation. Requests use `response_format.type=json_schema`, `provider.require_parameters=true`, `stream=false`, and the `response-healing` plugin.
+Concurrency is isolated by PR exact head; the same exact head never restarts after a provider-consuming fan-out has been established. A later corrected head may establish one new automatic sequence after substantive validation, while prior claims and outcomes remain immutable evidence. A provider failure is execution evidence for its slot and does not trigger secret substitution, retry through another slot, or automatic reordering. Sequence completion is a separate terminal check requiring five terminal slot outcomes.
 
 ## Manual re-review
-Manual later-head review uses /openrouter-free or /free-1 through /free-5 and authorized workflow dispatch. Manual review is outside the automatic sequence allowance and uses the same openrouter/free route. Each manual invocation remains advisory and exact-head bound.
+Manual later-head review uses /openrouter-free or /free-1 through /free-5 for single-slot re-review, and /openrouter-free-all for an explicit five-slot final review after PR editing has settled. Authorized workflow dispatch targets the same openrouter/free route. Manual review is outside the automatic sequence allowance; each invocation remains advisory and exact-head bound.
 
 ## Security boundaries
 
@@ -45,19 +45,14 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5 and au
 
 ## Reviewer configuration
 
-| Reviewer slot | Secret alias | Requested route |
-|---|---|---|
-| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free |
-
-The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
+The authoritative slot/credential registry is `.github/teamai/authority-manifest.yml`. This Skill consumes that registry through the governed workflows and must not duplicate its alias table. The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
 
 
 ## Evidence contract
 
 Every reviewer comment must identify the exact PR head and invocation class. A model review is advisory evidence only. A model verdict or model-generated approval never substitutes for governance-drift, evidence-consistency, agent-validation, Full-System, Security, Browser/Runtime, `review-readiness`, or human authorization. Required substantive validators must pass before automatic model invocation.
 
-The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.
+The automatic-review budget is a provider-resource protection mechanism, not evidence of implementation or acceptance.
+
+### Token-efficiency contract
+The advisory workflow does not impose a universal generation or reasoning ceiling. Generation and reasoning limits remain provider/model-native and are reported through per-slot telemetry. Reviewer output is bounded to three concise items per section at 400 characters each, and packet selection is authority-first. Provider HTTP 200 with an error payload, generation-limit truncation, unavailable routed-model provenance, or other provider degradation remain classified terminal evidence; the workflow stays green when the outcome is classified, while the sequence summary reports transport, publication, provenance, completeness, and quality separately. Stage ordering is an orchestration invariant only; Product Law, human authorization, and merge governance remain authoritative.

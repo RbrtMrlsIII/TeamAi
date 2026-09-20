@@ -50,21 +50,15 @@ A reusable runner transport/parser repair is a Verification & CI/Browser impleme
 
 ### Automatic reviewer sequence
 OpenRouter Free Router → 5 parallel slots → 2-second launch stagger; terminal slot outcome is explicit; actual routed model/provider recorded in each terminal slot artifact when the provider responds
-Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
-The sequence begins only after the first eligible non-draft opened, reopened, or ready_for_review event has passed the substantive exact-head validation gate. Five reusable reviewer jobs fan out with a nominal 2-second launch stagger and fail-fast disabled so one provider failure does not cancel peer slots.
-A durable sequence claim is written before the fan-out. synchronize and reopen events never restart a prior claimed sequence for the same PR. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after five terminal slot outcomes are present. The runner requests structured JSON Schema output with `require_parameters: true`, `stream: false`, and the `response-healing` plugin so providers must honor the structured-output contract; malformed or empty output still fails closed.
+Execution state is separate from advisory content: each slot records one terminal outcome (`SUCCEEDED`, `PROVIDER_FAILED`, `PROVIDER_WALL_CLOCK_TIMEOUT`, `REVIEW_QUALITY_FAILED`, `REVIEW_POST_FAILED`, or `PRE_PROVIDER_FAILURE`); only a successful slot publishes advisory review content, while a failed slot publishes compact failure evidence. Execution completion does not imply advisory approval or human acceptance.
+The sequence begins only after an eligible non-draft opened, reopened, or ready_for_review event has passed the substantive exact-head validation gate. Five reusable reviewer jobs fan out with a nominal 2-second launch stagger and fail-fast disabled so one provider failure does not cancel peer slots.
+A durable sequence claim is written before the fan-out. Ordinary synchronize edits do not launch provider-consuming advisory review; reopen/ready-for-review may establish one sequence for a new exact head, while a previously claimed exact head never restarts. Every slot receives the original triggering head and the reusable runner revalidates that head immediately before provider invocation. Sequence completion is checked only after five terminal slot outcomes are present. The runner requests structured JSON Schema output with `require_parameters: true`, `stream: false`, and the `response-healing` plugin so providers must honor the structured-output contract; malformed or empty output still fails closed.
 
 ### Manual reviewer routing
-The active manual command is /openrouter-free, with optional slot aliases /free-1 through /free-5 for deliberate later-head review. Authorized workflow dispatch targets the same OpenRouter Free Router. The former reviewer-specific commands remain historical evidence only and are not active routing instructions.
+The active manual commands are /openrouter-free or /free-1 through /free-5 for deliberate single-slot later-head review, plus /openrouter-free-all for an explicit five-slot final review after editing settles. Authorized workflow dispatch targets the same OpenRouter Free Router. The former reviewer-specific commands remain historical evidence only and are not active routing instructions.
 
 ### Reviewer configuration
-| Reviewer | Secret | Requested route | Cost class | Automatic stage |
-| OpenRouter Free Slot 1 | OPENROUTER_API_KEY | openrouter/free | Free | 1 |
-| OpenRouter Free Slot 2 | OPENROUTER_API_KEY_OPENAI | openrouter/free | Free | 2 |
-| OpenRouter Free Slot 3 | OPENROUTER_API_KEY_POOLSIDE | openrouter/free | Free | 3 |
-| OpenRouter Free Slot 4 | OPENROUTER_API_KEY_DEEPSEEK | openrouter/free | Free | 4 |
-| OpenRouter Free Slot 5 | OPENROUTER_API_KEY_GWEN | openrouter/free | Free | 5 |
-All five slots use the same OpenRouter Free Router route. The reusable runner must record the actual model returned by the router and the selected provider when exposed by routing metadata. Free does not imply suitable handling for confidential material; provider data-use terms remain a separate governance concern.
+The authoritative advisory slot registry is `.github/teamai/authority-manifest.yml`. It defines slot numbers, credential aliases, requested `openrouter/free` route, and automatic launch timing. This document intentionally does not duplicate the registry. The reusable runner records actual routed model/provider provenance when exposed. Free does not imply suitable handling for confidential material; provider data-use terms remain a separate governance concern.
 
 ## Canonical live-site routing reference
 
@@ -120,3 +114,8 @@ Governance validation consumes the PR body's `Draft proof target` section. The a
 The Tree Authority XML and four-file Tree Census are subordinate structural records, not a new Skill and not a second Product Law. Their consistency, semantic identity set, and non-authority boundary are machine-checked by `build-system/scripts/repository-canonical-governance-audit.py`, which also executes the existing `scripts/governance/census-sync-contract.mjs` against the full PR diff.
 
 Skills route implementation against these records but cannot override Product Law, define new semantic authority, grant permission, or authorize promotion/merge. Machine semantic projections must consume the canonical Census identities rather than creating a parallel hierarchy.
+
+
+## Current-slice consumption rule
+
+Skills route the current procedure selected for the slice; they do not own current-slice identity. The active slice must be resolved from `Masterplan/NEXT_SLICES.md`. Skill bodies and validators must not hard-code a specific Issue as the current slice when the canonical current-slice source can be read directly.

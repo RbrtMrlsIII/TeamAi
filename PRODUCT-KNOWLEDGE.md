@@ -38,6 +38,10 @@ Expansion is physical state. Camera targets follow semantic geometry. Wiring fol
 ### Release discipline
 Green CI is evidence, not automatic promotion. Product acceptance is a separate decision. A safer replacement is preferred over preserving obsolete implementation merely for continuity.
 
+### AI advisory token efficiency
+
+Past reviewer experiments showed that a fixed TeamAi generation ceiling can cause `finish_reason=length` and that increasing a ceiling does not guarantee completion. Because `openrouter/free` dynamically routes across heterogeneous models/providers, generation and reasoning limits are not durable TeamAi-wide invariants. The durable pattern is to keep generation/reasoning provider-native, bound only the structured report contract and packet safety, select context by authority relevance, and preserve per-slot usage, finish, HTTP-status, provenance, provider-error, and publication telemetry. Workflow success, transport success, publication, and substantive review quality must remain separate signals.
+
 ## Anti-patterns
 
 - Duplicate active roadmaps.

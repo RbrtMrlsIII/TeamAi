@@ -1,3 +1,10 @@
+/**
+ * VALIDATION CHANGE WARNING
+ * Protected old invariant: this check required the current execution frontier to remain in a non-production / draft-progress state.
+ * Disposition: RETAINED with lifecycle-state refinement.
+ * Replacement invariant: NEXT_SLICES keeps exactly one canonical Current Slice, while that slice may enter CLOSURE PENDING after implementation is complete but before governed review/merge/closure evidence is recorded.
+ * Rationale: Issue #394 is a closure-pending governance reconciliation vehicle; allowing only "IN PROGRESS" would encode stale lifecycle truth rather than the canonical current state.
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -18,5 +25,5 @@ test('NEXT_SLICES stays singular and current', () => {
   const next = read('Masterplan/NEXT_SLICES.md');
   assert.equal((next.match(/^## Current Slice$/gm) || []).length, 1);
   assert.match(next, /TEAM-EXPERIENCE-029|post-#346/i);
-  assert.match(next, /non-production|Draft/i);
+  assert.match(next, /non-production|Draft|CLOSURE PENDING/i);
 });
