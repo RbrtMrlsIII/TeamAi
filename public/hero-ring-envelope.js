@@ -13,19 +13,26 @@ export function deriveConcentricRingEnvelope({
   interRingClearance = 0.18,
 } = {}) {
   const workspace = Math.max(0, finite(workspaceRadius, 0));
-  const gap = Math.max(0.02, finite(interRingClearance, 0.18));
-  const seat = Math.max(workspace + gap * 3, finite(seatRingRadius, workspace));
+  const seat = Math.max(workspace, finite(seatRingRadius, workspace));
+  const requestedGap = Math.max(0.02, finite(interRingClearance, 0.18));
+  const availableSpan = Math.max(0, seat - workspace);
+  const gap = Math.min(requestedGap, availableSpan / 3);
   const rawR1 = workspace * Math.max(0, finite(ringR1Scale, 1));
   const rawR2 = workspace * Math.max(0, finite(ringR2Scale, 1));
-  const r1Max = Math.max(workspace + gap, seat - gap * 2);
-  const r2Max = Math.max(workspace + gap * 2, seat - gap);
-  const r1 = Math.min(r1Max, Math.max(workspace + gap, rawR1));
-  const r2 = Math.min(r2Max, Math.max(r1 + gap, rawR2));
+  const r1Min = workspace + gap;
+  const r1Max = Math.max(r1Min, seat - gap * 2);
+  const r1 = Math.min(r1Max, Math.max(r1Min, rawR1));
+  const r2Min = r1 + gap;
+  const r2Max = Math.max(r2Min, seat - gap);
+  const r2 = Math.min(r2Max, Math.max(r2Min, rawR2));
   return Object.freeze({
     workspaceRadius: workspace,
     seatRingRadius: seat,
     r1Radius: r1,
-    r2Radius: Math.max(r1 + gap, r2),
+    r2Radius: r2,
     interRingClearance: gap,
+    requestedInterRingClearance: requestedGap,
+    radialSpan: availableSpan,
+    valid: workspace < r1 && r1 < r2 && r2 < seat,
   });
 }
