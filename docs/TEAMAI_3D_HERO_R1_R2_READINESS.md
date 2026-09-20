@@ -70,6 +70,22 @@ R3  SEAT RING
 
 ---
 
+
+## 6. Current 029 execution reconciliation
+
+The original SP-06 classification predates Issue #396's active Slice D implementation program. The current execution has now established a concrete R1 owner:
+
+- `frontend/spatial/hero-r1-backend-display.js` is the source owner.
+- `public/hero-r1-backend-display.js` is the browser runtime copy.
+- `drawBackendDisplayRing(t)` remains a compatibility wrapper in the canonical Hero so existing assembly/apply contracts stay valid.
+- `scripts/sync-machine-spatial-runtime.mjs` now synchronizes the R1 module.
+- R1 placement is derived from the active workspace radius, R1 scale, and catalog rather than hard-coded coordinates.
+- R1 remains **presentation-only**. The module contains no OAuth, credential, provider, or durable backend authority.
+
+The older rule saying not to create an R1 module is therefore historical guidance for the pre-Slice-D state and no longer governs current #397 execution. The current requirement is to keep R1 under the same single-renderer architecture and avoid duplicate authority.
+
+The R1 module is still an implementation step, not a 029 completion claim. Animated service-thread topology and complete mechanical R1/R2 meshes remain bounded work under Issue #396.
+
 ## SEE ALSO
 
 - `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`  
