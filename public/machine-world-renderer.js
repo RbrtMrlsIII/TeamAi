@@ -16,11 +16,12 @@ import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.
 import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
-import { drawBackendDisplayRing } from './hero-r1-backend-display.js';
+import { BACKEND_DISPLAY_V1, drawBackendDisplayRing } from './hero-r1-backend-display.js';
 import { drawBackendDisplayThreads } from './hero-r1-backend-threads.js';
-import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
-import { BACKEND_DISPLAY_V1, RING_R1_SCALE, RING_R2_SCALE, SETUP_CONFIG_V1, NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
+import { SETUP_CONFIG_V1, drawSetupConfigRing } from './hero-r2-setup-ring.js';
+import { RING_R1_SCALE, RING_R2_SCALE, NAV_ZOOM_MAX } from './hero-world-contract.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
+import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -297,8 +298,14 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
   }
 
-  function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now }) {
+  function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now, seatRingRadius, articulationAmount }) {
     const profile = worldProfile(seatCount);
+    const envelope = deriveConcentricRingEnvelope({
+      workspaceRadius: profile.workspace,
+      seatRingRadius,
+      ringR1Scale: RING_R1_SCALE,
+      ringR2Scale: RING_R2_SCALE,
+    });
     const common = {
       profile: () => profile,
       seatCount,
@@ -318,16 +325,22 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     drawBackendDisplayRing({
       ...common,
       ringScale: RING_R1_SCALE,
+      ringRadius: envelope.r1Radius,
+      articulationAmount,
       catalog: BACKEND_DISPLAY_V1,
     }, now / 1000);
     drawBackendDisplayThreads({
       ...common,
       ringScale: RING_R1_SCALE,
+      ringRadius: envelope.r1Radius,
+      articulationAmount,
       catalog: BACKEND_DISPLAY_V1,
     }, now / 1000);
     drawSetupConfigRing({
       ...common,
       ringScale: RING_R2_SCALE,
+      ringRadius: envelope.r2Radius,
+      articulationAmount,
       items: SETUP_CONFIG_V1,
       focusedIndex: ringFocus?.ring === 'r2' ? ringFocus.index : -1,
       fillAmount: setupRingFillAmount,
@@ -337,6 +350,9 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     canvas.dataset.machineWorldR1Threads = '2';
     canvas.dataset.machineWorldR2 = 'setup-config';
     canvas.dataset.machineWorldR2Count = String(SETUP_CONFIG_V1.length);
+    canvas.dataset.machineWorldR1Radius = String(envelope.r1Radius);
+    canvas.dataset.machineWorldR2Radius = String(envelope.r2Radius);
+    canvas.dataset.machineWorldR3Radius = String(envelope.seatRingRadius);
   }
 
   function ensureBuffer(part) {
@@ -589,12 +605,20 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.drawArrays(gl.POINTS,0,STAR_FIELD.length);
     gl.depthMask(true);
 
+    const seatRingRadius = Math.max(
+      ...scene.parts
+        .filter((part) => part.kind === 'outer-housing')
+        .map((part) => Math.hypot(part.center.x, part.center.z)),
+      0,
+    );
     drawCanonicalRings({
       seatCount,
       ringFocus: state.ringFocus,
       setupRingFillAmount: finite(state.setupRingFillAmount, 0),
       reducedMotion,
       now,
+      seatRingRadius,
+      articulationAmount: sample.amount,
     });
 
     for (const fog of DEEP_SPACE_NEBULA_ANCHORS) {
