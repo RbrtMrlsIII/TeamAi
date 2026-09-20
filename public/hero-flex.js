@@ -106,6 +106,7 @@ import {
   deriveDeepSpaceStagingRadius,
   isMachineWorldLayer,
 } from './hero-environment.js';
+import { createMachineWorldRenderer } from './machine-world-renderer.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
@@ -115,6 +116,7 @@ const demoButton = document.querySelector('#demo-toggle');
 const motionButton = document.querySelector('#motion-toggle');
 const gl = canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
 if (!canvas || !shell || !gl) throw new Error('WebGL is required for the 3D Hero.');
+const machineWorldRenderer = createMachineWorldRenderer({ canvas, gl });
 
 const VS = `attribute vec3 p;attribute vec3 n;uniform mat4 mvp;uniform mat4 model;varying vec3 N;varying vec3 W;void main(){vec4 w=model*vec4(p,1.0);W=w.xyz;N=normalize(mat3(model)*n);gl_Position=mvp*vec4(p,1.0);}`;
 const FS = `precision mediump float;uniform vec3 color;uniform vec3 specular;uniform float rough;uniform float emit;uniform float alpha;varying vec3 N;varying vec3 W;void main(){vec3 n=normalize(N),k=normalize(vec3(-.55,.88,.34)),f=normalize(vec3(.66,.28,-.52)),v=normalize(vec3(-W.x*.045,.92,4.));float facing=max(dot(n,k),0.0),d=.24+.67*facing+.16*max(dot(n,f),0.0);vec3 h=normalize(k+v);float s=pow(max(dot(n,h),0.0),mix(96.0,12.0,rough));float r=pow(1.0-max(dot(n,v),0.0),3.2);float grazing=pow(1.0-facing,2.0);gl_FragColor=vec4(color*d+specular*s*(1.0-rough*.72)+color*(.05*grazing+emit*(.16+r*1.45)),alpha);}`;
@@ -472,7 +474,22 @@ function drawSetupConfigRing(t) {
     M,
   }, t);
 }
-function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}const worldMode=isMachineWorldLayer(shell);gl.clearColor(worldMode?M.space[0]:0,worldMode?M.space[1]:0,worldMode?M.space[2]:0,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawBackendDisplayThreads(now/1000);drawSetupConfigRing(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
+function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();
+  machineWorldRenderer.render(now, {
+    seatCount,
+    selectedSeat,
+    hierarchyOpen: Boolean(hierarchyRuntime.openParentId),
+    expanded: ['FOCUS','ACTIVE','CONTRIBUTE','ABSORB'].includes(state),
+    branchId: hierarchyRuntime.openParentId
+      ? (hierarchyRuntime.focusedChildId ? 'BRANCH-SEAT-' + String(selectedSeat + 1).padStart(2, '0') : 'BRANCH-SEAT-' + String(selectedSeat + 1).padStart(2, '0'))
+      : 'BRANCH-SEAT-' + String(selectedSeat + 1).padStart(2, '0'),
+    reducedMotion,
+    navOrbitYaw,
+    navOrbitPitch,
+    navZoom,
+  });
+  requestAnimationFrame(frame);
+  return;if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}const worldMode=isMachineWorldLayer(shell);gl.clearColor(worldMode?M.space[0]:0,worldMode?M.space[1]:0,worldMode?M.space[2]:0,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawBackendDisplayThreads(now/1000);drawSetupConfigRing(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
 canvas.addEventListener('click',event=>{
   // #304: the old dead-center 'Zone A' band (~0.38-0.62 x, 0.38-0.58 y) was a
   // structural no-op -- syncSetupRingCamera() read the focused ring item
