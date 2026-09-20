@@ -23,6 +23,7 @@ import { RING_R1_SCALE, RING_R2_SCALE, NAV_ZOOM_MAX } from './hero-world-contrac
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
+import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -521,6 +522,41 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     });
   }
 
+  function renderElectricalEdgeFlow(edge, amount, reducedMotion, now, label = 'machine') {
+    const route = resolveElectricalEdgeRoute(edge);
+    if (route.length < 2) return null;
+    const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, (now / 1000 * 0.42) % 1));
+    const point = electricalRoutePoint(route, reducedMotion ? 1 : progress);
+    const prefix = reducedMotion ? route : electricalRoutePrefix(route, progress);
+    if (!point || prefix.length < 1) return null;
+
+    gl.useProgram(line);
+    gl.uniformMatrix4fv(lineP,false,projection);
+    gl.uniformMatrix4fv(lineV,false,view);
+    gl.uniformMatrix4fv(lineM,false,identity);
+    const values = prefix.flatMap((entry) => [entry.x, entry.y, entry.z]);
+    gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(linePos);
+    gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
+    gl.uniform4f(lineColor,.30,.86,1,reducedMotion ? .42 : .76);
+    gl.drawArrays(gl.LINE_STRIP,0,prefix.length);
+
+    ringDraw('SPH', translateMatrix(point.x, point.y, point.z), scaleMatrix(.12, .12, .12), RING_MATERIALS.energy, {
+      glow: reducedMotion ? .12 : .26,
+      emit: reducedMotion ? .16 : .30,
+      alpha: reducedMotion ? .55 : .88,
+    });
+
+    return Object.freeze({
+      semanticEdgeId: edge.semanticEdgeId || edge.id || null,
+      label,
+      progress: reducedMotion ? 1 : progress,
+      target: Object.freeze({ ...route.at(-1) }),
+      presentationOnly: true,
+    });
+  }
+
   function render(timestamp = performance.now(), state = {}) {
     if (disposed) return;
     const now = finite(timestamp, performance.now());
@@ -677,7 +713,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     }
 
     // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
-    renderSeat1ConnectionChild(scene, finite(state.connectionBranchAmount, 0), effectiveCameraId, reducedMotion, now);
+    const seat1Child = renderSeat1ConnectionChild(scene, finite(state.connectionBranchAmount, 0), effectiveCameraId, reducedMotion, now);
     renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
     if (hierarchyOpen && state.focusedChildId && state.focusedChildId !== 'SEAT_CONNECTION') {
       const shell = scene.byBranch.get(effectiveCameraId);
@@ -703,6 +739,46 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       canvas.dataset.machineWorldFocusedDivision = '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = '';
     }
+
+    let electricalMachineFlow = null;
+    let electricalWorkspaceFlow = null;
+    if (sample.amount > 0.02) {
+      const selectedMachineEdge = scene.connections.find((edge) =>
+        edge.kind === 'inner-spoke' && edge.targetBranchId === branchId
+      );
+      if (selectedMachineEdge) {
+        electricalMachineFlow = renderElectricalEdgeFlow(
+          selectedMachineEdge,
+          sample.amount,
+          reducedMotion,
+          now,
+          'selected-seat',
+        );
+      }
+    }
+    if (
+      seat1Child
+      && hierarchyOpen
+      && effectiveCameraId === 'BRANCH-SEAT-01'
+      && state.focusedChildId === 'SEAT_CONNECTION'
+      && finite(state.connectionBranchAmount, 0) > 0.02
+    ) {
+      electricalWorkspaceFlow = renderElectricalEdgeFlow(
+        seat1Child.edge,
+        finite(state.connectionBranchAmount, 0),
+        reducedMotion,
+        now,
+        'workspace-center',
+      );
+    }
+    canvas.dataset.machineWorldElectricalEdge = electricalMachineFlow?.semanticEdgeId || '';
+    canvas.dataset.machineWorldElectricalProgress = String(electricalMachineFlow?.progress ?? '');
+    canvas.dataset.machineWorldWorkspaceElectricalEdge = electricalWorkspaceFlow?.semanticEdgeId || '';
+    canvas.dataset.machineWorldElectricalProof = electricalWorkspaceFlow
+      ? 'semantic-edge-route+workspace-center'
+      : electricalMachineFlow
+        ? 'semantic-edge-route'
+        : '';
 
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
