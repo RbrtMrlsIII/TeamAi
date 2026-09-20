@@ -230,7 +230,7 @@ jobs:
               if data.get('expected_head') != head: raise SystemExit(f'Slot {slot} exact-head mismatch')
               if data.get('requested_route') != 'openrouter/free': raise SystemExit(f'Slot {slot} route mismatch')
               outcome=data.get('outcome')
-              if outcome not in {'SUCCEEDED','PROVIDER_FAILED','REVIEW_QUALITY_FAILED','REVIEW_POST_FAILED','PRE_PROVIDER_FAILURE'}: raise SystemExit(f'Slot {slot} invalid outcome: {outcome}')
+              if outcome not in {'SUCCEEDED','PROVIDER_FAILED','PROVIDER_WALL_CLOCK_TIMEOUT','REVIEW_QUALITY_FAILED','REVIEW_POST_FAILED','PRE_PROVIDER_FAILURE'}: raise SystemExit(f'Slot {slot} invalid outcome: {outcome}')
               if outcome == 'SUCCEEDED':
                   if not data.get('provider_invocation_attempted') or not data.get('review_published'): raise SystemExit(f'Slot {slot} success lacks publication proof')
                   if not data.get('actual_model') or data.get('actual_model') == 'openrouter/free': raise SystemExit(f'Slot {slot} lacks distinct routed-model evidence')
@@ -265,6 +265,7 @@ jobs:
           terminal_failures="$(jq '[.slots[] | select(.outcome != "SUCCEEDED")] | length' /tmp/sequence-summary.json)"
           quality_failures="$(jq '[.slots[] | select(.outcome == "REVIEW_QUALITY_FAILED" or .review_quality_status == "failed")] | length' /tmp/sequence-summary.json)"
           provider_failures="$(jq '[.slots[] | select(.outcome == "PROVIDER_FAILED")] | length' /tmp/sequence-summary.json)"
+          wall_clock_timeouts="$(jq '[.slots[] | select(.outcome == "PROVIDER_WALL_CLOCK_TIMEOUT")] | length' /tmp/sequence-summary.json)"
           review_post_failures="$(jq '[.slots[] | select(.outcome == "REVIEW_POST_FAILED")] | length' /tmp/sequence-summary.json)"
           pre_provider_failures="$(jq '[.slots[] | select(.outcome == "PRE_PROVIDER_FAILURE")] | length' /tmp/sequence-summary.json)"
           advisory_status="HEALTHY"
@@ -284,6 +285,7 @@ jobs:
             printf 'Model/provider provenance gaps: %s/5\n' "$provenance_gaps"
           printf 'Advisory evidence status: %s\n' "$advisory_status"
           printf 'Provider failures: %s/5\n' "$provider_failures"
+          printf 'Provider wall-clock timeouts: %s/5\n' "$wall_clock_timeouts"
           printf 'Review-post failures: %s/5\n' "$review_post_failures"
           printf 'Pre-provider failures: %s/5\n' "$pre_provider_failures"
           printf 'Review-content quality failures: %s/5\n' "$quality_failures"
@@ -296,7 +298,7 @@ jobs:
              printf '%s\n' ''
              printf 'Status: %s\n' "$advisory_status"
              printf 'Exact head: %s\n' "$HEAD"
-             printf 'Provider 2xx: %s/5; published reviews: %s/5; quality failures: %s/5; provider failures: %s/5.\n' "$provider_2xx" "$published_reviews" "$quality_failures" "$provider_failures"
+             printf 'Provider 2xx: %s/5; published reviews: %s/5; quality failures: %s/5; provider failures: %s/5; wall-clock timeouts: %s/5.\n' "$provider_2xx" "$published_reviews" "$quality_failures" "$provider_failures" "$wall_clock_timeouts"
              printf '%s\n' ''
              printf '%s\n' 'This check records advisory evidence. It does not authorize merge, acceptance, or release.'
            } >> "$GITHUB_STEP_SUMMARY"
