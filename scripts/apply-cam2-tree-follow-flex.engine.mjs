@@ -50,18 +50,34 @@ function applyPatches(t) {
     }
   }
   if (!t.includes("from './hero-cam3-tree-center-zoom.js'") && t.includes("from './hero-cam2-tree-follow.js';")) {
-    t = t.replace("from './hero-cam2-tree-follow.js';", "from './hero-cam2-tree-follow.js';\nimport { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree } from './hero-cam3-tree-center-zoom.js';");
+    t = t.replace("from './hero-cam2-tree-follow.js';", "from './hero-cam2-tree-follow.js';\nimport { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree, worldPullbackProgress, blendCameraPose, fitWorldOverviewDock } from './hero-cam3-tree-center-zoom.js';");
     changed = true;
   }
   const oldNav = `function applyNavCamera() {\n  if (hierarchyRuntime.openParentId) return;\n  if (hierarchyRuntime.inputMode && hierarchyRuntime.inputMode !== HIERARCHY_INPUT.NAVIGATE) return;\n  const base = cameras().HERO_WIDE;\n  const dist = base.p[2] * navZoom;\n  const cy = base.p[1] + navOrbitPitch * 1.2;\n  const yaw = navOrbitYaw;\n  camera = { p: [Math.sin(yaw) * dist * 0.85, cy, Math.cos(yaw) * dist], t: base.t.slice(), f: base.f };\n  camAt = 1;\n}`;
-  const newNav = `function applyNavCamera() {\n  if (!shouldApplyTreeNav(hierarchyRuntime)) return;\n  const table = cameras();\n  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\n  camAt = 1;\n}`;
+  const newNav = `function applyNavCamera() {
+  if (!shouldApplyTreeNav(hierarchyRuntime)) return;
+  const table = cameras();
+  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
+  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
+    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });
+    if (seatDock) base = seatDock;
+  }
+  const subjectPose = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
+  const p = profile(seatCount);
+  const worldEnvelopeRadius = Math.max(p.workspace + 1, p.seatRadius + (typeof SEAT_BASE_RADIUS === 'number' ? SEAT_BASE_RADIUS * p.seatScale : 1.9)) + 0.2;
+  const worldPose = fitWorldOverviewDock(table.HERO_WIDE || table.SEAT_CLOSE, worldEnvelopeRadius, viewW / Math.max(1, viewH));
+  const worldPullback = hierarchyRuntime.openParentId ? worldPullbackProgress(navZoom, NAV_ZOOM_MAX) : 0;
+  lastNavBaseCameraId = worldPullback >= 1 || !hierarchyRuntime.openParentId ? 'HERO_WIDE' : cameraId || 'HERO_WIDE';
+  camera = hierarchyRuntime.openParentId ? blendCameraPose(subjectPose, worldPose, worldPullback) : subjectPose;
+  camAt = 1;
+}`;
   if (t.includes(oldNav)) { t = t.replace(oldNav, newNav); changed = true; }
-  // C6 fix (#278): once navZoom reaches NAV_ZOOM_MAX, the base dock must
-  // fall back to the world baseline (HERO_WIDE) even while a tree/seat
-  // branch is open, instead of staying pinned to that branch's close-up
-  // dock forever. Also exposes getBaseCameraId() for test/debug use.
+  // C6/B continuity: world pull-back blends from the current semantic subject
+  // into HERO_WIDE across the full 1.0→NAV_ZOOM_MAX interval. HERO_WIDE is a
+  // semantic destination, not a threshold-triggered implementation snap.
+  // The destination is fit from the current machine envelope and viewport.
   const seatDockNav = "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });";
-  const seatDockNavC6 = "const atWorldBaseline = navZoom >= NAV_ZOOM_MAX - 1e-6;\n  let base = (hierarchyRuntime.openParentId && !atWorldBaseline) ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  let baseId = (atWorldBaseline || !hierarchyRuntime.openParentId) ? 'HERO_WIDE' : (cameraId || 'HERO_WIDE');\n  if (!atWorldBaseline && hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  lastNavBaseCameraId = baseId;\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });";
+  const seatDockNavC6 = "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\nlet baseId = hierarchyRuntime.openParentId ? (cameraId || 'HERO_WIDE') : 'HERO_WIDE';\nif (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n  const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n  if (seatDock) base = seatDock;\n}\nconst subjectPose = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\nconst p = profile(seatCount);\nconst worldEnvelopeRadius = Math.max(p.workspace + 1, p.seatRadius + (typeof SEAT_BASE_RADIUS === 'number' ? SEAT_BASE_RADIUS * p.seatScale : 1.9)) + 0.2;\nconst worldPose = fitWorldOverviewDock(table.HERO_WIDE || table.SEAT_CLOSE, worldEnvelopeRadius, viewW / Math.max(1, viewH));\nconst worldPullback = hierarchyRuntime.openParentId ? worldPullbackProgress(navZoom, NAV_ZOOM_MAX) : 0;\nlastNavBaseCameraId = worldPullback >= 1 || !hierarchyRuntime.openParentId ? 'HERO_WIDE' : baseId;\ncamera = hierarchyRuntime.openParentId ? blendCameraPose(subjectPose, worldPose, worldPullback) : subjectPose;";
   if (t.includes(seatDockNav) && !t.includes('lastNavBaseCameraId')) {
     t = t.replace(seatDockNav, seatDockNavC6);
     t = t.replace('function applyNavCamera() {', "let lastNavBaseCameraId = 'HERO_WIDE';\nfunction applyNavCamera() {");

@@ -4,6 +4,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import {
   createHierarchyRuntime,
   openSeatShellParent,
@@ -95,6 +98,17 @@ test('close returns to world nav behavior', () => {
   closeHierarchyParent(state, { snap: true, nowMs: 1 });
   state.inputMode = HIERARCHY_INPUT.NAVIGATE;
   assert.equal(shouldApplyTreeNav(state), true);
+});
+
+test('assembly regenerates the canonical Hero with the continuous world camera helpers', async () => {
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+  const result = spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  assert.match(hero, /worldPullbackProgress/);
+  assert.match(hero, /fitWorldOverviewDock/);
+  assert.match(hero, /blendCameraPose/);
+  assert.match(hero, /HERO_WIDE.*worldEnvelopeRadius/);
 });
 
 test('module and contract stay presentation-only', async () => {
