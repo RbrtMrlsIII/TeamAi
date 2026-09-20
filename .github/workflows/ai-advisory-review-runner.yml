@@ -57,6 +57,7 @@ concurrency:
 
 env:
   MAX_REVIEW_CHARS: '12000'
+  PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: '300'
   VALIDATION_POLL_SECONDS: '10'
   VALIDATION_TIMEOUT_SECONDS: '900'
   REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
@@ -64,6 +65,7 @@ env:
 jobs:
   review:
     runs-on: ubuntu-latest
+    timeout-minutes: 22
     steps:
       - name: Read exact PR metadata
         id: meta
@@ -394,6 +396,7 @@ jobs:
           REVIEWER: ${{ inputs.reviewer }}
           INVOCATION_CLASS: ${{ inputs.invocation_class }}
           START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
+          PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: ${{ env.PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS }}
         shell: bash
         run: |
           set -euo pipefail
@@ -414,6 +417,7 @@ jobs:
           import json
           import os
           import re
+          import signal
           import sys
           import time
           import urllib.error
@@ -489,6 +493,18 @@ jobs:
           Path('/tmp/review.md').unlink(missing_ok=True)
 
           max_attempts = 1 if os.environ.get('INVOCATION_CLASS') == 'automatic' else 3
+          wall_timeout = int(os.environ.get('PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS', '300'))
+          if wall_timeout <= 0:
+              raise SystemExit('PROVIDER_WALL_CLOCK_TIMEOUT_CONFIGURATION_FAILURE: timeout must be positive.')
+
+          class ProviderWallClockTimeout(Exception):
+              pass
+
+          def _raise_wall_clock_timeout(signum, frame):
+              raise ProviderWallClockTimeout(f'provider call exceeded TeamAi wall-clock limit of {wall_timeout}s')
+
+          if hasattr(signal, 'SIGALRM'):
+              signal.signal(signal.SIGALRM, _raise_wall_clock_timeout)
 
           for attempt in range(1, max_attempts + 1):
               request = urllib.request.Request(
@@ -506,6 +522,8 @@ jobs:
               raw = b''
               headers = {}
               try:
+                  if hasattr(signal, 'SIGALRM'):
+                      signal.setitimer(signal.ITIMER_REAL, wall_timeout)
                   Path('/tmp/provider-attempted.json').write_text(json.dumps({
                       'attempt': attempt,
                       'requested_model': model,
@@ -518,6 +536,23 @@ jobs:
                   status = int(exc.code)
                   raw = exc.read()
                   headers = dict(exc.headers.items()) if exc.headers else {}
+              except ProviderWallClockTimeout as exc:
+                  reason = f'PROVIDER_WALL_CLOCK_TIMEOUT: provider call exceeded {wall_timeout}s wall-clock limit on attempt {attempt}.'
+                  Path('/tmp/provider-runtime.json').write_text(json.dumps({
+                      'requested_model': model,
+                      'actual_model': 'unreported',
+                      'actual_provider': 'unreported',
+                      'provenance_status': 'unreported',
+                      'http_status': None,
+                      'request_id': 'unreported',
+                      'routing_metadata': 'enabled',
+                      'response_shape': {'choices_count': 0, 'message_keys': [], 'finish_reason': None, 'content_present': False, 'content_chars': 0},
+                      'usage_summary': {},
+                      'wall_clock_timeout_seconds': wall_timeout,
+                  }, sort_keys=True), encoding='utf-8')
+                  Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                  print(f'{reviewer} {reason}', file=sys.stderr)
+                  break
               except (urllib.error.URLError, TimeoutError) as exc:
                   reason = f'PROVIDER_TRANSPORT_FAILURE: {exc.__class__.__name__}: {exc}'
                   Path('/tmp/provider-failure.txt').write_text(reason[:1200], encoding='utf-8')
@@ -527,6 +562,8 @@ jobs:
                       continue
                   break
 
+              if hasattr(signal, 'SIGALRM'):
+                  signal.setitimer(signal.ITIMER_REAL, 0)
               request_id = headers.get('x-request-id') or headers.get('x-openrouter-request-id') or 'unreported'
               print(f'{reviewer} provider response: http_status={status} attempt={attempt} request_id={request_id}', file=sys.stderr)
               Path('/tmp/response.json').write_bytes(raw)
