@@ -17,9 +17,16 @@ let text = readFileSync(heroPath, 'utf8');
 copyFileSync(expansionSource, expansionBrowser);
 
 if (!text.includes("from './seat-adjacent-division-expansion.js';")) {
-  const branchAnchor = "import { drawSetupConfigRing } from './hero-r2-setup-ring.js';";
-  if (!text.includes(branchAnchor)) throw new Error('hero module import anchor missing');
-  text = text.replace(branchAnchor, `${branchAnchor}\nimport { advanceAdjacentDivisionExpansion } from './seat-adjacent-division-expansion.js';`);
+  const branchAnchors = [
+    "import { drawSetupConfigRing } from './hero-r2-setup-ring.js';",
+    "import { drawSetupConfigRing as drawSetupConfigRingModule } from './hero-r2-setup-ring.js';",
+  ];
+  const branchAnchor = branchAnchors.find((anchor) => text.includes(anchor));
+  if (!branchAnchor) throw new Error('hero module import anchor missing');
+  text = text.replace(
+    branchAnchor,
+    branchAnchor + "\nimport { advanceAdjacentDivisionExpansion } from './seat-adjacent-division-expansion.js';",
+  );
 }
 
 const expansionGuard = "if (hierarchyRuntime.selectedSeatIndex === 0 && hierarchyRuntime.phase === 'division_closing' && hierarchyRuntime.divisionClosingChildId === HIERARCHY_PART.SEAT_CONNECTION && hierarchyRuntime.divisionPendingChildId === HIERARCHY_PART.SEAT_BEHAVIOR) { const expansion = advanceAdjacentDivisionExpansion({ sourceAmount: hierarchyRuntime.connectionBranchAmount || 1, targetAmount: 0 }, now - (hierarchyRuntime.divisionCloseStartMs || now), 240); hierarchyRuntime.connectionBranchAmount = expansion.sourceAmount; hierarchyRuntime.behaviorBranchAmount = 0; }";
