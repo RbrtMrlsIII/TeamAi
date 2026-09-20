@@ -1,3 +1,10 @@
+/**
+ * VALIDATION CHANGE WARNING
+ * Protected old invariant: this check required the current execution frontier to remain a non-production / draft-progress state.
+ * Disposition: RETAINED with lifecycle-state refinement.
+ * Replacement invariant: NEXT_SLICES keeps exactly one canonical Current Slice, while that slice may enter CLOSURE PENDING after implementation is complete but before governed review/merge/closure evidence is recorded.
+ * Rationale: Issue #394 is a closure-pending governance reconciliation vehicle; allowing only "IN PROGRESS" would encode stale lifecycle truth rather than the canonical current state.
+ */
 /** Slice L — satisfied-by map for #96–#98 */
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
