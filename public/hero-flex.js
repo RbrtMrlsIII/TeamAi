@@ -129,7 +129,7 @@ gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FS));
 gl.linkProgram(program);
 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program) || 'Program link failed');
 gl.useProgram(program);
-const STAR_VS = `attribute vec3 p;attribute float pointSize;attribute float phase;uniform mat4 viewProj;uniform mat4 view;uniform float time;varying float a;void main(){vec4 viewPos=view*vec4(p,1.0);gl_Position=viewProj*vec4(p,1.0);gl_PointSize=pointSize*(150.0/max(1.0,-viewPos.z));a=.76+.18*sin(time*.35+phase);}`;
+const STAR_VS = `attribute vec3 p;attribute float pointSize;attribute float phase;uniform mat4 viewProj;uniform mat4 view;uniform float time;varying float a;void main(){vec4 viewPos=view*vec4(p,1.0);gl_Position=viewProj*viewPos;gl_PointSize=pointSize*(150.0/max(1.0,-viewPos.z));a=.76+.18*sin(time*.35+phase);}`;
 const STAR_FS = `precision mediump float;varying float a;void main(){vec2 d=gl_PointCoord-.5;float r=dot(d,d);float soft=1.0-smoothstep(.04,.25,r);if(soft<=0.0)discard;gl_FragColor=vec4(.72,.79,.86,a*soft);}`;
 const starProgram=gl.createProgram();
 gl.attachShader(starProgram,compile(gl.VERTEX_SHADER,STAR_VS));
@@ -289,7 +289,7 @@ function drawDeepSpaceStars(t){
   gl.bindBuffer(gl.ARRAY_BUFFER,field.pb);gl.enableVertexAttribArray(STAR_U.p);gl.vertexAttribPointer(STAR_U.p,3,gl.FLOAT,false,0,0);
   gl.bindBuffer(gl.ARRAY_BUFFER,field.sb);gl.enableVertexAttribArray(STAR_U.pointSize);gl.vertexAttribPointer(STAR_U.pointSize,1,gl.FLOAT,false,0,0);
   gl.bindBuffer(gl.ARRAY_BUFFER,field.ph);gl.enableVertexAttribArray(STAR_U.phase);gl.vertexAttribPointer(STAR_U.phase,1,gl.FLOAT,false,0,0);
-  gl.drawArrays(gl.POINTS,0,field.count);
+  gl.depthMask(false);gl.drawArrays(gl.POINTS,0,field.count);gl.depthMask(true);
   gl.useProgram(program);
 }
 function addTrace(){const slots=Math.max(1,profile(seatCount).artifacts);traces.push({seatId:seats[selectedSeat]?.id||`seat-${selectedSeat+1}`,slot:traces.length%slots,sequence:traces.length+1});if(traces.length>TRACE_LIMIT)traces.shift()}
