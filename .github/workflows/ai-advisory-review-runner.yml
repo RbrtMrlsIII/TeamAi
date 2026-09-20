@@ -65,7 +65,7 @@ env:
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 35
     steps:
       - name: Read exact PR metadata
         id: meta
@@ -537,6 +537,8 @@ jobs:
                   raw = exc.read()
                   headers = dict(exc.headers.items()) if exc.headers else {}
               except ProviderWallClockTimeout as exc:
+                  if hasattr(signal, 'SIGALRM'):
+                      signal.setitimer(signal.ITIMER_REAL, 0)
                   reason = f'PROVIDER_WALL_CLOCK_TIMEOUT: provider call exceeded {wall_timeout}s wall-clock limit on attempt {attempt}.'
                   Path('/tmp/provider-runtime.json').write_text(json.dumps({
                       'requested_model': model,
@@ -554,6 +556,8 @@ jobs:
                   print(f'{reviewer} {reason}', file=sys.stderr)
                   break
               except (urllib.error.URLError, TimeoutError) as exc:
+                  if hasattr(signal, 'SIGALRM'):
+                      signal.setitimer(signal.ITIMER_REAL, 0)
                   reason = f'PROVIDER_TRANSPORT_FAILURE: {exc.__class__.__name__}: {exc}'
                   Path('/tmp/provider-failure.txt').write_text(reason[:1200], encoding='utf-8')
                   print(f'{reviewer} provider transport failure: {exc.__class__.__name__}: {exc}; attempt={attempt}', file=sys.stderr)
@@ -857,6 +861,8 @@ jobs:
 
           if runtime and post == 'success' and not failure_path.exists():
               outcome = 'SUCCEEDED'
+          elif failure_path.exists() and diagnostic.startswith('PROVIDER_WALL_CLOCK_TIMEOUT'):
+              outcome = 'PROVIDER_WALL_CLOCK_TIMEOUT'
           elif failure_path.exists() and (
               runtime.get('review_quality_status') == 'failed'
               or diagnostic.startswith('REVIEW_CONTENT_QUALITY_FAILURE')
