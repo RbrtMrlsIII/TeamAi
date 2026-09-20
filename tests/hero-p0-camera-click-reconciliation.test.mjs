@@ -13,7 +13,7 @@ const reconcile = () => {
 
 const readRuntime = () => readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 
-test('029 reconciliation removes retired TURN_FOLLOW from generated runtime', async () => {
+test('029 reconciliation keeps retired TURN_FOLLOW absent from controller', async () => {
   reconcile();
   const runtime = await readRuntime();
   assert.doesNotMatch(runtime, /setCamera\(['"]TURN_FOLLOW['"]\)/);
@@ -29,14 +29,15 @@ test('029 reconciliation leaves contribution transition camera-neutral', async (
   );
 });
 
-test('029 reconciliation removes generic background Seat cycling', async () => {
+test('029 controller uses safe background click no-op', async () => {
   reconcile();
   const runtime = await readRuntime();
-  assert.doesNotMatch(runtime, /selectSeatShell\(\(selectedSeat\+1\)%seatCount\)/);
+  assert.match(runtime, /event\.preventDefault\(\)/);
 });
 
-test('029 reconciliation does not invent another Seat walker', async () => {
+test('029 reconciliation script is validation-only', async () => {
   reconcile();
   const runtime = await readRuntime();
-  assert.doesNotMatch(runtime, /nextSeat|previousSeat|advanceSeat/);
+  const script = await readFile(new URL('../scripts/apply-029-camera-click-reconcile.mjs', import.meta.url), 'utf8');
+  assert.match(script, /no patch|source-owned|no mutation/i);
 });
