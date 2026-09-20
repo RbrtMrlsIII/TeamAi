@@ -1,6 +1,6 @@
 # TeamAi 3D Hero — Concentric Ring Map (presentation)
 
-**Status:** Spec baseline (docs first) — not fully implemented in meshes  
+**Status:** Active implementation baseline — R1/R2 mechanical presentation implemented-partial; 029 not released  
 **Date:** 2026-09-08  
 **Authority:** `Product_Law/PRODUCT_LAW.md` (Family J presentation) → Machine Interaction Contract → Hierarchy Runtime Baseline → this map  
 **Skills:** `skills/frontend/spatial/hierarchy-runtime/SKILL.md` · `skills/frontend/spatial/seat-shell-hierarchy/SKILL.md` (Seat ring only)  
@@ -24,7 +24,7 @@ R2  SETUP / CONFIG RING     major configuration branches & mechanical setup
 R3  SEAT RING               Web AI Seats (outer)
 ```
 
-Radii increase with ring index. Exact numbers live in baseline §9 when measured; do not invent private tables in code without amending §9.
+Radii increase with ring index. Runtime centerlines are derived by the shared hero-ring-envelope.js owner from the active workspace radius and actual outer machine envelope. Requested clearance may compress when the physical span is tight; the machine envelope itself is never moved by ring layout.
 
 ### R0 — Workspace core (middle)
 
@@ -107,6 +107,20 @@ Issue #396 Slice D now has concrete source owners for both intermediate rings:
 - R1 threads consume declared display-face IDs, resolve missing endpoints by failing closed, and route deterministically outside the workspace center.
 - These ring modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
 - Final service/backend topology, richer mechanical R1 articulation, complete R2 choreography, and final electricity remain later work in #396.
+
+## 6.6 Current Slice-D/E/F/G/H reconciliation
+
+The active implementation now has one shared geometry and semantic chain across the intermediate ring and Seat-machine layers:
+
+- hero-ring-envelope.js is the sole R1/R2 centerline envelope. R1 display faces, R1 presentation threads, and R2 setup faces consume its resolved radii.
+- R1/R2 catalogs are source-owned by their ring modules; the hierarchy runtime re-exports them rather than defining duplicate catalog identities.
+- SETUP_CONFIG_V1 uses the canonical WORKSPACE_CONFIG_BRANCH#prefs identity for the configuration branch.
+- Seat division presentation receives focusedChildId, focusedChildIndex, and the hierarchy-owned branch amount from the controller. It does not rebuild SEAT_SHELL_V1_CHILDREN.
+- Machine core connections now carry coordinate-independent semanticEdgeId values and are checked by machine-core-topology.js for branch endpoints, ports, routes, uniqueness, and expected edge classes.
+- Electricity is a presentation flow over declared semantic edge routes. The selected-seat pulse follows an existing machine-core edge; Seat-1 workspace transfer follows the declared TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER edge. No guessed electrical route is introduced.
+- R2 auth/setup remains presentation-only. teamai:app-ui-handoff is received by the normal UI auth/settings controller; the spatial renderer never performs auth/provider work.
+
+These are structural implementation steps, not a 029 completion claim. Browser exact-head validation and deeper mechanical choreography remain required verification layers.
 
 ## 7. Design principle
 
