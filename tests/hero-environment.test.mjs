@@ -57,10 +57,14 @@ test('029 Slice A runtime wiring and source/public sync are explicit', async () 
   const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
   const source = await readFile(new URL('../frontend/spatial/hero-environment.js', import.meta.url), 'utf8');
   const runtime = await readFile(new URL('../public/hero-environment.js', import.meta.url), 'utf8');
+  const base = await readFile(new URL('../public/_flex_src/hero-flex.base.js', import.meta.url), 'utf8');
   const sync = await readFile(new URL('../scripts/sync-machine-spatial-runtime.mjs', import.meta.url), 'utf8');
 
   assert.match(hero, /from ['\"]\.\/hero-environment\.js['\"]/);
   assert.match(hero, /isMachineWorldLayer/);
+  assert.match(base, /from ['\"]\.\/hero-environment\.js['\"]/);
+  assert.match(base, /isMachineWorldLayer/);
+  assert.doesNotMatch(base, /function floor\(\)\{/);
   assert.match(hero, /createDeepSpaceField/);
   assert.match(hero, /const SEAT_BASE_RADIUS=1\.9/);
   assert.match(hero, /seatFootprintRadius:SEAT_BASE_RADIUS\*p\.seatScale/);
