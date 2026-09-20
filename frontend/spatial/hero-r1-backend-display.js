@@ -4,6 +4,12 @@
  */
 const TAU = Math.PI * 2;
 
+export const BACKEND_DISPLAY_V1 = Object.freeze([
+  Object.freeze({ id: 'WORKSPACE_BACKEND_DISPLAY#docs', label: 'Docs platform' }),
+  Object.freeze({ id: 'WORKSPACE_BACKEND_DISPLAY#rules', label: 'Rules platform' }),
+  Object.freeze({ id: 'WORKSPACE_BACKEND_DISPLAY#connect', label: 'Connect face' }),
+]);
+
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 export function deriveBackendDisplayPlacements({
