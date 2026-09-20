@@ -45,13 +45,12 @@ test('accessible name announces presentation-only health', () => {
   assert.match(name, /Presentation only|not authorization/i);
 });
 
-test('hero-flex draws leaf and wires a11y/keyboard', () => {
-  assert.match(runtime, /function drawHealthLeaf/);
-  assert.match(runtime, /drawHealthLeaf\(/);
-  assert.match(runtime, /aria-live/);
+test('Hero controller exposes health-leaf accessibility state without owning its draw geometry', () => {
   assert.match(runtime, /healthLeafAccessibleName/);
   assert.match(runtime, /focusHierarchyLeaf|focusLeaf/);
   assert.match(runtime, /HEALTH_STATUS/);
+  assert.match(runtime, /aria-live/);
+  assert.match(runtime, /machine-world-renderer\.js/);
 });
 
 test('v1 children order and child stack numbers held', () => {
