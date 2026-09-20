@@ -125,6 +125,8 @@ test('hero-flex wires P-R2 camera-fill, keyboard L, and FOV', () => {
 
 test('R2 draw scales full-area plates by fillAmount', () => {
   const r2 = read('public/hero-r2-setup-ring.js');
+  const source = read('frontend/spatial/hero-r2-setup-ring.js');
+  assert.equal(r2, source);
   assert.match(r2, /fillAmount/);
   assert.match(r2, /fullArea/);
   assert.doesNotMatch(r2, /password|oauth|credential/i);

@@ -5,6 +5,7 @@ import { SETUP_CONFIG_V1, HIERARCHY_PART } from '../public/hero-hierarchy-runtim
 
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 const r2mod = await readFile(new URL('../public/hero-r2-setup-ring.js', import.meta.url), 'utf8');
+const r2source = await readFile(new URL('../frontend/spatial/hero-r2-setup-ring.js', import.meta.url), 'utf8');
 const map = await readFile(new URL('../docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md', import.meta.url), 'utf8');
 
 test('R2 part IDs and SETUP_CONFIG_V1 catalog', () => {
@@ -14,9 +15,11 @@ test('R2 part IDs and SETUP_CONFIG_V1 catalog', () => {
   assert.equal(HIERARCHY_PART.WORKSPACE_CONFIG_BRANCH, 'WORKSPACE_CONFIG_BRANCH');
 });
 
-test('hero-flex draws setup/config ring outside R1', () => {
-  assert.match(hero, /drawSetupConfigRing/);
-  assert.match(r2mod, /workspace \* RING_R2_SCALE/);
+test('hero-flex delegates setup/config rendering through the dedicated R2 module', () => {
+  assert.match(hero, /drawSetupConfigRingModule/);
+  assert.match(hero, /ringScale: RING_R2_SCALE/);
+  assert.match(r2mod, /deriveSetupConfigPlacements/);
+  assert.equal(r2mod, r2source);
 });
 
 test('ring map places setup/config on R2', () => {

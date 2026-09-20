@@ -30,7 +30,7 @@ R3  SEAT RING
 | **R0** | ZipSkills crown | `public/hero-p-r0-zipskills.js` · `WORKSPACE_ZIPSKILLS_V1` · `RING_R0_ZIP_SCALE` | **implemented** | Optional; not seat child; not entitlement |
 | **R1** | Part IDs / catalog | `HIERARCHY_PART.WORKSPACE_BACKEND_*` · `BACKEND_DISPLAY_V1` | **implemented** | Catalog only |
 | **R1** | Scale constant | `RING_R1_SCALE` in hierarchy runtime | **implemented** | §9-aligned starting number |
-| **R1** | Display ring draw | `drawBackendDisplayRing` expected in assembled `hero-flex` | **stubbed** | Presentation draw path; no separate `hero-r1-*.js` module |
+| **R1** | Display ring draw | `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js` → `drawBackendDisplayRing` wrapper | **implemented-partial** | Dedicated placement/render owner; full service-thread topology remains bounded |
 | **R1** | Animated threads | `WORKSPACE_BACKEND_THREAD` id | **planned** | Spec in ring map; no dedicated thread owner module |
 | **R1** | Live platform bind | — | **out of scope** | Presentation must not OAuth/bind from canvas |
 | **R2** | Scale constant | `RING_R2_SCALE` | **implemented** | |
@@ -45,8 +45,8 @@ R3  SEAT RING
 
 ## 3. Agent rules
 
-1. **Do not** create `hero-r1-backend-display.js` solely to “complete” the table unless a Masterplan/Vision slice names that owner and wire path.  
-2. **Do not** treat R1/R2 presentation stubs as backend connection completion or Conn-3.  
+1. R1 has a named Slice-D owner now; do not create duplicate R1 renderers or bypass the canonical Hero wrapper.  
+2. **Do not** treat R1/R2 presentation as backend connection completion or Conn-3.  
 3. **Do not** pull provider/runtime work into a spatial ring slice.  
 4. R1 animated threads remain **planned** until a concrete owner + tests exist.  
 5. R2 login/register faces may hand off via `APP_UI_HANDOFF` — never write Firestore from canvas.
@@ -90,4 +90,4 @@ The R1 module is still an implementation step, not a 029 completion claim. Anima
 
 - `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`  
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` SP-06 / Gate S7  
-- `public/hero-r2-setup-ring.js` · `public/hero-p-r0-zipskills.js`  
+- `frontend/spatial/hero-r1-backend-display.js` · `public/hero-r1-backend-display.js` · `frontend/spatial/hero-r2-setup-ring.js` · `public/hero-r2-setup-ring.js` · `public/hero-p-r0-zipskills.js`  
