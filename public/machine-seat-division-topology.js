@@ -35,7 +35,7 @@ export function seatDivisionPort(parent, childId, childIndex = 0) {
   const tangentOffset = scale * 0.06 * (index - 3);
   const radialOffset = scale * 0.46;
   return Object.freeze({
-    id: 'TREE-HERO-SEAT#' + seatIndex + ':' + semanticId + ':PORT',
+    id: 'TREE-HERO-SEAT#' + seatIndex + ':SEAT_SHELL:' + semanticId + ':PORT',
     tree: 'TREE-HERO-SEAT',
     seatIndex,
     division: semanticId,
@@ -64,7 +64,7 @@ export function buildSeatDivisionEdge({
   const target = seatDivisionPort(parent, child, childIndex);
   if (!target) return null;
   const source = Object.freeze({
-    id: geometry.id.replace(/:GEOMETRY$/, ':PORT'),
+    id: geometry.id.replace(/:GEOMETRY$/, ':DIVISION_PORT'),
     tree: 'TREE-HERO-SEAT',
     seatIndex,
     division: child,
