@@ -1,6 +1,6 @@
 /**
  * 029 R1 backend display ring renderer.
- * Geometry/render helper only. No backend bind, OAuth, credentials, or durable authority.
+ * Geometry/render helper only. No backend binding or durable state.
  */
 const TAU = Math.PI * 2;
 
@@ -38,6 +38,7 @@ export function drawBackendDisplayRing({
   reducedMotion,
   draw,
   CUBE,
+  CYL,
   TORUS,
   SPH,
   T,
