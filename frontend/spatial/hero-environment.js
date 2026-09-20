@@ -56,6 +56,9 @@ export function isMachineWorldLayer(shell) {
   return shell?.dataset?.heroLayer === DEEP_SPACE_ENVIRONMENT_MODE;
 }
 
-export function deriveDeepSpaceStagingRadius({ workspaceRadius, seatRadius }) {
-  return Math.max(Number(workspaceRadius) || 0, Number(seatRadius) || 0) + 0.9;
+export function deriveDeepSpaceStagingRadius({ workspaceRadius, seatRadius, seatFootprintRadius, clearance = 0.1 }) {
+  const workspace = Number(workspaceRadius) || 0;
+  const seat = Number(seatRadius) || 0;
+  const footprint = Number(seatFootprintRadius) || 0;
+  return Math.max(workspace, seat + footprint + Number(clearance));
 }

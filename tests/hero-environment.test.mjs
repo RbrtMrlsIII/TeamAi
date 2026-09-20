@@ -49,7 +49,8 @@ test('029 Slice A environment has explicit machine-world ownership', () => {
   assert.equal(isMachineWorldLayer({ dataset: { heroLayer: 'entrance' } }), false);
   assert.equal(isMachineWorldLayer({ dataset: {} }), false);
   assert.equal(DEEP_SPACE_ENVIRONMENT_MODE, 'machine');
-  assert.equal(deriveDeepSpaceStagingRadius({ workspaceRadius: 5.95, seatRadius: 6.45 }), 7.35);
+  assert.equal(deriveDeepSpaceStagingRadius({ workspaceRadius: 5.95, seatRadius: 6.45, seatFootprintRadius: 1.482 }), 8.032);
+  assert.equal(deriveDeepSpaceStagingRadius({ workspaceRadius: 4.35, seatRadius: 4.25, seatFootprintRadius: 1.9 }), 6.25);
 });
 
 test('029 Slice A runtime wiring and source/public sync are explicit', async () => {
@@ -61,6 +62,8 @@ test('029 Slice A runtime wiring and source/public sync are explicit', async () 
   assert.match(hero, /from ['\"]\.\/hero-environment\.js['\"]/);
   assert.match(hero, /isMachineWorldLayer/);
   assert.match(hero, /createDeepSpaceField/);
+  assert.match(hero, /const SEAT_BASE_RADIUS=1\.9/);
+  assert.match(hero, /seatFootprintRadius:SEAT_BASE_RADIUS\*p\.seatScale/);
   assert.doesNotMatch(hero, /function floor\(\)\{/);
   assert.doesNotMatch(hero, /floor\(\);environment\(/);
   assert.equal(runtime, source);
