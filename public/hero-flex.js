@@ -116,6 +116,7 @@ const seatRadiusForCount = (count) => {
   const density = Math.max(0, Math.min(1, (Math.max(1, count | 0) - 1) / 9));
   return 4.25 + (6.45 - 4.25) * density;
 };
+// Seat-camera density remains controller-owned for subject docking; world geometry is renderer-owned.
 const profile = (count) => {
   const density = Math.max(0, Math.min(1, (Math.max(1, count | 0) - 1) / 9));
   return {
@@ -627,6 +628,8 @@ function frame(now) {
     connectionBranchAmount: getConnectionBranchAmount(hierarchyRuntime),
     behaviorBranchAmount: getBehaviorBranchAmount(hierarchyRuntime),
     hierarchyPhase: hierarchyRuntime.phase,
+    ringFocus: { ring: ringFocus.ring, index: ringFocus.index },
+    setupRingFillAmount: getSetupRingFillAmount(hierarchyRuntime),
     machineLayer: shell.dataset.heroLayer === 'machine',
   });
 
