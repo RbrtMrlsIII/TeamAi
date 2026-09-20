@@ -64,13 +64,12 @@ test('module and contract stay presentation-only and proportional', async () => 
   assert.match(contract, /edge/i);
 });
 
-test('hero-flex wires Cam-4 edge/proportional after apply', async () => {
-  const { spawnSync } = await import('node:child_process');
-  const { fileURLToPath } = await import('node:url');
-  const { dirname, join } = await import('node:path');
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-  spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
+test('Hero controller owns pointer navigation while renderer owns spatial projection', async () => {
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /hero-cam4-edge-swipe|proportionalSwipeDelta/);
-  assert.match(flex, /edgeDriftDelta|edgePointerNorm/);
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(flex, /pointermove|onPointerMove/);
+  assert.match(flex, /navOrbitYaw/);
+  assert.match(flex, /machineWorldRenderer\.render/);
+  assert.match(renderer, /navOrbitYaw/);
+  assert.match(renderer, /lookAt/);
 });
