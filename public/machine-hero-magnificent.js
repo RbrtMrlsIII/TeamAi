@@ -1,24 +1,59 @@
-import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
-import { createMachineAnimation } from './machine-core-animation.js';
+/**
+ * Compatibility preview entry point.
+ * Rendering authority lives in machine-world-renderer.js.
+ */
+import { createMachineWorldRenderer } from './machine-world-renderer.js';
 
-const VS=`attribute vec3 p; attribute vec3 n; uniform mat4 P,V,M; uniform vec3 lightDir; varying float shade; varying vec3 worldN; varying vec3 worldP; void main(){vec4 wp=M*vec4(p,1.0);worldP=wp.xyz;worldN=normalize(mat3(M)*n);shade=.34+.66*max(dot(worldN,normalize(lightDir)),0.0);gl_Position=P*V*wp;}`;
-const FS=`precision mediump float; uniform vec4 c; uniform float glow; varying float shade; varying vec3 worldN; varying vec3 worldP; void main(){float rim=pow(1.0-max(dot(normalize(worldN),normalize(vec3(0.0,0.8,1.0))),0.0),3.0);vec3 base=c.rgb*(.72+.28*shade)+vec3(.08,.11,.14)*rim;gl_FragColor=vec4(base,c.a+rim*.08+glow*.12);}`;
-const WIREFS=`precision mediump float; uniform vec4 c; void main(){gl_FragColor=c;}`;
-const TAU=Math.PI*2;
-const POLYS={hex:[[-1,0],[-.5,-.86],[.5,-.86],[1,0],[.5,.86],[-.5,.86]],pod:[[-.9,-.25],[-.55,-.58],[.18,-.62],[.78,-.30],[.9,.12],[.5,.5],[-.3,.58],[-.82,.3]],fin:[[-1,-.55],[.05,-.7],[1,.3],[.35,.66],[-.5,.55]],arc:[[-.95,-.3],[-.45,-.7],[.25,-.7],[.85,-.28],[.85,.18],[.25,.68],[-.42,.62],[-.86,.25],[-.28,.08],[.35,.16],[.18,-.08],[-.38,-.03]],diamond:[[0,-.9],[.72,0],[0,.9],[-.72,0]],blade:[[-.95,-.6],[-.18,-.82],[.78,-.28],[.98,.12],[.2,.74],[-.72,.55]]};
-const PALETTE={hub:[.70,.76,.82,1],pod:[.46,.58,.69,1],fin:[.56,.63,.71,1],arc:[.50,.67,.72,1],diamond:[.66,.58,.49,1],blade:[.46,.65,.59,1]};
-const UI={command:[.88,.93,.98,1],seat:[.62,.80,.96,1],outer:[.72,.90,.92,1]};
-function shader(gl,type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s)||'shader compile');return s;}
-function program(gl,vs,fs){const p=gl.createProgram();gl.attachShader(p,shader(gl,gl.VERTEX_SHADER,vs));gl.attachShader(p,shader(gl,gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p)||'program link');return p;}
-function mesh(gl,poly,height){const verts=[],norms=[],n=poly.length;const add=(a,b,c,na)=>{verts.push(...a,...b,...c);norms.push(...na,...na,...na)};for(let i=1;i<n-1;i++){add([0,0,0],[poly[i][0],0,poly[i][1]],[poly[i+1][0],0,poly[i+1][1]],[0,-1,0]);add([0,height,0],[poly[i+1][0],height,poly[i+1][1]],[poly[i][0],height,poly[i][1]],[0,1,0]);}for(let i=0;i<n;i++){const j=(i+1)%n,[ax,ay]=poly[i],[bx,by]=poly[j];const ux=bx-ax,uz=by-ay,len=Math.hypot(ux,uz)||1;const no=[uz/len,0,-ux/len];add([ax,0,ay],[bx,0,by],[bx,height,by],no);add([ax,0,ay],[bx,height,by],[ax,height,ay],no);}return{v:new Float32Array(verts),n:new Float32Array(norms),count:verts.length/3}}
-function mat4ScaleTranslate(out,pos,size){out.set([size[0],0,0,0,0,size[1],0,0,0,0,size[2],0,pos[0],pos[1],pos[2],1]);}
-function persp(out,fovy,aspect,near,far){const f=1/Math.tan(fovy/2);out.fill(0);out[0]=f/aspect;out[5]=f;out[10]=(far+near)/(near-far);out[11]=-1;out[14]=2*far*near/(near-far);}
-function lookAt(out,e,t){let z=[e[0]-t[0],e[1]-t[1],e[2]-t[2]],zl=Math.hypot(...z)||1;z=z.map(v=>v/zl);let x=[z[2],0,-z[0]],xl=Math.hypot(...x)||1;x=x.map(v=>v/xl);const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];out.set([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1]);}
-function createGradientRing(count,r0,r1,y){const a=[];for(let i=0;i<=count;i++){const t=i/count,ang=t*TAU,r=r0+(r1-r0)*Math.sin(t*Math.PI);a.push(Math.cos(ang)*r,y,Math.sin(ang)*r);}return new Float32Array(a)}
-export function mountMagnificentMachine(root=globalThis.document){const canvas=root?.querySelector?.('[data-machine-magnificent]');if(!canvas||canvas.dataset.machineMounted)return canvas?canvas._machineController||null:null;canvas.dataset.machineMounted='1';const gl=canvas.getContext('webgl',{antialias:true,alpha:true});if(!gl){canvas.dataset.machineMounted='0';return null;}const solid=program(gl,VS,FS),wire=program(gl,VS,WIREFS);const ap=gl.getAttribLocation(solid,'p'),an=gl.getAttribLocation(solid,'n'),PP=gl.getUniformLocation(solid,'P'),PV=gl.getUniformLocation(solid,'V'),PM=gl.getUniformLocation(solid,'M'),PC=gl.getUniformLocation(solid,'c'),PL=gl.getUniformLocation(solid,'lightDir'),PG=gl.getUniformLocation(solid,'glow');const wp=gl.getAttribLocation(wire,'p'),wP=gl.getUniformLocation(wire,'P'),wV=gl.getUniformLocation(wire,'V'),wM=gl.getUniformLocation(wire,'M'),wC=gl.getUniformLocation(wire,'c');const P=new Float32Array(16),V=new Float32Array(16),M=new Float32Array(16),I=new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]),buffers=new Map(),frameBuffer=gl.createBuffer(),animation=createMachineAnimation({duration:950});let targetBranch='HUB-CORE';
-function setExpanded(value){const now=performance.now();animation.setTarget(value?'expanded':'collapsed',now);}
-function frame(now){const sample=animation.sample(now),amount=sample.amount,width=canvas.clientWidth||1180,height=canvas.clientHeight||760,dpr=globalThis.devicePixelRatio||1;canvas.width=Math.floor(width*dpr);canvas.height=Math.floor(height*dpr);gl.viewport(0,0,canvas.width,canvas.height);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.clearColor(.015,.020,.028,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);const scene=createBranchConnectionCore({seatCount:10,expansionAmount:amount});const selected=resolveBranchCamera(scene,targetBranch)||scene.cameras[0],subject=selected.target,orbit=now*.00009,radius=12.5;persp(P,Math.PI/3,width/Math.max(1,height),.1,100);lookAt(V,[subject.x+radius*Math.sin(orbit),subject.y+5.4,subject.z+radius*Math.cos(orbit)],subject);gl.useProgram(solid);gl.uniformMatrix4fv(PP,false,P);gl.uniformMatrix4fv(PV,false,V);gl.uniform3f(PL,.45,.85,.30);
-for(const part of scene.parts){let b=buffers.get(part.branchId);if(!b){const poly=part.kind==='hub'?POLYS.hex:POLYS[part.silhouette]||POLYS.pod;b=mesh(gl,poly,part.dimensions.y);b.vb=gl.createBuffer();b.nb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b.vb);gl.bufferData(gl.ARRAY_BUFFER,b.v,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,b.nb);gl.bufferData(gl.ARRAY_BUFFER,b.n,gl.STATIC_DRAW);buffers.set(part.branchId,b)}gl.bindBuffer(gl.ARRAY_BUFFER,b.vb);gl.enableVertexAttribArray(ap);gl.vertexAttribPointer(ap,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,b.nb);gl.enableVertexAttribArray(an);gl.vertexAttribPointer(an,3,gl.FLOAT,false,0,0);const spread=part.kind==='hub'?1:(.82+.18*amount),scale=[part.dimensions.x*.52*spread,part.dimensions.y*.55,part.dimensions.z*.52*spread],y=part.center.y+(part.kind==='hub'?0:Math.sin(now*.001+part.seatIndex*.7)*.035);mat4ScaleTranslate(M,[part.center.x,y,part.center.z],scale);gl.uniformMatrix4fv(PM,false,M);const base=PALETTE[part.silhouette||'hub']||PALETTE.pod,selectedBoost=part.branchId===targetBranch?.18:0;gl.uniform4f(PC,Math.min(1,base[0]+selectedBoost),Math.min(1,base[1]+selectedBoost),Math.min(1,base[2]+selectedBoost),.95);gl.uniform1f(PG,.12+(part.kind==='hub'?.18:0));gl.drawArrays(gl.TRIANGLES,0,b.count);const ui=part.uiSurface;if(ui){mat4ScaleTranslate(M,[ui.anchor.x,ui.anchor.y+.025*Math.sin(now*.0015),ui.anchor.z],[Math.max(.12,ui.width*.36),.018,Math.max(.10,ui.depth*.34)]);gl.uniformMatrix4fv(PM,false,M);const uc=part.kind==='hub'?UI.command:part.kind==='inner-pod'?UI.seat:UI.outer;gl.uniform4f(PC,uc[0],uc[1],uc[2],.20);gl.uniform1f(PG,.28);gl.drawArrays(gl.TRIANGLES,0,b.count)}}
- gl.useProgram(wire);gl.uniformMatrix4fv(wP,false,P);gl.uniformMatrix4fv(wV,false,V);gl.uniformMatrix4fv(wM,false,I);for(const connection of scene.connections){const pts=connection.route.flatMap(q=>[q.x,q.y,q.z]);gl.bindBuffer(gl.ARRAY_BUFFER,frameBuffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(pts),gl.DYNAMIC_DRAW);gl.enableVertexAttribArray(wp);gl.vertexAttribPointer(wp,3,gl.FLOAT,false,0,0);const pulse=.38+.32*(.5+.5*Math.sin(now*.004+connection.id.length));gl.uniform4f(wC,connection.kind==='lattice-link'?.28:.12,.82,1,pulse);gl.lineWidth(connection.kind==='lattice-link'?2:3);gl.drawArrays(gl.LINE_STRIP,0,connection.route.length)}const ring=createGradientRing(128,3.3,5.2,scene.hub.level-.22);gl.bindBuffer(gl.ARRAY_BUFFER,frameBuffer);gl.bufferData(gl.ARRAY_BUFFER,ring,gl.DYNAMIC_DRAW);gl.enableVertexAttribArray(wp);gl.vertexAttribPointer(wp,3,gl.FLOAT,false,0,0);gl.uniform4f(wC,.42,.72,1,.26);gl.drawArrays(gl.LINE_STRIP,0,129);requestAnimationFrame(frame)}
-const controller={setExpanded,selectBranch(branchId){if(branchId)targetBranch=branchId}};canvas._machineController=controller;requestAnimationFrame((now)=>frame(now));return controller;}
-if(globalThis.document&&new URLSearchParams(location.search).get('machine-preview')==='magnificent'){if(document.readyState==='loading')addEventListener('DOMContentLoaded',()=>mountMagnificentMachine(),{once:true});else mountMagnificentMachine();}
+export function mountMagnificentMachine(root = globalThis.document) {
+  const canvas = root?.querySelector?.('[data-machine-magnificent]');
+  if (!canvas) return null;
+  if (canvas._machineController) return canvas._machineController;
+  const gl = canvas.getContext('webgl', { antialias: true, alpha: true });
+  if (!gl) return null;
+
+  const renderer = createMachineWorldRenderer({ canvas, gl });
+  let expanded = false;
+  let branchId = 'HUB-CORE';
+  let raf = null;
+
+  const render = (timestamp) => {
+    raf = requestAnimationFrame(render);
+    renderer.render(timestamp, {
+      seatCount: 10,
+      selectedSeat: 0,
+      hierarchyOpen: expanded,
+      expanded,
+      branchId,
+      reducedMotion: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true,
+      navOrbitYaw: 0,
+      navOrbitPitch: 0,
+      navZoom: 1,
+    });
+  };
+
+  const controller = {
+    setExpanded(value) {
+      expanded = Boolean(value);
+      renderer.setExpanded(expanded, performance.now());
+    },
+    selectBranch(next) {
+      if (next) branchId = String(next);
+    },
+    dispose() {
+      if (raf !== null) cancelAnimationFrame(raf);
+      renderer.dispose();
+      canvas._machineController = null;
+    },
+  };
+  canvas._machineController = controller;
+  raf = requestAnimationFrame(render);
+  return controller;
+}
+
+if (globalThis.document && new URLSearchParams(globalThis.location?.search || '').get('machine-preview') === 'magnificent') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => mountMagnificentMachine(), { once: true });
+  } else {
+    mountMagnificentMachine();
+  }
+}
