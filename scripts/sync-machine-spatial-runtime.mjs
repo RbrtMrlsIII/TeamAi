@@ -14,6 +14,7 @@ const files = [
   'machine-hero-adaptive-geometry.js',
   'machine-hero-topology.js',
   'hero-environment.js',
+  'hero-world-contract.js',
   'hero-r1-backend-display.js',
   'hero-r1-backend-threads.js',
   'hero-r2-setup-ring.js',
