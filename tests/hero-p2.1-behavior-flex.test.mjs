@@ -27,10 +27,10 @@ test('hero-flex frame ticks behavior branch after hierarchy pose', () => {
   assert.ok(pose >= 0 && beh > pose);
 });
 
-test('hero-flex applies branchBoost for SEAT_BEHAVIOR child', () => {
+test('canonical renderer receives BEHAVIOR state from the controller', () => {
   const src = flex();
-  assert.match(src, /isBehavior/);
-  assert.match(src, /SEAT_BEHAVIOR/);
+  assert.match(src, /machine-world-renderer\\.js/);
+  assert.match(src, /getBehaviorBranchAmount\\(hierarchyRuntime\\)/);
   assert.match(src, /getBehaviorBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
 });
 
