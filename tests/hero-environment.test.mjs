@@ -53,22 +53,19 @@ test('029 Slice A environment has explicit machine-world ownership', () => {
   assert.equal(deriveDeepSpaceStagingRadius({ workspaceRadius: 4.35, seatRadius: 4.25, seatFootprintRadius: 1.9 }), 6.25);
 });
 
-test('029 Slice A runtime wiring and source/public sync are explicit', async () => {
+test('029 Slice A renderer wiring and source/public sync are explicit', async () => {
   const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const source = await readFile(new URL('../frontend/spatial/hero-environment.js', import.meta.url), 'utf8');
   const runtime = await readFile(new URL('../public/hero-environment.js', import.meta.url), 'utf8');
   const sync = await readFile(new URL('../scripts/sync-machine-spatial-runtime.mjs', import.meta.url), 'utf8');
-
-  assert.match(hero, /from ['\"]\.\/hero-environment\.js['\"]/);
-  assert.match(hero, /isMachineWorldLayer/);
-  assert.match(hero, /createDeepSpaceField/);
-  assert.match(hero, /const SEAT_BASE_RADIUS=1\.9/);
-  assert.match(hero, /seatFootprintRadius:SEAT_BASE_RADIUS\*p\.seatScale/);
-  assert.doesNotMatch(hero, /function floor\(\)\{/);
-  assert.doesNotMatch(hero, /floor\(\);environment\(/);
-  assert.doesNotMatch(hero, /S\(36,36,36\)/);
-  assert.match(hero, /worldMode=isMachineWorldLayer\(shell\)/);
-  assert.match(hero, /M\.space\[0\]/);
+  assert.match(hero, /machine-world-renderer\.js/);
+  assert.match(hero, /machineLayer/);
+  assert.match(renderer, /createDeepSpaceField/);
+  assert.match(renderer, /DEEP_SPACE_NEBULA_ANCHORS/);
+  assert.match(renderer, /clearColor\(\.012,\.020,\.032,1\)/);
+  assert.match(renderer, /gl\.POINTS/);
   assert.equal(runtime, source);
   assert.match(sync, /'hero-environment\.js'/);
+  assert.match(sync, /'machine-world-renderer\.js'/);
 });
