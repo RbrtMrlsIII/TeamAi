@@ -103,6 +103,32 @@
       "allocationRule": "Shared responsibility/skill definitions are allocated to participating Seats; do not fork definitions by Seat count"
     }
   ],
+  "presentationRings": {
+    "R1": {
+      "status": "IMPLEMENTED_PARTIAL",
+      "owner": [
+        "frontend/spatial/hero-r1-backend-display.js",
+        "public/hero-r1-backend-display.js",
+        "frontend/spatial/hero-r1-backend-threads.js",
+        "public/hero-r1-backend-threads.js"
+      ],
+      "threads": [
+        {
+          "id": "WORKSPACE_BACKEND_THREAD#docs→rules",
+          "from": "WORKSPACE_BACKEND_DISPLAY#docs",
+          "to": "WORKSPACE_BACKEND_DISPLAY#rules"
+        },
+        {
+          "id": "WORKSPACE_BACKEND_THREAD#rules→connect",
+          "from": "WORKSPACE_BACKEND_DISPLAY#rules",
+          "to": "WORKSPACE_BACKEND_DISPLAY#connect"
+        }
+      ],
+      "presentationOnly": true,
+      "topologyAuthority": "presentation relationship only; not the backend service graph",
+      "finalServiceTopology": "NOT_COMPLETE"
+    }
+  },
   "crossTreeConfiguration": {
     "turnConfiguration": {
       "owner": "TREE-ORCHESTRATION / scheduler",
