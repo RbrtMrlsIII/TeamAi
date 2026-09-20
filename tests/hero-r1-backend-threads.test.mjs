@@ -11,6 +11,7 @@ import {
 } from '../frontend/spatial/hero-r1-backend-threads.js';
 
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const source = await readFile(
   new URL('../frontend/spatial/hero-r1-backend-threads.js', import.meta.url),
   'utf8',
@@ -79,11 +80,12 @@ test('R1 thread paths are deterministic and route outside the workspace center',
   }
 });
 
-test('R1 thread owner stays synchronized and canonical Hero calls it', () => {
+test('R1 thread owner stays synchronized and canonical renderer consumes it', () => {
   assert.equal(source, publicModule);
-  assert.match(hero, /drawBackendDisplayThreadsModule/);
-  assert.match(hero, /drawBackendDisplayThreads\(now\/1000\)/);
-  assert.match(hero, /ringScale: RING_R1_SCALE/);
+  assert.match(renderer, /from '\.\/hero-r1-backend-threads\.js'/);
+  assert.match(renderer, /drawBackendDisplayThreads\(/);
+  assert.match(renderer, /ringScale: RING_R1_SCALE/);
+  assert.match(renderer, /drawCanonicalRings/);
 });
 
 test('R1 thread owner is presentation-only', () => {
