@@ -24,6 +24,12 @@ if (!text.includes("from './hero-cam5-selected-tree-center.js';")) {
 // works at both /TeamAi/hero-flex.js and the compatibility /TeamAi/hero/ route.
 copyFileSync(edgeSource, edgeBrowser);
 copyFileSync(geometrySource, geometryBrowser);
+if (text.includes('function drawSemanticSeat1Connection(') && text.includes('buildHeroSeat1Connection')) {
+  writeFileSync(path, text);
+  console.log('Seat-1 connection edge wire already owned by canonical semantic Hero renderer; legacy injector skipped');
+  process.exit(0);
+}
+
 
 if (!text.includes("from './seat-connection-edge.js';")) {
   text = text.replace(
