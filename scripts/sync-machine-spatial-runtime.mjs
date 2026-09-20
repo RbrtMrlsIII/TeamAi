@@ -13,6 +13,7 @@ const files = [
   'machine-hero-adaptive-geometry.js',
   'machine-hero-topology.js',
   'hero-environment.js',
+  'hero-r1-backend-display.js',
 ];
 
 for (const file of files) {

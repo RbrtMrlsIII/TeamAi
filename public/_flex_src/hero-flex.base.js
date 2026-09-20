@@ -96,6 +96,7 @@ import {
   seatShellParentId,
 } from './hero-hierarchy-runtime.js';
 import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
+import { drawBackendDisplayRing as drawBackendDisplayRingModule } from './hero-r1-backend-display.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import {
   createDeepSpaceField,
@@ -383,25 +384,23 @@ function drawWorkspaceZipskills(t) {
   }
 }
 function drawBackendDisplayRing(t) {
-  const p = profile(seatCount);
-  const r = p.workspace * RING_R1_SCALE;
-  const n = BACKEND_DISPLAY_V1.length;
-  for (let i = 0; i < n; i++) {
-    const a = -Math.PI / 2 + i * (Math.PI * 2 / Math.max(n, 1)) + 0.35;
-    const x = Math.cos(a) * r, z = Math.sin(a) * r, y = 1.05;
-    const focused = ringFocus.ring === 'r1' && ringFocus.index === i;
-    const pulse = reducedMotion ? 0 : 0.5 + 0.5 * Math.sin(t * 1.4 + i);
-    const emitBoost = focused ? 0.14 : 0.04 + 0.03 * pulse;
-    draw(CUBE, mul(mul(T(x, y, z), RY(a + Math.PI / 2)), S(0.55 * (focused ? 1.12 : 1), 0.12, 0.38 * (focused ? 1.12 : 1))), M.glass, { rough: 0.28, spec: [0.9, 0.92, 0.9], emit: emitBoost, alpha: 0.72 });
-    draw(TORUS, mul(T(x, y + 0.08, z), S(0.22 * (focused ? 1.2 : 1), 1, 0.22 * (focused ? 1.2 : 1))), focused ? M.energy : M.trace, { rough: 0.35, emit: focused ? 0.18 : 0.06, alpha: 0.55 });
-    for (let s = 1; s <= 5; s++) {
-      const q = s / 6;
-      const jitter = reducedMotion ? 0 : 0.02 * Math.sin(t * 2.2 + s + i);
-      const tx = x * (1 - q) + jitter, ty = y * (1 - q * 0.35) + 0.7 * q, tz = z * (1 - q);
-      const k = 0.08 * (1 - q * 0.4);
-      draw(SPH, mul(T(tx, ty, tz), S(k, k, k)), M.energy, { rough: 0.2, emit: 0.12 + 0.08 * pulse * (1 - q), alpha: 0.35 + 0.25 * (1 - q) });
-    }
-  }
+  return drawBackendDisplayRingModule({
+    profile,
+    seatCount,
+    ringScale: RING_R1_SCALE,
+    catalog: BACKEND_DISPLAY_V1,
+    ringFocus,
+    reducedMotion,
+    draw,
+    CUBE,
+    TORUS,
+    SPH,
+    T,
+    S,
+    RY,
+    mul,
+    M,
+  }, t);
 }
 function drawSeat(seat,index,t){const p=seatPos(seat),cfg=profile(seatCount),active=index===selectedSeat&&state!=='IDLE',engaged=active&&['FOCUS','ACTIVE','CONTRIBUTE'].includes(state),scale=cfg.seatScale,bob=(active?Math.sin(t*2.1)*.04:Math.sin(t*.7+index)*.012)*(reducedMotion?.2:1),hierLift=(hierarchyRuntime.openParentId===seatShellParentId(index)?SEAT_OPEN_LIFT*hierarchyRuntime.openAmount:0),y=p[1]+bob+hierLift;draw(CYL,mul(T(p[0],.27,p[2]),S(SEAT_BASE_RADIUS*scale,.44,SEAT_BASE_RADIUS*scale)),M.metal,{rough:.45,spec:[.8,.81,.77]});draw(TORUS,mul(T(p[0],.50,p[2]),S(.92*scale,1,.92*scale)),M.metal2,{rough:.3,spec:[.92,.92,.88]});{const L=heroMaterialContext(),Sm=authoredSeatShellMaterial(L),In=authoredSeatInsetMaterial(L);draw(AUTHORED_SEAT_SHELL,mul(mul(T(p[0],y,p[2]),RY(seat.a+Math.PI)),S(1.24*scale,1.12*scale,1.02*scale)),Sm.color,{rough:Sm.rough,spec:Sm.spec,emit:Sm.emit||0});draw(CYL,mul(mul(T(p[0],y+.08*scale,p[2]),RY(seat.a)),S(.98*scale,.55*scale,.98*scale)),In.color,{rough:In.rough,spec:In.spec});}draw(CYL,mul(mul(T(p[0],y+.47*scale,p[2]),RY(seat.a)),S(.62*scale,.12,.62*scale)),seat.accent,{rough:.25,spec:[.9,.9,.86],emit:engaged?.09:0});draw(TORUS,mul(T(p[0],y+.52*scale,p[2]),S(.40*scale,1,.40*scale)),engaged?M.energy:seat.accent,{rough:.22,emit:engaged?.28:.02,alpha:engaged?.88:.55});const nose=[p[0]+Math.cos(seat.a)*(.66*scale),y+.18*scale,p[2]+Math.sin(seat.a)*(.66*scale)];draw(CYL,mul(mul(T(...nose),RY(seat.a+Math.PI/2)),S(.15*scale,.45*scale,.15*scale)),M.metal2,{rough:.35,spec:[.88,.88,.84]});if(engaged){const pulse=reducedMotion?.65:.5+.5*Math.sin(t*4.2);draw(RING,mul(T(p[0],y+.66*scale,p[2]),S(.7*scale+.08*pulse,.7*scale+.08*pulse,.7*scale+.08*pulse)),M.energy,{rough:.18,emit:.12+.20*pulse,alpha:.27+.12*pulse})}drawHierarchyChildren(seat,index,t,y,scale);}
 function point(start,c1,c2,end,q){const u=1-q;return[u*u*u*start[0]+3*u*u*q*c1[0]+3*u*q*q*c2[0]+q*q*q*end[0],u*u*u*start[1]+3*u*u*q*c1[1]+3*u*q*q*c2[1]+q*q*q*end[1],u*u*u*start[2]+3*u*u*q*c1[2]+3*u*q*q*c2[2]+q*q*q*end[2]]}
