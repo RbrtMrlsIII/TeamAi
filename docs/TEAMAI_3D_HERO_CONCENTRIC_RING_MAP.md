@@ -11,7 +11,7 @@
 |-------|--------------------|--------|
 | **Center — Workspace** | Yes (Machine Interaction Contract §4.2) | Implemented (workspace ring + artifacts/traces) |
 | **Outer — Web AI Seats** | Yes (Contract §4.1; Seat Shell v1) | Implemented (seat ring + open hierarchy) |
-| **Intermediate rings** | **Not fully set** | **This document establishes the map** |
+| **Intermediate rings** | **Partially implemented** | **R1/R2 now have source-owned mechanical presentation modules; complete topology/choreography remains bounded work** |
 
 Whole-machine gears (subscription / discussion / coding / settings) remain mechanisms (Contract §4.3); they are **not** the same as the concentric intermediate rings below.
 
@@ -77,15 +77,15 @@ Radii increase with ring index. Exact numbers live in baseline §9 when measured
 | `drawWorkspaceZipskills` (`WORKSPACE_ZIPSKILLS_V1`) | R0 optional ZipSkills crown |
 | Contribution paths / traces | R0 ↔ R3 (R9) |
 | Seat ring `seatPos` / `drawSeat` | R3 |
-| Intermediate R1/R2 meshes | **Not yet** — sheet + stubs later |
+| Intermediate R1/R2 meshes | **Implemented-partial** — source-owned modules with mechanical presentation; complete service topology and final transform choreography remain later slices |
 | `MECHANISM_ZIPSKILLS` (legacy dictionary / e2e) | Reconcile toward `WORKSPACE_ZIPSKILLS` / workspace tree over time |
 
 ## 5. Implementation ladder (slice sequence)
 
 1. **This map** (docs) — PASS when merged.  
 2. Baseline § note + optional static test for ring IDs.  
-3. R1 presentation stubs (backend display faces + thread segments).  
-4. R2 setup/auth mechanical stubs (no durable auth).  
+3. R1 mechanical presentation owner (backend display faces + restrained service traces).  
+4. R2 setup/auth mechanical owner (no durable auth).  
 5. Reconcile legacy `MECHANISM_ZIPSKILLS` naming where tests allow.
 
 ## 6. Explicit non-goals (this slice)
@@ -94,6 +94,17 @@ Radii increase with ring index. Exact numbers live in baseline §9 when measured
 - No OAuth / API keys / Firestore writes  
 - No 029-released claim  
 - No change to Seat Shell v1 child order  
+
+## 6.5 Current Slice-D reconciliation
+
+Issue #396 Slice D now has concrete source owners for both intermediate rings:
+
+- R1: `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js`
+- R2: `frontend/spatial/hero-r2-setup-ring.js` → `public/hero-r2-setup-ring.js`
+- Canonical Hero remains the single WebGL renderer and retains small wrapper seams for existing assembly/apply contracts.
+- R1/R2 placement is derived from the active workspace envelope and catalog rather than a second coordinate authority.
+- These modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
+- Full R1 service topology, complete R2 mechanical choreography, and final electricity remain later work in #396.
 
 ## 7. Design principle
 
