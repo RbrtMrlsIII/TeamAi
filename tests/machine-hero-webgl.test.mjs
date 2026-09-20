@@ -45,9 +45,10 @@ test('canonical renderer owns the multi-module and wiring draw path', async () =
 test('Seat-1 child render path is owned by the canonical frame and is not recursive', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const childStart = renderer.indexOf('function renderSeat1ConnectionChild(');
+  const childBodyStart = renderer.indexOf('{', childStart) + 1;
   const childEnd = renderer.indexOf('\n  function renderSeat1AdjacentWiring', childStart);
-  assert.ok(childStart >= 0 && childEnd > childStart);
-  const childBody = renderer.slice(childStart, childEnd);
+  assert.ok(childStart >= 0 && childBodyStart > childStart && childEnd > childBodyStart);
+  const childBody = renderer.slice(childBodyStart, childEnd);
   assert.doesNotMatch(childBody, /renderSeat1ConnectionChild\s*\(/);
 
   const renderStart = renderer.indexOf('function render(timestamp = performance.now(), state = {})');
