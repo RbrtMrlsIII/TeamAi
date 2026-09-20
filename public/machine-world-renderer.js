@@ -13,6 +13,8 @@ import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-
 import { createMachineAnimation } from './machine-core-animation.js';
 import { deriveMachineSubject } from './machine-hero-scene.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
+import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
+import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 import { NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
@@ -196,6 +198,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
   const animation = createMachineAnimation({ duration: 950 });
   let targetExpanded = false;
   let branchId = 'HUB-CORE';
+  let lastSeat1AdjacentWiring = null;
   let disposed = false;
 
   function ensureBuffer(part) {
@@ -270,6 +273,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
 
     renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
+    renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
 
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
@@ -295,6 +299,74 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     canvas.dataset.seatConnectionDrawPath = 'canonical-machine-world';
     canvas.dataset.seatConnectionProof = 'semantic+geometry+edge+webgl';
     return child;
+  }
+
+  function renderSeat1AdjacentWiring(scene, selectedBranch, state, reducedMotion) {
+    lastSeat1AdjacentWiring = null;
+    if (selectedBranch !== 'BRANCH-SEAT-01' || !state?.hierarchyOpen) return;
+    const sourceAmount = clamp(finite(state.connectionBranchAmount, 0), 0, 1);
+    const targetAmount = clamp(finite(state.behaviorBranchAmount, 0), 0, 1);
+    const activeAmount = targetAmount > 0 ? targetAmount : sourceAmount;
+    if (activeAmount <= 0) return;
+
+    const shell = scene.byBranch.get('BRANCH-SEAT-01');
+    if (!shell) return;
+    const seatAngle = finite(shell.angle, 0);
+    const seatRadius = Math.hypot(finite(shell.center?.x, 0), finite(shell.center?.z, 0));
+
+    const sourceGeometry = buildSeatDivisionGeometry({
+      center: { x: shell.center.x, y: shell.level + 0.12, z: shell.center.z },
+      angle: seatAngle,
+      radialDistance: seatRadius,
+      payload: { labels: ['Connection', 'Health'], controls: ['configure'] },
+      workspaceTarget: { x: 0, y: 0.5, z: 0 },
+      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+    });
+    const targetGeometry = buildSeatDivisionGeometry({
+      center: {
+        x: shell.center.x - Math.cos(seatAngle) * 0.52,
+        y: shell.level + 0.30,
+        z: shell.center.z - Math.sin(seatAngle) * 0.52,
+      },
+      angle: seatAngle + Math.PI,
+      radialDistance: seatRadius,
+      payload: { labels: ['Behavior'], controls: ['configure'] },
+      workspaceTarget: { x: 0, y: 0.5, z: 0 },
+      id: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+    });
+
+    const wiring = buildAdjacentDivisionWiring({
+      sourceGeometry,
+      targetGeometry,
+      amount: sourceAmount,
+    });
+    const point = adjacentDivisionWiringPoint(wiring, activeAmount);
+
+    gl.useProgram(line);
+    gl.uniformMatrix4fv(lineP,false,projection);
+    gl.uniformMatrix4fv(lineV,false,view);
+    gl.uniformMatrix4fv(lineM,false,identity);
+    const route = new Float32Array([
+      wiring.from.projected.x,wiring.from.projected.y,wiring.from.projected.z,
+      point.x,point.y,point.z,
+    ]);
+    gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,route,gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(linePos);
+    gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
+    gl.uniform4f(lineColor,.36,.82,1,reducedMotion ? .38 : .62);
+    gl.drawArrays(gl.LINE_STRIP,0,2);
+
+    lastSeat1AdjacentWiring = Object.freeze({
+      id: wiring.id,
+      from: wiring.from.divisionId,
+      to: wiring.to.divisionId,
+      sourcePort: Object.freeze({ ...wiring.from.port }),
+      targetPort: Object.freeze({ ...wiring.to.port }),
+      amount: activeAmount,
+      phase: targetAmount > 0 ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
+      presentationOnly: true,
+    });
   }
 
   function render(timestamp = performance.now(), state = {}) {
@@ -471,6 +543,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       moduleCount: scene.parts.length,
       seatCount: scene.seatCount,
       subject: deriveMachineSubject(scene.parts, .2),
+      seat1AdjacentWiring: lastSeat1AdjacentWiring,
     });
   }
 
@@ -480,6 +553,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       targetExpanded = Boolean(value);
       animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
     },
+    getSeat1AdjacentWiring() { return lastSeat1AdjacentWiring; },
     dispose() { disposed = true; },
   });
 }
