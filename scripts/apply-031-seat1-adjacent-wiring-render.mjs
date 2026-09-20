@@ -22,12 +22,16 @@ const wiringBrowser = join(root, 'public/seat-adjacent-division-wiring.js');
 let text = readFileSync(heroPath, 'utf8');
 copyFileSync(wiringSource, wiringBrowser);
 
-const importAnchor = "import { drawSetupConfigRing } from './hero-r2-setup-ring.js';";
+const importAnchors = [
+  "import { drawSetupConfigRing } from './hero-r2-setup-ring.js';",
+  "import { drawSetupConfigRing as drawSetupConfigRingModule } from './hero-r2-setup-ring.js';",
+];
 if (!text.includes("from './seat-adjacent-division-wiring.js';")) {
-  if (!text.includes(importAnchor)) throw new Error('Hero module import anchor missing');
+  const importAnchor = importAnchors.find((anchor) => text.includes(anchor));
+  if (!importAnchor) throw new Error('Hero module import anchor missing');
   text = text.replace(
     importAnchor,
-    `${importAnchor}\nimport { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';`,
+    importAnchor + "\nimport { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';",
   );
 }
 
