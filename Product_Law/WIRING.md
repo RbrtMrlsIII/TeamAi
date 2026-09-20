@@ -59,7 +59,7 @@ The governance audit's `Draft proof target` parser is aligned to the repository'
 
 Product Law §15's chronological sequence is a program/release-gate ordering statement. It does not by itself prohibit bounded execution in separately owned development fields where Product Law already permits parallel work. Parallel work remains isolated by responsibility and does not create a second authority, bypass a release gate, or authorize promotion/completion claims outside the applicable Product Law, Masterplan, Issue, and human governance boundaries.
 
-This clarification belongs in Wiring as an execution-routing interpretation; it does not rewrite `Product_Law/PRODUCT_LAW.md`.
+This clarification is a non-authoritative Wiring interpretation only; it does not resolve, amend, reorder, or override `Product_Law/PRODUCT_LAW.md` §15.
 
 ## Current-slice authority consumption
 
