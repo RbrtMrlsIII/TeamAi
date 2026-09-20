@@ -28,6 +28,17 @@ This is the currently proven presentation hierarchy portion. It is **PARTIAL**, 
 
 This is a capability/responsibility presentation model. Skills instruct; policy and authorized contracts govern. This tree must never become entitlement or authorization.
 
+### Workspace R1 presentation ring
+
+The R1 backend-display ring is a **presentation-layer structure**, not a new semantic tree family. Its current implementation is partial and uses the existing backend display IDs plus two declared presentation relationships:
+
+- `WORKSPACE_BACKEND_THREAD#docs→rules`
+- `WORKSPACE_BACKEND_THREAD#rules→connect`
+
+The thread owner is `frontend/spatial/hero-r1-backend-threads.js` with the synchronized browser copy at `public/hero-r1-backend-threads.js`.
+
+These relationships are deterministic, presentation-only, fail closed when a referenced display identity is absent, and are routed outside the workspace center. They do **not** establish live backend service topology, OAuth, provider execution, entitlement, durable state, or final turn-loop electrical topology.
+
 ## 2. Tree identity and census maintenance
 
 Every intended tree must have a stable semantic `treeID` before the runtime treats it as an implementation identity. Every branch must have a stable `branchId` derived from semantic parentage.
