@@ -87,6 +87,7 @@ export function pointOnBackendThread(path, amount = 0) {
 export function deriveBackendPresentationThreadPaths({
   workspaceRadius = 1,
   ringScale = 1,
+  ringRadius = null,
   catalog = [],
   relationships = R1_BACKEND_PRESENTATION_THREADS_V1,
   bow = null,
@@ -95,14 +96,17 @@ export function deriveBackendPresentationThreadPaths({
   const placements = deriveBackendDisplayPlacements({
     workspaceRadius,
     ringScale,
+    ringRadius,
     catalog,
   });
   const placementById = new Map(placements.map((placement) => [placement.id, placement]));
   const resolved = resolveBackendPresentationThreads({ catalog, relationships });
   const safeSegments = clampInt(segments, 2, 24);
-  const ringRadius = Math.max(
+  const resolvedRingRadius = Math.max(
     0,
-    finite(workspaceRadius, 1) * Math.max(0, finite(ringScale, 1)),
+    ringRadius == null
+      ? finite(workspaceRadius, 1) * Math.max(0, finite(ringScale, 1))
+      : finite(ringRadius, 0),
   );
   const safeBow = bow == null
     ? Math.max(0.1, finite(workspaceRadius, 1) * 0.018)
@@ -123,7 +127,7 @@ export function deriveBackendPresentationThreadPaths({
         target: targetPlacement,
         sourceAngle,
         angleDelta,
-        ringRadius,
+        ringRadius: resolvedRingRadius,
         bow: safeBow,
       }, amount));
     });
@@ -138,7 +142,7 @@ export function deriveBackendPresentationThreadPaths({
       to: thread.to,
       presentationOnly: true,
       model: 'ring-arc',
-      ringRadius,
+      ringRadius: resolvedRingRadius,
       bow: safeBow,
       sourceAngle,
       angleDelta,
@@ -164,6 +168,7 @@ export function drawBackendDisplayThreads({
   profile,
   seatCount,
   ringScale,
+  ringRadius = null,
   catalog,
   ringFocus,
   reducedMotion,
@@ -181,6 +186,7 @@ export function drawBackendDisplayThreads({
   const paths = deriveBackendPresentationThreadPaths({
     workspaceRadius,
     ringScale,
+    ringRadius,
     catalog,
   });
   const thickness = Math.max(0.028, workspaceRadius * 0.0072);
