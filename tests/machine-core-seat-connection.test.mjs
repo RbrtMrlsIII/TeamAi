@@ -28,11 +28,12 @@ test('Seat-1 connection exposes one payload-driven adaptive expansion envelope',
     assert.ok(expanded.adaptive.current[axis] >= expanded.adaptive.collapsed[axis]);
     assert.ok(expanded.adaptive.current[axis] <= expanded.adaptive.expanded[axis]);
   }
-  assert.equal(expanded.geometry.dimensions.width, expanded.adaptive.expanded.x);
-  assert.equal(expanded.geometry.dimensions.depth, expanded.adaptive.expanded.z);
-  assert.equal(expanded.geometry.dimensions.height, expanded.adaptive.expanded.y);
+  assert.equal(expanded.geometry.dimensions.width, expanded.adaptive.current.x);
+  assert.equal(expanded.geometry.dimensions.depth, expanded.adaptive.current.z);
+  assert.equal(expanded.geometry.dimensions.height, expanded.adaptive.current.y);
   for (const axis of ['x', 'y', 'z']) {
     assert.equal(expanded.adaptive.current[axis], expanded.adaptive.expanded[axis]);
+    assert.ok(Number.isFinite(expanded.adaptive.current[axis]));
     assert.ok(collapsed.adaptive.current[axis] >= collapsed.adaptive.collapsed[axis]);
     assert.ok(collapsed.adaptive.current[axis] <= collapsed.adaptive.expanded[axis]);
   }
@@ -93,7 +94,7 @@ test('canonical Hero renders the existing Seat-1 semantic connection geometry', 
   for (const source of [hero, base]) {
     assert.match(source, /buildMachineCoreSeat1Connection/);
     assert.match(source, /TREE-HERO-SEAT#0:SEAT_SHELL/);
-    assert.match(source, /geometry\.dimensions/);
+    assert.match(source, /adaptive\.current/);
     assert.match(source, /drawSemanticSeat1Connection/);
     assert.doesNotMatch(source, /firestore|supabase|paypal|scheduler|oauth/i);
   }

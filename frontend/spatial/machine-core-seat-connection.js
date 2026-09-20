@@ -63,7 +63,11 @@ export function buildMachineCoreSeat1Connection({
     workspaceTarget,
   });
   const expansionProfile = deriveMachineExpansionProfile({
-    dimensions: geometry.dimensions,
+    dimensions: {
+      x: geometry.dimensions.width,
+      y: geometry.dimensions.height,
+      z: geometry.dimensions.depth,
+    },
     payload: divisionPayload,
   }, { clearance: geometry.clearance });
   const adaptiveDimensions = interpolateMachineDimensions(expansionProfile, amount);
