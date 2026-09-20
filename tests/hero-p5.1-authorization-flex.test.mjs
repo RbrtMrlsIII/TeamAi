@@ -28,9 +28,9 @@ test('hero-flex frame ticks authorization branch after hierarchy pose', () => {
   assert.ok(pose >= 0 && auth > pose);
 });
 
-test('hero-flex applies branchBoost for SEAT_AUTHORIZATION child', () => {
+test('canonical renderer receives AUTHORIZATION state from the controller', () => {
   const src = flex();
-  assert.match(src, /isAuthorization/);
+  assert.match(src, /machine-world-renderer\\.js/);
   assert.match(src, /getAuthorizationBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
   assert.match(src, /isCapabilities \|\| isAuthorization/);
 });
