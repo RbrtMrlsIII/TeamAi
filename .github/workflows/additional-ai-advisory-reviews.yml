@@ -151,6 +151,7 @@ jobs:
       credential_alias: ${{ matrix.credential_alias }}
       pr_number: ${{ needs.resolve_manual_slot.outputs.pr_number }}
       expected_head: ${{ needs.resolve_manual_slot.outputs.head_sha }}
+      start_delay_seconds: ${{ matrix.start_delay_seconds }}
       invocation_class: manual
       automatic_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-review -->'
