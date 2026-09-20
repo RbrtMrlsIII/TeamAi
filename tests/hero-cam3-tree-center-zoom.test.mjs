@@ -100,20 +100,17 @@ test('close returns to world nav behavior', () => {
   assert.equal(shouldApplyTreeNav(state), true);
 });
 
-test('assembly regenerates the canonical Hero with the continuous world camera helpers', async () => {
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-  const result = spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, encoding: 'utf8' });
-  assert.equal(result.status, 0, result.stderr || result.stdout);
+test('canonical renderer owns continuous world camera travel', async () => {
   const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  const engine = await readFile(new URL('../scripts/apply-cam2-tree-follow-flex.engine.mjs', import.meta.url), 'utf8');
-  assert.match(engine, /worldPullbackProgress/);
-  assert.match(engine, /blendCameraPose/);
-  assert.match(engine, /fitWorldOverviewDock/);
-  assert.match(hero, /worldPullbackProgress/);
-  assert.match(hero, /fitWorldOverviewDock/);
-  assert.match(hero, /blendCameraPose/);
-  assert.match(hero, /fitWorldOverviewDock\(/);
-  assert.match(hero, /worldEnvelopeRadius/);
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const sync = await readFile(new URL('../scripts/apply-cam2-tree-follow-flex.mjs', import.meta.url), 'utf8');
+  assert.match(hero, /machine-world-renderer\.js/);
+  assert.match(hero, /machineWorldRenderer\.render/);
+  assert.match(renderer, /worldPullbackProgress/);
+  assert.match(renderer, /blendCameraPose/);
+  assert.match(renderer, /NAV_ZOOM_MAX/);
+  assert.match(sync, /byte-for-byte parity|parity/i);
+  assert.doesNotMatch(sync, /apply-cam2-tree-follow-flex\.engine/);
 });
 
 test('module and contract stay presentation-only', async () => {
