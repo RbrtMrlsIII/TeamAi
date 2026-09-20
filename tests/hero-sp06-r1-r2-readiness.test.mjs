@@ -38,12 +38,14 @@ test('SP-06 R1 catalog + scale have a concrete Slice-D renderer owner', async ()
   assert.doesNotMatch(r1, /oauth|password|apiKey|firebase\.auth|supabase/i);
 });
 
-test('SP-06 R2 has named draw owner module + fill constants', async () => {
+test('SP-06 R2 has named draw owner module + canonical caller scale', async () => {
   await access(join(root, 'public/hero-r2-setup-ring.js'));
   const src = await readFile(join(root, 'public/hero-r2-setup-ring.js'), 'utf8');
+  const hero = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
   assert.match(src, /drawSetupConfigRing/);
-  assert.match(src, /RING_R2_SCALE/);
-  assert.match(src, /presentation only|not auth authority/i);
+  assert.match(src, /presentation only|authoritative ring scale/i);
+  assert.match(hero, /drawSetupConfigRingModule/);
+  assert.match(hero, /ringScale: RING_R2_SCALE/);
   assert.ok(RING_R2_SCALE > RING_R1_SCALE);
   assert.ok(SETUP_RING_FILL_MS > 0);
   assert.ok(SETUP_CONFIG_V1.length >= 3);
