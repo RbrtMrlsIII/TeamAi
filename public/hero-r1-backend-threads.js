@@ -20,10 +20,11 @@ const clampInt = (value, min, max) =>
 const distance3 = (a, b) =>
   Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z);
 
-const normalizeRadial = (point, fallback) => {
-  const length = Math.hypot(point.x, point.z);
-  if (length > 0.000001) return { x: point.x / length, z: point.z / length };
-  return fallback;
+const wrapAngle = (angle) => {
+  let value = angle;
+  while (value <= -Math.PI) value += Math.PI * 2;
+  while (value > Math.PI) value -= Math.PI * 2;
+  return value;
 };
 
 export const R1_BACKEND_PRESENTATION_THREADS_V1 = Object.freeze([
@@ -61,14 +62,25 @@ export function resolveBackendPresentationThreads({
 
 export function pointOnBackendThread(path, amount = 0) {
   const t = clamp(amount, 0, 1);
-  const u = 1 - t;
-  const a = path?.source || { x: 0, y: 0, z: 0 };
-  const c = path?.control || a;
-  const b = path?.target || a;
+  const source = path?.source || { x: 0, y: 0, z: 0 };
+  const target = path?.target || source;
+  const sourceAngle = finite(path?.sourceAngle, Math.atan2(source.z, source.x));
+  const angleDelta = finite(
+    path?.angleDelta,
+    wrapAngle(Math.atan2(target.z, target.x) - sourceAngle),
+  );
+  const ringRadius = Math.max(
+    0,
+    finite(path?.ringRadius, Math.hypot(source.x, source.z)),
+  );
+  const bow = Math.max(0, finite(path?.bow, 0));
+  const radius = ringRadius + bow * Math.sin(Math.PI * t) ** 2;
+  const angle = sourceAngle + angleDelta * t;
+  const y = source.y + (target.y - source.y) * t;
   return {
-    x: u * u * a.x + 2 * u * t * c.x + t * t * b.x,
-    y: u * u * a.y + 2 * u * t * c.y + t * t * b.y,
-    z: u * u * a.z + 2 * u * t * c.z + t * t * b.z,
+    x: radius * Math.cos(angle),
+    y,
+    z: radius * Math.sin(angle),
   };
 }
 
@@ -77,7 +89,7 @@ export function deriveBackendPresentationThreadPaths({
   ringScale = 1,
   catalog = [],
   relationships = R1_BACKEND_PRESENTATION_THREADS_V1,
-  bend = null,
+  bow = null,
   segments = 8,
 } = {}) {
   const placements = deriveBackendDisplayPlacements({
@@ -88,33 +100,33 @@ export function deriveBackendPresentationThreadPaths({
   const placementById = new Map(placements.map((placement) => [placement.id, placement]));
   const resolved = resolveBackendPresentationThreads({ catalog, relationships });
   const safeSegments = clampInt(segments, 2, 24);
-  const safeBend = bend == null
-    ? Math.max(0.14, finite(workspaceRadius, 1) * 0.052)
-    : Math.max(0, finite(bend, 0.24));
+  const ringRadius = Math.max(
+    0,
+    finite(workspaceRadius, 1) * Math.max(0, finite(ringScale, 1)),
+  );
+  const safeBow = bow == null
+    ? Math.max(0.1, finite(workspaceRadius, 1) * 0.018)
+    : Math.max(0, finite(bow, 0.12));
 
   return resolved.map((thread) => {
     const sourcePlacement = placementById.get(thread.from);
     const targetPlacement = placementById.get(thread.to);
     if (!sourcePlacement || !targetPlacement) return null;
 
-    const midpoint = {
-      x: (sourcePlacement.x + targetPlacement.x) * 0.5,
-      y: (sourcePlacement.y + targetPlacement.y) * 0.5 + 0.12,
-      z: (sourcePlacement.z + targetPlacement.z) * 0.5,
-    };
-    const sourceRadial = normalizeRadial(sourcePlacement, { x: 1, z: 0 });
-    const radial = normalizeRadial(midpoint, sourceRadial);
-    const control = {
-      x: midpoint.x + radial.x * safeBend,
-      y: midpoint.y,
-      z: midpoint.z + radial.z * safeBend,
-    };
-    const points = Array.from({ length: safeSegments + 1 }, (_, index) =>
-      Object.freeze(pointOnBackendThread(
-        { source: sourcePlacement, control, target: targetPlacement },
-        index / safeSegments,
-      )),
-    );
+    const sourceAngle = Math.atan2(sourcePlacement.z, sourcePlacement.x);
+    const targetAngle = Math.atan2(targetPlacement.z, targetPlacement.x);
+    const angleDelta = wrapAngle(targetAngle - sourceAngle);
+    const points = Array.from({ length: safeSegments + 1 }, (_, index) => {
+      const amount = index / safeSegments;
+      return Object.freeze(pointOnBackendThread({
+        source: sourcePlacement,
+        target: targetPlacement,
+        sourceAngle,
+        angleDelta,
+        ringRadius,
+        bow: safeBow,
+      }, amount));
+    });
     const length = points.slice(1).reduce(
       (sum, point, index) => sum + distance3(points[index], point),
       0,
@@ -125,6 +137,11 @@ export function deriveBackendPresentationThreadPaths({
       from: thread.from,
       to: thread.to,
       presentationOnly: true,
+      model: 'ring-arc',
+      ringRadius,
+      bow: safeBow,
+      sourceAngle,
+      angleDelta,
       source: Object.freeze({
         x: sourcePlacement.x,
         y: sourcePlacement.y,
@@ -137,7 +154,6 @@ export function deriveBackendPresentationThreadPaths({
         z: targetPlacement.z,
         index: targetPlacement.index,
       }),
-      control: Object.freeze(control),
       points,
       length,
     });
