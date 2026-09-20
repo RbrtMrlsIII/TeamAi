@@ -48,7 +48,7 @@ Rebaseline the canonical session/planning records and Issue topology against mer
 
 ## Current slice boundary
 
-Issue #394 owns only baseline/Issue-topology reconciliation. Its implementation is complete in PR #395 and it remains current only for merge/closure bookkeeping. #393 is fully absorbed into the same PR and is not a parallel execution stream. This slice does not absorb #278, #360, #284, #204, #83, or #392, and creates no 029 release, C9/C10, or backend completion claim.
+Issue #394 owns only baseline/Issue-topology reconciliation. Its implementation is complete in PR #395 and it remains current only for merge/closure bookkeeping. #393 is fully absorbed into the same PR and is not a parallel execution stream. This slice does not absorb #278, #360, #284, #204, #83, or #392, and creates no 029 release, C9/C10, or backend completion claim. Product Law §15 remains unchanged and authoritative; #394 closure does not endorse TEAM-BACKEND-001 completion or reorder the governed program/release sequence.
 
 
 ## Current blocker
