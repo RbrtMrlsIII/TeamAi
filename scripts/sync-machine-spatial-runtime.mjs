@@ -22,6 +22,7 @@ const files = [
   'hero-r2-setup-ring.js',
   'machine-world-renderer.js',
   'machine-seat-division-presentation.js',
+  'machine-energy-flow.js',
 ];
 
 for (const file of files) {
