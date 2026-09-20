@@ -14,6 +14,8 @@ export const OPEN_DURATION_MS = 520;
 export const CLOSE_DURATION_MS = 420;
 /** P1: SEAT_CONNECTION branch expand duration — §9 home. */
 export const CONNECTION_BRANCH_MS = 380;
+/** Compact the active division before changing semantic division focus. */
+export const DIVISION_FOCUS_CLOSE_MS = 240;
 /** P2: SEAT_BEHAVIOR branch expand duration — §9 home. */
 export const BEHAVIOR_BRANCH_MS = 360;
 /** P3: SEAT_TOOLKIT branch expand duration — optional equip face. */
@@ -65,6 +67,7 @@ export const HIERARCHY_PHASE = {
   OPENING: 'opening',
   OPEN: 'open',
   CLOSING: 'closing',
+  DIVISION_CLOSING: 'division_closing',
 };
 
 export const HIERARCHY_INPUT = {
@@ -127,6 +130,9 @@ export function createHierarchyRuntime(seed = {}) {
     openParentId: seed.openParentId ?? null,
     focusedChildId: seed.focusedChildId ?? null,
     focusedLeafId: seed.focusedLeafId ?? null,
+    divisionClosingChildId: seed.divisionClosingChildId ?? null,
+    divisionPendingChildId: seed.divisionPendingChildId ?? null,
+    divisionCloseStartMs: seed.divisionCloseStartMs ?? 0,
     phase: seed.phase ?? HIERARCHY_PHASE.REST,
     openAmount: seed.openAmount ?? 0,
     phaseStartMs: seed.phaseStartMs ?? 0,
@@ -160,6 +166,8 @@ export function closeHierarchyParent(state, opts = {}) {
   const now = opts.nowMs ?? 0;
   state.focusedLeafId = null;
   state.focusedChildId = null;
+  state.divisionClosingChildId = null;
+  state.divisionPendingChildId = null;
   state.connectionBranchAmount = 0;
   state.connectionBranchStartMs = now;
   state.behaviorBranchAmount = 0;
@@ -649,6 +657,8 @@ export function openSeatShellParent(state, seatIndex, opts = {}) {
   const snap = Boolean(opts.snap);
   const now = opts.nowMs ?? 0;
   state.openParentId = seatShellParentId(index);
+  state.divisionClosingChildId = null;
+  state.divisionPendingChildId = null;
   state.selectedSeatIndex = index;
   state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
   state.focusedLeafId = null;
@@ -688,10 +698,18 @@ export function childLocalPosition(seatAngle, seatRadius, index, openAmount = 1)
 export function focusChild(state, childId, opts = {}) {
   if (!state.openParentId) return state;
   if (!SEAT_SHELL_V1_CHILDREN.includes(childId)) return state;
-  state.focusedChildId = childId;
-  state.focusedLeafId = null;
   const now = opts.nowMs ?? 0;
   const snap = Boolean(opts.snap);
+  if (opts.interactive === true && state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && opts.nowMs != null && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)) {
+    state.divisionClosingChildId = state.focusedChildId;
+    state.divisionPendingChildId = childId;
+    state.divisionCloseStartMs = now;
+    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;
+    state.focusedLeafId = null;
+    return state;
+  }
+  state.focusedChildId = childId;
+  state.focusedLeafId = null;
   if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
     state.connectionBranchStartMs = now;
     state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
@@ -763,6 +781,50 @@ export function focusChild(state, childId, opts = {}) {
     state.authorizationBranchAmount = 0;
     state.workspaceScopeBranchAmount = 0;
     state.taskEvidenceBranchAmount = 0;
+  }
+  return state;
+}
+
+function resetDivisionBranchAmounts(state) {
+  state.connectionBranchAmount = 0;
+  state.behaviorBranchAmount = 0;
+  state.toolkitBranchAmount = 0;
+  state.capabilitiesBranchAmount = 0;
+  state.authorizationBranchAmount = 0;
+  state.workspaceScopeBranchAmount = 0;
+  state.taskEvidenceBranchAmount = 0;
+}
+
+export function tickDivisionFocusTransition(state, nowMs, reducedMotion = false) {
+  if (state.phase !== HIERARCHY_PHASE.DIVISION_CLOSING || !state.divisionClosingChildId) return state;
+  const now = nowMs ?? 0;
+  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+    const pending = state.divisionPendingChildId;
+    state.divisionClosingChildId = null;
+    state.divisionPendingChildId = null;
+    resetDivisionBranchAmounts(state);
+    state.phase = HIERARCHY_PHASE.OPEN;
+    return focusChild(state, pending, { nowMs: now, snap: true, allowTransition: false });
+  }
+  const progress = Math.min((now - (state.divisionCloseStartMs ?? now)) / DIVISION_FOCUS_CLOSE_MS, 1);
+  const amount = 1 - smoothstep(progress);
+  switch (state.divisionClosingChildId) {
+    case HIERARCHY_PART.SEAT_CONNECTION: state.connectionBranchAmount = amount; break;
+    case HIERARCHY_PART.SEAT_BEHAVIOR: state.behaviorBranchAmount = amount; break;
+    case HIERARCHY_PART.SEAT_TOOLKIT: state.toolkitBranchAmount = amount; break;
+    case HIERARCHY_PART.SEAT_CAPABILITIES: state.capabilitiesBranchAmount = amount; break;
+    case HIERARCHY_PART.SEAT_AUTHORIZATION: state.authorizationBranchAmount = amount; break;
+    case HIERARCHY_PART.SEAT_WORKSPACE_SCOPE: state.workspaceScopeBranchAmount = amount; break;
+    case HIERARCHY_PART.SEAT_TASK_EVIDENCE: state.taskEvidenceBranchAmount = amount; break;
+    default: resetDivisionBranchAmounts(state); break;
+  }
+  if (progress >= 1) {
+    const pending = state.divisionPendingChildId;
+    state.divisionClosingChildId = null;
+    state.divisionPendingChildId = null;
+    resetDivisionBranchAmounts(state);
+    state.phase = HIERARCHY_PHASE.OPEN;
+    return focusChild(state, pending, { nowMs: now, snap: false, allowTransition: false });
   }
   return state;
 }
