@@ -108,8 +108,9 @@ export function deriveBackendPresentationThreadPaths({
       ? finite(workspaceRadius, 1) * Math.max(0, finite(ringScale, 1))
       : finite(ringRadius, 0),
   );
+  const articulation = clamp(articulationAmount, 0, 1);
   const safeBow = bow == null
-    ? Math.max(0.1, finite(workspaceRadius, 1) * 0.018)
+    ? Math.max(0.1, finite(workspaceRadius, 1) * (0.012 + 0.006 * articulation))
     : Math.max(0, finite(bow, 0.12));
 
   return resolved.map((thread) => {
@@ -169,6 +170,7 @@ export function drawBackendDisplayThreads({
   seatCount,
   ringScale,
   ringRadius = null,
+  articulationAmount = 1,
   catalog,
   ringFocus,
   reducedMotion,
