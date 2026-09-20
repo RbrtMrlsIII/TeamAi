@@ -12,6 +12,7 @@ const files = [
   'machine-hero-payload.js',
   'machine-hero-adaptive-geometry.js',
   'machine-hero-topology.js',
+  'hero-environment.js',
 ];
 
 for (const file of files) {
