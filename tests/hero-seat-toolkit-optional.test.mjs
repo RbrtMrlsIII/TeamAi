@@ -25,10 +25,11 @@ test('accessible name denies entitlement / required setup', () => {
   assert.doesNotMatch(name, /authorized|entitled|must configure/i);
 });
 
-test('hero-flex wires toolkit label and draw path', () => {
+test('Hero controller exposes toolkit semantics without owning its geometry', () => {
   assert.match(hero, /SEAT_TOOLKIT/);
   assert.match(hero, /toolkitChildAccessibleName/);
-  assert.match(hero, /isToolkit/);
+  assert.match(hero, /getToolkitBranchAmount/);
+  assert.match(hero, /machine-world-renderer\.js/);
 });
 
 test('seat shell sheet marks toolkit optional', () => {
