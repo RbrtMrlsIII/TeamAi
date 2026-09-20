@@ -5,12 +5,14 @@
 const TAU = Math.PI * 2;
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
-const DEFAULT_ITEMS = Object.freeze([
+export const SETUP_CONFIG_V1 = Object.freeze([
   Object.freeze({ id: 'WORKSPACE_SETUP_ENGINE#core', label: 'Setup engine', kind: 'engine' }),
   Object.freeze({ id: 'WORKSPACE_AUTH_MECHANISM#login', label: 'Login mechanism', kind: 'auth' }),
   Object.freeze({ id: 'WORKSPACE_AUTH_MECHANISM#register', label: 'Register mechanism', kind: 'auth' }),
-  Object.freeze({ id: 'WORKSPACE_CONFIG_BRANCH#primary', label: 'Config branch', kind: 'branch' }),
+  Object.freeze({ id: 'WORKSPACE_CONFIG_BRANCH#prefs', label: 'Config branch', kind: 'config' }),
 ]);
+
+const DEFAULT_ITEMS = SETUP_CONFIG_V1;
 
 export function resolveSetupConfigItems(items = DEFAULT_ITEMS) {
   return Array.isArray(items) && items.length ? items : DEFAULT_ITEMS;
