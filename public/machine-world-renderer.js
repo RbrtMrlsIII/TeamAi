@@ -13,6 +13,8 @@ import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-
 import { createMachineAnimation } from './machine-core-animation.js';
 import { deriveMachineSubject } from './machine-hero-scene.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
+import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
+import { NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
 
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
@@ -211,8 +213,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
 
   function fitWorldCamera(scene, viewport, cameraId) {
     const subject = deriveMachineSubject(scene.parts, 0.2);
-    const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
-    const selected = resolveBranchCamera(scene, effectiveCameraId) || resolveBranchCamera(scene, 'HUB-CORE') || scene.cameras[0];
+    const selected = resolveBranchCamera(scene, cameraId) || resolveBranchCamera(scene, 'HUB-CORE') || scene.cameras[0];
     const span = subject ? Math.max(subject.max.x - subject.min.x, subject.max.z - subject.min.z) : 1;
     const distance = clamp(span * 1.12 + 6, 10, 22);
     const target = selected?.target || subject?.center || {x:0,y:.5,z:0};
@@ -258,18 +259,39 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     const selectedSeat = clamp(Math.floor(Number(state.selectedSeat) || 0), 0, seatCount - 1);
     branchId = state.branchId || `BRANCH-SEAT-${String(selectedSeat+1).padStart(2,'0')}`;
     const scene = createBranchConnectionCore({ seatCount, expansionAmount: sample.amount });
-
-    perspective(projection, fitWorldCamera(scene,{width,height},branchId).fov,width/Math.max(1,height),.1,120);
+    const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
     const cameraSpec = fitWorldCamera(scene,{width,height},effectiveCameraId);
-    const orbit = reducedMotion ? 0 : finite(state.navOrbitYaw, 0) + now*.000035;
-    const target = cameraSpec.target;
-    const radius = Math.max(8,cameraSpec.radius * clamp(finite(state.navZoom,1),.78,2.0));
+    const zoom = clamp(finite(state.navZoom,1),.78,NAV_ZOOM_MAX);
+    const pullback = hierarchyOpen ? worldPullbackProgress(zoom, NAV_ZOOM_MAX) : 0;
+    const subjectTarget = cameraSpec.target;
+    const subjectRadius = cameraSpec.radius * clamp(zoom,.78,1);
+    const subjectPose = {
+      p: [
+        subjectTarget.x + Math.sin(cameraSpec.bearing + finite(state.navOrbitYaw,0)) * subjectRadius * .82,
+        subjectTarget.y + cameraSpec.pitch + finite(state.navOrbitPitch,0) * 4.0,
+        subjectTarget.z + Math.cos(cameraSpec.bearing + finite(state.navOrbitYaw,0)) * subjectRadius,
+      ],
+      t: [subjectTarget.x,subjectTarget.y,subjectTarget.z],
+      f: cameraSpec.fov,
+    };
+    const worldRadius = Math.max(cameraSpec.radius, Math.min(30, cameraSpec.radius * 1.72));
+    const worldPose = {
+      p: [
+        scene.hub.center.x + Math.sin(cameraSpec.bearing) * worldRadius * .82,
+        scene.hub.center.y + Math.max(4.4, worldRadius*.34),
+        scene.hub.center.z + Math.cos(cameraSpec.bearing) * worldRadius,
+      ],
+      t: [scene.hub.center.x,scene.hub.center.y,scene.hub.center.z],
+      f: Math.min(50, cameraSpec.fov + 2),
+    };
+    const cameraPose = blendCameraPose(subjectPose, worldPose, pullback);
     const eye = [
-      target.x + Math.sin(cameraSpec.bearing + orbit) * radius * .82,
-      target.y + cameraSpec.pitch + finite(state.navOrbitPitch,0) * 4.0,
-      target.z + Math.cos(cameraSpec.bearing + orbit) * radius,
+      cameraPose.p[0],
+      cameraPose.p[1],
+      cameraPose.p[2],
     ];
-    lookAt(view,eye,[target.x,target.y,target.z]);
+    lookAt(view,eye,cameraPose.t);
+    perspective(projection,cameraPose.f,width/Math.max(1,height),.1,120);
 
     gl.useProgram(star);
     gl.uniformMatrix4fv(starP,false,projection);
