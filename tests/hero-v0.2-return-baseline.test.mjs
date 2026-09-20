@@ -46,10 +46,11 @@ test('V0.2 flex closeHierarchyParent restores baseline', async () => {
   assert.match(src, /function closeHierarchyParent\(\)\{ \/\* V0\.2 close baseline \*\//);
 });
 
-test('V0.2 imports WORLD_BASELINE_DOCK_ID from cam2', async () => {
+test('V0.2 controller delegates rendering after baseline reset', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /WORLD_BASELINE_DOCK_ID/);
-  assert.match(src, /from '\.\/hero-cam2-tree-follow\.js'/);
+  assert.match(src, /createMachineWorldRenderer/);
+  assert.match(src, /machineLayer/);
+  assert.doesNotMatch(src, /WORLD_BASELINE_DOCK_ID/);
 });
 
 test('V0.2 canonical source owns return-to-baseline directly', async () => {
