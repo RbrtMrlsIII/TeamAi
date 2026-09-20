@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-test('Cam-2 assembler declares lastNavBaseCameraId when B/C6 camera patch is present', async () => {
-  const source = await readFile(new URL('../scripts/apply-cam2-tree-follow-flex.engine.mjs', import.meta.url), 'utf8');
-  assert.match(source, /lastNavBaseCameraId/);
-  assert.match(source, /if \(!t\.includes\('lastNavBaseCameraId'\)\)/);
+
+test('Cam-2 compatibility command no longer depends on a mutation engine', async () => {
+  const apply = await readFile(new URL('../scripts/apply-cam2-tree-follow-flex.mjs', import.meta.url), 'utf8');
+  assert.match(apply, /hero-flex\.base\.js/);
+  assert.doesNotMatch(apply, /apply-cam2-tree-follow-flex\.engine/);
+  assert.doesNotMatch(apply, /fetch\(/);
 });
