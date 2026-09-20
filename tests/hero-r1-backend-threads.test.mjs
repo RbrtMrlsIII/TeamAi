@@ -72,9 +72,9 @@ test('R1 thread paths are deterministic and route outside the workspace center',
     assert.ok(path.length > 0);
     assert.equal(path.presentationOnly, true);
     const mid = pointOnBackendThread(path, 0.5);
-    const controlRadius = Math.hypot(path.control.x, path.control.z);
     const midpointRadius = Math.hypot(mid.x, mid.z);
-    assert.ok(controlRadius >= midpointRadius);
+    assert.ok(midpointRadius >= path.ringRadius);
+    assert.ok(path.ringRadius > 5.95);
     assert.equal(path.points.length, 9);
   }
 });
@@ -82,7 +82,7 @@ test('R1 thread paths are deterministic and route outside the workspace center',
 test('R1 thread owner stays synchronized and canonical Hero calls it', () => {
   assert.equal(source, publicModule);
   assert.match(hero, /drawBackendDisplayThreadsModule/);
-  assert.match(hero, /drawBackendDisplayThreads(now\/1000\)/);
+  assert.match(hero, /drawBackendDisplayThreads\(now\/1000\)/);
   assert.match(hero, /ringScale: RING_R1_SCALE/);
 });
 
