@@ -66,6 +66,9 @@ test('029 Slice A runtime wiring and source/public sync are explicit', async () 
   assert.match(hero, /seatFootprintRadius:SEAT_BASE_RADIUS\*p\.seatScale/);
   assert.doesNotMatch(hero, /function floor\(\)\{/);
   assert.doesNotMatch(hero, /floor\(\);environment\(/);
+  assert.doesNotMatch(hero, /S\\(36,36,36\\)/);
+  assert.match(hero, /worldMode=isMachineWorldLayer\\(shell\\)/);
+  assert.match(hero, /M\.space\[0\]/);
   assert.equal(runtime, source);
   assert.match(sync, /'hero-environment\.js'/);
 });
