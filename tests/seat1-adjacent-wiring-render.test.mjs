@@ -18,3 +18,20 @@ test('Seat-1 adjacent wiring follows sequential expansion phases', () => {
   assert.match(rendererScript, /phase: targetAmount > 0 \? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE'/);
   assert.match(rendererScript, /hierarchyRuntime\.seat1AdjacentWiring = null/);
 });
+
+test('adjacent 029 injectors tolerate the canonical R2 module alias', () => {
+  const expansionScript = readFileSync(
+    new URL('../scripts/apply-029-adjacent-division-expansion-render.mjs', import.meta.url),
+    'utf8',
+  );
+  for (const source of [rendererScript, expansionScript]) {
+    assert.match(
+      source,
+      /import \{ drawSetupConfigRing \} from ['"]\.\/hero-r2-setup-ring\.js['"];/,
+    );
+    assert.match(
+      source,
+      /import \{ drawSetupConfigRing as drawSetupConfigRingModule \} from ['"]\.\/hero-r2-setup-ring\.js['"];/,
+    );
+  }
+});
