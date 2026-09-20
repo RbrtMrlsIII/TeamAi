@@ -63,12 +63,14 @@ test('V0.3 isSeatShellOpen gates product subject', () => {
   assert.equal(isSeatShellOpen(state.openParentId), false);
 });
 
-test('V0.3 applied flex still wires force seatDock (Cam-6 + V0.2 coexist)', async () => {
+test('V0.3 controller keeps selected-seat subject locking as its boundary', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
+  const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
   assert.match(src, /force:\s*true/);
-  assert.match(src, /seatDock/);
   assert.match(src, /resolveSelectedSeatDock/);
-  assert.match(src, /WORLD_BASELINE_DOCK_ID|V0\.2 return baseline/);
+  assert.match(src, /getSubjectLockSnapshot/);
+  assert.match(renderer, /cameraSpec\.target/);
+  assert.match(renderer, /navOrbitYaw/);
 });
 
 test('V0.3 dockTowardSeat never uses world-origin look-at for ring seats', () => {
