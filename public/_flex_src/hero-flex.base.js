@@ -627,6 +627,7 @@ function frame(now) {
     connectionBranchAmount: getConnectionBranchAmount(hierarchyRuntime),
     behaviorBranchAmount: getBehaviorBranchAmount(hierarchyRuntime),
     hierarchyPhase: hierarchyRuntime.phase,
+    machineLayer: shell.dataset.heroLayer === 'machine',
   });
 
   requestAnimationFrame(frame);
