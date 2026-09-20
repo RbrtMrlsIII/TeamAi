@@ -16,10 +16,10 @@ import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.
 import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
-import { drawBackendDisplayRing } from './hero-r1-backend-display.js';
+import { BACKEND_DISPLAY_V1, drawBackendDisplayRing } from './hero-r1-backend-display.js';
 import { drawBackendDisplayThreads } from './hero-r1-backend-threads.js';
-import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
-import { BACKEND_DISPLAY_V1, RING_R1_SCALE, RING_R2_SCALE, SETUP_CONFIG_V1, NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
+import { SETUP_CONFIG_V1, drawSetupConfigRing } from './hero-r2-setup-ring.js';
+import { RING_R1_SCALE, RING_R2_SCALE, NAV_ZOOM_MAX } from './hero-world-contract.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
