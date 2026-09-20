@@ -78,6 +78,16 @@
       <allocationRule>Agent count changes Responsibility Unit allocation, not the underlying common skill catalog.</allocationRule>
     </tree>
   </treeFamilies>
+  <presentationRings>
+    <ring id="R1" status="implemented-partial" presentationOnly="true" finalServiceTopology="not-complete">
+      <owner>frontend/spatial/hero-r1-backend-threads.js</owner>
+      <browserOwner>public/hero-r1-backend-threads.js</browserOwner>
+      <thread id="WORKSPACE_BACKEND_THREAD#docs→rules" from="WORKSPACE_BACKEND_DISPLAY#docs" to="WORKSPACE_BACKEND_DISPLAY#rules" />
+      <thread id="WORKSPACE_BACKEND_THREAD#rules→connect" from="WORKSPACE_BACKEND_DISPLAY#rules" to="WORKSPACE_BACKEND_DISPLAY#connect" />
+      <topologyAuthority>presentation relationship only; not the backend service graph</topologyAuthority>
+      <failClosed>missing source or target display identity</failClosed>
+    </ring>
+  </presentationRings>
   <crossTreeConfiguration>
     <turnConfiguration owner="TREE-ORCHESTRATION/scheduler" status="defined-not-implementation-complete">
       <control>participating Seats</control>
