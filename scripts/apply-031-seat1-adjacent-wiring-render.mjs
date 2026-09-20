@@ -40,12 +40,17 @@ if (!text.includes('function drawSeat1AdjacentDivisionWiring(')) {
   text = text.slice(0, at) + fn + text.slice(at);
 }
 
-const callAnchor = '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);';
-if (!text.includes(callAnchor)) throw new Error('branch render anchor missing');
-if (!text.includes('drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, cx, cy, cz, seat, shellY, scale, seatAngle: seat.a });')) {
+const callAnchors = [
+  '      drawHealthLeaf(seat, index, shellY, scale, healthCenter?.x ?? cx, healthCenter?.y ?? cy, healthCenter?.z ?? cz);',
+  '      drawHealthLeaf(seat, index, shellY, scale, cx, cy, cz);',
+];
+const callAnchor = callAnchors.find((anchor) => text.includes(anchor));
+const alreadyIntegrated = text.includes('drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, cx, cy, cz, seat, shellY, scale, seatAngle: seat.a });');
+if (!callAnchor && !alreadyIntegrated) throw new Error('branch render anchor missing');
+if (!alreadyIntegrated) {
   text = text.replace(
     callAnchor,
-    `${callAnchor}\n      if (index === 0) drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, cx, cy, cz, seat, shellY, scale, seatAngle: seat.a });`,
+    callAnchor + '\n      if (index === 0) drawSeat1AdjacentDivisionWiring({ draw, CUBE, T, S, RY, M, cx, cy, cz, seat, shellY, scale, seatAngle: seat.a });',
   );
 }
 
