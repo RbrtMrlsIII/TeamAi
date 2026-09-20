@@ -66,7 +66,6 @@ export function mountMachineCoreVisual(root = globalThis.document) {
 
   select?.addEventListener('change', () => {
     branchId = select.value || 'HUB-CORE';
-    render(performance.now());
   });
   panel.querySelector('[data-core-expand]')?.addEventListener('click', () => setExpanded(true));
   panel.querySelector('[data-core-reset]')?.addEventListener('click', () => {
