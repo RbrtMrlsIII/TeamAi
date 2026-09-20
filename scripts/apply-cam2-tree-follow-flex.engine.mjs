@@ -78,10 +78,15 @@ function applyPatches(t) {
   // The destination is fit from the current machine envelope and viewport.
   const seatDockNav = "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\n  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n    const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n    if (seatDock) base = seatDock;\n  }\n  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });";
   const seatDockNavC6 = "let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);\nlet baseId = hierarchyRuntime.openParentId ? (cameraId || 'HERO_WIDE') : 'HERO_WIDE';\nif (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {\n  const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });\n  if (seatDock) base = seatDock;\n}\nconst subjectPose = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });\nconst p = profile(seatCount);\nconst worldEnvelopeRadius = Math.max(p.workspace + 1, p.seatRadius + (typeof SEAT_BASE_RADIUS === 'number' ? SEAT_BASE_RADIUS * p.seatScale : 1.9)) + 0.2;\nconst worldPose = fitWorldOverviewDock(table.HERO_WIDE || table.SEAT_CLOSE, worldEnvelopeRadius, viewW / Math.max(1, viewH));\nconst worldPullback = hierarchyRuntime.openParentId ? worldPullbackProgress(navZoom, NAV_ZOOM_MAX) : 0;\nlastNavBaseCameraId = worldPullback >= 1 || !hierarchyRuntime.openParentId ? 'HERO_WIDE' : baseId;\ncamera = hierarchyRuntime.openParentId ? blendCameraPose(subjectPose, worldPose, worldPullback) : subjectPose;";
-  if (t.includes(seatDockNav) && !t.includes('lastNavBaseCameraId')) {
-    t = t.replace(seatDockNav, seatDockNavC6);
-    t = t.replace('function applyNavCamera() {', "let lastNavBaseCameraId = 'HERO_WIDE';\nfunction applyNavCamera() {");
-    changed = true;
+  if (t.includes(seatDockNav)) {
+    if (!t.includes('lastNavBaseCameraId')) {
+      t = t.replace(seatDockNav, seatDockNavC6);
+      changed = true;
+    }
+    if (!t.includes("let lastNavBaseCameraId = 'HERO_WIDE';")) {
+      t = t.replace('function applyNavCamera() {', "let lastNavBaseCameraId = 'HERO_WIDE';\nfunction applyNavCamera() {");
+      changed = true;
+    }
   }
   if (t.includes('getNavZoom:()=>navZoom,') && !t.includes('getBaseCameraId:')) {
     t = t.replace('getNavZoom:()=>navZoom,', 'getNavZoom:()=>navZoom,getBaseCameraId:()=>lastNavBaseCameraId,');
