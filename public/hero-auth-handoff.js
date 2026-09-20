@@ -6,6 +6,31 @@ const modeButtons = [...document.querySelectorAll('[data-auth-mode]')];
 const forms = [...document.querySelectorAll('[data-auth-form]')];
 const status = document.querySelector('#auth-status');
 const reducedQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+function handleAppUiHandoff(event) {
+  const detail = event.detail || {};
+  if (detail.appUiHandoff !== true || detail.presentationOnly !== true || detail.normalUi !== true || detail.notAuthority !== true) return;
+  const target = String(detail.targetSection || '');
+  if (target === 'auth') {
+    const itemId = String(detail.itemId || '');
+    const mode = itemId.endsWith('#register') ? 'signup' : 'login';
+    openAuth();
+    setMode(mode);
+    return;
+  }
+  if (target === 'setup') {
+    const settingsButton = document.getElementById('hero-settings-shell');
+    if (settingsButton instanceof HTMLButtonElement) {
+      settingsButton.click();
+      return;
+    }
+    document.dispatchEvent(new CustomEvent('teamai:settings-request', {
+      detail: { source: 'r2-setup-handoff', targetSection: target, presentationOnly: true },
+      bubbles: true,
+    }));
+  }
+}
+
+
 let reducedMotion = Boolean(reducedQuery?.matches);
 
 function setMode(mode) {
@@ -65,6 +90,7 @@ forms.forEach(form => form.addEventListener('submit', event => {
 reducedQuery?.addEventListener?.('change', event => { reducedMotion = event.matches; });
 
 setMode('login');
+window.addEventListener('teamai:app-ui-handoff', handleAppUiHandoff);
 window.TeamAiHeroAuthHandoff = {
   open: openAuth,
   close: closeAuth,
