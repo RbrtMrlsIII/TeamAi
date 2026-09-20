@@ -21,12 +21,15 @@ export function resolveSetupConfigItems(items = DEFAULT_ITEMS) {
 export function deriveSetupConfigPlacements({
   workspaceRadius = 1,
   ringScale = 1,
+  ringRadius = null,
+  articulationAmount = 1,
   items = DEFAULT_ITEMS,
+  ringRadius = null,
   angleOffset = 0.08,
   y = 0.95,
 } = {}) {
   const resolved = resolveSetupConfigItems(items);
-  const radius = Math.max(0, finite(workspaceRadius) * Math.max(0, finite(ringScale, 1)));
+  const radius = Math.max(0, ringRadius == null ? finite(workspaceRadius) * Math.max(0, finite(ringScale, 1)) : finite(ringRadius, 0));
   return resolved.map((item, index) => {
     const angle = -Math.PI / 2 + (index * TAU / Math.max(resolved.length, 1)) + finite(angleOffset, 0);
     return Object.freeze({
@@ -62,19 +65,22 @@ export function drawSetupConfigRing({
   M,
 }, t = 0) {
   const fill = Math.max(0, Math.min(1, Number(fillAmount) || 0));
+  const articulation = Math.max(0, Math.min(1, finite(articulationAmount, 1)));
   const placements = deriveSetupConfigPlacements({
     workspaceRadius: profile(seatCount).workspace,
     ringScale,
+    ringRadius,
     items,
   });
   for (const placement of placements) {
     const { index, x, y, z, angle, kind } = placement;
     const focused = Number(focusedIndex) === index;
-    const spin = reducedMotion ? 0 : finite(t) * 0.35 + index;
+    const spin = reducedMotion ? 0 : finite(t) * (0.20 + 0.18 * articulation) + index;
     const gear = kind === 'engine' || kind === 'auth';
     const fullArea = kind === 'auth' || kind === 'config' || kind === 'branch';
     const deploy = focused && fullArea ? 1 + 0.35 * fill : 1;
-    const scale = (gear ? 0.42 : 0.36) * deploy;
+    const articulationScale = 0.84 + 0.16 * articulation;
+    const scale = (gear ? 0.42 : 0.36) * deploy * articulationScale;
     draw(CYL, mul(T(x, y, z), S(scale * 1.1, 0.14, scale * 1.1)), M.metal, {
       rough: 0.4, spec: [0.82, 0.84, 0.8], emit: focused ? 0.12 : 0.02,
     });
