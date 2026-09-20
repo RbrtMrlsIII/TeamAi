@@ -260,6 +260,7 @@ jobs:
               'Masterplan/NEXT_SLICES.md',
               'POLICY.md',
               'AI_ASSISTANT_READ_ME.md',
+              'PRODUCT-KNOWLEDGE.md',
               'docs/SKILL_WIRING.md',
               'skills/governance/ai-advisory-review/SKILL.md',
               'skills/governance/machine-builder/SKILL.md',
