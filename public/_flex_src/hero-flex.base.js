@@ -444,6 +444,7 @@ canvas.addEventListener('click',event=>{
   // every other non-ring-band click.
   const r=canvas.getBoundingClientRect(),x=(event.clientX-r.left)/r.width,y=(event.clientY-r.top)/r.height;if(!hierarchyRuntime.openParentId&&y>0.28&&y<0.48){if(x<=0.28){cycleRingFocus(ringFocus,'r1',1);updateLabels();return;}if(x>=0.72){cycleRingFocus(ringFocus,'r2',1);syncSetupRingCamera();updateLabels();return;}}const next=(selectedSeat+1)%seatCount;selectSeatShell(next);});
 let navOrbitYaw = 0, navOrbitPitch = 0, navZoom = 1;
+let lastNavBaseCameraId = 'HERO_WIDE';
 let touchState = null;
 function applyNavCamera() {
   if (hierarchyRuntime.openParentId) return;
