@@ -191,6 +191,7 @@ export function drawBackendDisplayThreads({
     workspaceRadius,
     ringScale,
     ringRadius,
+    articulationAmount,
     catalog,
   });
   const thickness = Math.max(0.028, workspaceRadius * 0.0072);
