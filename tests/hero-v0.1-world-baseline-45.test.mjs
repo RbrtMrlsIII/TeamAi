@@ -73,8 +73,12 @@ test('V0.1 applied hero-flex HERO_WIDE uses p:[0,d,d] (~45°), not d*.67', async
   assert.doesNotMatch(src, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
 });
 
-test('V0.1 apply script still owns the 0.67→d,d baseline patch', async () => {
+test('V0.1 canonical source owns the world baseline without a mutation pass', async () => {
+  const src = await readFile(flexPath, 'utf8');
   const apply = await readFile(applyScript, 'utf8');
-  assert.match(apply, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
-  assert.match(apply, /HERO_WIDE:\{p:\[0,d,d\]/);
+  assert.match(src, /HERO_WIDE:\{p:\[0,d,d\]/);
+  assert.doesNotMatch(src, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
+  assert.doesNotMatch(apply, /apply-cam2-tree-follow-flex\.engine|raw\.githubusercontent\.com/);
+  assert.match(apply, /hero-flex\.base\.js/);
+  assert.match(apply, /byte-for-byte parity|parity/i);
 });
