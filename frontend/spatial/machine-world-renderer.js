@@ -542,11 +542,19 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.uniform4f(lineColor,.30,.86,1,reducedMotion ? .42 : .76);
     gl.drawArrays(gl.LINE_STRIP,0,prefix.length);
 
-    ringDraw('SPH', translateMatrix(point.x, point.y, point.z), scaleMatrix(.12, .12, .12), RING_MATERIALS.energy, {
-      glow: reducedMotion ? .12 : .26,
-      emit: reducedMotion ? .16 : .30,
-      alpha: reducedMotion ? .55 : .88,
-    });
+    ringDraw(
+      'SPH',
+      multiplyMatrix(
+        translateMatrix(point.x, point.y, point.z),
+        scaleMatrix(.12, .12, .12),
+      ),
+      RING_MATERIALS.energy,
+      {
+        glow: reducedMotion ? .12 : .26,
+        emit: reducedMotion ? .16 : .30,
+        alpha: reducedMotion ? .55 : .88,
+      },
+    );
 
     return Object.freeze({
       semanticEdgeId: edge.semanticEdgeId || edge.id || null,
