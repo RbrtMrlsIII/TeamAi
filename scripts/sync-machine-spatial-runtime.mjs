@@ -13,6 +13,7 @@ const files = [
   'machine-hero-payload.js',
   'machine-hero-adaptive-geometry.js',
   'machine-hero-topology.js',
+  'machine-core-topology.js',
   'hero-environment.js',
   'hero-world-contract.js',
   'hero-ring-envelope.js',
@@ -20,6 +21,7 @@ const files = [
   'hero-r1-backend-threads.js',
   'hero-r2-setup-ring.js',
   'machine-world-renderer.js',
+  'machine-seat-division-presentation.js',
 ];
 
 for (const file of files) {
