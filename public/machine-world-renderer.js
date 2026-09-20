@@ -410,9 +410,6 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     gl.uniform1f(solidGlow, .85);
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
 
-    renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
-    renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
-
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
     gl.uniformMatrix4fv(lineV,false,view);
@@ -640,6 +637,9 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       );
       gl.uniform1f(solidGlow, selected ? .75 : .16);
       gl.drawArrays(gl.TRIANGLES,0,entry.count);
+
+    renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
+    renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
 
       if (part.uiSurface) {
         modelMatrix(model,
