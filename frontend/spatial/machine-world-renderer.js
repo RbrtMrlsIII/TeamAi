@@ -372,6 +372,13 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
   function render(timestamp = performance.now(), state = {}) {
     if (disposed) return;
     const now = finite(timestamp, performance.now());
+    if (state.machineLayer === false) {
+      gl.clearColor(0,0,0,0);
+      gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+      canvas.dataset.machineWorldLayer = 'entrance';
+      return null;
+    }
+    canvas.dataset.machineWorldLayer = 'machine';
     const width = canvas.clientWidth || 1180;
     const height = canvas.clientHeight || 760;
     const dpr = Math.min(2, globalThis.devicePixelRatio || 1);
