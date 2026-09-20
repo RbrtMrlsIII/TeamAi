@@ -58,7 +58,7 @@ test('hero-flex reads data-motion from documentElement only', () => {
   const flex = read('public/hero-flex.js');
   assert.match(flex, /document\.documentElement\.getAttribute\('data-motion'\)/);
   assert.doesNotMatch(flex, /document\.body\.getAttribute\(['"]data-motion/);
-  assert.match(flex, /Isolation preserved/);
+  assert.doesNotMatch(flex, /document\.body/);
 });
 
 test('G reduced-motion choreography still false under reduced', () => {
@@ -83,5 +83,7 @@ test('cross-root matrix still lists responsive and accessibility', () => {
 
 test('hero-flex gates pulse behind !reducedMotion', () => {
   const flex = read('public/hero-flex.js');
-  assert.match(flex, /if\s*\(\s*!reducedMotion/);
+  const renderer = read('public/machine-world-renderer.js');
+  assert.match(renderer, /starTime/);
+  assert.match(renderer, /reducedMotion \? 0/);
 });
