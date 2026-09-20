@@ -1,6 +1,6 @@
 # TeamAi 3D Hero — R1/R2 readiness boundary (SP-06)
 
-**Status:** Classification complete · Gate S7 / SP-06  
+**Status:** Active boundary reconciliation · Gate S7 / SP-06 · 029 not released  
 **Date:** 2026-09-10  
 **Authority:** Spatial execution basis SP-06 → Concentric Ring Map → hierarchy runtime  
 **Claim:** presentation ownership only · **no 029-released claim** · no new meshes invented here
@@ -85,6 +85,20 @@ The original SP-06 classification predates Issue #396's active Slice D implement
 The older rule saying not to create an R1 module is therefore historical guidance for the pre-Slice-D state and no longer governs current #397 execution. The current requirement is to keep R1 under the same single-renderer architecture and avoid duplicate authority.
 
 The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, and complete R2 mechanical choreography remain bounded work under Issue #396.
+
+## 7. Current structural reconciliation
+
+R1/R2 are now mechanically source-owned and consume the shared hero-ring-envelope.js geometry. The envelope clamps the requested inter-ring clearance to the available physical span instead of expanding the real R3 machine envelope.
+
+The Seat machine now has a generic focused-division presentation path driven by hierarchy-owned child identity/index and branch amount. The renderer remains the presentation layer; the controller remains the semantic state owner.
+
+Machine-core edges now expose stable semanticEdgeId values and are validated independently for endpoint branch identity, port continuity, finite routes, unique edges, and expected edge classes.
+
+The current electrical layer follows declared edge routes only. It is not a new topology authority, provider integration, or durable state system.
+
+R2 login/register and setup actions cross the APP_UI_HANDOFF boundary into normal UI controllers. The Hero remains presentation-only. The receiver path exists in public/hero-auth-handoff.js; browser exact-head proof is still a verification gate.
+
+This section supersedes older planned wording where current code now has a named implementation owner, but it does not convert implemented-partial work into a 029 completion claim.
 
 ## SEE ALSO
 
