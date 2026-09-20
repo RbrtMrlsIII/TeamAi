@@ -57,6 +57,12 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   const renderBody = renderer.slice(renderStart, renderEnd);
   assert.equal((renderBody.match(/renderSeat1ConnectionChild\s*\(/g) || []).length, 1);
   assert.match(renderBody, /renderSeat1AdjacentWiring\(scene, effectiveCameraId, state, reducedMotion\)/);
+  const partsLoopStart = renderBody.indexOf('for (const part of scene.parts) {');
+  const framePassMarker = renderBody.indexOf(
+    '\\n    }\\n\\n    // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.\\n    renderSeat1ConnectionChild'
+  );
+  assert.ok(partsLoopStart >= 0 && framePassMarker > partsLoopStart);
+  assert.ok(framePassMarker < renderBody.indexOf('gl.useProgram(line);', framePassMarker));
 });
 
 test('canonical world renderer uses the shared stateful animation engine for expansion and interruption', async () => {
