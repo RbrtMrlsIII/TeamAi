@@ -317,7 +317,7 @@ function drawSemanticSeat1Connection(connection,focused=false){
   const yaw=g.corridor.yaw;
   if(!d || !Number.isFinite(d.x) || !Number.isFinite(d.y) || !Number.isFinite(d.z))return;
   const emphasis=focused?1.16:1;
-  draw(CUBE,mul(mul(T(c.x,c.y,c.z),RY(yaw)),S(d.width*emphasis,d.height*emphasis,d.depth*emphasis)),focused?M.energy:M.glass,{
+  draw(CUBE,mul(mul(T(c.x,c.y,c.z),RY(yaw)),S(d.x*emphasis,d.y*emphasis,d.z*emphasis)),focused?M.energy:M.glass,{
     rough:.28,spec:[.92,.94,.90],emit:focused?.16:.05,alpha:.72,
   });
   const ring=.18*emphasis*(0.72+0.28*connection.amount);
