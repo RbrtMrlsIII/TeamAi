@@ -7,18 +7,16 @@ const publicPath = join(root, 'public/hero-flex.js');
 const basePath = join(root, 'public/_flex_src/hero-flex.base.js');
 
 /**
- * Stable command surface for the Hero flex assembly pipeline.
- * Ownership is delegated to the repository-local engine below.
- * The engine owns the Cam-2 / Cam-3 / Cam-4 path, including:
- *   hero-cam4-edge-swipe, proportionalSwipeDelta, inverseSwipeDelta, edgeDriftDelta
- *   flex-apply-integrity / assertFlexIntegrityOrExit / SP-04
- *   pinned base marker a2f8a3e
- *   V0.1 HERO_WIDE:{p:[0,d*.67,d]} → HERO_WIDE:{p:[0,d,d]} baseline reconciliation
- *   V0.2 Vision: return-to-baseline / V0.2 return baseline / V0.2 close baseline
- * Runtime/build source is repository-owned and must not use a cross-origin GitHub Raw source.
+ * Canonical Hero compatibility sync.
+ *
+ * The old Cam-2/3/4 patch engine used to mutate hero-flex during builds.
+ * Rendering authority has moved to machine-world-renderer.js. This command
+ * now only copies the repository-owned compatibility controller source and
+ * proves byte-for-byte parity. No network, patch engine, or runtime rewrite.
  */
+const source = readFileSync(basePath, 'utf8');
+writeFileSync(publicPath, source);
+const generated = readFileSync(publicPath, 'utf8');
+if (generated !== source) throw new Error('Canonical Hero compatibility source parity failed');
 
-// Always seed from the repository-owned source before invoking the patch engine.
-// This makes the normal build/test path deterministic and network-independent.
-writeFileSync(publicPath, readFileSync(basePath, 'utf8'));
-await import('./apply-cam2-tree-follow-flex.engine.mjs');
+console.log('Canonical Hero compatibility source synchronized');
