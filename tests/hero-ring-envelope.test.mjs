@@ -17,6 +17,8 @@ test('concentric envelope preserves R0 < R1 < R2 < R3 for the full seat range', 
       assert.ok(envelope.workspaceRadius < envelope.r1Radius, `R0/R1 invalid at ${seatCount} seats`);
       assert.ok(envelope.r1Radius < envelope.r2Radius, `R1/R2 invalid at ${seatCount} seats`);
       assert.ok(envelope.r2Radius < envelope.seatRingRadius, `R2/R3 invalid at ${seatCount} seats`);
+      assert.equal(envelope.seatRingRadius, seatRingRadius);
+      assert.equal(envelope.valid, true);
     }
   }
 });
