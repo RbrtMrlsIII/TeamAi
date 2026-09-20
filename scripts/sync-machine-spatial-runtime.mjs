@@ -16,6 +16,7 @@ const files = [
   'hero-r1-backend-display.js',
   'hero-r1-backend-threads.js',
   'hero-r2-setup-ring.js',
+  'machine-world-renderer.js',
 ];
 
 for (const file of files) {
