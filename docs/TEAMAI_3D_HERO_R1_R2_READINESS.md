@@ -31,7 +31,7 @@ R3  SEAT RING
 | **R1** | Part IDs / catalog | `HIERARCHY_PART.WORKSPACE_BACKEND_*` · `BACKEND_DISPLAY_V1` | **implemented** | Catalog only |
 | **R1** | Scale constant | `RING_R1_SCALE` in hierarchy runtime | **implemented** | §9-aligned starting number |
 | **R1** | Display ring draw | `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js` → `drawBackendDisplayRing` wrapper | **implemented-partial** | Dedicated placement/render owner; full service-thread topology remains bounded |
-| **R1** | Animated threads | `WORKSPACE_BACKEND_THREAD` id | **planned** | Spec in ring map; no dedicated thread owner module |
+| **R1** | Animated threads | `frontend/spatial/hero-r1-backend-threads.js` → `public/hero-r1-backend-threads.js` | **implemented-partial** | Deterministic presentation relationships between declared R1 display faces; final service-thread/backend topology remains bounded |
 | **R1** | Live platform bind | — | **out of scope** | Presentation must not OAuth/bind from canvas |
 | **R2** | Scale constant | `RING_R2_SCALE` | **implemented** | |
 | **R2** | Setup/config catalog | `SETUP_CONFIG_V1` · part ids on hierarchy | **implemented** | |
@@ -48,7 +48,7 @@ R3  SEAT RING
 1. R1 has a named Slice-D owner now; do not create duplicate R1 renderers or bypass the canonical Hero wrapper.  
 2. **Do not** treat R1/R2 presentation as backend connection completion or Conn-3.  
 3. **Do not** pull provider/runtime work into a spatial ring slice.  
-4. R1 animated threads remain **planned** until a concrete owner + tests exist.  
+4. R1 animated threads are **implemented-partial** under a dedicated presentation owner, with stable source/target display IDs and regression tests. They remain presentation-only and do not establish final service/backend topology.  
 5. R2 login/register faces may hand off via `APP_UI_HANDOFF` — never write Firestore from canvas.
 
 ---
@@ -84,10 +84,10 @@ The original SP-06 classification predates Issue #396's active Slice D implement
 
 The older rule saying not to create an R1 module is therefore historical guidance for the pre-Slice-D state and no longer governs current #397 execution. The current requirement is to keep R1 under the same single-renderer architecture and avoid duplicate authority.
 
-The R1 module is still an implementation step, not a 029 completion claim. Animated service-thread topology and complete mechanical R1/R2 meshes remain bounded work under Issue #396.
+The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, and complete R2 mechanical choreography remain bounded work under Issue #396.
 
 ## SEE ALSO
 
 - `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`  
 - `docs/TEAMAI_3D_HERO_SPATIAL_EXECUTION_BASIS.md` SP-06 / Gate S7  
-- `frontend/spatial/hero-r1-backend-display.js` · `public/hero-r1-backend-display.js` · `frontend/spatial/hero-r2-setup-ring.js` · `public/hero-r2-setup-ring.js` · `public/hero-p-r0-zipskills.js`  
+- `frontend/spatial/hero-r1-backend-display.js` · `public/hero-r1-backend-display.js` · `frontend/spatial/hero-r1-backend-threads.js` · `public/hero-r1-backend-threads.js` · `frontend/spatial/hero-r2-setup-ring.js` · `public/hero-r2-setup-ring.js` · `public/hero-p-r0-zipskills.js`  
