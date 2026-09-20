@@ -66,6 +66,8 @@ test('029 Slice A runtime wiring and source/public sync are explicit', async () 
 
   assert.match(hero, /from ['\"]\.\/hero-environment\.js['\"]/);
   assert.match(hero, /isMachineWorldLayer/);
+  assert.match(hero, /const STAR_VS/);
+  assert.match(hero, /gl\.drawArrays\(gl\.POINTS/);
   assert.match(base, /from ['\"]\.\/hero-environment\.js['\"]/);
   assert.match(base, /isMachineWorldLayer/);
   assert.doesNotMatch(base, /function floor\(\)\{/);

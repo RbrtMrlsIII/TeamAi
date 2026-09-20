@@ -121,6 +121,14 @@ gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FS));
 gl.linkProgram(program);
 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program) || 'Program link failed');
 gl.useProgram(program);
+const STAR_VS = `attribute vec3 p;attribute float pointSize;attribute float phase;uniform mat4 viewProj;uniform mat4 view;uniform float time;varying float a;void main(){vec4 viewPos=view*vec4(p,1.0);gl_Position=viewProj*vec4(p,1.0);gl_PointSize=pointSize*(150.0/max(1.0,-viewPos.z));a=.76+.18*sin(time*.35+phase);}`;
+const STAR_FS = `precision mediump float;varying float a;void main(){vec2 d=gl_PointCoord-.5;float r=dot(d,d);float soft=1.0-smoothstep(.04,.25,r);if(soft<=0.0)discard;gl_FragColor=vec4(.72,.79,.86,a*soft);}`;
+const starProgram=gl.createProgram();
+gl.attachShader(starProgram,compile(gl.VERTEX_SHADER,STAR_VS));
+gl.attachShader(starProgram,compile(gl.FRAGMENT_SHADER,STAR_FS));
+gl.linkProgram(starProgram);
+if(!gl.getProgramParameter(starProgram,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(starProgram)||'Star program link failed');
+const STAR_U={p:gl.getAttribLocation(starProgram,'p'),pointSize:gl.getAttribLocation(starProgram,'pointSize'),phase:gl.getAttribLocation(starProgram,'phase'),viewProj:gl.getUniformLocation(starProgram,'viewProj'),view:gl.getUniformLocation(starProgram,'view'),time:gl.getUniformLocation(starProgram,'time')};
 const U = { p: gl.getAttribLocation(program,'p'), n: gl.getAttribLocation(program,'n'), mvp: gl.getUniformLocation(program,'mvp'), model: gl.getUniformLocation(program,'model'), color: gl.getUniformLocation(program,'color'), specular: gl.getUniformLocation(program,'specular'), rough: gl.getUniformLocation(program,'rough'), emit: gl.getUniformLocation(program,'emit'), alpha: gl.getUniformLocation(program,'alpha') };
 function mesh(P,N){const pb=gl.createBuffer(),nb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,pb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(P),gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,nb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(N),gl.STATIC_DRAW);return{pb,nb,count:P.length/3};}
 function cube(){const v=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,.5,-.5],[-.5,.5,-.5],[-.5,-.5,.5],[.5,-.5,.5],[.5,.5,.5],[-.5,.5,.5]],f=[[0,1,2,3,0,0,-1],[4,7,6,5,0,0,1],[0,4,5,1,0,-1,0],[3,2,6,7,0,1,0],[0,3,7,4,-1,0,0],[1,5,6,2,1,0,0]],P=[],N=[];for(const[a,b,c,d,x,y,z]of f)for(const i of[a,b,c,a,c,d]){P.push(...v[i]);N.push(x,y,z);}return mesh(P,N);}
@@ -129,7 +137,8 @@ function torus(R=.9,r=.07,s=48,t=10){const P=[],N=[];for(let i=0;i<s;i++)for(let
 function sphere(r=.5,s=16,t=10){const P=[],N=[];for(let i=0;i<t;i++)for(let j=0;j<s;j++){const p0=i/t*Math.PI,p1=(i+1)/t*Math.PI,a0=j/s*Math.PI*2,a1=(j+1)/s*Math.PI*2;for(const[p,a]of[[p0,a0],[p0,a1],[p1,a1],[p0,a0],[p1,a1],[p1,a0]]){const x=Math.sin(p)*Math.cos(a),y=Math.cos(p),z=Math.sin(p)*Math.sin(a);P.push(x*r,y*r,z*r);N.push(x,y,z);}}return mesh(P,N);}
 function authored(def){const P=[],N=[];for(let i=0;i<def.indices.length;i+=3){const ia=def.indices[i]*3,ib=def.indices[i+1]*3,ic=def.indices[i+2]*3,a=def.positions.slice(ia,ia+3),b=def.positions.slice(ib,ib+3),c=def.positions.slice(ic,ic+3),u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]],nx=u[1]*v[2]-u[2]*v[1],ny=u[2]*v[0]-u[0]*v[2],nz=u[0]*v[1]-u[1]*v[0],m=Math.hypot(nx,ny,nz)||1;for(const id of[ia,ib,ic]){const q=def.positions.slice(id,id+3);P.push(...q);N.push(nx/m,ny/m,nz/m);}}return mesh(P,N);}
 const CUBE=cube(),CYL=cyl(),TORUS=torus(),RING=torus(.52,.045,40,8),SPH=sphere(),AUTHORED_RING=authored(HERO_AUTHORED_MESHES.workspaceRing),AUTHORED_SEAT_SHELL=authored(HERO_AUTHORED_MESHES.seatShell);
-const M={shell:[.89,.88,.84],metal:[.47,.51,.49],metal2:[.71,.72,.68],glass:[.58,.71,.75],dark:[.13,.15,.14],energy:[1,.56,.12],trace:[.30,.43,.40],space:[.014,.022,.038],spaceMist:[.07,.095,.13],spaceStar:[.72,.79,.86],staging:[.10,.13,.15]};
+let DEEP_SPACE_STAR_BUFFER=null;
+const M={shell:[.89,.88,.84],metal:[.47,.51,.49],metal2:[.71,.72,.68],glass:[.58,.71,.75],dark:[.13,.15,.14],energy:[1,.56,.12],trace:[.30,.43,.40],space:[.014,.022,.038],spaceMist:[.07,.095,.13],staging:[.10,.13,.15]};
 const PALETTE=[[.66,.57,.46],[.48,.60,.57],[.57,.50,.65],[.69,.57,.43],[.47,.57,.66],[.65,.53,.40],[.45,.62,.53],[.59,.49,.61]];
 /** Issue #88 + B/E + #89 — presentation material context.
  * Subset of mapHeroThemeLighting material keys (roughness, reflectance, grazingRimStrength,
@@ -239,6 +248,34 @@ function syncSetupRingCamera(){
 }
 function seatPos(seat){const p=profile(seatCount);return[Math.cos(seat.a)*p.seatRadius,SEAT_REST_Y,Math.sin(seat.a)*p.seatRadius]}
 function draw(mesh,model,color,opts={}){const mvp=mul(persp(camera.f+responsiveFovBoost(),canvas.width/Math.max(1,canvas.height),.1,90),mul(look(camera.p,camera.t),model));gl.uniformMatrix4fv(U.mvp,false,new Float32Array(mvp));gl.uniformMatrix4fv(U.model,false,new Float32Array(model));gl.uniform3fv(U.color,new Float32Array(color));gl.uniform3fv(U.specular,new Float32Array(opts.spec||[.5,.52,.49]));gl.uniform1f(U.rough,opts.rough??.7);gl.uniform1f(U.emit,opts.emit??0);gl.uniform1f(U.alpha,opts.alpha??1);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.pb);gl.enableVertexAttribArray(U.p);gl.vertexAttribPointer(U.p,3,gl.FLOAT,false,0,0);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.nb);gl.enableVertexAttribArray(U.n);gl.vertexAttribPointer(U.n,3,gl.FLOAT,false,0,0);if(opts.depthWrite===false)gl.depthMask(false);gl.drawArrays(gl.TRIANGLES,0,mesh.count);if(opts.depthWrite===false)gl.depthMask(true)}
+function prepareDeepSpaceStars(){
+  if(DEEP_SPACE_STAR_BUFFER)return DEEP_SPACE_STAR_BUFFER;
+  const points=[],sizes=[],phases=[];
+  for(const star of DEEP_SPACE_FIELD){
+    points.push(...star.position);
+    sizes.push(star.layer===0?2.8:star.layer===1?2.2:1.8);
+    phases.push(star.position[0]+star.position[2]*.73);
+  }
+  const pb=gl.createBuffer(),sb=gl.createBuffer(),ph=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,pb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(points),gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,sb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(sizes),gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,ph);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(phases),gl.STATIC_DRAW);
+  return DEEP_SPACE_STAR_BUFFER={pb,sb,ph,count:DEEP_SPACE_FIELD.length};
+}
+function drawDeepSpaceStars(t){
+  const field=prepareDeepSpaceStars();
+  const proj=persp(camera.f+responsiveFovBoost(),canvas.width/Math.max(1,canvas.height),.1,90);
+  const view=look(camera.p,camera.t);
+  gl.useProgram(starProgram);
+  gl.uniformMatrix4fv(STAR_U.viewProj,false,new Float32Array(proj));
+  gl.uniformMatrix4fv(STAR_U.view,false,new Float32Array(view));
+  gl.uniform1f(STAR_U.time,reducedMotion?0:t);
+  gl.bindBuffer(gl.ARRAY_BUFFER,field.pb);gl.enableVertexAttribArray(STAR_U.p);gl.vertexAttribPointer(STAR_U.p,3,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,field.sb);gl.enableVertexAttribArray(STAR_U.pointSize);gl.vertexAttribPointer(STAR_U.pointSize,1,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,field.ph);gl.enableVertexAttribArray(STAR_U.phase);gl.vertexAttribPointer(STAR_U.phase,1,gl.FLOAT,false,0,0);
+  gl.drawArrays(gl.POINTS,0,field.count);
+  gl.useProgram(program);
+}
 function addTrace(){const slots=Math.max(1,profile(seatCount).artifacts);traces.push({seatId:seats[selectedSeat]?.id||`seat-${selectedSeat+1}`,slot:traces.length%slots,sequence:traces.length+1});if(traces.length>TRACE_LIMIT)traces.shift()}
 function workspace(t){const p=profile(seatCount),r=p.workspace;draw(CYL,mul(T(0,.40,0),S(r+1,.52,r+1)),M.metal,{rough:.4,spec:[.86,.87,.83]});draw(CYL,mul(T(0,.69,0),S(r+.55,.34,r+.55)),M.shell,{rough:.6,spec:[.66,.65,.61]});{const L=heroMaterialContext(),Rm=authoredRingMaterial(L);draw(AUTHORED_RING,mul(T(0,.91,0),S(r*.88,.95,r*.88)),Rm.color,{rough:Rm.rough,spec:Rm.spec,emit:Rm.emit||0});draw(CYL,mul(T(0,.875,0),S(r*.86,.06,r*.86)),M.dark,{rough:.68,spec:[.32,.33,.31]});}draw(CYL,mul(T(0,.95,0),S(r*.84,.12,r*.84)),M.glass,{rough:.18,spec:[.96,.97,.95],alpha:.72});draw(TORUS,mul(T(0,1.01,0),S(r*.70,1,r*.70)),M.metal,{rough:.35,spec:[.8,.82,.78]});draw(CYL,mul(T(0,1.04,0),S(r*.65,.09,r*.65)),M.dark,{rough:.66,spec:[.42,.45,.43]});draw(TORUS,mul(T(0,1.08,0),S(r*.59,1,r*.59)),M.trace,{rough:.52,emit:.04});for(let i=0;i<p.artifacts;i++){const a=i*(Math.PI*2/p.artifacts)+.22,x=Math.cos(a)*r*.39,z=Math.sin(a)*r*.39;draw(CUBE,mul(mul(T(x,1.14,z),RY(a)),S(.82,.09,.20)),M.trace,{rough:.44,spec:[.68,.68,.63]})}for(let i=0;i<traces.length;i++){const tr=traces[i],a=tr.slot*(Math.PI*2/p.artifacts)+.22,x=Math.cos(a)*r*.52,z=Math.sin(a)*r*.52,isNew=i===traces.length-1;let pulse=1;if(!reducedMotion&&state==='HANDOFF'&&isNew)pulse=.5+.5*Math.sin(t*3.4);draw(RING,mul(mul(T(x,1.18,z),RY(a)),S(.18+.05*pulse,1,.18+.05*pulse)),isNew?M.energy:M.trace,{rough:.24,spec:[.84,.84,.80],emit:isNew?.16:.04,alpha:.5+.25*pulse});draw(CUBE,mul(mul(T(x,1.19,z),RY(a)),S(.36,.055,.12)),M.trace,{rough:.42,spec:[.7,.7,.66],alpha:.84})}if(state==='ABSORB'||state==='REFLECT'){const d=durations();let q=1;if(!reducedMotion){q=state==='ABSORB'?clamp((performance.now()-stateStart)/d.absorb,0,1):clamp(1-(performance.now()-stateStart)/d.reflect,0,1)}draw(TORUS,mul(T(0,1.11,0),S(.55+1.7*q,1,.55+1.7*q)),M.energy,{rough:.18,emit:.26+.20*q,alpha:.18+.24*q})}}
 function drawHealthLeaf(seat, index, shellY, scale, connectionCx, connectionCy, connectionCz) {
@@ -334,15 +371,11 @@ const DEEP_SPACE_FIELD = createDeepSpaceField({ seed: 396 });
 function environment(t){
   if(!isMachineWorldLayer(shell))return;
   draw(SPH,mul(T(0,0,0),S(36,36,36)),M.space,{rough:1,emit:.02,alpha:.92,depthWrite:false});
+  drawDeepSpaceStars(t);
   const breathing=reducedMotion?0:(Math.sin(t*.18)*.5+.5);
   for(const fog of DEEP_SPACE_NEBULA_ANCHORS){
     const alpha=fog.alpha*(.82+breathing*.18);
     draw(SPH,mul(T(...fog.position),S(...fog.scale)),M.spaceMist,{rough:1,emit:.015,alpha,depthWrite:false});
-  }
-  for(const star of DEEP_SPACE_FIELD){
-    const pulse=reducedMotion?1:(.88+.12*Math.sin(t*.32+star.layer*2.3+star.position[0]));
-    const size=star.size*pulse;
-    draw(SPH,mul(T(...star.position),S(size,size,size)),M.spaceStar,{rough:.28,emit:.08,alpha:star.alpha,depthWrite:false});
   }
   const p=profile(seatCount);
   const stagingRadius=deriveDeepSpaceStagingRadius({workspaceRadius:p.workspace,seatRadius:p.seatRadius,seatFootprintRadius:SEAT_BASE_RADIUS*p.seatScale});
