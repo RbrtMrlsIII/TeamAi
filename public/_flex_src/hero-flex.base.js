@@ -627,6 +627,22 @@ function frame(now) {
     navZoom,
     connectionBranchAmount: getConnectionBranchAmount(hierarchyRuntime),
     behaviorBranchAmount: getBehaviorBranchAmount(hierarchyRuntime),
+    toolkitBranchAmount: getToolkitBranchAmount(hierarchyRuntime),
+    capabilitiesBranchAmount: getCapabilitiesBranchAmount(hierarchyRuntime),
+    authorizationBranchAmount: getAuthorizationBranchAmount(hierarchyRuntime),
+    workspaceScopeBranchAmount: getWorkspaceScopeBranchAmount(hierarchyRuntime),
+    taskEvidenceBranchAmount: getTaskEvidenceBranchAmount(hierarchyRuntime),
+    focusedChildId: hierarchyRuntime.focusedChildId,
+    focusedChildIndex: SEAT_SHELL_V1_CHILDREN.indexOf(hierarchyRuntime.focusedChildId),
+    focusedChildAmount:
+      hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_CONNECTION ? getConnectionBranchAmount(hierarchyRuntime)
+      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_BEHAVIOR ? getBehaviorBranchAmount(hierarchyRuntime)
+      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_TOOLKIT ? getToolkitBranchAmount(hierarchyRuntime)
+      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_CAPABILITIES ? getCapabilitiesBranchAmount(hierarchyRuntime)
+      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_AUTHORIZATION ? getAuthorizationBranchAmount(hierarchyRuntime)
+      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_WORKSPACE_SCOPE ? getWorkspaceScopeBranchAmount(hierarchyRuntime)
+      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_TASK_EVIDENCE ? getTaskEvidenceBranchAmount(hierarchyRuntime)
+      : 0,
     hierarchyPhase: hierarchyRuntime.phase,
     ringFocus: { ring: ringFocus.ring, index: ringFocus.index },
     setupRingFillAmount: getSetupRingFillAmount(hierarchyRuntime),
