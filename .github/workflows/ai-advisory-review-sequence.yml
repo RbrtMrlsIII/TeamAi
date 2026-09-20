@@ -172,8 +172,8 @@ jobs:
           PY
 
   openrouter_free:
-    needs: [eligibility, resolve_advisory_slots]
-    if: needs.eligibility.outputs.should_run == 'true' && needs.resolve_advisory_slots.result == 'success'
+    needs: [eligibility, resolve_advisory_slots, validation_gate]
+    if: needs.eligibility.outputs.should_run == 'true' && needs.resolve_advisory_slots.result == 'success' && needs.validation_gate.result == 'success'
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.resolve_advisory_slots.outputs.matrix) }}
