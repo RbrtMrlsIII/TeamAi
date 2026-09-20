@@ -61,6 +61,21 @@ test('Seat-1 connection fails closed unless all canonical shell identity fields 
   assert.equal(buildMachineCoreSeat1Connection({ shell: core.hub, expansionAmount: 1 }), null);
 });
 
+test('canonical Hero renders the existing Seat-1 semantic connection geometry', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const [hero, base] = await Promise.all([
+    readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8'),
+    readFile(new URL('../public/_flex_src/hero-flex.base.js', import.meta.url), 'utf8'),
+  ]);
+  for (const source of [hero, base]) {
+    assert.match(source, /buildMachineCoreSeat1Connection/);
+    assert.match(source, /TREE-HERO-SEAT#0:SEAT_SHELL/);
+    assert.match(source, /geometry\.dimensions/);
+    assert.match(source, /drawSemanticSeat1Connection/);
+    assert.doesNotMatch(source, /firestore|supabase|paypal|scheduler|oauth/i);
+  }
+});
+
 test('public Seat-1 connection runtime stays synchronized with the canonical frontend module', async () => {
   const { readFile } = await import('node:fs/promises');
   const [frontend, publicRuntime, frontendGeometry, publicGeometry, frontendEdge, publicEdge] = await Promise.all([

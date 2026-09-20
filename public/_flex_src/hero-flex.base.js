@@ -96,6 +96,7 @@ import {
   seatShellParentId,
 } from './hero-hierarchy-runtime.js';
 import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
+import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import {
   createDeepSpaceField,
   DEEP_SPACE_NEBULA_ANCHORS,
@@ -255,6 +256,35 @@ function drawHealthLeaf(seat, index, shellY, scale, connectionCx, connectionCy, 
   draw(SPH, mul(T(lx, ly, lz), S(s, s, s)), col, { rough: 0.25, emit, alpha: 0.75 + (leafFocused ? 0.2 : 0) });
   if (leafFocused) draw(TORUS, mul(T(lx, ly, lz), S(s * 1.6, 1, s * 1.6)), M.energy, { rough: 0.2, emit: 0.18, alpha: 0.55 });
 }
+function buildHeroSeat1Connection(seat,index,shellY,scale,branchAmount){
+  if(index!==0 || branchAmount<=0.02)return null;
+  const p=seatPos(seat);
+  const shell={
+    branchId:'BRANCH-SEAT-01',
+    seatIndex:0,
+    semanticId:'SEAT_SHELL',
+    semanticKey:'TREE-HERO-SEAT#0:SEAT_SHELL',
+    semanticBoundary:'presentation-only',
+    center:{x:p[0],y:shellY,z:p[2]},
+    level:shellY,
+    dimensions:{x:SEAT_BASE_RADIUS*2*scale,y:.44*scale,z:SEAT_BASE_RADIUS*2*scale},
+  };
+  return buildMachineCoreSeat1Connection({ shell, expansionAmount:branchAmount });
+}
+
+function drawSemanticSeat1Connection(connection,focused=false){
+  const g=connection?.geometry;
+  if(!g)return;
+  const d=g.dimensions;
+  const c=g.center;
+  const yaw=g.corridor.yaw;
+  const emphasis=focused?1.16:1;
+  draw(CUBE,mul(mul(T(c.x,c.y,c.z),RY(yaw)),S(d.width*emphasis,d.height*emphasis,d.depth*emphasis)),focused?M.energy:M.glass,{
+    rough:.28,spec:[.92,.94,.90],emit:focused?.16:.05,alpha:.72,
+  });
+  const ring=.18*emphasis*(0.72+0.28*connection.amount);
+  draw(TORUS,mul(T(c.x,c.y+.055,c.z),S(ring,1,ring)),M.energy,{rough:.22,emit:.12+(.12*connection.amount),alpha:.58});
+}
 function drawHierarchyChildren(seat, index, t, shellY, scale) {
   if (hierarchyRuntime.openParentId !== seatShellParentId(index)) return;
   const amt = hierarchyRuntime.openAmount || 0;
@@ -275,6 +305,7 @@ function drawHierarchyChildren(seat, index, t, shellY, scale) {
     const isWorkspaceScope = childId === HIERARCHY_PART.SEAT_WORKSPACE_SCOPE;
     const isTaskEvidence = childId === HIERARCHY_PART.SEAT_TASK_EVIDENCE;
     const branch = isConnection ? getConnectionBranchAmount(hierarchyRuntime) : (isBehavior ? getBehaviorBranchAmount(hierarchyRuntime) : (isToolkit ? getToolkitBranchAmount(hierarchyRuntime) : (isCapabilities ? getCapabilitiesBranchAmount(hierarchyRuntime) : (isAuthorization ? getAuthorizationBranchAmount(hierarchyRuntime) : (isWorkspaceScope ? getWorkspaceScopeBranchAmount(hierarchyRuntime) : (isTaskEvidence ? getTaskEvidenceBranchAmount(hierarchyRuntime) : 0))))));
+    const semanticSeat1Connection = isConnection && index===0 ? buildHeroSeat1Connection(seat,index,shellY,scale,branch) : null;
     const branchBoost = 1 + 0.28 * branch;
     const col = isConnection ? M.energy : (isToolkit ? M.glass : (focused ? seat.accent : M.trace));
     const emit = focused || isConnection || isBehavior || isToolkit || isCapabilities || isAuthorization || isWorkspaceScope || isTaskEvidence ? 0.14 * amt * (1 + 0.55 * branch) : 0.03 * amt;
@@ -282,6 +313,7 @@ function drawHierarchyChildren(seat, index, t, shellY, scale) {
     const sy = 0.08 * s * (isConnection || isBehavior || isToolkit || isCapabilities || isAuthorization || isWorkspaceScope || isTaskEvidence ? (1 + 0.35 * branch) : 1);
     const sz = 0.38 * s * (isConnection || isBehavior || isToolkit || isCapabilities || isAuthorization || isWorkspaceScope || isTaskEvidence ? branchBoost : 1);
     draw(CUBE, mul(mul(T(cx, cy, cz), RY(seat.a + Math.PI / 2)), S(sx, sy, sz)), col, { rough: 0.35, spec: [0.8, 0.82, 0.78], emit, alpha: 0.35 + 0.55 * amt });
+    if (semanticSeat1Connection) drawSemanticSeat1Connection(semanticSeat1Connection, focused);
     if (isConnection) {
       const torusScale = 0.22 * s * branchBoost;
       draw(TORUS, mul(T(cx, cy + 0.06 * s * (1 + 0.2 * branch), cz), S(torusScale, 1, torusScale)), M.energy, { rough: 0.2, emit: 0.2 * amt * (1 + 0.7 * branch), alpha: 0.5 + 0.4 * amt });
