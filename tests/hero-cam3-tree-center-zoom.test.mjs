@@ -15,6 +15,7 @@ import {
   baseDockForTree,
   poseAboutTreeCenter,
   worldPullbackProgress,
+  fitWorldOverviewDock,
   blendCameraPose,
   shouldApplyTreeNav,
 } from '../public/hero-cam3-tree-center-zoom.js';
@@ -49,6 +50,18 @@ test('poseAboutTreeCenter keeps look-at locked to dock target', () => {
   const distA = Math.hypot(a.p[0] - a.t[0], a.p[1] - a.t[1], a.p[2] - a.t[2]);
   const distB = Math.hypot(b.p[0] - b.t[0], b.p[1] - b.t[1], b.p[2] - b.t[2]);
   assert.ok(distB > distA * 1.2);
+});
+
+test('world overview dock expands from the machine envelope when required', () => {
+  const base = { p: [0, 10, 10], t: [0, 0.78, 0], f: 39 };
+  const fitted = fitWorldOverviewDock(base, 8, 1);
+  const baseDistance = Math.hypot(...base.p.map((v, i) => v - base.t[i]));
+  const fittedDistance = Math.hypot(...fitted.p.map((v, i) => v - fitted.t[i]));
+  assert.ok(fittedDistance > baseDistance);
+  assert.deepEqual(fitted.t, base.t);
+  const narrow = fitWorldOverviewDock(base, 8, 0.6);
+  const narrowDistance = Math.hypot(...narrow.p.map((v, i) => v - narrow.t[i]));
+  assert.ok(narrowDistance >= fittedDistance);
 });
 
 test('world pullback is continuous across the full NAV_ZOOM range', () => {

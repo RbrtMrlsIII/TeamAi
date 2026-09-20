@@ -29,6 +29,22 @@ export function baseDockForTree(state = {}, cameraTable = {}) {
  * Build camera pose: zoom scales distance from center target (look-at),
  * yaw/pitch orbit about that center. Look-at never leaves the center.
  */
+export function fitWorldOverviewDock(baseDock = {}, envelopeRadius = 0, aspect = 1, safety = 1.08) {
+  const t = (baseDock.t || [0, 0.78, 0]).slice();
+  const bp = baseDock.p || [0, 6.4, 9.6];
+  const dx = bp[0] - t[0], dy = bp[1] - t[1], dz = bp[2] - t[2];
+  const currentDistance = Math.hypot(dx, dy, dz) || 1;
+  const radius = Math.max(0, Number(envelopeRadius) || 0);
+  const viewportAspect = Math.max(0.35, Number(aspect) || 1);
+  const fov = Math.max(1, Number(baseDock.f) || 39) * Math.PI / 180;
+  const tangent = Math.tan(fov / 2);
+  const limitingTangent = tangent * Math.min(1, viewportAspect);
+  const requiredDistance = radius > 0 ? (radius * Math.max(1, Number(safety) || 1) / Math.max(0.05, limitingTangent)) : 0;
+  if (!Number.isFinite(requiredDistance) || requiredDistance <= currentDistance) return { p: bp.slice(), t, f: baseDock.f ?? 39 };
+  const scale = requiredDistance / currentDistance;
+  return { p: [t[0] + dx * scale, t[1] + dy * scale, t[2] + dz * scale], t, f: baseDock.f ?? 39 };
+}
+
 export function worldPullbackProgress(navZoom, navZoomMax = 2) {
   const z = Number(navZoom);
   const max = Number(navZoomMax);

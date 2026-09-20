@@ -447,7 +447,7 @@ function applyNavCamera() {
     if (seatDock) base = seatDock;
   }
   const subjectPose = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
-  const worldPose = table.HERO_WIDE || table.SEAT_CLOSE;
+  const p=profile(seatCount);const worldEnvelopeRadius=Math.max(p.workspace+1,p.seatRadius+(typeof SEAT_BASE_RADIUS==='number'?SEAT_BASE_RADIUS*p.seatScale:1.9))+.2;const worldPose=fitWorldOverviewDock(table.HERO_WIDE||table.SEAT_CLOSE,worldEnvelopeRadius,viewW/Math.max(1,viewH));
   const worldPullback = hierarchyRuntime.openParentId ? worldPullbackProgress(navZoom, NAV_ZOOM_MAX) : 0;
   lastNavBaseCameraId = worldPullback >= 1 || !hierarchyRuntime.openParentId ? 'HERO_WIDE' : baseId;
   camera = hierarchyRuntime.openParentId ? blendCameraPose(subjectPose, worldPose, worldPullback) : subjectPose;
