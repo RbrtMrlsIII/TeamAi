@@ -102,7 +102,7 @@ import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { depthReadableFovBoost, depthReadableFaceScale, facePlateScaleForChild } from './hero-depth-readable-faces.js';
 import { applyMachineUiChrome } from './hero-dom-chrome-absorption.js';
 import { resolveDomCameraAction } from './hero-dom-action-map.js';
-import { drawSetupConfigRing } from './hero-r2-setup-ring.js';
+import { drawSetupConfigRing as drawSetupConfigRingModule } from './hero-r2-setup-ring.js';
 import { drawBackendDisplayRing as drawBackendDisplayRingModule } from './hero-r1-backend-display.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import {
@@ -447,6 +447,26 @@ function setSeatCount(next){const count=clampSeatCount(next);if(count===seatCoun
 function startLoop(){demo=true;setState('FOCUS','loop-start')}
 function stopLoop(){demo=false;contribution=0;setState('IDLE','loop-stop')}
 function cycleTurn(now){if(!demo)return;const elapsed=now-stateStart,d=durations();if(state==='FOCUS'&&elapsed>d.focus)setState('ACTIVE');else if(state==='ACTIVE'&&elapsed>d.active){contribution=0;setCamera('HERO_WIDE');setState('CONTRIBUTE','contribution-start')}else if(state==='CONTRIBUTE'){contribution=clamp(elapsed/d.contribute,0,1);if(elapsed>d.contribute){contribution=1;setState('ABSORB','workspace-absorb')}}else if(state==='ABSORB'&&elapsed>d.absorb)setState('REFLECT','workspace-reflect');else if(state==='REFLECT'&&elapsed>d.reflect){addTrace();setState('HANDOFF','trace-committed')}else if(state==='HANDOFF'&&elapsed>d.handoff){selectedSeat=(selectedSeat+1)%seatCount;setState('FOCUS','next-seat-focus');setCamera('TEAM_ORBIT')}}
+function drawSetupConfigRing(t) {
+  return drawSetupConfigRingModule({
+    profile,
+    seatCount,
+    ringScale: RING_R2_SCALE,
+    items: SETUP_CONFIG_V1,
+    focusedIndex: ringFocus.ring === 'r2' ? ringFocus.index : -1,
+    fillAmount: getSetupRingFillAmount(hierarchyRuntime),
+    reducedMotion,
+    draw,
+    CYL,
+    TORUS,
+    CUBE,
+    T,
+    S,
+    RY,
+    mul,
+    M,
+  }, t);
+}
 function frame(now){
   if (edgePointerNorm && !reducedMotion && typeof shouldApplyTreeNav === 'function' && shouldApplyTreeNav(hierarchyRuntime)) {
     const press = edgePressure(edgePointerNorm.nx, edgePointerNorm.ny);
@@ -459,7 +479,7 @@ function frame(now){
       applyNavCamera();
     } else { frame._last = now; }
   } else if (typeof now === 'number') { frame._last = now; }
-syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}const worldMode=isMachineWorldLayer(shell);gl.clearColor(worldMode?M.space[0]:0,worldMode?M.space[1]:0,worldMode?M.space[2]:0,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawSetupConfigRing({ profile, seatCount, reducedMotion, draw, CYL, TORUS, CUBE, T, S, RY, mul, M, focusedIndex: ringFocus.ring === 'r2' ? ringFocus.index : -1, fillAmount: getSetupRingFillAmount(hierarchyRuntime) }, now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
+syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();if(camAt<1){const q=reducedMotion?1:ease(clamp((now-camStart)/700,0,1));camera={p:[lerp(camFrom.p[0],camTo.p[0],q),lerp(camFrom.p[1],camTo.p[1],q),lerp(camFrom.p[2],camTo.p[2],q)],t:[lerp(camFrom.t[0],camTo.t[0],q),lerp(camFrom.t[1],camTo.t[1],q),lerp(camFrom.t[2],camTo.t[2],q)],f:lerp(camFrom.f,camTo.f,q)};camAt=q}const worldMode=isMachineWorldLayer(shell);gl.clearColor(worldMode?M.space[0]:0,worldMode?M.space[1]:0,worldMode?M.space[2]:0,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);environment(now/1000);workspace(now/1000);drawWorkspaceZipskills(now/1000);drawBackendDisplayRing(now/1000);drawSetupConfigRing(now/1000);seats.forEach((seat,index)=>drawSeat(seat,index,now/1000));contributionEffect(seats[selectedSeat]);requestAnimationFrame(frame)}
 canvas.addEventListener('click',event=>{
   // #304: the old dead-center 'Zone A' band (~0.38-0.62 x, 0.38-0.58 y) was a
   // structural no-op -- syncSetupRingCamera() read the focused ring item

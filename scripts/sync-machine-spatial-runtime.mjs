@@ -14,6 +14,7 @@ const files = [
   'machine-hero-topology.js',
   'hero-environment.js',
   'hero-r1-backend-display.js',
+  'hero-r2-setup-ring.js',
 ];
 
 for (const file of files) {
