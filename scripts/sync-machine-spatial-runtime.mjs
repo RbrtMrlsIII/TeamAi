@@ -22,6 +22,7 @@ const files = [
   'hero-r2-setup-ring.js',
   'machine-world-renderer.js',
   'machine-seat-division-presentation.js',
+  'machine-seat-division-topology.js',
   'machine-energy-flow.js',
 ];
 
