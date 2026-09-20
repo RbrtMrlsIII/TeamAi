@@ -92,8 +92,9 @@ test('module and contract stay presentation-only', async () => {
   assert.match(contract, /center target/i);
 });
 
-test('hero-flex has Cam-2 module path (static wire or emergency loader)', async () => {
+test('Hero controller delegates camera semantics to canonical camera modules', async () => {
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /hero-cam2-tree-follow|resolveTreeCamera/);
-  assert.match(flex, /DEFAULT_WORLD_ELEVATION_DEG|HERO_WIDE|emergency loader/);
+  assert.match(flex, /hero-cam5-selected-tree-center|resolveSelectedSeatDock/);
+  assert.match(flex, /hero-cam3-tree-center-zoom|shouldApplyTreeNav/);
+  assert.match(flex, /machine-world-renderer\.js/);
 });
