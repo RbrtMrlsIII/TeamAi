@@ -5,6 +5,7 @@ import { SETUP_CONFIG_V1, HIERARCHY_PART } from '../public/hero-hierarchy-runtim
 import { deriveSetupConfigPlacements } from '../frontend/spatial/hero-r2-setup-ring.js';
 
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const r2mod = await readFile(new URL('../public/hero-r2-setup-ring.js', import.meta.url), 'utf8');
 const r2source = await readFile(new URL('../frontend/spatial/hero-r2-setup-ring.js', import.meta.url), 'utf8');
 const map = await readFile(new URL('../docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md', import.meta.url), 'utf8');
@@ -28,9 +29,11 @@ test('R2 placement is geometry-derived and monotonic with the workspace envelope
   }
 });
 
-test('hero-flex delegates setup/config rendering through the dedicated R2 module', () => {
-  assert.match(hero, /drawSetupConfigRingModule/);
-  assert.match(hero, /ringScale: RING_R2_SCALE/);
+test('canonical machine-world renderer consumes the dedicated R2 module', () => {
+  assert.match(renderer, /from '\.\/hero-r2-setup-ring\.js'/);
+  assert.match(renderer, /drawSetupConfigRing\(/);
+  assert.match(renderer, /ringScale: RING_R2_SCALE/);
+  assert.match(renderer, /drawCanonicalRings/);
   assert.match(r2mod, /deriveSetupConfigPlacements/);
   assert.equal(r2mod, r2source);
 });
