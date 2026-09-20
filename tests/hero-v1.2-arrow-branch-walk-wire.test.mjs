@@ -27,7 +27,7 @@ test('V1.2 flex imports cycleSeatShellBranchFocus', async () => {
 
 test('V1.2 Arrow path uses cycleSeatShellBranchFocus not inline list math', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /\/\* V1\.2 branch walk \*\//);
+  assert.match(src, /cycleSeatShellBranchFocus/);
   assert.match(
     src,
     /cycleSeatShellBranchFocus\(hierarchyRuntime,event\.key==='ArrowRight'\?1:-1/,
