@@ -12,6 +12,7 @@
 import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
 import { createMachineAnimation } from './machine-core-animation.js';
 import { deriveMachineSubject } from './machine-hero-scene.js';
+import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 import { NAV_ZOOM_MAX } from './hero-hierarchy-runtime.js';
@@ -230,6 +231,70 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       bearing: bearing + .10,
       fov: aspect < .8 ? 48 : 44,
     };
+  }
+
+  function renderSeat1ConnectionChild(scene, amount, selectedBranch, reducedMotion, now) {
+    if (selectedBranch !== 'BRANCH-SEAT-01' || amount <= 0.02) return null;
+    const shell = scene.byBranch.get('BRANCH-SEAT-01');
+    const child = buildMachineCoreSeat1Connection({
+      shell,
+      expansionAmount: amount,
+      density: reducedMotion ? 'compact' : 'default',
+    });
+    if (!child) return null;
+    const geometry = child.geometry;
+    const scale = 0.78 + 0.22 * child.amount;
+    let entry = buffers.get('__seat1-connection-child');
+    if (!entry) {
+      const data = shapeBuffer(gl, POLYS.pod, 1);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      entry = { buffer, count: data.length / 3 };
+      buffers.set('__seat1-connection-child', entry);
+    }
+    gl.useProgram(solid);
+    gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
+    gl.enableVertexAttribArray(solidPos);
+    gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
+    modelMatrix(model,[geometry.center.x,geometry.center.y,geometry.center.z],[
+      geometry.dimensions.width * scale * 0.5,
+      geometry.dimensions.height * scale * 0.5,
+      geometry.dimensions.depth * scale * 0.5,
+    ]);
+    gl.uniformMatrix4fv(solidP,false,projection);
+    gl.uniformMatrix4fv(solidV,false,view);
+    gl.uniformMatrix4fv(solidM,false,model);
+    gl.uniform3f(solidColor, COLORS.connection[0], COLORS.connection[1], COLORS.connection[2]);
+    gl.uniform1f(solidGlow, .85);
+    gl.drawArrays(gl.TRIANGLES,0,entry.count);
+
+    renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
+
+    gl.useProgram(line);
+    gl.uniformMatrix4fv(lineP,false,projection);
+    gl.uniformMatrix4fv(lineV,false,view);
+    gl.uniformMatrix4fv(lineM,false,identity);
+    const start = geometry.corridor.start;
+    const signal = child.previewPoint;
+    const route = new Float32Array([
+      start.x,start.y,start.z,
+      signal.x,signal.y,signal.z,
+    ]);
+    gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,route,gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(linePos);
+    gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
+    gl.uniform4f(lineColor,.28,.76,1,reducedMotion ? .42 : .62 + .18 * child.amount);
+    gl.drawArrays(gl.LINE_STRIP,0,2);
+
+    canvas.dataset.seatConnectionSemantic = child.semanticKey;
+    canvas.dataset.seatConnectionGeometry = child.geometry.id;
+    canvas.dataset.seatConnectionEdge = child.edgeId;
+    canvas.dataset.seatConnectionHealth = child.healthLeaf.semanticKey;
+    canvas.dataset.seatConnectionDrawPath = 'canonical-machine-world';
+    canvas.dataset.seatConnectionProof = 'semantic+geometry+edge+webgl';
+    return child;
   }
 
   function render(timestamp = performance.now(), state = {}) {
