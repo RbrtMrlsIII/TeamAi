@@ -2,8 +2,12 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
   test('loads the semantic connection edge and reaches an open Seat-1 connection state', async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
+    const heartbeat = await page.evaluate(() => new Promise<number>((resolve) => requestAnimationFrame(() => resolve(performance.now()))));
+    expect(heartbeat).toBeGreaterThan(0);
 
     const edgeModule = await page.evaluate(async () => {
       const module = await import('./seat-connection-edge.js');
