@@ -119,3 +119,5 @@ Skills route implementation against these records but cannot override Product La
 ## Current-slice consumption rule
 
 Skills route the current procedure selected for the slice; they do not own current-slice identity. The active slice must be resolved from `Masterplan/NEXT_SLICES.md`. Skill bodies and validators must not hard-code a specific Issue as the current slice when the canonical current-slice source can be read directly.
+
+A merged closure-pending slice is not still current merely because its Issue remains visible. After post-merge current-slice advancement, spatial Skills (`workspace-ring`, `hierarchy-runtime`, `machine-builder`) are selected only when `Masterplan/NEXT_SLICES.md` names a TEAM-EXPERIENCE-029 presentation frontier.

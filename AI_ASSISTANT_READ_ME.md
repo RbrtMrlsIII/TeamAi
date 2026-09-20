@@ -2,21 +2,21 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: complete the current-state reconciliation, normalize the absorbed advisory-control-plane cleanup, and prepare PR #395 for governed closure without changing product/runtime logic.
+- Last given prompt: continue TeamAi from the connected GitHub repository using Product Law, Masterplan, Skill wiring, and the first incomplete NEXT_SLICES item.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
-- current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
-- current slice: GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
-- replacement branch: governance/baseline-truth-reconciliation-20260919
-- open implementation vehicles: PR #395 / Issue #394 (closure-pending until merge)
-- active implementation slices: #278, #360, #392, #83, #284, #204
-- closure-pending governance slices: #394 / #393, both implemented in PR #395
+- current main: `d8b1e767898be9fe640f002d72cf7771842865b6` (PR #395 merge)
+- current slice: FRONTEND — TEAM-EXPERIENCE-029 mechanical R1/R2 world rings (Issue #396, Draft PR #398)
+- replacement branch: governance/post-395-current-slice-advance-20260921
+- open implementation vehicles: Draft PR #398 / Issue #396
+- active implementation slices: #396, #278, #360, #392, #83, #284, #204
+- former closure-pending governance slices: #394 / #393, implemented in PR #395 and advanced off the current-slice pointer here
 - completed reconstruction: #391 / #389
-- historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379
+- historical/superseded: #394, #393, #347, #368, #369, #387, #388, #386, #385, #379
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: complete the governed human-review/merge path for PR #395, then advance `Masterplan/NEXT_SLICES.md` to the next separately owned product/backend/verification slice
+- next allowed work: inspect Draft PR #398 exact-head Project-test and Playwright failures, then implement only the mechanical R1/R2 world-ring presentation increment on that branch
 - handoff rule: chat is transient; start from this snapshot plus live GitHub state and the owning Issue/PR, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
@@ -41,7 +41,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 ## Current replacement-branch control plane
 
-- Issue #389 is completed; its reconstruction is merged into main. Issue #394 is the current baseline-reconciliation vehicle.
+- Issue #389 is completed; its reconstruction is merged into main. Issue #394 is historical after PR #395 merge `d8b1e767898be9fe640f002d72cf7771842865b6`.
 - #388/#386/#385/#379 are source/history only and must not be merged wholesale.
 - Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
 - Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
@@ -61,10 +61,12 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 - GitHub Pages is the canonical public validation surface at https://RbrtMrlsIII.github.io/TeamAi/.
 - Vercel remains non-authoritative and paused.
 
-## Product boundary while reconstruction is active
+## Product boundary after #395 merge
 
 - Preserve current machine candidate and semantic topology work already on main.
-- Do not advance to a new 029 feature/runtime slice until PR #395 is merged and `Masterplan/NEXT_SLICES.md` is advanced from the closure-pending #394 slice.
+- The former do-not-advance-029 gate is satisfied: PR #395 is merged and `Masterplan/NEXT_SLICES.md` now names the TEAM-EXPERIENCE-029 mechanical R1/R2 world-ring slice.
+- Continue 029 only through Issue #396 / Draft PR #398. Do not claim 029 released, C8/C9/C10 complete, or TEAM-BACKEND-001 complete.
+- Product Law §15 remains unchanged and authoritative. #394 did not rewrite it.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
 ## Validation lifecycle guide
@@ -103,6 +105,8 @@ Never weaken validation merely to make CI green.
 
 The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. Review-readiness distinguishes missing/in-progress checks from completed failures and waits for required checks instead of treating an absent conclusion as terminal failure. The automatic reviewer fan-out uses a bounded 2-second launch stagger to reduce burst traffic without reviving staged barriers. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication. The canonical governance parser's Draft-proof-target boundary was corrected from a level-2-or-3 closing lookahead to a level-2 closing lookahead so nested proof-target subsections are included; the required governance/canonical content is therefore validated rather than accidentally discarded.
 
+This post-#395 current-slice advancement does not change validators. Session snapshot fields now distinguish the immutable PR #391 main baseline from live `main` after PR #395. The phrase "closure-pending" is retained only as historical #394/#393 lifecycle evidence.
+
 ## Evidence rules
 
 specified ≠ implemented ≠ verified ≠ runtime-proven ≠ completed ≠ accepted
@@ -124,7 +128,7 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 
 ## CURRENT ISSUE OWNERSHIP
 
-- #394 = current baseline/session/Issue-topology reconciliation
+- #396 = current TEAM-EXPERIENCE-029 mechanical R1/R2 world-ring execution (Draft PR #398)
 - #278 = 029 canonical product-experience execution ledger
 - #360 = 029 machine-candidate/runtime/browser/provenance slice
 - #392 = AI Seat budget, usage, handoff, shared context, and cooperation product feature
@@ -132,6 +136,7 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 - #284 = backend durable/runtime ledger
 - #204 = Conn-3 GitHub OAuth/bind integration
 - #133 = enduring validation/promotion governance contract
-- #393 = governance/advisory normalization implemented in PR #395; closure-pending
+- #394 = historical baseline/session/Issue-topology reconciliation (PR #395)
+- #393 = historical governance/advisory normalization (PR #395)
 
 Historical Issues are evidence, not active routing.

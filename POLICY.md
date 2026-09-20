@@ -133,3 +133,5 @@ A passing structural audit establishes governance consistency only. It does not 
 ## Canonical current-slice consumption
 
 The current execution slice is owned exclusively by `Masterplan/NEXT_SLICES.md`. Policy and downstream validators/procedures must **consume that canonical current-slice record rather than hard-code a specific Issue number**. Historical Issue/PR identifiers may appear as evidence, but they do not become current execution authority merely by being mentioned here.
+
+After a closure-pending slice is merged, the next governed documentation PR must advance `Masterplan/NEXT_SLICES.md` rather than leaving the merged Issue as a stale current pointer. That advancement is session/governance synchronization, not a 029 release claim, C8/C9/C10 completion claim, or TEAM-BACKEND-001 completion claim.

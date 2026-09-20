@@ -64,3 +64,5 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 ## Current-slice authority consumption
 
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.
+
+When a current-slice Issue is implementation-complete and its governed PR is merged, field wiring must not keep that Issue as the live frontier. The next current slice is whatever `Masterplan/NEXT_SLICES.md` names after the post-merge synchronization PR. This is not a Product Law §15 amendment and does not complete TEAM-BACKEND-001 or TEAM-EXPERIENCE-029.

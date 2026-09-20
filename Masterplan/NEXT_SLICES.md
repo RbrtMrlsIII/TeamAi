@@ -4,53 +4,62 @@
 
 ## Current Slice
 
-GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
+FRONTEND — TEAM-EXPERIENCE-029 mechanical R1/R2 world rings (Issue #396, Draft PR #398)
 
 ## Status
 
-CLOSURE PENDING — implementation is complete in PR #395. This slice remains current only until the governed review/merge path completes and #394/#393 closure evidence is recorded.
+IN PROGRESS — Draft PR #398 is the active non-production implementation vehicle on `frontend/029-machine-world-convergence`. This slice does not claim 029 release, C8/C9/C10 completion, or TEAM-BACKEND-001 completion.
 
 ## Objective
 
-Current governing program: TEAM-EXPERIENCE-029 progression. The clean-mainline reconstruction is the control-plane prerequisite and does not redefine the Product Law program.
+Current governing program: TEAM-EXPERIENCE-029 progression. PR #395 merged the #394/#393 baseline into `main` at `d8b1e767898be9fe640f002d72cf7771842865b6`. The current frontier is the first open 029 machine-world Next row: mechanical R1 backend-display presentation and mechanical R2 setup/config presentation, with the renderer remaining presentation-only.
 
-Rebaseline the canonical session/planning records and Issue topology against merged `main`. Preserve one current session boundary, one advisory-review architecture, separate Product/Frontend/Backend/Governance ownership, structured terminal workflow state, explicit historical supersession, and machine-checked separation between CI-green, corpus-clean, and session-current evidence.
+Preserve the already-migrated machine-world architecture on Draft PR #398:
+
+- `public/hero-flex.js` remains the controller/input/hierarchy boundary
+- `frontend/spatial/machine-world-renderer.js` remains the authoritative production WebGL source
+- `public/machine-world-renderer.js` remains its synchronized browser copy
+- Guest entrance/machine boundary, 1–10 Seat capacity, and Tree 1–8 vocabulary stay distinct
+- Product Law §15 remains unchanged and authoritative
 
 ## Dependencies
 
 - Product_Law/PRODUCT_LAW.md
 - Product_Law/WIRING.md
+- Product_Law/FRONTEND_EXPERIENCE.md
 - Masterplan/MASTERPLAN.md
 - POLICY.md
 - docs/SKILL_WIRING.md
+- docs/TEAMAI_3D_HERO_R1_R2_READINESS.md
+- docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md
+- skills/governance/repository-synchronization/SKILL.md
+- skills/governance/machine-builder/SKILL.md
+- skills/frontend/spatial/workspace-ring/SKILL.md
+- skills/frontend/spatial/hierarchy-runtime/SKILL.md
 - AI_ASSISTANT_READ_ME.md
-- Issue #394
-- Current main baseline: 867944b03776f47fb01bd2cddf90ed4c70ab3b68
-- Completed reconstruction: #391 / #389
-- Active product slices: #278, #360, #392, #83, #204, #284
+- Issue #396
+- Draft PR #398
+- Merged #394 / #393 implementation: PR #395 / `d8b1e767898be9fe640f002d72cf7771842865b6`
+- Reconstruction baseline: #391 / `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
+- Parallel owners: #278, #360, #392, #83, #204, #284
 - Enduring governance contract: #133
-- #393 normalization: implemented in PR #395; closure-pending
-- Historical/superseded control-plane lineage: #347, #368, #369, #387, #388
-- Historical execution evidence remains under docs/archive/
 
 ## Verification
 
-- merged main baseline is current and independently inspectable
-- active governance surfaces agree on one authority chain
-- five credential-isolated advisory slots request only openrouter/free
-- no active model-specific reviewer or approval contract remains
-- owning Issue resolution is deterministic and required before provider invocation
-- automatic terminal state is artifact-backed and not comment-driven
-- superseded current-state, model-specific, and issue-lineage material is historical only and not active routing
-- the Session Snapshot is explicit and machine-checkable
-- CI green, corpus clean, and session current are separate claims
+- current-slice pointer no longer names #394 as the live frontier
+- Draft PR #398 remains Draft and non-production
+- R1 backend-display and R2 setup/config stay presentation-only
+- no canvas OAuth, Firestore write, entitlement, scheduler, or durable-auth authority
+- 1–10 Seat capacity remains distinct from Tree 1–8
+- Product Law §15 is unchanged
+- no 029 release, C8/C9/C10, or TEAM-BACKEND-001 completion claim
 - existing product/runtime tests remain governed; no validator is weakened
+- browser/runtime evidence for this slice is exact-head scoped to Draft PR #398
 
 ## Current slice boundary
 
-Issue #394 owns only baseline/Issue-topology reconciliation. Its implementation is complete in PR #395 and it remains current only for merge/closure bookkeeping. #393 is fully absorbed into the same PR and is not a parallel execution stream. This slice does not absorb #278, #360, #284, #204, #83, or #392, and creates no 029 release, C9/C10, or backend completion claim. Product Law §15 remains unchanged and authoritative; #394 closure does not endorse TEAM-BACKEND-001 completion or reorder the governed program/release sequence.
-
+Issue #396 / Draft PR #398 own only the TEAM-EXPERIENCE-029 mechanical R1/R2 world-ring presentation increment. This slice does not absorb #278, #360, #284, #204, #83, or #392. Later #396 frontiers (complete Seat branches, full semantic topology, electricity choreography, authenticated world boundary) remain later work. Merged #394/#393 records stay historical provenance.
 
 ## Current blocker
 
-This reconciliation is implementation-complete on PR #395. It remains open only until the exact-head governed checks, human review/authorization, merge, and post-merge Issue closure are recorded. It does not absorb or replace the separately owned product, frontend, backend, or governance feature slices.
+Draft PR #398 currently has failing Project tests + canonical package and Playwright browser verification on head `f79b8016a80461162d3f7fb8234c285235c01163`. The next implementation session must inspect those exact-head failures before adding R1/R2 presentation, and must not weaken validators to obtain green CI.

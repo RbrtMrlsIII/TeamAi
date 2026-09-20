@@ -1,7 +1,7 @@
 # MASTERPLAN — active execution checklist
 
 - [x] Issue #389 — clean canonical mainline reconstruction completed through PR #391 (merge `867944b03776f47fb01bd2cddf90ed4c70ab3b68`).
-- [x] Issue #394 — baseline/Issue-topology reconciliation implemented in PR #395; final acceptance and Issue closure remain merge-gated.
+- [x] Issue #394 — baseline/Issue-topology reconciliation merged through PR #395 (`d8b1e767898be9fe640f002d72cf7771842865b6`); post-merge current-slice advancement is recorded here. Product Law §15 remains unchanged.
 
 **Authority:** `Product_Law/PRODUCT_LAW.md`  
 **Role:** chronology and executable checklist only.  
@@ -105,7 +105,7 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] PR #361 is merged and its semantic topology/adaptive-clearance state is now the current machine implementation baseline.
 - [x] Align all canonical session/current-slice/masterplan records with the merged state after #361.
 - [ ] Retire stale PR #349/#352 interpretations after their landed changes are reflected in the canonical history/current-state surfaces.
-- [x] Resolve remaining active retired-root references and validator responsibility overlaps through #393; implemented in PR #395, with #393 closure remaining merge-gated.
+- [x] Resolve remaining active retired-root references and validator responsibility overlaps through #393; implemented in PR #395 (`d8b1e767898be9fe640f002d72cf7771842865b6`) and closed by the post-merge current-slice advancement.
 - [ ] Continue TEAM-EXPERIENCE-029 from the canonical current frontier; C8/C9/C10 remain incomplete.
 
 ## Session synchronization
@@ -129,6 +129,6 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 - [x] Route Guest Hero ring/camera density through `seatPopulationDensity()` / 1–10 instead of the leftover 8-seat clamp; keep Tree 1–8 as a separate world-tree vocabulary.
 
 
-## Current Issue topology baseline — Issue #394
+## Current Issue topology baseline — post-#395
 
-`main` remains the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. The #393 governance/advisory normalization is implemented in PR #395 and is closure-pending rather than an active implementation stream. Superseded vehicles remain historical and must not become parallel current slices.
+`main` is `d8b1e767898be9fe640f002d72cf7771842865b6` after PR #395. #394 and #393 are implementation-complete historical records; Product Law §15 remains unchanged. Current execution is split by responsibility: #396 / Draft PR #398 owns the TEAM-EXPERIENCE-029 mechanical R1/R2 world-ring frontier; #278 and #360 own 029 product/runtime ledgers; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. Superseded vehicles remain historical and must not become parallel current slices.
