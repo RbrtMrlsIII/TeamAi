@@ -638,9 +638,6 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       gl.uniform1f(solidGlow, selected ? .75 : .16);
       gl.drawArrays(gl.TRIANGLES,0,entry.count);
 
-    renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
-    renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
-
       if (part.uiSurface) {
         modelMatrix(model,
           [part.uiSurface.anchor.x,part.uiSurface.anchor.y,part.uiSurface.anchor.z],
@@ -653,6 +650,10 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
         gl.drawArrays(gl.TRIANGLES,0,entry.count);
       }
     }
+
+    // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
+    renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
+    renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
 
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
