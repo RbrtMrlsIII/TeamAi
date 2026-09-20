@@ -28,9 +28,9 @@ test('hero-flex frame ticks workspace scope branch after hierarchy pose', () => 
   assert.ok(pose >= 0 && ws > pose);
 });
 
-test('hero-flex applies branchBoost for SEAT_WORKSPACE_SCOPE child', () => {
+test('canonical renderer receives WORKSPACE_SCOPE state from the controller', () => {
   const src = flex();
-  assert.match(src, /isWorkspaceScope/);
+  assert.match(src, /machine-world-renderer\\.js/);
   assert.match(src, /getWorkspaceScopeBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
   assert.match(src, /isAuthorization \|\| isWorkspaceScope/);
 });
