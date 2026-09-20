@@ -522,6 +522,29 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     });
   }
 
+  function renderSemanticEdgeTrace(edge, amount, reducedMotion) {
+    const route = Array.isArray(edge?.route) ? edge.route : [];
+    if (route.length < 2) return null;
+    const activation = Math.max(0, Math.min(1, finite(amount, 0)));
+    if (activation <= 0.02) return null;
+    const values = route.flatMap((point) => [Number(point.x) || 0, Number(point.y) || 0, Number(point.z) || 0]);
+    gl.useProgram(line);
+    gl.uniformMatrix4fv(lineP,false,projection);
+    gl.uniformMatrix4fv(lineV,false,view);
+    gl.uniformMatrix4fv(lineM,false,identity);
+    gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(linePos);
+    gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
+    gl.uniform4f(lineColor,.20,.46,.72,reducedMotion ? .34 + .20 * activation : .18 + .34 * activation);
+    gl.drawArrays(gl.LINE_STRIP,0,route.length);
+    return Object.freeze({
+      semanticEdgeId: edge.semanticEdgeId || edge.id || null,
+      progress: activation,
+      presentationOnly: true,
+    });
+  }
+
   function renderElectricalEdgeFlow(edge, amount, reducedMotion, now, label = 'machine') {
     const route = resolveElectricalEdgeRoute(edge);
     if (route.length < 2) return null;
@@ -744,9 +767,16 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       }, now / 1000);
       canvas.dataset.machineWorldFocusedDivision = focusedDivision?.childId || '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = focusedDivision?.id || '';
+      const focusedDivisionTrace = renderSemanticEdgeTrace(
+        focusedDivision?.edge,
+        state.focusedChildAmount,
+        reducedMotion,
+      );
+      canvas.dataset.machineWorldFocusedDivisionEdge = focusedDivisionTrace?.semanticEdgeId || '';
     } else {
       canvas.dataset.machineWorldFocusedDivision = '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = '';
+      canvas.dataset.machineWorldFocusedDivisionEdge = '';
     }
 
     let electricalMachineFlow = null;
