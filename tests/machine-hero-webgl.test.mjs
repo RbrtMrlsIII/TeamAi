@@ -26,56 +26,45 @@ test('machine preview has a semantic fallback independent of WebGL availability'
   assert.match(fallback, /reduced-motion/);
 });
 
-test('WebGL projector resolves its browser graph dependency and graph resolves payload dependency', () => {
-  assert.match(source, /\.\/machine-hero-graph\.js/);
-  assert.match(graph, /\.\/machine-hero-scene\.js/);
-  assert.match(payload, /createMachineTransitionFromPayload/);
+test('WebGL preview delegates rendering to the canonical world renderer while semantic graph modules remain independently tested', () => {
+  assert.match(source, /\.\/machine-world-renderer\.js/);
+  assert.match(source, /createMachineWorldRenderer/);
   assert.match(graph, /createMachineGraph/);
+  assert.match(payload, /createMachineTransitionFromPayload/);
 });
 
-test('WebGL projector renders multiple semantic parts and wiring routes', () => {
-  assert.match(source, /SEAT_CONNECTION/);
-  assert.match(source, /SEAT_BEHAVIOR/);
-  assert.match(source, /SEAT_TOOLKIT/);
-  assert.match(source, /createMachineGraph/);
-  assert.match(source, /graph\.transitions/);
-  assert.match(source, /transition\.wiring\.route/);
-  assert.match(source, /graph\.renderedParts/);
-  assert.match(source, /gl\.LINE_STRIP/);
+test('canonical renderer owns the multi-module and wiring draw path', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /createBranchConnectionCore/);
+  assert.match(renderer, /scene\.parts/);
+  assert.match(renderer, /scene\.connections/);
+  assert.match(renderer, /gl\.LINE_STRIP/);
+  assert.match(renderer, /machineWorldRenderer|machine-world renderer|machine-world/);
 });
 
-test('WebGL preview uses the shared stateful animation engine for expansion and interruption', () => {
-  assert.match(source, /\.\/machine-core-animation\.js/);
-  assert.match(source, /createMachineAnimation/);
-  assert.match(source, /animation\.sample/);
-  assert.match(source, /animation\.setTarget/);
-  assert.match(source, /requestAnimationFrame/);
-  assert.match(source, /if\(!frame\.done\)scheduleDraw\(\)/);
-  assert.match(source, /frame\.state/);
-  assert.match(source, /reduced-motion/);
-  assert.match(source, /frame\.state/);
-  assert.match(source, /frame\.amount/);
-  assert.match(source, /sourceAmount:0,targetAmount:amount/);
-  assert.doesNotMatch(source, /expanded=!expanded/);
-  assert.doesNotMatch(source, /expanded\?\{\.\.\.edge/);
+test('canonical world renderer uses the shared stateful animation engine for expansion and interruption', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /\.\/machine-core-animation\.js/);
+  assert.match(renderer, /createMachineAnimation/);
+  assert.match(renderer, /animation\.sample/);
+  assert.match(renderer, /animation\.setTarget/);
+  assert.match(renderer, /reducedMotion/);
+  assert.match(renderer, /wantedExpanded/);
+  assert.match(renderer, /if \(wantedExpanded !== targetExpanded\)/);
 });
 
-test('WebGL projector keeps named camera identity separate from semantic subject', () => {
-  assert.match(source, /resolveMachineCamera/);
-  assert.match(source, /cameraId:'SEAT_CLOSE'/);
-  assert.match(source, /graph\.subject/);
+test('canonical world renderer keeps branch camera identity separate from physical subject', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /resolveBranchCamera/);
+  assert.match(renderer, /effectiveCameraId/);
+  assert.match(renderer, /fitWorldCamera/);
+  assert.match(renderer, /deriveMachineSubject/);
 });
 
-test('magnificent renderer is downstream of the shared 15-module machine core', () => {
-  assert.match(magnificent, /\.\/machine-core-layout-runtime\.js/);
-  assert.match(magnificent, /\.\/machine-core-animation\.js/);
-  assert.match(magnificent, /createBranchConnectionCore/);
-  assert.match(magnificent, /resolveBranchCamera/);
-  assert.match(magnificent, /createMachineAnimation/);
-  assert.match(magnificent, /scene\.parts/);
-  assert.match(magnificent, /scene\.connections/);
-  assert.match(magnificent, /requestAnimationFrame/);
-  assert.match(magnificent, /createGradientRing/);
+test('magnificent compatibility preview delegates to the canonical renderer', () => {
+  assert.match(magnificent, /\.\/machine-world-renderer\.js/);
+  assert.match(magnificent, /createMachineWorldRenderer/);
+  assert.match(magnificent, /mountMagnificentMachine/);
   assert.match(magnificentPage, /data-machine-magnificent/);
   assert.match(magnificentPage, /prototype · not production/);
 });
