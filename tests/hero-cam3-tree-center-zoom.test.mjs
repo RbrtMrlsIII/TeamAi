@@ -14,6 +14,8 @@ import {
   navAllowedOnOpenTree,
   baseDockForTree,
   poseAboutTreeCenter,
+  worldPullbackProgress,
+  blendCameraPose,
   shouldApplyTreeNav,
 } from '../public/hero-cam3-tree-center-zoom.js';
 
@@ -47,6 +49,26 @@ test('poseAboutTreeCenter keeps look-at locked to dock target', () => {
   const distA = Math.hypot(a.p[0] - a.t[0], a.p[1] - a.t[1], a.p[2] - a.t[2]);
   const distB = Math.hypot(b.p[0] - b.t[0], b.p[1] - b.t[1], b.p[2] - b.t[2]);
   assert.ok(distB > distA * 1.2);
+});
+
+test('world pullback is continuous across the full NAV_ZOOM range', () => {
+  assert.equal(worldPullbackProgress(0.72, 2), 0);
+  assert.equal(worldPullbackProgress(1, 2), 0);
+  assert.equal(worldPullbackProgress(1.5, 2), 0.5);
+  assert.equal(worldPullbackProgress(2, 2), 1);
+  assert.equal(worldPullbackProgress(2.5, 2), 1);
+});
+
+test('camera blending is monotonic and reaches the semantic world dock without a threshold snap', () => {
+  const seat = { p: [6, 2.3, 0], t: [5, 0.95, 0], f: 36 };
+  const world = { p: [0, 10, 10], t: [0, 0.78, 0], f: 39 };
+  const atStart = blendCameraPose(seat, world, 0);
+  const atMid = blendCameraPose(seat, world, 0.5);
+  const atEnd = blendCameraPose(seat, world, 1);
+  assert.deepEqual(atStart, seat);
+  assert.deepEqual(atEnd, world);
+  assert.ok(Math.hypot(...atMid.p.map((v, i) => v - seat.p[i])) > 0);
+  assert.ok(Math.hypot(...atEnd.p.map((v, i) => v - atMid.p[i])) > 0);
 });
 
 test('baseDockForTree uses cameraId from state', () => {

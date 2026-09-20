@@ -440,15 +440,17 @@ let lastNavBaseCameraId = 'HERO_WIDE';
 function applyNavCamera() {
   if (!shouldApplyTreeNav(hierarchyRuntime)) return;
   const table = cameras();
-  const atWorldBaseline = navZoom >= NAV_ZOOM_MAX - 1e-6;
-  let base = (hierarchyRuntime.openParentId && !atWorldBaseline) ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
-  let baseId = (atWorldBaseline || !hierarchyRuntime.openParentId) ? 'HERO_WIDE' : (cameraId || 'HERO_WIDE');
-  if (!atWorldBaseline && hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
+  let base = hierarchyRuntime.openParentId ? baseDockForTree({ cameraId }, table) : (table.HERO_WIDE || table.SEAT_CLOSE);
+  let baseId = hierarchyRuntime.openParentId ? (cameraId || 'HERO_WIDE') : 'HERO_WIDE';
+  if (hierarchyRuntime.openParentId && typeof resolveSelectedSeatDock === 'function') {
     const seatDock = resolveSelectedSeatDock(cameraId || 'SEAT_CLOSE', typeof selectedSeat === 'number' ? selectedSeat : 0, seatCount, profile(seatCount), { force: true });
     if (seatDock) base = seatDock;
   }
-  lastNavBaseCameraId = baseId;
-  camera = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
+  const subjectPose = poseAboutTreeCenter(base, { navZoom, navOrbitYaw, navOrbitPitch });
+  const worldPose = table.HERO_WIDE || table.SEAT_CLOSE;
+  const worldPullback = hierarchyRuntime.openParentId ? worldPullbackProgress(navZoom, NAV_ZOOM_MAX) : 0;
+  lastNavBaseCameraId = worldPullback >= 1 || !hierarchyRuntime.openParentId ? 'HERO_WIDE' : baseId;
+  camera = hierarchyRuntime.openParentId ? blendCameraPose(subjectPose, worldPose, worldPullback) : subjectPose;
   camAt = 1;
 }
 canvas.addEventListener('wheel', (event) => {
