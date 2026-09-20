@@ -2,22 +2,22 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: complete the current-state reconciliation, normalize the absorbed advisory-control-plane cleanup, and prepare PR #395 for governed closure without changing product/runtime logic.
+- Last given prompt: continue Issue #396 / PR #398 until the 029 spatial machine feature set is genuinely complete and the branch can replace main; feature completion comes before polish.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
 - current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
-- current slice: GOVERNANCE — current baseline truth and Issue topology reconciliation (Issue #394)
-- replacement branch: governance/baseline-truth-reconciliation-20260919
-- open implementation vehicles: PR #395 / Issue #394 (closure-pending until merge)
-- active implementation slices: #278, #360, #392, #83, #284, #204
-- closure-pending governance slices: #394 / #393, both implemented in PR #395
+- current slice: TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
+- replacement branch: frontend/029-machine-world-convergence
+- open implementation vehicle: PR #398 / Issue #396 (active Draft)
+- active implementation slices: #396, #278, #360, #392, #83, #284, #204
+- closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
-- historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379
+- historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: complete the governed human-review/merge path for PR #395, then advance `Masterplan/NEXT_SLICES.md` to the next separately owned product/backend/verification slice
-- handoff rule: chat is transient; start from this snapshot plus live GitHub state and the owning Issue/PR, not PR archaeology
+- next allowed work: continue the governed 029 implementation on PR #398, finish feature frontiers, then prove exact-head replacement readiness before any merge
+- handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
@@ -41,17 +41,15 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 ### 2026-09-21 active 029 migration
 
-PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-machine-world-convergence`. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d616b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
+PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-machine-world-convergence`. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d6168b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
 
 ## Current replacement-branch control plane
 
-- Issue #389 is completed; its reconstruction is merged into main. Issue #394 is the current baseline-reconciliation vehicle.
-- #388/#386/#385/#379 are source/history only and must not be merged wholesale.
+- Issue #389 is completed; its reconstruction is merged into main.
+- #394/#393 remain closure-pending governance lineage and historical control-plane evidence; they do not own the 029 product implementation.
 - Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
 - Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
-- Previous merged-main advisory proof: exact head `be9d234ee41a2771ccb737e7435dff5d3481897b`, terminal slots 5/5, publishable advisory reviews 4/5, one terminal `PROVIDER_RESPONSE_TRUNCATED`.
-- Earlier PR #395 advisory evidence (historical exact head `c2a6f11a5a2bc31fa7212ab74e66454c0a4e3a06`): workflow run `35451109816` reached 5/5 terminal slots, 4/5 provider HTTP 2xx responses, 1/5 published review, 3/5 `PROVIDER_RESPONSE_TRUNCATED`, 1/5 HTTP 429 from provider `Liquid`, and 0/5 provenance gaps. This is historical context only; fresh advisory evidence is exact-head scoped and supersedes it for current runtime state.
 - Actual model/provider is runtime evidence from OpenRouter.
 - Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
@@ -68,7 +66,7 @@ PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-ma
 ## Product boundary while reconstruction is active
 
 - Preserve current machine candidate and semantic topology work already on main.
-- Do not advance to a new 029 feature/runtime slice until PR #395 is merged and `Masterplan/NEXT_SLICES.md` is advanced from the closure-pending #394 slice.
+- PR #398 owns the current 029 spatial convergence implementation described by Issue #396.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
 ## Validation lifecycle guide
@@ -105,7 +103,7 @@ Never weaken validation merely to make CI green.
 
 ## Current validation-change record
 
-The clean-mainline reconstruction preserves the evidence-integrity contract while adapting validator assertions to the replacement advisory transport: PR comments remain publication evidence, structured workflow artifacts hold orchestration state, and the exact-head requirement is retained. Review-readiness distinguishes missing/in-progress checks from completed failures and waits for required checks instead of treating an absent conclusion as terminal failure. The automatic reviewer fan-out uses a bounded 2-second launch stagger to reduce burst traffic without reviving staged barriers. The advisory validator's old broad comment-read assertion was replaced with a precise read-pattern assertion rather than weakening comment publication. The canonical governance parser's Draft-proof-target boundary was corrected from a level-2-or-3 closing lookahead to a level-2 closing lookahead so nested proof-target subsections are included; the required governance/canonical content is therefore validated rather than accidentally discarded.
+PR #398 is replacing the retired monolithic Hero renderer with a canonical machine-world renderer while keeping the Hero controller as the semantic/input boundary. The migration preserves exact-head evidence rules and adapts validation toward owner-level behavioral contracts rather than stale source-shape assertions. A current concrete runtime issue was found on this branch: the canonical renderer imported `seat-adjacent-division-wiring.js` but the public synchronization manifest omitted it, which prevented Hero bootstrap and left `window.TeamAiHero` undefined. The repair publishes the dependency and adds it to the synchronization set.
 
 ## Evidence rules
 
@@ -125,10 +123,9 @@ There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to 
 
 The merged machine candidate remains non-production. Semantic identity, payload meaning, topology ownership, adaptive geometry, transition state, camera relationship, and rendering remain distinct concerns. Renderer output cannot become backend, identity, entitlement, scheduler, acceptance, or merge authority.
 
-
 ## CURRENT ISSUE OWNERSHIP
 
-- #394 = current baseline/session/Issue-topology reconciliation
+- #396 = active 029 spatial machine convergence execution guide
 - #278 = 029 canonical product-experience execution ledger
 - #360 = 029 machine-candidate/runtime/browser/provenance slice
 - #392 = AI Seat budget, usage, handoff, shared context, and cooperation product feature
@@ -136,6 +133,6 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 - #284 = backend durable/runtime ledger
 - #204 = Conn-3 GitHub OAuth/bind integration
 - #133 = enduring validation/promotion governance contract
-- #393 = governance/advisory normalization implemented in PR #395; closure-pending
+- #394/#393 = governance baseline/advisory normalization lineage, closure-pending in PR #395
 
 Historical Issues are evidence, not active routing.
