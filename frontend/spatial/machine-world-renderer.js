@@ -22,6 +22,7 @@ import { SETUP_CONFIG_V1, drawSetupConfigRing } from './hero-r2-setup-ring.js';
 import { RING_R1_SCALE, RING_R2_SCALE, NAV_ZOOM_MAX } from './hero-world-contract.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
+import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -676,8 +677,32 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     }
 
     // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
-    renderSeat1ConnectionChild(scene, sample.amount, effectiveCameraId, reducedMotion, now);
+    renderSeat1ConnectionChild(scene, finite(state.connectionBranchAmount, 0), effectiveCameraId, reducedMotion, now);
     renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
+    if (hierarchyOpen && state.focusedChildId && state.focusedChildId !== 'SEAT_CONNECTION') {
+      const shell = scene.byBranch.get(effectiveCameraId);
+      const focusedDivision = drawFocusedSeatDivision({
+        parent: shell,
+        childId: state.focusedChildId,
+        childIndex: state.focusedChildIndex,
+        amount: state.focusedChildAmount,
+        reducedMotion,
+        draw: ringDraw,
+        CYL: 'CYL',
+        TORUS: 'TORUS',
+        CUBE: 'CUBE',
+        T: translateMatrix,
+        S: scaleMatrix,
+        RY: rotateYMatrix,
+        mul: multiplyMatrix,
+        M: RING_MATERIALS,
+      }, now / 1000);
+      canvas.dataset.machineWorldFocusedDivision = focusedDivision?.childId || '';
+      canvas.dataset.machineWorldFocusedDivisionGeometry = focusedDivision?.id || '';
+    } else {
+      canvas.dataset.machineWorldFocusedDivision = '';
+      canvas.dataset.machineWorldFocusedDivisionGeometry = '';
+    }
 
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
