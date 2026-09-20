@@ -43,6 +43,10 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof now targets the revised five-slot free-router path.
 - [x] Automatic OpenRouter Free Router sequence has been runtime-executed on fresh eligible non-draft PR lifecycle events. Historical 0/5 proof at `b5cabce7fb9e503637a9ff42a06befef11a5bd22` remains immutable; final repaired proof at `be9d234ee41a2771ccb737e7435dff5d3481897b` recorded 4/5 publishable advisory reviews and 1/5 terminal `PROVIDER_RESPONSE_TRUNCATED`.
 
+## 2026-09-21 029 spatial convergence checkpoint
+
+Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-convergence`. The production spatial runtime has crossed the renderer boundary: `public/hero-flex.js` is controller/state/input only, while `frontend/spatial/machine-world-renderer.js` owns the WebGL machine world and is synchronized to `public/machine-world-renderer.js`. The old Hero mutation engine is retired. This checkpoint records the implementation lineage only; it does not create a 029 completion or release claim.
+
 ## Workspace and delivery
 
 - [x] Existing durable branch naming policy is responsibility-specific.
