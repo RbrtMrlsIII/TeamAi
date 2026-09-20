@@ -46,7 +46,7 @@ test('turn lifecycle exists', () => {
 });
 
 test('flexible seat model is present', () => {
-  for (const marker of ['profile(', 'buildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
+  for (const marker of ['rebuildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
     assert.ok(runtime.includes(marker), marker);
   }
   assert.match(runtime, /clampSeatCount\(next\)/);
@@ -54,16 +54,18 @@ test('flexible seat model is present', () => {
   assert.match(capacity, /MIN_SEAT_COUNT = 1/);
   assert.match(capacity, /MAX_SEAT_COUNT = 10/);
   assert.match(capacity, /GUEST_SEAT_COUNT = 10/);
-  assert.match(runtime, /seatPopulationDensity\(count\)/);
-  assert.match(runtime, /seatPopulationDensity\(seatCount\)/);
-  assert.doesNotMatch(runtime, /clamp\(count,1,8\)/);
-  assert.doesNotMatch(runtime, /\(seatCount-1\)\/7/);
+  const renderer = read('public/machine-world-renderer.js');
+  assert.match(renderer, /Number\(state\.seatCount\)/);
+  assert.match(renderer, /createBranchConnectionCore/);
 });
 
-test('signature geometry primitives are present', () => {
-  for (const primitive of ['function torus', 'function sph', 'TORUS', 'RING', 'SPH']) {
-    assert.match(runtime, new RegExp(primitive.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  }
+test('canonical renderer owns the WebGL geometry primitives', () => {
+  const renderer = read('public/machine-world-renderer.js');
+  assert.match(renderer, /const POLYS =/);
+  assert.match(renderer, /function shapeBuffer\(/);
+  assert.match(renderer, /gl\.drawArrays\(gl\.TRIANGLES/);
+  assert.match(renderer, /function ringDraw\(/);
+  assert.match(renderer, /PRIMITIVE_POLYGONS/);
 });
 
 test('spatial depth layer is wired', () => {
