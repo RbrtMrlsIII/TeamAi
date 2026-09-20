@@ -85,19 +85,16 @@ test('Seat-1 connection fails closed unless all canonical shell identity fields 
   assert.equal(buildMachineCoreSeat1Connection({ shell: core.hub, expansionAmount: 1 }), null);
 });
 
-test('canonical Hero renders the existing Seat-1 semantic connection geometry', async () => {
+test('canonical machine renderer owns Seat-1 semantic connection WebGL path', async () => {
   const { readFile } = await import('node:fs/promises');
-  const [hero, base] = await Promise.all([
-    readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8'),
-    readFile(new URL('../public/_flex_src/hero-flex.base.js', import.meta.url), 'utf8'),
-  ]);
-  for (const source of [hero, base]) {
-    assert.match(source, /buildMachineCoreSeat1Connection/);
-    assert.match(source, /TREE-HERO-SEAT#0:SEAT_SHELL/);
-    assert.match(source, /connection\.adaptive\?\.current/);
-    assert.match(source, /drawSemanticSeat1Connection/);
-    assert.doesNotMatch(source, /firestore|supabase|paypal|scheduler|oauth/i);
-  }
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /buildMachineCoreSeat1Connection/);
+  assert.match(renderer, /seatConnectionDrawPath/);
+  assert.match(renderer, /seatConnectionProof/);
+  assert.match(renderer, /TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY/);
+  assert.doesNotMatch(renderer, /firestore|supabase|paypal|scheduler|oauth/i);
+  const controller = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(controller, /drawSemanticSeat1Connection|buildHeroSeat1Connection/);
 });
 
 test('public Seat-1 connection runtime stays synchronized with the canonical frontend module', async () => {
