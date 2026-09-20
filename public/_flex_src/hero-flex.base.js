@@ -275,9 +275,10 @@ function buildHeroSeat1Connection(seat,index,shellY,scale,branchAmount){
 function drawSemanticSeat1Connection(connection,focused=false){
   const g=connection?.geometry;
   if(!g)return;
-  const d=g.dimensions;
+  const d=connection.adaptive?.current;
   const c=g.center;
   const yaw=g.corridor.yaw;
+  if(!d || !Number.isFinite(d.x) || !Number.isFinite(d.y) || !Number.isFinite(d.z))return;
   const emphasis=focused?1.16:1;
   draw(CUBE,mul(mul(T(c.x,c.y,c.z),RY(yaw)),S(d.width*emphasis,d.height*emphasis,d.depth*emphasis)),focused?M.energy:M.glass,{
     rough:.28,spec:[.92,.94,.90],emit:focused?.16:.05,alpha:.72,

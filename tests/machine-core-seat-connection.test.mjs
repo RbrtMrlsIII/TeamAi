@@ -28,7 +28,13 @@ test('Seat-1 connection exposes one payload-driven adaptive expansion envelope',
     assert.ok(expanded.adaptive.current[axis] >= expanded.adaptive.collapsed[axis]);
     assert.ok(expanded.adaptive.current[axis] <= expanded.adaptive.expanded[axis]);
   }
-  assert.deepEqual(expanded.geometry.dimensions, expanded.adaptive.current);
+  assert.equal(expanded.geometry.dimensions.width, expanded.adaptive.collapsed.x);
+  assert.equal(expanded.geometry.dimensions.depth, expanded.adaptive.collapsed.z);
+  assert.equal(expanded.geometry.dimensions.height, expanded.adaptive.collapsed.y);
+  for (const axis of ['x', 'y', 'z']) {
+    assert.ok(expanded.adaptive.current[axis] >= expanded.adaptive.collapsed[axis]);
+    assert.ok(expanded.adaptive.current[axis] <= expanded.adaptive.expanded[axis]);
+  }
   assert.notDeepEqual(expanded.adaptive.expanded, expanded.adaptive.collapsed);
 });
 
