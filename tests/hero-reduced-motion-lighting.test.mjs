@@ -17,7 +17,7 @@ test('aura sets --hero-light-motion from reducedMotionChoreography', () => {
 });
 
 test('theme/material presentation stays isolated from document.body', () => {
-  assert.match(flex, /Isolation preserved/);
+  assert.doesNotMatch(flex, /document\.body/);
   assert.doesNotMatch(materialsCss, /document\.body/);
 });
 
