@@ -41,8 +41,8 @@ test('hero-flex frame ticks connection branch after hierarchy pose', () => {
   );
 });
 
-test('hero-flex applies branchBoost visual on CONNECTION plate', () => {
-  assert.match(flex, /branchBoost/);
+test('canonical renderer receives CONNECTION state from the controller', () => {
+  assert.match(flex, /machine-world-renderer\\.js/);
   assert.match(flex, /getConnectionBranchAmount\(hierarchyRuntime\)/);
 });
 
