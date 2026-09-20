@@ -25,7 +25,7 @@ test('029 reconciliation leaves contribution transition camera-neutral', async (
   assert.match(runtime, /setState\(['"]CONTRIBUTE['"],['"]contribution-start['"]\)/);
   assert.doesNotMatch(
     runtime,
-    /setCamera\(['"](?:TURN_FOLLOW|HERO_WIDE)['"]\);setState\(['"]CONTRIBUTE['"],['"]contribution-start['"]\)/,
+    /setCamera\(['"](?:TURN_FOLLOW|HERO_WIDE)['"]\);\s*setState\(['"]CONTRIBUTE['"],\s*['"]contribution-start['"]\)/,
   );
 });
 
