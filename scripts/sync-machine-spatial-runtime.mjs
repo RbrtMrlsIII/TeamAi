@@ -6,6 +6,7 @@ const files = [
   'seat-capacity.js',
   'seat-division-geometry.js',
   'seat-connection-edge.js',
+  'seat-adjacent-division-wiring.js',
   'machine-core-seat-connection.js',
   'machine-hero-scene.js',
   'machine-hero-graph.js',
