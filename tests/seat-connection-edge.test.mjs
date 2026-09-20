@@ -10,6 +10,7 @@ test('Seat-1 connection edge contract is present', async () => {
 test('Seat-1 legacy injector yields to canonical semantic Hero ownership', async () => {
   const injector = await readFile(new URL('../scripts/apply-seat1-connection-edge-flex.mjs', import.meta.url), 'utf8');
   assert.match(injector, /canonical semantic Hero renderer/);
-  assert.match(injector, /function drawSemanticSeat1Connection/);
-  assert.match(injector, /buildHeroSeat1Connection/);
+  assert.match(injector, /machine-world-renderer\.js/);
+  assert.match(injector, /no longer mutates hero-flex\.js/);
+  assert.doesNotMatch(injector, /function drawSemanticSeat1Connection/);
 });
