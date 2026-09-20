@@ -82,15 +82,16 @@ test('accessible name and handoff stay optional presentation-only', () => {
   assert.equal(intent.source, 'p-r0-workspace-zipskills');
 });
 
-test('hero-flex crown draw + Isolation preserved; P-R0 module is importable', () => {
+test('R0 ZipSkills remains a declared workspace presentation capability', () => {
   const src = read('public/hero-flex.js');
-  assert.match(src, /drawWorkspaceZipskills/);
-  assert.match(src, /Isolation preserved/);
-  assert.match(src, /WORKSPACE_ZIPSKILLS_V1|RING_R0_ZIP_SCALE/);
+  assert.match(src, /WORKSPACE_ZIPSKILLS_V1/);
+  assert.match(src, /zipskillsAccessibleName/);
+  assert.match(src, /cycleRing\(/);
+  assert.match(src, /key === 'z'/);
+  assert.doesNotMatch(src, /gl\.drawArrays/);
   const mod = read('public/hero-p-r0-zipskills.js');
   assert.match(mod, /tickZipskillsBranch/);
   assert.match(mod, /ZIPSKILLS_BRANCH_MS/);
-  assert.match(mod, /requestZipskillsConfigureHandoff/);
 });
 
 test('workspace-zipskills skill exists with PASS and DO NOT seat authority', () => {
