@@ -112,9 +112,12 @@ test('SP-03 INSPECT when closed still blocks free nav', () => {
 test('SP-03 compatibility sync does not own Cam-4 behavior', async () => {
   const apply = await readFile(join(root, 'scripts/apply-cam2-tree-follow-flex.mjs'), 'utf8');
   const runtime = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(runtime, /hero-cam4-edge-swipe|inverseSwipeDelta/);
-  assert.match(runtime, /edgeDriftDelta/);
+  const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
+  assert.match(runtime, /machine-world-renderer\.js/);
+  assert.match(runtime, /applyNavCamera/);
+  assert.match(apply, /hero-flex\.base\.js/);
   assert.doesNotMatch(apply, /apply-cam2-tree-follow-flex\.engine/);
+  assert.match(renderer, /navOrbitYaw/);
 });
 
 test('SP-03 runtime helper exports proportional behavior', async () => {
