@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import {
   createDeepSpaceField,
   DEEP_SPACE_ENVIRONMENT_MODE,
@@ -59,6 +60,9 @@ test('029 Slice A runtime wiring and source/public sync are explicit', async () 
   const runtime = await readFile(new URL('../public/hero-environment.js', import.meta.url), 'utf8');
   const base = await readFile(new URL('../public/_flex_src/hero-flex.base.js', import.meta.url), 'utf8');
   const sync = await readFile(new URL('../scripts/sync-machine-spatial-runtime.mjs', import.meta.url), 'utf8');
+  const assembled = spawnSync(process.execPath, ['scripts/apply-cam2-tree-follow-flex.mjs'], { cwd: new URL('..', import.meta.url).pathname, encoding: 'utf8' });
+  assert.equal(assembled.status, 0, assembled.stderr || assembled.stdout);
+  const regenerated = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 
   assert.match(hero, /from ['\"]\.\/hero-environment\.js['\"]/);
   assert.match(hero, /isMachineWorldLayer/);
@@ -72,4 +76,7 @@ test('029 Slice A runtime wiring and source/public sync are explicit', async () 
   assert.doesNotMatch(hero, /floor\(\);environment\(/);
   assert.equal(runtime, source);
   assert.match(sync, /'hero-environment\.js'/);
+  assert.match(regenerated, /from ['\"]\.\/hero-environment\.js['\"]/);
+  assert.match(regenerated, /createDeepSpaceField/);
+  assert.doesNotMatch(regenerated, /function floor\(\)\{/);
 });
