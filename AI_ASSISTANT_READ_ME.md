@@ -39,6 +39,10 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 - docs/archive/ is historical only.
 - Active HandOver.md, active Endorsement.md, OBSOLETE_FILES.md, and docs/skills/ are forbidden.
 
+### 2026-09-21 active 029 migration
+
+PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-machine-world-convergence`. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d616b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
+
 ## Current replacement-branch control plane
 
 - Issue #389 is completed; its reconstruction is merged into main. Issue #394 is the current baseline-reconciliation vehicle.
