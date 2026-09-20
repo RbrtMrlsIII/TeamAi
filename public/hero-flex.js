@@ -37,6 +37,7 @@ import {
   closeHierarchyParent as closeHierarchyParentState,
   openSeatShellParent as openSeatShellParentState,
   tickHierarchyPose,
+  tickDivisionFocusTransition,
   tickConnectionBranch,
   getConnectionBranchAmount,
   connectionFaceAccessibleName,
@@ -474,7 +475,7 @@ function drawSetupConfigRing(t) {
     M,
   }, t);
 }
-function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();
+function frame(now){syncReducedMotionFromDocument();resize();cycleTurn(now);tickHierarchyPose(hierarchyRuntime,now,reducedMotion);tickDivisionFocusTransition(hierarchyRuntime,now,reducedMotion);tickConnectionBranch(hierarchyRuntime,now,reducedMotion);tickBehaviorBranch(hierarchyRuntime,now,reducedMotion);tickToolkitBranch(hierarchyRuntime,now,reducedMotion);tickCapabilitiesBranch(hierarchyRuntime,now,reducedMotion);tickAuthorizationBranch(hierarchyRuntime,now,reducedMotion);tickWorkspaceScopeBranch(hierarchyRuntime,now,reducedMotion);tickTaskEvidenceBranch(hierarchyRuntime,now,reducedMotion);tickSetupRingFill(hierarchyRuntime,ringFocus,now,reducedMotion);syncHierarchyFromGlobals();
   machineWorldRenderer.render(now, {
     seatCount,
     selectedSeat,
