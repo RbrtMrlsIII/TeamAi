@@ -88,6 +88,7 @@ export function deriveBackendPresentationThreadPaths({
   workspaceRadius = 1,
   ringScale = 1,
   ringRadius = null,
+  articulationAmount = 1,
   catalog = [],
   relationships = R1_BACKEND_PRESENTATION_THREADS_V1,
   bow = null,
@@ -97,6 +98,7 @@ export function deriveBackendPresentationThreadPaths({
     workspaceRadius,
     ringScale,
     ringRadius,
+    articulationAmount,
     catalog,
   });
   const placementById = new Map(placements.map((placement) => [placement.id, placement]));
