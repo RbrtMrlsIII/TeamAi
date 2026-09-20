@@ -8,7 +8,7 @@ TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 
 ## Status
 
-IMPLEMENTATION ACTIVE — PR #398 is the active Draft implementation vehicle on the governance-compliant `frontend/029-machine-world-convergence` branch. PR #397 is closed historical lineage.
+IMPLEMENTATION ACTIVE / IN PROGRESS — PR #398 is the active Draft implementation vehicle on the governance-compliant `frontend/029-machine-world-convergence` branch. PR #397 is closed historical lineage.
 
 ## Objective
 
