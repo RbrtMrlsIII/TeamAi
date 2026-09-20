@@ -388,7 +388,7 @@
       }
     ],
     "provider_wall_clock_timeout_seconds": 300,
-    "job_timeout_minutes": 22,
+    "job_timeout_minutes": 35,
     "credential_alias_policy": "Credential aliases are external secret identifiers and do not identify the routed model/provider; legacy aliases may be frozen when secret renaming cannot be independently verified.",
     "frozen_legacy_credential_aliases": {
       "OPENROUTER_API_KEY_GWEN": "Retained intentionally as the existing external secret alias; do not infer Qwen/model identity from the name."
