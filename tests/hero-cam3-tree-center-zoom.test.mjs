@@ -112,7 +112,8 @@ test('assembly regenerates the canonical Hero with the continuous world camera h
   assert.match(hero, /worldPullbackProgress/);
   assert.match(hero, /fitWorldOverviewDock/);
   assert.match(hero, /blendCameraPose/);
-  assert.match(hero, /fitWorldOverviewDock\(/);\n  assert.match(hero, /worldEnvelopeRadius/);
+  assert.match(hero, /fitWorldOverviewDock\(/);
+  assert.match(hero, /worldEnvelopeRadius/);
 });
 
 test('module and contract stay presentation-only', async () => {
