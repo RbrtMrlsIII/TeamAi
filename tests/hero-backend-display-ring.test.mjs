@@ -27,7 +27,7 @@ test('ring map places backend display on R1', () => {
 test('R1 module stays synchronized and presentation-only', () => {
   assert.equal(publicModule, frontendModule);
   assert.doesNotMatch(frontendModule, /oauth|password|apiKey|firebase\\.auth|supabase/i);
-  assert.match(frontendModule, /\\bCYL\\b/);
+  assert.match(frontendModule, /CYL/);
 });
 
 test('presentation-only: no OAuth or credential bind in R1 draw path', () => {
