@@ -902,6 +902,7 @@ jobs:
               'response_shape': runtime.get('response_shape'),
               'usage_summary': runtime.get('usage_summary'),
                'review_quality_reason': runtime.get('review_quality_reason'),
+              'wall_clock_timeout_seconds': runtime.get('wall_clock_timeout_seconds'),
               'diagnostic': diagnostic[:2000],
           }
           Path('/tmp/slot-result.json').write_text(
