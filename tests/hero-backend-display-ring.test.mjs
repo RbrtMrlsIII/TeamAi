@@ -15,9 +15,9 @@ test('R1 part IDs exist and are not seat children', () => {
   assert.equal(HIERARCHY_PART.WORKSPACE_BACKEND_THREAD, 'WORKSPACE_BACKEND_THREAD');
 });
 
-test('hero-flex draws backend display ring and threads', () => {
-  assert.match(hero, /drawBackendDisplayRing/);
-  assert.match(hero, /workspace \* RING_R1_SCALE/);
+test('hero-flex delegates backend display rendering to the R1 module', () => {
+  assert.match(hero, /drawBackendDisplayRingModule/);
+  assert.match(hero, /ringScale: RING_R1_SCALE/);
 });
 
 test('ring map places backend display on R1', () => {
