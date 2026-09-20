@@ -139,8 +139,8 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
   if (!canvas || !gl) throw new Error('machine-world renderer requires the canonical Hero canvas and WebGL context');
 
   const solid = program(gl,
-    'attribute vec3 p; attribute vec3 n; uniform mat4 P; uniform mat4 V; uniform mat4 M; uniform vec3 light; varying vec3 N; varying vec3 W; void main(){vec4 wp=M*vec4(p,1.0);W=wp.xyz;N=normalize(mat3(M)*n);gl_Position=P*V*wp;}',
-    'precision mediump float; uniform vec4 c; uniform float glow; varying vec3 N; varying vec3 W; void main(){vec3 n=normalize(N);float d=.34+.66*max(dot(n,normalize(vec3(-.42,.86,.32))),0.0);float rim=pow(1.0-max(dot(n,normalize(vec3(.15,.85,.50))),0.0),3.0);gl_FragColor=vec4(c.rgb*(d+.10*rim)+vec3(.05,.08,.11)*glow,c.a);}'
+    'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; varying vec3 W; void main(){vec4 wp=M*vec4(p,1.0);W=wp.xyz;gl_Position=P*V*wp;}',
+    'precision mediump float; uniform vec4 c; uniform float glow; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));float d=.34+.66*max(dot(n,normalize(vec3(-.42,.86,.32))),0.0);float rim=pow(1.0-max(dot(n,normalize(vec3(.15,.85,.50))),0.0),3.0);gl_FragColor=vec4(c.rgb*(d+.10*rim)+vec3(.05,.08,.11)*glow,c.a);}'
   );
   const line = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; void main(){gl_Position=P*V*M*vec4(p,1.0);}',
@@ -152,8 +152,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
   );
 
   const solidPos = gl.getAttribLocation(solid,'p');
-  const solidNorm = gl.getAttribLocation(solid,'n');
-  const solidP = gl.getUniformLocation(solid,'P');
+    const solidP = gl.getUniformLocation(solid,'P');
   const solidV = gl.getUniformLocation(solid,'V');
   const solidM = gl.getUniformLocation(solid,'M');
   const solidColor = gl.getUniformLocation(solid,'c');
@@ -212,7 +211,8 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
 
   function fitWorldCamera(scene, viewport, cameraId) {
     const subject = deriveMachineSubject(scene.parts, 0.2);
-    const selected = resolveBranchCamera(scene, cameraId) || resolveBranchCamera(scene, 'HUB-CORE') || scene.cameras[0];
+    const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
+    const selected = resolveBranchCamera(scene, effectiveCameraId) || resolveBranchCamera(scene, 'HUB-CORE') || scene.cameras[0];
     const span = subject ? Math.max(subject.max.x - subject.min.x, subject.max.z - subject.min.z) : 1;
     const distance = clamp(span * 1.12 + 6, 10, 22);
     const target = selected?.target || subject?.center || {x:0,y:.5,z:0};
@@ -260,7 +260,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     const scene = createBranchConnectionCore({ seatCount, expansionAmount: sample.amount });
 
     perspective(projection, fitWorldCamera(scene,{width,height},branchId).fov,width/Math.max(1,height),.1,120);
-    const cameraSpec = fitWorldCamera(scene,{width,height},branchId);
+    const cameraSpec = fitWorldCamera(scene,{width,height},effectiveCameraId);
     const orbit = reducedMotion ? 0 : finite(state.navOrbitYaw, 0) + now*.000035;
     const target = cameraSpec.target;
     const radius = Math.max(8,cameraSpec.radius * clamp(finite(state.navZoom,1),.78,2.0));
@@ -311,7 +311,6 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       gl.bindBuffer(gl.ARRAY_BUFFER,entry.buffer);
       gl.enableVertexAttribArray(solidPos);
       gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
-      gl.disableVertexAttribArray(solidNorm);
       modelMatrix(model,[part.center.x,part.level - part.dimensions.y*.25,part.center.z],[
         part.dimensions.x*.58,
         part.dimensions.y*.62,
