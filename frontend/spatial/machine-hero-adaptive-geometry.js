@@ -1,12 +1,17 @@
 const clamp01 = (value) => Math.min(1, Math.max(0, Number(value) || 0));
 const safeCount = (value) => Math.max(0, Number.isFinite(Number(value)) ? Number(value) : 0);
+const payloadDensity = (value) => {
+  const numeric = Number(value);
+  if (Number.isFinite(numeric)) return Math.max(0, numeric);
+  return value === 'compact' ? 0.82 : 1;
+};
 
 export function deriveMachineExpansionProfile(part = {}, { clearance = 0.16 } = {}) {
   const base = part?.dimensions || { x: 1, y: 1, z: 1 };
   const payload = part?.payload || {};
   const labels = Array.isArray(payload.labels) ? payload.labels : [];
   const controls = safeCount(payload.controls);
-  const density = safeCount(payload.density);
+  const density = payloadDensity(payload.density);
   const labelLoad = Math.min(1.8, labels.length * 0.18);
   const controlLoad = Math.min(1.8, controls * 0.12);
   const densityLoad = Math.min(2.0, density * 0.10);
