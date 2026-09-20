@@ -2,6 +2,7 @@ import {
   buildSeatDivisionGeometry,
   resolveSeatDivisionSemanticId,
 } from './seat-division-geometry.js';
+import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const clamp01 = (value) => Math.max(0, Math.min(1, finite(value, 0)));
@@ -108,6 +109,12 @@ export function drawFocusedSeatDivision({
   if (!geometry || !draw) return null;
   const presentation = resolveSeatDivisionPresentation(childId);
   const progress = clamp01(amount);
+  const edge = buildSeatDivisionEdge({
+    parent,
+    geometry,
+    childId,
+    childIndex,
+  });
   const deploy = 0.38 + progress * 0.62;
   const size = Math.max(0.22, Math.max(geometry.dimensions.width, geometry.dimensions.depth) * 0.74);
   const spin = reducedMotion ? 0 : finite(t) * 0.28 + Number(childIndex) * 0.21;
@@ -144,6 +151,7 @@ export function drawFocusedSeatDivision({
     amount: progress,
     childId: presentation.childId,
     kind: presentation.kind,
+    edge,
     presentationOnly: true,
   });
 }
