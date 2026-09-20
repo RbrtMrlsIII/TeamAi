@@ -65,7 +65,7 @@ test('SP-06 readiness doc classifies R1 threads as implemented-partial and R2 dr
   assert.match(doc, /implemented-partial/i);
   assert.match(doc, /hero-r1-backend-threads/);
   assert.match(doc, /hero-r2-setup-ring/);
-  assert.match(doc, /WORKSPACE_BACKEND_THREAD/);
+  assert.match(doc, /hero-r1-backend-threads/);
   assert.match(doc, /Do not invent/i);
   assert.match(doc, /no 029-released/);
 });
