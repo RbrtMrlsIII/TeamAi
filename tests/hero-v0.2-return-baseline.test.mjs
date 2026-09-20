@@ -52,9 +52,8 @@ test('V0.2 imports WORLD_BASELINE_DOCK_ID from cam2', async () => {
   assert.match(src, /from '\.\/hero-cam2-tree-follow\.js'/);
 });
 
-test('V0.2 apply script owns return-to-baseline patches', async () => {
+test('V0.2 canonical source owns return-to-baseline directly', async () => {
   const apply = await readFile(join(root, 'scripts/apply-cam2-tree-follow-flex.mjs'), 'utf8');
-  assert.match(apply, /V0\.2 Vision: return-to-baseline/);
-  assert.match(apply, /V0\.2 return baseline/);
-  assert.match(apply, /V0\.2 close baseline/);
+  assert.match(apply, /hero-flex\.base\.js/);
+  assert.doesNotMatch(apply, /V0\.2 Vision: return-to-baseline patches/);
 });
