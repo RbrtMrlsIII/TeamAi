@@ -29,44 +29,6 @@ export function baseDockForTree(state = {}, cameraTable = {}) {
  * Build camera pose: zoom scales distance from center target (look-at),
  * yaw/pitch orbit about that center. Look-at never leaves the center.
  */
-export function fitWorldOverviewDock(baseDock = {}, envelopeRadius = 0, aspect = 1, safety = 1.08) {
-  const t = (baseDock.t || [0, 0.78, 0]).slice();
-  const bp = baseDock.p || [0, 6.4, 9.6];
-  const dx = bp[0] - t[0], dy = bp[1] - t[1], dz = bp[2] - t[2];
-  const currentDistance = Math.hypot(dx, dy, dz) || 1;
-  const radius = Math.max(0, Number(envelopeRadius) || 0);
-  const viewportAspect = Math.max(0.35, Number(aspect) || 1);
-  const fov = Math.max(1, Number(baseDock.f) || 39) * Math.PI / 180;
-  const tangent = Math.tan(fov / 2);
-  const limitingTangent = tangent * Math.min(1, viewportAspect);
-  const requiredDistance = radius > 0 ? (radius * Math.max(1, Number(safety) || 1) / Math.max(0.05, limitingTangent)) : 0;
-  if (!Number.isFinite(requiredDistance) || requiredDistance <= currentDistance) return { p: bp.slice(), t, f: baseDock.f ?? 39 };
-  const scale = requiredDistance / currentDistance;
-  return { p: [t[0] + dx * scale, t[1] + dy * scale, t[2] + dz * scale], t, f: baseDock.f ?? 39 };
-}
-
-export function worldPullbackProgress(navZoom, navZoomMax = 2) {
-  const z = Number(navZoom);
-  const max = Number(navZoomMax);
-  if (!Number.isFinite(z) || z <= 1) return 0;
-  if (!Number.isFinite(max) || max <= 1) return 1;
-  return Math.max(0, Math.min(1, (z - 1) / (max - 1)));
-}
-
-export function blendCameraPose(from = {}, to = {}, amount = 0) {
-  const t = Math.max(0, Math.min(1, Number(amount) || 0));
-  const e = t * t * (3 - 2 * t);
-  const fp = from.p || [0, 6.4, 9.6];
-  const tp = to.p || fp;
-  const ft = from.t || [0, 0.78, 0];
-  const tt = to.t || ft;
-  return {
-    p: [fp[0] + (tp[0] - fp[0]) * e, fp[1] + (tp[1] - fp[1]) * e, fp[2] + (tp[2] - fp[2]) * e],
-    t: [ft[0] + (tt[0] - ft[0]) * e, ft[1] + (tt[1] - ft[1]) * e, ft[2] + (tt[2] - ft[2]) * e],
-    f: (from.f ?? 39) + ((to.f ?? from.f ?? 39) - (from.f ?? 39)) * e,
-  };
-}
-
 export function poseAboutTreeCenter(baseDock, nav = {}) {
   const t = (baseDock.t || [0, 0.78, 0]).slice();
   const bp = baseDock.p || [0, 6.4, 9.6];

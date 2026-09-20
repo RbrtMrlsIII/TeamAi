@@ -96,7 +96,7 @@ import {
   seatShellParentId,
 } from './hero-hierarchy-runtime.js';
 import { resolveTreeCamera, TREE_CAMERA, DEFAULT_WORLD_ELEVATION_DEG, WORLD_BASELINE_DOCK_ID } from './hero-cam2-tree-follow.js';
-import { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree } from './hero-cam3-tree-center-zoom.js';
+import { poseAboutTreeCenter, shouldApplyTreeNav, baseDockForTree, worldPullbackProgress, blendCameraPose, fitWorldOverviewDock } from './hero-cam3-tree-center-zoom.js';
 import { edgePressure, edgeDriftDelta, inverseSwipeDelta, clampPitch, pointerNorm } from './hero-cam4-edge-swipe.js';
 import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { depthReadableFovBoost, depthReadableFaceScale, facePlateScaleForChild } from './hero-depth-readable-faces.js';
