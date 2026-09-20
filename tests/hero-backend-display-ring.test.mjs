@@ -18,6 +18,7 @@ test('R1 part IDs exist and are not seat children', () => {
 test('hero-flex delegates backend display rendering to the R1 module', () => {
   assert.match(hero, /drawBackendDisplayRingModule/);
   assert.match(hero, /ringScale: RING_R1_SCALE/);
+  assert.match(hero, /draw,\s+CUBE,\s+CYL,\s+TORUS,\s+SPH,/);
 });
 
 test('ring map places backend display on R1', () => {
