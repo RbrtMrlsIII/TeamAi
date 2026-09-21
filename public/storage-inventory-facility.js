@@ -96,7 +96,7 @@ function render() {
   state.textContent = stateLabels[readiness];
   state.dataset.state = readiness;
   source.textContent = authenticated
-    ? `Source: ${escapeHtml(readModel.source)}`
+    ? `Source: ${readModel.source}`
     : 'Source: hidden until authenticated read model is available';
 
   inventory.innerHTML = readModel.items.length
@@ -122,10 +122,8 @@ function render() {
   inspect.disabled = !authenticated || readiness !== 'READY' || !currentItem();
 
   const item = currentItem();
-  if (item) {
-    const details = panel?.querySelector('[data-storage-selected-item]');
-    if (details) details.textContent = item.label;
-  }
+  const details = panel?.querySelector('[data-storage-selected-item]');
+  if (details) details.textContent = item ? item.label : 'None selected';
 
   updateBranchPreview();
 }
