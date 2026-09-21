@@ -64,19 +64,24 @@ function openSettings() {
 function bindAuthButtons() {
   document.querySelectorAll('[data-auth-open]').forEach((button) => {
     button.addEventListener('click', () => {
-      const panel = document.getElementById('hero-auth-panel');
-      if (!panel) return;
-      panel.hidden = false;
-      panel.classList.add('is-open');
-      panel.querySelector('input')?.focus();
+      if (typeof window.TeamAiHeroAuthHandoff?.open === 'function') {
+        window.TeamAiHeroAuthHandoff.open();
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('teamai:auth-open-request', {
+        detail: { source: 'experience-rebaseline', presentationOnly: true },
+      }));
     });
   });
   document.querySelectorAll('[data-auth-close]').forEach((button) => {
     button.addEventListener('click', () => {
-      const panel = document.getElementById('hero-auth-panel');
-      if (!panel) return;
-      panel.classList.remove('is-open');
-      panel.hidden = true;
+      if (typeof window.TeamAiHeroAuthHandoff?.close === 'function') {
+        window.TeamAiHeroAuthHandoff.close();
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('teamai:auth-close-request', {
+        detail: { source: 'experience-rebaseline', presentationOnly: true },
+      }));
     });
   });
 }
