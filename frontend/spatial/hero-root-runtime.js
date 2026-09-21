@@ -44,8 +44,10 @@ if (typeof document !== 'undefined') {
   }
 }
 
-window.TeamAiHeroRoots = Object.freeze({
-  definitions: HERO_ROOTS,
-  observe: () => bootstrapHeroRoot(document),
-  snapshot: getHeroRootSnapshot,
-});
+if (typeof window !== 'undefined') {
+  window.TeamAiHeroRoots = Object.freeze({
+    definitions: HERO_ROOTS,
+    observe: () => bootstrapHeroRoot(document),
+    snapshot: getHeroRootSnapshot,
+  });
+}
