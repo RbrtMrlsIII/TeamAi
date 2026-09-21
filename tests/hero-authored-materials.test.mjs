@@ -6,7 +6,7 @@ import {
   authoredSeatShellMaterial,
   authoredSeatInsetMaterial,
   HERO_AUTHORED_MATERIAL_ROLES,
-} from '../public/hero-authored-materials.js';
+} from '../frontend/spatial/hero-authored-materials.js';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -46,6 +46,10 @@ test('canonical machine renderer owns authored-material consumption', async () =
   assert.match(renderer, /const COLORS/);
   assert.match(renderer, /UI_COLORS/);
   assert.match(renderer, /createBranchConnectionCore/);
+  assert.match(renderer, /authoredSeatShellMaterial/);
+  assert.match(renderer, /authoredSeatInsetMaterial/);
+  assert.match(renderer, /authoredRingMaterial/);
+  assert.equal(authoredSource, authoredPublic);
   assert.match(renderer, /gl.drawArrays/);
   assert.doesNotMatch(heroFlex, /gl\.createShader|gl\.createProgram|gl\.drawArrays/);
 });
