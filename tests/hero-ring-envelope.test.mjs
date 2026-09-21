@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { deriveConcentricRingEnvelope } from '../frontend/spatial/hero-ring-envelope.js';
+import { deriveWorkspaceCoreGeometry } from '../frontend/spatial/hero-workspace-core.js';
+import { deriveExpandedMachineCoreRadii } from '../frontend/spatial/hero-world-profile.js';
 
 const workspaceForSeats = (seatCount) => 4.35 + (5.95 - 4.35) * ((seatCount - 1) / 9);
 
@@ -42,11 +44,14 @@ test('animated expansion keeps the concentric order across the supported Seat ra
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     const footprint = workspaceForSeats(seatCount);
     for (const expansionAmount of [0, 0.25, 0.5, 0.75, 1]) {
-      const r0 = footprint * (0.68 + 0.08 * expansionAmount);
-      const r3 = (4.05 + (4.55 - 4.05) * ((seatCount - 1) / 9)) + 0.5 * expansionAmount;
+      const workspaceCore = deriveWorkspaceCoreGeometry({
+        workspaceRadius: footprint,
+        expansionAmount,
+      });
+      const machineRadii = deriveExpandedMachineCoreRadii(seatCount, expansionAmount);
       const envelope = deriveConcentricRingEnvelope({
-        r0Radius: r0,
-        r3Radius: r3,
+        r0Radius: workspaceCore.radius,
+        r3Radius: machineRadii.seatShellRadius,
         ringR1Scale: 1.18,
         ringR2Scale: 1.42,
       });
