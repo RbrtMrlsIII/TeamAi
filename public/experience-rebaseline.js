@@ -1,5 +1,6 @@
 /* 029 Experience Rebaseline controller: explicit classic entrance -> 3D world. */
 import { getFrontendFeature, getGuestPresentationState, listFrontendFeatures } from './feature-registry.js';
+import { resolveFeatureAccess } from './feature-access.js';
 import { featureStateMetadata, featureStatePrecedence, normalizeFeatureState, resolveFeaturePresentationState } from './feature-state.js';
 
 const shell = () => document.querySelector('.hero-shell');
@@ -69,6 +70,10 @@ function publishFeatureRegistry() {
     get: (id) => getFrontendFeature(id),
     guestState: (id) => getGuestPresentationState(id),
   });
+  window.TeamAiFeatureAccess = Object.freeze({
+    guest: (id) => resolveFeatureAccess(id, { authenticated: false }),
+    authenticated: (id) => resolveFeatureAccess(id, { authenticated: true }),
+  });
   window.TeamAiFeatureState = Object.freeze({
     states: () => featureStatePrecedence(),
     normalize: (value, fallback) => normalizeFeatureState(value, fallback),
@@ -89,6 +94,7 @@ function dispatchFeatureIntent(button, source) {
     source,
     featureState: normalizeFeatureState(button?.dataset?.featureState || 'INACTIVE'),
     guestState: guestState?.presentation || null,
+    guestAccess: resolveFeatureAccess(feature.id, { authenticated: false }),
     presentationOnly: true,
   };
   window.dispatchEvent(new CustomEvent('teamai:feature-intent', { detail }));
