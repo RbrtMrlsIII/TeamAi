@@ -176,3 +176,50 @@ test('budget accounting can request handoff before exhaustion without changing l
   assert.equal(result.budget?.completionState, 'HANDOFF_REQUIRED');
   assert.equal(result.budget?.usage.remainingGenerationTokens, 2000);
 });
+
+
+test('preserves explicit provider completion evidence for a normal completed turn', async () => {
+  const { terminationFromOpenAI } = await import('../dist/src/providers/termination.js');
+  const { service: execution } = service(async () => ({
+    provider: 'fixture', model: 'model-1', requestId: 'request-stop', text: 'done',
+    usage: { inputTokens: 2, outputTokens: 2, totalTokens: 4 },
+    termination: terminationFromOpenAI('completed'),
+  }));
+  const result = await execution.execute(task(), 'scheduler-1', 'exec-stop-evidence');
+  assert.equal(result.status, 'completed');
+  assert.equal(result.result?.termination?.state, 'completed');
+  assert.equal(result.result?.termination?.reason, 'stop');
+  assert.deepEqual(result.result?.termination?.providerReason, undefined);
+});
+
+test('provider max-token termination becomes HANDOFF_REQUIRED instead of completed', async () => {
+  const { terminationFromOpenAI } = await import('../dist/src/providers/termination.js');
+  const { service: execution, events } = service(async () => ({
+    provider: 'fixture', model: 'model-1', requestId: 'request-length', text: 'partial',
+    usage: { inputTokens: 3, outputTokens: 16, totalTokens: 19 },
+    termination: terminationFromOpenAI('incomplete', 'max_tokens'),
+  }));
+  const input = task({
+    request: { messages: [{ role: 'user', content: 'long task' }], maxOutputTokens: 16, stream: false },
+  });
+  const result = await execution.execute(input, 'scheduler-1', 'exec-length');
+  assert.equal(result.status, 'handoff_required');
+  assert.equal(input.status, 'handoff_required');
+  assert.equal(result.result?.termination?.reason, 'length');
+  assert.deepEqual(events.map((event) => event.type), ['START', 'HANDOFF_REQUIRED']);
+});
+
+test('idempotent retry preserves handoff outcome', async () => {
+  const { terminationFromAnthropic } = await import('../dist/src/providers/termination.js');
+  const { service: execution } = service(async () => ({
+    provider: 'fixture', model: 'model-1', requestId: 'request-tool', text: 'tool pending',
+    usage: { inputTokens: 4, outputTokens: 4, totalTokens: 8 },
+    termination: terminationFromAnthropic('tool_use'),
+  }));
+  const input = task();
+  const first = await execution.execute(input, 'scheduler-1', 'exec-handoff-duplicate');
+  const second = await execution.execute(input, 'scheduler-1', 'exec-handoff-duplicate');
+  assert.equal(first.status, 'handoff_required');
+  assert.equal(second.status, 'handoff_required');
+  assert.equal(second.duplicate, true);
+});
