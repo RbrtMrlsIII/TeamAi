@@ -324,4 +324,82 @@ test('continuation request ID conflicts when a retry changes its relation or ins
     }),
     /continuation_request_id_conflict/,
   );
+});\n\ntest('continuation request ensures handoff task enters waiting_for_continuation state', async () => {
+  const calls = [];
+  const checkpoint = buildTaskContinuationCheckpoint({
+    task: task(),
+    actorId: 'actor-1',
+    idempotencyKey: 'exec-state-1',
+    result: {
+      provider: 'openai',
+      model: 'gpt-test',
+      requestId: 'req-state-1',
+      text: 'partial',
+      usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+      termination: { state: 'incomplete', reason: 'length' },
+    },
+  });
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    { async getCheckpoint() { return checkpoint; }, async persistCheckpoint() {} },
+    { async getRequest() { return null; }, async persistRequest(request) { calls.push('request:' + request.status); } },
+    { async assertCanContinue() { calls.push('authorization'); } },
+    { async ensureWaitingForContinuation({ request }) {
+      calls.push('state:' + request.continuationRequestId);
+    } },
+  );
+
+  const request = await service.request({
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: checkpoint.checkpointId,
+    continuationRequestId: 'cont-state-1',
+    targetSeatId: 'seat-coder',
+    actorId: 'actor-1',
+    instruction: 'continue',
+  });
+
+  assert.equal(request.nextTurn, 'fresh-budgeted-turn');
+  assert.deepEqual(calls, ['authorization', 'request:requested', 'state:cont-state-1']);
 });
+
+test('idempotent continuation retry re-heals waiting_for_continuation state', async () => {
+  const existingRequest = {
+    continuationRequestId: 'cont-state-2',
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: 'exec-state-2:checkpoint',
+    sourceSeatId: 'seat-coder',
+    targetSeatId: 'seat-coder',
+    requestedBy: 'actor-1',
+    requestedAt: '2026-09-22T00:07:00.000Z',
+    instruction: 'continue',
+    status: 'requested',
+    continuationOfCheckpointId: 'exec-state-2:checkpoint',
+    nextTurn: 'fresh-budgeted-turn',
+  };
+  const calls = [];
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint() {
+        throw new Error('checkpoint should not be reread for an idempotent request');
+      },
+      async persistCheckpoint() {},
+    },
+    { async getRequest() { return existingRequest; }, async persistRequest() { throw new Error('must not persist'); } },
+    { async assertCanContinue() { throw new Error('must not reauthorize'); } },
+    { async ensureWaitingForContinuation({ request }) { calls.push(request.continuationRequestId); } },
+  );
+
+  const result = await service.request({
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: existingRequest.checkpointId,
+    continuationRequestId: existingRequest.continuationRequestId,
+    targetSeatId: existingRequest.targetSeatId,
+    actorId: existingRequest.requestedBy,
+    instruction: existingRequest.instruction,
+  });
+
+  assert.equal(result.continuationRequestId, existingRequest.continuationRequestId);
+  assert.deepEqual(calls, ['cont-state-2']);
+});\n
