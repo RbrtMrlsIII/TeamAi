@@ -152,6 +152,19 @@ const requiredBudgetFields = ['turnBudgetTokens', 'outputBudgetTokens', 'reasoni
 for (const field of requiredBudgetFields) {
   if (!seatReport.turnBudget.fields.includes(field)) seatShapeErrors.push('turn_budget_missing_' + field);
 }
+if (seatReport.turnBudget.present) {
+  const rawBudget = decoded.turnBudget && typeof decoded.turnBudget === 'object' ? decoded.turnBudget : {};
+  const numericBudget = {};
+  for (const field of requiredBudgetFields) {
+    const value = Number(rawBudget[field]);
+    numericBudget[field] = value;
+    if (!Number.isInteger(value) || value < 0) seatShapeErrors.push('turn_budget_invalid_' + field);
+  }
+  if (Object.keys(numericBudget).length === requiredBudgetFields.length &&
+      numericBudget.outputBudgetTokens + numericBudget.reasoningBudgetTokens + numericBudget.handoffReserveTokens > numericBudget.turnBudgetTokens) {
+    seatShapeErrors.push('turn_budget_allocation_invalid');
+  }
+}
 
 const connectionShapeErrors = [];
 if (connectionReport.activeCount !== 1) connectionShapeErrors.push('active_seat_connection_count_not_one');
