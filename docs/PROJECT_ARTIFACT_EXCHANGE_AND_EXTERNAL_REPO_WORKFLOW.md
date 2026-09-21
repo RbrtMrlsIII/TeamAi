@@ -2,7 +2,7 @@
 
 ## Product boundary
 
-TeamAi web does **not** provide project ZIP upload or a Firebase Storage-backed project-file feature. Project artifacts remain outside the TeamAi web application.
+TeamAi web does **not** provide project ZIP upload or a Firebase Storage-backed project-file feature. Project artifacts remain outside the TeamAi web application's project-repository flow unless a governed future product contract changes that boundary.
 
 This is intentional: the TeamAi web surface focuses on authentication, workspace/project coordination, conversation, runtime visibility, and controlled links/intents. Large project artifacts are handled through an explicitly authorized external path.
 
@@ -47,7 +47,7 @@ The TeamAi web app should not proxy or persist the ZIP merely to make the handof
 - User remains the explicit authority over the external destination.
 - GitHub upload and external AI upload are distinguishable actions.
 - Artifact provenance and version identity remain visible/auditable.
-- TeamAi does not require Firebase Cloud Storage for project artifacts.
+- TeamAi does not require Firebase Cloud Storage for project artifacts. The planned TeamAi Storage facility is a separate entitled user-content surface and does not implicitly become the project-repository/ZIP transport.
 - The workflow remains compatible with Firebase Spark.
 
 ## Failure and recovery

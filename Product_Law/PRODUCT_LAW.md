@@ -233,6 +233,12 @@ If Firebase project identities conflict, the affected deployment or verification
 ### Resilience boundary
 Firestore remains the canonical durable store. TeamAi SHOULD reduce unnecessary usage through targeted reads, bounded queries, cursor pagination, safe caching/offline persistence where appropriate, selective listeners, aggregation/summary patterns, idempotent writes, and external artifact storage with Firestore metadata/reference. No alternate durable domain store may be introduced without explicit Product Law / architecture reconciliation.
 
+### Storage facility
+
+TeamAi Storage is a planned first-class frontend/product facility for entitled user content. It is distinct from Firestore domain state, browser storage, project repositories, and provider-native storage.
+
+The current architecture may use optional Supabase Storage for entitled user content. Firebase Cloud Storage is not the canonical TeamAi domain store and is not required merely because the Storage facility exists. Storage quotas, retention, commercial packaging, authorization, and access policy remain backend-owned.
+
 ### Connections
 Families B and C jointly establish where trusted execution lives and what durable evidence it must leave.
 
@@ -337,6 +343,16 @@ Seat identity
 **4 Seats:** three specialist contributors plus a Main Integration/Team Lead Seat is a canonical parallel-development topology.
 
 **5–8 Seats:** additional specialization MAY be introduced for Verification, Documentation, Recovery, Delivery/Operations, or other reconciled responsibilities.
+
+### Baseline account and feature discovery
+
+Guest presentation MAY expose the complete intended TeamAi feature vocabulary and spatial machine for discovery without granting restricted use.
+
+The baseline authenticated account begins with **one authorized persistent AI Seat** and baseline Team Quality / Tool Quality subject to the current entitlement model. Additional Seats, skills, MCP/tool packs, storage capabilities, usage capacity, and other commercial features are controlled by authoritative TeamAi entitlement, authorization, scope, health, and runtime state.
+
+The frontend MUST distinguish:
+
+`visible/discoverable ≠ configured ≠ entitled ≠ authorized ≠ project-scoped ≠ seat-allowed ≠ healthy ≠ usable`.
 
 ### Why it exists
 The workforce model lets users build complementary AI teams instead of merely selecting a provider/model count.
@@ -533,6 +549,14 @@ The commercial model separates:
 
 **Provider entitlement** remains externally owned.
 
+### Marketplace
+
+**Marketplace** is the TeamAi commerce frontend surface for discovering, selecting, subscribing to, and reviewing TeamAi commercial offerings.
+
+The Marketplace may expose additional persistent Seats, Team Quality, Tool Quality, skill/skill-bundle offerings, MCP/tool/integration packs, Storage capabilities where commercially defined, subscription state, usage, and billing state.
+
+Marketplace is **not** a provider connection or provider-billing authority. TeamAi commerce/entitlement remains server-owned and distinct from external provider subscriptions or entitlements.
+
 ### ZipSkills
 **ZipSkills** is the planned commercial packaging mechanism for validated TeamAi skill bundles, workspace-aware skill bundles, or capability-oriented skill collections.
 
@@ -572,6 +596,18 @@ The spatial UI, settings, theme, guides, and dictionary MUST NOT self-attest dur
 The visual system MUST preserve legibility, focus visibility, keyboard navigation, reduced-motion behavior, responsive behavior, and semantic accessibility. Visual effects MUST NOT become a prerequisite for durable application state.
 
 The 029 spatial system remains a shared-primitives system using the established F0–F7 design contract. F0–F7 identify spatial fields; they do not create new authority or legal boxes.
+
+### Canonical frontend feature grammar
+
+Issue #400 is the canonical frontend feature/UX contract for the current product direction. It governs how facilities, modules, Seats, dynamic branches, feature states, loading/recovery effects, navigation/return, accessibility, responsive behavior, and reduced-motion behavior are presented.
+
+The frontend MAY reveal a dynamic branch when a governed capability, skill, MCP/tool, Storage feature, project feature, or other product item is equipped to a Seat or Workspace. Such a branch is owned by the target semantic hierarchy and derives identity from the governed item plus owner; it is not a fixed Seat-child template.
+
+Guest discovery and authenticated activation are intentionally different states. A visible feature is not evidence that the user is entitled, authorized, or able to execute it.
+
+Semantic loading effects, including operation-specific orb families, communicate presentation state only. They never become evidence of backend execution or durable success.
+
+Nested facilities MUST provide deterministic return/back behavior and preserve semantic context when handing off to ordinary UI.
 
 ### Guides and dictionary
 User guides, help text, and dictionary surfaces MUST derive canonical terminology from Product Law, workspace rulesets, skills, and backend contracts.

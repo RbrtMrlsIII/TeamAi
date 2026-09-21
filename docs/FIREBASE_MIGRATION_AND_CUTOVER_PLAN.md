@@ -12,7 +12,7 @@ TeamAi is preparing to use Firebase as the next application-backend implementati
 
 The current WoWSQL PostgreSQL environment is authenticated and reachable, but its live schema materially diverges from the canonical TeamAi migration set. Applying the current migration set in place would create an unsafe hybrid schema. The safest course is to preserve the existing WoWSQL database as a frozen legacy/evidence environment while preparing a clean Firebase runtime surface.
 
-Firebase is a practical fit because Firestore provides atomic transactions and batched writes and Firebase Authentication provides managed identity services. TeamAi will remain on a Spark-compatible architecture for the current phase: Firebase Cloud Storage and Cloud Functions are explicitly out of scope. The Firebase Emulator Suite will be used for local validation before any production project connection.
+Firebase is a practical fit because Firestore provides atomic transactions and batched writes and Firebase Authentication provides managed identity services. TeamAi remains Spark-compatible for the Firebase baseline: Firebase Cloud Storage and Cloud Functions are not required for the current Firebase runtime, while a separate planned TeamAi Storage facility may use the optional Supabase Storage boundary for entitled user content. The Firebase Emulator Suite will be used for local validation before any production project connection.
 
 ## Target Firebase identity
 
@@ -24,7 +24,7 @@ Firebase is a practical fit because Firestore provides atomic transactions and b
 | Firebase Hosting | In scope | Primary web deployment surface |
 | Firebase Authentication | In scope | Identity foundation |
 | Cloud Firestore | In scope | Application/domain persistence |
-| Firebase Cloud Storage | **Out of scope** | No product feature; no runtime dependency |
+| Firebase Cloud Storage | Not used by the current Firebase baseline | TeamAi Storage is a separate planned product facility; optional entitled content storage may use Supabase Storage |
 | Cloud Functions | **Out of scope** | No runtime dependency |
 
 ## Target service map
@@ -40,7 +40,7 @@ Firebase is a practical fit because Firestore provides atomic transactions and b
 | App attestation | Firebase App Check | Client abuse/replay resistance where applicable |
 | Privileged orchestration | **External TeamAi runtime** | Runs outside Firebase Cloud Functions; authenticates to approved TeamAi data/API surfaces |
 | Scheduled jobs | **External TeamAi runtime / scheduler** | No Cloud Scheduler/Functions dependency in Spark phase |
-| Project ZIP / large artifact exchange | **External Workplace / GitHub / AI-app retrieval** | Not uploaded to TeamAi web app; Firebase Storage is not used |
+| Project ZIP / large artifact exchange | **External Workplace / GitHub / AI-app retrieval** | Not uploaded to Firebase Storage; separate TeamAi Storage facility does not automatically change the project-artifact boundary |
 | Existing WoWSQL | No cutover yet | Preserve for evidence/legacy compatibility; do not mutate via TeamAi migration |
 
 ## Domain-to-Firestore mapping

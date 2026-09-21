@@ -123,7 +123,7 @@ Individual agents **must not** have their own GitHub user accounts.
 | **Supabase** | Not a domain login | Edge Functions as trusted execution | Postgres as TeamAi domain; `ai_agent_role` with INSERT/UPDATE on `public` |
 | **Postgres** | Do not collect user DB passwords for TeamAi domain | N/A for v1 | Superuser, DROP, TRUNCATE, schema-owner roles for AI |
 
-GitHub is the first Connection to finish. Do not stand up a four-platform marketplace until GitHub install → UID map → scoped PR path is real.
+GitHub remains the first Connection path to finish. TeamAi Marketplace is the commerce surface and must not be used as a substitute for provider connection setup, OAuth installation, UID mapping, or scoped GitHub authorization.
 
 ## Hero / CONNECTION mapping
 

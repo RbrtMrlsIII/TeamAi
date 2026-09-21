@@ -84,7 +84,7 @@ WebAi **can** increase usage only when the product **persists** turns, events, o
 
 ## 6. First-party tools & configurations
 
-At entitled Tool Quality levels, TeamAi may unlock **TeamAi-built** tools/configs (not third-party marketplace billing in this architecture).
+At entitled Tool Quality levels, TeamAi may unlock **TeamAi-built** tools/configs through the TeamAi Marketplace/commercial boundary. Third-party provider billing remains distinct from TeamAi Marketplace billing.
 
 Still required for use:
 
