@@ -621,6 +621,8 @@ function frame(now) {
     focusedChildId: hierarchyRuntime.focusedChildId,
     focusedChildIndex: SEAT_SHELL_V1_CHILDREN.indexOf(hierarchyRuntime.focusedChildId),
     hierarchyOpenAmount: hierarchyRuntime.openAmount,
+    heroState: state,
+    contributionAmount: contribution,
     focusedChildAmount:
       getSeatDivisionBranchAmount(hierarchyRuntime, hierarchyRuntime.focusedChildId),
     hierarchyPhase: hierarchyRuntime.phase,
