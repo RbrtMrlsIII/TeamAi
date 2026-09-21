@@ -102,10 +102,9 @@ const stateLabel = document.querySelector('#state-label');
 const seatLabel = document.querySelector('#seat-label');
 const demoButton = document.querySelector('#demo-toggle');
 const motionButton = document.querySelector('#motion-toggle');
-const gl = canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
-if (!canvas || !shell || !gl) throw new Error('WebGL is required for the 3D Hero.');
+if (!canvas || !shell) throw new Error('3D Hero canvas and shell are required.');
 
-const machineWorldRenderer = createMachineWorldRenderer({ canvas, gl });
+const machineWorldRenderer = createMachineWorldRenderer({ canvas });
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || 0));
 const normalizeSeatIndex = (value, count = seatCount) => {
