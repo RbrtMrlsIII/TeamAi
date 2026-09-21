@@ -62,8 +62,14 @@ test('Firestore executable task inherits Turn Budget from the durable Seat state
         return { fields: { projectId: stringValue('project-1') } };
       }
       if (path.endsWith('/tasks/task-budget')) return { fields: taskFields };
-      if (path.endsWith('/seats/seat-coder')) return { fields: seatFields };
       return null;
+    },
+    async findCanonicalSeatDocument() {
+      return {
+        path: 'accounts/uid-1/workplaces/workplace-1/projects/project-1/teams/team-1/seats/seat-coder',
+        teamId: 'team-1',
+        document: { fields: seatFields },
+      };
     },
   };
 
@@ -100,7 +106,9 @@ test('Firestore executable task fails closed when its durable Seat does not exis
           },
         };
       }
-      if (path.endsWith('/seats/seat-missing')) return null;
+      return null;
+    },
+    async findCanonicalSeatDocument() {
       return null;
     },
   };
