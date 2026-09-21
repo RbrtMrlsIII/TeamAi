@@ -23,6 +23,7 @@ import { RING_R1_SCALE, RING_R2_SCALE, NAV_ZOOM_MAX } from './hero-world-contrac
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
+import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 const TAU = Math.PI * 2;
@@ -265,10 +266,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const primitiveBuffers = new Map();
 
   function worldProfile(seatCount) {
-    const density = clamp((Math.max(1, seatCount | 0) - 1) / 9, 0, 1);
+    const profile = deriveMachineWorldProfile(seatCount);
     return {
-      workspace: 4.35 + (5.95 - 4.35) * density,
-      seatRadius: 4.25 + (6.45 - 4.25) * density,
+      workspace: profile.workspaceFootprint,
+      seatRadius: profile.seatShellRadius,
     };
   }
 
