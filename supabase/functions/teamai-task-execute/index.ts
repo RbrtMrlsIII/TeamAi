@@ -120,7 +120,7 @@ function firestoreFields(value: Record<string, unknown>): Record<string, unknown
 async function recordEvent(
   taskPath: string,
   eventId: string,
-  type: "START" | "COMPLETE" | "HANDOFF_REQUIRED" | "FAIL",
+  type: "START" | "CONTINUE_START" | "COMPLETE" | "HANDOFF_REQUIRED" | "FAIL",
   uid: string,
   seatId: string,
   projectId: string,
@@ -207,7 +207,7 @@ async function leaseWaitingApprovalTask(input: {
   return "acquired";
 }
 
-\nasync function persistContinuationCheckpoint(input: {
+async function persistContinuationCheckpoint(input: {
   taskPath: string;
   checkpointId: string;
   taskId: string;
@@ -221,6 +221,8 @@ async function leaseWaitingApprovalTask(input: {
   result: GenerateResult;
   budget: Record<string, unknown>;
   accessToken: string;
+  continuationRequestId?: string;
+  continuationOfCheckpointId?: string;
 }): Promise<void> {
   await firestoreCreate(
     input.taskPath + "/continuation-checkpoints/" + input.checkpointId,
@@ -244,6 +246,8 @@ async function leaseWaitingApprovalTask(input: {
       usableGenerationTokens: input.budget.usableGenerationTokens,
       handoffReserveTokens: input.budget.handoffReserveTokens,
       nextAction: "authorized-continuation-turn",
+      ...(input.continuationRequestId ? { continuationRequestId: input.continuationRequestId } : {}),
+      ...(input.continuationOfCheckpointId ? { continuationOfCheckpointId: input.continuationOfCheckpointId } : {}),
     }),
     input.accessToken,
   );
