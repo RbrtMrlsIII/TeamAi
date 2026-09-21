@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test';
 
 test('Marketplace reveals Team Quality and nine-tier Team Population catalog for guests', async ({ page }) => {
   await page.goto('/hero/');
-  await page.locator('[data-world-entry]').click();
   await page.locator('[data-world-menu-toggle]').click();
   await page.locator('[data-marketplace-open]').click();
 

@@ -106,15 +106,16 @@ function requestCheckoutIntent() {
 function renderTierList() {
   const inventory = panel?.querySelector('[data-marketplace-tiers]');
   if (!inventory) return;
-  const activeTier = activeTierForFamily();
+  const entitlementTier = activeTierForFamily();
   inventory.innerHTML = listMarketplaceTiers(activeFamily).map((tier) => {
     const selected = tier.tier === activeTier;
+    const entitled = tier.tier === entitlementTier;
     const decision = resolveMarketplaceTierPresentation({
       family: activeFamily,
-      activeTier,
+      activeTier: entitlementTier,
       requestedTier: tier.tier,
     });
-    const state = selected ? 'ACTIVE' : decision.state;
+    const state = entitled ? 'ACTIVE' : decision.state;
     const disabled = decision.canPurchase === false && !selected;
     return '<article class="marketplace-facility__tier' + (selected ? ' is-active' : '') + '">' +
       '<div class="marketplace-facility__tier-heading">' +
