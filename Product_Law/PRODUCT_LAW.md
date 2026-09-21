@@ -587,6 +587,9 @@ Family I depends on Families H and G for skill/package identity and uses Family 
 
 ## 10. LAW FAMILY J — SPATIAL EXPERIENCE, GUIDES, DICTIONARY, AND HUMAN-FACING CONTROL
 
+### Canonical frontend truth status
+Issue #400 is the current canonical frontend product/UX contract. Its statements are current implementation truth, not a claim that the final frontend has been completed. Existing contracts may be refined, extended, or replaced only through a governed amendment and reconciliation against Product Law. New evidence may therefore adjust an existing rule or add a missing one without implying that the earlier baseline was wrong.
+
 ### Definition
 The TeamAi Spatial Theme is the human-facing map of the workforce. It is not a second authority layer.
 
