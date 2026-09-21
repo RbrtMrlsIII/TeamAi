@@ -27,7 +27,6 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       to: 'WORKSPACE_CENTER',
       semantic: true,
       presentationOnly: true,
-      },
     });
 
     await page.evaluate(() => {
@@ -50,6 +49,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     });
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
+
     await expect.poll(async () => page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
       return {
@@ -58,12 +58,12 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       };
     })).toMatchObject({
       proof: {
-      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
-      from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
-      to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
-      phase: 'SOURCE_OPENING_OR_ACTIVE',
-      amount: 1,
-      presentationOnly: true,
+        id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
+        from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+        to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+        phase: 'SOURCE_OPENING_OR_ACTIVE',
+        amount: 1,
+        presentationOnly: true,
       },
     });
   });
@@ -94,12 +94,12 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       };
     })).toMatchObject({
       proof: {
-      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
-      from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
-      to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
-      phase: 'TARGET_OPENING_OR_ACTIVE',
-      amount: 1,
-      presentationOnly: true,
+        id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
+        from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+        to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+        phase: 'TARGET_OPENING_OR_ACTIVE',
+        amount: 1,
+        presentationOnly: true,
       },
     });
 
@@ -124,12 +124,12 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       };
     })).toMatchObject({
       proof: {
-      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
-      from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
-      to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
-      phase: 'SOURCE_OPENING_OR_ACTIVE',
-      amount: 1,
-      presentationOnly: true,
+        id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
+        from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+        to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+        phase: 'SOURCE_OPENING_OR_ACTIVE',
+        amount: 1,
+        presentationOnly: true,
       },
     });
   });
