@@ -1,5 +1,6 @@
 import { createSign } from 'node:crypto';
 import type { DurableExecutionResult, TaskExecutionResultIdentity, TaskExecutionResultStore } from './task-execution-result.js';
+import type { TaskContinuationCheckpoint, TaskContinuationCheckpointStore } from './task-continuation.js';
 
 const ROOT = 'https://firestore.googleapis.com/v1';
 type ServiceAccount = { project_id: string; client_email: string; private_key: string };
@@ -154,4 +155,93 @@ async function exchangeAccessToken(account: ServiceAccount): Promise<string> {
   const body = await response.json() as { access_token?: unknown };
   if (typeof body.access_token !== 'string') throw new Error('Firebase access token missing');
   return body.access_token;
+}
+
+
+export class FirestoreTaskContinuationCheckpointStore implements TaskContinuationCheckpointStore {
+  private readonly account = loadServiceAccount();
+  private readonly firebaseProjectId: string;
+  private readonly uid: string;
+  private readonly workplaceId: string;
+  private token?: { value: string; expiresAt: number };
+
+  constructor(
+    uid: string,
+    workplaceId: string,
+    firebaseProjectId = process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official',
+  ) {
+    this.uid = required(uid, 'uid');
+    this.workplaceId = required(workplaceId, 'workplaceId');
+    this.firebaseProjectId = required(firebaseProjectId, 'firebaseProjectId');
+    if (this.account.project_id !== this.firebaseProjectId) {
+      throw new Error('Firebase project identity mismatch');
+    }
+  }
+
+  async getCheckpoint(taskId: string, checkpointId: string): Promise<TaskContinuationCheckpoint | null> {
+    required(taskId, 'taskId');
+    required(checkpointId, 'checkpointId');
+    const token = await this.accessToken();
+    const response = await fetch(
+      this.documentHttpUrl(this.checkpointPath(taskId, checkpointId)),
+      { headers: { authorization: `Bearer ${token}` } },
+    );
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Firestore continuation checkpoint read failed: ${response.status}`);
+    return decodeDocument(await response.json() as FirestoreDocument) as unknown as TaskContinuationCheckpoint;
+  }
+
+  async persistCheckpoint(checkpoint: TaskContinuationCheckpoint): Promise<void> {
+    required(checkpoint.taskId, 'checkpoint.taskId');
+    required(checkpoint.projectId, 'checkpoint.projectId');
+    required(checkpoint.checkpointId, 'checkpoint.checkpointId');
+    const token = await this.accessToken();
+    const response = await fetch(
+      `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents:commit`,
+      {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          writes: [{
+            update: {
+              name: this.resourceName(this.checkpointPath(checkpoint.taskId, checkpoint.checkpointId)),
+              fields: fields(checkpoint as unknown as Record<string, unknown>),
+            },
+            currentDocument: { exists: false },
+          }],
+        }),
+      },
+    );
+    if (!response.ok && ![409, 412].includes(response.status)) {
+      const body = await response.text();
+      throw new Error(`Firestore continuation checkpoint write failed: ${response.status} ${body.slice(0, 300)}`);
+    }
+  }
+
+  private checkpointPath(taskId: string, checkpointId: string): string {
+    return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${this.checkpointProjectId(checkpointId)}/tasks/${required(taskId, 'taskId')}/continuation-checkpoints/${encodeURIComponent(required(checkpointId, 'checkpointId'))}`;
+  }
+
+  private checkpointProjectId(checkpointId: string): string {
+    const delimiter = ':project:';
+    const index = checkpointId.indexOf(delimiter);
+    return index >= 0 ? required(checkpointId.slice(index + delimiter.length), 'projectId') : '';
+  }
+
+  private resourceName(path: string): string {
+    const encoded = path.split('/').map((segment) => encodeURIComponent(segment)).join('/');
+    return `projects/${this.firebaseProjectId}/databases/(default)/documents/${encoded}`;
+  }
+
+  private documentHttpUrl(path: string): string {
+    return `${ROOT}/${this.resourceName(path)}`;
+  }
+
+  private async accessToken(): Promise<string> {
+    const now = Math.floor(Date.now() / 1000);
+    if (this.token && this.token.expiresAt > now + 60) return this.token.value;
+    const token = await exchangeAccessToken(this.account);
+    this.token = { value: token, expiresAt: now + 3500 };
+    return token;
+  }
 }
