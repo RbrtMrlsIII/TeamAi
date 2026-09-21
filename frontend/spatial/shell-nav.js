@@ -5,6 +5,7 @@
  */
 
 import { getFrontendFeature } from "./feature-registry.js";
+import { createSeatReportPresentation, createSeatTransactionPresentation } from "./seat-runtime-presentation.js";
 
 import {
   applyDocumentTheme,
@@ -138,6 +139,8 @@ let seatsBuilt = false;
 let approvalsBuilt = false;
 let activeSeat = "alpha";
 let activeApproval = "runtime-alpha";
+let activeSeatReport = createSeatReportPresentation({ authoritative: false });
+let activeSeatTransaction = null;
 
 function refreshThemeControls() {
   const mode = resolveMode(readSource(), readStoredMode());
@@ -326,6 +329,29 @@ function buildSeats() {
         <p class="ta-type-body" data-seat-limits>Budget 80% · rate normal · storage 62% · approval gate required</p>
       </section>
 
+      <section class="ta-seat-runtime ta-panel" data-field="F3" aria-labelledby="seat-runtime-title">
+        <div class="ta-region-heading">
+          <div>
+            <p class="ta-type-label">Seat runtime</p>
+            <h3 id="seat-runtime-title" class="ta-type-title">Report / handoff</h3>
+          </div>
+          <span class="ta-type-status" data-seat-runtime-state>UNAVAILABLE</span>
+        </div>
+        <p class="ta-type-body" data-seat-runtime-empty>Waiting for an authoritative runtime result. Presentation state is not execution proof.</p>
+        <dl class="ta-seat-runtime__facts" hidden data-seat-runtime-facts>
+          <div><dt class="ta-type-meta">Turn</dt><dd class="ta-type-body" data-seat-runtime-turn></dd></div>
+          <div><dt class="ta-type-meta">Completion</dt><dd class="ta-type-status" data-seat-runtime-completion></dd></div>
+          <div><dt class="ta-type-meta">Responsibility</dt><dd class="ta-type-body" data-seat-runtime-responsibility></dd></div>
+          <div><dt class="ta-type-meta">Remaining budget</dt><dd class="ta-type-body" data-seat-runtime-budget></dd></div>
+          <div><dt class="ta-type-meta">Next action</dt><dd class="ta-type-body" data-seat-runtime-next></dd></div>
+        </dl>
+        <div class="ta-seat-runtime__transaction ta-card" data-seat-transaction>
+          <span class="ta-type-label">Semantic transaction state</span>
+          <span class="ta-type-status" data-seat-transaction-state>UNAVAILABLE</span>
+          <span class="ta-type-meta" data-seat-transaction-kind>Awaiting runtime transaction</span>
+        </div>
+      </section>
+
       <section class="ta-seat-entitlements ta-panel" data-field="F3" aria-labelledby="seat-entitlement-title">
         <h3 id="seat-entitlement-title" class="ta-type-label">Entitlement split</h3>
         <div class="ta-seat-entitlement-grid">
@@ -367,6 +393,36 @@ function selectSeat(seatId) {
   renderSeatDetail();
 }
 
+function renderSeatRuntime() {
+  const state = document.querySelector("[data-seat-runtime-state]");
+  const empty = document.querySelector("[data-seat-runtime-empty]");
+  const facts = document.querySelector("[data-seat-runtime-facts]");
+  const turn = document.querySelector("[data-seat-runtime-turn]");
+  const completion = document.querySelector("[data-seat-runtime-completion]");
+  const responsibility = document.querySelector("[data-seat-runtime-responsibility]");
+  const budget = document.querySelector("[data-seat-runtime-budget]");
+  const next = document.querySelector("[data-seat-runtime-next]");
+  const transactionState = document.querySelector("[data-seat-transaction-state]");
+  const transactionKind = document.querySelector("[data-seat-transaction-kind]");
+
+  const report = activeSeatReport;
+  if (state) state.textContent = report?.available ? report.completionState : "UNAVAILABLE";
+  if (empty) empty.hidden = Boolean(report?.available);
+  if (facts) facts.hidden = !report?.available;
+  if (report?.available) {
+    if (turn) turn.textContent = report.turnId || "unreported";
+    if (completion) completion.textContent = report.completionState;
+    if (responsibility) responsibility.textContent = report.responsibility || "unreported";
+    if (budget) budget.textContent = report.remainingBudget == null ? "unreported" : String(report.remainingBudget);
+    if (next) next.textContent = report.nextAction || "No next action reported";
+  }
+
+  if (transactionState) transactionState.textContent = activeSeatTransaction?.state || "UNAVAILABLE";
+  if (transactionKind) transactionKind.textContent = activeSeatTransaction?.kind
+    ? String(activeSeatTransaction.kind).replaceAll("-", " ")
+    : "Awaiting runtime transaction";
+}
+
 function renderSeatDetail() {
   const seat = SEAT_DATA[activeSeat];
   if (!seat) return;
@@ -394,6 +450,7 @@ function renderSeatDetail() {
   if (teamEntitlement) teamEntitlement.textContent = seat.teamEntitlement;
   if (providerEntitlement) providerEntitlement.textContent = seat.providerEntitlement;
   if (activate) activate.disabled = !seatActivationAllowed(seat);
+  renderSeatRuntime();
   if (activate) activate.setAttribute("aria-describedby", "seat-activation-state");
   let state = document.querySelector("#seat-activation-state");
   if (!state) {
