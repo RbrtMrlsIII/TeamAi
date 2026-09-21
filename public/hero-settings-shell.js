@@ -17,7 +17,7 @@ import {
   readLang,
   applyUiLang,
   SUPPORTED_UI_LANGS,
-} from '../frontend/spatial/theme-root.js';
+} from './theme-root.js';
 
 export const SETTINGS_SHELL_ID = 'hero-settings-shell';
 
