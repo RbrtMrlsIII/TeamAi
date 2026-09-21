@@ -18,8 +18,8 @@
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
 - next allowed work: continue the governed 029 implementation on PR #398, beginning with the next representative #400 Workspace capability proof; preserve MCP as browser-proven representative frontend evidence and do not claim full MCP lifecycle authority.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
-- live PR head: `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842` (verified on 2026-09-21). Evidence is admissible only when tied to the exact head under review.
+- validation state: the four-gate proof was green at `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`. The documentation-only follow-up head `c7ef2962615530f1e3c76e3af688ede7729886d7` requires fresh exact-head revalidation; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The previously verified MCP proof head was `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`; the current live head is `c7ef2962615530f1e3c76e3af688ede7729886d7`. Re-read live GitHub before relying on either SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
