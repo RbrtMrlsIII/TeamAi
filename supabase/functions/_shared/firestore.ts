@@ -109,3 +109,38 @@ export async function firestorePatch(documentPath: string, fields: Record<string
   });
   if (!response.ok) throw jsonError(`firestore_patch_failed:${response.status}`);
 }
+
+type FirestoreDecodedValue =
+  | string
+  | boolean
+  | number
+  | null
+  | FirestoreDecodedValue[]
+  | { [key: string]: FirestoreDecodedValue };
+
+export function decodeFirestoreValue(value: Record<string, unknown> | undefined): FirestoreDecodedValue | undefined {
+  if (!value) return undefined;
+  if (typeof value.stringValue === "string") return value.stringValue;
+  if (typeof value.booleanValue === "boolean") return value.booleanValue;
+  if (typeof value.integerValue === "string") return Number(value.integerValue);
+  if (typeof value.doubleValue === "number") return value.doubleValue;
+  if (typeof value.timestampValue === "string") return value.timestampValue;
+  if (value.nullValue !== undefined) return null;
+  if (value.arrayValue && typeof value.arrayValue === "object") {
+    const values = (value.arrayValue as { values?: Record<string, unknown>[] }).values ?? [];
+    return values.map(decodeFirestoreValue).filter((item): item is FirestoreDecodedValue => item !== undefined);
+  }
+  if (value.mapValue && typeof value.mapValue === "object") {
+    const fields = (value.mapValue as { fields?: Record<string, Record<string, unknown>> }).fields ?? {};
+    return Object.fromEntries(Object.entries(fields)
+      .map(([key, child]) => [key, decodeFirestoreValue(child)])
+      .filter(([, child]) => child !== undefined));
+  }
+  return undefined;
+}
+
+export function decodeFirestoreFields(fields: Record<string, unknown> | undefined): Record<string, FirestoreDecodedValue> {
+  return Object.fromEntries(Object.entries(fields ?? {})
+    .map(([key, value]) => [key, decodeFirestoreValue(value as Record<string, unknown>)])
+    .filter(([, value]) => value !== undefined)) as Record<string, FirestoreDecodedValue>;
+}
