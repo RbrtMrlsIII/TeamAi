@@ -563,6 +563,20 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     });
     const point = adjacentDivisionWiringPoint(wiring, activeAmount);
 
+    lastSeat1AdjacentWiring = Object.freeze({
+      id: wiring.id,
+      from: wiring.from.divisionId,
+      to: wiring.to.divisionId,
+      sourcePort: Object.freeze({ ...wiring.from.port }),
+      targetPort: Object.freeze({ ...wiring.to.port }),
+      amount: activeAmount,
+      phase: targetAmount > sourceAmount ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
+      presentationOnly: true,
+    });
+    canvas.dataset.machineWorldAdjacentWiring = lastSeat1AdjacentWiring.id;
+    canvas.dataset.machineWorldAdjacentAmount = String(activeAmount);
+    canvas.dataset.machineWorldAdjacentPhase = lastSeat1AdjacentWiring.phase;
+
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
     gl.uniformMatrix4fv(lineV,false,view);
@@ -578,16 +592,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.uniform4f(lineColor,.36,.82,1,reducedMotion ? .26 : .54);
     gl.drawArrays(gl.LINE_STRIP,0,2);
 
-    lastSeat1AdjacentWiring = Object.freeze({
-      id: wiring.id,
-      from: wiring.from.divisionId,
-      to: wiring.to.divisionId,
-      sourcePort: Object.freeze({ ...wiring.from.port }),
-      targetPort: Object.freeze({ ...wiring.to.port }),
-      amount: activeAmount,
-      phase: targetAmount > sourceAmount ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
-      presentationOnly: true,
-    });
   }
 
   function renderSemanticEdgeTrace(edge, amount, reducedMotion) {
