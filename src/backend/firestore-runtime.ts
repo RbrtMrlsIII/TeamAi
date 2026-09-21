@@ -144,7 +144,7 @@ export class FirestoreRuntimeClient {
     return await response.json() as FirestoreDocument;
   }
 
-  private async findCanonicalSeatDocument(
+  async findCanonicalSeatDocument(
     uid: string,
     projectId: string,
     seatId: string,
