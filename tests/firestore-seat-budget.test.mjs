@@ -1,6 +1,99 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+import { generateKeyPairSync } from 'node:crypto';
+import { FirestoreRuntimeClient } from '../dist/src/backend/firestore-runtime.js';
+
+function serviceAccount() {
+  return {
+    project_id: 'team-ai-official',
+    client_email: 'runtime-test@example.iam.gserviceaccount.com',
+    private_key: generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }),
+  };
+}
+
+test('Firestore Seat resolver ignores legacy project-level Seat documents and returns canonical team-nested Seat', async () => {
+  const originalFetch = globalThis.fetch;
+  const calls = [];
+  const canonicalPath = 'accounts/uid-1/workplaces/workplace-1/projects/project-1/teams/team-1/seats/seat-coder';
+  try {
+    globalThis.fetch = async (url, init = {}) => {
+      calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
+      if (calls.length === 1) {
+        return new Response(JSON.stringify({ access_token: 'token-1' }), { status: 200 });
+      }
+      const legacy = {
+        name: 'projects/team-ai-official/databases/(default)/documents/accounts/uid-1/workplaces/workplace-1/projects/project-1/seats/seat-coder',
+        fields: {
+          uid: { stringValue: 'uid-1' },
+          workplaceId: { stringValue: 'workplace-1' },
+          projectId: { stringValue: 'project-1' },
+          seatId: { stringValue: 'seat-coder' },
+        },
+      };
+      const canonical = {
+        name: 'projects/team-ai-official/databases/(default)/documents/' + canonicalPath,
+        fields: {
+          uid: { stringValue: 'uid-1' },
+          workplaceId: { stringValue: 'workplace-1' },
+          projectId: { stringValue: 'project-1' },
+          teamId: { stringValue: 'team-1' },
+          seatId: { stringValue: 'seat-coder' },
+          provider: { stringValue: 'openai' },
+        },
+      };
+      return new Response(JSON.stringify({ document: legacy }) + '\n' + JSON.stringify({ document: canonical }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    };
+
+    const client = new FirestoreRuntimeClient('team-ai-official', serviceAccount());
+    const seat = await client.getSeat('uid-1', 'project-1', 'seat-coder');
+    assert.equal(seat?.teamId, 'team-1');
+    assert.equal(seat?.provider, 'openai');
+    assert.equal(calls.length, 2);
+    const query = JSON.parse(calls[1].body);
+    assert.equal(query.structuredQuery.from[0].collectionId, 'seats');
+    assert.equal(query.structuredQuery.from[0].allDescendants, true);
+    assert.equal(query.structuredQuery.where.fieldFilter.field.fieldPath, 'seatId');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+test('Firestore Seat resolver fails closed when two canonical teams expose the same Seat id', async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async (url, init = {}) => {
+      if (!String(url).endsWith('/token')) {
+        // no-op: resolver test only needs the query response after the token exchange
+      }
+      const body = String(init.body ?? '');
+      if (body.includes('grant_type=')) {
+        return new Response(JSON.stringify({ access_token: 'token-2' }), { status: 200 });
+      }
+      const mk = (team) => ({
+        document: {
+          name: 'projects/team-ai-official/databases/(default)/documents/accounts/uid-1/workplaces/workplace-1/projects/project-1/teams/' + team + '/seats/seat-coder',
+          fields: {
+            uid: { stringValue: 'uid-1' },
+            workplaceId: { stringValue: 'workplace-1' },
+            projectId: { stringValue: 'project-1' },
+            teamId: { stringValue: team },
+            seatId: { stringValue: 'seat-coder' },
+          },
+        },
+      });
+      return new Response(JSON.stringify(mk('team-1')) + '\n' + JSON.stringify(mk('team-2')), { status: 200 });
+    };
+    const client = new FirestoreRuntimeClient('team-ai-official', serviceAccount());
+    await assert.rejects(client.getSeat('uid-1', 'project-1', 'seat-coder'), /seat_ambiguous/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
 import { FirestoreRuntimeTaskStore } from '../dist/src/backend/firestore-runtime.js';
 
 const stringValue = (value) => ({ stringValue: value });
