@@ -64,7 +64,7 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.match(renderBody, /state\.focusedChildId/);
   const partsLoopStart = renderBody.indexOf('for (const part of scene.parts) {');
   const framePassMarker = renderBody.indexOf(
-    '\\n    }\\n\\n    // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.\\n    renderSeat1ConnectionChild'
+    '\n    }\n\n    // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.\n    renderSeat1ConnectionChild'
   );
   assert.ok(partsLoopStart >= 0 && framePassMarker > partsLoopStart);
   assert.ok(framePassMarker < renderBody.indexOf('gl.useProgram(line);', framePassMarker));
