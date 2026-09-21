@@ -20,6 +20,7 @@ const files = [
   'feature-registry.js',
   'feature-state.js',
   'feature-access.js',
+  'seat-runtime-presentation.js',
   'hero-world-contract.js',
   'hero-world-profile.js',
   'theme-root.js',
