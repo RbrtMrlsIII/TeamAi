@@ -275,6 +275,7 @@ test('Firestore runtime task store atomically moves a handoff task into waiting_
     async beginTransaction() { calls.push('begin'); return 'tx-1'; },
     async get(path, transaction) {
       calls.push(['get', path, transaction]);
+      if (path.includes('/events/')) return null;
       return {
         updateTime: '2026-09-22T00:10:00Z',
         fields: {
