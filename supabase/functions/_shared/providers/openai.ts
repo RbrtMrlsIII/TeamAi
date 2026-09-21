@@ -1,7 +1,7 @@
-import type { AIProvider, GenerateRequest, GenerateResult, StreamChunk } from './types.js';
-import { fetchJson, parseSse, ProviderHttpError } from './http.js';
-import { withRetry } from './retry.js';
-import { terminationFromOpenAI } from './termination.js';
+import type { AIProvider, GenerateRequest, GenerateResult, StreamChunk } from './types.ts';
+import { fetchJson, parseSse, ProviderHttpError } from './http.ts';
+import { withRetry } from './retry.ts';
+import { terminationFromOpenAI } from './termination.ts';
 
 function usageFrom(u: any) {
   const inputTokens = Number(u?.input_tokens ?? 0);
