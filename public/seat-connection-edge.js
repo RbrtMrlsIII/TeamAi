@@ -1,3 +1,5 @@
+import { WORKSPACE_CENTER_ID } from './hero-workspace-core.js';
+
 /**
  * 029 Seat-1 semantic connection edge.
  * Presentation geometry only. The edge identity is stable and suitable for
@@ -32,7 +34,7 @@ export function seat1ConnectionPort(point) {
 export function seat1ConnectionEdge(start, end = { x: 0, y: 0.5, z: 0 }) {
   const from = seat1ConnectionPort(start);
   const to = {
-    id: 'WORKSPACE_CENTER',
+    id: WORKSPACE_CENTER_ID,
     role: 'workspace-center-target',
     x: Number(end?.x) || 0,
     y: Number(end?.y) || 0,
