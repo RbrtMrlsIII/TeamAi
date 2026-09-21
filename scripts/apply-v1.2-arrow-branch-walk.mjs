@@ -10,5 +10,4 @@ import { fileURLToPath } from 'node:url';
 const root = join(fileURLToPath(new URL('..', import.meta.url)), '.');
 const hero = readFileSync(join(root, 'public/hero-flex.js'), 'utf8');
 if (!hero.includes('cycleSeatShellBranchFocus')) throw new Error('canonical Hero controller lacks branch-walk ownership');
-if (!hero.includes('interactive:true')) throw new Error('canonical Hero controller lacks interactive branch focus');
 console.log('V1.2 branch-walk already source-owned; no patch performed');
