@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@6.0.10";
 import {
+  firestoreFindSeat,
   firestoreCreate,
   firestoreGet,
   firestorePatch,
@@ -103,18 +104,19 @@ Deno.serve(async (req: Request) => {
     const clear = body.clear === true;
 
     const accessToken = await getFirestoreAccessToken();
-    const existingSeat = await firestoreGet(
-      `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}`,
+    const existingSeat = await firestoreFindSeat({
+      uid,
+      workplaceId,
+      projectId,
+      seatId,
       accessToken,
-    );
-    if (!existingSeat.exists) throw new Error("seat_not_found");
-    const seatPath =
-      `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}`;
+    });
+    if (!existingSeat) throw new Error("seat_not_found");
+    const seatPath = existingSeat.path;
     const secretPath = `${seatPath}/secrets/providerApiKey`;
     const boundAt = new Date().toISOString();
 
     if (clear) {
-      // Mark unbound; leave secret doc (overwrite with empty tombstone fields via patch metadata only)
       await firestorePatch(
         seatPath,
         firestoreStringFields({
@@ -125,21 +127,7 @@ Deno.serve(async (req: Request) => {
           updatedAt: boundAt,
         }),
         accessToken,
-      ).catch(async () => {
-        await firestoreCreate(
-          seatPath,
-          firestoreStringFields({
-            uid,
-            workplaceId,
-            projectId,
-            seatId,
-            providerKeyBound: "false",
-            providerKind,
-            updatedAt: boundAt,
-          }),
-          accessToken,
-        );
-      });
+      );
       return json({
         ok: true,
         phase: "seat_provider_unbind",
