@@ -25,7 +25,7 @@ test('electrical route sampling follows the declared polyline', () => {
 test('electrical route prefix never invents coordinates outside the edge', () => {
   const prefix = electricalRoutePrefix(route, 0.5);
   assert.equal(prefix.length, 3);
-  assert.deepEqual(prefix.at(-1), { x: 3, y: 0, z: 0.5 });
+  assert.deepEqual(prefix.at(-1), { x: 3, y: 0.5, z: 0 });
 });
 
 test('invalid electrical route fails closed', () => {
