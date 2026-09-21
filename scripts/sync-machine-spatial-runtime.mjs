@@ -52,7 +52,7 @@ const files = [
   'seat-budget-settings.js',
   'seat-budget-settings-facility.js',
   'seat-budget-settings.css',
-  'marketplace-commerce.js,
+  'marketplace-commerce.js',
   'marketplace-commerce-facility.js',
   'marketplace-commerce.css',
 ];
