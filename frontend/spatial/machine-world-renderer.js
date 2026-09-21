@@ -810,8 +810,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
 
     // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
-    // Canonical branch aggregate wins; legacy scalar remains only as compatibility fallback.
-    const branchAmounts = state.seatDivisionBranchAmounts || {};
+    // Reuse the canonical branch aggregate resolved at the top of the frame.
     const seat1ConnectionAmount = clamp(
       finite(branchAmounts.connectionBranchAmount ?? state.connectionBranchAmount, 0),
       0,
