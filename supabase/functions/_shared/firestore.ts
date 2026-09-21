@@ -219,7 +219,7 @@ export async function firestoreFindSeatConnection(input: {
     if (markerIndex < 0) return null;
     const path = String(document.name).slice(markerIndex + marker.length);
     const parts = path.split('/');
-    const canonical = parts.length === 8 && parts[0] === 'accounts' && parts[1] === input.uid && parts[2] === 'workplaces' && parts[3] === input.workplaceId && parts[4] === 'projects' && parts[5] === input.projectId && parts[6] === 'connections' && parts[7] === parts[7];
+    const canonical = parts.length === 8 && parts[0] === 'accounts' && parts[1] === input.uid && parts[2] === 'workplaces' && parts[3] === input.workplaceId && parts[4] === 'projects' && parts[5] === input.projectId && parts[6] === 'connections' && Boolean(parts[7]);
     if (!canonical) return null;
     const fields = decodeFirestoreFields(document.fields);
     if (String(fields.uid ?? '') !== input.uid || String(fields.workplaceId ?? '') !== input.workplaceId || String(fields.projectId ?? '') !== input.projectId || String(fields.seatId ?? '') !== input.seatId) return null;
