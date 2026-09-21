@@ -786,7 +786,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
 
     let electricalMachineFlow = null;
     let electricalWorkspaceFlow = null;
-    if (sample.amount > 0.02) {
+    if (hierarchyOpen && sample.amount > 0.02) {
       const selectedMachineEdge = scene.connections.find((edge) =>
         edge.kind === 'inner-spoke' && edge.targetBranchId === branchId
       );
