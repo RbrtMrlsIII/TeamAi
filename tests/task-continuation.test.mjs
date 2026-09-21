@@ -404,7 +404,7 @@ test('idempotent continuation retry re-heals waiting_for_continuation state', as
 
   assert.equal(result.continuationRequestId, existingRequest.continuationRequestId);
   assert.deepEqual(calls, ['cont-state-2']);
-});\
+});
 
 
 
