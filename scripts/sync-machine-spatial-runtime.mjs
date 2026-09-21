@@ -49,7 +49,10 @@ const files = [
   'storage-inventory.js',
   'storage-inventory-facility.js',
   'storage-inventory.css',
-  'marketplace-commerce.js',
+  'seat-budget-settings.js',
+  'seat-budget-settings-facility.js',
+  'seat-budget-settings.css',
+  'marketplace-commerce.js,
   'marketplace-commerce-facility.js',
   'marketplace-commerce.css',
 ];
