@@ -21,7 +21,7 @@ test('Seat-1 adjacent wiring follows sequential expansion phases', () => {
 });
 
 test('legacy adjacent-wiring command is now source synchronization only', () => {
-  assert.match(syncScript, /no Hero mutation|no mutation performed/i);
+  assert.match(syncScript, /verifyHeroFlexFeature|sync-machine-spatial-runtime/);
   assert.doesNotMatch(syncScript, /writeFileSync\(heroPath/);
   assert.match(syncScript, /machine-world-renderer\.js/);
 });
