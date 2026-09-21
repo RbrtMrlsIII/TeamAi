@@ -212,3 +212,46 @@ test('Firestore executable task fails closed when its durable Seat does not exis
     /seat not found: seat-missing/,
   );
 });
+
+test('Firestore scheduler adapter lists only canonical team-nested Seats', async () => {
+  const client = {
+    async listDocuments(path) {
+      if (path.endsWith('/projects/project-1/teams')) {
+        return [
+          { name: 'projects/team-ai-official/databases/(default)/documents/accounts/uid-1/workplaces/workplace-1/projects/project-1/teams/team-1' },
+        ];
+      }
+      if (path.endsWith('/teams/team-1/seats')) {
+        return [{
+          name: 'projects/team-ai-official/databases/(default)/documents/accounts/uid-1/workplaces/workplace-1/projects/project-1/teams/team-1/seats/seat-coder',
+          fields: {
+            seatId: stringValue('seat-coder'),
+            projectId: stringValue('project-1'),
+            field: stringValue('engineering'),
+            skills: { arrayValue: { values: [stringValue('typescript')] } },
+            authorization: mapValue({
+              status: stringValue('authorized'),
+              capabilities: { arrayValue: { values: [stringValue('execute')] } },
+              allowedTaskTypes: { arrayValue: { values: [stringValue('code')] } },
+            }),
+            status: stringValue('active'),
+          },
+        }];
+      }
+      return [];
+    },
+  };
+
+  const store = new FirestoreRuntimeTaskStore(client, 'uid-1', 'workplace-1');
+  const seats = await store.listSchedulerSeats('project-1');
+  assert.deepEqual(seats, [{
+    id: 'seat-coder',
+    projectId: 'project-1',
+    field: 'engineering',
+    skills: ['typescript'],
+    capabilities: ['execute'],
+    allowedTaskTypes: ['code'],
+    status: 'active',
+    authorization: 'authorized',
+  }]);
+});
