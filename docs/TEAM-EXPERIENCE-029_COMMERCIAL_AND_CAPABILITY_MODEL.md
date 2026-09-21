@@ -239,6 +239,19 @@ This model does not yet decide:
 
 Those decisions belong to later planning/approval and must not be inferred as current implementation.
 
+## 12a. Approved Marketplace packaging direction
+
+The frontend Marketplace representative slice now has two explicit commercial modules:
+
+- **Team Quality:** five paid tiers, separate from the baseline Team Quality allocation.
+- **Team Population:** nine paid tiers, where Population Tier 1 unlocks persistent Seat 2 and Tier 9 unlocks persistent Seat 10.
+
+Both subscription families use a monthly renewal cycle. A lower tier remains locked for the current active period when a higher tier is active. Selecting a higher tier is permitted, but the UI must warn inline that the lower tier's effect disappears when the higher tier takes effect. This warning is part of the presentation/read-model contract, not a toast-based confirmation authority.
+
+TeamAi does not store card credentials. Payment is completed on a TeamAi-provided external hosted billing page; the browser Marketplace may expose that link when an authorized read model provides it, but must not collect or retain card details.
+
+These packaging decisions define tier identity and transition semantics only. Prices, exact Team Quality capability limits, promotional terms, and provider entitlements remain separate and are not inferred by the catalog.
+
 ## 12b. Current commerce implementation reconciliation
 
 The first real commerce runtime has now established a concrete TeamAi-owned boundary without closing the planning questions above:

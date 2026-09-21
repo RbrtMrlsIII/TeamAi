@@ -46,6 +46,9 @@ const files = [
   'team-agents.js',
   'team-agents-facility.js',
   'team-agents-facility.css',
+  'marketplace-commerce.js',
+  'marketplace-commerce-facility.js',
+  'marketplace-commerce.css',
 ];
 
 const checkOnly = process.argv.includes('--check');

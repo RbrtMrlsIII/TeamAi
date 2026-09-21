@@ -1,7 +1,7 @@
 # TEAM-EXPERIENCE-029 — Entitlement & usage limits architecture
 
 **Status:** PLANNING / ARCHITECTURE SUPPORT — **not** pricing authority  
-**Numbers:** intentionally **unset** (`TBD`) until product packaging approval  
+**Numbers:** tier counts are defined for Team Quality/Population; **prices and capability limits remain TBD**  
 **Authority:** `Product_Law/PRODUCT_LAW.md` · commercial capability model · Firestore usage policy  
 **No 029-released claim.**
 
@@ -9,7 +9,7 @@
 
 Define **how** TeamAi will interpret subscriptions and usage limits so implementation can plug numbers later without redesigning axes.
 
-This document does **not** set prices, plan names, or numeric caps.
+This document does **not** set prices or exact capability caps. It does record the approved Team Quality/Population tier counts and their subscription transition semantics.
 
 ## 2. Three independent product levers
 
@@ -30,6 +30,14 @@ This document does **not** set prices, plan names, or numeric caps.
 ```text
 Team Quality  ≠  Tool Quality  ≠  Provider entitlement  ≠  Skills packages
 ```
+
+## 2a. Current approved commercial tier structure
+
+**Team Quality** has five paid tiers above the baseline Team Quality allocation (`Tier 0`). **Team Population** has nine paid tiers. Population Tier 1 unlocks persistent Seat 2 and Population Tier 9 unlocks persistent Seat 10.
+
+Both families are monthly subscriptions. A lower tier remains locked for the duration of an active higher tier. A higher-tier change is permitted, but the resulting user flow must warn inline that the lower tier's effect disappears when the higher tier takes effect.
+
+The exact Team Quality limits, prices, discounts, promotional terms, and entitlement payload remain backend/product packaging data and must not be invented by the browser.
 
 ## 3. Entitlement projection (runtime shape)
 
@@ -104,7 +112,7 @@ Still required for use:
 
 ## 8. Explicit non-goals
 
-- No prices or seat counts in this doc.  
+- No prices or exact Team Quality capability limits in this doc; population tier-to-seat mapping is defined above.  
 - No ZipSkills SKU.  
 - No client-written entitlement.  
 - No alternate durable DB under quota pressure.
