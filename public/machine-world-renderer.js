@@ -538,7 +538,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     const sourceGeometry = deriveFocusedSeatDivisionGeometry({
       parent: shell,
-      childId: state.focusedChildId,
+      childId: sourceId,
       childIndex: sourceIndex,
       amount: sourceAmount,
     });
