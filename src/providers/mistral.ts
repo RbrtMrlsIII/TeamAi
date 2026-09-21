@@ -1,5 +1,6 @@
 import type {AIProvider,GenerateRequest,GenerateResult,ModelInfo,StreamChunk} from './types.js';
 import {fetchJson,parseSse} from './http.js';
+import { terminationFromMistral } from './termination.js';
 
 export class MistralProvider implements AIProvider {
   constructor(public readonly provider='mistral',private readonly key=process.env.MISTRAL_API_KEY??'',private readonly base='https://api.mistral.ai/v1'){}
@@ -7,7 +8,7 @@ export class MistralProvider implements AIProvider {
   async generate(req:GenerateRequest):Promise<GenerateResult>{
     if(!this.key) throw new Error('MISTRAL_API_KEY not configured');
     const {data,requestId}=await fetchJson(`${this.base}/chat/completions`,{method:'POST',headers:this.headers(),body:JSON.stringify({model:req.model,messages:req.messages,max_tokens:req.maxOutputTokens,temperature:req.temperature,stream:false})});
-    const u=data.usage??{}; return {provider:this.provider,model:req.model,requestId:data.id??requestId??'',text:typeof data.choices?.[0]?.message?.content==='string'?data.choices[0].message.content:(data.choices?.[0]?.message?.content??[]).map((x:any)=>x.text??'').join(''),usage:{inputTokens:u.prompt_tokens??0,outputTokens:u.completion_tokens??0,totalTokens:u.total_tokens??(u.prompt_tokens??0)+(u.completion_tokens??0)}};
+    const u=data.usage??{}; return {provider:this.provider,model:req.model,requestId:data.id??requestId??'',text:typeof data.choices?.[0]?.message?.content==='string'?data.choices[0].message.content:(data.choices?.[0]?.message?.content??[]).map((x:any)=>x.text??'').join(''),usage:{inputTokens:u.prompt_tokens??0,outputTokens:u.completion_tokens??0,totalTokens:u.total_tokens??(u.prompt_tokens??0)+(u.completion_tokens??0)},termination:terminationFromMistral(data.choices?.[0]?.finish_reason)};
   }
   async *stream(req:GenerateRequest):AsyncIterable<StreamChunk>{
     if(!this.key) throw new Error('MISTRAL_API_KEY not configured');
