@@ -101,7 +101,7 @@ Individual agents **must not** have their own GitHub user accounts.
 | `ALTER TABLE users ADD github_installation_id` on Postgres | Durable domain is **Firestore**, rooted in Firebase UID. Supabase Postgres is infrastructure only. |
 | Keyword interceptor for `DROP` / `DELETE` as the safety model | Do not give AI a SQL role against TeamAi domain. Guardrails belong in API policy, not string filters. |
 | Firebase Extension as the “Connect Firebase” path | Firebase Auth + Firestore `(default)` are already TeamAi identity/domain. An Extension is a different product. |
-| One marketplace that treats GitHub App, Firebase Extension, Supabase OAuth, and raw Postgres passwords as the same UX | Four different authority families. GitHub App first. |
+| One combined connection surface that treats GitHub App, Firebase Extension, Supabase OAuth, and raw Postgres passwords as the same UX | Four different authority families. Keep GitHub App connection lifecycle separate from TeamAi Marketplace commerce. |
 | GitHub Actions as orchestration | Family B: Actions is verification, **not** the Web AI scheduler. |
 | Hero “connected” badge = usable | Connection lifecycle: `authorized ≠ project-scoped ≠ seat-allowed ≠ healthy ≠ usable`. |
 
