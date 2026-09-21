@@ -47,12 +47,14 @@ Historical camera paths, prototype coordinates, ambient timings, and retired Com
 
 The active Draft implementation keeps the construction law above, but the current code now has explicit owners for several formerly implicit seams:
 
-- World geometry profile: hero-world-profile.js.
-- R0 receiving core: hero-workspace-core.js.
-- R1/R2 concentric fitting: hero-ring-envelope.js plus the source-owned R1/R2 modules.
+- World geometry profile: `hero-world-profile.js`.
+- R0 receiving core: `hero-workspace-core.js`.
+- R1/R2 concentric fitting: `hero-ring-envelope.js` plus the source-owned R1/R2 modules.
 - Seat division payload/geometry/topology: the machine-seat-division-* modules.
-- Semantic electricity route sampling: machine-energy-flow.js.
-- Provisional root ownership/presence: hero-root-contract.js and hero-root-runtime.js.
+- Semantic electricity route sampling: `machine-energy-flow.js`.
+- Canonical WebGL projection: `machine-world-renderer.js` → `public/machine-world-renderer.js`.
+- Controller/input/hierarchy boundary: `public/hero-flex.js` and preserved source `public/_flex_src/hero-flex.base.js`.
+- Provisional root ownership/presence: `hero-root-contract.js` and `hero-root-runtime.js`.
 
 The world-profile distinction is deliberate: workspace footprint, R0 centerline, Seat-shell radius, and outer-housing radius are separate physical concepts. A geometry value must not be copied between those layers simply because the numbers are similar.
 
@@ -101,7 +103,7 @@ RETURN_TO_PARENT · RETURN_TO_WORLD · CONTINUOUS_TREE_TRAVEL
 RESPONSIVE_FRAMING · REDUCED_MOTION_EQUIVALENT
 ```
 
-Subject identity is semantic. Named docks and ~`700 ms` lerp are **implementation baselines**, not final travel law. Continuous tree-to-tree travel and deep branch subject resolution remain incomplete on current `main`.
+Subject identity is semantic. Named docks and ~`700 ms` lerp are **implementation baselines**, not final travel law. Continuous tree-to-tree travel and deep branch subject resolution remain incomplete in the current #398 implementation.
 
 ### Electricity law
 
