@@ -1,4 +1,5 @@
 import { clampSeatCount, MACHINE_DEFAULT_SEAT_COUNT } from './seat-capacity.js';
+import { deriveExpandedMachineCoreRadii } from './hero-world-profile.js';
 const TAU = Math.PI * 2;
 const polar = (radius, angle, y = 0) => ({ x: Math.cos(angle) * radius, y, z: Math.sin(angle) * radius });
 const DEFAULT_SEAT_COUNT = 10;
@@ -54,9 +55,10 @@ export function bindSeatShellProjection({ seatIndex, branchId } = {}) {
 export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, expanded = false, expansionAmount = null } = {}) {
   const count = clampSeatCount(seatCount, MACHINE_DEFAULT_SEAT_COUNT);
   const amount = expansionAmount == null ? (expanded ? 1 : 0) : clamp01(expansionAmount);
-  const innerRadius = 4.05 + (4.55 - 4.05) * amount;
+  const coreRadii = deriveExpandedMachineCoreRadii(count, amount);
+  const innerRadius = coreRadii.seatShellRadius;
   const podPortRadius = 0.92 + (1.02 - 0.92) * amount;
-  const outerRadius = 6.45 + (7.15 - 6.45) * amount;
+  const outerRadius = coreRadii.outerHousingRadius;
   const hub = { id: 'machine-hub-core', branchId: 'HUB-CORE', kind: 'hub', level: 0.42, center: { x: 0, y: 0.42, z: 0 }, dimensions: { x: 2.6, y: 0.78, z: 2.6 }, silhouette: 'hex', seam: 0.26, port: { x: 0, y: 0.42, z: 1.45 }, uiStyle: 'command-core', expanded: true, semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only' };
   hub.uiSurface = makeUiSurface(hub, hub.uiStyle, 0.72); hub.camera = cameraForPart(hub, Math.PI / 2);
   const inner = Array.from({ length: count }, (_, seatIndex) => {
