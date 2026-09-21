@@ -207,6 +207,48 @@ async function leaseWaitingApprovalTask(input: {
   return "acquired";
 }
 
+\nasync function persistContinuationCheckpoint(input: {
+  taskPath: string;
+  checkpointId: string;
+  taskId: string;
+  projectId: string;
+  seatId: string;
+  actorId: string;
+  sourceExecutionId: string;
+  sourceEventId: string;
+  provider: string;
+  model: string;
+  result: GenerateResult;
+  budget: Record<string, unknown>;
+  accessToken: string;
+}): Promise<void> {
+  await firestoreCreate(
+    input.taskPath + "/continuation-checkpoints/" + input.checkpointId,
+    firestoreFields({
+      checkpointId: input.checkpointId,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      seatId: input.seatId,
+      actorId: input.actorId,
+      sourceExecutionId: input.sourceExecutionId,
+      sourceEventId: input.sourceEventId,
+      createdAt: new Date().toISOString(),
+      status: "awaiting_continuation",
+      completionState: "HANDOFF_REQUIRED",
+      provider: input.provider,
+      model: input.model,
+      providerOutput: input.result.text,
+      usage: input.result.usage,
+      termination: input.result.termination,
+      remainingGenerationTokens: input.budget.remainingGenerationTokens,
+      usableGenerationTokens: input.budget.usableGenerationTokens,
+      handoffReserveTokens: input.budget.handoffReserveTokens,
+      nextAction: "authorized-continuation-turn",
+    }),
+    input.accessToken,
+  );
+}
+
 async function executeProvider(providerKind: "openai" | "anthropic", apiKey: string, request: GenerateRequest): Promise<GenerateResult> {
   if (providerKind === "openai") return new OpenAIProvider(apiKey).generate(request);
   return new AnthropicProvider(apiKey).generate(request);
@@ -429,6 +471,25 @@ Deno.serve(async (req: Request) => {
       usableGenerationTokens: String(budgetUsage.usableGenerationTokens),
     });
 
+    const continuationCheckpointId = continuation ? executionId + ":checkpoint" : undefined;
+    if (continuation) {
+      await persistContinuationCheckpoint({
+        taskPath,
+        checkpointId: continuationCheckpointId!,
+        taskId,
+        projectId,
+        seatId,
+        actorId,
+        sourceExecutionId: executionId,
+        sourceEventId: eventId,
+        provider: result.provider,
+        model: result.model,
+        result,
+        budget: budgetUsage,
+        accessToken,
+      });
+    }
+
     await firestoreCreate(resultPath, firestoreFields({
       taskId,
       projectId,
@@ -451,6 +512,7 @@ Deno.serve(async (req: Request) => {
       termination: result.termination,
       budget: budgetUsage,
       configuredBudget: budget,
+      ...(continuationCheckpointId ? { continuationCheckpointId } : {}),
     }), accessToken);
 
     await patchTask(taskPath, accessToken, {
@@ -458,11 +520,13 @@ Deno.serve(async (req: Request) => {
       completionState,
       completedAt: recordedAt,
       executionId,
+      ...(continuationCheckpointId ? { continuationCheckpointId } : {}),
       provider: result.provider,
       model: result.model,
       terminationReason: terminal.reason,
       remainingGenerationTokens: String(budgetUsage.remainingGenerationTokens),
       usableGenerationTokens: String(budgetUsage.usableGenerationTokens),
+      ...(continuationCheckpointId ? { continuationCheckpointId } : {}),
     });
 
     return json({
