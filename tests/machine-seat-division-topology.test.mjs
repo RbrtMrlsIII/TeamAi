@@ -86,6 +86,7 @@ test('full Seat division network reuses shared AABB/port/route clearance authori
   assert.equal(validation.valid, true, validation.reasons.join(', '));
   assert.equal(validation.divisionCount, 7);
   assert.equal(validation.edgeCount, 7);
+  assert.ok(edges.every((edge) => edge.route.length === 4));
 });
 
 
