@@ -120,8 +120,9 @@ test('Trusted continuation request boundary atomically creates the request, stat
 
 test('Edge continuation execution requires the target Seat-owned connection', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
-  assert.match(source, /continuation_target_connection_mismatch/);
-  assert.match(source, /connection\.seatId/);
+  assert.match(source, /firestoreFindSeatConnection/);
+  assert.match(source, /continuation_target_connection_not_found/);
+  assert.match(source, /connectionProvider/);
   assert.match(source, /seatId: targetSeatId/);
 });
 
