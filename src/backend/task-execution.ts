@@ -129,7 +129,13 @@ export class TaskExecutionService {
     if (task.authorizationStatus !== 'authorized') throw new Error(`task execution requires authorization, got ${task.authorizationStatus}`);
 
     const startedAt = new Date().toISOString();
-    const startEvent = this.event(`${idempotencyKey}:start`, idempotencyKey, 'START', actorId, startedAt);
+    const startEvent = this.event(
+      `${idempotencyKey}:start`,
+      idempotencyKey,
+      continuationContext ? 'CONTINUE_START' : 'START',
+      actorId,
+      startedAt,
+    );
     assertDurableEvent(startEvent);
     await this.events.append(startEvent);
     task.status = continuationContext
@@ -226,6 +232,8 @@ export class TaskExecutionService {
           result,
           budget: budgetAfterExecution ?? undefined,
           continuationCheckpointId: checkpoint.checkpointId,
+          continuationRequestId: continuationContext?.requestId,
+          continuationOfCheckpointId: continuationContext?.continuationOfCheckpointId,
           duplicate: false,
         };
       }
@@ -264,6 +272,8 @@ export class TaskExecutionService {
       recordedAt: completeEvent.occurredAt,
       result,
       termination: result.termination,
+      continuationRequestId: continuationContext?.requestId,
+      continuationOfCheckpointId: continuationContext?.continuationOfCheckpointId,
     });
     await this.events.append(completeEvent);
     task.status = transitionTask(task.status, 'COMPLETE');
