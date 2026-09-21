@@ -339,6 +339,12 @@ evidence required
 
 A geometry-first change without a semantic owner stops for reconciliation.
 
+## 16.1 Product feature registry
+
+The frontend product-feature vocabulary is centralized in `frontend/spatial/feature-registry.js` with its synchronized browser copy at `public/feature-registry.js`. These are presentation/navigation descriptors for the product facilities listed by this contract.
+
+The feature registry is not a semantic tree, permission system, entitlement ledger, scheduler, billing authority, or durable-state authority. Feature ids must not be reused as tree/branch semantic ids. Guest presentation state may be derived for discoverability/lock messaging, but authoritative authorization and entitlement remain backend-owned.
+
 ## 16. Census synchronization
 
 The Tree Census remains the structural inventory. Product-Law-derived semantic roots and branches MUST remain synchronized with it.
