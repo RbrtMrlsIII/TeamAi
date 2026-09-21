@@ -5,7 +5,7 @@
  * The canonical semantic Hero renderer owns the active WebGL path.
  *
  * The canonical machine-spatial sync owns browser delivery. This command
- * performs no file mutation.
+ * performs no file mutation and no longer mutates hero-flex.js.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
