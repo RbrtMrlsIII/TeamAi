@@ -144,6 +144,97 @@ export class FirestoreRuntimeClient {
     return await response.json() as FirestoreDocument;
   }
 
+  private async findCanonicalSeatDocument(
+    uid: string,
+    projectId: string,
+    seatId: string,
+    transaction?: string,
+  ): Promise<{ document: FirestoreDocument; path: string; teamId: string } | null> {
+    const safeUid = required(uid, 'uid');
+    const safeProjectId = required(projectId, 'projectId');
+    const safeSeatId = required(seatId, 'seatId');
+    const parentPath =
+      'accounts/' + safeUid +
+      '/workplaces/' + this.workplaceId +
+      '/projects/' + safeProjectId;
+
+    const token = await googleAccessToken(this.account);
+    const response = await fetch(this.documentUrl(parentPath) + ':runQuery', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + token,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: 'seats', allDescendants: true }],
+          where: {
+            fieldFilter: {
+              field: { fieldPath: 'seatId' },
+              op: 'EQUAL',
+              value: { stringValue: safeSeatId },
+            },
+          },
+          limit: 2,
+        },
+        ...(transaction ? { transaction } : {}),
+      }),
+    });
+    if (!response.ok) throw new Error('Firestore Seat query failed: ' + response.status);
+
+    const body = await response.text();
+    const rows = body.trim()
+      ? (() => {
+          try {
+            const parsed = JSON.parse(body) as unknown;
+            return Array.isArray(parsed) ? parsed : [parsed];
+          } catch {
+            return body.trim().split(/\\r?\\n/).map((line) => JSON.parse(line));
+          }
+        })()
+      : [];
+
+    const matches = rows
+      .map((row) => (row && typeof row === 'object' ? row as { document?: FirestoreDocument } : {}))
+      .map((row) => row.document)
+      .filter((document): document is FirestoreDocument & { name: string } => Boolean(document?.name))
+      .map((document) => {
+        const marker = '/documents/';
+        const markerIndex = String(document.name).indexOf(marker);
+        if (markerIndex < 0) return null;
+        const path = String(document.name).slice(markerIndex + marker.length);
+        const segments = path.split('/');
+        const canonical =
+          segments.length === 10 &&
+          segments[0] === 'accounts' &&
+          segments[1] === safeUid &&
+          segments[2] === 'workplaces' &&
+          segments[3] === this.workplaceId &&
+          segments[4] === 'projects' &&
+          segments[5] === safeProjectId &&
+          segments[6] === 'teams' &&
+          segments[8] === 'seats' &&
+          segments[9] === safeSeatId;
+        if (!canonical) return null;
+
+        const current = decodeDocument(document);
+        if (
+          String(current.uid ?? '') !== safeUid ||
+          String(current.workplaceId ?? '') !== this.workplaceId ||
+          String(current.projectId ?? '') !== safeProjectId ||
+          String(current.seatId ?? '') !== safeSeatId
+        ) return null;
+
+        const teamId = String(current.teamId ?? segments[7] ?? '').trim();
+        if (!teamId) return null;
+        return { document, path, teamId };
+      })
+      .filter((item): item is { document: FirestoreDocument; path: string; teamId: string } => Boolean(item));
+
+    if (matches.length > 1) throw new Error('seat_ambiguous');
+    return matches[0] ?? null;
+  }
+
   async beginTransaction(): Promise<string> {
     const token = await googleAccessToken(this.account);
     const response = await fetch(`${FIRESTORE_ROOT}/projects/${encodeURIComponent(this.projectId)}/databases/(default)/documents:beginTransaction`, {
@@ -244,8 +335,12 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   }
 
   async getSeat(uid: string, projectId: string, seatId: string): Promise<SeatState | null> {
-    const doc = await this.client.get(`accounts/${required(uid, 'uid')}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/seats/${required(seatId, 'seatId')}`);
-    return doc ? decodeDocument(doc) as unknown as SeatState : null;
+    const resolved = await this.client.findCanonicalSeatDocument(
+      required(uid, 'uid'),
+      required(projectId, 'projectId'),
+      required(seatId, 'seatId'),
+    );
+    return resolved ? decodeDocument(resolved.document) as unknown as SeatState : null;
   }
 
   async getSeatBudget(uid: string, projectId: string, seatId: string): Promise<SeatTurnBudgetConfig | null> {
@@ -258,15 +353,16 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
     const safeProjectId = required(projectId, 'projectId');
     const safeSeatId = required(seatId, 'seatId');
     const transaction = await this.client.beginTransaction();
-    const seatPath = FirestoreRuntimeClient.path(
+    const resolved = await this.client.findCanonicalSeatDocument(
       safeUid,
-      this.workplaceId,
       safeProjectId,
-      `seats/${safeSeatId}`,
+      safeSeatId,
+      transaction,
     );
-    const document = await this.client.get(seatPath, transaction);
-    if (!document) throw new Error(`seat not found: ${safeSeatId}`);
+    if (!resolved) throw new Error(`seat not found: ${safeSeatId}`);
 
+    const seatPath = resolved.path;
+    const document = resolved.document;
     const now = new Date().toISOString();
     await this.client.commit(transaction, [{
       update: {
