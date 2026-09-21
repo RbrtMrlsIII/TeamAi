@@ -36,6 +36,7 @@ const files = [
   'machine-seat-division-payload.js',
   'machine-energy-flow.js',
   'machine-choreography.js',
+  'mcp-capability.js',
 ];
 
 const checkOnly = process.argv.includes('--check');
