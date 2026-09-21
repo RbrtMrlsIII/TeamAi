@@ -55,7 +55,15 @@ while:
 
 A provider, runtime, model, or external application may impose separate requirements that TeamAi cannot waive.
 
-## 3. Base TeamAi capability set versus additional MCP/tool quality
+## 3. MCP facility ownership
+
+All TeamAi-facing MCP concerns are grouped under the dedicated **MCP facility**. The facility owns the product UX for MCP inventory, install/add, connector authentication handoff, permission configuration, connection health/test, and custom MCP creation/setup/management.
+
+The MCP facility can equip a capability to one Seat, multiple/all eligible Seats, or Workspace. Equipping creates a target-owned dynamic branch for capability configuration and operation. The Seat or Workspace branch does not become the MCP inventory authority.
+
+External provider credentials, provider terms, and provider-owned account authority remain external even when authentication is initiated from the MCP facility.
+
+## 4. Base TeamAi capability set versus additional MCP/tool quality
 
 TeamAi needs a minimum capability set that makes a TeamAi team able to function as a coordinated product. These capability categories are **not automatically required to be implemented as MCP servers**. Core TeamAi authority should remain native to TeamAi where appropriate.
 
@@ -72,7 +80,7 @@ Candidate Base TeamAi Capability Set:
 
 The baseline should be intentionally minimal. Additional integrations become Tool Quality extensions rather than silently becoming core TeamAi requirements.
 
-## 4. Additional MCP / Tool Quality
+## 5. Additional MCP / Tool Quality
 
 Examples of optional additional capability packs may include:
 
@@ -95,7 +103,7 @@ Therefore:
 
 Tool results never silently grant new permissions.
 
-## 5. AI Seat capability identity
+## 6. AI Seat capability identity
 
 An AI Seat remains distinct from all of the following:
 
@@ -119,19 +127,19 @@ A TeamAi Seat is the configured participation identity inside a Workplace/Projec
 
 The same external model may therefore support multiple differently configured TeamAi Seats when the provider/runtime allows it.
 
-## 6. External setup versus TeamAi activation
+## 7. External setup versus TeamAi activation
 
-Some setup must or may happen outside the TeamAi web application:
+Provider-owned account or credential authority may remain external, but the **TeamAi MCP lifecycle is managed through the MCP facility**:
 
-`provider account → external authentication → external application/runtime setup → external MCP/tool configuration → external permissions/terms`
+`MCP facility → discover/install/add → connector authentication handoff → permissions/configuration → health test → target equip → Seat/Workspace activation`
 
-TeamAi then provides the coordination boundary:
+Where provider-native account setup is required, that step may leave TeamAi through an explicit authentication handoff. TeamAi then provides the coordination boundary:
 
 `authorized connection → capability test → Workplace/Project binding → AI Seat → Team Quality + Tool Quality policy → scopes/limits → activation`
 
 TeamAi must not pretend it owns external configuration that remains under the provider/application's authority.
 
-## 7. How the AI uses its individual tools
+## 8. How the AI uses its individual tools
 
 The AI should never receive raw provider credentials merely because a tool is available.
 
