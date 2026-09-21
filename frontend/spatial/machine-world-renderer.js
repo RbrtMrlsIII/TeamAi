@@ -770,6 +770,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       }, now / 1000);
       canvas.dataset.machineWorldFocusedDivision = focusedDivision?.childId || '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = focusedDivision?.id || '';
+      canvas.dataset.machineWorldFocusedDivisionCamera = focusedDivision?.cameraId || '';
       const focusedDivisionTrace = renderSemanticEdgeTrace(
         focusedDivision?.edge,
         state.focusedChildAmount,
@@ -779,6 +780,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     } else {
       canvas.dataset.machineWorldFocusedDivision = '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = '';
+      canvas.dataset.machineWorldFocusedDivisionCamera = '';
       canvas.dataset.machineWorldFocusedDivisionEdge = '';
     }
 
