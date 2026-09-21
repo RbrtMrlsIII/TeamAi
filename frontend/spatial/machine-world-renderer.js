@@ -281,7 +281,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   let targetExpanded = false;
   let branchId = 'HUB-CORE';
   let lastSeat1AdjacentWiring = null;
-  let lastSeat1AdjacentWiringDiagnostic = Object.freeze({ reason: 'NOT_RENDERED' });
   let disposed = false;
   const primitiveBuffers = new Map();
 
@@ -495,17 +494,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   }
 
   function renderAdjacentDivisionWiring(scene, selectedBranch, state, reducedMotion) {
-    const fail = (reason, extra = {}) => {
+    const fail = () => {
       lastSeat1AdjacentWiring = null;
-      lastSeat1AdjacentWiringDiagnostic = Object.freeze({
-        reason,
-        selectedBranch: selectedBranch || null,
-        hierarchyOpen: Boolean(state?.hierarchyOpen),
-        focusedChildId: state?.focusedChildId || null,
-        focusedChildIndex: Number.isInteger(state?.focusedChildIndex) ? state.focusedChildIndex : null,
-        connectionAmount: finite((state?.seatDivisionBranchAmounts || {}).connectionBranchAmount ?? state?.connectionBranchAmount, 0),
-        ...extra,
-      });
     };
     if (selectedBranch !== 'BRANCH-SEAT-01') { fail('SELECTED_BRANCH_NOT_SEAT_1'); return; }
     if (!state?.hierarchyOpen) { fail('HIERARCHY_NOT_OPEN'); return; }
@@ -594,7 +584,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldAdjacentWiring = lastSeat1AdjacentWiring.id;
     canvas.dataset.machineWorldAdjacentAmount = String(activeAmount);
     canvas.dataset.machineWorldAdjacentPhase = lastSeat1AdjacentWiring.phase;
-    lastSeat1AdjacentWiringDiagnostic = Object.freeze({ reason: 'READY', selectedBranch, hierarchyOpen: true, focusedChildId: state.focusedChildId, focusedChildIndex: focusedIndex, sourceId, targetId, amount: activeAmount });
 
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
@@ -1073,7 +1062,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
     },
     getSeat1AdjacentWiring() { return lastSeat1AdjacentWiring; },
-    getSeat1AdjacentWiringDiagnostic() { return lastSeat1AdjacentWiringDiagnostic; },
     dispose() { disposed = true; },
   });
 }
