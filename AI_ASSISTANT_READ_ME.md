@@ -16,10 +16,10 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, with the Workspace representative frontend/browser proof established and Team/Agents role-assignment presentation as the next #400 frontier.
+- next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, and Team/Agents representative frontend/browser contracts proven; Marketplace / Commerce entitlement-gated presentation is the next #400 frontier.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, Project/Package, Recovery, Agent-validation, and Canonical Browser checks are green at `026a0fcfd8ac41a43ffd8988dad5b160cf972edb`; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
-- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live head is `026a0fcfd8ac41a43ffd8988dad5b160cf972edb`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
+- validation state: exact-head Governance, Full-System, Security, Project/Package, Recovery, Agent-validation, and Canonical Browser checks are green at `cd4a06a8a6706cf433e2f6a2c01c5456924af406`; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live proof head is `cd4a06a8a6706cf433e2f6a2c01c5456924af406`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
@@ -39,6 +39,13 @@
 - Exact-head Browser verification on 026a0fcfd8ac41a43ffd8988dad5b160cf972edb passed the Workspace flow: guest discovery, capability inventory, dynamic project-scoped branch preview, workspace-center camera focus, guest action lock, and authentication handoff.
 - Workspace proof remains representative frontend/browser evidence only. Firestore Workspace state, authorization, entitlement, scheduler eligibility, and execution remain authoritative outside the facility.
 - Next representative #400 contract: Team / Agents role assignment and Seat assignment presentation.
+
+
+### 2026-09-21 exact-head Team / Agents proof
+- Team / Agents representative contract is implemented as a responsibility presentation boundary with Agent identity, role vocabulary, Seat assignment preview, dynamic branch identity, readiness dimensions, and presentation-only assignment intent.
+- Exact-head Browser verification on `cd4a06a8a6706cf433e2f6a2c01c5456924af406` passed the Team / Agents flow. The preceding `0b182c4c...` failure was solely a regex-literal `+` matcher defect in the E2E test; production UI text was already correct.
+- Team / Agents proof remains representative frontend/browser evidence only. Durable Agent state, assignment persistence, authorization, entitlement, scheduler eligibility, and execution remain backend/runtime-owned.
+- Next representative #400 contract: Marketplace / Commerce entitlement-gated feature.
 
 ## Canonical authority path
 
