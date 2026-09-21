@@ -48,6 +48,11 @@ MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inven
 ## Current blocker
 No current exact-head CI gate blocker at Storage proof head `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`. The branch remains Draft because these checks prove exercised contracts only, not full #400 completion, live commerce lifecycle integration, #392 completion, human acceptance, or merge readiness.
 
+### #392 budget foundation boundary
+- Canonical backend accounting engine added at src/backend/seat-turn-budget.ts.
+- TaskExecutionService now applies backend-owned provider output ceilings and exposes authoritative post-turn accounting.
+- Current foundation evidence is intentionally bounded: it does not claim live Edge enforcement, durable Seat budget configuration, provider completion-state detection, durable handoff checkpoint persistence, or continuation execution.
+- The next #392 slice must reconcile these missing authorities instead of introducing client-side counters or a duplicate Edge-only budget engine.
 ### Exact-head Storage boundary record
 - Storage item inventory is presentation/read-model only on this slice.
 - No live Supabase Storage buckets are currently provisioned in the connected project, so no live content inventory is claimed.
