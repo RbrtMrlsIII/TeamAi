@@ -30,3 +30,14 @@ test('division payloads keep capability, authorization, scope, and entitlement b
   assert.equal(resolveSeatDivisionPayload('SEAT_TOOLKIT').optional, true);
   assert.equal(resolveSeatDivisionPayload('SEAT_TOOLKIT').entitlement, false);
 });
+
+
+test('Seat division payloads retain their established camera relations', () => {
+  assert.equal(resolveSeatDivisionPayload('SEAT_CONNECTION').cameraId, 'SEAT_CLOSE');
+  assert.equal(resolveSeatDivisionPayload('SEAT_BEHAVIOR').cameraId, 'SEAT_CLOSE');
+  assert.equal(resolveSeatDivisionPayload('SEAT_TOOLKIT').cameraId, 'SEAT_CLOSE');
+  assert.equal(resolveSeatDivisionPayload('SEAT_CAPABILITIES').cameraId, 'DETAIL_ANCHOR');
+  assert.equal(resolveSeatDivisionPayload('SEAT_AUTHORIZATION').cameraId, 'DETAIL_ANCHOR');
+  assert.equal(resolveSeatDivisionPayload('SEAT_WORKSPACE_SCOPE').cameraId, 'WORKSPACE_CLOSE');
+  assert.equal(resolveSeatDivisionPayload('SEAT_TASK_EVIDENCE').cameraId, 'DETAIL_ANCHOR');
+});
