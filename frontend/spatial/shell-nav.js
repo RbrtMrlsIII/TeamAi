@@ -6,6 +6,9 @@
 
 import { getFrontendFeature } from "./feature-registry.js";
 import { createSeatReportPresentation, createSeatTransactionPresentation } from "./seat-runtime-presentation.js";
+import { projectSeat, normalizeConnectionHealth, applyProjectionToHeroSeatStack } from "./seat-read-model.js";
+import { runSeatConnectionTest, formatConnectionTestMessage } from "./seat-connection-wire.js";
+import { ensureProviderBindOnSeatsPage, syncProviderBindSeat } from "./seat-provider-bind-wire.js";
 
 import {
   applyDocumentTheme,
@@ -258,8 +261,15 @@ function enterProject() {
   showComposition("deck");
 }
 
+function projectedSeat(seatId = activeSeat) {
+  const raw = SEAT_DATA[seatId] || SEAT_DATA.alpha;
+  return projectSeat(raw, { seatId: SEAT_DATA[seatId] ? seatId : "alpha", source: "fixture" });
+}
+
 function seatActivationAllowed(seat) {
-  return seat.connection === "ready" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";
+  if (seat?.connectionHealth) return Boolean(seat.activationAllowedPresentation);
+  const health = normalizeConnectionHealth(seat?.health ?? seat?.connection);
+  return health === "healthy" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";
 }
 
 function buildSeats() {
@@ -379,6 +389,7 @@ function buildSeats() {
   section.querySelector('[data-action="back-to-deck"]')?.addEventListener("click", () => showComposition("deck"));
   seatsBuilt = true;
   selectSeat(activeSeat);
+  ensureProviderBindOnSeatsPage();
 }
 
 function selectSeat(seatId) {
@@ -440,7 +451,8 @@ function renderSeatDetail() {
   const activate = document.querySelector('[data-action="activate-seat"]');
   if (title) title.textContent = seat.name;
   if (binding) binding.textContent = `${seat.role} · ${seat.provider} · ${seat.model}`;
-  if (health) health.textContent = seat.health;
+  if (health) health.textContent = projectedSeat(activeSeat).connectionHealth;
+  applyProjectionToHeroSeatStack(projectedSeat(activeSeat));
   if (identity) identity.textContent = `${seat.name} · ${seat.role}`;
   if (provider) provider.textContent = `${seat.provider} · ${seat.model}`;
   if (connection) connection.textContent = seat.connection;
@@ -451,6 +463,7 @@ function renderSeatDetail() {
   if (providerEntitlement) providerEntitlement.textContent = seat.providerEntitlement;
   if (activate) activate.disabled = !seatActivationAllowed(seat);
   renderSeatRuntime();
+  syncProviderBindSeat(id);
   if (activate) activate.setAttribute("aria-describedby", "seat-activation-state");
   let state = document.querySelector("#seat-activation-state");
   if (!state) {
@@ -463,17 +476,22 @@ function renderSeatDetail() {
   state.textContent = seatActivationAllowed(seat) ? `${seat.name} activation eligible from displayed facts.` : `${seat.name} activation blocked until connection and both entitlements allow.`;
 }
 
-function testSeatConnection() {
-  const seat = SEAT_DATA[activeSeat];
-  if (!seat) return;
+async function testSeatConnection() {
+  const fixture = projectedSeat(activeSeat);
+  if (!fixture) return;
   const result = document.querySelector("[data-seat-result]");
-  if (seat.connection === "ready") {
-    if (result) result.textContent = `${seat.name} connection test passed in UI only; no provider request was made.`;
-  } else {
-    if (result) result.textContent = `${seat.name} connection remains degraded in UI; no provider request was made.`;
+  if (result) result.textContent = fixture.name + " testing connection…";
+  try {
+    const outcome = await runSeatConnectionTest({ seatId: activeSeat, fixtureProjection: fixture });
+    const seat = outcome.projection;
+    if (result) result.textContent = formatConnectionTestMessage(seat, outcome);
+    applyProjectionToHeroSeatStack(seat);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (result) result.textContent = fixture.name + " connection test failed in UI (" + message + "); fixture health unchanged.";
+    applyProjectionToHeroSeatStack(fixture);
   }
 }
-
 function activateSeat() {
   const seat = SEAT_DATA[activeSeat];
   if (!seat || !seatActivationAllowed(seat)) return;
