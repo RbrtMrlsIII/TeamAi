@@ -6,6 +6,11 @@
 
 TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 
+## Audit anchor
+
+- Last audited implementation head: `a887afb68b5449b13e6dbe54f51bffa7f3b4bcb5`.
+- The live branch head is authoritative and must be re-read before relying on any recorded SHA. Documentation commits after the audit anchor do not change the implementation under audit.
+
 ## Status
 
 IMPLEMENTATION ACTIVE / IN PROGRESS — PR #398 is the active Draft implementation vehicle on the governance-compliant `frontend/029-machine-world-convergence` branch. PR #397 is closed historical lineage.
