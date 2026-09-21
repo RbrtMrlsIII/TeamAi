@@ -43,7 +43,7 @@ Continue converging the TeamAi Spatial World from the exact #397 implementation 
 This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
 
 ## Current frontier
-MCP, Workspace HQ, and Team / Agents representative frontend/browser contracts are now exact-head proven. The next authorized representative #400 contract is **Marketplace / Commerce**: entitlement-gated presentation, TeamAi-versus-provider entitlement separation, read-model state vocabulary, and commerce intent without browser payment or entitlement authority.
+MCP, Workspace HQ, Team / Agents, and Marketplace / Commerce representative frontend/browser contracts are now exact-head proven. The next authorized representative #400 contract is **Storage item inventory**: first-class inventory presentation while keeping upload, binary transfer, and content-write authority deferred.
 
 ## Current blocker
-No current CI gate blocker at the proven Team / Agents head. The branch remains Draft because green checks prove exercised contracts only, not full #400 completion, backend lifecycle authority, live commerce runtime proof, human acceptance, or merge readiness.
+No current exact-head CI gate blocker at Marketplace proof head `7b61c3c725b242288749324ad73d2eb752ded3b1`. The branch remains Draft because these checks prove only exercised contracts, not full #400 completion, live commerce lifecycle integration, Storage completion, human acceptance, or merge readiness.

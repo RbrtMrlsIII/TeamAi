@@ -16,9 +16,9 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, and Team/Agents representative frontend/browser contracts proven; Marketplace / Commerce entitlement-gated presentation is the next #400 frontier.
+- next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, Team/Agents, and Marketplace / Commerce representative frontend/browser contracts proven; Storage item-inventory presentation is the next #400 frontier.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, Project/Package, Recovery, Agent-validation, and Canonical Browser checks are green at `cd4a06a8a6706cf433e2f6a2c01c5456924af406`; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `7b61c3c725b242288749324ad73d2eb752ded3b1`; Marketplace browser proof exercised the three representative commerce scenarios. Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
 - live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live proof head is `cd4a06a8a6706cf433e2f6a2c01c5456924af406`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
@@ -162,3 +162,14 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 - #394/#393 = governance baseline/advisory normalization lineage, closure-pending in PR #395
 
 Historical Issues are evidence, not active routing.
+
+
+### 2026-09-21 exact-head Marketplace / Commerce proof
+
+- Marketplace is implemented as a presentation/read-model facility exposing exactly two commercial modules: Team Quality (five paid tiers above the baseline) and Team Population (nine paid tiers mapping persistent Seat 2 through Seat 10).
+- Team Population lower tiers remain locked during an active higher tier; higher-tier selection is permitted with an inline replacement warning that the lower tier effect disappears when the higher tier takes effect.
+- TeamAi entitlement and provider entitlement remain separate read-model facts. Commerce success is backend-defined as completed aggregate plus active entitlement sourced from the verified commerce event.
+- TeamAi does not collect or store card credentials. The facility exposes only an authorized external hosted billing link and keeps the card-entry boundary outside the browser.
+- Exact-head verification on `7b61c3c725b242288749324ad73d2eb752ded3b1`: Governance, Full-System, Security, and Canonical Browser all passed. Browser ran 60 tests, with 3 Marketplace scenarios passing and 4 historical tests skipped by existing lifecycle rules.
+- The earlier Marketplace browser failures were test-contract defects: stale world-entry setup, card-level text assertion targeting the button rather than its tier card, and dynamic billing-state assertion omitting the no-card-storage guarantee. Each was corrected without weakening product validation.
+- The live Supabase commerce intent/webhook functions remain external runtime authorities. Product-tier binding into the live edge intent is intentionally deferred until a shared authoritative catalog seam can be introduced without duplicating product authority.
