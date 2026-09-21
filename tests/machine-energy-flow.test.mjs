@@ -32,3 +32,9 @@ test('invalid electrical route fails closed', () => {
   assert.equal(resolveElectricalEdgeRoute({ route: [{ x: 0, y: 0, z: 0 }, { x: NaN, y: 0, z: 0 }] }).length, 0);
   assert.equal(resolveElectricalEdgeRoute({}).length, 0);
 });
+
+
+test('electrical prefixes can be bounded by semantic activation', () => {
+  assert.deepEqual(electricalRoutePrefix(route, 0), [route[0]]);
+  assert.deepEqual(electricalRoutePoint(route, 1), route.at(-1));
+});
