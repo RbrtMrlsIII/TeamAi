@@ -36,36 +36,39 @@ import {
   openSeatShellParent as openSeatShellParentState,
   tickHierarchyPose,
   tickDivisionFocusTransition,
-  tickConnectionBranch,
-  getConnectionBranchAmount,
+  tickSeatDivisionBranches,
+  getSeatDivisionBranchAmount,
+  getSeatDivisionBranchAmounts,
+
+
   connectionFaceAccessibleName,
 
-  tickBehaviorBranch,
-  getBehaviorBranchAmount,
+
+
   behaviorFaceAccessibleName,
 
   BEHAVIOR_BRANCH_MS,
-  tickToolkitBranch,
-  getToolkitBranchAmount,
+
+
   toolkitFaceAccessibleName,
 
   TOOLKIT_BRANCH_MS,
-  tickCapabilitiesBranch,
-  getCapabilitiesBranchAmount,
+
+
   capabilitiesFaceAccessibleName,
 
   CAPABILITIES_BRANCH_MS,
-  tickAuthorizationBranch,
-  getAuthorizationBranchAmount,
+
+
   authorizationFaceAccessibleName,
 
   AUTHORIZATION_BRANCH_MS,
-  tickWorkspaceScopeBranch,
-  getWorkspaceScopeBranchAmount,
+
+
   workspaceScopeFaceAccessibleName,
 
   WORKSPACE_SCOPE_BRANCH_MS,
-  tickTaskEvidenceBranch,
+
   getTaskEvidenceBranchAmount,
   taskEvidenceFaceAccessibleName,
 
@@ -600,13 +603,7 @@ function frame(now) {
   cycleTurn(now);
   tickHierarchyPose(hierarchyRuntime, now, reducedMotion);
   tickDivisionFocusTransition(hierarchyRuntime, now, reducedMotion);
-  tickConnectionBranch(hierarchyRuntime, now, reducedMotion);
-  tickBehaviorBranch(hierarchyRuntime, now, reducedMotion);
-  tickToolkitBranch(hierarchyRuntime, now, reducedMotion);
-  tickCapabilitiesBranch(hierarchyRuntime, now, reducedMotion);
-  tickAuthorizationBranch(hierarchyRuntime, now, reducedMotion);
-  tickWorkspaceScopeBranch(hierarchyRuntime, now, reducedMotion);
-  tickTaskEvidenceBranch(hierarchyRuntime, now, reducedMotion);
+  tickSeatDivisionBranches(hierarchyRuntime, now, reducedMotion);
   tickSetupRingFill(hierarchyRuntime, ringFocus, now, reducedMotion);
   syncHierarchyFromGlobals();
 
@@ -620,25 +617,12 @@ function frame(now) {
     navOrbitYaw,
     navOrbitPitch,
     navZoom,
-    connectionBranchAmount: getConnectionBranchAmount(hierarchyRuntime),
-    behaviorBranchAmount: getBehaviorBranchAmount(hierarchyRuntime),
-    toolkitBranchAmount: getToolkitBranchAmount(hierarchyRuntime),
-    capabilitiesBranchAmount: getCapabilitiesBranchAmount(hierarchyRuntime),
-    authorizationBranchAmount: getAuthorizationBranchAmount(hierarchyRuntime),
-    workspaceScopeBranchAmount: getWorkspaceScopeBranchAmount(hierarchyRuntime),
-    taskEvidenceBranchAmount: getTaskEvidenceBranchAmount(hierarchyRuntime),
+    seatDivisionBranchAmounts: getSeatDivisionBranchAmounts(hierarchyRuntime),
     focusedChildId: hierarchyRuntime.focusedChildId,
     focusedChildIndex: SEAT_SHELL_V1_CHILDREN.indexOf(hierarchyRuntime.focusedChildId),
     hierarchyOpenAmount: hierarchyRuntime.openAmount,
     focusedChildAmount:
-      hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_CONNECTION ? getConnectionBranchAmount(hierarchyRuntime)
-      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_BEHAVIOR ? getBehaviorBranchAmount(hierarchyRuntime)
-      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_TOOLKIT ? getToolkitBranchAmount(hierarchyRuntime)
-      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_CAPABILITIES ? getCapabilitiesBranchAmount(hierarchyRuntime)
-      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_AUTHORIZATION ? getAuthorizationBranchAmount(hierarchyRuntime)
-      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_WORKSPACE_SCOPE ? getWorkspaceScopeBranchAmount(hierarchyRuntime)
-      : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_TASK_EVIDENCE ? getTaskEvidenceBranchAmount(hierarchyRuntime)
-      : 0,
+      getSeatDivisionBranchAmount(hierarchyRuntime, hierarchyRuntime.focusedChildId),
     hierarchyPhase: hierarchyRuntime.phase,
     ringFocus: { ring: ringFocus.ring, index: ringFocus.index },
     setupRingFillAmount: getSetupRingFillAmount(hierarchyRuntime),
