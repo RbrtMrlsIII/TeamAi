@@ -2,8 +2,11 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@6.0.10";
 import {
   decodeFirestoreFields,
+  firestoreBeginTransaction,
+  firestoreCommitTransaction,
   firestoreCreate,
   firestoreGet,
+  firestoreGetInTransaction,
   firestorePatch,
   firestoreStringFields,
   getFirestoreAccessToken,
@@ -144,6 +147,65 @@ async function patchTask(taskPath: string, accessToken: string, fields: Record<s
   await firestorePatch(taskPath, firestoreStringFields(fields), accessToken);
 }
 
+async function leaseWaitingApprovalTask(input: {
+  taskPath: string;
+  leaseId: string;
+  seatId: string;
+  actorId: string;
+  uid: string;
+  taskId: string;
+  accessToken: string;
+}): Promise<"acquired" | "not_ready" | "conflict"> {
+  const transaction = await firestoreBeginTransaction(input.accessToken);
+  const task = await firestoreGetInTransaction(input.taskPath, transaction, input.accessToken);
+  if (!task.exists) throw new Error("task_not_found");
+  const current = decodedRecord(task.fields);
+  if (String(current.status ?? "") !== "waiting_approval") return "not_ready";
+  if (current.seatId && String(current.seatId) !== input.seatId) throw new Error("task_seat_mismatch");
+
+  const now = new Date().toISOString();
+  const leasePath = input.taskPath + "/leases/" + input.leaseId;
+  const leaseFields = firestoreFields({
+    uid: input.uid,
+    taskId: input.taskId,
+    seatId: input.seatId,
+    leaseId: input.leaseId,
+    actorId: input.actorId,
+    status: "leased",
+    leasedAt: now,
+  });
+  const taskFields: Record<string, unknown> = {
+    ...task.fields,
+    status: { stringValue: "leased" },
+    leaseId: { stringValue: input.leaseId },
+    leasedBy: { stringValue: input.actorId },
+    updatedAt: { stringValue: now },
+  };
+
+  try {
+    await firestoreCommitTransaction(
+      transaction,
+      [
+        {
+          update: { name: "projects/" + FIREBASE_PROJECT_ID + "/databases/(default)/documents/" + leasePath, fields: leaseFields },
+          currentDocument: { exists: false },
+        },
+        {
+          update: { name: "projects/" + FIREBASE_PROJECT_ID + "/databases/(default)/documents/" + input.taskPath, fields: taskFields },
+          currentDocument: task.updateTime ? { updateTime: task.updateTime } : { exists: true },
+        },
+      ],
+      input.accessToken,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (/409|412|conflict|aborted/i.test(message)) return "conflict";
+    throw error;
+  }
+
+  return "acquired";
+}
+
 async function executeProvider(providerKind: "openai" | "anthropic", apiKey: string, request: GenerateRequest): Promise<GenerateResult> {
   if (providerKind === "openai") return new OpenAIProvider(apiKey).generate(request);
   return new AnthropicProvider(apiKey).generate(request);
@@ -259,6 +321,18 @@ Deno.serve(async (req: Request) => {
     });
 
     if (credential.providerKind !== providerKind) return json({ error: "provider_key_provider_mismatch" }, 409);
+
+    const lease = await leaseWaitingApprovalTask({
+      taskPath,
+      leaseId: executionId,
+      seatId,
+      actorId,
+      uid,
+      taskId,
+      accessToken,
+    });
+    if (lease === "not_ready") return json({ error: "task_not_waiting_approval", status: task.status ?? null }, 409);
+    if (lease === "conflict") return json({ error: "task_lease_conflict" }, 409);
 
     await patchTask(taskPath, accessToken, {
       status: "running",
