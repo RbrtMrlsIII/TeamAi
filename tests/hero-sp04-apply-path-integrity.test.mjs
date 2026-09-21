@@ -12,7 +12,7 @@ import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const apply = join(root, 'scripts/apply-cam2-tree-follow-flex.mjs');
+const apply = join(root, 'scripts/sync-hero-flex-runtime.mjs');
 
 test('SP-04 compatibility sync is deterministic and network-independent', async () => {
   const result = spawnSync(process.execPath, [apply], { cwd: root, encoding: 'utf8' });
