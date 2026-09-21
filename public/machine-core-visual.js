@@ -12,13 +12,18 @@ export function mountMachineCoreVisual(root = globalThis.document) {
   host.append(panel);
 
   const canvas = panel.querySelector('canvas');
-  const gl = canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
-  if (!canvas || !gl) {
+  if (!canvas) {
     panel.querySelector('[data-core-state]').textContent = 'WebGL unavailable';
     return panel;
   }
 
-  const renderer = createMachineWorldRenderer({ canvas, gl });
+  let renderer;
+  try {
+    renderer = createMachineWorldRenderer({ canvas });
+  } catch {
+    panel.querySelector('[data-core-state]').textContent = 'WebGL unavailable';
+    return panel;
+  }
   const seatCount = parseSeatCountParam();
   let branchId = 'HUB-CORE';
   let expanded = false;
@@ -74,10 +79,6 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     renderer.setExpanded(false, performance.now());
     if (select) select.value = branchId;
   });
-
-  if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(() => render()).observe(canvas);
-  }
 
   raf = requestAnimationFrame(render);
   panel._machineCoreDispose = () => {
