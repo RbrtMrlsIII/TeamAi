@@ -3,6 +3,11 @@ import type { GenerateRequest, GenerateResult } from '../providers/types.js';
 import { ProviderRuntime, type ExecutionAuthorizationStatus, type ProviderInvocationRequest } from './provider-runtime.js';
 import { assertDurableEvent, transitionTask, type TaskEvent, type TaskStatus } from './task-state.js';
 import type { DurableExecutionResult, TaskExecutionResultStore } from './task-execution-result.js';
+import {
+  accountTurnBudget,
+  type SeatTurnBudgetConfig,
+  type TurnBudgetAccounting,
+} from './seat-turn-budget.js';
 
 export type ExecutableTask = {
   id: string;
@@ -15,6 +20,10 @@ export type ExecutableTask = {
   authorizationStatus: ExecutionAuthorizationStatus;
   connection: ProjectConnection;
   request: Omit<GenerateRequest, 'model'>;
+  /** Backend-owned budget configuration; never supplied as execution authority by the browser. */
+  turnBudget?: SeatTurnBudgetConfig;
+  /** Backend-derived estimate used only for handoff prediction. */
+  estimatedCompletionNeedTokens?: number;
 };
 
 export type TaskExecutionEventStore = {
@@ -26,6 +35,7 @@ export type TaskExecutionResult = {
   status: 'completed' | 'failed';
   result?: GenerateResult;
   error?: unknown;
+  budget?: TurnBudgetAccounting;
   duplicate: boolean;
 };
 
@@ -55,6 +65,23 @@ export class TaskExecutionService {
     await this.events.append(startEvent);
     task.status = transitionTask(task.status, 'START');
 
+    const budgetBeforeExecution = task.turnBudget
+      ? accountTurnBudget({
+        config: task.turnBudget,
+        usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
+        estimatedCompletionNeedTokens: task.estimatedCompletionNeedTokens,
+      })
+      : null;
+
+    const request = task.turnBudget
+      ? {
+        ...task.request,
+        maxOutputTokens: task.request.maxOutputTokens === undefined
+          ? budgetBeforeExecution.providerOutputCeilingTokens
+          : Math.min(task.request.maxOutputTokens, budgetBeforeExecution.providerOutputCeilingTokens),
+      }
+      : task.request;
+
     const invocation: ProviderInvocationRequest = {
       taskId: task.id,
       projectId: task.projectId,
@@ -65,7 +92,7 @@ export class TaskExecutionService {
       approved: task.approved,
       authorizationStatus: task.authorizationStatus,
       connection: task.connection,
-      request: task.request,
+      request,
     };
 
     let result: GenerateResult | undefined;
@@ -79,17 +106,25 @@ export class TaskExecutionService {
       await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: failEvent.eventId, idempotencyKey: failKey, status: 'failed', recordedAt: failEvent.occurredAt, error: serializeError(providerError) });
       await this.events.append(failEvent);
       task.status = transitionTask(task.status, 'FAIL');
-      return { status: 'failed', error: providerError, duplicate: false };
+      return { status: 'failed', error: providerError, budget: budgetBeforeExecution ?? undefined, duplicate: false };
     }
 
     if (!result) throw new Error('ProviderRuntime returned no result');
+    const budgetAfterExecution = task.turnBudget
+      ? accountTurnBudget({
+        config: task.turnBudget,
+        usage: result.usage,
+        estimatedCompletionNeedTokens: task.estimatedCompletionNeedTokens,
+      })
+      : null;
+
     const completeKey = `${idempotencyKey}:complete`;
     const completeEvent = this.event(`${completeKey}:event`, completeKey, 'COMPLETE', actorId, new Date().toISOString());
     assertDurableEvent(completeEvent);
     await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: completeEvent.eventId, idempotencyKey: completeKey, status: 'completed', recordedAt: completeEvent.occurredAt, result });
     await this.events.append(completeEvent);
     task.status = transitionTask(task.status, 'COMPLETE');
-    return { status: 'completed', result, duplicate: false };
+    return { status: 'completed', result, budget: budgetAfterExecution ?? undefined, duplicate: false };
   }
 
   private async persistResult(result: DurableExecutionResult): Promise<void> {
