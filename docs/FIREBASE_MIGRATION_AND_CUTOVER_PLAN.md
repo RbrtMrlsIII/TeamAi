@@ -18,13 +18,13 @@ Firebase is a practical fit because Firestore provides atomic transactions and b
 
 | Setting | Canonical value | Status |
 |---|---|---|
-| Firebase project | `teamai-7d20f` | Identified from user-supplied project configuration |
+| Firebase project | `team-ai-official` | Current Product Law authority |
 | Firestore database | `default` | Canonical target |
 | Billing posture | Spark-compatible | Hard implementation constraint for current phase |
 | Firebase Hosting | In scope | Primary web deployment surface |
 | Firebase Authentication | In scope | Identity foundation |
 | Cloud Firestore | In scope | Application/domain persistence |
-| Firebase Cloud Storage | Not used by the current Firebase baseline | TeamAi Storage is a separate planned product facility; optional entitled content storage may use Supabase Storage |
+| Firebase Cloud Storage | Not used by the current Firebase baseline | TeamAi Storage is a separate planned product facility; current product scope is item inventory only; future entitled user-content storage may use Supabase Storage; image/file upload remains deferred pending security and cost controls |
 | Cloud Functions | **Out of scope** | No runtime dependency |
 
 ## Target service map
@@ -40,7 +40,7 @@ Firebase is a practical fit because Firestore provides atomic transactions and b
 | App attestation | Firebase App Check | Client abuse/replay resistance where applicable |
 | Privileged orchestration | **External TeamAi runtime** | Runs outside Firebase Cloud Functions; authenticates to approved TeamAi data/API surfaces |
 | Scheduled jobs | **External TeamAi runtime / scheduler** | No Cloud Scheduler/Functions dependency in Spark phase |
-| Project ZIP / large artifact exchange | **External Workplace / GitHub / AI-app retrieval** | Not uploaded to Firebase Storage; separate TeamAi Storage facility does not automatically change the project-artifact boundary |
+| Project ZIP / large artifact exchange | **External Workplace / GitHub / AI-app retrieval** | Not uploaded to Firebase Storage; separate TeamAi Storage facility does not automatically change the project-artifact boundary; item-inventory Storage is not ZIP transport |
 | Existing WoWSQL | No cutover yet | Preserve for evidence/legacy compatibility; do not mutate via TeamAi migration |
 
 ## Domain-to-Firestore mapping
