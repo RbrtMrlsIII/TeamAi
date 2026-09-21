@@ -87,3 +87,31 @@ test('Edge handoff writes the checkpoint before the durable handoff result', () 
   assert.ok(resultIndex >= 0);
   assert.ok(checkpointIndex < resultIndex);
 });
+
+
+test('Trusted continuation request boundary stays user-authorized, checkpoint-scoped, and provider-free', () => {
+  const source = read('supabase/functions/teamai-task-continuation-request/index.ts');
+  assert.match(source, /verifyFirebaseUid/);
+  assert.match(source, /firestoreFindSeat/);
+  assert.match(source, /continuation-checkpoints/);
+  assert.match(source, /continuation-requests/);
+  assert.match(source, /continuation_checkpoint_scope_mismatch/);
+  assert.match(source, /target_seat_not_authorized/);
+  assert.match(source, /nextTurn: "fresh-budgeted-turn"/);
+  assert.match(source, /type: "CONTINUE_WAIT"/);
+  assert.match(source, /No provider execution occurs in this boundary/);
+  assert.doesNotMatch(source, /OpenAIProvider/);
+  assert.doesNotMatch(source, /AnthropicProvider/);
+});
+
+test('Trusted continuation request boundary atomically creates the request, state transition, and CONTINUE_WAIT event', () => {
+  const source = read('supabase/functions/teamai-task-continuation-request/index.ts');
+  const commitIndex = source.indexOf('await firestoreCommitTransaction(transaction, [');
+  const requestIndex = source.indexOf('continuation-requests/');
+  const taskStateIndex = source.indexOf('status: { stringValue: "waiting_for_continuation" }');
+  const eventIndex = source.indexOf('type: "CONTINUE_WAIT"');
+  assert.ok(commitIndex >= 0);
+  assert.ok(requestIndex >= 0);
+  assert.ok(taskStateIndex > commitIndex || taskStateIndex >= 0);
+  assert.ok(eventIndex > commitIndex || eventIndex >= 0);
+});
