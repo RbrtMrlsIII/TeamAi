@@ -75,10 +75,18 @@ export function buildSeatDivisionEdge({
     y: Number(geometry.port.y) || 0,
     z: Number(geometry.port.z) || 0,
   });
-  const mid = Object.freeze({
-    x: (source.x + target.x) * 0.5,
-    y: Math.max(source.y, target.y) + Math.max(0.06, Number(geometry.clearance) || 0.06),
-    z: (source.z + target.z) * 0.5,
+  const clearance = Math.max(0.06, Number(geometry.clearance) || 0.06);
+  const parentHeight = Math.max(0.2, Number(parent?.dimensions?.y) || 0.5);
+  const deckY = Math.max(source.y, target.y) + parentHeight + clearance * 2;
+  const sourceLift = Object.freeze({
+    x: source.x,
+    y: deckY,
+    z: source.z,
+  });
+  const targetLift = Object.freeze({
+    x: target.x,
+    y: deckY,
+    z: target.z,
   });
   const semanticChildKey = 'TREE-HERO-SEAT#' + seatIndex + ':' + child;
   const semanticEdgeId = 'EDGE:SEAT-DIVISION:' + semanticChildKey + '=>' + parent.semanticKey;
@@ -90,7 +98,7 @@ export function buildSeatDivisionEdge({
     targetBranchId: parent.branchId,
     sourcePort: source,
     targetPort: target,
-    route: Object.freeze([source, mid, target]),
+    route: Object.freeze([source, sourceLift, targetLift, target]),
     semanticSource: semanticChildKey,
     semanticTarget: parent.semanticKey,
     clearance: Number(geometry.clearance) || 0,
