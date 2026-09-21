@@ -13,6 +13,14 @@ const names = [
   'apply-p5.1-authorization-flex.mjs',
   'apply-p6.1-workspace-scope-flex.mjs',
   'apply-p7.1-task-evidence-flex.mjs',
+  'apply-p2-seat-behavior.mjs',
+  'apply-p3-seat-toolkit.mjs',
+  'apply-p4-seat-capabilities.mjs',
+  'apply-p5-seat-authorization.mjs',
+  'apply-p6-seat-workspace-scope.mjs',
+  'apply-p7-seat-task-evidence.mjs',
+  'apply-029-division-interactive-arrow.mjs',
+  'apply-031-seat1-adjacent-wiring-render.mjs',
 ];
 
 test('historical apply-p scripts are compatibility checks, not source mutators', async () => {
