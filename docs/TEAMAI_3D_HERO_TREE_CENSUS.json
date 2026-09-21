@@ -3,7 +3,13 @@
   "authority": "PRODUCT_LAW -> docs/VISION.md -> Masterplan context -> tree census -> implementation",
   "treeIdentityRule": "treeID and branchId are semantic identities; coordinates do not define identity",
   "censusMaintenance": {
-    "trigger": ["add", "remove", "rename", "materially_restructure", "reimplement"],
+    "trigger": [
+      "add",
+      "remove",
+      "rename",
+      "materially_restructure",
+      "reimplement"
+    ],
     "sameGovernedChange": true,
     "representations": [
       "docs/TEAMAI_3D_HERO_TREE_CENSUS.csv",
@@ -17,10 +23,20 @@
       "treeID": "TREE-DOMAIN",
       "status": "INCOMPLETE",
       "class": "domain",
-      "root": ["Account", "Workplace", "Project", "Seat"],
+      "root": [
+        "Account",
+        "Workplace",
+        "Project",
+        "Seat"
+      ],
       "rendererAuthority": "presentation only",
       "durableAuthorityOutsideRenderer": true,
-      "nodes": ["DOMAIN-ACCOUNT", "DOMAIN-WORKPLACE", "DOMAIN-PROJECT", "DOMAIN-SEAT"],
+      "nodes": [
+        "DOMAIN-ACCOUNT",
+        "DOMAIN-WORKPLACE",
+        "DOMAIN-PROJECT",
+        "DOMAIN-SEAT"
+      ],
       "geometry": "UNRESOLVED",
       "expansion": "PENDING",
       "connection": "PENDING",
@@ -30,10 +46,33 @@
       "treeID": "TREE-HERO-SEAT",
       "status": "PARTIAL",
       "class": "presentation-hierarchy",
-      "root": ["Seat Shell", "Connection", "Behavior", "Toolkit", "Capabilities", "Authorization", "Workspace Scope", "Task/Evidence"],
+      "root": [
+        "Seat Shell",
+        "Connection",
+        "Behavior",
+        "Toolkit",
+        "Capabilities",
+        "Authorization",
+        "Workspace Scope",
+        "Task/Evidence"
+      ],
       "rendererAuthority": "presentation only",
-      "runtimeEvidence": ["public/hero-hierarchy-runtime.js", "public/hero-seat-branch-walk.js", "public/hero-seat-stack.js", "public/hero-flex.js"],
-      "nodes": ["SEAT_SHELL", "SEAT_CONNECTION", "SEAT_BEHAVIOR", "SEAT_TOOLKIT", "SEAT_CAPABILITIES", "SEAT_AUTHORIZATION", "SEAT_WORKSPACE_SCOPE", "SEAT_TASK_EVIDENCE"],
+      "runtimeEvidence": [
+        "public/hero-hierarchy-runtime.js",
+        "public/hero-seat-branch-walk.js",
+        "public/hero-seat-stack.js",
+        "public/hero-flex.js"
+      ],
+      "nodes": [
+        "SEAT_SHELL",
+        "SEAT_CONNECTION",
+        "SEAT_BEHAVIOR",
+        "SEAT_TOOLKIT",
+        "SEAT_CAPABILITIES",
+        "SEAT_AUTHORIZATION",
+        "SEAT_WORKSPACE_SCOPE",
+        "SEAT_TASK_EVIDENCE"
+      ],
       "geometry": "PAYLOAD_DRIVEN",
       "expansion": "PARTIAL",
       "connection": "SEAT1_REFERENCE_EDGE_IMPLEMENTED_PARTIAL",
@@ -43,7 +82,10 @@
         "status": "IMPLEMENTED_PARTIAL",
         "dimensions": "derived from payload density/labels/controls",
         "corridor": {
-          "reservedFor": ["adjacent-divisions", "workspace-center"],
+          "reservedFor": [
+            "adjacent-divisions",
+            "workspace-center"
+          ],
           "ownership": "TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY"
         },
         "adjacentDivisionWiring": {
@@ -62,7 +104,13 @@
         },
         "topologyValidation": {
           "status": "TEST_LEVEL_CURRENT_HEAD",
-          "checks": ["semantic identity", "source/target ports", "route endpoints", "finite route points", "AABB clearance"],
+          "checks": [
+            "semantic identity",
+            "source/target ports",
+            "route endpoints",
+            "finite route points",
+            "AABB clearance"
+          ],
           "failureMode": "FAIL_CLOSED",
           "fullInterDivisionTopology": "NOT_COMPLETE"
         },
@@ -72,7 +120,20 @@
       "configurationContract": {
         "singleHierarchy": true,
         "facetRule": "provider/application/service-runtime/model-variant/skills/tools/workstation/scope/permissions/approvals/limits/compliance/health are configuration facets mapped onto existing Seat branches, not a second Seat tree",
-        "lifecycle": ["Discover", "External Setup", "Import/Authorize", "Capability Test", "Bind", "Equip", "Activate", "Run", "Observe", "Degrade/Suspend", "Recover/Revalidate", "Rebind/Retire"],
+        "lifecycle": [
+          "Discover",
+          "External Setup",
+          "Import/Authorize",
+          "Capability Test",
+          "Bind",
+          "Equip",
+          "Activate",
+          "Run",
+          "Observe",
+          "Degrade/Suspend",
+          "Recover/Revalidate",
+          "Rebind/Retire"
+        ],
         "globalTurnPolicyOutsideSeat": true,
         "globalTurnPolicyOwner": "TREE-ORCHESTRATION / scheduler",
         "seatBehaviorMeaning": "Seat-local defaults and constraints only",
@@ -81,21 +142,31 @@
         "agentCountRule": "Agent count changes responsibility allocation and effective per-Seat skill bundles, not the common skill definitions",
         "twoSeatRule": "Fewer Seats may carry several Responsibility Units and broader resolved skill bundles",
         "tenSeatRule": "Up to ten Seats partition the same Responsibility Unit and common-skill substrate more finely; each Seat may resolve a different effective bundle",
-        "presentationDensity": "Guest Hero ring/camera density uses seatPopulationDensity across MIN=1 MAX=10; Tree 1-8 is a separate world-tree vocabulary",
+        "presentationDensity": "Guest Hero ring/camera density uses seatPopulationDensity across MIN=1 MAX=10; Tree 1-8 is a separate world-tree vocabulary; guest facility use is locked.",
         "userSkillEditing": "DEFINED_NOT_IMPLEMENTED; user-owned skill material must remain distinct from canonical common skills",
         "removeAgent": "Seat lifecycle retire/remove operation; must not imply deletion of the user's root account",
         "return": "Cross-tree navigation to public Entrance; not a Seat child",
-        "dictionary": "Complex Dictionary / User Guide (?) is a public guidance surface; not a Seat child"
+        "dictionary": "Complex Dictionary / User Guide is a public guidance surface; not a Seat child"
       }
     },
     {
       "treeID": "TREE-SKILL-RESPONSIBILITY",
       "status": "INCOMPLETE",
       "class": "responsibility-capability",
-      "root": ["ToolKit upstream", "WebAi Seat responsibility", "skill bundle", "governance/adaptation/capacity"],
+      "root": [
+        "ToolKit upstream",
+        "WebAi Seat responsibility",
+        "skill bundle",
+        "governance/adaptation/capacity"
+      ],
       "rendererAuthority": "presentation only",
       "durableAuthorityOutsideRenderer": true,
-      "nodes": ["SKILL-TOOLKIT", "SKILL-WEBAI-RESPONSIBILITY", "SKILL-BUNDLE", "SKILL-GOVERNANCE"],
+      "nodes": [
+        "SKILL-TOOLKIT",
+        "SKILL-WEBAI-RESPONSIBILITY",
+        "SKILL-BUNDLE",
+        "SKILL-GOVERNANCE"
+      ],
       "geometry": "UNRESOLVED",
       "expansion": "PENDING",
       "connection": "PENDING",
@@ -133,16 +204,32 @@
     "turnConfiguration": {
       "owner": "TREE-ORCHESTRATION / scheduler",
       "status": "DEFINED_NOT_IMPLEMENTATION_COMPLETE",
-      "controls": ["participating Seats", "actions/turns per participating Seat", "turn order/scheduling policy", "round or stopping conditions", "summarizer selection", "resource/time limits", "turn-loop mode"],
+      "controls": [
+        "participating Seats",
+        "actions/turns per participating Seat",
+        "turn order/scheduling policy",
+        "round or stopping conditions",
+        "summarizer selection",
+        "resource/time limits",
+        "turn-loop mode"
+      ],
       "seatRelationship": "Seat-local behavior may provide defaults/constraints, but global turn policy is not a Seat branch"
     },
     "settings": {
       "status": "DEFINED",
-      "categories": ["Seats", "Tree 1-8", "Branches", "Privacy Policy", "Terms", "Logout", "Return BTN"],
+      "categories": [
+        "Seats",
+        "Tree 1-8",
+        "Branches",
+        "Privacy Policy",
+        "Terms",
+        "Logout",
+        "Return BTN"
+      ],
       "hierarchyRule": "Settings is a navigation/control taxonomy and must reference the same semantic census identities; it is not a second machine hierarchy"
     },
     "dictionary": {
-      "surface": "Public Entrance Complex Dictionary / User Guide (?)",
+      "surface": "Public Entrance Complex Dictionary / User Guide",
       "role": "Explain TeamAi vocabulary and behavior",
       "seatHierarchy": false
     },
@@ -153,7 +240,20 @@
     }
   },
   "branchContract": {
-    "required": ["branchId", "parentIdentity", "semanticPurpose", "responsibility", "uiProductPayload", "expansionRegion", "adjacentClearance", "connectionPathOwnership", "cameraRelationship", "responsiveBehavior", "reducedMotionBehavior", "verificationEvidence"],
+    "required": [
+      "branchId",
+      "parentIdentity",
+      "semanticPurpose",
+      "responsibility",
+      "uiProductPayload",
+      "expansionRegion",
+      "adjacentClearance",
+      "connectionPathOwnership",
+      "cameraRelationship",
+      "responsiveBehavior",
+      "reducedMotionBehavior",
+      "verificationEvidence"
+    ],
     "supportsRecursiveDepth": true,
     "geometryRule": "derive geometry from semantic/UI payload; never copy fixed prototype coordinates as universal truth"
   },
@@ -169,7 +269,13 @@
     "state": "PLANNED_NOT_FINAL",
     "signalModel": "semantic electrical flow through actual connection graph",
     "requiredExpandedState": "participating divisions active/open",
-    "path": ["active turn", "active tree/branch", "expanded participating divisions", "connected adjacent divisions", "workspace center"],
+    "path": [
+      "active turn",
+      "active tree/branch",
+      "expanded participating divisions",
+      "connected adjacent divisions",
+      "workspace center"
+    ],
     "decorativeDisconnectedPathsAllowed": false
   },
   "camera": {
@@ -187,5 +293,15 @@
     "machineTestCommand": "npm run test:machine",
     "productionRendererReplacement": false,
     "promotion": "requires governed Machine Hero M1-M6 proof and decision"
+  },
+  "truthMaturity": "CURRENT_TRUTH_NOT_FINAL",
+  "frontendContract": {
+    "source": "#400",
+    "guestAccess": "All product facilities are visible/discoverable but locked for guests; only designated Sign Up and Login surfaces are guest-accessible; Sign Out is authenticated-state gated.",
+    "mcpFacility": "Dedicated TeamAi facility owns MCP inventory, install/add, connector authentication handoff, permission configuration, health/test, and custom MCP setup/management.",
+    "targetEquip": "MCP capabilities may be equipped to one Seat, multiple/all eligible Seats, or Workspace; equipping may create target-owned dynamic branches.",
+    "storageScope": "Current product scope is item inventory storage only; image/file upload and binary object transfer are deferred pending security and cost controls.",
+    "seatReport": "Each Seat exposes a report/handoff read surface after each completed turn for the user and authorized participating agents.",
+    "transactionLoading": "Each Seat uses transaction-specific loading/orb presentation; the effect family communicates presentation state only."
   }
 }
