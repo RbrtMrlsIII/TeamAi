@@ -430,6 +430,14 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
     const currentStatus = String(current.status ?? '');
     const currentCheckpointId = String(current.continuationCheckpointId ?? '');
     const currentRequestId = String(current.continuationRequestId ?? '');
+    const eventId = request.continuationRequestId + ':continue-wait:event';
+    const eventPath = FirestoreRuntimeClient.path(
+      this.uid,
+      this.workplaceId,
+      safeProjectId,
+      `events/${eventId}`,
+    );
+    const existingEvent = await this.client.get(eventPath, transaction);
 
     if (currentStatus === 'waiting_for_continuation') {
       if (
@@ -438,12 +446,32 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
       ) {
         throw new Error('continuation_request_state_conflict');
       }
+
+      if (existingEvent) return;
+
+      await this.client.commit(transaction, [{
+        update: {
+          name: this.clientPath(eventPath),
+          fields: FirestoreRuntimeClient.fields({
+            uid: this.uid,
+            projectId: safeProjectId,
+            taskId: safeTaskId,
+            eventId,
+            idempotencyKey: request.continuationRequestId,
+            type: 'CONTINUE_WAIT',
+            actorId: request.requestedBy,
+            occurredAt: request.requestedAt,
+          }),
+        },
+        currentDocument: { exists: false },
+      }]);
       return;
     }
 
     if (currentStatus !== 'handoff_required') {
       throw new Error(`continuation requires handoff_required task, got ${currentStatus}`);
     }
+    if (existingEvent) throw new Error('continuation_request_state_conflict');
 
     const now = new Date().toISOString();
     const next = {
@@ -464,15 +492,33 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
       updatedAt: now,
     };
 
-    await this.client.commit(transaction, [{
-      update: {
-        name: this.clientPath(taskPath),
-        fields: FirestoreRuntimeClient.fields(next),
+    await this.client.commit(transaction, [
+      {
+        update: {
+          name: this.clientPath(taskPath),
+          fields: FirestoreRuntimeClient.fields(next),
+        },
+        currentDocument: task.updateTime
+          ? { updateTime: task.updateTime }
+          : { exists: true },
       },
-      currentDocument: task.updateTime
-        ? { updateTime: task.updateTime }
-        : { exists: true },
-    }]);
+      {
+        update: {
+          name: this.clientPath(eventPath),
+          fields: FirestoreRuntimeClient.fields({
+            uid: this.uid,
+            projectId: safeProjectId,
+            taskId: safeTaskId,
+            eventId,
+            idempotencyKey: request.continuationRequestId,
+            type: 'CONTINUE_WAIT',
+            actorId: request.requestedBy,
+            occurredAt: request.requestedAt,
+          }),
+        },
+        currentDocument: { exists: false },
+      },
+    ]);
   }
 
   async appendEvent(event: DurableEventRecord): Promise<void> {
