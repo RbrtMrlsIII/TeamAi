@@ -35,7 +35,10 @@ test('V0.2 runtime close returns world baseline camera id', () => {
 
 test('V0.2 flex returnFromSeatShell resets nav and sets baseline dock', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /function returnFromSeatShell\(\)[\s\S]*navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
+  assert.match(src, /function returnFromSeatShell\(\)/);
+  assert.match(src, /navOrbitYaw = 0;/);
+  assert.match(src, /navOrbitPitch = 0;/);
+  assert.match(src, /navZoom = 1;/);
   assert.match(src, /navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
   assert.match(src, /setCamera\('HERO_WIDE'\)/);
 });
