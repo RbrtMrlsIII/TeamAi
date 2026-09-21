@@ -683,25 +683,34 @@ export function tickDivisionFocusTransition(state, nowMs, reducedMotion = false)
     state.phase = HIERARCHY_PHASE.OPEN;
     return focusChild(state, pending, { nowMs: now, snap: true, allowTransition: false });
   }
-  const progress = Math.min((now - (state.divisionCloseStartMs ?? now)) / DIVISION_FOCUS_CLOSE_MS, 1);
-  const amount = 1 - smoothstep(progress);
-  switch (state.divisionClosingChildId) {
-    case HIERARCHY_PART.SEAT_CONNECTION: state.connectionBranchAmount = amount; break;
-    case HIERARCHY_PART.SEAT_BEHAVIOR: state.behaviorBranchAmount = amount; break;
-    case HIERARCHY_PART.SEAT_TOOLKIT: state.toolkitBranchAmount = amount; break;
-    case HIERARCHY_PART.SEAT_CAPABILITIES: state.capabilitiesBranchAmount = amount; break;
-    case HIERARCHY_PART.SEAT_AUTHORIZATION: state.authorizationBranchAmount = amount; break;
-    case HIERARCHY_PART.SEAT_WORKSPACE_SCOPE: state.workspaceScopeBranchAmount = amount; break;
-    case HIERARCHY_PART.SEAT_TASK_EVIDENCE: state.taskEvidenceBranchAmount = amount; break;
-    default: resetDivisionBranchAmounts(state); break;
+
+  const spec = DIVISION_BRANCH_SPECS[state.divisionClosingChildId];
+  if (!spec) {
+    state.divisionClosingChildId = null;
+    state.divisionPendingChildId = null;
+    resetDivisionBranchAmounts(state);
+    state.phase = HIERARCHY_PHASE.OPEN;
+    return state;
   }
+
+  const progress = Math.min(
+    (now - (state.divisionCloseStartMs ?? now)) / DIVISION_FOCUS_CLOSE_MS,
+    1,
+  );
+  const amount = 1 - smoothstep(progress);
+  state[spec.amountKey] = amount;
+
   if (progress >= 1) {
     const pending = state.divisionPendingChildId;
     state.divisionClosingChildId = null;
     state.divisionPendingChildId = null;
     resetDivisionBranchAmounts(state);
     state.phase = HIERARCHY_PHASE.OPEN;
-    return focusChild(state, pending, { nowMs: now, snap: false, allowTransition: false });
+    return focusChild(state, pending, {
+      nowMs: now,
+      snap: HIERARCHY_REDUCED_SNAP && reducedMotion,
+      allowTransition: false,
+    });
   }
   return state;
 }
