@@ -1,4 +1,4 @@
-import { firestoreGet, getFirestoreAccessToken } from './firestore.ts';
+import { firestoreFindSeat, firestoreGet, getFirestoreAccessToken } from './firestore.ts';
 import { decryptSeatApiKey } from './seat-secret.ts';
 
 export type EdgeProviderCredential = Readonly<{
@@ -22,13 +22,19 @@ export async function loadSeatProviderCredential(input: {
 }): Promise<EdgeProviderCredential> {
   const providerKind = normalizeProviderKind(input.providerKind);
   const token = await getFirestoreAccessToken();
-  const path =
-    'accounts/' + input.uid +
-    '/workplaces/' + input.workplaceId +
-    '/projects/' + input.projectId +
-    '/seats/' + input.seatId +
-    '/secrets/providerApiKey';
+  const seat = await firestoreFindSeat({
+    uid: input.uid,
+    workplaceId: input.workplaceId,
+    projectId: input.projectId,
+    seatId: input.seatId,
+    accessToken: token,
+  });
+  if (!seat) throw new Error('seat_not_found');
+  if (String(seat.fields.providerKeyBound ?? '').toLowerCase() !== 'true') {
+    throw new Error('provider_key_not_bound');
+  }
 
+  const path = seat.path + '/secrets/providerApiKey';
   const document = await firestoreGet(path, token);
   if (!document.exists) throw new Error('provider_key_not_bound');
 
