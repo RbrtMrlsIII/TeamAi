@@ -1,6 +1,6 @@
 import type { ExecutableTask, TaskExecutionEventStore, TaskExecutionResult } from './task-execution.js';
 import type { TaskExecutionResultStore } from './task-execution-result.js';
-import type { TaskContinuationCheckpointStore, TaskContinuationStateStore } from './task-continuation.js';
+import type { TaskContinuationCheckpointStore } from './task-continuation.js';
 import { TaskExecutionService } from './task-execution.js';
 import type { ProviderRuntime } from './provider-runtime.js';
 import type { SchedulerDecision, SchedulerSeat, SchedulerTask } from './scheduler.js';
@@ -27,7 +27,6 @@ export type TaskRuntimeBridgeResult =
 
 export class TaskRuntimeBridge {
   private readonly execution: TaskExecutionService;
-  private readonly continuationState?: TaskContinuationStateStore;
 
   constructor(
     runtime: ProviderRuntime,
@@ -37,9 +36,8 @@ export class TaskRuntimeBridge {
     events: TaskExecutionEventStore,
     results?: TaskExecutionResultStore,
     checkpoints?: TaskContinuationCheckpointStore,
-    continuationState?: TaskContinuationStateStore,
   ) {
-    this.execution = new TaskExecutionService(runtime, events, results, checkpoints, continuationState);
+    this.execution = new TaskExecutionService(runtime, events, results, checkpoints);
   }
 
   async schedule(taskId: string): Promise<{ decision: SchedulerDecision }> {
