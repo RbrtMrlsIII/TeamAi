@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { generateKeyPairSync } from 'node:crypto';
 import { ProviderRuntime } from '../dist/src/backend/provider-runtime.js';
 import { TaskExecutionService } from '../dist/src/backend/task-execution.js';
-import { FirestoreTaskExecutionResultStore } from '../dist/src/backend/firestore-result-store.js';
+import { FirestoreTaskExecutionResultStore, FirestoreTaskContinuationCheckpointStore } from '../dist/src/backend/firestore-result-store.js';
 
 const originalFetch = globalThis.fetch;
 function privateKey() { return generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }); }
@@ -89,4 +89,103 @@ test('TaskExecutionService does not perform a durable-result preflight read', as
   assert.equal(result.status, 'completed');
   assert.equal(resultReadCalled, false);
   assert.deepEqual(order, ['event:START', 'result:completed', 'event:COMPLETE']);
+});
+
+test('TaskExecutionService persists a durable continuation checkpoint before returning handoff_required', async () => {
+  const order = [];
+  const runtime = new ProviderRuntime(new Map([['fixture', {
+    provider: 'fixture',
+    async generate() {
+      return {
+        provider: 'fixture',
+        model: 'model-1',
+        requestId: 'request-11',
+        text: 'partial implementation output',
+        usage: { inputTokens: 25, outputTokens: 100, totalTokens: 125 },
+        termination: { state: 'incomplete', reason: 'length', providerReason: 'max_tokens' },
+      };
+    },
+  }]]));
+  const execution = new TaskExecutionService(runtime, {
+    async hasIdempotencyKey() { return false; },
+    async append(event) { order.push('event:' + event.type); },
+  }, {
+    async hasResult() { return false; },
+    async getResult() { return null; },
+    async persist(result) { order.push('result:' + result.status); },
+  }, {
+    async getCheckpoint() { return null; },
+    async persistCheckpoint(checkpoint) {
+      order.push('checkpoint:' + checkpoint.status);
+      assert.equal(checkpoint.checkpointId, 'exec-11:checkpoint');
+      assert.equal(checkpoint.completionState, 'HANDOFF_REQUIRED');
+      assert.equal(checkpoint.termination.reason, 'length');
+      assert.equal(checkpoint.taskId, 'task-11');
+    },
+  });
+  const task = {
+    id: 'task-11',
+    projectId: 'project-1',
+    seatId: 'seat-coder',
+    provider: 'fixture',
+    model: 'model-1',
+    status: 'waiting_approval',
+    approved: true,
+    authorizationStatus: 'authorized',
+    connection: { id: 'connection-1', projectId: 'project-1', providerCode: 'fixture', environment: 'development', capabilities: ['execute'], status: 'active' },
+    request: { messages: [{ role: 'user', content: 'run task' }] },
+    turnBudget: {
+      turnBudgetTokens: 1000,
+      outputBudgetTokens: 400,
+      reasoningBudgetTokens: 400,
+      handoffReserveTokens: 200,
+      warningThresholdPercent: 0.8,
+      hardStopPolicy: 'handoff-before-exhaustion',
+      responsibilityProfile: 'coder',
+      contextInputPolicy: { retention: 'minimal-durable-context' },
+    },
+  };
+  const result = await execution.execute(task, 'actor-1', 'exec-11');
+  assert.equal(result.status, 'handoff_required');
+  assert.equal(result.continuationCheckpointId, 'exec-11:checkpoint');
+  assert.deepEqual(order, ['event:START', 'checkpoint:awaiting_continuation', 'result:handoff_required', 'event:HANDOFF_REQUIRED']);
+  assert.equal(task.status, 'handoff_required');
+});
+
+test('Firestore continuation checkpoint store uses create-only scoped task paths', async () => {
+  setup();
+  const calls = [];
+  globalThis.fetch = async (url, init = {}) => {
+    calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
+    if (String(url).includes('oauth2.googleapis.com/token')) {
+      return new Response(JSON.stringify({ access_token: 'token-3' }), { status: 200 });
+    }
+    return new Response(JSON.stringify({ commit: true }), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+  try {
+    const store = new FirestoreTaskContinuationCheckpointStore('uid-1', 'workplace-1');
+    await store.persistCheckpoint({
+      checkpointId: 'exec-12:checkpoint',
+      taskId: 'task-12',
+      projectId: 'project-9',
+      seatId: 'seat-coder',
+      actorId: 'actor-1',
+      sourceExecutionId: 'exec-12',
+      sourceEventId: 'exec-12:handoff:event',
+      createdAt: '2026-09-22T00:00:00Z',
+      status: 'awaiting_continuation',
+      completionState: 'HANDOFF_REQUIRED',
+      provider: 'fixture',
+      model: 'model-1',
+      termination: { state: 'incomplete', reason: 'length', providerReason: 'max_tokens' },
+      providerOutput: 'partial',
+      usage: { inputTokens: 1, outputTokens: 2, totalTokens: 3 },
+      nextAction: 'authorized-continuation-turn',
+    });
+    const commit = calls.find((call) => call.url.includes(':commit'));
+    assert.ok(commit);
+    const body = JSON.parse(commit.body);
+    assert.equal(body.writes[0].currentDocument.exists, false);
+    assert.match(body.writes[0].update.name, /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-9\/tasks\/task-12\/continuation-checkpoints\/exec-12%3Acheckpoint$/);
+  } finally { restore(); }
 });
