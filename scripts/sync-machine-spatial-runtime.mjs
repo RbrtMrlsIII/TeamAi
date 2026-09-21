@@ -16,6 +16,7 @@ const files = [
   'machine-core-topology.js',
   'hero-environment.js',
   'hero-theme-lighting-adapter.js',
+  'hero-authored-materials.js',
   'hero-world-contract.js',
   'hero-world-profile.js',
   'theme-root.js',
