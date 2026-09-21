@@ -46,12 +46,16 @@ export type SeatState = {
   teamId: EntityId;
   id: EntityId;
   provider: string;
+  providerKind?: 'openai' | 'anthropic' | 'generic' | 'stub';
   application: string;
   runtime?: string;
   field: string;
   skills: string[];
   authorization: SeatAuthorizationState;
   status: 'active' | 'paused' | 'revoked';
+  teamEntitlement?: string;
+  providerEntitlement?: string;
+  providerKeyBound?: boolean | string;
   turnBudget?: SeatTurnBudgetConfig;
 };
 
