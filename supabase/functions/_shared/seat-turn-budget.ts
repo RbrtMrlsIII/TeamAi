@@ -27,12 +27,16 @@ function nonNegativeInteger(value: unknown, name: string): number {
 export function normalizeEdgeTurnBudget(value: unknown): EdgeTurnBudgetConfig {
   if (!value || typeof value !== 'object') throw new Error('seat_budget_not_configured');
   const input = value as Record<string, unknown>;
-  const budget = {
+  const hardStopPolicy: EdgeTurnBudgetConfig['hardStopPolicy'] =
+    input.hardStopPolicy === 'stop-at-limit'
+      ? 'stop-at-limit'
+      : 'handoff-before-exhaustion';
+  const budget: EdgeTurnBudgetConfig = {
     turnBudgetTokens: nonNegativeInteger(input.turnBudgetTokens, 'turnBudgetTokens'),
     outputBudgetTokens: nonNegativeInteger(input.outputBudgetTokens, 'outputBudgetTokens'),
     reasoningBudgetTokens: nonNegativeInteger(input.reasoningBudgetTokens, 'reasoningBudgetTokens'),
     handoffReserveTokens: nonNegativeInteger(input.handoffReserveTokens, 'handoffReserveTokens'),
-    hardStopPolicy: input.hardStopPolicy === 'stop-at-limit' ? 'stop-at-limit' : 'handoff-before-exhaustion',
+    hardStopPolicy,
     responsibilityProfile: typeof input.responsibilityProfile === 'string' ? input.responsibilityProfile : undefined,
     warningThresholdPercent: Number.isFinite(Number(input.warningThresholdPercent))
       ? Math.max(0, Math.min(1, Number(input.warningThresholdPercent)))
