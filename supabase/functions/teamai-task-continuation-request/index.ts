@@ -4,7 +4,6 @@ import {
   decodeFirestoreFields,
   firestoreBeginTransaction,
   firestoreCommitTransaction,
-  firestoreDocumentUrl,
   firestoreFindSeat,
   firestoreGet,
   firestoreGetInTransaction,
@@ -369,7 +368,8 @@ Deno.serve(async (req: Request) => {
       message === "continuation_task_not_found" ||
       message === "target_seat_not_found"
     ) return json({ error: message }, 404);
-    if (
+    if (message === "firestore_commit_transaction_failed:409" ||
+      message.includes("firestore_commit_transaction_failed:409") ||
       message === "continuation_checkpoint_scope_mismatch" ||
       message === "continuation_checkpoint_not_continuable" ||
       message === "continuation_request_id_conflict" ||
