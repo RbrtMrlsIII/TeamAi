@@ -68,3 +68,37 @@ test('reduced motion preserves semantic amounts while collapsing only incidental
   assert.equal(full.workspaceReception, reduced.workspaceReception);
   assert.equal(reduced.reducedMotion, true);
 });
+
+
+test('Hero lifecycle contributes to R0 reception without changing hierarchy ownership', () => {
+  const contributing = deriveMachineTransformationChoreography({
+    shellAmount: 1,
+    hierarchyOpen: false,
+    heroState: 'CONTRIBUTE',
+    contributionAmount: 0.5,
+  });
+  const absorbing = deriveMachineTransformationChoreography({
+    shellAmount: 1,
+    hierarchyOpen: false,
+    heroState: 'ABSORB',
+    contributionAmount: 1,
+  });
+  const reflected = deriveMachineTransformationChoreography({
+    shellAmount: 1,
+    hierarchyOpen: false,
+    heroState: 'REFLECT',
+    contributionAmount: 1,
+  });
+  const handoff = deriveMachineTransformationChoreography({
+    shellAmount: 1,
+    hierarchyOpen: false,
+    heroState: 'HANDOFF',
+    contributionAmount: 1,
+  });
+  assert.equal(contributing.phase, MACHINE_CHOREOGRAPHY_PHASE.CONTRIBUTING);
+  assert.equal(contributing.lifecycleReception, 0.5);
+  assert.equal(absorbing.phase, MACHINE_CHOREOGRAPHY_PHASE.ABSORBING);
+  assert.equal(absorbing.lifecycleReception, 1);
+  assert.equal(reflected.phase, MACHINE_CHOREOGRAPHY_PHASE.REFLECTING);
+  assert.equal(handoff.phase, MACHINE_CHOREOGRAPHY_PHASE.HANDOFF_READY);
+});
