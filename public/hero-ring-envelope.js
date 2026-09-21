@@ -6,14 +6,22 @@
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 export function deriveConcentricRingEnvelope({
+  r0Radius = null,
+  r3Radius = null,
   workspaceRadius = 1,
   seatRingRadius = 2,
   ringR1Scale = 1,
   ringR2Scale = 1,
   interRingClearance = 0.18,
 } = {}) {
-  const workspace = Math.max(0, finite(workspaceRadius, 0));
-  const seat = Math.max(workspace, finite(seatRingRadius, workspace));
+  const workspace = Math.max(
+    0,
+    finite(r0Radius == null ? workspaceRadius : r0Radius, 0),
+  );
+  const seat = Math.max(
+    workspace,
+    finite(r3Radius == null ? seatRingRadius : r3Radius, workspace),
+  );
   const requestedGap = Math.max(0.02, finite(interRingClearance, 0.18));
   const availableSpan = Math.max(0, seat - workspace);
   const gap = Math.min(requestedGap, availableSpan / 3);
