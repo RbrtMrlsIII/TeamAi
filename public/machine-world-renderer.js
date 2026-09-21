@@ -483,13 +483,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const targetPayload = resolveSeatDivisionPayload(neighborId);
     if (!sourcePayload || !targetPayload) return;
 
+    const branchAmounts = state.seatDivisionBranchAmounts || {};
     const sourceAmount = clamp(
-      finite(state[sourcePayload.branchAmountKey], 0),
+      finite(branchAmounts[sourcePayload.branchAmountKey] ?? state[sourcePayload.branchAmountKey], 0),
       0,
       1,
     );
     const targetAmount = clamp(
-      finite(state[targetPayload.branchAmountKey], 0),
+      finite(branchAmounts[targetPayload.branchAmountKey] ?? state[targetPayload.branchAmountKey], 0),
       0,
       1,
     );
