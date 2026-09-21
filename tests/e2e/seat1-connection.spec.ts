@@ -27,6 +27,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
       to: 'WORKSPACE_CENTER',
       semantic: true,
       presentationOnly: true,
+      },
     });
 
     await page.evaluate(() => {
@@ -49,13 +50,21 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     });
 
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
-    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getSeat1AdjacentWiring?.())).toMatchObject({
+    await expect.poll(async () => page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return {
+        proof: hero.getSeat1AdjacentWiring?.(),
+        diagnostic: hero.getSeat1AdjacentWiringDiagnostic?.(),
+      };
+    })).toMatchObject({
+      proof: {
       id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
       from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
       to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
       phase: 'SOURCE_OPENING_OR_ACTIVE',
       amount: 1,
       presentationOnly: true,
+      },
     });
   });
 
@@ -77,13 +86,21 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBehaviorBranchAmount())).toBe(1);
     await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat behavior face (expanded). Do/Dont presentation only; not durable policy. Press B for normal UI.');
 
-    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getSeat1AdjacentWiring?.())).toMatchObject({
+    await expect.poll(async () => page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return {
+        proof: hero.getSeat1AdjacentWiring?.(),
+        diagnostic: hero.getSeat1AdjacentWiringDiagnostic?.(),
+      };
+    })).toMatchObject({
+      proof: {
       id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
       from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
       to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
       phase: 'TARGET_OPENING_OR_ACTIVE',
       amount: 1,
       presentationOnly: true,
+      },
     });
 
     await page.keyboard.press('ArrowLeft');
@@ -99,13 +116,21 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
     await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getConnectionBranchAmount())).toBe(1);
     await expect.poll(async () => page.locator('#seat-label').textContent()).toBe('Seat connection face (expanded). Presentation only; not live bind. Press C to configure seat in normal UI.');
 
-    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getSeat1AdjacentWiring?.())).toMatchObject({
+    await expect.poll(async () => page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      return {
+        proof: hero.getSeat1AdjacentWiring?.(),
+        diagnostic: hero.getSeat1AdjacentWiringDiagnostic?.(),
+      };
+    })).toMatchObject({
+      proof: {
       id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING',
       from: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
       to: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
       phase: 'SOURCE_OPENING_OR_ACTIVE',
       amount: 1,
       presentationOnly: true,
+      },
     });
   });
 });
