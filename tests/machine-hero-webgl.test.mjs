@@ -195,3 +195,11 @@ test('compatibility previews keep context and RAF ownership inside the renderer'
   assert.match(preview, /rafId = requestAnimationFrame\(render\)/);
   assert.match(magnificent, /raf = requestAnimationFrame\(render\)/);
 });
+
+
+test('workspace profile is frame-scoped and reused for the R0 receiving core', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /const workspaceProfile = worldProfile\(seatCount\);/);
+  assert.match(renderer, /workspaceRadius: workspaceProfile\.workspace/);
+  assert.match(renderer, /expansionAmount: choreography\.transformation/);
+});
