@@ -267,3 +267,101 @@ test('Firestore continuation request store retrieves an existing request by exac
     );
   } finally { restore(); }
 });
+
+
+test('Firestore runtime task store atomically moves a handoff task into waiting_for_continuation', async () => {
+  const calls = [];
+  const client = {
+    async beginTransaction() { calls.push('begin'); return 'tx-1'; },
+    async get(path, transaction) {
+      calls.push(['get', path, transaction]);
+      return {
+        updateTime: '2026-09-22T00:10:00Z',
+        fields: {
+          status: { stringValue: 'handoff_required' },
+          approved: { booleanValue: true },
+          continuationCheckpointId: { stringValue: 'old-checkpoint' },
+          leaseId: { stringValue: 'old-lease' },
+        },
+      };
+    },
+    async commit(transaction, writes) {
+      calls.push(['commit', transaction, writes]);
+    },
+  };
+  const { FirestoreRuntimeTaskStore } = await import('../dist/src/backend/firestore-runtime.js');
+  const store = new FirestoreRuntimeTaskStore(client, 'uid-1', 'workplace-1');
+  await store.ensureWaitingForContinuation({
+    request: {
+      continuationRequestId: 'cont-20',
+      taskId: 'task-20',
+      projectId: 'project-20',
+      checkpointId: 'exec-20:checkpoint',
+      sourceSeatId: 'seat-source',
+      targetSeatId: 'seat-target',
+      requestedBy: 'actor-20',
+      requestedAt: '2026-09-22T00:10:00Z',
+      instruction: 'continue from checkpoint',
+      status: 'requested',
+      continuationOfCheckpointId: 'exec-20:checkpoint',
+      nextTurn: 'fresh-budgeted-turn',
+    },
+  });
+
+  assert.equal(calls[0], 'begin');
+  assert.deepEqual(calls[1], [
+    'get',
+    'accounts/uid-1/workplaces/workplace-1/projects/project-20/tasks/task-20',
+    'tx-1',
+  ]);
+  assert.equal(calls[2][0], 'commit');
+  const write = calls[2][2][0];
+  assert.equal(write.currentDocument.updateTime, '2026-09-22T00:10:00Z');
+  const fields = write.update.fields;
+  assert.equal(fields.status.stringValue, 'waiting_for_continuation');
+  assert.equal(fields.completionState.stringValue, 'WAITING_FOR_CONTINUATION');
+  assert.equal(fields.approved.booleanValue, false);
+  assert.equal(fields.continuationCheckpointId.stringValue, 'exec-20:checkpoint');
+  assert.equal(fields.continuationRequestId.stringValue, 'cont-20');
+  assert.equal(fields.continuationTargetSeatId.stringValue, 'seat-target');
+  assert.equal(fields.continuationRequestedBy.stringValue, 'actor-20');
+  assert.equal(fields.continuationInstruction.stringValue, 'continue from checkpoint');
+  assert.equal(fields.leaseId.nullValue, null);
+});
+
+test('Firestore runtime task store rejects a second continuation request against a waiting task', async () => {
+  const client = {
+    async beginTransaction() { return 'tx-2'; },
+    async get() {
+      return {
+        fields: {
+          status: { stringValue: 'waiting_for_continuation' },
+          continuationCheckpointId: { stringValue: 'exec-21:checkpoint' },
+          continuationRequestId: { stringValue: 'cont-21-existing' },
+        },
+      };
+    },
+    async commit() { throw new Error('must not commit'); },
+  };
+  const { FirestoreRuntimeTaskStore } = await import('../dist/src/backend/firestore-runtime.js');
+  const store = new FirestoreRuntimeTaskStore(client, 'uid-1', 'workplace-1');
+  await assert.rejects(
+    store.ensureWaitingForContinuation({
+      request: {
+        continuationRequestId: 'cont-21-new',
+        taskId: 'task-21',
+        projectId: 'project-21',
+        checkpointId: 'exec-21:checkpoint',
+        sourceSeatId: 'seat-source',
+        targetSeatId: 'seat-target',
+        requestedBy: 'actor-21',
+        requestedAt: '2026-09-22T00:11:00Z',
+        instruction: 'continue',
+        status: 'requested',
+        continuationOfCheckpointId: 'exec-21:checkpoint',
+        nextTurn: 'fresh-budgeted-turn',
+      },
+    }),
+    /continuation_request_state_conflict/,
+  );
+});
