@@ -289,6 +289,23 @@ Deno.serve(async (req: Request) => {
     if (priorRequest.exists) {
       const existing = decodeFirestoreFields(priorRequest.fields);
       if (!matchesRequest(existing, input)) throw new Error("continuation_request_id_conflict");
+      const existingStatus = String(existing.status ?? "requested");
+      if (existingStatus !== "requested") {
+        return json({
+          ok: true,
+          phase: "idempotent",
+          duplicate: true,
+          uid,
+          workplaceId,
+          projectId,
+          taskId,
+          continuationRequestId,
+          checkpointId,
+          targetSeatId,
+          requestStatus: existingStatus,
+          statePhase: "not_reopened",
+        });
+      }
       const phase = await transitionTaskForContinuation(input);
       return json({
         ok: true,
