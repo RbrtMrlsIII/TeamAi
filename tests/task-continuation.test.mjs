@@ -186,3 +186,142 @@ test('continuation request rejects a checkpoint outside the requested task/proje
     /continuation_checkpoint_scope_mismatch/,
   );
 });
+
+
+test('continuation request retries with the same identity are idempotent', async () => {
+  let writes = 0;
+  const existingRequest = {
+    continuationRequestId: 'cont-3',
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: 'exec-1:checkpoint',
+    sourceSeatId: 'seat-coder',
+    targetSeatId: 'seat-coder-2',
+    requestedBy: 'actor-1',
+    requestedAt: '2026-09-22T00:04:00.000Z',
+    instruction: 'continue',
+    status: 'requested',
+    continuationOfCheckpointId: 'exec-1:checkpoint',
+    nextTurn: 'fresh-budgeted-turn',
+  };
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint() {
+        return {
+          ...buildTaskContinuationCheckpoint({
+            task: task(),
+            actorId: 'actor-1',
+            idempotencyKey: 'exec-1',
+            result: {
+              provider: 'openai',
+              model: 'gpt-test',
+              requestId: 'req-1',
+              text: 'partial',
+              usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+              termination: { state: 'incomplete', reason: 'length' },
+            },
+          }),
+        };
+      },
+      async persistCheckpoint() {},
+    },
+    {
+      async getRequest() { return writes ? existingRequest : null; },
+      async persistRequest() { writes += 1; },
+    },
+    { async assertCanContinue() { throw new Error('authorization should not run after an existing idempotent request'); } },
+  );
+
+  // First request requires authorization and persistence.
+  const firstService = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint() {
+        return buildTaskContinuationCheckpoint({
+          task: task(),
+          actorId: 'actor-1',
+          idempotencyKey: 'exec-1',
+          result: {
+            provider: 'openai',
+            model: 'gpt-test',
+            requestId: 'req-1',
+            text: 'partial',
+            usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+            termination: { state: 'incomplete', reason: 'length' },
+          },
+        });
+      },
+      async persistCheckpoint() {},
+    },
+    {
+      async getRequest() { return null; },
+      async persistRequest() { writes += 1; },
+    },
+    { async assertCanContinue() {} },
+  );
+  await firstService.request({
+    taskId: 'task-1', projectId: 'project-1', checkpointId: 'exec-1:checkpoint',
+    continuationRequestId: 'cont-3', targetSeatId: 'seat-coder-2', actorId: 'actor-1',
+    instruction: 'continue',
+  });
+  assert.equal(writes, 1);
+
+  const retry = await service.request({
+    taskId: 'task-1', projectId: 'project-1', checkpointId: 'exec-1:checkpoint',
+    continuationRequestId: 'cont-3', targetSeatId: 'seat-coder-2', actorId: 'actor-1',
+    instruction: 'continue',
+  });
+  assert.equal(retry.continuationRequestId, 'cont-3');
+  assert.equal(writes, 1);
+});
+
+test('continuation request ID conflicts when a retry changes its relation or instruction', async () => {
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint() {
+        return buildTaskContinuationCheckpoint({
+          task: task(),
+          actorId: 'actor-1',
+          idempotencyKey: 'exec-1',
+          result: {
+            provider: 'openai',
+            model: 'gpt-test',
+            requestId: 'req-1',
+            text: 'partial',
+            usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+            termination: { state: 'incomplete', reason: 'length' },
+          },
+        });
+      },
+      async persistCheckpoint() {},
+    },
+    {
+      async getRequest() {
+        return {
+          continuationRequestId: 'cont-4',
+          taskId: 'task-1',
+          projectId: 'project-1',
+          checkpointId: 'exec-1:checkpoint',
+          sourceSeatId: 'seat-coder',
+          targetSeatId: 'seat-coder-2',
+          requestedBy: 'actor-1',
+          requestedAt: '2026-09-22T00:05:00.000Z',
+          instruction: 'continue existing',
+          status: 'requested',
+          continuationOfCheckpointId: 'exec-1:checkpoint',
+          nextTurn: 'fresh-budgeted-turn',
+        };
+      },
+      async persistRequest() { throw new Error('must not write on conflict'); },
+    },
+    { async assertCanContinue() { throw new Error('must not authorize on conflict'); } },
+  );
+
+  await assert.rejects(
+    service.request({
+      taskId: 'task-1', projectId: 'project-1', checkpointId: 'exec-1:checkpoint',
+      continuationRequestId: 'cont-4', targetSeatId: 'seat-coder-2', actorId: 'actor-1',
+      instruction: 'changed instruction',
+    }),
+    /continuation_request_id_conflict/,
+  );
+});
