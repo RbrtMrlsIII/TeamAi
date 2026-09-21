@@ -16,10 +16,10 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, beginning with the next representative #400 Workspace capability proof; preserve MCP as browser-proven representative frontend evidence and do not claim full MCP lifecycle authority.
+- next allowed work: continue the governed 029 implementation on PR #398, with the Workspace representative frontend/browser proof established and Team/Agents role-assignment presentation as the next #400 frontier.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: the four-gate proof was green at `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`. The documentation-only follow-up head `c7ef2962615530f1e3c76e3af688ede7729886d7` requires fresh exact-head revalidation; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
-- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The previously verified MCP proof head was `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`; the current live head is `c7ef2962615530f1e3c76e3af688ede7729886d7`. Re-read live GitHub before relying on either SHA. Evidence is admissible only when tied to the exact head under review.
+- validation state: exact-head Governance, Full-System, Security, Project/Package, Recovery, Agent-validation, and Canonical Browser checks are green at `026a0fcfd8ac41a43ffd8988dad5b160cf972edb`; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live head is `026a0fcfd8ac41a43ffd8988dad5b160cf972edb`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
@@ -31,6 +31,14 @@
 - Browser proof covers guest discovery, four-capability inventory, dynamic target-owned branch preview, auth handoff, MCP facility close, and auth-panel visibility.
 - This is representative frontend/browser proof only. MCP provider credentials, authoritative lifecycle, entitlement, authorization, health, durable equip state, and execution remain external/backend-owned.
 - Next representative contract: Workspace capability surface under Issue #400.
+
+
+### 2026-09-21 exact-head Workspace proof
+- Workspace HQ representative contract is implemented in workspace-capability.js with a WORKSPACE_CENTER semantic target, dynamic Workspace-owned branch identity, and presentation-only capability intent/readiness semantics.
+- Live Hero Workspace facility is delivered through synchronized source/public modules and is reachable from the world menu without reviving /spatial/.
+- Exact-head Browser verification on 026a0fcfd8ac41a43ffd8988dad5b160cf972edb passed the Workspace flow: guest discovery, capability inventory, dynamic project-scoped branch preview, workspace-center camera focus, guest action lock, and authentication handoff.
+- Workspace proof remains representative frontend/browser evidence only. Firestore Workspace state, authorization, entitlement, scheduler eligibility, and execution remain authoritative outside the facility.
+- Next representative #400 contract: Team / Agents role assignment and Seat assignment presentation.
 
 ## Canonical authority path
 
