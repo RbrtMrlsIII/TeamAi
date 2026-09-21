@@ -98,10 +98,54 @@ export function buildSeatDivisionEdge({
   });
 }
 
+function boundsForGeometry(geometry, padding = 0) {
+  if (!geometry?.center || !geometry?.dimensions) return null;
+  const half = {
+    x: Math.max(0, Number(geometry.dimensions.width) || 0) * 0.5 + padding,
+    y: Math.max(0, Number(geometry.dimensions.height) || 0) * 0.5 + padding,
+    z: Math.max(0, Number(geometry.dimensions.depth) || 0) * 0.5 + padding,
+  };
+  const center = {
+    x: Number(geometry.center.x) || 0,
+    y: Number(geometry.center.y) || 0,
+    z: Number(geometry.center.z) || 0,
+  };
+  return {
+    min: { x: center.x - half.x, y: center.y - half.y, z: center.z - half.z },
+    max: { x: center.x + half.x, y: center.y + half.y, z: center.z + half.z },
+  };
+}
+
+function segmentIntersectsAabb(a, b, bounds, epsilon = EPSILON) {
+  if (!bounds) return false;
+  let tMin = 0;
+  let tMax = 1;
+  for (const axis of ['x', 'y', 'z']) {
+    const start = Number(a?.[axis]);
+    const delta = Number(b?.[axis]) - start;
+    const min = bounds.min[axis] - epsilon;
+    const max = bounds.max[axis] + epsilon;
+    if (!Number.isFinite(start) || !Number.isFinite(delta)) return true;
+    if (Math.abs(delta) <= epsilon) {
+      if (start < min || start > max) return false;
+      continue;
+    }
+    const inverse = 1 / delta;
+    let near = (min - start) * inverse;
+    let far = (max - start) * inverse;
+    if (near > far) [near, far] = [far, near];
+    tMin = Math.max(tMin, near);
+    tMax = Math.min(tMax, far);
+    if (tMin > tMax) return false;
+  }
+  return tMax >= 0 && tMin <= 1;
+}
+
 export function validateSeatDivisionNetwork({
   parent,
   divisions = [],
   edges = [],
+  obstacles = divisions,
   clearance = 0.16,
   epsilon = EPSILON,
 } = {}) {
@@ -140,6 +184,26 @@ export function validateSeatDivisionNetwork({
     }, { clearance, epsilon });
     if (!topology.valid) {
       reasons.push(...topology.reasons.map((reason) => edge.semanticEdgeId + ':' + reason));
+    }
+
+    const obstacleList = Array.isArray(obstacles) ? obstacles : [];
+    for (const obstacle of obstacleList) {
+      if (!obstacle || obstacle === source || obstacle === target) continue;
+      const obstacleSemantic = String(obstacle.semantic || obstacle.id || '');
+      if (
+        obstacleSemantic === String(edge.semanticSource || '').split(':').at(-1)
+        || obstacleSemantic === String(edge.semanticTarget || '').split(':').at(-1)
+      ) {
+        continue;
+      }
+      const bounds = boundsForGeometry(obstacle, Math.max(0, Number(clearance) || 0));
+      if (!bounds || !Array.isArray(edge.route) || edge.route.length < 2) continue;
+      for (let index = 1; index < edge.route.length; index += 1) {
+        if (segmentIntersectsAabb(edge.route[index - 1], edge.route[index], bounds, epsilon)) {
+          reasons.push(edge.semanticEdgeId + ':ROUTE_CROSSES_OBSTACLE:' + obstacleSemantic);
+          break;
+        }
+      }
     }
   }
 
