@@ -15,7 +15,7 @@ A remote source fetched at page load makes the product runtime depend on an exte
 ## Current migration
 
 - Repository-owned base source is vendored from the exact historical pre-loader blob used by the existing Hero assembly.
-- `scripts/apply-cam2-tree-follow-flex.mjs` now copies the repository-owned base into `public/hero-flex.js` and proves byte-for-byte parity.
+- `scripts/sync-hero-flex-runtime.mjs` now copies the repository-owned base into `public/hero-flex.js` and proves byte-for-byte parity.
 - The stable assembly command is deterministic, network-free, and keeps the runtime artifact synchronized with the repository-owned base source.
 - A static regression test forbids `raw.githubusercontent.com` in the runtime entry.
 - The browser/build path must be validated from the repository-owned artifact, not from a remote source.
