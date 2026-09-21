@@ -633,7 +633,15 @@ export function focusChild(state, childId, opts = {}) {
   if (!SEAT_SHELL_V1_CHILDREN.includes(childId)) return state;
   const now = opts.nowMs ?? 0;
   const snap = Boolean(opts.snap);
-  if (opts.interactive === true && state.focusedChildId && state.focusedChildId !== childId && !snap && opts.allowTransition !== false && opts.nowMs != null && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)) {
+  if (
+    opts.interactive === true
+    && state.focusedChildId
+    && state.focusedChildId !== childId
+    && !snap
+    && opts.allowTransition !== false
+    && opts.nowMs != null
+    && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)
+  ) {
     state.divisionClosingChildId = state.focusedChildId;
     state.divisionPendingChildId = childId;
     state.divisionCloseStartMs = now;
@@ -641,79 +649,15 @@ export function focusChild(state, childId, opts = {}) {
     state.focusedLeafId = null;
     return state;
   }
+
+  const spec = DIVISION_BRANCH_SPECS[childId];
+  const previousAmount = spec ? Number(state[spec.amountKey]) || 0 : 0;
   state.focusedChildId = childId;
   state.focusedLeafId = null;
-  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
-    state.connectionBranchStartMs = now;
-    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_BEHAVIOR) {
-    state.behaviorBranchStartMs = now;
-    state.behaviorBranchAmount = snap ? 1 : Math.min(state.behaviorBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_TOOLKIT) {
-    state.toolkitBranchStartMs = now;
-    state.toolkitBranchAmount = snap ? 1 : Math.min(state.toolkitBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_CAPABILITIES) {
-    state.capabilitiesBranchStartMs = now;
-    state.capabilitiesBranchAmount = snap ? 1 : Math.min(state.capabilitiesBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_AUTHORIZATION) {
-    state.authorizationBranchStartMs = now;
-    state.authorizationBranchAmount = snap ? 1 : Math.min(state.authorizationBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_WORKSPACE_SCOPE) {
-    state.workspaceScopeBranchStartMs = now;
-    state.workspaceScopeBranchAmount = snap ? 1 : Math.min(state.workspaceScopeBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_TASK_EVIDENCE) {
-    state.taskEvidenceBranchStartMs = now;
-    state.taskEvidenceBranchAmount = snap ? 1 : Math.min(state.taskEvidenceBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-  } else {
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
+  resetDivisionBranchAmounts(state);
+  if (spec) {
+    state[spec.startKey] = now;
+    state[spec.amountKey] = snap ? 1 : Math.min(previousAmount, 0.15);
   }
   return state;
 }
