@@ -95,6 +95,7 @@ import { cycleSeatShellBranchFocus } from './hero-seat-branch-walk.js';
 import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
+import { deriveMachineWorldProfile } from './hero-world-profile.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
@@ -111,18 +112,14 @@ const normalizeSeatIndex = (value, count = seatCount) => {
   const total = Math.max(1, count | 0);
   return ((Math.floor(Number(value)) % total) + total) % total;
 };
-const seatRadiusForCount = (count) => {
-  const density = Math.max(0, Math.min(1, (Math.max(1, count | 0) - 1) / 9));
-  return 4.25 + (6.45 - 4.25) * density;
-};
-// Seat-camera density remains controller-owned for subject docking; world geometry is renderer-owned.
+// Camera-facing values resolve from the shared world profile; WebGL geometry remains renderer-owned.
 const profile = (count) => {
-  const density = Math.max(0, Math.min(1, (Math.max(1, count | 0) - 1) / 9));
+  const world = deriveMachineWorldProfile(count);
   return {
-    workspace: 4.35 + (5.95 - 4.35) * density,
-    seatRadius: seatRadiusForCount(count),
-    seatScale: 1 + (.78 - 1) * density,
-    cameraDist: 9.6 + (12.2 - 9.6) * density,
+    workspace: world.workspaceFootprint,
+    seatRadius: world.seatShellRadius,
+    seatScale: world.seatScale,
+    cameraDist: world.cameraDistance,
   };
 };
 
