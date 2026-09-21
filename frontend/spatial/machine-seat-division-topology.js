@@ -1,3 +1,5 @@
+import { validateMachineConnectionTopology } from './machine-hero-topology.js';
+
 const EPSILON = 1e-6;
 
 const finite = (value) => Number.isFinite(Number(value));
@@ -93,6 +95,62 @@ export function buildSeatDivisionEdge({
     semanticTarget: parent.semanticKey,
     clearance: Number(geometry.clearance) || 0,
     presentationOnly: true,
+  });
+}
+
+export function validateSeatDivisionNetwork({
+  parent,
+  divisions = [],
+  edges = [],
+  clearance = 0.16,
+  epsilon = EPSILON,
+} = {}) {
+  const reasons = [];
+  const list = Array.isArray(divisions) ? divisions.filter(Boolean) : [];
+  const normalizedEdges = Array.isArray(edges) ? edges.filter(Boolean) : [];
+  const byChild = new Map(
+    list.map((division) => [String(division.semantic), division]),
+  );
+
+  for (const edge of normalizedEdges) {
+    const source = byChild.get(String(edge.semanticSource || '').split(':').at(-1));
+    const target = parent;
+    if (!source || !target) {
+      reasons.push('MISSING_NETWORK_ENDPOINT');
+      continue;
+    }
+    const sourcePart = {
+      semanticId: edge.sourcePort?.division || source.semantic || null,
+      center: source.center,
+      dimensions: {
+        x: source.dimensions?.width,
+        y: source.dimensions?.height,
+        z: source.dimensions?.depth,
+      },
+      port: edge.sourcePort,
+    };
+    const targetPart = {
+      semanticId: target.semanticId,
+      center: target.center,
+      dimensions: target.dimensions,
+      port: edge.targetPort,
+    };
+    const topology = validateMachineConnectionTopology(sourcePart, targetPart, {
+      route: edge.route,
+    }, { clearance, epsilon });
+    if (!topology.valid) {
+      reasons.push(...topology.reasons.map((reason) => edge.semanticEdgeId + ':' + reason));
+    }
+  }
+
+  const identities = normalizedEdges.map((edge) => edge.semanticEdgeId).filter(Boolean);
+  if (identities.length !== new Set(identities).size) reasons.push('DUPLICATE_SEMANTIC_EDGE_ID');
+
+  return Object.freeze({
+    valid: reasons.length === 0,
+    reasons: Object.freeze([...new Set(reasons)]),
+    divisionCount: list.length,
+    edgeCount: normalizedEdges.length,
   });
 }
 
