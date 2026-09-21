@@ -286,7 +286,7 @@ export function getSeatDivisionBranchAmounts(state) {
   return Object.freeze(
     Object.fromEntries(
       Object.entries(DIVISION_BRANCH_SPECS).map(([childId, spec]) => [
-        childId,
+        spec.amountKey,
         getSeatDivisionBranchAmount(state, childId),
       ]),
     ),

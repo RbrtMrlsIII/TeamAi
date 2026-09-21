@@ -14,6 +14,7 @@ import {
   tickAuthorizationBranch,
   tickWorkspaceScopeBranch,
   tickTaskEvidenceBranch,
+  getSeatDivisionBranchAmounts,
 } from '../public/hero-hierarchy-runtime.js';
 
 const branches = [
@@ -92,4 +93,20 @@ test('Seat division command contract maps each key to exactly one semantic child
     assert.ok(entry.targetSection);
     assert.ok(entry.childId);
   }
+});
+
+test('aggregate branch amounts use canonical branch amount keys', () => {
+  const state = createHierarchyRuntime({
+    openParentId: 'SEAT_SHELL#0',
+    focusedChildId: HIERARCHY_PART.SEAT_CONNECTION,
+    phase: HIERARCHY_PHASE.OPEN,
+    openAmount: 1,
+    connectionBranchAmount: 1,
+    behaviorBranchAmount: 0.4,
+  });
+  const amounts = getSeatDivisionBranchAmounts(state);
+  assert.equal(amounts.connectionBranchAmount, 1);
+  assert.equal(amounts.behaviorBranchAmount, 0.4);
+  assert.equal(amounts.SEAT_CONNECTION, undefined);
+  assert.equal(amounts.SEAT_BEHAVIOR, undefined);
 });
