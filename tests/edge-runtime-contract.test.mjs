@@ -131,3 +131,16 @@ test('Edge continuation execution creates a new checkpoint linked to the previou
   assert.match(source, /continuationOfCheckpointId: checkpointId/);
   assert.match(source, /continuationRequestId, continuationOfCheckpointId/);
 });
+
+
+test('Continuation setup validates Seat budget and credential before the durable running transition', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  const continuationStart = source.indexOf('async function executeContinuationTurn');
+  const budgetIndex = source.indexOf('const budget = normalizeEdgeTurnBudget(seat.turnBudget);', continuationStart);
+  const credentialIndex = source.indexOf('loadSeatProviderCredential', continuationStart);
+  const transactionIndex = source.indexOf('const transaction = await firestoreBeginTransaction(accessToken);', continuationStart);
+  assert.ok(continuationStart >= 0);
+  assert.ok(budgetIndex > continuationStart);
+  assert.ok(credentialIndex > budgetIndex);
+  assert.ok(transactionIndex > credentialIndex);
+});
