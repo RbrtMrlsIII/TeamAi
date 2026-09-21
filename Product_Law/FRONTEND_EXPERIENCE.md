@@ -163,6 +163,8 @@ AUTHENTICATED
 → readiness can be evaluated
 ```
 
+Guests may discover the complete intended feature vocabulary and machine presentation, but all product facilities remain locked for guest use. The only guest-accessible product actions are the designated **Sign Up** and **Login** authentication surfaces. **Sign Out** is available only for authenticated state.
+
 Selecting Login or Sign up begins an authentication transition. The transition may use spatial choreography, but choreography is not proof of successful authentication.
 
 After authentication succeeds:
@@ -177,6 +179,12 @@ identity established
 → evaluate readiness
 → permit user-started turn only when required conditions hold
 ```
+
+## 8A. Seat reports and transaction loading
+
+Every Seat exposes a report/handoff section for the latest completed turn. Users and authorized participating agents may read that report as the Seat's continuity/read-model and evidence surface.
+
+Long-running Seat transactions use a dedicated semantic loading/orb family rather than one generic product spinner. The family is selected by transaction type, including configuration, connection test, MCP invocation, AI turn/execution, handoff/continuation, Storage operation, Marketplace transaction/verification, authorization, or recovery. Presentation effects do not prove backend completion.
 
 ## 8. Entrance information architecture
 
