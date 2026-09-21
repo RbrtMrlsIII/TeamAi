@@ -171,7 +171,7 @@ async function transitionTaskForContinuation(input: {
           }),
         },
         currentDocument: { exists: false },
-      }]);
+      }], input.accessToken);
     }
     return "idempotent";
   }
