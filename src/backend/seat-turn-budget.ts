@@ -32,6 +32,7 @@ export type TurnBudgetUsage = {
   consumedInputTokens: number;
   consumedTotalTokens: number;
   remainingGenerationTokens: number;
+  usableGenerationTokens: number;
 };
 
 export type TurnBudgetState =
@@ -159,9 +160,10 @@ export function accountTurnBudget(input: {
   const warningThresholdReached =
     remainingGenerationTokens <= Math.ceil(effective * (1 - input.config.warningThresholdPercent));
 
+  const usableGenerationTokens = Math.max(0, remainingGenerationTokens - input.config.handoffReserveTokens);
   const handoffTrigger =
     input.estimatedCompletionNeedTokens !== undefined
-    && remainingGenerationTokens < input.estimatedCompletionNeedTokens + input.config.handoffReserveTokens;
+    && usableGenerationTokens < input.estimatedCompletionNeedTokens;
 
   let state: TurnBudgetState;
   let completionState: TurnCompletionState | null = input.completionState ?? null;
@@ -174,14 +176,12 @@ export function accountTurnBudget(input: {
     state = 'PROVIDER_FAILED';
   } else if (completionState === 'CANCELLED') {
     state = 'CANCELLED';
-  } else if (handoffTrigger) {
-    completionState = remainingGenerationTokens <= input.config.handoffReserveTokens
-      ? 'WAITING_FOR_CONTINUATION'
-      : 'HANDOFF_REQUIRED';
-    state = completionState === 'WAITING_FOR_CONTINUATION' ? 'WAITING_FOR_CONTINUATION' : 'HANDOFF';
-  } else if (remainingGenerationTokens === 0) {
+  } else if (usableGenerationTokens === 0) {
     completionState = 'WAITING_FOR_CONTINUATION';
     state = 'EXHAUSTED';
+  } else if (handoffTrigger) {
+    completionState = 'HANDOFF_REQUIRED';
+    state = 'HANDOFF';
   } else if (warningThresholdReached) {
     state = 'LOW';
   } else {
@@ -192,7 +192,7 @@ export function accountTurnBudget(input: {
     0,
     Math.min(
       input.config.outputBudgetTokens,
-      effective - reservedTokens - input.config.handoffReserveTokens - consumedGenerationTokens,
+      usableGenerationTokens,
     ),
   );
 
