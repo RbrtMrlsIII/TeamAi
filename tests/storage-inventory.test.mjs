@@ -43,6 +43,18 @@ test('authenticated Storage does not invent inventory without a backend read mod
   );
 });
 
+test('presentation read-model data does not change guest lock semantics', () => {
+  const model = normalizeStorageInventoryReadModel({
+    inventoryKnown: true,
+    authorized: true,
+    entitled: true,
+    healthy: true,
+    items: [{ id: 'hidden-item', label: 'Hidden until authenticated' }],
+  });
+  assert.equal(model.items.length, 1);
+  assert.equal(resolveStorageInventoryReadiness({ authenticated: false, ...model }), 'DISCOVERABLE_LOCKED');
+});
+
 test('authorized inventory read model is ready and preserves metadata-only items', () => {
   const model = normalizeStorageInventoryReadModel({
     inventoryKnown: true,
