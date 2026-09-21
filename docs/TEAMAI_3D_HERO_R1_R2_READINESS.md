@@ -26,10 +26,10 @@ R3  SEAT RING
 
 | Ring | Piece | Owner in code | Class | Notes |
 |------|--------|---------------|-------|-------|
-| **R0** | Workspace surface | `hero-flex` workspace draw (assembled base) | **implemented** | Machine contract + flex |
+| **R0** | Workspace surface | `frontend/spatial/hero-workspace-core.js` → canonical `machine-world-renderer.js` | **implemented** | Shared receiving-core geometry; controller owns intent/state only |
 | **R0** | ZipSkills crown | `public/hero-p-r0-zipskills.js` · `WORKSPACE_ZIPSKILLS_V1` · `RING_R0_ZIP_SCALE` | **implemented** | Optional; not seat child; not entitlement |
 | **R1** | Part IDs / catalog | `HIERARCHY_PART.WORKSPACE_BACKEND_*` · `BACKEND_DISPLAY_V1` | **implemented** | Catalog only |
-| **R1** | Scale constant | `RING_R1_SCALE` in hierarchy runtime | **implemented** | §9-aligned starting number |
+| **R1** | Scale constant | `frontend/spatial/hero-world-contract.js` (`RING_R1_SCALE`) | **implemented** | Shared render contract |
 | **R1** | Display ring draw | `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js` → `drawBackendDisplayRing` wrapper | **implemented-partial** | Dedicated placement/render owner; full service-thread topology remains bounded |
 | **R1** | Animated threads | `frontend/spatial/hero-r1-backend-threads.js` → `public/hero-r1-backend-threads.js` | **implemented-partial** | Deterministic presentation relationships between declared R1 display faces; final service-thread/backend topology remains bounded |
 | **R1** | Live platform bind | — | **out of scope** | Presentation must not OAuth/bind from canvas |
@@ -39,7 +39,7 @@ R3  SEAT RING
 | **R2** | Camera-fill state | `setupRingFillAmount` / `tickSetupRingFill` / `SETUP_RING_FILL_MS` | **implemented** | Presentation fill only |
 | **R2** | Auth mechanism faces | `WORKSPACE_AUTH_MECHANISM#login/register` in catalog + draw kinds | **stubbed** | Mechanical presentation — **not** Firebase auth authority |
 | **R2** | Durable auth / credentials | — | **out of scope** | Domain remains outside Hero |
-| **R3** | Seat ring + hierarchy | hierarchy runtime · seat shell v1 · Cam-2…6 | **implemented** | SP-05 matrix covers children |
+| **R3** | Seat ring + hierarchy | `machine-core-layout-runtime.js` + hierarchy runtime + canonical renderer | **implemented** | Physical Seat envelope and semantic child hierarchy stay distinct |
 
 ---
 
@@ -77,12 +77,12 @@ The original SP-06 classification predates Issue #396's active Slice D implement
 
 - `frontend/spatial/hero-r1-backend-display.js` is the source owner.
 - `public/hero-r1-backend-display.js` is the browser runtime copy.
-- `drawBackendDisplayRing(t)` remains a compatibility wrapper in the canonical Hero so existing assembly/apply contracts stay valid.
+- `drawBackendDisplayRing(t)` remains a ring-module draw owner consumed by the canonical machine-world renderer; it is not a controller WebGL owner.
 - `scripts/sync-machine-spatial-runtime.mjs` now synchronizes the R1 module.
 - R1 placement is derived from the active workspace radius, R1 scale, and catalog rather than hard-coded coordinates.
 - R1 remains **presentation-only**. The module contains no OAuth, credential, provider, or durable backend authority.
 
-The older rule saying not to create an R1 module is therefore historical guidance for the pre-Slice-D state and no longer governs current #397 execution. The current requirement is to keep R1 under the same single-renderer architecture and avoid duplicate authority.
+The older rule saying not to create an R1 module is historical guidance for the pre-Slice-D state. Current execution keeps R1 under one canonical machine-world renderer and avoids duplicate geometry authority.
 
 The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, and complete R2 mechanical choreography remain bounded work under Issue #396.
 
