@@ -52,12 +52,12 @@ test('Seat provider binding and credential loading use canonical existing-Seat a
   assert.match(bind, /seat_not_found/);
   assert.match(bind, /const clear = body\\.clear === true/);
   assert.match(bind, /const apiKey = clear \\? "" : requireId/);
-  assert.doesNotMatch(bind, /firestoreCreate\\(\\s*seatPath/);
+  assert.doesNotMatch(bind, /firestoreCreate\(\s*seatPath/);
   assert.match(credentials, /firestoreFindSeat/);
   assert.match(credentials, /providerKeyBound/);
   assert.match(connection, /firestoreFindSeat/);
   assert.match(connection, /seat_not_found/);
-  assert.doesNotMatch(connection, /if \\(existing\.exists\\)[\\s\\S]*else \\{/);
+  assert.doesNotMatch(connection, /if \(existing\.exists\)[\s\S]*else \{/);
 });
 
 test('Seat secret resolver never exposes plaintext through a return field other than in-memory credential', () => {
