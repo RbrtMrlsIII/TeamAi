@@ -17,7 +17,7 @@ IMPLEMENTATION ACTIVE / IN PROGRESS — PR #398 is the active Draft implementati
 
 ## Objective
 
-Continue converging the TeamAi Spatial World from the exact #397 implementation head without creating a second renderer or restoring the retired Hero mutation architecture. Frontend/product behavior must implement against Issue #400 while treating that contract as current truth, not final UI closure. The current renderer boundary is: semantic hierarchy/controller/input state → canonical machine-world renderer source/runtime.
+Continue converging the TeamAi Spatial World from the current PR #398 implementation lineage without creating a second renderer or restoring the retired Hero mutation architecture. Frontend/product behavior must implement against Issue #400 while treating that contract as current truth, not final UI closure. The current renderer boundary is: semantic hierarchy/controller/input state → canonical machine-world renderer source/runtime.
 
 ## Dependencies
 
