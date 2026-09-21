@@ -211,7 +211,7 @@ export class FirestoreRuntimeClient {
           segments[0] === 'accounts' &&
           segments[1] === safeUid &&
           segments[2] === 'workplaces' &&
-          segments[3] === this.workplaceId &&
+          segments[3] === safeWorkplaceId &&
           segments[4] === 'projects' &&
           segments[5] === safeProjectId &&
           segments[6] === 'teams' &&
