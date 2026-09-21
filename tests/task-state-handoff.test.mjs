@@ -16,3 +16,9 @@ test('waiting-for-continuation can be cancelled but not silently completed', () 
   assert.equal(transitionTask('waiting_for_continuation', 'CANCEL'), 'cancelled');
   assert.throws(() => transitionTask('waiting_for_continuation', 'START'), /invalid task transition/);
 });
+
+
+test('waiting_for_continuation can explicitly start a continuation turn', async () => {
+  const { transitionTask } = await import('../dist/src/backend/task-state.js');
+  assert.equal(transitionTask('waiting_for_continuation', 'CONTINUE_START'), 'running');
+});
