@@ -99,9 +99,9 @@ Deno.serve(async (req: Request) => {
     const workplaceId = requireId(body.workplaceId, "workplaceId");
     const projectId = requireId(body.projectId, "projectId");
     const seatId = requireId(body.seatId, "seatId");
-    const apiKey = requireId(body.apiKey, "apiKey");
-    const providerKind = normalizeProviderKind(body.providerKind ?? body.provider);
     const clear = body.clear === true;
+    const apiKey = clear ? "" : requireId(body.apiKey, "apiKey");
+    const providerKind = normalizeProviderKind(body.providerKind ?? body.provider);
 
     const accessToken = await getFirestoreAccessToken();
     const existingSeat = await firestoreFindSeat({
