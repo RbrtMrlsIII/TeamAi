@@ -94,7 +94,7 @@ function render() {
 
 function focusTeam() {
   const hero = window.TeamAiHero;
-  if (hero && typeof hero.setCamera === 'function') hero.setCamera('SEAT_CLOSE');
+  if (hero && typeof hero.setCamera === 'function') hero.setCamera('TEAM_ORBIT');
   const status = panel?.querySelector('[data-agent-result]');
   if (status) status.textContent = 'Team / Agent relationship focused. Camera state is presentation-only.';
 }
