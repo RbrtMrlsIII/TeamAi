@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 
-const wrapper = readFileSync(new URL('../scripts/apply-cam2-tree-follow-flex.mjs', import.meta.url), 'utf8');
+const wrapper = readFileSync(new URL('../scripts/sync-hero-flex-runtime.mjs', import.meta.url), 'utf8');
 const entry = readFileSync(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
 const renderer = readFileSync(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const baseUrl = new URL('../public/_flex_src/hero-flex.base.js', import.meta.url);
