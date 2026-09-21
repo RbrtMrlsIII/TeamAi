@@ -27,7 +27,7 @@ export type TaskContinuationCheckpoint = {
 };
 
 export type TaskContinuationCheckpointStore = {
-  getCheckpoint(taskId: string, checkpointId: string): Promise<TaskContinuationCheckpoint | null>;
+  getCheckpoint(projectId: string, taskId: string, checkpointId: string): Promise<TaskContinuationCheckpoint | null>;
   persistCheckpoint(checkpoint: TaskContinuationCheckpoint): Promise<void>;
 };
 
