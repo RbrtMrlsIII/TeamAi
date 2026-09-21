@@ -176,7 +176,7 @@ function render() {
   checkout.disabled = !authenticated || !offer || !decision?.canPurchase;
   billing.textContent = readModel.billingUrl
     ? 'Hosted billing is available. TeamAi stores no card credentials.'
-    : 'Hosted billing link is supplied by authorized backend state when available.';
+    : 'Hosted billing link is supplied by authorized backend state when available. TeamAi stores no card credentials.';
   teamAi.textContent = authenticated ? String(readModel.teamAiEntitlement) : 'not verified in guest context';
   provider.textContent = String(readModel.providerEntitlement || 'separate external entitlement');
   if (offer && branch) {
