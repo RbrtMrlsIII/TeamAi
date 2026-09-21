@@ -12,6 +12,7 @@ const files = [
   'machine-hero-graph.js',
   'machine-hero-payload.js',
   'machine-hero-adaptive-geometry.js',
+  'machine-geometry-primitives.js',
   'machine-hero-topology.js',
   'machine-core-topology.js',
   'hero-environment.js',

@@ -1,15 +1,6 @@
 import { validateMachineConnectionTopology } from './machine-hero-topology.js';
 import { seatDivisionFanDirection, SEAT_DIVISION_PORT_RADIUS } from './seat-division-geometry.js';
-
-const EPSILON = 1e-6;
-
-const finite = (value) => Number.isFinite(Number(value));
-
-const equalPoint = (a, b, epsilon = EPSILON) =>
-  finite(a?.x) && finite(a?.y) && finite(a?.z)
-  && Math.abs(Number(a.x) - Number(b.x)) <= epsilon
-  && Math.abs(Number(a.y) - Number(b.y)) <= epsilon
-  && Math.abs(Number(a.z) - Number(b.z)) <= epsilon;
+import { EPSILON, finite, pointEqual as equalPoint } from './machine-geometry-primitives.js';
 
 function branchCenter(parent) {
   return {
