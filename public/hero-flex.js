@@ -630,6 +630,7 @@ function frame(now) {
     taskEvidenceBranchAmount: getTaskEvidenceBranchAmount(hierarchyRuntime),
     focusedChildId: hierarchyRuntime.focusedChildId,
     focusedChildIndex: SEAT_SHELL_V1_CHILDREN.indexOf(hierarchyRuntime.focusedChildId),
+    hierarchyOpenAmount: hierarchyRuntime.openAmount,
     focusedChildAmount:
       hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_CONNECTION ? getConnectionBranchAmount(hierarchyRuntime)
       : hierarchyRuntime.focusedChildId === HIERARCHY_PART.SEAT_BEHAVIOR ? getBehaviorBranchAmount(hierarchyRuntime)
