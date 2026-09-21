@@ -82,7 +82,7 @@ test('Edge executor persists a durable continuation checkpoint before recording 
 test('Edge handoff writes the checkpoint before the durable handoff result', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
   const checkpointIndex = source.indexOf('await persistContinuationCheckpoint({');
-  const resultIndex = source.indexOf('await firestoreCreate(resultPath');
+  const resultIndex = source.lastIndexOf('await firestoreCreate(resultPath');
   assert.ok(checkpointIndex >= 0);
   assert.ok(resultIndex >= 0);
   assert.ok(checkpointIndex < resultIndex);
