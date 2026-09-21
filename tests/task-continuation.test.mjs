@@ -79,3 +79,110 @@ test('continuation checkpoint rejects completed provider termination', () => {
     },
   }), /incomplete provider termination/);
 });
+
+
+test('continuation request requires checkpoint authorization and creates a fresh-turn relationship', async () => {
+  const events = [];
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint(projectId, taskId, checkpointId) {
+        assert.deepEqual({ projectId, taskId, checkpointId }, {
+          projectId: 'project-1',
+          taskId: 'task-1',
+          checkpointId: 'exec-1:checkpoint',
+        });
+        return buildTaskContinuationCheckpoint({
+          task: task(),
+          actorId: 'actor-1',
+          idempotencyKey: 'exec-1',
+          result: {
+            provider: 'openai',
+            model: 'gpt-test',
+            requestId: 'req-1',
+            text: 'partial work',
+            usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 },
+            termination: { state: 'incomplete', reason: 'length', providerReason: 'max_tokens' },
+          },
+          occurredAt: '2026-09-22T00:00:00.000Z',
+        });
+      },
+      async persistCheckpoint() {},
+    },
+    {
+      async getRequest() { return null; },
+      async persistRequest(request) { events.push(request); },
+    },
+    {
+      async assertCanContinue(input) {
+        events.push({
+          authorization: 'checked',
+          targetSeatId: input.targetSeatId,
+          actorId: input.actorId,
+          checkpointId: input.checkpoint.checkpointId,
+        });
+      },
+    },
+  );
+
+  const request = await service.request({
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: 'exec-1:checkpoint',
+    continuationRequestId: 'cont-1',
+    targetSeatId: 'seat-coder-2',
+    actorId: 'actor-1',
+    instruction: 'Continue from the saved checkpoint and finish the unresolved work.',
+    requestedAt: '2026-09-22T00:01:00.000Z',
+  });
+
+  assert.equal(request.continuationRequestId, 'cont-1');
+  assert.equal(request.checkpointId, 'exec-1:checkpoint');
+  assert.equal(request.continuationOfCheckpointId, 'exec-1:checkpoint');
+  assert.equal(request.sourceSeatId, 'seat-coder');
+  assert.equal(request.targetSeatId, 'seat-coder-2');
+  assert.equal(request.nextTurn, 'fresh-budgeted-turn');
+  assert.equal(request.status, 'requested');
+  assert.equal(events[0].authorization, 'checked');
+  assert.equal(events[1].targetSeatId, 'seat-coder-2');
+});
+
+test('continuation request rejects a checkpoint outside the requested task/project scope', async () => {
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint() {
+        return {
+          ...buildTaskContinuationCheckpoint({
+            task: task(),
+            actorId: 'actor-1',
+            idempotencyKey: 'exec-1',
+            result: {
+              provider: 'openai',
+              model: 'gpt-test',
+              requestId: 'req-1',
+              text: 'partial',
+              usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+              termination: { state: 'incomplete', reason: 'length' },
+            },
+          }),
+          projectId: 'other-project',
+        };
+      },
+      async persistCheckpoint() {},
+    },
+    { async persistRequest() {}, async getRequest() { return null; } },
+    { async assertCanContinue() { throw new Error('must not authorize'); } },
+  );
+
+  await assert.rejects(
+    service.request({
+      taskId: 'task-1',
+      projectId: 'project-1',
+      checkpointId: 'exec-1:checkpoint',
+      continuationRequestId: 'cont-2',
+      targetSeatId: 'seat-coder-2',
+      actorId: 'actor-1',
+      instruction: 'continue',
+    }),
+    /continuation_checkpoint_scope_mismatch/,
+  );
+});
