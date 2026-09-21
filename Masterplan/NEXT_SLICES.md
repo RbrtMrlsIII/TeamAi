@@ -43,7 +43,14 @@ Continue converging the TeamAi Spatial World from the exact #397 implementation 
 This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
 
 ## Current frontier
-MCP, Workspace HQ, Team / Agents, and Marketplace / Commerce representative frontend/browser contracts are now exact-head proven. The next authorized representative #400 contract is **Storage item inventory**: first-class inventory presentation while keeping upload, binary transfer, and content-write authority deferred.
+MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are now exact-head proven. The next authorized representative continuation is **#392 usage / exhaustion / continuation presentation**: authoritative budget, remaining capacity, handoff reserve, and completion-state presentation without client-side accounting authority.
 
 ## Current blocker
-No current exact-head CI gate blocker at Marketplace proof head `7b61c3c725b242288749324ad73d2eb752ded3b1`. The branch remains Draft because these checks prove only exercised contracts, not full #400 completion, live commerce lifecycle integration, Storage completion, human acceptance, or merge readiness.
+No current exact-head CI gate blocker at Storage proof head `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`. The branch remains Draft because these checks prove exercised contracts only, not full #400 completion, live commerce lifecycle integration, #392 completion, human acceptance, or merge readiness.
+
+### Exact-head Storage boundary record
+- Storage item inventory is presentation/read-model only on this slice.
+- No live Supabase Storage buckets are currently provisioned in the connected project, so no live content inventory is claimed.
+- Firestore task/event/evidence data remains distinct from Storage user-content inventory.
+- Upload, binary transfer, and content-write flows remain deferred.
+
