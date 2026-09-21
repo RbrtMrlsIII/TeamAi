@@ -677,7 +677,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
 
     const seatRingRadius = Math.max(
       ...scene.parts
-        .filter((part) => part.kind === 'outer-housing')
+        .filter((part) => part.kind === 'inner-pod' && Number.isInteger(part.seatIndex))
         .map((part) => Math.hypot(part.center.x, part.center.z)),
       0,
     );
