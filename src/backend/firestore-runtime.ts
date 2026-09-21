@@ -7,6 +7,7 @@ import type { DurableDomainStateStore, AccountState, SeatState, ConnectionState,
 import type { RuntimeApprovalStore, RuntimeTaskStore } from './task-runtime-bridge.js';
 import type { SeatBudgetSettingsStore } from './seat-turn-budget-settings.js';
 import type { SeatTurnBudgetConfig } from './seat-turn-budget.js';
+import type { TaskContinuationRequest, TaskContinuationStateStore } from './task-continuation.js';
 import type { SchedulerSeat, SchedulerTask } from './scheduler.js';
 
 const FIRESTORE_ROOT = 'https://firestore.googleapis.com/v1';
@@ -349,7 +350,7 @@ export class FirestoreAtomicTaskLeaseStore implements AtomicTaskLeaseStore {
   }
 }
 
-export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore, SeatBudgetSettingsStore {
+export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore, SeatBudgetSettingsStore, TaskContinuationStateStore {
   constructor(private readonly client: FirestoreRuntimeClient, private readonly uid: string, private readonly workplaceId: string) {}
 
   async getAccount(uid: string): Promise<AccountState | null> {
@@ -409,6 +410,69 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   async getTask(uid: string, projectId: string, taskId: string): Promise<TaskStateRecord | null> {
     const doc = await this.client.get(`accounts/${required(uid, 'uid')}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/tasks/${required(taskId, 'taskId')}`);
     return doc ? decodeDocument(doc) as unknown as TaskStateRecord : null;
+  }
+
+  async ensureWaitingForContinuation(input: { request: TaskContinuationRequest }): Promise<void> {
+    const request = input.request;
+    const safeTaskId = required(request.taskId, 'request.taskId');
+    const safeProjectId = required(request.projectId, 'request.projectId');
+    const transaction = await this.client.beginTransaction();
+    const taskPath = FirestoreRuntimeClient.path(
+      this.uid,
+      this.workplaceId,
+      safeProjectId,
+      `tasks/${safeTaskId}`,
+    );
+    const task = await this.client.get(taskPath, transaction);
+    if (!task) throw new Error('continuation_task_not_found');
+
+    const current = decodeDocument(task);
+    const currentStatus = String(current.status ?? '');
+    const currentCheckpointId = String(current.continuationCheckpointId ?? '');
+    const currentRequestId = String(current.continuationRequestId ?? '');
+
+    if (currentStatus === 'waiting_for_continuation') {
+      if (
+        currentCheckpointId !== request.continuationOfCheckpointId ||
+        currentRequestId !== request.continuationRequestId
+      ) {
+        throw new Error('continuation_request_state_conflict');
+      }
+      return;
+    }
+
+    if (currentStatus !== 'handoff_required') {
+      throw new Error(`continuation requires handoff_required task, got ${currentStatus}`);
+    }
+
+    const now = new Date().toISOString();
+    const next = {
+      ...current,
+      status: 'waiting_for_continuation',
+      completionState: 'WAITING_FOR_CONTINUATION',
+      approved: false,
+      approvedBy: null,
+      approvedAt: null,
+      leaseId: null,
+      leasedBy: null,
+      continuationCheckpointId: request.continuationOfCheckpointId,
+      continuationRequestId: request.continuationRequestId,
+      continuationTargetSeatId: request.targetSeatId,
+      continuationRequestedBy: request.requestedBy,
+      continuationRequestedAt: request.requestedAt,
+      continuationInstruction: request.instruction,
+      updatedAt: now,
+    };
+
+    await this.client.commit(transaction, [{
+      update: {
+        name: this.clientPath(taskPath),
+        fields: FirestoreRuntimeClient.fields(next),
+      },
+      currentDocument: task.updateTime
+        ? { updateTime: task.updateTime }
+        : { exists: true },
+    }]);
   }
 
   async appendEvent(event: DurableEventRecord): Promise<void> {
