@@ -22,9 +22,7 @@ export function deriveSetupConfigPlacements({
   workspaceRadius = 1,
   ringScale = 1,
   ringRadius = null,
-  articulationAmount = 1,
   items = DEFAULT_ITEMS,
-  ringRadius = null,
   angleOffset = 0.08,
   y = 0.95,
 } = {}) {
@@ -50,6 +48,8 @@ export function drawSetupConfigRing({
   profile,
   seatCount,
   ringScale = 1,
+  ringRadius = null,
+  articulationAmount = 1,
   items = DEFAULT_ITEMS,
   focusedIndex = -1,
   fillAmount = 0,
