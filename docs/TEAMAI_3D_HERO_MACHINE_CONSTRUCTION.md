@@ -43,6 +43,21 @@ ROOT TRUTH
 
 Historical camera paths, prototype coordinates, ambient timings, and retired Command Deck mechanisms are **replaceable baselines**. They must not constrain adaptive tree/branch/division geometry or semantic electrical topology.
 
+## 1.5 Current 029 construction reconciliation
+
+The active Draft implementation keeps the construction law above, but the current code now has explicit owners for several formerly implicit seams:
+
+- World geometry profile: hero-world-profile.js.
+- R0 receiving core: hero-workspace-core.js.
+- R1/R2 concentric fitting: hero-ring-envelope.js plus the source-owned R1/R2 modules.
+- Seat division payload/geometry/topology: the machine-seat-division-* modules.
+- Semantic electricity route sampling: machine-energy-flow.js.
+- Provisional root ownership/presence: hero-root-contract.js and hero-root-runtime.js.
+
+The world-profile distinction is deliberate: workspace footprint, R0 centerline, Seat-shell radius, and outer-housing radius are separate physical concepts. A geometry value must not be copied between those layers simply because the numbers are similar.
+
+The root model is provisional. Its purpose is to expose missing or duplicate ownership while the product architecture is still settling, not to freeze today's composition as final.
+
 ## 2. Layer dependency map
 
 | Layer | Job | Depends on | Must not |
