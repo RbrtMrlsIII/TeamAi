@@ -99,7 +99,7 @@ test('handoff prediction protects the reserve before hard exhaustion', () => {
   const handoff = accountTurnBudget({
     config,
     usage: usage(1500, 7000),
-    estimatedCompletionNeedTokens: 1200,
+    estimatedCompletionNeedTokens: 2500,
   });
   assert.equal(handoff.state, 'HANDOFF');
   assert.equal(handoff.completionState, 'HANDOFF_REQUIRED');
