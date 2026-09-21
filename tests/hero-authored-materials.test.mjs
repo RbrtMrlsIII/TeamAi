@@ -11,6 +11,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const heroFlex = fs.readFileSync(path.join(process.cwd(), 'public/hero-flex.js'), 'utf8');
+const authoredSource = fs.readFileSync(path.join(process.cwd(), 'frontend/spatial/hero-authored-materials.js'), 'utf8');
+const authoredPublic = fs.readFileSync(path.join(process.cwd(), 'public/hero-authored-materials.js'), 'utf8');
 
 test('Issue #88 material roles are explicit and pure', () => {
   assert.deepEqual([...HERO_AUTHORED_MATERIAL_ROLES], [
