@@ -21,3 +21,7 @@ test('Hero delivery is repository-owned and renderer/controller boundaries are e
   assert.ok(statSync(baseUrl).size > 0);
   assert.ok(entry.length < 30000, 'Hero flex should remain a controller, not a renderer monolith');
 });
+test('Hero controller does not acquire its own WebGL context', () => {
+  assert.equal(entry.includes("getContext('webgl'"), false);
+  assert.equal(renderer.includes("providedGl || canvas?.getContext('webgl'"), true);
+});
