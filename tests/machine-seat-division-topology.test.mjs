@@ -3,6 +3,7 @@ import test from 'node:test';
 import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
 import { seatDivisionFanDirection, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
+import { buildAdjacentDivisionWiring } from '../frontend/spatial/seat-adjacent-division-wiring.js';
 
 const children = [
   'SEAT_CONNECTION',
@@ -235,4 +236,39 @@ test('Seat division route obstruction fails closed', () => {
   });
   assert.equal(validation.valid, false);
   assert.ok(validation.reasons.some((reason) => reason.includes('ROUTE_CROSSES_OBSTACLE')));
+});
+
+
+test('ordered adjacent wiring preserves Connection→Behavior edge regardless of focused child', () => {
+  const connection = deriveFocusedSeatDivisionGeometry({
+    parent,
+    childId: 'SEAT_CONNECTION',
+    childIndex: 0,
+    amount: 1,
+  });
+  const behavior = deriveFocusedSeatDivisionGeometry({
+    parent,
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount: 1,
+  });
+
+  const fromConnection = buildAdjacentDivisionWiring({
+    sourceGeometry: connection,
+    targetGeometry: behavior,
+    amount: 1,
+  });
+  assert.equal(
+    fromConnection.id,
+    'TREE-HERO-SEAT#2:SEAT_CONNECTION:ADJACENCY_WIRING',
+  );
+
+  const fromPreviousToBehavior = buildAdjacentDivisionWiring({
+    sourceGeometry: connection,
+    targetGeometry: behavior,
+    amount: 1,
+  });
+  assert.equal(fromPreviousToBehavior.from.divisionId, connection.id);
+  assert.equal(fromPreviousToBehavior.to.divisionId, behavior.id);
+  assert.equal(fromPreviousToBehavior.presentationOnly, true);
 });
