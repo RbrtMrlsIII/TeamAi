@@ -11,6 +11,7 @@ export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GE
 
 export const SEAT_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
 export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
+export const SEAT_DIVISION_PORT_RADIUS = 0.28;
 
 export function seatDivisionFanAngle(childIndex = 0) {
   const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));

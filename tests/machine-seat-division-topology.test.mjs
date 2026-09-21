@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
-import { seatDivisionFanDirection } from '../frontend/spatial/seat-division-geometry.js';
+import { seatDivisionFanDirection, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
 
 const children = [
   'SEAT_CONNECTION',
@@ -140,6 +140,26 @@ test('fan placement keeps all seven division volumes separated across supported 
         assert.equal(validation.valid, true, validation.reasons.join(', '));
       }
     }
+  }
+});
+
+test('fan target ports stay inside the canonical Seat shell bounds', () => {
+  for (let childIndex = 0; childIndex < children.length; childIndex += 1) {
+    const edge = buildSeatDivisionEdge({
+      parent,
+      geometry: deriveFocusedSeatDivisionGeometry({
+        parent,
+        childId: children[childIndex],
+        childIndex,
+        amount: 1,
+      }),
+      childId: children[childIndex],
+      childIndex,
+    });
+    const target = edge.targetPort;
+    assert.ok(Math.abs(target.x - parent.center.x) <= parent.dimensions.x / 2);
+    assert.ok(Math.abs(target.z - parent.center.z) <= parent.dimensions.z / 2);
+    assert.equal(SEAT_DIVISION_PORT_RADIUS, 0.28);
   }
 });
 

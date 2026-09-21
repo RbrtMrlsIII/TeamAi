@@ -1,5 +1,5 @@
 import { validateMachineConnectionTopology } from './machine-hero-topology.js';
-import { seatDivisionFanDirection } from './seat-division-geometry.js';
+import { seatDivisionFanDirection, SEAT_DIVISION_PORT_RADIUS } from './seat-division-geometry.js';
 
 const EPSILON = 1e-6;
 
@@ -31,7 +31,7 @@ export function seatDivisionPort(parent, childId, childIndex = 0) {
   );
   const index = Math.max(0, Number(childIndex) || 0);
   const direction = seatDivisionFanDirection(parent, index);
-  const radialOffset = scale * 0.46;
+  const radialOffset = scale * SEAT_DIVISION_PORT_RADIUS;
   return Object.freeze({
     id: 'TREE-HERO-SEAT#' + seatIndex + ':SEAT_SHELL:' + semanticId + ':PORT',
     tree: 'TREE-HERO-SEAT',
