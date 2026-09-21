@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { WORKSPACE_CENTER_ID } from '../frontend/spatial/hero-workspace-core.js';
+import { seat1ConnectionEdge } from '../frontend/spatial/seat-connection-edge.js';
 import { readFile } from 'node:fs/promises';
 
 test('Seat-1 connection edge contract is present', async () => {
