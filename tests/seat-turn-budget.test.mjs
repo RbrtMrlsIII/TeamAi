@@ -6,7 +6,7 @@ import {
   createSeatTurnBudgetConfig,
   responsibilityDefaults,
   resolveEffectiveTurnBudget,
-} from '../src/backend/seat-turn-budget.js';
+} from '../dist/src/backend/seat-turn-budget.js';
 
 const usage = (inputTokens, outputTokens) => ({
   inputTokens,
