@@ -746,6 +746,7 @@ window.TeamAiHero = {
   getSubjectLockCameraTarget: () => getSubjectLockSnapshot().target,
   getConnectionBranchAmount: () => getConnectionBranchAmount(hierarchyRuntime),
   getSeat1AdjacentWiring: () => machineWorldRenderer.getSeat1AdjacentWiring(),
+  getSeat1AdjacentWiringDiagnostic: () => machineWorldRenderer.getSeat1AdjacentWiringDiagnostic(),
   requestConnectionConfigure: () => requestSeatDivisionConfigure(HIERARCHY_PART.SEAT_CONNECTION),
   CONNECTION_BRANCH_MS,
   connectionFaceAccessibleName,
