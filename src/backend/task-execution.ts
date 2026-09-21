@@ -113,12 +113,19 @@ export class TaskExecutionService {
     if (!idempotencyKey.trim()) throw new Error('idempotencyKey is required');
     if (!task.id.trim()) throw new Error('task.id is required');
     if (await this.events.hasIdempotencyKey(idempotencyKey)) {
-      const status = task.status === 'completed'
-        ? 'completed'
-        : task.status === 'handoff_required' || task.status === 'waiting_for_continuation'
-          ? 'handoff_required'
-          : 'failed';
-      return { status, duplicate: true };
+      const status = continuationContext
+        ? 'handoff_required'
+        : task.status === 'completed'
+          ? 'completed'
+          : task.status === 'handoff_required' || task.status === 'waiting_for_continuation'
+            ? 'handoff_required'
+            : 'failed';
+      return {
+        status,
+        duplicate: true,
+        continuationRequestId: continuationContext?.requestId,
+        continuationOfCheckpointId: continuationContext?.continuationOfCheckpointId,
+      };
     }
     if (continuationContext) {
       if (task.status !== 'waiting_for_continuation') {
