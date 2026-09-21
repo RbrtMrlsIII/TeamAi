@@ -17,3 +17,5 @@ export * from './catalog-service.js';
 export * from './backend/commerce.js';
 export * from './backend/provider-runtime.js';
 export * from './backend/task-execution.js';
+export * from './backend/seat-turn-budget.js';
+export * from './providers/termination.js';
