@@ -48,6 +48,7 @@ The TeamAi web app should not proxy or persist the ZIP merely to make the handof
 - GitHub upload and external AI upload are distinguishable actions.
 - Artifact provenance and version identity remain visible/auditable.
 - TeamAi does not require Firebase Cloud Storage for project artifacts. The planned TeamAi Storage facility is a separate entitled user-content surface and does not implicitly become the project-repository/ZIP transport.
+- Current TeamAi Storage product scope is item inventory only. Image/file upload and binary object-transfer surfaces remain deferred pending explicit security and cost controls.
 - The workflow remains compatible with Firebase Spark.
 
 ## Failure and recovery
