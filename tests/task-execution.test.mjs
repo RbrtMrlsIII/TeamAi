@@ -223,3 +223,99 @@ test('idempotent retry preserves handoff outcome', async () => {
   assert.equal(second.status, 'handoff_required');
   assert.equal(second.duplicate, true);
 });
+
+
+test('continuation execution starts a fresh budgeted turn from the durable checkpoint', async () => {
+  const events = [];
+  const calls = [];
+  const runtime = new ProviderRuntime(new Map([['fixture', {
+    provider: 'fixture',
+    async generate(request) {
+      calls.push(request);
+      return {
+        provider: 'fixture',
+        model: 'model-2',
+        requestId: 'request-cont-1',
+        text: 'final implementation',
+        usage: { inputTokens: 12, outputTokens: 18, totalTokens: 30 },
+        termination: { state: 'completed', reason: 'stop', providerReason: 'stop' },
+      };
+    },
+  }]]));
+  const execution = new TaskExecutionService(runtime, {
+    async hasIdempotencyKey() { return false; },
+    async append(event) { events.push(event); },
+  }, {
+    async hasResult() { return false; },
+    async getResult() { return null; },
+    async persist(result) { calls.push({ persisted: result }); },
+  });
+  const task = {
+    id: 'task-cont-1',
+    projectId: 'project-1',
+    seatId: 'seat-coder',
+    provider: 'fixture',
+    model: 'model-2',
+    status: 'waiting_for_continuation',
+    approved: false,
+    authorizationStatus: 'authorized',
+    connection: { id: 'connection-1', projectId: 'project-1', providerCode: 'fixture', environment: 'development', capabilities: ['execute'], status: 'active' },
+    request: { messages: [{ role: 'user', content: 'implement the task' }] },
+    turnBudget: {
+      turnBudgetTokens: 1000,
+      outputBudgetTokens: 400,
+      reasoningBudgetTokens: 400,
+      handoffReserveTokens: 200,
+      warningThresholdPercent: 0.8,
+      hardStopPolicy: 'handoff-before-exhaustion',
+      responsibilityProfile: 'coder',
+      contextInputPolicy: { retention: 'minimal-durable-context' },
+    },
+  };
+  const checkpoint = {
+    checkpointId: 'exec-old:checkpoint',
+    taskId: task.id,
+    projectId: task.projectId,
+    seatId: task.seatId,
+    actorId: 'actor-1',
+    sourceExecutionId: 'exec-old',
+    sourceEventId: 'exec-old:handoff:event',
+    createdAt: '2026-09-22T00:20:00Z',
+    status: 'awaiting_continuation',
+    completionState: 'HANDOFF_REQUIRED',
+    provider: 'fixture',
+    model: 'model-2',
+    termination: { state: 'incomplete', reason: 'length' },
+    providerOutput: 'partial implementation from the first turn',
+    usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 },
+    nextAction: 'authorized-continuation-turn',
+  };
+  const request = {
+    continuationRequestId: 'cont-1',
+    taskId: task.id,
+    projectId: task.projectId,
+    checkpointId: checkpoint.checkpointId,
+    sourceSeatId: task.seatId,
+    targetSeatId: task.seatId,
+    requestedBy: 'actor-1',
+    requestedAt: '2026-09-22T00:21:00Z',
+    instruction: 'finish the remaining implementation',
+    status: 'requested',
+    continuationOfCheckpointId: checkpoint.checkpointId,
+    nextTurn: 'fresh-budgeted-turn',
+  };
+
+  const result = await execution.executeContinuation(task, request, checkpoint, 'actor-1', 'exec-new');
+  assert.equal(result.status, 'completed');
+  assert.equal(result.continuationRequestId, 'cont-1');
+  assert.equal(result.continuationOfCheckpointId, checkpoint.checkpointId);
+  assert.equal(task.status, 'completed');
+  assert.equal(events[0].type, 'CONTINUE_START');
+  assert.equal(events[0].idempotencyKey, 'exec-new');
+  assert.equal(calls[0].messages.at(-2).role, 'assistant');
+  assert.equal(calls[0].messages.at(-2).content, checkpoint.providerOutput);
+  assert.equal(calls[0].messages.at(-1).role, 'user');
+  assert.equal(calls[0].messages.at(-1).content, request.instruction);
+  assert.ok(calls[0].maxOutputTokens <= 400);
+  assert.equal(calls.at(-1).persisted.continuationOfCheckpointId, checkpoint.checkpointId);
+});
