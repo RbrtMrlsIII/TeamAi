@@ -58,7 +58,8 @@ test('V0.4 flex wheel is not blocked by openParentId hard return', async () => {
   assert.ok(wheelIdx > 0);
   const snippet = src.slice(wheelIdx, wheelIdx + 450);
   assert.doesNotMatch(snippet, /if\s*\(\s*hierarchyRuntime\.openParentId\s*\)\s*return/);
-  assert.match(snippet, /applyNavCamera/);
+  assert.match(src, /function applyNavCamera\(\)[\s\S]*shouldApplyTreeNav/);
+  assert.match(src, /onWheel\(event\)[\s\S]*applyNavCamera\(\)/);
 });
 
 test('V0.4 controller applies free-nav gate and passes orbit state to renderer', async () => {
