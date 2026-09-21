@@ -78,6 +78,119 @@ export async function firestoreGet(documentPath: string, accessToken: string): P
   return { exists: true, fields: (data.fields ?? {}) as Record<string, unknown> };
 }
 
+
+type FirestoreRunQueryResponse = {
+  document?: {
+    name?: string;
+    fields?: Record<string, unknown>;
+  };
+};
+
+function parseRunQueryDocuments(body: string): FirestoreRunQueryResponse[] {
+  const trimmed = body.trim();
+  if (!trimmed) return [];
+  try {
+    const parsed = JSON.parse(trimmed) as unknown;
+    const rows = Array.isArray(parsed) ? parsed : [parsed];
+    return rows.filter((row): row is FirestoreRunQueryResponse => Boolean(row && typeof row === "object"));
+  } catch {
+    return trimmed
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as FirestoreRunQueryResponse);
+  }
+}
+
+export type FirestoreSeatDocument = {
+  path: string;
+  teamId: string;
+  fields: Record<string, FirestoreDecodedValue>;
+};
+
+/**
+ * Resolve a Seat from the canonical team-nested Firestore hierarchy.
+ * Historical project-level /seats documents are ignored.
+ */
+export async function firestoreFindSeat(input: {
+  uid: string;
+  workplaceId: string;
+  projectId: string;
+  seatId: string;
+  accessToken: string;
+}): Promise<FirestoreSeatDocument | null> {
+  for (const [key, value] of Object.entries(input)) {
+    if (typeof value !== "string" || !value.trim()) throw new Error(key + "_required");
+  }
+
+  const parentPath =
+    "accounts/" + input.uid +
+    "/workplaces/" + input.workplaceId +
+    "/projects/" + input.projectId;
+  const response = await fetch(firestoreDocumentUrl(parentPath) + ":runQuery", {
+    method: "POST",
+    headers: {
+      authorization: "Bearer " + input.accessToken,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      structuredQuery: {
+        from: [{ collectionId: "seats", allDescendants: true }],
+        where: {
+          fieldFilter: {
+            field: { fieldPath: "seatId" },
+            op: "EQUAL",
+            value: { stringValue: input.seatId },
+          },
+        },
+        limit: 2,
+      },
+    }),
+  });
+  if (!response.ok) throw jsonError("firestore_seat_query_failed:" + response.status);
+
+  const rows = parseRunQueryDocuments(await response.text());
+  const matches = rows
+    .map((row) => row.document)
+    .filter((document): document is NonNullable<FirestoreRunQueryResponse["document"]> => Boolean(document?.name))
+    .map((document) => {
+      const marker = "/documents/";
+      const markerIndex = String(document.name).indexOf(marker);
+      if (markerIndex < 0) return null;
+      const path = String(document.name).slice(markerIndex + marker.length);
+      const segments = path.split("/");
+      const canonical =
+        segments.length === 10 &&
+        segments[0] === "accounts" &&
+        segments[1] === input.uid &&
+        segments[2] === "workplaces" &&
+        segments[3] === input.workplaceId &&
+        segments[4] === "projects" &&
+        segments[5] === input.projectId &&
+        segments[6] === "teams" &&
+        segments[8] === "seats" &&
+        segments[9] === input.seatId;
+      if (!canonical) return null;
+
+      const fields = decodeFirestoreFields(document.fields);
+      if (
+        String(fields.uid ?? "") !== input.uid ||
+        String(fields.workplaceId ?? "") !== input.workplaceId ||
+        String(fields.projectId ?? "") !== input.projectId ||
+        String(fields.seatId ?? "") !== input.seatId
+      ) {
+        return null;
+      }
+
+      const teamId = String(fields.teamId ?? segments[7] ?? "").trim();
+      if (!teamId) return null;
+      return { path, teamId, fields } satisfies FirestoreSeatDocument;
+    })
+    .filter((seat): seat is FirestoreSeatDocument => Boolean(seat));
+
+  if (matches.length > 1) throw new Error("seat_ambiguous");
+  return matches[0] ?? null;
+}
+
 export async function firestoreCreate(documentPath: string, fields: Record<string, unknown>, accessToken: string): Promise<"created" | "exists"> {
   const slash = documentPath.lastIndexOf("/");
   const parent = slash >= 0 ? documentPath.slice(0, slash) : "";
