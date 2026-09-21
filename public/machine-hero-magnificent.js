@@ -8,10 +8,12 @@ export function mountMagnificentMachine(root = globalThis.document) {
   const canvas = root?.querySelector?.('[data-machine-magnificent]');
   if (!canvas) return null;
   if (canvas._machineController) return canvas._machineController;
-  const gl = canvas.getContext('webgl', { antialias: true, alpha: true });
-  if (!gl) return null;
-
-  const renderer = createMachineWorldRenderer({ canvas, gl });
+  let renderer;
+  try {
+    renderer = createMachineWorldRenderer({ canvas });
+  } catch {
+    return null;
+  }
   let expanded = false;
   let branchId = 'HUB-CORE';
   let raf = null;
