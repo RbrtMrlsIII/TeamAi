@@ -148,6 +148,7 @@ export class TaskExecutionService {
           eventId: handoffEvent.eventId,
           idempotencyKey: handoffKey,
           status: 'handoff_required',
+          continuationCheckpointId: checkpoint.checkpointId,
           recordedAt: handoffEvent.occurredAt,
           result,
           termination: result.termination,
