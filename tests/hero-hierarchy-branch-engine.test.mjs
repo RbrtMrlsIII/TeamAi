@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   HIERARCHY_PART,
+  SEAT_DIVISION_CONFIG_COMMANDS,
+  resolveSeatDivisionConfigCommand,
   HIERARCHY_PHASE,
   createHierarchyRuntime,
   focusChild,
@@ -78,4 +80,16 @@ test('focusChild clears every sibling branch deterministically', () => {
   assert.equal(state.toolkitBranchAmount, 0.15);
   assert.equal(state.toolkitBranchStartMs, 250);
   assert.equal(state.focusedChildId, HIERARCHY_PART.SEAT_TOOLKIT);
+});
+
+
+test('Seat division command contract maps each key to exactly one semantic child', () => {
+  assert.equal(SEAT_DIVISION_CONFIG_COMMANDS.length, 7);
+  assert.equal(new Set(SEAT_DIVISION_CONFIG_COMMANDS.map((entry) => entry.key)).size, 7);
+  for (const entry of SEAT_DIVISION_CONFIG_COMMANDS) {
+    assert.equal(resolveSeatDivisionConfigCommand(entry.key), entry);
+    assert.equal(typeof entry.request, 'function');
+    assert.ok(entry.targetSection);
+    assert.ok(entry.childId);
+  }
 });
