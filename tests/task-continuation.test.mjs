@@ -403,3 +403,46 @@ test('idempotent continuation retry re-heals waiting_for_continuation state', as
   assert.equal(result.continuationRequestId, existingRequest.continuationRequestId);
   assert.deepEqual(calls, ['cont-state-2']);
 });\n
+
+
+test('continuation request ID conflicts when the checkpoint relation changes', async () => {
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    {
+      async getCheckpoint() { throw new Error('must not load checkpoint on request-id conflict'); },
+      async persistCheckpoint() {},
+    },
+    {
+      async getRequest() {
+        return {
+          continuationRequestId: 'cont-5',
+          taskId: 'task-1',
+          projectId: 'project-1',
+          checkpointId: 'exec-old:checkpoint',
+          sourceSeatId: 'seat-coder',
+          targetSeatId: 'seat-coder',
+          requestedBy: 'actor-1',
+          requestedAt: '2026-09-22T00:06:00.000Z',
+          instruction: 'continue',
+          status: 'requested',
+          continuationOfCheckpointId: 'exec-old:checkpoint',
+          nextTurn: 'fresh-budgeted-turn',
+        };
+      },
+      async persistRequest() { throw new Error('must not persist'); },
+    },
+    { async assertCanContinue() { throw new Error('must not authorize'); } },
+  );
+
+  await assert.rejects(
+    service.request({
+      taskId: 'task-1',
+      projectId: 'project-1',
+      checkpointId: 'exec-new:checkpoint',
+      continuationRequestId: 'cont-5',
+      targetSeatId: 'seat-coder',
+      actorId: 'actor-1',
+      instruction: 'continue',
+    }),
+    /continuation_request_id_conflict/,
+  );
+});
