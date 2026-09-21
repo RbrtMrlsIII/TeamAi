@@ -304,9 +304,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now, seatRingRadius, articulationAmount }) {
     const profile = worldProfile(seatCount);
-    const envelope = deriveConcentricRingEnvelope({
+    const workspaceCore = deriveWorkspaceCoreGeometry({
       workspaceRadius: profile.workspace,
-      seatRingRadius,
+      expansionAmount: articulationAmount,
+    });
+    const envelope = deriveConcentricRingEnvelope({
+      r0Radius: workspaceCore.radius,
+      r3Radius: seatRingRadius,
       ringR1Scale: RING_R1_SCALE,
       ringR2Scale: RING_R2_SCALE,
     });
@@ -354,6 +358,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldR1Threads = '2';
     canvas.dataset.machineWorldR2 = 'setup-config';
     canvas.dataset.machineWorldR2Count = String(SETUP_CONFIG_V1.length);
+    canvas.dataset.machineWorldR0Radius = String(envelope.workspaceRadius);
     canvas.dataset.machineWorldR1Radius = String(envelope.r1Radius);
     canvas.dataset.machineWorldR2Radius = String(envelope.r2Radius);
     canvas.dataset.machineWorldR3Radius = String(envelope.seatRingRadius);
@@ -845,7 +850,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
       gl.drawArrays(gl.LINE_STRIP,0,connection.route.length);
     }
-    const workspaceProfile = worldProfile(seatCount);
     const workspaceCore = deriveWorkspaceCoreGeometry({
       workspaceRadius: workspaceProfile.workspace,
       expansionAmount: sample.amount,
