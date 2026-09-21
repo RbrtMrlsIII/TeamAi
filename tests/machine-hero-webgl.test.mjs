@@ -46,7 +46,7 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const childStart = renderer.indexOf('function renderSeat1ConnectionChild(');
   const childBodyStart = renderer.indexOf('{', childStart) + 1;
-  const childEnd = renderer.indexOf('\n  function renderSeat1AdjacentWiring', childStart);
+  const childEnd = renderer.indexOf('\n  function renderAdjacentDivisionWiring', childStart);
   assert.ok(childStart >= 0 && childBodyStart > childStart && childEnd > childBodyStart);
   const childBody = renderer.slice(childBodyStart, childEnd);
   assert.doesNotMatch(childBody, /renderSeat1ConnectionChild\s*\(/);
