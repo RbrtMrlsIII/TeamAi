@@ -22,7 +22,7 @@ test('029 reconciliation keeps retired TURN_FOLLOW absent from controller', asyn
 test('029 reconciliation leaves contribution transition camera-neutral', async () => {
   reconcile();
   const runtime = await readRuntime();
-  assert.match(runtime, /setState\(['"]CONTRIBUTE['"],['"]contribution-start['"]\)/);
+  assert.match(runtime, /setState\(\s*['"]CONTRIBUTE['"]\s*,\s*['"]contribution-start['"]\s*\)/);
   assert.doesNotMatch(
     runtime,
     /setCamera\(['"](?:TURN_FOLLOW|HERO_WIDE)['"]\);\s*setState\(['"]CONTRIBUTE['"],\s*['"]contribution-start['"]\)/,
