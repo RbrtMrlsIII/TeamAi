@@ -25,6 +25,11 @@ export const HERO_ROOTS = Object.freeze({
     layer: 'normal-ui',
     owner: 'hero-settings-shell',
   }),
+  mcp: Object.freeze({
+    id: 'hero-mcp-facility',
+    layer: 'normal-ui',
+    owner: 'hero-mcp-capability-facility',
+  }),
   diagnostics: Object.freeze({
     id: 'hero-diagnostics',
     layer: 'diagnostic',

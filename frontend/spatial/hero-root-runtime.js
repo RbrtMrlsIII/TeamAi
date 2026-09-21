@@ -11,6 +11,7 @@ export function deriveHeroRootPresence(root = globalThis.document) {
     machine: Boolean(root?.querySelector?.('#hero-canvas') || globalThis.window?.TeamAiHero),
     auth: Boolean(root?.querySelector?.('#hero-auth-panel') || globalThis.window?.TeamAiHeroAuthHandoff),
     settings: Boolean(root?.querySelector?.('#hero-settings-shell') || root?.querySelector?.('#hero-settings-panel')),
+    mcp: Boolean(root?.querySelector?.('#hero-mcp-facility') || globalThis.window?.TeamAiMcpFacility),
     diagnostics: Boolean(root?.querySelector?.('[data-hero-machine-proof]')),
   };
   return Object.freeze(presence);

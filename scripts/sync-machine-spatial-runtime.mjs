@@ -37,6 +37,8 @@ const files = [
   'machine-energy-flow.js',
   'machine-choreography.js',
   'mcp-capability.js',
+  'mcp-capability-facility.js',
+  'mcp-capability.css',
 ];
 
 const checkOnly = process.argv.includes('--check');
