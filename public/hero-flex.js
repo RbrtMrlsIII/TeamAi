@@ -39,36 +39,36 @@ import {
   tickConnectionBranch,
   getConnectionBranchAmount,
   connectionFaceAccessibleName,
-  requestConnectionConfigureHandoff,
+
   tickBehaviorBranch,
   getBehaviorBranchAmount,
   behaviorFaceAccessibleName,
-  requestBehaviorConfigureHandoff,
+
   BEHAVIOR_BRANCH_MS,
   tickToolkitBranch,
   getToolkitBranchAmount,
   toolkitFaceAccessibleName,
-  requestToolkitConfigureHandoff,
+
   TOOLKIT_BRANCH_MS,
   tickCapabilitiesBranch,
   getCapabilitiesBranchAmount,
   capabilitiesFaceAccessibleName,
-  requestCapabilitiesConfigureHandoff,
+
   CAPABILITIES_BRANCH_MS,
   tickAuthorizationBranch,
   getAuthorizationBranchAmount,
   authorizationFaceAccessibleName,
-  requestAuthorizationConfigureHandoff,
+
   AUTHORIZATION_BRANCH_MS,
   tickWorkspaceScopeBranch,
   getWorkspaceScopeBranchAmount,
   workspaceScopeFaceAccessibleName,
-  requestWorkspaceScopeConfigureHandoff,
+
   WORKSPACE_SCOPE_BRANCH_MS,
   tickTaskEvidenceBranch,
   getTaskEvidenceBranchAmount,
   taskEvidenceFaceAccessibleName,
-  requestTaskEvidenceConfigureHandoff,
+
   TASK_EVIDENCE_BRANCH_MS,
   SETUP_RING_FILL_MS,
   SETUP_RING_FOV_FILL,
@@ -90,6 +90,8 @@ import {
   healthLeafAccessibleName,
   getHierarchySnapshot,
   seatShellParentId,
+  resolveSeatDivisionConfigCommand,
+  requestSeatDivisionConfigure,
 } from './hero-hierarchy-runtime.js';
 import { cycleSeatShellBranchFocus } from './hero-seat-branch-walk.js';
 import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
@@ -570,18 +572,15 @@ function handleKeyDown(event) {
     event.preventDefault();
   }
 
-  const handoffs = {
-    c: [HIERARCHY_PART.SEAT_CONNECTION, requestConnectionConfigureHandoff, 'connection'],
-    b: [HIERARCHY_PART.SEAT_BEHAVIOR, requestBehaviorConfigureHandoff, 'behavior'],
-    t: [HIERARCHY_PART.SEAT_TOOLKIT, requestToolkitConfigureHandoff, 'toolkit'],
-    k: [HIERARCHY_PART.SEAT_CAPABILITIES, requestCapabilitiesConfigureHandoff, 'capabilities'],
-    a: [HIERARCHY_PART.SEAT_AUTHORIZATION, requestAuthorizationConfigureHandoff, 'authorization'],
-    w: [HIERARCHY_PART.SEAT_WORKSPACE_SCOPE, requestWorkspaceScopeConfigureHandoff, 'workspace-scope'],
-    e: [HIERARCHY_PART.SEAT_TASK_EVIDENCE, requestTaskEvidenceConfigureHandoff, 'task-evidence'],
-  };
-  const handoff = handoffs[key.toLowerCase()];
-  if (handoff && hierarchyRuntime.openParentId && hierarchyRuntime.focusedChildId === handoff[0]) {
-    handoff[1]({ targetSection: handoff[2] });
+    const handoff = resolveSeatDivisionConfigCommand(key);
+  if (
+    handoff
+    && hierarchyRuntime.openParentId
+    && hierarchyRuntime.focusedChildId === handoff.childId
+  ) {
+    requestSeatDivisionConfigure(handoff.childId, {
+      targetSection: handoff.targetSection,
+    });
     event.preventDefault();
   }
 
