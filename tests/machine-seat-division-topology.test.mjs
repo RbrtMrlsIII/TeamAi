@@ -87,3 +87,32 @@ test('full Seat division network reuses shared AABB/port/route clearance authori
   assert.equal(validation.divisionCount, 7);
   assert.equal(validation.edgeCount, 7);
 });
+
+
+test('Seat division route obstruction fails closed', () => {
+  const divisions = children.map((childId, childIndex) =>
+    deriveFocusedSeatDivisionGeometry({ parent, childId, childIndex, amount: 1 }),
+  );
+  const edge = buildSeatDivisionEdge({
+    parent,
+    geometry: divisions[0],
+    childId: children[0],
+    childIndex: 0,
+  });
+  const obstacle = {
+    semantic: 'OBSTRUCTION',
+    center: {
+      ...edge.route[1],
+    },
+    dimensions: { width: 0.32, height: 0.32, depth: 0.32 },
+  };
+  const validation = validateSeatDivisionNetwork({
+    parent: { ...parent, semanticId: 'SEAT_SHELL' },
+    divisions,
+    edges: [edge],
+    obstacles: [obstacle],
+    clearance: 0.08,
+  });
+  assert.equal(validation.valid, false);
+  assert.ok(validation.reasons.some((reason) => reason.includes('ROUTE_CROSSES_OBSTACLE')));
+});
