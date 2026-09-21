@@ -192,7 +192,7 @@ function setState(next, reason = 'transition') {
 
 function seatCameraProfile() {
   return {
-    seatRadius: seatRadiusForCount(seatCount),
+    seatRadius: deriveMachineWorldProfile(seatCount).seatShellRadius,
   };
 }
 
