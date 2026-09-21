@@ -420,7 +420,19 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   }
 
   function renderSeat1ConnectionChild(scene, amount, selectedBranch, reducedMotion, now) {
-    if (selectedBranch !== 'BRANCH-SEAT-01' || amount <= 0.02) return null;
+    if (selectedBranch !== 'BRANCH-SEAT-01' || amount <= 0.02) {
+      for (const key of [
+        'seatConnectionSemantic',
+        'seatConnectionGeometry',
+        'seatConnectionEdge',
+        'seatConnectionHealth',
+        'seatConnectionDrawPath',
+        'seatConnectionProof',
+      ]) {
+        delete canvas.dataset[key];
+      }
+      return null;
+    }
     const shell = scene.byBranch.get('BRANCH-SEAT-01');
     const child = buildMachineCoreSeat1Connection({
       shell,
@@ -496,8 +508,18 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const neighborId = SEAT_DIVISION_ORDER[neighborIndex];
     if (!neighborId || neighborId === state.focusedChildId) return;
 
-    const sourcePayload = resolveSeatDivisionPayload(state.focusedChildId);
-    const targetPayload = resolveSeatDivisionPayload(neighborId);
+    // The wiring always represents the ordered neighborhood edge. At the first
+    // child, focus is the source and the next child is the target. For later
+    // children, the previous neighbor is the source and the focused child is
+    // the target. This preserves one stable Connection→Behavior seam while
+    // remaining generalized for all seven divisions.
+    const sourceId = focusedIndex > 0 ? neighborId : state.focusedChildId;
+    const targetId = focusedIndex > 0 ? state.focusedChildId : neighborId;
+    const sourceIndex = focusedIndex > 0 ? neighborIndex : focusedIndex;
+    const targetIndex = focusedIndex > 0 ? focusedIndex : neighborIndex;
+
+    const sourcePayload = resolveSeatDivisionPayload(sourceId);
+    const targetPayload = resolveSeatDivisionPayload(targetId);
     if (!sourcePayload || !targetPayload) return;
 
     const branchAmounts = state.seatDivisionBranchAmounts || {};
@@ -517,13 +539,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const sourceGeometry = deriveFocusedSeatDivisionGeometry({
       parent: shell,
       childId: state.focusedChildId,
-      childIndex: focusedIndex,
+      childIndex: sourceIndex,
       amount: sourceAmount,
     });
     const targetGeometry = deriveFocusedSeatDivisionGeometry({
       parent: shell,
-      childId: neighborId,
-      childIndex: neighborIndex,
+      childId: targetId,
+      childIndex: targetIndex,
       amount: targetAmount,
     });
     if (!sourceGeometry || !targetGeometry) return;
