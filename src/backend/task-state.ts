@@ -11,7 +11,7 @@ export type TaskStatus =
   | 'handoff_required'
   | 'waiting_for_continuation';
 
-export type TaskEventType = 'READY' | 'LEASE' | 'START' | 'WAIT_APPROVAL' | 'BLOCK' | 'COMPLETE' | 'FAIL' | 'CANCEL' | 'HANDOFF_REQUIRED' | 'CONTINUE_WAIT';
+export type TaskEventType = 'READY' | 'LEASE' | 'START' | 'WAIT_APPROVAL' | 'BLOCK' | 'COMPLETE' | 'FAIL' | 'CANCEL' | 'HANDOFF_REQUIRED' | 'CONTINUE_WAIT' | 'CONTINUE_START';
 
 const TRANSITIONS: Record<TaskStatus, Partial<Record<TaskEventType, TaskStatus>>> = {
   pending: { READY: 'ready', CANCEL: 'cancelled' },
@@ -24,7 +24,7 @@ const TRANSITIONS: Record<TaskStatus, Partial<Record<TaskEventType, TaskStatus>>
   failed: {},
   cancelled: {},
   handoff_required: { CONTINUE_WAIT: 'waiting_for_continuation', CANCEL: 'cancelled', FAIL: 'failed' },
-  waiting_for_continuation: { CANCEL: 'cancelled' },
+  waiting_for_continuation: { CONTINUE_START: 'running', CANCEL: 'cancelled' },
 };
 
 export type TaskEvent = {
