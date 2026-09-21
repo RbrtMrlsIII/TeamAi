@@ -11,7 +11,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 test('V2.4 settings shell imports theme-root', async () => {
   const src = await readFile(join(root, 'public/hero-settings-shell.js'), 'utf8');
-  assert.match(src, /from '\.\.\/frontend\/spatial\/theme-root\.js'/);
+  assert.match(src, /from '\.\/theme-root\.js'/);
   assert.match(src, /applyDocumentTheme/);
   assert.match(src, /persistTheme/);
   assert.match(src, /initializeTheme/);
