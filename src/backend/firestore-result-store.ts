@@ -1,6 +1,11 @@
 import { createSign } from 'node:crypto';
 import type { DurableExecutionResult, TaskExecutionResultIdentity, TaskExecutionResultStore } from './task-execution-result.js';
-import type { TaskContinuationCheckpoint, TaskContinuationCheckpointStore } from './task-continuation.js';
+import type {
+  TaskContinuationCheckpoint,
+  TaskContinuationCheckpointStore,
+  TaskContinuationRequest,
+  TaskContinuationRequestStore,
+} from './task-continuation.js';
 
 const ROOT = 'https://firestore.googleapis.com/v1';
 type ServiceAccount = { project_id: string; client_email: string; private_key: string };
@@ -158,7 +163,7 @@ async function exchangeAccessToken(account: ServiceAccount): Promise<string> {
 }
 
 
-export class FirestoreTaskContinuationCheckpointStore implements TaskContinuationCheckpointStore {
+export class FirestoreTaskContinuationCheckpointStore implements TaskContinuationCheckpointStore, TaskContinuationRequestStore {
   private readonly account = loadServiceAccount();
   private readonly firebaseProjectId: string;
   private readonly uid: string;
@@ -192,6 +197,57 @@ export class FirestoreTaskContinuationCheckpointStore implements TaskContinuatio
     return decodeDocument(await response.json() as FirestoreDocument) as unknown as TaskContinuationCheckpoint;
   }
 
+  async getRequest(
+    projectId: string,
+    taskId: string,
+    continuationRequestId: string,
+  ): Promise<TaskContinuationRequest | null> {
+    required(projectId, 'projectId');
+    required(taskId, 'taskId');
+    required(continuationRequestId, 'continuationRequestId');
+    const token = await this.accessToken();
+    const response = await fetch(
+      this.documentHttpUrl(this.requestPath(projectId, taskId, continuationRequestId)),
+      { headers: { authorization: `Bearer ${token}` } },
+    );
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Firestore continuation request read failed: ${response.status}`);
+    return decodeDocument(await response.json() as FirestoreDocument) as unknown as TaskContinuationRequest;
+  }
+
+  async persistRequest(request: TaskContinuationRequest): Promise<void> {
+    required(request.taskId, 'request.taskId');
+    required(request.projectId, 'request.projectId');
+    required(request.continuationRequestId, 'request.continuationRequestId');
+    required(request.checkpointId, 'request.checkpointId');
+    required(request.sourceSeatId, 'request.sourceSeatId');
+    required(request.targetSeatId, 'request.targetSeatId');
+    required(request.requestedBy, 'request.requestedBy');
+    required(request.instruction, 'request.instruction');
+
+    const token = await this.accessToken();
+    const response = await fetch(
+      `${ROOT}/projects/${encodeURIComponent(this.firebaseProjectId)}/databases/(default)/documents:commit`,
+      {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          writes: [{
+            update: {
+              name: this.resourceName(this.requestPath(request.projectId, request.taskId, request.continuationRequestId)),
+              fields: fields(request as unknown as Record<string, unknown>),
+            },
+            currentDocument: { exists: false },
+          }],
+        }),
+      },
+    );
+    if (!response.ok && ![409, 412].includes(response.status)) {
+      const body = await response.text();
+      throw new Error(`Firestore continuation request write failed: ${response.status} ${body.slice(0, 300)}`);
+    }
+  }
+
   async persistCheckpoint(checkpoint: TaskContinuationCheckpoint): Promise<void> {
     required(checkpoint.taskId, 'checkpoint.taskId');
     required(checkpoint.projectId, 'checkpoint.projectId');
@@ -217,6 +273,10 @@ export class FirestoreTaskContinuationCheckpointStore implements TaskContinuatio
       const body = await response.text();
       throw new Error(`Firestore continuation checkpoint write failed: ${response.status} ${body.slice(0, 300)}`);
     }
+  }
+
+  private requestPath(projectId: string, taskId: string, continuationRequestId: string): string {
+    return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/tasks/${required(taskId, 'taskId')}/continuation-requests/${required(continuationRequestId, 'continuationRequestId')}`;
   }
 
   private checkpointPath(projectId: string, taskId: string, checkpointId: string): string {
