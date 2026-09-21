@@ -1,23 +1,25 @@
 #!/usr/bin/env node
 /**
- * 029 Seat division focus-compaction source sync.
+ * Historical compatibility verifier for Seat division focus compaction.
  *
- * The transition is now owned by public/hero-hierarchy-runtime.js and the
- * canonical Hero controller. This command only synchronizes the Hero source
- * copy and refuses to mutate runtime semantics.
+ * The canonical Hero source is authoritative. This command performs no
+ * synchronization or runtime mutation.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const sourcePath = join(root, 'public/_flex_src/hero-flex.base.js');
-const publicPath = join(root, 'public/hero-flex.js');
-const source = readFileSync(sourcePath, 'utf8');
-if (!source.includes('tickDivisionFocusTransition')) {
-  throw new Error('canonical Hero source does not contain division focus transition');
+const root = join(fileURLToPath(import.meta.url), "..", "..");
+const sourcePath = join(root, "public/_flex_src/hero-flex.base.js");
+const publicPath = join(root, "public/hero-flex.js");
+const source = readFileSync(sourcePath, "utf8");
+const browser = readFileSync(publicPath, "utf8");
+
+if (!source.includes("tickDivisionFocusTransition")) {
+  throw new Error("canonical Hero source lacks division focus transition");
 }
-writeFileSync(publicPath, source);
-const mirrored = readFileSync(publicPath, 'utf8');
-if (mirrored !== source) throw new Error('Hero source parity failed');
-console.log('Seat division focus-compaction source synchronized');
+if (browser !== source) {
+  throw new Error("Hero source/public parity failed");
+}
+
+console.log("Seat division focus compaction is source-owned; no mutation performed");
