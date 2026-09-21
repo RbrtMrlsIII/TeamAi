@@ -123,6 +123,7 @@ function renderTierList() {
         '<span class="marketplace-facility__tier-state" data-state="' + state + '">' + state + '</span>' +
       '</div>' +
       '<p>' + tier.guide + '</p>' +
+      '<p class="marketplace-facility__effect">Billing cycle: monthly</p>' +
       (tier.seat ? '<p class="marketplace-facility__effect">Persistent capacity effect: Seat ' + tier.seat + '</p>' : '') +
       '<button type="button" data-marketplace-tier="' + tier.tier + '"' +
         (disabled ? ' disabled' : '') +

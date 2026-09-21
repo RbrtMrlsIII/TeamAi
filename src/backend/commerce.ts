@@ -40,6 +40,21 @@ export type CommerceOfferReference = {
   tier: number;
 };
 
+export type CommerceAggregateStatus = 'pending' | 'completed' | 'cancelled' | 'unavailable' | 'error';
+
+export type CommerceReadModel = {
+  aggregateStatus: CommerceAggregateStatus;
+  entitlementStatus: EntitlementProjection['status'] | 'missing';
+  entitlementSourceCommerceEventId: string | null;
+  providerEntitlementStatus: string | null;
+};
+
+export function isCommerceAccessActive(readModel: CommerceReadModel): boolean {
+  return readModel.aggregateStatus === 'completed'
+    && readModel.entitlementStatus === 'active'
+    && Boolean(readModel.entitlementSourceCommerceEventId);
+}
+
 export type CommerceCorrelation = {
   firebaseUid: string;
   provider: CommerceProvider;

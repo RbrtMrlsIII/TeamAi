@@ -13,6 +13,7 @@ import {
 import {
   assertCommerceOfferReference,
   createServerOwnedCommerceIntent,
+  isCommerceAccessActive,
 } from '../dist/src/backend/commerce.js';
 
 test('Marketplace commerce catalog exposes five Team Quality and nine Team Population tiers', () => {
@@ -58,4 +59,27 @@ test('billing guidance never asks TeamAi to collect card credentials', () => {
   const guidance = commerceBillingGuidance();
   assert.equal(guidance.cardStorage, 'none');
   assert.match(guidance.text, /does not store card credentials/);
+});
+
+
+test('commerce success requires both completed aggregate and active entitlement projection', () => {
+  const sourceEvent = 'paypal-event-7';
+  assert.equal(isCommerceAccessActive({
+    aggregateStatus: 'completed',
+    entitlementStatus: 'active',
+    entitlementSourceCommerceEventId: sourceEvent,
+    providerEntitlementStatus: 'active',
+  }), true);
+  assert.equal(isCommerceAccessActive({
+    aggregateStatus: 'pending',
+    entitlementStatus: 'active',
+    entitlementSourceCommerceEventId: sourceEvent,
+    providerEntitlementStatus: 'active',
+  }), false);
+  assert.equal(isCommerceAccessActive({
+    aggregateStatus: 'completed',
+    entitlementStatus: 'active',
+    entitlementSourceCommerceEventId: null,
+    providerEntitlementStatus: 'active',
+  }), false);
 });

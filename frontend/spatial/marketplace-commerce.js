@@ -6,7 +6,7 @@ export const MARKETPLACE_MODULES = Object.freeze([
     id: 'team-quality',
     label: 'Team Quality',
     summary: 'TeamAi teamwork quality and capacity subscription.',
-    guide: 'Five paid Team Quality tiers are presented here. Exact capability limits come from the authorized entitlement read model.',
+    guide: 'Five paid Team Quality tiers are presented here. Each tier renews monthly; exact capability limits come from the authorized entitlement read model.',
     tierCount: 5,
   }),
   Object.freeze({
@@ -28,7 +28,7 @@ const qualityTiers = Object.freeze(Array.from({ length: 5 }, (_, index) => {
     id: 'team-quality-tier-' + tier,
     label: 'Team Quality Tier ' + tier,
     summary: 'TeamAi Quality allocation tier ' + tier + '.',
-    guide: 'This tier has its own Team Quality guide. Exact capability limits are supplied by authoritative entitlement state.',
+    guide: 'This paid tier has its own Team Quality guide and renews monthly. Exact capability limits are supplied by authoritative entitlement state.',
   });
 }));
 
@@ -41,7 +41,7 @@ const populationTiers = Object.freeze(Array.from({ length: 9 }, (_, index) => {
     id: 'team-population-tier-' + tier,
     label: 'Team Population Tier ' + tier,
     summary: 'Unlocks persistent Seat ' + seat + '.',
-    guide: 'This monthly tier unlocks persistent Seat ' + seat + '.',
+    guide: 'This monthly tier unlocks persistent Seat ' + seat + ' and remains subject to the authoritative entitlement period.',
     seat,
   });
 }));
