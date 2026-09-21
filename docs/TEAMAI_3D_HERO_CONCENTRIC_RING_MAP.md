@@ -73,10 +73,10 @@ Radii increase with ring index. Runtime centerlines are derived by the shared he
 
 | Existing | Ring |
 |----------|------|
-| `workspace()` in `hero-flex.js` | R0 |
+| `hero-workspace-core.js` → canonical `machine-world-renderer.js` | R0 |
 | `drawWorkspaceZipskills` (`WORKSPACE_ZIPSKILLS_V1`) | R0 optional ZipSkills crown |
 | Contribution paths / traces | R0 ↔ R3 (R9) |
-| Seat ring `seatPos` / `drawSeat` | R3 |
+| `machine-core-layout-runtime.js` + canonical `machine-world-renderer.js` | R3 |
 | Intermediate R1/R2 meshes | **Implemented-partial** — source-owned modules with mechanical presentation; complete service topology and final transform choreography remain later slices |
 | `MECHANISM_ZIPSKILLS` (legacy dictionary / e2e) | Reconcile toward `WORKSPACE_ZIPSKILLS` / workspace tree over time |
 
@@ -102,7 +102,7 @@ Issue #396 Slice D now has concrete source owners for both intermediate rings:
 - R1 display: `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js`
 - R1 presentation threads: `frontend/spatial/hero-r1-backend-threads.js` → `public/hero-r1-backend-threads.js`
 - R2: `frontend/spatial/hero-r2-setup-ring.js` → `public/hero-r2-setup-ring.js`
-- Canonical Hero remains the single WebGL renderer and retains small wrapper seams for existing assembly/apply contracts.
+- `machine-world-renderer.js` is the sole WebGL renderer; `hero-flex.js` remains the controller/input/hierarchy boundary.
 - R1/R2 placement is derived from the active workspace envelope and catalog rather than a second coordinate authority.
 - R1 threads consume declared display-face IDs, resolve missing endpoints by failing closed, and route deterministically outside the workspace center.
 - These ring modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
