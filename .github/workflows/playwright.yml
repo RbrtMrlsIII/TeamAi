@@ -38,7 +38,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Synchronize canonical Hero source
-        run: node scripts/apply-cam2-tree-follow-flex.mjs
+        run: node scripts/sync-hero-flex-runtime.mjs
 
 
       - name: Run Playwright browser verification
