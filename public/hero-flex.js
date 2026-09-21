@@ -626,6 +626,7 @@ function frame(now) {
   tickSeatDivisionBranches(hierarchyRuntime, now, reducedMotion);
   tickSetupRingFill(hierarchyRuntime, ringFocus, now, reducedMotion);
   syncHierarchyFromGlobals();
+  updateLabels();
 
   machineWorldRenderer.render(now, {
     seatCount,
