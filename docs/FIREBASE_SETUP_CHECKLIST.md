@@ -16,16 +16,16 @@ Setup/operator steps that remain relevant must be executed under the applicable 
 
 `TARGET PROJECT IDENTIFIED — SPARK-COMPATIBLE / NOT YET CONNECTED`
 
-Target Firebase project: `teamai-7d20f`
-Target Firestore database: `default`
-Target deployment surface: **Firebase Hosting**
+Historical operator target: `teamai-7d20f` (retained only as legacy setup evidence; **not** the current Firebase authority).
+Historical Firestore target: `default`.
+Historical deployment surface: **Firebase Hosting**.
 
 TeamAi intentionally avoids Firebase Cloud Storage and Cloud Functions. The current architecture is constrained to services usable without a Blaze upgrade.
 
 ### Human-controlled setup
 
 - [x] Create/select TeamAi Firebase project.
-- [x] Record target project ID: `teamai-7d20f`.
+- [x] Historical target project ID was recorded above; it is retained only for recovery evidence and MUST NOT override the current Product Law project identity `team-ai-official`.
 - [x] Use Firestore database ID: `default`.
 - [ ] Enable Authentication providers required by TeamAi.
 - [ ] Confirm Firestore database/region and production ownership path.
