@@ -51,6 +51,12 @@ export type TaskContinuationRequestStore = {
   persistRequest(request: TaskContinuationRequest): Promise<void>;
 };
 
+export type TaskContinuationStateStore = {
+  ensureWaitingForContinuation(input: {
+    request: TaskContinuationRequest;
+  }): Promise<void>;
+};
+
 export type TaskContinuationAuthorizer = {
   assertCanContinue(input: {
     taskId: string;
@@ -66,6 +72,7 @@ export class TaskContinuationService {
     private readonly checkpoints: TaskContinuationCheckpointStore,
     private readonly requests: TaskContinuationRequestStore,
     private readonly authorizer: TaskContinuationAuthorizer,
+    private readonly state?: TaskContinuationStateStore,
   ) {}
 
   async request(input: {
@@ -98,6 +105,7 @@ export class TaskContinuationService {
       ) {
         throw new Error('continuation_request_id_conflict');
       }
+      if (this.state) await this.state.ensureWaitingForContinuation({ request: existing });
       return existing;
     }
 
@@ -136,6 +144,7 @@ export class TaskContinuationService {
     });
 
     await this.requests.persistRequest(request);
+    if (this.state) await this.state.ensureWaitingForContinuation({ request });
     return request;
   }
 }
