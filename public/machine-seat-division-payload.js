@@ -4,6 +4,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_CONNECTION: Object.freeze({
     label: 'Connection',
     role: 'integration-boundary',
+    cameraId: 'SEAT_CLOSE',
     labels: clone(['Connection', 'Health']),
     controls: clone(['configure', 'health']),
     presentationOnly: true,
@@ -11,6 +12,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_BEHAVIOR: Object.freeze({
     label: 'Behavior',
     role: 'behavior-preview',
+    cameraId: 'SEAT_CLOSE',
     labels: clone(['Behavior', "Do/Don't"]),
     controls: clone(['configure', 'inspect']),
     presentationOnly: true,
@@ -19,6 +21,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_TOOLKIT: Object.freeze({
     label: 'Toolkit',
     role: 'optional-equip',
+    cameraId: 'SEAT_CLOSE',
     labels: clone(['Toolkit', 'Core skill bundle', 'Domain skill bundle', 'External assign slot']),
     controls: clone(['configure', 'equip']),
     presentationOnly: true,
@@ -28,6 +31,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_CAPABILITIES: Object.freeze({
     label: 'Capabilities',
     role: 'capability-preview',
+    cameraId: 'DETAIL_ANCHOR',
     labels: clone(['Capabilities', 'Available actions']),
     controls: clone(['configure', 'inspect']),
     presentationOnly: true,
@@ -37,6 +41,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_AUTHORIZATION: Object.freeze({
     label: 'Authorization',
     role: 'authorization-preview',
+    cameraId: 'DETAIL_ANCHOR',
     labels: clone(['Authorization', 'Policy grant preview']),
     controls: clone(['configure', 'inspect']),
     presentationOnly: true,
@@ -46,6 +51,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_WORKSPACE_SCOPE: Object.freeze({
     label: 'Workspace scope',
     role: 'workspace-scope-preview',
+    cameraId: 'WORKSPACE_CLOSE',
     labels: clone(['Workspace scope', 'Current workspace']),
     controls: clone(['configure', 'scope']),
     presentationOnly: true,
@@ -55,6 +61,7 @@ export const SEAT_DIVISION_PAYLOADS = Object.freeze({
   SEAT_TASK_EVIDENCE: Object.freeze({
     label: 'Task evidence',
     role: 'evidence-preview',
+    cameraId: 'DETAIL_ANCHOR',
     labels: clone(['Task evidence', 'Trace']),
     controls: clone(['configure', 'inspect']),
     presentationOnly: true,
