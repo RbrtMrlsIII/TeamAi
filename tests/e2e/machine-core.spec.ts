@@ -56,7 +56,7 @@ test.describe('Modular branch connection core', () => {
     await expect(canvas).toHaveAttribute('data-seat-connection-geometry', 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY');
     await expect(canvas).toHaveAttribute('data-seat-connection-edge', 'TREE-HERO-SEAT#0:SEAT_CONNECTION→WORKSPACE_CENTER');
     await expect(canvas).toHaveAttribute('data-seat-connection-health', 'SEAT_CONNECTION_HEALTH_FACE');
-    await expect(canvas).toHaveAttribute('data-seat-connection-draw-path', 'webgl');
+    await expect(canvas).toHaveAttribute('data-seat-connection-draw-path', 'canonical-machine-world');
     await expect(canvas).toHaveAttribute('data-seat-connection-proof', 'semantic+geometry+edge+webgl');
 
     await page.getByLabel('Branch camera').selectOption('BRANCH-SEAT-02');
