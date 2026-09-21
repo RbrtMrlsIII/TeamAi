@@ -2,7 +2,7 @@
 
 ## Non-secret canonical configuration
 
-- Firebase project ID: `teamai-7d20f`
+- Firebase project ID: `team-ai-official`
 - Firestore database ID: `default`
 - Target plan posture: Spark-compatible
 - Authentication: in scope
@@ -15,4 +15,4 @@ The Firebase web configuration contains a client API key. It is not treated as a
 
 ## Artifact boundary
 
-TeamAi web does not use Firebase Cloud Storage for project-ZIP upload/download. A separate planned TeamAi Storage facility may provide entitled user-content storage through the governed storage architecture; project-ZIP/artifact exchange remains on explicitly authorized external repository or AI-app paths unless a future product contract states otherwise.
+TeamAi web does not use Firebase Cloud Storage for project-ZIP upload/download. A separate planned TeamAi Storage facility may provide entitled user-content storage through the governed storage architecture. Current TeamAi Storage product scope is item inventory only; image/file upload and binary object transfer remain deferred pending explicit security and cost controls. Project-ZIP/artifact exchange remains on explicitly authorized external repository or AI-app paths unless a future product contract states otherwise.
