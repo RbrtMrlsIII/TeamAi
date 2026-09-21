@@ -8,6 +8,7 @@ import {
   type SeatTurnBudgetConfig,
   type TurnBudgetAccounting,
 } from './seat-turn-budget.js';
+import { requiresContinuation } from '../providers/termination.js';
 
 export type ExecutableTask = {
   id: string;
@@ -32,7 +33,7 @@ export type TaskExecutionEventStore = {
 };
 
 export type TaskExecutionResult = {
-  status: 'completed' | 'failed';
+  status: 'completed' | 'failed' | 'handoff_required';
   result?: GenerateResult;
   error?: unknown;
   budget?: TurnBudgetAccounting;
@@ -51,7 +52,12 @@ export class TaskExecutionService {
     if (!idempotencyKey.trim()) throw new Error('idempotencyKey is required');
     if (!task.id.trim()) throw new Error('task.id is required');
     if (await this.events.hasIdempotencyKey(idempotencyKey)) {
-      return { status: task.status === 'completed' ? 'completed' : 'failed', duplicate: true };
+      const status = task.status === 'completed'
+        ? 'completed'
+        : task.status === 'handoff_required' || task.status === 'waiting_for_continuation'
+          ? 'handoff_required'
+          : 'failed';
+      return { status, duplicate: true };
     }
     if (task.status !== 'waiting_approval') {
       throw new Error(`task execution requires waiting_approval state, got ${task.status}`);
@@ -118,10 +124,67 @@ export class TaskExecutionService {
       })
       : null;
 
+    if (result.termination && result.termination.state !== 'completed') {
+      if (requiresContinuation(result.termination)) {
+        const handoffKey = `${idempotencyKey}:handoff`;
+        const handoffEvent = this.event(`${handoffKey}:event`, handoffKey, 'HANDOFF_REQUIRED', actorId, new Date().toISOString());
+        assertDurableEvent(handoffEvent);
+        await this.persistResult({
+          taskId: task.id,
+          projectId: task.projectId,
+          seatId: task.seatId,
+          eventId: handoffEvent.eventId,
+          idempotencyKey: handoffKey,
+          status: 'handoff_required',
+          recordedAt: handoffEvent.occurredAt,
+          result,
+          termination: result.termination,
+        });
+        await this.events.append(handoffEvent);
+        task.status = transitionTask(task.status, 'HANDOFF_REQUIRED');
+        return {
+          status: 'handoff_required',
+          result,
+          budget: budgetAfterExecution ?? undefined,
+          duplicate: false,
+        };
+      }
+
+      const failKey = `${idempotencyKey}:termination`;
+      const failEvent = this.event(`${failKey}:event`, failKey, 'FAIL', actorId, new Date().toISOString());
+      assertDurableEvent(failEvent);
+      const terminationError = new Error(`provider terminated before completion: ${result.termination.reason}`);
+      await this.persistResult({
+        taskId: task.id,
+        projectId: task.projectId,
+        seatId: task.seatId,
+        eventId: failEvent.eventId,
+        idempotencyKey: failKey,
+        status: 'failed',
+        recordedAt: failEvent.occurredAt,
+        result,
+        termination: result.termination,
+        error: { name: terminationError.name, message: terminationError.message },
+      });
+      await this.events.append(failEvent);
+      task.status = transitionTask(task.status, 'FAIL');
+      return { status: 'failed', result, error: terminationError, budget: budgetAfterExecution ?? undefined, duplicate: false };
+    }
+
     const completeKey = `${idempotencyKey}:complete`;
     const completeEvent = this.event(`${completeKey}:event`, completeKey, 'COMPLETE', actorId, new Date().toISOString());
     assertDurableEvent(completeEvent);
-    await this.persistResult({ taskId: task.id, projectId: task.projectId, seatId: task.seatId, eventId: completeEvent.eventId, idempotencyKey: completeKey, status: 'completed', recordedAt: completeEvent.occurredAt, result });
+    await this.persistResult({
+      taskId: task.id,
+      projectId: task.projectId,
+      seatId: task.seatId,
+      eventId: completeEvent.eventId,
+      idempotencyKey: completeKey,
+      status: 'completed',
+      recordedAt: completeEvent.occurredAt,
+      result,
+      termination: result.termination,
+    });
     await this.events.append(completeEvent);
     task.status = transitionTask(task.status, 'COMPLETE');
     return { status: 'completed', result, budget: budgetAfterExecution ?? undefined, duplicate: false };
