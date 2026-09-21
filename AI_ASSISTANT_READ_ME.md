@@ -193,6 +193,10 @@ Historical Issues are evidence, not active routing.
 - The live Supabase commerce intent/webhook functions remain external runtime authorities. Product-tier binding into the live edge intent is intentionally deferred until a shared authoritative catalog seam can be introduced without duplicating product authority.
 
 
+### 2026-09-22 audit hardening
+- The current branch head `ce4191a1f853d5bdaf95487081035cf1f6ec2e31` includes a hardened production Firestore Seat diagnostic that fails closed on missing/inactive/unauthorized/unentitled/unbound Seats, invalid budget shape, ambiguous or incompatible active Seat connections, and missing execute capability.
+- The diagnostic script is now syntax-checked by Full-System verification; the CodeQL-reported test URL matcher was tightened to exact hostname/path matching.
+
 ### 2026-09-22 #392 Seat runtime + durable continuation convergence
 - Canonical team-nested Firestore Seat resolution remains the sole active Seat authority across task execution, durable Seat budget persistence, scheduler Seat enumeration, provider binding, provider credential lookup, and Seat connection-test persistence. Legacy project-level `/seats` records are ignored; ambiguous canonical Seat IDs fail closed.
 - Provider binding and connection persistence do not create missing Seat documents implicitly. Provider-key clearing remains possible with `clear:true` without an API key.
