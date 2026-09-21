@@ -71,9 +71,9 @@ export class TaskExecutionService {
         usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
         estimatedCompletionNeedTokens: task.estimatedCompletionNeedTokens,
       })
-      : null;
+      : undefined;
 
-    const request = task.turnBudget
+    const request = budgetBeforeExecution
       ? {
         ...task.request,
         maxOutputTokens: task.request.maxOutputTokens === undefined
