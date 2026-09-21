@@ -550,9 +550,11 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     const route = resolveElectricalEdgeRoute(edge);
     if (route.length < 2) return null;
     const activation = Math.max(0, Math.min(1, finite(amount, 0)));
-    const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, (now / 1000 * 0.42) % 1));
-    const point = electricalRoutePoint(route, reducedMotion ? 1 : progress);
-    const prefix = reducedMotion ? route : electricalRoutePrefix(route, progress);
+    if (activation <= 0.02) return null;
+    const cycleProgress = Math.max(0, Math.min(1, (now / 1000 * 0.42) % 1));
+    const progress = reducedMotion ? activation : Math.min(activation, cycleProgress);
+    const point = electricalRoutePoint(route, progress);
+    const prefix = electricalRoutePrefix(route, progress);
     if (!point || prefix.length < 1) return null;
 
     gl.useProgram(line);
@@ -584,7 +586,7 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
     return Object.freeze({
       semanticEdgeId: edge.semanticEdgeId || edge.id || null,
       label,
-      progress: reducedMotion ? 1 : progress,
+      progress,
       target: Object.freeze({ ...route.at(-1) }),
       presentationOnly: true,
     });
