@@ -75,6 +75,7 @@ test('healthy and low states are computed from backend usage, not UI counters', 
   });
   assert.equal(healthy.state, 'HEALTHY');
   assert.equal(healthy.usage.remainingGenerationTokens, 6000);
+  assert.equal(healthy.usage.usableGenerationTokens, 5000);
   assert.equal(healthy.providerOutputCeilingTokens, 3000);
 
   const low = accountTurnBudget({
@@ -102,8 +103,9 @@ test('handoff prediction protects the reserve before hard exhaustion', () => {
   });
   assert.equal(handoff.state, 'HANDOFF');
   assert.equal(handoff.completionState, 'HANDOFF_REQUIRED');
-  assert.equal(handoff.usage.remainingGenerationTokens, 2000);
-  assert.equal(handoff.providerOutputCeilingTokens, 0);
+  assert.equal(handoff.usage.remainingGenerationTokens, 3000);
+  assert.equal(handoff.usage.usableGenerationTokens, 2000);
+  assert.equal(handoff.providerOutputCeilingTokens, 2000);
 });
 
 test('exhaustion becomes waiting-for-continuation rather than completion', () => {
