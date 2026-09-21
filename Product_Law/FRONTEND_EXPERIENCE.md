@@ -182,13 +182,13 @@ identity established
 → permit user-started turn only when required conditions hold
 ```
 
-## 9. Seat reports and transaction loading
+## 8. Seat reports and transaction loading
 
 Every Seat exposes a report/handoff section for the latest completed turn. Users and authorized participating agents may read that report as the Seat's continuity/read-model and evidence surface.
 
 Long-running Seat transactions use a dedicated semantic loading/orb family rather than one generic product spinner. The family is selected by transaction type, including configuration, connection test, MCP invocation, AI turn/execution, handoff/continuation, Storage operation, Marketplace transaction/verification, authorization, or recovery. Presentation effects do not prove backend completion.
 
-## 8. Entrance information architecture
+## 9. Entrance information architecture
 
 The public Entrance is the public information and trust surface. Privacy Policy and Terms remain publicly reachable. A comprehensive Dictionary/User Guide may explain product concepts, but it does not become Product Law.
 
