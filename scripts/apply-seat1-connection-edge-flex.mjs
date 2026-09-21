@@ -2,6 +2,8 @@
 /**
  * Historical compatibility verifier for the Seat-1 connection path.
  *
+ * The canonical semantic Hero renderer owns the active WebGL path.
+ *
  * The canonical machine-spatial sync owns browser delivery. This command
  * performs no file mutation.
  */
