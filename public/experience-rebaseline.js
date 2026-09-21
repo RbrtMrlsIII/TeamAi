@@ -1,5 +1,6 @@
 /* 029 Experience Rebaseline controller: explicit classic entrance -> 3D world. */
 import { getFrontendFeature, getGuestPresentationState, listFrontendFeatures } from './feature-registry.js';
+import { featureStateMetadata, featureStatePrecedence, normalizeFeatureState, resolveFeaturePresentationState } from './feature-state.js';
 
 const shell = () => document.querySelector('.hero-shell');
 
@@ -68,6 +69,12 @@ function publishFeatureRegistry() {
     get: (id) => getFrontendFeature(id),
     guestState: (id) => getGuestPresentationState(id),
   });
+  window.TeamAiFeatureState = Object.freeze({
+    states: () => featureStatePrecedence(),
+    normalize: (value, fallback) => normalizeFeatureState(value, fallback),
+    resolve: (states) => resolveFeaturePresentationState(states),
+    metadata: (state) => featureStateMetadata(state),
+  });
 }
 
 function dispatchFeatureIntent(button, source) {
@@ -80,6 +87,7 @@ function dispatchFeatureIntent(button, source) {
     featureId: feature.id,
     label: feature.label,
     source,
+    featureState: normalizeFeatureState(button?.dataset?.featureState || 'INACTIVE'),
     guestState: guestState?.presentation || null,
     presentationOnly: true,
   };
@@ -120,6 +128,10 @@ function bind() {
 
   // /hero/ is the direct world surface. Establish both route and presentation
   // layer together so the world controls are usable on direct load.
+  document.querySelectorAll('[data-feature-id]').forEach((button) => {
+    if (!button.dataset.featureState) button.dataset.featureState = 'INACTIVE';
+  });
+
   if (isWorldRoute()) {
     el.dataset.heroLayer = 'machine';
     el.dataset.experience = 'world';
