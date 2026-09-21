@@ -27,6 +27,7 @@ const files = [
   'machine-world-renderer.js',
   'machine-seat-division-presentation.js',
   'machine-seat-division-topology.js',
+  'machine-seat-division-payload.js',
   'machine-energy-flow.js',
 ];
 
