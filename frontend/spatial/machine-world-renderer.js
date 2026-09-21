@@ -22,6 +22,7 @@ import { SETUP_CONFIG_V1, drawSetupConfigRing } from './hero-r2-setup-ring.js';
 import { RING_R1_SCALE, RING_R2_SCALE, NAV_ZOOM_MAX } from './hero-world-contract.js';
 import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-zoom.js';
 import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
+import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 const TAU = Math.PI * 2;
@@ -839,14 +840,48 @@ export function createMachineWorldRenderer({ canvas, gl } = {}) {
       );
       gl.drawArrays(gl.LINE_STRIP,0,connection.route.length);
     }
+    const workspaceProfile = worldProfile(seatCount);
+    const workspaceCore = deriveWorkspaceCoreGeometry({
+      workspaceRadius: workspaceProfile.workspace,
+      expansionAmount: sample.amount,
+    });
+    ringDraw(
+      'CYL',
+      multiplyMatrix(
+        translateMatrix(workspaceCore.center.x, workspaceCore.center.y, workspaceCore.center.z),
+        scaleMatrix(workspaceCore.innerRadius * 0.22, 0.12 + 0.04 * sample.amount, workspaceCore.innerRadius * 0.22),
+      ),
+      RING_MATERIALS.metal2,
+      {
+        rough: 0.34,
+        emit: 0.05 + 0.05 * sample.amount,
+        alpha: 0.82,
+      },
+    );
+    ringDraw(
+      'TORUS',
+      multiplyMatrix(
+        translateMatrix(workspaceCore.center.x, workspaceCore.center.y + 0.08, workspaceCore.center.z),
+        scaleMatrix(workspaceCore.radius, 1, workspaceCore.radius),
+      ),
+      RING_MATERIALS.trace,
+      {
+        rough: 0.30,
+        emit: reducedMotion ? 0.05 : 0.08,
+        alpha: reducedMotion ? 0.38 : 0.56,
+      },
+    );
     if (!reducedMotion) {
-      const ring = ringPoints(144, Math.max(2.7, scene.hub ? 4.1 + sample.amount*.5 : 4), .05);
+      const ring = ringPoints(144, workspaceCore.radius, workspaceCore.center.y + 0.03);
       gl.bufferData(gl.ARRAY_BUFFER,ring,gl.DYNAMIC_DRAW);
       gl.enableVertexAttribArray(linePos);
       gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
       gl.uniform4f(lineColor,.38,.68,.96,.22);
       gl.drawArrays(gl.LINE_STRIP,0,145);
     }
+    canvas.dataset.machineWorldWorkspaceCore = workspaceCore.id;
+    canvas.dataset.machineWorldWorkspaceCenter = String(workspaceCore.center.x) + ',' + String(workspaceCore.center.y) + ',' + String(workspaceCore.center.z);
+    canvas.dataset.machineWorldWorkspaceRadius = String(workspaceCore.radius);
     canvas.dataset.machineWorldState = sample.state;
     canvas.dataset.machineWorldAmount = String(sample.amount);
     canvas.dataset.machineWorldBranch = branchId;
