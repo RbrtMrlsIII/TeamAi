@@ -494,6 +494,8 @@ Deno.serve(async (req: Request) => {
     if (message === "seat_budget_not_configured" || message === "turnBudget_invalid" || message === "seat_budget_allocation_invalid") {
       return json({ error: message }, 409);
     }
+    if (message === "seat_not_found") return json({ error: "seat_not_found" }, 404);
+    if (message === "seat_ambiguous") return json({ error: "seat_ambiguous" }, 409);
     if (message === "provider_key_not_bound" || message === "provider_key_corrupt" || message === "provider_key_empty") {
       return json({ error: message }, 409);
     }
