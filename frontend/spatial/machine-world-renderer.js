@@ -678,6 +678,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       reducedMotion,
     });
     const seatCount = clamp(Math.floor(Number(state.seatCount) || 10), 1, 10);
+    const workspaceProfile = worldProfile(seatCount);
     const selectedSeat = clamp(Math.floor(Number(state.selectedSeat) || 0), 0, seatCount - 1);
     branchId = state.branchId || `BRANCH-SEAT-${String(selectedSeat+1).padStart(2,'0')}`;
     const scene = createBranchConnectionCore({ seatCount, expansionAmount: sample.amount });
@@ -901,7 +902,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
     const workspaceCore = deriveWorkspaceCoreGeometry({
       workspaceRadius: workspaceProfile.workspace,
-      expansionAmount: sample.amount,
+      expansionAmount: choreography.transformation,
     });
     ringDraw(
       'CYL',
