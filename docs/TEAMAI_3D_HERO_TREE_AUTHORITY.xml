@@ -4,10 +4,13 @@
     <productLaw>Product_Law/PRODUCT_LAW.md</productLaw>
     <vision>docs/VISION.md</vision>
     <executionLedger>Issue #278</executionLedger>
+    <spatialExecutionGuide>Issue #396</spatialExecutionGuide>
+    <frontendContract>Issue #400</frontendContract>
     <contract>docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md</contract>
     <census>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</census>
     <machineReadableCensus>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</machineReadableCensus>
     <runtimeBaseline>docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md</runtimeBaseline>
+    <rendererOwner>frontend/spatial/machine-world-renderer.js</rendererOwner>
   </authority>
   <maintenance>
     <trigger>add|remove|rename|materially_restructure|reimplement</trigger>
