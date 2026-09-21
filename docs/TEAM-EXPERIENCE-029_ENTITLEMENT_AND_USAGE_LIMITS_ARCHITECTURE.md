@@ -33,6 +33,8 @@ Team Quality  ≠  Tool Quality  ≠  Provider entitlement  ≠  Skills packages
 
 ## 3. Entitlement projection (runtime shape)
 
+All TeamAi-facing MCP inventory, installation, connector authentication handoff, permission configuration, health/test, and custom MCP management are presented through the dedicated MCP facility. Entitlement determines whether a capability is available to the account; MCP configuration determines how that capability is installed and managed; equipping then determines which eligible Seat(s) or Workspace may expose its target-owned branch.
+
 ```text
 PayPal / commerce event (verified)
   → UID-owned commerce aggregate
