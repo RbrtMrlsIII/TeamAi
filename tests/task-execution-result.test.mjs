@@ -189,3 +189,81 @@ test('Firestore continuation checkpoint store uses create-only scoped task paths
     assert.match(body.writes[0].update.name, /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-9\/tasks\/task-12\/continuation-checkpoints\/exec-12%3Acheckpoint$/);
   } finally { restore(); }
 });
+
+test('Firestore continuation request store uses create-only scoped task paths', async () => {
+  setup();
+  const calls = [];
+  globalThis.fetch = async (url, init = {}) => {
+    calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
+    if (String(url).includes('oauth2.googleapis.com/token')) {
+      return new Response(JSON.stringify({ access_token: 'token-4' }), { status: 200 });
+    }
+    return new Response(JSON.stringify({ commit: true }), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+  try {
+    const store = new FirestoreTaskContinuationCheckpointStore('uid-1', 'workplace-1');
+    await store.persistRequest({
+      continuationRequestId: 'cont-1',
+      taskId: 'task-12',
+      projectId: 'project-9',
+      checkpointId: 'exec-12:checkpoint',
+      sourceSeatId: 'seat-coder',
+      targetSeatId: 'seat-coder-2',
+      requestedBy: 'actor-1',
+      requestedAt: '2026-09-22T00:02:00Z',
+      instruction: 'continue from checkpoint',
+      status: 'requested',
+      continuationOfCheckpointId: 'exec-12:checkpoint',
+      nextTurn: 'fresh-budgeted-turn',
+    });
+    const commit = calls.find((call) => call.url.includes(':commit'));
+    assert.ok(commit);
+    const body = JSON.parse(commit.body);
+    assert.equal(body.writes[0].currentDocument.exists, false);
+    assert.match(
+      body.writes[0].update.name,
+      /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-9\/tasks\/task-12\/continuation-requests\/cont-1$/,
+    );
+  } finally { restore(); }
+});
+
+test('Firestore continuation request store retrieves an existing request by exact relation identity', async () => {
+  setup();
+  const requestDocument = {
+    fields: {
+      continuationRequestId: { stringValue: 'cont-2' },
+      taskId: { stringValue: 'task-13' },
+      projectId: { stringValue: 'project-9' },
+      checkpointId: { stringValue: 'exec-13:checkpoint' },
+      sourceSeatId: { stringValue: 'seat-coder' },
+      targetSeatId: { stringValue: 'seat-coder-2' },
+      requestedBy: { stringValue: 'actor-1' },
+      requestedAt: { timestampValue: '2026-09-22T00:03:00Z' },
+      instruction: { stringValue: 'continue' },
+      status: { stringValue: 'requested' },
+      continuationOfCheckpointId: { stringValue: 'exec-13:checkpoint' },
+      nextTurn: { stringValue: 'fresh-budgeted-turn' },
+    },
+  };
+  const calls = [];
+  globalThis.fetch = async (url, init = {}) => {
+    calls.push({ url: String(url), method: init.method ?? 'GET' });
+    if (String(url).includes('oauth2.googleapis.com/token')) {
+      return new Response(JSON.stringify({ access_token: 'token-5' }), { status: 200 });
+    }
+    return new Response(JSON.stringify(requestDocument), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+  try {
+    const store = new FirestoreTaskContinuationCheckpointStore('uid-1', 'workplace-1');
+    const request = await store.getRequest('project-9', 'task-13', 'cont-2');
+    assert.equal(request?.continuationRequestId, 'cont-2');
+    assert.equal(request?.continuationOfCheckpointId, 'exec-13:checkpoint');
+    assert.equal(request?.targetSeatId, 'seat-coder-2');
+    const read = calls.find((call) => call.method === 'GET' && !call.url.includes('oauth2.googleapis.com'));
+    assert.ok(read);
+    assert.match(
+      read.url,
+      /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-9\/tasks\/task-13\/continuation-requests\/cont-2$/,
+    );
+  } finally { restore(); }
+});
