@@ -42,6 +42,9 @@ const files = [
   'workspace-capability.js',
   'workspace-capability-facility.js',
   'workspace-capability.css',
+  'team-agents.js',
+  'team-agents-facility.js',
+  'team-agents-facility.css',
 ];
 
 const checkOnly = process.argv.includes('--check');
