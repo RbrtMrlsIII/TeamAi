@@ -487,6 +487,21 @@ export function requestTaskEvidenceConfigureHandoff(detail = {}) {
 }
 
 
+export const SEAT_DIVISION_CONFIG_COMMANDS = Object.freeze([
+  Object.freeze({ key: 'c', childId: HIERARCHY_PART.SEAT_CONNECTION, targetSection: 'connection', request: requestConnectionConfigureHandoff }),
+  Object.freeze({ key: 'b', childId: HIERARCHY_PART.SEAT_BEHAVIOR, targetSection: 'behavior', request: requestBehaviorConfigureHandoff }),
+  Object.freeze({ key: 't', childId: HIERARCHY_PART.SEAT_TOOLKIT, targetSection: 'toolkit', request: requestToolkitConfigureHandoff }),
+  Object.freeze({ key: 'k', childId: HIERARCHY_PART.SEAT_CAPABILITIES, targetSection: 'capabilities', request: requestCapabilitiesConfigureHandoff }),
+  Object.freeze({ key: 'a', childId: HIERARCHY_PART.SEAT_AUTHORIZATION, targetSection: 'authorization', request: requestAuthorizationConfigureHandoff }),
+  Object.freeze({ key: 'w', childId: HIERARCHY_PART.SEAT_WORKSPACE_SCOPE, targetSection: 'workspace-scope', request: requestWorkspaceScopeConfigureHandoff }),
+  Object.freeze({ key: 'e', childId: HIERARCHY_PART.SEAT_TASK_EVIDENCE, targetSection: 'task-evidence', request: requestTaskEvidenceConfigureHandoff }),
+]);
+
+export function resolveSeatDivisionConfigCommand(key) {
+  const normalized = String(key || '').toLowerCase();
+  return SEAT_DIVISION_CONFIG_COMMANDS.find((command) => command.key === normalized) || null;
+}
+
 export function setupRingFocusedItem(ringFocus) {
   if (!ringFocus || ringFocus.ring !== 'r2') return null;
   return SETUP_CONFIG_V1[ringFocus.index] || null;
