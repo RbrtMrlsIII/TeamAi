@@ -18,6 +18,7 @@ const files = [
   'hero-world-contract.js',
   'hero-root-runtime.js',
   'hero-ring-envelope.js',
+  'hero-workspace-core.js',
   'hero-r1-backend-display.js',
   'hero-r1-backend-threads.js',
   'hero-r2-setup-ring.js',
