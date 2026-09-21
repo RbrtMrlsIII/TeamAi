@@ -1,21 +1,24 @@
-# Seats plate phase2 bind
+# Seats plate phase-2 ownership
 
-## Do you need to run the CLI commit?
+The historical phase-2 mutation route has been retired.
 
-**No — not required for CI or GitHub Pages.**
+## Current owner
 
-| Surface | How bind is applied |
-|---------|---------------------|
-| Unit / e2e CI | `npm test` / `npm run test:e2e` runs `seat:plate:phase2` first |
-| GitHub Pages | workflow runs `node scripts/apply-seat-plate-phase2.mjs` before copy |
-| Local static preview | run `npm run seat:plate:phase2` once after pull |
+`frontend/spatial/shell-nav.js` explicitly imports the Seat read model and connection/provider owners. The behavior is committed source, not injected by a patch script.
 
-Optional (only if you want the bound file committed in git history):
+| Surface | Current path |
+|---|---|
+| Seat read model | `frontend/spatial/seat-read-model.js` |
+| Connection projection | `frontend/spatial/seat-connection-wire.js` |
+| Provider binding | `frontend/spatial/seat-provider-bind-wire.js` |
+| Shell/navigation owner | `frontend/spatial/shell-nav.js` |
+| Browser delivery | governed build / Pages source copy |
+| Compatibility wrapper | `scripts/apply-seat-plate-phase2.mjs` (verify-only) |
 
-```bash
-npm run seat:plate:phase2
-git add frontend/spatial/shell-nav.js
-git commit -m "chore(029): commit applied Seats plate phase2 bind"
-```
+## Verification rule
 
-The apply script is **idempotent** — safe to re-run.
+`npm run seat:plate:phase2` remains available for legacy callers, but it must only verify the committed owner-level source contract and must never rewrite `shell-nav.js`.
+
+The same rule applies to the historical Seat connection and provider-bind wrapper scripts.
+
+Source mutation belongs only to the intentional synchronization/build mechanisms. Runtime behavior belongs to explicit source modules.
