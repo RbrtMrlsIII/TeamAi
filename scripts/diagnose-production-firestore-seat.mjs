@@ -108,12 +108,38 @@ const rows = await runQuery(parent, {
   where: { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: seatId } } },
   limit: 2,
 }, token);
-const canonical = rows.map(row => row.document).filter(document => document?.name).filter(document => (document.name.split('/documents/')[1] ?? '').split('/').length === 10).find(document => {
+const canonical = rows.map(row => row.document).filter(document => document?.name).filter(document => (document.name.split('/documents/')[1] ?? '').split('/').length === 10).filter(document => {
   const p = (document.name.split('/documents/')[1] ?? '').split('/');
   return p[0] === 'accounts' && p[1] === uid && p[2] === 'workplaces' && p[3] === workplaceId && p[4] === 'projects' && p[5] === projectId && p[6] === 'teams' && p[8] === 'seats' && p[9] === seatId;
 });
-if (!canonical) {
-  console.error(JSON.stringify({ ok: false, error: 'canonical_seat_not_found_or_ambiguous', uid, workplaceId, projectId, seatId }, null, 2));
+if (canonical.length !== 1) {
+  console.error(JSON.stringify({ ok: false, error: canonical.length === 0 ? 'canonical_seat_not_found' : 'canonical_seat_ambiguous', matches: canonical.length, uid, workplaceId, projectId, seatId }, null, 2));
   process.exit(2);
 }
-console.log(JSON.stringify({ ok: true, note: 'Metadata-only diagnostic. No provider credentials or secret payloads are printed.', report: shapeReport(canonical, { uid, workplaceId, projectId, seatId }) }, null, 2));
+
+const seatReport = shapeReport(canonical[0], { uid, workplaceId, projectId, seatId });
+const connectionRows = await runQuery(parent, {
+  from: [{ collectionId: 'connections' }],
+  where: {
+    fieldFilter: {
+      field: { fieldPath: 'seatId' },
+      op: 'EQUAL',
+      value: { stringValue: seatId },
+    },
+  },
+  limit: 2,
+}, token);
+const connections = connectionRows.map(row => row.document).filter(document => document?.name).map(document => fields(document.fields));
+const activeConnections = connections.filter(connection => String(connection.status ?? '') === 'active');
+const connectionReport = {
+  count: connections.length,
+  activeCount: activeConnections.length,
+  matchingSeatIds: activeConnections.map(connection => String(connection.seatId ?? '')),
+  providers: activeConnections.map(connection => String(connection.provider ?? connection.providerCode ?? '')),
+  executeCapability: activeConnections.some(connection => Array.isArray(connection.capabilities) && connection.capabilities.map(String).includes('execute')),
+};
+console.log(JSON.stringify({
+  ok: true,
+  note: 'Metadata-only diagnostic. No provider credentials or secret payloads are printed.',
+  report: { ...seatReport, connection: connectionReport },
+}, null, 2));
