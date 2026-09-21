@@ -269,6 +269,30 @@ const DIVISION_BRANCH_SPECS = Object.freeze({
   }),
 });
 
+export function tickSeatDivisionBranches(state, nowMs, reducedMotion = false) {
+  for (const childId of Object.keys(DIVISION_BRANCH_SPECS)) {
+    tickDivisionBranch(state, nowMs, reducedMotion, childId);
+  }
+  return state;
+}
+
+export function getSeatDivisionBranchAmount(state, childId) {
+  const spec = DIVISION_BRANCH_SPECS[childId];
+  if (!spec) return 0;
+  return Math.max(0, Math.min(1, Number(state?.[spec.amountKey]) || 0));
+}
+
+export function getSeatDivisionBranchAmounts(state) {
+  return Object.freeze(
+    Object.fromEntries(
+      Object.entries(DIVISION_BRANCH_SPECS).map(([childId, spec]) => [
+        childId,
+        getSeatDivisionBranchAmount(state, childId),
+      ]),
+    ),
+  );
+}
+
 function tickDivisionBranch(state, nowMs, reducedMotion, childId) {
   const spec = DIVISION_BRANCH_SPECS[childId];
   if (!spec) return state;
