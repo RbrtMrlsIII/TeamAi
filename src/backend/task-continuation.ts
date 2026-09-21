@@ -83,6 +83,24 @@ export class TaskContinuationService {
       if (typeof value !== 'string' || !value.trim()) throw new Error(key + ' is required');
     }
 
+    const existing = await this.requests.getRequest(
+      input.projectId,
+      input.taskId,
+      input.continuationRequestId,
+    );
+    if (existing) {
+      if (
+        existing.taskId !== input.taskId ||
+        existing.projectId !== input.projectId ||
+        existing.targetSeatId !== input.targetSeatId ||
+        existing.requestedBy !== input.actorId ||
+        existing.instruction !== input.instruction.trim()
+      ) {
+        throw new Error('continuation_request_id_conflict');
+      }
+      return existing;
+    }
+
     const checkpoint = await this.checkpoints.getCheckpoint(
       input.projectId,
       input.taskId,
@@ -101,23 +119,6 @@ export class TaskContinuationService {
       targetSeatId: input.targetSeatId,
       actorId: input.actorId,
     });
-
-    const existing = await this.requests.getRequest(
-      input.projectId,
-      input.taskId,
-      input.continuationRequestId,
-    );
-    if (existing) {
-      if (
-        existing.checkpointId !== checkpoint.checkpointId ||
-        existing.targetSeatId !== input.targetSeatId ||
-        existing.requestedBy !== input.actorId ||
-        existing.instruction !== input.instruction.trim()
-      ) {
-        throw new Error('continuation_request_id_conflict');
-      }
-      return existing;
-    }
 
     const request: TaskContinuationRequest = Object.freeze({
       continuationRequestId: input.continuationRequestId,
