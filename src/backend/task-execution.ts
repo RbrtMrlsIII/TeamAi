@@ -3,7 +3,7 @@ import type { GenerateRequest, GenerateResult } from '../providers/types.js';
 import { ProviderRuntime, type ExecutionAuthorizationStatus, type ProviderInvocationRequest } from './provider-runtime.js';
 import { assertDurableEvent, transitionTask, type TaskEvent, type TaskStatus } from './task-state.js';
 import type { DurableExecutionResult, TaskExecutionResultStore } from './task-execution-result.js';
-import { buildTaskContinuationCheckpoint, type TaskContinuationCheckpointStore } from './task-continuation.js';
+import { assertContinuationCheckpoint, buildTaskContinuationCheckpoint, type TaskContinuationCheckpoint, type TaskContinuationCheckpointStore, type TaskContinuationRequest } from './task-continuation.js';
 import {
   accountTurnBudget,
   type SeatTurnBudgetConfig,
@@ -39,6 +39,8 @@ export type TaskExecutionResult = {
   error?: unknown;
   budget?: TurnBudgetAccounting;
   continuationCheckpointId?: string;
+  continuationRequestId?: string;
+  continuationOfCheckpointId?: string;
   duplicate: boolean;
 };
 
@@ -50,7 +52,65 @@ export class TaskExecutionService {
     private readonly checkpoints?: TaskContinuationCheckpointStore,
   ) {}
 
-  async execute(task: ExecutableTask, actorId: string, idempotencyKey: string): Promise<TaskExecutionResult> {
+  async executeContinuation(
+    task: ExecutableTask,
+    request: TaskContinuationRequest,
+    checkpoint: TaskContinuationCheckpoint,
+    actorId: string,
+    idempotencyKey: string,
+  ): Promise<TaskExecutionResult> {
+    if (task.status !== 'waiting_for_continuation') {
+      throw new Error(`continuation execution requires waiting_for_continuation state, got ${task.status}`);
+    }
+    if (request.taskId !== task.id || request.projectId !== task.projectId) {
+      throw new Error('continuation_request_task_scope_mismatch');
+    }
+    if (
+      request.checkpointId !== checkpoint.checkpointId ||
+      request.continuationOfCheckpointId !== checkpoint.checkpointId ||
+      checkpoint.taskId !== task.id ||
+      checkpoint.projectId !== task.projectId
+    ) {
+      throw new Error('continuation_checkpoint_scope_mismatch');
+    }
+    if (request.targetSeatId !== task.seatId) {
+      throw new Error('continuation_target_seat_mismatch');
+    }
+    assertContinuationCheckpoint(checkpoint);
+
+    const continuationRequest = {
+      ...task.request,
+      messages: [
+        ...(Array.isArray(task.request.messages) ? task.request.messages : []),
+        ...(checkpoint.providerOutput ? [{ role: 'assistant' as const, content: checkpoint.providerOutput }] : []),
+        { role: 'user' as const, content: request.instruction },
+      ],
+    };
+
+    const continuationTask: ExecutableTask = {
+      ...task,
+      status: 'waiting_for_approval',
+      approved: true,
+      request: continuationRequest,
+    };
+
+    const result = await this.execute(continuationTask, actorId, idempotencyKey, {
+      requestId: request.continuationRequestId,
+      continuationOfCheckpointId: checkpoint.checkpointId,
+      parentCheckpoint: checkpoint,
+    });
+
+    task.status = continuationTask.status === 'handoff_required'
+      ? 'handoff_required'
+      : continuationTask.status;
+    return {
+      ...result,
+      continuationRequestId: request.continuationRequestId,
+      continuationOfCheckpointId: checkpoint.checkpointId,
+    };
+  }
+
+  async execute(task: ExecutableTask, actorId: string, idempotencyKey: string, continuationContext?: { requestId: string; continuationOfCheckpointId: string; parentCheckpoint: TaskContinuationCheckpoint }): Promise<TaskExecutionResult> {
     if (!actorId.trim()) throw new Error('actorId is required');
     if (!idempotencyKey.trim()) throw new Error('idempotencyKey is required');
     if (!task.id.trim()) throw new Error('task.id is required');
@@ -72,7 +132,9 @@ export class TaskExecutionService {
     const startEvent = this.event(`${idempotencyKey}:start`, idempotencyKey, 'START', actorId, startedAt);
     assertDurableEvent(startEvent);
     await this.events.append(startEvent);
-    task.status = transitionTask(task.status, 'START');
+    task.status = continuationContext
+      ? transitionTask('waiting_for_continuation', 'CONTINUE_START')
+      : transitionTask(task.status, 'START');
 
     const budgetBeforeExecution = task.turnBudget
       ? accountTurnBudget({
@@ -139,6 +201,8 @@ export class TaskExecutionService {
           result,
           budget: budgetAfterExecution,
           occurredAt: handoffEvent.occurredAt,
+          continuationRequestId: continuationContext?.requestId,
+          continuationOfCheckpointId: continuationContext?.continuationOfCheckpointId,
         });
         if (this.checkpoints) await this.checkpoints.persistCheckpoint(checkpoint);
         await this.persistResult({
@@ -152,6 +216,8 @@ export class TaskExecutionService {
           recordedAt: handoffEvent.occurredAt,
           result,
           termination: result.termination,
+          continuationRequestId: continuationContext?.requestId,
+          continuationOfCheckpointId: continuationContext?.continuationOfCheckpointId,
         });
         await this.events.append(handoffEvent);
         task.status = transitionTask(task.status, 'HANDOFF_REQUIRED');
