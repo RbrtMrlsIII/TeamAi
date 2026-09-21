@@ -10,7 +10,7 @@
 - current main: `d8b1e767898be9fe640f002d72cf7771842865b6`
 - current slice: TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 - replacement branch: frontend/029-machine-world-convergence
-- open implementation vehicle: PR #398 / Issue #396 (active Draft)
+- open implementation vehicles: PR #398 / Issue #396 (active Draft)
 - active implementation slices: #396, #278, #360, #392, #83, #284, #204
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
