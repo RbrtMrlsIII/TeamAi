@@ -281,6 +281,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   let targetExpanded = false;
   let branchId = 'HUB-CORE';
   let lastSeat1AdjacentWiring = null;
+  let lastSeat1AdjacentWiringDiagnostic = Object.freeze({ reason: 'NOT_RENDERED' });
   let disposed = false;
   const primitiveBuffers = new Map();
 
@@ -494,21 +495,32 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   }
 
   function renderAdjacentDivisionWiring(scene, selectedBranch, state, reducedMotion) {
-    if (selectedBranch !== 'BRANCH-SEAT-01' || !state?.hierarchyOpen) {
+    const fail = (reason, extra = {}) => {
       lastSeat1AdjacentWiring = null;
-      return;
-    }
+      lastSeat1AdjacentWiringDiagnostic = Object.freeze({
+        reason,
+        selectedBranch: selectedBranch || null,
+        hierarchyOpen: Boolean(state?.hierarchyOpen),
+        focusedChildId: state?.focusedChildId || null,
+        focusedChildIndex: Number.isInteger(state?.focusedChildIndex) ? state.focusedChildIndex : null,
+        connectionAmount: finite((state?.seatDivisionBranchAmounts || {}).connectionBranchAmount ?? state?.connectionBranchAmount, 0),
+        ...extra,
+      });
+    };
+    if (selectedBranch !== 'BRANCH-SEAT-01') { fail('SELECTED_BRANCH_NOT_SEAT_1'); return; }
+    if (!state?.hierarchyOpen) { fail('HIERARCHY_NOT_OPEN'); return; }
     const shell = scene.byBranch.get(selectedBranch);
-    if (!shell || !state.focusedChildId) return;
+    if (!shell) { fail('SELECTED_BRANCH_MISSING'); return; }
+    if (!state.focusedChildId) { fail('NO_FOCUSED_CHILD'); return; }
 
     const focusedIndex = Number.isInteger(state.focusedChildIndex)
       ? state.focusedChildIndex
       : SEAT_DIVISION_ORDER.indexOf(state.focusedChildId);
-    if (focusedIndex < 0 || focusedIndex >= SEAT_DIVISION_ORDER.length) return;
+    if (focusedIndex < 0 || focusedIndex >= SEAT_DIVISION_ORDER.length) { fail('INVALID_FOCUSED_INDEX', { divisionOrder: [...SEAT_DIVISION_ORDER] }); return; }
 
     const neighborIndex = focusedIndex > 0 ? focusedIndex - 1 : focusedIndex + 1;
     const neighborId = SEAT_DIVISION_ORDER[neighborIndex];
-    if (!neighborId || neighborId === state.focusedChildId) return;
+    if (!neighborId || neighborId === state.focusedChildId) { fail('NO_NEIGHBOR_DIVISION', { neighborId: neighborId || null }); return; }
 
     // The wiring always represents the ordered neighborhood edge. At the first
     // child, focus is the source and the next child is the target. For later
@@ -522,7 +534,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     const sourcePayload = resolveSeatDivisionPayload(sourceId);
     const targetPayload = resolveSeatDivisionPayload(targetId);
-    if (!sourcePayload || !targetPayload) return;
+    if (!sourcePayload || !targetPayload) { fail('MISSING_DIVISION_PAYLOAD', { sourceId, targetId, sourcePayload: Boolean(sourcePayload), targetPayload: Boolean(targetPayload) }); return; }
 
     const branchAmounts = state.seatDivisionBranchAmounts || {};
     const sourceAmount = clamp(
@@ -536,7 +548,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       1,
     );
     const activeAmount = Math.max(sourceAmount, targetAmount);
-    if (activeAmount <= 0.02) return;
+    if (activeAmount <= 0.02) { fail('ACTIVE_AMOUNT_TOO_LOW', { sourceAmount, targetAmount, activeAmount }); return; }
 
     const sourceGeometry = deriveFocusedSeatDivisionGeometry({
       parent: shell,
@@ -550,9 +562,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       childIndex: targetIndex,
       amount: targetAmount,
     });
-    if (!sourceGeometry || !targetGeometry) return;
+    if (!sourceGeometry || !targetGeometry) { fail('MISSING_DIVISION_GEOMETRY', { sourceId, targetId, sourceGeometry: Boolean(sourceGeometry), targetGeometry: Boolean(targetGeometry) }); return; }
 
-    const wiring = buildAdjacentDivisionWiring({
+    let wiring;
+    try {
+      wiring = buildAdjacentDivisionWiring({
       sourceGeometry,
       targetGeometry,
       clearance: Math.max(
@@ -560,7 +574,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         finite(targetGeometry.clearance, 0.16),
       ),
       amount: sourceAmount,
-    });
+      });
+    } catch (error) {
+      fail('WIRING_BUILD_ERROR', { message: error instanceof Error ? error.message : String(error), sourceId, targetId });
+      return;
+    }
     const point = adjacentDivisionWiringPoint(wiring, activeAmount);
 
     lastSeat1AdjacentWiring = Object.freeze({
@@ -576,6 +594,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldAdjacentWiring = lastSeat1AdjacentWiring.id;
     canvas.dataset.machineWorldAdjacentAmount = String(activeAmount);
     canvas.dataset.machineWorldAdjacentPhase = lastSeat1AdjacentWiring.phase;
+    lastSeat1AdjacentWiringDiagnostic = Object.freeze({ reason: 'READY', selectedBranch, hierarchyOpen: true, focusedChildId: state.focusedChildId, focusedChildIndex: focusedIndex, sourceId, targetId, amount: activeAmount });
 
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
@@ -1054,6 +1073,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
     },
     getSeat1AdjacentWiring() { return lastSeat1AdjacentWiring; },
+    getSeat1AdjacentWiringDiagnostic() { return lastSeat1AdjacentWiringDiagnostic; },
     dispose() { disposed = true; },
   });
 }
