@@ -35,7 +35,7 @@ jobs:
           mkdir -p dist
 
           if [ -d public ]; then
-            node scripts/apply-cam2-tree-follow-flex.mjs
+            node scripts/sync-hero-flex-runtime.mjs
             node scripts/sync-machine-spatial-runtime.mjs
             cp -R public/. dist/
           else
