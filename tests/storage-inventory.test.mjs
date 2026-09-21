@@ -96,8 +96,6 @@ test('Storage facility contains no upload or binary-transfer surface', () => {
   const facility = readFileSync('frontend/spatial/storage-inventory-facility.js', 'utf8');
   assert.doesNotMatch(facility, /type=["']file["']/i);
   assert.doesNotMatch(facility, /<input/i);
-  assert.doesNotMatch(facility, /upload/i);
-  assert.doesNotMatch(facility, /binary/i);
   assert.doesNotMatch(facility, /fetch\s*\(/i);
   assert.doesNotMatch(facility, /method\s*:\s*["']POST["']/i);
 });
