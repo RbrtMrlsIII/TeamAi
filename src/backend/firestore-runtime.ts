@@ -235,6 +235,27 @@ export class FirestoreRuntimeClient {
     return matches[0] ?? null;
   }
 
+  async listDocuments(collectionPath: string): Promise<FirestoreDocument[]> {
+    const token = await googleAccessToken(this.account);
+    const documents: FirestoreDocument[] = [];
+    let pageToken: string | undefined;
+
+    do {
+      const url = new URL(this.documentUrl(required(collectionPath, 'collectionPath')));
+      url.searchParams.set('pageSize', '1000');
+      if (pageToken) url.searchParams.set('pageToken', pageToken);
+      const response = await fetch(url.toString(), {
+        headers: { authorization: 'Bearer ' + token },
+      });
+      if (!response.ok) throw new Error('Firestore collection read failed: ' + response.status);
+      const body = await response.json() as { documents?: FirestoreDocument[]; nextPageToken?: string };
+      documents.push(...(body.documents ?? []));
+      pageToken = body.nextPageToken;
+    } while (pageToken);
+
+    return documents;
+  }
+
   async beginTransaction(): Promise<string> {
     const token = await googleAccessToken(this.account);
     const response = await fetch(`${FIRESTORE_ROOT}/projects/${encodeURIComponent(this.projectId)}/databases/(default)/documents:beginTransaction`, {
@@ -403,12 +424,62 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   }
 
   async listSchedulerSeats(projectId: string): Promise<SchedulerSeat[]> {
-    const token = await googleAccessToken((this.client as unknown as { account: ServiceAccount }).account);
-    const url = `${FIRESTORE_ROOT}/projects/${encodeURIComponent(process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official')}/databases/(default)/documents/${FirestoreRuntimeClient.path(this.uid, this.workplaceId, required(projectId, 'projectId'), 'seats')}`;
-    const response = await fetch(url, { headers: { authorization: `Bearer ${token}` } });
-    if (!response.ok) throw new Error(`Firestore seat list failed: ${response.status}`);
-    const body = await response.json() as { documents?: FirestoreDocument[] };
-    return (body.documents ?? []).map((doc) => decodeDocument(doc) as unknown as SchedulerSeat);
+    const safeProjectId = required(projectId, 'projectId');
+    const projectPath =
+      'accounts/' + this.uid +
+      '/workplaces/' + this.workplaceId +
+      '/projects/' + safeProjectId;
+    const teams = await this.client.listDocuments(projectPath + '/teams');
+    const seats: SchedulerSeat[] = [];
+
+    for (const team of teams) {
+      if (!team.name) continue;
+      const marker = '/documents/';
+      const markerIndex = team.name.indexOf(marker);
+      if (markerIndex < 0) continue;
+      const teamPath = team.name.slice(markerIndex + marker.length);
+      const parts = teamPath.split('/');
+      if (
+        parts.length !== 8 ||
+        parts[0] !== 'accounts' ||
+        parts[1] !== this.uid ||
+        parts[2] !== 'workplaces' ||
+        parts[3] !== this.workplaceId ||
+        parts[4] !== 'projects' ||
+        parts[5] !== safeProjectId ||
+        parts[6] !== 'teams'
+      ) continue;
+
+      const seatDocuments = await this.client.listDocuments(teamPath + '/seats');
+      for (const document of seatDocuments) {
+        const data = decodeDocument(document) as Record<string, unknown>;
+        const authorization = data.authorization && typeof data.authorization === 'object'
+          ? data.authorization as Record<string, unknown>
+          : {};
+        const id = String(data.id ?? data.seatId ?? document.name?.split('/').at(-1) ?? '');
+        if (!id) continue;
+        seats.push({
+          id,
+          projectId: String(data.projectId ?? safeProjectId),
+          field: String(data.field ?? ''),
+          skills: Array.isArray(data.skills) ? data.skills.map(String) : [],
+          capabilities: Array.isArray(data.capabilities)
+            ? data.capabilities.map(String)
+            : Array.isArray(authorization.capabilities)
+              ? authorization.capabilities.map(String)
+              : [],
+          allowedTaskTypes: Array.isArray(data.allowedTaskTypes)
+            ? data.allowedTaskTypes.map(String)
+            : Array.isArray(authorization.allowedTaskTypes)
+              ? authorization.allowedTaskTypes.map(String)
+              : [],
+          status: String(data.status ?? 'revoked') as SchedulerSeat['status'],
+          authorization: String(authorization.status ?? data.authorizationStatus ?? 'revoked') as SchedulerSeat['authorization'],
+        });
+      }
+    }
+
+    return seats;
   }
 
   async getExecutableTask(taskId: string, seatId: string): Promise<ExecutableTask | null> {
