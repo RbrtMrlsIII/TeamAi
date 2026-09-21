@@ -449,3 +449,43 @@ test('continuation request ID conflicts when the checkpoint relation changes', a
     /continuation_request_id_conflict/,
   );
 });
+
+
+test('terminal continuation request retry remains idempotent without reopening task state', async () => {
+  const existingRequest = {
+    continuationRequestId: 'cont-terminal',
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: 'exec-terminal:checkpoint',
+    sourceSeatId: 'seat-coder',
+    targetSeatId: 'seat-coder',
+    requestedBy: 'actor-1',
+    requestedAt: '2026-09-22T00:40:00.000Z',
+    instruction: 'finish',
+    status: 'completed',
+    continuationOfCheckpointId: 'exec-terminal:checkpoint',
+    nextTurn: 'fresh-budgeted-turn',
+    executionId: 'exec-terminal',
+    completedAt: '2026-09-22T00:41:00.000Z',
+  };
+  let stateCalls = 0;
+  const service = new (await import('../dist/src/backend/task-continuation.js')).TaskContinuationService(
+    { async getCheckpoint() { throw new Error('checkpoint should not be loaded for a terminal idempotent request'); }, async persistCheckpoint() {} },
+    { async getRequest() { return existingRequest; }, async persistRequest() { throw new Error('must not persist'); } },
+    { async assertCanContinue() { throw new Error('must not authorize'); } },
+    { async ensureWaitingForContinuation() { stateCalls += 1; } },
+  );
+
+  const result = await service.request({
+    taskId: 'task-1',
+    projectId: 'project-1',
+    checkpointId: 'exec-terminal:checkpoint',
+    continuationRequestId: 'cont-terminal',
+    targetSeatId: 'seat-coder',
+    actorId: 'actor-1',
+    instruction: 'finish',
+  });
+
+  assert.equal(result.status, 'completed');
+  assert.equal(stateCalls, 0);
+});
