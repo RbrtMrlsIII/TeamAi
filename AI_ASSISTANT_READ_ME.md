@@ -16,11 +16,21 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, finish feature frontiers, then prove exact-head replacement readiness before any merge
+- next allowed work: continue the governed 029 implementation on PR #398, beginning with the next representative #400 Workspace capability proof; preserve MCP as browser-proven representative frontend evidence and do not claim full MCP lifecycle authority.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: CI green, Corpus clean, and Session current are separate claims
-- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. At this handoff point the observed head is `8a05b028f70e479b578af58d5c798766b37e44a5`; verify live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
+- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`; Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- live PR head: `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842` (verified on 2026-09-21). Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
+
+
+### 2026-09-21 exact-head MCP proof
+
+- Verified live branch/PR head: `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`.
+- Commit `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842` corrected the MCP E2E direct-`/hero/` route assumption and closes the MCP facility before auth handoff.
+- Exact-head gates: Governance `35571627232` PASS; Full-System `35571627248` PASS; Security `35571627166` PASS; Browser `35571627174` PASS.
+- Browser proof covers guest discovery, four-capability inventory, dynamic target-owned branch preview, auth handoff, MCP facility close, and auth-panel visibility.
+- This is representative frontend/browser proof only. MCP provider credentials, authoritative lifecycle, entitlement, authorization, health, durable equip state, and execution remain external/backend-owned.
+- Next representative contract: Workspace capability surface under Issue #400.
 
 ## Canonical authority path
 

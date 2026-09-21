@@ -42,6 +42,8 @@ Continue converging the TeamAi Spatial World from the exact #397 implementation 
 
 This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
 
-## Current blocker
+## Current frontier
+MCP representative frontend/browser proof is converged on the exact head. The next authorized representative #400 contract is **Workspace capability surface**. Design it from the existing `WORKSPACE_CENTER` / workspace geometry boundary and normal application authority model; do not duplicate MCP ownership or elevate visual workspace state into durable authority.
 
-Fresh exact-head runtime/browser proof for the migrated renderer must complete successfully before the migration is treated as runtime-proven. Governance branch naming is no longer the blocker on #398; the remaining governance contract is canonical-spine synchronization plus exact-head proof.
+## Current blocker
+No current CI gate blocker. The branch remains Draft because green gates prove the exercised contracts only, not 029 completion, full MCP lifecycle authority, human acceptance, or merge readiness.
