@@ -324,6 +324,19 @@ async function executeContinuationTurn(input: {
   const capabilities = Array.isArray(connection.capabilities) ? connection.capabilities.map(String) : [];
   if (!capabilities.includes('execute')) return json({ error: 'connection_execute_capability_required' }, 403);
 
+  const budget = normalizeEdgeTurnBudget(seat.turnBudget);
+  const outputCeiling = providerOutputCeiling(budget);
+  if (outputCeiling <= 0) return json({ error: 'seat_budget_exhausted' }, 409);
+  const requestRecord = task.request && typeof task.request === 'object' ? task.request as Record<string, unknown> : {};
+  const messages = normalizeMessages(requestRecord.messages);
+  const continuationMessages = [...messages, ...(String(checkpoint.providerOutput ?? '') ? [{ role: 'assistant' as const, content: String(checkpoint.providerOutput) }] : []), { role: 'user' as const, content: instruction }];
+  const requestedOutput = requestRecord.maxOutputTokens === undefined ? outputCeiling : finiteNonNegative(requestRecord.maxOutputTokens, 'maxOutputTokens', outputCeiling);
+  const maxOutputTokens = Math.min(outputCeiling, requestedOutput);
+  if (maxOutputTokens <= 0) return json({ error: 'provider_output_ceiling_zero' }, 409);
+  const model = requireId(task.model, 'task_model');
+  const providerKind = normalizeProviderKind(seat.providerKind ?? seatProvider);
+  const credential = await loadSeatProviderCredential({ uid, workplaceId, projectId, seatId: targetSeatId, providerKind });
+  if (credential.providerKind !== providerKind) return json({ error: 'provider_key_provider_mismatch' }, 409);
   const transaction = await firestoreBeginTransaction(accessToken);
   const transactionalTask = await firestoreGetInTransaction(taskPath, transaction, accessToken);
   const transactionalRequest = await firestoreGetInTransaction(requestPath, transaction, accessToken);
@@ -341,19 +354,6 @@ async function executeContinuationTurn(input: {
     { update: { name: 'projects/' + FIREBASE_PROJECT_ID + '/databases/(default)/documents/' + taskPath + '/execution-events/' + startEventId, fields: firestoreFields({ uid, projectId, taskId, seatId: targetSeatId, eventId: startEventId, type: 'CONTINUE_START', occurredAt: startedAt, source: 'teamai-task-execute', actorId, continuationRequestId, continuationOfCheckpointId: checkpointId }) }, currentDocument: { exists: false } },
   ], accessToken);
 
-  const budget = normalizeEdgeTurnBudget(seat.turnBudget);
-  const outputCeiling = providerOutputCeiling(budget);
-  if (outputCeiling <= 0) return json({ error: 'seat_budget_exhausted' }, 409);
-  const requestRecord = task.request && typeof task.request === 'object' ? task.request as Record<string, unknown> : {};
-  const messages = normalizeMessages(requestRecord.messages);
-  const continuationMessages = [...messages, ...(String(checkpoint.providerOutput ?? '') ? [{ role: 'assistant' as const, content: String(checkpoint.providerOutput) }] : []), { role: 'user' as const, content: instruction }];
-  const requestedOutput = requestRecord.maxOutputTokens === undefined ? outputCeiling : finiteNonNegative(requestRecord.maxOutputTokens, 'maxOutputTokens', outputCeiling);
-  const maxOutputTokens = Math.min(outputCeiling, requestedOutput);
-  if (maxOutputTokens <= 0) return json({ error: 'provider_output_ceiling_zero' }, 409);
-  const model = requireId(task.model, 'task_model');
-  const providerKind = normalizeProviderKind(seat.providerKind ?? seatProvider);
-  const credential = await loadSeatProviderCredential({ uid, workplaceId, projectId, seatId: targetSeatId, providerKind });
-  if (credential.providerKind !== providerKind) return json({ error: 'provider_key_provider_mismatch' }, 409);
 
   let result: GenerateResult;
   try {
