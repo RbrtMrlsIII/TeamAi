@@ -64,6 +64,7 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.match(renderBody, /renderSemanticEdgeTrace/);
   assert.match(renderBody, /focusedDivision\?\.edge/);
   assert.match(renderBody, /state\.focusedChildId/);
+  assert.match(renderBody, /state\.seatDivisionBranchAmounts/);
   assert.match(renderBody, /machineWorldFocusedDivisionCamera/);
   assert.match(renderBody, /hierarchyOpen && sample\.amount > 0\.02/);
   assert.match(renderBody, /kind === 'inner-pod' && Number\.isInteger\(part\.seatIndex\)/);
