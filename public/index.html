@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./hero-dom-chrome.css" />
     <link rel="stylesheet" href="./experience-rebaseline.css" />
     <link rel="stylesheet" href="./mcp-capability.css" />
+    <link rel="stylesheet" href="./workspace-capability.css" />
   </head>
   <body>
     <main class="hero-shell" data-hero-layer="entrance" data-experience="classic" aria-label="TeamAi Web AI workspace">
@@ -57,7 +58,7 @@
             <div id="world-menu" class="world-navigation__popover">
               <button type="button" data-auth-open>Sign in</button>
               <button type="button" data-world-camera-request="SEAT_CLOSE" data-feature-id="seats">Selected seat</button>
-              <button type="button" data-world-camera-request="WORKSPACE_CLOSE" data-feature-id="workspace-hq">Workspace</button>
+              <button type="button" data-workspace-open data-feature-id="workspace-hq">Workspace</button>
               <button type="button" data-world-camera-request="DETAIL_ANCHOR">Detail</button>
               <button type="button" data-mcp-open data-feature-id="mcp-capability">MCP / Capability</button>
               <button type="button" data-settings-open data-feature-id="settings">Settings</button>
@@ -167,6 +168,7 @@
     <script type="module" src="./hero-machine-nav-bind.js"></script>
     <script type="module" src="./hero-settings-shell.js"></script>
     <script type="module" src="./mcp-capability-facility.js"></script>
+    <script type="module" src="./workspace-capability-facility.js"></script>
     <script type="module" src="./hero-seat-stack.js"></script>
     <script type="module" src="./hero-seat-stack-action-bridge.js"></script>
     <script type="module" src="./hero-semantic-camera.js"></script>

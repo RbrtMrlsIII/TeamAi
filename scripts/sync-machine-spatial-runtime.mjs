@@ -39,6 +39,9 @@ const files = [
   'mcp-capability.js',
   'mcp-capability-facility.js',
   'mcp-capability.css',
+  'workspace-capability.js',
+  'workspace-capability-facility.js',
+  'workspace-capability.css',
 ];
 
 const checkOnly = process.argv.includes('--check');
