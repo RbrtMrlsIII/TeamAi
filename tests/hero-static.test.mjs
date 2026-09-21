@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
 const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
 const semantic = await readFile(new URL('../public/hero-semantic-camera.js', import.meta.url), 'utf8');
@@ -54,13 +55,11 @@ test('flexible seat model is present', () => {
   assert.match(capacity, /MIN_SEAT_COUNT = 1/);
   assert.match(capacity, /MAX_SEAT_COUNT = 10/);
   assert.match(capacity, /GUEST_SEAT_COUNT = 10/);
-  const renderer = read('public/machine-world-renderer.js');
   assert.match(renderer, /Number\(state\.seatCount\)/);
   assert.match(renderer, /createBranchConnectionCore/);
 });
 
 test('canonical renderer owns the WebGL geometry primitives', () => {
-  const renderer = read('public/machine-world-renderer.js');
   assert.match(renderer, /const POLYS =/);
   assert.match(renderer, /function shapeBuffer\(/);
   assert.match(renderer, /gl\.drawArrays\(gl\.TRIANGLES/);
