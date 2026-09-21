@@ -138,10 +138,11 @@ function render() {
   const result = panel?.querySelector('[data-marketplace-result]');
   const checkout = panel?.querySelector('[data-marketplace-checkout]');
   const warning = panel?.querySelector('[data-marketplace-warning]');
+  const commerce = panel?.querySelector('[data-marketplace-commerce-status]');
   const teamAi = panel?.querySelector('[data-marketplace-teamai-entitlement]');
   const provider = panel?.querySelector('[data-marketplace-provider-entitlement]');
   const billing = panel?.querySelector('[data-marketplace-billing]');
-  if (!state || !modules || !result || !checkout || !warning || !teamAi || !provider || !billing) return;
+  if (!state || !modules || !result || !checkout || !warning || !commerce || !teamAi || !provider || !billing) return;
 
   state.textContent = authenticated
     ? 'Authenticated context · backend commerce read model required'
@@ -169,6 +170,8 @@ function render() {
 
   warning.hidden = !decision?.warning;
   warning.textContent = decision?.warning || '';
+  commerce.textContent = authenticated ? readModel.commerceStatus : 'unauthorized/read-blocked';
+  commerce.dataset.state = readModel.commerceStatus;
   checkout.disabled = !authenticated || !offer || !decision?.canPurchase;
   billing.textContent = readModel.billingUrl
     ? 'Hosted billing is available. TeamAi stores no card credentials.'
@@ -200,6 +203,9 @@ function build() {
     '</div>' +
     '<p class="marketplace-facility__note">Marketplace reveals two commercial modules. Subscription state, entitlement, authorization, and payment authority remain outside the browser presentation.</p>' +
     '<div class="marketplace-facility__state-row"><span data-marketplace-state data-state="DISCOVERABLE_LOCKED">Guest · DISCOVERABLE LOCKED</span><span>Presentation only</span></div>' +
+    '<div class="marketplace-facility__baseline" role="note">' +
+      '<strong>Baseline</strong><span>Team Quality: no paid subscription · Team Population: persistent Seat 1</span>' +
+    '</div>' +
     '<div class="marketplace-facility__modules" data-marketplace-modules role="list"></div>' +
     '<section class="marketplace-facility__section" aria-labelledby="marketplace-tiers-title">' +
       '<div class="marketplace-facility__section-heading"><div><p class="marketplace-facility__eyebrow">Subscription tiers</p><h3 id="marketplace-tiers-title">Choose a tier to inspect its guide</h3></div><span data-marketplace-result role="status">Browse the catalog without receiving commerce capability.</span></div>' +
@@ -209,6 +215,7 @@ function build() {
     '<section class="marketplace-facility__section" aria-labelledby="marketplace-entitlement-title">' +
       '<div class="marketplace-facility__section-heading"><div><p class="marketplace-facility__eyebrow">Authority separation</p><h3 id="marketplace-entitlement-title">Entitlement read model</h3></div></div>' +
       '<div class="marketplace-facility__entitlements">' +
+        '<div><span>Commerce status</span><strong data-marketplace-commerce-status data-state="unauthorized/read-blocked">unauthorized/read-blocked</strong></div>' +
         '<div><span>TeamAi entitlement</span><strong data-marketplace-teamai-entitlement>not verified in guest context</strong></div>' +
         '<div><span>Provider entitlement</span><strong data-marketplace-provider-entitlement>separate external entitlement</strong></div>' +
       '</div>' +

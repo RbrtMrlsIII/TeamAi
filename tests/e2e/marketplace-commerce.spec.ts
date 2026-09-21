@@ -15,6 +15,7 @@ test('Marketplace reveals Team Quality and nine-tier Team Population catalog for
   await expect(facility.locator('[data-marketplace-tier="1"]')).toContainText('Seat 2');
   await expect(facility.locator('[data-marketplace-tier="9"]')).toContainText('Seat 10');
   await expect(facility.locator('[data-marketplace-billing]')).toContainText('no card credentials');
+  await expect(facility.locator('[data-marketplace-commerce-status]')).toHaveText('unauthorized/read-blocked');
   await expect(facility.locator('[data-marketplace-checkout]')).toBeDisabled();
 });
 
@@ -28,6 +29,7 @@ test('Marketplace shows higher-tier replacement warning inline and locks lower t
     window.TeamAiMarketplaceFacility?.setPresentationAuthState(true);
     window.TeamAiMarketplaceFacility?.setPresentationReadModel({
       activeTeamPopulationTier: 2,
+      commerceStatus: 'pending',
       teamAiEntitlement: 'active',
       providerEntitlement: 'separate / externally evaluated',
       billingUrl: 'https://billing.example.test/portal',
@@ -43,6 +45,7 @@ test('Marketplace shows higher-tier replacement warning inline and locks lower t
 
   await expect(facility.locator('[data-marketplace-tier="1"]')).toBeDisabled();
   await expect(facility.locator('[data-marketplace-tier="4"]')).toHaveAttribute('aria-pressed', 'false');
+  await expect(facility.locator('[data-marketplace-commerce-status]')).toHaveText('pending');
   await expect(facility.locator('[data-marketplace-teamai-entitlement]')).toContainText('active');
   await expect(facility.locator('[data-marketplace-provider-entitlement]')).toContainText('separate');
 });
