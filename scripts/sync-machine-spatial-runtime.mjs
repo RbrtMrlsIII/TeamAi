@@ -30,6 +30,7 @@ const files = [
   'machine-seat-division-topology.js',
   'machine-seat-division-payload.js',
   'machine-energy-flow.js',
+  'machine-choreography.js',
 ];
 
 for (const file of files) {
