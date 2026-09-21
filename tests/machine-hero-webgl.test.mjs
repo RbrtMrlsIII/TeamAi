@@ -183,8 +183,9 @@ test('machine choreography is state-derived and lifecycle-connected in the canon
   assert.match(renderer, /divisionAmount: finite\(state\.focusedChildAmount, 0\)/);
   assert.match(
     renderer,
-    /connectionAmount: finite\(branchAmounts\.connectionBranchAmount \?\? state\.connectionBranchAmount, 0\)/,
+    /const connectionAmount = finite\(\s*branchAmounts\.connectionBranchAmount \?\? state\.connectionBranchAmount,\s*0,\s*\)/s,
   );
+  assert.match(renderer, /\n\s*connectionAmount,\n/);
   assert.match(renderer, /heroState: state\.heroState/);
   assert.match(renderer, /contributionAmount: finite\(state\.contributionAmount, 0\)/);
   assert.match(renderer, /choreography\.electrical/);
