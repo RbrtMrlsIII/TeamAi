@@ -60,7 +60,7 @@ test('Firestore Seat resolver ignores legacy project-level Seat documents and re
   } finally {
     globalThis.fetch = originalFetch;
   }
-}
+});
 
 test('Firestore Seat resolver fails closed when two canonical teams expose the same Seat id', async () => {
   const originalFetch = globalThis.fetch;
@@ -93,8 +93,6 @@ test('Firestore Seat resolver fails closed when two canonical teams expose the s
     globalThis.fetch = originalFetch;
   }
 });
-
-import { FirestoreRuntimeTaskStore } from '../dist/src/backend/firestore-runtime.js';
 
 const stringValue = (value) => ({ stringValue: value });
 const mapValue = (fields) => ({ mapValue: { fields } });
