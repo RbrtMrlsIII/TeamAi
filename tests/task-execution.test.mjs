@@ -107,3 +107,72 @@ test('returns duplicate without invoking provider twice', async () => {
   assert.equal(second.duplicate, true);
   assert.equal(calls, 1);
 });
+
+
+test('applies backend-owned Seat turn budget to provider request and returns authoritative accounting', async () => {
+  const { createSeatTurnBudgetConfig } = await import('../dist/src/backend/seat-turn-budget.js');
+  let observedMaxOutputTokens = null;
+  const budget = createSeatTurnBudgetConfig({
+    turnBudgetTokens: 12000,
+    responsibilityProfile: 'coder',
+    outputBudgetTokens: 4000,
+    reasoningBudgetTokens: 5000,
+    handoffReserveTokens: 1000,
+    warningThresholdPercent: 0.8,
+  });
+  const { service: execution } = service(async (request) => {
+    observedMaxOutputTokens = request.maxOutputTokens;
+    return {
+      provider: 'fixture', model: 'model-1', requestId: 'request-budget-1', text: 'bounded',
+      usage: { inputTokens: 1200, outputTokens: 3800, totalTokens: 5000 },
+    };
+  });
+
+  const result = await execution.execute(
+    task({
+      request: { messages: [{ role: 'user', content: 'budgeted task' }], maxOutputTokens: 9000, stream: false },
+      turnBudget: budget,
+      estimatedCompletionNeedTokens: 500,
+    }),
+    'scheduler-1',
+    'exec-budget',
+  );
+
+  assert.equal(observedMaxOutputTokens, 4000);
+  assert.equal(result.status, 'completed');
+  assert.equal(result.budget?.configured.responsibilityProfile, 'coder');
+  assert.equal(result.budget?.usage.consumedOutputTokens, 3800);
+  assert.equal(result.budget?.usage.consumedInputTokens, 1200);
+  assert.equal(result.budget?.usage.remainingGenerationTokens, 8200);
+  assert.equal(result.budget?.completionState, null);
+});
+
+test('budget accounting can request handoff before exhaustion without changing legacy completion semantics', async () => {
+  const { createSeatTurnBudgetConfig } = await import('../dist/src/backend/seat-turn-budget.js');
+  const budget = createSeatTurnBudgetConfig({
+    turnBudgetTokens: 12000,
+    responsibilityProfile: 'coder',
+    outputBudgetTokens: 4000,
+    reasoningBudgetTokens: 5000,
+    handoffReserveTokens: 1000,
+  });
+  const { service: execution } = service(async () => ({
+    provider: 'fixture', model: 'model-1', requestId: 'request-budget-2', text: 'handoff candidate',
+    usage: { inputTokens: 2000, outputTokens: 10000, totalTokens: 12000 },
+  }));
+
+  const result = await execution.execute(
+    task({
+      request: { messages: [{ role: 'user', content: 'needs continuation' }], maxOutputTokens: 12000, stream: false },
+      turnBudget: budget,
+      estimatedCompletionNeedTokens: 1500,
+    }),
+    'scheduler-1',
+    'exec-budget-handoff',
+  );
+
+  assert.equal(result.status, 'completed');
+  assert.equal(result.budget?.state, 'HANDOFF');
+  assert.equal(result.budget?.completionState, 'HANDOFF_REQUIRED');
+  assert.equal(result.budget?.usage.remainingGenerationTokens, 2000);
+});
