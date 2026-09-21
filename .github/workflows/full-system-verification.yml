@@ -55,6 +55,8 @@ jobs:
         run: npm run build-system:audit
       - name: Run backend authority audit
         run: npm run backend:authority-audit
+      - name: Syntax-check production Seat diagnostic
+        run: node --check scripts/diagnose-production-firestore-seat.mjs
       - name: Run typecheck
         run: npm run typecheck
       - name: Setup Deno
