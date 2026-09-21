@@ -494,8 +494,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   }
 
   function renderAdjacentDivisionWiring(scene, selectedBranch, state, reducedMotion) {
-    lastSeat1AdjacentWiring = null;
-    if (!selectedBranch || !state?.hierarchyOpen) return;
+    if (selectedBranch !== 'BRANCH-SEAT-01' || !state?.hierarchyOpen) {
+      lastSeat1AdjacentWiring = null;
+      return;
+    }
     const shell = scene.byBranch.get(selectedBranch);
     if (!shell || !state.focusedChildId) return;
 
