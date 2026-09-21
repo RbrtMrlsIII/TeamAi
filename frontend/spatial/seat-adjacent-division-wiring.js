@@ -10,6 +10,19 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_ADJACENCY_WIRING_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING';
 
+export function semanticAdjacentDivisionWiringId(sourceGeometry, targetGeometry) {
+  const source = String(sourceGeometry?.id || '').replace(/:GEOMETRY$/, '');
+  const target = String(targetGeometry?.id || '').replace(/:GEOMETRY$/, '');
+  if (!source || !target) return null;
+  if (
+    source === 'TREE-HERO-SEAT#0:SEAT_CONNECTION'
+    && target === 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR'
+  ) {
+    return SEAT1_ADJACENCY_WIRING_ID;
+  }
+  return 'EDGE:ADJACENT-DIVISION:' + source + '=>' + target;
+}
+
 function pointDistance(a, b) {
   return Math.hypot((b.x || 0) - (a.x || 0), (b.z || 0) - (a.z || 0));
 }
@@ -30,8 +43,11 @@ export function buildAdjacentDivisionWiring({
   const dz = targetPort.z - sourceAtAmount.z;
   const length = normalize(Math.max(0.02, Math.hypot(dx, dz)));
 
+  const id = semanticAdjacentDivisionWiringId(sourceGeometry, targetGeometry);
+  if (!id) throw new Error('adjacent division wiring requires stable semantic division identities');
+
   return {
-    id: SEAT1_ADJACENCY_WIRING_ID,
+    id,
     semantic: 'ADJACENT_DIVISION_WIRING',
     from: {
       divisionId: sourceGeometry.id,
