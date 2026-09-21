@@ -106,11 +106,13 @@ test('Trusted continuation request boundary stays user-authorized, checkpoint-sc
 
 test('Trusted continuation request boundary atomically creates the request, state transition, and CONTINUE_WAIT event', () => {
   const source = read('supabase/functions/teamai-task-continuation-request/index.ts');
+  const requestSectionIndex = source.indexOf('const requestPath = path + "/continuation-requests/"');
   const commitIndex = source.indexOf('await firestoreCommitTransaction(transaction, [');
-  assert.ok(commitIndex >= 0);
-  const commitBlock = source.slice(commitIndex, source.indexOf('  return "created";', commitIndex));
-  assert.match(commitBlock, /continuation-requests/);
-  assert.match(commitBlock, /status: "waiting_for_continuation"|status: \{ stringValue: "waiting_for_continuation" \}/);
-  assert.match(commitBlock, /type: "CONTINUE_WAIT"/);
-  assert.match(commitBlock, /currentDocument: \{ exists: false \}/);
+  assert.ok(requestSectionIndex >= 0);
+  assert.ok(commitIndex > requestSectionIndex);
+  const transactionSection = source.slice(requestSectionIndex, source.indexOf('  return "created";', requestSectionIndex));
+  assert.match(transactionSection, /continuation-requests/);
+  assert.match(transactionSection, /status: \{ stringValue: "waiting_for_continuation" \}/);
+  assert.match(transactionSection, /type: "CONTINUE_WAIT"/);
+  assert.match(transactionSection, /currentDocument: \{ exists: false \}/);
 });
