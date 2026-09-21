@@ -1,6 +1,7 @@
 export type EdgeTurnBudgetConfig = {
   turnBudgetTokens: number;
   hardStopPolicy: 'handoff-before-exhaustion' | 'stop-at-limit';
+  responsibilityProfile?: string;
   outputBudgetTokens: number;
   reasoningBudgetTokens: number;
   handoffReserveTokens: number;
@@ -32,6 +33,7 @@ export function normalizeEdgeTurnBudget(value: unknown): EdgeTurnBudgetConfig {
     reasoningBudgetTokens: nonNegativeInteger(input.reasoningBudgetTokens, 'reasoningBudgetTokens'),
     handoffReserveTokens: nonNegativeInteger(input.handoffReserveTokens, 'handoffReserveTokens'),
     hardStopPolicy: input.hardStopPolicy === 'stop-at-limit' ? 'stop-at-limit' : 'handoff-before-exhaustion',
+    responsibilityProfile: typeof input.responsibilityProfile === 'string' ? input.responsibilityProfile : undefined,
     warningThresholdPercent: Number.isFinite(Number(input.warningThresholdPercent))
       ? Math.max(0, Math.min(1, Number(input.warningThresholdPercent)))
       : 0.8,
@@ -57,7 +59,7 @@ export function computeEdgeBudget(input: {
   );
   const consumedWorkOutputTokens = outputTokens - reasoningTokens;
   const consumedTotalTokens = inputTokens + outputTokens;
-  const remainingGenerationTokens = Math.max(0, input.config.turnBudgetTokens - consumedTotalTokens);
+  const remainingGenerationTokens = Math.max(0, input.config.turnBudgetTokens - outputTokens);
   const usableGenerationTokens = Math.max(0, remainingGenerationTokens - input.config.handoffReserveTokens);
 
   return Object.freeze({
