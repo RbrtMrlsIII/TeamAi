@@ -6,7 +6,7 @@ import {
   createSeatBudgetSaveIntent,
   normalizeSeatBudgetReadModel,
   seatBudgetEnergySegments,
-} from '../dist/frontend/spatial/seat-budget-settings.js';
+} from '../frontend/spatial/seat-budget-settings.js';
 
 test('Seat Budget read model keeps authorization/configurability separate', () => {
   const locked = normalizeSeatBudgetReadModel({
