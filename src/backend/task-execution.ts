@@ -3,6 +3,7 @@ import type { GenerateRequest, GenerateResult } from '../providers/types.js';
 import { ProviderRuntime, type ExecutionAuthorizationStatus, type ProviderInvocationRequest } from './provider-runtime.js';
 import { assertDurableEvent, transitionTask, type TaskEvent, type TaskStatus } from './task-state.js';
 import type { DurableExecutionResult, TaskExecutionResultStore } from './task-execution-result.js';
+import { buildTaskContinuationCheckpoint, type TaskContinuationCheckpointStore } from './task-continuation.js';
 import {
   accountTurnBudget,
   type SeatTurnBudgetConfig,
@@ -45,6 +46,7 @@ export class TaskExecutionService {
     private readonly runtime: ProviderRuntime,
     private readonly events: TaskExecutionEventStore,
     private readonly results?: TaskExecutionResultStore,
+    private readonly checkpoints?: TaskContinuationCheckpointStore,
   ) {}
 
   async execute(task: ExecutableTask, actorId: string, idempotencyKey: string): Promise<TaskExecutionResult> {
@@ -129,6 +131,15 @@ export class TaskExecutionService {
         const handoffKey = `${idempotencyKey}:handoff`;
         const handoffEvent = this.event(`${handoffKey}:event`, handoffKey, 'HANDOFF_REQUIRED', actorId, new Date().toISOString());
         assertDurableEvent(handoffEvent);
+        const checkpoint = buildTaskContinuationCheckpoint({
+          task,
+          actorId,
+          idempotencyKey,
+          result,
+          budget: budgetAfterExecution,
+          occurredAt: handoffEvent.occurredAt,
+        });
+        if (this.checkpoints) await this.checkpoints.persistCheckpoint(checkpoint);
         await this.persistResult({
           taskId: task.id,
           projectId: task.projectId,
@@ -146,6 +157,7 @@ export class TaskExecutionService {
           status: 'handoff_required',
           result,
           budget: budgetAfterExecution ?? undefined,
+          continuationCheckpointId: checkpoint.checkpointId,
           duplicate: false,
         };
       }
