@@ -8,6 +8,7 @@ export type DurableExecutionResult = {
   eventId: string;
   idempotencyKey: string;
   status: 'completed' | 'failed' | 'handoff_required';
+  continuationCheckpointId?: string;
   recordedAt: string;
   result?: GenerateResult;
   error?: unknown;
