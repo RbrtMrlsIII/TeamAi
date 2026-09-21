@@ -42,7 +42,7 @@ test('animated expansion keeps the concentric order across the supported Seat ra
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     const footprint = workspaceForSeats(seatCount);
     for (const expansionAmount of [0, 0.25, 0.5, 0.75, 1]) {
-      const r0 = footprint * 0.68 * (0.68 + 0.08 * expansionAmount);
+      const r0 = footprint * (0.68 + 0.08 * expansionAmount);
       const r3 = (4.05 + (4.55 - 4.05) * ((seatCount - 1) / 9)) + 0.5 * expansionAmount;
       const envelope = deriveConcentricRingEnvelope({
         r0Radius: r0,
