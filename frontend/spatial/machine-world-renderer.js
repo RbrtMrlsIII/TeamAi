@@ -25,6 +25,7 @@ import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
+import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
@@ -462,43 +463,59 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     return child;
   }
 
-  function renderSeat1AdjacentWiring(scene, selectedBranch, state, reducedMotion) {
+  function renderAdjacentDivisionWiring(scene, selectedBranch, state, reducedMotion) {
     lastSeat1AdjacentWiring = null;
-    if (selectedBranch !== 'BRANCH-SEAT-01' || !state?.hierarchyOpen) return;
-    const sourceAmount = clamp(finite(state.connectionBranchAmount, 0), 0, 1);
-    const targetAmount = clamp(finite(state.behaviorBranchAmount, 0), 0, 1);
-    const activeAmount = targetAmount > 0 ? targetAmount : sourceAmount;
-    if (activeAmount <= 0) return;
+    if (!selectedBranch || !state?.hierarchyOpen) return;
+    const shell = scene.byBranch.get(selectedBranch);
+    if (!shell || !state.focusedChildId) return;
 
-    const shell = scene.byBranch.get('BRANCH-SEAT-01');
-    if (!shell) return;
-    const seatAngle = finite(shell.angle, 0);
-    const seatRadius = Math.hypot(finite(shell.center?.x, 0), finite(shell.center?.z, 0));
+    const focusedIndex = Number.isInteger(state.focusedChildIndex)
+      ? state.focusedChildIndex
+      : SEAT_DIVISION_ORDER.indexOf(state.focusedChildId);
+    if (focusedIndex < 0 || focusedIndex >= SEAT_DIVISION_ORDER.length) return;
 
-    const sourceGeometry = buildSeatDivisionGeometry({
-      center: { x: shell.center.x, y: shell.level + 0.12, z: shell.center.z },
-      angle: seatAngle,
-      radialDistance: seatRadius,
-      payload: { labels: ['Connection', 'Health'], controls: ['configure'] },
-      workspaceTarget: { x: 0, y: 0.5, z: 0 },
-      id: 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY',
+    const neighborIndex = focusedIndex > 0 ? focusedIndex - 1 : focusedIndex + 1;
+    const neighborId = SEAT_DIVISION_ORDER[neighborIndex];
+    if (!neighborId || neighborId === state.focusedChildId) return;
+
+    const sourcePayload = resolveSeatDivisionPayload(state.focusedChildId);
+    const targetPayload = resolveSeatDivisionPayload(neighborId);
+    if (!sourcePayload || !targetPayload) return;
+
+    const sourceAmount = clamp(
+      finite(state[sourcePayload.branchAmountKey], 0),
+      0,
+      1,
+    );
+    const targetAmount = clamp(
+      finite(state[targetPayload.branchAmountKey], 0),
+      0,
+      1,
+    );
+    const activeAmount = Math.max(sourceAmount, targetAmount);
+    if (activeAmount <= 0.02) return;
+
+    const sourceGeometry = deriveFocusedSeatDivisionGeometry({
+      parent: shell,
+      childId: state.focusedChildId,
+      childIndex: focusedIndex,
+      amount: sourceAmount,
     });
-    const targetGeometry = buildSeatDivisionGeometry({
-      center: {
-        x: shell.center.x - Math.cos(seatAngle) * 0.52,
-        y: shell.level + 0.30,
-        z: shell.center.z - Math.sin(seatAngle) * 0.52,
-      },
-      angle: seatAngle + Math.PI,
-      radialDistance: seatRadius,
-      payload: { labels: ['Behavior'], controls: ['configure'] },
-      workspaceTarget: { x: 0, y: 0.5, z: 0 },
-      id: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+    const targetGeometry = deriveFocusedSeatDivisionGeometry({
+      parent: shell,
+      childId: neighborId,
+      childIndex: neighborIndex,
+      amount: targetAmount,
     });
+    if (!sourceGeometry || !targetGeometry) return;
 
     const wiring = buildAdjacentDivisionWiring({
       sourceGeometry,
       targetGeometry,
+      clearance: Math.max(
+        finite(sourceGeometry.clearance, 0.16),
+        finite(targetGeometry.clearance, 0.16),
+      ),
       amount: sourceAmount,
     });
     const point = adjacentDivisionWiringPoint(wiring, activeAmount);
@@ -515,7 +532,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.bufferData(gl.ARRAY_BUFFER,route,gl.DYNAMIC_DRAW);
     gl.enableVertexAttribArray(linePos);
     gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
-    gl.uniform4f(lineColor,.36,.82,1,reducedMotion ? .38 : .62);
+    gl.uniform4f(lineColor,.36,.82,1,reducedMotion ? .26 : .54);
     gl.drawArrays(gl.LINE_STRIP,0,2);
 
     lastSeat1AdjacentWiring = Object.freeze({
@@ -525,7 +542,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       sourcePort: Object.freeze({ ...wiring.from.port }),
       targetPort: Object.freeze({ ...wiring.to.port }),
       amount: activeAmount,
-      phase: targetAmount > 0 ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
+      phase: targetAmount > sourceAmount ? 'TARGET_OPENING_OR_ACTIVE' : 'SOURCE_OPENING_OR_ACTIVE',
       presentationOnly: true,
     });
   }
@@ -756,7 +773,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
     const seat1Child = renderSeat1ConnectionChild(scene, finite(state.connectionBranchAmount, 0), effectiveCameraId, reducedMotion, now);
-    renderSeat1AdjacentWiring(scene, effectiveCameraId, state, reducedMotion);
+    renderAdjacentDivisionWiring(scene, effectiveCameraId, state, reducedMotion);
     if (hierarchyOpen && state.focusedChildId && state.focusedChildId !== 'SEAT_CONNECTION') {
       const shell = scene.byBranch.get(effectiveCameraId);
       const focusedDivision = drawFocusedSeatDivision({
