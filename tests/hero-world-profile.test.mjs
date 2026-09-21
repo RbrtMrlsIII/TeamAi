@@ -26,3 +26,20 @@ test('expanded machine-core radii remain monotonic without changing semantic pop
     assert.ok(open.outerHousingRadius > base.outerHousingRadius);
   }
 });
+
+import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
+
+test('machine core, renderer, and controller share the same Seat and housing radii', () => {
+  for (let count = 1; count <= 10; count += 1) {
+    const profile = deriveMachineWorldProfile(count);
+    const core = createBranchConnectionCore({ seatCount: count });
+    const seatRadii = core.parts
+      .filter((part) => part.kind === 'inner-pod')
+      .map((part) => Math.hypot(part.center.x, part.center.z));
+    const housingRadii = core.parts
+      .filter((part) => part.kind === 'outer-housing')
+      .map((part) => Math.hypot(part.center.x, part.center.z));
+    assert.ok(seatRadii.every((radius) => Math.abs(radius - profile.seatShellRadius) < 1e-9));
+    assert.ok(housingRadii.every((radius) => Math.abs(radius - profile.outerHousingRadius) < 1e-9));
+  }
+});
