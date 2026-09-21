@@ -946,6 +946,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldModules = String(scene.parts.length);
     canvas.dataset.machineWorldSeats = String(scene.seatCount);
     canvas.dataset.machineWorldRenderer = 'canonical';
+    canvas.dataset.machineWorldChoreographyPhase = choreography.phase;
+    canvas.dataset.machineWorldChoreographyElectrical = String(choreography.electrical);
+    canvas.dataset.machineWorldChoreographyWorkspaceReception = String(choreography.workspaceReception);
     canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
 
     return Object.freeze({
