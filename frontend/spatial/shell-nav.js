@@ -20,13 +20,13 @@ import {
 
 const NAV_LABELS = {
   deck: "Deck",
-  workplace: getFrontendFeature("workspace-hq")?.label || "Workplace",
-  seats: getFrontendFeature("seats")?.label || "Seats",
+  workplace: "Workplace",
+  seats: "Seats",
   planning: "Planning",
   working: "Working",
-  artifacts: getFrontendFeature("artifacts-inventory")?.label || "Artifacts / Inventory",
+  artifacts: "Artifacts",
   approvals: "Approvals",
-  settings: getFrontendFeature("settings")?.label || "Settings / Control",
+  settings: "Settings",
 };
 
 const NAV_FEATURE_IDS = Object.freeze({
