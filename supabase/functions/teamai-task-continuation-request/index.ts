@@ -245,7 +245,7 @@ async function transitionTaskForContinuation(input: {
       },
       currentDocument: { exists: false },
     },
-  ]);
+  ], input.accessToken);
 
   return "created";
 }
@@ -306,7 +306,7 @@ Deno.serve(async (req: Request) => {
           statePhase: "not_reopened",
         });
       }
-      const phase = await transitionTaskForContinuation(input);
+      const phase = await transitionTaskForContinuation({ ...input, accessToken });
       return json({
         ok: true,
         phase: "idempotent",
@@ -355,7 +355,7 @@ Deno.serve(async (req: Request) => {
       throw new Error("target_seat_provider_entitlement_required");
     }
 
-    const phase = await transitionTaskForContinuation(input);
+    const phase = await transitionTaskForContinuation({ ...input, accessToken });
 
     return json({
       ok: true,
