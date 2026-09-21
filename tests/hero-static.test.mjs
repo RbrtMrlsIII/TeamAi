@@ -113,3 +113,14 @@ test('Issue #89 responsive framing helpers exist without second theme root', () 
   assert.match(runtime, /responsiveFovBoost|FOV_BOOST|setupRingFovBoost|viewW|aspect/);
   assert.doesNotMatch(runtime, /second theme root|body\.dataset\.theme/i);
 });
+
+
+test('public boot graph stays within the public runtime boundary', async () => {
+  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map((match) => match[1]);
+  assert.ok(scripts.includes('./hero-root-runtime.js'));
+  for (const src of scripts) {
+    const runtimePath = new URL(src, new URL('../public/', import.meta.url));
+    const source = await readFile(runtimePath, 'utf8');
+    assert.doesNotMatch(source, /from\s+['"][^'"]*frontend\/spatial\//);
+  }
+});
