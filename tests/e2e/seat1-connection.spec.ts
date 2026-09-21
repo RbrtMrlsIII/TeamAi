@@ -65,6 +65,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
         amount: 1,
         presentationOnly: true,
       },
+      diagnostic: { reason: 'READY' },
     });
   });
 
@@ -101,6 +102,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
         amount: 1,
         presentationOnly: true,
       },
+      diagnostic: { reason: 'READY' },
     });
 
     await page.keyboard.press('ArrowLeft');
@@ -131,6 +133,7 @@ test.describe('Seat-1 SEAT_CONNECTION vertical', () => {
         amount: 1,
         presentationOnly: true,
       },
+      diagnostic: { reason: 'READY' },
     });
   });
 });
