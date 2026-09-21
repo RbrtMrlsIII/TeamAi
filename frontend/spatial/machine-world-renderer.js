@@ -810,7 +810,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
 
     // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
-    const seat1Child = renderSeat1ConnectionChild(scene, finite(state.connectionBranchAmount, 0), effectiveCameraId, reducedMotion, now);
+    // Canonical branch aggregate wins; legacy scalar remains only as compatibility fallback.
+    const branchAmounts = state.seatDivisionBranchAmounts || {};
+    const seat1ConnectionAmount = clamp(
+      finite(branchAmounts.connectionBranchAmount ?? state.connectionBranchAmount, 0),
+      0,
+      1,
+    );
+    const seat1Child = renderSeat1ConnectionChild(scene, seat1ConnectionAmount, effectiveCameraId, reducedMotion, now);
     renderAdjacentDivisionWiring(scene, effectiveCameraId, state, reducedMotion);
     if (hierarchyOpen && state.focusedChildId && state.focusedChildId !== 'SEAT_CONNECTION') {
       const shell = scene.byBranch.get(effectiveCameraId);

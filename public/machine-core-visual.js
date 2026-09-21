@@ -50,7 +50,7 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     if (state) {
       const camera = resolveBranchCamera(semanticScene, branchId) || semanticScene.cameras[0];
       const motionPrefix = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true ? 'reduced-motion ' : '';
-      state.textContent = `${motionPrefix}${frame.state} · ${Math.round(frame.amount * 100)}% · camera ${camera?.cameraId || 'BRANCH_CAMERA_HUB-CORE'}`;
+      state.textContent = `${motionPrefix}${frame.state} · ${Math.round(frame.amount * 100)}% · ${semanticScene.parts.length} independent modules · camera ${camera?.cameraId || 'BRANCH_CAMERA_HUB-CORE'}`;
     }
     raf = requestAnimationFrame(render);
   };

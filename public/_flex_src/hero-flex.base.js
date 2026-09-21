@@ -39,6 +39,12 @@ import {
   tickSeatDivisionBranches,
   getSeatDivisionBranchAmount,
   getSeatDivisionBranchAmounts,
+  getConnectionBranchAmount,
+  getBehaviorBranchAmount,
+  getToolkitBranchAmount,
+  getCapabilitiesBranchAmount,
+  getAuthorizationBranchAmount,
+  getWorkspaceScopeBranchAmount,
 
 
   connectionFaceAccessibleName,
