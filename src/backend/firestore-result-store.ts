@@ -178,12 +178,13 @@ export class FirestoreTaskContinuationCheckpointStore implements TaskContinuatio
     }
   }
 
-  async getCheckpoint(taskId: string, checkpointId: string): Promise<TaskContinuationCheckpoint | null> {
+  async getCheckpoint(projectId: string, taskId: string, checkpointId: string): Promise<TaskContinuationCheckpoint | null> {
+    required(projectId, 'projectId');
     required(taskId, 'taskId');
     required(checkpointId, 'checkpointId');
     const token = await this.accessToken();
     const response = await fetch(
-      this.documentHttpUrl(this.checkpointPath(taskId, checkpointId)),
+      this.documentHttpUrl(this.checkpointPath(projectId, taskId, checkpointId)),
       { headers: { authorization: `Bearer ${token}` } },
     );
     if (response.status === 404) return null;
@@ -204,7 +205,7 @@ export class FirestoreTaskContinuationCheckpointStore implements TaskContinuatio
         body: JSON.stringify({
           writes: [{
             update: {
-              name: this.resourceName(this.checkpointPath(checkpoint.taskId, checkpoint.checkpointId)),
+              name: this.resourceName(this.checkpointPath(checkpoint.projectId, checkpoint.taskId, checkpoint.checkpointId)),
               fields: fields(checkpoint as unknown as Record<string, unknown>),
             },
             currentDocument: { exists: false },
@@ -218,14 +219,8 @@ export class FirestoreTaskContinuationCheckpointStore implements TaskContinuatio
     }
   }
 
-  private checkpointPath(taskId: string, checkpointId: string): string {
-    return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${this.checkpointProjectId(checkpointId)}/tasks/${required(taskId, 'taskId')}/continuation-checkpoints/${encodeURIComponent(required(checkpointId, 'checkpointId'))}`;
-  }
-
-  private checkpointProjectId(checkpointId: string): string {
-    const delimiter = ':project:';
-    const index = checkpointId.indexOf(delimiter);
-    return index >= 0 ? required(checkpointId.slice(index + delimiter.length), 'projectId') : '';
+  private checkpointPath(projectId: string, taskId: string, checkpointId: string): string {
+    return `accounts/${this.uid}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/tasks/${required(taskId, 'taskId')}/continuation-checkpoints/${required(checkpointId, 'checkpointId')}`;
   }
 
   private resourceName(path: string): string {
