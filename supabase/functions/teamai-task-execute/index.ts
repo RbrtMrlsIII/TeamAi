@@ -258,6 +258,136 @@ async function executeProvider(providerKind: "openai" | "anthropic", apiKey: str
   return new AnthropicProvider(apiKey).generate(request);
 }
 
+function matchesContinuationRequest(
+  request: Record<string, any>,
+  input: { taskId: string; projectId: string; checkpointId: string; continuationRequestId: string; targetSeatId: string; requestedBy: string; instruction: string },
+): boolean {
+  return String(request.continuationRequestId ?? '') === input.continuationRequestId
+    && String(request.taskId ?? '') === input.taskId
+    && String(request.projectId ?? '') === input.projectId
+    && String(request.checkpointId ?? '') === input.checkpointId
+    && String(request.continuationOfCheckpointId ?? '') === input.checkpointId
+    && String(request.targetSeatId ?? '') === input.targetSeatId
+    && String(request.requestedBy ?? '') === input.requestedBy
+    && String(request.instruction ?? '') === input.instruction;
+}
+
+async function executeContinuationTurn(input: {
+  uid: string; workplaceId: string; projectId: string; taskId: string; checkpointId: string;
+  continuationRequestId: string; actorId: string; executionId: string; taskPath: string; accessToken: string;
+}): Promise<Response> {
+  const { uid, workplaceId, projectId, taskId, checkpointId, continuationRequestId, actorId, executionId, taskPath, accessToken } = input;
+  const resultPath = taskPath + '/execution-results/' + executionId;
+  const requestPath = taskPath + '/continuation-requests/' + continuationRequestId;
+  const checkpointPath = taskPath + '/continuation-checkpoints/' + checkpointId;
+
+  const priorResult = await firestoreGet(resultPath, accessToken);
+  if (priorResult.exists) {
+    const prior = decodedRecord(priorResult.fields);
+    return json({ ok: true, phase: 'idempotent-result', duplicate: true, uid, taskId, executionId, status: prior.status ?? 'unknown', continuationRequestId: prior.continuationRequestId ?? continuationRequestId, continuationOfCheckpointId: prior.continuationOfCheckpointId ?? checkpointId, termination: prior.termination ?? null });
+  }
+
+  const requestDocument = await firestoreGet(requestPath, accessToken);
+  if (!requestDocument.exists) return json({ error: 'continuation_request_not_found' }, 404);
+  const continuationRequest = decodedRecord(requestDocument.fields);
+  const targetSeatId = requireId(continuationRequest.targetSeatId, 'targetSeatId');
+  const instruction = requireId(continuationRequest.instruction, 'continuationInstruction');
+  if (!matchesContinuationRequest(continuationRequest, { taskId, projectId, checkpointId, continuationRequestId, targetSeatId, requestedBy: uid, instruction })) return json({ error: 'continuation_request_id_conflict' }, 409);
+
+  const checkpointDocument = await firestoreGet(checkpointPath, accessToken);
+  if (!checkpointDocument.exists) return json({ error: 'continuation_checkpoint_not_found' }, 404);
+  const checkpoint = decodedRecord(checkpointDocument.fields);
+  if (String(checkpoint.checkpointId ?? '') !== checkpointId || String(checkpoint.taskId ?? '') !== taskId || String(checkpoint.projectId ?? '') !== projectId || String(checkpoint.status ?? '') !== 'awaiting_continuation' || String(checkpoint.completionState ?? '') !== 'HANDOFF_REQUIRED' || String((checkpoint.termination as Record<string, unknown> | undefined)?.state ?? '') !== 'incomplete') return json({ error: 'continuation_checkpoint_not_continuable' }, 409);
+
+  const taskDocument = await firestoreGet(taskPath, accessToken);
+  if (!taskDocument.exists) return json({ error: 'task_not_found', taskId }, 404);
+  const task = decodedRecord(taskDocument.fields);
+  if (String(task.status ?? '') !== 'waiting_for_continuation') return json({ error: 'task_not_waiting_for_continuation', status: task.status ?? null }, 409);
+  if (String(task.continuationRequestId ?? '') !== continuationRequestId || String(task.continuationCheckpointId ?? '') !== checkpointId) return json({ error: 'continuation_request_state_conflict' }, 409);
+
+  const seatDocument = await firestoreFindSeat({ uid, workplaceId, projectId, seatId: targetSeatId, accessToken });
+  if (!seatDocument) return json({ error: 'target_seat_not_found' }, 404);
+  const seat = seatDocument.fields;
+  if (String(seat.status ?? '') !== 'active') return json({ error: 'target_seat_not_active' }, 403);
+  const authorization = seat.authorization && typeof seat.authorization === 'object' ? seat.authorization : {};
+  if (String((authorization as Record<string, unknown>).status ?? '') !== 'authorized') return json({ error: 'target_seat_not_authorized' }, 403);
+  if (String(seat.teamEntitlement ?? '') !== 'allowed') return json({ error: 'target_seat_team_entitlement_required' }, 403);
+  if (String(seat.providerEntitlement ?? '') !== 'allowed') return json({ error: 'target_seat_provider_entitlement_required' }, 403);
+
+  const seatProvider = String(seat.provider ?? '').trim();
+  const taskProvider = String(task.provider ?? '').trim();
+  if (!seatProvider || (taskProvider && taskProvider.toLowerCase() !== seatProvider.toLowerCase())) return json({ error: 'continuation_provider_seat_mismatch' }, 409);
+  const connection = task.connection && typeof task.connection === 'object' ? task.connection as Record<string, unknown> : null;
+  if (!connection || String(connection.status ?? '') !== 'active') return json({ error: 'connection_not_active' }, 409);
+  if (String(connection.projectId ?? '') !== projectId) return json({ error: 'connection_project_mismatch' }, 409);
+  if (String(connection.seatId ?? '') !== targetSeatId) return json({ error: 'continuation_target_connection_mismatch' }, 409);
+  const capabilities = Array.isArray(connection.capabilities) ? connection.capabilities.map(String) : [];
+  if (!capabilities.includes('execute')) return json({ error: 'connection_execute_capability_required' }, 403);
+
+  const transaction = await firestoreBeginTransaction(accessToken);
+  const transactionalTask = await firestoreGetInTransaction(taskPath, transaction, accessToken);
+  const transactionalRequest = await firestoreGetInTransaction(requestPath, transaction, accessToken);
+  if (!transactionalTask.exists || !transactionalRequest.exists) return json({ error: 'continuation_request_state_conflict' }, 409);
+  const currentTask = decodeFirestoreFields(transactionalTask.fields);
+  const currentRequest = decodeFirestoreFields(transactionalRequest.fields);
+  if (String(currentTask.status ?? '') !== 'waiting_for_continuation' || String(currentRequest.status ?? 'requested') !== 'requested') return json({ error: 'continuation_request_state_conflict' }, 409);
+  if (!matchesContinuationRequest(currentRequest, { taskId, projectId, checkpointId, continuationRequestId, targetSeatId, requestedBy: uid, instruction: String(currentRequest.instruction ?? '') })) return json({ error: 'continuation_request_state_conflict' }, 409);
+
+  const startedAt = new Date().toISOString();
+  const startEventId = 'continue-start-' + executionId;
+  await firestoreCommitTransaction(transaction, [
+    { update: { name: 'projects/' + FIREBASE_PROJECT_ID + '/databases/(default)/documents/' + taskPath, fields: { ...transactionalTask.fields, status: { stringValue: 'running' }, completionState: { stringValue: 'CONTINUATION_RUNNING' }, executionId: { stringValue: executionId }, actorId: { stringValue: actorId }, startedAt: { stringValue: startedAt }, continuationExecutionId: { stringValue: executionId }, continuationRequestId: { stringValue: continuationRequestId }, continuationCheckpointId: { stringValue: checkpointId } } }, currentDocument: transactionalTask.updateTime ? { updateTime: transactionalTask.updateTime } : { exists: true } },
+    { update: { name: 'projects/' + FIREBASE_PROJECT_ID + '/databases/(default)/documents/' + requestPath, fields: { ...transactionalRequest.fields, status: { stringValue: 'executing' }, executionId: { stringValue: executionId }, startedAt: { stringValue: startedAt } } }, currentDocument: transactionalRequest.updateTime ? { updateTime: transactionalRequest.updateTime } : { exists: true } },
+    { update: { name: 'projects/' + FIREBASE_PROJECT_ID + '/databases/(default)/documents/' + taskPath + '/execution-events/' + startEventId, fields: firestoreFields({ uid, projectId, taskId, seatId: targetSeatId, eventId: startEventId, type: 'CONTINUE_START', occurredAt: startedAt, source: 'teamai-task-execute', actorId, continuationRequestId, continuationOfCheckpointId: checkpointId }) }, currentDocument: { exists: false } },
+  ], accessToken);
+
+  const budget = normalizeEdgeTurnBudget(seat.turnBudget);
+  const outputCeiling = providerOutputCeiling(budget);
+  if (outputCeiling <= 0) return json({ error: 'seat_budget_exhausted' }, 409);
+  const requestRecord = task.request && typeof task.request === 'object' ? task.request as Record<string, unknown> : {};
+  const messages = normalizeMessages(requestRecord.messages);
+  const continuationMessages = [...messages, ...(String(checkpoint.providerOutput ?? '') ? [{ role: 'assistant' as const, content: String(checkpoint.providerOutput) }] : []), { role: 'user' as const, content: instruction }];
+  const requestedOutput = requestRecord.maxOutputTokens === undefined ? outputCeiling : finiteNonNegative(requestRecord.maxOutputTokens, 'maxOutputTokens', outputCeiling);
+  const maxOutputTokens = Math.min(outputCeiling, requestedOutput);
+  if (maxOutputTokens <= 0) return json({ error: 'provider_output_ceiling_zero' }, 409);
+  const model = requireId(task.model, 'task_model');
+  const providerKind = normalizeProviderKind(seat.providerKind ?? seatProvider);
+  const credential = await loadSeatProviderCredential({ uid, workplaceId, projectId, seatId: targetSeatId, providerKind });
+  if (credential.providerKind !== providerKind) return json({ error: 'provider_key_provider_mismatch' }, 409);
+
+  let result: GenerateResult;
+  try {
+    result = await executeProvider(providerKind, credential.apiKey, { model, messages: continuationMessages, maxOutputTokens, temperature: typeof requestRecord.temperature === 'number' ? requestRecord.temperature : undefined, stream: false });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'provider_execution_failed';
+    const recordedAt = new Date().toISOString();
+    await recordEvent(taskPath, 'fail-' + executionId, 'FAIL', uid, targetSeatId, projectId, accessToken, { executionId, continuationRequestId, continuationOfCheckpointId: checkpointId, reason: 'provider_error', diagnostic: message.slice(0, 300) });
+    await firestoreCreate(resultPath, firestoreFields({ taskId, projectId, seatId: targetSeatId, eventId: 'fail-' + executionId, idempotencyKey: executionId, status: 'failed', recordedAt, continuationRequestId, continuationOfCheckpointId: checkpointId, error: { name: error instanceof Error ? error.name : 'Error', message: message.slice(0, 300) } }), accessToken);
+    await patchTask(taskPath, accessToken, { status: 'failed', completionState: 'PROVIDER_FAILED', completedAt: recordedAt, executionId });
+    await patchTask(requestPath, accessToken, { status: 'failed', completedAt: recordedAt, executionId });
+    return json({ error: 'provider_execution_failed', taskId, executionId }, 502);
+  }
+
+  const budgetUsage = computeEdgeBudget({ config: budget, inputTokens: finiteNonNegative(result.usage.inputTokens, 'usage.inputTokens'), outputTokens: finiteNonNegative(result.usage.outputTokens, 'usage.outputTokens'), reasoningTokens: finiteNonNegative(result.usage.reasoningTokens, 'usage.reasoningTokens') });
+  if (!result.termination) throw new Error('provider_termination_missing');
+  const terminal = result.termination;
+  const recordedAt = new Date().toISOString();
+  const continuation = terminal.state === 'incomplete' && requiresContinuation(terminal);
+  const status = terminal.state === 'completed' ? 'completed' : continuation ? 'handoff_required' : 'failed';
+  const completionState = terminal.state === 'completed' ? 'WORK_COMPLETE' : continuation ? 'HANDOFF_REQUIRED' : terminal.state === 'cancelled' ? 'CANCELLED' : 'PROVIDER_FAILED';
+  const eventType = status === 'completed' ? 'COMPLETE' : status === 'handoff_required' ? 'HANDOFF_REQUIRED' : 'FAIL';
+  const eventId = eventType.toLowerCase() + '-' + executionId;
+  await recordEvent(taskPath, eventId, eventType, uid, targetSeatId, projectId, accessToken, { executionId, continuationRequestId, continuationOfCheckpointId: checkpointId, completionState, terminationReason: terminal.reason, providerReason: terminal.providerReason ?? '', consumedTotalTokens: String(budgetUsage.consumedTotalTokens), remainingGenerationTokens: String(budgetUsage.remainingGenerationTokens), usableGenerationTokens: String(budgetUsage.usableGenerationTokens) });
+  let nextCheckpointId: string | undefined;
+  if (continuation) {
+    nextCheckpointId = executionId + ':checkpoint';
+    await persistContinuationCheckpoint({ taskPath, checkpointId: nextCheckpointId, taskId, projectId, seatId: targetSeatId, actorId, sourceExecutionId: executionId, sourceEventId: eventId, provider: result.provider, model: result.model, result, budget: budgetUsage, accessToken, continuationRequestId, continuationOfCheckpointId: checkpointId });
+  }
+  await firestoreCreate(resultPath, firestoreFields({ taskId, projectId, seatId: targetSeatId, eventId, idempotencyKey: executionId, status, completionState, recordedAt, provider: result.provider, model: result.model, requestId: result.requestId, text: result.text, usage: { inputTokens: result.usage.inputTokens, outputTokens: result.usage.outputTokens, totalTokens: result.usage.totalTokens, reasoningTokens: result.usage.reasoningTokens ?? 0 }, termination: result.termination, budget: budgetUsage, configuredBudget: budget, continuationRequestId, continuationOfCheckpointId: checkpointId, ...(nextCheckpointId ? { continuationCheckpointId: nextCheckpointId } : {}) }), accessToken);
+  await patchTask(taskPath, accessToken, { status, completionState, completedAt: recordedAt, executionId, continuationRequestId, continuationOfCheckpointId: checkpointId, ...(nextCheckpointId ? { continuationCheckpointId: nextCheckpointId } : {}), provider: result.provider, model: result.model, terminationReason: terminal.reason, remainingGenerationTokens: String(budgetUsage.remainingGenerationTokens), usableGenerationTokens: String(budgetUsage.usableGenerationTokens) });
+  await patchTask(requestPath, accessToken, { status: status === 'completed' ? 'completed' : status, completedAt: recordedAt, executionId, ...(nextCheckpointId ? { continuationCheckpointId: nextCheckpointId } : {}) });
+  return json({ ok: true, phase: status === 'completed' ? 'complete' : status, uid, workplaceId, projectId, taskId, seatId: targetSeatId, executionId, continuationRequestId, continuationOfCheckpointId: checkpointId, continuationCheckpointId: nextCheckpointId ?? null, provider: result.provider, model: result.model, requestId: result.requestId, completionState, termination: result.termination, usage: budgetUsage, text: result.text }, status === 'completed' ? 201 : 200);
+}
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: {
     "access-control-allow-origin": "*",
@@ -277,6 +407,16 @@ Deno.serve(async (req: Request) => {
     const workplaceId = requireId(body.workplaceId, "workplaceId");
     const projectId = requireId(body.projectId, "projectId");
     const taskId = requireId(body.taskId, "taskId");
+    const continuationRequestId = typeof body.continuationRequestId === "string" && body.continuationRequestId.trim() ? body.continuationRequestId.trim() : "";
+    if (continuationRequestId) {
+      const checkpointId = requireId(body.checkpointId, "checkpointId");
+      const executionId = typeof body.executionId === "string" && body.executionId.trim() ? body.executionId.trim() : crypto.randomUUID();
+      const actorId = typeof body.actorId === "string" && body.actorId.trim() ? body.actorId.trim() : uid;
+      if (actorId !== uid) return json({ error: "continuation_actor_mismatch" }, 403);
+      const taskPath = "accounts/" + uid + "/workplaces/" + workplaceId + "/projects/" + projectId + "/tasks/" + taskId;
+      const accessToken = await getFirestoreAccessToken();
+      return executeContinuationTurn({ uid, workplaceId, projectId, taskId, checkpointId, continuationRequestId, actorId, executionId, taskPath, accessToken });
+    }
     const seatId = requireId(body.seatId, "seatId");
     const actorId = typeof body.actorId === "string" && body.actorId.trim() ? body.actorId.trim() : uid;
     executionId = typeof body.executionId === "string" && body.executionId.trim()
