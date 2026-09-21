@@ -40,6 +40,8 @@ jobs:
       - name: Synchronize canonical Hero source
         run: node scripts/sync-hero-flex-runtime.mjs
 
+      - name: Verify committed machine spatial runtime parity
+        run: npm run machine:sync:check
 
       - name: Run Playwright browser verification
         run: npm run test:e2e

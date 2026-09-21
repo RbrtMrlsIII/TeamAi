@@ -915,12 +915,12 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       'CYL',
       multiplyMatrix(
         translateMatrix(workspaceCore.center.x, workspaceCore.center.y, workspaceCore.center.z),
-        scaleMatrix(workspaceCore.innerRadius * 0.22, 0.12 + 0.04 * sample.amount, workspaceCore.innerRadius * 0.22),
+        scaleMatrix(workspaceCore.innerRadius * (0.20 + 0.08 * choreography.workspaceReception), 0.12 + 0.06 * choreography.workspaceReception, workspaceCore.innerRadius * (0.20 + 0.08 * choreography.workspaceReception)),
       ),
       RING_MATERIALS.metal2,
       {
         rough: 0.34,
-        emit: 0.05 + 0.05 * sample.amount,
+        emit: 0.05 + 0.10 * choreography.workspaceReception,
         alpha: 0.82,
       },
     );
@@ -933,8 +933,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       RING_MATERIALS.trace,
       {
         rough: 0.30,
-        emit: reducedMotion ? 0.05 : 0.08,
-        alpha: reducedMotion ? 0.38 : 0.56,
+        emit: reducedMotion ? 0.05 + 0.04 * choreography.workspaceReception : 0.08 + 0.14 * choreography.workspaceReception,
+        alpha: reducedMotion ? 0.38 + 0.10 * choreography.workspaceReception : 0.56 + 0.18 * choreography.workspaceReception,
       },
     );
     if (!reducedMotion) {
@@ -948,6 +948,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldWorkspaceCore = workspaceCore.id;
     canvas.dataset.machineWorldWorkspaceCenter = String(workspaceCore.center.x) + ',' + String(workspaceCore.center.y) + ',' + String(workspaceCore.center.z);
     canvas.dataset.machineWorldWorkspaceRadius = String(workspaceCore.radius);
+    canvas.dataset.machineWorldWorkspaceReception = String(choreography.workspaceReception);
     canvas.dataset.machineWorldState = sample.state;
     canvas.dataset.machineWorldAmount = String(sample.amount);
     canvas.dataset.machineWorldBranch = branchId;

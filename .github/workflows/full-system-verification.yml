@@ -57,6 +57,8 @@ jobs:
         run: npm run backend:authority-audit
       - name: Run typecheck
         run: npm run typecheck
+      - name: Verify committed machine spatial runtime parity
+        run: npm run machine:sync:check
       - name: Run project tests
         run: npm test
       - name: Build and verify Full Project ZIP

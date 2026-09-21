@@ -33,12 +33,31 @@ const files = [
   'machine-choreography.js',
 ];
 
+const checkOnly = process.argv.includes('--check');
+const drifted = [];
+
 for (const file of files) {
   const sourcePath = resolve(root, 'frontend/spatial', file);
   const publicPath = resolve(root, 'public', file);
   const source = await readFile(sourcePath, 'utf8');
   const current = await readFile(publicPath, 'utf8').catch(() => null);
-  if (current !== source) await writeFile(publicPath, source, 'utf8');
+
+  if (current !== source) {
+    if (checkOnly) {
+      drifted.push(file);
+    } else {
+      await writeFile(publicPath, source, 'utf8');
+    }
+  }
 }
 
-console.log(`Synchronized ${files.length} machine semantic modules from frontend/spatial to public`);
+if (checkOnly) {
+  if (drifted.length) {
+    console.error(`Machine spatial runtime parity failed for ${drifted.length} module(s):`);
+    for (const file of drifted) console.error(` - ${file}`);
+    process.exit(1);
+  }
+  console.log(`Machine spatial runtime parity verified for ${files.length} modules`);
+} else {
+  console.log(`Synchronized ${files.length} machine semantic modules from frontend/spatial to public`);
+}

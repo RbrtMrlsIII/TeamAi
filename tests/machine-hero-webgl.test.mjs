@@ -160,12 +160,33 @@ test('WebGL preview has no provider, auth, or durable-state authority', () => {
 });
 
 
-test('machine choreography is state-derived in the canonical renderer', async () => {
+/**
+ * VALIDATION CHANGE WARNING
+ * Protected old invariant: choreography consumed state.connectionBranchAmount directly.
+ * Authorized new rule: the canonical renderer consumes hierarchy-owned seatDivisionBranchAmounts first,
+ * keeps the individual branch field as a compatibility fallback, and now receives Hero lifecycle state.
+ * Replacement invariant: choreography input ownership is centralized in the hierarchy branch-state contract,
+ * while lifecycle/contribution remains an explicit renderer input for R0 receiving behavior.
+ * Implementation impact: update the source-shape contract to the current semantic owner instead of weakening it.
+ * Validation impact: assert both canonical branch-state precedence and Hero lifecycle inputs.
+ * Evidence/browser impact: this validates the interrupted lifecycle→choreography seam without claiming browser proof.
+ * Residual uncertainty: exact-head runtime/browser execution still depends on downstream CI and deployed-page evidence.
+ */
+test('machine choreography is state-derived and lifecycle-connected in the canonical renderer', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /deriveMachineTransformationChoreography\(/);
-  assert.match(renderer, /shellAmount: finite\(state\.hierarchyOpenAmount, sample\.amount\)/);
+  assert.match(renderer, /const branchAmounts = state\.seatDivisionBranchAmounts \|\| \{\};/);
+  assert.match(
+    renderer,
+    /shellAmount: finite\(state\.hierarchyOpenAmount, sample\.amount\)/,
+  );
   assert.match(renderer, /divisionAmount: finite\(state\.focusedChildAmount, 0\)/);
-  assert.match(renderer, /connectionAmount: finite\(state\.connectionBranchAmount, 0\)/);
+  assert.match(
+    renderer,
+    /connectionAmount: finite\(branchAmounts\.connectionBranchAmount \?\? state\.connectionBranchAmount, 0\)/,
+  );
+  assert.match(renderer, /heroState: state\.heroState/);
+  assert.match(renderer, /contributionAmount: finite\(state\.contributionAmount, 0\)/);
   assert.match(renderer, /choreography\.electrical/);
   assert.match(renderer, /choreography\.workspaceReception/);
   assert.match(renderer, /machineWorldChoreographyPhase/);

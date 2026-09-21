@@ -6,13 +6,11 @@
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
-- main baseline: `867944b03776f47fb01bd2cddf90ed4c70ab3b68` (PR #391 merge)
-- current main: `867944b03776f47fb01bd2cddf90ed4c70ab3b68`
+- main baseline: `d8b1e767898be9fe640f002d72cf7771842865b6` (current main / PR #395 merge)
+- current main: `d8b1e767898be9fe640f002d72cf7771842865b6`
 - current slice: TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 - replacement branch: frontend/029-machine-world-convergence
 - open implementation vehicle: PR #398 / Issue #396 (active Draft)
-- open implementation vehicles: PR #398 / Issue #396 (active Draft)
-- open implementation vehicles: PR #398 / Issue #396 (active Draft)
 - active implementation slices: #396, #278, #360, #392, #83, #284, #204
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
@@ -53,7 +51,6 @@ PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-ma
 - Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
 - Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
 - Actual model/provider is runtime evidence from OpenRouter.
-- Earlier PR #395 advisory evidence (historical exact head c2a6f11a5a2bc31fa7212ab74e66454c0a4e3a06): retained as immutable historical evidence only.
 - Earlier PR #395 advisory evidence (historical exact head c2a6f11a5a2bc31fa7212ab74e66454c0a4e3a06): retained as immutable historical evidence only.
 - Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
 - The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
