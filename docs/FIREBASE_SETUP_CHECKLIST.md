@@ -16,7 +16,7 @@ Setup/operator steps that remain relevant must be executed under the applicable 
 
 `TARGET PROJECT IDENTIFIED — SPARK-COMPATIBLE / NOT YET CONNECTED`
 
-Historical operator target: `teamai-7d20f` (retained only as legacy setup evidence; **not** the current Firebase authority).
+Historical Firebase target details are retained only as legacy setup evidence and do not define current authority.
 Historical Firestore target: `default`.
 Historical deployment surface: **Firebase Hosting**.
 
@@ -25,7 +25,7 @@ TeamAi intentionally avoids Firebase Cloud Storage and Cloud Functions. The curr
 ### Human-controlled setup
 
 - [x] Create/select TeamAi Firebase project.
-- [x] Historical target project ID was recorded above; it is retained only for recovery evidence and MUST NOT override the current Product Law project identity `team-ai-official`.
+- [x] Historical target identity is explicitly non-authoritative and MUST NOT override the current Product Law project identity `team-ai-official`.
 - [x] Use Firestore database ID: `default`.
 - [ ] Enable Authentication providers required by TeamAi.
 - [ ] Confirm Firestore database/region and production ownership path.
