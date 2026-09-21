@@ -31,6 +31,97 @@ export type TaskContinuationCheckpointStore = {
   persistCheckpoint(checkpoint: TaskContinuationCheckpoint): Promise<void>;
 };
 
+export type TaskContinuationRequest = {
+  continuationRequestId: string;
+  taskId: string;
+  projectId: string;
+  checkpointId: string;
+  sourceSeatId: string;
+  targetSeatId: string;
+  requestedBy: string;
+  requestedAt: string;
+  instruction: string;
+  status: 'requested';
+  continuationOfCheckpointId: string;
+  nextTurn: 'fresh-budgeted-turn';
+};
+
+export type TaskContinuationRequestStore = {
+  getRequest(projectId: string, taskId: string, continuationRequestId: string): Promise<TaskContinuationRequest | null>;
+  persistRequest(request: TaskContinuationRequest): Promise<void>;
+};
+
+export type TaskContinuationAuthorizer = {
+  assertCanContinue(input: {
+    taskId: string;
+    projectId: string;
+    checkpoint: TaskContinuationCheckpoint;
+    targetSeatId: string;
+    actorId: string;
+  }): Promise<void>;
+};
+
+export class TaskContinuationService {
+  constructor(
+    private readonly checkpoints: TaskContinuationCheckpointStore,
+    private readonly requests: TaskContinuationRequestStore,
+    private readonly authorizer: TaskContinuationAuthorizer,
+  ) {}
+
+  async request(input: {
+    taskId: string;
+    projectId: string;
+    checkpointId: string;
+    continuationRequestId: string;
+    targetSeatId: string;
+    actorId: string;
+    instruction: string;
+    requestedAt?: string;
+  }): Promise<TaskContinuationRequest> {
+    for (const [key, value] of Object.entries(input)) {
+      if (key === 'requestedAt') continue;
+      if (typeof value !== 'string' || !value.trim()) throw new Error(key + ' is required');
+    }
+
+    const checkpoint = await this.checkpoints.getCheckpoint(
+      input.projectId,
+      input.taskId,
+      input.checkpointId,
+    );
+    if (!checkpoint) throw new Error('continuation_checkpoint_not_found');
+    assertContinuationCheckpoint(checkpoint);
+    if (checkpoint.taskId !== input.taskId || checkpoint.projectId !== input.projectId) {
+      throw new Error('continuation_checkpoint_scope_mismatch');
+    }
+
+    await this.authorizer.assertCanContinue({
+      taskId: input.taskId,
+      projectId: input.projectId,
+      checkpoint,
+      targetSeatId: input.targetSeatId,
+      actorId: input.actorId,
+    });
+
+    const request: TaskContinuationRequest = Object.freeze({
+      continuationRequestId: input.continuationRequestId,
+      taskId: input.taskId,
+      projectId: input.projectId,
+      checkpointId: checkpoint.checkpointId,
+      sourceSeatId: checkpoint.seatId,
+      targetSeatId: input.targetSeatId,
+      requestedBy: input.actorId,
+      requestedAt: input.requestedAt ?? new Date().toISOString(),
+      instruction: input.instruction.trim(),
+      status: 'requested',
+      continuationOfCheckpointId: checkpoint.checkpointId,
+      nextTurn: 'fresh-budgeted-turn',
+    });
+
+    await this.requests.persistRequest(request);
+    return request;
+  }
+}
+
 export function buildTaskContinuationCheckpoint(input: {
   task: ExecutableTask;
   actorId: string;
