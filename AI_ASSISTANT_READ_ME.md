@@ -19,7 +19,7 @@
 - next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, Team/Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts proven; #392 usage / exhaustion / continuation presentation is the next frontier.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; Storage browser proof exercised guest lock, authorized metadata inventory/selection, semantic branch preview, and reduced-motion equivalence. Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
-- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live proof head is `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
+- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The Storage implementation proof is pinned to `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; re-read live GitHub before relying on any recorded SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
