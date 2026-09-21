@@ -50,8 +50,8 @@ test('Seat provider binding and credential loading use canonical existing-Seat a
   const connection = read('supabase/functions/teamai-seat-connection-test/index.ts');
   assert.match(bind, /firestoreFindSeat/);
   assert.match(bind, /seat_not_found/);
-  assert.match(bind, /const clear = body\\.clear === true/);
-  assert.match(bind, /const apiKey = clear \\? "" : requireId/);
+  assert.match(bind, /const clear = body\.clear === true/);
+  assert.match(bind, /const apiKey = clear \? "" : requireId/);
   assert.doesNotMatch(bind, /firestoreCreate\(\s*seatPath/);
   assert.match(credentials, /firestoreFindSeat/);
   assert.match(credentials, /providerKeyBound/);
