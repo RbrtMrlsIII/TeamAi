@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { generateKeyPairSync } from 'node:crypto';
-import { FirestoreRuntimeClient } from '../dist/src/backend/firestore-runtime.js';
+import { FirestoreRuntimeClient, FirestoreRuntimeTaskStore } from '../dist/src/backend/firestore-runtime.js';
 
 function serviceAccount() {
   return {
@@ -49,9 +49,9 @@ test('Firestore Seat resolver ignores legacy project-level Seat documents and re
     };
 
     const client = new FirestoreRuntimeClient('team-ai-official', serviceAccount());
-    const seat = await client.getSeat('uid-1', 'project-1', 'seat-coder');
+    const seat = await client.findCanonicalSeatDocument('uid-1', 'workplace-1', 'project-1', 'seat-coder');
     assert.equal(seat?.teamId, 'team-1');
-    assert.equal(seat?.provider, 'openai');
+    assert.equal(seat?.path, canonicalPath);
     assert.equal(calls.length, 2);
     const query = JSON.parse(calls[1].body);
     assert.equal(query.structuredQuery.from[0].collectionId, 'seats');
@@ -88,7 +88,10 @@ test('Firestore Seat resolver fails closed when two canonical teams expose the s
       return new Response(JSON.stringify(mk('team-1')) + '\n' + JSON.stringify(mk('team-2')), { status: 200 });
     };
     const client = new FirestoreRuntimeClient('team-ai-official', serviceAccount());
-    await assert.rejects(client.getSeat('uid-1', 'project-1', 'seat-coder'), /seat_ambiguous/);
+    await assert.rejects(
+      client.findCanonicalSeatDocument('uid-1', 'workplace-1', 'project-1', 'seat-coder'),
+      /seat_ambiguous/,
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }
