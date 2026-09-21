@@ -144,3 +144,44 @@ export function decodeFirestoreFields(fields: Record<string, unknown> | undefine
     .map(([key, value]) => [key, decodeFirestoreValue(value as Record<string, unknown>)])
     .filter(([, value]) => value !== undefined)) as Record<string, FirestoreDecodedValue>;
 }
+
+export async function firestoreBeginTransaction(accessToken: string): Promise<string> {
+  const response = await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents:beginTransaction`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
+    body: JSON.stringify({ options: { readWrite: {} } }),
+  });
+  if (!response.ok) throw jsonError(`firestore_begin_transaction_failed:${response.status}`);
+  const data = await response.json() as { transaction?: string };
+  if (typeof data.transaction !== "string" || !data.transaction) {
+    throw jsonError("firestore_begin_transaction_missing_id");
+  }
+  return data.transaction;
+}
+
+export async function firestoreGetInTransaction(
+  documentPath: string,
+  transaction: string,
+  accessToken: string,
+): Promise<{ exists: boolean; updateTime?: string; fields: Record<string, unknown> }> {
+  const url = new URL(firestoreDocumentUrl(documentPath));
+  url.searchParams.set("transaction", transaction);
+  const response = await fetch(url, { headers: { authorization: `Bearer ${accessToken}` } });
+  if (response.status === 404) return { exists: false, fields: {} };
+  if (!response.ok) throw jsonError(`firestore_transactional_get_failed:${response.status}`);
+  const data = await response.json() as { updateTime?: string; fields?: Record<string, unknown> };
+  return { exists: true, updateTime: data.updateTime, fields: data.fields ?? {} };
+}
+
+export async function firestoreCommitTransaction(
+  transaction: string,
+  writes: Array<Record<string, unknown>>,
+  accessToken: string,
+): Promise<void> {
+  const response = await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents:commit`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
+    body: JSON.stringify({ transaction, writes }),
+  });
+  if (!response.ok) throw jsonError(`firestore_commit_transaction_failed:${response.status}`);
+}
