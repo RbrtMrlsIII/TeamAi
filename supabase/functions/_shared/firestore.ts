@@ -191,6 +191,45 @@ export async function firestoreFindSeat(input: {
   return matches[0] ?? null;
 }
 
+export async function firestoreFindSeatConnection(input: {
+  uid: string;
+  workplaceId: string;
+  projectId: string;
+  seatId: string;
+  accessToken: string;
+}): Promise<{ path: string; fields: Record<string, FirestoreDecodedValue> } | null> {
+  for (const [key, value] of Object.entries(input)) {
+    if (typeof value !== 'string' || !value.trim()) throw new Error(key + '_required');
+  }
+  const parentPath = 'accounts/' + input.uid + '/workplaces/' + input.workplaceId + '/projects/' + input.projectId;
+  const response = await fetch(firestoreDocumentUrl(parentPath) + ':runQuery', {
+    method: 'POST',
+    headers: { authorization: 'Bearer ' + input.accessToken, 'content-type': 'application/json' },
+    body: JSON.stringify({ structuredQuery: {
+      from: [{ collectionId: 'connections' }],
+      where: { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: input.seatId } } },
+      limit: 2,
+    }}),
+  });
+  if (!response.ok) throw jsonError('firestore_seat_connection_query_failed:' + response.status);
+  const rows = parseRunQueryDocuments(await response.text());
+  const matches = rows.map(row => row.document).filter((document): document is NonNullable<FirestoreRunQueryResponse['document']> => Boolean(document?.name)).map(document => {
+    const marker = '/documents/';
+    const markerIndex = String(document.name).indexOf(marker);
+    if (markerIndex < 0) return null;
+    const path = String(document.name).slice(markerIndex + marker.length);
+    const parts = path.split('/');
+    const canonical = parts.length === 8 && parts[0] === 'accounts' && parts[1] === input.uid && parts[2] === 'workplaces' && parts[3] === input.workplaceId && parts[4] === 'projects' && parts[5] === input.projectId && parts[6] === 'connections' && parts[7] === parts[7];
+    if (!canonical) return null;
+    const fields = decodeFirestoreFields(document.fields);
+    if (String(fields.uid ?? '') !== input.uid || String(fields.workplaceId ?? '') !== input.workplaceId || String(fields.projectId ?? '') !== input.projectId || String(fields.seatId ?? '') !== input.seatId) return null;
+    const status = String(fields.status ?? '').trim().toLowerCase();
+    if (status !== 'active') return null;
+    return { path, fields } satisfies { path: string; fields: Record<string, FirestoreDecodedValue> };
+  }).filter((item): item is { path: string; fields: Record<string, FirestoreDecodedValue> } => Boolean(item));
+  if (matches.length > 1) throw new Error('seat_connection_ambiguous');
+  return matches[0] ?? null;
+}
 export async function firestoreCreate(documentPath: string, fields: Record<string, unknown>, accessToken: string): Promise<"created" | "exists"> {
   const slash = documentPath.lastIndexOf("/");
   const parent = slash >= 0 ? documentPath.slice(0, slash) : "";
