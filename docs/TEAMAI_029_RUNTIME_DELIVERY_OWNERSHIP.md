@@ -34,7 +34,7 @@ This keeps the runtime repository-owned without introducing a second live loader
 
 ## Remaining cleanup
 
-The preserved patch engine still contains an emergency remote fallback for historical recovery. That fallback is not a valid runtime/build authority and should be removed in a later narrow hardening change after the repository-owned source path has been fully validated.
+The former mutation scripts remain under their historical filenames for compatibility, but they are now verification-only wrappers and no longer rewrite hero-flex.js. Their non-mutating behavior is covered by a regression test.
 
 ## Product/governance boundary
 
