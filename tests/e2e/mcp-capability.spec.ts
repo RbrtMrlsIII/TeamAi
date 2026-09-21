@@ -3,7 +3,6 @@ import { expect, test } from '@playwright/test';
 test.describe('MCP / Capability facility', () => {
   test('guest can discover the facility, inspect capabilities, preview a dynamic branch, and hand off to auth', async ({ page }) => {
     await page.goto('/hero/');
-    await page.getByRole('button', { name: 'Enter 3D world' }).click();
     await page.getByRole('button', { name: 'Menu' }).click();
     await page.getByRole('button', { name: 'MCP / Capability' }).click();
 
@@ -19,6 +18,7 @@ test.describe('MCP / Capability facility', () => {
     await expect(facility.locator('[data-mcp-branch]')).toHaveText('BRANCH-MCP::github/WORKSPACE/workspace-main/configuration/authorization');
 
     await facility.getByRole('button', { name: 'Sign in to configure' }).click();
+    await expect(facility).toBeHidden();
     await expect(page.locator('#hero-auth-panel')).toBeVisible();
     await expect(page.locator('#hero-auth-panel')).toHaveAttribute('aria-hidden', 'false');
   });

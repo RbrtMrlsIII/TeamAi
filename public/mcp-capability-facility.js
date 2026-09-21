@@ -93,6 +93,7 @@ function setCapability(id) {
 }
 
 function requestAuth() {
+  close();
   dispatch('teamai:app-ui-handoff', {
     appUiHandoff: true,
     normalUi: true,
