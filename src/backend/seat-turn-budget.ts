@@ -138,6 +138,7 @@ export function summarizeUsage(usage: Usage, reservedTokens: number): TurnBudget
     consumedInputTokens: usage.inputTokens,
     consumedTotalTokens,
     remainingGenerationTokens: 0,
+    usableGenerationTokens: 0,
   });
 }
 
