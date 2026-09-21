@@ -327,6 +327,12 @@ test('Firestore runtime task store atomically moves a handoff task into waiting_
   assert.equal(fields.continuationRequestedBy.stringValue, 'actor-20');
   assert.equal(fields.continuationInstruction.stringValue, 'continue from checkpoint');
   assert.equal(fields.leaseId.nullValue, null);
+  assert.equal(calls[2][2].length, 2);
+  const eventWrite = calls[2][2][1];
+  assert.match(eventWrite.update.name, /\/events\/cont-20%3Acontinue-wait%3Aevent$/);
+  assert.equal(eventWrite.currentDocument.exists, false);
+  assert.equal(eventWrite.update.fields.type.stringValue, 'CONTINUE_WAIT');
+  assert.equal(eventWrite.update.fields.idempotencyKey.stringValue, 'cont-20');
 });
 
 test('Firestore runtime task store rejects a second continuation request against a waiting task', async () => {
