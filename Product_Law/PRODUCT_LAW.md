@@ -237,7 +237,7 @@ Firestore remains the canonical durable store. TeamAi SHOULD reduce unnecessary 
 
 TeamAi Storage is a planned first-class frontend/product facility for entitled user content. It is distinct from Firestore domain state, browser storage, project repositories, and provider-native storage.
 
-The current architecture may use optional Supabase Storage for entitled user content. Firebase Cloud Storage is not the canonical TeamAi domain store and is not required merely because the Storage facility exists. Storage quotas, retention, commercial packaging, authorization, and access policy remain backend-owned.
+The current architecture may use optional Supabase Storage for entitled user content. Firebase Cloud Storage is not the canonical TeamAi domain store and is not required merely because the Storage facility exists. **Current frontend/product scope is item inventory storage only. Image/file upload and binary object-transfer UX are explicitly deferred pending security and cost review.** Storage quotas, retention, commercial packaging, authorization, and access policy remain backend-owned.
 
 ### Connections
 Families B and C jointly establish where trusted execution lives and what durable evidence it must leave.
@@ -349,6 +349,8 @@ Seat identity
 Guest presentation MAY expose the complete intended TeamAi feature vocabulary and spatial machine for discovery without granting restricted use.
 
 The baseline authenticated account begins with **one authorized persistent AI Seat** and baseline Team Quality / Tool Quality subject to the current entitlement model. Additional Seats, skills, MCP/tool packs, storage capabilities, usage capacity, and other commercial features are controlled by authoritative TeamAi entitlement, authorization, scope, health, and runtime state.
+
+Guest product facilities are discoverable but locked. Guests cannot execute turns, configure Seats, manage MCP, mutate projects/storage, transact in Marketplace, or use other authenticated capabilities. The designated **Sign Up** and **Login** authentication surfaces are guest-accessible; **Sign Out** is state-gated to authenticated users.
 
 The frontend MUST distinguish:
 
@@ -523,6 +525,14 @@ It MUST be able to distinguish:
 `can PR but cannot merge`
 `can coordinate but cannot override specialist authority`
 
+### MCP capability facility
+
+TeamAi MCP concerns are presented through one dedicated **MCP facility**. That facility owns the TeamAi-facing lifecycle for MCP/tool/integration inventory, install/add, connector authentication handoff, permission configuration, connection health/test, and custom MCP setup/management.
+
+The MCP facility may equip a governed capability to one Seat, multiple/all eligible Seats, or Workspace. Equipping creates target-owned presentation/configuration branches. Branches are subordinate to the MCP facility's capability identity/configuration contract and do not become a new inventory authority.
+
+Provider credentials and external provider authority remain outside TeamAi's ownership boundary even when authentication is initiated from the MCP facility.
+
 ### Connection/capability boundary
 
 ```text
@@ -608,6 +618,10 @@ Guest discovery and authenticated activation are intentionally different states.
 Semantic loading effects, including operation-specific orb families, communicate presentation state only. They never become evidence of backend execution or durable success.
 
 Nested facilities MUST provide deterministic return/back behavior and preserve semantic context when handing off to ordinary UI.
+
+Every Web AI Seat MUST expose a report/handoff section for its latest completed turn. The report is readable by the user and authorized participating Seats/agents and presents result, summary, findings, state, evidence references, unresolved items, and next-handoff context. It is a continuity/evidence surface, not an authority grant.
+
+Long-running Seat transactions MUST use a dedicated Seat-local loading/orb presentation family selected by operation type, such as configuration, connection test, MCP invocation, AI turn/execution, handoff/continuation, Storage operation, Marketplace transaction/verification, authorization, or recovery. These effects are presentation-only and never prove backend completion.
 
 ### Guides and dictionary
 User guides, help text, and dictionary surfaces MUST derive canonical terminology from Product Law, workspace rulesets, skills, and backend contracts.
