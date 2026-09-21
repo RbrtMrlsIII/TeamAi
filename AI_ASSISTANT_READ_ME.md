@@ -11,7 +11,7 @@
 - current slice: TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 - replacement branch: frontend/029-machine-world-convergence
 - open implementation vehicles: PR #398 / Issue #396 (active Draft)
-- active implementation slices: #396, #278, #360, #392, #83, #284, #204
+- active implementation slices: #396, #278, #360, #392, #83, #284, #204, #400 frontend contract
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
@@ -19,7 +19,7 @@
 - next allowed work: continue the governed 029 implementation on PR #398, finish feature frontiers, then prove exact-head replacement readiness before any merge
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
-- live PR head: the GitHub PR head is the source of truth for the current verification commit; evidence is admissible only when tied to that exact head
+- live PR head: `e26c6a78715b1fe80e06be71b1c01fd7aefb3348` at this handoff point; GitHub remains authoritative for later changes. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 ## Canonical authority path
@@ -104,7 +104,7 @@ Never weaken validation merely to make CI green.
 
 ## Current validation-change record
 
-PR #398 is replacing the retired monolithic Hero renderer with a canonical machine-world renderer while keeping the Hero controller as the semantic/input boundary. The migration preserves exact-head evidence rules and adapts validation toward owner-level behavioral contracts rather than stale source-shape assertions. A current concrete runtime issue was found on this branch: the canonical renderer imported `seat-adjacent-division-wiring.js` but the public synchronization manifest omitted it, which prevented Hero bootstrap and left `window.TeamAiHero` undefined. The repair publishes the dependency and adds it to the synchronization set.
+PR #398 is replacing the retired monolithic Hero renderer with a canonical machine-world renderer while keeping the Hero controller as the semantic/input boundary. The migration preserves exact-head evidence rules and adapts validation toward owner-level behavioral contracts rather than stale source-shape assertions. The first exact-head Browser failure on the migrated renderer was a duplicate `branchAmounts` declaration in the canonical renderer. Follow-on exact-head evidence exposed invalid WebGL `uniform3f` calls against a `vec4` uniform and a line-render pass that continued using the solid program after a material draw. Those were repaired at the canonical renderer boundary. Controller trace persistence/zoom-baseline semantics and standalone machine-core Seat focus injection were also repaired without creating a second renderer. A source-owned feature registry and shared frontend state grammar are now part of the #400 foundation.
 
 ## Evidence rules
 
