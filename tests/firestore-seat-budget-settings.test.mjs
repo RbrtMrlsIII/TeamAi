@@ -51,7 +51,7 @@ test('Seat budget persistence updates only budget metadata under the authenticat
 test('Seat budget persistence fails closed when the durable Seat does not exist', async () => {
   const client = {
     async beginTransaction() { return 'tx-2'; },
-    async get() { return null; },
+    async findCanonicalSeatDocument() { return null; },
     async commit() { throw new Error('must not commit'); },
   };
   const store = new FirestoreRuntimeTaskStore(client, 'uid-7', 'workplace-2');
