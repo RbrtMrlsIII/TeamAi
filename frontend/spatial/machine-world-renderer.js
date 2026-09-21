@@ -669,10 +669,17 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
     }
     const sample = animation.sample(now);
+    const branchAmounts = state.seatDivisionBranchAmounts || {};
+    const connectionAmount = finite(
+      branchAmounts.connectionBranchAmount ?? state.connectionBranchAmount,
+      0,
+    );
     const choreography = deriveMachineTransformationChoreography({
       shellAmount: finite(state.hierarchyOpenAmount, sample.amount),
       divisionAmount: finite(state.focusedChildAmount, 0),
-      connectionAmount: finite(state.connectionBranchAmount, 0),
+      connectionAmount,
+      heroState: state.heroState,
+      contributionAmount: finite(state.contributionAmount, 0),
       hierarchyOpen,
       focusedChildId: state.focusedChildId,
       reducedMotion,
