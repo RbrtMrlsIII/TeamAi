@@ -203,7 +203,7 @@ The effect must remain valid when trees differ in geometry, depth, branch count,
 
 `TREE-HERO-SEAT` is the existing Seat presentation hierarchy. This section reconciles the already-defined Seat shell with the existing Seat lifecycle, Responsibility Unit, Universal/TeamAi Skill, and product orchestration contracts. **It does not create a second Seat hierarchy.**
 
-Guest Hero ring/camera density consumes `seatPopulationDensity()` across the 1–10 Seat-capacity range. **Tree 1–8 remains a separate Settings/world-tree vocabulary.**
+Guest Hero ring/camera density consumes `seatPopulationDensity()` across the 1–10 Seat-capacity range. **Tree 1–8 remains a separate Settings/world-tree vocabulary.** Guest product facilities are presentation-only and locked; only the designated Sign Up and Login authentication surfaces are interactive for guests.
 
 ### 11.1 Existing structural branches
 
@@ -230,10 +230,10 @@ The canonical Seat is more than a model label. Existing project contracts distin
 | `SEAT_CONNECTION` | external provider/application relationship, OAuth/provider handoff, bind, connection test, health |
 | `SEAT_BEHAVIOR` | Seat-local behavior/defaults and constraints only; it does **not** own global team turn policy |
 | `SEAT_TOOLKIT` | resolved TeamAi/common skill and procedure equipment for this Seat; optional presentation |
-| `SEAT_CAPABILITIES` | available mechanisms, tools/plugins/MCP/model/runtime capability inventory |
+| `SEAT_CAPABILITIES` | capabilities equipped/visible to this Seat, including tools/MCP facets; the canonical MCP inventory/install/auth/configuration surface belongs to the dedicated MCP facility |
 | `SEAT_AUTHORIZATION` | reason-bearing permission/approval/authorization state; presentation only, never a grant authority |
 | `SEAT_WORKSPACE_SCOPE` | workplace/project/repository/path/workstation scope |
-| `SEAT_TASK_EVIDENCE` | task/result/event/evidence continuity |
+| `SEAT_TASK_EVIDENCE` | task/result/event/evidence continuity, including the Seat report/handoff read surface available after each turn |
 
 The existing Seat lifecycle remains the canonical lifecycle vocabulary:
 
