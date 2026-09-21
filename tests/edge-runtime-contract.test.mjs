@@ -66,3 +66,14 @@ test('Seat secret resolver never exposes plaintext through a return field other 
   assert.match(source, /decryptSeatApiKey/);
   assert.match(source, /provider_key_not_bound/);
 });
+
+
+test('Edge executor persists a durable continuation checkpoint before recording handoff', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  assert.match(source, /persistContinuationCheckpoint/);
+  assert.match(source, /continuation-checkpoints/);
+  assert.match(source, /continuationCheckpointId/);
+  assert.match(source, /sourceExecutionId/);
+  assert.match(source, /sourceEventId/);
+  assert.match(source, /authorized-continuation-turn/);
+});
