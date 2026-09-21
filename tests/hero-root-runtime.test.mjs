@@ -26,6 +26,7 @@ test('Hero root presence derives from existing DOM contracts without owning them
     machine: true,
     auth: false,
     settings: true,
+    mcp: false,
     diagnostics: false,
   });
 });

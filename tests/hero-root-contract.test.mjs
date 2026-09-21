@@ -11,7 +11,7 @@ import {
 test('provisional Hero roots have explicit owners without freezing spatial implementation', () => {
   assert.deepEqual(
     Object.keys(HERO_ROOTS),
-    ['entrance', 'machine', 'auth', 'settings', 'diagnostics'],
+    ['entrance', 'machine', 'auth', 'settings', 'mcp', 'diagnostics'],
   );
   for (const root of Object.values(HERO_ROOTS)) {
     assert.ok(root.id);
