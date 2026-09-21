@@ -60,3 +60,22 @@ test('reduced motion snaps every Seat division branch to fully open', () => {
     assert.equal(state[amountKey], 1, childId);
   }
 });
+
+
+test('focusChild clears every sibling branch deterministically', () => {
+  const state = createHierarchyRuntime({
+    openParentId: 'SEAT_SHELL#0',
+    focusedChildId: HIERARCHY_PART.SEAT_CONNECTION,
+    connectionBranchAmount: 0.9,
+    behaviorBranchAmount: 0.7,
+    toolkitBranchAmount: 0.6,
+    phase: HIERARCHY_PHASE.OPEN,
+    openAmount: 1,
+  });
+  focusChild(state, HIERARCHY_PART.SEAT_TOOLKIT, { nowMs: 250, snap: false, allowTransition: false });
+  assert.equal(state.connectionBranchAmount, 0);
+  assert.equal(state.behaviorBranchAmount, 0);
+  assert.equal(state.toolkitBranchAmount, 0);
+  assert.equal(state.toolkitBranchStartMs, 250);
+  assert.equal(state.focusedChildId, HIERARCHY_PART.SEAT_TOOLKIT);
+});
