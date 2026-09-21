@@ -17,13 +17,18 @@ export function mountMachineWebGLPreview(root = globalThis.document) {
   host.append(panel);
 
   const canvas = panel.querySelector('canvas');
-  const gl = canvas?.getContext('webgl', { antialias: true, alpha: true });
-  if (!canvas || !gl) {
+  if (!canvas) {
     panel.querySelector('[data-machine-webgl-state]').textContent = 'WebGL unavailable';
     return panel;
   }
 
-  const renderer = createMachineWorldRenderer({ canvas, gl });
+  let renderer;
+  try {
+    renderer = createMachineWorldRenderer({ canvas });
+  } catch {
+    panel.querySelector('[data-machine-webgl-state]').textContent = 'WebGL unavailable';
+    return panel;
+  }
   let expanded = false;
   let selectedSeat = 0;
   let rafId = null;
@@ -62,17 +67,7 @@ export function mountMachineWebGLPreview(root = globalThis.document) {
     if (state) state.textContent = `selected seat ${selectedSeat + 1}`;
     renderer.setExpanded(expanded, now());
   });
-  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => renderer.render(now(), {
-    seatCount: 10,
-    selectedSeat,
-    hierarchyOpen: expanded,
-    expanded,
-    branchId: `BRANCH-SEAT-${String(selectedSeat + 1).padStart(2, '0')}`,
-    reducedMotion: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true,
-    navOrbitYaw: offset * 0.08,
-    navOrbitPitch: 0,
-    navZoom: 1,
-  })).observe(canvas);
+
 
   rafId = requestAnimationFrame(render);
   panel._machineRenderer = renderer;
