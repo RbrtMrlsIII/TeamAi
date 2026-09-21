@@ -3,8 +3,6 @@
  * Presentation-only: joins two semantic division geometry descriptors.
  * No provider, authorization, scheduler, or durable-domain authority.
  */
-import { connectionCorridorPoint } from './seat-division-geometry.js';
-
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || 0));
 const normalize = (value) => Number(Number(value).toFixed(12));
 
@@ -37,7 +35,7 @@ export function buildAdjacentDivisionWiring({
     throw new Error('adjacent division wiring requires source and target semantic ports');
   }
 
-  const sourceAtAmount = connectionCorridorPoint(sourceGeometry, clamp(amount, 0, 1));
+  const sourceAtAmount = { ...sourceGeometry.port };
   const targetPort = targetGeometry.port;
   const dx = targetPort.x - sourceAtAmount.x;
   const dz = targetPort.z - sourceAtAmount.z;
@@ -49,6 +47,7 @@ export function buildAdjacentDivisionWiring({
   return {
     id,
     semantic: 'ADJACENT_DIVISION_WIRING',
+    activationAmount: clamp(amount, 0, 1),
     from: {
       divisionId: sourceGeometry.id,
       port: { ...sourceGeometry.port },
