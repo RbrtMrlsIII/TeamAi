@@ -24,6 +24,8 @@ export type TaskContinuationCheckpoint = {
   usableGenerationTokens?: number;
   handoffReserveTokens?: number;
   nextAction: 'authorized-continuation-turn';
+  continuationRequestId?: string;
+  continuationOfCheckpointId?: string;
 };
 
 export type TaskContinuationCheckpointStore = {
@@ -158,6 +160,8 @@ export function buildTaskContinuationCheckpoint(input: {
   result: GenerateResult;
   budget?: TurnBudgetAccounting | null;
   occurredAt?: string;
+  continuationRequestId?: string;
+  continuationOfCheckpointId?: string;
 }): TaskContinuationCheckpoint {
   if (!input.task.id.trim()) throw new Error('task.id is required');
   if (!input.task.projectId.trim()) throw new Error('task.projectId is required');
@@ -191,6 +195,8 @@ export function buildTaskContinuationCheckpoint(input: {
     usableGenerationTokens: budget?.usage.usableGenerationTokens,
     handoffReserveTokens: budget?.handoffReserveTokens,
     nextAction: 'authorized-continuation-turn',
+    ...(input.continuationRequestId ? { continuationRequestId: input.continuationRequestId } : {}),
+    ...(input.continuationOfCheckpointId ? { continuationOfCheckpointId: input.continuationOfCheckpointId } : {}),
   });
 }
 
