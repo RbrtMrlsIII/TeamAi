@@ -56,9 +56,11 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.ok(renderStart >= 0 && renderEnd > renderStart);
   const renderBody = renderer.slice(renderStart, renderEnd);
   assert.equal((renderBody.match(/renderSeat1ConnectionChild\s*\(/g) || []).length, 1);
-  assert.match(renderBody, /renderSeat1AdjacentWiring\(scene, effectiveCameraId, state, reducedMotion\)/);
+  assert.match(renderBody, /renderAdjacentDivisionWiring\(scene, effectiveCameraId, state, reducedMotion\)/);
   assert.match(renderBody, /renderSeat1ConnectionChild\(scene, finite\(state\.connectionBranchAmount, 0\), effectiveCameraId, reducedMotion, now\)/);
   assert.match(renderBody, /drawFocusedSeatDivision/);
+  assert.match(renderBody, /SEAT_DIVISION_ORDER/);
+  assert.match(renderBody, /resolveSeatDivisionPayload/);
   assert.match(renderBody, /renderSemanticEdgeTrace/);
   assert.match(renderBody, /focusedDivision\?\.edge/);
   assert.match(renderBody, /state\.focusedChildId/);
