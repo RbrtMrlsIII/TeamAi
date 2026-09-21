@@ -324,7 +324,9 @@ test('continuation request ID conflicts when a retry changes its relation or ins
     }),
     /continuation_request_id_conflict/,
   );
-});\n\ntest('continuation request ensures handoff task enters waiting_for_continuation state', async () => {
+});
+
+test('continuation request ensures handoff task enters waiting_for_continuation state', async () => {
   const calls = [];
   const checkpoint = buildTaskContinuationCheckpoint({
     task: task(),
@@ -402,7 +404,8 @@ test('idempotent continuation retry re-heals waiting_for_continuation state', as
 
   assert.equal(result.continuationRequestId, existingRequest.continuationRequestId);
   assert.deepEqual(calls, ['cont-state-2']);
-});\n
+});\
+
 
 
 test('continuation request ID conflicts when the checkpoint relation changes', async () => {
