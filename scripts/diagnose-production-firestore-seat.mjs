@@ -131,15 +131,49 @@ const connectionRows = await runQuery(parent, {
 }, token);
 const connections = connectionRows.map(row => row.document).filter(document => document?.name).map(document => fields(document.fields));
 const activeConnections = connections.filter(connection => String(connection.status ?? '') === 'active');
+const connectionProviderNames = activeConnections.map(connection => String(connection.provider ?? connection.providerCode ?? '').trim()).filter(Boolean);
 const connectionReport = {
   count: connections.length,
   activeCount: activeConnections.length,
   matchingSeatIds: activeConnections.map(connection => String(connection.seatId ?? '')),
-  providers: activeConnections.map(connection => String(connection.provider ?? connection.providerCode ?? '')),
+  providers: connectionProviderNames,
   executeCapability: activeConnections.some(connection => Array.isArray(connection.capabilities) && connection.capabilities.map(String).includes('execute')),
 };
+
+const seatShapeErrors = [];
+if (seatReport.status !== 'active') seatShapeErrors.push('seat_not_active');
+if (seatReport.authorization.status !== 'authorized') seatShapeErrors.push('seat_not_authorized');
+if (seatReport.entitlement.teamEntitlement !== 'allowed') seatShapeErrors.push('team_entitlement_not_allowed');
+if (seatReport.entitlement.providerEntitlement !== 'allowed') seatShapeErrors.push('provider_entitlement_not_allowed');
+if (!String(seatReport.provider.provider ?? '').trim()) seatShapeErrors.push('provider_not_configured');
+if (!String(seatReport.provider.providerKind ?? '').trim()) seatShapeErrors.push('provider_kind_not_configured');
+if (String(seatReport.provider.providerKeyBound).toLowerCase() !== 'true') seatShapeErrors.push('provider_key_not_bound');
+const requiredBudgetFields = ['turnBudgetTokens', 'outputBudgetTokens', 'reasoningBudgetTokens', 'handoffReserveTokens'];
+for (const field of requiredBudgetFields) {
+  if (!seatReport.turnBudget.fields.includes(field)) seatShapeErrors.push('turn_budget_missing_' + field);
+}
+
+const connectionShapeErrors = [];
+if (connectionReport.activeCount !== 1) connectionShapeErrors.push('active_seat_connection_count_not_one');
+if (connectionReport.matchingSeatIds.some(value => value !== seatId)) connectionShapeErrors.push('active_connection_seat_mismatch');
+const seatProvider = String(seatReport.provider.provider ?? '').trim().toLowerCase();
+if (!connectionProviderNames.some(provider => provider.toLowerCase() === seatProvider)) connectionShapeErrors.push('active_connection_provider_mismatch');
+if (!connectionReport.executeCapability) connectionShapeErrors.push('connection_execute_capability_missing');
+
+const ok = seatShapeErrors.length === 0 && connectionShapeErrors.length === 0;
+const report = {
+  ...seatReport,
+  connection: connectionReport,
+  gate: {
+    productionExecutionShapeReady: ok,
+    seatShapeErrors,
+    connectionShapeErrors,
+  },
+};
+
 console.log(JSON.stringify({
-  ok: true,
+  ok,
   note: 'Metadata-only diagnostic. No provider credentials or secret payloads are printed.',
-  report: { ...seatReport, connection: connectionReport },
+  report,
 }, null, 2));
+if (!ok) process.exit(3);
