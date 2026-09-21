@@ -6,17 +6,18 @@ const workspaceForSeats = (seatCount) => 4.35 + (5.95 - 4.35) * ((seatCount - 1)
 
 test('concentric envelope preserves R0 < R1 < R2 < R3 for the full seat range', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
-    const workspace = workspaceForSeats(seatCount);
-    for (const seatRingRadius of [6.45, 7.15]) {
+    const workspace = workspaceForSeats(seatCount) * 0.68;
+    for (const seatRingRadius of [4.05, 4.55]) {
       const envelope = deriveConcentricRingEnvelope({
-        workspaceRadius: workspace,
-        seatRingRadius,
+        r0Radius: workspace,
+        r3Radius: seatRingRadius,
         ringR1Scale: 1.18,
         ringR2Scale: 1.42,
       });
       assert.ok(envelope.workspaceRadius < envelope.r1Radius, `R0/R1 invalid at ${seatCount} seats`);
       assert.ok(envelope.r1Radius < envelope.r2Radius, `R1/R2 invalid at ${seatCount} seats`);
       assert.ok(envelope.r2Radius < envelope.seatRingRadius, `R2/R3 invalid at ${seatCount} seats`);
+      assert.equal(envelope.workspaceRadius, workspace);
       assert.equal(envelope.seatRingRadius, seatRingRadius);
       assert.equal(envelope.valid, true);
     }
