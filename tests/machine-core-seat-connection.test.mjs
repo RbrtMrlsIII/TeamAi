@@ -91,7 +91,7 @@ test('canonical machine renderer owns Seat-1 semantic connection WebGL path', as
   assert.match(renderer, /buildMachineCoreSeat1Connection/);
   assert.match(renderer, /seatConnectionDrawPath/);
   assert.match(renderer, /seatConnectionProof/);
-  assert.match(renderer, /TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY/);
+  assert.match(renderer, /canvas\.dataset\.seatConnectionGeometry = child\.geometry\.id/);
   assert.doesNotMatch(renderer, /firestore|supabase|paypal|scheduler|oauth/i);
   const controller = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
   assert.doesNotMatch(controller, /drawSemanticSeat1Connection|buildHeroSeat1Connection/);

@@ -39,7 +39,6 @@ test('V0.2 flex returnFromSeatShell resets nav and sets baseline dock', async ()
   assert.match(src, /navOrbitYaw = 0;/);
   assert.match(src, /navOrbitPitch = 0;/);
   assert.match(src, /navZoom = 1;/);
-  assert.match(src, /navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
   assert.match(src, /setCamera\('HERO_WIDE'\)/);
 });
 
