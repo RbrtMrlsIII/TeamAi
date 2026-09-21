@@ -1,4 +1,5 @@
 /* 029 Experience Rebaseline controller: explicit classic entrance -> 3D world. */
+import { getFrontendFeature, getGuestPresentationState, listFrontendFeatures } from './feature-registry.js';
 
 const shell = () => document.querySelector('.hero-shell');
 
@@ -61,9 +62,35 @@ function openSettings() {
   return false;
 }
 
+function publishFeatureRegistry() {
+  window.TeamAiFeatureRegistry = Object.freeze({
+    list: () => listFrontendFeatures(),
+    get: (id) => getFrontendFeature(id),
+    guestState: (id) => getGuestPresentationState(id),
+  });
+}
+
+function dispatchFeatureIntent(button, source) {
+  const featureId = button?.dataset?.featureId;
+  if (!featureId) return null;
+  const feature = getFrontendFeature(featureId);
+  if (!feature) return null;
+  const guestState = getGuestPresentationState(feature);
+  const detail = {
+    featureId: feature.id,
+    label: feature.label,
+    source,
+    guestState: guestState?.presentation || null,
+    presentationOnly: true,
+  };
+  window.dispatchEvent(new CustomEvent('teamai:feature-intent', { detail }));
+  return detail;
+}
+
 function bindAuthButtons() {
   document.querySelectorAll('[data-auth-open]').forEach((button) => {
     button.addEventListener('click', () => {
+      dispatchFeatureIntent(button, 'experience-auth');
       if (typeof window.TeamAiHeroAuthHandoff?.open === 'function') {
         window.TeamAiHeroAuthHandoff.open();
         return;
@@ -89,6 +116,7 @@ function bindAuthButtons() {
 function bind() {
   const el = shell();
   if (!el) return;
+  publishFeatureRegistry();
 
   // /hero/ is the direct world surface. Establish both route and presentation
   // layer together so the world controls are usable on direct load.
@@ -117,6 +145,7 @@ function bind() {
 
   document.querySelectorAll('[data-world-camera-request]').forEach((button) => {
     button.addEventListener('click', () => {
+      dispatchFeatureIntent(button, 'experience-world-menu');
       const cameraId = button.dataset.worldCameraRequest;
       if (cameraId && typeof window.TeamAiHero?.setCamera === 'function') {
         window.TeamAiHero.setCamera(cameraId);
