@@ -151,6 +151,7 @@ export function drawFocusedSeatDivision({
     amount: progress,
     childId: presentation.childId,
     kind: presentation.kind,
+    cameraId: presentation.payload.cameraId,
     edge,
     presentationOnly: true,
   });
