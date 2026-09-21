@@ -7,9 +7,13 @@ test('Seat budget persistence updates only budget metadata under the authenticat
   const calls = [];
   const client = {
     async beginTransaction() { calls.push({ op: 'begin' }); return 'tx-1'; },
-    async get(path, transaction) {
-      calls.push({ op: 'get', path, transaction });
-      return { updateTime: '2026-09-21T11:00:00Z', fields: {} };
+    async findCanonicalSeatDocument(uid, projectId, seatId, transaction) {
+      calls.push({ op: 'resolve', uid, projectId, seatId, transaction });
+      return {
+        path: 'accounts/' + uid + '/workplaces/' + 'workplace-2' + '/projects/' + projectId + '/teams/team-coder/seats/' + seatId,
+        teamId: 'team-coder',
+        document: { updateTime: '2026-09-21T11:00:00Z', fields: {} },
+      };
     },
     async commit(transaction, writes) {
       calls.push({ op: 'commit', transaction, writes });
@@ -29,8 +33,12 @@ test('Seat budget persistence updates only budget metadata under the authenticat
   });
 
   assert.equal(calls[0].op, 'begin');
-  assert.match(calls[1].path, /^accounts\/uid-7\/workplaces\/workplace-2\/projects\/project-4\/seats\/seat-3$/);
+  assert.equal(calls[1].op, 'resolve');
+  assert.equal(calls[1].uid, 'uid-7');
+  assert.equal(calls[1].projectId, 'project-4');
+  assert.equal(calls[1].seatId, 'seat-3');
   assert.equal(calls[1].transaction, 'tx-1');
+  assert.equal(calls[2].op, 'commit');
   assert.equal(calls[2].transaction, 'tx-1');
 
   const write = calls[2].writes[0];
