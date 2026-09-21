@@ -17,6 +17,7 @@ const files = [
   'hero-environment.js',
   'hero-theme-lighting-adapter.js',
   'hero-authored-materials.js',
+  'feature-registry.js',
   'hero-world-contract.js',
   'hero-world-profile.js',
   'theme-root.js',
