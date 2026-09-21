@@ -43,9 +43,13 @@ export type TaskContinuationRequest = {
   requestedBy: string;
   requestedAt: string;
   instruction: string;
-  status: 'requested';
+  status: 'requested' | 'executing' | 'completed' | 'handoff_required' | 'failed' | 'cancelled';
   continuationOfCheckpointId: string;
   nextTurn: 'fresh-budgeted-turn';
+  executionId?: string;
+  startedAt?: string;
+  completedAt?: string;
+  continuationCheckpointId?: string;
 };
 
 export type TaskContinuationRequestStore = {
@@ -109,7 +113,7 @@ export class TaskContinuationService {
       ) {
         throw new Error('continuation_request_id_conflict');
       }
-      if (this.state) await this.state.ensureWaitingForContinuation({ request: existing });
+      if (existing.status === 'requested' && this.state) await this.state.ensureWaitingForContinuation({ request: existing });
       return existing;
     }
 
