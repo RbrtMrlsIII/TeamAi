@@ -502,6 +502,15 @@ export function resolveSeatDivisionConfigCommand(key) {
   return SEAT_DIVISION_CONFIG_COMMANDS.find((command) => command.key === normalized) || null;
 }
 
+export function requestSeatDivisionConfigure(childId, detail = {}) {
+  const command = SEAT_DIVISION_CONFIG_COMMANDS.find((entry) => entry.childId === childId);
+  if (!command) return null;
+  return command.request({
+    ...detail,
+    targetSection: detail.targetSection || command.targetSection,
+  });
+}
+
 export function setupRingFocusedItem(ringFocus) {
   if (!ringFocus || ringFocus.ring !== 'r2') return null;
   return SETUP_CONFIG_V1[ringFocus.index] || null;
