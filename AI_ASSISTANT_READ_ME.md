@@ -19,7 +19,7 @@
 - next allowed work: continue the governed 029 implementation on PR #398, finish feature frontiers, then prove exact-head replacement readiness before any merge
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: CI green, Corpus clean, and Session current are separate claims
-- live PR head: `e26c6a78715b1fe80e06be71b1c01fd7aefb3348` at this handoff point; GitHub remains authoritative for later changes. Evidence is admissible only when tied to the exact head under review.
+- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. At this handoff point the observed head is `8a05b028f70e479b578af58d5c798766b37e44a5`; verify live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 ## Canonical authority path
