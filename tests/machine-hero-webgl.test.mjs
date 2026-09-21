@@ -63,6 +63,7 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.match(renderBody, /focusedDivision\?\.edge/);
   assert.match(renderBody, /state\.focusedChildId/);
   assert.match(renderBody, /machineWorldFocusedDivisionCamera/);
+  assert.match(renderBody, /hierarchyOpen && sample\.amount > 0\.02/);
   assert.match(renderBody, /kind === 'inner-pod' && Number\.isInteger\(part\.seatIndex\)/);
   const partsLoopStart = renderBody.indexOf('for (const part of scene.parts) {');
   const partsLoopOpen = renderBody.indexOf('{', partsLoopStart);
