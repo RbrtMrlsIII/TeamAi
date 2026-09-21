@@ -3,7 +3,7 @@ import type { GenerateRequest, GenerateResult } from '../providers/types.js';
 import { ProviderRuntime, type ExecutionAuthorizationStatus, type ProviderInvocationRequest } from './provider-runtime.js';
 import { assertDurableEvent, transitionTask, type TaskEvent, type TaskStatus } from './task-state.js';
 import type { DurableExecutionResult, TaskExecutionResultStore } from './task-execution-result.js';
-import { buildTaskContinuationCheckpoint, type TaskContinuationCheckpointStore, type TaskContinuationStateStore } from './task-continuation.js';
+import { buildTaskContinuationCheckpoint, type TaskContinuationCheckpointStore } from './task-continuation.js';
 import {
   accountTurnBudget,
   type SeatTurnBudgetConfig,
@@ -48,7 +48,6 @@ export class TaskExecutionService {
     private readonly events: TaskExecutionEventStore,
     private readonly results?: TaskExecutionResultStore,
     private readonly checkpoints?: TaskContinuationCheckpointStore,
-    private readonly continuationState?: TaskContinuationStateStore,
   ) {}
 
   async execute(task: ExecutableTask, actorId: string, idempotencyKey: string): Promise<TaskExecutionResult> {
@@ -142,10 +141,6 @@ export class TaskExecutionService {
           occurredAt: handoffEvent.occurredAt,
         });
         if (this.checkpoints) await this.checkpoints.persistCheckpoint(checkpoint);
-        if (this.continuationState) {
-          // The initial handoff remains handoff_required. The explicit continuation request
-          // is the boundary that moves the task into waiting_for_continuation.
-        }
         await this.persistResult({
           taskId: task.id,
           projectId: task.projectId,
