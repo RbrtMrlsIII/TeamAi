@@ -1,7 +1,7 @@
-import type { AIProvider, GenerateRequest, GenerateResult, StreamChunk } from './types.js';
-import { fetchJson, parseSse, ProviderHttpError } from './http.js';
-import { withRetry } from './retry.js';
-import { terminationFromAnthropic } from './termination.js';
+import type { AIProvider, GenerateRequest, GenerateResult, StreamChunk } from './types.ts';
+import { fetchJson, parseSse, ProviderHttpError } from './http.ts';
+import { withRetry } from './retry.ts';
+import { terminationFromAnthropic } from './termination.ts';
 
 export class AnthropicProvider implements AIProvider {
   readonly provider = 'anthropic';
