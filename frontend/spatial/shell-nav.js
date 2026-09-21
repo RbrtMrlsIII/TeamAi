@@ -4,6 +4,8 @@
  * Must not: Firestore, PayPal, scheduler actor, entitlements, execute approved actions.
  */
 
+import { getFrontendFeature } from "./feature-registry.js";
+
 import {
   applyDocumentTheme,
   initializeTheme,
@@ -18,14 +20,24 @@ import {
 
 const NAV_LABELS = {
   deck: "Deck",
-  workplace: "Workplace",
-  seats: "Seats",
+  workplace: getFrontendFeature("workspace-hq")?.label || "Workplace",
+  seats: getFrontendFeature("seats")?.label || "Seats",
   planning: "Planning",
   working: "Working",
-  artifacts: "Artifacts",
+  artifacts: getFrontendFeature("artifacts-inventory")?.label || "Artifacts / Inventory",
   approvals: "Approvals",
-  settings: "Settings",
+  settings: getFrontendFeature("settings")?.label || "Settings / Control",
 };
+
+const NAV_FEATURE_IDS = Object.freeze({
+  workplace: "workspace-hq",
+  seats: "seats",
+  artifacts: "artifacts-inventory",
+  settings: "settings",
+  planning: "orchestration",
+  working: "orchestration",
+  approvals: "orchestration",
+});
 
 const SEAT_DATA = {
   alpha: {
@@ -563,6 +575,8 @@ function showComposition(destination) {
 
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     const id = btn.getAttribute("data-nav") ?? "";
+    const featureId = NAV_FEATURE_IDS[id];
+    if (featureId) btn.dataset.featureId = featureId;
     if (id === destination) btn.setAttribute("aria-current", "page");
     else btn.removeAttribute("aria-current");
   });
