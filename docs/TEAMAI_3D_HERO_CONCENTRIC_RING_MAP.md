@@ -24,7 +24,7 @@ R2  SETUP / CONFIG RING     major configuration branches & mechanical setup
 R3  SEAT RING               Web AI Seats (outer)
 ```
 
-Radii increase with ring index. Runtime centerlines are derived by the shared hero-ring-envelope.js owner from the active workspace radius and actual outer machine envelope. Requested clearance may compress when the physical span is tight; the machine envelope itself is never moved by ring layout.
+Radii increase with ring index. Runtime centerlines are derived by the shared hero-ring-envelope.js owner from the actual R0 workspace-core radius and the physical R3 Seat-shell envelope. The broader workspace footprint is not itself an R0 centerline. Machine-core inner pods/Seat mechanisms and outer housings are separate geometry layers and are not interchangeable radius inputs. Requested clearance may compress when the physical span is tight; neither the workspace core nor Seat envelope is moved merely to satisfy ring spacing.
 
 ### R0 — Workspace core (middle)
 
@@ -121,6 +121,18 @@ The active implementation now has one shared geometry and semantic chain across 
 - R2 auth/setup remains presentation-only. teamai:app-ui-handoff is received by the normal UI auth/settings controller; the spatial renderer never performs auth/provider work.
 
 These are structural implementation steps, not a 029 completion claim. Browser exact-head validation and deeper mechanical choreography remain required verification layers.
+
+
+
+### Geometry authority note
+
+The current implementation distinguishes three related but different values:
+
+- workspace footprint: the broader world/profile extent used for framing and payload density;
+- R0 centerline: the actual workspace receiving-core radius produced by hero-workspace-core.js;
+- R3 Seat envelope: the actual Seat-shell radius from machine-core layout, not the four outer housing modules.
+
+R1/R2 are fitted inside that physical R0→R3 span. This prevents a large workspace profile from incorrectly forcing intermediate rings outside the Seat machine.
 
 ## 7. Design principle
 
