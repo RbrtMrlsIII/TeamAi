@@ -164,6 +164,13 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 Historical Issues are evidence, not active routing.
 
 
+### 2026-09-21 #392 budget foundation
+
+- src/backend/seat-turn-budget.ts is now the canonical server-side accounting engine for the #392 foundation. It keeps total turn budget, output allocation, reasoning allocation, context/input policy, protected handoff reserve, warning threshold, configured/effective values, usage, remaining capacity, and completion/handoff display state distinct.
+- TaskExecutionService now accepts an optional backend-owned Seat budget, constrains the provider request maxOutputTokens, and returns server-computed budget accounting alongside the existing execution result.
+- Runtime tests cover request capping, actual usage accounting, handoff prediction, and continuation-aware exhaustion display.
+- This is foundation only, not #392 completion. The live teamai-task-execute Edge Function remains stub-edge-runtime; durable Seat budget config/usage authority, provider termination/completion evidence, durable handoff checkpoints, and live continuation enforcement remain open.
+- Do not replace these gaps with client counters or a second Edge-specific budget authority.
 ### 2026-09-21 exact-head Storage item-inventory proof
 
 - Storage is implemented as a presentation/read-model-only facility with explicit readiness dimensions for authentication, inventory knowledge, authorization, entitlement, and health.
