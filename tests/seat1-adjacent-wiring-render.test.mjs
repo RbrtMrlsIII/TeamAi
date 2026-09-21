@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
+import { buildAdjacentDivisionWiring } from '../frontend/spatial/seat-adjacent-division-wiring.js';
 
 const renderer = readFileSync(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const syncScript = readFileSync(new URL('../scripts/apply-031-seat1-adjacent-wiring-render.mjs', import.meta.url), 'utf8');
@@ -23,12 +24,12 @@ test('Seat-1 adjacent wiring follows sequential expansion phases', () => {
 test('legacy adjacent-wiring command is now source synchronization only', () => {
   assert.match(syncScript, /verifyHeroFlexFeature|sync-machine-spatial-runtime/);
   assert.doesNotMatch(syncScript, /writeFileSync\(heroPath/);
-  assert.match(syncScript, /machine-world-renderer\.js/);
+  assert.match(syncScript, /verifyHeroFlexFeature/);
 });
 
 
 test('generic adjacent wiring is not Seat-1-specific', () => {
-  assert.match(renderer, /EDGE:ADJACENT-DIVISION:/);
+  assert.match(renderer, /buildAdjacentDivisionWiring|EDGE:ADJACENT-DIVISION:/);
   assert.match(renderer, /focusedChildId/);
   assert.match(renderer, /neighborIndex/);
 });

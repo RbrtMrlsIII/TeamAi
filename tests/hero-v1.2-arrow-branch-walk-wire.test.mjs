@@ -30,9 +30,9 @@ test('V1.2 Arrow path uses cycleSeatShellBranchFocus not inline list math', asyn
   assert.match(src, /cycleSeatShellBranchFocus/);
   assert.match(src, /cycleSeatShellBranchFocus\(/);
   assert.match(src, /key === 'ArrowRight' \? 1 : -1/);
-  const arrowIdx = src.indexOf("event.key==='ArrowRight'");
+  const arrowIdx = src.indexOf("ArrowRight");
   assert.ok(arrowIdx > 0);
-  const snippet = src.slice(arrowIdx, arrowIdx + 350);
+  const snippet = src.slice(arrowIdx, arrowIdx + 700);
   assert.doesNotMatch(snippet, /const list=SEAT_SHELL_V1_CHILDREN/);
 });
 

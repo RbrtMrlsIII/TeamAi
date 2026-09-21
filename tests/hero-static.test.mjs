@@ -51,7 +51,7 @@ test('flexible seat model is present', () => {
     assert.ok(runtime.includes(marker), marker);
   }
   assert.match(runtime, /clampSeatCount\(next\)/);
-  assert.match(runtime, /seatCount=GUEST_SEAT_COUNT/);
+  assert.match(runtime, /seatCount\s*=\s*GUEST_SEAT_COUNT/);
   assert.match(capacity, /MIN_SEAT_COUNT = 1/);
   assert.match(capacity, /MAX_SEAT_COUNT = 10/);
   assert.match(capacity, /GUEST_SEAT_COUNT = 10/);

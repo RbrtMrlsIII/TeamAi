@@ -73,6 +73,6 @@ test('V0.1 compatibility sync preserves the canonical controller snapshot', asyn
   const base = await readFile(join(root, 'public/_flex_src/hero-flex.base.js'), 'utf8');
   const apply = await readFile(applyScript, 'utf8');
   assert.equal(src, base);
-  assert.match(apply, /hero-flex\.base\.js/);
+  assert.match(apply, /sync-hero-flex-runtime\.mjs/);
   assert.doesNotMatch(apply, /apply-cam2-tree-follow-flex\.engine|raw\.githubusercontent\.com/);
 });

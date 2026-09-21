@@ -37,7 +37,7 @@ test('V0.2 flex returnFromSeatShell resets nav and sets baseline dock', async ()
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
   assert.match(src, /function returnFromSeatShell\(\)[\s\S]*navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
   assert.match(src, /navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
-  assert.match(src, /setCamera\(typeof WORLD_BASELINE_DOCK_ID/);
+  assert.match(src, /setCamera\('HERO_WIDE'\)/);
 });
 
 test('V0.2 flex closeHierarchyParent restores baseline', async () => {
@@ -54,6 +54,6 @@ test('V0.2 controller delegates rendering after baseline reset', async () => {
 
 test('V0.2 canonical source owns return-to-baseline directly', async () => {
   const apply = await readFile(join(root, 'scripts/apply-cam2-tree-follow-flex.mjs'), 'utf8');
-  assert.match(apply, /hero-flex\.base\.js/);
+  assert.match(apply, /sync-hero-flex-runtime\.mjs/);
   assert.doesNotMatch(apply, /V0\.2 Vision: return-to-baseline patches/);
 });

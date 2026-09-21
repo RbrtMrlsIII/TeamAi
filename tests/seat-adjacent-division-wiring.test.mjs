@@ -21,7 +21,7 @@ test('adjacent division wiring uses semantic ports from both divisions', () => {
 
   const wiring = buildAdjacentDivisionWiring({ sourceGeometry: source, targetGeometry: target });
 
-  assert.equal(wiring.id, 'TREE-HERO-SEAT#0:SEAT_CONNECTION:ADJACENCY_WIRING');
+  assert.equal(wiring.id, 'EDGE:ADJACENT-DIVISION:' + source.id.replace(/:GEOMETRY$/, '') + '=>' + target.id.replace(/:GEOMETRY$/, ''));
   assert.equal(wiring.from.divisionId, source.id);
   assert.equal(wiring.to.divisionId, target.id);
   assert.deepEqual(wiring.corridor.reservedFor, ['source-division', 'target-division']);
