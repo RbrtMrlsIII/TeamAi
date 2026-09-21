@@ -157,3 +157,15 @@ test('WebGL preview has no provider, auth, or durable-state authority', () => {
   assert.doesNotMatch(magnificent, /firebase|supabase|paypal|oauth|authorization/i);
   assert.doesNotMatch(magnificent, /fetch\(|XMLHttpRequest|localStorage|indexedDB/);
 });
+
+
+test('machine choreography is state-derived in the canonical renderer', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /deriveMachineTransformationChoreography\(/);
+  assert.match(renderer, /shellAmount: finite\(state\.hierarchyOpenAmount, sample\.amount\)/);
+  assert.match(renderer, /divisionAmount: finite\(state\.focusedChildAmount, 0\)/);
+  assert.match(renderer, /connectionAmount: finite\(state\.connectionBranchAmount, 0\)/);
+  assert.match(renderer, /choreography\.electrical/);
+  assert.match(renderer, /choreography\.workspaceReception/);
+  assert.match(renderer, /machineWorldChoreographyPhase/);
+});
