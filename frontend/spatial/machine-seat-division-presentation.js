@@ -2,6 +2,7 @@ import {
   buildSeatDivisionGeometry,
   resolveSeatDivisionSemanticId,
 } from './seat-division-geometry.js';
+import { resolveSeatDivisionPayload } from './machine-seat-division-payload.js';
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -29,14 +30,13 @@ export function resolveSeatDivisionPresentation(childId) {
             : semanticId.includes('CAPABILITIES')
               ? 'capabilities'
               : 'behavior';
+  const payload = resolveSeatDivisionPayload(semanticId);
+  if (!payload) return null;
   return Object.freeze({
     childId: semanticId,
-    label,
+    label: payload.label || label,
     kind,
-    payload: Object.freeze({
-      labels: Object.freeze([label]),
-      controls: Object.freeze(['configure']),
-    }),
+    payload,
   });
 }
 
