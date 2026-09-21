@@ -92,7 +92,7 @@ test('Firestore Seat resolver fails closed when two canonical teams expose the s
   } finally {
     globalThis.fetch = originalFetch;
   }
-}
+});
 
 import { FirestoreRuntimeTaskStore } from '../dist/src/backend/firestore-runtime.js';
 
