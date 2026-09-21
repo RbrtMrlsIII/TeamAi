@@ -191,7 +191,7 @@ export class FirestoreRuntimeClient {
             const parsed = JSON.parse(body) as unknown;
             return Array.isArray(parsed) ? parsed : [parsed];
           } catch {
-            return body.trim().split(/\\r?\\n/).map((line) => JSON.parse(line));
+            return body.trim().split(/\r?\n/).map((line) => JSON.parse(line));
           }
         })()
       : [];
