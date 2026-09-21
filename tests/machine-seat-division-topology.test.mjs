@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildSeatDivisionEdge, validateSeatDivisionEdges } from '../frontend/spatial/machine-seat-division-topology.js';
+import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
 
 const children = [
@@ -59,4 +59,31 @@ test('seat division edge identity remains stable while coordinates change', () =
 
 test('malformed child edge fails closed', () => {
   assert.equal(validateSeatDivisionEdges([{ semanticEdgeId: 'x', route: [] }]).valid, false);
+});
+
+
+test('full Seat division network reuses shared AABB/port/route clearance authority', () => {
+  const divisions = children.map((childId, childIndex) =>
+    deriveFocusedSeatDivisionGeometry({ parent, childId, childIndex, amount: 1 }),
+  );
+  const edges = divisions.map((geometry, childIndex) =>
+    buildSeatDivisionEdge({
+      parent,
+      geometry,
+      childId: children[childIndex],
+      childIndex,
+    }),
+  );
+  const validation = validateSeatDivisionNetwork({
+    parent: {
+      ...parent,
+      semanticId: 'SEAT_SHELL',
+    },
+    divisions,
+    edges,
+    clearance: 0.08,
+  });
+  assert.equal(validation.valid, true, validation.reasons.join(', '));
+  assert.equal(validation.divisionCount, 7);
+  assert.equal(validation.edgeCount, 7);
 });
