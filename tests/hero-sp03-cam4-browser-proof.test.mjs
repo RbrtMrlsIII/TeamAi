@@ -115,7 +115,7 @@ test('SP-03 compatibility sync does not own Cam-4 behavior', async () => {
   const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
   assert.match(runtime, /machine-world-renderer\.js/);
   assert.match(runtime, /applyNavCamera/);
-  assert.match(apply, /hero-flex\.base\.js/);
+  assert.match(apply, /sync-hero-flex-runtime\.mjs/);
   assert.doesNotMatch(apply, /apply-cam2-tree-follow-flex\.engine/);
   assert.match(renderer, /navOrbitYaw/);
 });

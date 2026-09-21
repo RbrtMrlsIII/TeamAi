@@ -109,7 +109,7 @@ test('canonical renderer owns continuous world camera travel', async () => {
   assert.match(renderer, /worldPullbackProgress/);
   assert.match(renderer, /blendCameraPose/);
   assert.match(renderer, /NAV_ZOOM_MAX/);
-  assert.match(sync, /byte-for-byte parity|parity/i);
+  assert.match(sync, /sync-hero-flex-runtime\.mjs/);
   assert.doesNotMatch(sync, /apply-cam2-tree-follow-flex\.engine/);
 });
 
