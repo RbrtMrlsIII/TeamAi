@@ -260,7 +260,7 @@ test('ordered adjacent wiring preserves Connection→Behavior edge regardless of
   });
   assert.equal(
     fromConnection.id,
-    'TREE-HERO-SEAT#2:SEAT_CONNECTION:ADJACENCY_WIRING',
+    'EDGE:ADJACENT-DIVISION:TREE-HERO-SEAT#2:SEAT_CONNECTION=>TREE-HERO-SEAT#2:SEAT_BEHAVIOR',
   );
 
   const fromPreviousToBehavior = buildAdjacentDivisionWiring({
