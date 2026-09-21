@@ -28,8 +28,11 @@ export function mountMachineCoreVisual(root = globalThis.document) {
   const seatCount = parseSeatCountParam();
   const semanticScene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
   let branchId = 'HUB-CORE';
+  let focusedChildId = null;
   let expanded = false;
   let raf = 0;
+
+  const isSeatBranch = (value) => /^BRANCH-SEAT-\d{2}$/.test(String(value || ''));
 
   const render = (timestamp = performance.now()) => {
     const frame = renderer.render(timestamp, {
@@ -43,6 +46,13 @@ export function mountMachineCoreVisual(root = globalThis.document) {
       navOrbitPitch: 0,
       navZoom: 1,
       machineLayer: true,
+      seatDivisionBranchAmounts: {
+        connectionBranchAmount: expanded && isSeatBranch(branchId) ? 1 : 0,
+      },
+      focusedChildId: expanded && isSeatBranch(branchId) ? focusedChildId : null,
+      focusedChildIndex: expanded && isSeatBranch(branchId) ? 0 : -1,
+      focusedChildAmount: expanded && isSeatBranch(branchId) ? 1 : 0,
+      connectionBranchAmount: expanded && isSeatBranch(branchId) ? 1 : 0,
     });
     const count = panel.querySelector('[data-core-count]');
     const state = panel.querySelector('[data-core-state]');
@@ -83,6 +93,7 @@ export function mountMachineCoreVisual(root = globalThis.document) {
 
   select?.addEventListener('change', () => {
     branchId = select.value || 'HUB-CORE';
+    focusedChildId = isSeatBranch(branchId) ? 'SEAT_CONNECTION' : null;
   });
   panel.querySelector('[data-core-expand]')?.addEventListener('click', () => setExpanded(true));
   panel.querySelector('[data-core-reset]')?.addEventListener('click', () => {
