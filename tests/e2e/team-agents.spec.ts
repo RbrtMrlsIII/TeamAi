@@ -18,7 +18,7 @@ test.describe('Team / Agents facility', () => {
     await facility.locator('[data-agent-id="agent-gamma"]').click();
     await facility.locator('[data-agent-seat]').selectOption('seat-02');
     await facility.locator('[data-agent-role]').selectOption('coordinator');
-    await expect(facility.locator('[data-agent-profile]')).toHaveText(/Review + verification/);
+    await expect(facility.locator('[data-agent-profile]')).toContainText('Review + verification');
     await expect(facility.locator('[data-agent-branch]')).toHaveText(
       'BRANCH-TEAM::agent/agent-gamma/seat/seat-02/role/coordinator/configuration',
     );
