@@ -176,6 +176,7 @@ test('machine choreography is state-derived and lifecycle-connected in the canon
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /deriveMachineTransformationChoreography\(/);
   assert.match(renderer, /const branchAmounts = state\.seatDivisionBranchAmounts \|\| \{\};/);
+  assert.match(renderer, /import \{ drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry \}/);
   assert.match(
     renderer,
     /shellAmount: finite\(state\.hierarchyOpenAmount, sample\.amount\)/,

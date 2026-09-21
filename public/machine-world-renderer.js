@@ -13,7 +13,6 @@ import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-
 import { createMachineAnimation } from './machine-core-animation.js';
 import { deriveMachineSubject } from './machine-hero-scene.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
-import { buildSeatDivisionGeometry } from './seat-division-geometry.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
 import { BACKEND_DISPLAY_V1, drawBackendDisplayRing } from './hero-r1-backend-display.js';
@@ -24,7 +23,7 @@ import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-
 import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
-import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
+import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './machine-seat-division-presentation.js';
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 import { deriveMachineTransformationChoreography } from './machine-choreography.js';
