@@ -5,6 +5,8 @@ import type { ExecutableTask, TaskExecutionEventStore } from './task-execution.j
 import type { AtomicTaskLeaseStore, LeaseResult } from './task-lease.js';
 import type { DurableDomainStateStore, AccountState, SeatState, ConnectionState, TaskStateRecord, DurableEventRecord } from './domain-state.js';
 import type { RuntimeApprovalStore, RuntimeTaskStore } from './task-runtime-bridge.js';
+import type { SeatBudgetSettingsStore } from './seat-turn-budget-settings.js';
+import type { SeatTurnBudgetConfig } from './seat-turn-budget.js';
 import type { SchedulerSeat, SchedulerTask } from './scheduler.js';
 
 const FIRESTORE_ROOT = 'https://firestore.googleapis.com/v1';
@@ -233,7 +235,7 @@ export class FirestoreAtomicTaskLeaseStore implements AtomicTaskLeaseStore {
   }
 }
 
-export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore {
+export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore, SeatBudgetSettingsStore {
   constructor(private readonly client: FirestoreRuntimeClient, private readonly uid: string, private readonly workplaceId: string) {}
 
   async getAccount(uid: string): Promise<AccountState | null> {
@@ -244,6 +246,38 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   async getSeat(uid: string, projectId: string, seatId: string): Promise<SeatState | null> {
     const doc = await this.client.get(`accounts/${required(uid, 'uid')}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/seats/${required(seatId, 'seatId')}`);
     return doc ? decodeDocument(doc) as unknown as SeatState : null;
+  }
+
+  async getSeatBudget(uid: string, projectId: string, seatId: string): Promise<SeatTurnBudgetConfig | null> {
+    const seat = await this.getSeat(uid, projectId, seatId);
+    return seat?.turnBudget ?? null;
+  }
+
+  async saveSeatBudget(uid: string, projectId: string, seatId: string, config: SeatTurnBudgetConfig): Promise<void> {
+    const safeUid = required(uid, 'uid');
+    const safeProjectId = required(projectId, 'projectId');
+    const safeSeatId = required(seatId, 'seatId');
+    const transaction = await this.client.beginTransaction();
+    const seatPath = FirestoreRuntimeClient.path(
+      safeUid,
+      this.workplaceId,
+      safeProjectId,
+      `seats/${safeSeatId}`,
+    );
+    const document = await this.client.get(seatPath, transaction);
+    if (!document) throw new Error(`seat not found: ${safeSeatId}`);
+
+    const now = new Date().toISOString();
+    await this.client.commit(transaction, [{
+      update: {
+        name: this.clientPath(seatPath),
+        fields: FirestoreRuntimeClient.fields({ turnBudget: config, updatedAt: now }),
+      },
+      updateMask: { fieldPaths: ['turnBudget', 'updatedAt'] },
+      currentDocument: document.updateTime
+        ? { updateTime: document.updateTime }
+        : { exists: true },
+    }]);
   }
 
   async getConnection(uid: string, projectId: string, connectionId: string): Promise<ConnectionState | null> {
