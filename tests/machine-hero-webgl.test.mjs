@@ -178,3 +178,19 @@ test('canonical renderer keeps canvas resize idempotent between frames', async (
   assert.match(renderer, /if \(changed\) \{[\s\S]*canvas\.width = pixelWidth/);
   assert.doesNotMatch(renderer, /canvas\.width = Math\.max\(1, Math\.floor\(width\*dpr\)\)/);
 });
+
+
+test('compatibility previews keep context and RAF ownership inside the renderer', async () => {
+  const coreVisual = await readFile(new URL('../public/machine-core-visual.js', import.meta.url), 'utf8');
+  const preview = await readFile(new URL('../public/machine-hero-webgl.js', import.meta.url), 'utf8');
+  const magnificent = await readFile(new URL('../public/machine-hero-magnificent.js', import.meta.url), 'utf8');
+
+  for (const source of [coreVisual, preview, magnificent]) {
+    assert.doesNotMatch(source, /getContext\(['"]webgl['"]/);
+    assert.match(source, /createMachineWorldRenderer\(\{ canvas \}\)/);
+  }
+  assert.doesNotMatch(coreVisual, /new ResizeObserver\(\(\) => render\(\)\)/);
+  assert.match(coreVisual, /raf = requestAnimationFrame\(render\)/);
+  assert.match(preview, /rafId = requestAnimationFrame\(render\)/);
+  assert.match(magnificent, /raf = requestAnimationFrame\(render\)/);
+});
