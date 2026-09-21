@@ -37,7 +37,7 @@ export async function decryptSeatApiKey(ciphertextB64: string, ivB64: string): P
   const plain = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: new Uint8Array(fromB64(ivB64)) },
     key,
-    fromB64(ciphertextB64),
+    new Uint8Array(fromB64(ciphertextB64)),
   );
   return new TextDecoder().decode(plain);
 }
