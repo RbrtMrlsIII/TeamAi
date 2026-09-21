@@ -34,6 +34,10 @@ TeamAi intentionally avoids Firebase Cloud Storage and Cloud Functions. The curr
 - [x] Keep Cloud Functions out of the TeamAi product architecture.
 - [x] Do not require a Blaze upgrade for the baseline TeamAi architecture.
 
+### TeamAi Storage product boundary
+
+TeamAi Storage is a separate planned product facility from Firebase Cloud Storage. The current frontend/product scope is **item inventory storage only**. Image/file upload and binary object-transfer surfaces remain deferred pending explicit security and cost controls.
+
 ### Project/artifact workflow
 
 - [ ] Add canonical manual GitHub setup guide for users who want their projects in GitHub.
