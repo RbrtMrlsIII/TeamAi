@@ -32,3 +32,24 @@ test('generic adjacent wiring is not Seat-1-specific', () => {
   assert.match(renderer, /focusedChildId/);
   assert.match(renderer, /neighborIndex/);
 });
+
+
+test('adjacent wiring remains anchored to semantic division ports', () => {
+  const source = {
+    id: 'TREE-HERO-SEAT#0:SEAT_BEHAVIOR:GEOMETRY',
+    port: { x: 1, y: 0.5, z: 2 },
+    corridor: { start: { x: 1, y: 0.5, z: 2 }, end: { x: 0, y: 0.5, z: 0 } },
+  };
+  const target = {
+    id: 'TREE-HERO-SEAT#0:SEAT_TOOLKIT:GEOMETRY',
+    port: { x: 2, y: 0.6, z: 3 },
+  };
+  const result = buildAdjacentDivisionWiring({
+    sourceGeometry: source,
+    targetGeometry: target,
+    amount: 0.25,
+  });
+  assert.deepEqual(result.from.projected, source.port);
+  assert.deepEqual(result.to.port, target.port);
+  assert.equal(result.activationAmount, 0.25);
+});
