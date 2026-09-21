@@ -1,5 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+
+function isGoogleTokenRequest(url) {
+  try {
+    const parsed = new URL(String(url));
+    return parsed.hostname === 'oauth2.googleapis.com' && parsed.pathname === '/token';
+  } catch {
+    return false;
+  }
+}
 import { generateKeyPairSync } from 'node:crypto';
 import { ProviderRuntime } from '../dist/src/backend/provider-runtime.js';
 import { TaskExecutionService } from '../dist/src/backend/task-execution.js';
@@ -18,7 +27,7 @@ test('Firestore result store persists only inside the Firebase UID/workplace/pro
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
-    if (String(url).includes('oauth2.googleapis.com/token')) return new Response(JSON.stringify({ access_token: 'token-1' }), { status: 200 });
+    if (isGoogleTokenRequest(url)) return new Response(JSON.stringify({ access_token: 'token-1' }), { status: 200 });
     return new Response(JSON.stringify({ commit: true }), { status: 200, headers: { 'content-type': 'application/json' } });
   };
   try {
@@ -54,7 +63,7 @@ test('Firestore result store retrieves the exact durable result by task/project/
   };
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET' });
-    if (String(url).includes('oauth2.googleapis.com/token')) return new Response(JSON.stringify({ access_token: 'token-2' }), { status: 200 });
+    if (isGoogleTokenRequest(url)) return new Response(JSON.stringify({ access_token: 'token-2' }), { status: 200 });
     return new Response(JSON.stringify(document), { status: 200, headers: { 'content-type': 'application/json' } });
   };
   try {
@@ -63,7 +72,7 @@ test('Firestore result store retrieves the exact durable result by task/project/
     assert.equal(result?.taskId, 'task-9');
     assert.equal(result?.projectId, 'project-1');
     assert.equal(result?.result?.text, 'done-after-restart');
-    const read = calls.find((call) => call.method === 'GET' && !call.url.includes('oauth2.googleapis.com'));
+    const read = calls.find((call) => call.method === 'GET' && !isGoogleTokenRequest(call.url));
     assert.ok(read);
     assert.match(read.url, /accounts\/uid-1\/workplaces\/workplace-1\/projects\/project-1\/tasks\/task-9\/execution-results\/exec-9%3Acomplete%3Aevent$/);
   } finally { restore(); }
@@ -157,7 +166,7 @@ test('Firestore continuation checkpoint store uses create-only scoped task paths
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
-    if (String(url).includes('oauth2.googleapis.com/token')) {
+    if (isGoogleTokenRequest(url)) {
       return new Response(JSON.stringify({ access_token: 'token-3' }), { status: 200 });
     }
     return new Response(JSON.stringify({ commit: true }), { status: 200, headers: { 'content-type': 'application/json' } });
@@ -195,7 +204,7 @@ test('Firestore continuation request store uses create-only scoped task paths', 
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET', body: init.body });
-    if (String(url).includes('oauth2.googleapis.com/token')) {
+    if (isGoogleTokenRequest(url)) {
       return new Response(JSON.stringify({ access_token: 'token-4' }), { status: 200 });
     }
     return new Response(JSON.stringify({ commit: true }), { status: 200, headers: { 'content-type': 'application/json' } });
@@ -248,7 +257,7 @@ test('Firestore continuation request store retrieves an existing request by exac
   const calls = [];
   globalThis.fetch = async (url, init = {}) => {
     calls.push({ url: String(url), method: init.method ?? 'GET' });
-    if (String(url).includes('oauth2.googleapis.com/token')) {
+    if (isGoogleTokenRequest(url)) {
       return new Response(JSON.stringify({ access_token: 'token-5' }), { status: 200 });
     }
     return new Response(JSON.stringify(requestDocument), { status: 200, headers: { 'content-type': 'application/json' } });
@@ -259,7 +268,7 @@ test('Firestore continuation request store retrieves an existing request by exac
     assert.equal(request?.continuationRequestId, 'cont-2');
     assert.equal(request?.continuationOfCheckpointId, 'exec-13:checkpoint');
     assert.equal(request?.targetSeatId, 'seat-coder-2');
-    const read = calls.find((call) => call.method === 'GET' && !call.url.includes('oauth2.googleapis.com'));
+    const read = calls.find((call) => call.method === 'GET' && !isGoogleTokenRequest(call.url));
     assert.ok(read);
     assert.match(
       read.url,
