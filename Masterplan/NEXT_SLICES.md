@@ -43,16 +43,17 @@ Continue converging the TeamAi Spatial World from the exact #397 implementation 
 This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
 
 ## Current frontier
-MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are now exact-head proven. The next authorized representative continuation is **#392 usage / exhaustion / continuation presentation**: authoritative budget, remaining capacity, handoff reserve, and completion-state presentation without client-side accounting authority.
+MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are exact-head proven. The latest implementation slice also converged server-side Seat access on the canonical team-nested Firestore hierarchy across task execution, budget persistence, scheduler enumeration, provider binding, credential loading, and connection-test persistence. The next authorized #392 slice is **live Firestore Seat-shape verification followed by controlled real-provider runtime proof**.
 
 ## Current blocker
-No current exact-head CI gate blocker at Storage proof head `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`. The branch remains Draft because these checks prove exercised contracts only, not full #400 completion, live commerce lifecycle integration, #392 completion, human acceptance, or merge readiness.
+No exact-head CI gate is blocking the current repository head `ffdc44292d96e4702af48193cd3965ebdf7a1d30`; the preceding verified code head `daafe6d5503d91c42a8bd6c41b257046030042fb` had Governance, Full-System, Security, and Browser all green. The branch remains Draft because exercised repository/browser contracts do not prove production Firestore shape, live Edge deployment, real-provider execution, durable continuation, human acceptance, or merge readiness.
 
-### #392 budget foundation boundary
-- Canonical backend accounting engine added at src/backend/seat-turn-budget.ts.
-- TaskExecutionService now applies backend-owned provider output ceilings and exposes authoritative post-turn accounting.
-- Current foundation evidence is intentionally bounded: it does not claim live Edge enforcement, durable Seat budget configuration, provider completion-state detection, durable handoff checkpoint persistence, or continuation execution.
-- The next #392 slice must reconcile these missing authorities instead of introducing client-side counters or a duplicate Edge-only budget engine.
+### #392 budget/runtime convergence boundary
+- Canonical backend accounting remains at `src/backend/seat-turn-budget.ts`.
+- TaskExecutionService and the new Edge executor enforce the Seat-owned budget model, normalized provider termination, and truthful handoff state at the repository level.
+- Canonical Firestore Seat resolution is now team-nested and fail-closed on missing/ambiguous Seats across the active server readers/writers.
+- Current evidence is intentionally bounded: live production Firestore Seat document shape is not yet directly verified; live `teamai-task-execute` remains v12 stub deployment; durable handoff checkpoint/continuation execution remains open.
+- The next #392 slice must verify the real Seat document contract, then deploy and runtime-prove one Coder Seat + one real provider + one bounded task before generalizing.
 ### Exact-head Storage boundary record
 - Storage item inventory is presentation/read-model only on this slice.
 - No live Supabase Storage buckets are currently provisioned in the connected project, so no live content inventory is claimed.
