@@ -1,17 +1,35 @@
 #!/usr/bin/env node
 /**
- * 029 adjacent expansion compatibility sync.
- * Geometry/state is source-owned; no Hero renderer mutation is permitted.
+ * Historical compatibility verifier for the 029 adjacent-division expansion path.
+ *
+ * The runtime is source-owned. This command intentionally performs no mutation.
+ * The reusable expansion contract is tested directly from frontend/spatial.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const srcPath = join(root, 'frontend/spatial/seat-adjacent-division-expansion.js');
-const publicPath = join(root, 'public/seat-adjacent-division-expansion.js');
-const source = readFileSync(srcPath, 'utf8');
-writeFileSync(publicPath, source);
-if (readFileSync(publicPath, 'utf8') !== source) throw new Error('adjacent expansion parity failed');
-const renderer = readFileSync(join(root, 'public/machine-world-renderer.js'), 'utf8');
-if (!renderer.includes('buildAdjacentDivisionWiring')) throw new Error('canonical renderer missing adjacency ownership');
-console.log('Adjacent expansion source synchronized; no Hero mutation performed');
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = join(fileURLToPath(import.meta.url), "..", "..");
+const sourcePath = join(root, "frontend/spatial/seat-adjacent-division-expansion.js");
+const rendererPath = join(root, "frontend/spatial/machine-world-renderer.js");
+
+const source = readFileSync(sourcePath, "utf8");
+const renderer = readFileSync(rendererPath, "utf8");
+
+for (const marker of [
+  "export function buildAdjacentDivisionExpansionEnvelope",
+  "export function adjacentExpansionCollidesWithCorridor",
+  "export function advanceAdjacentDivisionExpansion",
+]) {
+  if (!source.includes(marker)) throw new Error("adjacent expansion source contract missing: " + marker);
+}
+
+if (!renderer.includes("renderAdjacentDivisionWiring")) {
+  throw new Error("canonical machine-world renderer lacks generalized adjacency ownership");
+}
+
+if (renderer.includes("advanceAdjacentDivisionExpansion")) {
+  throw new Error("adjacent expansion must not be source-string injected into the renderer");
+}
+
+console.log("Adjacent expansion contract is source-owned; no mutation performed");
