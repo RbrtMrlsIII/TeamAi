@@ -35,15 +35,14 @@ test('V0.2 runtime close returns world baseline camera id', () => {
 
 test('V0.2 flex returnFromSeatShell resets nav and sets baseline dock', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /\/\* V0\.2 return baseline \*\//);
+  assert.match(src, /function returnFromSeatShell\(\)[\s\S]*navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
   assert.match(src, /navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
   assert.match(src, /setCamera\(typeof WORLD_BASELINE_DOCK_ID/);
 });
 
 test('V0.2 flex closeHierarchyParent restores baseline', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /\/\* V0\.2 close baseline \*\//);
-  assert.match(src, /function closeHierarchyParent\(\)\{ \/\* V0\.2 close baseline \*\//);
+  assert.match(src, /function closeHierarchyParent\(\)\s*\{[\s\S]*return returnFromSeatShell\(\);/);
 });
 
 test('V0.2 controller delegates rendering after baseline reset', async () => {
