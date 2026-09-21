@@ -169,3 +169,12 @@ test('machine choreography is state-derived in the canonical renderer', async ()
   assert.match(renderer, /choreography\.workspaceReception/);
   assert.match(renderer, /machineWorldChoreographyPhase/);
 });
+
+
+test('canonical renderer keeps canvas resize idempotent between frames', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /function resizeCanvasIfNeeded\(width, height, dpr\)/);
+  assert.match(renderer, /canvas\.width !== pixelWidth \|\| canvas\.height !== pixelHeight/);
+  assert.match(renderer, /if \(changed\) \{[\s\S]*canvas\.width = pixelWidth/);
+  assert.doesNotMatch(renderer, /canvas\.width = Math\.max\(1, Math\.floor\(width\*dpr\)\)/);
+});
