@@ -16,10 +16,10 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, Team/Agents, and Marketplace / Commerce representative frontend/browser contracts proven; Storage item-inventory presentation is the next #400 frontier.
+- next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, Team/Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts proven; #392 usage / exhaustion / continuation presentation is the next frontier.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `7b61c3c725b242288749324ad73d2eb752ded3b1`; Marketplace browser proof exercised the three representative commerce scenarios. Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
-- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live proof head is `cd4a06a8a6706cf433e2f6a2c01c5456924af406`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
+- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; Storage browser proof exercised guest lock, authorized metadata inventory/selection, semantic branch preview, and reduced-motion equivalence. Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The current live proof head is `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; re-read live GitHub before relying on this SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
@@ -162,6 +162,17 @@ The merged machine candidate remains non-production. Semantic identity, payload 
 - #394/#393 = governance baseline/advisory normalization lineage, closure-pending in PR #395
 
 Historical Issues are evidence, not active routing.
+
+
+### 2026-09-21 exact-head Storage item-inventory proof
+
+- Storage is implemented as a presentation/read-model-only facility with explicit readiness dimensions for authentication, inventory knowledge, authorization, entitlement, and health.
+- The facility reveals no inventory metadata until the read-model reaches `READY`, preventing guest or blocked contexts from rendering supplied item data.
+- Storage item metadata is normalized without content/body payloads. Item branches are dynamic and item-owned: `BRANCH-STORAGE::item/<item>/workspace/<workspace>/project/<project>/inventory`.
+- The browser surface contains no file input, upload endpoint, binary-transfer operation, or content-write method. It exposes only an inspection intent, which is presentation-only.
+- Exact-head verification on `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`: Node test suite reported 59 passing tests; Canonical Browser reported 58 passing Playwright tests with 4 historical skips. Governance, Full-System, Security, and Browser runs all passed.
+- Independent live backend check: the connected Supabase project's `storage.buckets` query returned no buckets. No live content inventory was therefore fabricated or inferred from Firestore task/event/evidence data.
+- The absence of a live Storage content bucket/read endpoint is an explicit backend seam for a future governed slice, not a defect to be hidden inside frontend presentation.
 
 
 ### 2026-09-21 exact-head Marketplace / Commerce proof
