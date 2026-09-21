@@ -149,6 +149,7 @@ let lastNavBaseCameraId = 'HERO_WIDE';
 let touchState = null;
 let pinchStart = null;
 let seats = [];
+let traces = [];
 
 const hierarchyRuntime = createHierarchyRuntime({
   selectedSeatIndex: selectedSeat,
@@ -178,6 +179,15 @@ function getHierarchyState() {
   return getHierarchySnapshot(syncHierarchyFromGlobals());
 }
 
+function addTrace() {
+  traces.push(Object.freeze({
+    seatIndex: selectedSeat,
+    seatId: seats[selectedSeat]?.id ?? null,
+    state: 'REFLECT',
+    presentationOnly: true,
+  }));
+}
+
 function setState(next, reason = 'transition') {
   const previous = state;
   state = next;
@@ -191,7 +201,7 @@ function setState(next, reason = 'transition') {
       seatId: seats[selectedSeat]?.id ?? null,
       reason,
       presentationOnly: true,
-      traceCount: 0,
+      traceCount: traces.length,
     },
   }));
 }
@@ -332,7 +342,10 @@ function cycleTurn(now) {
       setState('ABSORB', 'workspace-absorb');
     }
   } else if (state === 'ABSORB' && elapsed > durations.absorb) setState('REFLECT', 'workspace-reflect');
-  else if (state === 'REFLECT' && elapsed > durations.reflect) setState('HANDOFF', 'trace-committed');
+  else if (state === 'REFLECT' && elapsed > durations.reflect) {
+    addTrace();
+    setState('HANDOFF', 'trace-committed');
+  }
   else if (state === 'HANDOFF' && elapsed > durations.handoff) {
     selectedSeat = (selectedSeat + 1) % seatCount;
     rebuildSeats();
@@ -385,7 +398,7 @@ function updateLabels() {
   shell.dataset.hierarchyOpen = hierarchyRuntime.openParentId ? 'true' : 'false';
   shell.dataset.focusedChild = hierarchyRuntime.focusedChildId || '';
   shell.dataset.focusedLeaf = hierarchyRuntime.focusedLeafId || '';
-  shell.dataset.traceCount = '0';
+  shell.dataset.traceCount = String(traces.length);
 }
 
 function setSeatCount(next) {
@@ -416,6 +429,7 @@ function onWheel(event) {
   const delta = Math.sign(event.deltaY) * 0.08;
   navZoom = clamp(navZoom + delta, NAV_ZOOM_MIN, NAV_ZOOM_MAX);
   if (reducedMotion) navZoom = clamp(navZoom, NAV_ZOOM_REDUCED_MIN, NAV_ZOOM_REDUCED_MAX);
+  if (navZoom >= NAV_ZOOM_MAX - 1e-6) lastNavBaseCameraId = 'HERO_WIDE';
   applyNavCamera();
 }
 
@@ -679,7 +693,7 @@ window.TeamAiHero = {
   startLoop,
   stopLoop,
   getState: () => state,
-  getTraceCount: () => 0,
+  getTraceCount: () => traces.length,
   getSelectedSeat: () => selectedSeat,
   getContributionProgress: () => contribution,
   getReducedMotion: () => reducedMotion,
