@@ -23,6 +23,8 @@ import { worldPullbackProgress, blendCameraPose } from './hero-cam3-tree-center-
 import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
+import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
+import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial } from './hero-authored-materials.js';
 import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './machine-seat-division-presentation.js';
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
@@ -57,6 +59,22 @@ const UI_COLORS = {
 
 const clamp = (v,a,b) => Math.max(a, Math.min(b, Number(v) || 0));
 const finite = (v,f=0) => Number.isFinite(Number(v)) ? Number(v) : f;
+
+function resolveHeroMaterialContext(state, reducedMotion) {
+  const root = globalThis.document?.documentElement;
+  const heroState = String(state?.heroState || 'IDLE');
+  return mapHeroThemeLighting({
+    themeMode: root?.getAttribute?.('data-theme-mode') || 'light',
+    themeSource: root?.getAttribute?.('data-theme-source') || 'default',
+    density: root?.getAttribute?.('data-density') || 'default',
+    atmosphere: 0.52,
+    surface: heroState === 'ACTIVE' || heroState === 'CONTRIBUTE' ? 0.82 : 0.62,
+    focus: heroState === 'FOCUS' || heroState === 'ACTIVE' ? 0.86 : 0.24,
+    signal: heroState === 'CONTRIBUTE' ? 1 : heroState === 'ABSORB' || heroState === 'REFLECT' ? 0.78 : 0,
+    status: heroState === 'BLOCKED' ? 0.8 : heroState === 'UNAUTHORIZED' ? 0.55 : 0,
+    reducedMotion: Boolean(reducedMotion),
+  });
+}
 
 function shader(gl, type, source) {
   const value = gl.createShader(type);
@@ -299,7 +317,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.uniformMatrix4fv(solidP,false,projection);
     gl.uniformMatrix4fv(solidV,false,view);
     gl.uniformMatrix4fv(solidM,false,transform);
-    gl.uniform3f(solidColor,color[0],color[1],color[2]);
+    gl.uniform4f(solidColor,color[0],color[1],color[2],finite(options.alpha, 1));
     gl.uniform1f(solidGlow,glow);
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
   }
@@ -433,7 +451,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.uniformMatrix4fv(solidP,false,projection);
     gl.uniformMatrix4fv(solidV,false,view);
     gl.uniformMatrix4fv(solidM,false,model);
-    gl.uniform3f(solidColor, COLORS.connection[0], COLORS.connection[1], COLORS.connection[2]);
+    gl.uniform4f(solidColor, COLORS.connection[0], COLORS.connection[1], COLORS.connection[2], 1);
     gl.uniform1f(solidGlow, .85);
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
 
@@ -662,6 +680,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     const reducedMotion = Boolean(state.reducedMotion);
     const hierarchyOpen = Boolean(state.hierarchyOpen);
+    const materialLighting = resolveHeroMaterialContext(state, reducedMotion);
+    const authoredRing = authoredRingMaterial(materialLighting);
+    const authoredSeatShell = authoredSeatShellMaterial(materialLighting);
+    const authoredSeatInset = authoredSeatInsetMaterial(materialLighting);
     const wantedExpanded = hierarchyOpen || Boolean(state.expanded);
     if (wantedExpanded !== targetExpanded) {
       targetExpanded = wantedExpanded;
@@ -767,7 +789,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       gl.uniformMatrix4fv(solidP,false,projection);
       gl.uniformMatrix4fv(solidV,false,view);
       gl.uniformMatrix4fv(solidM,false,model);
-      gl.uniform3f(solidColor,.06,.09,.14);
+      gl.uniform4f(solidColor,.06,.09,.14,1);
       gl.uniform1f(solidGlow,.04);
       gl.drawArrays(gl.TRIANGLES,0,entry.count);
     }
@@ -786,15 +808,30 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       gl.uniformMatrix4fv(solidP,false,projection);
       gl.uniformMatrix4fv(solidV,false,view);
       gl.uniformMatrix4fv(solidM,false,model);
-      const color = COLORS[part.silhouette || 'pod'] || COLORS.pod;
+      const fallbackColor = COLORS[part.silhouette || 'pod'] || COLORS.pod;
+      const partMaterial = part.kind === 'inner-pod' ? authoredSeatShell : null;
+      const color = partMaterial?.color || fallbackColor;
       const selected = part.branchId === branchId;
-      gl.uniform3f(solidColor,
+      gl.uniform4f(solidColor,
         clamp(color[0] + (selected ? .14 : 0),0,1),
         clamp(color[1] + (selected ? .14 : 0),0,1),
-        clamp(color[2] + (selected ? .14 : 0),0,1)
+        clamp(color[2] + (selected ? .14 : 0),0,1),
+        1
       );
-      gl.uniform1f(solidGlow, selected ? .75 : .16);
+      gl.uniform1f(solidGlow, (partMaterial?.emit || 0) + (selected ? .75 : .16));
       gl.drawArrays(gl.TRIANGLES,0,entry.count);
+
+      if (part.kind === 'inner-pod') {
+        modelMatrix(model,[part.center.x,part.level - part.dimensions.y*.26,part.center.z],[
+          part.dimensions.x*.54,
+          part.dimensions.y*.52,
+          part.dimensions.z*.54,
+        ]);
+        gl.uniformMatrix4fv(solidM,false,model);
+        gl.uniform4f(solidColor,authoredSeatInset.color[0],authoredSeatInset.color[1],authoredSeatInset.color[2],1);
+        gl.uniform1f(solidGlow,authoredSeatInset.emit || 0);
+        gl.drawArrays(gl.TRIANGLES,0,entry.count);
+      }
 
       if (part.uiSurface) {
         modelMatrix(model,
@@ -803,7 +840,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         );
         gl.uniformMatrix4fv(solidM,false,model);
         const ui = UI_COLORS[part.uiStyle] || [0.80,0.87,0.92];
-        gl.uniform3f(solidColor,ui[0],ui[1],ui[2]);
+        gl.uniform4f(solidColor,ui[0],ui[1],ui[2],1);
         gl.uniform1f(solidGlow,selected ? .72 : .28);
         gl.drawArrays(gl.TRIANGLES,0,entry.count);
       }
@@ -935,15 +972,20 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         translateMatrix(workspaceCore.center.x, workspaceCore.center.y + 0.08, workspaceCore.center.z),
         scaleMatrix(workspaceCore.radius, 1, workspaceCore.radius),
       ),
-      RING_MATERIALS.trace,
+      authoredRing,
       {
-        rough: 0.30,
-        emit: reducedMotion ? 0.05 + 0.04 * choreography.workspaceReception : 0.08 + 0.14 * choreography.workspaceReception,
+        rough: authoredRing.rough,
+        emit: reducedMotion ? authoredRing.emit + 0.04 * choreography.workspaceReception : authoredRing.emit + 0.14 * choreography.workspaceReception,
         alpha: reducedMotion ? 0.38 + 0.10 * choreography.workspaceReception : 0.56 + 0.18 * choreography.workspaceReception,
       },
     );
     if (!reducedMotion) {
       const ring = ringPoints(144, workspaceCore.radius, workspaceCore.center.y + 0.03);
+      gl.useProgram(line);
+      gl.uniformMatrix4fv(lineP,false,projection);
+      gl.uniformMatrix4fv(lineV,false,view);
+      gl.uniformMatrix4fv(lineM,false,identity);
+      gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
       gl.bufferData(gl.ARRAY_BUFFER,ring,gl.DYNAMIC_DRAW);
       gl.enableVertexAttribArray(linePos);
       gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
@@ -964,6 +1006,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldChoreographyElectrical = String(choreography.electrical);
     canvas.dataset.machineWorldChoreographyWorkspaceReception = String(choreography.workspaceReception);
     canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
+    canvas.dataset.machineWorldMaterialModel = 'hero-authored-v1';
 
     return Object.freeze({
       state: sample.state,
