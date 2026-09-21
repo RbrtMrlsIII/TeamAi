@@ -6,6 +6,7 @@ import {
   firestoreCommitTransaction,
   firestoreCreate,
   firestoreFindSeat,
+  firestoreFindSeatConnection,
   firestoreGet,
   firestoreGetInTransaction,
   firestorePatch,
@@ -317,10 +318,11 @@ async function executeContinuationTurn(input: {
   const seatProvider = String(seat.provider ?? '').trim();
   const taskProvider = String(task.provider ?? '').trim();
   if (!seatProvider || (taskProvider && taskProvider.toLowerCase() !== seatProvider.toLowerCase())) return json({ error: 'continuation_provider_seat_mismatch' }, 409);
-  const connection = task.connection && typeof task.connection === 'object' ? task.connection as Record<string, unknown> : null;
-  if (!connection || String(connection.status ?? '') !== 'active') return json({ error: 'connection_not_active' }, 409);
-  if (String(connection.projectId ?? '') !== projectId) return json({ error: 'connection_project_mismatch' }, 409);
-  if (String(connection.seatId ?? '') !== targetSeatId) return json({ error: 'continuation_target_connection_mismatch' }, 409);
+  const connectionDocument = await firestoreFindSeatConnection({ uid, workplaceId, projectId, seatId: targetSeatId, accessToken });
+  if (!connectionDocument) return json({ error: 'continuation_target_connection_not_found' }, 409);
+  const connection = connectionDocument.fields;
+  const connectionProvider = String(connection.provider ?? connection.providerCode ?? '').trim();
+  if (connectionProvider && connectionProvider.toLowerCase() !== seatProvider.toLowerCase()) return json({ error: 'continuation_connection_provider_mismatch' }, 409);
   const capabilities = Array.isArray(connection.capabilities) ? connection.capabilities.map(String) : [];
   if (!capabilities.includes('execute')) return json({ error: 'connection_execute_capability_required' }, 403);
 
