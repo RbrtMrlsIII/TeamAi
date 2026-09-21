@@ -13,7 +13,7 @@ export function mountMachineWebGLPreview(root = globalThis.document) {
   const panel = root.createElement('aside');
   panel.className = 'machine-hero-preview machine-hero-preview--webgl';
   panel.dataset.machineHeroWebgl = '1';
-  panel.innerHTML = '<div class="machine-hero-preview__header"><strong>Machine 3D</strong><span>semantic machine → physical envelope → wiring → camera</span></div><div class="machine-hero-preview__controls"><button type="button" data-machine-webgl-expand>Expand machine</button><button type="button" data-machine-webgl-nudge>Move selected seat</button><output data-machine-webgl-state>collapsed · 0%</output></div><canvas aria-label="Interactive Machine Hero WebGL preview"></canvas>';
+  panel.innerHTML = '<div class="machine-hero-preview__header"><strong>Machine 3D</strong><span>semantic machine → physical envelope → wiring → camera</span></div><div class="machine-hero-preview__controls"><button type="button" data-machine-webgl-expand>Expand divisions</button><button type="button" data-machine-webgl-nudge>Move selected seat</button><output data-machine-webgl-state>collapsed · 0%</output></div><canvas aria-label="Interactive Machine Hero WebGL preview"></canvas>';
   host.append(panel);
 
   const canvas = panel.querySelector('canvas');
@@ -50,7 +50,7 @@ export function mountMachineWebGLPreview(root = globalThis.document) {
     const state = panel.querySelector('[data-machine-webgl-state]');
     const action = panel.querySelector('[data-machine-webgl-expand]');
     if (state) state.textContent = `${frame.state} · ${Math.round(frame.amount * 100)}% · ${frame.moduleCount} modules`;
-    if (action) action.textContent = expanded ? 'Collapse machine' : 'Expand machine';
+    if (action) action.textContent = expanded ? 'Collapse divisions' : 'Expand divisions';
     rafId = requestAnimationFrame(render);
   };
 

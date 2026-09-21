@@ -1,5 +1,6 @@
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
 import { parseSeatCountParam } from './seat-capacity.js';
+import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
 
 export function mountMachineCoreVisual(root = globalThis.document) {
   const host = root?.querySelector?.('.machine-core-shell');
@@ -25,6 +26,7 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     return panel;
   }
   const seatCount = parseSeatCountParam();
+  const semanticScene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
   let branchId = 'HUB-CORE';
   let expanded = false;
   let raf = 0;
@@ -44,8 +46,12 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     });
     const count = panel.querySelector('[data-core-count]');
     const state = panel.querySelector('[data-core-state]');
-    if (count) count.textContent = `${frame.moduleCount} modules · ${frame.seatCount} seats · canonical world renderer`;
-    if (state) state.textContent = `${frame.state} · ${Math.round(frame.amount * 100)}% · camera ${branchId}`;
+    if (count) count.textContent = `${frame.moduleCount} modules · ${frame.seatCount} seats · 4 outer housings · 1 hub`;
+    if (state) {
+      const camera = resolveBranchCamera(semanticScene, branchId) || semanticScene.cameras[0];
+      const motionPrefix = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true ? 'reduced-motion ' : '';
+      state.textContent = `${motionPrefix}${frame.state} · ${Math.round(frame.amount * 100)}% · camera ${camera?.cameraId || 'BRANCH_CAMERA_HUB-CORE'}`;
+    }
     raf = requestAnimationFrame(render);
   };
 
@@ -53,7 +59,7 @@ export function mountMachineCoreVisual(root = globalThis.document) {
   const populate = () => {
     if (!select) return;
     select.innerHTML = '';
-    const labels = ['HUB-CORE', ...Array.from({ length: Math.min(seatCount, 10) }, (_, i) => `BRANCH-SEAT-${String(i + 1).padStart(2, '0')}`)];
+    const labels = semanticScene.cameras.map((camera) => camera.branchId);
     for (const value of labels) {
       const option = root.createElement('option');
       option.value = value;
@@ -63,6 +69,12 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     }
   };
   populate();
+
+  canvas.addEventListener('machine:config-change', (event) => {
+    const detail = event.detail || {};
+    if (detail.profile !== undefined) canvas.dataset.configProfile = String(detail.profile);
+    if (detail.density !== undefined) canvas.dataset.configDensity = String(detail.density);
+  });
 
   const setExpanded = (value) => {
     expanded = Boolean(value);
