@@ -38,6 +38,7 @@ export type TaskExecutionResult = {
   result?: GenerateResult;
   error?: unknown;
   budget?: TurnBudgetAccounting;
+  continuationCheckpointId?: string;
   duplicate: boolean;
 };
 
