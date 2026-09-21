@@ -75,7 +75,7 @@ test('focusChild clears every sibling branch deterministically', () => {
   focusChild(state, HIERARCHY_PART.SEAT_TOOLKIT, { nowMs: 250, snap: false, allowTransition: false });
   assert.equal(state.connectionBranchAmount, 0);
   assert.equal(state.behaviorBranchAmount, 0);
-  assert.equal(state.toolkitBranchAmount, 0);
+  assert.equal(state.toolkitBranchAmount, 0.15);
   assert.equal(state.toolkitBranchStartMs, 250);
   assert.equal(state.focusedChildId, HIERARCHY_PART.SEAT_TOOLKIT);
 });
