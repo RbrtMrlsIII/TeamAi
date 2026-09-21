@@ -315,8 +315,8 @@ test('Firestore runtime task store atomically moves a handoff task into waiting_
     'accounts/uid-1/workplaces/workplace-1/projects/project-20/tasks/task-20',
     'tx-1',
   ]);
-  assert.equal(calls[2][0], 'commit');
-  const write = calls[2][2][0];
+  assert.equal(calls[3][0], 'commit');
+  const write = calls[3][2][0];
   assert.equal(write.currentDocument.updateTime, '2026-09-22T00:10:00Z');
   const fields = write.update.fields;
   assert.equal(fields.status.stringValue, 'waiting_for_continuation');
@@ -328,8 +328,8 @@ test('Firestore runtime task store atomically moves a handoff task into waiting_
   assert.equal(fields.continuationRequestedBy.stringValue, 'actor-20');
   assert.equal(fields.continuationInstruction.stringValue, 'continue from checkpoint');
   assert.equal(fields.leaseId.nullValue, null);
-  assert.equal(calls[2][2].length, 2);
-  const eventWrite = calls[2][2][1];
+  assert.equal(calls[3][2].length, 2);
+  const eventWrite = calls[3][2][1];
   assert.match(eventWrite.update.name, /\/events\/cont-20%3Acontinue-wait%3Aevent$/);
   assert.equal(eventWrite.currentDocument.exists, false);
   assert.equal(eventWrite.update.fields.type.stringValue, 'CONTINUE_WAIT');
