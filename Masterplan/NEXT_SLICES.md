@@ -46,7 +46,7 @@ This slice owns the 029 spatial machine convergence already authorized by Issue 
 MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are exact-head proven. The #392 runtime slice now has repository-proven durable continuation semantics through fresh-turn execution, target Seat-owned connection resolution, and explicit continuation lifecycle evidence.
 
 ## Current blocker
-The repository is now exact-head verified through Governance, Full-System, Security Static Analysis, and Canonical Browser on `1994b7a901c2bc86acb88a5214dbf15a6448f58f`. The branch remains Draft because production Firestore Seat shape, controlled live Edge deployment, real-provider runtime evidence, end-to-end live continuation, human acceptance, and merge readiness are not yet proven.
+The repository is now exact-head verified through Governance, Full-System, Security Static Analysis, and Canonical Browser on `6e5551d29df373124e23f067440d64f4e0f9039c`. The branch remains Draft because production Firestore Seat shape, controlled live Edge deployment, real-provider runtime evidence, end-to-end live continuation, human acceptance, and merge readiness are not yet proven.
 
 ### #392 budget/runtime convergence boundary
 - Canonical backend accounting remains at `src/backend/seat-turn-budget.ts`.
