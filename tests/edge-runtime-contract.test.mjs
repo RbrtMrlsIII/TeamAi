@@ -29,7 +29,7 @@ test('Edge executor requires existing approved task and authorized Seat', () => 
 test('Edge executor binds provider selection and budget to the durable Seat', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
   assert.match(source, /seat.provider/);
-  assert.match(source, /normalizeEdgeTurnBudget(seat.turnBudget)/);
+  assert.match(source, /normalizeEdgeTurnBudget\(seat\.turnBudget\)/);
   assert.match(source, /providerOutputCeiling(budget)/);
   assert.match(source, /loadSeatProviderCredential/);
 });
