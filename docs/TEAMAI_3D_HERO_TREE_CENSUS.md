@@ -407,6 +407,43 @@ The adjacent-division expansion envelope is now a bounded implementation baselin
 
 The canonical Seat renderer now consumes the governed adjacent-division wiring seam for the bounded `SEAT_CONNECTION` ↔ `SEAT_BEHAVIOR` presentation path. The rendered segment is derived from the semantic ports and current branch geometry; it does not constitute final electrical or complete inter-division topology.
 
+## 16. Current 029 spatial convergence reconciliation
+
+The active Draft PR #398 now contains a broader structural implementation than the historical Seat-1-only census described above. The current state remains IMPLEMENTED_PARTIAL and does not claim 029 completion.
+
+### Workspace / R0
+- WORKSPACE_CENTER is a stable semantic receiving-core identity.
+- hero-workspace-core.js owns the R0 receiving-core geometry from the workspace profile.
+- Seat-1 connection termination reuses WORKSPACE_CENTER rather than repeating a private target identity.
+
+### Intermediate rings / R1-R2
+- hero-ring-envelope.js owns R1/R2 centerline fitting from the actual R0 core radius to the Seat-shell R3 envelope.
+- hero-r1-backend-display.js and hero-r1-backend-threads.js share the same resolved R1 radius.
+- hero-r2-setup-ring.js consumes the shared R2 radius and canonical SETUP_CONFIG_V1 identities.
+- R1/R2 remain presentation-only and are not backend/provider/auth authority.
+
+### Seat divisions
+The seven Seat children remain one canonical hierarchy:
+SEAT_CONNECTION, SEAT_BEHAVIOR, SEAT_TOOLKIT, SEAT_CAPABILITIES, SEAT_AUTHORIZATION, SEAT_WORKSPACE_SCOPE, SEAT_TASK_EVIDENCE.
+
+Their branch lifecycle now shares one timing specification table and one focus/close transition engine. Their payload, geometry, camera relation, and semantic topology are separated into explicit source-owned modules.
+
+### Topology / electricity
+- Machine-core edges expose coordinate-independent semanticEdgeId values.
+- Seat division child-to-shell edges have distinct division and shell ports.
+- Focused division rendering follows its declared topology edge.
+- Electricity follows declared edge routes and is bounded by semantic activation.
+- Seat-1 workspace flow terminates at WORKSPACE_CENTER.
+
+### Root and delivery ownership
+- hero-root-contract.js and hero-root-runtime.js provide provisional root ownership/presence observability.
+- The root model is explicitly not frozen. It exists to surface duplicate or missing ownership while the spatial architecture evolves.
+- Browser-facing runtime modules no longer directly import frontend/spatial sources.
+- Historical apply-p0-p7 Hero scripts are compatibility verification wrappers and no longer mutate hero-flex.js.
+- hero-flex remains the controller entry artifact; the canonical machine renderer owns WebGL context and drawing.
+
+These changes are current structural truth for #398, not a replacement execution chronology. The census remains an inventory and evidence surface.
+
 ## PR-344 machine Hero candidate synchronization
 
 PR **#344** adds a renderer-neutral machine implementation/evidence candidate with a parameterized ten-seat branch-connection core, independent hub/branch modules, per-branch camera and UI-surface contracts, semantic wiring, continuous expansion, interaction, reduced-motion behavior, and an opt-in machine candidate bridge on the real Hero shell.
