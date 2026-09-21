@@ -201,7 +201,8 @@ function multiplyMatrix(a, b) {
   return out;
 }
 
-export function createMachineWorldRenderer({ canvas, gl } = {}) {
+export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
+  const gl = providedGl || canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!canvas || !gl) throw new Error('machine-world renderer requires the canonical Hero canvas and WebGL context');
 
   const solid = program(gl,
