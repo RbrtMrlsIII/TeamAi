@@ -289,17 +289,23 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
     const connection = data.connection as ProjectConnection | undefined;
     const request = data.request as Omit<GenerateRequest, 'model'> | undefined;
     if (!connection || !request) throw new Error('executable task is missing connection or request');
+
+    const resolvedSeatId = required(seatId, 'seatId');
+    const seat = await this.getSeat(this.uid, projectId, resolvedSeatId);
+    if (!seat) throw new Error(`seat not found: ${resolvedSeatId}`);
+
     return {
       id: taskId,
       projectId,
-      seatId: required(seatId, 'seatId'),
-      provider: String(data.provider ?? ''),
+      seatId: resolvedSeatId,
+      provider: String(data.provider ?? seat.provider ?? ''),
       model: String(data.model ?? ''),
       status: String(data.status ?? 'pending') as ExecutableTask['status'],
       approved: data.approved === true,
-      authorizationStatus: String(data.authorizationStatus ?? 'revoked') as ExecutableTask['authorizationStatus'],
+      authorizationStatus: String(data.authorizationStatus ?? seat.authorization.status ?? 'revoked') as ExecutableTask['authorizationStatus'],
       connection,
       request,
+      turnBudget: seat.turnBudget,
     };
   }
 
