@@ -21,7 +21,6 @@ test('Marketplace reveals Team Quality and nine-tier Team Population catalog for
 
 test('Marketplace shows higher-tier replacement warning inline and locks lower tiers', async ({ page }) => {
   await page.goto('/hero/');
-  await page.locator('[data-world-entry]').click();
   await page.locator('[data-world-menu-toggle]').click();
   await page.locator('[data-marketplace-open]').click();
 
@@ -52,7 +51,6 @@ test('Marketplace shows higher-tier replacement warning inline and locks lower t
 
 test('Marketplace auth handoff closes facility and shows authentication panel', async ({ page }) => {
   await page.goto('/hero/');
-  await page.locator('[data-world-entry]').click();
   await page.locator('[data-world-menu-toggle]').click();
   await page.locator('[data-marketplace-open]').click();
 
