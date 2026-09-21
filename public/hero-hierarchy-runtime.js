@@ -145,6 +145,16 @@ export function createHierarchyRuntime(seed = {}) {
     connectionBranchStartMs: seed.connectionBranchStartMs ?? 0,
     behaviorBranchAmount: seed.behaviorBranchAmount ?? 0,
     behaviorBranchStartMs: seed.behaviorBranchStartMs ?? 0,
+    toolkitBranchAmount: seed.toolkitBranchAmount ?? 0,
+    toolkitBranchStartMs: seed.toolkitBranchStartMs ?? 0,
+    capabilitiesBranchAmount: seed.capabilitiesBranchAmount ?? 0,
+    capabilitiesBranchStartMs: seed.capabilitiesBranchStartMs ?? 0,
+    authorizationBranchAmount: seed.authorizationBranchAmount ?? 0,
+    authorizationBranchStartMs: seed.authorizationBranchStartMs ?? 0,
+    workspaceScopeBranchAmount: seed.workspaceScopeBranchAmount ?? 0,
+    workspaceScopeBranchStartMs: seed.workspaceScopeBranchStartMs ?? 0,
+    taskEvidenceBranchAmount: seed.taskEvidenceBranchAmount ?? 0,
+    taskEvidenceBranchStartMs: seed.taskEvidenceBranchStartMs ?? 0,
     setupRingItemId: seed.setupRingItemId ?? null,
     setupRingFillStartMs: seed.setupRingFillStartMs ?? 0,
     setupRingFillAmount: seed.setupRingFillAmount ?? 0,
@@ -221,28 +231,71 @@ export function tickHierarchyPose(state, nowMs, reducedMotion = false) {
   return state;
 }
 
-export function tickConnectionBranch(state, nowMs, reducedMotion = false) {
+const DIVISION_BRANCH_SPECS = Object.freeze({
+  [HIERARCHY_PART.SEAT_CONNECTION]: Object.freeze({
+    amountKey: 'connectionBranchAmount',
+    startKey: 'connectionBranchStartMs',
+    duration: CONNECTION_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_BEHAVIOR]: Object.freeze({
+    amountKey: 'behaviorBranchAmount',
+    startKey: 'behaviorBranchStartMs',
+    duration: BEHAVIOR_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_TOOLKIT]: Object.freeze({
+    amountKey: 'toolkitBranchAmount',
+    startKey: 'toolkitBranchStartMs',
+    duration: TOOLKIT_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_CAPABILITIES]: Object.freeze({
+    amountKey: 'capabilitiesBranchAmount',
+    startKey: 'capabilitiesBranchStartMs',
+    duration: CAPABILITIES_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_AUTHORIZATION]: Object.freeze({
+    amountKey: 'authorizationBranchAmount',
+    startKey: 'authorizationBranchStartMs',
+    duration: AUTHORIZATION_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_WORKSPACE_SCOPE]: Object.freeze({
+    amountKey: 'workspaceScopeBranchAmount',
+    startKey: 'workspaceScopeBranchStartMs',
+    duration: WORKSPACE_SCOPE_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_TASK_EVIDENCE]: Object.freeze({
+    amountKey: 'taskEvidenceBranchAmount',
+    startKey: 'taskEvidenceBranchStartMs',
+    duration: TASK_EVIDENCE_BRANCH_MS,
+  }),
+});
+
+function tickDivisionBranch(state, nowMs, reducedMotion, childId) {
+  const spec = DIVISION_BRANCH_SPECS[childId];
+  if (!spec) return state;
   const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_CONNECTION) {
-    if ((state.connectionBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_CONNECTION) {
-      state.connectionBranchAmount = 0;
-    }
+  const amount = Number(state[spec.amountKey]) || 0;
+  if (!state.openParentId || state.focusedChildId !== childId) {
+    if (amount > 0) state[spec.amountKey] = 0;
     return state;
   }
   if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.connectionBranchAmount = 1;
+    state[spec.amountKey] = 1;
     return state;
   }
   const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
   if (!parentReady) {
-    state.connectionBranchAmount = 0;
+    state[spec.amountKey] = 0;
     return state;
   }
-  const start = state.connectionBranchStartMs ?? now;
-  const progress = Math.min((now - start) / CONNECTION_BRANCH_MS, 1);
+  const start = state[spec.startKey] ?? now;
+  const progress = Math.min((now - start) / spec.duration, 1);
   const x = Math.max(0, Math.min(1, progress));
-  state.connectionBranchAmount = x * x * (3 - 2 * x);
+  state[spec.amountKey] = x * x * (3 - 2 * x);
   return state;
+}
+
+export function tickConnectionBranch(state, nowMs, reducedMotion = false) {
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_CONNECTION);
 }
 
 export function getConnectionBranchAmount(state) {
@@ -268,27 +321,7 @@ export function requestConnectionConfigureHandoff(detail = {}) {
 }
 
 export function tickBehaviorBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_BEHAVIOR) {
-    if ((state.behaviorBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_BEHAVIOR) {
-      state.behaviorBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.behaviorBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.behaviorBranchAmount = 0;
-    return state;
-  }
-  const start = state.behaviorBranchStartMs ?? now;
-  const progress = Math.min((now - start) / BEHAVIOR_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.behaviorBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_BEHAVIOR);
 }
 
 export function getBehaviorBranchAmount(state) {
@@ -315,27 +348,7 @@ export function requestBehaviorConfigureHandoff(detail = {}) {
 
 
 export function tickToolkitBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_TOOLKIT) {
-    if ((state.toolkitBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_TOOLKIT) {
-      state.toolkitBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.toolkitBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.toolkitBranchAmount = 0;
-    return state;
-  }
-  const start = state.toolkitBranchStartMs ?? now;
-  const progress = Math.min((now - start) / TOOLKIT_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.toolkitBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_TOOLKIT);
 }
 
 export function getToolkitBranchAmount(state) {
@@ -363,27 +376,7 @@ export function requestToolkitConfigureHandoff(detail = {}) {
 
 
 export function tickCapabilitiesBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_CAPABILITIES) {
-    if ((state.capabilitiesBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_CAPABILITIES) {
-      state.capabilitiesBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.capabilitiesBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.capabilitiesBranchAmount = 0;
-    return state;
-  }
-  const start = state.capabilitiesBranchStartMs ?? now;
-  const progress = Math.min((now - start) / CAPABILITIES_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.capabilitiesBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_CAPABILITIES);
 }
 
 export function getCapabilitiesBranchAmount(state) {
@@ -411,27 +404,7 @@ export function requestCapabilitiesConfigureHandoff(detail = {}) {
 
 
 export function tickAuthorizationBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_AUTHORIZATION) {
-    if ((state.authorizationBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_AUTHORIZATION) {
-      state.authorizationBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.authorizationBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.authorizationBranchAmount = 0;
-    return state;
-  }
-  const start = state.authorizationBranchStartMs ?? now;
-  const progress = Math.min((now - start) / AUTHORIZATION_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.authorizationBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_AUTHORIZATION);
 }
 
 export function getAuthorizationBranchAmount(state) {
@@ -459,27 +432,7 @@ export function requestAuthorizationConfigureHandoff(detail = {}) {
 
 
 export function tickWorkspaceScopeBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_WORKSPACE_SCOPE) {
-    if ((state.workspaceScopeBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_WORKSPACE_SCOPE) {
-      state.workspaceScopeBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.workspaceScopeBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.workspaceScopeBranchAmount = 0;
-    return state;
-  }
-  const start = state.workspaceScopeBranchStartMs ?? now;
-  const progress = Math.min((now - start) / WORKSPACE_SCOPE_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.workspaceScopeBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_WORKSPACE_SCOPE);
 }
 
 export function getWorkspaceScopeBranchAmount(state) {
@@ -507,27 +460,7 @@ export function requestWorkspaceScopeConfigureHandoff(detail = {}) {
 
 
 export function tickTaskEvidenceBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_TASK_EVIDENCE) {
-    if ((state.taskEvidenceBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_TASK_EVIDENCE) {
-      state.taskEvidenceBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.taskEvidenceBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.taskEvidenceBranchAmount = 0;
-    return state;
-  }
-  const start = state.taskEvidenceBranchStartMs ?? now;
-  const progress = Math.min((now - start) / TASK_EVIDENCE_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.taskEvidenceBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_TASK_EVIDENCE);
 }
 
 export function getTaskEvidenceBranchAmount(state) {
