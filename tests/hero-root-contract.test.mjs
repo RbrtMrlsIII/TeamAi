@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   HERO_ROOTS,
   getHeroRootSnapshot,
+  validateHeroRootDefinitions,
   getHeroRootState,
   registerHeroRoot,
 } from '../frontend/spatial/hero-root-contract.js';
@@ -30,4 +31,14 @@ test('Hero root registration is idempotent and observable', () => {
 test('unknown roots fail closed', () => {
   assert.equal(registerHeroRoot('unknown'), null);
   assert.equal(getHeroRootState('unknown'), null);
+});
+
+
+test('root definitions validate without duplicate identities or owners', () => {
+  const validation = validateHeroRootDefinitions();
+  assert.equal(validation.valid, true, validation.issues.join(', '));
+  assert.deepEqual(validateHeroRootDefinitions({
+    a: { id: 'same', owner: 'owner' },
+    b: { id: 'same', owner: 'owner' },
+  }).issues, ['ROOT_DUPLICATE_ID:same', 'ROOT_DUPLICATE_OWNER:owner']);
 });
