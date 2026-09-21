@@ -12,8 +12,8 @@ test('Marketplace reveals Team Quality and nine-tier Team Population catalog for
 
   await facility.locator('[data-marketplace-module="team-population"]').click();
   await expect(facility.locator('[data-marketplace-tier]')).toHaveCount(9);
-  await expect(facility.locator('[data-marketplace-tier="1"]')).toContainText('Seat 2');
-  await expect(facility.locator('[data-marketplace-tier="9"]')).toContainText('Seat 10');
+  await expect(facility.locator('[data-marketplace-tier="1"]').locator('xpath=..')).toContainText('Seat 2');
+  await expect(facility.locator('[data-marketplace-tier="9"]').locator('xpath=..')).toContainText('Seat 10');
   await expect(facility.locator('[data-marketplace-billing]')).toContainText('no card credentials');
   await expect(facility.locator('[data-marketplace-commerce-status]')).toHaveText('unauthorized/read-blocked');
   await expect(facility.locator('[data-marketplace-checkout]')).toBeDisabled();
