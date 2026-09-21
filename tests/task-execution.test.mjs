@@ -319,3 +319,77 @@ test('continuation execution starts a fresh budgeted turn from the durable check
   assert.ok(calls[0].maxOutputTokens <= 400);
   assert.equal(calls.at(-1).persisted.continuationOfCheckpointId, checkpoint.checkpointId);
 });
+
+
+test('duplicate continuation execution preserves continuation provenance without invoking the provider', async () => {
+  let providerCalls = 0;
+  const runtime = new ProviderRuntime(new Map([['fixture', {
+    provider: 'fixture',
+    async generate() {
+      providerCalls += 1;
+      return {
+        provider: 'fixture',
+        model: 'model-3',
+        requestId: 'request-duplicate-cont',
+        text: 'unused',
+        usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+        termination: { state: 'completed', reason: 'stop' },
+      };
+    },
+  }]]));
+  const events = {
+    async hasIdempotencyKey() { return true; },
+    async append() { throw new Error('must not append on duplicate'); },
+  };
+  const execution = new TaskExecutionService(runtime, events);
+  const task = {
+    id: 'task-dup-cont',
+    projectId: 'project-1',
+    seatId: 'seat-coder',
+    provider: 'fixture',
+    model: 'model-3',
+    status: 'waiting_for_continuation',
+    approved: false,
+    authorizationStatus: 'authorized',
+    connection: { id: 'connection-1', projectId: 'project-1', providerCode: 'fixture', environment: 'development', capabilities: ['execute'], status: 'active' },
+    request: { messages: [{ role: 'user', content: 'continue' }] },
+  };
+  const checkpoint = {
+    checkpointId: 'exec-parent:checkpoint',
+    taskId: task.id,
+    projectId: task.projectId,
+    seatId: task.seatId,
+    actorId: 'actor-1',
+    sourceExecutionId: 'exec-parent',
+    sourceEventId: 'exec-parent:handoff:event',
+    createdAt: '2026-09-22T00:50:00Z',
+    status: 'awaiting_continuation',
+    completionState: 'HANDOFF_REQUIRED',
+    provider: 'fixture',
+    model: 'model-3',
+    termination: { state: 'incomplete', reason: 'length' },
+    providerOutput: 'partial',
+    usage: { inputTokens: 1, outputTokens: 2, totalTokens: 3 },
+    nextAction: 'authorized-continuation-turn',
+  };
+  const request = {
+    continuationRequestId: 'cont-dup',
+    taskId: task.id,
+    projectId: task.projectId,
+    checkpointId: checkpoint.checkpointId,
+    sourceSeatId: task.seatId,
+    targetSeatId: task.seatId,
+    requestedBy: 'actor-1',
+    requestedAt: '2026-09-22T00:51:00Z',
+    instruction: 'continue',
+    status: 'requested',
+    continuationOfCheckpointId: checkpoint.checkpointId,
+    nextTurn: 'fresh-budgeted-turn',
+  };
+  const result = await execution.executeContinuation(task, request, checkpoint, 'actor-1', 'exec-dup-cont');
+  assert.equal(result.duplicate, true);
+  assert.equal(result.status, 'handoff_required');
+  assert.equal(result.continuationRequestId, 'cont-dup');
+  assert.equal(result.continuationOfCheckpointId, checkpoint.checkpointId);
+  assert.equal(providerCalls, 0);
+});
