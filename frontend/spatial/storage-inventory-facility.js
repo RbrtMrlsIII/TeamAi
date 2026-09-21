@@ -39,6 +39,14 @@ function dispatch(name, detail) {
 }
 
 function currentItem() {
+  const readiness = resolveStorageInventoryReadiness({
+    authenticated,
+    inventoryKnown: readModel.inventoryKnown,
+    authorized: readModel.authorized,
+    entitled: readModel.entitled,
+    healthy: readModel.healthy,
+  });
+  if (readiness !== 'READY') return null;
   return readModel.items.find((item) => item.id === activeItemId) || readModel.items[0] || null;
 }
 
@@ -99,8 +107,9 @@ function render() {
     ? `Source: ${readModel.source}`
     : 'Source: hidden until authenticated read model is available';
 
-  inventory.innerHTML = readModel.items.length
-    ? readModel.items.map((item) => {
+  const visibleItems = readiness === 'READY' ? readModel.items : [];
+  inventory.innerHTML = visibleItems.length
+    ? visibleItems.map((item) => {
         const selected = item.id === activeItemId;
         const metadata = [
           item.kind,
