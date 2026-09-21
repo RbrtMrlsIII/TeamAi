@@ -44,6 +44,20 @@ test('Edge provider runtime mirror is synchronized from canonical providers', ()
   }
 });
 
+test('Seat provider binding and credential loading use canonical existing-Seat authority', () => {
+  const bind = read('supabase/functions/teamai-seat-provider-bind/index.ts');
+  const credentials = read('supabase/functions/_shared/provider-credentials.ts');
+  const connection = read('supabase/functions/teamai-seat-connection-test/index.ts');
+  assert.match(bind, /firestoreFindSeat/);
+  assert.match(bind, /seat_not_found/);
+  assert.doesNotMatch(bind, /firestoreCreate\\(\\s*seatPath/);
+  assert.match(credentials, /firestoreFindSeat/);
+  assert.match(credentials, /providerKeyBound/);
+  assert.match(connection, /firestoreFindSeat/);
+  assert.match(connection, /seat_not_found/);
+  assert.doesNotMatch(connection, /if \\(existing\.exists\\)[\\s\\S]*else \\{/);
+});
+
 test('Seat secret resolver never exposes plaintext through a return field other than in-memory credential', () => {
   const source = read('supabase/functions/_shared/provider-credentials.ts');
   assert.doesNotMatch(source, /return\s+.*ciphertext/i);
