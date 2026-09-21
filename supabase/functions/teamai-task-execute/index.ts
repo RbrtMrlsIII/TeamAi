@@ -5,6 +5,7 @@ import {
   firestoreBeginTransaction,
   firestoreCommitTransaction,
   firestoreCreate,
+  firestoreFindSeat,
   firestoreGet,
   firestoreGetInTransaction,
   firestorePatch,
@@ -260,10 +261,16 @@ Deno.serve(async (req: Request) => {
     if (!taskDocument.exists) return json({ error: "task_not_found", taskId }, 404);
     const task = decodedRecord(taskDocument.fields);
 
-    const seatPath = taskPath.replace("/tasks/" + taskId, "/seats/" + seatId);
-    const seatDocument = await firestoreGet(seatPath, accessToken);
-    if (!seatDocument.exists) return json({ error: "seat_not_found", seatId }, 404);
-    const seat = decodedRecord(seatDocument.fields);
+    const seatDocument = await firestoreFindSeat({
+      uid,
+      workplaceId,
+      projectId,
+      seatId,
+      accessToken,
+    });
+    if (!seatDocument) return json({ error: "seat_not_found", seatId }, 404);
+    const seatPath = seatDocument.path;
+    const seat = seatDocument.fields;
 
     if (task.seatId && String(task.seatId) !== seatId) return json({ error: "task_seat_mismatch" }, 409);
     if (String(task.projectId ?? projectId) !== projectId) return json({ error: "task_project_mismatch" }, 409);
