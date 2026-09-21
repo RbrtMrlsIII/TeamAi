@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
+import { seatDivisionFanDirection } from '../frontend/spatial/seat-division-geometry.js';
 
 const children = [
   'SEAT_CONNECTION',
@@ -61,6 +62,104 @@ test('malformed child edge fails closed', () => {
   assert.equal(validateSeatDivisionEdges([{ semanticEdgeId: 'x', route: [] }]).valid, false);
 });
 
+
+function boundsForDivision(geometry, padding = 0.08) {
+  const halfX = geometry.dimensions.width / 2 + padding;
+  const halfY = geometry.dimensions.height / 2 + padding;
+  const halfZ = geometry.dimensions.depth / 2 + padding;
+  return {
+    min: {
+      x: geometry.center.x - halfX,
+      y: geometry.center.y - halfY,
+      z: geometry.center.z - halfZ,
+    },
+    max: {
+      x: geometry.center.x + halfX,
+      y: geometry.center.y + halfY,
+      z: geometry.center.z + halfZ,
+    },
+  };
+}
+
+function overlaps(a, b) {
+  return a.min.x <= b.max.x
+    && b.min.x <= a.max.x
+    && a.min.y <= b.max.y
+    && b.min.y <= a.max.y
+    && a.min.z <= b.max.z
+    && b.min.z <= a.max.z;
+}
+
+test('fan placement keeps all seven division volumes separated across supported seats and animation states', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (let seatIndex = 0; seatIndex < seatCount; seatIndex += 1) {
+      const angle = (Math.PI * 2 * seatIndex) / Math.max(1, seatCount);
+      const parentAtSeat = {
+        ...parent,
+        seatIndex,
+        level: 0.60 + ((seatIndex * 0.17) % 0.31),
+        center: {
+          x: Math.cos(angle) * 4.2,
+          y: 0.60 + ((seatIndex * 0.17) % 0.31),
+          z: Math.sin(angle) * 4.2,
+        },
+      };
+      for (const amount of [0, 0.5, 1]) {
+        const divisions = children.map((childId, childIndex) =>
+          deriveFocusedSeatDivisionGeometry({
+            parent: parentAtSeat,
+            childId,
+            childIndex,
+            amount,
+          }),
+        );
+        const boxes = divisions.map((division) => boundsForDivision(division));
+        for (let i = 0; i < boxes.length; i += 1) {
+          for (let j = i + 1; j < boxes.length; j += 1) {
+            assert.equal(
+              overlaps(boxes[i], boxes[j]),
+              false,
+              `seat ${seatIndex + 1}/${seatCount} amount ${amount}: divisions ${i}/${j} overlap`,
+            );
+          }
+        }
+        const edges = divisions.map((geometry, childIndex) =>
+          buildSeatDivisionEdge({
+            parent: parentAtSeat,
+            geometry,
+            childId: children[childIndex],
+            childIndex,
+          }),
+        );
+        const validation = validateSeatDivisionNetwork({
+          parent: { ...parentAtSeat, semanticId: 'SEAT_SHELL' },
+          divisions,
+          edges,
+          clearance: 0.08,
+        });
+        assert.equal(validation.valid, true, validation.reasons.join(', '));
+      }
+    }
+  }
+});
+
+test('fan target ports share the same semantic direction as their division geometry', () => {
+  for (let childIndex = 0; childIndex < children.length; childIndex += 1) {
+    const geometry = deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId: children[childIndex],
+      childIndex,
+      amount: 1,
+    });
+    const direction = seatDivisionFanDirection(parent, childIndex);
+    const dx = geometry.center.x - parent.center.x;
+    const dz = geometry.center.z - parent.center.z;
+    const length = Math.hypot(dx, dz);
+    assert.ok(length > 0);
+    assert.ok(Math.abs(dx / length - direction.x) < 1e-9);
+    assert.ok(Math.abs(dz / length - direction.z) < 1e-9);
+  }
+});
 
 test('full Seat division network reuses shared AABB/port/route clearance authority', () => {
   const divisions = children.map((childId, childIndex) =>

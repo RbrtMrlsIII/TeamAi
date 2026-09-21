@@ -1,4 +1,5 @@
 import { validateMachineConnectionTopology } from './machine-hero-topology.js';
+import { seatDivisionFanDirection } from './seat-division-geometry.js';
 
 const EPSILON = 1e-6;
 
@@ -23,18 +24,13 @@ export function seatDivisionPort(parent, childId, childIndex = 0) {
   const semanticId = String(childId || '');
   if (seatIndex == null || !semanticId.startsWith('SEAT_')) return null;
   const center = branchCenter(parent);
-  const angle = Math.atan2(center.z, center.x);
-  const radialX = Math.cos(angle);
-  const radialZ = Math.sin(angle);
-  const tangentX = -radialZ;
-  const tangentZ = radialX;
   const scale = Math.max(
     Number(parent?.dimensions?.x) || 0,
     Number(parent?.dimensions?.z) || 0,
     0.2,
   );
   const index = Math.max(0, Number(childIndex) || 0);
-  const tangentOffset = scale * 0.06 * (index - 3);
+  const direction = seatDivisionFanDirection(parent, index);
   const radialOffset = scale * 0.46;
   return Object.freeze({
     id: 'TREE-HERO-SEAT#' + seatIndex + ':SEAT_SHELL:' + semanticId + ':PORT',
@@ -42,9 +38,9 @@ export function seatDivisionPort(parent, childId, childIndex = 0) {
     seatIndex,
     division: semanticId,
     role: 'seat-shell-port',
-    x: center.x + radialX * radialOffset + tangentX * tangentOffset,
+    x: center.x + direction.x * radialOffset,
     y: center.y + Math.max(0.08, Number(parent?.dimensions?.y) || 0.5) * 0.18,
-    z: center.z + radialZ * radialOffset + tangentZ * tangentOffset,
+    z: center.z + direction.z * radialOffset,
   });
 }
 

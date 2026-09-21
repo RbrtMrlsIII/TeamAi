@@ -1,6 +1,8 @@
 import {
   buildSeatDivisionGeometry,
   resolveSeatDivisionSemanticId,
+  seatDivisionFanDirection,
+  seatDivisionFanRadius,
 } from './seat-division-geometry.js';
 import { resolveSeatDivisionPayload } from './machine-seat-division-payload.js';
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
@@ -51,28 +53,23 @@ export function deriveFocusedSeatDivisionGeometry({
   if (!presentation || !parent?.center || !parent?.dimensions || !Number.isInteger(parent?.seatIndex)) return null;
   const t = clamp01(amount);
   const index = Math.max(0, Number(childIndex) || 0);
-  const radialAngle = Math.atan2(Number(parent.center.z) || 0, Number(parent.center.x) || 0);
-  const radialX = Math.cos(radialAngle);
-  const radialZ = Math.sin(radialAngle);
-  const tangentX = -radialZ;
-  const tangentZ = radialX;
   const parentScale = Math.max(
     finite(parent.dimensions.x, 0),
     finite(parent.dimensions.z, 0),
     0.2,
   );
-  const radialOffset = parentScale * (0.56 + index * 0.16 + t * 0.52);
-  const tangentOffset = parentScale * 0.12 * (index - 3);
+  const direction = seatDivisionFanDirection(parent, index);
+  const radialOffset = seatDivisionFanRadius(parent, t);
   const y = finite(parent.level, finite(parent.center.y, 0))
     + finite(parent.dimensions.y, 0) * (0.68 + 0.55 * t + index * 0.08);
   const center = {
-    x: finite(parent.center.x, 0) + radialX * radialOffset + tangentX * tangentOffset,
+    x: finite(parent.center.x, 0) + direction.x * radialOffset,
     y,
-    z: finite(parent.center.z, 0) + radialZ * radialOffset + tangentZ * tangentOffset,
+    z: finite(parent.center.z, 0) + direction.z * radialOffset,
   };
   return buildSeatDivisionGeometry({
     center,
-    angle: radialAngle + Math.PI,
+    angle: Math.atan2(direction.z, direction.x) + Math.PI,
     radialDistance: radialOffset,
     payload: presentation.payload,
     baseWidth: parentScale * 0.38,
