@@ -144,3 +144,18 @@ test('Continuation setup validates Seat budget and credential before the durable
   assert.ok(credentialIndex > budgetIndex);
   assert.ok(transactionIndex > credentialIndex);
 });
+
+
+test('Continuation request endpoint does not reopen terminal request state', () => {
+  const source = read('supabase/functions/teamai-task-continuation-request/index.ts');
+  assert.match(source, /existingStatus/);
+  assert.match(source, /existingStatus !== "requested"/);
+  assert.match(source, /statePhase: "not_reopened"/);
+});
+
+test('Continuation executor resolves an active connection from the target Seat', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  assert.match(source, /firestoreFindSeatConnection/);
+  assert.match(source, /continuation_target_connection_not_found/);
+  assert.match(source, /connectionProvider/);
+});
