@@ -16,9 +16,9 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, with MCP, Workspace, Team/Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts proven; #392 usage / exhaustion / continuation presentation is the next frontier.
+- next allowed work: continue the governed 029 implementation on PR #398, with the next frontier now the #392 real runtime proof after live Firestore Seat-shape verification; do not deploy or claim live provider execution until the canonical Seat fields and runtime path are verified in production.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green at `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; Storage browser proof exercised guest lock, authorized metadata inventory/selection, semantic branch preview, and reduced-motion equivalence. Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
+- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks are green on current code head `daafe6d5503d91c42a8bd6c41b257046030042fb`. The current Browser run passed source/public parity and Playwright verification. An independent public-browser check loaded GitHub Pages with HTTP 200, correct title, and no visible runtime/console errors on initial load; the 3D world remains behind the intended Enter-3D-world interaction. Draft review-readiness remains lifecycle-skipped and is not evidence of acceptance.
 - live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The Storage implementation proof is pinned to `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; re-read live GitHub before relying on any recorded SHA. Evidence is admissible only when tied to the exact head under review.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
@@ -191,3 +191,14 @@ Historical Issues are evidence, not active routing.
 - Exact-head verification on `7b61c3c725b242288749324ad73d2eb752ded3b1`: Governance, Full-System, Security, and Canonical Browser all passed. Browser ran 60 tests, with 3 Marketplace scenarios passing and 4 historical tests skipped by existing lifecycle rules.
 - The earlier Marketplace browser failures were test-contract defects: stale world-entry setup, card-level text assertion targeting the button rather than its tier card, and dynamic billing-state assertion omitting the no-card-storage guarantee. Each was corrected without weakening product validation.
 - The live Supabase commerce intent/webhook functions remain external runtime authorities. Product-tier binding into the live edge intent is intentionally deferred until a shared authoritative catalog seam can be introduced without duplicating product authority.
+
+
+### 2026-09-21 canonical Seat runtime convergence — current exact head
+- `daafe6d5503d91c42a8bd6c41b257046030042fb` is the current branch head for the latest verified code slice.
+- The stale `providerOutputCeiling(budget)` test assertion was corrected without changing runtime semantics.
+- Canonical team-nested Firestore Seat resolution is now shared across task execution, durable Seat budget persistence, scheduler Seat enumeration, provider binding, provider credential lookup, and Seat connection-test persistence. Legacy project-level `/seats` records are ignored; ambiguous canonical Seat IDs fail closed.
+- Provider binding and connection persistence no longer create missing Seat documents implicitly. Provider-key clearing remains possible with `clear:true` without an API key.
+- Full-System, Governance, Security, and Browser CI all pass on this code head.
+- Live Supabase remains unchanged: `teamai-task-execute` is still v12 and `teamai-seat-provider-bind` is still v7. The newer real-provider source is repository-only until a controlled deployment is explicitly proven.
+- Live production Firestore Seat document shape remains unverified from the real dataset. That is the required pre-deployment diagnostic before the next #392 runtime slice.
+- #392 durable handoff checkpointing and continuation execution remain incomplete. Gate 4 Firebase emulator proof also remains parked/unproven.
