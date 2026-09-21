@@ -146,16 +146,18 @@ export class FirestoreRuntimeClient {
 
   async findCanonicalSeatDocument(
     uid: string,
+    workplaceId: string,
     projectId: string,
     seatId: string,
     transaction?: string,
   ): Promise<{ document: FirestoreDocument; path: string; teamId: string } | null> {
     const safeUid = required(uid, 'uid');
+    const safeWorkplaceId = required(workplaceId, 'workplaceId');
     const safeProjectId = required(projectId, 'projectId');
     const safeSeatId = required(seatId, 'seatId');
     const parentPath =
       'accounts/' + safeUid +
-      '/workplaces/' + this.workplaceId +
+      '/workplaces/' + safeWorkplaceId +
       '/projects/' + safeProjectId;
 
     const token = await googleAccessToken(this.account);
@@ -198,7 +200,7 @@ export class FirestoreRuntimeClient {
       .map((row) => (row && typeof row === 'object' ? row as { document?: FirestoreDocument } : {}))
       .map((row) => row.document)
       .filter((document): document is FirestoreDocument & { name: string } => Boolean(document?.name))
-      .map((document) => {
+      .map((document): { document: FirestoreDocument; path: string; teamId: string } | null => {
         const marker = '/documents/';
         const markerIndex = String(document.name).indexOf(marker);
         if (markerIndex < 0) return null;
@@ -220,7 +222,7 @@ export class FirestoreRuntimeClient {
         const current = decodeDocument(document);
         if (
           String(current.uid ?? '') !== safeUid ||
-          String(current.workplaceId ?? '') !== this.workplaceId ||
+          String(current.workplaceId ?? '') !== safeWorkplaceId ||
           String(current.projectId ?? '') !== safeProjectId ||
           String(current.seatId ?? '') !== safeSeatId
         ) return null;
@@ -358,6 +360,7 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   async getSeat(uid: string, projectId: string, seatId: string): Promise<SeatState | null> {
     const resolved = await this.client.findCanonicalSeatDocument(
       required(uid, 'uid'),
+      this.workplaceId,
       required(projectId, 'projectId'),
       required(seatId, 'seatId'),
     );
@@ -376,6 +379,7 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
     const transaction = await this.client.beginTransaction();
     const resolved = await this.client.findCanonicalSeatDocument(
       safeUid,
+      this.workplaceId,
       safeProjectId,
       safeSeatId,
       transaction,
