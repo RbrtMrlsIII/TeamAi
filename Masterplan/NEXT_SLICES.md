@@ -43,19 +43,20 @@ Continue converging the TeamAi Spatial World from the exact #397 implementation 
 This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
 
 ## Current frontier
-MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are exact-head proven. The active #392 runtime slice now extends from Seat-authoritative budget/provider execution into durable continuation: checkpointed handoff, explicit continuation request, atomic waiting state, durable CONTINUE_WAIT evidence, and a trusted user-authenticated Edge request boundary.
+MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are exact-head proven. The #392 runtime slice now has repository-proven durable continuation semantics through fresh-turn execution, target Seat-owned connection resolution, and explicit continuation lifecycle evidence.
 
 ## Current blocker
-The branch remains Draft because repository contracts do not yet prove the real production Firestore Seat shape, controlled live Edge deployment, one real-provider Coder execution, end-to-end continuation execution, human acceptance, or merge readiness. Exact-head CI must be re-read after the latest documentation commit.
+The repository is now exact-head verified through Governance, Full-System, Security Static Analysis, and Canonical Browser on `1994b7a901c2bc86acb88a5214dbf15a6448f58f`. The branch remains Draft because production Firestore Seat shape, controlled live Edge deployment, real-provider runtime evidence, end-to-end live continuation, human acceptance, and merge readiness are not yet proven.
 
 ### #392 budget/runtime convergence boundary
 - Canonical backend accounting remains at `src/backend/seat-turn-budget.ts`.
 - TaskExecutionService and the repository Edge executor enforce the Seat-owned budget model, normalized provider termination, and truthful handoff state.
-- Canonical Firestore Seat resolution is team-nested and fail-closed on missing/ambiguous Seats across the active server readers/writers.
-- The repository now proves durable checkpointing, explicit continuation-request identity/idempotency, atomic `handoff_required → waiting_for_continuation` state, and durable `CONTINUE_WAIT` evidence.
-- The repository also contains a trusted Firebase-authenticated Edge continuation-request boundary. It is provider-free and intentionally does not auto-execute.
-- Current evidence is intentionally bounded: live production Firestore Seat document shape is not directly verified; live `teamai-task-execute` remains v12; the new continuation-request source is not deployed.
-- Remaining execution slice: verify the real Seat document contract, controlled-deploy the source, runtime-prove one real Coder Seat + one real provider + one bounded task through exhaustion/handoff, then execute one explicitly authorized fresh-budgeted continuation turn to truthful completion.
+- Canonical Firestore Seat resolution is team-nested and fail-closed on missing/ambiguous Seats.
+- Repository proof now covers durable checkpoints, explicit continuation request identity/idempotency, atomic `handoff_required → waiting_for_continuation`, `CONTINUE_START`, fresh budgeted execution, and linked subsequent checkpoints.
+- Full-System now includes executable Deno compilation of the trusted Edge entrypoints, not merely source-pattern checks.
+- Current evidence is intentionally bounded: live production Firestore Seat shape is not directly verified; live `teamai-task-execute` remains v12; the new continuation Edge source is not deployed.
+- Next authorized runtime action is the read-only production Seat diagnostic, followed only after successful shape verification by controlled live deployment and one real Coder-provider task.
+
 ### Exact-head Storage boundary record
 - Storage item inventory is presentation/read-model only on this slice.
 - No live Supabase Storage buckets are currently provisioned in the connected project, so no live content inventory is claimed.
