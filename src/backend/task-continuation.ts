@@ -18,7 +18,7 @@ export type TaskContinuationCheckpoint = {
   provider: string;
   model: string;
   termination: ProviderTermination;
-  providerOutput: string;
+  providerOutput?: string;
   usage: GenerateResult['usage'];
   remainingGenerationTokens?: number;
   usableGenerationTokens?: number;
@@ -65,7 +65,7 @@ export function buildTaskContinuationCheckpoint(input: {
     provider: input.result.provider,
     model: input.result.model,
     termination: input.result.termination,
-    providerOutput: input.result.text,
+    ...(input.result.text ? { providerOutput: input.result.text } : {}),
     usage: input.result.usage,
     remainingGenerationTokens: budget?.usage.remainingGenerationTokens,
     usableGenerationTokens: budget?.usage.usableGenerationTokens,
@@ -86,7 +86,6 @@ export function assertContinuationCheckpoint(checkpoint: TaskContinuationCheckpo
     checkpoint.createdAt,
     checkpoint.provider,
     checkpoint.model,
-    checkpoint.providerOutput,
     checkpoint.nextAction,
   ];
   if (required.some((value) => !String(value).trim())) {
