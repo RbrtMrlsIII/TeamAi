@@ -27,6 +27,7 @@ import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { drawFocusedSeatDivision } from './machine-seat-division-presentation.js';
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
+import { deriveMachineTransformationChoreography } from './machine-choreography.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -646,6 +647,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
     }
     const sample = animation.sample(now);
+    const choreography = deriveMachineTransformationChoreography({
+      shellAmount: finite(state.hierarchyOpenAmount, sample.amount),
+      divisionAmount: finite(state.focusedChildAmount, 0),
+      connectionAmount: finite(state.connectionBranchAmount, 0),
+      hierarchyOpen,
+      focusedChildId: state.focusedChildId,
+      reducedMotion,
+    });
     const seatCount = clamp(Math.floor(Number(state.seatCount) || 10), 1, 10);
     const selectedSeat = clamp(Math.floor(Number(state.selectedSeat) || 0), 0, seatCount - 1);
     branchId = state.branchId || `BRANCH-SEAT-${String(selectedSeat+1).padStart(2,'0')}`;
@@ -817,7 +826,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       if (selectedMachineEdge) {
         electricalMachineFlow = renderElectricalEdgeFlow(
           selectedMachineEdge,
-          sample.amount,
+          choreography.electrical,
           reducedMotion,
           now,
           'selected-seat',
@@ -833,7 +842,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     ) {
       electricalWorkspaceFlow = renderElectricalEdgeFlow(
         seat1Child.edge,
-        finite(state.connectionBranchAmount, 0),
+        choreography.workspaceReception,
         reducedMotion,
         now,
         'workspace-center',
