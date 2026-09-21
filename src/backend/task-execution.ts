@@ -89,8 +89,6 @@ export class TaskExecutionService {
 
     const continuationTask: ExecutableTask = {
       ...task,
-      status: 'waiting_for_approval',
-      approved: true,
       request: continuationRequest,
     };
 
@@ -122,10 +120,16 @@ export class TaskExecutionService {
           : 'failed';
       return { status, duplicate: true };
     }
-    if (task.status !== 'waiting_approval') {
-      throw new Error(`task execution requires waiting_approval state, got ${task.status}`);
+    if (continuationContext) {
+      if (task.status !== 'waiting_for_continuation') {
+        throw new Error(`continuation execution requires waiting_for_continuation state, got ${task.status}`);
+      }
+    } else {
+      if (task.status !== 'waiting_approval') {
+        throw new Error(`task execution requires waiting_approval state, got ${task.status}`);
+      }
+      if (!task.approved) throw new Error('task execution requires approval');
     }
-    if (!task.approved) throw new Error('task execution requires approval');
     if (task.authorizationStatus !== 'authorized') throw new Error(`task execution requires authorization, got ${task.authorizationStatus}`);
 
     const startedAt = new Date().toISOString();
@@ -166,7 +170,7 @@ export class TaskExecutionService {
       provider: task.provider,
       model: task.model,
       executionStatus: 'running',
-      approved: task.approved,
+      approved: continuationContext ? true : task.approved,
       authorizationStatus: task.authorizationStatus,
       connection: task.connection,
       request,
