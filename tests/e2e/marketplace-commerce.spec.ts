@@ -44,7 +44,7 @@ test('Marketplace shows higher-tier replacement warning inline and locks lower t
   await expect(facility.locator('[data-marketplace-checkout]')).toBeEnabled();
 
   await expect(facility.locator('[data-marketplace-tier="1"]')).toBeDisabled();
-  await expect(facility.locator('[data-marketplace-tier="4"]')).toHaveAttribute('aria-pressed', 'false');
+  await expect(facility.locator('[data-marketplace-tier="4"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(facility.locator('[data-marketplace-commerce-status]')).toHaveText('pending');
   await expect(facility.locator('[data-marketplace-teamai-entitlement]')).toContainText('active');
   await expect(facility.locator('[data-marketplace-provider-entitlement]')).toContainText('separate');
