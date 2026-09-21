@@ -116,3 +116,18 @@ test('Trusted continuation request boundary atomically creates the request, stat
   assert.match(transactionSection, /type: "CONTINUE_WAIT"/);
   assert.match(transactionSection, /currentDocument: \{ exists: false \}/);
 });
+
+
+test('Edge continuation execution requires the target Seat-owned connection', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  assert.match(source, /continuation_target_connection_mismatch/);
+  assert.match(source, /connection\.seatId/);
+  assert.match(source, /seatId: targetSeatId/);
+});
+
+test('Edge continuation execution creates a new checkpoint linked to the previous checkpoint', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  assert.match(source, /nextCheckpointId = executionId \+ ':checkpoint'/);
+  assert.match(source, /continuationOfCheckpointId: checkpointId/);
+  assert.match(source, /continuationRequestId, continuationOfCheckpointId/);
+});
