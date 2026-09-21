@@ -24,6 +24,8 @@ test('focused division presentation derives geometry from semantic child identit
     const geometry = deriveFocusedSeatDivisionGeometry({ parent, childId, childIndex: 3, amount: 1 });
     assert.ok(presentation);
     assert.equal(geometry.semantic, childId);
+    assert.equal(presentation.payload.presentationOnly, true);
+    assert.ok(presentation.payload.controls.includes('configure'));
     assert.match(geometry.id, new RegExp(':' + childId + ':GEOMETRY$'));
     assert.ok(geometry.dimensions.width > 0);
     assert.ok(geometry.dimensions.depth > 0);
