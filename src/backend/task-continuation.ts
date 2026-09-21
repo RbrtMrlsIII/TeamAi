@@ -99,6 +99,8 @@ export class TaskContinuationService {
       if (
         existing.taskId !== input.taskId ||
         existing.projectId !== input.projectId ||
+        existing.checkpointId !== input.checkpointId ||
+        existing.continuationOfCheckpointId !== input.checkpointId ||
         existing.targetSeatId !== input.targetSeatId ||
         existing.requestedBy !== input.actorId ||
         existing.instruction !== input.instruction.trim()
