@@ -617,6 +617,29 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     });
   }
 
+  let lastCanvasWidth = 0;
+  let lastCanvasHeight = 0;
+
+  function resizeCanvasIfNeeded(width, height, dpr) {
+    const pixelWidth = Math.max(1, Math.floor(width * dpr));
+    const pixelHeight = Math.max(1, Math.floor(height * dpr));
+    const changed = canvas.width !== pixelWidth || canvas.height !== pixelHeight;
+    if (changed) {
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+    }
+    if (lastCanvasWidth !== pixelWidth || lastCanvasHeight !== pixelHeight) {
+      gl.viewport(0, 0, pixelWidth, pixelHeight);
+      lastCanvasWidth = pixelWidth;
+      lastCanvasHeight = pixelHeight;
+    }
+    return Object.freeze({
+      width: pixelWidth,
+      height: pixelHeight,
+      changed,
+    });
+  }
+
   function render(timestamp = performance.now(), state = {}) {
     if (disposed) return;
     const now = finite(timestamp, performance.now());
@@ -630,9 +653,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const width = canvas.clientWidth || 1180;
     const height = canvas.clientHeight || 760;
     const dpr = Math.min(2, globalThis.devicePixelRatio || 1);
-    canvas.width = Math.max(1, Math.floor(width*dpr));
-    canvas.height = Math.max(1, Math.floor(height*dpr));
-    gl.viewport(0,0,canvas.width,canvas.height);
+    resizeCanvasIfNeeded(width, height, dpr);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
