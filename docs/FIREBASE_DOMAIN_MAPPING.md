@@ -31,6 +31,10 @@ Where a TeamAi invariant depends on the current state of one or more documents, 
 
 The current TeamAi Firebase target is Spark-compatible and uses Firestore `default` plus Firebase Authentication and Hosting. Cloud Storage and Cloud Functions are not TeamAi product dependencies. Privileged orchestration and scheduling are therefore implemented behind an external TeamAi runtime boundary rather than client-side code or Cloud Functions.
 
+## TeamAi Storage product boundary
+
+TeamAi Storage is a separate planned product facility from Firebase Cloud Storage. The current frontend/product scope is **item inventory storage only**. Image/file upload and binary object-transfer surfaces remain deferred pending explicit security and cost controls.
+
 ## Project artifact exchange boundary
 
 TeamAi web does not upload project ZIPs. A project may be manually placed in the user's GitHub repository using the canonical setup guide, or an explicitly authorized AI may perform an external upload through Workplace or another approved execution surface. When the user names a specific AI app in chat, TeamAi may direct the user to that AI app's own artifact retrieval path for the project ZIP. These flows must preserve authorization, provenance, checksum/version identity and auditability without introducing Firebase Storage.
