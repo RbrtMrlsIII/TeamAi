@@ -194,7 +194,7 @@ Historical Issues are evidence, not active routing.
 
 
 ### 2026-09-22 audit hardening
-- The last audited implementation head is `a887afb68b5449b13e6dbe54f51bffa7f3b4bcb5`. The live branch head is authoritative and must be re-read before relying on this snapshot; the hardened production Firestore Seat diagnostic that fails closed on missing/inactive/unauthorized/unentitled/unbound Seats, invalid budget shape, ambiguous or incompatible active Seat connections, and missing execute capability.
+- The last audited implementation head is `a887afb68b5449b13e6dbe54f51bffa7f3b4bcb5`. The live branch head is authoritative and must be re-read before relying on this snapshot. That audited head includes the hardened production Firestore Seat diagnostic, which fails closed on missing/inactive/unauthorized/unentitled/unbound Seats, invalid budget shape, ambiguous or incompatible active Seat connections, and missing execute capability.
 - The diagnostic script is now syntax-checked by Full-System verification; the CodeQL-reported test URL matcher was tightened to exact hostname/path matching.
 
 ### 2026-09-22 #392 Seat runtime + durable continuation convergence
