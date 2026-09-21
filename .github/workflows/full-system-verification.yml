@@ -63,8 +63,8 @@ jobs:
           deno-version: lts
       - name: Typecheck trusted Edge entrypoints
         run: |
-          deno check supabase/functions/teamai-task-execute/index.ts
-          deno check supabase/functions/teamai-task-continuation-request/index.ts
+          deno check --node-modules-dir=auto supabase/functions/teamai-task-execute/index.ts
+          deno check --node-modules-dir=auto supabase/functions/teamai-task-continuation-request/index.ts
       - name: Verify committed machine spatial runtime parity
         run: npm run machine:sync:check
       - name: Run project tests
