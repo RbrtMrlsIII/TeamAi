@@ -63,10 +63,59 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.match(renderBody, /focusedDivision\?\.edge/);
   assert.match(renderBody, /state\.focusedChildId/);
   const partsLoopStart = renderBody.indexOf('for (const part of scene.parts) {');
+  const partsLoopOpen = renderBody.indexOf('{', partsLoopStart);
   const framePassMarker = renderBody.indexOf(
-    '\n    }\n\n    // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.\n    renderSeat1ConnectionChild'
+    '// Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.',
   );
-  assert.ok(partsLoopStart >= 0 && framePassMarker > partsLoopStart);
+  assert.ok(partsLoopStart >= 0 && partsLoopOpen > partsLoopStart && framePassMarker > partsLoopOpen);
+
+  let depth = 0;
+  let loopEnd = -1;
+  let quote = null;
+  let escaped = false;
+  let lineComment = false;
+  let blockComment = false;
+  for (let index = partsLoopOpen; index < framePassMarker; index += 1) {
+    const char = renderBody[index];
+    const next = renderBody[index + 1];
+    if (lineComment) {
+      if (char === '\n') lineComment = false;
+      continue;
+    }
+    if (blockComment) {
+      if (char === '*' && next === '/') {
+        blockComment = false;
+        index += 1;
+      }
+      continue;
+    }
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === quote) quote = null;
+      continue;
+    }
+    if (char === "'" || char === '"' || char === '`') {
+      quote = char;
+      continue;
+    }
+    if (char === '/' && next === '/') {
+      lineComment = true;
+      index += 1;
+      continue;
+    }
+    if (char === '/' && next === '*') {
+      blockComment = true;
+      index += 1;
+      continue;
+    }
+    if (char === '{') depth += 1;
+    else if (char === '}') {
+      depth -= 1;
+      if (depth === 0) loopEnd = index;
+    }
+  }
+  assert.ok(loopEnd > partsLoopOpen && framePassMarker > loopEnd);
   assert.ok(framePassMarker < renderBody.indexOf('gl.useProgram(line);', framePassMarker));
 });
 
