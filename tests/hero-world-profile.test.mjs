@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   deriveExpandedMachineCoreRadii,
@@ -42,4 +43,11 @@ test('machine core, renderer, and controller share the same Seat and housing rad
     assert.ok(seatRadii.every((radius) => Math.abs(radius - profile.seatShellRadius) < 1e-9));
     assert.ok(housingRadii.every((radius) => Math.abs(radius - profile.outerHousingRadius) < 1e-9));
   }
+});
+
+
+test('controller no longer owns a private seat radius formula', async () => {
+  const source = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /function seatRadiusForCount/);
+  assert.match(source, /deriveMachineWorldProfile\(seatCount\)\.seatShellRadius/);
 });
