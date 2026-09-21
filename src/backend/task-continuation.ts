@@ -102,6 +102,23 @@ export class TaskContinuationService {
       actorId: input.actorId,
     });
 
+    const existing = await this.requests.getRequest(
+      input.projectId,
+      input.taskId,
+      input.continuationRequestId,
+    );
+    if (existing) {
+      if (
+        existing.checkpointId !== checkpoint.checkpointId ||
+        existing.targetSeatId !== input.targetSeatId ||
+        existing.requestedBy !== input.actorId ||
+        existing.instruction !== input.instruction.trim()
+      ) {
+        throw new Error('continuation_request_id_conflict');
+      }
+      return existing;
+    }
+
     const request: TaskContinuationRequest = Object.freeze({
       continuationRequestId: input.continuationRequestId,
       taskId: input.taskId,
