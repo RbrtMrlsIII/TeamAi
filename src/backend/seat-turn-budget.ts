@@ -205,6 +205,7 @@ export function accountTurnBudget(input: {
     usage: Object.freeze({
       ...usage,
       remainingGenerationTokens,
+      usableGenerationTokens,
     }),
     state,
     completionState,
