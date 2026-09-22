@@ -43,6 +43,7 @@ export function drawBackendDisplayRing({
   catalog,
   ringRadius = null,
   articulationAmount = 1,
+  signalAmount = 0,
   ringFocus,
   reducedMotion,
   draw,
@@ -58,13 +59,14 @@ export function drawBackendDisplayRing({
 }, t = 0) {
   const p = profile(seatCount);
   const articulation = Math.max(0, Math.min(1, finite(articulationAmount, 1)));
-  const deploy = 0.84 + 0.16 * articulation;
+  const signal = Math.max(0, Math.min(1, finite(signalAmount, 0)));
+  const deploy = 0.68 + 0.32 * articulation;
   const placements = deriveBackendDisplayPlacements({ workspaceRadius: p.workspace, ringScale, ringRadius, catalog });
   for (const placement of placements) {
     const { index, x, y, z, angle, radius } = placement;
     const hinge = reducedMotion ? 0 : (0.018 + 0.028 * articulation) * Math.sin(finite(t) * 0.9 + index * 0.7);
     const focused = ringFocus?.ring === 'r1' && ringFocus.index === index;
-    const faceLift = 0.04 + 0.10 * articulation + (focused ? 0.05 : 0);
+    const faceLift = 0.02 + 0.13 * articulation + 0.05 * signal + (focused ? 0.05 : 0);
     const pulse = reducedMotion ? 0 : 0.5 + 0.5 * Math.sin(finite(t) * 1.4 + index);
     const faceScale = focused ? 1.12 : 1;
     const nodeScale = focused ? 1.2 : 1;
@@ -73,10 +75,10 @@ export function drawBackendDisplayRing({
     draw(CYL, mul(T(mountX, y - 0.08, mountZ), S(0.28 * (focused ? 1.08 : 1), 0.12, 0.28 * (focused ? 1.08 : 1))), M.metal, { rough: 0.42, spec: [0.84, 0.86, 0.82], emit: focused ? 0.04 : 0 });
     draw(CUBE, mul(mul(T(x, y - 0.01 - hinge, z), RY(angle + hinge)), S(0.72 * deploy, 0.16 * deploy, 0.26 * deploy)), M.metal2, { rough: 0.38, spec: [0.86, 0.88, 0.84], alpha: 0.94 });
     draw(CUBE, mul(mul(T(x, y + faceLift, z), RY(angle + Math.PI / 2 + hinge)), S(0.55 * faceScale * deploy, 0.12 * deploy, 0.38 * faceScale * deploy)), M.glass, {
-      rough: 0.28, spec: [0.9, 0.92, 0.9], emit: focused ? 0.14 : 0.04 + 0.03 * pulse, alpha: 0.72,
+      rough: 0.28, spec: [0.9, 0.92, 0.9], emit: focused ? 0.14 : 0.04 + 0.03 * pulse + 0.08 * signal, alpha: 0.52 + 0.32 * articulation,
     });
     draw(TORUS, mul(T(x, y + 0.08, z), S(0.22 * nodeScale, 1, 0.22 * nodeScale)), focused ? M.energy : M.trace, {
-      rough: 0.35, emit: focused ? 0.18 : 0.06, alpha: 0.55,
+      rough: 0.35, emit: focused ? 0.18 : 0.06 + 0.10 * signal, alpha: 0.42 + 0.36 * articulation,
     });
     for (let segment = 1; segment <= 3; segment += 1) {
       const q = segment / 6;
