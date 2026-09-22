@@ -4,7 +4,7 @@
 
 ## Current Slice
 
-TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
+TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
 
 ## Status
 
@@ -52,7 +52,8 @@ The audited ownership fixes now include a neutral machine-subject geometry owner
 - Issue #396 — 029 Spatial World execution guide
 - Issue #400 — Canonical Frontend Feature & Spatial UX Contract
 - #392 — Seat budget, usage, handoff, continuation, and cooperation runtime
-- Draft PR #398 — `frontend/029-machine-world-convergence`
+- Merged PR #398 — reviewed 029 structural baseline
+- Issue #401 — 030 production Firestore authority/security/runtime evidence
 - `.github/teamai/authority-manifest.yml`
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md`
 - `docs/RECONCILIATION_FIRESTORE_WRITE_AUTHORITY_REVIEW.md`
@@ -108,6 +109,17 @@ A checked implementation item must not be read as LIVE-DEPLOYED, RUNTIME-PROVEN,
 ## Post-#398 production-data strategy
 
 After #398 is merged, the next vehicle should create **fresh run-scoped Firestore evidence** using the canonical runtime/data path. New probe documents should carry a unique run namespace and should not reuse or mutate historical probe documents. The first run must be read/write scoped to an operator-authorized test hierarchy and must never print provider secrets.
+
+
+## 030 successor frontier
+
+The first successor implementation slice is deliberately additive:
+
+- fresh run-scoped Firestore metadata evidence under `runtime-diagnostics/{runId}`;
+- exact canonical Seat/connection inspection without mutation of canonical Seat/Connection documents;
+- production evidence remains manually dispatched and protected by Actions secrets;
+- Rules hardening is downstream of observed field inventory;
+- live index deployment and real-provider execution remain separately gated.
 
 ## Current blocker
 
