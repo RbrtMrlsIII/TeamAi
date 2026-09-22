@@ -95,7 +95,7 @@ test('Edge executor binds provider selection and budget to the durable Seat', ()
 
 test('Normal Edge execution resolves an authoritative active connection from the canonical Seat scope', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
-  const executeStart = source.indexOf('const taskProvider = String(task.provider');
+  const executeStart = source.lastIndexOf('const taskProvider = String(task.provider');
   const budgetStart = source.indexOf('const budget = normalizeEdgeTurnBudget', executeStart);
   assert.ok(executeStart >= 0);
   assert.ok(budgetStart > executeStart);
