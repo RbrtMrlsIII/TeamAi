@@ -106,7 +106,8 @@ const parent = 'accounts/' + uid + '/workplaces/' + workplaceId + '/projects/' +
 const rows = await runQuery(parent, {
   from: [{ collectionId: 'seats', allDescendants: true }],
   where: { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: seatId } } },
-  limit: 2,
+  // Do not cap canonical-seat discovery before path validation; legacy and multi-team records must not hide a real Seat.
+
 }, token);
 const canonical = rows.map(row => row.document).filter(document => document?.name).filter(document => (document.name.split('/documents/')[1] ?? '').split('/').length === 10).filter(document => {
   const p = (document.name.split('/documents/')[1] ?? '').split('/');
@@ -130,7 +131,8 @@ const connectionRows = await runQuery(parent, {
       ],
     },
   },
-  limit: 2,
+  // Do not cap canonical-seat discovery before path validation; legacy and multi-team records must not hide a real Seat.
+
 }, token);
 const connections = connectionRows.map(row => row.document).filter(document => document?.name).map(document => fields(document.fields));
 const activeConnections = connections.filter(connection => String(connection.status ?? '') === 'active');
