@@ -29,6 +29,7 @@ import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './ma
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 import { deriveMachineTransformationChoreography } from './machine-choreography.js';
+import { deriveMachineRingArticulation } from './machine-ring-articulation.js';
 import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './machine-r0-receiving.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
@@ -323,7 +324,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
   }
 
-  function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now, seatRingRadius, articulationAmount }) {
+  function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now, seatRingRadius, articulationAmount, ringArticulation }) {
     const profile = worldProfile(seatCount);
     const workspaceCore = deriveWorkspaceCoreGeometry({
       workspaceRadius: profile.workspace,
@@ -355,25 +356,34 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ...common,
       ringScale: RING_R1_SCALE,
       ringRadius: envelope.r1Radius,
-      articulationAmount,
+      articulationAmount: ringArticulation.r1Amount,
+      signalAmount: ringArticulation.r1Signal,
       catalog: BACKEND_DISPLAY_V1,
     }, now / 1000);
     drawBackendDisplayThreads({
       ...common,
       ringScale: RING_R1_SCALE,
       ringRadius: envelope.r1Radius,
-      articulationAmount,
+      articulationAmount: ringArticulation.r1Amount,
+      signalAmount: ringArticulation.r1Signal,
       catalog: BACKEND_DISPLAY_V1,
     }, now / 1000);
     drawSetupConfigRing({
       ...common,
       ringScale: RING_R2_SCALE,
       ringRadius: envelope.r2Radius,
-      articulationAmount,
+      articulationAmount: ringArticulation.r2Amount,
+      signalAmount: ringArticulation.r2Signal,
       items: SETUP_CONFIG_V1,
       focusedIndex: ringFocus?.ring === 'r2' ? ringFocus.index : -1,
       fillAmount: setupRingFillAmount,
     }, now / 1000);
+    canvas.dataset.machineWorldR0Receiving = String(ringArticulation.receiving);
+    canvas.dataset.machineWorldRingArticulationPhase = ringArticulation.phase;
+    canvas.dataset.machineWorldR1Articulation = String(ringArticulation.r1Amount);
+    canvas.dataset.machineWorldR2Articulation = String(ringArticulation.r2Amount);
+    canvas.dataset.machineWorldR1Signal = String(ringArticulation.r1Signal);
+    canvas.dataset.machineWorldR2Signal = String(ringArticulation.r2Signal);
     canvas.dataset.machineWorldR1 = 'backend-display';
     canvas.dataset.machineWorldR1Count = String(BACKEND_DISPLAY_V1.length);
     canvas.dataset.machineWorldR1Threads = '2';
@@ -863,6 +873,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         .map((part) => Math.hypot(part.center.x, part.center.z)),
       0,
     );
+    const ringArticulation = deriveMachineRingArticulation({
+      hierarchyOpen,
+      choreography,
+      reducedMotion,
+    });
     drawCanonicalRings({
       seatCount,
       ringFocus: state.ringFocus,
@@ -871,6 +886,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       now,
       seatRingRadius,
       articulationAmount: sample.amount,
+      ringArticulation,
     });
 
     for (const fog of DEEP_SPACE_NEBULA_ANCHORS) {
