@@ -1027,6 +1027,26 @@ Official platform references used for this registry include:
 
 ---
 
+### 2026-09-22: GitHub Actions - manual dispatch requires a default-branch workflow
+
+Finding:
+The new PR #402 workflow firestore-production-evidence.yml could not be manually dispatched from backend/030-production-runtime-evidence. GitHub returned HTTP 404 because the workflow is not present on the default branch.
+
+Why it matters:
+A workflow_dispatch definition is required to exist on the default branch before it can be manually triggered. This is a platform boundary, not a repository defect.
+
+Security implication:
+Do not convert a production-secret workflow into an untrusted pull-request execution path merely to bypass this rule. That would widen the secret exposure boundary.
+
+Validated by:
+Live GitHub workflow-dispatch attempt plus current GitHub Actions documentation.
+
+Action:
+Keep the production evidence workflow scoped to PR #402 and do not mutate main merely to make the new workflow dispatchable. Use an already-authorized default-branch execution vehicle only when it exactly matches the intended evidence contract.
+
+Status:
+Recorded as an execution blocker; no insecure bypass adopted.
+
 ## 15. Maintenance rule
 
 **This file is living engineering knowledge.**
