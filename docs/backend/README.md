@@ -10,7 +10,7 @@ This status does **not** mean the entire backend or product path is complete. Th
 ## Read order
 1. `BACKEND_SERVICE_BOUNDARY.md`
 2. `FIREBASE_BACKEND_GUIDE.md`
-3. `FIRESTORE_DOMAIN_MODEL.md`
+3. `FIRESTORE_DOMAIN_MODEL_V2.md`
 4. `SUPABASE_EDGE_FUNCTIONS_GUIDE.md`
 5. `PAYPAL_WEBHOOK_GUIDE.md`
 6. `BACKEND_FOUNDATION_EXECUTION.md`
