@@ -30,7 +30,7 @@ test('diagnostic consumes the same environment contract that the workflow suppli
     'TEAMAI_PROJECT_ID',
     'TEAMAI_SEAT_ID',
   ]) {
-    assert.match(diagnostic, new RegExp('requireEnv\\(\\'' + name + '\\'\\)'));
+    assert.ok(diagnostic.includes("requireEnv('" + name + "')"));
   }
   assert.match(diagnostic, /TEAMAI_FIREBASE_PROJECT_ID/);
   assert.match(diagnostic, /team-ai-official/);
