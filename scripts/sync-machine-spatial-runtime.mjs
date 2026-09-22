@@ -9,6 +9,7 @@ const files = [
   'seat-adjacent-division-wiring.js',
   'machine-core-seat-connection.js',
   'machine-hero-scene.js',
+  'machine-subject.js',
   'machine-hero-graph.js',
   'machine-hero-payload.js',
   'machine-hero-adaptive-geometry.js',
