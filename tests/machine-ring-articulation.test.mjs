@@ -46,8 +46,8 @@ test('receiving raises R1 signal while keeping R2 structural articulation bounde
     choreography: choreography({ topology: 1, electrical: 0.9, workspaceReception: 0.55 }),
   });
   assert.equal(receiving.phase, MACHINE_RING_ARTICULATION_PHASE.RECEIVING);
-  assert.equal(receiving.r1Signal, 1);
-  assert.ok(receiving.r2Amount < 1);
+  assert.equal(receiving.r1Signal, 0.9);
+  assert.ok(receiving.r2Amount > 0 && receiving.r2Amount < 1);
 
   const lifecycle = deriveMachineRingArticulation({
     hierarchyOpen: false,
