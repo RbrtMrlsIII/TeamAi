@@ -55,10 +55,15 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 - [x] The trusted continuation-request Edge boundary is deployed as v2; live task execution remains gated.
 - [x] #400 representative frontend contracts remain presentation/read-model/intent boundaries and do not create backend authority.
 - [x] Maximum-density ring separation is now represented as an explicit regression contract rather than an assumed visual property.
+- [x] R0 workspace receiving is now a semantic choreography layer and canonical WebGL receiving pass from the Seat connection route into WORKSPACE_CENTER.
+- [x] Seat Budget Settings is now a trusted end-to-end configuration capability; `teamai-seat-budget-settings` v1 is live in Supabase and has a read-only unauthenticated 401 smoke proof.
+- [x] Seat Budget durable runtime read model is repository-complete and exact-head verified, consuming the latest Seat-owned durable execution result without returning provider output.
+- [x] Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is checked into the repository with an indexes-only manual deployment workflow.
 - [ ] Real production Firestore Seat shape and exactly one compatible active execute-capable connection remain directly unverified.
 - [ ] New real-provider `teamai-task-execute` deployment remains gated by the production Seat diagnostic.
 - [ ] Real provider incomplete termination → checkpoint → explicit continuation → fresh target-Seat turn → truthful completion remains unproven in production.
 - [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
+- [ ] Firestore index deployment remains pending before live promotion of `teamai-seat-budget-runtime`.
 - [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
 
 ## TEAM-EXPERIENCE-029 baseline
