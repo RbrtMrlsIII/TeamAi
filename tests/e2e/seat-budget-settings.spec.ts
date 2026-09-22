@@ -63,8 +63,8 @@ test.describe('Seat Budget Settings', () => {
     await expect(panel.locator('[data-seat-budget-save]')).toBeEnabled();
 
     await panel.locator('[data-seat-budget-save]').click();
-    await expect(panel.locator('[data-seat-budget-result]')).toContainText('Configuration intent requested');
-    await expect(panel.locator('[data-seat-budget-result]')).toContainText('backend-owned');
+    await expect(panel.locator('[data-seat-budget-result]')).toContainText('Configuration intent dispatched');
+    await expect(panel.locator('[data-seat-budget-result]')).toContainText('Durable persistence requires');
   });
 
   test('configured runtime loads and saves the selected Seat budget through the trusted boundary', async ({ page }) => {
