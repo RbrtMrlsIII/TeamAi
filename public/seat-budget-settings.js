@@ -21,6 +21,12 @@ function nonNegative(value) {
   return Number.isFinite(number) && number >= 0 ? number : 0;
 }
 
+function nonNegativeOrNull(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
 export function normalizeSeatBudgetReadModel(value = {}) {
   if (!value || typeof value !== 'object') throw new Error('seat budget read model must be an object');
   const input = value;
@@ -47,12 +53,17 @@ export function normalizeSeatBudgetReadModel(value = {}) {
     contextInputPolicy: configured.contextInputPolicy && typeof configured.contextInputPolicy === 'object'
       ? Object.freeze({ ...configured.contextInputPolicy })
       : Object.freeze({ retention: 'minimal-durable-context' }),
-    usageReported: Boolean(input.usage && typeof input.usage === 'object'),
-    consumedTokens: nonNegative(usage.consumedTotalTokens),
-    remainingTokens: nonNegative(usage.remainingGenerationTokens),
-    usableTokens: nonNegative(usage.usableGenerationTokens),
-    reasoningUsedTokens: nonNegative(usage.consumedReasoningTokens),
-    workOutputUsedTokens: nonNegative(usage.consumedWorkOutputTokens),
+    usageReported: input.usageReported === true || Boolean(input.usage && typeof input.usage === 'object' && usage.remainingGenerationTokens !== null && usage.remainingGenerationTokens !== undefined),
+    accountingSource: optionalString(input.accountingSource),
+    consumedTokens: nonNegativeOrNull(usage.consumedTotalTokens) ?? 0,
+    remainingTokens: nonNegativeOrNull(usage.remainingGenerationTokens),
+    usableTokens: nonNegativeOrNull(usage.usableGenerationTokens),
+    reasoningUsedTokens: nonNegativeOrNull(usage.consumedReasoningTokens) ?? 0,
+    workOutputUsedTokens: nonNegativeOrNull(usage.consumedWorkOutputTokens),
+    latestExecutionId: optionalString(input.latest?.executionId),
+    latestTaskId: optionalString(input.latest?.taskId),
+    latestRecordedAt: optionalString(input.latest?.recordedAt),
+    providerRuntime: optionalString(input.latest?.providerRuntime),
     state: SEAT_BUDGET_STATES.includes(String(input.state)) ? String(input.state) : 'UNAVAILABLE',
     completionState: optionalString(input.completionState),
     continuationAvailable: input.continuationAvailable === true,
