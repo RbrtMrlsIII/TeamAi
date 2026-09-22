@@ -8,7 +8,7 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / IN PROGRESS. Draft PR #398 remains the sole implementation vehicle on `frontend/029-machine-world-convergence`. The live branch head is the source of truth for current verification; merge remains gated on exact-head review and human authorization.
+IMPLEMENTATION ACTIVE / IN PROGRESS. PR #398 is merged as the reviewed 029 structural baseline. Issue #401 and successor PR #402 are now the sole implementation frontier for production Firestore authority, security, and runtime evidence. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
@@ -111,6 +111,10 @@ A checked implementation item must not be read as LIVE-DEPLOYED, RUNTIME-PROVEN,
 After #398 is merged, the next vehicle should create **fresh run-scoped Firestore evidence** using the canonical runtime/data path. New probe documents should carry a unique run namespace and should not reuse or mutate historical probe documents. The first run must be read/write scoped to an operator-authorized test hierarchy and must never print provider secrets.
 
 
+## Historical 029 continuity
+
+TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 control-plane reconstruction remains historical context; PR #398 is the reviewed structural baseline now landed on `main`. No historical vehicle is reopened as a parallel current implementation path.
+
 ## 030 successor frontier
 
 The first successor implementation slice is deliberately additive:
@@ -129,4 +133,4 @@ The first successor implementation slice is deliberately additive:
 - **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398 stays Draft until exact-head evidence, reconciliation, review, and human acceptance satisfy the governed promotion path.
+- **Merge authority remains separate.** #398 is already merged as the reviewed structural baseline; #402 remains Draft until its own exact-head evidence, review, and human acceptance satisfy the governed promotion path.
