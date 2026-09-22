@@ -80,7 +80,7 @@ Do not invent or infer a missing emulator run from later green CI that did not e
 
 Some backend progress is completed through human-operated provider UI, credentials, external account authorization, live/sandbox interactions, or other boundaries that are not visible to every Agent.
 
-`docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves the bridge between repository intent, operator state, connected runtime, and claim level. The current eight-function deployment inventory is now separately frozen in the active census file.
+`docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves the bridge between repository intent, operator state, connected runtime, and claim level. The current ten-function deployment inventory is now separately recorded in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`.
 
 Before cleanup or refactor that could erase provenance, preserve the observed external state first.
 
@@ -96,7 +96,7 @@ No V-series/SP execution should reopen completed backend foundations merely beca
 
 ## Historical snapshot — preserved
 
-Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wording remain preserved in repository history and older evidence records. They are not the current live inventory. The active eight-function census and this 2026-09-12 reconciliation supersede older live inventory tables for recovery purposes.
+Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wording remain preserved in repository history and older evidence records. They are not the current live inventory. The 2026-09-22 census supersedes the 2026-09-12 snapshot for current live inventory purposes.
 
 ## Required evidence distinction
 
