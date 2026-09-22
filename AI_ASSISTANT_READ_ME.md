@@ -16,7 +16,7 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: inspect why `teams/gate3-test-team/seats/gate3-test-seat` 404s under the protected test hierarchy; persist negative runtime-diagnostics; then reconcile Rules/index/runtime gates from observed production state.
+- next allowed work: the protected test project currently lists zero team documents, so Gate 3 Seat inspection cannot proceed until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/index/runtime gates from observed production state.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
@@ -39,8 +39,8 @@ Residual uncertainty: live secrets, Seat document presence, and the connections 
 - First exact-path dispatch succeeded as a GitHub Actions execution: run `35762786313` on `6ee82e0ca92c5bd8e7485fff3d6345eb8a955538`.
 - Probe result: `canonical Seat document not found` (HTTP 404) for team `gate3-test-team` / seat `gate3-test-seat`.
 - Token/secrets were present; this is not the old collection-group HTTP 400.
-- Later heads persist that 404 as additive `runtime-diagnostics` evidence and list team document IDs when the list call is permitted.
-- This does not tick MASTERPLAN 030 "Fresh production Seat evidence run executed" as Seat-shape proof. The run happened; the Seat was absent.
+- Corrected run `35763013851` on `a7baf21bc752c3ecbdbfc2589f2c4e2a58c70f23` wrote additive evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897` with `teamDocumentCount: 0` and `teamListError: null`, then exited 2.
+- MASTERPLAN 030 "Fresh production Seat evidence run executed" is checked only as a run that produced durable negative evidence. It is not Seat-shape verification.
 - This does not complete TEAM-EXPERIENCE-029 or TEAM-BACKEND-001.
 
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.

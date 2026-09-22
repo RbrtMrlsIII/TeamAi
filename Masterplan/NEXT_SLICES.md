@@ -130,7 +130,7 @@ The first successor implementation slice is deliberately additive:
 
 ## Current blocker
 
-- **Production Firestore Seat shape remains unverified.** The default-branch diagnostic vehicle dispatched the exact-path probe as run `35762786313`. The Gate 3 path `teams/gate3-test-team/seats/gate3-test-seat` returned HTTP 404. This is not collection-group HTTP 400. Seat shape, authorization, entitlement, budget, and execute-capable connection remain unproven.
+- **Production Firestore Seat shape remains unverified.** Exact-path run `35763013851` wrote negative evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897`: Seat `gate3-test-seat` under team `gate3-test-team` is absent, and the protected test project currently lists **zero** team documents. This is not collection-group HTTP 400. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
 - **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
 - **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
 - **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted. The 2026-09-22 CLI attempt failed on Service Usage GET 403, not on index write.

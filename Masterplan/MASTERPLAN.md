@@ -78,7 +78,8 @@ Issue #401 is now the sole successor implementation frontier. The remaining 029/
 - [x] #398 reviewed structural baseline merged into `main`.
 - [x] Fresh production Firestore evidence vehicle created from the #398 merge point.
 - [x] Default-branch `firestore-seat-shape-diagnostic.yml` now dispatches the exact-path evidence probe against the 030 branch.
-- [ ] Fresh production Seat evidence run executed.
+- [x] Fresh production Seat evidence run executed as run `35763013851` on `a7baf21bc752c3ecbdbfc2589f2c4e2a58c70f23`; observed result is `canonical_seat_not_found` with zero team documents under the protected test project. This is not Seat-shape verification.
+
 
 - [ ] Real Seat field inventory reconciled with field-level Firestore Rules.
 - [ ] Live `execution-results` index deployed/read back.

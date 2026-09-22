@@ -55,5 +55,14 @@ A successful successor run will establish the observed production field inventor
 
 The first post-#398 production run demonstrated that the historical collection-group Seat resolver is not currently usable for this diagnostic because its Firestore REST query returned HTTP 400 before the Seat document was reached. The successor probe therefore uses the exact known team-nested Seat path as its authoritative diagnostic read boundary.
 
-The first exact-path dispatch through the default-branch vehicle was run `35762786313` on head `6ee82e0ca92c5bd8e7485fff3d6345eb8a955538`. Secrets were present and token exchange succeeded. The canonical Seat GET at `teams/gate3-test-team/seats/gate3-test-seat` returned 404. That is production evidence that this exact document was not found; it is not Seat-shape verification and not a 029 completion claim.
+The first exact-path dispatch through the default-branch vehicle was run `35762786313` on head `6ee82e0ca92c5bd8e7485fff3d6345eb8a955538`. Secrets were present and token exchange succeeded. The canonical Seat GET at `teams/gate3-test-team/seats/gate3-test-seat` returned 404.
+
+Corrected run `35763013851` on head `a7baf21bc752c3ecbdbfc2589f2c4e2a58c70f23` persisted that miss as additive evidence:
+
+- runId: `run-2026-09-22T17-48-26-734Z-edb51fd8-897`
+- `canonical_seat_not_found`
+- `teamDocumentCount: 0`
+- `teamListError: null`
+
+The protected test project currently has no team documents. That is production evidence of an empty Gate 3 team collection, not Seat-shape verification and not a 029 completion claim.
 

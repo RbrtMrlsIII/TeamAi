@@ -55,9 +55,16 @@ First exact-path dispatch after that rewiring:
 - no Seat, Connection, or secret document was mutated
 - the first exact-path attempt did not write `runtime-diagnostics` because it threw before the write
 
-Negative 404 evidence is now persisted on later runs so a missing Seat still leaves an additive diagnostic document. Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. It is not counted as fresh Seat-shape proof.
+Durable negative evidence from the corrected probe:
 
-No production-secret pull-request trigger was introduced.
+- workflow run: `35763013851`
+- head: `a7baf21bc752c3ecbdbfc2589f2c4e2a58c70f23`
+- runId: `run-2026-09-22T17-48-26-734Z-edb51fd8-897`
+- result: `canonical_seat_not_found`, `seatPresent: false`, `teamDocumentCount: 0`, `teamListError: null`
+- exit code 2, as designed for a missing Seat
+- additive `runtime-diagnostics` document written; canonical Seat/Connection documents were not patched
+
+The protected test project currently has no `teams` documents, so Gate 3 selectors cannot inspect a Coder Seat until that hierarchy exists again or a different authorized path is supplied. Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. None of these runs is Seat-shape verification or 029 completion.
 
 ## Index deployment execution boundary
 
