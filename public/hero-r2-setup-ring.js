@@ -50,6 +50,7 @@ export function drawSetupConfigRing({
   ringScale = 1,
   ringRadius = null,
   articulationAmount = 1,
+  signalAmount = 0,
   items = DEFAULT_ITEMS,
   focusedIndex = -1,
   fillAmount = 0,
@@ -66,6 +67,7 @@ export function drawSetupConfigRing({
 }, t = 0) {
   const fill = Math.max(0, Math.min(1, Number(fillAmount) || 0));
   const articulation = Math.max(0, Math.min(1, finite(articulationAmount, 1)));
+  const signal = Math.max(0, Math.min(1, finite(signalAmount, 0)));
   const placements = deriveSetupConfigPlacements({
     workspaceRadius: profile(seatCount).workspace,
     ringScale,
@@ -79,16 +81,17 @@ export function drawSetupConfigRing({
     const gear = kind === 'engine' || kind === 'auth';
     const fullArea = kind === 'auth' || kind === 'config' || kind === 'branch';
     const deploy = focused && fullArea ? 1 + 0.35 * fill : 1;
+    const signalScale = 1 + 0.14 * signal;
     const articulationScale = 0.84 + 0.16 * articulation;
-    const scale = (gear ? 0.42 : 0.36) * deploy * articulationScale;
+    const scale = (gear ? 0.42 : 0.36) * deploy * articulationScale * signalScale;
     draw(CYL, mul(T(x, y, z), S(scale * 1.1, 0.14, scale * 1.1)), M.metal, {
       rough: 0.4, spec: [0.82, 0.84, 0.8], emit: focused ? 0.12 : 0.02,
     });
     draw(TORUS, mul(mul(T(x, y + 0.09, z), RY(spin)), S(scale * (focused ? 1.15 : 1), 1, scale * (focused ? 1.15 : 1))), kind === 'auth' || focused ? M.energy : M.metal2, {
-      rough: 0.28, emit: focused ? 0.2 : (kind === 'auth' ? 0.1 : 0.03), alpha: 0.85,
+      rough: 0.28, emit: focused ? 0.2 : (kind === 'auth' ? 0.1 : 0.03) + 0.08 * signal, alpha: 0.52 + 0.36 * articulation,
     });
     draw(CUBE, mul(mul(T(x, y + 0.16, z), RY(angle)), S(0.22, 0.06, 0.14)), M.glass, {
-      rough: 0.25, emit: 0.05, alpha: 0.7,
+      rough: 0.25, emit: 0.05 + 0.06 * signal, alpha: 0.46 + 0.30 * articulation,
     });
   }
 }
