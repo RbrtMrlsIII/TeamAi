@@ -35,3 +35,10 @@ test('fresh evidence resolves the canonical Seat by exact team-nested document p
   assert.match(script, /canonical Seat path identity mismatch/);
   assert.doesNotMatch(script, /query\(parent, 'seats'/);
 });
+
+
+test('secret detection traverses nested Firestore maps rather than only top-level keys', () => {
+  assert.match(script, /findForbiddenPaths\(value/);
+  assert.match(script, /findForbiddenPaths\(child, childPath\)/);
+  assert.match(script, /assertNoSecretFields\(raw\)/);
+});
