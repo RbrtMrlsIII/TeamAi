@@ -79,7 +79,8 @@ test('reduced motion preserves semantic articulation values', () => {
   };
   const full = deriveMachineRingArticulation({ ...input, reducedMotion: false });
   const reduced = deriveMachineRingArticulation({ ...input, reducedMotion: true });
-  assert.deepEqual(reduced, { ...reduced, reducedMotion: true });
+  assert.equal(reduced.reducedMotion, true);
+  assert.equal(full.phase, reduced.phase);
   assert.equal(full.r1Amount, reduced.r1Amount);
   assert.equal(full.r2Amount, reduced.r2Amount);
   assert.equal(full.r1Signal, reduced.r1Signal);
