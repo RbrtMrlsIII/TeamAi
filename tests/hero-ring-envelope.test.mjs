@@ -26,6 +26,20 @@ test('concentric envelope preserves R0 < R1 < R2 < R3 for the full seat range', 
   }
 });
 
+test('ten-seat base envelope retains a measurable three-band radial separation', () => {
+  const workspace = workspaceForSeats(10) * 0.68;
+  const envelope = deriveConcentricRingEnvelope({
+    r0Radius: workspace,
+    r3Radius: 4.55,
+    ringR1Scale: 1.18,
+    ringR2Scale: 1.42,
+  });
+  assert.equal(envelope.interRingClearance, 0.168);
+  assert.ok(envelope.r1Radius - envelope.workspaceRadius >= 0.168);
+  assert.ok(envelope.r2Radius - envelope.r1Radius >= 0.168);
+  assert.ok(envelope.seatRingRadius - envelope.r2Radius >= 0.168);
+});
+
 test('envelope remains deterministic when the preferred scales exceed the physical gap', () => {
   const input = {
     workspaceRadius: 5.95,
