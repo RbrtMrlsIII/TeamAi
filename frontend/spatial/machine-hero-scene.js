@@ -1,4 +1,5 @@
 import { deriveMachineExpansionProfile, interpolateMachineDimensions, deriveExpansionShift } from './machine-hero-adaptive-geometry.js';
+import { deriveMachineSubject } from './machine-subject.js';
 import { validateMachineConnectionTopology } from './machine-hero-topology.js';
 
 export const MACHINE_HERO_VERSION = 'M1-preview';
