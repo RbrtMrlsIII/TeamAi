@@ -39,6 +39,7 @@ const files = [
   'machine-energy-flow.js',
   'machine-choreography.js',
   'machine-r0-receiving.js',
+  'machine-ring-articulation.js',
   'mcp-capability.js',
   'mcp-capability-facility.js',
   'mcp-capability.css',
