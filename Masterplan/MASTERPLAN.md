@@ -57,6 +57,8 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 - [x] Maximum-density ring separation is now represented as an explicit regression contract rather than an assumed visual property.
 - [x] R0 workspace receiving is now a semantic choreography layer and canonical WebGL receiving pass from the Seat connection route into WORKSPACE_CENTER.
 - [x] Seat Budget Settings is now a trusted end-to-end configuration capability; `teamai-seat-budget-settings` v1 is live in Supabase and has a read-only unauthenticated 401 smoke proof.
+- [x] Current Supabase Edge inventory is reconciled to a 2026-09-22 connected observation in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`; the 2026-09-12 census remains historical evidence only.
+- [x] Duplicate local `src/server.ts` in-memory Fastify runtime removed; `src/main.ts` remains the sole configured local Node entrypoint and is protected by a focused regression test.
 - [x] Seat Budget durable runtime read model is repository-complete and exact-head verified, consuming the latest Seat-owned durable execution result without returning provider output.
 - [x] Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is checked into the repository with an indexes-only manual deployment workflow.
 - [ ] Real production Firestore Seat shape and exactly one compatible active execute-capable connection remain directly unverified.
