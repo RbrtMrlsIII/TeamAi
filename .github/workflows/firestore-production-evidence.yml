@@ -35,5 +35,6 @@ jobs:
           TEAMAI_DIAGNOSTIC_UID: ${{ secrets.TEAMAI_FIREBASE_TEST_UID }}
           TEAMAI_WORKPLACE_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_WORKPLACE_ID }}
           TEAMAI_PROJECT_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_PROJECT_ID }}
+          TEAMAI_TEAM_ID: ${{ inputs.team_id }}
           TEAMAI_SEAT_ID: ${{ inputs.seat_id }}
         run: node scripts/run-production-firestore-evidence.mjs
