@@ -21,10 +21,13 @@ function toReadModel(body = {}) {
     provider: body.provider,
     model: body.model,
     configured: body.configured,
+    usageReported: body.usageReported === true,
     usage: body.usage || null,
-    state: body.usage ? 'READY' : 'READY',
+    accountingSource: body.accountingSource || null,
+    state: body.state || 'UNAVAILABLE',
     completionState: body.completionState || null,
     continuationAvailable: body.continuationAvailable === true,
+    latest: body.latest || null,
     reason: body.reason,
     source: body.source || 'runtime',
   };
@@ -71,9 +74,10 @@ async function handleSave(event) {
   if (!seatId || !runtimeConfigured()) return;
   status('Saving Seat budget configuration…');
   try {
-    const body = await saveSeatBudgetSettings({ seatId, patch: intent.patch || {} });
+    await saveSeatBudgetSettings({ seatId, patch: intent.patch || {} });
+    const body = await loadSeatBudgetRuntime({ seatId });
     dispatch('teamai:seat-budget-runtime-read-model', { readModel: toReadModel(body) });
-    status('Seat budget saved to canonical Firestore.', 'READY');
+    status('Seat budget saved to canonical Firestore and runtime readback refreshed.', 'READY');
   } catch (error) {
     status(`Save failed: ${error instanceof Error ? error.message : String(error)}`, 'ERROR');
   }
