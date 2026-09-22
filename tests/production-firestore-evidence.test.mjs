@@ -20,10 +20,18 @@ test('fresh evidence workflow is manual and protected', () => {
   assert.match(workflow, /TEAMAI_FIREBASE_TEST_UID/);
   assert.match(workflow, /TEAMAI_FIREBASE_TEST_WORKPLACE_ID/);
   assert.match(workflow, /TEAMAI_FIREBASE_TEST_PROJECT_ID/);
+  assert.match(workflow, /TEAMAI_TEAM_ID/);
   assert.match(workflow, /TEAMAI_SEAT_ID/);
 });
 
 test('fresh evidence writes only to runtime-diagnostics', () => {
   assert.match(script, /const runPath = parent \+ '\/runtime-diagnostics\/' \+ runId/);
   assert.doesNotMatch(script, /method:\s*['"]PATCH['"][^]*seatPath/);
+});
+
+
+test('fresh evidence resolves the canonical Seat by exact team-nested document path', () => {
+  assert.match(script, /const seatPath = parent \+ '\/teams\/' \+ teamId \+ '\/seats\/' \+ seatId/);
+  assert.match(script, /canonical Seat path identity mismatch/);
+  assert.doesNotMatch(script, /query\(parent, 'seats'/);
 });
