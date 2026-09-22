@@ -22,6 +22,20 @@ test('Seat Budget read model keeps authorization/configurability separate', () =
   assert.equal(locked.state, 'LOCKED');
 });
 
+test('Seat Budget settings can be configured without inventing live-turn usage', () => {
+  const model = normalizeSeatBudgetReadModel({
+    available: true,
+    authorized: true,
+    configurable: true,
+    configured: { turnBudgetTokens: 12000, outputBudgetTokens: 4000, reasoningBudgetTokens: 5000, handoffReserveTokens: 1000, hardStopPolicy: 'handoff-before-exhaustion', responsibilityProfile: 'coder' },
+    usage: null,
+    state: 'READY',
+  });
+  assert.equal(model.usageReported, false);
+  assert.equal(model.hardStopPolicy, 'handoff-before-exhaustion');
+  assert.deepEqual(seatBudgetEnergySegments(model), { consumedFraction: 0, handoffReserveFraction: 0, remainingFraction: 0 });
+});
+
 test('Seat Budget energy segments preserve protected handoff reserve', () => {
   const model = normalizeSeatBudgetReadModel({
     available: true,
