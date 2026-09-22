@@ -195,17 +195,32 @@ const token = await tokenFor(sa);
 const uid = env('TEAMAI_DIAGNOSTIC_UID');
 const workplaceId = env('TEAMAI_WORKPLACE_ID');
 const projectId = env('TEAMAI_PROJECT_ID');
+const teamId = env('TEAMAI_TEAM_ID');
 const seatId = env('TEAMAI_SEAT_ID');
 const parent = 'accounts/' + uid + '/workplaces/' + workplaceId + '/projects/' + projectId;
 const runId = 'run-' + new Date().toISOString().replace(/[:.]/g, '-') + '-' + crypto.randomUUID().slice(0, 12);
 
-const seats = await query(parent, 'seats', {
-  fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: seatId } }
-}, token);
-const seatMatches = canonicalSeat(seats, { uid, workplaceId, projectId, seatId });
-if (seatMatches.length !== 1) throw new Error('canonical Seat resolution failed: expected 1, found ' + seatMatches.length);
-
-const seat = safeSeat(seatMatches[0]);
+const seatPath = parent + '/teams/' + teamId + '/seats/' + seatId;
+const seatDocument = await read(seatPath, token);
+if (!seatDocument) throw new Error('canonical Seat document not found');
+const canonicalPath = seatDocument.name?.split('/documents/')[1] || '';
+const canonicalParts = canonicalPath.split('/');
+if (
+  canonicalParts.length !== 10 ||
+  canonicalParts[0] !== 'accounts' ||
+  canonicalParts[1] !== uid ||
+  canonicalParts[2] !== 'workplaces' ||
+  canonicalParts[3] !== workplaceId ||
+  canonicalParts[4] !== 'projects' ||
+  canonicalParts[5] !== projectId ||
+  canonicalParts[6] !== 'teams' ||
+  canonicalParts[7] !== teamId ||
+  canonicalParts[8] !== 'seats' ||
+  canonicalParts[9] !== seatId
+) {
+  throw new Error('canonical Seat path identity mismatch');
+}
+const seat = safeSeat(seatDocument);
 const connectionDocs = await query(parent, 'connections', {
   compositeFilter: {
     op: 'AND',
@@ -228,6 +243,7 @@ const evidence = {
   uid,
   workplaceId,
   projectId,
+  teamId,
   seatId,
   seat,
   connections: {
