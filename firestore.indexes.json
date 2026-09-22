@@ -1,20 +1,6 @@
 {
   "indexes": [
     {
-      "collectionGroup": "connections",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "seatId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
       "collectionGroup": "execution-results",
       "queryScope": "COLLECTION_GROUP",
       "fields": [
