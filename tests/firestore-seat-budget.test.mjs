@@ -57,6 +57,7 @@ test('Firestore Seat resolver ignores legacy project-level Seat documents and re
     assert.equal(query.structuredQuery.from[0].collectionId, 'seats');
     assert.equal(query.structuredQuery.from[0].allDescendants, true);
     assert.equal(query.structuredQuery.where.fieldFilter.field.fieldPath, 'seatId');
+    assert.equal('limit' in query.structuredQuery, false, 'Seat discovery must validate the full candidate set before canonical filtering');
   } finally {
     globalThis.fetch = originalFetch;
   }
