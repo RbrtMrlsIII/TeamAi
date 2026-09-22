@@ -149,6 +149,99 @@ async function patchTask(taskPath: string, accessToken: string, fields: Record<s
   await firestorePatch(taskPath, firestoreStringFields(fields), accessToken);
 }
 
+async function persistProviderTerminationFailure(input: {
+  taskPath: string;
+  resultPath: string;
+  requestPath?: string;
+  uid: string;
+  projectId: string;
+  taskId: string;
+  seatId: string;
+  executionId: string;
+  accessToken: string;
+  result: GenerateResult;
+  budgetUsage: ReturnType<typeof computeEdgeBudget>;
+  continuationRequestId?: string;
+  continuationOfCheckpointId?: string;
+}): Promise<void> {
+  const recordedAt = new Date().toISOString();
+  const eventId = "fail-" + input.executionId;
+  const common = {
+    taskId: input.taskId,
+    projectId: input.projectId,
+    seatId: input.seatId,
+    eventId,
+    idempotencyKey: input.executionId,
+    status: "failed",
+    completionState: "PROVIDER_TERMINATION_INVALID",
+    recordedAt,
+    provider: input.result.provider,
+    model: input.result.model,
+    requestId: input.result.requestId,
+    text: input.result.text,
+    usage: {
+      inputTokens: input.result.usage.inputTokens,
+      outputTokens: input.result.usage.outputTokens,
+      totalTokens: input.result.usage.totalTokens,
+      reasoningTokens: input.result.usage.reasoningTokens ?? 0,
+    },
+    termination: null,
+    budget: input.budgetUsage,
+    error: {
+      code: "provider_termination_missing",
+      message: "Provider adapter returned a result without normalized termination metadata.",
+    },
+    ...(input.continuationRequestId ? { continuationRequestId: input.continuationRequestId } : {}),
+    ...(input.continuationOfCheckpointId ? { continuationOfCheckpointId: input.continuationOfCheckpointId } : {}),
+  };
+
+  try {
+    await recordEvent(
+      input.taskPath,
+      eventId,
+      "FAIL",
+      input.uid,
+      input.seatId,
+      input.projectId,
+      input.accessToken,
+      {
+        executionId: input.executionId,
+        reason: "provider_termination_missing",
+        completionState: "PROVIDER_TERMINATION_INVALID",
+        consumedTotalTokens: String(input.budgetUsage.consumedTotalTokens),
+        remainingGenerationTokens: String(input.budgetUsage.remainingGenerationTokens),
+        usableGenerationTokens: String(input.budgetUsage.usableGenerationTokens),
+        ...(input.continuationRequestId ? { continuationRequestId: input.continuationRequestId } : {}),
+        ...(input.continuationOfCheckpointId ? { continuationOfCheckpointId: input.continuationOfCheckpointId } : {}),
+      },
+    );
+    await firestoreCreate(input.resultPath, firestoreFields(common), input.accessToken);
+  } finally {
+    await patchTask(input.taskPath, input.accessToken, {
+      status: "failed",
+      completionState: "PROVIDER_TERMINATION_INVALID",
+      completedAt: recordedAt,
+      executionId: input.executionId,
+      provider: input.result.provider,
+      model: input.result.model,
+      terminationReason: "missing",
+      remainingGenerationTokens: String(input.budgetUsage.remainingGenerationTokens),
+      usableGenerationTokens: String(input.budgetUsage.usableGenerationTokens),
+      ...(input.continuationRequestId ? { continuationRequestId: input.continuationRequestId } : {}),
+      ...(input.continuationOfCheckpointId ? { continuationOfCheckpointId: input.continuationOfCheckpointId } : {}),
+    });
+    if (input.requestPath) {
+      await patchTask(input.requestPath, input.accessToken, {
+        status: "failed",
+        completedAt: recordedAt,
+        executionId: input.executionId,
+        ...(input.continuationRequestId ? { continuationRequestId: input.continuationRequestId } : {}),
+        ...(input.continuationOfCheckpointId ? { continuationOfCheckpointId: input.continuationOfCheckpointId } : {}),
+      });
+    }
+  }
+}
+
 async function leaseWaitingApprovalTask(input: {
   taskPath: string;
   leaseId: string;
@@ -371,7 +464,24 @@ async function executeContinuationTurn(input: {
   }
 
   const budgetUsage = computeEdgeBudget({ config: budget, inputTokens: finiteNonNegative(result.usage.inputTokens, 'usage.inputTokens'), outputTokens: finiteNonNegative(result.usage.outputTokens, 'usage.outputTokens'), reasoningTokens: finiteNonNegative(result.usage.reasoningTokens, 'usage.reasoningTokens') });
-  if (!result.termination) throw new Error('provider_termination_missing');
+  if (!result.termination) {
+    await persistProviderTerminationFailure({
+      taskPath,
+      resultPath,
+      requestPath,
+      uid,
+      projectId,
+      taskId,
+      seatId: targetSeatId,
+      executionId,
+      accessToken,
+      result,
+      budgetUsage,
+      continuationRequestId,
+      continuationOfCheckpointId: checkpointId,
+    });
+    return json({ error: 'provider_termination_invalid', taskId, executionId }, 502);
+  }
   const terminal = result.termination;
   const recordedAt = new Date().toISOString();
   const continuation = terminal.state === 'incomplete' && requiresContinuation(terminal);
@@ -599,7 +709,21 @@ Deno.serve(async (req: Request) => {
     });
 
     const terminal = result.termination;
-    if (!terminal) throw new Error("provider_termination_missing");
+    if (!terminal) {
+      await persistProviderTerminationFailure({
+        taskPath,
+        resultPath,
+        uid,
+        projectId,
+        taskId,
+        seatId,
+        executionId,
+        accessToken,
+        result,
+        budgetUsage,
+      });
+      return json({ error: "provider_termination_invalid", taskId, executionId }, 502);
+    }
 
     const recordedAt = new Date().toISOString();
     const continuation = terminal.state === "incomplete" && requiresContinuation(terminal);
