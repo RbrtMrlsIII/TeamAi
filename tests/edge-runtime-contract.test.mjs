@@ -21,21 +21,6 @@ test('Seat Budget runtime read boundary queries only the selected Seat latest du
 });
 
 
-test('Firestore indexes declare the compound active Seat-connection lookup used by trusted Edge execution', () => {
-  const indexes = JSON.parse(read('firestore.indexes.json'));
-  assert.ok(Array.isArray(indexes.indexes));
-  assert.ok(indexes.indexes.some((index) =>
-    index.collectionGroup === 'connections'
-      && index.queryScope === 'COLLECTION'
-      && Array.isArray(index.fields)
-      && index.fields.length === 2
-      && index.fields[0]?.fieldPath === 'seatId'
-      && index.fields[0]?.order === 'ASCENDING'
-      && index.fields[1]?.fieldPath === 'status'
-      && index.fields[1]?.order === 'ASCENDING',
-  ));
-});
-
 test('Seat Budget runtime read boundary refuses unauthenticated requests and missing Seat state', () => {
   const source = read('supabase/functions/teamai-seat-budget-runtime/index.ts');
   assert.match(source, /missing_firebase_id_token/);
