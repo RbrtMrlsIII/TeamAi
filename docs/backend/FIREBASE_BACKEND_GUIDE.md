@@ -27,6 +27,6 @@ Keep Firestore rules locked down by default. Expand access only for an explicitl
 TeamAi web does not upload project ZIPs to Firebase. Project artifacts remain external and user-authorized unless a later product contract explicitly changes that boundary. This does not prevent a separate entitled TeamAi Storage facility for user content.
 
 ## Current TEAM-BACKEND-001 status
-The Firebase source configuration baseline is now wired. `firestore.rules` authenticates ownership by Firebase UID for the modeled account/workplace/project/team/seat hierarchy, permits observation of owned task/event state, and denies client writes to durable task/event evidence. `firestore.indexes.json` is intentionally empty until an observed query requires an index.
+The Firebase source configuration baseline is now wired. `firestore.rules` authenticates ownership by Firebase UID for the modeled account/workplace/project/team/seat hierarchy, permits observation of owned task/event state, and denies client writes to durable task/event evidence. `firestore.indexes.json` now declares the required `execution-results` collection-group index (`seatId ASC, recordedAt DESC`) for the Seat Budget runtime read model. Its production deployment remains a separate operator-authorized gate.
 
 Live project identity, Auth/Firestore integration, emulator execution, rules verification, and deployment remain open evidence gates. No live deployment is implied by source configuration.
