@@ -1,6 +1,7 @@
 import {
   loadSeatBudgetSettings,
   saveSeatBudgetSettings,
+  readSeatBudgetRuntimeConfig,
 } from './seat-budget-settings-client.js';
 
 function dispatch(name, detail = {}) {
@@ -29,13 +30,18 @@ function toReadModel(body = {}) {
   };
 }
 
+function runtimeConfigured() {
+  const cfg = readSeatBudgetRuntimeConfig();
+  return Boolean(cfg.baseUrl && cfg.idToken && cfg.workplaceId && cfg.projectId);
+}
+
 function status(message, state = 'LOADING') {
   dispatch('teamai:seat-budget-runtime-status', { message, state });
 }
 
 async function handleLoad(event) {
   const seatId = String(event.detail?.seatId || '').trim();
-  if (!seatId) return;
+  if (!seatId || !runtimeConfigured()) return;
   status('Loading canonical Seat budget…');
   try {
     const body = await loadSeatBudgetSettings({ seatId });
@@ -62,7 +68,7 @@ async function handleLoad(event) {
 async function handleSave(event) {
   const intent = event.detail || {};
   const seatId = String(intent.seatId || '').trim();
-  if (!seatId) return;
+  if (!seatId || !runtimeConfigured()) return;
   status('Saving Seat budget configuration…');
   try {
     const body = await saveSeatBudgetSettings({ seatId, patch: intent.patch || {} });
