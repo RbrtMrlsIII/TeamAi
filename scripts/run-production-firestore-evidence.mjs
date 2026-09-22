@@ -118,6 +118,20 @@ async function write(path, data, token) {
   if (!response.ok) throw new Error('Diagnostic evidence write failed: ' + response.status);
 }
 
+async function listDocumentIds(parent, collectionId, token) {
+  const url = docUrl(parent) + '/' + encodeURIComponent(collectionId) + '?pageSize=20';
+  const response = await fetch(url, { headers: { authorization: 'Bearer ' + token } });
+  if (!response.ok) throw new Error('Firestore ' + collectionId + ' list failed: ' + response.status);
+  const body = await response.json();
+  return (Array.isArray(body.documents) ? body.documents : [])
+    .map(document => {
+      const path = String(document.name || '').split('/documents/')[1] || '';
+      const parts = path.split('/');
+      return parts[parts.length - 1] || '';
+    })
+    .filter(Boolean);
+}
+
 function canonicalSeat(documents, expected) {
   return documents.filter(document => {
     const parts = (document.name?.split('/documents/')[1] || '').split('/');
@@ -217,7 +231,46 @@ const runId = 'run-' + new Date().toISOString().replace(/[:.]/g, '-') + '-' + cr
 
 const seatPath = parent + '/teams/' + teamId + '/seats/' + seatId;
 const seatDocument = await read(seatPath, token);
-if (!seatDocument) throw new Error('canonical Seat document not found');
+if (!seatDocument) {
+  let teamIds = [];
+  let teamListError = null;
+  try {
+    teamIds = await listDocumentIds(parent, 'teams', token);
+  } catch (error) {
+    teamListError = error instanceof Error ? error.message : 'team_list_failed';
+  }
+  const evidence = {
+    runId,
+    createdAt: new Date().toISOString(),
+    evidenceClass: 'production-firestore-seat-shape',
+    source: 'firestore-rest-service-account',
+    teamId,
+    seatId,
+    result: 'canonical_seat_not_found',
+    seatPresent: false,
+    teamDocumentIds: teamIds,
+    teamListError,
+    connections: {
+      activeCount: 0,
+      activeExecuteCapableCount: 0,
+      items: []
+    }
+  };
+  await write(runPath, evidence, token);
+  console.log(JSON.stringify({
+    ok: false,
+    error: 'canonical_seat_not_found',
+    runId,
+    evidenceClass: evidence.evidenceClass,
+    teamId,
+    seatId,
+    seatPresent: false,
+    teamDocumentCount: teamIds.length,
+    teamListError,
+    note: 'Exact team-nested Seat document returned 404. Negative run-scoped evidence was written under runtime-diagnostics. Secret path components are not printed.'
+  }, null, 2));
+  process.exit(2);
+}
 const canonicalPath = seatDocument.name?.split('/documents/')[1] || '';
 const canonicalParts = canonicalPath.split('/');
 if (

@@ -31,6 +31,14 @@ test('fresh evidence writes only to runtime-diagnostics', () => {
   assert.doesNotMatch(script, /await write\(seatPath, evidence, token\)/);
 });
 
+test('missing canonical Seat still writes negative run-scoped evidence', () => {
+  assert.match(script, /result: 'canonical_seat_not_found'/);
+  assert.match(script, /seatPresent: false/);
+  assert.match(script, /process\.exit\(2\)/);
+  assert.match(script, /listDocumentIds\(parent, 'teams'/);
+  assert.doesNotMatch(script, /throw new Error\('canonical Seat document not found'\)/);
+});
+
 
 test('fresh evidence resolves the canonical Seat by exact team-nested document path', () => {
   assert.match(script, /const seatPath = parent \+ '\/teams\/' \+ teamId \+ '\/seats\/' \+ seatId/);
