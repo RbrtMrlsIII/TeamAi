@@ -15,9 +15,9 @@ Supabase provides the trusted server/runtime surface for TeamAi.
 - Public schema tables: none; Supabase Postgres remains free of TeamAi domain tables.
 
 ## Current active Edge Function surface
-The precise current deployment inventory is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`.
+The precise current deployment inventory is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`.
 
-The current active TeamAi Edge Function set is exactly:
+The current active TeamAi Edge Function set contains exactly 10 functions:
 
 - `teamai-commerce-intent`
 - `teamai-domain-bootstrap`
@@ -26,9 +26,13 @@ The current active TeamAi Edge Function set is exactly:
 - `teamai-paypal-webhook-v5c`
 - `teamai-seat-connection-test`
 - `teamai-seat-provider-bind`
+- `teamai-seat-budget-settings`
+- `teamai-task-continuation-request`
 - `teamai-task-execute`
 
-The obsolete `paypal-webhook` function has been removed from the connected Supabase deployment and must not be reintroduced as a current endpoint.
+The obsolete `paypal-webhook` function is absent from the connected Supabase deployment and must not be reintroduced as a current endpoint.
+
+`teamai-seat-budget-runtime` is a repository read-model surface but is not deployed in the current connected project.
 
 ## Security baseline
 Use publishable keys for browser-facing access and secret keys only inside trusted backend code. Never place secret keys in client code, Git, chat, handoffs, or logs.
