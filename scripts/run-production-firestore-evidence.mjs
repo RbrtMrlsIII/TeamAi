@@ -129,11 +129,27 @@ function canonicalSeat(documents, expected) {
   });
 }
 
+function findForbiddenPaths(value, path = '') {
+  if (Array.isArray(value)) {
+    return value.flatMap((child, index) => findForbiddenPaths(child, path + '[' + index + ']'));
+  }
+  if (!value || typeof value !== 'object') return [];
+  return Object.entries(value).flatMap(([key, child]) => {
+    const childPath = path ? path + '.' + key : key;
+    const own = forbidden.has(key) ? [childPath] : [];
+    return own.concat(findForbiddenPaths(child, childPath));
+  });
+}
+
+function assertNoSecretFields(raw) {
+  const leaked = findForbiddenPaths(raw);
+  if (leaked.length) throw new Error('forbidden secret field reached diagnostic surface: ' + leaked.join(','));
+}
+
 function safeConnection(document) {
   const raw = fields(document.fields);
   const names = Object.keys(raw).sort();
-  const leaked = names.filter(name => forbidden.has(name));
-  if (leaked.length) throw new Error('forbidden secret field reached diagnostic surface: ' + leaked.join(','));
+  assertNoSecretFields(raw);
   return {
     fieldNames: names,
     uid: String(raw.uid || ''),
@@ -150,8 +166,7 @@ function safeConnection(document) {
 function safeSeat(document) {
   const raw = fields(document.fields);
   const names = Object.keys(raw).sort();
-  const leaked = names.filter(name => forbidden.has(name));
-  if (leaked.length) throw new Error('forbidden secret field reached diagnostic surface: ' + leaked.join(','));
+  assertNoSecretFields(raw);
   const auth = raw.authorization && typeof raw.authorization === 'object' ? raw.authorization : {};
   const budget = raw.turnBudget && typeof raw.turnBudget === 'object' ? raw.turnBudget : {};
   return {
