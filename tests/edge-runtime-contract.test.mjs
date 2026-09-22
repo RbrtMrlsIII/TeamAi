@@ -10,7 +10,7 @@ test('Seat Budget runtime read boundary queries only the selected Seat latest du
   const source = read('supabase/functions/teamai-seat-budget-runtime/index.ts');
   assert.match(source, /collectionId: "execution-results"/);
   assert.match(source, /fieldPath: "seatId"/);
-  assert.match(source, /fieldPath: "projectId"/);
+  assert.doesNotMatch(source, /fieldPath: "projectId"/);
   assert.match(source, /orderBy: \[\{[\s\S]*fieldPath: "recordedAt"[\s\S]*DESCENDING/);
   assert.match(source, /limit: 1/);
   assert.match(source, /execution_result_query_failed/);
