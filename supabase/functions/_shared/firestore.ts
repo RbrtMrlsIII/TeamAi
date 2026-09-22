@@ -142,7 +142,8 @@ export async function firestoreFindSeat(input: {
             value: { stringValue: input.seatId },
           },
         },
-        limit: 2,
+        // Do not cap canonical-seat discovery before path validation; legacy and multi-team records must not hide a real Seat.
+
       },
     }),
   });
@@ -216,7 +217,8 @@ export async function firestoreFindSeatConnection(input: {
           ],
         },
       },
-      limit: 2,
+      // Do not cap canonical-seat discovery before path validation; legacy and multi-team records must not hide a real Seat.
+
     }}),
   });
   if (!response.ok) throw jsonError('firestore_seat_connection_query_failed:' + response.status);
