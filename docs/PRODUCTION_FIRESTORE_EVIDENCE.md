@@ -40,18 +40,13 @@ The verified Gate 3 diagnostic selectors are:
 
 These are historical test hierarchy identifiers and are safe to use as selectors for the fresh diagnostic.
 
-The fresh production evidence workflow is implemented on the PR #402 branch, but its manual dispatch is currently blocked because GitHub requires the workflow_dispatch workflow file to exist on the repository default branch before it can be manually triggered.
+The dedicated `firestore-production-evidence.yml` workflow remains on the PR #402 branch and still cannot be dispatched until that file exists on the repository default branch.
 
-Observed result:
-- workflow: firestore-production-evidence.yml
-- ref: backend/030-production-runtime-evidence
-- API result: HTTP 404, workflow not found for dispatch
+The existing default-branch vehicle `firestore-seat-shape-diagnostic.yml` is now the safe dispatch path for the same exact-path probe. GitHub already knows that workflow on `main`, so a manual run against `backend/030-production-runtime-evidence` executes the PR-branch workflow file. That file no longer uses the collection-group Seat query. It runs `scripts/run-production-firestore-evidence.mjs` with Team ID `gate3-test-team` and the dispatched Seat ID.
 
-The existing default-branch Firestore production Seat diagnostic is not an equivalent substitute. It uses the older collection-group discovery path and its real run already failed at the Firestore HTTP 400 query boundary.
+Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. It is not counted as fresh 2026-09-22 Seat-shape evidence.
 
-No production-secret PR trigger was introduced to bypass this limitation.
-
-Therefore the fresh Firestore evidence gate remains blocked until a safe default-branch execution vehicle becomes available or the project makes an explicit merge decision. Historical Gate 3 evidence is not counted as fresh 2026-09-22 evidence.
+No production-secret pull-request trigger was introduced.
 
 ## Index deployment execution boundary
 
@@ -63,4 +58,4 @@ The run did not deploy the index configuration. Firebase CLI failed during its F
 
 Therefore the production index state remains unverified.
 
-The next action is an IAM diagnosis of the exact deployment identity and its effective permissions. Do not broaden IAM to Owner or Editor merely to force the CLI through the preflight. The minimum required Service Usage and Firestore index permissions must be established first.
+The next action after the fresh Seat evidence run is an IAM diagnosis of the exact deployment identity and its effective permissions. Do not broaden IAM to Owner or Editor merely to force the CLI through the preflight. The minimum required Service Usage and Firestore index permissions must be established first.

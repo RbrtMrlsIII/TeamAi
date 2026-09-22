@@ -38,6 +38,14 @@ The successor diagnostic is intentionally narrower for this proof:
 
 This removes the unnecessary collection-group dependency from the Seat-shape proof. Collection-group queries remain a separate application/index concern where actually required.
 
+## Default-branch dispatch vehicle
+
+GitHub will not dispatch a `workflow_dispatch` workflow until that file exists on the default branch. The new `firestore-production-evidence.yml` file is still PR-branch-only, so it remains undispatchable.
+
+The existing default-branch workflow `firestore-seat-shape-diagnostic.yml` is therefore reused as the execution vehicle. On this PR branch it keeps the same filename, trigger, secrets, and `seat_id` input so GitHub can run it against `backend/030-production-runtime-evidence`. The job now invokes `scripts/run-production-firestore-evidence.mjs` with Team ID `gate3-test-team`.
+
+The old collection-group script remains in the repository as parked historical source. It is no longer the live dispatch path.
+
 ## Evidence boundary
 
 A successful successor run will establish the observed production field inventory for this exact Seat and run. It will not, by itself, establish Firestore Rules closure, index deployment, provider execution, continuation, or release acceptance.

@@ -13,7 +13,7 @@ IMPLEMENTATION ACTIVE / IN PROGRESS. PR #398 is merged as the reviewed 029 struc
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
 | Spatial renderer | Canonical source renderer, controller split, semantic topology, adaptive geometry, R0/R1/R2, Seat-1 wiring, camera choreography | exact-head source/test + Browser proof on current head | final deployed visual acceptance remains open |
-| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository contracts and tests | real production Seat inspection remains open |
+| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository contracts and tests | real production Seat inspection remains open; default-branch diagnostic vehicle now runs the exact-path probe |
 | Seat connection/provider | Seat-owned binding, credential loading, active connection resolution | repository + deployed function source reconciliation | production execution-capable relationship remains unproven |
 | Task execution | Real-provider Edge source with canonical Seat-owned connection authority, truthful termination, durable handoff checkpoint, continuation execution | Full-System/Security/contract proof | live `teamai-task-execute` remains v12; promotion gated |
 | Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E + deployed request boundary | live provider continuation remains open |
@@ -83,6 +83,8 @@ Green CI does not prove Firebase runtime state, provider execution, production d
 - Firestore collection-group index configuration is checked into `firestore.indexes.json`, with a manual indexes-only deployment workflow. Live promotion of `teamai-seat-budget-runtime` remains blocked until that index exists in production.
 
 - R1/R2 browser regression was diagnosed from the exact-head Browser artifact and repaired at `b2957c4430ac66d970ab0db695bc04b3f90eed4c`; the canonical Browser gate passes. A dedicated canonical R1/R2 articulation browser contract now runs on every exact head. This closes the observed render-loop exception and adds runtime proof, but does not complete final spatial visual acceptance.
+
+- Default-branch `firestore-seat-shape-diagnostic.yml` now invokes the exact-path evidence probe so the first 030 Seat evidence run can be dispatched without merging #402 first. Live Seat inspection remains unproven until that dispatch succeeds.
 ## Evidence-state contract for pre-merge review
 
 Use these states consistently in the checklist and review discussion:
@@ -122,15 +124,16 @@ The first successor implementation slice is deliberately additive:
 - fresh run-scoped Firestore metadata evidence under `runtime-diagnostics/{runId}`;
 - exact canonical Seat/connection inspection without mutation of canonical Seat/Connection documents;
 - production evidence remains manually dispatched and protected by Actions secrets;
+- the default-branch `firestore-seat-shape-diagnostic.yml` filename is the current dispatch vehicle for that probe;
 - Rules hardening is downstream of observed field inventory;
 - live index deployment and real-provider execution remain separately gated.
 
 ## Current blocker
 
-- **Production Firestore Seat shape remains unverified.** The diagnostic must prove active/authorized/entitled Seat state, provider configuration/binding, valid budget shape, and exactly one compatible active execute-capable connection with matching UID/workplace/project/Seat identity.
+- **Production Firestore Seat shape remains unverified.** The default-branch diagnostic vehicle can now dispatch the exact-path probe against this PR branch. The diagnostic must still prove active/authorized/entitled Seat state, provider configuration/binding, valid budget shape, and exactly one compatible active execute-capable connection with matching UID/workplace/project/Seat identity.
 - **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
 - **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
-- **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted.
+- **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted. The 2026-09-22 CLI attempt failed on Service Usage GET 403, not on index write.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
 - **Merge authority remains separate.** #398 is already merged as the reviewed structural baseline; #402 remains Draft until its own exact-head evidence, review, and human acceptance satisfy the governed promotion path.
