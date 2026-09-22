@@ -108,7 +108,7 @@ The distinction remains valid even after bounded gates are endorsed.
 
 The next backend actions remain bounded rather than a generic rewrite:
 
-1. retain the eight-function active surface as the current deployment baseline;
+1. retain the current 10-function active surface as the live deployment baseline until each runtime is independently reconciled;
 2. keep Gate 4 parked unless an actual emulator PASS record is recovered;
 3. keep real external provider runtime separate from the proven `stub-edge-runtime` path;
 4. keep OAuth lifecycle/security and deploy-source reconciliation separately governed;
@@ -126,6 +126,10 @@ For the broader 029 release hold, use the Masterplan and current evidence reconc
 The trusted `teamai-task-continuation-request` boundary is deployed in Supabase as version 2 from the audited 029 branch source. It reuses the existing Firebase service-account secret and performs Firebase ID-token verification, canonical Seat/checkpoint validation, and durable continuation-request state transition only; it does not execute a provider.
 
 The live `teamai-task-execute` function remains version 12 and the production Seat/connection shape is not yet directly verified. The newer real-provider executor remains undeployed until that gate is satisfied.
+
+Repository-side hardening on the active 029 branch now makes normal task execution resolve the active connection from the canonical Firestore Seat scope, matching the continuation execution boundary. Provider results that omit normalized termination are durably terminalized as `PROVIDER_TERMINATION_INVALID` rather than leaving a leased task/request running.
+
+The checked-in Firestore index set retains the required `execution-results` collection-group index (`seatId ASC, recordedAt DESC`). An equality-only `connections(seatId,status)` composite was deliberately not retained because Firestore supports compound equality queries through index merging. The indexes-only workflow now deploys and then reads back deployed indexes, verifying required repository indexes without deleting unrelated live indexes.
 
 
 ## Seat Budget runtime read model — 2026-09-22
