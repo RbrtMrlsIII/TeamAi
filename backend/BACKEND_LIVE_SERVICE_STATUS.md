@@ -35,6 +35,7 @@ The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) reports exact
 - `teamai-seat-connection-test` v7
 - `teamai-seat-provider-bind` v7
 - `teamai-task-execute` v12
+- `teamai-task-continuation-request` v2
 
 The obsolete `paypal-webhook` deployment is absent from the connected Supabase inventory after operator deletion.
 
@@ -123,3 +124,10 @@ For the broader 029 release hold, use the Masterplan and current evidence reconc
 ## Lease field-preservation fix — 2026-09-12 (#284/#287)
 
 `teamai-task-execute`'s lease-commit path previously kept only string-typed fields from the in-memory task snapshot when writing the lease update, silently dropping any non-string Firestore field types on every lease. This is now fixed: the lease commit preserves the complete raw Firestore `fields` map and overlays only the lease-owned keys. Covered by `tests/backend-task-lease-preservation.test.mjs`. This is a repository-level bug fix and does not by itself change the broader backend release gates.
+
+
+## Live deployment note — 2026-09-22
+
+The trusted `teamai-task-continuation-request` boundary is deployed in Supabase as version 2 from the audited 029 branch source. It reuses the existing Firebase service-account secret and performs Firebase ID-token verification, canonical Seat/checkpoint validation, and durable continuation-request state transition only; it does not execute a provider.
+
+The live `teamai-task-execute` function remains version 12 and the production Seat/connection shape is not yet directly verified. The newer real-provider executor remains undeployed until that gate is satisfied.
