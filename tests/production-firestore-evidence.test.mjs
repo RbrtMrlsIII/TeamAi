@@ -26,7 +26,8 @@ test('fresh evidence workflow is manual and protected', () => {
 
 test('fresh evidence writes only to runtime-diagnostics', () => {
   assert.match(script, /const runPath = parent \+ '\/runtime-diagnostics\/' \+ runId/);
-  assert.doesNotMatch(script, /method:\s*['"]PATCH['"][^]*seatPath/);
+  assert.match(script, /await write\\(runPath, evidence, token\\)/);
+  assert.doesNotMatch(script, /await write\\(seatPath, evidence, token\\)/);
 });
 
 
