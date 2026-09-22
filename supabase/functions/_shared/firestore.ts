@@ -212,7 +212,7 @@ export async function firestoreFindSeatConnection(input: {
           op: 'AND',
           filters: [
             { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: input.seatId } } },
-            { fieldFilter: { field { fieldPath: 'status' }, op: 'EQUAL', value: { stringValue: 'active' } } },
+            { fieldFilter: { field: { fieldPath: 'status' }, op: 'EQUAL', value: { stringValue: 'active' } } },
           ],
         },
       },
