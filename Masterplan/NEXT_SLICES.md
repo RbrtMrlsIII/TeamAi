@@ -6,65 +6,77 @@
 
 TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 
-## Audit anchor
-
-- Last audited implementation head: `a887afb68b5449b13e6dbe54f51bffa7f3b4bcb5`.
-- The live branch head is authoritative and must be re-read before relying on any recorded SHA. Documentation commits after the audit anchor do not change the implementation under audit.
-
 ## Status
 
-IMPLEMENTATION ACTIVE / IN PROGRESS — PR #398 is the active Draft implementation vehicle on the governance-compliant `frontend/029-machine-world-convergence` branch. PR #397 is closed historical lineage.
+IMPLEMENTATION ACTIVE / IN PROGRESS. Draft PR #398 remains the sole implementation vehicle on `frontend/029-machine-world-convergence`. The live branch head is the source of truth for current verification.
+
+| Authority area | Implementation state | Proof state |
+|---|---|---|
+| Spatial renderer | Canonical source renderer, controller split, semantic topology, adaptive geometry, R0/R1/R2, Seat-1 wiring, camera choreography | exact-head source/test proof; final deployed visual acceptance remains open |
+| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository proof; real production Seat inspection remains open |
+| Seat connection/provider | Seat-owned binding, credential loading, active connection resolution | live connection/bind functions deployed; production execution-capable relationship remains unproven |
+| Task execution | Real-provider Edge source with truthful termination, durable handoff checkpoint, continuation execution | live `teamai-task-execute` remains v12; new runtime deployment is gated |
+| Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E and deployed request boundary proven; live provider continuation remains open |
+| Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative browser proof; authoritative backend wiring remains intentionally bounded |
+| Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | #398 production deployment and browser observation remain open |
 
 ## Objective
 
-Continue converging the TeamAi Spatial World from the current PR #398 implementation lineage without creating a second renderer or restoring the retired Hero mutation architecture. Frontend/product behavior must implement against Issue #400 while treating that contract as current truth, not final UI closure. The current renderer boundary is: semantic hierarchy/controller/input state → canonical machine-world renderer source/runtime.
+Converge the 029 Spatial World implementation and the #392/#400 runtime/product surfaces without creating competing authority.
+
+The current chain is:
+
+```
+Product Law
+  → current Issue/PR execution boundary
+  → canonical spatial source
+  → canonical Firestore Seat/domain state
+  → trusted Edge runtime
+  → durable result/checkpoint
+  → explicit continuation
+  → frontend read-model + user intent
+  → exact-head verification
+  → controlled deployment
+  → production observation
+```
+
+The audited ownership fixes now include a neutral machine-subject geometry owner instead of a production-to-preview dependency, and identical uncapped candidate discovery semantics between Node and Edge canonical Seat resolution.
 
 ## Dependencies
 
-- Product_Law/PRODUCT_LAW.md
-- Product_Law/WIRING.md
-- Masterplan/MASTERPLAN.md
-- POLICY.md
-- docs/SKILL_WIRING.md
-- AI_ASSISTANT_READ_ME.md
-- Issue #396
-- Draft PR #398
+- `Product_Law/PRODUCT_LAW.md`
+- `Product_Law/WIRING.md`
+- `Masterplan/MASTERPLAN.md`
+- `POLICY.md`
+- `docs/SKILL_WIRING.md`
+- Issue #396 — 029 Spatial World execution guide
 - Issue #400 — Canonical Frontend Feature & Spatial UX Contract
-- Baseline main: d8b1e767898be9fe640f002d72cf7771842865b6
-- Migration source head from #397: 23a83ae166f0983b598910d616b1203ebf600096
+- #392 — Seat budget, usage, handoff, continuation, and cooperation runtime
+- Draft PR #398 — `frontend/029-machine-world-convergence`
+- `.github/teamai/authority-manifest.yml`
+- `backend/BACKEND_LIVE_SERVICE_STATUS.md`
+- `docs/RECONCILIATION_FIRESTORE_WRITE_AUTHORITY_REVIEW.md`
 
 ## Verification
 
-- renderer/controller ownership is source-inspected
-- frontend/public machine renderer parity is maintained
-- legacy Hero mutation engine is retired
-- exact-head browser/runtime verification remains required
-- deterministic geometry and independent numerical validation remain required for spatial claims
-- governance, Full-System, Security, and Browser checks remain exact-head signals
-- PR #398 remains Draft until the substantive validation set supports the next promotion decision
+All substantive claims are admissible only for the exact PR `base...head` under review.
 
-## Current slice boundary
+- **Governance Integrity:** active authority graph, forbidden/historical routing, current-slice grammar, proof-target consistency.
+- **Full-System:** typecheck, trusted Edge compilation, machine source/public parity, project tests, package verification.
+- **Security Static Analysis:** source and secret-boundary analysis.
+- **Canonical Browser:** observable entrance, machine world, facility, responsive, and reduced-motion behavior.
+- **Independent geometry:** 1–10 Seat density, maximum-density ring separation, semantic subject bounds, topology continuity, connection corridors, and route sampling.
+- **Production Firestore diagnostic:** read-only metadata-only inspection of the real authorized Coder Seat.
+- **Runtime proof:** controlled new task-executor deployment only after Seat-shape/connection validation, then provider incomplete termination → durable checkpoint → explicit continuation request → target Seat-owned connection → fresh budgeted turn → truthful completion.
+- **Deployment proof:** governed Firebase Hosting deployment followed by production browser observation. GitHub Pages remains validation-only.
 
-This slice owns the 029 spatial machine convergence already authorized by Issue #396: renderer migration, legacy debris cleanup, adaptive mechanical geometry, world-scale camera travel, semantic topology, and the subsequent R1/R2/E-H progression. It does not create a 029 release claim, backend authority, entitlement, authentication authority, or merge authorization.
-
-## Current frontier
-MCP, Workspace HQ, Team / Agents, Marketplace / Commerce, and Storage item-inventory representative frontend/browser contracts are exact-head proven. The #392 runtime slice now has repository-proven durable continuation semantics through fresh-turn execution, target Seat-owned connection resolution, and explicit continuation lifecycle evidence.
+Green CI does not prove Firebase runtime state, provider execution, production deployment, or human acceptance.
 
 ## Current blocker
-The repository is now exact-head verified through Governance, Full-System, Security Static Analysis, and Canonical Browser on `6e5551d29df373124e23f067440d64f4e0f9039c`. The branch remains Draft because production Firestore Seat shape, controlled live Edge deployment, real-provider runtime evidence, end-to-end live continuation, human acceptance, and merge readiness are not yet proven.
 
-### #392 budget/runtime convergence boundary
-- Canonical backend accounting remains at `src/backend/seat-turn-budget.ts`.
-- TaskExecutionService and the repository Edge executor enforce the Seat-owned budget model, normalized provider termination, and truthful handoff state.
-- Canonical Firestore Seat resolution is team-nested and fail-closed on missing/ambiguous Seats.
-- Repository proof now covers durable checkpoints, explicit continuation request identity/idempotency, atomic `handoff_required → waiting_for_continuation`, `CONTINUE_START`, fresh budgeted execution, and linked subsequent checkpoints.
-- Full-System now includes executable Deno compilation of the trusted Edge entrypoints, not merely source-pattern checks.
-- Current evidence is intentionally bounded: live production Firestore Seat shape is not directly verified; live `teamai-task-execute` remains v12; the new continuation Edge source is not deployed.
-- Next authorized runtime action is the read-only production Seat diagnostic, followed only after successful shape verification by controlled live deployment and one real Coder-provider task.
-
-### Exact-head Storage boundary record
-- Storage item inventory is presentation/read-model only on this slice.
-- No live Supabase Storage buckets are currently provisioned in the connected project, so no live content inventory is claimed.
-- Firestore task/event/evidence data remains distinct from Storage user-content inventory.
-- Upload, binary transfer, and content-write flows remain deferred.
-
+1. **Production Firestore Seat shape remains unverified.** The diagnostic must prove active/authorized/entitled Seat state, provider configuration/binding, valid budget shape, and exactly one compatible active execute-capable connection with matching UID/workplace/project/Seat identity.
+2. **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
+3. **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
+4. **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
+5. **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
+6. **Merge authority remains separate.** #398 stays Draft until exact-head evidence, reconciliation, review, and human acceptance satisfy the governed promotion path.
