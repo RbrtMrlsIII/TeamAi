@@ -1018,7 +1018,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
     canvas.dataset.machineWorldElectricalEdge = electricalMachineFlow?.semanticEdgeId || '';
     canvas.dataset.machineWorldElectricalProgress = String(electricalMachineFlow?.progress ?? '');
-    canvas.dataset.machineWorldWorkspaceElectricalEdge = electricalWorkspaceFlow?.target?.id || '';
+    canvas.dataset.machineWorldWorkspaceElectricalEdge = electricalWorkspaceFlow?.semanticEdgeId || '';
     canvas.dataset.machineWorldWorkspaceReceptionPhase = electricalWorkspaceFlow?.phase || R0_RECEIVING_PHASE.DORMANT;
     canvas.dataset.machineWorldElectricalProof = electricalWorkspaceFlow
       ? 'semantic-edge-route+workspace-center'
