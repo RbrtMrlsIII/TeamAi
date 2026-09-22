@@ -122,10 +122,12 @@ const seatReport = shapeReport(canonical[0], { uid, workplaceId, projectId, seat
 const connectionRows = await runQuery(parent, {
   from: [{ collectionId: 'connections' }],
   where: {
-    fieldFilter: {
-      field: { fieldPath: 'seatId' },
-      op: 'EQUAL',
-      value: { stringValue: seatId },
+    compositeFilter: {
+      op: 'AND',
+      filters: [
+        { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: seatId } } },
+        { fieldFilter: { field: { fieldPath: 'status' }, op: 'EQUAL', value: { stringValue: 'active' } } },
+      ],
     },
   },
   limit: 2,
