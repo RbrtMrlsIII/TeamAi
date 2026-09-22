@@ -72,6 +72,13 @@ All substantive claims are admissible only for the exact PR `base...head` under 
 
 Green CI does not prove Firebase runtime state, provider execution, production deployment, or human acceptance.
 
+## Completed capability slices — 2026-09-22
+
+- R0 workspace receiving choreography now has a semantic presentation model and canonical WebGL rendering pass from the Seat connection route into `WORKSPACE_CENTER`.
+- Seat Budget Settings is a real end-to-end configuration capability through a trusted Edge boundary and canonical Seat transaction. Its live function is deployed as `teamai-seat-budget-settings` v1.
+- Seat Budget durable runtime read model is implemented and exact-head verified. It reads the latest Seat-owned `execution-results` evidence and distinguishes authoritative budget accounting from legacy raw usage.
+- Firestore collection-group index configuration is checked into `firestore.indexes.json`, with a manual indexes-only deployment workflow. Live promotion of `teamai-seat-budget-runtime` remains blocked until that index exists in production.
+
 ## Current blocker
 
 - **Production Firestore Seat shape remains unverified.** The diagnostic must prove active/authorized/entitled Seat state, provider configuration/binding, valid budget shape, and exactly one compatible active execute-capable connection with matching UID/workplace/project/Seat identity.
