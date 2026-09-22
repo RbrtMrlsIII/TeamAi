@@ -45,7 +45,7 @@ Execution state is separate from advisory content: each slot records one termina
 
 ## 2026-09-22 029 cross-stack convergence checkpoint
 
-Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-convergence`. The active PR is now a cross-stack convergence vehicle, not a frontend-only implementation record. Spatial ownership, canonical Firestore Seat resolution, Seat-owned budget/continuation contracts, trusted Edge boundaries, #400 representative frontend contracts, delivery controls, and exact-head evidence are tracked together while each authority remains in its owning subsystem.
+Issue #396 / PR #398 is the reviewed 029 structural baseline now merged into `main`. The active PR is now a cross-stack convergence vehicle, not a frontend-only implementation record. Spatial ownership, canonical Firestore Seat resolution, Seat-owned budget/continuation contracts, trusted Edge boundaries, #400 representative frontend contracts, delivery controls, and exact-head evidence are tracked together while each authority remains in its owning subsystem.
 
 - [x] Production WebGL ownership is separated from `public/hero-flex.js`; the canonical renderer source is `frontend/spatial/machine-world-renderer.js`.
 - [x] The renderer's semantic-subject calculation has a neutral geometry owner; `machine-hero-scene.js` remains a compatibility surface rather than production renderer authority.
