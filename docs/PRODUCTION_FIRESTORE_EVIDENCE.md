@@ -52,3 +52,15 @@ The existing default-branch Firestore production Seat diagnostic is not an equiv
 No production-secret PR trigger was introduced to bypass this limitation.
 
 Therefore the fresh Firestore evidence gate remains blocked until a safe default-branch execution vehicle becomes available or the project makes an explicit merge decision. Historical Gate 3 evidence is not counted as fresh 2026-09-22 evidence.
+
+## Index deployment execution boundary
+
+The existing default-branch firestore-index-deploy.yml is the authorized production deployment vehicle for the repository checked-in Firestore indexes.
+
+On 2026-09-22 it was dispatched as run 35734239293 against main commit 87f466fb0edac3784280128785a8fd2dc757e749.
+
+The run did not deploy the index configuration. Firebase CLI failed during its Firestore API Service Usage preflight with HTTP 403 because the deployment identity lacked permission to get the firestore.googleapis.com service. The subsequent index readback step was skipped.
+
+Therefore the production index state remains unverified.
+
+The next action is an IAM diagnosis of the exact deployment identity and its effective permissions. Do not broaden IAM to Owner or Editor merely to force the CLI through the preflight. The minimum required Service Usage and Firestore index permissions must be established first.
