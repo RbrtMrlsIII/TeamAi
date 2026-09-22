@@ -8,7 +8,7 @@
 
 - main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
 - current main: `87f466fb0edac3784280128785a8fd2dc757e749`
-- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft PR #402)
+- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
 - replacement branch: backend/030-production-runtime-evidence
 - open implementation vehicles: PR #402 / Issue #401 (active Draft)
 - active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
@@ -20,7 +20,8 @@
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
 - live PR head: the GitHub PR head is the source of truth for current verification; never infer current verification truth from an older recorded SHA.
-- snapshot rule: recorded main baseline must match the post-#398 `main` merge SHA before mutation; live GitHub branch/head state remains authoritative for current commit truth
+- snapshot rule: recorded main baseline must match the post-#398 `main` merge SHA before mutation; live GitHub branch/head state remains authoritative for current commit truth.
+- source-of-truth rule: the live PR head is the source of truth for the current verification commit; historical PR #346 head references do not define current state.
 
 
 ### 2026-09-21 exact-head MCP proof
