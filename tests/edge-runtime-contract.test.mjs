@@ -188,13 +188,15 @@ test('Edge continuation execution requires the target Seat-owned connection', ()
 test('Edge executor durably terminalizes provider results that omit normalized termination metadata', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
   const helperStart = source.indexOf('async function persistProviderTerminationFailure');
-  const normalStart = source.indexOf('const terminal = result.termination;', source.indexOf('async function executeContinuationTurn'));
-  const normalSecondStart = source.lastIndexOf('const terminal = result.termination;');
+  const continuationStart = source.indexOf('async function executeContinuationTurn');
+  const serveStart = source.indexOf('Deno.serve', continuationStart);
+  const normalTerminationStart = source.lastIndexOf('const terminal = result.termination;');
   assert.ok(helperStart >= 0);
-  assert.ok(normalStart >= 0);
-  assert.ok(normalSecondStart > normalStart);
+  assert.ok(continuationStart >= 0);
+  assert.ok(serveStart > continuationStart);
+  assert.ok(normalTerminationStart > serveStart);
 
-  const helper = source.slice(helperStart, normalStart);
+  const helper = source.slice(helperStart, continuationStart);
   assert.match(helper, /completionState: "PROVIDER_TERMINATION_INVALID"/);
   assert.match(helper, /reason: "provider_termination_missing"/);
   assert.match(helper, /termination: null/);
@@ -204,12 +206,15 @@ test('Edge executor durably terminalizes provider results that omit normalized t
   assert.match(helper, /status: "failed"/);
   assert.match(helper, /await patchTask\(input\.taskPath/);
 
-  const normalSection = source.slice(normalSecondStart, source.indexOf('const recordedAt = new Date().toISOString();', normalSecondStart));
+  const normalSection = source.slice(
+    source.lastIndexOf('const budgetUsage = computeEdgeBudget', normalTerminationStart),
+    source.indexOf('const recordedAt = new Date().toISOString();', normalTerminationStart),
+  );
   assert.match(normalSection, /if \(!terminal\)/);
   assert.match(normalSection, /persistProviderTerminationFailure/);
   assert.match(normalSection, /provider_termination_invalid/);
 
-  const continuationSection = source.slice(normalStart, normalSecondStart);
+  const continuationSection = source.slice(continuationStart, serveStart);
   assert.match(continuationSection, /if \(!result\.termination\)/);
   assert.match(continuationSection, /persistProviderTerminationFailure/);
   assert.match(continuationSection, /requestPath/);
