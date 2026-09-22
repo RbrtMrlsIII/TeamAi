@@ -42,10 +42,10 @@ LOCAL DRAFT  (apiKey in memory only)
 ## Paths
 
 ```text
-accounts/{uid}/workplaces/{workplaceId}/projects/{projectId}/seats/{seatId}
+accounts/{uid}/workplaces/{workplaceId}/projects/{projectId}/teams/{teamId}/seats/{seatId}
   providerKind, providerKeyBound, providerKeyLastFour, providerKeyBoundAt
 
-…/seats/{seatId}/secrets/providerApiKey
+…/teams/{teamId}/seats/{seatId}/secrets/providerApiKey
   ciphertext, iv, alg, providerKind, boundAt
 ```
 
