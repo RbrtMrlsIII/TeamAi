@@ -61,7 +61,7 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 - [x] Duplicate local `src/server.ts` in-memory Fastify runtime removed; `src/main.ts` remains the sole configured local Node entrypoint and is protected by a focused regression test.
 - [x] Seat Budget durable runtime read model is repository-complete and exact-head verified, consuming the latest Seat-owned durable execution result without returning provider output.
 - [x] Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is checked into the repository with an indexes-only manual deployment workflow.
-- [ ] Real production Firestore Seat shape and exactly one compatible active execute-capable connection remain directly unverified.
+- [ ] Real production Firestore Seat shape and exactly one compatible active execute-capable connection remain directly unverified; future evidence runs must be fresh/run-scoped rather than manual edits to historical documents.
 - [ ] New real-provider `teamai-task-execute` deployment remains gated by the production Seat diagnostic.
 - [ ] Real provider incomplete termination → checkpoint → explicit continuation → fresh target-Seat turn → truthful completion remains unproven in production.
 - [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
@@ -72,11 +72,11 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 
 - [x] Existing C0–C7 implementation/evidence is retained as historical baseline.
 - [x] Canonical machine-world renderer ownership and source/public parity are established.
-- [x] Semantic topology, adaptive geometry, Seat-1 connection ownership, workspace center, and branch camera contracts are established.
-- [ ] Final R0 receiving choreography and contribution/absorb/reflect behavior are complete.
+- [x] Semantic topology, adaptive geometry, Seat-1 connection ownership, workspace center, branch camera contracts, and R0/R1/R2 presentation contracts are established.
+- [ ] Final R0 contribution/absorb/reflect behavior and final visual acceptance are complete.
 - [ ] Final R1/R2 mechanical articulation and visual-quality acceptance are complete.
 - [ ] Responsive, reduced-motion, accessibility, and seven-child interaction evidence is complete.
-- [ ] Production Firestore Seat/runtime proof is complete.
+- [ ] Real production Firestore Seat/runtime proof is complete.
 - [ ] Real provider execution and continuation proof is complete.
 - [ ] C8 authenticated/server-authorized workspace integration is complete.
 - [ ] C9 desktop and phone human acceptance is complete.
