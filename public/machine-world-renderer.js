@@ -11,7 +11,7 @@
  */
 import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
 import { createMachineAnimation } from './machine-core-animation.js';
-import { deriveMachineSubject } from './machine-hero-scene.js';
+import { deriveMachineSubject } from './machine-subject.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
