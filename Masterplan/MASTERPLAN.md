@@ -43,9 +43,37 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof now targets the revised five-slot free-router path.
 - [x] Automatic OpenRouter Free Router sequence has been runtime-executed on fresh eligible non-draft PR lifecycle events. Historical 0/5 proof at `b5cabce7fb9e503637a9ff42a06befef11a5bd22` remains immutable; final repaired proof at `be9d234ee41a2771ccb737e7435dff5d3481897b` recorded 4/5 publishable advisory reviews and 1/5 terminal `PROVIDER_RESPONSE_TRUNCATED`.
 
-## 2026-09-21 029 spatial convergence checkpoint
+## 2026-09-22 029 cross-stack convergence checkpoint
 
-Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-convergence`. The production spatial runtime has crossed the renderer boundary: `public/hero-flex.js` is controller/state/input only, while `frontend/spatial/machine-world-renderer.js` owns the WebGL machine world and is synchronized to `public/machine-world-renderer.js`. The old Hero mutation engine is retired. This checkpoint records the implementation lineage only; it does not create a 029 completion or release claim.
+Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-convergence`. The active PR is now a cross-stack convergence vehicle, not a frontend-only implementation record. Spatial ownership, canonical Firestore Seat resolution, Seat-owned budget/continuation contracts, trusted Edge boundaries, #400 representative frontend contracts, delivery controls, and exact-head evidence are tracked together while each authority remains in its owning subsystem.
+
+- [x] Production WebGL ownership is separated from `public/hero-flex.js`; the canonical renderer source is `frontend/spatial/machine-world-renderer.js`.
+- [x] The renderer's semantic-subject calculation has a neutral geometry owner; `machine-hero-scene.js` remains a compatibility surface rather than production renderer authority.
+- [x] Node and Edge canonical Seat discovery use uncapped candidate discovery followed by canonical-path and identity validation.
+- [x] Active Seat connection lookup requires `seatId == target` and `status == active` before the ambiguity guard.
+- [x] Repository continuation semantics include durable checkpointing, explicit continuation request, waiting-state transition, target-Seat-owned connection resolution, fresh-turn budgeting, and truthful completion.
+- [x] The trusted continuation-request Edge boundary is deployed as v2; live task execution remains gated.
+- [x] #400 representative frontend contracts remain presentation/read-model/intent boundaries and do not create backend authority.
+- [x] Maximum-density ring separation is now represented as an explicit regression contract rather than an assumed visual property.
+- [ ] Real production Firestore Seat shape and exactly one compatible active execute-capable connection remain directly unverified.
+- [ ] New real-provider `teamai-task-execute` deployment remains gated by the production Seat diagnostic.
+- [ ] Real provider incomplete termination → checkpoint → explicit continuation → fresh target-Seat turn → truthful completion remains unproven in production.
+- [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
+- [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
+
+## TEAM-EXPERIENCE-029 baseline
+
+- [x] Existing C0–C7 implementation/evidence is retained as historical baseline.
+- [x] Canonical machine-world renderer ownership and source/public parity are established.
+- [x] Semantic topology, adaptive geometry, Seat-1 connection ownership, workspace center, and branch camera contracts are established.
+- [ ] Final R0 receiving choreography and contribution/absorb/reflect behavior are complete.
+- [ ] Final R1/R2 mechanical articulation and visual-quality acceptance are complete.
+- [ ] Responsive, reduced-motion, accessibility, and seven-child interaction evidence is complete.
+- [ ] Production Firestore Seat/runtime proof is complete.
+- [ ] Real provider execution and continuation proof is complete.
+- [ ] C8 authenticated/server-authorized workspace integration is complete.
+- [ ] C9 desktop and phone human acceptance is complete.
+- [ ] C10 ProMax refinement is complete.
 
 ## Workspace and delivery
 
