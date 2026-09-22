@@ -52,6 +52,8 @@ const files = [
   'storage-inventory-facility.js',
   'storage-inventory.css',
   'seat-budget-settings.js',
+  'seat-budget-settings-client.js',
+  'seat-budget-settings-runtime.js',
   'seat-budget-settings-facility.js',
   'seat-budget-settings.css',
   'marketplace-commerce.js',
