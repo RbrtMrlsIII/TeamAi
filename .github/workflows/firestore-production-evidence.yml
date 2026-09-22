@@ -1,0 +1,35 @@
+name: Fresh production Firestore evidence run
+
+on:
+  workflow_dispatch:
+    inputs:
+      seat_id:
+        description: 'Canonical Seat ID to inspect'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run fresh metadata evidence probe
+        env:
+          TEAMAI_FIREBASE_PROJECT_ID: team-ai-official
+          TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON }}
+          TEAMAI_DIAGNOSTIC_UID: ${{ secrets.TEAMAI_FIREBASE_TEST_UID }}
+          TEAMAI_WORKPLACE_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_WORKPLACE_ID }}
+          TEAMAI_PROJECT_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_PROJECT_ID }}
+          TEAMAI_SEAT_ID: ${{ inputs.seat_id }}
+        run: node scripts/run-production-firestore-evidence.mjs
