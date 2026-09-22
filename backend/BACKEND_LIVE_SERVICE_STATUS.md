@@ -4,7 +4,7 @@
 **Phase:** TEAM-BACKEND-001 / backend continuation  
 **Status:** **ENDORSED for bounded recorded scope; residual boundaries remain explicit**
 
-> **Current live-state reconciliation — 2026-09-12:** The connected Supabase project now reports exactly eight ACTIVE TeamAi Edge Functions after the operator removed the obsolete `paypal-webhook` deployment. The precise active deployment inventory is maintained in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. Historical deployment snapshots remain evidence and are not current inventory.
+> **Current live-state reconciliation — 2026-09-22:** The active inventory has moved beyond the dated 2026-09-12 census: the trusted `teamai-task-continuation-request` boundary is now deployed as v2. The dated census remains historical evidence; this active status record is the current claim-level inventory and must be re-read before relying on versions.
 
 ## Current boundary state
 
@@ -32,9 +32,10 @@ The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) reports exact
 - `teamai-github-oauth-bind` v8
 - `teamai-github-webhook` v7
 - `teamai-paypal-webhook-v5c` v21
-- `teamai-seat-connection-test` v7
-- `teamai-seat-provider-bind` v7
+- `teamai-seat-connection-test` v8
+- `teamai-seat-provider-bind` v8
 - `teamai-task-execute` v12
+- `teamai-task-continuation-request` v2
 - `teamai-task-continuation-request` v2
 
 The obsolete `paypal-webhook` deployment is absent from the connected Supabase inventory after operator deletion.
