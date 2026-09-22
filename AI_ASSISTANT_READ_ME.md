@@ -16,10 +16,10 @@
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #387, #388, #386, #385, #379, #397
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue the governed 029 implementation on PR #398, with the next frontier now the #392 real runtime proof after live Firestore Seat-shape verification; do not deploy or claim live provider execution until the canonical Seat fields and runtime path are verified in production.
+- next allowed work: continue the governed 029 cross-stack implementation on PR #398; implementation remains active while production Firestore Seat-shape verification, controlled task-executor deployment, real provider continuation proof, final spatial acceptance, and production delivery evidence remain open.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security Static Analysis, and Canonical Browser checks all pass on current code head `444310f43e44956325aa2d22e124614115690ba3`. Full-System includes Node typecheck, Deno compilation of trusted Edge entrypoints, project tests, spatial parity, and package verification. Draft review-readiness remains lifecycle-skipped and is not acceptance evidence.
-- live PR head: the GitHub PR head is the **source of truth for the current verification commit**. The Storage implementation proof is pinned to `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`; re-read live GitHub before relying on any recorded SHA. Evidence is admissible only when tied to the exact head under review.
+- validation state: exact-head Governance, Security, Full-System, and Canonical Browser checks are running/re-evaluating against the current #398 head after the audited ownership/test/document reconstruction; results are not admissible until tied to the same exact head.
+- live PR head: `d0520f38a5c4c79be28d569f11e446469afca591` at the last verified read; re-read live GitHub before relying on this SHA because active commits continue to move the branch.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
@@ -46,6 +46,13 @@
 - Exact-head Browser verification on `cd4a06a8a6706cf433e2f6a2c01c5456924af406` passed the Team / Agents flow. The preceding `0b182c4c...` failure was solely a regex-literal `+` matcher defect in the E2E test; production UI text was already correct.
 - Team / Agents proof remains representative frontend/browser evidence only. Durable Agent state, assignment persistence, authorization, entitlement, scheduler eligibility, and execution remain backend/runtime-owned.
 - Next representative #400 contract: Marketplace / Commerce entitlement-gated feature.
+
+### 2026-09-22 cross-stack convergence reconstruction
+
+- Reconstructed #398 as the sole cross-stack execution vehicle for Issue #396, incorporating spatial renderer ownership, Firestore Seat identity/budget, trusted Edge execution, continuation, #400 frontend contracts, delivery, evidence, and promotion boundaries.
+- Current structural fixes on this branch include a neutral `machine-subject.js` geometry owner, Node/Edge canonical Seat-discovery convergence, a maximum-density ring-separation regression contract, and explicit test coverage for the new ownership seam.
+- `backend/BACKEND_LIVE_SERVICE_STATUS.md` is now reconciled to the post-2026-09-12 active Edge inventory instead of claiming eight active functions while listing continuation-request v2.
+- The current blockers are production evidence and final acceptance boundaries, not permission to invent live state. Real Firestore/Edge/provider work remains gated on the protected diagnostic and governed deployment sequence.
 
 ## Canonical authority path
 
