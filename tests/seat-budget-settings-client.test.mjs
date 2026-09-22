@@ -62,3 +62,22 @@ test('Seat Budget save client forwards only the explicit configuration patch', a
   );
   assert.equal(body.action, 'save');
 });
+
+
+test('Seat Budget runtime client uses the trusted runtime endpoint', async () => {
+  globalThis.TEAMAI_SEAT_CONNECTION_BASE_URL = 'https://edge.example/functions/v1';
+  globalThis.TEAMAI_FIREBASE_ID_TOKEN = 'firebase-token';
+  globalThis.TEAMAI_WORKPLACE_ID = 'workplace-1';
+  globalThis.TEAMAI_PROJECT_ID = 'project-2';
+
+  const body = await (await import('../frontend/spatial/seat-budget-settings-client.js')).loadSeatBudgetRuntime(
+    { seatId: 'seat-1' },
+    mockFetch({
+      workplaceId: 'workplace-1',
+      projectId: 'project-2',
+      seatId: 'seat-1',
+    }, { ok: true, usageReported: true, usage: { consumedTotalTokens: 2, remainingGenerationTokens: 999 } }),
+  );
+  assert.equal(body.usageReported, true);
+  assert.equal(body.usage.remainingGenerationTokens, 999);
+});
