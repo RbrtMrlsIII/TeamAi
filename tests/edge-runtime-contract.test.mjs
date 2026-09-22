@@ -76,6 +76,22 @@ test('Edge executor binds provider selection and budget to the durable Seat', ()
   assert.match(source, /loadSeatProviderCredential/);
 });
 
+
+test('Normal Edge execution resolves an authoritative active connection from the canonical Seat scope', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  const executeStart = source.indexOf('const taskProvider = String(task.provider');
+  const budgetStart = source.indexOf('const budget = normalizeEdgeTurnBudget', executeStart);
+  assert.ok(executeStart >= 0);
+  assert.ok(budgetStart > executeStart);
+  const connectionSection = source.slice(executeStart, budgetStart);
+  assert.match(connectionSection, /firestoreFindSeatConnection\(\{[\s\S]*seatId,[\s\S]*accessToken,[\s\S]*\}\)/);
+  assert.match(connectionSection, /connection_not_found/);
+  assert.match(connectionSection, /connection_provider_not_configured/);
+  assert.match(connectionSection, /connection_provider_seat_mismatch/);
+  assert.match(connectionSection, /connection_execute_capability_required/);
+  assert.doesNotMatch(connectionSection, /task\.connection/);
+});
+
 test('Edge provider runtime mirror is synchronized from canonical providers', () => {
   const files = ['types.ts', 'http.ts', 'retry.ts', 'termination.ts', 'openai.ts', 'anthropic.ts'];
   for (const file of files) {
