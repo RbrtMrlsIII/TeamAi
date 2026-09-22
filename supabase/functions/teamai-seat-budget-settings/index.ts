@@ -93,6 +93,7 @@ function budgetFields(budget: ReturnType<typeof normalizeEdgeTurnBudget>): Fires
     hardStopPolicy: budget.hardStopPolicy,
     responsibilityProfile: budget.responsibilityProfile ?? "reviewer",
     warningThresholdPercent: budget.warningThresholdPercent,
+    contextInputPolicy: (budget as Record<string, unknown>).contextInputPolicy ?? { retention: "minimal-durable-context" },
   });
 }
 
@@ -215,13 +216,18 @@ Deno.serve(async (req: Request) => {
           : undefined)
         ?? "reviewer",
     });
+    const contextInputPolicy = patch.contextInputPolicy && typeof patch.contextInputPolicy === "object"
+      ? patch.contextInputPolicy
+      : currentBudget && typeof currentBudget === "object" && (currentBudget as Record<string, unknown>).contextInputPolicy
+        ? (currentBudget as Record<string, unknown>).contextInputPolicy
+        : { retention: "minimal-durable-context" };
 
     const now = new Date().toISOString();
     await firestoreCommitTransaction(transaction, [{
       update: {
         name: `projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/${seat.path}`,
         fields: {
-          turnBudget: budgetFields(nextBudget),
+          turnBudget: value({ ...nextBudget, contextInputPolicy }),
           updatedAt: { stringValue: now },
         },
       },
@@ -235,8 +241,8 @@ Deno.serve(async (req: Request) => {
       projectId,
       seatId,
       teamId: seat.teamId,
-      fields: { ...currentFields, turnBudget: nextBudget },
-      budget: nextBudget,
+      fields: { ...currentFields, turnBudget: { ...nextBudget, contextInputPolicy } },
+      budget: { ...nextBudget, contextInputPolicy },
       action,
     }), 200);
   } catch (error) {
