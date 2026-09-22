@@ -33,6 +33,16 @@ test('WebGL preview delegates rendering to the canonical world renderer while se
   assert.match(payload, /createMachineTransitionFromPayload/);
 });
 
+test('canonical renderer exposes lifecycle-driven R1/R2 articulation state', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine-ring-articulation\.js/);
+  assert.match(renderer, /deriveMachineRingArticulation/);
+  assert.match(renderer, /machineWorldR1Articulation/);
+  assert.match(renderer, /machineWorldR2Articulation/);
+  assert.match(renderer, /machineWorldR1Signal/);
+  assert.match(renderer, /machineWorldR2Signal/);
+});
+
 test('canonical renderer owns the R0 workspace receiving presentation pass', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /machine-r0-receiving\.js/);
