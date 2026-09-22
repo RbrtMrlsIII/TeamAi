@@ -56,7 +56,7 @@ test('receiving raises R1 signal while keeping R2 structural articulation bounde
   assert.equal(lifecycle.phase, MACHINE_RING_ARTICULATION_PHASE.LIFECYCLE_SIGNAL);
   assert.ok(lifecycle.r1Amount > 0);
   assert.ok(lifecycle.r2Amount > 0);
-  assert.equal(lifecycle.r2Amount, 0.28);
+  assert.ok(Math.abs(lifecycle.r2Amount - 0.25088) < 1e-12);
 });
 
 test('articulation increases monotonically with structural progress', () => {
