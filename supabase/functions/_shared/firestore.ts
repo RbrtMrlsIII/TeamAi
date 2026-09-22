@@ -207,7 +207,15 @@ export async function firestoreFindSeatConnection(input: {
     headers: { authorization: 'Bearer ' + input.accessToken, 'content-type': 'application/json' },
     body: JSON.stringify({ structuredQuery: {
       from: [{ collectionId: 'connections' }],
-      where: { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: input.seatId } } },
+      where: {
+        compositeFilter: {
+          op: 'AND',
+          filters: [
+            { fieldFilter: { field: { fieldPath: 'seatId' }, op: 'EQUAL', value: { stringValue: input.seatId } } },
+            { fieldFilter: { field { fieldPath: 'status' }, op: 'EQUAL', value: { stringValue: 'active' } } },
+          ],
+        },
+      },
       limit: 2,
     }}),
   });
