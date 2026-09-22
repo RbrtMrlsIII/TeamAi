@@ -18,7 +18,7 @@
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
 - next allowed work: continue the governed 029 cross-stack implementation on PR #398; implementation remains active while production Firestore Seat-shape verification, controlled task-executor deployment, real provider continuation proof, final spatial acceptance, and production delivery evidence remain open.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks PASS on `b2957c4430ac66d970ab0db695bc04b3f90eed4c`; this proves the repaired R1/R2 browser/runtime contract on that exact head, not final spatial acceptance, production deployment, provider execution, or human acceptance.
+- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks PASS on `e309f8e7ea61c60f241d1127c8ca606720fc2d3f`; this exact head also includes the new canonical R1/R2 browser acceptance contract, while final spatial visual acceptance, production deployment, provider execution, and human acceptance remain open.
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
@@ -54,6 +54,14 @@
 - Commit `b2957c4430ac66d970ab0db695bc04b3f90eed4c` restores the missing local articulation value in the draw pass, synchronizes the canonical source/public pair, and adds an execution-level regression test that invokes the draw function rather than only checking source structure.
 - Exact-head validation on `b2957c4430ac66d970ab0db695bc04b3f90eed4c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS. Browser also passed the committed machine-spatial parity check before Playwright execution.
 - This closes the observed R1/R2 render-loop regression. It does not close final visual acceptance, production Firebase deployment, production Firestore evidence, real-provider execution/continuation, human acceptance, or merge authorization.
+
+### 2026-09-22 R1/R2 runtime acceptance contract
+
+- Added `tests/e2e/hero-r1-r2-articulation.spec.ts` to exercise the canonical `/hero/` renderer rather than only the pure articulation model.
+- The browser contract verifies closed-state `STOWED` articulation, the fully opened 10-Seat `LINKED` state, R1/R2 articulation values, R1/R2 catalog counts, and strict R0 < R1 < R2 < R3 radial ordering.
+- Reduced-motion opening is included so the semantic articulation contract is proven under the non-animated accessibility path as well.
+- Exact-head validation on `e309f8e7ea61c60f241d1127c8ca606720fc2d3f`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS.
+- This establishes runtime/browser evidence for the R1/R2 articulation interface. It does not constitute final visual acceptance or production delivery evidence.
 
 ### 2026-09-22 cross-stack convergence reconstruction
 
