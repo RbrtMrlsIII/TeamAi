@@ -4,7 +4,11 @@
 
 ## 2026-09-21 spatial PR migration checkpoint
 
-PR #398 is the active Draft implementation vehicle for Issue #396 on the responsibility-compliant branch `frontend/029-machine-world-convergence`. It was created from exact PR #397 head `23a83ae166f0983b598910d616b1203ebf600096`; #397 is closed and historical. The active spatial renderer ownership is now `frontend/spatial/machine-world-renderer.js` → `public/machine-world-renderer.js`, while `public/hero-flex.js` remains the controller boundary.
+PR #398 is the reviewed 029 structural baseline merged into `main`. Current production-data/runtime work continues under Issue #401 / PR #402 on `backend/030-production-runtime-evidence`. It was created from exact PR #397 head `23a83ae166f0983b598910d616b1203ebf600096`; #397 is closed and historical. The active spatial renderer ownership is now `frontend/spatial/machine-world-renderer.js` → `public/machine-world-renderer.js`, while `public/hero-flex.js` remains the controller boundary.
+
+## 2026-09-22 production-runtime successor checkpoint
+
+Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757e749`. Issue #401 / successor PR #402 now owns the production Firestore authority, security, and runtime-evidence frontier. This is a current routing clarification only; it does not change Product Law authority or the draft-first/no-auto-merge discipline.
 
 ## ORUCAVEAM
 
