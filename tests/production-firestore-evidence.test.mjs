@@ -36,7 +36,11 @@ test('missing canonical Seat still writes negative run-scoped evidence', () => {
   assert.match(script, /seatPresent: false/);
   assert.match(script, /process\.exit\(2\)/);
   assert.match(script, /listDocumentIds\(parent, 'teams'/);
+  assert.match(script, /const runPath = parent \+ '\/runtime-diagnostics\/' \+ runId/);
   assert.doesNotMatch(script, /throw new Error\('canonical Seat document not found'\)/);
+  const runPathIndex = script.indexOf("const runPath = parent + '/runtime-diagnostics/' + runId");
+  const missingIndex = script.indexOf("result: 'canonical_seat_not_found'");
+  assert.ok(runPathIndex >= 0 && missingIndex > runPathIndex);
 });
 
 

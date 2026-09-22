@@ -228,6 +228,7 @@ const teamId = env('TEAMAI_TEAM_ID');
 const seatId = env('TEAMAI_SEAT_ID');
 const parent = 'accounts/' + uid + '/workplaces/' + workplaceId + '/projects/' + projectId;
 const runId = 'run-' + new Date().toISOString().replace(/[:.]/g, '-') + '-' + crypto.randomUUID().slice(0, 12);
+const runPath = parent + '/runtime-diagnostics/' + runId;
 
 const seatPath = parent + '/teams/' + teamId + '/seats/' + seatId;
 const seatDocument = await read(seatPath, token);
@@ -302,7 +303,6 @@ const connections = connectionDocs.map(safeConnection).filter(item =>
   item.uid === uid && item.workplaceId === workplaceId && item.projectId === projectId && item.seatId === seatId
 );
 
-const runPath = parent + '/runtime-diagnostics/' + runId;
 const evidence = {
   runId,
   createdAt: new Date().toISOString(),
