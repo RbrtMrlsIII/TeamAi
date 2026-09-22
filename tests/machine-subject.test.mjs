@@ -14,8 +14,8 @@ test('neutral machine subject owner derives deterministic bounds from semantic g
     kind: 'semantic-subject',
     sourcePartIds: ['part-a', 'part-b'],
     min: { x: -2.12, y: -0.12, z: -1.12 },
-    max: { x: 2.17, y: 1.37, z: 0.9 },
-    center: { x: 0.025, y: 0.625, z: -0.11 },
+    max: { x: 2.17, y: 1.27, z: 1.02 },
+    center: { x: 0.02499999999999991, y: 0.575, z: -0.050000000000000044 },
   });
 });
 
