@@ -99,17 +99,6 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 - [ ] Real external provider invocation remains a separate proof gate.
 - [ ] Remaining security, timeout, cancellation, recovery, and integration evidence remains explicit.
 
-## TEAM-EXPERIENCE-029 baseline
-
-- [x] Existing C0–C7 implementation/evidence is retained as the baseline.
-- [ ] Semantic machine registry is complete and truthful.
-- [ ] Adaptive payload-driven geometry and expansion are complete.
-- [ ] Semantic connection topology is complete.
-- [ ] Turn-loop contribution follows real semantic edges.
-- [ ] C8 authenticated/server-authorized workspace integration is complete.
-- [ ] C9 desktop and phone acceptance is complete.
-- [ ] C10 ProMax refinement is complete.
-
 ## Machine Hero candidate: PR #353
 
 - [x] Candidate implementation is merged into `main` but remains non-production until promotion gates are satisfied.
