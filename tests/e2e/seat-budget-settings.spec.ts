@@ -67,7 +67,7 @@ test.describe('Seat Budget Settings', () => {
     await expect(panel.locator('[data-seat-budget-result]')).toContainText('Durable persistence requires');
   });
 
-  test('configured runtime loads and saves the selected Seat budget through the trusted boundary', async ({ page }) => {
+  test('configured runtime loads settings and durable usage through the trusted boundaries', async ({ page }) => {
     await page.addInitScript(() => {
       window.TEAMAI_SEAT_CONNECTION_BASE_URL = 'https://edge.example/functions/v1';
       window.TEAMAI_FIREBASE_ID_TOKEN = 'firebase-token';
@@ -75,20 +75,21 @@ test.describe('Seat Budget Settings', () => {
       window.TEAMAI_PROJECT_ID = 'project-2';
     });
 
-    await page.route('https://edge.example/functions/v1/teamai-seat-budget-settings', async (route) => {
+    let savedPatch = null;
+    await page.route('https://edge.example/functions/v1/teamai-seat-budget-runtime', async (route) => {
       const request = route.request();
       const body = JSON.parse(request.postData() || '{}');
       expect(request.headers().authorization).toBe('Bearer firebase-token');
       expect(body.seatId).toBe('seat-1');
 
       const configured = {
-        turnBudgetTokens: body.action === 'save' ? body.patch.turnBudgetTokens : 12000,
-        outputBudgetTokens: body.action === 'save' ? body.patch.outputBudgetTokens : 4000,
-        reasoningBudgetTokens: body.action === 'save' ? body.patch.reasoningBudgetTokens : 5000,
-        handoffReserveTokens: body.action === 'save' ? body.patch.handoffReserveTokens : 1000,
-        warningThresholdPercent: body.action === 'save' ? body.patch.warningThresholdPercent : 0.8,
-        hardStopPolicy: body.action === 'save' ? body.patch.hardStopPolicy : 'handoff-before-exhaustion',
-        responsibilityProfile: body.action === 'save' ? body.patch.responsibilityProfile : 'coder',
+        turnBudgetTokens: savedPatch?.turnBudgetTokens ?? 12000,
+        outputBudgetTokens: savedPatch?.outputBudgetTokens ?? 4000,
+        reasoningBudgetTokens: savedPatch?.reasoningBudgetTokens ?? 5000,
+        handoffReserveTokens: savedPatch?.handoffReserveTokens ?? 1000,
+        warningThresholdPercent: savedPatch?.warningThresholdPercent ?? 0.8,
+        hardStopPolicy: savedPatch?.hardStopPolicy ?? 'handoff-before-exhaustion',
+        responsibilityProfile: savedPatch?.responsibilityProfile ?? 'coder',
         contextInputPolicy: { retention: 'minimal-durable-context' },
       };
 
@@ -97,15 +98,95 @@ test.describe('Seat Budget Settings', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           ok: true,
-          action: body.action,
           available: true,
           authorized: true,
           configurable: true,
           healthy: true,
-          seatId: body.seatId,
-          provider: 'openai',
-          model: 'gpt-test',
+          seatId: 'seat-1',
+          provider: 'stub-edge-runtime',
+          model: 'teamai-task-execute-v1',
           configured,
+          usageReported: false,
+          usage: {
+            consumedInputTokens: 1,
+            consumedOutputTokens: 1,
+            consumedTotalTokens: 2,
+            remainingGenerationTokens: null,
+            usableGenerationTokens: null,
+          },
+          accountingSource: 'durable-execution-result-raw-usage',
+          state: 'COMPLETED',
+          completionState: 'WORK_COMPLETE',
+          continuationAvailable: false,
+          latest: {
+            taskId: 'exec-task-1',
+            executionId: 'complete-run-1',
+            recordedAt: '2026-09-22T05:00:00.000Z',
+            providerRuntime: 'stub-edge-runtime',
+            budgetRecorded: false,
+          },
+          source: 'firestore-execution-result',
+          reason: 'Latest durable execution result contains raw runtime usage, but no server-side remaining-capacity accounting. This is not inferred.',
+        }),
+      });
+    });
+
+    await page.route('https://edge.example/functions/v1/teamai-seat-budget-settings', async (route) => {
+      const request = route.request();
+      const body = JSON.parse(request.postData() || '{}');
+      expect(request.headers().authorization).toBe('Bearer firebase-token');
+      expect(body.seatId).toBe('seat-1');
+
+      if (body.action === 'save') {
+        savedPatch = body.patch;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            ok: true,
+            action: 'save',
+            available: true,
+            authorized: true,
+            configurable: true,
+            healthy: true,
+            seatId: 'seat-1',
+            provider: 'stub-edge-runtime',
+            model: 'teamai-task-execute-v1',
+            configured: {
+              ...body.patch,
+              contextInputPolicy: { retention: 'minimal-durable-context' },
+            },
+            usage: null,
+            source: 'firestore-canonical-seat',
+            reason: 'Configuration persisted to canonical Seat.',
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ok: true,
+          action: 'get',
+          available: true,
+          authorized: true,
+          configurable: true,
+          healthy: true,
+          seatId: 'seat-1',
+          provider: 'stub-edge-runtime',
+          model: 'teamai-task-execute-v1',
+          configured: {
+            turnBudgetTokens: 12000,
+            outputBudgetTokens: 4000,
+            reasoningBudgetTokens: 5000,
+            handoffReserveTokens: 1000,
+            warningThresholdPercent: 0.8,
+            hardStopPolicy: 'handoff-before-exhaustion',
+            responsibilityProfile: 'coder',
+            contextInputPolicy: { retention: 'minimal-durable-context' },
+          },
           usage: null,
           source: 'firestore-canonical-seat',
           reason: 'Settings integration test',
@@ -122,6 +203,9 @@ test.describe('Seat Budget Settings', () => {
     await expect(panel.locator('[data-seat-budget-total]')).toHaveText('12,000 tokens');
     await expect(panel.locator('[data-seat-budget-reserve]')).toHaveText('1,000 tokens');
     await expect(panel.locator('[data-seat-budget-input="hardStopPolicy"]')).toHaveValue('handoff-before-exhaustion');
+    await expect(panel.locator('[data-seat-budget-consumed]')).toHaveText('2 tokens · 0%');
+    await expect(panel.locator('[data-seat-budget-remaining]')).toHaveText('Not reported');
+    await expect(panel.locator('[data-seat-budget-state]')).toContainText('raw usage recorded');
 
     await panel.locator('[data-seat-budget-input="turnBudgetTokens"]').fill('16000');
     await panel.locator('[data-seat-budget-input="outputBudgetTokens"]').fill('5000');
@@ -131,13 +215,14 @@ test.describe('Seat Budget Settings', () => {
     await panel.locator('[data-seat-budget-input="hardStopPolicy"]').selectOption('stop-at-limit');
 
     await panel.locator('[data-seat-budget-save]').click();
-    await expect(panel.locator('[data-seat-budget-result]')).toContainText('Seat budget saved to canonical Firestore.');
+    await expect(panel.locator('[data-seat-budget-result]')).toContainText('runtime readback refreshed');
     await expect(panel.locator('[data-seat-budget-total]')).toHaveText('16,000 tokens');
     await expect(panel.locator('[data-seat-budget-output]')).toHaveText('5,000 tokens');
     await expect(panel.locator('[data-seat-budget-reasoning]')).toContainText('7,000 tokens');
     await expect(panel.locator('[data-seat-budget-reserve]')).toHaveText('1,500 tokens');
     await expect(panel.locator('[data-seat-budget-input="warningThresholdPercent"]')).toHaveValue('75');
     await expect(panel.locator('[data-seat-budget-input="hardStopPolicy"]')).toHaveValue('stop-at-limit');
+    await expect(panel.locator('[data-seat-budget-remaining]')).toHaveText('Not reported');
   });
 
   test('reduced-motion mode preserves Seat Budget semantics', async ({ page }) => {
