@@ -30,6 +30,16 @@ function currentPercent(value, total) {
   return total > 0 ? Math.round((value / total) * 100) : 0;
 }
 
+function selectedSeatId() {
+  if (readModel.seatId) return readModel.seatId;
+  const index = Number(globalThis.window?.TeamAiHero?.getSelectedSeat?.());
+  return Number.isInteger(index) && index >= 0 ? `seat-${index + 1}` : null;
+}
+
+function editorValue(name) {
+  return panel?.querySelector(`[data-seat-budget-input="${name}"]`)?.value ?? '';
+}
+
 function render() {
   if (!panel) return;
   const state = panel.querySelector('[data-seat-budget-state]');
@@ -48,9 +58,16 @@ function render() {
   const meter = panel.querySelector('[data-seat-budget-meter]');
   const note = panel.querySelector('[data-seat-budget-note]');
   const save = panel.querySelector('[data-seat-budget-save]');
-  if (!state || !title || !seat || !responsibility || !provider || !budget || !output || !reasoning || !reserve || !consumed || !remaining || !completion || !continuation || !meter || !note || !save) return;
+  const turnBudgetInput = panel.querySelector('[data-seat-budget-input="turnBudgetTokens"]');
+  const outputBudgetInput = panel.querySelector('[data-seat-budget-input="outputBudgetTokens"]');
+  const reasoningBudgetInput = panel.querySelector('[data-seat-budget-input="reasoningBudgetTokens"]');
+  const reserveInput = panel.querySelector('[data-seat-budget-input="handoffReserveTokens"]');
+  const warningInput = panel.querySelector('[data-seat-budget-input="warningThresholdPercent"]');
+  const hardStopInput = panel.querySelector('[data-seat-budget-input="hardStopPolicy"]');
+  if (!state || !title || !seat || !responsibility || !provider || !budget || !output || !reasoning || !reserve || !consumed || !remaining || !completion || !continuation || !meter || !note || !save || !turnBudgetInput || !outputBudgetInput || !reasoningBudgetInput || !reserveInput || !warningInput || !hardStopInput) return;
 
   const locked = !readModel.available || !readModel.authorized;
+  const editingDisabled = locked || !readModel.configurable;
   const segments = seatBudgetEnergySegments(readModel);
   const consumedPercent = currentPercent(readModel.consumedTokens, readModel.turnBudgetTokens);
 
@@ -68,6 +85,12 @@ function render() {
   remaining.textContent = `${readModel.remainingTokens.toLocaleString()} tokens`;
   completion.textContent = readModel.completionState || 'No terminal state recorded';
   continuation.textContent = readModel.continuationAvailable ? 'Available' : 'Not available';
+  turnBudgetInput.value = String(readModel.turnBudgetTokens || '');
+  outputBudgetInput.value = String(readModel.outputBudgetTokens || '');
+  reasoningBudgetInput.value = String(readModel.reasoningBudgetTokens || '');
+  reserveInput.value = String(readModel.handoffReserveTokens || '');
+  warningInput.value = String(Math.round(readModel.warningThresholdPercent * 100));
+  hardStopInput.value = readModel.hardStopPolicy;
   note.textContent = locked
     ? 'This surface does not infer or grant Seat configuration authority. An authenticated backend read model must provide the settings before they are shown as active.'
     : (readModel.reason || 'Server-authoritative budget accounting. Larger budgets do not guarantee completion.');
@@ -75,7 +98,8 @@ function render() {
   meter.style.setProperty('--seat-budget-consumed', String(segments.consumedFraction));
   meter.style.setProperty('--seat-budget-reserve', String(segments.handoffReserveFraction));
   meter.style.setProperty('--seat-budget-remaining', String(segments.remainingFraction));
-  save.disabled = locked || !readModel.configurable;
+  save.disabled = editingDisabled;
+  for (const input of [turnBudgetInput, outputBudgetInput, reasoningBudgetInput, reserveInput, warningInput, hardStopInput]) input.disabled = editingDisabled;
 }
 
 function open() {
@@ -85,6 +109,7 @@ function open() {
   panel.setAttribute('aria-hidden', 'false');
   document.documentElement.setAttribute('data-seat-budget-open', '1');
   render();
+  dispatch('teamai:seat-budget-load-intent', { seatId: selectedSeatId() });
   panel.querySelector('[data-seat-budget-close]')?.focus();
 }
 
@@ -96,22 +121,41 @@ function close() {
 }
 
 function saveIntent() {
-  if (!readModel.seatId || !readModel.configurable) return;
+  const seatId = selectedSeatId();
+  if (!seatId || !readModel.configurable) return;
+
+  const numericFields = {
+    turnBudgetTokens: Number(editorValue('turnBudgetTokens')),
+    outputBudgetTokens: Number(editorValue('outputBudgetTokens')),
+    reasoningBudgetTokens: Number(editorValue('reasoningBudgetTokens')),
+    handoffReserveTokens: Number(editorValue('handoffReserveTokens')),
+  };
+  if (Object.values(numericFields).some((value) => !Number.isInteger(value) || value < 0)) {
+    const result = panel?.querySelector('[data-seat-budget-result]');
+    if (result) result.textContent = 'Enter non-negative whole-token values before saving.';
+    return;
+  }
+
+  const warningPercent = Number(editorValue('warningThresholdPercent'));
+  if (!Number.isFinite(warningPercent) || warningPercent < 0 || warningPercent > 100) {
+    const result = panel?.querySelector('[data-seat-budget-result]');
+    if (result) result.textContent = 'Warning threshold must be between 0 and 100 percent.';
+    return;
+  }
+
   const intent = createSeatBudgetSaveIntent({
-    seatId: readModel.seatId,
+    seatId,
     patch: {
-      turnBudgetTokens: readModel.turnBudgetTokens,
-      outputBudgetTokens: readModel.outputBudgetTokens,
-      reasoningBudgetTokens: readModel.reasoningBudgetTokens,
-      handoffReserveTokens: readModel.handoffReserveTokens,
-      warningThresholdPercent: readModel.warningThresholdPercent,
+      ...numericFields,
+      warningThresholdPercent: warningPercent / 100,
+      hardStopPolicy: editorValue('hardStopPolicy'),
       responsibilityProfile: readModel.responsibilityProfile,
       contextInputPolicy: readModel.contextInputPolicy,
     },
   });
   dispatch('teamai:seat-budget-save-intent', intent);
   const result = panel?.querySelector('[data-seat-budget-result]');
-  if (result) result.textContent = 'Configuration intent requested. Durable authorization and persistence remain backend-owned.';
+  if (result) result.textContent = 'Configuration save requested through the trusted runtime.';
 }
 
 function build() {
@@ -146,7 +190,15 @@ function build() {
     '<div class="seat-budget-facility__meter" data-seat-budget-meter role="img" aria-label="Seat budget energy bar">' +
       '<span class="seat-budget-facility__meter-consumed"></span><span class="seat-budget-facility__meter-reserve"></span><span class="seat-budget-facility__meter-remaining"></span>' +
     '</div>' +
-    '<p class="seat-budget-facility__meter-caption">Consumed · protected handoff reserve · usable remaining</p>' +
+    '<p class="seat-budget-facility__meter-caption">Consumed · protected handoff reserve · usable remaining. Live usage is reported separately by the active-turn runtime.</p>' +
+    '<div class="seat-budget-facility__editor" aria-label="Edit Seat Budget configuration">' +
+      '<label class="seat-budget-facility__field">Turn Budget (tokens)<input class="ta-control" data-seat-budget-input="turnBudgetTokens" type="number" min="1" step="1" value="0" /></label>' +
+      '<label class="seat-budget-facility__field">Work / Output Budget<input class="ta-control" data-seat-budget-input="outputBudgetTokens" type="number" min="0" step="1" value="0" /></label>' +
+      '<label class="seat-budget-facility__field">Reasoning Budget<input class="ta-control" data-seat-budget-input="reasoningBudgetTokens" type="number" min="0" step="1" value="0" /></label>' +
+      '<label class="seat-budget-facility__field">Handoff Reserve<input class="ta-control" data-seat-budget-input="handoffReserveTokens" type="number" min="0" step="1" value="0" /></label>' +
+      '<label class="seat-budget-facility__field">Warning Threshold (%)<input class="ta-control" data-seat-budget-input="warningThresholdPercent" type="number" min="0" max="100" step="1" value="80" /></label>' +
+      '<label class="seat-budget-facility__field">Hard Stop Policy<select class="ta-control" data-seat-budget-input="hardStopPolicy"><option value="handoff-before-exhaustion">Handoff before exhaustion</option><option value="stop-at-limit">Stop at limit</option></select></label>' +
+    '</div>' +
     '<div class="seat-budget-facility__actions">' +
       '<button type="button" data-seat-budget-save disabled>Request configuration save</button>' +
       '<button type="button" data-seat-budget-close>Back to world</button>' +
@@ -186,5 +238,15 @@ if (typeof window !== 'undefined') {
     mount: mountSeatBudgetFacility,
     setReadModel: setSeatBudgetReadModel,
     getReadModel: () => readModel,
+  });
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('teamai:seat-budget-runtime-read-model', (event) => {
+    if (event.detail?.readModel) setSeatBudgetReadModel(event.detail.readModel);
+  });
+  window.addEventListener('teamai:seat-budget-runtime-status', (event) => {
+    const result = document.querySelector('[data-seat-budget-result]');
+    if (result && event.detail?.message) result.textContent = String(event.detail.message);
   });
 }
