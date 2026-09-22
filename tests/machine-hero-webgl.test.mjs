@@ -33,6 +33,16 @@ test('WebGL preview delegates rendering to the canonical world renderer while se
   assert.match(payload, /createMachineTransitionFromPayload/);
 });
 
+test('canonical renderer owns the R0 workspace receiving presentation pass', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine-r0-receiving\.js/);
+  assert.match(renderer, /deriveWorkspaceReceivingPresentation/);
+  assert.match(renderer, /function renderWorkspaceReceiving\(/);
+  assert.match(renderer, /R0_RECEIVING_PHASE\.DORMANT/);
+  assert.match(renderer, /machineWorldWorkspaceReceptionPhase/);
+  assert.match(renderer, /state\.heroState/);
+});
+
 test('canonical renderer owns the multi-module and wiring draw path', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /createBranchConnectionCore/);
