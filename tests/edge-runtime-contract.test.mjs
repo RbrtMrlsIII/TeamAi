@@ -200,6 +200,37 @@ test('Edge continuation execution requires the target Seat-owned connection', ()
   assert.match(source, /seatId: targetSeatId/);
 });
 
+test('Edge executor durably terminalizes provider results that omit normalized termination metadata', () => {
+  const source = read('supabase/functions/teamai-task-execute/index.ts');
+  const helperStart = source.indexOf('async function persistProviderTerminationFailure');
+  const normalStart = source.indexOf('const terminal = result.termination;', source.indexOf('async function executeContinuationTurn'));
+  const normalSecondStart = source.lastIndexOf('const terminal = result.termination;');
+  assert.ok(helperStart >= 0);
+  assert.ok(normalStart >= 0);
+  assert.ok(normalSecondStart > normalStart);
+
+  const helper = source.slice(helperStart, normalStart);
+  assert.match(helper, /completionState: "PROVIDER_TERMINATION_INVALID"/);
+  assert.match(helper, /reason: "provider_termination_missing"/);
+  assert.match(helper, /termination: null/);
+  assert.match(helper, /await recordEvent\(/);
+  assert.match(helper, /await firestoreCreate\(input\.resultPath/);
+  assert.match(helper, /finally/);
+  assert.match(helper, /status: "failed"/);
+  assert.match(helper, /await patchTask\(input\.taskPath/);
+
+  const normalSection = source.slice(normalSecondStart, source.indexOf('const recordedAt = new Date().toISOString();', normalSecondStart));
+  assert.match(normalSection, /if \(!terminal\)/);
+  assert.match(normalSection, /persistProviderTerminationFailure/);
+  assert.match(normalSection, /provider_termination_invalid/);
+
+  const continuationSection = source.slice(normalStart, normalSecondStart);
+  assert.match(continuationSection, /if \(!result\.termination\)/);
+  assert.match(continuationSection, /persistProviderTerminationFailure/);
+  assert.match(continuationSection, /requestPath/);
+});
+
+
 test('Edge continuation execution creates a new checkpoint linked to the previous checkpoint', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
   assert.match(source, /nextCheckpointId = executionId \+ ':checkpoint'/);
