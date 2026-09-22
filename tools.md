@@ -1073,6 +1073,118 @@ Keep index deployment unclaimed. Diagnose the deployment identity effective IAM 
 Status:
 Blocked on IAM authorization; no permission change made.
 
+
+# Deep static security scanner layer
+
+**Purpose:** provide complementary static-analysis coverage without pretending every scanner applies to every TeamAi language surface.
+
+| Scanner | TeamAi status | Current purpose | Activation |
+| --- | --- | --- | --- |
+| **CodeQL** | ACTIVE | Existing semantic security analysis for JavaScript/TypeScript | Existing codeql.yml workflow |
+| **Semgrep CE** | ACTIVE | Broad source-pattern analysis across JS/TS/Python/YAML and other supported surfaces | Always runs on CI |
+| **Bandit** | ACTIVE | Python-specific security analysis | Runs because TeamAi contains Python |
+| **SonarQube / SonarCloud** | PREPARED / CONFIG-GATED | Complementary code-quality and security analysis | Requires SONAR_TOKEN plus project configuration |
+| **gosec** | CONDITIONAL / DORMANT | Go security analysis | Runs only when a Go module/workspace and .go source exist |
+| **Brakeman** | CONDITIONAL / DORMANT | Ruby on Rails security analysis | Runs only when Rails application markers exist |
+| **MobSF / mobsfscan** | CONDITIONAL / DORMANT | Android/iOS source security scanning | Runs only when mobile source markers exist |
+
+### Why the scanner layer is split this way
+
+CodeQL already provides a semantic analysis layer for the repository's JS/TS surface. Semgrep adds broad cross-language pattern analysis, while Bandit is specifically useful for the repository's existing Python code.
+
+The remaining tools are not forced into irrelevant scans. Their jobs detect the technology surface at runtime and skip cleanly until the repository actually contains the target technology.
+
+### Advisory behavior
+
+Third-party scanners are currently advisory infrastructure:
+
+- scanner findings should still generate SARIF where supported;
+- known finding exit codes are normalized where the scanner supports that behavior;
+- SARIF upload failures are non-blocking so fork/permission differences do not destroy the primary CI signal;
+- scanner infrastructure errors still fail the relevant job when no report can be produced.
+
+This keeps security visibility separate from an immature false-positive baseline.
+
+### Supply-chain rule
+
+Third-party GitHub Actions are pinned to immutable commit SHAs. Package-based scanners are pinned to exact versions. Semgrep uses the native CLI rather than the deprecated archived semgrep/semgrep-action.
+
+### Configuration boundary
+
+SonarQube is deliberately not auto-connected. SonarQube requires a project on SonarQube Cloud or Server plus an authentication token, and the TeamAi workflow remains dormant until the project configuration is explicitly provisioned.
+
+### Discovery records
+
+#### 2026-09-22: TeamAi scanner applicability audit
+
+Finding:
+The repository language inventory is JavaScript, TypeScript, CSS, HTML, Python, and Shell. No Go or Ruby language was reported by the GitHub language endpoint, and no mobile source markers were found in the repository root.
+
+Why it matters:
+The requested scanner set should be layered by applicability instead of creating meaningless always-on jobs for technologies TeamAi does not currently use.
+
+Validated by:
+Live GitHub repository language inventory and repository tree inspection.
+
+Action:
+Semgrep and Bandit are active now. gosec, Brakeman, and MobSF are conditional. SonarQube is prepared but project/token gated.
+
+Status:
+Accepted.
+
+#### 2026-09-22: Semgrep - deprecated GitHub Action avoided
+
+Finding:
+The legacy semgrep/semgrep-action integration is deprecated/archived. Current TeamAi integration uses the native Semgrep CLI with an exact PyPI version.
+
+Why it matters:
+The workflow should not add a known-retired integration merely because older examples still surface online.
+
+Validated by:
+Current Semgrep release/documentation review.
+
+Action:
+Use Semgrep CLI 1.177.0 and emit SARIF for GitHub code scanning.
+
+Status:
+Accepted.
+
+#### 2026-09-22: MobSF - source scanner scope
+
+Finding:
+mobsfscan targets Android/iOS source patterns and supports SARIF output. Its current 1.0.0 package pins Semgrep 1.172.0 internally.
+
+Why it matters:
+MobSF is specialized mobile-source coverage and should remain conditional. Its dependency pin is independent of TeamAi's top-level Semgrep job because the jobs run in isolated environments.
+
+Validated by:
+Current MobSF 1.0.0 repository/package metadata.
+
+Action:
+Run MobSF only when mobile source markers exist.
+
+Status:
+Accepted.
+
+#### 2026-09-22: Scanner action supply-chain pinning
+
+Finding:
+Current upstream releases provide immutable commit targets for TeamAi's scanner workflow bootstrap and SARIF upload actions.
+
+Validated by:
+Current upstream release/reference inspection.
+
+Pinned actions:
+- checkout v7.0.1: 3d3c42e5aac5ba805825da76410c181273ba90b1
+- setup-python v7.0.0: 5fda3b95a4ea91299a34e894583c3862153e4b97
+- setup-go v7.0.0: b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+- CodeQL upload-sarif v4.38.1: 1c5b675653bb5c22dbe9b12b556ec555138e09fd
+- SonarQube scan action v8.2.1: 22918119ff8e1ca75a623e15c8296b6ea4fbe28f
+
+Status:
+Accepted.
+
+
 ## 15. Maintenance rule
 
 **This file is living engineering knowledge.**

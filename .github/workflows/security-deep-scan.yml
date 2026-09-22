@@ -1,0 +1,235 @@
+name: Deep Security Static Analysis
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  semgrep:
+    name: Semgrep CE
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install Semgrep
+        run: python -m pip install --disable-pip-version-check semgrep==1.177.0
+
+      - name: Run Semgrep
+        shell: bash
+        run: |
+          set +e
+          semgrep scan --config auto --sarif --output semgrep.sarif             --exclude node_modules --exclude dist --exclude coverage             --exclude .git .
+          status=$?
+          test -f semgrep.sarif
+          if [ "$status" -ne 0 ] && [ ! -s semgrep.sarif ]; then
+            exit "$status"
+          fi
+          exit 0
+
+      - name: Upload Semgrep SARIF
+        if: always() && hashFiles('semgrep.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
+        with:
+          sarif_file: semgrep.sarif
+
+  bandit:
+    name: Bandit Python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install Bandit
+        run: python -m pip install --disable-pip-version-check bandit[sarif]==1.9.4
+
+      - name: Run Bandit
+        shell: bash
+        run: |
+          set +e
+          bandit -r .             --exclude ./node_modules,./dist,./coverage,./.git             -f sarif -o bandit.sarif
+          status=$?
+          test -f bandit.sarif
+          if [ "$status" -ne 0 ] && [ ! -s bandit.sarif ]; then
+            exit "$status"
+          fi
+          exit 0
+
+      - name: Upload Bandit SARIF
+        if: always() && hashFiles('bandit.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
+        with:
+          sarif_file: bandit.sarif
+
+  sonarqube:
+    name: SonarQube / SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Detect SonarQube configuration
+        id: sonar
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        run: |
+          if [ -n "$SONAR_TOKEN" ] && [ -n "$SONAR_PROJECT_KEY" ] &&              { [ -n "$SONAR_ORGANIZATION" ] || [ -n "$SONAR_HOST_URL" ]; }; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "SonarQube scan skipped: project/token configuration is not connected."
+          fi
+
+      - name: SonarQube Scan
+        if: steps.sonar.outputs.enabled == 'true'
+        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_ROOT_CERT: ${{ secrets.SONAR_ROOT_CERT }}
+        with:
+          args: >-
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=src,frontend,public,supabase,scripts,build-system
+            -Dsonar.exclusions=node_modules/**,dist/**,coverage/**,.git/**
+            ${{ vars.SONAR_ORGANIZATION != '' && format('-Dsonar.organization={0}', vars.SONAR_ORGANIZATION) || '' }}
+
+  gosec:
+    name: gosec Go
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Detect Go surface
+        id: detect
+        shell: bash
+        run: |
+          if find . -type f -name '*.go' -not -path './.git/*' | grep -q . &&              { test -f go.mod || test -f go.work || test -f .go-version; }; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "gosec skipped: no Go module/workspace surface detected."
+          fi
+
+      - name: Setup Go
+        if: steps.detect.outputs.enabled == 'true'
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.25.5'
+
+      - name: Install gosec
+        if: steps.detect.outputs.enabled == 'true'
+        run: go install github.com/securego/gosec/v2/cmd/gosec@v2.28.0
+
+      - name: Run gosec
+        if: steps.detect.outputs.enabled == 'true'
+        run: |
+          gosec -no-fail -fmt sarif -out gosec.sarif ./...
+
+      - name: Upload gosec SARIF
+        if: steps.detect.outputs.enabled == 'true' && hashFiles('gosec.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
+        with:
+          sarif_file: gosec.sarif
+
+  brakeman:
+    name: Brakeman Rails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Detect Rails surface
+        id: detect
+        shell: bash
+        run: |
+          if test -f Gemfile && test -f config/application.rb &&              { test -d app || test -d lib; }; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Brakeman skipped: no Rails application surface detected."
+          fi
+
+      - name: Install Brakeman
+        if: steps.detect.outputs.enabled == 'true'
+        run: gem install brakeman --version 8.0.6 --no-document
+
+      - name: Run Brakeman
+        if: steps.detect.outputs.enabled == 'true'
+        run: |
+          brakeman -f sarif -o brakeman.sarif             --no-exit-on-warn --no-exit-on-error
+
+      - name: Upload Brakeman SARIF
+        if: steps.detect.outputs.enabled == 'true' && hashFiles('brakeman.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
+        with:
+          sarif_file: brakeman.sarif
+
+  mobsfscan:
+    name: MobSF mobile source scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Detect mobile source surface
+        id: detect
+        shell: bash
+        run: |
+          if find . -type f \(               -name 'AndroidManifest.xml' -o               -name 'Podfile' -o               -name '*.xcodeproj' -o               -name '*.swift' -o               -name '*.kt' -o               -name '*.m' -o               -name '*.mm'             \) -not -path './.git/*' | grep -q .; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "MobSF skipped: no Android/iOS source markers detected."
+          fi
+
+      - name: Setup Python
+        if: steps.detect.outputs.enabled == 'true'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install mobsfscan
+        if: steps.detect.outputs.enabled == 'true'
+        run: python -m pip install --disable-pip-version-check mobsfscan==1.0.0
+
+      - name: Run mobsfscan
+        if: steps.detect.outputs.enabled == 'true'
+        run: |
+          mobsfscan . --sarif --output mobsfscan.sarif --no-fail
+
+      - name: Upload MobSF SARIF
+        if: steps.detect.outputs.enabled == 'true' && hashFiles('mobsfscan.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
+        with:
+          sarif_file: mobsfscan.sarif
