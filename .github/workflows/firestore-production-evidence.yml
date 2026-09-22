@@ -3,6 +3,10 @@ name: Fresh production Firestore evidence run
 on:
   workflow_dispatch:
     inputs:
+      team_id:
+        description: 'Canonical Team ID containing the Seat'
+        required: true
+        type: string
       seat_id:
         description: 'Canonical Seat ID to inspect'
         required: true
