@@ -41,3 +41,8 @@ This removes the unnecessary collection-group dependency from the Seat-shape pro
 ## Evidence boundary
 
 A successful successor run will establish the observed production field inventory for this exact Seat and run. It will not, by itself, establish Firestore Rules closure, index deployment, provider execution, continuation, or release acceptance.
+
+
+## Successor probe status
+
+The first post-#398 production run demonstrated that the historical collection-group Seat resolver is not currently usable for this diagnostic because its Firestore REST query returned HTTP 400 before the Seat document was reached. The successor probe therefore uses the exact known team-nested Seat path as its authoritative diagnostic read boundary.
