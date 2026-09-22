@@ -1,5 +1,5 @@
 import {
-  loadSeatBudgetSettings,
+  loadSeatBudgetRuntime,
   saveSeatBudgetSettings,
   readSeatBudgetRuntimeConfig,
 } from './seat-budget-settings-client.js';
@@ -44,7 +44,7 @@ async function handleLoad(event) {
   if (!seatId || !runtimeConfigured()) return;
   status('Loading canonical Seat budget…');
   try {
-    const body = await loadSeatBudgetSettings({ seatId });
+    const body = await loadSeatBudgetRuntime({ seatId });
     dispatch('teamai:seat-budget-runtime-read-model', { readModel: toReadModel(body) });
     status('Loaded from canonical Seat budget.', 'READY');
   } catch (error) {
