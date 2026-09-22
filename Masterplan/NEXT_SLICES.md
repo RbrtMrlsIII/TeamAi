@@ -8,7 +8,7 @@ TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 
 ## Status
 
-PRE-MERGE RECONCILIATION. Draft PR #398 remains the sole implementation vehicle on `frontend/029-machine-world-convergence`. The live branch head is the source of truth for current verification; merge remains gated on exact-head review and human authorization.
+IMPLEMENTATION ACTIVE / IN PROGRESS. Draft PR #398 remains the sole implementation vehicle on `frontend/029-machine-world-convergence`. The live branch head is the source of truth for current verification; merge remains gated on exact-head review and human authorization.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
