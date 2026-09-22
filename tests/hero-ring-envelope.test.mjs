@@ -34,7 +34,7 @@ test('ten-seat base envelope retains a measurable three-band radial separation',
     ringR1Scale: 1.18,
     ringR2Scale: 1.42,
   });
-  assert.equal(envelope.interRingClearance, 0.168);
+  assert.ok(Math.abs(envelope.interRingClearance - 0.168) < 1e-12);
   assert.ok(envelope.r1Radius - envelope.workspaceRadius >= 0.168);
   assert.ok(envelope.r2Radius - envelope.r1Radius >= 0.168);
   assert.ok(envelope.seatRingRadius - envelope.r2Radius >= 0.168);
