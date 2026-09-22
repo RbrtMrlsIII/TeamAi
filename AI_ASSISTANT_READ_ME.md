@@ -18,7 +18,7 @@
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
 - next allowed work: continue the governed 029 cross-stack implementation on PR #398; implementation remains active while production Firestore Seat-shape verification, controlled task-executor deployment, real provider continuation proof, final spatial acceptance, and production delivery evidence remain open.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks PASS on `e309f8e7ea61c60f241d1127c8ca606720fc2d3f`; this exact head also includes the new canonical R1/R2 browser acceptance contract, while final spatial visual acceptance, production deployment, provider execution, and human acceptance remain open.
+- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks PASS on `48c688f1ed033803002d5f6e594c51d3a255fc0c`; this exact head includes the canonical R1/R2 browser acceptance contract and the production Seat diagnostic workflow guard, while final spatial visual acceptance, production deployment, provider execution, and human acceptance remain open.
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
@@ -54,6 +54,14 @@
 - Commit `b2957c4430ac66d970ab0db695bc04b3f90eed4c` restores the missing local articulation value in the draw pass, synchronizes the canonical source/public pair, and adds an execution-level regression test that invokes the draw function rather than only checking source structure.
 - Exact-head validation on `b2957c4430ac66d970ab0db695bc04b3f90eed4c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS. Browser also passed the committed machine-spatial parity check before Playwright execution.
 - This closes the observed R1/R2 render-loop regression. It does not close final visual acceptance, production Firebase deployment, production Firestore evidence, real-provider execution/continuation, human acceptance, or merge authorization.
+
+### 2026-09-22 production Seat diagnostic gate hardening
+
+- The live production Seat diagnostic remains workflow-dispatch-only and is not auto-triggered.
+- Added `tests/firestore-seat-shape-diagnostic.test.mjs` to lock the workflow/script environment mapping, canonical Seat filtering, one-active-connection fail-closed rule, and metadata-only reporting posture.
+- The first version of this guard failed because its test assertion contained malformed JavaScript quoting. That was corrected in `48c688f1ed033803002d5f6e594c51d3a255fc0c` without changing the production diagnostic or workflow.
+- Exact-head validation on `48c688f1ed033803002d5f6e594c51d3a255fc0c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS.
+- Live Supabase remains unchanged: `teamai-task-execute` is v12 stub runtime, `teamai-task-continuation-request` is v2, `teamai-seat-budget-settings` is v1, and `teamai-seat-budget-runtime` is not deployed. The next authoritative gate is the real Firestore Seat diagnostic itself.
 
 ### 2026-09-22 R1/R2 runtime acceptance contract
 

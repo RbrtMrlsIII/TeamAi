@@ -73,6 +73,7 @@ All substantive claims are admissible only for the exact PR `base...head` under 
 Green CI does not prove Firebase runtime state, provider execution, production deployment, or human acceptance.
 
 ## Completed capability slices — 2026-09-22
+- Production Firestore Seat diagnostic workflow/script wiring is now contract-tested; the live diagnostic remains manually dispatched and requires protected secrets plus a real Seat ID.
 
 - R0 workspace receiving choreography now has a semantic presentation model and canonical WebGL rendering pass from the Seat connection route into `WORKSPACE_CENTER`.
 - Seat Budget Settings is a real end-to-end configuration capability through a trusted Edge boundary and canonical Seat transaction. Its live function is deployed as `teamai-seat-budget-settings` v1.
