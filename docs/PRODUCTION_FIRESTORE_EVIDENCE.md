@@ -30,3 +30,25 @@ After the first successful run, use the observed Seat field inventory to reconci
 ## Exact Seat read
 
 The diagnostic now requires the Team ID as an explicit workflow input and performs a direct document read at the canonical team-nested Seat path. This intentionally avoids using a collection-group Seat query for a proof that already has an exact Team/Seat identity. Collection-group queries remain separately governed and indexed where they are needed by application behavior.
+
+## Current execution boundary
+
+The verified Gate 3 diagnostic selectors are:
+
+- team: gate3-test-team
+- seat: gate3-test-seat
+
+These are historical test hierarchy identifiers and are safe to use as selectors for the fresh diagnostic.
+
+The fresh production evidence workflow is implemented on the PR #402 branch, but its manual dispatch is currently blocked because GitHub requires the workflow_dispatch workflow file to exist on the repository default branch before it can be manually triggered.
+
+Observed result:
+- workflow: firestore-production-evidence.yml
+- ref: backend/030-production-runtime-evidence
+- API result: HTTP 404, workflow not found for dispatch
+
+The existing default-branch Firestore production Seat diagnostic is not an equivalent substitute. It uses the older collection-group discovery path and its real run already failed at the Firestore HTTP 400 query boundary.
+
+No production-secret PR trigger was introduced to bypass this limitation.
+
+Therefore the fresh Firestore evidence gate remains blocked until a safe default-branch execution vehicle becomes available or the project makes an explicit merge decision. Historical Gate 3 evidence is not counted as fresh 2026-09-22 evidence.
