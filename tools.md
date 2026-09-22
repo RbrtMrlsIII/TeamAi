@@ -1047,6 +1047,32 @@ Keep the production evidence workflow scoped to PR #402 and do not mutate main m
 Status:
 Recorded as an execution blocker; no insecure bypass adopted.
 
+### 2026-09-22: Firebase CLI / Firestore index deployment - Service Usage IAM boundary
+
+Finding:
+The controlled default-branch Firestore index deployment workflow reached the Firebase CLI deployment step successfully, but the CLI stopped during its Firestore API preflight with HTTP 403 from Service Usage: permission denied to get service firestore.googleapis.com.
+
+Observed workflow:
+- run: 35734239293
+- head: main / 87f466fb0edac3784280128785a8fd2dc757e749
+- failing step: Deploy Firestore indexes only
+- readback step: skipped
+
+Why it matters:
+The deployment service account is not currently authorized for the Service Usage permission needed by the Firebase CLI preflight. This does not establish that the Firestore index definition itself is invalid, and it does not prove whether the index was created.
+
+Required IAM surface:
+Current Google Cloud documentation shows serviceusage.services.get is a distinct IAM permission and Firestore index creation requires datastore schema/index permissions such as those included by roles/datastore.indexAdmin.
+
+Security implication:
+Do not grant a broad Owner or Editor role as a quick fix. Resolve the minimum required permissions for the dedicated deployment identity first.
+
+Action:
+Keep index deployment unclaimed. Diagnose the deployment identity effective IAM permissions through an authorized Google Cloud IAM surface before making an IAM mutation, then rerun the existing readback workflow.
+
+Status:
+Blocked on IAM authorization; no permission change made.
+
 ## 15. Maintenance rule
 
 **This file is living engineering knowledge.**
