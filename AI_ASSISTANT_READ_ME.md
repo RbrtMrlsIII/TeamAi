@@ -210,6 +210,14 @@ Historical Issues are evidence, not active routing.
 - The repository now carries the next bounded continuation chain: incomplete provider result → durable handoff checkpoint → explicit continuation request → atomic task transition to `waiting_for_continuation` plus `CONTINUE_WAIT` durable event → trusted user-authenticated Edge continuation-request boundary.
 - Continuation requests preserve task/project/checkpoint/request identity, are idempotent on exact retry, and conflict on relation/instruction changes. The continuation boundary does not invoke a provider and does not treat a request as implicit execution approval.
 - The real Edge task-execute source now persists the handoff checkpoint before its durable `handoff_required` result and references that checkpoint in task/result evidence.
-- Live Supabase remains unchanged: `teamai-task-execute` is still v12 and `teamai-seat-provider-bind` is still v7; the new continuation-request Edge source is repository-only until controlled deployment is explicitly proven.
+- Live Supabase currently reports `teamai-task-execute` v12, `teamai-seat-provider-bind` v8, `teamai-task-continuation-request` v2, and `teamai-seat-budget-settings` v1. The new `teamai-seat-budget-runtime` Edge source is repository-complete but held from deployment until its Firestore collection-group index is deployed.
 - Live production Firestore Seat document shape remains unverified from the real dataset. Do not deploy the new runtime path until the real authorized Coder Seat shape and connection relationship are directly inspected.
 - Remaining #392 execution gap: continuation request → authorized fresh-budgeted continuation turn → provider execution → truthful final completion. Gate 4 Firebase emulator proof remains parked/unproven.
+
+### 2026-09-22 #392 Seat Budget capability expansion
+- Seat Budget Settings is now an actual configurable product path: browser editor → authenticated runtime client → trusted `teamai-seat-budget-settings` Edge boundary → canonical Seat transaction → readback.
+- The live `teamai-seat-budget-settings` function is v1 and was source-matched after deployment. An unauthenticated browser-origin smoke returns HTTP 401 with `missing_firebase_id_token`.
+- Seat Budget durable runtime read model is repository-complete. `teamai-seat-budget-runtime` resolves the active/authorized canonical Seat, reads the latest Seat-owned durable `execution-results` record, and exposes usage/accounting provenance without returning provider output.
+- Legacy v12 stub execution is handled truthfully: raw usage may be shown as durable evidence, while remaining/usable generation capacity stays unknown until server-side budget accounting exists.
+- Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. Live runtime-read-model promotion is blocked until that index exists in production.
+- R0 workspace receiving choreography is implemented and independently verified as a renderer-owned presentation capability from the Seat connection route into WORKSPACE_CENTER.
