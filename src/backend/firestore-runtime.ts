@@ -350,6 +350,19 @@ export class FirestoreAtomicTaskLeaseStore implements AtomicTaskLeaseStore {
   }
 }
 
+
+export function normalizeSeatStateDocument(
+  data: Record<string, unknown>,
+  seatId: string,
+): SeatState {
+  const normalizedId = String(data.id ?? data.seatId ?? seatId).trim();
+  if (!normalizedId) throw new Error('seat_id_missing');
+  return {
+    ...data,
+    id: normalizedId,
+  } as unknown as SeatState;
+}
+
 export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore, SeatBudgetSettingsStore, TaskContinuationStateStore {
   constructor(private readonly client: FirestoreRuntimeClient, private readonly uid: string, private readonly workplaceId: string) {}
 
@@ -365,7 +378,9 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
       required(projectId, 'projectId'),
       required(seatId, 'seatId'),
     );
-    return resolved ? decodeDocument(resolved.document) as unknown as SeatState : null;
+    if (!resolved) return null;
+    const decoded = decodeDocument(resolved.document);
+    return normalizeSeatStateDocument(decoded, required(seatId, 'seatId'));
   }
 
   async getSeatBudget(uid: string, projectId: string, seatId: string): Promise<SeatTurnBudgetConfig | null> {
