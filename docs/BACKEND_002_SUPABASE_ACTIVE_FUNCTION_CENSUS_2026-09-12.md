@@ -1,5 +1,7 @@
 # TeamAi Backend — Active Edge Function Census
 
+> **Historical snapshot:** This census records the connected Supabase deployment observed on 2026-09-12. It is preserved for provenance and recovery only. The current deployment authority is `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`. Do not treat this file as the current live inventory.
+
 Observed from the connected Supabase project on 2026-09-12.
 
 This file is infrastructure evidence, not product roadmap or completion proof.
@@ -25,6 +27,6 @@ The `verify_jwt: false` setting is intentional for the active functions because 
 
 The observed Supabase deployment metadata still contains inconsistent local checkout path shapes, including `TeamAi/TeamAi/` for several functions. This is deployment provenance evidence, not by itself proof of a runtime defect.
 
-## Freeze rule
+## Historical freeze rule
 
-This eight-function set is the current active backend surface observed on 2026-09-12. Future additions, removals, renames, material restructurings, or reimplementations of Edge Functions must update this census and the canonical backend current-state record in the same governed change, while keeping implementation, deployment, runtime-proof, completion, and endorsement claims distinct.
+This eight-function set was the active backend surface observed on 2026-09-12. Future changes must update the current 2026-09-22 census and canonical backend current-state record in the same governed change. This historical snapshot remains immutable evidence for its original observation.
