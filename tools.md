@@ -1202,3 +1202,29 @@ over:
 > "BigQuery is connected."
 
 That distinction is the purpose of this file.
+
+#### 2026-09-22: Deep Security Static Analysis - first PR #402 execution
+
+Finding:
+The new layered security workflow completed successfully on exact commit 752dbe8c906a1a3b418e4ae7ec0b89bb1863e6f5.
+
+Observed:
+- Semgrep CE executed successfully and uploaded SARIF.
+- Bandit Python executed successfully and uploaded SARIF.
+- SonarQube job completed with the external scan correctly skipped because project/token configuration is not connected.
+- gosec completed with the Go scan skipped because no Go module/workspace surface exists.
+- Brakeman completed with the Rails scan skipped because no Rails application markers exist.
+- MobSF completed with the mobile scan skipped because no Android/iOS source markers exist.
+- GitHub code scanning returned no Semgrep alerts and no Bandit alerts for the exact PR branch at the time of inspection.
+
+Why it matters:
+The scanner layer is now executable rather than merely documented, while applicability gates prevent irrelevant scanners from producing misleading coverage.
+
+Validated by:
+GitHub Actions run 35736168765 and exact-branch code-scanning alert queries.
+
+Action:
+Keep Semgrep and Bandit active for the current repository surface. Keep SonarQube configuration-gated and retain technology-specific conditional jobs.
+
+Status:
+Accepted.
