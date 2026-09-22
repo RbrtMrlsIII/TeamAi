@@ -26,13 +26,13 @@ test("Firestore index verifier accepts required indexes plus unrelated live inde
 test("Firestore index verifier identifies a missing required composite index", () => {
   const expected = JSON.parse(readFileSync("firestore.indexes.json", "utf8"));
   const deployed = {
-    indexes: expected.indexes.filter((index) => index.collectionGroup !== "connections"),
+    indexes: expected.indexes.filter((index) => index.collectionGroup !== "execution-results"),
   };
 
   const result = verifyRequiredIndexes(expected, deployed);
   assert.equal(result.ok, false);
   assert.equal(result.missing.length, 1);
-  assert.equal(result.missing[0].collectionGroup, "connections");
+  assert.equal(result.missing[0].collectionGroup, "execution-results");
 });
 
 test("Firestore index deployment workflow performs deploy then readback verification", () => {
