@@ -155,7 +155,7 @@ function saveIntent() {
   });
   dispatch('teamai:seat-budget-save-intent', intent);
   const result = panel?.querySelector('[data-seat-budget-result]');
-  if (result) result.textContent = 'Configuration save requested through the trusted runtime.';
+  if (result) result.textContent = 'Configuration intent dispatched. Durable persistence requires the trusted runtime configuration.';
 }
 
 function build() {
