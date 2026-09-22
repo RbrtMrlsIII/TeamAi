@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSeatBudgetSettings, saveSeatBudgetSettings } from '../frontend/spatial/seat-budget-settings-client.js';
+import { loadSeatBudgetSettings, loadSeatBudgetRuntime, saveSeatBudgetSettings } from '../frontend/spatial/seat-budget-settings-client.js';
 
 function mockFetch(expectedBody, responseBody = { ok: true }, endpoint = 'teamai-seat-budget-settings') {
   return async (url, options) => {
@@ -70,13 +70,13 @@ test('Seat Budget runtime client uses the trusted runtime endpoint', async () =>
   globalThis.TEAMAI_WORKPLACE_ID = 'workplace-1';
   globalThis.TEAMAI_PROJECT_ID = 'project-2';
 
-  const body = await (await import('../frontend/spatial/seat-budget-settings-client.js')).loadSeatBudgetRuntime(
+  const body = await loadSeatBudgetRuntime(
     { seatId: 'seat-1' },
     mockFetch({
       workplaceId: 'workplace-1',
       projectId: 'project-2',
       seatId: 'seat-1',
-    }, { ok: true, usageReported: true, usage: { consumedTotalTokens: 2, remainingGenerationTokens: 999 } }),
+    }, { ok: true, usageReported: true, usage: { consumedTotalTokens: 2, remainingGenerationTokens: 999 } }, 'teamai-seat-budget-runtime'),
   );
   assert.equal(body.usageReported, true);
   assert.equal(body.usage.remainingGenerationTokens, 999);
