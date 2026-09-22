@@ -22,12 +22,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Run read-only Seat-shape diagnostic
+      - name: Run fresh exact-path metadata evidence probe
         env:
           TEAMAI_FIREBASE_PROJECT_ID: team-ai-official
           TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON }}
           TEAMAI_DIAGNOSTIC_UID: ${{ secrets.TEAMAI_FIREBASE_TEST_UID }}
           TEAMAI_WORKPLACE_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_WORKPLACE_ID }}
           TEAMAI_PROJECT_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_PROJECT_ID }}
+          TEAMAI_TEAM_ID: gate3-test-team
           TEAMAI_SEAT_ID: ${{ inputs.seat_id }}
-        run: node scripts/diagnose-production-firestore-seat.mjs
+        run: node scripts/run-production-firestore-evidence.mjs

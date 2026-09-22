@@ -4,6 +4,7 @@ import fs from 'node:fs';
 
 const script = fs.readFileSync('scripts/run-production-firestore-evidence.mjs', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/firestore-production-evidence.yml', 'utf8');
+const diagnosticWorkflow = fs.readFileSync('.github/workflows/firestore-seat-shape-diagnostic.yml', 'utf8');
 
 test('fresh evidence is uniquely run-scoped and secret-redacted', () => {
   assert.match(script, /runtime-diagnostics/);
@@ -42,4 +43,14 @@ test('secret detection traverses nested Firestore maps rather than only top-leve
   assert.match(script, /findForbiddenPaths\(value/);
   assert.match(script, /findForbiddenPaths\(child, childPath\)/);
   assert.match(script, /assertNoSecretFields\(raw\)/);
+});
+
+test('default-branch Seat diagnostic vehicle now runs the exact-path evidence probe', () => {
+  assert.match(diagnosticWorkflow, /workflow_dispatch:/);
+  assert.match(diagnosticWorkflow, /seat_id:/);
+  assert.match(diagnosticWorkflow, /TEAMAI_TEAM_ID: gate3-test-team/);
+  assert.match(diagnosticWorkflow, /node scripts\/run-production-firestore-evidence\.mjs/);
+  assert.doesNotMatch(diagnosticWorkflow, /diagnose-production-firestore-seat\.mjs/);
+  assert.doesNotMatch(diagnosticWorkflow, /pull_request:/);
+  assert.doesNotMatch(diagnosticWorkflow, /pull_request_target:/);
 });
