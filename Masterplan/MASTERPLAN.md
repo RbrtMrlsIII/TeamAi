@@ -68,6 +68,24 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 - [ ] Firestore index deployment remains pending before live promotion of `teamai-seat-budget-runtime`.
 - [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
 
+
+## 2026-09-22 030 production-runtime evidence checkpoint
+
+PR #398 has merged at `87f466fb0edac3784280128785a8fd2dc757e749` after exact-head validation and independent human approval on head `08115e507b4999966b753e3e4e3c8e035e9db163`.
+
+Issue #401 is now the sole successor implementation frontier. The remaining 029/backend checklist is intentionally carried forward as evidence-dependent work rather than reopened inside #398.
+
+- [x] #398 reviewed structural baseline merged into `main`.
+- [x] Fresh production Firestore evidence vehicle created from the #398 merge point.
+- [ ] Fresh production Seat evidence run executed.
+- [ ] Real Seat field inventory reconciled with field-level Firestore Rules.
+- [ ] Live `execution-results` index deployed/read back.
+- [ ] `teamai-seat-budget-runtime` live validation/promotion completed.
+- [ ] Real-provider `teamai-task-execute` promotion completed.
+- [ ] Provider incomplete termination → durable checkpoint → explicit continuation → fresh Seat-owned turn → truthful completion proven.
+- [ ] Remaining #400 authoritative runtime wiring completed where required.
+- [ ] Final spatial visual/human acceptance and production delivery observation completed.
+
 ## TEAM-EXPERIENCE-029 baseline
 
 - [x] Existing C0–C7 implementation/evidence is retained as historical baseline.
