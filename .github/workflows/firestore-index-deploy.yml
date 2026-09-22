@@ -36,6 +36,13 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/teamai-firebase-service-account.json
         run: firebase deploy --only firestore:indexes --project team-ai-official --non-interactive
 
+      - name: Read back deployed Firestore indexes
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/teamai-firebase-service-account.json
+        run: |
+          set -euo pipefail
+          firebase firestore:indexes --project team-ai-official --database="(default)" --json > "${RUNNER_TEMP}/deployed-firestore-indexes.json"
+          node scripts/verify-firestore-indexes.mjs firestore.indexes.json "${RUNNER_TEMP}/deployed-firestore-indexes.json"
       - name: Remove service account
         if: always()
         shell: bash
