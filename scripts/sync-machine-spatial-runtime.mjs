@@ -38,6 +38,7 @@ const files = [
   'machine-seat-division-payload.js',
   'machine-energy-flow.js',
   'machine-choreography.js',
+  'machine-r0-receiving.js',
   'mcp-capability.js',
   'mcp-capability-facility.js',
   'mcp-capability.css',
