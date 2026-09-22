@@ -35,9 +35,9 @@ test('ten-seat base envelope retains a measurable three-band radial separation',
     ringR2Scale: 1.42,
   });
   assert.ok(Math.abs(envelope.interRingClearance - 0.168) < 1e-12);
-  assert.ok(envelope.r1Radius - envelope.workspaceRadius >= 0.168);
-  assert.ok(envelope.r2Radius - envelope.r1Radius >= 0.168);
-  assert.ok(envelope.seatRingRadius - envelope.r2Radius >= 0.168);
+  assert.ok(envelope.r1Radius - envelope.workspaceRadius >= envelope.interRingClearance - 1e-12);
+  assert.ok(envelope.r2Radius - envelope.r1Radius >= envelope.interRingClearance - 1e-12);
+  assert.ok(envelope.seatRingRadius - envelope.r2Radius >= envelope.interRingClearance - 1e-12);
 });
 
 test('envelope remains deterministic when the preferred scales exceed the physical gap', () => {
