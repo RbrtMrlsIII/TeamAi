@@ -85,13 +85,14 @@ async function findLatestResult(input: {
     body: JSON.stringify({
       structuredQuery: {
         from: [{ collectionId: "execution-results", allDescendants: true }],
+        // The parent path scopes the query to uid/workplace/project.
+        // Keep the collection-group predicate to Seat identity so the declared
+        // composite index is exactly (seatId ASC, recordedAt DESC).
         where: {
-          compositeFilter: {
-            op: "AND",
-            filters: [
-              { fieldFilter: { field: { fieldPath: "seatId" }, op: "EQUAL", value: { stringValue: input.seatId } } },
-              { fieldFilter: { field: { fieldPath: "projectId" }, op: "EQUAL", value: { stringValue: input.projectId } } },
-            ],
+          fieldFilter: {
+            field: { fieldPath: "seatId" },
+            op: "EQUAL",
+            value: { stringValue: input.seatId },
           },
         },
         orderBy: [{
