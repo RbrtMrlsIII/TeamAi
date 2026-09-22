@@ -70,7 +70,7 @@ export function deriveWorkspaceReceivingPresentation({
     transferPoint,
     transferPrefix,
     semanticEdgeId: edge?.semanticEdgeId || edge?.id || null,
-    target: Object.freeze({ ...route.at(-1) }),
+    target: Object.freeze({ ...route.at(-1), id: edge?.target?.id || edge?.to || null }),
     receiverAmount,
     reflectionAmount,
     presentationOnly: true,
