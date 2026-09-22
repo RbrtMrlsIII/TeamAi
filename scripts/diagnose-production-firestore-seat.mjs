@@ -133,11 +133,18 @@ const connectionRows = await runQuery(parent, {
 const connections = connectionRows.map(row => row.document).filter(document => document?.name).map(document => fields(document.fields));
 const activeConnections = connections.filter(connection => String(connection.status ?? '') === 'active');
 const connectionProviderNames = activeConnections.map(connection => String(connection.provider ?? connection.providerCode ?? '').trim()).filter(Boolean);
+const connectionIdentityMismatches = activeConnections.filter(connection =>
+  String(connection.uid ?? '') !== uid ||
+  String(connection.workplaceId ?? '') !== workplaceId ||
+  String(connection.projectId ?? '') !== projectId ||
+  String(connection.seatId ?? '') !== seatId,
+);
 const connectionReport = {
   count: connections.length,
   activeCount: activeConnections.length,
   matchingSeatIds: activeConnections.map(connection => String(connection.seatId ?? '')),
   providers: connectionProviderNames,
+  identityMismatchCount: connectionIdentityMismatches.length,
   executeCapability: activeConnections.some(connection => Array.isArray(connection.capabilities) && connection.capabilities.map(String).includes('execute')),
 };
 
@@ -169,7 +176,7 @@ if (seatReport.turnBudget.present) {
 
 const connectionShapeErrors = [];
 if (connectionReport.activeCount !== 1) connectionShapeErrors.push('active_seat_connection_count_not_one');
-if (connectionReport.matchingSeatIds.some(value => value !== seatId)) connectionShapeErrors.push('active_connection_seat_mismatch');
+if (connectionReport.identityMismatchCount !== 0) connectionShapeErrors.push('active_connection_identity_mismatch');
 const seatProvider = String(seatReport.provider.provider ?? '').trim().toLowerCase();
 if (!connectionProviderNames.some(provider => provider.toLowerCase() === seatProvider)) connectionShapeErrors.push('active_connection_provider_mismatch');
 if (!connectionReport.executeCapability) connectionShapeErrors.push('connection_execute_capability_missing');
