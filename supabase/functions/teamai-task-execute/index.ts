@@ -480,9 +480,20 @@ Deno.serve(async (req: Request) => {
       return json({ error: "task_provider_seat_mismatch" }, 409);
     }
 
-    const connection = task.connection && typeof task.connection === "object" ? task.connection as Record<string, unknown> : null;
-    if (!connection || String(connection.status ?? "") !== "active") return json({ error: "connection_not_active" }, 409);
-    if (String(connection.projectId ?? "") !== projectId) return json({ error: "connection_project_mismatch" }, 409);
+    const connectionDocument = await firestoreFindSeatConnection({
+      uid,
+      workplaceId,
+      projectId,
+      seatId,
+      accessToken,
+    });
+    if (!connectionDocument) return json({ error: "connection_not_found" }, 409);
+    const connection = connectionDocument.fields;
+    const connectionProvider = String(connection.provider ?? connection.providerCode ?? "").trim();
+    if (!connectionProvider) return json({ error: "connection_provider_not_configured" }, 409);
+    if (connectionProvider.toLowerCase() !== seatProvider.toLowerCase()) {
+      return json({ error: "connection_provider_seat_mismatch" }, 409);
+    }
     const capabilities = Array.isArray(connection.capabilities) ? connection.capabilities.map(String) : [];
     if (!capabilities.includes("execute")) return json({ error: "connection_execute_capability_required" }, 403);
 
