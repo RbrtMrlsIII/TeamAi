@@ -6,6 +6,26 @@ function read(path) {
   return readFileSync(path, 'utf8');
 }
 
+test('Seat Budget settings Edge boundary requires Firebase identity and persists only canonical Seat budget fields', () => {
+  const source = read('supabase/functions/teamai-seat-budget-settings/index.ts');
+  assert.match(source, /verifyFirebaseUid/);
+  assert.match(source, /firestoreFindSeat/);
+  assert.match(source, /firestoreBeginTransaction/);
+  assert.match(source, /firestoreGetInTransaction/);
+  assert.match(source, /firestoreCommitTransaction/);
+  assert.match(source, /normalizeEdgeTurnBudget/);
+  assert.match(source, /seat_authorization_required/);
+  assert.match(source, /seat_identity_mismatch/);
+  assert.match(source, /updateMask: \{ fieldPaths: \[["']turnBudget["'], ["']updatedAt["'] \] \}/);
+  assert.doesNotMatch(source, /providerApiKey|decryptSeatApiKey|TEAMAI_SEAT_SECRET_KEY/);
+});
+
+test('Seat Budget settings Edge boundary never creates a missing Seat', () => {
+  const source = read('supabase/functions/teamai-seat-budget-settings/index.ts');
+  assert.match(source, /seat_not_found/);
+  assert.doesNotMatch(source, /firestoreCreate/);
+});
+
 test('Edge executor no longer claims stub completion', () => {
   const source = read('supabase/functions/teamai-task-execute/index.ts');
   assert.doesNotMatch(source, /stub-edge-runtime/);
