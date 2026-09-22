@@ -178,7 +178,6 @@ export class FirestoreRuntimeClient {
               value: { stringValue: safeSeatId },
             },
           },
-          limit: 2,
         },
         ...(transaction ? { transaction } : {}),
       }),
