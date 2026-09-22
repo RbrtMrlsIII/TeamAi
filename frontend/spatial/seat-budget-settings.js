@@ -34,6 +34,7 @@ export function normalizeSeatBudgetReadModel(value = {}) {
     healthy: input.healthy !== false,
     seatId: optionalString(input.seatId),
     responsibilityProfile: optionalString(configured.responsibilityProfile),
+    hardStopPolicy: configured.hardStopPolicy === 'stop-at-limit' ? 'stop-at-limit' : 'handoff-before-exhaustion',
     provider: optionalString(input.provider),
     model: optionalString(input.model),
     turnBudgetTokens: nonNegative(configured.turnBudgetTokens),
