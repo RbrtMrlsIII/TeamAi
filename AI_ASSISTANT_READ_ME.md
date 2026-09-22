@@ -19,7 +19,7 @@
 - next allowed work: continue the governed 029 cross-stack implementation on PR #398; implementation remains active while production Firestore Seat-shape verification, controlled task-executor deployment, real provider continuation proof, final spatial acceptance, and production delivery evidence remain open.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: exact-head Governance, Security, Full-System, and Canonical Browser checks are running/re-evaluating against the current #398 head after the audited ownership/test/document reconstruction; results are not admissible until tied to the same exact head.
-- live PR head: `d0520f38a5c4c79be28d569f11e446469afca591` at the last verified read; re-read live GitHub before relying on this SHA because active commits continue to move the branch.
+- live PR head: the GitHub PR head is the source of truth for the current verification commit; current observed head at this update: `39fb30582659a7673d6a15a40bfcd338acd47e6d`.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
 
