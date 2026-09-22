@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
 const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
 const semantic = await readFile(new URL('../public/hero-semantic-camera.js', import.meta.url), 'utf8');
@@ -46,24 +47,24 @@ test('turn lifecycle exists', () => {
 });
 
 test('flexible seat model is present', () => {
-  for (const marker of ['profile(', 'buildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
+  for (const marker of ['rebuildSeats(', 'setSeatCount', 'setTeamSize', 'teamai:web-ai-seat-unlocked', 'seatCount']) {
     assert.ok(runtime.includes(marker), marker);
   }
   assert.match(runtime, /clampSeatCount\(next\)/);
-  assert.match(runtime, /seatCount=GUEST_SEAT_COUNT/);
+  assert.match(runtime, /seatCount\s*=\s*GUEST_SEAT_COUNT/);
   assert.match(capacity, /MIN_SEAT_COUNT = 1/);
   assert.match(capacity, /MAX_SEAT_COUNT = 10/);
   assert.match(capacity, /GUEST_SEAT_COUNT = 10/);
-  assert.match(runtime, /seatPopulationDensity\(count\)/);
-  assert.match(runtime, /seatPopulationDensity\(seatCount\)/);
-  assert.doesNotMatch(runtime, /clamp\(count,1,8\)/);
-  assert.doesNotMatch(runtime, /\(seatCount-1\)\/7/);
+  assert.match(renderer, /Number\(state\.seatCount\)/);
+  assert.match(renderer, /createBranchConnectionCore/);
 });
 
-test('signature geometry primitives are present', () => {
-  for (const primitive of ['function torus', 'function sph', 'TORUS', 'RING', 'SPH']) {
-    assert.match(runtime, new RegExp(primitive.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  }
+test('canonical renderer owns the WebGL geometry primitives', () => {
+  assert.match(renderer, /const POLYS =/);
+  assert.match(renderer, /function shapeBuffer\(/);
+  assert.match(renderer, /gl\.drawArrays\(gl\.TRIANGLES/);
+  assert.match(renderer, /function ringDraw\(/);
+  assert.match(renderer, /PRIMITIVE_POLYGONS/);
 });
 
 test('spatial depth layer is wired', () => {
@@ -110,4 +111,15 @@ test('Issue #89 reduced-motion contract is wired to documentElement data-motion'
 test('Issue #89 responsive framing helpers exist without second theme root', () => {
   assert.match(runtime, /responsiveFovBoost|FOV_BOOST|setupRingFovBoost|viewW|aspect/);
   assert.doesNotMatch(runtime, /second theme root|body\.dataset\.theme/i);
+});
+
+
+test('public boot graph stays within the public runtime boundary', async () => {
+  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map((match) => match[1]);
+  assert.ok(scripts.includes('./hero-root-runtime.js'));
+  for (const src of scripts) {
+    const runtimePath = new URL(src, new URL('../public/', import.meta.url));
+    const source = await readFile(runtimePath, 'utf8');
+    assert.doesNotMatch(source, /from\s+['"][^'"]*frontend\/spatial\//);
+  }
 });

@@ -44,3 +44,11 @@ test('retired camera concepts are not reintroduced by the new experience layer',
   assert.doesNotMatch(src, /HERO_LOW_ORBIT/);
   assert.doesNotMatch(src, /TURN_FOLLOW/);
 });
+
+
+test('experience layer delegates auth ownership to the dedicated auth root', async () => {
+  const src = await readFile(new URL('../public/experience-rebaseline.js', import.meta.url), 'utf8');
+  assert.match(src, /TeamAiHeroAuthHandoff\?\.open/);
+  assert.match(src, /TeamAiHeroAuthHandoff\?\.close/);
+  assert.doesNotMatch(src, /getElementById\('hero-auth-panel'\)/);
+});

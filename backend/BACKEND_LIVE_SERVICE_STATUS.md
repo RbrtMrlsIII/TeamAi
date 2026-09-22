@@ -1,10 +1,10 @@
 # TEAM-BACKEND-001 — Live Service Status
 
-**Current observation:** 2026-09-12  
+**Current observation:** 2026-09-22  
 **Phase:** TEAM-BACKEND-001 / backend continuation  
 **Status:** **ENDORSED for bounded recorded scope; residual boundaries remain explicit**
 
-> **Current live-state reconciliation — 2026-09-12:** The connected Supabase project now reports exactly eight ACTIVE TeamAi Edge Functions after the operator removed the obsolete `paypal-webhook` deployment. The precise active deployment inventory is maintained in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. Historical deployment snapshots remain evidence and are not current inventory.
+> **Current live-state reconciliation — 2026-09-22:** The active inventory has moved beyond the dated 2026-09-12 census: the trusted `teamai-task-continuation-request` boundary is now deployed as v2. The dated census remains historical evidence; this active status record is the current claim-level inventory and must be re-read before relying on versions.
 
 ## Current boundary state
 
@@ -12,7 +12,7 @@
 |---|---|---|---|
 | Firebase Auth | live Edge paths verify Firebase ID tokens and derive UID from verified claims | **RUNTIME-PROVEN for exercised slices** | every possible auth/failure case |
 | Firestore `default` | Gate-3 authenticated persistence, independent reads, idempotency, lease contention/recovery, and durable results are recorded | **RUNTIME-PROVEN for bounded slices** | full scheduler/product integration |
-| Supabase Edge Functions | TeamAi project `srpgzzretfyqdsfclnuo` reports exactly eight ACTIVE TeamAi functions | **DEPLOYED / current inventory recorded** | deployment alone = end-to-end completion |
+| Supabase Edge Functions | TeamAi project `srpgzzretfyqdsfclnuo` reports 10 ACTIVE TeamAi functions, including `teamai-seat-budget-settings` v1 | **DEPLOYED / current inventory recorded** | deployment alone = end-to-end completion |
 | PayPal live webhook target | operator reports `teamai-paypal-webhook-v5c` at the live URL; Supabase reports v5c ACTIVE | **OPERATOR-CONFIRMED TARGET + DEPLOYED** | all configured PayPal events semantically handled |
 | GitHub | `main` is the engineering/source authority | **PASS** | Hero live binding from install alone |
 | Firebase Hosting | Product Law keeps Firebase Hosting as delivery authority | **PASS** | unrelated deployment paths |
@@ -23,30 +23,26 @@
 | Firebase Rules Gate 4 | reproducible harness exists, but no emulator PASS is recorded | **PARKED / NOT PROVEN** | configuration = emulator PASS |
 | External provider runtime | `teamai-task-execute` remains `stub-edge-runtime` | **OPEN beyond stub** | real provider integration |
 
-## Current live Supabase inventory — 2026-09-12
+## Current live Supabase inventory — 2026-09-22
 
-The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) reports exactly these eight ACTIVE TeamAi Edge Functions:
+The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) reports these ACTIVE TeamAi Edge Functions:
 
-- `teamai-commerce-intent` v19
 - `teamai-domain-bootstrap` v22
-- `teamai-github-oauth-bind` v8
-- `teamai-github-webhook` v7
+- `teamai-commerce-intent` v19
 - `teamai-paypal-webhook-v5c` v21
-- `teamai-seat-connection-test` v7
-- `teamai-seat-provider-bind` v7
 - `teamai-task-execute` v12
+- `teamai-github-webhook` v7
+- `teamai-github-oauth-bind` v9
+- `teamai-seat-connection-test` v8
+- `teamai-seat-provider-bind` v8
+- `teamai-task-continuation-request` v2
+- `teamai-seat-budget-settings` v1
 
-The obsolete `paypal-webhook` deployment is absent from the connected Supabase inventory after operator deletion.
+The new `teamai-seat-budget-runtime` read-model function is repository-complete and exact-head verified, but is **not yet deployed** because its Firestore collection-group composite index must first exist in the live Firebase project.
 
-The precise current deployment census is recorded in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. This live-status document carries claim-level backend state; it does not replace the census.
+The checked-in `firestore.indexes.json` now declares the required `execution-results` collection-group index on `seatId ASC, recordedAt DESC`. The manual workflow `.github/workflows/firestore-index-deploy.yml` is intentionally `workflow_dispatch` only and performs an indexes-only Firebase deployment.
 
-Deployment metadata still shows inconsistent local checkout path shapes for several functions, including `TeamAi/TeamAi/`. That is deployment provenance evidence, not by itself proof of runtime failure.
-
-`teamai-task-execute` remains explicitly `stub-edge-runtime` for the provider stage. Its authenticated task → lease → durable-result path is runtime-proven for the bounded exercised slice; real external provider invocation is a separate authorization/runtime boundary.
-
-`teamai-github-oauth-bind` is live. Its authenticated POST writes the server-owned Firebase UID ↔ GitHub installation mapping. Its GET callback was changed in merged PR #246 to return HTTP 303 to the TeamAi Hero destination; current live deployment/browser proof remains separately bounded.
-
-The Supabase public schema currently has no application tables. This remains consistent with TeamAi's authority model: Firestore `(default)` is the durable application/domain store and Supabase provides trusted Edge execution and webhook infrastructure.
+`teamai-task-execute` remains v12 and is still the historical stub-edge-runtime production boundary. The newer real-provider executor is separately gated by the production Seat diagnostic and must not be promoted by this feature slice.
 
 ## Recovered backend evidence
 
@@ -84,7 +80,7 @@ Do not invent or infer a missing emulator run from later green CI that did not e
 
 Some backend progress is completed through human-operated provider UI, credentials, external account authorization, live/sandbox interactions, or other boundaries that are not visible to every Agent.
 
-`docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves the bridge between repository intent, operator state, connected runtime, and claim level. The current eight-function deployment inventory is now separately frozen in the active census file.
+`docs/TEAMAI_BACKEND_LIVE_REALITY_LEDGER.md` preserves the bridge between repository intent, operator state, connected runtime, and claim level. The current ten-function deployment inventory is now separately recorded in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`.
 
 Before cleanup or refactor that could erase provenance, preserve the observed external state first.
 
@@ -100,7 +96,7 @@ No V-series/SP execution should reopen completed backend foundations merely beca
 
 ## Historical snapshot — preserved
 
-Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wording remain preserved in repository history and older evidence records. They are not the current live inventory. The active eight-function census and this 2026-09-12 reconciliation supersede older live inventory tables for recovery purposes.
+Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wording remain preserved in repository history and older evidence records. They are not the current live inventory. The 2026-09-22 census supersedes the 2026-09-12 snapshot for current live inventory purposes.
 
 ## Required evidence distinction
 
@@ -108,11 +104,24 @@ Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wordin
 
 The distinction remains valid even after bounded gates are endorsed.
 
+## Production Firestore data hygiene — 2026-09-22
+
+The connected production dataset contains both useful bounded evidence and older probe records. **No manual field deletion is authorized from this status record.** A document that looks sparse, duplicated, or historical is first classified as canonical, diagnostic, historical evidence, or malformed before any mutation.
+
+For future production proof, prefer a fresh run-scoped hierarchy created by an explicit operator-authorized diagnostic/probe workflow. Fresh runs should:
+- use unique IDs so new evidence cannot overwrite historical records;
+- create only the fields required by the canonical runtime contract;
+- keep provider secrets out of logs and readbacks;
+- record the exact run ID and evidence class;
+- leave historical evidence immutable unless a separate cleanup authorization exists.
+
+The previously observed commerce paths and server-only `commerceCorrelationIndex/{correlationId}` remain part of the commerce evidence model and must not be deleted merely because their documents are sparse.
+
 ## Next backend continuation
 
 The next backend actions remain bounded rather than a generic rewrite:
 
-1. retain the eight-function active surface as the current deployment baseline;
+1. retain the current 10-function active surface as the live deployment baseline until each runtime is independently reconciled;
 2. keep Gate 4 parked unless an actual emulator PASS record is recovered;
 3. keep real external provider runtime separate from the proven `stub-edge-runtime` path;
 4. keep OAuth lifecycle/security and deploy-source reconciliation separately governed;
@@ -123,3 +132,24 @@ For the broader 029 release hold, use the Masterplan and current evidence reconc
 ## Lease field-preservation fix — 2026-09-12 (#284/#287)
 
 `teamai-task-execute`'s lease-commit path previously kept only string-typed fields from the in-memory task snapshot when writing the lease update, silently dropping any non-string Firestore field types on every lease. This is now fixed: the lease commit preserves the complete raw Firestore `fields` map and overlays only the lease-owned keys. Covered by `tests/backend-task-lease-preservation.test.mjs`. This is a repository-level bug fix and does not by itself change the broader backend release gates.
+
+
+## Live deployment note — 2026-09-22
+
+The trusted `teamai-task-continuation-request` boundary is deployed in Supabase as version 2 from the audited 029 branch source. It reuses the existing Firebase service-account secret and performs Firebase ID-token verification, canonical Seat/checkpoint validation, and durable continuation-request state transition only; it does not execute a provider.
+
+The live `teamai-task-execute` function remains version 12 and the production Seat/connection shape is not yet directly verified. The newer real-provider executor remains undeployed until that gate is satisfied.
+
+Repository-side hardening on the active 029 branch now makes normal task execution resolve the active connection from the canonical Firestore Seat scope, matching the continuation execution boundary. Provider results that omit normalized termination are durably terminalized as `PROVIDER_TERMINATION_INVALID` rather than leaving a leased task/request running.
+
+The checked-in Firestore index set retains the required `execution-results` collection-group index (`seatId ASC, recordedAt DESC`). An equality-only `connections(seatId,status)` composite was deliberately not retained because Firestore supports compound equality queries through index merging. The indexes-only workflow now deploys and then reads back deployed indexes, verifying required repository indexes without deleting unrelated live indexes.
+
+
+## Seat Budget runtime read model — 2026-09-22
+
+The repository now contains a trusted `teamai-seat-budget-runtime` read boundary that resolves the canonical active/authorized Seat, reads the latest Seat-owned durable `execution-results` record, and exposes configuration plus runtime accounting without returning provider output.
+
+The projection is intentionally backward-compatible with the live v12 stub: raw usage may be shown as recorded usage while remaining/usable capacity stays unknown when server-side budget accounting is absent. This is explicitly not treated as authoritative remaining capacity.
+
+The runtime endpoint is held from production deployment until the declared Firestore collection-group index is deployed. This is an infrastructure prerequisite, not a code-validation gap.
+

@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@6.0.10";
 import {
   firestoreCreate,
+  firestoreFindSeat,
   firestoreGet,
   firestorePatch,
   firestoreStringFields,
@@ -310,8 +311,15 @@ async function persistConnectionProbe(input: {
   capability: string;
 }): Promise<{ durableWritten: boolean; eventStatus: "created" | "exists"; seatPath: string; eventPath: string }> {
   const accessToken = await getFirestoreAccessToken();
-  const seatPath =
-    `accounts/${input.uid}/workplaces/${input.workplaceId}/projects/${input.projectId}/seats/${input.seatId}`;
+  const seat = await firestoreFindSeat({
+    uid: input.uid,
+    workplaceId: input.workplaceId,
+    projectId: input.projectId,
+    seatId: input.seatId,
+    accessToken,
+  });
+  if (!seat) throw new Error("seat_not_found");
+  const seatPath = seat.path;
   const eventPath = `${seatPath}/connection-tests/${input.probeId}`;
 
   const eventFields = firestoreStringFields({
@@ -338,32 +346,7 @@ async function persistConnectionProbe(input: {
     updatedAt: input.probedAt,
   });
 
-  const existing = await firestoreGet(seatPath, accessToken);
-  if (existing.exists) {
-    await firestorePatch(seatPath, healthFields, accessToken);
-  } else {
-    await firestoreCreate(
-      seatPath,
-      {
-        ...firestoreStringFields({
-          uid: input.uid,
-          workplaceId: input.workplaceId,
-          projectId: input.projectId,
-          seatId: input.seatId,
-          name: input.name,
-          role: input.role,
-          provider: input.provider,
-          model: input.model,
-          teamEntitlement: input.teamEntitlement,
-          providerEntitlement: input.providerEntitlement,
-          capability: input.capability,
-          createdAt: input.probedAt,
-        }),
-        ...healthFields,
-      },
-      accessToken,
-    );
-  }
+  await firestorePatch(seatPath, healthFields, accessToken);
 
   return { durableWritten: true, eventStatus, seatPath, eventPath };
 }
@@ -403,14 +386,23 @@ Deno.serve(async (req: Request) => {
 
     let durable: Record<string, unknown> | null = null;
     let durablePath: string | null = null;
+    let canonicalSeatPath: string | null = null;
 
     if (workplaceId && projectId) {
-      durablePath =
-        `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}`;
       try {
         const accessToken = await getFirestoreAccessToken();
-        const doc = await firestoreGet(durablePath, accessToken);
-        if (doc.exists) durable = decodeFields(doc.fields as Record<string, unknown>);
+        const doc = await firestoreFindSeat({
+          uid,
+          workplaceId,
+          projectId,
+          seatId,
+          accessToken,
+        });
+        if (doc) {
+          durablePath = doc.path;
+          canonicalSeatPath = doc.path;
+          durable = doc.fields as Record<string, unknown>;
+        }
       } catch (err) {
         console.error(
           "seat_connection_firestore_read",
@@ -450,8 +442,8 @@ Deno.serve(async (req: Request) => {
     if (workplaceId && projectId) {
       try {
         const accessTokenForSecret = await getFirestoreAccessToken();
-        const secretPath =
-          `accounts/${uid}/workplaces/${workplaceId}/projects/${projectId}/seats/${seatId}/secrets/providerApiKey`;
+        if (!canonicalSeatPath) throw new Error("seat_not_found");
+        const secretPath = canonicalSeatPath + "/secrets/providerApiKey";
         const secretDoc = await firestoreGet(secretPath, accessTokenForSecret);
         if (secretDoc.exists) {
           const sf = decodeFields(secretDoc.fields as Record<string, unknown>);
@@ -490,6 +482,7 @@ Deno.serve(async (req: Request) => {
     let eventPath: string | null = null;
 
     if (persistRequested && workplaceId && projectId) {
+      if (!canonicalSeatPath) return json({ error: "seat_not_found", seatId }, 404);
       try {
         const persisted = await persistConnectionProbe({
           uid,

@@ -1,55 +1,30 @@
-/**
- * P4.1 SEAT_CAPABILITIES visual flex — presentation-only source contracts
- * CAPABILITY ≠ AUTHORIZATION · no entitlement
- */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { test } from 'node:test';
+import test from 'node:test';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const flex = () => readFileSync(join(root, 'public/hero-flex.js'), 'utf8');
+const flex = readFileSync(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const runtime = readFileSync(new URL('../public/hero-hierarchy-runtime.js', import.meta.url), 'utf8');
 
-test('hero-flex imports capabilities branch APIs', () => {
-  const src = flex();
-  assert.match(src, /tickCapabilitiesBranch/);
-  assert.match(src, /getCapabilitiesBranchAmount/);
-  assert.match(src, /capabilitiesFaceAccessibleName/);
-  assert.match(src, /requestCapabilitiesConfigureHandoff/);
-  assert.match(src, /CAPABILITIES_BRANCH_MS/);
+test('CAPABILITIES branch state is hierarchy-owned and renderer-consumed', () => {
+  for (const token of ['tickSeatDivisionBranches', 'getSeatDivisionBranchAmounts']) {
+    assert.ok(flex.includes(token), token);
+    assert.ok(runtime.includes(token), token);
+  }
+  assert.ok(flex.includes('seatDivisionBranchAmounts: getSeatDivisionBranchAmounts'));
+  assert.ok(flex.includes('machine-world-renderer.js'));
 });
 
-test('hero-flex frame ticks capabilities branch after hierarchy pose', () => {
-  const src = flex();
-  assert.match(src, /tickCapabilitiesBranch\s*\(\s*hierarchyRuntime/);
-  const pose = src.indexOf('tickHierarchyPose');
-  const caps = src.indexOf('tickCapabilitiesBranch');
-  assert.ok(pose >= 0 && caps > pose);
+test('CAPABILITIES branch timing remains after hierarchy pose', () => {
+  assert.ok(flex.indexOf('tickHierarchyPose') < flex.indexOf('tickSeatDivisionBranches'));
 });
 
-test('hero-flex applies branchBoost for SEAT_CAPABILITIES child', () => {
-  const src = flex();
-  assert.match(src, /isCapabilities/);
-  assert.match(src, /getCapabilitiesBranchAmount\s*\(\s*hierarchyRuntime\s*\)/);
-  assert.match(src, /isToolkit \|\| isCapabilities/);
+test('CAPABILITIES handoff and accessibility remain public API', () => {
+  assert.ok(runtime.includes('requestCapabilitiesConfigureHandoff'));
+  assert.ok(runtime.includes('capabilitiesFaceAccessibleName'));
+  assert.ok(flex.includes('requestSeatDivisionConfigure'));
+  assert.ok(flex.includes('getCapabilitiesBranchAmount'));
 });
 
-test('hero-flex keyboard K requests capabilities configure handoff', () => {
-  const src = flex();
-  assert.match(src, /key===['"]k['"]/);
-  assert.match(src, /requestCapabilitiesConfigureHandoff/);
-  assert.match(src, /targetSection:\s*['"]capabilities['"]/);
-});
-
-test('hero-flex labels use capabilitiesFaceAccessibleName', () => {
-  const src = flex();
-  assert.match(src, /capabilitiesFaceAccessibleName\s*\(\s*getCapabilitiesBranchAmount/);
-});
-
-test('TeamAiHero exposes capabilities inspection helpers', () => {
-  const src = flex();
-  assert.match(src, /getCapabilitiesBranchAmount:\s*\(\)\s*=>/);
-  assert.match(src, /requestCapabilitiesConfigure:\s*\(\)\s*=>/);
-  assert.match(src, /capabilitiesFaceAccessibleName/);
+test('CAPABILITIES retains its compatibility branch timing export', () => {
+  assert.ok(runtime.includes('CAPABILITIES_BRANCH_MS'));
 });

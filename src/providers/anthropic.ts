@@ -1,6 +1,7 @@
 import type { AIProvider, GenerateRequest, GenerateResult, StreamChunk } from './types.js';
 import { fetchJson, parseSse, ProviderHttpError } from './http.js';
 import { withRetry } from './retry.js';
+import { terminationFromAnthropic } from './termination.js';
 
 export class AnthropicProvider implements AIProvider {
   readonly provider = 'anthropic';
@@ -18,7 +19,7 @@ export class AnthropicProvider implements AIProvider {
       const text = (data?.content ?? []).filter((b: any) => b?.type === 'text').map((b: any) => b.text).join('');
       const inputTokens = Number(data?.usage?.input_tokens ?? 0);
       const outputTokens = Number(data?.usage?.output_tokens ?? 0);
-      return { provider: this.provider, model: request.model, requestId: data?.id ?? requestId ?? 'unknown', text, usage: { inputTokens, outputTokens, totalTokens: inputTokens + outputTokens } };
+      return { provider: this.provider, model: request.model, requestId: data?.id ?? requestId ?? 'unknown', text, usage: { inputTokens, outputTokens, totalTokens: inputTokens + outputTokens }, termination: terminationFromAnthropic(data?.stop_reason) };
     }, { shouldRetry: (e) => e instanceof ProviderHttpError && e.retryable });
   }
 

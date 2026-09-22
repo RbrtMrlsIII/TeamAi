@@ -46,15 +46,11 @@ test('R0 ring catalog cycles ZipSkills faces', () => {
   assert.match(spoken, /Presentation only/i);
 });
 
-test('hero-flex draws inner crown and wires z/x keys', () => {
-  assert.match(hero, /function drawWorkspaceZipskills/);
-  assert.match(hero, /drawWorkspaceZipskills\(/);
-  assert.match(hero, /workspace \* RING_R0_ZIP_SCALE/);
-  assert.match(hero, /cycleRingFocus\(ringFocus,'r0'/);
-  assert.match(hero, /event\.key==='z'/);
+test('Hero controller routes R0 focus and preserves workspace/seat separation', () => {
+  assert.match(hero, /cycleRing\(/);
+  assert.match(hero, /key === 'z'/);
   assert.match(hero, /WORKSPACE_ZIPSKILLS_V1/);
-  assert.match(hero, /zipskillsAccessibleName/);
-  assert.match(hero, /Isolation preserved/);
+  assert.doesNotMatch(hero, /gl\.drawArrays/);
 });
 
 test('docs place ZipSkills on R0 workspace tree; §9 holds RING_R0_ZIP_SCALE', () => {

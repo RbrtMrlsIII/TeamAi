@@ -59,22 +59,20 @@ test('V0.1 closed hierarchy resolves to HERO_WIDE world baseline', () => {
   assert.equal(r.treeCenter, 'world');
 });
 
-test('V0.1 applied hero-flex HERO_WIDE uses p:[0,d,d] (~45°), not d*.67', async () => {
-  // Re-apply in-test: parallel suite files can race on the shared flex path
-  // (tracked main file is a short runtime loader until apply restores the base).
-  runApply();
-  let src = await readFile(flexPath, 'utf8');
-  if (src.length < 8000 || !src.includes('function cameras()')) {
-    runApply();
-    src = await readFile(flexPath, 'utf8');
-  }
-  assert.ok(src.includes('function cameras()'), 'applied flex must include cameras() table');
-  assert.match(src, /HERO_WIDE:\{p:\[0,d,d\]/);
-  assert.doesNotMatch(src, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
+test('V0.1 canonical Hero starts at the world baseline', async () => {
+  const src = await readFile(flexPath, 'utf8');
+  const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
+  assert.match(src, /createMachineWorldRenderer/);
+  assert.match(src, /setCamera\('HERO_WIDE'\)/);
+  assert.match(renderer, /machineWorldLayer = 'machine'/);
+  assert.match(renderer, /effectiveCameraId/);
 });
 
-test('V0.1 apply script still owns the 0.67→d,d baseline patch', async () => {
+test('V0.1 compatibility sync preserves the canonical controller snapshot', async () => {
+  const src = await readFile(flexPath, 'utf8');
+  const base = await readFile(join(root, 'public/_flex_src/hero-flex.base.js'), 'utf8');
   const apply = await readFile(applyScript, 'utf8');
-  assert.match(apply, /HERO_WIDE:\{p:\[0,d\*\.67,d\]/);
-  assert.match(apply, /HERO_WIDE:\{p:\[0,d,d\]/);
+  assert.equal(src, base);
+  assert.match(apply, /sync-hero-flex-runtime\.mjs/);
+  assert.doesNotMatch(apply, /apply-cam2-tree-follow-flex\.engine|raw\.githubusercontent\.com/);
 });

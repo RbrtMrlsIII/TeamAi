@@ -4,6 +4,12 @@
  * Must not: Firestore, PayPal, scheduler actor, entitlements, execute approved actions.
  */
 
+import { getFrontendFeature } from "./feature-registry.js";
+import { createSeatReportPresentation, createSeatTransactionPresentation } from "./seat-runtime-presentation.js";
+import { projectSeat, normalizeConnectionHealth, applyProjectionToHeroSeatStack } from "./seat-read-model.js";
+import { runSeatConnectionTest, formatConnectionTestMessage } from "./seat-connection-wire.js";
+import { ensureProviderBindOnSeatsPage, syncProviderBindSeat } from "./seat-provider-bind-wire.js";
+
 import {
   applyDocumentTheme,
   initializeTheme,
@@ -26,6 +32,16 @@ const NAV_LABELS = {
   approvals: "Approvals",
   settings: "Settings",
 };
+
+const NAV_FEATURE_IDS = Object.freeze({
+  workplace: "workspace-hq",
+  seats: "seats",
+  artifacts: "artifacts-inventory",
+  settings: "settings",
+  planning: "orchestration",
+  working: "orchestration",
+  approvals: "orchestration",
+});
 
 const SEAT_DATA = {
   alpha: {
@@ -126,6 +142,8 @@ let seatsBuilt = false;
 let approvalsBuilt = false;
 let activeSeat = "alpha";
 let activeApproval = "runtime-alpha";
+let activeSeatReport = createSeatReportPresentation({ authoritative: false });
+let activeSeatTransaction = null;
 
 function refreshThemeControls() {
   const mode = resolveMode(readSource(), readStoredMode());
@@ -243,8 +261,15 @@ function enterProject() {
   showComposition("deck");
 }
 
+function projectedSeat(seatId = activeSeat) {
+  const raw = SEAT_DATA[seatId] || SEAT_DATA.alpha;
+  return projectSeat(raw, { seatId: SEAT_DATA[seatId] ? seatId : "alpha", source: "fixture" });
+}
+
 function seatActivationAllowed(seat) {
-  return seat.connection === "ready" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";
+  if (seat?.connectionHealth) return Boolean(seat.activationAllowedPresentation);
+  const health = normalizeConnectionHealth(seat?.health ?? seat?.connection);
+  return health === "healthy" && seat.teamEntitlement === "allowed" && seat.providerEntitlement === "allowed";
 }
 
 function buildSeats() {
@@ -314,6 +339,29 @@ function buildSeats() {
         <p class="ta-type-body" data-seat-limits>Budget 80% · rate normal · storage 62% · approval gate required</p>
       </section>
 
+      <section class="ta-seat-runtime ta-panel" data-field="F3" aria-labelledby="seat-runtime-title">
+        <div class="ta-region-heading">
+          <div>
+            <p class="ta-type-label">Seat runtime</p>
+            <h3 id="seat-runtime-title" class="ta-type-title">Report / handoff</h3>
+          </div>
+          <span class="ta-type-status" data-seat-runtime-state>UNAVAILABLE</span>
+        </div>
+        <p class="ta-type-body" data-seat-runtime-empty>Waiting for an authoritative runtime result. Presentation state is not execution proof.</p>
+        <dl class="ta-seat-runtime__facts" hidden data-seat-runtime-facts>
+          <div><dt class="ta-type-meta">Turn</dt><dd class="ta-type-body" data-seat-runtime-turn></dd></div>
+          <div><dt class="ta-type-meta">Completion</dt><dd class="ta-type-status" data-seat-runtime-completion></dd></div>
+          <div><dt class="ta-type-meta">Responsibility</dt><dd class="ta-type-body" data-seat-runtime-responsibility></dd></div>
+          <div><dt class="ta-type-meta">Remaining budget</dt><dd class="ta-type-body" data-seat-runtime-budget></dd></div>
+          <div><dt class="ta-type-meta">Next action</dt><dd class="ta-type-body" data-seat-runtime-next></dd></div>
+        </dl>
+        <div class="ta-seat-runtime__transaction ta-card" data-seat-transaction>
+          <span class="ta-type-label">Semantic transaction state</span>
+          <span class="ta-type-status" data-seat-transaction-state>UNAVAILABLE</span>
+          <span class="ta-type-meta" data-seat-transaction-kind>Awaiting runtime transaction</span>
+        </div>
+      </section>
+
       <section class="ta-seat-entitlements ta-panel" data-field="F3" aria-labelledby="seat-entitlement-title">
         <h3 id="seat-entitlement-title" class="ta-type-label">Entitlement split</h3>
         <div class="ta-seat-entitlement-grid">
@@ -341,6 +389,7 @@ function buildSeats() {
   section.querySelector('[data-action="back-to-deck"]')?.addEventListener("click", () => showComposition("deck"));
   seatsBuilt = true;
   selectSeat(activeSeat);
+  ensureProviderBindOnSeatsPage();
 }
 
 function selectSeat(seatId) {
@@ -353,6 +402,36 @@ function selectSeat(seatId) {
     else card.removeAttribute("data-state");
   });
   renderSeatDetail();
+}
+
+function renderSeatRuntime() {
+  const state = document.querySelector("[data-seat-runtime-state]");
+  const empty = document.querySelector("[data-seat-runtime-empty]");
+  const facts = document.querySelector("[data-seat-runtime-facts]");
+  const turn = document.querySelector("[data-seat-runtime-turn]");
+  const completion = document.querySelector("[data-seat-runtime-completion]");
+  const responsibility = document.querySelector("[data-seat-runtime-responsibility]");
+  const budget = document.querySelector("[data-seat-runtime-budget]");
+  const next = document.querySelector("[data-seat-runtime-next]");
+  const transactionState = document.querySelector("[data-seat-transaction-state]");
+  const transactionKind = document.querySelector("[data-seat-transaction-kind]");
+
+  const report = activeSeatReport;
+  if (state) state.textContent = report?.available ? report.completionState : "UNAVAILABLE";
+  if (empty) empty.hidden = Boolean(report?.available);
+  if (facts) facts.hidden = !report?.available;
+  if (report?.available) {
+    if (turn) turn.textContent = report.turnId || "unreported";
+    if (completion) completion.textContent = report.completionState;
+    if (responsibility) responsibility.textContent = report.responsibility || "unreported";
+    if (budget) budget.textContent = report.remainingBudget == null ? "unreported" : String(report.remainingBudget);
+    if (next) next.textContent = report.nextAction || "No next action reported";
+  }
+
+  if (transactionState) transactionState.textContent = activeSeatTransaction?.state || "UNAVAILABLE";
+  if (transactionKind) transactionKind.textContent = activeSeatTransaction?.kind
+    ? String(activeSeatTransaction.kind).replaceAll("-", " ")
+    : "Awaiting runtime transaction";
 }
 
 function renderSeatDetail() {
@@ -372,7 +451,8 @@ function renderSeatDetail() {
   const activate = document.querySelector('[data-action="activate-seat"]');
   if (title) title.textContent = seat.name;
   if (binding) binding.textContent = `${seat.role} · ${seat.provider} · ${seat.model}`;
-  if (health) health.textContent = seat.health;
+  if (health) health.textContent = projectedSeat(activeSeat).connectionHealth;
+  applyProjectionToHeroSeatStack(projectedSeat(activeSeat));
   if (identity) identity.textContent = `${seat.name} · ${seat.role}`;
   if (provider) provider.textContent = `${seat.provider} · ${seat.model}`;
   if (connection) connection.textContent = seat.connection;
@@ -382,6 +462,8 @@ function renderSeatDetail() {
   if (teamEntitlement) teamEntitlement.textContent = seat.teamEntitlement;
   if (providerEntitlement) providerEntitlement.textContent = seat.providerEntitlement;
   if (activate) activate.disabled = !seatActivationAllowed(seat);
+  renderSeatRuntime();
+  syncProviderBindSeat(id);
   if (activate) activate.setAttribute("aria-describedby", "seat-activation-state");
   let state = document.querySelector("#seat-activation-state");
   if (!state) {
@@ -394,17 +476,22 @@ function renderSeatDetail() {
   state.textContent = seatActivationAllowed(seat) ? `${seat.name} activation eligible from displayed facts.` : `${seat.name} activation blocked until connection and both entitlements allow.`;
 }
 
-function testSeatConnection() {
-  const seat = SEAT_DATA[activeSeat];
-  if (!seat) return;
+async function testSeatConnection() {
+  const fixture = projectedSeat(activeSeat);
+  if (!fixture) return;
   const result = document.querySelector("[data-seat-result]");
-  if (seat.connection === "ready") {
-    if (result) result.textContent = `${seat.name} connection test passed in UI only; no provider request was made.`;
-  } else {
-    if (result) result.textContent = `${seat.name} connection remains degraded in UI; no provider request was made.`;
+  if (result) result.textContent = fixture.name + " testing connection…";
+  try {
+    const outcome = await runSeatConnectionTest({ seatId: activeSeat, fixtureProjection: fixture });
+    const seat = outcome.projection;
+    if (result) result.textContent = formatConnectionTestMessage(seat, outcome);
+    applyProjectionToHeroSeatStack(seat);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (result) result.textContent = fixture.name + " connection test failed in UI (" + message + "); fixture health unchanged.";
+    applyProjectionToHeroSeatStack(fixture);
   }
 }
-
 function activateSeat() {
   const seat = SEAT_DATA[activeSeat];
   if (!seat || !seatActivationAllowed(seat)) return;
@@ -563,6 +650,8 @@ function showComposition(destination) {
 
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     const id = btn.getAttribute("data-nav") ?? "";
+    const featureId = NAV_FEATURE_IDS[id];
+    if (featureId) btn.dataset.featureId = featureId;
     if (id === destination) btn.setAttribute("aria-current", "page");
     else btn.removeAttribute("aria-current");
   });
@@ -683,6 +772,20 @@ function wire() {
   buildApprovals();
   showComposition("deck");
   setStage("planning");
+
+  window.addEventListener("teamai:seat-runtime-report", (event) => {
+    const detail = event.detail || {};
+    if (detail.authoritative !== true) return;
+    activeSeatReport = createSeatReportPresentation(detail);
+    renderSeatRuntime();
+  });
+
+  window.addEventListener("teamai:seat-transaction-state", (event) => {
+    const detail = event.detail || {};
+    if (detail.authoritative !== true) return;
+    activeSeatTransaction = createSeatTransactionPresentation(detail);
+    renderSeatRuntime();
+  });
 
   document.querySelector('[data-action="toggle-theme"]')?.addEventListener("click", toggleTheme);
   document.querySelector('[data-action="toggle-density"]')?.addEventListener("click", toggleDensity);

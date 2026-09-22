@@ -59,8 +59,9 @@ Presentation sources under `frontend/spatial/`:
 | `theme-root.css` | Token + primitive surfaces |
 | `hero-theme-lighting-adapter.js` | Deterministic theme/root → Hero lighting map. Not a second root. |
 | `shell-nav.js` | **Browser ESM entry** for shell/nav/deck/F7 scripts |
-| `shell-nav.ts` | Typed mirror of `shell-nav.js` (documentation / future tsc); not loaded by static HTML |
+| `shell-nav.ts` | Typed reference mirror of `shell-nav.js`; not compiled or loaded by static HTML |
+| `mcp-capability.js` | Source-owned MCP facility read-model, readiness, dynamic branch identity, and intent contract |
 
 Static `index.html` must import **`.js`** modules only. Do not point `<script type="module">` at `.ts` files.
 
-When changing theme or presentation behavior, update the pair (`.ts` + `.js`) in the same change, or document intentional lag.
+When changing `theme-root`, update its `.ts` + `.js` browser pair in the same change. `shell-nav.ts` is a typed reference only and is intentionally not a runtime lockstep mirror.

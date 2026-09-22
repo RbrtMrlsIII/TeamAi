@@ -60,15 +60,16 @@ test.describe('Issue #88 material/depth visual evidence', () => {
     expect(api.reduced).toBe(true);
     expect(api.seats).toBe(4);
 
-    // Static source evidence: authored materials still consumed
+    // Canonical material authority now lives in the machine-world renderer, not the controller.
+    await expect(page.locator('#hero-canvas')).toHaveAttribute('data-machine-world-material-model', 'hero-authored-v1');
     const srcOk = await page.evaluate(async () => {
-      const res = await fetch('/hero/hero-flex.js');
+      const res = await fetch('/hero/machine-world-renderer.js');
       const text = await res.text();
       return (
         text.includes('authoredRingMaterial') &&
         text.includes('authoredSeatShellMaterial') &&
         text.includes('authoredSeatInsetMaterial') &&
-        text.includes('heroMaterialContext')
+        text.includes('mapHeroThemeLighting')
       );
     });
     expect(srcOk).toBe(true);

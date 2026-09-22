@@ -64,13 +64,10 @@ test('module and contract stay presentation-only', async () => {
   assert.match(contract, /Depth readability|readable/i);
 });
 
-test('hero-flex wires depth-readable FOV and plate scale after apply', async () => {
-  const { spawnSync } = await import('node:child_process');
-  const { fileURLToPath } = await import('node:url');
-  const { dirname, join } = await import('node:path');
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-  spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
-  const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /hero-depth-readable-faces|depthReadableFovBoost/);
-  assert.match(flex, /facePlateScaleForChild/);
+test('depth readability module remains independently owned', async () => {
+  const src = await readFile(new URL('../public/hero-depth-readable-faces.js', import.meta.url), 'utf8');
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(src, /depthReadableFovBoost|facePlateScaleForChild/);
+  assert.match(renderer, /fitWorldCamera/);
+  assert.match(renderer, /camera/);
 });

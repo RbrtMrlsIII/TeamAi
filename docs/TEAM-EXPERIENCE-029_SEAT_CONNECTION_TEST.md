@@ -9,7 +9,7 @@ When `probeMode` is `auto` or `http`:
 
 1. **`forceHealth`** or **`probeMode: stub`** → no provider key (free smoke)
 2. **Per-seat encrypted key** at  
-   `accounts/{uid}/workplaces/{w}/projects/{p}/seats/{seatId}/secrets/providerApiKey`  
+   `accounts/{uid}/workplaces/{w}/projects/{p}/teams/{team}/seats/{seatId}/secrets/providerApiKey`  
    (decrypt with `TEAMAI_SEAT_SECRET_KEY`)
 3. **Platform env** `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`
 4. Else **stub fallback**

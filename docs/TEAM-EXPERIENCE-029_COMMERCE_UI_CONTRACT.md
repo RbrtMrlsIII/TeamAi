@@ -57,7 +57,18 @@ entitlement.sourceCommerceEventId = provider event ID
 
 A provider event such as `PAYMENT.CAPTURE.COMPLETED` is evidence used by the backend to produce trusted state. The browser must not independently transform that provider event into entitlement authority.
 
-## 5. User-facing commerce surfaces
+## 5. Marketplace module contract
+
+Marketplace reveals two first-class commercial modules when focused:
+
+1. **Team Quality** — five paid tiers above the baseline Team Quality allocation.
+2. **Team Population** — nine paid tiers, mapping Population Tier 1 → persistent Seat 2 through Population Tier 9 → persistent Seat 10.
+
+Each tier exposes its own guide/description. Both families renew monthly unless renewed. A lower tier remains locked while a higher tier is active. A higher-tier selection must present an inline warning that the current lower tier effect disappears when the higher tier takes effect; the warning is not represented solely by a toast.
+
+The Marketplace may present a hosted billing link supplied by authorized backend/read-model state. TeamAi does not collect or store card credentials in the Marketplace. The browser must never host a card-entry form as a substitute for the external billing boundary.
+
+## 6. User-facing commerce surfaces
 
 ### 5.1 Commerce status / checkout entry
 
@@ -79,7 +90,7 @@ Use E2 cards / E3 detail panels. Show event type, provider event identity, time,
 
 Use the existing F6 status and owning-service recovery guidance. The UI points the user toward the responsible service or action; it does not diagnose or repair backend state itself.
 
-## 6. 029 spatial integration
+## 7. 029 spatial integration
 
 Commerce is a composition, not a new visual system.
 
@@ -91,7 +102,7 @@ and existing E0–E4 elevation/token/material rules.
 
 Commerce UI must inherit the existing Command Space / Instrument Space theme root. It must not introduce a second root, page-local hex, `--hero-*` namespace, alternate dialog family, or independent status vocabulary.
 
-## 7. Approval boundary
+## 8. Approval boundary
 
 Commerce-related actions that require human approval use the existing E4 plate. The E4 presentation may explain:
 
@@ -105,7 +116,7 @@ Commerce-related actions that require human approval use the existing E4 plate. 
 
 E4 remains presentation/interaction. It does not itself charge PayPal, write Firestore, mutate entitlements, select scheduler actors, or bypass TeamAi authorization.
 
-## 8. Browser security and authority rules
+## 9. Browser security and authority rules
 
 The browser must not:
 
@@ -118,7 +129,7 @@ The browser must not:
 - become a substitute PayPal webhook verifier;
 - interpret TeamAi entitlement as an external provider subscription.
 
-## 9. TeamAi vs provider entitlement
+## 10. TeamAi vs provider entitlement
 
 The UI must present these as two separate facts:
 
@@ -130,7 +141,7 @@ Provider entitlement
 
 A completed TeamAi commerce aggregate indicates the TeamAi commerce lifecycle reached its trusted state. External provider access remains a separately evaluated capability under the connection/Seat lifecycle.
 
-## 10. Responsive/accessibility rules
+## 11. Responsive/accessibility rules
 
 The implementation follows the existing 029 rules:
 
@@ -144,7 +155,7 @@ The implementation follows the existing 029 rules:
 - Touch controls retain the existing 44px minimum.
 - Existing focus-ring and keyboard behavior remain intact.
 
-## 11. Verification gate
+## 12. Verification gate
 
 Before a commerce UI slice is considered runtime-proven:
 
@@ -156,7 +167,7 @@ Before a commerce UI slice is considered runtime-proven:
 6. live backend state is not inferred from fixtures;
 7. the evidence record distinguishes source, environment, and runtime proof.
 
-## 12. Current implementation dependency
+## 13. Current implementation dependency
 
 The first frontend commerce implementation should remain blocked only on the minimum authoritative dependency required for truthful runtime integration: the final post-fix Firestore verification of the isolated PayPal v13 aggregate/event/entitlement state.
 

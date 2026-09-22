@@ -19,7 +19,7 @@ GitHub is never the webhook receiver and never the payment authority.
 ## Current active surface
 The legacy `paypal-webhook` function has been removed from the connected Supabase deployment. `teamai-paypal-webhook-v5c` is the sole current TeamAi PayPal webhook surface.
 
-The current live deployment inventory is frozen in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`.
+The current live deployment inventory is observed in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`. The 2026-09-12 census remains historical infrastructure evidence.
 
 ## Current event-coverage boundary
 The operator-reported PayPal configuration contains 67 subscribed event labels. The current v5c implementation maps 16 event types in source. Verified provider events outside those mappings are acknowledged as unsupported (`processed: false`) rather than silently treated as TeamAi commerce state.

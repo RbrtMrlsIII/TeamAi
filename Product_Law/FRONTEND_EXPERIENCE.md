@@ -11,6 +11,8 @@ Product meaning, invariants, authority boundaries, and development-field ownersh
 
 ## 1. Experience sequence
 
+**Current truth status:** this contract records the current product-facing frontend truth. It is deliberately not final UI lock-in. Governed implementation evidence may add, refine, or replace a rule while preserving Product Law authority.
+
 ```text
 01 PUBLIC ENTRANCE
    ↓
@@ -163,6 +165,8 @@ AUTHENTICATED
 → readiness can be evaluated
 ```
 
+Guests may discover the complete intended feature vocabulary and machine presentation, but all product facilities remain locked for guest use. The only guest-accessible product actions are the designated **Sign Up** and **Login** authentication surfaces. **Sign Out** is available only for authenticated state.
+
 Selecting Login or Sign up begins an authentication transition. The transition may use spatial choreography, but choreography is not proof of successful authentication.
 
 After authentication succeeds:
@@ -178,7 +182,13 @@ identity established
 → permit user-started turn only when required conditions hold
 ```
 
-## 8. Entrance information architecture
+## 8. Seat reports and transaction loading
+
+Every Seat exposes a report/handoff section for the latest completed turn. Users and authorized participating agents may read that report as the Seat's continuity/read-model and evidence surface.
+
+Long-running Seat transactions use a dedicated semantic loading/orb family rather than one generic product spinner. The family is selected by transaction type, including configuration, connection test, MCP invocation, AI turn/execution, handoff/continuation, Storage operation, Marketplace transaction/verification, authorization, or recovery. Presentation effects do not prove backend completion.
+
+## 9. Entrance information architecture
 
 The public Entrance is the public information and trust surface. Privacy Policy and Terms remain publicly reachable. A comprehensive Dictionary/User Guide may explain product concepts, but it does not become Product Law.
 
@@ -198,7 +208,7 @@ PUBLIC ENTRANCE
 
 The transition into the 3D world is explicit. Entrance presentation and live authenticated machine presentation remain distinct responsibilities while sharing visual language where appropriate.
 
-## 9. Settings semantic map
+## 10. Settings semantic map
 
 The authenticated Settings surface is a world/category map over canonical semantic identities, not a second hierarchy.
 
@@ -214,7 +224,7 @@ The authenticated Settings surface is a world/category map over canonical semant
 
 Selecting a category may focus or expand a corresponding node, but it cannot fabricate durable state or bypass authorization.
 
-## 10. Spatial levels and expansion
+## 11. Spatial levels and expansion
 
 The machine uses three conceptual scales:
 
@@ -234,7 +244,7 @@ CLOSED → PREPARING → OPENING → ACTIVE → CLOSING → CLOSED
 
 Geometry may differ. Semantic identity, adjacency, connection continuity, camera subject, responsive readability, and reduced-motion equivalence must remain intact.
 
-## 11. Interaction-state law
+## 12. Interaction-state law
 
 The minimum presentation state vocabulary is:
 
@@ -267,7 +277,7 @@ blocked/error
 
 Effects communicate semantics only. Decorative effects MUST NOT be treated as backend evidence.
 
-## 12. Camera capability law
+## 13. Camera capability law
 
 The semantic camera capability set is:
 
@@ -285,7 +295,7 @@ REDUCED_MOTION_EQUIVALENT
 
 Camera subject identity follows semantic identity, never hard-coded coordinates. Exact timing and distance remain implementation parameters until justified by runtime evidence.
 
-## 13. Turn-loop presentation boundary
+## 14. Turn-loop presentation boundary
 
 The active turn is a graph operation, not decoration:
 
@@ -308,7 +318,7 @@ For every visualized active wire, the system must be able to identify:
 
 A wire without a semantic edge is decorative and not proof of orchestration.
 
-## 14. Freeze and evolution rule
+## 15. Freeze and evolution rule
 
 Before implementation changes the frontend machine, the agent must identify:
 
@@ -329,12 +339,18 @@ evidence required
 
 A geometry-first change without a semantic owner stops for reconciliation.
 
-## 15. Census synchronization
+## 16.1 Product feature registry
+
+The frontend product-feature vocabulary is centralized in `frontend/spatial/feature-registry.js` with its synchronized browser copy at `public/feature-registry.js`. These are presentation/navigation descriptors for the product facilities listed by this contract.
+
+The feature registry is not a semantic tree, permission system, entitlement ledger, scheduler, billing authority, or durable-state authority. Feature ids must not be reused as tree/branch semantic ids. Guest presentation state may be derived for discoverability/lock messaging, but authoritative authorization and entitlement remain backend-owned.
+
+## 16. Census synchronization
 
 The Tree Census remains the structural inventory. Product-Law-derived semantic roots and branches MUST remain synchronized with it.
 
 A governed implementation change that adds, removes, renames, materially restructures, or reimplements a tree/branch/division MUST reconcile the applicable registry and census entries in the same change. Runtime implementation status must remain truthful and must not be inferred merely from source presence.
 
-## 16. Authority statement
+## 17. Authority statement
 
 This file is a subordinate Frontend & Experience field contract. It does not override `Product_Law/PRODUCT_LAW.md`, create permissions, redefine backend authority, replace the Masterplan, replace the current slice, or act as a merge authority.

@@ -20,6 +20,11 @@ body { min-height: 100vh; overflow: hidden; background: #f5f2ec; }
     radial-gradient(circle at 63% 44%, rgba(255,255,255,.96), rgba(245,242,236,.88) 38%, rgba(236,232,224,.96) 100%);
 }
 
+.hero-shell[data-hero-layer="machine"] {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(26, 40, 58, .92), rgba(6, 13, 23, .98) 58%, rgba(2, 6, 12, 1) 100%);
+}
+
 #hero-canvas {
   position: absolute;
   inset: 0;

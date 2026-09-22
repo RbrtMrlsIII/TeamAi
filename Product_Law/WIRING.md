@@ -6,6 +6,10 @@
 
 `Product_Law/PRODUCT_LAW.md` is the single Product Law document. It contains connected product meaning, protected invariants, service boundaries, development fields, responsibility model, workspace rules, skills boundary, authorization boundary, execution model, and product-wide constraints.
 
+## Current 029 spatial execution routing
+
+Issue #396 is currently implemented through Draft PR #398 on `frontend/029-machine-world-convergence`. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority.
+
 ## Development fields
 
 | Field | Purpose |

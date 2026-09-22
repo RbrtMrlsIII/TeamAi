@@ -9,6 +9,48 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
+export const SEAT_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
+export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
+export const SEAT_DIVISION_PORT_RADIUS = 0.28;
+
+export function seatDivisionFanAngle(childIndex = 0) {
+  const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));
+  return -SEAT_DIVISION_FAN_SPAN / 2 + (SEAT_DIVISION_FAN_SPAN * index) / SEAT_DIVISION_FAN_MAX_INDEX;
+}
+
+export function seatDivisionFanDirection(parent = {}, childIndex = 0) {
+  const radialAngle = Math.atan2(
+    Number(parent?.center?.z) || 0,
+    Number(parent?.center?.x) || 0,
+  );
+  const fanAngle = seatDivisionFanAngle(childIndex);
+  const radialX = Math.cos(radialAngle);
+  const radialZ = Math.sin(radialAngle);
+  const tangentX = -radialZ;
+  const tangentZ = radialX;
+  return Object.freeze({
+    radialAngle,
+    fanAngle,
+    x: radialX * Math.cos(fanAngle) + tangentX * Math.sin(fanAngle),
+    z: radialZ * Math.cos(fanAngle) + tangentZ * Math.sin(fanAngle),
+  });
+}
+
+export function seatDivisionFanRadius(parent = {}, amount = 0) {
+  const scale = Math.max(
+    Number(parent?.dimensions?.x) || 0,
+    Number(parent?.dimensions?.z) || 0,
+    0.2,
+  );
+  const t = clamp(amount, 0, 1);
+  return scale * (1.7 + 0.5 * t);
+}
+
+export function resolveSeatDivisionSemanticId(id) {
+  const match = String(id ?? '').match(/:((?:SEAT|WORKSPACE)_[A-Z_]+):GEOMETRY$/);
+  return match ? match[1] : null;
+}
+
 export function measureDivisionPayload(payload = {}) {
   const labels = Array.isArray(payload.labels) ? payload.labels : [];
   const controls = Array.isArray(payload.controls) ? payload.controls : [];
@@ -60,7 +102,7 @@ export function buildSeatDivisionGeometry({
 
   return {
     id,
-    semantic: id.includes('SEAT_BEHAVIOR') ? 'SEAT_BEHAVIOR' : 'SEAT_CONNECTION',
+    semantic: resolveSeatDivisionSemanticId(id) || 'UNKNOWN',
     center: {
       x: normalize(Number(center.x) || 0),
       y: normalize(Number(center.y) || 0),

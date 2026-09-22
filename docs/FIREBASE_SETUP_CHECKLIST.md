@@ -16,16 +16,16 @@ Setup/operator steps that remain relevant must be executed under the applicable 
 
 `TARGET PROJECT IDENTIFIED — SPARK-COMPATIBLE / NOT YET CONNECTED`
 
-Target Firebase project: `teamai-7d20f`
-Target Firestore database: `default`
-Target deployment surface: **Firebase Hosting**
+Historical Firebase target details are retained only as legacy setup evidence and do not define current authority.
+Historical Firestore target: `default`.
+Historical deployment surface: **Firebase Hosting**.
 
 TeamAi intentionally avoids Firebase Cloud Storage and Cloud Functions. The current architecture is constrained to services usable without a Blaze upgrade.
 
 ### Human-controlled setup
 
 - [x] Create/select TeamAi Firebase project.
-- [x] Record target project ID: `teamai-7d20f`.
+- [x] Historical target identity is explicitly non-authoritative and MUST NOT override the current Product Law project identity `team-ai-official`.
 - [x] Use Firestore database ID: `default`.
 - [ ] Enable Authentication providers required by TeamAi.
 - [ ] Confirm Firestore database/region and production ownership path.
@@ -33,6 +33,10 @@ TeamAi intentionally avoids Firebase Cloud Storage and Cloud Functions. The curr
 - [x] Keep Firebase Cloud Storage out of the TeamAi product architecture.
 - [x] Keep Cloud Functions out of the TeamAi product architecture.
 - [x] Do not require a Blaze upgrade for the baseline TeamAi architecture.
+
+### TeamAi Storage product boundary
+
+TeamAi Storage is a separate planned product facility from Firebase Cloud Storage. The current frontend/product scope is **item inventory storage only**. Image/file upload and binary object-transfer surfaces remain deferred pending explicit security and cost controls.
 
 ### Project/artifact workflow
 

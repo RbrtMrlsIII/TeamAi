@@ -1,6 +1,6 @@
 # TeamAi Backend — Live Reality Ledger
 
-**Date:** 2026-09-12  
+**Date:** 2026-09-22  
 **Status:** ACTIVE recovery / evidence ledger  
 **Purpose:** preserve connected backend state that may exist outside ordinary repository-visible evidence, especially manually configured Firebase/Supabase/provider state, so later agents do not erase or misclassify progress.
 
@@ -37,26 +37,28 @@ Provider dashboards, credentials/secrets, external account authorization, live/s
 `runtime proof ≠ completion`  
 `completion ≠ endorsement`
 
-## 3. Current connected Supabase state — 2026-09-12
+## 3. Current connected Supabase state — 2026-09-22
 
 Connected project: `TeamAi` (`srpgzzretfyqdsfclnuo`).
 
-The live inventory currently contains **exactly eight ACTIVE TeamAi Edge Functions**:
+The live inventory currently contains **exactly ten ACTIVE TeamAi Edge Functions**:
 
 | Runtime surface | Status | Version | Current interpretation |
 |---|---|---:|---|
-| `teamai-commerce-intent` | ACTIVE | 19 | pending commerce intent surface |
+| `teamai-commerce-intent` | ACTIVE | 19 | trusted commerce-intent boundary |
 | `teamai-domain-bootstrap` | ACTIVE | 22 | idempotent domain bootstrap |
-| `teamai-github-oauth-bind` | ACTIVE | 8 | GitHub installation/OAuth binding; not Hero live bind proof |
+| `teamai-github-oauth-bind` | ACTIVE | 9 | GitHub installation/OAuth binding; not Hero live bind proof |
 | `teamai-github-webhook` | ACTIVE | 7 | GitHub webhook receipt; not Hero live bind proof |
 | `teamai-paypal-webhook-v5c` | ACTIVE | 21 | canonical live PayPal webhook |
-| `teamai-seat-connection-test` | ACTIVE | 7 | provider connectivity/health test |
-| `teamai-seat-provider-bind` | ACTIVE | 7 | encrypted provider-key binding |
+| `teamai-seat-connection-test` | ACTIVE | 8 | Seat-owned provider connectivity/health test |
+| `teamai-seat-provider-bind` | ACTIVE | 8 | Seat-owned encrypted provider-key binding |
+| `teamai-seat-budget-settings` | ACTIVE | 1 | Seat-owned budget configuration boundary |
+| `teamai-task-continuation-request` | ACTIVE | 2 | trusted continuation-request boundary; provider-free |
 | `teamai-task-execute` | ACTIVE | 12 | authenticated task lease/execution boundary; provider remains `stub-edge-runtime` |
 
-The obsolete `paypal-webhook` deployment was manually removed by the operator before this observation. It is not part of the current active surface.
+The obsolete `paypal-webhook` deployment is absent from the current connected inventory.
 
-The precise live deployment inventory is the canonical snapshot in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md`. This ledger carries the wider claim/evidence context around that inventory.
+The precise live deployment inventory is the current observation in `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md`. The 2026-09-12 census remains preserved historical infrastructure evidence.
 
 The connected Supabase public schema contains no TeamAi application tables. Firestore `(default)` remains the durable TeamAi application/domain authority.
 
@@ -137,7 +139,7 @@ Several current Supabase deployment records still contain inconsistent local che
 
 ## 10. Historical continuity
 
-Older deployment tables that contain `paypal-webhook` or earlier function versions remain historical snapshots where preserved. They must not be edited into false current state. The current 2026-09-12 eight-function snapshot supersedes them for live inventory purposes.
+Older deployment tables that contain `paypal-webhook` or earlier function versions remain historical snapshots where preserved. They must not be edited into false current state. The current 2026-09-22 ten-function observation supersedes the earlier census for live inventory purposes.
 
 Likewise:
 
@@ -151,7 +153,7 @@ Likewise:
 - `docs/SKILL_WIRING.md` — capability/skill routing.
 - `docs/TEAMAI_029_CURRENT_STATE_MAP.md` — cross-track state map.
 - `backend/BACKEND_LIVE_SERVICE_STATUS.md` — backend claim-level status.
-- `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-12.md` — current live eight-function inventory.
+- `docs/BACKEND_002_SUPABASE_ACTIVE_FUNCTION_CENSUS_2026-09-22.md` — current live 10-function deployment observation.
 - `docs/CHECKPOINT_BACKEND_EVIDENCE_RECONCILIATION_2026-09-10.md` — evidence reconciliation.
 
 When sources disagree, reconcile the authority chain and preserve the discrepancy rather than selecting the most optimistic interpretation.

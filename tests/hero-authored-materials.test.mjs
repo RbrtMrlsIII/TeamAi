@@ -6,11 +6,13 @@ import {
   authoredSeatShellMaterial,
   authoredSeatInsetMaterial,
   HERO_AUTHORED_MATERIAL_ROLES,
-} from '../public/hero-authored-materials.js';
+} from '../frontend/spatial/hero-authored-materials.js';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const heroFlex = fs.readFileSync(path.join(process.cwd(), 'public/hero-flex.js'), 'utf8');
+const authoredSource = fs.readFileSync(path.join(process.cwd(), 'frontend/spatial/hero-authored-materials.js'), 'utf8');
+const authoredPublic = fs.readFileSync(path.join(process.cwd(), 'public/hero-authored-materials.js'), 'utf8');
 
 test('Issue #88 material roles are explicit and pure', () => {
   assert.deepEqual([...HERO_AUTHORED_MATERIAL_ROLES], [
@@ -41,17 +43,17 @@ test('Light and Dark material families remain distinguishable', () => {
   assert.notDeepEqual(authoredSeatShellMaterial(light), authoredSeatShellMaterial(dark));
 });
 
-test('hero-flex consumes authored material helpers and stays public-self-contained', () => {
-  assert.match(heroFlex, /authoredRingMaterial/);
-  assert.match(heroFlex, /authoredSeatShellMaterial/);
-  assert.match(heroFlex, /authoredSeatInsetMaterial/);
-  assert.match(heroFlex, /heroMaterialContext/);
-  // Comment may name the canonical function; forbid actual import or call.
-  assert.doesNotMatch(heroFlex, /from ['"].*mapHeroThemeLighting/);
-  assert.doesNotMatch(heroFlex, /mapHeroThemeLighting\s*\(/);
-  assert.doesNotMatch(heroFlex, /from ['"].*frontend\/spatial/);
-  assert.match(heroFlex, /AUTHORED_RING/);
-  assert.match(heroFlex, /AUTHORED_SEAT_SHELL/);
+test('canonical machine renderer owns authored-material consumption', async () => {
+  const renderer = await fs.promises.readFile(path.join(process.cwd(), 'public/machine-world-renderer.js'), 'utf8');
+  assert.match(renderer, /const COLORS/);
+  assert.match(renderer, /UI_COLORS/);
+  assert.match(renderer, /createBranchConnectionCore/);
+  assert.match(renderer, /authoredSeatShellMaterial/);
+  assert.match(renderer, /authoredSeatInsetMaterial/);
+  assert.match(renderer, /authoredRingMaterial/);
+  assert.equal(authoredSource, authoredPublic);
+  assert.match(renderer, /gl.drawArrays/);
+  assert.doesNotMatch(heroFlex, /gl\.createShader|gl\.createProgram|gl\.drawArrays/);
 });
 
 test('materials are deterministic for identical lighting input', () => {
@@ -60,18 +62,11 @@ test('materials are deterministic for identical lighting input', () => {
   assert.deepEqual(authoredSeatShellMaterial(L), authoredSeatShellMaterial(L));
 });
 
-test('B/E reconciliation: heroMaterialContext uses documentElement only (no body fallback) and documents MODE_PROFILE subset', () => {
-  // No body.dataset.theme fallback
-  assert.doesNotMatch(heroFlex, /body\?\.dataset\?\.theme/);
-  assert.doesNotMatch(heroFlex, /body\.dataset\.theme/);
-  // Canonical attribute source
-  assert.match(heroFlex, /document\.documentElement\.getAttribute\('data-theme-mode'\)/);
-  assert.match(heroFlex, /document\.documentElement\.getAttribute\('data-density'\)/);
-  // Isolation + subset documentation
-  assert.match(heroFlex, /Isolation preserved/);
-  assert.match(heroFlex, /MODE_PROFILE/);
-  assert.match(heroFlex, /mapHeroThemeLighting material keys/);
-  // Still no cross-root import
-  assert.doesNotMatch(heroFlex, /from ['"].*frontend\/spatial/);
-  assert.doesNotMatch(heroFlex, /mapHeroThemeLighting\s*\(/);
+test('B/E reconciliation: theme presentation remains document-root based', async () => {
+  assert.doesNotMatch(heroFlex, /body\?\.dataset\?\.theme|body\.dataset\.theme/);
+  const themeRoot = await fs.promises.readFile(path.join(process.cwd(), 'frontend/spatial/theme-root.js'), 'utf8');
+  assert.match(themeRoot, /document\.documentElement/);
+  assert.match(themeRoot, /data-theme-mode/);
+  assert.match(themeRoot, /data-density/);
 });
+

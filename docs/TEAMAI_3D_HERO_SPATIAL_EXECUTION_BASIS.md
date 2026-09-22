@@ -162,7 +162,7 @@ Current map:
 For this pass:
 
 - R0 and R3 existing structure may be verified/refined.
-- R1/R2 must be treated as **planned/spec-defined unless their concrete owner exists**.
+- R1/R2 are **implemented-partial** where named presentation owners exist; any missing service/backend topology remains planned.
 - No backend implementation is pulled in merely because R1 visually represents backend platforms.
 - R2 auth/setup remains mechanical presentation; durable auth remains outside this spatial slice.
 
@@ -210,19 +210,19 @@ Trace:
 
 Prove edge pressure, inverse touch, reduced motion suppression, and coexistence with selected-tree look-at.
 
-### SP-04 — Apply-path integrity
+### SP-04 — Source/delivery integrity
 
-Make the `hero-flex.js` reconstruction path fail loudly when an expected replacement does not apply.
+The historical `hero-flex.js` reconstruction/mutation path is retired. Current delivery is source-owned with deterministic synchronization.
 
 Minimum integrity requirements:
 
-- every expected patch reports applied;
-- patch count/order is deterministic;
-- pinned source compatibility is checked;
-- silent no-op is impossible;
-- a newer canonical change cannot be silently overwritten.
+- canonical source and public browser copies remain parity-checked;
+- synchronization manifests enumerate browser-delivered spatial modules;
+- historical `apply-*` wrappers perform verification only;
+- silent source/public drift is impossible;
+- a newer canonical change cannot be silently overwritten by a retired patch engine.
 
-Do not replace the architecture wholesale. Harden the existing reconstruction mechanism first.
+Do not restore source-string reconstruction to satisfy this gate.
 
 ### SP-05 — Tree depth/readability matrix
 
@@ -309,8 +309,10 @@ It is the execution bridge between the existing spatial contracts and an agent's
 - Camera follow: `public/hero-cam2-tree-follow.js`
 - Center-locked navigation: `public/hero-cam3-tree-center-zoom.js`
 - Edge / swipe: `public/hero-cam4-edge-swipe.js`
-- Assembly / compatibility path: `public/hero-flex.js` + `scripts/apply-cam2-tree-follow-flex.mjs`
+- Controller/input/hierarchy boundary: `public/hero-flex.js` + preserved source `public/_flex_src/hero-flex.base.js`
+- Canonical WebGL projection: `frontend/spatial/machine-world-renderer.js` → `public/machine-world-renderer.js`
 - Branch focus / Back/Next: hierarchy focus APIs + `hero-dom-action-map.js`
+- Historical apply wrappers: verification-only compatibility commands; source mutation belongs to governed synchronization/build scripts
 - Machine topology: `docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md`
 - Product interaction law: `docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md`
 - Current Cam↔V chronology: `docs/TEAMAI_CAMERA_CAM_V_LADDER_RECONCILIATION.md`

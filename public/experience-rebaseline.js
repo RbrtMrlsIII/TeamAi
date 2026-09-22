@@ -1,4 +1,7 @@
 /* 029 Experience Rebaseline controller: explicit classic entrance -> 3D world. */
+import { getFrontendFeature, getGuestPresentationState, listFrontendFeatures } from './feature-registry.js';
+import { resolveFeatureAccess } from './feature-access.js';
+import { featureStateMetadata, featureStatePrecedence, normalizeFeatureState, resolveFeaturePresentationState } from './feature-state.js';
 
 const shell = () => document.querySelector('.hero-shell');
 
@@ -61,22 +64,65 @@ function openSettings() {
   return false;
 }
 
+function publishFeatureRegistry() {
+  window.TeamAiFeatureRegistry = Object.freeze({
+    list: () => listFrontendFeatures(),
+    get: (id) => getFrontendFeature(id),
+    guestState: (id) => getGuestPresentationState(id),
+  });
+  window.TeamAiFeatureAccess = Object.freeze({
+    guest: (id) => resolveFeatureAccess(id, { authenticated: false }),
+    authenticated: (id) => resolveFeatureAccess(id, { authenticated: true }),
+  });
+  window.TeamAiFeatureState = Object.freeze({
+    states: () => featureStatePrecedence(),
+    normalize: (value, fallback) => normalizeFeatureState(value, fallback),
+    resolve: (states) => resolveFeaturePresentationState(states),
+    metadata: (state) => featureStateMetadata(state),
+  });
+}
+
+function dispatchFeatureIntent(button, source) {
+  const featureId = button?.dataset?.featureId;
+  if (!featureId) return null;
+  const feature = getFrontendFeature(featureId);
+  if (!feature) return null;
+  const guestState = getGuestPresentationState(feature);
+  const detail = {
+    featureId: feature.id,
+    label: feature.label,
+    source,
+    featureState: normalizeFeatureState(button?.dataset?.featureState || 'INACTIVE'),
+    guestState: guestState?.presentation || null,
+    guestAccess: resolveFeatureAccess(feature.id, { authenticated: false }),
+    presentationOnly: true,
+  };
+  window.dispatchEvent(new CustomEvent('teamai:feature-intent', { detail }));
+  return detail;
+}
+
 function bindAuthButtons() {
   document.querySelectorAll('[data-auth-open]').forEach((button) => {
     button.addEventListener('click', () => {
-      const panel = document.getElementById('hero-auth-panel');
-      if (!panel) return;
-      panel.hidden = false;
-      panel.classList.add('is-open');
-      panel.querySelector('input')?.focus();
+      dispatchFeatureIntent(button, 'experience-auth');
+      if (typeof window.TeamAiHeroAuthHandoff?.open === 'function') {
+        window.TeamAiHeroAuthHandoff.open();
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('teamai:auth-open-request', {
+        detail: { source: 'experience-rebaseline', presentationOnly: true },
+      }));
     });
   });
   document.querySelectorAll('[data-auth-close]').forEach((button) => {
     button.addEventListener('click', () => {
-      const panel = document.getElementById('hero-auth-panel');
-      if (!panel) return;
-      panel.classList.remove('is-open');
-      panel.hidden = true;
+      if (typeof window.TeamAiHeroAuthHandoff?.close === 'function') {
+        window.TeamAiHeroAuthHandoff.close();
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('teamai:auth-close-request', {
+        detail: { source: 'experience-rebaseline', presentationOnly: true },
+      }));
     });
   });
 }
@@ -84,9 +130,14 @@ function bindAuthButtons() {
 function bind() {
   const el = shell();
   if (!el) return;
+  publishFeatureRegistry();
 
   // /hero/ is the direct world surface. Establish both route and presentation
   // layer together so the world controls are usable on direct load.
+  document.querySelectorAll('[data-feature-id]').forEach((button) => {
+    if (!button.dataset.featureState) button.dataset.featureState = 'INACTIVE';
+  });
+
   if (isWorldRoute()) {
     el.dataset.heroLayer = 'machine';
     el.dataset.experience = 'world';
@@ -112,6 +163,7 @@ function bind() {
 
   document.querySelectorAll('[data-world-camera-request]').forEach((button) => {
     button.addEventListener('click', () => {
+      dispatchFeatureIntent(button, 'experience-world-menu');
       const cameraId = button.dataset.worldCameraRequest;
       if (cameraId && typeof window.TeamAiHero?.setCamera === 'function') {
         window.TeamAiHero.setCamera(cameraId);

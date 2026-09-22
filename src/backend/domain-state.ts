@@ -37,6 +37,8 @@ export type SeatAuthorizationState = {
   status: 'authorized' | 'suspended' | 'revoked';
 };
 
+import type { SeatTurnBudgetConfig } from './seat-turn-budget.js';
+
 export type SeatState = {
   uid: string;
   workplaceId: EntityId;
@@ -44,12 +46,17 @@ export type SeatState = {
   teamId: EntityId;
   id: EntityId;
   provider: string;
+  providerKind?: 'openai' | 'anthropic' | 'generic' | 'stub';
   application: string;
   runtime?: string;
   field: string;
   skills: string[];
   authorization: SeatAuthorizationState;
   status: 'active' | 'paused' | 'revoked';
+  teamEntitlement?: string;
+  providerEntitlement?: string;
+  providerKeyBound?: boolean | string;
+  turnBudget?: SeatTurnBudgetConfig;
 };
 
 export type ConnectionState = {
@@ -73,7 +80,7 @@ export type TaskStateRecord = {
   uid: string;
   projectId: EntityId;
   id: EntityId;
-  status: 'pending' | 'ready' | 'leased' | 'running' | 'waiting_approval' | 'blocked' | 'completed' | 'failed' | 'cancelled';
+  status: 'pending' | 'ready' | 'leased' | 'running' | 'waiting_approval' | 'blocked' | 'completed' | 'failed' | 'cancelled' | 'handoff_required' | 'waiting_for_continuation';
   approved: boolean;
   requirements: TaskRequirementState;
 };

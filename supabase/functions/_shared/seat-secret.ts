@@ -35,9 +35,9 @@ export async function encryptSeatApiKey(plain: string): Promise<{ ciphertextB64:
 export async function decryptSeatApiKey(ciphertextB64: string, ivB64: string): Promise<string> {
   const key = await materializeSeatAesKey();
   const plain = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: fromB64(ivB64) },
+    { name: "AES-GCM", iv: new Uint8Array(fromB64(ivB64)) },
     key,
-    fromB64(ciphertextB64),
+    new Uint8Array(fromB64(ciphertextB64)),
   );
   return new TextDecoder().decode(plain);
 }

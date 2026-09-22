@@ -14,6 +14,8 @@ export const OPEN_DURATION_MS = 520;
 export const CLOSE_DURATION_MS = 420;
 /** P1: SEAT_CONNECTION branch expand duration — §9 home. */
 export const CONNECTION_BRANCH_MS = 380;
+/** Compact the active division before changing semantic division focus. */
+export const DIVISION_FOCUS_CLOSE_MS = 240;
 /** P2: SEAT_BEHAVIOR branch expand duration — §9 home. */
 export const BEHAVIOR_BRANCH_MS = 360;
 /** P3: SEAT_TOOLKIT branch expand duration — optional equip face. */
@@ -65,6 +67,7 @@ export const HIERARCHY_PHASE = {
   OPENING: 'opening',
   OPEN: 'open',
   CLOSING: 'closing',
+  DIVISION_CLOSING: 'division_closing',
 };
 
 export const HIERARCHY_INPUT = {
@@ -127,6 +130,9 @@ export function createHierarchyRuntime(seed = {}) {
     openParentId: seed.openParentId ?? null,
     focusedChildId: seed.focusedChildId ?? null,
     focusedLeafId: seed.focusedLeafId ?? null,
+    divisionClosingChildId: seed.divisionClosingChildId ?? null,
+    divisionPendingChildId: seed.divisionPendingChildId ?? null,
+    divisionCloseStartMs: seed.divisionCloseStartMs ?? 0,
     phase: seed.phase ?? HIERARCHY_PHASE.REST,
     openAmount: seed.openAmount ?? 0,
     phaseStartMs: seed.phaseStartMs ?? 0,
@@ -139,6 +145,16 @@ export function createHierarchyRuntime(seed = {}) {
     connectionBranchStartMs: seed.connectionBranchStartMs ?? 0,
     behaviorBranchAmount: seed.behaviorBranchAmount ?? 0,
     behaviorBranchStartMs: seed.behaviorBranchStartMs ?? 0,
+    toolkitBranchAmount: seed.toolkitBranchAmount ?? 0,
+    toolkitBranchStartMs: seed.toolkitBranchStartMs ?? 0,
+    capabilitiesBranchAmount: seed.capabilitiesBranchAmount ?? 0,
+    capabilitiesBranchStartMs: seed.capabilitiesBranchStartMs ?? 0,
+    authorizationBranchAmount: seed.authorizationBranchAmount ?? 0,
+    authorizationBranchStartMs: seed.authorizationBranchStartMs ?? 0,
+    workspaceScopeBranchAmount: seed.workspaceScopeBranchAmount ?? 0,
+    workspaceScopeBranchStartMs: seed.workspaceScopeBranchStartMs ?? 0,
+    taskEvidenceBranchAmount: seed.taskEvidenceBranchAmount ?? 0,
+    taskEvidenceBranchStartMs: seed.taskEvidenceBranchStartMs ?? 0,
     setupRingItemId: seed.setupRingItemId ?? null,
     setupRingFillStartMs: seed.setupRingFillStartMs ?? 0,
     setupRingFillAmount: seed.setupRingFillAmount ?? 0,
@@ -160,6 +176,8 @@ export function closeHierarchyParent(state, opts = {}) {
   const now = opts.nowMs ?? 0;
   state.focusedLeafId = null;
   state.focusedChildId = null;
+  state.divisionClosingChildId = null;
+  state.divisionPendingChildId = null;
   state.connectionBranchAmount = 0;
   state.connectionBranchStartMs = now;
   state.behaviorBranchAmount = 0;
@@ -213,28 +231,95 @@ export function tickHierarchyPose(state, nowMs, reducedMotion = false) {
   return state;
 }
 
-export function tickConnectionBranch(state, nowMs, reducedMotion = false) {
+const DIVISION_BRANCH_SPECS = Object.freeze({
+  [HIERARCHY_PART.SEAT_CONNECTION]: Object.freeze({
+    amountKey: 'connectionBranchAmount',
+    startKey: 'connectionBranchStartMs',
+    duration: CONNECTION_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_BEHAVIOR]: Object.freeze({
+    amountKey: 'behaviorBranchAmount',
+    startKey: 'behaviorBranchStartMs',
+    duration: BEHAVIOR_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_TOOLKIT]: Object.freeze({
+    amountKey: 'toolkitBranchAmount',
+    startKey: 'toolkitBranchStartMs',
+    duration: TOOLKIT_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_CAPABILITIES]: Object.freeze({
+    amountKey: 'capabilitiesBranchAmount',
+    startKey: 'capabilitiesBranchStartMs',
+    duration: CAPABILITIES_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_AUTHORIZATION]: Object.freeze({
+    amountKey: 'authorizationBranchAmount',
+    startKey: 'authorizationBranchStartMs',
+    duration: AUTHORIZATION_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_WORKSPACE_SCOPE]: Object.freeze({
+    amountKey: 'workspaceScopeBranchAmount',
+    startKey: 'workspaceScopeBranchStartMs',
+    duration: WORKSPACE_SCOPE_BRANCH_MS,
+  }),
+  [HIERARCHY_PART.SEAT_TASK_EVIDENCE]: Object.freeze({
+    amountKey: 'taskEvidenceBranchAmount',
+    startKey: 'taskEvidenceBranchStartMs',
+    duration: TASK_EVIDENCE_BRANCH_MS,
+  }),
+});
+
+export function tickSeatDivisionBranches(state, nowMs, reducedMotion = false) {
+  for (const childId of Object.keys(DIVISION_BRANCH_SPECS)) {
+    tickDivisionBranch(state, nowMs, reducedMotion, childId);
+  }
+  return state;
+}
+
+export function getSeatDivisionBranchAmount(state, childId) {
+  const spec = DIVISION_BRANCH_SPECS[childId];
+  if (!spec) return 0;
+  return Math.max(0, Math.min(1, Number(state?.[spec.amountKey]) || 0));
+}
+
+export function getSeatDivisionBranchAmounts(state) {
+  return Object.freeze(
+    Object.fromEntries(
+      Object.entries(DIVISION_BRANCH_SPECS).map(([childId, spec]) => [
+        spec.amountKey,
+        getSeatDivisionBranchAmount(state, childId),
+      ]),
+    ),
+  );
+}
+
+function tickDivisionBranch(state, nowMs, reducedMotion, childId) {
+  const spec = DIVISION_BRANCH_SPECS[childId];
+  if (!spec) return state;
   const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_CONNECTION) {
-    if ((state.connectionBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_CONNECTION) {
-      state.connectionBranchAmount = 0;
-    }
+  const amount = Number(state[spec.amountKey]) || 0;
+  if (!state.openParentId || state.focusedChildId !== childId) {
+    if (amount > 0) state[spec.amountKey] = 0;
     return state;
   }
   if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.connectionBranchAmount = 1;
+    state[spec.amountKey] = 1;
     return state;
   }
   const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
   if (!parentReady) {
-    state.connectionBranchAmount = 0;
+    state[spec.amountKey] = 0;
     return state;
   }
-  const start = state.connectionBranchStartMs ?? now;
-  const progress = Math.min((now - start) / CONNECTION_BRANCH_MS, 1);
+  const start = state[spec.startKey] ?? now;
+  const progress = Math.min((now - start) / spec.duration, 1);
   const x = Math.max(0, Math.min(1, progress));
-  state.connectionBranchAmount = x * x * (3 - 2 * x);
+  state[spec.amountKey] = x * x * (3 - 2 * x);
   return state;
+}
+
+export function tickConnectionBranch(state, nowMs, reducedMotion = false) {
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_CONNECTION);
 }
 
 export function getConnectionBranchAmount(state) {
@@ -260,27 +345,7 @@ export function requestConnectionConfigureHandoff(detail = {}) {
 }
 
 export function tickBehaviorBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_BEHAVIOR) {
-    if ((state.behaviorBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_BEHAVIOR) {
-      state.behaviorBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.behaviorBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.behaviorBranchAmount = 0;
-    return state;
-  }
-  const start = state.behaviorBranchStartMs ?? now;
-  const progress = Math.min((now - start) / BEHAVIOR_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.behaviorBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_BEHAVIOR);
 }
 
 export function getBehaviorBranchAmount(state) {
@@ -307,27 +372,7 @@ export function requestBehaviorConfigureHandoff(detail = {}) {
 
 
 export function tickToolkitBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_TOOLKIT) {
-    if ((state.toolkitBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_TOOLKIT) {
-      state.toolkitBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.toolkitBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.toolkitBranchAmount = 0;
-    return state;
-  }
-  const start = state.toolkitBranchStartMs ?? now;
-  const progress = Math.min((now - start) / TOOLKIT_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.toolkitBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_TOOLKIT);
 }
 
 export function getToolkitBranchAmount(state) {
@@ -355,27 +400,7 @@ export function requestToolkitConfigureHandoff(detail = {}) {
 
 
 export function tickCapabilitiesBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_CAPABILITIES) {
-    if ((state.capabilitiesBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_CAPABILITIES) {
-      state.capabilitiesBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.capabilitiesBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.capabilitiesBranchAmount = 0;
-    return state;
-  }
-  const start = state.capabilitiesBranchStartMs ?? now;
-  const progress = Math.min((now - start) / CAPABILITIES_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.capabilitiesBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_CAPABILITIES);
 }
 
 export function getCapabilitiesBranchAmount(state) {
@@ -403,27 +428,7 @@ export function requestCapabilitiesConfigureHandoff(detail = {}) {
 
 
 export function tickAuthorizationBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_AUTHORIZATION) {
-    if ((state.authorizationBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_AUTHORIZATION) {
-      state.authorizationBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.authorizationBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.authorizationBranchAmount = 0;
-    return state;
-  }
-  const start = state.authorizationBranchStartMs ?? now;
-  const progress = Math.min((now - start) / AUTHORIZATION_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.authorizationBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_AUTHORIZATION);
 }
 
 export function getAuthorizationBranchAmount(state) {
@@ -451,27 +456,7 @@ export function requestAuthorizationConfigureHandoff(detail = {}) {
 
 
 export function tickWorkspaceScopeBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_WORKSPACE_SCOPE) {
-    if ((state.workspaceScopeBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_WORKSPACE_SCOPE) {
-      state.workspaceScopeBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.workspaceScopeBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.workspaceScopeBranchAmount = 0;
-    return state;
-  }
-  const start = state.workspaceScopeBranchStartMs ?? now;
-  const progress = Math.min((now - start) / WORKSPACE_SCOPE_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.workspaceScopeBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_WORKSPACE_SCOPE);
 }
 
 export function getWorkspaceScopeBranchAmount(state) {
@@ -499,27 +484,7 @@ export function requestWorkspaceScopeConfigureHandoff(detail = {}) {
 
 
 export function tickTaskEvidenceBranch(state, nowMs, reducedMotion = false) {
-  const now = nowMs ?? 0;
-  if (!state.openParentId || state.focusedChildId !== HIERARCHY_PART.SEAT_TASK_EVIDENCE) {
-    if ((state.taskEvidenceBranchAmount || 0) > 0 && state.focusedChildId !== HIERARCHY_PART.SEAT_TASK_EVIDENCE) {
-      state.taskEvidenceBranchAmount = 0;
-    }
-    return state;
-  }
-  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
-    state.taskEvidenceBranchAmount = 1;
-    return state;
-  }
-  const parentReady = (state.openAmount || 0) >= 0.55 || state.phase === HIERARCHY_PHASE.OPEN;
-  if (!parentReady) {
-    state.taskEvidenceBranchAmount = 0;
-    return state;
-  }
-  const start = state.taskEvidenceBranchStartMs ?? now;
-  const progress = Math.min((now - start) / TASK_EVIDENCE_BRANCH_MS, 1);
-  const x = Math.max(0, Math.min(1, progress));
-  state.taskEvidenceBranchAmount = x * x * (3 - 2 * x);
-  return state;
+  return tickDivisionBranch(state, nowMs, reducedMotion, HIERARCHY_PART.SEAT_TASK_EVIDENCE);
 }
 
 export function getTaskEvidenceBranchAmount(state) {
@@ -545,6 +510,30 @@ export function requestTaskEvidenceConfigureHandoff(detail = {}) {
   return intent;
 }
 
+
+export const SEAT_DIVISION_CONFIG_COMMANDS = Object.freeze([
+  Object.freeze({ key: 'c', childId: HIERARCHY_PART.SEAT_CONNECTION, targetSection: 'connection', request: requestConnectionConfigureHandoff }),
+  Object.freeze({ key: 'b', childId: HIERARCHY_PART.SEAT_BEHAVIOR, targetSection: 'behavior', request: requestBehaviorConfigureHandoff }),
+  Object.freeze({ key: 't', childId: HIERARCHY_PART.SEAT_TOOLKIT, targetSection: 'toolkit', request: requestToolkitConfigureHandoff }),
+  Object.freeze({ key: 'k', childId: HIERARCHY_PART.SEAT_CAPABILITIES, targetSection: 'capabilities', request: requestCapabilitiesConfigureHandoff }),
+  Object.freeze({ key: 'a', childId: HIERARCHY_PART.SEAT_AUTHORIZATION, targetSection: 'authorization', request: requestAuthorizationConfigureHandoff }),
+  Object.freeze({ key: 'w', childId: HIERARCHY_PART.SEAT_WORKSPACE_SCOPE, targetSection: 'workspace-scope', request: requestWorkspaceScopeConfigureHandoff }),
+  Object.freeze({ key: 'e', childId: HIERARCHY_PART.SEAT_TASK_EVIDENCE, targetSection: 'task-evidence', request: requestTaskEvidenceConfigureHandoff }),
+]);
+
+export function resolveSeatDivisionConfigCommand(key) {
+  const normalized = String(key || '').toLowerCase();
+  return SEAT_DIVISION_CONFIG_COMMANDS.find((command) => command.key === normalized) || null;
+}
+
+export function requestSeatDivisionConfigure(childId, detail = {}) {
+  const command = SEAT_DIVISION_CONFIG_COMMANDS.find((entry) => entry.childId === childId);
+  if (!command) return null;
+  return command.request({
+    ...detail,
+    targetSection: detail.targetSection || command.targetSection,
+  });
+}
 
 export function setupRingFocusedItem(ringFocus) {
   if (!ringFocus || ringFocus.ring !== 'r2') return null;
@@ -649,6 +638,8 @@ export function openSeatShellParent(state, seatIndex, opts = {}) {
   const snap = Boolean(opts.snap);
   const now = opts.nowMs ?? 0;
   state.openParentId = seatShellParentId(index);
+  state.divisionClosingChildId = null;
+  state.divisionPendingChildId = null;
   state.selectedSeatIndex = index;
   state.focusedChildId = HIERARCHY_PART.SEAT_CONNECTION;
   state.focusedLeafId = null;
@@ -688,81 +679,86 @@ export function childLocalPosition(seatAngle, seatRadius, index, openAmount = 1)
 export function focusChild(state, childId, opts = {}) {
   if (!state.openParentId) return state;
   if (!SEAT_SHELL_V1_CHILDREN.includes(childId)) return state;
-  state.focusedChildId = childId;
-  state.focusedLeafId = null;
   const now = opts.nowMs ?? 0;
   const snap = Boolean(opts.snap);
-  if (childId === HIERARCHY_PART.SEAT_CONNECTION) {
-    state.connectionBranchStartMs = now;
-    state.connectionBranchAmount = snap ? 1 : Math.min(state.connectionBranchAmount || 0, 0.15);
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_BEHAVIOR) {
-    state.behaviorBranchStartMs = now;
-    state.behaviorBranchAmount = snap ? 1 : Math.min(state.behaviorBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_TOOLKIT) {
-    state.toolkitBranchStartMs = now;
-    state.toolkitBranchAmount = snap ? 1 : Math.min(state.toolkitBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_CAPABILITIES) {
-    state.capabilitiesBranchStartMs = now;
-    state.capabilitiesBranchAmount = snap ? 1 : Math.min(state.capabilitiesBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_AUTHORIZATION) {
-    state.authorizationBranchStartMs = now;
-    state.authorizationBranchAmount = snap ? 1 : Math.min(state.authorizationBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_WORKSPACE_SCOPE) {
-    state.workspaceScopeBranchStartMs = now;
-    state.workspaceScopeBranchAmount = snap ? 1 : Math.min(state.workspaceScopeBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
-  } else if (childId === HIERARCHY_PART.SEAT_TASK_EVIDENCE) {
-    state.taskEvidenceBranchStartMs = now;
-    state.taskEvidenceBranchAmount = snap ? 1 : Math.min(state.taskEvidenceBranchAmount || 0, 0.15);
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-  } else {
-    state.connectionBranchAmount = 0;
-    state.behaviorBranchAmount = 0;
-    state.toolkitBranchAmount = 0;
-    state.capabilitiesBranchAmount = 0;
-    state.authorizationBranchAmount = 0;
-    state.workspaceScopeBranchAmount = 0;
-    state.taskEvidenceBranchAmount = 0;
+  if (
+    opts.interactive === true
+    && state.focusedChildId
+    && state.focusedChildId !== childId
+    && !snap
+    && opts.allowTransition !== false
+    && opts.nowMs != null
+    && (state.phase === HIERARCHY_PHASE.OPEN || state.phase === HIERARCHY_PHASE.OPENING)
+  ) {
+    state.divisionClosingChildId = state.focusedChildId;
+    state.divisionPendingChildId = childId;
+    state.divisionCloseStartMs = now;
+    state.phase = HIERARCHY_PHASE.DIVISION_CLOSING;
+    state.focusedLeafId = null;
+    return state;
+  }
+
+  const spec = DIVISION_BRANCH_SPECS[childId];
+  const previousAmount = spec ? Number(state[spec.amountKey]) || 0 : 0;
+  state.focusedChildId = childId;
+  state.focusedLeafId = null;
+  resetDivisionBranchAmounts(state);
+  if (spec) {
+    state[spec.startKey] = now;
+    state[spec.amountKey] = snap ? 1 : Math.min(previousAmount, 0.15);
+  }
+  return state;
+}
+
+function resetDivisionBranchAmounts(state) {
+  state.connectionBranchAmount = 0;
+  state.behaviorBranchAmount = 0;
+  state.toolkitBranchAmount = 0;
+  state.capabilitiesBranchAmount = 0;
+  state.authorizationBranchAmount = 0;
+  state.workspaceScopeBranchAmount = 0;
+  state.taskEvidenceBranchAmount = 0;
+}
+
+export function tickDivisionFocusTransition(state, nowMs, reducedMotion = false) {
+  if (state.phase !== HIERARCHY_PHASE.DIVISION_CLOSING || !state.divisionClosingChildId) return state;
+  const now = nowMs ?? 0;
+  if (HIERARCHY_REDUCED_SNAP && reducedMotion) {
+    const pending = state.divisionPendingChildId;
+    state.divisionClosingChildId = null;
+    state.divisionPendingChildId = null;
+    resetDivisionBranchAmounts(state);
+    state.phase = HIERARCHY_PHASE.OPEN;
+    return focusChild(state, pending, { nowMs: now, snap: true, allowTransition: false });
+  }
+
+  const spec = DIVISION_BRANCH_SPECS[state.divisionClosingChildId];
+  if (!spec) {
+    state.divisionClosingChildId = null;
+    state.divisionPendingChildId = null;
+    resetDivisionBranchAmounts(state);
+    state.phase = HIERARCHY_PHASE.OPEN;
+    return state;
+  }
+
+  const progress = Math.min(
+    (now - (state.divisionCloseStartMs ?? now)) / DIVISION_FOCUS_CLOSE_MS,
+    1,
+  );
+  const amount = 1 - smoothstep(progress);
+  state[spec.amountKey] = amount;
+
+  if (progress >= 1) {
+    const pending = state.divisionPendingChildId;
+    state.divisionClosingChildId = null;
+    state.divisionPendingChildId = null;
+    resetDivisionBranchAmounts(state);
+    state.phase = HIERARCHY_PHASE.OPEN;
+    return focusChild(state, pending, {
+      nowMs: now,
+      snap: HIERARCHY_REDUCED_SNAP && reducedMotion,
+      allowTransition: false,
+    });
   }
   return state;
 }

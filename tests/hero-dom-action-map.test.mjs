@@ -48,15 +48,12 @@ test('module and absorption plan stay presentation-only', async () => {
   assert.match(plan, /Retire lock-only|Far-environment/i);
 });
 
-test('hero-flex wires resolveDomCameraAction after apply', async () => {
-  const { spawnSync } = await import('node:child_process');
-  const { fileURLToPath } = await import('node:url');
-  const { dirname, join } = await import('node:path');
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-  spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
+test('DOM camera action policy is separate from canonical renderer ownership', async () => {
+  const src = await readFile(new URL('../public/hero-dom-action-map.js', import.meta.url), 'utf8');
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /resolveDomCameraAction/);
-  assert.match(flex, /hero-dom-action-map/);
+  assert.match(src, /resolveDomCameraAction/);
+  assert.match(flex, /function setCamera/);
+  assert.match(flex, /machine-world-renderer\.js/);
 });
 
 test('index marks far-environment outside shell', async () => {

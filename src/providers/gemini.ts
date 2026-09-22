@@ -1,5 +1,6 @@
 import type {AIProvider,GenerateRequest,GenerateResult,ModelInfo,StreamChunk} from './types.js';
 import {fetchJson,parseSse} from './http.js';
+import {terminationFromGemini} from './termination.js';
 
 export class GeminiProvider {
   constructor(public readonly provider='gemini',private readonly key=process.env.GEMINI_API_KEY??'',private readonly base='https://generativelanguage.googleapis.com/v1beta'){}
@@ -11,7 +12,7 @@ export class GeminiProvider {
     const body={contents,...(system?{systemInstruction:{parts:[{text:system}]}}:{}),generationConfig:{maxOutputTokens:req.maxOutputTokens,temperature:req.temperature}};
     const {data,requestId}=await fetchJson(`${this.base}/models/${encodeURIComponent(req.model)}:generateContent`,{method:'POST',headers:this.authHeaders(),body:JSON.stringify(body)});
     const usage=data.usageMetadata??{};
-    return {provider:this.provider,model:req.model,requestId:data.responseId??requestId??'',text:(data.candidates?.[0]?.content?.parts??[]).map((p:any)=>p.text??'').join(''),usage:{inputTokens:usage.promptTokenCount??0,outputTokens:usage.candidatesTokenCount??0,totalTokens:usage.totalTokenCount??(usage.promptTokenCount??0)+(usage.candidatesTokenCount??0)}};
+    return {provider:this.provider,model:req.model,requestId:data.responseId??requestId??'',text:(data.candidates?.[0]?.content?.parts??[]).map((p:any)=>p.text??'').join(''),usage:{inputTokens:usage.promptTokenCount??0,outputTokens:usage.candidatesTokenCount??0,totalTokens:usage.totalTokenCount??(usage.promptTokenCount??0)+(usage.candidatesTokenCount??0)},termination:terminationFromGemini(data.candidates?.[0]?.finishReason)};
   }
   async *stream(req:GenerateRequest):AsyncIterable<StreamChunk>{
     if(!this.key) throw new Error('GEMINI_API_KEY not configured');

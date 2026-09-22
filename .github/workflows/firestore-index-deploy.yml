@@ -1,0 +1,49 @@
+name: Firestore index deployment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-indexes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+
+      - name: Write Firebase service account
+        shell: bash
+        env:
+          TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          test -n "${TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON}"
+          printf '%s' "${TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON}" > "${RUNNER_TEMP}/teamai-firebase-service-account.json"
+
+      - name: Deploy Firestore indexes only
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/teamai-firebase-service-account.json
+        run: firebase deploy --only firestore:indexes --project team-ai-official --non-interactive
+
+      - name: Read back deployed Firestore indexes
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/teamai-firebase-service-account.json
+        run: |
+          set -euo pipefail
+          firebase firestore:indexes --project team-ai-official --database="(default)" --json > "${RUNNER_TEMP}/deployed-firestore-indexes.json"
+          node scripts/verify-firestore-indexes.mjs firestore.indexes.json "${RUNNER_TEMP}/deployed-firestore-indexes.json"
+      - name: Remove service account
+        if: always()
+        shell: bash
+        run: rm -f "${RUNNER_TEMP}/teamai-firebase-service-account.json"

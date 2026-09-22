@@ -37,14 +37,11 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Apply Cam-2 hero-flex tree follow wire
-        run: node scripts/apply-cam2-tree-follow-flex.mjs
+      - name: Synchronize canonical Hero source
+        run: node scripts/sync-hero-flex-runtime.mjs
 
-      - name: Apply Seat division focus compaction
-        run: node scripts/apply-seat-division-focus-compaction.mjs
-
-      - name: Apply Seat-1 connection edge
-        run: node scripts/apply-seat1-connection-edge-flex.mjs
+      - name: Verify committed machine spatial runtime parity
+        run: npm run machine:sync:check
 
       - name: Run Playwright browser verification
         run: npm run test:e2e

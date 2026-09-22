@@ -12,6 +12,7 @@ import {
 } from '../public/hero-hierarchy-runtime.js';
 
 const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const r1 = await readFile(new URL('../public/hero-r1-backend-display.js', import.meta.url), 'utf8');
 const r2 = await readFile(new URL('../public/hero-r2-setup-ring.js', import.meta.url), 'utf8');
 
 test('ring focus cycles R1 and R2 catalogs', () => {
@@ -39,18 +40,17 @@ test('accessible name is presentation only', () => {
   assert.doesNotMatch(name, /authorized|entitled/i);
 });
 
-test('hero-flex wires ring focus keys and click zones', () => {
+test('ring focus input remains controller-owned', () => {
   assert.match(hero, /cycleRingFocus/);
   assert.match(hero, /ringFocusAccessibleName/);
-  assert.match(hero, /event\.key==='\['/);
-  assert.match(hero, /getRingFocus/);
-  assert.match(hero, /y>0\.28&&y<0\.48/);
-  assert.match(hero, /wheel|passive: false/);
-  assert.match(hero, /touchmove|pointermove/);
+  assert.match(hero, /cycleRing\(/);
+  assert.match(hero, /ArrowRight|ArrowLeft/);
+  assert.match(hero, /wheel|pointermove/);
+  assert.match(hero, /machine-world-renderer\.js/);
 });
 
 test('draw paths react to focusedIndex / r1 focus', () => {
-  assert.match(hero, /ringFocus\.ring === 'r1'/);
+  assert.match(r1, /ringFocus\?\.ring === 'r1'/);
   assert.match(r2, /focusedIndex/);
   assert.match(r2, /focused \?/);
 });

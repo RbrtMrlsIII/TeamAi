@@ -16,6 +16,30 @@ test('Seat-1 connection child stays absent while the machine core is collapsed',
   assert.equal(buildMachineCoreSeat1Connection({ shell, expansionAmount: 0 }), null);
 });
 
+test('Seat-1 connection exposes one payload-driven adaptive expansion envelope', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
+  const shell = core.byBranch.get('BRANCH-SEAT-01');
+  const collapsed = buildMachineCoreSeat1Connection({ shell, expansionAmount: 0.25 });
+  const expanded = buildMachineCoreSeat1Connection({ shell, expansionAmount: 1 });
+  assert.ok(collapsed && expanded);
+  assert.ok(expanded.adaptive.normalizedLoad > 0);
+  for (const axis of ['x', 'y', 'z']) {
+    assert.ok(expanded.adaptive.expanded[axis] >= expanded.adaptive.collapsed[axis]);
+    assert.ok(expanded.adaptive.current[axis] >= expanded.adaptive.collapsed[axis]);
+    assert.ok(expanded.adaptive.current[axis] <= expanded.adaptive.expanded[axis]);
+  }
+  assert.equal(expanded.geometry.dimensions.width, expanded.adaptive.current.x);
+  assert.equal(expanded.geometry.dimensions.depth, expanded.adaptive.current.z);
+  assert.equal(expanded.geometry.dimensions.height, expanded.adaptive.current.y);
+  for (const axis of ['x', 'y', 'z']) {
+    assert.equal(expanded.adaptive.current[axis], expanded.adaptive.expanded[axis]);
+    assert.ok(Number.isFinite(expanded.adaptive.current[axis]));
+    assert.ok(collapsed.adaptive.current[axis] >= collapsed.adaptive.collapsed[axis]);
+    assert.ok(collapsed.adaptive.current[axis] <= collapsed.adaptive.expanded[axis]);
+  }
+  assert.notDeepEqual(expanded.adaptive.expanded, expanded.adaptive.collapsed);
+});
+
 test('Seat-1 connection child reuses canonical geometry and edge identities', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
   const shell = core.byBranch.get('BRANCH-SEAT-01');
@@ -59,6 +83,18 @@ test('Seat-1 connection fails closed unless all canonical shell identity fields 
     assert.equal(buildMachineCoreSeat1Connection({ shell: { ...shell, ...mutation }, expansionAmount: 1 }), null);
   }
   assert.equal(buildMachineCoreSeat1Connection({ shell: core.hub, expansionAmount: 1 }), null);
+});
+
+test('canonical machine renderer owns Seat-1 semantic connection WebGL path', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /buildMachineCoreSeat1Connection/);
+  assert.match(renderer, /seatConnectionDrawPath/);
+  assert.match(renderer, /seatConnectionProof/);
+  assert.match(renderer, /canvas\.dataset\.seatConnectionGeometry = child\.geometry\.id/);
+  assert.doesNotMatch(renderer, /firestore|supabase|paypal|scheduler|oauth/i);
+  const controller = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(controller, /drawSemanticSeat1Connection|buildHeroSeat1Connection/);
 });
 
 test('public Seat-1 connection runtime stays synchronized with the canonical frontend module', async () => {

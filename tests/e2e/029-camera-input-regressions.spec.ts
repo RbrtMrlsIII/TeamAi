@@ -2,6 +2,11 @@ import { expect, test } from '@playwright/test';
 
 test.describe('029 camera/input regression guards', () => {
   test('turn-loop preserves the current camera while contribution remains user-navigable', async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+    const heartbeat = await page.evaluate(() => new Promise<number>((resolve) => requestAnimationFrame(() => resolve(performance.now()))));
+    expect(heartbeat).toBeGreaterThan(0);
+
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
 
@@ -26,6 +31,8 @@ test.describe('029 camera/input regression guards', () => {
       window.addEventListener('teamai:hero-state-change', onState);
       (window as any).TeamAiHero.startLoop();
     }));
+
+    if (pageErrors.length > 0) throw new Error(`Hero page errors: ${pageErrors.join(' | ')}`);
 
     const during = await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;

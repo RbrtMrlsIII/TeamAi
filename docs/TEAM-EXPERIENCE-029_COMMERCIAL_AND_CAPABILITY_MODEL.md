@@ -55,7 +55,15 @@ while:
 
 A provider, runtime, model, or external application may impose separate requirements that TeamAi cannot waive.
 
-## 3. Base TeamAi capability set versus additional MCP/tool quality
+## 3. MCP facility ownership
+
+All TeamAi-facing MCP concerns are grouped under the dedicated **MCP facility**. The facility owns the product UX for MCP inventory, install/add, connector authentication handoff, permission configuration, connection health/test, and custom MCP creation/setup/management.
+
+The MCP facility can equip a capability to one Seat, multiple/all eligible Seats, or Workspace. Equipping creates a target-owned dynamic branch for capability configuration and operation. The Seat or Workspace branch does not become the MCP inventory authority.
+
+External provider credentials, provider terms, and provider-owned account authority remain external even when authentication is initiated from the MCP facility.
+
+## 4. Base TeamAi capability set versus additional MCP/tool quality
 
 TeamAi needs a minimum capability set that makes a TeamAi team able to function as a coordinated product. These capability categories are **not automatically required to be implemented as MCP servers**. Core TeamAi authority should remain native to TeamAi where appropriate.
 
@@ -72,7 +80,7 @@ Candidate Base TeamAi Capability Set:
 
 The baseline should be intentionally minimal. Additional integrations become Tool Quality extensions rather than silently becoming core TeamAi requirements.
 
-## 4. Additional MCP / Tool Quality
+## 5. Additional MCP / Tool Quality
 
 Examples of optional additional capability packs may include:
 
@@ -95,7 +103,7 @@ Therefore:
 
 Tool results never silently grant new permissions.
 
-## 5. AI Seat capability identity
+## 6. AI Seat capability identity
 
 An AI Seat remains distinct from all of the following:
 
@@ -119,19 +127,19 @@ A TeamAi Seat is the configured participation identity inside a Workplace/Projec
 
 The same external model may therefore support multiple differently configured TeamAi Seats when the provider/runtime allows it.
 
-## 6. External setup versus TeamAi activation
+## 7. External setup versus TeamAi activation
 
-Some setup must or may happen outside the TeamAi web application:
+Provider-owned account or credential authority may remain external, but the **TeamAi MCP lifecycle is managed through the MCP facility**:
 
-`provider account → external authentication → external application/runtime setup → external MCP/tool configuration → external permissions/terms`
+`MCP facility → discover/install/add → connector authentication handoff → permissions/configuration → health test → target equip → Seat/Workspace activation`
 
-TeamAi then provides the coordination boundary:
+Where provider-native account setup is required, that step may leave TeamAi through an explicit authentication handoff. TeamAi then provides the coordination boundary:
 
 `authorized connection → capability test → Workplace/Project binding → AI Seat → Team Quality + Tool Quality policy → scopes/limits → activation`
 
 TeamAi must not pretend it owns external configuration that remains under the provider/application's authority.
 
-## 7. How the AI uses its individual tools
+## 8. How the AI uses its individual tools
 
 The AI should never receive raw provider credentials merely because a tool is available.
 
@@ -230,6 +238,19 @@ This model does not yet decide:
 - final usage/resource limits.
 
 Those decisions belong to later planning/approval and must not be inferred as current implementation.
+
+## 12a. Approved Marketplace packaging direction
+
+The frontend Marketplace representative slice now has two explicit commercial modules:
+
+- **Team Quality:** five paid tiers, separate from the baseline Team Quality allocation.
+- **Team Population:** nine paid tiers, where Population Tier 1 unlocks persistent Seat 2 and Tier 9 unlocks persistent Seat 10.
+
+Both subscription families use a monthly renewal cycle. A lower tier remains locked for the current active period when a higher tier is active. Selecting a higher tier is permitted, but the UI must warn inline that the lower tier's effect disappears when the higher tier takes effect. This warning is part of the presentation/read-model contract, not a toast-based confirmation authority.
+
+TeamAi does not store card credentials. Payment is completed on a TeamAi-provided external hosted billing page; the browser Marketplace may expose that link when an authorized read model provides it, but must not collect or retain card details.
+
+These packaging decisions define tier identity and transition semantics only. Prices, exact Team Quality capability limits, promotional terms, and provider entitlements remain separate and are not inferred by the catalog.
 
 ## 12b. Current commerce implementation reconciliation
 

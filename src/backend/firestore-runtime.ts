@@ -5,6 +5,9 @@ import type { ExecutableTask, TaskExecutionEventStore } from './task-execution.j
 import type { AtomicTaskLeaseStore, LeaseResult } from './task-lease.js';
 import type { DurableDomainStateStore, AccountState, SeatState, ConnectionState, TaskStateRecord, DurableEventRecord } from './domain-state.js';
 import type { RuntimeApprovalStore, RuntimeTaskStore } from './task-runtime-bridge.js';
+import type { SeatBudgetSettingsStore } from './seat-turn-budget-settings.js';
+import type { SeatTurnBudgetConfig } from './seat-turn-budget.js';
+import type { TaskContinuationRequest, TaskContinuationStateStore } from './task-continuation.js';
 import type { SchedulerSeat, SchedulerTask } from './scheduler.js';
 
 const FIRESTORE_ROOT = 'https://firestore.googleapis.com/v1';
@@ -142,6 +145,119 @@ export class FirestoreRuntimeClient {
     return await response.json() as FirestoreDocument;
   }
 
+  async findCanonicalSeatDocument(
+    uid: string,
+    workplaceId: string,
+    projectId: string,
+    seatId: string,
+    transaction?: string,
+  ): Promise<{ document: FirestoreDocument; path: string; teamId: string } | null> {
+    const safeUid = required(uid, 'uid');
+    const safeWorkplaceId = required(workplaceId, 'workplaceId');
+    const safeProjectId = required(projectId, 'projectId');
+    const safeSeatId = required(seatId, 'seatId');
+    const parentPath =
+      'accounts/' + safeUid +
+      '/workplaces/' + safeWorkplaceId +
+      '/projects/' + safeProjectId;
+
+    const token = await googleAccessToken(this.account);
+    const response = await fetch(this.documentUrl(parentPath) + ':runQuery', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + token,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: 'seats', allDescendants: true }],
+          where: {
+            fieldFilter: {
+              field: { fieldPath: 'seatId' },
+              op: 'EQUAL',
+              value: { stringValue: safeSeatId },
+            },
+          },
+        },
+        ...(transaction ? { transaction } : {}),
+      }),
+    });
+    if (!response.ok) throw new Error('Firestore Seat query failed: ' + response.status);
+
+    const body = await response.text();
+    const rows = body.trim()
+      ? (() => {
+          try {
+            const parsed = JSON.parse(body) as unknown;
+            return Array.isArray(parsed) ? parsed : [parsed];
+          } catch {
+            return body.trim().split(/\r?\n/).map((line) => JSON.parse(line));
+          }
+        })()
+      : [];
+
+    const matches = rows
+      .map((row) => (row && typeof row === 'object' ? row as { document?: FirestoreDocument } : {}))
+      .map((row) => row.document)
+      .filter((document): document is FirestoreDocument & { name: string } => Boolean(document?.name))
+      .map((document): { document: FirestoreDocument; path: string; teamId: string } | null => {
+        const marker = '/documents/';
+        const markerIndex = String(document.name).indexOf(marker);
+        if (markerIndex < 0) return null;
+        const path = String(document.name).slice(markerIndex + marker.length);
+        const segments = path.split('/');
+        const canonical =
+          segments.length === 10 &&
+          segments[0] === 'accounts' &&
+          segments[1] === safeUid &&
+          segments[2] === 'workplaces' &&
+          segments[3] === safeWorkplaceId &&
+          segments[4] === 'projects' &&
+          segments[5] === safeProjectId &&
+          segments[6] === 'teams' &&
+          segments[8] === 'seats' &&
+          segments[9] === safeSeatId;
+        if (!canonical) return null;
+
+        const current = decodeDocument(document);
+        if (
+          String(current.uid ?? '') !== safeUid ||
+          String(current.workplaceId ?? '') !== safeWorkplaceId ||
+          String(current.projectId ?? '') !== safeProjectId ||
+          String(current.seatId ?? '') !== safeSeatId
+        ) return null;
+
+        const teamId = String(current.teamId ?? segments[7] ?? '').trim();
+        if (!teamId) return null;
+        return { document, path, teamId };
+      })
+      .filter((item): item is { document: FirestoreDocument; path: string; teamId: string } => Boolean(item));
+
+    if (matches.length > 1) throw new Error('seat_ambiguous');
+    return matches[0] ?? null;
+  }
+
+  async listDocuments(collectionPath: string): Promise<FirestoreDocument[]> {
+    const token = await googleAccessToken(this.account);
+    const documents: FirestoreDocument[] = [];
+    let pageToken: string | undefined;
+
+    do {
+      const url = new URL(this.documentUrl(required(collectionPath, 'collectionPath')));
+      url.searchParams.set('pageSize', '1000');
+      if (pageToken) url.searchParams.set('pageToken', pageToken);
+      const response = await fetch(url.toString(), {
+        headers: { authorization: 'Bearer ' + token },
+      });
+      if (!response.ok) throw new Error('Firestore collection read failed: ' + response.status);
+      const body = await response.json() as { documents?: FirestoreDocument[]; nextPageToken?: string };
+      documents.push(...(body.documents ?? []));
+      pageToken = body.nextPageToken;
+    } while (pageToken);
+
+    return documents;
+  }
+
   async beginTransaction(): Promise<string> {
     const token = await googleAccessToken(this.account);
     const response = await fetch(`${FIRESTORE_ROOT}/projects/${encodeURIComponent(this.projectId)}/databases/(default)/documents:beginTransaction`, {
@@ -233,7 +349,20 @@ export class FirestoreAtomicTaskLeaseStore implements AtomicTaskLeaseStore {
   }
 }
 
-export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore {
+
+export function normalizeSeatStateDocument(
+  data: Record<string, unknown>,
+  seatId: string,
+): SeatState {
+  const normalizedId = String(data.id ?? data.seatId ?? seatId).trim();
+  if (!normalizedId) throw new Error('seat_id_missing');
+  return {
+    ...data,
+    id: normalizedId,
+  } as unknown as SeatState;
+}
+
+export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomainStateStore, SeatBudgetSettingsStore, TaskContinuationStateStore {
   constructor(private readonly client: FirestoreRuntimeClient, private readonly uid: string, private readonly workplaceId: string) {}
 
   async getAccount(uid: string): Promise<AccountState | null> {
@@ -242,8 +371,49 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   }
 
   async getSeat(uid: string, projectId: string, seatId: string): Promise<SeatState | null> {
-    const doc = await this.client.get(`accounts/${required(uid, 'uid')}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/seats/${required(seatId, 'seatId')}`);
-    return doc ? decodeDocument(doc) as unknown as SeatState : null;
+    const resolved = await this.client.findCanonicalSeatDocument(
+      required(uid, 'uid'),
+      this.workplaceId,
+      required(projectId, 'projectId'),
+      required(seatId, 'seatId'),
+    );
+    if (!resolved) return null;
+    const decoded = decodeDocument(resolved.document);
+    return normalizeSeatStateDocument(decoded, required(seatId, 'seatId'));
+  }
+
+  async getSeatBudget(uid: string, projectId: string, seatId: string): Promise<SeatTurnBudgetConfig | null> {
+    const seat = await this.getSeat(uid, projectId, seatId);
+    return seat?.turnBudget ?? null;
+  }
+
+  async saveSeatBudget(uid: string, projectId: string, seatId: string, config: SeatTurnBudgetConfig): Promise<void> {
+    const safeUid = required(uid, 'uid');
+    const safeProjectId = required(projectId, 'projectId');
+    const safeSeatId = required(seatId, 'seatId');
+    const transaction = await this.client.beginTransaction();
+    const resolved = await this.client.findCanonicalSeatDocument(
+      safeUid,
+      this.workplaceId,
+      safeProjectId,
+      safeSeatId,
+      transaction,
+    );
+    if (!resolved) throw new Error(`seat not found: ${safeSeatId}`);
+
+    const seatPath = resolved.path;
+    const document = resolved.document;
+    const now = new Date().toISOString();
+    await this.client.commit(transaction, [{
+      update: {
+        name: this.clientPath(seatPath),
+        fields: FirestoreRuntimeClient.fields({ turnBudget: config, updatedAt: now }),
+      },
+      updateMask: { fieldPaths: ['turnBudget', 'updatedAt'] },
+      currentDocument: document.updateTime
+        ? { updateTime: document.updateTime }
+        : { exists: true },
+    }]);
   }
 
   async getConnection(uid: string, projectId: string, connectionId: string): Promise<ConnectionState | null> {
@@ -254,6 +424,115 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   async getTask(uid: string, projectId: string, taskId: string): Promise<TaskStateRecord | null> {
     const doc = await this.client.get(`accounts/${required(uid, 'uid')}/workplaces/${this.workplaceId}/projects/${required(projectId, 'projectId')}/tasks/${required(taskId, 'taskId')}`);
     return doc ? decodeDocument(doc) as unknown as TaskStateRecord : null;
+  }
+
+  async ensureWaitingForContinuation(input: { request: TaskContinuationRequest }): Promise<void> {
+    const request = input.request;
+    const safeTaskId = required(request.taskId, 'request.taskId');
+    const safeProjectId = required(request.projectId, 'request.projectId');
+    const transaction = await this.client.beginTransaction();
+    const taskPath = FirestoreRuntimeClient.path(
+      this.uid,
+      this.workplaceId,
+      safeProjectId,
+      `tasks/${safeTaskId}`,
+    );
+    const task = await this.client.get(taskPath, transaction);
+    if (!task) throw new Error('continuation_task_not_found');
+
+    const current = decodeDocument(task);
+    const currentStatus = String(current.status ?? '');
+    const currentCheckpointId = String(current.continuationCheckpointId ?? '');
+    const currentRequestId = String(current.continuationRequestId ?? '');
+    const eventId = request.continuationRequestId + ':continue-wait:event';
+    const eventPath = FirestoreRuntimeClient.path(
+      this.uid,
+      this.workplaceId,
+      safeProjectId,
+      `events/${eventId}`,
+    );
+    const existingEvent = await this.client.get(eventPath, transaction);
+
+    if (currentStatus === 'waiting_for_continuation') {
+      if (
+        currentCheckpointId !== request.continuationOfCheckpointId ||
+        currentRequestId !== request.continuationRequestId
+      ) {
+        throw new Error('continuation_request_state_conflict');
+      }
+
+      if (existingEvent) return;
+
+      await this.client.commit(transaction, [{
+        update: {
+          name: this.clientPath(eventPath),
+          fields: FirestoreRuntimeClient.fields({
+            uid: this.uid,
+            projectId: safeProjectId,
+            taskId: safeTaskId,
+            eventId,
+            idempotencyKey: request.continuationRequestId,
+            type: 'CONTINUE_WAIT',
+            actorId: request.requestedBy,
+            occurredAt: request.requestedAt,
+          }),
+        },
+        currentDocument: { exists: false },
+      }]);
+      return;
+    }
+
+    if (currentStatus !== 'handoff_required') {
+      throw new Error(`continuation requires handoff_required task, got ${currentStatus}`);
+    }
+    if (existingEvent) throw new Error('continuation_request_state_conflict');
+
+    const now = new Date().toISOString();
+    const next = {
+      ...current,
+      status: 'waiting_for_continuation',
+      completionState: 'WAITING_FOR_CONTINUATION',
+      approved: false,
+      approvedBy: null,
+      approvedAt: null,
+      leaseId: null,
+      leasedBy: null,
+      continuationCheckpointId: request.continuationOfCheckpointId,
+      continuationRequestId: request.continuationRequestId,
+      continuationTargetSeatId: request.targetSeatId,
+      continuationRequestedBy: request.requestedBy,
+      continuationRequestedAt: request.requestedAt,
+      continuationInstruction: request.instruction,
+      updatedAt: now,
+    };
+
+    await this.client.commit(transaction, [
+      {
+        update: {
+          name: this.clientPath(taskPath),
+          fields: FirestoreRuntimeClient.fields(next),
+        },
+        currentDocument: task.updateTime
+          ? { updateTime: task.updateTime }
+          : { exists: true },
+      },
+      {
+        update: {
+          name: this.clientPath(eventPath),
+          fields: FirestoreRuntimeClient.fields({
+            uid: this.uid,
+            projectId: safeProjectId,
+            taskId: safeTaskId,
+            eventId,
+            idempotencyKey: request.continuationRequestId,
+            type: 'CONTINUE_WAIT',
+            actorId: request.requestedBy,
+            occurredAt: request.requestedAt,
+          }),
+        },
+        currentDocument: { exists: false },
+      },
+    ]);
   }
 
   async appendEvent(event: DurableEventRecord): Promise<void> {
@@ -273,12 +552,62 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
   }
 
   async listSchedulerSeats(projectId: string): Promise<SchedulerSeat[]> {
-    const token = await googleAccessToken((this.client as unknown as { account: ServiceAccount }).account);
-    const url = `${FIRESTORE_ROOT}/projects/${encodeURIComponent(process.env.TEAMAI_FIREBASE_PROJECT_ID ?? 'team-ai-official')}/databases/(default)/documents/${FirestoreRuntimeClient.path(this.uid, this.workplaceId, required(projectId, 'projectId'), 'seats')}`;
-    const response = await fetch(url, { headers: { authorization: `Bearer ${token}` } });
-    if (!response.ok) throw new Error(`Firestore seat list failed: ${response.status}`);
-    const body = await response.json() as { documents?: FirestoreDocument[] };
-    return (body.documents ?? []).map((doc) => decodeDocument(doc) as unknown as SchedulerSeat);
+    const safeProjectId = required(projectId, 'projectId');
+    const projectPath =
+      'accounts/' + this.uid +
+      '/workplaces/' + this.workplaceId +
+      '/projects/' + safeProjectId;
+    const teams = await this.client.listDocuments(projectPath + '/teams');
+    const seats: SchedulerSeat[] = [];
+
+    for (const team of teams) {
+      if (!team.name) continue;
+      const marker = '/documents/';
+      const markerIndex = team.name.indexOf(marker);
+      if (markerIndex < 0) continue;
+      const teamPath = team.name.slice(markerIndex + marker.length);
+      const parts = teamPath.split('/');
+      if (
+        parts.length !== 8 ||
+        parts[0] !== 'accounts' ||
+        parts[1] !== this.uid ||
+        parts[2] !== 'workplaces' ||
+        parts[3] !== this.workplaceId ||
+        parts[4] !== 'projects' ||
+        parts[5] !== safeProjectId ||
+        parts[6] !== 'teams'
+      ) continue;
+
+      const seatDocuments = await this.client.listDocuments(teamPath + '/seats');
+      for (const document of seatDocuments) {
+        const data = decodeDocument(document) as Record<string, unknown>;
+        const authorization = data.authorization && typeof data.authorization === 'object'
+          ? data.authorization as Record<string, unknown>
+          : {};
+        const id = String(data.id ?? data.seatId ?? document.name?.split('/').at(-1) ?? '');
+        if (!id) continue;
+        seats.push({
+          id,
+          projectId: String(data.projectId ?? safeProjectId),
+          field: String(data.field ?? ''),
+          skills: Array.isArray(data.skills) ? data.skills.map(String) : [],
+          capabilities: Array.isArray(data.capabilities)
+            ? data.capabilities.map(String)
+            : Array.isArray(authorization.capabilities)
+              ? authorization.capabilities.map(String)
+              : [],
+          allowedTaskTypes: Array.isArray(data.allowedTaskTypes)
+            ? data.allowedTaskTypes.map(String)
+            : Array.isArray(authorization.allowedTaskTypes)
+              ? authorization.allowedTaskTypes.map(String)
+              : [],
+          status: String(data.status ?? 'revoked') as SchedulerSeat['status'],
+          authorization: String(authorization.status ?? data.authorizationStatus ?? 'revoked') as SchedulerSeat['authorization'],
+        });
+      }
+    }
+
+    return seats;
   }
 
   async getExecutableTask(taskId: string, seatId: string): Promise<ExecutableTask | null> {
@@ -289,17 +618,23 @@ export class FirestoreRuntimeTaskStore implements RuntimeTaskStore, DurableDomai
     const connection = data.connection as ProjectConnection | undefined;
     const request = data.request as Omit<GenerateRequest, 'model'> | undefined;
     if (!connection || !request) throw new Error('executable task is missing connection or request');
+
+    const resolvedSeatId = required(seatId, 'seatId');
+    const seat = await this.getSeat(this.uid, projectId, resolvedSeatId);
+    if (!seat) throw new Error(`seat not found: ${resolvedSeatId}`);
+
     return {
       id: taskId,
       projectId,
-      seatId: required(seatId, 'seatId'),
-      provider: String(data.provider ?? ''),
+      seatId: resolvedSeatId,
+      provider: String(data.provider ?? seat.provider ?? ''),
       model: String(data.model ?? ''),
       status: String(data.status ?? 'pending') as ExecutableTask['status'],
       approved: data.approved === true,
-      authorizationStatus: String(data.authorizationStatus ?? 'revoked') as ExecutableTask['authorizationStatus'],
+      authorizationStatus: String(data.authorizationStatus ?? seat.authorization.status ?? 'revoked') as ExecutableTask['authorizationStatus'],
       connection,
       request,
+      turnBudget: seat.turnBudget,
     };
   }
 

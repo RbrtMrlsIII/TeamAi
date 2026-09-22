@@ -58,18 +58,23 @@ test('V0.4 flex wheel is not blocked by openParentId hard return', async () => {
   assert.ok(wheelIdx > 0);
   const snippet = src.slice(wheelIdx, wheelIdx + 450);
   assert.doesNotMatch(snippet, /if\s*\(\s*hierarchyRuntime\.openParentId\s*\)\s*return/);
-  assert.match(snippet, /applyNavCamera/);
-});
-
-test('V0.4 flex applyNavCamera uses shouldApplyTreeNav + poseAboutTreeCenter', async () => {
-  const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
   assert.match(src, /function applyNavCamera\(\)[\s\S]*shouldApplyTreeNav/);
-  assert.match(src, /poseAboutTreeCenter\(base,\s*\{\s*navZoom,\s*navOrbitYaw,\s*navOrbitPitch\s*\}\)/);
+  assert.match(src, /onWheel\(event\)[\s\S]*applyNavCamera\(\)/);
 });
 
-test('C6 applyNavCamera falls back to HERO_WIDE only at NAV_ZOOM_MAX while a tree is open', async () => {
+test('V0.4 controller applies free-nav gate and passes orbit state to renderer', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /const atWorldBaseline = navZoom >= NAV_ZOOM_MAX/);
-  assert.match(src, /openParentId && !atWorldBaseline/);
-  assert.match(src, /getBaseCameraId:\(\)=>lastNavBaseCameraId/);
+  const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
+  assert.match(src, /function applyNavCamera\(\)[\s\S]*shouldApplyTreeNav/);
+  assert.match(src, /navOrbitYaw/);
+  assert.match(src, /navOrbitPitch/);
+  assert.match(renderer, /blendCameraPose/);
+});
+
+test('C6 canonical renderer pulls back continuously toward the world pose', async () => {
+  const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
+  assert.match(renderer, /worldPullbackProgress/);
+  assert.match(renderer, /blendCameraPose/);
+  assert.match(renderer, /const cameraPose = blendCameraPose/);
+  assert.doesNotMatch(renderer, /atWorldBaseline/);
 });

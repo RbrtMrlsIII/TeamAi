@@ -27,19 +27,17 @@ test('V1.2 flex imports cycleSeatShellBranchFocus', async () => {
 
 test('V1.2 Arrow path uses cycleSeatShellBranchFocus not inline list math', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /\/\* V1\.2 branch walk \*\//);
-  assert.match(
-    src,
-    /cycleSeatShellBranchFocus\(hierarchyRuntime,event\.key==='ArrowRight'\?1:-1/,
-  );
-  const arrowIdx = src.indexOf("event.key==='ArrowRight'");
+  assert.match(src, /cycleSeatShellBranchFocus/);
+  assert.match(src, /cycleSeatShellBranchFocus\(/);
+  assert.match(src, /key === 'ArrowRight' \? 1 : -1/);
+  const arrowIdx = src.indexOf("ArrowRight");
   assert.ok(arrowIdx > 0);
-  const snippet = src.slice(arrowIdx, arrowIdx + 350);
+  const snippet = src.slice(arrowIdx, arrowIdx + 700);
   assert.doesNotMatch(snippet, /const list=SEAT_SHELL_V1_CHILDREN/);
 });
 
-test('V1.2 apply script owns the Arrow wire', async () => {
+test('V1.2 compatibility script performs no Hero mutation', async () => {
   const apply = await readFile(join(root, 'scripts/apply-v1.2-arrow-branch-walk.mjs'), 'utf8');
-  assert.match(apply, /cycleSeatShellBranchFocus/);
-  assert.match(apply, /V1\.2 branch walk/);
+  assert.match(apply, /no mutation|source-owned/i);
+  assert.doesNotMatch(apply, /writeFileSync\(path/);
 });

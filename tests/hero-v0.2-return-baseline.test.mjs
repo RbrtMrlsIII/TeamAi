@@ -35,26 +35,27 @@ test('V0.2 runtime close returns world baseline camera id', () => {
 
 test('V0.2 flex returnFromSeatShell resets nav and sets baseline dock', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /\/\* V0\.2 return baseline \*\//);
-  assert.match(src, /navOrbitYaw = 0; navOrbitPitch = 0; navZoom = 1;/);
-  assert.match(src, /setCamera\(typeof WORLD_BASELINE_DOCK_ID/);
+  assert.match(src, /function returnFromSeatShell\(\)/);
+  assert.match(src, /navOrbitYaw = 0;/);
+  assert.match(src, /navOrbitPitch = 0;/);
+  assert.match(src, /navZoom = 1;/);
+  assert.match(src, /setCamera\('HERO_WIDE'\)/);
 });
 
 test('V0.2 flex closeHierarchyParent restores baseline', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /\/\* V0\.2 close baseline \*\//);
-  assert.match(src, /function closeHierarchyParent\(\)\{ \/\* V0\.2 close baseline \*\//);
+  assert.match(src, /function closeHierarchyParent\(\)\s*\{[\s\S]*return returnFromSeatShell\(\);/);
 });
 
-test('V0.2 imports WORLD_BASELINE_DOCK_ID from cam2', async () => {
+test('V0.2 controller delegates rendering after baseline reset', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
-  assert.match(src, /WORLD_BASELINE_DOCK_ID/);
-  assert.match(src, /from '\.\/hero-cam2-tree-follow\.js'/);
+  assert.match(src, /createMachineWorldRenderer/);
+  assert.match(src, /machineLayer/);
+  assert.doesNotMatch(src, /WORLD_BASELINE_DOCK_ID/);
 });
 
-test('V0.2 apply script owns return-to-baseline patches', async () => {
+test('V0.2 canonical source owns return-to-baseline directly', async () => {
   const apply = await readFile(join(root, 'scripts/apply-cam2-tree-follow-flex.mjs'), 'utf8');
-  assert.match(apply, /V0\.2 Vision: return-to-baseline/);
-  assert.match(apply, /V0\.2 return baseline/);
-  assert.match(apply, /V0\.2 close baseline/);
+  assert.match(apply, /sync-hero-flex-runtime\.mjs/);
+  assert.doesNotMatch(apply, /V0\.2 Vision: return-to-baseline patches/);
 });

@@ -1,0 +1,127 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+
+import { BACKEND_DISPLAY_V1 } from '../public/hero-hierarchy-runtime.js';
+import {
+  R1_BACKEND_PRESENTATION_THREADS_V1,
+  resolveBackendPresentationThreads,
+  deriveBackendPresentationThreadPaths,
+  drawBackendDisplayThreads,
+  pointOnBackendThread,
+} from '../frontend/spatial/hero-r1-backend-threads.js';
+
+const hero = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+const source = await readFile(
+  new URL('../frontend/spatial/hero-r1-backend-threads.js', import.meta.url),
+  'utf8',
+);
+const publicModule = await readFile(
+  new URL('../public/hero-r1-backend-threads.js', import.meta.url),
+  'utf8',
+);
+
+test('R1 presentation relationships use stable source/target identities', () => {
+  assert.equal(R1_BACKEND_PRESENTATION_THREADS_V1.length, 2);
+  assert.deepEqual(
+    R1_BACKEND_PRESENTATION_THREADS_V1.map((thread) => [thread.id, thread.from, thread.to]),
+    [
+      [
+        'WORKSPACE_BACKEND_THREAD#docs→rules',
+        'WORKSPACE_BACKEND_DISPLAY#docs',
+        'WORKSPACE_BACKEND_DISPLAY#rules',
+      ],
+      [
+        'WORKSPACE_BACKEND_THREAD#rules→connect',
+        'WORKSPACE_BACKEND_DISPLAY#rules',
+        'WORKSPACE_BACKEND_DISPLAY#connect',
+      ],
+    ],
+  );
+});
+
+test('R1 thread resolution fails closed for missing presentation endpoints', () => {
+  const resolved = resolveBackendPresentationThreads({
+    catalog: BACKEND_DISPLAY_V1,
+    relationships: [
+      ...R1_BACKEND_PRESENTATION_THREADS_V1,
+      {
+        id: 'WORKSPACE_BACKEND_THREAD#missing',
+        from: 'WORKSPACE_BACKEND_DISPLAY#missing',
+        to: 'WORKSPACE_BACKEND_DISPLAY#docs',
+      },
+    ],
+  });
+  assert.equal(resolved.length, 2);
+  assert.equal(resolved.every((thread) => thread.presentationOnly), true);
+});
+
+test('R1 thread paths are deterministic and route outside the workspace center', () => {
+  const first = deriveBackendPresentationThreadPaths({
+    workspaceRadius: 5.95,
+    ringScale: 1.18,
+    catalog: BACKEND_DISPLAY_V1,
+  });
+  const second = deriveBackendPresentationThreadPaths({
+    workspaceRadius: 5.95,
+    ringScale: 1.18,
+    catalog: BACKEND_DISPLAY_V1,
+  });
+  assert.deepEqual(first, second);
+  assert.equal(first.length, 2);
+  for (const path of first) {
+    assert.ok(path.length > 0);
+    assert.equal(path.presentationOnly, true);
+    const mid = pointOnBackendThread(path, 0.5);
+    const midpointRadius = Math.hypot(mid.x, mid.z);
+    assert.ok(midpointRadius >= path.ringRadius);
+    assert.ok(path.ringRadius > 5.95);
+    assert.equal(path.points.length, 9);
+  }
+});
+
+test('R1 thread draw executes its articulation contract in the browser renderer shape', () => {
+  const calls = [];
+  const materials = {
+    trace: Object.freeze({ id: 'trace' }),
+    energy: Object.freeze({ id: 'energy' }),
+  };
+
+  assert.doesNotThrow(() => drawBackendDisplayThreads({
+    profile: () => ({ workspace: 5.95 }),
+    seatCount: 4,
+    ringScale: 1.18,
+    articulationAmount: 0.4,
+    signalAmount: 0.7,
+    catalog: BACKEND_DISPLAY_V1,
+    ringFocus: null,
+    reducedMotion: true,
+    draw: (...args) => calls.push(args),
+    CUBE: 'CUBE',
+    SPH: 'SPH',
+    T: (x, y, z) => ({ x, y, z }),
+    S: (x, y, z) => ({ x, y, z }),
+    RY: (angle) => ({ angle }),
+    mul: (a, b) => ({ a, b }),
+    M: materials,
+  }, 1));
+
+  assert.equal(calls.length, 18);
+  const traceCall = calls.find((call) => call[2] === materials.trace);
+  assert.ok(traceCall);
+  assert.ok(Math.abs(traceCall[3].alpha - 0.436) < 1e-12);
+});
+
+test('R1 thread owner stays synchronized and canonical renderer consumes it', () => {
+  assert.equal(source, publicModule);
+  assert.match(renderer, /from '\.\/hero-r1-backend-threads\.js'/);
+  assert.match(renderer, /drawBackendDisplayThreads\(/);
+  assert.match(renderer, /ringScale: RING_R1_SCALE/);
+  assert.match(renderer, /drawCanonicalRings/);
+});
+
+test('R1 thread owner is presentation-only', () => {
+  const executable = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  assert.doesNotMatch(executable, /oauth|password|apiKey|firebase\.auth|supabase|firestore|paypal/i);
+});

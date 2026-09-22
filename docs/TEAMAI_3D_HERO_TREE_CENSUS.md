@@ -28,6 +28,17 @@ This is the currently proven presentation hierarchy portion. It is **PARTIAL**, 
 
 This is a capability/responsibility presentation model. Skills instruct; policy and authorized contracts govern. This tree must never become entitlement or authorization.
 
+### Workspace R1 presentation ring
+
+The R1 backend-display ring is a **presentation-layer structure**, not a new semantic tree family. Its current implementation is partial and uses the existing backend display IDs plus two declared presentation relationships:
+
+- `WORKSPACE_BACKEND_THREAD#docs→rules`
+- `WORKSPACE_BACKEND_THREAD#rules→connect`
+
+The thread owner is `frontend/spatial/hero-r1-backend-threads.js` with the synchronized browser copy at `public/hero-r1-backend-threads.js`.
+
+These relationships are deterministic, presentation-only, fail closed when a referenced display identity is absent, and are routed outside the workspace center. They do **not** establish live backend service topology, OAuth, provider execution, entitlement, durable state, or final turn-loop electrical topology.
+
 ## 2. Tree identity and census maintenance
 
 Every intended tree must have a stable semantic `treeID` before the runtime treats it as an implementation identity. Every branch must have a stable `branchId` derived from semantic parentage.
@@ -192,7 +203,7 @@ The effect must remain valid when trees differ in geometry, depth, branch count,
 
 `TREE-HERO-SEAT` is the existing Seat presentation hierarchy. This section reconciles the already-defined Seat shell with the existing Seat lifecycle, Responsibility Unit, Universal/TeamAi Skill, and product orchestration contracts. **It does not create a second Seat hierarchy.**
 
-Guest Hero ring/camera density consumes `seatPopulationDensity()` across the 1–10 Seat-capacity range. **Tree 1–8 remains a separate Settings/world-tree vocabulary.**
+Guest Hero ring/camera density consumes `seatPopulationDensity()` across the 1–10 Seat-capacity range. **Tree 1–8 remains a separate Settings/world-tree vocabulary.** Guest product facilities are presentation-only and locked; only the designated Sign Up and Login authentication surfaces are interactive for guests.
 
 ### 11.1 Existing structural branches
 
@@ -219,10 +230,10 @@ The canonical Seat is more than a model label. Existing project contracts distin
 | `SEAT_CONNECTION` | external provider/application relationship, OAuth/provider handoff, bind, connection test, health |
 | `SEAT_BEHAVIOR` | Seat-local behavior/defaults and constraints only; it does **not** own global team turn policy |
 | `SEAT_TOOLKIT` | resolved TeamAi/common skill and procedure equipment for this Seat; optional presentation |
-| `SEAT_CAPABILITIES` | available mechanisms, tools/plugins/MCP/model/runtime capability inventory |
+| `SEAT_CAPABILITIES` | capabilities equipped/visible to this Seat, including tools/MCP facets; the canonical MCP inventory/install/auth/configuration surface belongs to the dedicated MCP facility |
 | `SEAT_AUTHORIZATION` | reason-bearing permission/approval/authorization state; presentation only, never a grant authority |
 | `SEAT_WORKSPACE_SCOPE` | workplace/project/repository/path/workstation scope |
-| `SEAT_TASK_EVIDENCE` | task/result/event/evidence continuity |
+| `SEAT_TASK_EVIDENCE` | task/result/event/evidence continuity, including the Seat report/handoff read surface available after each turn |
 
 The existing Seat lifecycle remains the canonical lifecycle vocabulary:
 
@@ -395,6 +406,43 @@ The bounded Seat-1 connection path now has **TEST_LEVEL_CURRENT_HEAD** topology 
 The adjacent-division expansion envelope is now a bounded implementation baseline. It derives source and target expansion bounds from their semantic geometry descriptors and preserves the Seat-1 connection corridor as shared space. During focus transition, the source division must compact fully while the target division remains closed; only after the source reaches zero may the target begin expanding. The transition timing is explicitly not final animation law, and the complete inter-division topology and final turn-loop choreography remain open.
 
 The canonical Seat renderer now consumes the governed adjacent-division wiring seam for the bounded `SEAT_CONNECTION` ↔ `SEAT_BEHAVIOR` presentation path. The rendered segment is derived from the semantic ports and current branch geometry; it does not constitute final electrical or complete inter-division topology.
+
+## 16. Current 029 spatial convergence reconciliation
+
+The active Draft PR #398 now contains a broader structural implementation than the historical Seat-1-only census described above. The current state remains IMPLEMENTED_PARTIAL and does not claim 029 completion.
+
+### Workspace / R0
+- WORKSPACE_CENTER is a stable semantic receiving-core identity.
+- hero-workspace-core.js owns the R0 receiving-core geometry from the workspace profile.
+- Seat-1 connection termination reuses WORKSPACE_CENTER rather than repeating a private target identity.
+
+### Intermediate rings / R1-R2
+- hero-ring-envelope.js owns R1/R2 centerline fitting from the actual R0 core radius to the Seat-shell R3 envelope.
+- hero-r1-backend-display.js and hero-r1-backend-threads.js share the same resolved R1 radius.
+- hero-r2-setup-ring.js consumes the shared R2 radius and canonical SETUP_CONFIG_V1 identities.
+- R1/R2 remain presentation-only and are not backend/provider/auth authority.
+
+### Seat divisions
+The seven Seat children remain one canonical hierarchy:
+SEAT_CONNECTION, SEAT_BEHAVIOR, SEAT_TOOLKIT, SEAT_CAPABILITIES, SEAT_AUTHORIZATION, SEAT_WORKSPACE_SCOPE, SEAT_TASK_EVIDENCE.
+
+Their branch lifecycle now shares one timing specification table and one focus/close transition engine. Their payload, geometry, camera relation, and semantic topology are separated into explicit source-owned modules.
+
+### Topology / electricity
+- Machine-core edges expose coordinate-independent semanticEdgeId values.
+- Seat division child-to-shell edges have distinct division and shell ports.
+- Focused division rendering follows its declared topology edge.
+- Electricity follows declared edge routes and is bounded by semantic activation.
+- Seat-1 workspace flow terminates at WORKSPACE_CENTER.
+
+### Root and delivery ownership
+- hero-root-contract.js and hero-root-runtime.js provide provisional root ownership/presence observability.
+- The root model is explicitly not frozen. It exists to surface duplicate or missing ownership while the spatial architecture evolves.
+- Browser-facing runtime modules no longer directly import frontend/spatial sources.
+- Historical apply-p0-p7 Hero scripts are compatibility verification wrappers and no longer mutate hero-flex.js.
+- hero-flex remains the controller entry artifact; the canonical machine renderer owns WebGL context and drawing.
+
+These changes are current structural truth for #398, not a replacement execution chronology. The census remains an inventory and evidence surface.
 
 ## PR-344 machine Hero candidate synchronization
 

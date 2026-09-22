@@ -86,12 +86,10 @@ test('CSS defines machine-ui soft-hide rules', async () => {
   assert.match(css, /seat-stack/);
 });
 
-test('hero-flex wires DOM soft-hide after apply', async () => {
-  const { spawnSync } = await import('node:child_process');
-  const { fileURLToPath } = await import('node:url');
-  const { dirname, join } = await import('node:path');
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-  spawnSync(process.execPath, [join(root, 'scripts/apply-cam2-tree-follow-flex.mjs')], { cwd: root, stdio: 'inherit' });
+test('DOM chrome absorption stays in its dedicated presentation module', async () => {
+  const src = await readFile(new URL('../public/hero-dom-chrome-absorption.js', import.meta.url), 'utf8');
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /hero-dom-chrome-absorption|applyMachineUiChrome/);
+  assert.match(src, /applyMachineUiChrome/);
+  assert.match(src, /data-hero-machine-ui/);
+  assert.doesNotMatch(flex, /gl\.drawArrays/);
 });

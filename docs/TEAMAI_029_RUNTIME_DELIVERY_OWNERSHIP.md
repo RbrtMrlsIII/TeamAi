@@ -6,7 +6,7 @@
 
 The Hero browser runtime must load its base source from the TeamAi repository/package being served to the user. Runtime source must not depend on `raw.githubusercontent.com`, a moving GitHub branch, or an unrelated remote commit for ordinary operation.
 
-`public/hero-flex.js` is the runtime entry. `public/_flex_src/hero-flex.base.js` is the preserved repository-owned base source. The existing flex patch engine remains an implementation mechanism and must be deterministic from repository inputs.
+`public/hero-flex.js` is the runtime entry artifact. `public/_flex_src/hero-flex.base.js` is the preserved repository-owned controller source used to assemble that artifact. The compatibility assembly script copies the base into the runtime entry and proves byte-for-byte parity. The former flex patch engine is retired from this path.
 
 ## Why this matters
 
@@ -15,14 +15,26 @@ A remote source fetched at page load makes the product runtime depend on an exte
 ## Current migration
 
 - Repository-owned base source is vendored from the exact historical pre-loader blob used by the existing Hero assembly.
-- `public/hero-flex.js` now points to `./_flex_src/hero-flex.base.js` for runtime loading.
-- The stable `scripts/apply-cam2-tree-follow-flex.mjs` command path now seeds from the local base before invoking the preserved patch engine.
+- `scripts/sync-hero-flex-runtime.mjs` now copies the repository-owned base into `public/hero-flex.js` and proves byte-for-byte parity.
+- The stable assembly command is deterministic, network-free, and keeps the runtime artifact synchronized with the repository-owned base source.
 - A static regression test forbids `raw.githubusercontent.com` in the runtime entry.
 - The browser/build path must be validated from the repository-owned artifact, not from a remote source.
 
+## Current implementation reconciliation
+
+The previous wording described hero-flex.js as a runtime loader. That is no longer the implementation model.
+
+The current model is:
+
+repository-owned base controller source → deterministic local assembly → committed runtime artifact → browser execution.
+
+The runtime artifact and preserved base are intentionally byte-identical today. The base remains the source-maintenance location, while hero-flex.js remains the delivery entry consumed by the page and by existing verification.
+
+This keeps the runtime repository-owned without introducing a second live loader layer.
+
 ## Remaining cleanup
 
-The preserved patch engine still contains an emergency remote fallback for historical recovery. That fallback is not a valid runtime/build authority and should be removed in a later narrow hardening change after the repository-owned source path has been fully validated.
+The former mutation scripts remain under their historical filenames for compatibility, but they are now verification-only wrappers and no longer rewrite hero-flex.js. Their non-mutating behavior is covered by a regression test.
 
 ## Product/governance boundary
 

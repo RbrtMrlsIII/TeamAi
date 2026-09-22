@@ -64,6 +64,10 @@ The authoritative advisory slot registry is `.github/teamai/authority-manifest.y
 
 For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. Preserve the `TeamAi` path casing in recorded evidence. Public live-site validation is separate from PR/candidate validation, which remains exact-head CI/browser evidence.
 
+## Current 029 machine-world routing checkpoint
+
+For Issue #396 / PR #398, the Frontend & Experience machine-world implementation resolves through the semantic machine modules and the canonical `frontend/spatial/machine-world-renderer.js` source, synchronized to `public/machine-world-renderer.js`. `public/hero-flex.js` is the controller/input boundary. PR #397 is historical after migration and is not an active routing vehicle.
+
 ## Machine Hero routing
 
 PR #353 is the current merged machine candidate and remains non-production. Its routing is:

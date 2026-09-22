@@ -31,16 +31,13 @@ test('CAM-R1: does not authorize TURN_FOLLOW or HERO_LOW_ORBIT', () => {
   assert.equal(shouldCenterOnSelectedSeat('HERO_LOW_ORBIT'), false);
 });
 
-test('CAM-R1: applied flex uses SEAT_CLOSE on next-seat-focus (not TEAM_ORBIT/TURN_FOLLOW)', () => {
-  spawnSync('node', ['scripts/apply-cam2-tree-follow-flex.mjs'], { stdio: 'pipe', encoding: 'utf8' });
-  spawnSync('node', ['scripts/apply-cam-r1-subject-lock.mjs'], { stdio: 'pipe', encoding: 'utf8' });
-  return readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8').then((flex) => {
-    assert.match(flex, /next-seat-focus'\);setCamera\('SEAT_CLOSE'\)/);
-    assert.doesNotMatch(flex, /next-seat-focus'\);setCamera\('TEAM_ORBIT'\)/);
-    assert.doesNotMatch(flex, /setCamera\('TURN_FOLLOW'\)/);
-    assert.match(flex, /function retargetSubjectLock/);
-    assert.match(flex, /function setSelectedSeat/);
-  });
+test('CAM-R1: controller owns selected-seat subject-lock without mutation', async () => {
+  const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  assert.match(flex, /function retargetSubjectLock/);
+  assert.match(flex, /function setSelectedSeat/);
+  assert.match(flex, /getSubjectLockSnapshot/);
+  assert.match(flex, /setCamera\('SEAT_CLOSE'\)/);
+  assert.doesNotMatch(flex, /setCamera\('TURN_FOLLOW'\)/);
 });
 
 test('CAM-R1: isSeatShellOpen gates forced subject', () => {

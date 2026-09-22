@@ -1,6 +1,7 @@
 import { createMachineTransition, makeMachinePart, deriveMachineSubject, deriveMachineWiring } from './machine-hero-scene.js';
+import { validateMachineGraphTopology } from './machine-hero-topology.js';
 
-export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [] } = {}) {
+export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [], clearance = 0.16 } = {}) {
   const parts = divisions.map((division) => makeMachinePart({ ...division, active: Boolean(division.active) }));
   const bySemanticId = new Map(parts.map((part) => [part.semanticId, part]));
   const transitions = edges.map((edge) => {
@@ -8,7 +9,7 @@ export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [] }
     const target = bySemanticId.get(edge.targetDivisionId);
     if (!source || !target) return null;
     const wiring = deriveMachineWiring(source, target, { id: edge.id, kind: edge.kind });
-    return createMachineTransition({ seatIndex, source, target, expansion: edge.expansion || {}, wiring: edge.wiring || wiring });
+    return createMachineTransition({ seatIndex, source, target, expansion: edge.expansion || {}, wiring: edge.wiring || wiring, clearance });
   });
   const validTransitions = transitions.filter(Boolean);
   const expandedPartMap = new Map(parts.map((part) => [part.semanticId, part]));
@@ -16,13 +17,15 @@ export function createMachineGraph({ seatIndex = 0, divisions = [], edges = [] }
     expandedPartMap.set(transition.sourceDivisionId, transition.sourceGeometry);
     expandedPartMap.set(transition.targetDivisionId, transition.targetGeometry);
   }
-  const renderedParts = [...expandedPartMap.values()];
+  const expandedParts = [...expandedPartMap.values()];
+  const topology = validateMachineGraphTopology({ parts, transitions: validTransitions }, { clearance });
   return Object.freeze({
     seatIndex: Number(seatIndex),
     parts: Object.freeze(parts),
-    renderedParts: Object.freeze(renderedParts),
+    renderedParts: Object.freeze(expandedParts),
     transitions: Object.freeze(validTransitions),
-    subject: deriveMachineSubject(renderedParts),
+    topology,
+    subject: deriveMachineSubject(expandedParts),
   });
 }
 

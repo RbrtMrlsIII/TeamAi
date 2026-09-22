@@ -4,10 +4,13 @@
     <productLaw>Product_Law/PRODUCT_LAW.md</productLaw>
     <vision>docs/VISION.md</vision>
     <executionLedger>Issue #278</executionLedger>
+    <spatialExecutionGuide>Issue #396</spatialExecutionGuide>
+    <frontendContract>Issue #400</frontendContract>
     <contract>docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md</contract>
     <census>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</census>
     <machineReadableCensus>docs/TEAMAI_3D_HERO_TREE_CENSUS.json</machineReadableCensus>
     <runtimeBaseline>docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md</runtimeBaseline>
+    <rendererOwner>frontend/spatial/machine-world-renderer.js</rendererOwner>
   </authority>
   <maintenance>
     <trigger>add|remove|rename|materially_restructure|reimplement</trigger>
@@ -78,6 +81,16 @@
       <allocationRule>Agent count changes Responsibility Unit allocation, not the underlying common skill catalog.</allocationRule>
     </tree>
   </treeFamilies>
+  <presentationRings>
+    <ring id="R1" status="implemented-partial" presentationOnly="true" finalServiceTopology="not-complete">
+      <owner>frontend/spatial/hero-r1-backend-threads.js</owner>
+      <browserOwner>public/hero-r1-backend-threads.js</browserOwner>
+      <thread id="WORKSPACE_BACKEND_THREAD#docs→rules" from="WORKSPACE_BACKEND_DISPLAY#docs" to="WORKSPACE_BACKEND_DISPLAY#rules" />
+      <thread id="WORKSPACE_BACKEND_THREAD#rules→connect" from="WORKSPACE_BACKEND_DISPLAY#rules" to="WORKSPACE_BACKEND_DISPLAY#connect" />
+      <topologyAuthority>presentation relationship only; not the backend service graph</topologyAuthority>
+      <failClosed>missing source or target display identity</failClosed>
+    </ring>
+  </presentationRings>
   <crossTreeConfiguration>
     <turnConfiguration owner="TREE-ORCHESTRATION/scheduler" status="defined-not-implementation-complete">
       <control>participating Seats</control>

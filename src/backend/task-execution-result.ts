@@ -1,4 +1,5 @@
 import type { GenerateResult } from '../providers/types.js';
+import type { ProviderTermination } from '../providers/termination.js';
 
 export type DurableExecutionResult = {
   taskId: string;
@@ -6,10 +7,14 @@ export type DurableExecutionResult = {
   seatId: string;
   eventId: string;
   idempotencyKey: string;
-  status: 'completed' | 'failed';
+  status: 'completed' | 'failed' | 'handoff_required';
+  continuationCheckpointId?: string;
+  continuationRequestId?: string;
+  continuationOfCheckpointId?: string;
   recordedAt: string;
   result?: GenerateResult;
   error?: unknown;
+  termination?: ProviderTermination;
 };
 
 export type TaskExecutionResultIdentity = Pick<DurableExecutionResult, 'taskId' | 'projectId' | 'eventId'>;

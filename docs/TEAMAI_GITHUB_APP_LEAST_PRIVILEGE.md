@@ -101,7 +101,7 @@ Individual agents **must not** have their own GitHub user accounts.
 | `ALTER TABLE users ADD github_installation_id` on Postgres | Durable domain is **Firestore**, rooted in Firebase UID. Supabase Postgres is infrastructure only. |
 | Keyword interceptor for `DROP` / `DELETE` as the safety model | Do not give AI a SQL role against TeamAi domain. Guardrails belong in API policy, not string filters. |
 | Firebase Extension as the “Connect Firebase” path | Firebase Auth + Firestore `(default)` are already TeamAi identity/domain. An Extension is a different product. |
-| One marketplace that treats GitHub App, Firebase Extension, Supabase OAuth, and raw Postgres passwords as the same UX | Four different authority families. GitHub App first. |
+| One combined connection surface that treats GitHub App, Firebase Extension, Supabase OAuth, and raw Postgres passwords as the same UX | Four different authority families. Keep GitHub App connection lifecycle separate from TeamAi Marketplace commerce. |
 | GitHub Actions as orchestration | Family B: Actions is verification, **not** the Web AI scheduler. |
 | Hero “connected” badge = usable | Connection lifecycle: `authorized ≠ project-scoped ≠ seat-allowed ≠ healthy ≠ usable`. |
 
@@ -123,7 +123,7 @@ Individual agents **must not** have their own GitHub user accounts.
 | **Supabase** | Not a domain login | Edge Functions as trusted execution | Postgres as TeamAi domain; `ai_agent_role` with INSERT/UPDATE on `public` |
 | **Postgres** | Do not collect user DB passwords for TeamAi domain | N/A for v1 | Superuser, DROP, TRUNCATE, schema-owner roles for AI |
 
-GitHub is the first Connection to finish. Do not stand up a four-platform marketplace until GitHub install → UID map → scoped PR path is real.
+GitHub remains the first Connection path to finish. TeamAi Marketplace is the commerce surface and must not be used as a substitute for provider connection setup, OAuth installation, UID mapping, or scoped GitHub authorization.
 
 ## Hero / CONNECTION mapping
 

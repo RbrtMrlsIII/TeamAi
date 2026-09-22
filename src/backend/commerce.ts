@@ -1,12 +1,24 @@
+import {
+  getCommerceOffer,
+  type CommerceProductFamily,
+  resolveCommerceTierChange,
+} from '../billing/commerce-products.js';
+
 export type CommerceProvider = 'paypal';
 
 export type CommerceEventType =
   | 'payment_completed'
+  | 'payment_denied'
+  | 'payment_pending'
+  | 'subscription_created'
   | 'subscription_activated'
+  | 'subscription_updated'
   | 'subscription_renewed'
   | 'subscription_suspended'
   | 'subscription_cancelled'
-  | 'refund_issued';
+  | 'subscription_payment_failed'
+  | 'refund_issued'
+  | 'refund_warning';
 
 export type ServerOwnedCommerceIntent = {
   firebaseUid: string;
@@ -14,7 +26,34 @@ export type ServerOwnedCommerceIntent = {
   provider: CommerceProvider;
   createdAt: string;
   status: 'pending';
+  offerId?: string;
+  productFamily?: CommerceProductFamily;
+  tier?: number;
+  billingCycle: 'monthly';
+  billingMode: 'external-hosted-page';
+  cardStorage: 'none';
 };
+
+export type CommerceOfferReference = {
+  offerId: string;
+  productFamily: CommerceProductFamily;
+  tier: number;
+};
+
+export type CommerceAggregateStatus = 'pending' | 'completed' | 'cancelled' | 'unavailable' | 'error';
+
+export type CommerceReadModel = {
+  aggregateStatus: CommerceAggregateStatus;
+  entitlementStatus: EntitlementProjection['status'] | 'missing';
+  entitlementSourceCommerceEventId: string | null;
+  providerEntitlementStatus: string | null;
+};
+
+export function isCommerceAccessActive(readModel: CommerceReadModel): boolean {
+  return readModel.aggregateStatus === 'completed'
+    && readModel.entitlementStatus === 'active'
+    && Boolean(readModel.entitlementSourceCommerceEventId);
+}
 
 export type CommerceCorrelation = {
   firebaseUid: string;
@@ -36,6 +75,8 @@ export type EntitlementProjection = {
   sourceCommerceEventId: string;
   status: 'active' | 'suspended' | 'cancelled' | 'revoked';
   effectiveAt: string;
+  productFamily?: CommerceProductFamily;
+  tier?: number;
 };
 
 export type CommerceCorrelationIndex = {
@@ -51,17 +92,36 @@ function requireNonEmpty(value: string, name: string): string {
   return value;
 }
 
+export function assertCommerceOfferReference(reference: CommerceOfferReference): CommerceOfferReference {
+  const offer = getCommerceOffer(reference.productFamily, reference.tier);
+  if (!offer) throw new Error('unknown commerce offer');
+  if (offer.id !== requireNonEmpty(reference.offerId, 'offerId')) throw new Error('commerce offer identity mismatch');
+  return Object.freeze({ ...reference });
+}
+
 export function createServerOwnedCommerceIntent(
   firebaseUid: string,
   correlationId: string,
   createdAt: string,
+  offerReference?: CommerceOfferReference,
 ): ServerOwnedCommerceIntent {
+  const reference = offerReference ? assertCommerceOfferReference(offerReference) : undefined;
   return {
     firebaseUid: requireNonEmpty(firebaseUid, 'firebaseUid'),
     correlationId: requireNonEmpty(correlationId, 'correlationId'),
     provider: 'paypal',
     createdAt: requireNonEmpty(createdAt, 'createdAt'),
     status: 'pending',
+    ...(reference
+      ? {
+          offerId: reference.offerId,
+          productFamily: reference.productFamily,
+          tier: reference.tier,
+        }
+      : {}),
+    billingCycle: 'monthly',
+    billingMode: 'external-hosted-page',
+    cardStorage: 'none',
   };
 }
 
@@ -91,6 +151,14 @@ export function assertServerOwnedCorrelation(input: CommerceCorrelation): Commer
   requireNonEmpty(input.correlationId, 'correlationId');
   if (input.provider !== 'paypal') throw new Error('unsupported commerce provider');
   return input;
+}
+
+export function classifyCommerceTierChange(
+  family: CommerceProductFamily,
+  activeTier: number | null | undefined,
+  requestedTier: number,
+) {
+  return resolveCommerceTierChange(family, activeTier, requestedTier);
 }
 
 export function commerceIntentPath(firebaseUid: string, correlationId: string): string {

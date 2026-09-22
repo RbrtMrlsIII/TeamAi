@@ -3,7 +3,7 @@
  * Owners: #hero-canvas + .hero-aura-* (Layer A backdrop).
  * Presentation only · no second WebGL · no 029-released claim.
  */
-import { mapHeroThemeLighting } from '../frontend/spatial/hero-theme-lighting-adapter.js';
+import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
 import { clampSeatCount, seatPopulationDensity } from './seat-capacity.js';
 
 const shell = document.querySelector('.hero-shell');

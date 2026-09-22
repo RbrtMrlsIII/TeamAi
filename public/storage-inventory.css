@@ -1,0 +1,147 @@
+.storage-inventory-facility {
+  position: absolute;
+  inset: 4.5rem 1.25rem 5.75rem;
+  z-index: 60;
+  display: grid;
+  gap: 0.9rem;
+  overflow: auto;
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border, currentColor);
+  border-radius: 1rem;
+  background: var(--ui-panel, rgba(255,255,255,0.94));
+  color: var(--ui-text, currentColor);
+  box-sizing: border-box;
+}
+
+.storage-inventory-facility[hidden] { display: none; }
+
+.storage-inventory-facility__header,
+.storage-inventory-facility__section-heading,
+.storage-inventory-facility__actions,
+.storage-inventory-facility__state-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.storage-inventory-facility__header { align-items: flex-start; }
+.storage-inventory-facility__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+.storage-inventory-facility__header h2,
+.storage-inventory-facility__section h3,
+.storage-inventory-facility__boundary h3 { margin: 0; }
+.storage-inventory-facility__note,
+.storage-inventory-facility__branch-note,
+.storage-inventory-facility__boundary p {
+  margin: 0;
+  line-height: 1.45;
+}
+.storage-inventory-facility__state-row {
+  padding: 0.55rem 0;
+  border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  font-size: 0.74rem;
+}
+.storage-inventory-facility__state-row [data-state="READY"] { font-weight: 700; }
+.storage-inventory-facility__state-row [data-state="BLOCKED"],
+.storage-inventory-facility__state-row [data-state="ERROR"] { font-weight: 700; }
+
+.storage-inventory-facility__section,
+.storage-inventory-facility__boundary {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 0.2rem;
+}
+.storage-inventory-facility__section + .storage-inventory-facility__section,
+.storage-inventory-facility__boundary {
+  border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  padding-top: 0.9rem;
+}
+.storage-inventory-facility__section-heading {
+  align-items: flex-start;
+}
+.storage-inventory-facility__section-heading [role="status"] {
+  max-width: 24rem;
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+.storage-inventory-facility__inventory {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+.storage-inventory-facility__item {
+  min-width: 0;
+  min-height: 5rem;
+  padding: 0.85rem;
+  border: 1px solid var(--ui-border, currentColor);
+  border-radius: 0.8rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.storage-inventory-facility__item.is-selected { outline: 2px solid currentColor; outline-offset: 1px; }
+.storage-inventory-facility__item-name,
+.storage-inventory-facility__item-meta,
+.storage-inventory-facility__item-source {
+  display: block;
+}
+.storage-inventory-facility__item-name { font-weight: 760; }
+.storage-inventory-facility__item-meta,
+.storage-inventory-facility__item-source {
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  opacity: 0.68;
+}
+.storage-inventory-facility__empty {
+  padding: 0.9rem;
+  border: 1px dashed var(--ui-border, currentColor);
+  border-radius: 0.8rem;
+  opacity: 0.72;
+}
+.storage-inventory-facility__selected {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+.storage-inventory-facility__branch {
+  display: block;
+  padding: 0.7rem;
+  overflow-wrap: anywhere;
+  border: 1px dashed var(--ui-border, currentColor);
+  border-radius: 0.65rem;
+}
+.storage-inventory-facility__boundary {
+  padding: 0.8rem;
+  border: 1px solid currentColor;
+  border-radius: 0.8rem;
+}
+.storage-inventory-facility__actions {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+.storage-inventory-facility__actions button { flex: 1 1 12rem; min-height: 44px; }
+
+@media (max-width: 840px) {
+  .storage-inventory-facility {
+    inset: 3.4rem 0.8rem 7rem;
+    padding: 0.8rem;
+  }
+  .storage-inventory-facility__inventory { grid-template-columns: 1fr; }
+  .storage-inventory-facility__header,
+  .storage-inventory-facility__section-heading,
+  .storage-inventory-facility__state-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storage-inventory-facility { scroll-behavior: auto; }
+}

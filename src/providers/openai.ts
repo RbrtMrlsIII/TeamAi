@@ -1,6 +1,7 @@
 import type { AIProvider, GenerateRequest, GenerateResult, StreamChunk } from './types.js';
 import { fetchJson, parseSse, ProviderHttpError } from './http.js';
 import { withRetry } from './retry.js';
+import { terminationFromOpenAI } from './termination.js';
 
 function usageFrom(u: any) {
   const inputTokens = Number(u?.input_tokens ?? 0);
@@ -30,7 +31,7 @@ export class OpenAIProvider implements AIProvider {
       const text = typeof data?.output_text === 'string'
         ? data.output_text
         : (data?.output ?? []).flatMap((item: any) => item?.content ?? []).map((c: any) => c?.text ?? '').join('');
-      return { provider: this.provider, model: request.model, requestId: data?.id ?? requestId ?? 'unknown', text, usage: usageFrom(data?.usage), costUsd: undefined };
+      return { provider: this.provider, model: request.model, requestId: data?.id ?? requestId ?? 'unknown', text, usage: usageFrom(data?.usage), costUsd: undefined, termination: terminationFromOpenAI(data?.status, data?.incomplete_details?.reason) };
     }, { shouldRetry: (e) => e instanceof ProviderHttpError && e.retryable });
   }
 

@@ -1,6 +1,8 @@
 /**
- * Typed mirror of shell-nav.js — not loaded by static HTML.
- * Keep in lockstep with .js. Browser entry remains shell-nav.js.
+ * Typed reference mirror of shell-nav.js — not loaded by static HTML.
+ *
+ * The browser entry remains shell-nav.js. This file is not a generated
+ * lockstep copy and is not an alternate runtime authority.
  */
 
 import {

@@ -13,6 +13,21 @@ Firestore `default` is the TeamAi durable application/domain system of record. F
 
 The implemented source contract and current `firestore.rules` remain the authority for what is actually writable, readable, server-managed, or verified. This document defines the current concrete hierarchy; it does not by itself prove live runtime behavior.
 
+## Seat persistence identity boundary
+
+The canonical Firestore Seat document uses `seatId` as its persisted identity field and lives at the team-nested path shown above. The domain `SeatState` interface uses the generic `id` field for in-process identity. The Firestore adapter explicitly maps `seatId` → `SeatState.id` when a persisted `id` is absent; this is an adapter normalization, not a second Firestore identity.
+
+Canonical Seat identity must remain path-consistent:
+
+- `uid` matches the authenticated Firebase UID and `accounts/{uid}` path;
+- `workplaceId` matches the parent Workplace path;
+- `projectId` matches the parent Project path;
+- `teamId` matches the containing Team path;
+- `seatId` matches the final Seat document field and document identifier.
+
+Historical project-level `/seats/{seatId}` documents are not part of the current runtime model.
+
+
 ## Canonical commerce hierarchy
 
 Commerce state is rooted in the authenticated Firebase UID and uses the existing server-owned `correlationId` as the commerce aggregate document identifier.
