@@ -2,7 +2,43 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: continue Issue #396 after reviewed PR #398 merged; production-data/runtime evidence is now the active successor vehicle.
+- Last given prompt: continue TeamAi from the connected GitHub repository; execute one current-slice item.
+- #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
+- #353 machine Hero candidate is merged on main as the non-production implementation baseline.
+
+- main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
+- current main: `87f466fb0edac3784280128785a8fd2dc757e749`
+- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
+- replacement branch: backend/030-production-runtime-evidence
+- open implementation vehicles: PR #402 / Issue #401 (active Draft)
+- active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
+- closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
+- completed reconstruction: #391 / #389
+- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
+- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
+- next allowed work: dispatch the default-branch `firestore-seat-shape-diagnostic.yml` vehicle against this PR branch for the first exact-path Seat evidence run; then reconcile Rules/index/runtime gates from observed production state.
+- handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
+- validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
+- live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
+- snapshot rule: recorded main baseline must match the post-#398 `main` merge SHA before mutation; live GitHub branch/head state remains authoritative for current commit truth.
+- source-of-truth rule: the live PR head is the source of truth for the current verification commit; historical PR #346 head references do not define current state.
+
+
+### 2026-09-23 default-branch exact-path evidence vehicle
+
+VALIDATION CHANGE WARNING
+Protected old invariant: `firestore-seat-shape-diagnostic.yml` dispatched `scripts/diagnose-production-firestore-seat.mjs`, which discovers the Seat through a collection-group `seats` query.
+Authorized new rule: the same default-branch workflow filename now dispatches `scripts/run-production-firestore-evidence.mjs` with exact team-nested Seat document read and additive `runtime-diagnostics/{runId}` write.
+Why the old invariant is obsolete/retained: live run `35726408785` failed with Firestore REST HTTP 400 before the Seat document was reached. The parked collection-group script remains in the repository as historical source. The dedicated `firestore-production-evidence.yml` file still cannot be dispatched until it exists on `main`.
+Replacement invariant: GitHub can run the existing diagnostic workflow against `backend/030-production-runtime-evidence`, executing the PR-branch workflow file and the exact-path probe. Team ID is the documented Gate 3 selector `gate3-test-team`. Seat ID remains the required dispatch input.
+Implementation impact: default-branch dispatch unblocks the first 030 evidence run without merging #402 and without a production-secret pull-request trigger.
+Validation impact: diagnostic workflow tests now lock the exact-path script mapping; parked-script tests remain for the historical collection-group source.
+Evidence/browser impact: no live Seat proof, Rules closure, index deployment, provider execution, or 029-released claim is made until the dispatched run succeeds.
+Residual uncertainty: live secrets, Seat document presence, and the connections subcollection query may still fail at runtime.
+
+- This does not tick MASTERPLAN 030 "Fresh production Seat evidence run executed" until a real dispatch produces run-scoped evidence.
+- This does not complete TEAM-EXPERIENCE-029 or TEAM-BACKEND-001.
+
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
