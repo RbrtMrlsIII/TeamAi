@@ -8,17 +8,17 @@ TEAM-EXPERIENCE-029 spatial machine convergence (Issue #396 / Draft PR #398)
 
 ## Status
 
-IMPLEMENTATION ACTIVE / IN PROGRESS. Draft PR #398 remains the sole implementation vehicle on `frontend/029-machine-world-convergence`. The live branch head is the source of truth for current verification.
+PRE-MERGE RECONCILIATION. Draft PR #398 remains the sole implementation vehicle on `frontend/029-machine-world-convergence`. The live branch head is the source of truth for current verification; merge remains gated on exact-head review and human authorization.
 
-| Authority area | Implementation state | Proof state |
-|---|---|---|
-| Spatial renderer | Canonical source renderer, controller split, semantic topology, adaptive geometry, R0/R1/R2, Seat-1 wiring, camera choreography | exact-head source/test proof; final deployed visual acceptance remains open |
-| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository proof; real production Seat inspection remains open |
-| Seat connection/provider | Seat-owned binding, credential loading, active connection resolution | live connection/bind functions deployed; production execution-capable relationship remains unproven |
-| Task execution | Real-provider Edge source with canonical Seat-owned connection authority, truthful termination, durable handoff checkpoint, continuation execution | live `teamai-task-execute` remains v12; new runtime deployment is gated |
-| Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E and deployed request boundary proven; live provider continuation remains open |
-| Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative browser proof; authoritative backend wiring remains intentionally bounded |
-| Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | #398 production deployment and browser observation remain open |
+| Authority area | Implemented / source state | Repository proof | Live / human proof |
+|---|---|---|---|
+| Spatial renderer | Canonical source renderer, controller split, semantic topology, adaptive geometry, R0/R1/R2, Seat-1 wiring, camera choreography | exact-head source/test + Browser proof on current head | final deployed visual acceptance remains open |
+| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository contracts and tests | real production Seat inspection remains open |
+| Seat connection/provider | Seat-owned binding, credential loading, active connection resolution | repository + deployed function source reconciliation | production execution-capable relationship remains unproven |
+| Task execution | Real-provider Edge source with canonical Seat-owned connection authority, truthful termination, durable handoff checkpoint, continuation execution | Full-System/Security/contract proof | live `teamai-task-execute` remains v12; promotion gated |
+| Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E + deployed request boundary | live provider continuation remains open |
+| Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative Browser proof | authoritative backend wiring intentionally bounded |
+| Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | repository workflow/contracts | production deployment/browser observation remains open |
 
 ## Objective
 
@@ -82,6 +82,33 @@ Green CI does not prove Firebase runtime state, provider execution, production d
 - Firestore collection-group index configuration is checked into `firestore.indexes.json`, with a manual indexes-only deployment workflow. Live promotion of `teamai-seat-budget-runtime` remains blocked until that index exists in production.
 
 - R1/R2 browser regression was diagnosed from the exact-head Browser artifact and repaired at `b2957c4430ac66d970ab0db695bc04b3f90eed4c`; the canonical Browser gate passes. A dedicated canonical R1/R2 articulation browser contract now runs on every exact head. This closes the observed render-loop exception and adds runtime proof, but does not complete final spatial visual acceptance.
+## Evidence-state contract for pre-merge review
+
+Use these states consistently in the checklist and review discussion:
+
+```text
+IMPLEMENTED
+  source/architecture exists and is covered by repository contracts
+
+REPOSITORY-VERIFIED
+  exact-head automated tests prove the stated behavior
+
+LIVE-DEPLOYED
+  connected service inventory/source inspection proves the artifact is deployed
+
+RUNTIME-PROVEN
+  a real runtime interaction produced the claimed durable/observable result
+
+HUMAN-ACCEPTED
+  the authorized human reviewer/operator accepted the behavior for promotion
+```
+
+A checked implementation item must not be read as LIVE-DEPLOYED, RUNTIME-PROVEN, or HUMAN-ACCEPTED. Production data that is no longer needed for evidence is handled only by a governed cleanup/probe procedure, never by manual field deletion.
+
+## Post-#398 production-data strategy
+
+After #398 is merged, the next vehicle should create **fresh run-scoped Firestore evidence** using the canonical runtime/data path. New probe documents should carry a unique run namespace and should not reuse or mutate historical probe documents. The first run must be read/write scoped to an operator-authorized test hierarchy and must never print provider secrets.
+
 ## Current blocker
 
 - **Production Firestore Seat shape remains unverified.** The diagnostic must prove active/authorized/entitled Seat state, provider configuration/binding, valid budget shape, and exactly one compatible active execute-capable connection with matching UID/workplace/project/Seat identity.
