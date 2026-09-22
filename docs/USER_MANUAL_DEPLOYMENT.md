@@ -91,11 +91,12 @@ npx supabase functions deploy teamai-github-oauth-bind \
 
 | Function | Role |
 |----------|------|
-| `teamai-task-execute` | Task lease + stub |
+| `teamai-task-execute` | Task lease + provider execution boundary |
 | `teamai-seat-connection-test` | Probe + durable health |
 | `teamai-seat-provider-bind` | Per-seat encrypted API key |
 | `teamai-github-webhook` | Conn-2 HMAC + UID **lookup** |
 | `teamai-github-oauth-bind` | Conn-3 mint UID ↔ installation_id |
+| `teamai-task-continuation-request` | Continuation request + durable waiting transition |
 | `teamai-domain-bootstrap` | Domain bootstrap |
 | `teamai-commerce-intent` / PayPal webhooks | Commerce |
 
@@ -182,8 +183,9 @@ curl -sS -o /dev/null -w "%{http_code}\n" -X POST \
 ## 7. Firestore paths (operators)
 
 ```text
-accounts/{uid}/workplaces/{w}/projects/{p}/seats/{seatId}
-accounts/{uid}/…/seats/{seatId}/secrets/providerApiKey   # never full key to browser
+accounts/{uid}/workplaces/{w}/projects/{p}/teams/{team}/seats/{seatId}
+accounts/{uid}/workplaces/{w}/projects/{p}/teams/{team}/seats/{seatId}/secrets/providerApiKey   # never full key to browser
+accounts/{uid}/workplaces/{w}/projects/{p}/connections/{connectionId}                 # server-resolved Seat connection
 
 githubInstallationIndex/{installationId}                 # server-only
 accounts/{uid}/githubInstallations/{installationId}      # client write false
@@ -205,5 +207,11 @@ Remaining human step: **turn App webhook Active** and confirm deliveries.
 - `docs/TEAM-EXPERIENCE-029_GITHUB_OAUTH_UID_BIND.md` — Conn-3
 - `docs/TEAM-EXPERIENCE-029_SEAT_PROVIDER_KEY_BIND.md` — seat keys
 - `Product_Law/PRODUCT_LAW.md` — identity ≠ provider ≠ seat ≠ entitlement
+
+### Live execution note — 2026-09-22
+
+`teamai-task-continuation-request` is deployed as Supabase Edge version 2 using the existing `FIREBASE_SERVICE_ACCOUNT_JSON` secret. No new secret was created and `TEAMAI_SEAT_SECRET_KEY` was not rotated.
+
+The continuation request boundary is live and remains provider-free: it verifies the Firebase ID token, validates the checkpoint and target Seat, and records the durable `waiting_for_continuation` transition. The live `teamai-task-execute` function remains version 12 until the production Seat/connection shape is directly verified and the newer real-provider executor is independently promoted.
 
 **no 029-released claim**
