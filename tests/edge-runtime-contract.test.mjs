@@ -6,6 +6,28 @@ function read(path) {
   return readFileSync(path, 'utf8');
 }
 
+test('Seat Budget runtime read boundary queries only the selected Seat latest durable execution result', () => {
+  const source = read('supabase/functions/teamai-seat-budget-runtime/index.ts');
+  assert.match(source, /collectionId: "execution-results"/);
+  assert.match(source, /fieldPath: "seatId"/);
+  assert.match(source, /fieldPath: "projectId"/);
+  assert.match(source, /orderBy: \[\{[\s\S]*fieldPath: "recordedAt"[\s\S]*DESCENDING/);
+  assert.match(source, /limit: 1/);
+  assert.match(source, /execution_result_query_failed/);
+  assert.match(source, /seat_execution_result_ambiguous/);
+  assert.match(source, /seat_authorization_required/);
+  assert.doesNotMatch(source, /providerOutput/);
+  assert.doesNotMatch(source, /fields\.text[^\n]*return/);
+});
+
+test('Seat Budget runtime read boundary refuses unauthenticated requests and missing Seat state', () => {
+  const source = read('supabase/functions/teamai-seat-budget-runtime/index.ts');
+  assert.match(source, /missing_firebase_id_token/);
+  assert.match(source, /seat_not_found/);
+  assert.match(source, /seat_not_active/);
+  assert.match(source, /seat_budget_not_configured/);
+});
+
 test('Seat Budget settings Edge boundary requires Firebase identity and persists only canonical Seat budget fields', () => {
   const source = read('supabase/functions/teamai-seat-budget-settings/index.ts');
   assert.match(source, /verifyFirebaseUid/);
