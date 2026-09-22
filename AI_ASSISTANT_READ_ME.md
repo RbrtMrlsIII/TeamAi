@@ -18,7 +18,7 @@
 - do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
 - next allowed work: continue the governed 029 cross-stack implementation on PR #398; implementation remains active while production Firestore Seat-shape verification, controlled task-executor deployment, real provider continuation proof, final spatial acceptance, and production delivery evidence remain open.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: exact-head Governance, Full-System, Security, and Canonical Browser checks PASS on `48c688f1ed033803002d5f6e594c51d3a255fc0c`; current branch head `f3e1b9453cacb41bceaaf8084e6a21ef2e4e7546` adds canonical active-connection authority to normal task execution, with its four exact-head workflows currently running. Final spatial visual acceptance, production deployment, provider execution, and human acceptance remain open.
+- validation state: the current branch head is authoritative and must be re-verified by fresh exact-head workflows after each implementation change. The previous fully green exact-head baseline was `5badf3723b9bcbf5bb6f98f7e4e7c04a14fb6f50`; subsequent work has added canonical active-connection authority, durable invalid-provider-termination handling, and the manual Firestore `execution-results` index readback workflow. Final spatial visual acceptance, production deployment, provider execution, and human acceptance remain open.
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
 - snapshot rule: recorded main baseline must be checked against the PR base before mutation; live GitHub branch/head state remains authoritative for current commit truth
 
@@ -69,6 +69,10 @@
 - Commit `f3e1b9453cacb41bceaaf8084e6a21ef2e4e7546` removes that normal-path dependency. Task execution now resolves `firestoreFindSeatConnection({ uid, workplaceId, projectId, seatId })`, requires an active Seat-owned connection, requires provider agreement with the authorized Seat, and requires the `execute` capability before loading the Seat provider credential.
 - `tests/edge-runtime-contract.test.mjs` now guards this authority boundary and explicitly rejects `task.connection` as the normal execution authority.
 - This is repository-side hardening only. Live Supabase remains on `teamai-task-execute` v12 stub runtime until the controlled promotion gate is reached.
+
+- The same review identified a second authority split and failure-state gap. Normal execution now resolves the canonical active Seat-owned connection, matching continuation execution. A provider result that omits normalized `termination` is now durably recorded as `PROVIDER_TERMINATION_INVALID`, the task is failed, and continuation requests are failed rather than left running.
+- Firestore index review initially proposed a manual `connections(seatId,status)` index, but current Firebase documentation confirms compound equality queries can use index merging. That redundant index was removed. Only the `execution-results` `seatId ASC, recordedAt DESC` manual index remains required for the current ordered read model.
+- The manual Firestore index workflow now performs deployment followed by `firebase firestore:indexes` readback and verifies required repository indexes without deleting unrelated historical/live indexes.
 
 ### 2026-09-22 R1/R2 runtime acceptance contract
 
