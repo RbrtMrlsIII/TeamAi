@@ -67,6 +67,79 @@ test.describe('Seat Budget Settings', () => {
     await expect(panel.locator('[data-seat-budget-result]')).toContainText('backend-owned');
   });
 
+  test('configured runtime loads and saves the selected Seat budget through the trusted boundary', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.TEAMAI_SEAT_CONNECTION_BASE_URL = 'https://edge.example/functions/v1';
+      window.TEAMAI_FIREBASE_ID_TOKEN = 'firebase-token';
+      window.TEAMAI_WORKPLACE_ID = 'workplace-1';
+      window.TEAMAI_PROJECT_ID = 'project-2';
+    });
+
+    await page.route('https://edge.example/functions/v1/teamai-seat-budget-settings', async (route) => {
+      const request = route.request();
+      const body = JSON.parse(request.postData() || '{}');
+      expect(request.headers().authorization).toBe('Bearer firebase-token');
+      expect(body.seatId).toBe('seat-1');
+
+      const configured = {
+        turnBudgetTokens: body.action === 'save' ? body.patch.turnBudgetTokens : 12000,
+        outputBudgetTokens: body.action === 'save' ? body.patch.outputBudgetTokens : 4000,
+        reasoningBudgetTokens: body.action === 'save' ? body.patch.reasoningBudgetTokens : 5000,
+        handoffReserveTokens: body.action === 'save' ? body.patch.handoffReserveTokens : 1000,
+        warningThresholdPercent: body.action === 'save' ? body.patch.warningThresholdPercent : 0.8,
+        hardStopPolicy: body.action === 'save' ? body.patch.hardStopPolicy : 'handoff-before-exhaustion',
+        responsibilityProfile: body.action === 'save' ? body.patch.responsibilityProfile : 'coder',
+        contextInputPolicy: { retention: 'minimal-durable-context' },
+      };
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ok: true,
+          action: body.action,
+          available: true,
+          authorized: true,
+          configurable: true,
+          healthy: true,
+          seatId: body.seatId,
+          provider: 'openai',
+          model: 'gpt-test',
+          configured,
+          usage: null,
+          source: 'firestore-canonical-seat',
+          reason: 'Settings integration test',
+        }),
+      });
+    });
+
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.getByRole('button', { name: 'Seat Budget' }).click();
+
+    const panel = page.locator('#hero-seat-budget-facility');
+    await expect(panel.locator('[data-seat-budget-seat]')).toHaveText('seat-1');
+    await expect(panel.locator('[data-seat-budget-total]')).toHaveText('12,000 tokens');
+    await expect(panel.locator('[data-seat-budget-reserve]')).toHaveText('1,000 tokens');
+    await expect(panel.locator('[data-seat-budget-input="hardStopPolicy"]')).toHaveValue('handoff-before-exhaustion');
+
+    await panel.locator('[data-seat-budget-input="turnBudgetTokens"]').fill('16000');
+    await panel.locator('[data-seat-budget-input="outputBudgetTokens"]').fill('5000');
+    await panel.locator('[data-seat-budget-input="reasoningBudgetTokens"]').fill('7000');
+    await panel.locator('[data-seat-budget-input="handoffReserveTokens"]').fill('1500');
+    await panel.locator('[data-seat-budget-input="warningThresholdPercent"]').fill('75');
+    await panel.locator('[data-seat-budget-input="hardStopPolicy"]').selectOption('stop-at-limit');
+
+    await panel.locator('[data-seat-budget-save]').click();
+    await expect(panel.locator('[data-seat-budget-result]')).toContainText('Seat budget saved to canonical Firestore.');
+    await expect(panel.locator('[data-seat-budget-total]')).toHaveText('16,000 tokens');
+    await expect(panel.locator('[data-seat-budget-output]')).toHaveText('5,000 tokens');
+    await expect(panel.locator('[data-seat-budget-reasoning]')).toContainText('7,000 tokens');
+    await expect(panel.locator('[data-seat-budget-reserve]')).toHaveText('1,500 tokens');
+    await expect(panel.locator('[data-seat-budget-input="warningThresholdPercent"]')).toHaveValue('75');
+    await expect(panel.locator('[data-seat-budget-input="hardStopPolicy"]')).toHaveValue('stop-at-limit');
+  });
+
   test('reduced-motion mode preserves Seat Budget semantics', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/hero/');
