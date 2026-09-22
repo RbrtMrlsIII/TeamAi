@@ -205,7 +205,7 @@ test.describe('Seat Budget Settings', () => {
     await expect(panel.locator('[data-seat-budget-input="hardStopPolicy"]')).toHaveValue('handoff-before-exhaustion');
     await expect(panel.locator('[data-seat-budget-consumed]')).toHaveText('2 tokens · 0%');
     await expect(panel.locator('[data-seat-budget-remaining]')).toHaveText('Not reported');
-    await expect(panel.locator('[data-seat-budget-state]')).toContainText('raw usage recorded');
+    await expect(panel.locator('[data-seat-budget-note]')).toContainText('raw runtime usage, but no server-side remaining-capacity accounting');
 
     await panel.locator('[data-seat-budget-input="turnBudgetTokens"]').fill('16000');
     await panel.locator('[data-seat-budget-input="outputBudgetTokens"]').fill('5000');
