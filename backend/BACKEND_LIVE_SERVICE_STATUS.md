@@ -104,6 +104,19 @@ Historical backend deployment inventories and earlier `IN IMPLEMENTATION` wordin
 
 The distinction remains valid even after bounded gates are endorsed.
 
+## Production Firestore data hygiene — 2026-09-22
+
+The connected production dataset contains both useful bounded evidence and older probe records. **No manual field deletion is authorized from this status record.** A document that looks sparse, duplicated, or historical is first classified as canonical, diagnostic, historical evidence, or malformed before any mutation.
+
+For future production proof, prefer a fresh run-scoped hierarchy created by an explicit operator-authorized diagnostic/probe workflow. Fresh runs should:
+- use unique IDs so new evidence cannot overwrite historical records;
+- create only the fields required by the canonical runtime contract;
+- keep provider secrets out of logs and readbacks;
+- record the exact run ID and evidence class;
+- leave historical evidence immutable unless a separate cleanup authorization exists.
+
+The previously observed commerce paths and server-only `commerceCorrelationIndex/{correlationId}` remain part of the commerce evidence model and must not be deleted merely because their documents are sparse.
+
 ## Next backend continuation
 
 The next backend actions remain bounded rather than a generic rewrite:
