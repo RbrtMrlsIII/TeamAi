@@ -173,6 +173,7 @@ export function drawBackendDisplayThreads({
   ringScale,
   ringRadius = null,
   articulationAmount = 1,
+  signalAmount = 0,
   catalog,
   ringFocus,
   reducedMotion,
@@ -196,12 +197,14 @@ export function drawBackendDisplayThreads({
   });
   const thickness = Math.max(0.028, workspaceRadius * 0.0072);
   const pulseSize = Math.max(0.045, workspaceRadius * 0.011);
+  const signal = clamp(signalAmount, 0, 1);
   const time = finite(t);
   for (let threadIndex = 0; threadIndex < paths.length; threadIndex += 1) {
     const path = paths[threadIndex];
     const focusedSource = ringFocus?.ring === 'r1' && ringFocus.index === path.source.index;
     const focusedTarget = ringFocus?.ring === 'r1' && ringFocus.index === path.target.index;
     const focused = focusedSource || focusedTarget;
+    const activation = Math.max(articulation, signal);
     for (let segmentIndex = 0; segmentIndex < path.points.length - 1; segmentIndex += 1) {
       const a = path.points[segmentIndex];
       const b = path.points[segmentIndex + 1];
@@ -220,7 +223,7 @@ export function drawBackendDisplayThreads({
           rough: 0.34,
           spec: [0.56, 0.58, 0.55],
           emit: focused ? 0.055 : 0.025,
-          alpha: focused ? 0.62 : 0.38,
+          alpha: focused ? 0.62 : 0.24 + 0.28 * activation,
         },
       );
     }
@@ -235,8 +238,8 @@ export function drawBackendDisplayThreads({
       M.energy,
       {
         rough: 0.18,
-        emit: focused ? 0.24 : 0.13,
-        alpha: focused ? 0.76 : 0.46,
+        emit: focused ? 0.24 : 0.10 + 0.12 * signal,
+        alpha: focused ? 0.76 : 0.30 + 0.40 * activation,
       },
     );
   }
