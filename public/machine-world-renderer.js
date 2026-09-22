@@ -29,6 +29,7 @@ import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './ma
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 import { deriveMachineTransformationChoreography } from './machine-choreography.js';
+import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './machine-r0-receiving.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -670,6 +671,65 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       presentationOnly: true,
     });
   }
+  function renderWorkspaceReceiving(edge, reception, heroState, reducedMotion, now) {
+    const presentation = deriveWorkspaceReceivingPresentation({
+      edge,
+      receptionAmount: reception,
+      heroState,
+      reducedMotion,
+      now,
+    });
+    if (presentation.phase === R0_RECEIVING_PHASE.DORMANT || !presentation.transferPoint) return null;
+
+    gl.useProgram(line);
+    gl.uniformMatrix4fv(lineP,false,projection);
+    gl.uniformMatrix4fv(lineV,false,view);
+    gl.uniformMatrix4fv(lineM,false,identity);
+    const values = presentation.transferPrefix.flatMap((point) => [point.x, point.y, point.z]);
+    gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(linePos);
+    gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
+    const activeAlpha = 0.28 + 0.46 * presentation.receiverAmount;
+    gl.uniform4f(lineColor,.34,.90,1,activeAlpha);
+    gl.drawArrays(gl.LINE_STRIP,0,presentation.transferPrefix.length);
+
+    const point = presentation.transferPoint;
+    const receiverScale = 0.10 + 0.12 * presentation.receiverAmount;
+    ringDraw('SPH', multiplyMatrix(
+      translateMatrix(point.x, point.y, point.z),
+      scaleMatrix(receiverScale, receiverScale, receiverScale),
+    ), RING_MATERIALS.energy, {
+      emit: 0.12 + 0.22 * presentation.receiverAmount,
+      glow: reducedMotion ? 0.08 : 0.24,
+      alpha: 0.48 + 0.36 * presentation.receiverAmount,
+    });
+
+    const target = presentation.target;
+    const targetScale = 0.20 + 0.16 * presentation.receiverAmount;
+    ringDraw('TORUS', multiplyMatrix(
+      translateMatrix(target.x, target.y + 0.02, target.z),
+      scaleMatrix(targetScale, 1, targetScale),
+    ), presentation.reflectionAmount > 0 ? RING_MATERIALS.energy : RING_MATERIALS.glass, {
+      emit: 0.10 + 0.28 * presentation.receiverAmount + 0.12 * presentation.reflectionAmount,
+      alpha: 0.50 + 0.30 * presentation.receiverAmount,
+    });
+
+    if (presentation.reflectionAmount > 0) {
+      const wave = reducedMotion ? 1 : 0.54 + 0.46 * Math.sin((finite(now) / 1000) * Math.PI * 1.4);
+      const radius = targetScale * (1.15 + 0.40 * wave);
+      ringDraw('TORUS', multiplyMatrix(
+        translateMatrix(target.x, target.y + 0.05, target.z),
+        scaleMatrix(radius, 1, radius),
+      ), RING_MATERIALS.energy, {
+        emit: 0.08 + 0.12 * presentation.reflectionAmount,
+        alpha: 0.24 + 0.18 * presentation.reflectionAmount,
+      });
+    }
+
+    return presentation;
+  }
+
 
   let lastCanvasWidth = 0;
   let lastCanvasHeight = 0;
@@ -948,17 +1008,18 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       && state.focusedChildId === 'SEAT_CONNECTION'
       && finite(state.connectionBranchAmount, 0) > 0.02
     ) {
-      electricalWorkspaceFlow = renderElectricalEdgeFlow(
+      electricalWorkspaceFlow = renderWorkspaceReceiving(
         seat1Child.edge,
         choreography.workspaceReception,
+        state.heroState,
         reducedMotion,
         now,
-        'workspace-center',
       );
     }
     canvas.dataset.machineWorldElectricalEdge = electricalMachineFlow?.semanticEdgeId || '';
     canvas.dataset.machineWorldElectricalProgress = String(electricalMachineFlow?.progress ?? '');
     canvas.dataset.machineWorldWorkspaceElectricalEdge = electricalWorkspaceFlow?.semanticEdgeId || '';
+    canvas.dataset.machineWorldWorkspaceReceptionPhase = electricalWorkspaceFlow?.phase || R0_RECEIVING_PHASE.DORMANT;
     canvas.dataset.machineWorldElectricalProof = electricalWorkspaceFlow
       ? 'semantic-edge-route+workspace-center'
       : electricalMachineFlow
