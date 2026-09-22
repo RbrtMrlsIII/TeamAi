@@ -44,7 +44,18 @@ The dedicated `firestore-production-evidence.yml` workflow remains on the PR #40
 
 The existing default-branch vehicle `firestore-seat-shape-diagnostic.yml` is now the safe dispatch path for the same exact-path probe. GitHub already knows that workflow on `main`, so a manual run against `backend/030-production-runtime-evidence` executes the PR-branch workflow file. That file no longer uses the collection-group Seat query. It runs `scripts/run-production-firestore-evidence.mjs` with Team ID `gate3-test-team` and the dispatched Seat ID.
 
-Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. It is not counted as fresh 2026-09-22 Seat-shape evidence.
+First exact-path dispatch after that rewiring:
+
+- workflow run: `35762786313`
+- head: `6ee82e0ca92c5bd8e7485fff3d6345eb8a955538`
+- branch: `backend/030-production-runtime-evidence`
+- selectors: team `gate3-test-team`, seat `gate3-test-seat`
+- result: Firestore document GET returned 404; script exited `canonical Seat document not found`
+- this is not a collection-group HTTP 400 and not a service-account token failure
+- no Seat, Connection, or secret document was mutated
+- the first exact-path attempt did not write `runtime-diagnostics` because it threw before the write
+
+Negative 404 evidence is now persisted on later runs so a missing Seat still leaves an additive diagnostic document. Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. It is not counted as fresh Seat-shape proof.
 
 No production-secret pull-request trigger was introduced.
 
