@@ -34,6 +34,7 @@ export function normalizeSeatBudgetReadModel(value = {}) {
     healthy: input.healthy !== false,
     seatId: optionalString(input.seatId),
     responsibilityProfile: optionalString(configured.responsibilityProfile),
+    hardStopPolicy: configured.hardStopPolicy === 'stop-at-limit' ? 'stop-at-limit' : 'handoff-before-exhaustion',
     provider: optionalString(input.provider),
     model: optionalString(input.model),
     turnBudgetTokens: nonNegative(configured.turnBudgetTokens),
@@ -46,6 +47,7 @@ export function normalizeSeatBudgetReadModel(value = {}) {
     contextInputPolicy: configured.contextInputPolicy && typeof configured.contextInputPolicy === 'object'
       ? Object.freeze({ ...configured.contextInputPolicy })
       : Object.freeze({ retention: 'minimal-durable-context' }),
+    usageReported: Boolean(input.usage && typeof input.usage === 'object'),
     consumedTokens: nonNegative(usage.consumedTotalTokens),
     remainingTokens: nonNegative(usage.remainingGenerationTokens),
     usableTokens: nonNegative(usage.usableGenerationTokens),
@@ -61,6 +63,7 @@ export function normalizeSeatBudgetReadModel(value = {}) {
 }
 
 export function seatBudgetEnergySegments(model) {
+  if (!model.usageReported) return Object.freeze({ consumedFraction: 0, handoffReserveFraction: 0, remainingFraction: 0 });
   const total = Math.max(1, model.turnBudgetTokens);
   const consumed = Math.min(total, model.consumedTokens);
   const reserve = Math.min(total - consumed, model.handoffReserveTokens);
