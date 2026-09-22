@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadSeatBudgetSettings, saveSeatBudgetSettings } from '../frontend/spatial/seat-budget-settings-client.js';
 
-function mockFetch(expectedBody, responseBody = { ok: true }) {
+function mockFetch(expectedBody, responseBody = { ok: true }, endpoint = 'teamai-seat-budget-settings') {
   return async (url, options) => {
-    assert.equal(url, 'https://edge.example/functions/v1/teamai-seat-budget-settings');
+    assert.equal(url, `https://edge.example/functions/v1/${endpoint}`);
     assert.equal(options.method, 'POST');
     assert.equal(options.headers.authorization, 'Bearer firebase-token');
     const body = JSON.parse(options.body);
