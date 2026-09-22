@@ -22,7 +22,9 @@ function stateLabel() {
   if (readModel.state === 'EXHAUSTED') return 'Exhausted · waiting for continuation';
   if (readModel.state === 'COMPLETED') return 'Completed';
   if (readModel.state === 'BLOCKED') return 'Blocked';
-  if (readModel.healthy) return 'Ready · server-authoritative accounting';
+  if (readModel.usageReported) return 'Ready · server-authoritative accounting';
+  if (readModel.accountingSource === 'durable-execution-result-raw-usage') return 'Ready · raw usage recorded; remaining capacity not recorded';
+  return 'Ready · configuration loaded';
   return 'Unavailable · backend health degraded';
 }
 
@@ -82,7 +84,7 @@ function render() {
   reasoning.textContent = `${readModel.reasoningBudgetTokens.toLocaleString()} tokens${readModel.reasoningUsedTokens ? ` · used ${readModel.reasoningUsedTokens.toLocaleString()}` : ''}`;
   reserve.textContent = `${readModel.handoffReserveTokens.toLocaleString()} tokens`;
   consumed.textContent = `${readModel.consumedTokens.toLocaleString()} tokens · ${consumedPercent}%`;
-  remaining.textContent = `${readModel.remainingTokens.toLocaleString()} tokens`;
+  remaining.textContent = readModel.remainingTokens === null ? 'Not reported' : `${readModel.remainingTokens.toLocaleString()} tokens`;
   completion.textContent = readModel.completionState || 'No terminal state recorded';
   continuation.textContent = readModel.continuationAvailable ? 'Available' : 'Not available';
   turnBudgetInput.value = String(readModel.turnBudgetTokens || '');
@@ -91,9 +93,12 @@ function render() {
   reserveInput.value = String(readModel.handoffReserveTokens || '');
   warningInput.value = String(Math.round(readModel.warningThresholdPercent * 100));
   hardStopInput.value = readModel.hardStopPolicy;
+  const evidenceNote = readModel.latestExecutionId
+    ? `Latest durable turn ${readModel.latestTaskId || 'unknown task'} / ${readModel.latestExecutionId}${readModel.providerRuntime ? ` · ${readModel.providerRuntime}` : ''}.`
+    : 'No durable execution result is recorded for this Seat.';
   note.textContent = locked
     ? 'This surface does not infer or grant Seat configuration authority. An authenticated backend read model must provide the settings before they are shown as active.'
-    : (readModel.reason || 'Server-authoritative budget accounting. Larger budgets do not guarantee completion.');
+    : `${readModel.reason || 'Server-authoritative Seat budget configuration.'} ${evidenceNote}`;
 
   meter.style.setProperty('--seat-budget-consumed', String(segments.consumedFraction));
   meter.style.setProperty('--seat-budget-reserve', String(segments.handoffReserveFraction));
