@@ -7,6 +7,7 @@ import {
   R1_BACKEND_PRESENTATION_THREADS_V1,
   resolveBackendPresentationThreads,
   deriveBackendPresentationThreadPaths,
+  drawBackendDisplayThreads,
   pointOnBackendThread,
 } from '../frontend/spatial/hero-r1-backend-threads.js';
 
@@ -78,6 +79,38 @@ test('R1 thread paths are deterministic and route outside the workspace center',
     assert.ok(path.ringRadius > 5.95);
     assert.equal(path.points.length, 9);
   }
+});
+
+test('R1 thread draw executes its articulation contract in the browser renderer shape', () => {
+  const calls = [];
+  const materials = {
+    trace: Object.freeze({ id: 'trace' }),
+    energy: Object.freeze({ id: 'energy' }),
+  };
+
+  assert.doesNotThrow(() => drawBackendDisplayThreads({
+    profile: () => ({ workspace: 5.95 }),
+    seatCount: 4,
+    ringScale: 1.18,
+    articulationAmount: 0.4,
+    signalAmount: 0.7,
+    catalog: BACKEND_DISPLAY_V1,
+    ringFocus: null,
+    reducedMotion: true,
+    draw: (...args) => calls.push(args),
+    CUBE: 'CUBE',
+    SPH: 'SPH',
+    T: (x, y, z) => ({ x, y, z }),
+    S: (x, y, z) => ({ x, y, z }),
+    RY: (angle) => ({ angle }),
+    mul: (a, b) => ({ a, b }),
+    M: materials,
+  }, 1));
+
+  assert.equal(calls.length, 18);
+  const traceCall = calls.find((call) => call[2] === materials.trace);
+  assert.ok(traceCall);
+  assert.ok(Math.abs(traceCall[3].alpha - 0.436) < 1e-12);
 });
 
 test('R1 thread owner stays synchronized and canonical renderer consumes it', () => {

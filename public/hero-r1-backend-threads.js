@@ -199,6 +199,7 @@ export function drawBackendDisplayThreads({
   const pulseSize = Math.max(0.045, workspaceRadius * 0.011);
   const signal = clamp(signalAmount, 0, 1);
   const time = finite(t);
+  const articulation = clamp(articulationAmount, 0, 1);
   for (let threadIndex = 0; threadIndex < paths.length; threadIndex += 1) {
     const path = paths[threadIndex];
     const focusedSource = ringFocus?.ring === 'r1' && ringFocus.index === path.source.index;
