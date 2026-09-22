@@ -15,7 +15,7 @@ IMPLEMENTATION ACTIVE / IN PROGRESS. Draft PR #398 remains the sole implementati
 | Spatial renderer | Canonical source renderer, controller split, semantic topology, adaptive geometry, R0/R1/R2, Seat-1 wiring, camera choreography | exact-head source/test proof; final deployed visual acceptance remains open |
 | Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository proof; real production Seat inspection remains open |
 | Seat connection/provider | Seat-owned binding, credential loading, active connection resolution | live connection/bind functions deployed; production execution-capable relationship remains unproven |
-| Task execution | Real-provider Edge source with truthful termination, durable handoff checkpoint, continuation execution | live `teamai-task-execute` remains v12; new runtime deployment is gated |
+| Task execution | Real-provider Edge source with canonical Seat-owned connection authority, truthful termination, durable handoff checkpoint, continuation execution | live `teamai-task-execute` remains v12; new runtime deployment is gated |
 | Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E and deployed request boundary proven; live provider continuation remains open |
 | Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative browser proof; authoritative backend wiring remains intentionally bounded |
 | Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | #398 production deployment and browser observation remain open |
@@ -74,6 +74,7 @@ Green CI does not prove Firebase runtime state, provider execution, production d
 
 ## Completed capability slices — 2026-09-22
 - Production Firestore Seat diagnostic workflow/script wiring is now contract-tested; the live diagnostic remains manually dispatched and requires protected secrets plus a real Seat ID.
+- Backend cleanup removed the duplicate `src/server.ts` in-memory Fastify runtime. `src/main.ts` is the sole configured local Node entrypoint, guarded by `tests/backend-runtime-entrypoint.test.mjs`.
 
 - R0 workspace receiving choreography now has a semantic presentation model and canonical WebGL rendering pass from the Seat connection route into `WORKSPACE_CENTER`.
 - Seat Budget Settings is a real end-to-end configuration capability through a trusted Edge boundary and canonical Seat transaction. Its live function is deployed as `teamai-seat-budget-settings` v1.
