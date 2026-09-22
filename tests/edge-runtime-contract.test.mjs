@@ -16,7 +16,7 @@ test('Seat Budget settings Edge boundary requires Firebase identity and persists
   assert.match(source, /normalizeEdgeTurnBudget/);
   assert.match(source, /seat_authorization_required/);
   assert.match(source, /seat_identity_mismatch/);
-  assert.match(source, /updateMask: \{ fieldPaths: \[["']turnBudget["'], ["']updatedAt["'] \] \}/);
+  assert.match(source, /updateMask: \{ fieldPaths: \["turnBudget", "updatedAt"\] \}/);
   assert.doesNotMatch(source, /providerApiKey|decryptSeatApiKey|TEAMAI_SEAT_SECRET_KEY/);
 });
 
