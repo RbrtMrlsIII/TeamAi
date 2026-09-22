@@ -117,6 +117,7 @@ if (canonical.length !== 1) {
   process.exit(2);
 }
 
+const decodedSeat = fields(canonical[0].fields);
 const seatReport = shapeReport(canonical[0], { uid, workplaceId, projectId, seatId });
 const connectionRows = await runQuery(parent, {
   from: [{ collectionId: 'connections' }],
@@ -153,7 +154,7 @@ for (const field of requiredBudgetFields) {
   if (!seatReport.turnBudget.fields.includes(field)) seatShapeErrors.push('turn_budget_missing_' + field);
 }
 if (seatReport.turnBudget.present) {
-  const rawBudget = decoded.turnBudget && typeof decoded.turnBudget === 'object' ? decoded.turnBudget : {};
+  const rawBudget = decodedSeat.turnBudget && typeof decodedSeat.turnBudget === 'object' ? decodedSeat.turnBudget : {};
   const numericBudget = {};
   for (const field of requiredBudgetFields) {
     const value = Number(rawBudget[field]);
