@@ -70,6 +70,9 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      issue_kind: ${{ steps.resolve.outputs.kind }}
+      issue_number: ${{ steps.resolve.outputs.issue_number }}
     steps:
       - name: Checkout exact PR head
         uses: actions/checkout@v7
@@ -78,6 +81,7 @@ jobs:
           fetch-depth: 1
 
       - name: Validate advisory issue declaration once
+        id: resolve
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -86,7 +90,9 @@ jobs:
         run: |
           set -euo pipefail
           gh api "repos/$REPO/pulls/$PR" --jq '.body // ""' > /tmp/advisory-pr-body
-          node scripts/governance/resolve-advisory-issue.mjs /tmp/advisory-pr-body
+          resolution="$(node scripts/governance/resolve-advisory-issue.mjs /tmp/advisory-pr-body)"
+          echo "kind=$(jq -r '.kind' <<< "$resolution")" >> "$GITHUB_OUTPUT"
+          echo "issue_number=$(jq -r '.issue_number // empty' <<< "$resolution")" >> "$GITHUB_OUTPUT"
 
 
   validation_gate:
