@@ -49,6 +49,8 @@ jobs:
       matrix: ${{ steps.resolve.outputs.matrix }}
       pr_number: ${{ steps.resolve.outputs.pr_number }}
       head_sha: ${{ steps.target.outputs.head_sha }}
+      issue_kind: ${{ steps.resolve_issue.outputs.kind }}
+      issue_number: ${{ steps.resolve_issue.outputs.issue_number }}
     steps:
       - name: Read target PR head
         id: target
@@ -73,6 +75,7 @@ jobs:
           fetch-depth: 1
 
       - name: Validate advisory issue declaration once
+        id: resolve_issue
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -81,7 +84,9 @@ jobs:
         run: |
           set -euo pipefail
           gh api "repos/$REPO/pulls/$PR" --jq '.body // ""' > /tmp/advisory-pr-body
-          node scripts/governance/resolve-advisory-issue.mjs /tmp/advisory-pr-body
+          resolution="$(node scripts/governance/resolve-advisory-issue.mjs /tmp/advisory-pr-body)"
+          echo "kind=$(jq -r '.kind' <<< "$resolution")" >> "$GITHUB_OUTPUT"
+          echo "issue_number=$(jq -r '.issue_number // empty' <<< "$resolution")" >> "$GITHUB_OUTPUT"
       - name: Resolve requested slot from canonical manifest
         id: resolve
         shell: bash
@@ -166,5 +171,7 @@ jobs:
       invocation_class: manual
       automatic_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-manual-${{ matrix.slot }}-review -->'
+      governing_issue_kind: ${{ needs.resolve_manual_slot.outputs.issue_kind }}
+      governing_issue_number: ${{ needs.resolve_manual_slot.outputs.issue_number }}
     secrets:
       api_key: ${{ secrets[matrix.credential_alias] }}
