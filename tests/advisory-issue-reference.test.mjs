@@ -59,9 +59,12 @@ testCase("manual all-free advisory routing uses the same one-time issue prefligh
   assert.match(manual, /node scripts\/governance\/resolve-advisory-issue\.mjs/);
 });
 
-testCase("reusable advisory runner consumes the shared issue parser and preserves no-issue context", () => {
+testCase("reusable advisory runner consumes preflighted issue context and preserves no-issue context", () => {
   const runner = read(".github/workflows/ai-advisory-review-runner.yml");
-  assert.match(runner, /node scripts\/governance\/resolve-advisory-issue\.mjs \/tmp\/body/);
-  assert.match(runner, /issue_kind=.*\.kind/);
+  assert.match(runner, /governing_issue_kind:/);
+  assert.match(runner, /governing_issue_number:/);
+  assert.doesNotMatch(runner, /node scripts\/governance\/resolve-advisory-issue\.mjs \/tmp\/body/);
+  assert.match(runner, /GOVERNING_ISSUE_KIND/);
+  assert.match(runner, /GOVERNING_ISSUE_NUMBER/);
   assert.match(runner, /explicit PR field uses the accepted no-issue value/);
 });
