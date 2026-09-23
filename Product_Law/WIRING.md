@@ -73,3 +73,7 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 ### 030 successor routing
 
 The current implementation frontier is resolved from `Masterplan/NEXT_SLICES.md`: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence. This Wiring file only routes the field; it does not create new production/runtime authority.
+
+### Advisory control-plane wiring note
+
+The advisory review mechanism is repository governance infrastructure only. PR metadata is parsed for routing context before provider fan-out; no advisory result becomes Product Law authority, runtime authority, or merge authorization. Explicit no-issue declarations remain valid for repository changes without an owning Issue.
