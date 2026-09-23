@@ -141,3 +141,7 @@ A passing structural audit establishes governance consistency only. It does not 
 ## Canonical current-slice consumption
 
 The current execution slice is owned exclusively by `Masterplan/NEXT_SLICES.md`. Policy and downstream validators/procedures must **consume that canonical current-slice record rather than hard-code a specific Issue number**. Historical Issue/PR identifiers may appear as evidence, but they do not become current execution authority merely by being mentioned here.
+
+### Advisory issue declaration control
+
+The advisory reviewer pipeline treats `Owning Issue: #N` / `Governing Issue: #N` as machine-readable metadata. Automatic fan-out validates this declaration once before provider execution, and `Owning Issue: none` or `n/a` is an explicit valid no-issue state. Provider/model reviews remain advisory evidence and do not authorize merge, acceptance, or release.
