@@ -57,3 +57,8 @@ Historical branches are retained when they provide provenance or recovery value.
 ## Archive
 
 Retired operating material is preserved under `docs/archive/`. Historical handover evidence may remain under `handover/`. Do not create or revive `OBSOLETE_FILES.md`. Archive material is consulted only for historical recovery.
+
+## License
+
+Copyright © 2026 Robert Morales III and TeamAi. All rights reserved.
+See [`LICENSE`](LICENSE). Publication of this repository is not an open-source grant.
