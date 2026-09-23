@@ -105,7 +105,8 @@
       "verification/",
       "docs/",
       "recovery/",
-      "delivery/"
+      "delivery/",
+      "ci/"
     ],
     "protected_branch": "main",
     "main_change_mode": "PR_ONLY",
