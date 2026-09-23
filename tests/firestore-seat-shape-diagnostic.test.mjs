@@ -19,10 +19,12 @@ test('production Seat diagnostic remains workflow-dispatch-only with canonical i
   assert.match(workflow, /TEAMAI_WORKPLACE_ID: \$\{\{ secrets\.TEAMAI_FIREBASE_TEST_WORKPLACE_ID \}\}/);
   assert.match(workflow, /TEAMAI_PROJECT_ID: \$\{\{ secrets\.TEAMAI_FIREBASE_TEST_PROJECT_ID \}\}/);
   assert.match(workflow, /TEAMAI_SEAT_ID: \$\{\{ inputs\.seat_id \}\}/);
-  assert.match(workflow, /node scripts\/diagnose-production-firestore-seat\.mjs/);
+  assert.match(workflow, /TEAMAI_TEAM_ID: gate3-test-team/);
+  assert.match(workflow, /node scripts\/run-production-firestore-evidence\.mjs/);
+  assert.doesNotMatch(workflow, /diagnose-production-firestore-seat\.mjs/);
 });
 
-test('diagnostic consumes the same environment contract that the workflow supplies', () => {
+test('parked collection-group diagnostic still consumes the same environment contract', () => {
   for (const name of [
     'TEAMAI_FIREBASE_SERVICE_ACCOUNT_JSON',
     'TEAMAI_DIAGNOSTIC_UID',
@@ -36,7 +38,7 @@ test('diagnostic consumes the same environment contract that the workflow suppli
   assert.match(diagnostic, /team-ai-official/);
 });
 
-test('canonical Seat and active connection queries remain fail-closed before promotion', () => {
+test('parked collection-group diagnostic remains fail-closed historical source', () => {
   assert.match(diagnostic, /p\[0\] === 'accounts'/);
   assert.match(diagnostic, /p\[2\] === 'workplaces'/);
   assert.match(diagnostic, /p\[4\] === 'projects'/);
@@ -48,7 +50,7 @@ test('canonical Seat and active connection queries remain fail-closed before pro
   assert.match(diagnostic, /activeCount !== 1/);
 });
 
-test('diagnostic remains metadata-only and does not print provider credentials', () => {
+test('parked collection-group diagnostic remains metadata-only and does not print provider credentials', () => {
   assert.match(diagnostic, /Metadata-only diagnostic/);
   assert.match(diagnostic, /plaintextProviderKeyPresent/);
   assert.match(diagnostic, /secretCiphertextPresentOnSeat/);

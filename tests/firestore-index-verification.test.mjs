@@ -23,6 +23,23 @@ test("Firestore index verifier accepts required indexes plus unrelated live inde
   assert.deepEqual(result.missing, []);
 });
 
+test("Firestore index verifier accepts the Firebase CLI --json envelope", () => {
+  const expected = JSON.parse(readFileSync("firestore.indexes.json", "utf8"));
+  const deployed = {
+    status: "success",
+    result: {
+      indexes: expected.indexes,
+      fieldOverrides: [],
+    },
+  };
+
+  const result = verifyRequiredIndexes(expected, deployed);
+  assert.equal(result.ok, true);
+  assert.equal(result.requiredCount, expected.indexes.length);
+  assert.equal(result.deployedCount, expected.indexes.length);
+  assert.deepEqual(result.missing, []);
+});
+
 test("Firestore index verifier identifies a missing required composite index", () => {
   const expected = JSON.parse(readFileSync("firestore.indexes.json", "utf8"));
   const deployed = {

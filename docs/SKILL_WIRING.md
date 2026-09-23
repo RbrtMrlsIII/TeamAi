@@ -66,7 +66,7 @@ For public live website validation, all applicable verification routes converge 
 
 ## Current 029 machine-world routing checkpoint
 
-For Issue #396 / PR #398, the Frontend & Experience machine-world implementation resolves through the semantic machine modules and the canonical `frontend/spatial/machine-world-renderer.js` source, synchronized to `public/machine-world-renderer.js`. `public/hero-flex.js` is the controller/input boundary. PR #397 is historical after migration and is not an active routing vehicle.
+For the reviewed 029 baseline in PR #398, the Frontend & Experience machine-world implementation resolves through the semantic machine modules and the canonical `frontend/spatial/machine-world-renderer.js` source, synchronized to `public/machine-world-renderer.js`. `public/hero-flex.js` is the controller/input boundary. PR #397 and PR #398 are historical/landed respectively and are not active routing vehicles.
 
 ## Machine Hero routing
 
@@ -123,3 +123,8 @@ Skills route implementation against these records but cannot override Product La
 ## Current-slice consumption rule
 
 Skills route the current procedure selected for the slice; they do not own current-slice identity. The active slice must be resolved from `Masterplan/NEXT_SLICES.md`. Skill bodies and validators must not hard-code a specific Issue as the current slice when the canonical current-slice source can be read directly.
+
+
+## 030 successor routing
+
+PR #398 is the reviewed 029 structural baseline now landed on `main`. The active Skill-routing frontier is Issue #401 / successor PR #402 for production Firestore authority, security, and runtime evidence. Skills continue to provide reusable procedures only; they do not acquire production-data, entitlement, runtime, or merge authority.

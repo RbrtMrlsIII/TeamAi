@@ -45,7 +45,7 @@ Execution state is separate from advisory content: each slot records one termina
 
 ## 2026-09-22 029 cross-stack convergence checkpoint
 
-Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-convergence`. The active PR is now a cross-stack convergence vehicle, not a frontend-only implementation record. Spatial ownership, canonical Firestore Seat resolution, Seat-owned budget/continuation contracts, trusted Edge boundaries, #400 representative frontend contracts, delivery controls, and exact-head evidence are tracked together while each authority remains in its owning subsystem.
+Issue #396 / PR #398 is the reviewed 029 structural baseline now merged into `main`. The active PR is now a cross-stack convergence vehicle, not a frontend-only implementation record. Spatial ownership, canonical Firestore Seat resolution, Seat-owned budget/continuation contracts, trusted Edge boundaries, #400 representative frontend contracts, delivery controls, and exact-head evidence are tracked together while each authority remains in its owning subsystem.
 
 - [x] Production WebGL ownership is separated from `public/hero-flex.js`; the canonical renderer source is `frontend/spatial/machine-world-renderer.js`.
 - [x] The renderer's semantic-subject calculation has a neutral geometry owner; `machine-hero-scene.js` remains a compatibility surface rather than production renderer authority.
@@ -67,6 +67,27 @@ Issue #396 continues through Draft PR #398 on `frontend/029-machine-world-conver
 - [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
 - [ ] Firestore index deployment remains pending before live promotion of `teamai-seat-budget-runtime`.
 - [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
+
+
+## 2026-09-22 030 production-runtime evidence checkpoint
+
+PR #398 has merged at `87f466fb0edac3784280128785a8fd2dc757e749` after exact-head validation and independent human approval on head `08115e507b4999966b753e3e4e3c8e035e9db163`.
+
+Issue #401 is now the sole successor implementation frontier. The remaining 029/backend checklist is intentionally carried forward as evidence-dependent work rather than reopened inside #398.
+
+- [x] #398 reviewed structural baseline merged into `main`.
+- [x] Fresh production Firestore evidence vehicle created from the #398 merge point.
+- [x] Default-branch `firestore-seat-shape-diagnostic.yml` now dispatches the exact-path evidence probe against the 030 branch.
+- [x] Fresh production Seat evidence run executed as run `35763013851` on `a7baf21bc752c3ecbdbfc2589f2c4e2a58c70f23`; observed result is `canonical_seat_not_found` with zero team documents under the protected test project. This is not Seat-shape verification.
+
+
+- [ ] Real Seat field inventory reconciled with field-level Firestore Rules.
+- [ ] Live `execution-results` index deployed/read back.
+- [ ] `teamai-seat-budget-runtime` live validation/promotion completed.
+- [ ] Real-provider `teamai-task-execute` promotion completed.
+- [ ] Provider incomplete termination → durable checkpoint → explicit continuation → fresh Seat-owned turn → truthful completion proven.
+- [ ] Remaining #400 authoritative runtime wiring completed where required.
+- [ ] Final spatial visual/human acceptance and production delivery observation completed.
 
 ## TEAM-EXPERIENCE-029 baseline
 

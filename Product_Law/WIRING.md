@@ -6,9 +6,9 @@
 
 `Product_Law/PRODUCT_LAW.md` is the single Product Law document. It contains connected product meaning, protected invariants, service boundaries, development fields, responsibility model, workspace rules, skills boundary, authorization boundary, execution model, and product-wide constraints.
 
-## Current 029 spatial execution routing
+## Current execution routing
 
-Issue #396 is currently implemented through Draft PR #398 on `frontend/029-machine-world-convergence`. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority.
+Reviewed PR #398 is the landed 029 structural baseline. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority. Production-data/runtime routing now continues through Issue #401 / successor PR #402, without changing the Product Law authority chain.
 
 ## Development fields
 
@@ -68,3 +68,8 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 ## Current-slice authority consumption
 
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.
+
+
+### 030 successor routing
+
+The current implementation frontier is resolved from `Masterplan/NEXT_SLICES.md`: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence. This Wiring file only routes the field; it does not create new production/runtime authority.
