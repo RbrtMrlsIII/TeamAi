@@ -128,3 +128,7 @@ Skills route the current procedure selected for the slice; they do not own curre
 ## 030 successor routing
 
 PR #398 is the reviewed 029 structural baseline now landed on `main`. The active Skill-routing frontier is Issue #401 / successor PR #402 for production Firestore authority, security, and runtime evidence. Skills continue to provide reusable procedures only; they do not acquire production-data, entitlement, runtime, or merge authority.
+
+### 2026-09-23 advisory issue preflight
+
+The advisory workflow uses the shared `scripts/governance/resolve-advisory-issue.mjs` parser before automatic provider fan-out. It validates Issue metadata once per sequence and accepts explicit `none`/`n/a` values; model output remains advisory evidence.
