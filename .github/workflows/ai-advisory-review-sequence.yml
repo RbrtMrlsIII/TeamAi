@@ -221,6 +221,8 @@ jobs:
       invocation_class: automatic
       automatic_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-auto-review -->'
       manual_marker: '<!-- teamai-openrouter-free-slot-${{ matrix.slot }}-manual-review -->'
+      governing_issue_kind: ${{ needs.advisory_issue_preflight.outputs.issue_kind }}
+      governing_issue_number: ${{ needs.advisory_issue_preflight.outputs.issue_number }}
     secrets:
       api_key: ${{ secrets[matrix.credential_alias] }}
 
