@@ -27,12 +27,21 @@ function sameIndex(expected, actual) {
     && JSON.stringify(left.fields) === JSON.stringify(right.fields);
 }
 
+function unwrapDeployedIndexPayload(payload) {
+  if (payload?.result && typeof payload.result === "object") {
+    return payload.result;
+  }
+
+  return payload;
+}
+
 export function verifyRequiredIndexes(expectedConfig, deployedPayload) {
   const expected = Array.isArray(expectedConfig?.indexes) ? expectedConfig.indexes : [];
-  const deployed = Array.isArray(deployedPayload?.indexes)
-    ? deployedPayload.indexes
-    : Array.isArray(deployedPayload)
-      ? deployedPayload
+  const unwrapped = unwrapDeployedIndexPayload(deployedPayload);
+  const deployed = Array.isArray(unwrapped?.indexes)
+    ? unwrapped.indexes
+    : Array.isArray(unwrapped)
+      ? unwrapped
       : [];
 
   const missing = expected.filter(
