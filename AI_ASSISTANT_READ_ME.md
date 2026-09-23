@@ -297,3 +297,7 @@ Historical Issues are evidence, not active routing.
 - Legacy v12 stub execution is handled truthfully: raw usage may be shown as durable evidence, while remaining/usable generation capacity stays unknown until server-side budget accounting exists.
 - Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. Live runtime-read-model promotion is blocked until that index exists in production.
 - R0 workspace receiving choreography is implemented and independently verified as a renderer-owned presentation capability from the Seat connection route into WORKSPACE_CENTER.
+
+### 2026-09-23 shared advisory control-plane support
+
+PR #407 is a narrow CI/infrastructure support vehicle for Issue #406. It does not replace the current product/spatial frontier. The advisory pipeline now preflights its PR Issue declaration once before automatic fan-out and accepts explicit `none`/`n/a` no-issue states; provider/model output remains advisory evidence only.
