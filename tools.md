@@ -1228,3 +1228,13 @@ Keep Semgrep and Bandit active for the current repository surface. Keep SonarQub
 
 Status:
 Accepted.
+
+### 2026-09-23: Advisory pipeline preflight boundary
+
+**Finding:** All five automatic advisory slots can fail before provider invocation when shared PR-body Issue metadata is malformed or absent. The old per-slot parser made one control-plane defect look like five provider failures.
+
+**Action:** PR #407 centralizes parsing in `scripts/governance/resolve-advisory-issue.mjs`, validates once before automatic and manual all-slot fan-out, and accepts explicit `none`/`n/a` no-issue states.
+
+**Boundary:** Provider/model results remain advisory evidence only. Issue metadata is routing context, not merge authorization.
+
+**Status:** In implementation under #407 / Issue #406.
