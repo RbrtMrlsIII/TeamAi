@@ -63,5 +63,5 @@ testCase("reusable advisory runner consumes the shared issue parser and preserve
   const runner = read(".github/workflows/ai-advisory-review-runner.yml");
   assert.match(runner, /node scripts\/governance\/resolve-advisory-issue\.mjs \/tmp\/body/);
   assert.match(runner, /issue_kind=.*\.kind/);
-  assert.match(runner, /Explicit no-issue value/);
+  assert.match(runner, /explicit PR field uses the accepted no-issue value/);
 });
