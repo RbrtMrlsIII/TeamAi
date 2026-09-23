@@ -62,6 +62,33 @@ jobs:
           echo 'should_run=true' >> "$GITHUB_OUTPUT"
           echo "Prior workflow attempts did not reach provider fan-out; exact-head sequence remains eligible."
 
+  advisory_issue_preflight:
+    name: advisory-issue-preflight
+    needs: eligibility
+    if: needs.eligibility.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Validate advisory issue declaration once
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR" --jq '.body // ""' > /tmp/advisory-pr-body
+          node scripts/governance/resolve-advisory-issue.mjs /tmp/advisory-pr-body
+
+
   validation_gate:
     needs: eligibility
     if: needs.eligibility.outputs.should_run == 'true'
@@ -172,7 +199,7 @@ jobs:
           PY
 
   openrouter_free:
-    needs: [eligibility, resolve_advisory_slots, validation_gate]
+    needs: [eligibility, advisory_issue_preflight, resolve_advisory_slots, validation_gate]
     if: needs.eligibility.outputs.should_run == 'true' && needs.resolve_advisory_slots.result == 'success' && needs.validation_gate.result == 'success'
     strategy:
       fail-fast: false
