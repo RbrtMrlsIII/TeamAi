@@ -71,6 +71,17 @@ jobs:
         with:
           ref: ${{ steps.target.outputs.head_sha }}
           fetch-depth: 1
+
+      - name: Validate advisory issue declaration once
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ steps.target.outputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR" --jq '.body // ""' > /tmp/advisory-pr-body
+          node scripts/governance/resolve-advisory-issue.mjs /tmp/advisory-pr-body
       - name: Resolve requested slot from canonical manifest
         id: resolve
         shell: bash
