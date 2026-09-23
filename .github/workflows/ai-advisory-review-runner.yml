@@ -24,6 +24,15 @@ on:
         required: false
         default: ''
         type: string
+      governing_issue_kind:
+        description: Normalized advisory Issue declaration kind from the one-time preflight.
+        required: true
+        type: string
+      governing_issue_number:
+        description: Normalized advisory Issue number when the declaration kind is ISSUE.
+        required: false
+        default: ''
+        type: string
       invocation_class:
         description: automatic or manual
         required: true
@@ -191,12 +200,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          GOVERNING_ISSUE_KIND: ${{ inputs.governing_issue_kind }}
+          GOVERNING_ISSUE_NUMBER: ${{ inputs.governing_issue_number }}
         shell: bash
         run: |
           set -euo pipefail
-          resolution="$(node scripts/governance/resolve-advisory-issue.mjs /tmp/body)"
-          issue_kind="$(jq -r '.kind' <<< "$resolution")"
-          issue_number="$(jq -r '.issue_number // empty' <<< "$resolution")"
+          issue_kind="$GOVERNING_ISSUE_KIND"
+          issue_number="$GOVERNING_ISSUE_NUMBER"
           if [[ "$issue_kind" == "NONE" ]]; then
             cat > /tmp/issue-context.txt <<'EOF'
 === GOVERNING ISSUE ===
@@ -206,7 +216,7 @@ EOF
             exit 0
           fi
           if [[ "$issue_kind" != "ISSUE" || -z "$issue_number" ]]; then
-            echo 'PRE_PROVIDER_FAILURE: advisory issue declaration is invalid.' > /tmp/provider-failure.txt
+            echo 'PRE_PROVIDER_FAILURE: normalized advisory issue declaration is invalid.' > /tmp/provider-failure.txt
             exit 1
           fi
           gh api "repos/$REPO/issues/$issue_number" > /tmp/issue.json
