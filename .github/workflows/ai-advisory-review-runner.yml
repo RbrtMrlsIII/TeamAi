@@ -194,16 +194,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          issue_number="$(python - <<'PY'
-          import re
-          from pathlib import Path
-          body = Path('/tmp/body').read_text(encoding='utf-8')
-          match = re.search(r'(?im)^\s*(?:[-*]\s*)?(?:\*\*)?\s*(?:Owning|Governing)\s+Issue:\s*(?:\*\*)?#(\d+)', body)
-          print(match.group(1) if match else '')
-          PY
-          )"
-          if [[ -z "$issue_number" ]]; then
-            echo 'PRE_PROVIDER_FAILURE: PR body must contain an explicit Owning Issue: #N or Governing Issue: #N field.' > /tmp/provider-failure.txt
+          resolution="$(node scripts/governance/resolve-advisory-issue.mjs /tmp/body)"
+          issue_kind="$(jq -r '.kind' <<< "$resolution")"
+          issue_number="$(jq -r '.issue_number // empty' <<< "$resolution")"
+          if [[ "$issue_kind" == "NONE" ]]; then
+            cat > /tmp/issue-context.txt <<'EOF'
+=== GOVERNING ISSUE ===
+No governing issue declared for this advisory review.
+The explicit PR field uses the accepted no-issue value (none or n/a).
+EOF
+            exit 0
+          fi
+          if [[ "$issue_kind" != "ISSUE" || -z "$issue_number" ]]; then
+            echo 'PRE_PROVIDER_FAILURE: advisory issue declaration is invalid.' > /tmp/provider-failure.txt
             exit 1
           fi
           gh api "repos/$REPO/issues/$issue_number" > /tmp/issue.json
