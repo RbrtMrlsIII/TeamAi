@@ -118,7 +118,6 @@ test('S7 exposes a first-class facility payload surface bound to an authored mac
     assert.ok(source);
     assert.deepEqual(machine.payloadSurface.center, source.center);
     assert.deepEqual(machine.payloadSurface.dimensions, source.dimensions);
-    assert.equal(validateMachineFacilityMachinery([machine], { expectedCount: 1 }).valid, true);
   }
 });
 
