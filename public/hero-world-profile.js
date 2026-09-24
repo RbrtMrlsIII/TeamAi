@@ -12,7 +12,7 @@ export const MACHINE_WORLD_PROFILE = Object.freeze({
 // Structural safety envelopes keep S5 clearance solvable without allowing the
 // expansion layer to become a second source of world-scale geometry.
 export const MACHINE_SEAT_SHELL_SAFETY_BUFFER = 0.5;
-export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 2.4;
+export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 2.7;
 
 export function seatPopulationDensity(seatCount) {
   return clamp01((Math.max(1, Number(seatCount) || 1) - 1) / 9);
