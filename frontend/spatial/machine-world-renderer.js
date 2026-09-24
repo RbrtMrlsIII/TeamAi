@@ -1262,6 +1262,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       });
     }
 
+    let facilityAssemblyCount = 0;
+    let facilityComponentCount = 0;
+    let facilityPortCount = 0;
     let facilityMachineryCount = 0;
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;

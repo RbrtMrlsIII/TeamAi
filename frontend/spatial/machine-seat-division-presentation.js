@@ -3,7 +3,6 @@ import {
   resolveSeatDivisionSemanticId,
   seatDivisionFanDirection,
   seatDivisionFanRadius,
-  SEAT_DIVISION_SERVICE_DECK_LIFT,
 } from './seat-division-geometry.js';
 import { resolveSeatDivisionPayload } from './machine-seat-division-payload.js';
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
@@ -66,8 +65,7 @@ export function deriveFocusedSeatDivisionGeometry({
   const direction = seatDivisionFanDirection(parent, index);
   const radialOffset = seatDivisionFanRadius(parent, t);
   const y = finite(parent.level, finite(parent.center.y, 0))
-    + finite(parent.dimensions.y, 0) * (0.68 + 0.55 * t + index * 0.08)
-    + SEAT_DIVISION_SERVICE_DECK_LIFT;
+    + finite(parent.dimensions.y, 0) * (0.68 + 0.55 * t + index * 0.08);
   const center = {
     x: finite(parent.center.x, 0) + direction.x * radialOffset,
     y,

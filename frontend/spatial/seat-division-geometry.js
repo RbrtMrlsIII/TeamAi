@@ -13,8 +13,6 @@ export const SEAT_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
 export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
 export const SEAT_DIVISION_PORT_RADIUS = 0.28;
 
-export const SEAT_DIVISION_SERVICE_DECK_LIFT = 0.56;
-
 export function seatDivisionFanAngle(childIndex = 0) {
   const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));
   return -SEAT_DIVISION_FAN_SPAN / 2 + (SEAT_DIVISION_FAN_SPAN * index) / SEAT_DIVISION_FAN_MAX_INDEX;
