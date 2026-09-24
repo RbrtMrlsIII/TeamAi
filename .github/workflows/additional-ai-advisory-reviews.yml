@@ -160,7 +160,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.resolve_manual_slot.outputs.matrix) }}
-    uses: ./.github/workflows/ai-advisory-review-runner.yml
+    uses: ./.github/workflows/ai-advisory-review-runner-v2.yml
     with:
       reviewer: OpenRouter Free Manual Slot ${{ matrix.slot }}
       reviewer_slug: openrouter-free-manual-${{ matrix.slot }}
