@@ -126,6 +126,10 @@ Skills route implementation against these records but cannot override Product La
 Skills route the current procedure selected for the slice; they do not own current-slice identity. The active slice must be resolved from `Masterplan/NEXT_SLICES.md`. Skill bodies and validators must not hard-code a specific Issue as the current slice when the canonical current-slice source can be read directly.
 
 
+## 2026-09-24 029 spatial acceptance routing
+
+The 029 PR #404 structural correction stays within the existing Machine Builder and applicable frontend/spatial Skill families. No new Skill or governance authority is introduced. The implementation seam is: authored S4 division geometry → shared world-profile safety envelopes → S5 clearance planner → canonical renderer/runtime → exact-head Full-System and Browser verification. The exact current branch head is `965f0fb7db1ccf85fca8e30e7790d5f48404f768`; its implementation state must not be promoted to verified/completed status until the exact-head validators provide evidence.
+
 ## 030 successor routing
 
 PR #398 is the reviewed 029 structural baseline now landed on `main`. The active Skill-routing frontier is Issue #401 / successor PR #402 for production Firestore authority, security, and runtime evidence. Skills continue to provide reusable procedures only; they do not acquire production-data, entitlement, runtime, or merge authority.

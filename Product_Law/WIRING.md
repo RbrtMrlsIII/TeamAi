@@ -71,6 +71,10 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.
 
 
+### 2026-09-24 029 spatial acceptance routing
+
+PR #404 is routed as a bounded 029 Frontend & Experience implementation/evidence companion while `Masterplan/NEXT_SLICES.md` continues to own the single current slice. Its spatial construction path remains Product Law → Wiring → current slice/Issue → machine-builder and applicable spatial Skills → canonical source/runtime → Verification & CI/Browser. The current branch head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` preserves S4 authored division grammar, places the structural Seat/outer safety envelope in the shared world-profile authority, and lets S5 enforce clearance against the authored machine obstacles. These facts do not promote 029 to complete, create a second current slice, or authorize merge.
+
 ### 030 successor routing
 
 The current implementation frontier is resolved from `Masterplan/NEXT_SLICES.md`: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence. This Wiring file only routes the field; it does not create new production/runtime authority.

@@ -9,6 +9,7 @@
 - main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
 - current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
+- 2026-09-24 PR #404 exact-head structural hardening: `965f0fb7db1ccf85fca8e30e7790d5f48404f768` preserves authored S4 division geometry, adds shared world-profile Seat/outer safety envelopes, and extends S5 clearance coverage to authored outer housings plus sibling Pods. Source-contract drift toward the current S5 expansion authority is reconciled. This is implementation state only; exact-head Full-System/Browser evidence and governance synchronization are still required.
 - replacement branch: backend/030-production-runtime-evidence
 - open implementation vehicles: PR #402 / Issue #401 (active Draft); Draft PR #404 remains the 029 reconstruction vehicle; advisory-runner push-noise repair is infrastructure only
 - active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance

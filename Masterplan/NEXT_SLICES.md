@@ -117,6 +117,12 @@ After #398 is merged, the next vehicle should create **fresh run-scoped Firestor
 
 TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 control-plane reconstruction remains historical context; PR #398 is the reviewed structural baseline now landed on `main`. No historical vehicle is reopened as a parallel current implementation path.
 
+## 2026-09-24 029 spatial acceptance companion
+
+PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Exact branch head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` contains the current structural acceptance hardening: S5 now evaluates both outer housings and sibling inner Pods as clearance obstacles; the shared world profile carries explicit structural safety envelopes for the Seat shell and outer housing; the canonical renderer source-contract tests now assert the S5 expansion mechanism rather than the retired renderer-local animation factory. The authored S4 fan geometry remains unchanged after the earlier separation regression was identified.
+
+These are repository implementation facts, not completion claims. Exact-head Full-System and Browser validation remain required, and Governance Integrity must see the synchronized canonical documents. No 029 completion, visual acceptance, deployment, or merge authorization is inferred from this checkpoint.
+
 ## 030 successor frontier
 
 The first successor implementation slice is deliberately additive:

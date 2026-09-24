@@ -183,6 +183,12 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 
 `main` remains the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. The #393 governance/advisory normalization is implemented in PR #395 and is closure-pending rather than an active implementation stream. Superseded vehicles remain historical and must not become parallel current slices.
 
+## 2026-09-24 029 exact-head spatial acceptance hardening
+
+PR #404 remains the Draft reconstruction vehicle for the remaining 029 spatial acceptance work. Its exact current head is `965f0fb7db1ccf85fca8e30e7790d5f48404f768`. The implementation now keeps the authored S4 division fan unchanged while adding explicit structural safety envelopes at the shared world-profile boundary: `+0.5` for the Seat shell and `+2.4` for the outer-housing radial envelope. S5's regression coverage evaluates Seat counts 1–10, shell states 0/0.5/1, all seven authored division identities, outer housings, and sibling Pods under the same conservative AABB clearance model used by the planner. The stale canonical-renderer source assertions were also reconciled to `createMachineExpansionMechanism`, the current S5-owned animation authority.
+
+This checkpoint records implementation state only. Exact-head CI must still prove the geometry and browser contracts, and the six canonical synchronization files must participate in governance validation. 029 remains open for final runtime/browser acceptance and human acceptance.
+
 ## 2026-09-23 advisory control-plane reconciliation
 
 Issue #406 is being addressed through PR #407 as shared CI infrastructure, not as a product implementation slice. Automatic advisory fan-out now has a single preflight for the explicit `Owning Issue:` / `Governing Issue:` declaration, while `none`/`n/a` are valid explicit no-issue states. This does not change the current 029 spatial implementation frontier or merge authority.
