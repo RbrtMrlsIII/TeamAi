@@ -17,11 +17,11 @@ const retiredRunner='.github/workflows/'+'ai-advisory-review-runner-'+'v2.yml';
 const retired=['1→2→2','150-second','2 minutes 30 seconds','one shared OpenRouter API key','comment-driven orchestration state','skills/governance/nemotron-copilot-review','.github/workflows/nemotron-copilot-review.yml','docs/TEAMAI_029_CURRENT_STATE_MAP.md'];
 assert.equal(exists('.github/workflows/ai-advisory-review-runner.yml'),true);
 assert.equal(exists(retiredRunner),false);
-assert.match(files.sequence,/uses: \.\/\.github\/workflows\/ai-advisory-review-runner-v2\.yml/);
-assert.match(files.manual,/uses: \.\/\.github\/workflows\/ai-advisory-review-runner-v2\.yml/);
-assert.doesNotMatch(files.sequence,/ai-advisory-review-runner\.yml/);
-assert.doesNotMatch(files.manual,/ai-advisory-review-runner\.yml/);
-assert.match(files.runner,/workflow_call:/);assert.match(files.runner,/inputs\\.invocation_class/);assert.doesNotMatch(files.runner,/^  push:/m);assert.doesNotMatch(files.runner,/ignore_direct_push:/);
+assert.ok(files.sequence.includes('uses: ./.github/workflows/ai-advisory-review-runner.yml'));
+assert.ok(files.manual.includes('uses: ./.github/workflows/ai-advisory-review-runner.yml'));
+assert.doesNotMatch(files.sequence,/ai-advisory-review-runner-v2\.yml/);
+assert.doesNotMatch(files.manual,/ai-advisory-review-runner-v2\.yml/);
+assert.match(files.runner,/workflow_call:/);assert.match(files.runner,/inputs\.invocation_class/);assert.doesNotMatch(files.runner,/^  push:/m);assert.doesNotMatch(files.runner,/ignore_direct_push:/);assert.doesNotMatch(files.runner,/github\.event_name/);
 assert.doesNotMatch(files.runner,/github\\.event_name == 'workflow_call'/);
 
 assert.doesNotMatch(files.runner,/github\\.event_name != 'workflow_call'/);
