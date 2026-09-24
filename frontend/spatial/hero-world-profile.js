@@ -11,7 +11,6 @@ export const MACHINE_WORLD_PROFILE = Object.freeze({
 
 // Reserved radial envelope for the four outer facility housings. This is a structural
 // world-profile constraint so S5 can enforce clearance without redesigning S4 geometry.
-export const MACHINE_SEAT_SHELL_SAFETY_BUFFER = 0.4;
 export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 2.3;
 
 export function seatPopulationDensity(seatCount) {
@@ -20,11 +19,6 @@ export function seatPopulationDensity(seatCount) {
 
 export function deriveMachineWorldProfile(seatCount) {
   const density = seatPopulationDensity(seatCount);
-  const seatShellRadius = lerp(
-    MACHINE_WORLD_PROFILE.seatShellRadius.min,
-    MACHINE_WORLD_PROFILE.seatShellRadius.max,
-    density,
-  ) + MACHINE_SEAT_SHELL_SAFETY_BUFFER;
   const outerHousingRadius = lerp(
     MACHINE_WORLD_PROFILE.outerHousingRadius.min,
     MACHINE_WORLD_PROFILE.outerHousingRadius.max,
@@ -37,7 +31,11 @@ export function deriveMachineWorldProfile(seatCount) {
       MACHINE_WORLD_PROFILE.workspaceFootprint.max,
       density,
     ),
-    seatShellRadius,
+    seatShellRadius: lerp(
+      MACHINE_WORLD_PROFILE.seatShellRadius.min,
+      MACHINE_WORLD_PROFILE.seatShellRadius.max,
+      density,
+    ),
     outerHousingRadius,
     cameraDistance: lerp(
       MACHINE_WORLD_PROFILE.cameraDistance.min,
@@ -59,7 +57,7 @@ export function deriveExpandedMachineCoreRadii(seatCount, expansionAmount = 0) {
     MACHINE_WORLD_PROFILE.seatShellRadius.min,
     MACHINE_WORLD_PROFILE.seatShellRadius.max,
     density,
-  ) + MACHINE_SEAT_SHELL_SAFETY_BUFFER;
+  );
   const expandedSeatShellRadius = baseSeatShellRadius + 0.5;
   const baseOuterHousingRadius = lerp(
     MACHINE_WORLD_PROFILE.outerHousingRadius.min,

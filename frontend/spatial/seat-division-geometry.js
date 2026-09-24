@@ -43,7 +43,7 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
     0.2,
   );
   const t = clamp(amount, 0, 1);
-  return scale * (1.4 + 0.3 * t);
+  return scale * (1.7 + 0.5 * t);
 }
 
 export function resolveSeatDivisionSemanticId(id) {
