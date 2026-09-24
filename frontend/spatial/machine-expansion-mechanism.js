@@ -322,11 +322,13 @@ export function deriveMachineSeatDivisionExpansionPlan({
   const plan = deriveMachineExpansionClearancePlan({
     startSubject: startAssembly.subject,
     endSubject: endAssembly.subject,
+    // Clearance is applied exactly once by resolveMaxSafeAmount().
+    // Do not pre-pad part bounds here or the planner would double-count it.
     obstacles: Array.isArray(obstacles)
       ? obstacles.map((obstacle) =>
         obstacle?.min && obstacle?.max
           ? obstacle
-          : partBounds(obstacle, clearance),
+          : partBounds(obstacle),
       ).filter(Boolean)
       : [],
     clearance,
