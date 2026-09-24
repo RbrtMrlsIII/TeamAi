@@ -306,7 +306,8 @@ test('workspace profile is frame-scoped and reused for the R0 receiving core', a
   assert.match(renderer, /expansionAmount: choreography\.transformation/);
 });
 
-test('canonical renderer computes topology-edge count before publishing it', () => {
+test('canonical renderer computes topology-edge count before publishing it', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const declaration = renderer.indexOf('const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(');
   const publication = renderer.indexOf('canvas.dataset.machineWorldTopologyRenderedEdges = String(renderedWorldTopologyEdges);');
   assert.ok(declaration >= 0);
