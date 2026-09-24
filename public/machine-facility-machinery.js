@@ -14,25 +14,29 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V3';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V4';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 const MACHINE_PROFILES = Object.freeze({
   analysis: Object.freeze({
     label: 'Telescoping analysis',
     componentRoles: Object.freeze(['barrel-stage-1', 'barrel-stage-2', 'barrel-stage-3', 'focus-ring', 'analysis-lens']),
+    payloadSurfaceRole: 'analysis-lens',
   }),
   operations: Object.freeze({
     label: 'Fin / structural deployment',
     componentRoles: Object.freeze(['hinge-core', 'deployment-fin', 'deployment-fin-secondary', 'clamp-ring', 'structural-spine']),
+    payloadSurfaceRole: 'deployment-fin',
   }),
   control: Object.freeze({
     label: 'Rotational core / analysis',
     componentRoles: Object.freeze(['rotor-hub', 'rotor-ring', 'rotor-ring-secondary', 'analysis-chamber', 'control-collar']),
+    payloadSurfaceRole: 'analysis-chamber',
   }),
   'access-commerce': Object.freeze({
     label: 'Sensor / communication',
     componentRoles: Object.freeze(['sensor-mast', 'sensor-dish', 'sensor-array', 'communication-antenna', 'signal-ring']),
+    payloadSurfaceRole: 'sensor-dish',
   }),
 });
 
@@ -268,6 +272,26 @@ function buildGraph(components) {
   })));
 }
 
+
+function buildMachinePayloadSurface(machineRole, assembly, components) {
+  const role = MACHINE_PROFILES[machineRole]?.payloadSurfaceRole;
+  const source = components.find((entry) => entry.role === role);
+  if (!role || !source) return null;
+
+  const semanticId = assembly.branchId + ':PAYLOAD-SURFACE';
+  return Object.freeze({
+    id: 'MACHINERY:' + assembly.branchId + ':PAYLOAD-SURFACE',
+    role: 'facility-payload-surface',
+    profile: 'facility-payload:' + machineRole,
+    componentId: source.id,
+    center: Object.freeze({ ...source.center }),
+    dimensions: Object.freeze({ ...source.dimensions }),
+    materialRole: source.materialRole,
+    ...rootContext(semanticId),
+    presentationOnly: true,
+  });
+}
+
 function centerDistanceXZ(a, b) {
   return Math.hypot(
     finite(a?.x) - finite(b?.x),
@@ -314,6 +338,7 @@ function deriveFacilityClearanceProfile(machine, obstacles = [], clearance = 0.1
     : Infinity;
   return Object.freeze({
     requiredClearance: required,
+    selfCenter: Object.freeze({ ...selfCenter }),
     minimumAvailableClearance: minimum,
     safe: minimum >= required,
     nearestObstacleId: measured.find((entry) => entry.availableClearance === minimum)?.obstacleId || null,
@@ -375,6 +400,7 @@ export function deriveMachineFacilityMachinery({
       { amount: 1, reducedMotion: true },
     );
     const maxMotionById = new Map(maxPresentation.components.map((entry) => [entry.id, entry]));
+    const payloadSurface = buildMachinePayloadSurface(assembly.machineRole, assembly, components);
     const subject = deriveMachineSubject(
       components.map((entry) => {
         const motion = maxMotionById.get(entry.id);
@@ -410,7 +436,9 @@ export function deriveMachineFacilityMachinery({
       profileLabel: profile?.label || assembly.machineRole,
       facilityIds: Object.freeze(assembly.facilities.map((facility) => facility.id)),
       facilityAssemblyId: assembly.id,
+      outerHousing: assembly.outerHousing,
       components,
+      payloadSurface,
       mechanismGraph: buildGraph(components),
       ports,
       subject,
@@ -470,6 +498,9 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
     if (!(Number(machine?.envelope?.radius) > 0)) reasons.push(machine?.id + ':ENVELOPE_INVALID');
     if (!(Number(machine?.envelope?.height) > 0)) reasons.push(machine?.id + ':ENVELOPE_HEIGHT_INVALID');
     if (!machine?.facilityAssemblyId) reasons.push(machine?.id + ':S6_ASSEMBLY_REFERENCE_MISSING');
+    if (!machine?.outerHousing?.center || !machine?.outerHousing?.dimensions) reasons.push(machine?.id + ':OUTER_HOUSING_ANCHOR_MISSING');
+    if (!machine?.payloadSurface?.componentId || !machine?.payloadSurface?.center || !machine?.payloadSurface?.dimensions) reasons.push(machine?.id + ':PAYLOAD_SURFACE_MISSING');
+    if (machine?.payloadSurface?.componentId && !(machine.components || []).some((entry) => entry?.id === machine.payloadSurface.componentId)) reasons.push(machine?.id + ':PAYLOAD_SURFACE_COMPONENT_MISSING');
     if (!machine?.clearanceProfile || !Number.isFinite(Number(machine.clearanceProfile.minimumAvailableClearance))) {
       reasons.push(machine?.id + ':FACILITY_CLEARANCE_UNPROVEN');
     } else if (!machine.clearanceProfile.safe) {

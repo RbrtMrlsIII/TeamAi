@@ -68,7 +68,7 @@ Exit: root inheritance is explicit, traceable, and enforceable across the entire
 - [ ] Verify actual articulated division paths against all seven-child index positions and outer-facility envelopes.
 - [ ] Replace the current simple envelope assumptions with geometry-aware collision/clearance calculation.
 
-Diagnosis: the structural graph, first-frame renderer, and adaptive clearance foundations are now operational. The previous 0.148-unit radial envelope discrepancy is closed at the current 10-seat profile; remaining physical gaps are primarily S7 specialized machinery differentiation and S33 human acceptance.
+Diagnosis: the structural graph, first-frame renderer, adaptive clearance foundations, and S7 specialized machine grammars are now operational. The previous 0.148-unit radial envelope discrepancy is closed at the current 10-seat profile; remaining physical gaps are exact articulated-path verification, geometry-aware collision/clearance, later product/runtime slices, and human acceptance.
 
 ## B. S0 — Forensics and baseline freeze
 - [ ] Re-read Product Law, #278, #396, #400, #392, #83 and current Masterplan.
