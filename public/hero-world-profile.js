@@ -9,9 +9,10 @@ export const MACHINE_WORLD_PROFILE = Object.freeze({
   seatScale: Object.freeze({ min: 1, max: 0.78 }),
 });
 
-// Reserved radial envelope for the four outer facility housings. This is a structural
-// world-profile constraint so S5 can enforce clearance without redesigning S4 geometry.
-export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 2.3;
+// Structural safety envelopes keep S5 clearance solvable without allowing the
+// expansion layer to become a second source of world-scale geometry.
+export const MACHINE_SEAT_SHELL_SAFETY_BUFFER = 0.5;
+export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 2.4;
 
 export function seatPopulationDensity(seatCount) {
   return clamp01((Math.max(1, Number(seatCount) || 1) - 1) / 9);
@@ -19,6 +20,11 @@ export function seatPopulationDensity(seatCount) {
 
 export function deriveMachineWorldProfile(seatCount) {
   const density = seatPopulationDensity(seatCount);
+  const seatShellRadius = lerp(
+    MACHINE_WORLD_PROFILE.seatShellRadius.min,
+    MACHINE_WORLD_PROFILE.seatShellRadius.max,
+    density,
+  ) + MACHINE_SEAT_SHELL_SAFETY_BUFFER;
   const outerHousingRadius = lerp(
     MACHINE_WORLD_PROFILE.outerHousingRadius.min,
     MACHINE_WORLD_PROFILE.outerHousingRadius.max,
@@ -31,11 +37,7 @@ export function deriveMachineWorldProfile(seatCount) {
       MACHINE_WORLD_PROFILE.workspaceFootprint.max,
       density,
     ),
-    seatShellRadius: lerp(
-      MACHINE_WORLD_PROFILE.seatShellRadius.min,
-      MACHINE_WORLD_PROFILE.seatShellRadius.max,
-      density,
-    ),
+    seatShellRadius,
     outerHousingRadius,
     cameraDistance: lerp(
       MACHINE_WORLD_PROFILE.cameraDistance.min,
@@ -57,7 +59,7 @@ export function deriveExpandedMachineCoreRadii(seatCount, expansionAmount = 0) {
     MACHINE_WORLD_PROFILE.seatShellRadius.min,
     MACHINE_WORLD_PROFILE.seatShellRadius.max,
     density,
-  );
+  ) + MACHINE_SEAT_SHELL_SAFETY_BUFFER;
   const expandedSeatShellRadius = baseSeatShellRadius + 0.5;
   const baseOuterHousingRadius = lerp(
     MACHINE_WORLD_PROFILE.outerHousingRadius.min,
