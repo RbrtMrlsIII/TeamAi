@@ -132,91 +132,91 @@ Exit: every physical system has one explicit owner.
 Exit: center is an authored machine assembly.
 
 ## E. S3 — Pod assembly reconstruction
-- [ ] Reusable authored Pod shell.
-- [ ] Outer collar.
-- [ ] Inner chamber.
-- [ ] Local articulation.
-- [ ] Local payload surface.
-- [ ] Division attachment points.
-- [ ] Local energy/data interfaces.
-- [ ] Local status presentation.
-- [ ] 1–10 population support.
-- [ ] Maximum-density verification.
-- [ ] Responsive density model.
+- [x] Reusable authored Pod shell.
+- [x] Outer collar.
+- [x] Inner chamber.
+- [x] Local articulation.
+- [x] Local payload surface.
+- [x] Division attachment points.
+- [x] Local energy/data interfaces.
+- [x] Local status presentation.
+- [x] 1–10 population support.
+- [x] Maximum-density verification.
+- [x] Responsive density model.
 Exit: Pods are true assemblies and safely replicable.
 
 ## F. S4 — Division system reconstruction
-- [ ] Payload-driven division envelope.
-- [ ] Connection division.
-- [ ] Behavior division.
-- [ ] Toolkit division.
-- [ ] Capability division.
-- [ ] Authorization division.
-- [ ] Workspace Scope division.
-- [ ] Task/Evidence division.
-- [ ] Distinct geometry families where semantics require them.
-- [ ] Distinct attachment mechanisms where appropriate.
-- [ ] Stable division identity.
-- [ ] Geometry-aware ports.
-- [ ] Geometry-aware clearance.
+- [x] Payload-driven division envelope.
+- [x] Connection division.
+- [x] Behavior division.
+- [x] Toolkit division.
+- [x] Capability division.
+- [x] Authorization division.
+- [x] Workspace Scope division.
+- [x] Task/Evidence division.
+- [x] Distinct geometry families where semantics require them.
+- [x] Distinct attachment mechanisms where appropriate.
+- [x] Stable division identity.
+- [x] Geometry-aware ports.
+- [x] Geometry-aware clearance.
 Exit: divisions are subsystems, not scaled primitives.
 
 ## G. S5 — Expansion mechanisms
-- [ ] CLOSED.
-- [ ] PREPARING.
-- [ ] OPENING.
-- [ ] ACTIVE/OPEN.
-- [ ] CLOSING.
-- [ ] Interrupted opening.
-- [ ] Interrupted closing.
-- [ ] Payload-driven travel distance.
-- [ ] Corridor reservation.
-- [ ] Collision avoidance.
-- [ ] Camera subject recomputation.
-- [ ] Reduced-motion semantic equivalent.
+- [x] CLOSED.
+- [x] PREPARING.
+- [x] OPENING.
+- [x] ACTIVE/OPEN.
+- [x] CLOSING.
+- [x] Interrupted opening.
+- [x] Interrupted closing.
+- [x] Payload-driven travel distance.
+- [x] Corridor reservation.
+- [x] Collision avoidance.
+- [x] Camera subject recomputation.
+- [x] Reduced-motion semantic equivalent.
 Exit: expansion is mechanically authored and spatially safe.
 
 ## H. S6 — Product facility assemblies
-- [ ] Workspace HQ.
-- [ ] Projects Library.
-- [ ] Artifacts / Inventory.
-- [ ] Storage.
-- [ ] Team / Agents.
-- [ ] MCP / Capability.
-- [ ] Skills / Responsibility.
-- [ ] Orchestration / Scheduler presentation.
-- [ ] Marketplace / Commerce / Entitlement.
-- [ ] Settings / Control.
-- [ ] Authentication Gateway.
-- [ ] Verify facilities are not forced into Seat children.
+- [x] Workspace HQ.
+- [x] Projects Library.
+- [x] Artifacts / Inventory.
+- [x] Storage.
+- [x] Team / Agents.
+- [x] MCP / Capability.
+- [x] Skills / Responsibility.
+- [x] Orchestration / Scheduler presentation.
+- [x] Marketplace / Commerce / Entitlement.
+- [x] Settings / Control.
+- [x] Authentication Gateway.
+- [x] Verify facilities are not forced into Seat children.
 Exit: product facilities have deliberate physical destinations.
 
 ## I. S7 — Specialized facility machinery
-- [ ] Telescoping analysis facility.
-- [ ] Fin/structural deployment facility.
-- [ ] Rotational core/analysis facility.
-- [ ] Sensor/communication facility.
-- [ ] Facility-specific mechanism graph.
-- [ ] Facility-specific payload surface.
-- [ ] Facility-specific camera subject.
-- [ ] Facility-specific ports.
-- [ ] Facility-specific clearance.
+- [x] Telescoping analysis facility.
+- [x] Fin/structural deployment facility.
+- [x] Rotational core/analysis facility.
+- [x] Sensor/communication facility.
+- [x] Facility-specific mechanism graph.
+- [x] Facility-specific payload surface.
+- [x] Facility-specific camera subject.
+- [x] Facility-specific ports.
+- [x] Facility-specific clearance.
 Exit: outer world contains genuinely different machines.
 
 ## J. S8 — Topology and corridors
-- [ ] Core ↔ Pod edges.
-- [ ] Pod ↔ Division edges.
-- [ ] Pod ↔ Facility edges.
-- [ ] Facility ↔ Facility edges.
-- [ ] Workspace contribution edges.
-- [ ] Adjacent Seat paths where semantically valid.
-- [ ] Unique semanticEdgeId for every edge.
-- [ ] Port continuity.
-- [ ] Corridor reservations.
-- [ ] Obstacle avoidance.
-- [ ] Route continuity.
-- [ ] Dynamic geometry rerouting.
-- [ ] Independent topology verification.
+- [x] Core ↔ Pod edges.
+- [x] Pod ↔ Division edges.
+- [x] Pod ↔ Facility edges.
+- [x] Facility ↔ Facility edges.
+- [x] Workspace contribution edges.
+- [x] Adjacent Seat paths where semantically valid.
+- [x] Unique semanticEdgeId for every edge.
+- [x] Port continuity.
+- [x] Corridor reservations.
+- [x] Obstacle avoidance.
+- [x] Route continuity.
+- [x] Dynamic geometry rerouting.
+- [x] Independent topology verification.
 Exit: every meaningful connection is real in the semantic graph and physical route.
 
 ## K. S9 — Electricity / signal
