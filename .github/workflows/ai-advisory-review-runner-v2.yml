@@ -1,0 +1,934 @@
+name: AI Advisory Review Runner
+
+on:
+  workflow_call:
+    inputs:
+      reviewer:
+        description: Reviewer display name
+        required: true
+        type: string
+      credential_alias:
+        description: Non-secret credential alias used by this advisory slot
+        required: true
+        type: string
+      reviewer_slug:
+        description: Stable reviewer identifier
+        required: true
+        type: string
+      pr_number:
+        description: Pull request number
+        required: true
+        type: string
+      expected_head:
+        description: Expected exact head SHA. Empty for a manual review that targets the current head.
+        required: false
+        default: ''
+        type: string
+      governing_issue_kind:
+        description: Normalized advisory Issue declaration kind from the one-time preflight.
+        required: true
+        type: string
+      governing_issue_number:
+        description: Normalized advisory Issue number when the declaration kind is ISSUE.
+        required: false
+        default: ''
+        type: string
+      invocation_class:
+        description: automatic or manual
+        required: true
+        type: string
+      start_delay_seconds:
+        description: Bounded automatic slot launch delay in seconds
+        required: false
+        default: 0
+        type: number
+      automatic_marker:
+        description: Reviewer-specific automatic marker
+        required: true
+        type: string
+      manual_marker:
+        description: Reviewer-specific manual marker
+        required: true
+        type: string
+    secrets:
+      api_key:
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: ai-review-runner-${{ inputs.reviewer_slug }}-${{ inputs.pr_number }}-${{ inputs.expected_head || 'manual' }}
+  cancel-in-progress: false
+
+env:
+  MAX_REVIEW_CHARS: '12000'
+  PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: '300'
+  VALIDATION_POLL_SECONDS: '10'
+  VALIDATION_TIMEOUT_SECONDS: '900'
+  REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Read exact PR metadata
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ inputs.pr_number }}
+          EXPECTED_HEAD: ${{ inputs.expected_head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/pulls/$PR" > /tmp/pr.json
+          actual_head="$(jq -r '.head.sha' /tmp/pr.json)"
+          base="$(jq -r '.base.sha' /tmp/pr.json)"
+          title="$(jq -r '.title' /tmp/pr.json)"
+          body="$(jq -r '.body // ""' /tmp/pr.json)"
+          if [[ -n "$EXPECTED_HEAD" && "$actual_head" != "$EXPECTED_HEAD" ]]; then
+            echo "Exact-head guard failed: expected $EXPECTED_HEAD but current PR head is $actual_head."
+            exit 1
+          fi
+          printf '%s\n' "$actual_head" > /tmp/head.sha
+          printf '%s\n' "$base" > /tmp/base.sha
+          printf '%s\n' "$title" > /tmp/title
+          printf '%s\n' "$body" > /tmp/body
+          echo "head=$actual_head" >> "$GITHUB_OUTPUT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout exact PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.meta.outputs.head }}
+          fetch-depth: 0
+
+      - name: Wait for substantive exact-head validators
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          EXPECTED_HEAD: ${{ steps.meta.outputs.head }}
+          REQUIRED: ${{ env.REQUIRED_CHECKS }}
+          POLL_SECONDS: ${{ env.VALIDATION_POLL_SECONDS }}
+          TIMEOUT_SECONDS: ${{ env.VALIDATION_TIMEOUT_SECONDS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_ref="$(gh api "repos/$REPO/pulls/$PR" --jq '.base.ref')"
+          if [[ "$base_ref" != "main" ]]; then
+            REQUIRED="$(jq -c 'del(.[] | select(. == "CodeQL analyze (javascript-typescript)"))' <<< "$REQUIRED")"
+          fi
+          start="$(date +%s)"
+          while true; do
+            current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+            [[ "$current_head" == "$EXPECTED_HEAD" ]] || {
+              echo "Exact-head guard failed: PR moved from $EXPECTED_HEAD to $current_head."
+              exit 1
+            }
+            checks="$(gh api "repos/$REPO/commits/$EXPECTED_HEAD/check-runs?per_page=100")"
+            pending=0
+            failed=0
+            : > /tmp/validation-status.txt
+            while IFS= read -r check_name; do
+              check="$(jq -c --arg name "$check_name" --arg head "$EXPECTED_HEAD" '[.check_runs[] | select(.name == $name and .head_sha == $head)] | sort_by(.started_at // .created_at) | last // empty' <<< "$checks")"
+              if [[ -z "$check" ]]; then
+                printf '%s\tPENDING\tmissing exact-head check\n' "$check_name" >> /tmp/validation-status.txt
+                pending=1
+                continue
+              fi
+              status="$(jq -r '.status' <<< "$check")"
+              conclusion="$(jq -r '.conclusion // ""' <<< "$check")"
+              url="$(jq -r '.html_url' <<< "$check")"
+              if [[ "$status" == "completed" && "$conclusion" == "success" ]]; then
+                printf '%s\tPASS\t%s\n' "$check_name" "$url" >> /tmp/validation-status.txt
+              elif [[ "$status" == "completed" ]]; then
+                printf '%s\tFAIL\tconclusion=%s\t%s\n' "$check_name" "$conclusion" "$url" >> /tmp/validation-status.txt
+                failed=1
+              else
+                printf '%s\tPENDING\tstatus=%s\t%s\n' "$check_name" "$status" "$url" >> /tmp/validation-status.txt
+                pending=1
+              fi
+            done < <(jq -r '.[]' <<< "$REQUIRED")
+            cat /tmp/validation-status.txt
+            if (( failed == 1 )); then
+              echo 'VALIDATION_GATE=FAIL'
+              exit 1
+            fi
+            if (( pending == 0 )); then
+              echo 'VALIDATION_GATE=PASS'
+              break
+            fi
+            elapsed=$(( $(date +%s) - start ))
+            if (( elapsed >= TIMEOUT_SECONDS )); then
+              echo "Validation gate timed out after ${TIMEOUT_SECONDS}s."
+              exit 1
+            fi
+            sleep "$POLL_SECONDS"
+          done
+
+      - name: Collect exact-head execution evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          REQUIRED_CHECKS: ${{ env.REQUIRED_CHECKS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_ref="$(gh api "repos/$REPO/pulls/${{ inputs.pr_number }}" --jq '.base.ref')"
+          required_checks="$REQUIRED_CHECKS"
+          if [[ "$base_ref" != "main" ]]; then
+            required_checks="$(jq -c 'del(.[] | select(. == "CodeQL analyze (javascript-typescript)"))' <<< "$required_checks")"
+          fi
+          gh api "repos/$REPO/commits/$HEAD/check-runs?per_page=100" > /tmp/check-runs.json
+          test -s /tmp/check-runs.json
+          {
+            echo '=== VALIDATION GATE ==='
+            echo "head=$HEAD"
+            echo 'status=PASS'
+            echo '=== REQUIRED CHECKS ==='
+            jq -r --arg head "$HEAD" --argjson required "$required_checks" '.check_runs | map(select(.head_sha == $head)) | map({(.name): .}) | add // {} | . as $by_name | $required[] | $by_name[.] | [ .name, .status, (.conclusion // ""), .html_url, (.output.title // ""), (.output.summary // "") ] | @tsv' /tmp/check-runs.json
+          } > /tmp/execution-evidence.txt
+
+      - name: Collect governing Issue state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          GOVERNING_ISSUE_KIND: ${{ inputs.governing_issue_kind }}
+          GOVERNING_ISSUE_NUMBER: ${{ inputs.governing_issue_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          issue_kind="$GOVERNING_ISSUE_KIND"
+          issue_number="$GOVERNING_ISSUE_NUMBER"
+          if [[ "$issue_kind" == "NONE" ]]; then
+            cat > /tmp/issue-context.txt <<'EOF'
+=== GOVERNING ISSUE ===
+No governing issue declared for this advisory review.
+The explicit PR field uses the accepted no-issue value (none or n/a).
+EOF
+            exit 0
+          fi
+          if [[ "$issue_kind" != "ISSUE" || -z "$issue_number" ]]; then
+            echo 'PRE_PROVIDER_FAILURE: normalized advisory issue declaration is invalid.' > /tmp/provider-failure.txt
+            exit 1
+          fi
+          gh api "repos/$REPO/issues/$issue_number" > /tmp/issue.json
+          test -s /tmp/issue.json
+          {
+            echo "=== GOVERNING ISSUE #$issue_number ==="
+            jq -r '"title=" + .title, "state=" + .state, "closed_at=" + (.closed_at // "null"), "updated_at=" + .updated_at, "comments=" + (.comments | tostring)' /tmp/issue.json
+            echo '--- Issue body ---'
+            jq -r '.body // ""' /tmp/issue.json
+          } > /tmp/issue-context.txt
+
+      - name: Resolve advisory output contract and packet policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          advisory=data.get('advisory_review') or {}
+          output_contract=advisory.get('output_contract') or {}
+          packet=advisory.get('packet') or {}
+          if int(output_contract.get('max_findings_per_section',0)) != 3:
+              raise SystemExit('Advisory review must cap each finding section at three items.')
+          if int(output_contract.get('max_item_chars',0)) != 400:
+              raise SystemExit('Advisory review item character budget drifted.')
+          values={
+              'ADVISORY_MAX_FINDINGS': str(int(output_contract['max_findings_per_section'])),
+              'ADVISORY_MAX_ITEM_CHARS': str(int(output_contract['max_item_chars'])),
+              'MAX_REVIEW_PACKET_CHARS': str(int(packet['max_review_packet_chars'])),
+              'MAX_GOVERNANCE_CHARS': str(int(packet['max_governance_context_chars'])),
+              'MAX_DIFF_CHARS': str(int(packet['max_diff_chars'])),
+               'ADVISORY_MIN_EVIDENCE_ITEMS': str(int((advisory.get('quality_contract') or {}).get('min_governance_and_evidence_items', 1))),
+               'ADVISORY_MIN_REVIEW_BASIS_ITEMS': str(int((advisory.get('quality_contract') or {}).get('min_review_basis_items', 1))),
+               'ADVISORY_CHANGES_REQUIRE_REASON': str(bool((advisory.get('quality_contract') or {}).get('changes_requested_requires_finding_or_gap', True))).lower(),
+               'ADVISORY_APPROVE_NO_GAPS': str(bool((advisory.get('quality_contract') or {}).get('approve_requires_no_verification_gaps', True))).lower(),
+          }
+          with open(os.environ['GITHUB_ENV'],'a',encoding='utf-8') as out:
+              for key,value in values.items(): out.write(f'{key}={value}\n')
+          print('Resolved advisory token and packet policy from canonical manifest.')
+          PY
+
+      - name: Collect governing repository context
+        env:
+          MAX_CHARS: ${{ env.MAX_GOVERNANCE_CHARS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          files = [
+              'Product_Law/PRODUCT_LAW.md',
+              'Product_Law/WIRING.md',
+              'Masterplan/MASTERPLAN.md',
+              'Masterplan/NEXT_SLICES.md',
+              'POLICY.md',
+              'AI_ASSISTANT_READ_ME.md',
+              'PRODUCT-KNOWLEDGE.md',
+              'docs/SKILL_WIRING.md',
+              'skills/governance/ai-advisory-review/SKILL.md',
+              'skills/governance/machine-builder/SKILL.md',
+          ]
+          budget = int(os.environ['MAX_CHARS'])
+          chunks, used = [], 0
+          for path in files:
+              marker = f'=== GOVERNING FILE: {path} ===\n'
+              file_path = Path(path)
+              text = file_path.read_text(encoding='utf-8') if file_path.is_file() else '[MISSING AT EXACT PR HEAD]\n'
+              chunk = marker + text + ('\n' if not text.endswith('\n') else '')
+              if used + len(chunk) > budget:
+                  remaining = max(0, budget - used)
+                  chunks.append(chunk[:remaining])
+                  chunks.append('\n[ GOVERNING CONTEXT TRUNCATED ]\n')
+                  break
+              chunks.append(chunk)
+              used += len(chunk)
+          Path('/tmp/governing-context.txt').write_text(''.join(chunks), encoding='utf-8')
+          PY
+
+      - name: Build bounded review packet
+        env:
+          BASE: ${{ steps.meta.outputs.base }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          MAX_PACKET: ${{ env.MAX_REVIEW_PACKET_CHARS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --name-status "$BASE...$HEAD" > /tmp/changed-files.txt
+          git diff --stat "$BASE...$HEAD" > /tmp/changed-stat.txt
+          git diff --unified=12 "$BASE...$HEAD" > /tmp/changed-diff.txt
+          python - "$BASE" "$HEAD" <<'PY'
+          import json, os
+          from pathlib import Path
+          base,head=os.sys.argv[1],os.sys.argv[2]
+          changed=Path('/tmp/changed-files.txt').read_text(encoding='utf-8').splitlines()
+          diff_path=Path('/tmp/changed-diff.txt')
+          diff=diff_path.read_text(encoding='utf-8')
+          max_diff=int(os.environ['MAX_DIFF_CHARS'])
+          truncated=len(diff)>max_diff
+          if truncated:
+              diff_path.write_text(diff[:max_diff]+'\n[DIFF SECTION TRUNCATED BY DETERMINISTIC REVIEW-MANIFEST BOUND]\n',encoding='utf-8')
+          manifest={
+              'schema_version':2,
+              'base':base,
+              'exact_head':head,
+              'authority_files':['Product_Law/PRODUCT_LAW.md','Product_Law/WIRING.md','Masterplan/MASTERPLAN.md','Masterplan/NEXT_SLICES.md','POLICY.md','docs/SKILL_WIRING.md','AI_ASSISTANT_READ_ME.md','PRODUCT-KNOWLEDGE.md','skills/governance/ai-advisory-review/SKILL.md','skills/governance/machine-builder/SKILL.md'],
+              'evidence_files':['/tmp/execution-evidence.txt','/tmp/issue-context.txt'],
+              'changed_path_count':len(changed),
+              'diff_policy':{'format':'git diff --unified=12 BASE...HEAD','max_chars':max_diff,'truncated':truncated},
+              'generation_policy':{'owner':'provider/model','teamai_generation_ceiling':'unbounded_by_teamai','reasoning_control':'unbounded_by_teamai'},
+              'output_contract':{'max_findings_per_section':int(os.environ['ADVISORY_MAX_FINDINGS']),'max_item_chars':int(os.environ['ADVISORY_MAX_ITEM_CHARS'])},
+          }
+          Path('/tmp/review-manifest.json').write_text(json.dumps(manifest,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+          PY
+          {
+             echo '=== EVIDENCE POLICY ==='
+             echo "target_exact_head=$HEAD"
+             echo 'Current runtime evidence is only evidence explicitly tied to target_exact_head.'
+             echo 'Historical commit/run IDs, prior advisory comments, and earlier measurements are context only, never current-state proof.'
+             echo 'Advisory publication count and generation truncation count are telemetry, not acceptance thresholds.'
+             echo 'No requirement for 5/5 published advisory reviews or any specific truncation ratio exists unless an authoritative current contract explicitly says so.'
+             echo 'Reviewer findings must be supported by current changed paths or authoritative current contracts.'
+             echo 'Inspect changed paths first and do not require unrelated unchanged artifacts.'
+             echo
+            echo '=== PR ==='
+            cat /tmp/title
+            echo
+            echo "base=$BASE"
+            echo "head=$HEAD"
+            echo
+            cat /tmp/execution-evidence.txt
+            echo
+            cat /tmp/issue-context.txt
+            echo
+            cat /tmp/review-manifest.json
+            echo
+            cat /tmp/governing-context.txt
+            echo
+            echo '=== CHANGED FILES ==='
+            git diff --name-status "$BASE...$HEAD"
+            echo
+            echo '=== DIFF ==='
+            cat /tmp/changed-diff.txt
+          } > /tmp/review.txt
+          sed -E -i \
+            -e 's/(ADVISORY_API_KEY|FIREBASE_[A-Z0-9_]+|SUPABASE_[A-Z0-9_]+|PAYPAL_[A-Z0-9_]+)[[:space:]]*[:=][[:space:]]*[^[:space:]"'"'"'`]+/\1=[REDACTED]/g' \
+            -e 's/(ghp_|github_pat_|sk-proj-|sk-or-v1-)[A-Za-z0-9._-]+/[REDACTED]/g' \
+            /tmp/review.txt
+          if (( $(wc -c < /tmp/review.txt) > MAX_PACKET )); then
+            head -c "$MAX_PACKET" /tmp/review.txt > /tmp/review.bounded
+            mv /tmp/review.bounded /tmp/review.txt
+            printf '\n[REVIEW PACKET TRUNCATED AT %s CHARS]\n' "$MAX_PACKET" >> /tmp/review.txt
+          fi
+
+      - name: Apply bounded automatic launch stagger
+        if: inputs.invocation_class == 'automatic' && inputs.start_delay_seconds > 0
+        env:
+          START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$START_DELAY_SECONDS" in
+            ''|*[!0-9]*) echo "Invalid start delay: $START_DELAY_SECONDS" >&2; exit 1 ;;
+          esac
+          echo "Applying ${START_DELAY_SECONDS}s automatic slot launch stagger."
+          sleep "$START_DELAY_SECONDS"
+
+      - name: Confirm exact head before model invocation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          EXPECTED_HEAD: ${{ steps.meta.outputs.head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$EXPECTED_HEAD" ]] || {
+            echo "Exact-head guard failed immediately before model invocation: $current_head != $EXPECTED_HEAD."
+            exit 1
+          }
+
+      - name: Ask reviewer model
+        id: invoke_model
+        env:
+          ADVISORY_API_KEY: ${{ secrets.api_key }}
+          MODEL: openrouter/free
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
+          REVIEWER: ${{ inputs.reviewer }}
+          INVOCATION_CLASS: ${{ inputs.invocation_class }}
+          START_DELAY_SECONDS: ${{ inputs.start_delay_seconds }}
+          PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: ${{ env.PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$ADVISORY_API_KEY"
+          python - "$CREDENTIAL_ALIAS" <<'PY'
+          import json, sys
+          from pathlib import Path
+          alias=sys.argv[1]
+          manifest=json.loads(Path('.github/teamai/authority-manifest.yml').read_text(encoding='utf-8'))
+          advisory=manifest.get('advisory_review') or {}
+          aliases={str(slot.get('credential_alias')) for slot in (advisory.get('slots') or [])}
+          if advisory.get('route') != 'openrouter/free' or alias not in aliases:
+              raise SystemExit(f'CREDENTIAL_ALIAS_CONFIGURATION_FAILURE: unsupported credential alias {alias}')
+          print(f'Credential alias {alias} validated against canonical advisory registry.')
+          PY
+          set +e
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import signal
+          import sys
+          import time
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          api_key = os.environ['ADVISORY_API_KEY']
+          model = os.environ['MODEL']
+          reviewer = os.environ['REVIEWER']
+          packet = Path('/tmp/review.txt').read_text(encoding='utf-8')
+          system = '\n'.join([
+              f'You are the independent advisory {reviewer} reviewer for the TeamAi repository.',
+              'The packet contains exact-head execution evidence, governing documents and applicable Skills, owning Issue state, and the PR diff.',
+              'The workflow has already blocked invocation until every required substantive exact-head check completed successfully.',
+              'Review repository truth, product logic, governing rules, documentation, Issue state, execution evidence, and changed code.',
+              'Authority order: Product Law -> Masterplan -> POLICY/ORUCAVEAM -> Skill wiring -> applicable Skills -> Issue -> PR.',
+              'Never invent requirements or recommend weakening governance or validators.',
+               'Current-head evidence policy is authoritative: only evidence tied to this exact target head is current runtime proof; older run IDs and historical comments are context only.'
+               'Do not invent acceptance thresholds. The five-slot advisory sequence has no 5/5 publication threshold and no truncation-count threshold; those are telemetry signals only.'
+               'A provider HTTP success or advisory workflow success does not itself establish product acceptance, merge authorization, or Issue closure.'
+               'Do not claim secret-expression defects unless the exact current workflow source or current execution behavior demonstrates one.'
+               'Do not claim packet/diff truncation unless the current review-manifest explicitly says the relevant section is truncated or the packet contains its explicit truncation marker.'
+               'Do not require unrelated unchanged artifacts, historical censuses, or model-specific documents unless the current changed paths or authoritative contract makes them relevant.'
+              'Never treat a PR claim as execution proof when the packet disagrees.',
+              'Never treat an open Issue as resolved merely because a PR satisfies one slice. Report the actual Issue state and checklist/completion evidence present in the packet.',
+              'Skipped, stale, unrelated, or head-mismatched checks are not passing evidence.',
+              'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
+              'If material execution, governance, applicable-Skill, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
+              'Token-efficiency contract: inspect changed paths first, use authority-relevant evidence only as needed, do not restate the packet, and stop once the decision is supported.',
+              'Keep the visible structured review concise: 1 to 3 items per section and no more than 400 characters per item.',
+              '',
+              'Return one JSON object only. Do not expose hidden reasoning, internal deliberation, or repeated self-corrections.',
+              'The JSON verdict field must be one of APPROVE, CHANGES_REQUESTED, or ADVISORY_ONLY.',
+              'blocking_findings, governance_and_evidence, verification_gaps, non_blocking_observations, and review_basis must each be arrays of at most 3 concise strings, each no longer than 400 characters.',
+               'Use an empty array only where the evidence is genuinely absent; governance_and_evidence and review_basis must each contain at least one concrete statement.',
+               'Never write a bare APPROVE with all evidence arrays empty. A published review must demonstrate what was inspected and why the verdict follows.',
+               'Do not claim diff or governing-context truncation unless review-manifest.json explicitly reports truncation or the packet contains a truncation marker.',
+              'Use the response_format schema exactly; do not return Markdown headings or any content outside the JSON object.'
+          ])
+          payload = {
+              'model': model,
+              'messages': [
+                  {'role': 'system', 'content': system},
+                  {'role': 'user', 'content': 'Repository PR verification packet:\n\n' + packet},
+              ],
+              'temperature': 0.1,
+              'provider': {'require_parameters': True},
+              'plugins': [{'id': 'response-healing'}],
+              'stream': False,
+              'response_format': {
+                  'type': 'json_schema',
+                  'json_schema': {
+                      'name': 'teamai_advisory_review',
+                      'strict': True,
+                      'schema': {
+                          'type': 'object',
+                          'additionalProperties': False,
+                          'properties': {
+                              'verdict': {'type': 'string', 'enum': ['APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY']},
+                              'blocking_findings': {'type': 'array', 'items': {'type': 'string', 'maxLength': 400}, 'maxItems': 3},
+                              'governance_and_evidence': {'type': 'array', 'items': {'type': 'string', 'maxLength': 400}, 'maxItems': 3},
+                              'verification_gaps': {'type': 'array', 'items': {'type': 'string', 'maxLength': 400}, 'maxItems': 3},
+                              'non_blocking_observations': {'type': 'array', 'items': {'type': 'string', 'maxLength': 400}, 'maxItems': 3},
+                              'review_basis': {'type': 'array', 'items': {'type': 'string', 'maxLength': 400}, 'maxItems': 3},
+                          },
+                          'required': ['verdict', 'blocking_findings', 'governance_and_evidence', 'verification_gaps', 'non_blocking_observations', 'review_basis'],
+                      },
+                  },
+              },
+          }
+          body = json.dumps(payload).encode('utf-8')
+          Path('/tmp/payload.json').write_bytes(body)
+          Path('/tmp/review.md').unlink(missing_ok=True)
+
+          max_attempts = 1 if os.environ.get('INVOCATION_CLASS') == 'automatic' else 3
+          wall_timeout = int(os.environ.get('PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS', '300'))
+          if wall_timeout <= 0:
+              raise SystemExit('PROVIDER_WALL_CLOCK_TIMEOUT_CONFIGURATION_FAILURE: timeout must be positive.')
+
+          class ProviderWallClockTimeout(Exception):
+              pass
+
+          def _raise_wall_clock_timeout(signum, frame):
+              raise ProviderWallClockTimeout(f'provider call exceeded TeamAi wall-clock limit of {wall_timeout}s')
+
+          if hasattr(signal, 'SIGALRM'):
+              signal.signal(signal.SIGALRM, _raise_wall_clock_timeout)
+
+          for attempt in range(1, max_attempts + 1):
+              request = urllib.request.Request(
+                  'https://openrouter.ai/api/v1/chat/completions',
+                  data=body,
+                  method='POST',
+              )
+              request.add_header('Authorization', f'Bearer {api_key}')
+              request.add_header('Content-Type', 'application/json')
+              request.add_header('X-OpenRouter-Metadata', 'enabled')
+              request.add_header('HTTP-Referer', 'https://github.com/' + os.environ.get('GITHUB_REPOSITORY', 'RbrtMrlsIII/TeamAi'))
+              request.add_header('X-Title', f'TeamAi {reviewer} Advisory Review')
+
+              status = None
+              raw = b''
+              headers = {}
+              try:
+                  if hasattr(signal, 'SIGALRM'):
+                      signal.setitimer(signal.ITIMER_REAL, wall_timeout)
+                  Path('/tmp/provider-attempted.json').write_text(json.dumps({
+                      'attempt': attempt,
+                      'requested_model': model,
+                  }, sort_keys=True), encoding='utf-8')
+                  with urllib.request.urlopen(request, timeout=180) as response:
+                      status = int(response.status)
+                      raw = response.read()
+                      headers = dict(response.headers.items())
+              except urllib.error.HTTPError as exc:
+                  status = int(exc.code)
+                  raw = exc.read()
+                  headers = dict(exc.headers.items()) if exc.headers else {}
+              except ProviderWallClockTimeout as exc:
+                  if hasattr(signal, 'SIGALRM'):
+                      signal.setitimer(signal.ITIMER_REAL, 0)
+                  reason = f'PROVIDER_WALL_CLOCK_TIMEOUT: provider call exceeded {wall_timeout}s wall-clock limit on attempt {attempt}.'
+                  Path('/tmp/provider-runtime.json').write_text(json.dumps({
+                      'requested_model': model,
+                      'actual_model': 'unreported',
+                      'actual_provider': 'unreported',
+                      'provenance_status': 'unreported',
+                      'http_status': None,
+                      'request_id': 'unreported',
+                      'routing_metadata': 'enabled',
+                      'response_shape': {'choices_count': 0, 'message_keys': [], 'finish_reason': None, 'content_present': False, 'content_chars': 0},
+                      'usage_summary': {},
+                      'wall_clock_timeout_seconds': wall_timeout,
+                  }, sort_keys=True), encoding='utf-8')
+                  Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                  print(f'{reviewer} {reason}', file=sys.stderr)
+                  break
+              except (urllib.error.URLError, TimeoutError) as exc:
+                  if hasattr(signal, 'SIGALRM'):
+                      signal.setitimer(signal.ITIMER_REAL, 0)
+                  reason = f'PROVIDER_TRANSPORT_FAILURE: {exc.__class__.__name__}: {exc}'
+                  Path('/tmp/provider-failure.txt').write_text(reason[:1200], encoding='utf-8')
+                  print(f'{reviewer} provider transport failure: {exc.__class__.__name__}: {exc}; attempt={attempt}', file=sys.stderr)
+                  if attempt < max_attempts:
+                      time.sleep(attempt * 4)
+                      continue
+                  break
+
+              if hasattr(signal, 'SIGALRM'):
+                  signal.setitimer(signal.ITIMER_REAL, 0)
+              request_id = headers.get('x-request-id') or headers.get('x-openrouter-request-id') or 'unreported'
+              print(f'{reviewer} provider response: http_status={status} attempt={attempt} request_id={request_id}', file=sys.stderr)
+              Path('/tmp/response.json').write_bytes(raw)
+
+              try:
+                  data = json.loads(raw.decode('utf-8')) if raw else {}
+              except (UnicodeDecodeError, json.JSONDecodeError):
+                  data = {}
+
+              if status is not None and 200 <= status < 300:
+                  provider_error = data.get('error') if isinstance(data, dict) else None
+                  if isinstance(provider_error, dict):
+                      error_metadata = provider_error.get('metadata') if isinstance(provider_error.get('metadata'), dict) else {}
+                      diagnostic = {
+                          'error_code': provider_error.get('code'),
+                          'error_type': provider_error.get('type'),
+                          'error_message': provider_error.get('message') or data.get('message'),
+                          'provider': error_metadata.get('provider_name'),
+                      }
+                      actual_model = data.get('model') if isinstance(data, dict) and isinstance(data.get('model'), str) else 'unreported'
+                      actual_provider = diagnostic.get('provider') or (data.get('provider') if isinstance(data.get('provider'), str) else 'unreported')
+                      provenance_status = 'verified' if actual_model and actual_model != model else 'unreported'
+                      runtime = {
+                          'requested_model': model,
+                          'actual_model': actual_model if provenance_status == 'verified' else 'unreported',
+                          'actual_provider': actual_provider,
+                          'provenance_status': provenance_status,
+                          'http_status': status,
+                          'request_id': request_id,
+                          'routing_metadata': 'enabled',
+                          'response_shape': {
+                              'choices_count': 0,
+                              'message_keys': [],
+                              'error_present': True,
+                              'error_keys': sorted(provider_error.keys()),
+                          },
+                          'usage_summary': {},
+                      }
+                      Path('/tmp/provider-runtime.json').write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                      reason = f'PROVIDER_RESPONSE_ERROR_PAYLOAD: HTTP {status} returned an error object: {json.dumps(diagnostic, sort_keys=True)}'
+                      Path('/tmp/provider-failure.txt').write_text(reason[:2000], encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
+                  choices = data.get('choices') or [] if isinstance(data, dict) else []
+                  message = choices[0].get('message') if choices and isinstance(choices[0], dict) else {}
+                  metadata = data.get('openrouter_metadata') if isinstance(data, dict) else {}
+                  endpoints = metadata.get('endpoints') if isinstance(metadata, dict) else {}
+                  available = endpoints.get('available') if isinstance(endpoints, dict) else []
+                  selected = next((item for item in (available or []) if isinstance(item, dict) and item.get('selected') is True), {})
+                  actual_model = data.get('model') if isinstance(data, dict) else None
+                  actual_provider = selected.get('provider') if isinstance(selected, dict) else None
+                  provenance_ok = isinstance(actual_model, str) and bool(actual_model) and actual_model != model
+                  provenance_status = 'verified' if provenance_ok else 'unreported'
+                  if not provenance_ok:
+                      actual_model = 'unreported'
+                      print(f'{reviewer} provider/model provenance is unavailable; continuing with advisory attribution limited to the requested route.', file=sys.stderr)
+                  Path('/tmp/provider-runtime.json').write_text(json.dumps({
+                      'requested_model': model,
+                      'actual_model': actual_model,
+                      'actual_provider': actual_provider if isinstance(actual_provider, str) and actual_provider else 'unreported',
+                      'provenance_status': provenance_status,
+                      'http_status': status,
+                      'request_id': request_id,
+                      'routing_metadata': 'enabled',
+                  }, sort_keys=True), encoding='utf-8')
+
+                  content = message.get('content') if isinstance(message, dict) else None
+                  if isinstance(content, list):
+                      content = '\n'.join(item.get('text', '') for item in content if isinstance(item, dict) and isinstance(item.get('text'), str))
+                  response_shape = {
+                      'choices_count': len(choices),
+                      'message_keys': sorted(message.keys()) if isinstance(message, dict) else [],
+                      'finish_reason': choices[0].get('finish_reason') if choices and isinstance(choices[0], dict) else None,
+                      'content_present': isinstance(content, str) and bool(content.strip()),
+                      'content_chars': len(content) if isinstance(content, str) else 0,
+                      'reasoning_chars': len(message.get('reasoning')) if isinstance(message, dict) and isinstance(message.get('reasoning'), str) else 0,
+                      'refusal_present': bool(message.get('refusal')) if isinstance(message, dict) else False,
+                      'tool_calls_present': bool(message.get('tool_calls')) if isinstance(message, dict) else False,
+                  }
+                  usage = data.get('usage') if isinstance(data, dict) and isinstance(data.get('usage'), dict) else {}
+                  completion_details = usage.get('completion_tokens_details') if isinstance(usage.get('completion_tokens_details'), dict) else {}
+                  usage_summary = {
+                      'prompt_tokens': usage.get('prompt_tokens') if isinstance(usage.get('prompt_tokens'), int) else None,
+                      'completion_tokens': usage.get('completion_tokens') if isinstance(usage.get('completion_tokens'), int) else None,
+                      'total_tokens': usage.get('total_tokens') if isinstance(usage.get('total_tokens'), int) else None,
+                      'reasoning_tokens': completion_details.get('reasoning_tokens') if isinstance(completion_details.get('reasoning_tokens'), int) else (usage.get('reasoning_tokens') if isinstance(usage.get('reasoning_tokens'), int) else None),
+                  }
+                  runtime_path = Path('/tmp/provider-runtime.json')
+                  runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+                  runtime['response_shape'] = response_shape
+                  runtime['usage_summary'] = usage_summary
+                  runtime['http_status'] = status
+                  runtime['provenance_status'] = provenance_status
+                  runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                  if not isinstance(content, str) or not content.strip():
+                      response_keys = ','.join(sorted(data.keys())) if isinstance(data, dict) else 'non-object'
+                      finish_reason = choices[0].get('finish_reason') if choices and isinstance(choices[0], dict) else None
+                      if finish_reason == 'length':
+                          reason = f'PROVIDER_RESPONSE_TRUNCATED: HTTP {status} reached finish_reason=length before usable review content was produced; response_keys={response_keys}.'
+                      else:
+                          reason = f'PROVIDER_RESPONSE_FAILURE: HTTP {status} returned no usable review content; response_keys={response_keys}.'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
+
+                  try:
+                      structured = json.loads(content)
+                      if not isinstance(structured, dict):
+                          raise ValueError('structured review root must be an object')
+                  except (TypeError, json.JSONDecodeError, ValueError) as exc:
+                      reason = f'INVALID_REVIEW_FORMAT: response was not valid JSON matching the advisory review contract: {exc}'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
+
+                  allowed_verdicts = {'APPROVE', 'CHANGES_REQUESTED', 'ADVISORY_ONLY'}
+                  fields = ['blocking_findings', 'governance_and_evidence', 'verification_gaps', 'non_blocking_observations', 'review_basis']
+                  verdict = structured.get('verdict')
+                  if verdict not in allowed_verdicts:
+                      reason = 'INVALID_REVIEW_FORMAT: structured verdict is missing or invalid.'
+                      Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                      print(f'{reviewer} {reason}', file=sys.stderr)
+                      sys.exit(1)
+                  for field in fields:
+                      value = structured.get(field)
+                      if not isinstance(value, list) or len(value) > int(os.environ['ADVISORY_MAX_FINDINGS']) or not all(isinstance(item, str) and len(item) <= int(os.environ['ADVISORY_MAX_ITEM_CHARS']) for item in value):
+                          reason = f'INVALID_REVIEW_FORMAT: field {field} must be an array of at most 3 strings.'
+                          Path('/tmp/provider-failure.txt').write_text(reason, encoding='utf-8')
+                          print(f'{reviewer} {reason}', file=sys.stderr)
+                          sys.exit(1)
+                  nonempty=lambda values: [item.strip() for item in values if isinstance(item, str) and item.strip()]
+                  evidence_items=nonempty(structured['governance_and_evidence'])
+                  basis_items=nonempty(structured['review_basis'])
+                  blocking_items=nonempty(structured['blocking_findings'])
+                  gap_items=nonempty(structured['verification_gaps'])
+                  quality_reason=None
+                  if len(evidence_items) < int(os.environ['ADVISORY_MIN_EVIDENCE_ITEMS']):
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: governance_and_evidence must contain at least one concrete statement.'
+                  elif len(basis_items) < int(os.environ['ADVISORY_MIN_REVIEW_BASIS_ITEMS']):
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: review_basis must contain at least one concrete statement.'
+                  elif verdict == 'CHANGES_REQUESTED' and os.environ.get('ADVISORY_CHANGES_REQUIRE_REASON') == 'true' and not (blocking_items or gap_items):
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: CHANGES_REQUESTED requires at least one blocking finding or verification gap.'
+                  elif verdict == 'APPROVE' and os.environ.get('ADVISORY_APPROVE_NO_GAPS') == 'true' and gap_items:
+                      quality_reason='REVIEW_CONTENT_QUALITY_FAILURE: APPROVE cannot contain verification gaps.'
+                  runtime_path=Path('/tmp/provider-runtime.json')
+                  runtime=json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+                  runtime['review_quality_status']='passed'
+                  if quality_reason:
+                      runtime['review_quality_status']='failed'
+                      runtime['review_quality_reason']=quality_reason
+                      runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+                      Path('/tmp/provider-failure.txt').write_text(quality_reason, encoding='utf-8')
+                      print(f'{reviewer} {quality_reason}', file=sys.stderr)
+                      sys.exit(1)
+                  runtime_path.write_text(json.dumps(runtime, sort_keys=True), encoding='utf-8')
+
+                  def compact_items(items):
+                      clean = [item.strip() for item in items if item.strip()]
+                      if not clean:
+                          return 'None stated.'
+                      text = '\n'.join(f'- {item}' for item in clean)
+                      text = re.sub(r'\n{3,}', '\n\n', text)
+                      return text[:2000].rstrip() + ('...' if len(text) > 2000 else '')
+
+                  normalized = '\n\n'.join([
+                      f'## Verdict\n{verdict}',
+                      f'## Blocking findings\n{compact_items(structured["blocking_findings"])}',
+                      f'## Governance and evidence\n{compact_items(structured["governance_and_evidence"])}',
+                      f'## Verification gaps\n{compact_items(structured["verification_gaps"])}',
+                      f'## Non-blocking observations\n{compact_items(structured["non_blocking_observations"])}',
+                      f'## Review basis\n{compact_items(structured["review_basis"])}',
+                  ])
+                  if len(normalized) > int(os.environ.get('MAX_REVIEW_CHARS', '12000')):
+                      normalized = normalized[:int(os.environ.get('MAX_REVIEW_CHARS', '12000'))].rstrip() + '\n\n[review output bounded by TeamAi reviewer contract]'
+                  Path('/tmp/review.md').write_text(normalized, encoding='utf-8')
+                  sys.exit(0)
+              else:
+                  error = data.get('error') if isinstance(data, dict) else None
+                  error = error if isinstance(error, dict) else {}
+                  diagnostic = {
+                      'error_code': error.get('code'),
+                      'error_type': error.get('type'),
+                      'error_message': error.get('message') or (data.get('message') if isinstance(data, dict) else None),
+                      'provider': ((error.get('metadata') or {}).get('provider_name') if isinstance(error.get('metadata'), dict) else None),
+                  }
+                  reason = f'PROVIDER_HTTP_FAILURE: HTTP {status}; {json.dumps(diagnostic, sort_keys=True)}'
+                  Path('/tmp/provider-failure.txt').write_text(reason[:1600], encoding='utf-8')
+                  print(f'{reviewer} provider diagnostic: {json.dumps(diagnostic, sort_keys=True)}', file=sys.stderr)
+
+              if attempt < max_attempts:
+                  time.sleep(attempt * 4)
+
+          if not Path('/tmp/provider-failure.txt').exists():
+              Path('/tmp/provider-failure.txt').write_text(
+                  f'PROVIDER_REQUEST_FAILURE: review request failed after {max_attempts} provider attempt(s).',
+                  encoding='utf-8',
+              )
+          print(f'{reviewer} review request failed after {max_attempts} provider attempt(s). No review was posted.', file=sys.stderr)
+          sys.exit(1)
+          PY
+          python_rc=$?
+          set -e
+          if [[ "$INVOCATION_CLASS" == "automatic" ]]; then
+            if [[ "$python_rc" -eq 0 && -s /tmp/review.md ]]; then
+              echo 'review_ready=true' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [[ -f /tmp/provider-failure.txt ]]; then
+              echo 'review_ready=false' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "AUTOMATIC_PROVIDER_STEP_FAILURE: reviewer runner exited $python_rc without a classified provider failure." >&2
+            exit "$python_rc"
+          fi
+          exit "$python_rc"
+
+      - name: Post advisory review
+        id: post_review
+        if: inputs.invocation_class != 'automatic' || steps.invoke_model.outputs.review_ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ steps.meta.outputs.head }}
+          REVIEWER: ${{ inputs.reviewer }}
+          MODEL: openrouter/free
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
+          INVOCATION: ${{ inputs.invocation_class }}
+          AUTO_MARKER: ${{ inputs.automatic_marker }}
+          MANUAL_MARKER: ${{ inputs.manual_marker }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s /tmp/provider-runtime.json
+          actual_model="$(jq -r '.actual_model' /tmp/provider-runtime.json)"
+          actual_provider="$(jq -r '.actual_provider' /tmp/provider-runtime.json)"
+          request_id="$(jq -r '.request_id' /tmp/provider-runtime.json)"
+          test -n "$actual_model"
+          test "$actual_model" != "$MODEL"
+          current_head="$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')"
+          [[ "$current_head" == "$HEAD" ]] || {
+            echo "Exact-head guard failed while posting review: $current_head != $HEAD."
+            exit 1
+          }
+          marker="$MANUAL_MARKER"
+          if [[ "$INVOCATION" == "automatic" ]]; then marker="$AUTO_MARKER"; fi
+          {
+            echo "$marker"
+            echo "# $REVIEWER Advisory Review"
+            echo
+            echo '> **MODEL-ADVISORY EVIDENCE ONLY**. This comment is not GitHub review state, approval, merge authorization, or product acceptance.'
+            echo
+            printf 'Requested route: `%s`\n' "$MODEL"
+            printf 'Actual model: `%s`\n' "$actual_model"
+            printf 'Actual provider: `%s`\n' "$actual_provider"
+            printf 'Model/provider provenance: `%s`\n' "$(jq -r '.provenance_status // "unreported"' /tmp/provider-runtime.json)"
+            printf 'OpenRouter request id: `%s`\n' "$request_id"
+            printf 'Exact PR head: `%s`\n' "$HEAD"
+            echo "Invocation class: $INVOCATION"
+            printf 'Credential alias: `%s`\n' "$CREDENTIAL_ALIAS"
+            if [[ "$INVOCATION" == "automatic" ]]; then echo 'Slot outcome: SUCCEEDED'; fi
+            echo 'Execution gate: required substantive exact-head checks passed before model invocation.'
+            echo
+            cat /tmp/review.md
+          } > /tmp/comment.md
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$(cat /tmp/comment.md)" >/dev/null
+
+      - name: Write terminal automatic slot artifact
+        if: always() && inputs.invocation_class == 'automatic'
+        env:
+          HEAD: ${{ inputs.expected_head }}
+          REVIEWER: ${{ inputs.reviewer }}
+          REVIEWER_SLUG: ${{ inputs.reviewer_slug }}
+          CREDENTIAL_ALIAS: ${{ inputs.credential_alias }}
+          INVOKE_OUTCOME: ${{ steps.invoke_model.outcome }}
+          POST_OUTCOME: ${{ steps.post_review.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          attempted = Path('/tmp/provider-attempted.json').exists()
+          runtime_path = Path('/tmp/provider-runtime.json')
+          runtime = json.loads(runtime_path.read_text(encoding='utf-8')) if runtime_path.exists() else {}
+          failure_path = Path('/tmp/provider-failure.txt')
+          diagnostic = failure_path.read_text(encoding='utf-8').strip() if failure_path.exists() else ''
+          invoke = os.environ.get('INVOKE_OUTCOME', '')
+          post = os.environ.get('POST_OUTCOME', '')
+
+          if runtime and post == 'success' and not failure_path.exists():
+              outcome = 'SUCCEEDED'
+          elif failure_path.exists() and diagnostic.startswith('PROVIDER_WALL_CLOCK_TIMEOUT'):
+              outcome = 'PROVIDER_WALL_CLOCK_TIMEOUT'
+          elif failure_path.exists() and (
+              runtime.get('review_quality_status') == 'failed'
+              or diagnostic.startswith('REVIEW_CONTENT_QUALITY_FAILURE')
+          ):
+              outcome = 'REVIEW_QUALITY_FAILED'
+          elif failure_path.exists():
+              outcome = 'PROVIDER_FAILED'
+          elif runtime:
+              outcome = 'REVIEW_POST_FAILED'
+              diagnostic = diagnostic or 'Provider response was validated, but the advisory review could not be posted.'
+          elif attempted:
+              outcome = 'PROVIDER_FAILED'
+          else:
+              outcome = 'PRE_PROVIDER_FAILURE'
+              diagnostic = diagnostic or ('Provider invocation was not reached; review step outcome=' + (invoke or 'not-started'))
+
+          tail = os.environ['REVIEWER_SLUG'].rsplit('-', 1)[-1]
+          if not tail.isdigit():
+              raise SystemExit('Invalid reviewer slug; terminal slot artifact cannot be assigned.')
+          record = {
+              'schema_version': 1,
+              'slot': int(tail),
+              'reviewer': os.environ['REVIEWER'],
+              'reviewer_slug': os.environ['REVIEWER_SLUG'],
+              'credential_alias': os.environ['CREDENTIAL_ALIAS'],
+              'expected_head': os.environ.get('HEAD', ''),
+              'requested_route': 'openrouter/free',
+              'actual_model': runtime.get('actual_model'),
+              'actual_provider': runtime.get('actual_provider'),
+              'provenance_status': runtime.get('provenance_status'),
+              'http_status': runtime.get('http_status'),
+              'request_id': runtime.get('request_id'),
+               'review_quality_status': runtime.get('review_quality_status'),
+              'outcome': outcome,
+              'provider_invocation_attempted': attempted,
+              'review_published': post == 'success',
+              'response_shape': runtime.get('response_shape'),
+              'usage_summary': runtime.get('usage_summary'),
+               'review_quality_reason': runtime.get('review_quality_reason'),
+              'wall_clock_timeout_seconds': runtime.get('wall_clock_timeout_seconds'),
+              'diagnostic': diagnostic[:2000],
+          }
+          Path('/tmp/slot-result.json').write_text(
+              json.dumps(record, sort_keys=True, indent=2) + '\n',
+              encoding='utf-8',
+          )
+          PY
+
+      - name: Upload terminal automatic slot artifact
+        if: always() && inputs.invocation_class == 'automatic'
+        uses: actions/upload-artifact@v4
+        with:
+          name: teamai-advisory-slot-${{ inputs.reviewer_slug }}
+          path: /tmp/slot-result.json
+          if-no-files-found: error
+          retention-days: 14
