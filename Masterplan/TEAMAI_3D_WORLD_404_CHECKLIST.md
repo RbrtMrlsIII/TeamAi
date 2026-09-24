@@ -54,10 +54,10 @@ Exit: root inheritance is explicit, traceable, and enforceable across the entire
 ### A4. Visual reference reconciliation
 - [x] Activation storyboard is treated as a visual/mechanical reference, not Product Law or a numeric capacity authority.
 - [x] Storyboard reference shows 8 inner pods, while the canonical 029 machine supports 1–10 durable Seat slots / 10 maximum presentation modules; this is a documented reference-vs-product-capacity discrepancy, not a reason to hard-code 8.
-- [x] Storyboard names four specialized outer mechanisms (telescope, fin deployment, rotating core analysis, sensor array), while the current baseline only has four placeholder structural silhouettes; specialized machinery remains an S7 construction gap.
+- [x] Storyboard names four specialized outer mechanisms (telescope, fin deployment, rotating core analysis, sensor array); S7 V4 now maps all four facility destinations to authored machine grammars and first-class payload surfaces.
 - [x] Storyboard timestamps are panel labels only; no video-specific timing is inferred because no video asset is part of the current project evidence.
 - [x] White studio/cinematic lighting, blue/white/orange energy, metallic/glass surfaces, and holographic blueprint cues are treated as visual inputs to S22-S29, subordinate to the single Product Law theme root.
-- [ ] During S7, map each specialized outer module to a real semantic/product owner and replace placeholder silhouettes without creating a second facility hierarchy.
+- [x] During S7, map each specialized outer module to a real semantic/product owner and replace placeholder silhouettes without creating a second facility hierarchy.
 - [ ] During S33/human acceptance, verify that the final world can express the reference composition at the intended seat population without overriding the canonical 1–10 capacity model.
 
 ### A4. Active geometry discrepancy
@@ -105,14 +105,14 @@ Exit: every physical system has one explicit owner.
 - [x] World scene graph ownership identified in `machine-hero-scene.js`, with WebGL orchestration remaining in `machine-world-renderer.js`.
 - [x] PhysicalModule ownership identified in `machine-hero-scene.js::makeMachinePart`.
 - [x] PodAssembly ownership established in `machine-pod-assembly.js::deriveMachinePodAssembly`; `machine-core-layout.js::createBranchConnectionCore` retains population/placement responsibility.
-- [ ] Resolve partitioned FacilityAssembly ownership before S6/S7 completion.
-- [ ] Resolve partitioned Division contract ownership before S4 completion.
-- [ ] Resolve partitioned ExpansionMechanism lifecycle ownership before S5 completion.
-  - Current reconciliation: hero-hierarchy-runtime.js remains semantic OPEN/CLOSE state authority; machine-expansion-mechanism.js owns physical travel, clearance, corridor reservation, and camera-subject projection constraints. S5 must not create a competing semantic hierarchy state machine.
+- [x] Resolve partitioned FacilityAssembly ownership before S6/S7 completion.
+- [x] Resolve partitioned Division contract ownership before S4 completion.
+- [x] Resolve partitioned ExpansionMechanism lifecycle ownership before S5 completion.
+  - Current reconciliation: public/hero-hierarchy-runtime.js remains semantic OPEN/CLOSE state authority; frontend/spatial/machine-expansion-mechanism.js owns physical travel, clearance, corridor reservation, and camera-subject projection constraints. S5 must not create a competing semantic hierarchy state machine.
 
-- [ ] Resolve partitioned Port derivation before S8 completion.
-- [ ] Resolve partitioned Corridor reservation ownership before S8 completion.
-- [ ] Resolve partitioned Edge identity/topology ownership before S8 completion.
+- [x] Resolve partitioned Port derivation before S8 completion.
+- [x] Resolve partitioned Corridor reservation ownership before S8 completion.
+- [x] Resolve partitioned Edge identity/topology ownership before S8 completion.
 - [x] CameraSubject ownership identified in `machine-subject.js`.
 - [ ] Resolve partitioned state/effect projection ownership before S9/S28/S29 completion.
 
