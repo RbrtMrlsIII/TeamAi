@@ -24,7 +24,7 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     panel.dataset.machineCoreRenderer = 'canonical';
   } catch {
     panel.dataset.machineCoreRenderer = 'unavailable';
-    panel.querySelector('[data-core-state').textContent = 'WebGL unavailable';
+    panel.querySelector('[data-core-state]').textContent = 'WebGL unavailable';
     return panel;
   }
   const seatCount = parseSeatCountParam();
