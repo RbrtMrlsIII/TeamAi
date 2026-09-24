@@ -53,6 +53,43 @@ test('canonical renderer owns the R0 workspace receiving presentation pass', asy
   assert.match(renderer, /state\.heroState/);
 });
 
+test('canonical renderer reaches focused Seat divisions through the authored S4 presentation owner', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const presentation = await readFile(new URL('../public/machine-seat-division-presentation.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine-seat-division-presentation\.js/);
+  assert.match(renderer, /drawFocusedSeatDivision/);
+  assert.match(presentation, /machine-seat-division-assembly\.js/);
+  assert.match(presentation, /deriveMachineSeatDivisionAssembly/);
+  assert.match(presentation, /validateMachineSeatDivisionAssembly/);
+  assert.match(presentation, /assembly\.components/);
+});
+test('canonical renderer renders the S2 authored core assembly through one central-core owner', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine-core-assembly\.js/);
+  assert.match(renderer, /deriveMachineCoreAssembly/);
+  assert.match(renderer, /validateMachineCoreAssembly/);
+  assert.match(renderer, /drawMachineCoreAssembly/);
+  assert.match(renderer, /assembly\.components/);
+  assert.match(renderer, /machineWorldCoreAssembly/);
+  assert.match(renderer, /machineWorldCoreValidation/);
+});
+
+test('canonical renderer does not self-reference the world topology during planning', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const initializerMatch = renderer.match(
+    /machineWorldTopology\s*=\s*buildMachineWorldTopology\(\{([\s\S]*?)\n\s{6}\}\);/,
+  );
+  assert.ok(initializerMatch, 'canonical renderer must construct world topology from an explicit planning input object');
+  const initializer = initializerMatch[1];
+  assert.match(initializer, /\bscene,?/);
+  assert.match(initializer, /facilityAssemblies,/);
+  assert.match(initializer, /facilityMachinery,/);
+  assert.match(initializer, /seatDivisionAmount:/);
+  assert.match(initializer, /clearance: 0\.16/);
+  assert.doesNotMatch(initializer, /\bmachineWorldTopology\s*,/);
+  assert.match(renderer, /machineWorldSpatialCache\?\.key === spatialGeometryKey/);
+  assert.match(renderer, /machineWorldTopologyValidation = validateMachineWorldTopology\(/);
+});
 test('canonical renderer owns the multi-module and wiring draw path', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /createBranchConnectionCore/);
@@ -76,8 +113,10 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.ok(renderStart >= 0 && renderEnd > renderStart);
   const renderBody = renderer.slice(renderStart, renderEnd);
   assert.equal((renderBody.match(/renderSeat1ConnectionChild\s*\(/g) || []).length, 1);
-  assert.match(renderBody, /renderAdjacentDivisionWiring\(scene, effectiveCameraId, state, reducedMotion\)/);
-  assert.match(renderBody, /const seat1ConnectionAmount = clamp\([\s\S]*branchAmounts\.connectionBranchAmount \?\? state\.connectionBranchAmount[\s\S]*renderSeat1ConnectionChild\(scene, seat1ConnectionAmount, effectiveCameraId, reducedMotion, now\)/);
+  assert.match(renderBody, /renderAdjacentDivisionWiring\(\s*scene,\s*effectiveCameraId,\s*\{ \.\.\.state, focusedChildAmount \},\s*reducedMotion,\s*\)/s);
+  assert.match(renderBody, /focusedChildAmount/);
+  assert.match(renderBody, /const rawSeat1ConnectionAmount = clamp\([\s\S]*branchAmounts\.connectionBranchAmount \?\? state\.connectionBranchAmount[\s\S]*const seat1ConnectionAmount = state\.focusedChildId === 'SEAT_CONNECTION'/);
+  assert.match(renderBody, /renderSeat1ConnectionChild\(scene, seat1ConnectionAmount, effectiveCameraId, reducedMotion, now\)/);
   assert.match(renderBody, /drawFocusedSeatDivision/);
   assert.match(renderer, /SEAT_DIVISION_ORDER/);
   assert.match(renderer, /resolveSeatDivisionPayload/);
@@ -145,12 +184,12 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.ok(framePassMarker < renderBody.indexOf('gl.useProgram(line);', framePassMarker));
 });
 
-test('canonical world renderer uses the shared stateful animation engine for expansion and interruption', async () => {
+test('canonical world renderer uses the S5 stateful expansion mechanism for expansion and interruption', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
-  assert.match(renderer, /\.\/machine-core-animation\.js/);
-  assert.match(renderer, /createMachineAnimation/);
-  assert.match(renderer, /animation\.sample/);
-  assert.match(renderer, /animation\.setTarget/);
+  assert.doesNotMatch(renderer, /import \{ createMachineAnimation \}/);
+  assert.match(renderer, /createMachineExpansionMechanism\(\{ duration: 950 \}\)/);
+  assert.match(renderer, /expansionMechanism\.sample/);
+  assert.match(renderer, /expansionMechanism\.setTarget/);
   assert.match(renderer, /reducedMotion/);
   assert.match(renderer, /wantedExpanded/);
   assert.match(renderer, /if \(wantedExpanded !== targetExpanded\)/);
@@ -192,16 +231,36 @@ test('WebGL preview has no provider, auth, or durable-state authority', () => {
  * Evidence/browser impact: this validates the interrupted lifecycle→choreography seam without claiming browser proof.
  * Residual uncertainty: exact-head runtime/browser execution still depends on downstream CI and deployed-page evidence.
  */
+test('canonical renderer memoizes heavy S6-S8 world planning by authored geometry state', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /const SPATIAL_TOPOLOGY_RESOLUTION = 24/);
+  assert.match(renderer, /let machineWorldSpatialCache = null/);
+  assert.match(renderer, /const spatialGeometryKey = \[/);
+  assert.match(renderer, /machineWorldSpatialCache\?\.key === spatialGeometryKey/);
+  assert.match(renderer, /buildMachineWorldTopology\(/);
+  assert.match(renderer, /machineWorldSpatialCache = Object\.freeze/);
+});
+
 test('machine choreography is state-derived and lifecycle-connected in the canonical renderer', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /deriveMachineTransformationChoreography\(/);
   assert.match(renderer, /const branchAmounts = state\.seatDivisionBranchAmounts \|\| \{\};/);
   assert.match(renderer, /import \{ drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry \}/);
-  assert.match(
-    renderer,
-    /shellAmount: finite\(state\.hierarchyOpenAmount, sample\.amount\)/,
+  assert.match(renderer, /createMachineExpansionMechanism\(\{ duration: 950 \}\)/);
+  assert.match(renderer, /renderAdjacentDivisionWiring\(/);
+  assert.match(renderer, /resolveMachineFocusedExpansionPhase/);
+  assert.match(renderer, /const seat1ConnectionAmount = state\.focusedChildId === 'SEAT_CONNECTION'/);
+  assert.match(renderer, /const rawFocusedChildAmount = finite\(state\.focusedChildAmount, 0\);/);
+  assert.match(renderer, /const focusedChildAmount = focusedExpansionPlan/);
+  const focusedDeclaration = renderer.indexOf('const focusedChildAmount = focusedExpansionPlan');
+  const choreographyCall = renderer.indexOf('const choreography = deriveMachineTransformationChoreography(');
+  assert.ok(
+    focusedDeclaration >= 0 && choreographyCall >= 0 && focusedDeclaration < choreographyCall,
+    'focusedChildAmount must be resolved before choreography consumes it',
   );
-  assert.match(renderer, /divisionAmount: finite\(state\.focusedChildAmount, 0\)/);
+
+  assert.match(renderer, /shellAmount: finite\(state\.hierarchyOpenAmount, expansionSample\.amount\)/);
+  assert.match(renderer, /divisionAmount: focusedChildAmount/);
   assert.match(
     renderer,
     /const connectionAmount = finite\(\s*branchAmounts\.connectionBranchAmount \?\? state\.connectionBranchAmount,\s*0,\s*\)/s,

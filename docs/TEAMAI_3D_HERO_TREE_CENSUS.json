@@ -303,5 +303,27 @@
     "storageScope": "Current product scope is item inventory storage only; image/file upload and binary object transfer are deferred pending security and cost controls.",
     "seatReport": "Each Seat exposes a report/handoff read surface after each completed turn for the user and authorized participating agents.",
     "transactionLoading": "Each Seat uses transaction-specific loading/orb presentation; the effect family communicates presentation state only."
+  },
+  "spatialConstructionRootContract": {
+    "status": "IMPLEMENTED_METADATA",
+    "authority": "PR #404 / current spatial construction",
+    "source": "frontend/spatial/machine-spatial-root-contract.js",
+    "browserMirror": "public/machine-spatial-root-contract.js",
+    "semanticIdentityImpact": false,
+    "purpose": "Bind physical spatial assemblies to explicit construction slices and inherited S0-S10 structural roots without creating a second semantic tree hierarchy.",
+    "inheritance": {
+      "S0_S10": "structural roots",
+      "S11_S21": "inherits complete S0-S10",
+      "S22_S29": "cross-cutting expression over S0-S21",
+      "S30_S33": "verification/acceptance"
+    },
+    "currentCoreMappings": {
+      "HUB_CORE": "S2",
+      "INNER_POD": "S3",
+      "OUTER_HOUSING": "S7",
+      "CONNECTION_EDGE": "S8"
+    },
+    "validation": "tests/machine-spatial-root-contract.test.mjs",
+    "note": "Metadata consistency does not by itself prove that every prerequisite slice is functionally complete."
   }
 }

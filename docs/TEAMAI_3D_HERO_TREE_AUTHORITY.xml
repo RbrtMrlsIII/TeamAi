@@ -12,6 +12,18 @@
     <runtimeBaseline>docs/TEAMAI_3D_HERO_HIERARCHY_RUNTIME_BASELINE.md</runtimeBaseline>
     <rendererOwner>frontend/spatial/machine-world-renderer.js</rendererOwner>
   </authority>
+  <spatialConstructionRootContract status="implemented-metadata" semanticIdentityChange="false" source="frontend/spatial/machine-spatial-root-contract.js" browserMirror="public/machine-spatial-root-contract.js">
+    <structuralRoots>S0-S10</structuralRoots>
+    <productRuntime>S11-S21 inherits-complete-structural-roots</productRuntime>
+    <worldExpression>S22-S29 cross-cutting-over-S0-S21</worldExpression>
+    <finalProof>S30-S33 verification-acceptance</finalProof>
+    <hubRoot>S2</hubRoot>
+    <innerPodRoot>S3</innerPodRoot>
+    <outerHousingRoot>S7</outerHousingRoot>
+    <connectionRoot>S8</connectionRoot>
+    <semanticIdentityImpact>false</semanticIdentityImpact>
+    <functionalCompletionProof>not established by metadata alone</functionalCompletionProof>
+  </spatialConstructionRootContract>
   <maintenance>
     <trigger>add|remove|rename|materially_restructure|reimplement</trigger>
     <sameGovernedChange>true</sameGovernedChange>

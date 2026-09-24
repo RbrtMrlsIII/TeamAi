@@ -6,6 +6,10 @@ import {
 } from './seat-division-geometry.js';
 import { resolveSeatDivisionPayload } from './machine-seat-division-payload.js';
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
+import {
+  deriveMachineSeatDivisionAssembly,
+  validateMachineSeatDivisionAssembly,
+} from './machine-seat-division-assembly.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const clamp01 = (value) => Math.max(0, Math.min(1, finite(value, 0)));
@@ -81,6 +85,44 @@ export function deriveFocusedSeatDivisionGeometry({
   });
 }
 
+export function resolveSeatDivisionAttachmentTransform(assembly, component, amount) {
+  const attachment = assembly?.mechanism?.attachment;
+  const t = clamp01(amount);
+  if (!attachment) return Object.freeze({
+    x: 0,
+    y: 0,
+    z: 0,
+    rotationY: component.rotationY,
+    scaleMultiplier: 1,
+  });
+  const isPrimary = component.profile === attachment.primaryComponent;
+  if (!isPrimary) return Object.freeze({
+    x: 0,
+    y: 0,
+    z: 0,
+    rotationY: component.rotationY,
+    scaleMultiplier: 1,
+  });
+  const travel = finite(attachment.travel, 0) * t;
+  if (attachment.motion === 'rotate') {
+    return Object.freeze({
+      x: 0,
+      y: 0,
+      z: 0,
+      rotationY: component.rotationY + travel,
+      scaleMultiplier: 1,
+    });
+  }
+  const outwardAngle = finite(assembly?.geometry?.angle, 0) + Math.PI;
+  return Object.freeze({
+    x: Math.cos(outwardAngle) * travel,
+    y: 0,
+    z: Math.sin(outwardAngle) * travel,
+    rotationY: component.rotationY,
+    scaleMultiplier: 1,
+  });
+}
+
 export function drawFocusedSeatDivision({
   parent,
   childId,
@@ -112,39 +154,70 @@ export function drawFocusedSeatDivision({
     childId,
     childIndex,
   });
-  const deploy = 0.38 + progress * 0.62;
-  const size = Math.max(0.22, Math.max(geometry.dimensions.width, geometry.dimensions.depth) * 0.74);
-  const spin = reducedMotion ? 0 : finite(t) * 0.28 + Number(childIndex) * 0.21;
-  const material = presentation.kind === 'connection' || presentation.kind === 'authorization'
-    ? M.energy
-    : presentation.kind === 'toolkit'
-      ? M.glass
-      : M.metal2;
-  draw(CYL, mul(T(geometry.center.x, geometry.center.y, geometry.center.z), S(size * deploy, geometry.dimensions.height * deploy, size * deploy)), material, {
-    rough: 0.34,
-    emit: presentation.kind === 'connection' ? 0.18 * deploy : 0.06 * deploy,
-    alpha: 0.88,
-  });
-  draw(TORUS, mul(
-    mul(T(geometry.center.x, geometry.center.y + geometry.dimensions.height * 0.7, geometry.center.z), RY(spin)),
-    S(size * (0.68 + 0.18 * progress), 1, size * (0.68 + 0.18 * progress)),
-  ), material, {
-    rough: 0.28,
-    emit: 0.12 * deploy,
-    alpha: 0.76,
-  });
-  draw(CUBE, mul(
-    mul(T(geometry.center.x, geometry.center.y + geometry.dimensions.height, geometry.center.z), RY(spin)),
-    S(size * 0.72, Math.max(0.035, geometry.dimensions.height * 0.38), size * 0.34),
-  ), M.glass, {
-    rough: 0.24,
-    emit: 0.08 * deploy,
-    alpha: 0.7,
-  });
-  return Object.freeze({
-    semantic: geometry.semantic,
-    id: geometry.id,
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent,
+    childId,
+    childIndex,
+    amount: progress,
     geometry,
+  });
+  const validation = validateMachineSeatDivisionAssembly(assembly, {
+    expectedSemanticId: presentation?.childId || null,
+  });
+  if (!validation.valid) return null;
+
+  const primitives = { CYL, TORUS, CUBE };
+  const materialFor = (role) => ({
+    energy: M.energy,
+    glass: M.glass,
+    trace: M.metal2,
+    metal: M.metal,
+    metal2: M.metal2,
+    'seat-inset': M.glass,
+  }[role] || M.metal2);
+
+  for (const component of assembly.components) {
+    const primitive = primitives[component.shape];
+    if (!primitive) continue;
+    const attachmentTransform = resolveSeatDivisionAttachmentTransform(assembly, component, progress);
+    const localCenter = {
+      x: assembly.center.x + component.offset.x + attachmentTransform.x,
+      y: assembly.center.y + component.offset.y + attachmentTransform.y,
+      z: assembly.center.z + component.offset.z + attachmentTransform.z,
+    };
+    const rotation = reducedMotion ? 0 : attachmentTransform.rotationY + finite(t) * (
+      component.role === 'articulation-pivots' || component.role === 'tool-cartridges'
+        ? 0.06
+        : 0
+    );
+    const height = Math.max(0.025, Number(component.scale.y) || 0.025);
+    draw(
+      primitive,
+      mul(
+        T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+        mul(
+          RY(rotation),
+          S(
+            component.scale.x,
+            component.scale.y,
+            component.scale.z,
+          ),
+        ),
+      ),
+      materialFor(component.materialRole),
+      {
+        rough: component.materialRole === 'glass' ? 0.24 : 0.34,
+        emit: component.materialRole === 'energy' ? 0.16 * (0.45 + 0.55 * progress) : 0.05 * (0.4 + 0.6 * progress),
+        alpha: component.materialRole === 'glass' ? 0.72 : 0.88,
+      },
+    );
+  }
+
+  return Object.freeze({
+    semantic: assembly.semanticId,
+    id: assembly.geometry.id,
+    geometry: assembly.geometry,
+    assembly,
     amount: progress,
     childId: presentation.childId,
     kind: presentation.kind,
