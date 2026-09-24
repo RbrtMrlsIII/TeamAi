@@ -31,7 +31,7 @@ test('SP-04 legacy mutation machinery is gone', async () => {
 test('SP-04 canonical spatial renderer is modular', async () => {
   const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
   assert.match(renderer, /createBranchConnectionCore/);
-  assert.match(renderer, /createMachineAnimation/);
+  assert.match(renderer, /createMachineExpansionMechanism/);
   assert.match(renderer, /createDeepSpaceField/);
   assert.match(renderer, /scene\.connections/);
   assert.match(renderer, /canvas\.dataset\.machineWorldRenderer/);

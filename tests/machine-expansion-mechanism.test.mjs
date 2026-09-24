@@ -179,6 +179,51 @@ test('S5 resolved amount feeds a recomputed semantic subject', () => {
   assert.ok(subject.center.x !== undefined && subject.center.z !== undefined);
 });
 
+test('S5 full Seat-density expansion stays clear of all authored outer facilities', () => {
+  const divisions = [
+    'SEAT_CONNECTION',
+    'SEAT_BEHAVIOR',
+    'SEAT_TOOLKIT',
+    'SEAT_CAPABILITIES',
+    'SEAT_AUTHORIZATION',
+    'SEAT_WORKSPACE_SCOPE',
+    'SEAT_TASK_EVIDENCE',
+  ];
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    const core = createBranchConnectionCore({ seatCount });
+    const seats = core.parts.filter((part) => part.kind === 'inner-pod');
+    const obstacles = core.parts.filter((part) => part.kind === 'outer-housing');
+
+    for (const seat of seats) {
+      for (const [childIndex, childId] of divisions.entries()) {
+        const plan = deriveMachineSeatDivisionExpansionPlan({
+          parent: seat,
+          childId,
+          childIndex,
+          obstacles,
+          clearance: 0.16,
+        });
+
+        assert.ok(
+          plan?.clearancePlan?.clearanceSatisfiedAtClosed,
+          `closed clearance rejected: seats=${seatCount}, ${seat.branchId}, ${childId}`,
+        );
+        assert.equal(
+          plan?.clearancePlan?.collision,
+          false,
+          `full expansion collision: seats=${seatCount}, ${seat.branchId}, ${childId}`,
+        );
+        assert.equal(
+          plan?.clearancePlan?.maxSafeAmount,
+          1,
+          `full expansion was limited: seats=${seatCount}, ${seat.branchId}, ${childId}`,
+        );
+      }
+    }
+  }
+});
+
 test('S5 real Seat-01 envelope plans are bounded against the existing outer facility ring', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
   const seat = core.byBranch.get('BRANCH-SEAT-01');

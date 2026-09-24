@@ -20,7 +20,7 @@ test('canonical renderer owns scene geometry while semantic modules remain scala
   const renderer = await fs.promises.readFile(path.join(process.cwd(), 'public/machine-world-renderer.js'), 'utf8');
   assert.match(renderer, /shapeBuffer/);
   assert.match(renderer, /createBranchConnectionCore/);
-  assert.match(renderer, /createMachineAnimation/);
+  assert.match(renderer, /createMachineExpansionMechanism/);
   assert.match(renderer, /deriveMachineSubject/);
   assert.match(renderer, /gl\.drawArrays/);
   assert.match(heroFlex, /teamai:web-ai-seat-unlocked/);

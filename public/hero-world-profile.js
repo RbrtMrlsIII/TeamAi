@@ -9,12 +9,21 @@ export const MACHINE_WORLD_PROFILE = Object.freeze({
   seatScale: Object.freeze({ min: 1, max: 0.78 }),
 });
 
+// Reserved radial envelope for the four outer facility housings. This is a structural
+// world-profile constraint so S5 can enforce clearance without redesigning S4 geometry.
+export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 1.7;
+
 export function seatPopulationDensity(seatCount) {
   return clamp01((Math.max(1, Number(seatCount) || 1) - 1) / 9);
 }
 
 export function deriveMachineWorldProfile(seatCount) {
   const density = seatPopulationDensity(seatCount);
+  const outerHousingRadius = lerp(
+    MACHINE_WORLD_PROFILE.outerHousingRadius.min,
+    MACHINE_WORLD_PROFILE.outerHousingRadius.max,
+    density,
+  ) + MACHINE_OUTER_HOUSING_SAFETY_BUFFER;
   return Object.freeze({
     density,
     workspaceFootprint: lerp(
@@ -27,11 +36,7 @@ export function deriveMachineWorldProfile(seatCount) {
       MACHINE_WORLD_PROFILE.seatShellRadius.max,
       density,
     ),
-    outerHousingRadius: lerp(
-      MACHINE_WORLD_PROFILE.outerHousingRadius.min,
-      MACHINE_WORLD_PROFILE.outerHousingRadius.max,
-      density,
-    ),
+    outerHousingRadius,
     cameraDistance: lerp(
       MACHINE_WORLD_PROFILE.cameraDistance.min,
       MACHINE_WORLD_PROFILE.cameraDistance.max,
@@ -48,6 +53,12 @@ export function deriveMachineWorldProfile(seatCount) {
 export function deriveExpandedMachineCoreRadii(seatCount, expansionAmount = 0) {
   const density = seatPopulationDensity(seatCount);
   const amount = clamp01(expansionAmount);
+  const baseOuterHousingRadius = lerp(
+    MACHINE_WORLD_PROFILE.outerHousingRadius.min,
+    MACHINE_WORLD_PROFILE.outerHousingRadius.max,
+    density,
+  ) + MACHINE_OUTER_HOUSING_SAFETY_BUFFER;
+  const expandedOuterHousingRadius = baseOuterHousingRadius + 0.7;
   return Object.freeze({
     density,
     expansionAmount: amount,
@@ -57,8 +68,8 @@ export function deriveExpandedMachineCoreRadii(seatCount, expansionAmount = 0) {
       amount,
     ),
     outerHousingRadius: lerp(
-      lerp(MACHINE_WORLD_PROFILE.outerHousingRadius.min, MACHINE_WORLD_PROFILE.outerHousingRadius.max, density),
-      lerp(MACHINE_WORLD_PROFILE.outerHousingRadius.min + 0.7, MACHINE_WORLD_PROFILE.outerHousingRadius.max + 0.7, density),
+      baseOuterHousingRadius,
+      expandedOuterHousingRadius,
       amount,
     ),
   });
