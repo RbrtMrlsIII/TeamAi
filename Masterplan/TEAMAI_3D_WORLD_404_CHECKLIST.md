@@ -1,0 +1,642 @@
+# TEAMAI 3D WORLD / PR #404 — MASTER EXECUTION CHECKLIST
+
+Owner vehicle: PR #404 frontend/029-spatial-world-reconstruction
+Dedicated Issue: #405
+Scope: all remaining 029 spatial construction, feature integration, cleanup, documentation alignment, verification, acceptance, and ProMax polish.
+Rule: no additional implementation PRs for S0-S33. PR #404 remains the sole spatial implementation vehicle.
+
+## A. Verified starting-state diagnosis
+
+### A1. Repository baseline
+- [x] PR #398 is merged into main at 87f466fb0edac3784280128785a8fd2dc757e749.
+- [x] PR #398 is treated as reviewed structural baseline, not final 029 completion.
+- [x] Canonical renderer source is frontend/spatial/machine-world-renderer.js.
+- [x] Browser mirror is public/machine-world-renderer.js.
+- [x] Controller/input boundary remains public/hero-flex.js.
+- [x] PR #402 / Issue #401 remains separate backend/runtime production-evidence vehicle.
+- [x] #392 remains authoritative for Seat budget, usage, handoff, continuation, and cooperation.
+
+### A2. Current physical world census from source
+- [x] Current core layout contains 1 HUB-CORE + 10 inner Seat pods + 4 outer housings = 15 physical modules at maximum capacity.
+- [x] Current R1 catalog contains 3 presentation display items: docs, rules, connect.
+- [x] Current R2 catalog contains 4 presentation items: setup engine, login, register, config branch.
+- [x] Current Seat division catalog contains 7 concrete divisions: Connection, Behavior, Toolkit, Capabilities, Authorization, Workspace Scope, Task Evidence.
+- [x] Current division fan span is 150 degrees across the seven indexed positions.
+- [x] Current Seat division port radius is 0.28 × parent scale.
+- [x] Current division radial offset is parent max horizontal dimension × (1.7 + 0.5 × expansion).
+
+### A3. Current numeric spatial findings
+At the current maximum 10-seat profile:
+- [x] workspace footprint = 5.95
+- [x] Seat-shell centerline radius = 4.55
+- [x] expanded Seat-shell centerline radius at full expansion = 5.05
+- [x] outer-housing centerline radius = 7.15
+- [x] expanded outer-housing radius at full expansion = 7.85
+- [x] R0 receiving-core radius = 4.046 at the current non-expanded workspace geometry
+- [x] current 10-seat ring envelope resolves approximately R1 = 4.214, R2 = 4.382, R3 = 4.55 with approximately 0.168 inter-ring gap
+- [x] current maximum-density adjacent Seat center spacing = approximately 2.812
+- [x] current Pod max horizontal dimension = 1.34
+
+### A5. Root inheritance and world-expression contract
+- [x] S0-S10 are explicitly declared as the canonical structural roots of the 029 spatial machine, not merely sequential implementation phases.
+- [x] Every later slice S11-S33 is declared to consume applicable S0-S10 contracts rather than creating parallel spatial grammar or authority.
+- [x] Product features and facilities, including S13 Workspace and S18-S20 Storage/Commerce/Settings, must project through the inherited machine roots instead of becoming isolated UI islands or invented Seat children.
+- [x] S22-S29 are explicitly declared as cross-cutting world-expression and interaction layers over S0-S21, not an independent visual architecture.
+- [x] Light Spatial Skeuomorphism and Dark Spatial Glassmorphism are explicitly derived from the single canonical unified theme root owned by Product Law.
+- [ ] Each construction slice records and verifies the specific S0-S10 roots it consumes before declaring the slice complete.
+- [x] S0/S1 root metadata enforcement is covered by `machine-spatial-root-contract.js` and its contract tests.
+- [ ] Any structural constraint discovered by S22-S29 is resolved at its owning root rather than by a parallel late-stage workaround.
+
+**Review test:** a cold reviewer must be able to trace any later feature, facility, effect, camera state, or interaction back to its semantic owner, physical assembly, topology, signal, camera, and verification roots without inventing a new machine grammar.
+
+Exit: root inheritance is explicit, traceable, and enforceable across the entire S0-S33 program.
+
+### A4. Visual reference reconciliation
+- [x] Activation storyboard is treated as a visual/mechanical reference, not Product Law or a numeric capacity authority.
+- [x] Storyboard reference shows 8 inner pods, while the canonical 029 machine supports 1–10 durable Seat slots / 10 maximum presentation modules; this is a documented reference-vs-product-capacity discrepancy, not a reason to hard-code 8.
+- [x] Storyboard names four specialized outer mechanisms (telescope, fin deployment, rotating core analysis, sensor array), while the current baseline only has four placeholder structural silhouettes; specialized machinery remains an S7 construction gap.
+- [x] Storyboard timestamps are panel labels only; no video-specific timing is inferred because no video asset is part of the current project evidence.
+- [x] White studio/cinematic lighting, blue/white/orange energy, metallic/glass surfaces, and holographic blueprint cues are treated as visual inputs to S22-S29, subordinate to the single Product Law theme root.
+- [ ] During S7, map each specialized outer module to a real semantic/product owner and replace placeholder silhouettes without creating a second facility hierarchy.
+- [ ] During S33/human acceptance, verify that the final world can express the reference composition at the intended seat population without overriding the canonical 1–10 capacity model.
+
+### A4. Active geometry discrepancy
+- [x] Current full-division radial offset is approximately 2.948 for the current Pod dimension.
+- [x] Current full-expansion Seat + division theoretical reach is approximately 7.998 from world center.
+- [x] At the current 10-seat density, the adaptive world profile yields an expanded outer-housing radius of 10.55, exceeding the 7.998 Seat + division theoretical reach by 2.552 units.
+- [x] The previously reported approximately 0.148-unit radial overrun is resolved in the current adaptive world profile: the 10-seat expanded outer-housing envelope is 10.55 versus a 7.998 Seat + division theoretical reach.
+- [ ] Verify actual articulated division paths against all seven-child index positions and outer-facility envelopes.
+- [ ] Replace the current simple envelope assumptions with geometry-aware collision/clearance calculation.
+
+Diagnosis: the structural graph, first-frame renderer, and adaptive clearance foundations are now operational. The previous 0.148-unit radial envelope discrepancy is closed at the current 10-seat profile; remaining physical gaps are primarily S7 specialized machinery differentiation and S33 human acceptance.
+
+## B. S0 — Forensics and baseline freeze
+- [ ] Re-read Product Law, #278, #396, #400, #392, #83 and current Masterplan.
+- [ ] Reconcile merged #398 state against main.
+- [ ] Freeze physical module inventory.
+- [ ] Freeze semantic tree/branch/division inventory.
+- [ ] Inventory geometry owners.
+- [ ] Inventory choreography owners.
+- [ ] Inventory topology owners.
+- [ ] Inventory browser entrypoints.
+- [ ] Classify structural, compatibility, historical and obsolete files.
+- [ ] Record available visual reference assets.
+- [ ] Do not infer unavailable video timing.
+Exit: one authoritative baseline and replaceable scaffolding list.
+
+## C. S1 — Spatial scene grammar
+- [x] Establish the canonical structural-root inheritance metadata contract (owner, semantic boundary, construction slice, required S0-S10 roots for later slices).
+- [ ] Define World scene graph.
+- [ ] Define PhysicalModule contract.
+- [ ] Define PodAssembly contract.
+- [ ] Define FacilityAssembly contract.
+- [ ] Define Division contract.
+- [ ] Define ExpansionMechanism contract.
+- [ ] Define Port contract.
+- [ ] Define Corridor contract.
+- [ ] Define Edge contract.
+- [ ] Define CameraSubject contract.
+- [ ] Define state/effect projection contract.
+- [ ] Keep semantic identity independent of mesh index and coordinates.
+- [ ] Keep renderer as projection/orchestration layer.
+Exit: every physical system has one explicit owner.
+
+### C1. S1 existing-owner reconciliation
+- [x] World scene graph ownership identified in `machine-hero-scene.js`, with WebGL orchestration remaining in `machine-world-renderer.js`.
+- [x] PhysicalModule ownership identified in `machine-hero-scene.js::makeMachinePart`.
+- [x] PodAssembly ownership established in `machine-pod-assembly.js::deriveMachinePodAssembly`; `machine-core-layout.js::createBranchConnectionCore` retains population/placement responsibility.
+- [ ] Resolve partitioned FacilityAssembly ownership before S6/S7 completion.
+- [ ] Resolve partitioned Division contract ownership before S4 completion.
+- [ ] Resolve partitioned ExpansionMechanism lifecycle ownership before S5 completion.
+  - Current reconciliation: hero-hierarchy-runtime.js remains semantic OPEN/CLOSE state authority; machine-expansion-mechanism.js owns physical travel, clearance, corridor reservation, and camera-subject projection constraints. S5 must not create a competing semantic hierarchy state machine.
+
+- [ ] Resolve partitioned Port derivation before S8 completion.
+- [ ] Resolve partitioned Corridor reservation ownership before S8 completion.
+- [ ] Resolve partitioned Edge identity/topology ownership before S8 completion.
+- [x] CameraSubject ownership identified in `machine-subject.js`.
+- [ ] Resolve partitioned state/effect projection ownership before S9/S28/S29 completion.
+
+**Exit:** S1 is not considered structurally closed while a partitioned row can still produce a second competing authority. Established rows may be consumed immediately; unresolved rows must be closed at their owning construction slice.
+
+## D. S2 — Central Core reconstruction
+- [ ] Authored outer shell.
+- [ ] Layered core chamber.
+- [ ] Receiving surface.
+- [ ] Internal concentric mechanisms.
+- [ ] Core energy intake/outflow ports.
+- [ ] Workspace payload surface.
+- [ ] Core state indicators.
+- [ ] Receive/absorb/reflect/handoff states.
+- [ ] Core camera subject.
+- [ ] Geometry envelope verification.
+Exit: center is an authored machine assembly.
+
+## E. S3 — Pod assembly reconstruction
+- [ ] Reusable authored Pod shell.
+- [ ] Outer collar.
+- [ ] Inner chamber.
+- [ ] Local articulation.
+- [ ] Local payload surface.
+- [ ] Division attachment points.
+- [ ] Local energy/data interfaces.
+- [ ] Local status presentation.
+- [ ] 1–10 population support.
+- [ ] Maximum-density verification.
+- [ ] Responsive density model.
+Exit: Pods are true assemblies and safely replicable.
+
+## F. S4 — Division system reconstruction
+- [ ] Payload-driven division envelope.
+- [ ] Connection division.
+- [ ] Behavior division.
+- [ ] Toolkit division.
+- [ ] Capability division.
+- [ ] Authorization division.
+- [ ] Workspace Scope division.
+- [ ] Task/Evidence division.
+- [ ] Distinct geometry families where semantics require them.
+- [ ] Distinct attachment mechanisms where appropriate.
+- [ ] Stable division identity.
+- [ ] Geometry-aware ports.
+- [ ] Geometry-aware clearance.
+Exit: divisions are subsystems, not scaled primitives.
+
+## G. S5 — Expansion mechanisms
+- [ ] CLOSED.
+- [ ] PREPARING.
+- [ ] OPENING.
+- [ ] ACTIVE/OPEN.
+- [ ] CLOSING.
+- [ ] Interrupted opening.
+- [ ] Interrupted closing.
+- [ ] Payload-driven travel distance.
+- [ ] Corridor reservation.
+- [ ] Collision avoidance.
+- [ ] Camera subject recomputation.
+- [ ] Reduced-motion semantic equivalent.
+Exit: expansion is mechanically authored and spatially safe.
+
+## H. S6 — Product facility assemblies
+- [ ] Workspace HQ.
+- [ ] Projects Library.
+- [ ] Artifacts / Inventory.
+- [ ] Storage.
+- [ ] Team / Agents.
+- [ ] MCP / Capability.
+- [ ] Skills / Responsibility.
+- [ ] Orchestration / Scheduler presentation.
+- [ ] Marketplace / Commerce / Entitlement.
+- [ ] Settings / Control.
+- [ ] Authentication Gateway.
+- [ ] Verify facilities are not forced into Seat children.
+Exit: product facilities have deliberate physical destinations.
+
+## I. S7 — Specialized facility machinery
+- [ ] Telescoping analysis facility.
+- [ ] Fin/structural deployment facility.
+- [ ] Rotational core/analysis facility.
+- [ ] Sensor/communication facility.
+- [ ] Facility-specific mechanism graph.
+- [ ] Facility-specific payload surface.
+- [ ] Facility-specific camera subject.
+- [ ] Facility-specific ports.
+- [ ] Facility-specific clearance.
+Exit: outer world contains genuinely different machines.
+
+## J. S8 — Topology and corridors
+- [ ] Core ↔ Pod edges.
+- [ ] Pod ↔ Division edges.
+- [ ] Pod ↔ Facility edges.
+- [ ] Facility ↔ Facility edges.
+- [ ] Workspace contribution edges.
+- [ ] Adjacent Seat paths where semantically valid.
+- [ ] Unique semanticEdgeId for every edge.
+- [ ] Port continuity.
+- [ ] Corridor reservations.
+- [ ] Obstacle avoidance.
+- [ ] Route continuity.
+- [ ] Dynamic geometry rerouting.
+- [ ] Independent topology verification.
+Exit: every meaningful connection is real in the semantic graph and physical route.
+
+## K. S9 — Electricity / signal
+- [ ] Idle state.
+- [ ] Active Seat state.
+- [ ] Active branch state.
+- [ ] Contribution transfer.
+- [ ] Workspace receiving.
+- [ ] Absorb.
+- [ ] Reflect.
+- [ ] Handoff-ready.
+- [ ] Waiting for continuation.
+- [ ] Blocked/error.
+- [ ] Reduced-motion signal state.
+- [ ] Remove visual paths without semantic edges.
+Exit: energy flow is a projection of the declared machine graph.
+
+## L. S10 — Camera/navigation
+- [ ] WORLD_OVERVIEW.
+- [ ] POD_FOCUS.
+- [ ] DIVISION_FOCUS.
+- [ ] FACILITY_FOCUS.
+- [ ] EXPANSION_FOLLOW.
+- [ ] RETURN_TO_PARENT.
+- [ ] RETURN_TO_WORLD.
+- [ ] CONTINUOUS_TREE_TRAVEL.
+- [ ] Responsive framing.
+- [ ] Reduced-motion equivalent.
+- [ ] Semantic subject identity.
+- [ ] Subject envelope follows expanded geometry.
+- [ ] Retired camera identifiers remain retired.
+Exit: camera movement is spatially meaningful and payload-aware.
+
+## M. S11-S21 — Inheritance contract for product/runtime slices
+**Every S11-S21 slice inherits S0-S10. A later feature may extend the machine but may not replace its scene grammar, assembly ownership, topology, signal model, or semantic camera contracts.**
+
+**Reviewer example:** S13 Workspace must be implemented as a projection of the S0-S10 machine, including the S1 scene graph, S2 Core/Workspace center, S6 facility ownership, S8 topology/corridors, S9 signal semantics, and S10 camera subjects. It must not become an isolated UI island or invent a parallel facility geometry authority.
+
+Exit: a cold reviewer can trace each product/runtime feature back to the S0-S10 structural roots before reviewing feature-specific behavior.
+
+## M. S11 — Guest machine
+- [ ] Public entrance.
+- [ ] Explicit Enter 3D world.
+- [ ] Ten-seat presentation capacity.
+- [ ] Gentle automatic orbit.
+- [ ] Guest lock/limited-action state.
+- [ ] Login/Sign Up invitation.
+- [ ] Orbit stop during auth transition.
+Exit: guest machine is coherent showroom behavior.
+
+## N. S12 — Authenticated restoration
+- [ ] Firebase identity handoff.
+- [ ] Workplace restore.
+- [ ] Project restore.
+- [ ] Actual durable Seat population.
+- [ ] Seat-to-Pod projection.
+- [ ] Readiness dimensions.
+- [ ] Reason-bearing unavailable state.
+- [ ] No fabricated durable state.
+- [ ] Correct return path.
+Exit: authenticated world reflects authoritative state.
+
+## O. S13 — Workspace capability facility
+- [ ] Workspace center.
+- [ ] Current project/team context.
+- [ ] Active task presentation.
+- [ ] Evidence/result surface.
+- [ ] Workspace capabilities.
+- [ ] Authorized normal-UI handoffs.
+- [ ] Read-model driven state.
+Exit: Workspace is both physical core and capability surface.
+
+## P. S14 — Team / Agents
+- [ ] Agent/application identity.
+- [ ] Responsibility.
+- [ ] Seat assignment.
+- [ ] Skill bundle.
+- [ ] Capability profile.
+- [ ] Readiness.
+- [ ] Assignment/configuration intent.
+- [ ] No implied authorization from role.
+Exit: participation is spatially legible.
+
+## Q. S15 — MCP / Capability / Toolkit
+- [ ] Discover.
+- [ ] Inspect.
+- [ ] Install.
+- [ ] Authentication handoff.
+- [ ] Configure.
+- [ ] Health/test.
+- [ ] Equip.
+- [ ] Dynamic target-owned branch.
+- [ ] Recursive capability branches.
+- [ ] Credential boundary.
+- [ ] Presentation/runtime truth separation.
+Exit: capabilities become physical equipment without authority leakage.
+
+## R. S16 — #392 budget / energy / handoff / continuation
+- [ ] Configured budget.
+- [ ] Effective budget.
+- [ ] Reasoning allocation where supported.
+- [ ] Work/output allocation.
+- [ ] Consumption.
+- [ ] Remaining.
+- [ ] Handoff reserve.
+- [ ] Warning threshold.
+- [ ] HANDOFF_REQUIRED.
+- [ ] WAITING_FOR_CONTINUATION.
+- [ ] EXHAUSTED.
+- [ ] COMPLETED.
+- [ ] BLOCKED.
+- [ ] Continue/reconfigure/close/new-command presentation.
+- [ ] Backend remains authoritative.
+Exit: execution envelope is understandable without invented accounting.
+
+## S17 — Task / evidence / report
+- [ ] Active task presentation.
+- [ ] Task lifecycle.
+- [ ] Evidence state.
+- [ ] Result state.
+- [ ] Seat report/handoff.
+- [ ] Historical/live separation.
+- [ ] Provenance.
+- [ ] Artifact inspection.
+Exit: users can follow work and continuity.
+
+## T. S18 — Storage / artifacts
+- [ ] Inventory state.
+- [ ] Item selection.
+- [ ] Metadata.
+- [ ] Ready/empty/blocked states.
+- [ ] Artifact state.
+- [ ] Deferred upload remains deferred.
+- [ ] No fabricated content.
+Exit: storage and artifacts are distinct honest facilities.
+
+## U. S19 — Marketplace / commerce
+- [ ] Team Quality presentation.
+- [ ] Team Population presentation.
+- [ ] Seat capacity state.
+- [ ] Entitlement state.
+- [ ] Purchase intent.
+- [ ] Transaction verification/loading.
+- [ ] External billing authority.
+- [ ] No visual-only purchase completion.
+Exit: commerce state is a projection of authoritative entitlement.
+
+## V. S20 — Settings / control
+- [ ] Settings facility.
+- [ ] Semantic tree/branch navigation.
+- [ ] Seat settings.
+- [ ] Budget settings.
+- [ ] Feature controls.
+- [ ] Login/Sign Up separation.
+- [ ] Logout.
+- [ ] Return.
+- [ ] Back.
+Exit: controls are consistently discoverable.
+
+## W. S21 — Loading / recovery
+- [ ] Navigation loading.
+- [ ] Data retrieval.
+- [ ] Connection test.
+- [ ] MCP/tool invocation.
+- [ ] AI execution.
+- [ ] Handoff/continuation.
+- [ ] Storage operation.
+- [ ] Commerce verification.
+- [ ] Authorization.
+- [ ] Provider unavailable.
+- [ ] Retry/recovery.
+- [ ] Cancellation.
+- [ ] No false-success effect.
+Exit: failure states remain understandable.
+
+## X. S22 — Accessibility
+**Inherited roots: S0-S10. Cross-cutting over S0-S21; must not fork machine meaning.**
+- [ ] Keyboard navigation.
+- [ ] Visible focus.
+- [ ] Deterministic accessible names.
+- [ ] State announcements.
+- [ ] Error/blocked reasons.
+- [ ] Non-color-only meaning.
+- [ ] Escape/back.
+- [ ] Return-to-parent.
+- [ ] Reduced-motion semantic equivalence.
+- [ ] Browser accessibility smoke coverage.
+Exit: machine is operable without mouse/color/animation dependence.
+
+## Y. S23 — Responsive machine
+**Inherited roots: S0-S10. Responsive changes may alter framing, density, and affordances, never semantic identity.**
+- [ ] Desktop.
+- [ ] Tablet/compact.
+- [ ] Phone.
+- [ ] Camera adaptation.
+- [ ] Density adaptation.
+- [ ] Panel/overlay adaptation.
+- [ ] Pod/facility readability.
+- [ ] Maximum-density 10-seat case.
+- [ ] Touch interaction.
+- [ ] Reduced-motion interaction.
+Exit: phone is a designed machine view.
+
+## Z. S24 — Materials / lighting
+**Inherited roots: S0-S10. Theme authority: Product Law canonical unified theme root.**
+- [ ] Light-skeomorphic environment.
+- [ ] Primary structural material.
+- [ ] Secondary machinery material.
+- [ ] Glass/translucency.
+- [ ] Energy material.
+- [ ] Holographic material.
+- [ ] Semantic emissive strength.
+- [ ] Shadow/depth separation.
+- [ ] Canonical theme bridge.
+- [ ] Dark-glass mode remains future-gated.
+Exit: materials reinforce hierarchy and state.
+
+## AA. S25 — Holograms / blueprints
+**Inherited roots: S0-S10. Payload and geometry remain semantic sources of truth.**
+- [ ] Holographic core.
+- [ ] Feature blueprint surfaces.
+- [ ] Facility schematics.
+- [ ] Data payloads.
+- [ ] Labels.
+- [ ] State/status indicators.
+- [ ] Payload-specific detail.
+Exit: machine surfaces communicate product meaning.
+
+## AB. S26 — Ambient environment
+**Inherited roots: S0-S10. Ambient effects remain subordinate to machine state and performance.**
+- [ ] Star field.
+- [ ] Atmospheric depth.
+- [ ] Negative-space composition.
+- [ ] Controlled particles.
+- [ ] Ambient motion.
+- [ ] State-aware ambient intensity.
+- [ ] No ambient effect used as runtime proof.
+Exit: environment supports machine focus.
+
+## AC. S27 — Performance / resource discipline
+**Inherited roots: S0-S10. Measure the full inherited machine, not merely cosmetic effects.**
+- [ ] Frame-time measurements.
+- [ ] GPU/buffer measurements.
+- [ ] Duplicate-context check.
+- [ ] Geometry reuse.
+- [ ] Dynamic resource disposal.
+- [ ] Particle budget.
+- [ ] 10-seat stress case.
+- [ ] Phone performance case.
+- [ ] Memory/leak regression.
+Exit: visual complexity is sustainable.
+
+## AD. S28 — Cross-feature choreography
+**Inherited roots: S0-S10. Cross-feature choreography must use the same semantic machine and topology.**
+- [ ] Workspace ↔ Seat.
+- [ ] Seat ↔ Connection.
+- [ ] Seat ↔ Toolkit.
+- [ ] Seat ↔ Capability.
+- [ ] Capability ↔ Workspace.
+- [ ] Seat ↔ Task.
+- [ ] Task ↔ Evidence.
+- [ ] Turn ↔ Budget.
+- [ ] Budget ↔ Handoff.
+- [ ] Handoff ↔ Continuation.
+- [ ] Commerce ↔ Entitlement.
+- [ ] Storage ↔ Inventory.
+- [ ] GitHub capability projection.
+- [ ] MCP ↔ Capability.
+- [ ] Auth ↔ restoration.
+- [ ] Settings ↔ feature state.
+Exit: one machine grammar spans the product.
+
+## AE. S29 — Final interaction choreography
+**Inherited roots: S0-S10. Final choreography integrates the inherited machine; it does not create a replacement interaction model.**
+- [ ] Focus → highlight.
+- [ ] Highlight → mechanical deploy.
+- [ ] Deploy → payload settle.
+- [ ] Payload → controls actionable.
+- [ ] Action → semantic loading.
+- [ ] Result → settle.
+- [ ] Failure → reason-bearing recovery.
+- [ ] Back → parent compaction.
+- [ ] Next → semantic next subject.
+- [ ] Close → parent/world.
+- [ ] Turn → semantic signal.
+- [ ] Handoff → continuity.
+- [ ] Continuation → fresh turn.
+Exit: major feature classes behave consistently.
+
+## AF. S30 — Exact-head repository verification
+- [ ] Governance Integrity.
+- [ ] Full-System.
+- [ ] Security.
+- [ ] Deep Security.
+- [ ] Canonical Browser.
+- [ ] Geometry checks.
+- [ ] Source/public parity.
+- [ ] Responsive browser proof.
+- [ ] Reduced-motion browser proof.
+- [ ] Accessibility proof.
+- [ ] Stale-reference audit.
+- [ ] No validator weakening.
+Exit: all claims are exact-head grounded.
+
+## AG. S31 — Runtime / deployment reconciliation
+- [ ] Re-check #402 current state.
+- [ ] Re-check production Firestore evidence.
+- [ ] Re-check authoritative read-model surfaces.
+- [ ] Confirm deployed artifact.
+- [ ] Confirm canonical hosting.
+- [ ] Browser-observe production.
+- [ ] Record runtime evidence.
+- [ ] Keep runtime proof separate from spatial proof.
+Exit: deployed presentation matches actual runtime truth.
+
+## AH. S32 — Human acceptance
+- [ ] Desktop.
+- [ ] Phone.
+- [ ] Guest.
+- [ ] Authentication transition.
+- [ ] Seat/pod interaction.
+- [ ] Division expansion.
+- [ ] Facility navigation.
+- [ ] Camera travel.
+- [ ] Energy/turn.
+- [ ] Handoff/continuation presentation.
+- [ ] Loading/recovery.
+- [ ] Accessibility.
+- [ ] Reduced motion.
+Exit: authorized human accepts the integrated machine.
+
+## AI. S33 — ProMax polish
+- [ ] Silhouette refinement.
+- [ ] Mechanical micro-motion.
+- [ ] Material refinement.
+- [ ] Lighting refinement.
+- [ ] Hologram refinement.
+- [ ] Energy-flow refinement.
+- [ ] Depth cues.
+- [ ] Transition refinement.
+- [ ] Mobile refinement.
+- [ ] Micro-interactions.
+- [ ] Visual hierarchy cleanup.
+- [ ] Dead geometry removal.
+- [ ] Safe obsolete compatibility cleanup.
+- [ ] Full verification rerun.
+Exit: polish improves a correct machine.
+
+## AJ. Documentation and cleanup alignment
+
+### AJ1. Current-state routing cleanup
+- [x] Reconcile Product_Law/WIRING.md so #398 is historical baseline and #404 is current spatial execution vehicle.
+- [x] Reconcile POLICY.md spatial migration checkpoint.
+- [x] Reconcile Masterplan/MASTERPLAN.md.
+- [x] Reconcile Masterplan/NEXT_SLICES.md.
+- [x] Reconcile AI_ASSISTANT_READ_ME.md.
+- [x] Reconcile docs/SKILL_WIRING.md.
+- [x] Reconcile docs/TEAMAI_3D_HERO_TREE_CENSUS.*.
+- [x] Reconcile docs/TEAMAI_3D_HERO_MACHINE_CONSTRUCTION.md.
+- [x] Reconcile docs/TEAMAI_3D_HERO_R1_R2_READINESS.md.
+- [x] Reconcile docs/TEAMAI_3D_HERO_CONCENTRIC_RING_MAP.md.
+- [x] Preserve historical/archive references as historical.
+- [x] Do not erase provenance merely to remove stale wording.
+
+### AJ2. Canonical checklist alignment
+- [x] This file remains the detailed execution checklist under Masterplan/.
+- [x] Masterplan/NEXT_SLICES.md remains the single current-frontier summary.
+- [x] No second current-slice checklist is created.
+- [x] PR #404 and Issue #405 are the sole spatial execution pair.
+- [x] #396/#278 remain product/ledger authorities, not additional implementation vehicles.
+- [x] #402/#401 remain backend/runtime counterpart only.
+
+### AJ3. Structural inventory cleanup
+- [x] Audit stale Command Deck documents against current spatial authority; four unreferenced obsolete slice artifacts were archived with provenance, while referenced planning context remains subordinate and is not treated as current machine authority.
+- [x] Tree Census records truthful status and now records the non-semantic S0-S10 construction-root metadata alongside unchanged semantic identities.
+- [ ] New physical assemblies map to semantic owners.
+- [ ] New facilities do not get invented Seat child identities.
+- [ ] Removed/replaced structures are recorded, not silently disappeared.
+- [ ] Source/public pairs remain synchronized.
+- [ ] Compatibility modules are clearly labeled.
+- [ ] Retired modules remain historical or are removed only after dependency proof.
+
+### AJ4. Documentation quality
+- [ ] Remove claims that imply #398 is still Draft/active.
+- [ ] Remove claims that imply current primitive renderer is final.
+- [ ] State clearly that R1/R2 are implemented-partial, not final machine completion.
+- [ ] Record the 10-seat geometry discrepancy and its resolution when closed.
+- [ ] Record actual evidence runs by exact head.
+- [ ] Keep screenshots/video references separate from Product Law.
+- [ ] Update session/recovery state after major slice boundaries.
+
+## AK. Acceptance gates
+- [ ] G1 Semantic completeness.
+- [ ] G2 Physical machine completeness.
+- [ ] G3 Interaction completeness.
+- [ ] G4 Spatial/geometry completeness.
+- [ ] G5 Runtime truthfulness.
+- [ ] G6 Visual completeness.
+- [ ] G7 Production/browser evidence.
+- [ ] G8 Human acceptance.
+- [ ] G9 ProMax polish.
+
+Evidence vocabulary: IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → RUNTIME-PROVEN → HUMAN-ACCEPTED
+
+## AL. Hard constraints
+- [ ] No second implementation PR for this scope.
+- [ ] No backend rewrite in #404.
+- [ ] No fabricated production data.
+- [ ] No duplicate geometry authority.
+- [ ] No duplicate topology authority.
+- [ ] No facility forced into Seat hierarchy merely for convenience.
+- [ ] No universal fixed branch geometry.
+- [ ] No primitive scaling presented as the final machine mechanism.
+- [ ] No electricity before semantic topology.
+- [ ] No visual effect treated as runtime proof.
+- [ ] No provider credentials in renderer/browser state.
+- [ ] No Firebase/Auth authority in renderer.
+- [ ] No scheduler authority in renderer.
+- [ ] No revival of Command Deck.
+- [ ] No revival of retired camera identifiers.
+- [ ] No old prototype timing treated as architecture.
+- [ ] No validator weakening to make CI green.
+- [ ] No 029-release claim before G1-G8.
