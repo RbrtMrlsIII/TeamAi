@@ -2,20 +2,20 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: continue TeamAi from the connected GitHub repository; execute one current-slice item.
+- Last given prompt: apply the advisory-runner direct-push event-graph repair without mixing it into #404.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `87f466fb0edac3784280128785a8fd2dc757e749`
+- current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
 - replacement branch: backend/030-production-runtime-evidence
-- open implementation vehicles: PR #402 / Issue #401 (active Draft)
+- open implementation vehicles: PR #402 / Issue #401 (active Draft); Draft PR #404 remains the 029 reconstruction vehicle; advisory-runner push-noise repair is infrastructure only
 - active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
-- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
+- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, the retired current-state map, or treating reusable-runner zero-job push failures as product proof
 - next allowed work: the protected test project currently lists zero team documents, so Gate 3 Seat inspection cannot proceed until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/index/runtime gates from observed production state.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
@@ -47,10 +47,10 @@ Residual uncertainty: live secrets, Seat document presence, and the connections 
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `87f466fb0edac3784280128785a8fd2dc757e749`
+- current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
 - replacement branch: backend/030-production-runtime-evidence
-- open implementation vehicles: PR #402 / Issue #401 (active Draft)
+- open implementation vehicles: PR #402 / Issue #401 (active Draft); Draft PR #404 remains the 029 reconstruction vehicle; advisory-runner push-noise repair is infrastructure only
 - active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
