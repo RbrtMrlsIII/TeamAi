@@ -42,7 +42,7 @@ Execution state is separate from advisory content: each slot records one termina
 - [x] #370 fresh runtime-proof vehicle demonstrated the durable claim and fail-closed stale-head barrier; its former model-specific stage exposed a reusable-runner parser fault before provider transport, so no later reviewer stage ran.
 - [x] #371 reusable reviewer provider-invocation repair is validated and merged; fresh provider runtime proof now targets the revised five-slot free-router path.
 - [x] Automatic OpenRouter Free Router sequence has been runtime-executed on fresh eligible non-draft PR lifecycle events. Historical 0/5 proof at `b5cabce7fb9e503637a9ff42a06befef11a5bd22` remains immutable; final repaired proof at `be9d234ee41a2771ccb737e7435dff5d3481897b` recorded 4/5 publishable advisory reviews and 1/5 terminal `PROVIDER_RESPONSE_TRUNCATED`.
-The reusable advisory runner path is `.github/workflows/ai-advisory-review-runner-v2.yml`. Direct push is not a provider invocation. A GitHub push evaluation of this reusable file must not conclude failure with zero jobs; provider work remains `workflow_call` only.
+The reusable advisory runner path is `.github/workflows/ai-advisory-review-runner.yml`. It is `workflow_call`-only; provider work remains restricted to the sequence and manual caller workflows.
 
 ## 2026-09-22 029 cross-stack convergence checkpoint
 

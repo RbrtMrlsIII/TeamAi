@@ -53,9 +53,6 @@ on:
     secrets:
       api_key:
         required: true
-  push:
-    paths:
-      - '.github/workflows/ai-advisory-review-runner-v2.yml'
 
 permissions:
   contents: read
@@ -64,7 +61,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: ai-review-runner-${{ github.event_name }}-${{ inputs.reviewer_slug || github.sha }}-${{ inputs.pr_number || 'none' }}-${{ inputs.expected_head || 'manual' }}
+  group: ai-review-runner-${{ inputs.reviewer_slug }}-${{ inputs.pr_number }}-${{ inputs.expected_head || 'manual' }}
   cancel-in-progress: false
 
 env:
@@ -75,18 +72,7 @@ env:
   REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
 
 jobs:
-  ignore_direct_push:
-    if: github.event_name != 'workflow_call'
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    permissions:
-      contents: read
-    steps:
-      - name: Ignore direct push
-        run: echo "Reusable advisory runner; direct push is ignored."
-
   review:
-    if: github.event_name == 'workflow_call'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -223,10 +209,10 @@ jobs:
           issue_number="$GOVERNING_ISSUE_NUMBER"
           if [[ "$issue_kind" == "NONE" ]]; then
             cat > /tmp/issue-context.txt <<'EOF'
-=== GOVERNING ISSUE ===
-No governing issue declared for this advisory review.
-The explicit PR field uses the accepted no-issue value (none or n/a).
-EOF
+            === GOVERNING ISSUE ===
+            No governing issue declared for this advisory review.
+            The explicit PR field uses the accepted no-issue value (none or n/a).
+            EOF
             exit 0
           fi
           if [[ "$issue_kind" != "ISSUE" || -z "$issue_number" ]]; then

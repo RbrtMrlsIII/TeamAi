@@ -53,7 +53,7 @@ The requested route is openrouter/free. The actual routed model/provider returne
 
 ## Reviewer runner repair boundary
 Implementation repairs to the reusable advisory-review runner belong to Verification & CI/Browser and do not create new Product Law authority. Runtime proof must distinguish configured routing from actual provider invocation. The fresh runtime vehicles that exposed the historical parser defects remain immutable evidence for those heads. The current runner records the OpenRouter response model and routing metadata so the repository does not mistake a dynamic router request for a fixed reviewer identity.
-The reusable runner path is `.github/workflows/ai-advisory-review-runner-v2.yml`. Direct push is not an advisory invocation. The runner defines a non-provider job so a GitHub push evaluation cannot conclude failure with zero jobs. Provider work remains `workflow_call` only from the sequence and manual workflows.
+The reusable runner path is `.github/workflows/ai-advisory-review-runner.yml`. It is `workflow_call`-only. Provider work is entered only through the automatic sequence and manual workflows.
 
 ### Validation parser alignment
 
