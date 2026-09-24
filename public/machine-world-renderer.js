@@ -1441,6 +1441,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : choreography.transformation >= 0.999
         ? 'ACTIVE'
         : 'DEPLOYING';
+    const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(
+      machineWorldTopology,
+      branchId,
+      reducedMotion,
+      now,
+      {
+        ...state,
+        workspaceReceptionAmount: choreography.workspaceReception,
+      },
+    );
     canvas.dataset.machineWorldTopology = machineWorldTopology.id;
     canvas.dataset.machineWorldTopologyVersion = machineWorldTopology.version;
     canvas.dataset.machineWorldTopologyValidation = 'pass';
@@ -1585,16 +1595,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
       gl.drawArrays(gl.LINE_STRIP,0,connection.route.length);
     }
-    const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(
-      machineWorldTopology,
-      branchId,
-      reducedMotion,
-      now,
-      {
-        ...state,
-        workspaceReceptionAmount: choreography.workspaceReception,
-      },
-    );
     ringDraw(
       'CYL',
       multiplyMatrix(

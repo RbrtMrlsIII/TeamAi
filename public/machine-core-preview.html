@@ -40,7 +40,7 @@
         if (root) root.dataset.coreBoot = 'ready';
       } catch (error) {
         showBootError(error);
-        if (root) root.dataset.coreBoot = 'ready';
+        if (root) root.dataset.coreBoot = 'error';
         throw error;
       }
     }

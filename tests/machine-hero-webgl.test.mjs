@@ -305,3 +305,20 @@ test('workspace profile is frame-scoped and reused for the R0 receiving core', a
   assert.match(renderer, /workspaceRadius: workspaceProfile\.workspace/);
   assert.match(renderer, /expansionAmount: choreography\.transformation/);
 });
+
+test('canonical renderer computes topology-edge count before publishing it', () => {
+  const declaration = renderer.indexOf('const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(');
+  const publication = renderer.indexOf('canvas.dataset.machineWorldTopologyRenderedEdges = String(renderedWorldTopologyEdges);');
+  assert.ok(declaration >= 0);
+  assert.ok(publication >= 0);
+  assert.ok(declaration < publication);
+});
+
+test('machine-core preview reports boot errors truthfully', () => {
+  const catchStart = page.indexOf('} catch (error) {');
+  const throwIndex = page.indexOf('throw error;', catchStart);
+  assert.ok(catchStart >= 0 && throwIndex > catchStart);
+  const catchBlock = page.slice(catchStart, throwIndex);
+  assert.match(catchBlock, /root\.dataset\.coreBoot = 'error'/);
+  assert.doesNotMatch(catchBlock, /root\.dataset\.coreBoot = 'ready'/);
+});
