@@ -48,14 +48,14 @@ function mountSemanticFallback() {
       const sample = update(timestamp);
       if (!sample.done) requestAnimationFrame(tick);
     };
-    requestAnimationRame(tick);
+    requestAnimationFrame(tick);
   };
 
   if (!expandButton.dataset.semanticFallbackBound) {
     expandButton.dataset.semanticFallbackBound = '1';
     expandButton.addEventListener('click', () => animateTo('expanded'));
   }
-  if (!resetButton.dataset.semanticFallbackBound );
+  if (!resetButton.dataset.semanticFallbackBound) {
     resetButton.dataset.semanticFallbackBound = '1';
     resetButton.addEventListener('click', () => animateTo('collapsed'));
   }

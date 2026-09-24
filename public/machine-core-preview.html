@@ -12,8 +12,6 @@
     <noscript>JavaScript is required to render the modular branch connection core.</noscript>
   </main>
   <script type="module">
-    import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
-    import { parseSeatCountParam } from './seat-capacity.js';
 
     const root = document.querySelector('.machine-core-shell');
     const showBootError = (error) => {
@@ -29,76 +27,6 @@
       return new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
     }
 
-    function hydrateSemanticFallback() {
-      const panel = document.querySelector('[data-machine-core-visual]');
-      if (!panel) return;
-      const seatCount = parseSeatCountParam();
-      const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true;
-      const scene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
-      const count = panel.querySelector('[data-core-count]');
-      const camera = panel.querySelector('[data-core-camera]');
-      const state = panel.querySelector('[data-core-state]');
-      const expand = panel.querySelector('[data-core-expand]');
-      const reset = panel.querySelector('[data-core-reset]');
-
-      if (count && !count.textContent.trim()) {
-        count.textContent = `${scene.parts.length} modules · ${scene.seatCount} seats · 4 outer housings · 1 hub`;
-      }
-      if (camera && camera.options.length === 0) {
-        for (const item of scene.cameras) {
-          const option = document.createElement('option');
-          option.value = item.branchId;
-          option.textContent = `${item.branchId.replace('BRANCH-', '')} · ${item.cameraId}`;
-          camera.append(option);
-        }
-        camera.value = 'HUB-CORE';
-      }
-
-      const updateCameraState = () => {
-        const selected = camera?.value || 'HUB-CORE';
-        const branchCamera = resolveBranchCamera(scene, selected) || scene.cameras[0];
-        if (state) state.textContent = `${reducedMotion ? 'reduced-motion ' : ''}${state.dataset.machineMotionState || 'collapsed'} · ${state.dataset.machineAmount || '0'}% · ${scene.parts.length} independent modules · camera ${branchCamera.cameraId}`;
-      };
-      const setMotionState = (next) => {
-        if (!state) return;
-        state.dataset.machineMotionState = next === 'expanded' ? 'expanded' : 'collapsed';
-        state.dataset.machineAmount = next === 'expanded' ? '100' : '0';
-        updateCameraState();
-      };
-
-      if (state && !state.dataset.machineMotionState) {
-        state.dataset.machineMotionState = 'collapsed';
-        state.dataset.machineAmount = '0';
-        updateCameraState();
-      }
-      if (camera && !camera.dataset.machineSemanticFallbackBound) {
-        camera.dataset.machineSemanticFallbackBound = '1';
-        camera.addEventListener('change', updateCameraState);
-      }
-      if (expand && !expand.dataset.machineSemanticFallbackBound) {
-        expand.dataset.machineSemanticFallbackBound = '1';
-        expand.addEventListener('click', () => {
-          if (reducedMotion) setMotionState('expanded');
-          else {
-            if (state) state.dataset.machineMotionState = 'opening';
-            updateCameraState();
-            globalThis.setTimeout(() => setMotionState('expanded'), 900);
-          }
-        });
-      }
-      if (reset && !reset.dataset.machineSemanticFallbackBound) {
-        reset.dataset.machineSemanticFallbackBound = '1';
-        reset.addEventListener('click', () => {
-          if (reducedMotion) setMotionState('collapsed');
-          else {
-            if (state) state.dataset.machineMotionState = 'closing';
-            updateCameraState();
-            globalThis.setTimeout(() => setMotionState('collapsed'), 900);
-          }
-        });
-      }
-    }
-
     async function boot() {
       await whenDomReady();
       try {
@@ -109,11 +37,9 @@
         if (new URLSearchParams(globalThis.location.search).get('machine-preview') === 'webgl') {
           mountMachineWebGLPreview();
         }
-        hydrateSemanticFallback();
         if (root) root.dataset.coreBoot = 'ready';
       } catch (error) {
         showBootError(error);
-        hydrateSemanticFallback();
         if (root) root.dataset.coreBoot = 'ready';
         throw error;
       }
