@@ -106,7 +106,8 @@
       "docs/",
       "recovery/",
       "delivery/",
-      "ci/"
+      "ci/",
+      "chore/"
     ],
     "protected_branch": "main",
     "main_change_mode": "PR_ONLY",

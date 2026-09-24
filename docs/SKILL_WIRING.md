@@ -47,6 +47,7 @@ A downstream **skipped** job is never a passing validation. Recovery must inspec
 The reusable advisory-review runner is downstream of the substantive validator set. For every invocation it polls the exact PR head and accepts only successful completion of the required exact-head check-runs before invoking the external model. The packet receives current governing-file context, the owning Issue state, exact-head execution evidence, and the complete bounded diff.
 
 A reusable runner transport/parser repair is a Verification & CI/Browser implementation concern. It must be proven by a fresh eligible exact-head execution after the repaired path is governed; static route declarations and green non-provider validators are not sufficient provider runtime evidence.
+The reusable runner file is `.github/workflows/ai-advisory-review-runner-v2.yml`. Direct push is ignored and must not start providers; provider invocation remains `workflow_call` from the sequence and manual workflows.
 
 ### Automatic reviewer sequence
 OpenRouter Free Router → 5 parallel slots → 2-second launch stagger; terminal slot outcome is explicit; actual routed model/provider recorded in each terminal slot artifact when the provider responds

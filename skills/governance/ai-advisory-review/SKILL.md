@@ -46,6 +46,7 @@ Manual later-head review uses /openrouter-free or /free-1 through /free-5 for si
 ## Reviewer configuration
 
 The authoritative slot/credential registry is `.github/teamai/authority-manifest.yml`. This Skill consumes that registry through the governed workflows and must not duplicate its alias table. The five aliases are credential identifiers only. Actual routed model/provider provenance comes from the OpenRouter response and must be recorded on successful execution.
+The reusable runner path is `.github/workflows/ai-advisory-review-runner-v2.yml`. Direct push is ignored and does not start providers. Provider work remains `workflow_call` from the automatic sequence and manual commands.
 
 
 ## Evidence contract

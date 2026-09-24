@@ -75,6 +75,7 @@ The automatic advisory path uses the manifest-defined `openrouter/free` route an
 ### Runtime-repair evidence boundary
 
 A reusable advisory-review transport or parser repair is a Verification & CI/Browser implementation concern, not a new authority layer. Configuration presence, static workflow consistency, and successful non-provider validators do not constitute provider runtime proof. The runtime-proof claim requires a fresh eligible exact-head lifecycle event after the repaired runner is governed, with observed provider invocation and terminal slot evidence. The diagnostic #370 parser failure and stale-head containment remain historical evidence for that specific proof vehicle.
+The reusable runner path is `.github/workflows/ai-advisory-review-runner-v2.yml`. GitHub may evaluate that reusable file on direct push even when provider work is `workflow_call` only. Direct push must not start providers and must not conclude as a zero-job failure.
 
 ## Validation-stage model
 

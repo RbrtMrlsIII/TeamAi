@@ -141,3 +141,5 @@ The first successor implementation slice is deliberately additive:
 ### Shared CI support: advisory issue preflight
 
 PR #407 is infrastructure support for Issue #406. It is not a replacement current slice and does not create a second product implementation frontier. The advisory control plane validates issue metadata once before provider fan-out and treats explicit `none`/`n/a` as no owning issue.
+
+The reusable advisory-runner path and direct-push event-graph repair are infrastructure support only. They are not a replacement current slice, not 029 completion, and must not be mixed into Draft PR #404.
