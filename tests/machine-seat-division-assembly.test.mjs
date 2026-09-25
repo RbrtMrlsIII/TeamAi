@@ -147,3 +147,53 @@ test('S4 attachment mechanisms are distinct across all seven semantic families',
   }
   assert.equal(types.size, divisions.length);
 });
+
+
+test('S4 physical subjects follow authored attachment translation and rotation', () => {
+  const parent = createBranchConnectionCore({ seatCount: 10 }).byBranch.get('BRANCH-SEAT-01');
+
+  const toolkitClosed = deriveMachineSeatDivisionAssembly({
+    parent,
+    childId: 'SEAT_TOOLKIT',
+    childIndex: 2,
+    amount: 0,
+    geometry: deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId: 'SEAT_TOOLKIT',
+      childIndex: 2,
+      amount: 0,
+    }),
+  });
+  const toolkitOpen = deriveMachineSeatDivisionAssembly({
+    parent,
+    childId: 'SEAT_TOOLKIT',
+    childIndex: 2,
+    amount: 1,
+    geometry: deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId: 'SEAT_TOOLKIT',
+      childIndex: 2,
+      amount: 1,
+    }),
+  });
+  const rackId = toolkitOpen.components.find((entry) => entry.profile === 'equipment-rack')?.id;
+  const closedRack = toolkitClosed.subject.sourcePartIds.includes(rackId);
+  assert.equal(closedRack, true);
+  assert.ok(toolkitOpen.subject.center.x !== toolkitClosed.subject.center.x || toolkitOpen.subject.center.z !== toolkitClosed.subject.center.z);
+
+  const behaviorClosed = deriveMachineSeatDivisionAssembly({
+    parent,
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount: 0,
+    geometry: deriveFocusedSeatDivisionGeometry({ parent, childId: 'SEAT_BEHAVIOR', childIndex: 1, amount: 0 }),
+  });
+  const behaviorOpen = deriveMachineSeatDivisionAssembly({
+    parent,
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount: 1,
+    geometry: deriveFocusedSeatDivisionGeometry({ parent, childId: 'SEAT_BEHAVIOR', childIndex: 1, amount: 1 }),
+  });
+  assert.notDeepEqual(behaviorClosed.subject.max, behaviorOpen.subject.max);
+});
