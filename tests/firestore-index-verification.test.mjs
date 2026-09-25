@@ -40,6 +40,32 @@ test("Firestore index verifier accepts the Firebase CLI --json envelope", () => 
   assert.deepEqual(result.missing, []);
 });
 
+test("Firestore index verifier accepts Firebase's implicit __name__ suffix on deployed composite indexes", () => {
+  const expected = JSON.parse(readFileSync("firestore.indexes.json", "utf8"));
+  const deployed = {
+    status: "success",
+    result: {
+      indexes: expected.indexes.map((index) => ({
+        ...index,
+        fields: [
+          ...index.fields,
+          {
+            fieldPath: "__name__",
+            order: "DESCENDING",
+          },
+        ],
+      })),
+      fieldOverrides: [],
+    },
+  };
+
+  const result = verifyRequiredIndexes(expected, deployed);
+  assert.equal(result.ok, true);
+  assert.equal(result.requiredCount, 1);
+  assert.equal(result.deployedCount, 1);
+  assert.deepEqual(result.missing, []);
+});
+
 test("Firestore index verifier identifies a missing required composite index", () => {
   const expected = JSON.parse(readFileSync("firestore.indexes.json", "utf8"));
   const deployed = {
