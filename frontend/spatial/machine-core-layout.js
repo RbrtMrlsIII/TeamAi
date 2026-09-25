@@ -39,6 +39,26 @@ const outerAngle = (count, outerIndex) => {
   return (nearestSeatIndex + 0.5) * step;
 };
 
+function radialHalfExtent(dimensions, angle) {
+  const width = Math.abs(Number(dimensions?.x) || 0);
+  const depth = Math.abs(Number(dimensions?.z) || 0);
+  return 0.5 * (
+    Math.abs(Math.cos(angle)) * width
+    + Math.abs(Math.sin(angle)) * depth
+  );
+}
+
+function deriveOuterHousingPort(center, dimensions, angle, seam, y) {
+  const radial = Math.hypot(Number(center?.x) || 0, Number(center?.z) || 0);
+  const halfExtent = radialHalfExtent(dimensions, angle);
+  const innerOffset = halfExtent + Math.max(0.05, (Number(seam) || 0) * 0.25);
+  return polar(
+    Math.max(0.2, radial - innerOffset),
+    angle,
+    Number(y) || 0,
+  );
+}
+
 export function seatShellBranchId(seatIndex) {
   return `BRANCH-SEAT-${String(Number(seatIndex) + 1).padStart(2, '0')}`;
 }
@@ -92,7 +112,7 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
   });
   const outer = outerProfiles.map((profile, outerIndex) => {
     const angle = outerAngle(count, outerIndex), center = polar(outerRadius, angle, profile.height), dims = silhouetteDimensions[profile.silhouette];
-    const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: polar(1.12, angle, profile.height), semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only', ...createSpatialConstructionContext({ slice: 'S7', owner: ROOT_OWNER.facility, semanticBoundary: 'presentation-only' }) };
+    const part = { id: profile.branchId.toLowerCase(), branchId: profile.branchId, seatIndex: null, kind: 'outer-housing', level: profile.height, center, dimensions: { ...dims }, silhouette: profile.silhouette, seam: dims.seam, uiStyle: profile.uiStyle, port: deriveOuterHousingPort(center, dims, angle, dims.seam, profile.height), semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only', ...createSpatialConstructionContext({ slice: 'S7', owner: ROOT_OWNER.facility, semanticBoundary: 'presentation-only' }) };
     part.uiSurface = makeUiSurface(part, profile.uiStyle, profile.uiScale); part.camera = cameraForPart(part, angle); return part;
   });
   const parts = [hub, ...inner, ...outer], byBranch = new Map(parts.map((part) => [part.branchId, part]));
