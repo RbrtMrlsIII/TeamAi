@@ -634,6 +634,7 @@ function frame(now) {
     hierarchyOpen: Boolean(hierarchyRuntime.openParentId),
     expanded: Boolean(hierarchyRuntime.openParentId || ['FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB'].includes(state)),
     branchId: `BRANCH-SEAT-${String(selectedSeat + 1).padStart(2, '0')}`,
+    cameraId,
     reducedMotion,
     navOrbitYaw,
     navOrbitPitch,
