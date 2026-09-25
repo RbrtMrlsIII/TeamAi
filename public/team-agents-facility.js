@@ -3,18 +3,19 @@ import {
   createAgentAssignmentBranch,
   createAgentAssignmentIntent,
   getAgentRole,
-  getTeamAgent,
-  listTeamAgents,
-  resolveAgentReadiness,
 } from './team-agents.js';
+import {
+  createEmptyTeamAgentsReadModel,
+  normalizeTeamAgentsReadModel,
+} from './team-agents-runtime-read-model.js';
 
 export const TEAM_AGENTS_FACILITY_ROOT_ID = 'hero-team-agents-facility';
 
 let panel = null;
-let activeAgentId = 'agent-alpha';
-let selectedSeatId = 'seat-01';
-let selectedRole = 'planner';
-let authenticated = false;
+let activeAgentId = null;
+let selectedSeatId = null;
+let selectedRole = null;
+let readModel = createEmptyTeamAgentsReadModel();
 
 function dispatch(name, detail) {
   if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
@@ -24,14 +25,19 @@ function dispatch(name, detail) {
 }
 
 function getAgent() {
-  return getTeamAgent(activeAgentId) || listTeamAgents()[0];
+  return readModel.agents.find((agent) => agent.id === activeAgentId) || readModel.agents[0] || null;
 }
 
 function renderBranch() {
   const field = panel?.querySelector('[data-agent-branch]');
   const note = panel?.querySelector('[data-agent-branch-note]');
   const agent = getAgent();
-  if (!field || !note || !agent) return;
+  if (!field || !note) return;
+  if (!readModel.usable || !agent || !selectedSeatId || !selectedRole) {
+    field.textContent = 'Assignment preview unavailable';
+    note.textContent = 'An authorized Team/Seat read model is required before an assignment branch can be projected.';
+    return;
+  }
   try {
     const branch = createAgentAssignmentBranch({
       agentId: agent.id,
@@ -53,42 +59,51 @@ function render() {
   const seat = panel?.querySelector('[data-agent-seat]');
   const request = panel?.querySelector('[data-agent-request]');
   const profile = panel?.querySelector('[data-agent-profile]');
-  if (!inventory || !state || !role || !seat || !request || !profile) return;
+  const skills = panel?.querySelector('[data-agent-skills]');
+  if (!inventory || !state || !role || !seat || !request || !profile || !skills) return;
 
   const agent = getAgent();
-  const readiness = resolveAgentReadiness({
-    authenticated,
-    agentKnown: false,
-    seatKnown: false,
-    roleConfigured: false,
-    authorized: false,
-    entitled: false,
-    healthy: false,
-  });
+  if (!activeAgentId && agent) {
+    activeAgentId = agent.id;
+    selectedSeatId = agent.seatId;
+    selectedRole = agent.role;
+  }
 
-  state.textContent = authenticated
-    ? 'Authenticated context · backend Team / Agent state required'
+  state.textContent = readModel.authenticated
+    ? readModel.contextAvailable
+      ? readModel.usable
+        ? 'Authenticated · Team / Agents READY'
+        : 'Authenticated · no ready Agent assignments available'
+      : 'Authenticated context · Team / Agent read model unavailable'
     : 'Guest · DISCOVERABLE LOCKED';
-  state.dataset.state = readiness.state;
+  state.dataset.state = readModel.state;
 
-  inventory.innerHTML = listTeamAgents().map((item) => {
-    const selected = item.id === activeAgentId;
-    return '<button type="button" class="team-agents-facility__agent' +
-      (selected ? ' is-selected' : '') +
-      '" data-agent-id="' + item.id +
-      '" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
-      '<span class="team-agents-facility__agent-name">' + item.label + '</span>' +
-      '<span class="team-agents-facility__agent-meta">' + (getAgentRole(item.role)?.label || item.role) + ' · ' + item.seatId + '</span>' +
-      '</button>';
-  }).join('');
+  inventory.innerHTML = readModel.agents.length
+    ? readModel.agents.map((item) => {
+        const selected = item.id === activeAgentId;
+        return '<button type="button" class="team-agents-facility__agent' +
+          (selected ? ' is-selected' : '') +
+          '" data-agent-id="' + item.id +
+          '" aria-pressed="' + (selected ? 'true' : 'false') + '">' +
+          '<span class="team-agents-facility__agent-name">' + item.label + '</span>' +
+          '<span class="team-agents-facility__agent-meta">' + item.role + ' · ' + item.seatId + '</span>' +
+          '</button>';
+      }).join('')
+    : '<p class="team-agents-facility__empty">No authorized Agent assignments are available in the current read model.</p>';
 
-  profile.textContent = agent.capabilityProfile + ' · presentation profile';
+  role.innerHTML = AGENT_ROLES.map((item) => '<option value="' + item.id + '">' + item.label + '</option>').join('');
+  seat.innerHTML = readModel.seats.map((item) => '<option value="' + item.id + '">' + item.label + '</option>').join('');
 
-  for (const option of role.options) option.textContent = getAgentRole(option.value)?.label || option.value;
-  role.value = selectedRole;
-  seat.value = selectedSeatId;
+  if (agent) {
+    if (!selectedRole) selectedRole = agent.role;
+    if (!selectedSeatId) selectedSeatId = agent.seatId;
+  }
+  if (selectedRole) role.value = selectedRole;
+  if (selectedSeatId) seat.value = selectedSeatId;
 
-  request.disabled = !authenticated;
+  profile.textContent = agent?.capabilityProfile || 'Capability profile unavailable';
+  skills.textContent = agent?.skillBundle?.length ? agent.skillBundle.join(' · ') : 'Skill bundle unavailable';
+  request.disabled = !readModel.usable || !agent;
   renderBranch();
 }
 
@@ -112,13 +127,18 @@ function requestAuth() {
 }
 
 function requestAssignment() {
+  const agent = getAgent();
+  const status = panel?.querySelector('[data-agent-result]');
+  if (!readModel.usable || !agent || !selectedSeatId || !selectedRole) {
+    if (status) status.textContent = 'Assignment intent is unavailable until an authorized Team / Seat read model is present.';
+    return;
+  }
   const intent = createAgentAssignmentIntent({
-    agentId: activeAgentId,
+    agentId: agent.id,
     seatId: selectedSeatId,
     role: selectedRole,
   });
   dispatch('teamai:agent-assignment-intent', intent);
-  const status = panel?.querySelector('[data-agent-result]');
   if (status) status.textContent = 'Role / Seat assignment intent requested. Authoritative TeamAi state is still required.';
 }
 
@@ -162,10 +182,11 @@ function build() {
     '<section class="team-agents-facility__section" aria-labelledby="team-agents-profile-title">' +
       '<div class="team-agents-facility__section-heading"><div><p class="team-agents-facility__eyebrow">Responsibility profile</p><h3 id="team-agents-profile-title">Role + Seat preview</h3></div><span data-agent-profile>Planning + review · presentation profile</span></div>' +
       '<div class="team-agents-facility__controls">' +
-        '<label>Seat<select data-agent-seat><option value="seat-01">Seat 1</option><option value="seat-02">Seat 2</option><option value="seat-03">Seat 3</option></select></label>' +
+        '<label>Seat<select data-agent-seat></select></label>' +
         '<label>Role<select data-agent-role>' + AGENT_ROLES.map((role) => '<option value="' + role.id + '">' + role.label + '</option>').join('') + '</select></label>' +
       '</div>' +
-      '<code class="team-agents-facility__branch" data-agent-branch>BRANCH-TEAM::agent/agent-alpha/seat/seat-01/role/planner/configuration</code>' +
+      '<p class="team-agents-facility__skills" data-agent-skills>Skill bundle unavailable</p>' +
+      '<code class="team-agents-facility__branch" data-agent-branch>Assignment preview unavailable</code>' +
       '<p class="team-agents-facility__branch-note" data-agent-branch-note>Assignment preview only. Role and Seat mutation remain backend-authoritative.</p>' +
     '</section>' +
     '<div class="team-agents-facility__actions">' +
@@ -189,11 +210,11 @@ export function mountTeamAgentsFacility(rootNode = document) {
   panel.querySelector('[data-agent-auth]')?.addEventListener('click', requestAuth);
   panel.querySelector('[data-agent-request]')?.addEventListener('click', requestAssignment);
   panel.querySelector('[data-agent-seat]')?.addEventListener('change', (event) => {
-    selectedSeatId = String(event.target?.value || 'seat-01');
+    selectedSeatId = String(event.target?.value || '');
     renderBranch();
   });
   panel.querySelector('[data-agent-role]')?.addEventListener('change', (event) => {
-    const next = String(event.target?.value || 'planner');
+    const next = String(event.target?.value || '');
     if (getAgentRole(next)) selectedRole = next;
     renderBranch();
   });
@@ -201,9 +222,9 @@ export function mountTeamAgentsFacility(rootNode = document) {
     const target = event.target;
     if (!(target instanceof Element)) return;
     const id = target.closest('[data-agent-id]')?.getAttribute('data-agent-id');
-    if (!id || !getTeamAgent(id)) return;
+    const agent = readModel.agents.find((item) => item.id === id);
+    if (!agent) return;
     activeAgentId = id;
-    const agent = getAgent();
     selectedSeatId = agent.seatId;
     selectedRole = agent.role;
     render();
@@ -214,7 +235,19 @@ export function mountTeamAgentsFacility(rootNode = document) {
 }
 
 export function setTeamAgentsPresentationAuthState(value) {
-  authenticated = Boolean(value);
+  const authenticated = Boolean(value);
+  readModel = normalizeTeamAgentsReadModel({
+    ...readModel,
+    readiness: { ...readModel, authenticated },
+  });
+  render();
+}
+
+export function setTeamAgentsReadModel(value) {
+  readModel = normalizeTeamAgentsReadModel(value);
+  activeAgentId = readModel.agents[0]?.id || null;
+  selectedSeatId = readModel.agents[0]?.seatId || readModel.seats[0]?.id || null;
+  selectedRole = readModel.agents[0]?.role || null;
   render();
 }
 
@@ -227,17 +260,23 @@ if (typeof document !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
+  window.addEventListener('teamai:team-agents-runtime-read-model', (event) => {
+    if (event.detail?.readModel) setTeamAgentsReadModel(event.detail.readModel);
+  });
+
   window.TeamAiTeamAgentsFacility = Object.freeze({
     open: openTeamAgentsFacility,
     close: closeTeamAgentsFacility,
     mount: mountTeamAgentsFacility,
     setPresentationAuthState: setTeamAgentsPresentationAuthState,
+    setReadModel: setTeamAgentsReadModel,
     focusTeam,
     getState: () => Object.freeze({
-      authenticated,
+      authenticated: readModel.authenticated,
       activeAgentId,
       selectedSeatId,
       selectedRole,
+      contextAvailable: readModel.contextAvailable,
     }),
   });
 }
