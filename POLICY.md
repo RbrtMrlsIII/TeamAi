@@ -14,6 +14,19 @@ Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757
 
 PR #413 is the current Draft successor for Issue #401's Firestore index verification false negative. Production run 36140968869 deployed the checked-in index successfully; diagnostic run 36141481871 showed the required execution-results collection-group index is present with Firestore's implicit __name__ suffix. The correct action is to normalize verifier semantics, not delete live indexes or use --force.
 
+## 2026-09-25 review-readiness guidance checkpoint
+
+Issue #415 formalizes the semantic handoff between substantive exact-head validation, `review-readiness`, AI advisory evidence, human approval, and governed merge. This is a guidance/procedure reconciliation only.
+
+The review unit is the PR's declared proof target and claimed scope. The owning Issue supplies current workstream context but does not turn every open Issue item into a PR verification gap. Advisory reviewers must distinguish:
+- concrete evidence inspected (`governance_and_evidence`);
+- rationale linking evidence to verdict (`review_basis`);
+- material proof-target defects (`blocking_findings`);
+- material proof-target requirements still unproven (`verification_gaps`);
+- relevant but non-blocking Issue/downstream context (`non_blocking_observations`).
+
+`APPROVE` requires defensible exact-head evidence and no material verification gaps for the declared proof target. `CHANGES_REQUESTED` requires a concrete finding or proof-target gap. `ADVISORY_ONLY` is required where material evidence or context is insufficient or ambiguous. These advisory semantics never grant merge or acceptance authority.
+
 ## ORUCAVEAM
 
 `O → R → U → C → A → V → E → A → M`
