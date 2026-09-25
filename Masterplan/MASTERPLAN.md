@@ -7,6 +7,12 @@
 **Role:** chronology and executable checklist only.  
 **Current governing program:** TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
 
+## 2026-09-25 Issue #401 production-readback reconciliation
+
+- [ ] Firestore index verification is not considered complete until PR #413 normalizes the live deployed index representation and a fresh default-branch workflow passes. The live required execution-results index is already present; the prior verifier result was a false negative caused by Firestore's implicit trailing __name__ field in deployed readback.
+- [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented gate3-test-team / gate3-test-seat and listed zero team documents.
+
+
 ## Repository foundation
 
 - [x] Product Law moved to `Product_Law/PRODUCT_LAW.md` and remains the single product authority.

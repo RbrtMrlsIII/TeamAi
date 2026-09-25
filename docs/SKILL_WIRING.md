@@ -14,6 +14,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 |---|---|---|
 | Product & Governance | `skills/governance/**` + ORUCAVEAM | governance validators |
 | Backend & Runtime | `skills/backend/**` | backend/runtime verification |
+| Issue #401 verifier-readback successor | applicable backend/verification Skills | Firestore index readback + production-evidence verification |
 | Frontend & Experience | `skills/frontend/**` | tests + browser verification |
 | Integration & Contracts | applicable backend/frontend contract Skills | contract/integration tests |
 | Verification & CI/Browser | `skills/verification/**` | CI/browser/evidence |
