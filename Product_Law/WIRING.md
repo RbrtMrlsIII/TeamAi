@@ -60,6 +60,10 @@ The reusable runner path is `.github/workflows/ai-advisory-review-runner.yml`. I
 The governance audit's `Draft proof target` parser is aligned to the repository's canonical PR-body contract: level-2 or level-3 Markdown headings are accepted, including the established `### Draft proof target` form. This is validation implementation alignment, not a new authority layer.
 
 
+### Review-readiness semantic routing
+
+Issue #415 routes review-readiness procedure guidance to the AI Advisory Review Skill and PR template. The governing semantic unit is the PR's declared proof target and claimed scope; owning Issue state remains context unless it materially prevents that proof. This Wiring entry does not create acceptance or merge authority.
+
 ## Program-order and bounded parallel execution
 
 Product Law §15's chronological sequence is a program/release-gate ordering statement. It does not by itself prohibit bounded execution in separately owned development fields where Product Law already permits parallel work. Parallel work remains isolated by responsibility and does not create a second authority, bypass a release gate, or authorize promotion/completion claims outside the applicable Product Law, Masterplan, Issue, and human governance boundaries.
