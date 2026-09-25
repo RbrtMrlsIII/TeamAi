@@ -7,9 +7,12 @@ test.describe('Seat Task / Evidence report', () => {
     await page.waitForFunction(() => Boolean((window as any).TeamAiHero?.selectSeatShell));
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
-    for (let i = 0; i < 7; i += 1) {
-      await page.keyboard.press('ArrowRight');
-    }
+    await expect.poll(
+      async () => page.evaluate(() => (window as any).TeamAiHero.getHierarchyState?.().phase),
+      { timeout: 5000 },
+    ).toBe('open');
+
+    await page.evaluate(() => (window as any).TeamAiHero.focusChild('SEAT_TASK_EVIDENCE'));
 
     await expect.poll(
       async () => page.evaluate(() => {
