@@ -109,3 +109,34 @@ test('S8 topology recomputes division routes and corridor bounds from current ex
   assert.notDeepEqual(closedEdge.route, openEdge.route);
   assert.notDeepEqual(closedEdge.corridor.bounds, openEdge.corridor.bounds);
 });
+
+
+test('S8 core routes preserve clearance across 1-10 Seats and shell expansion states', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const facilityAssemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      const facilityMachinery = deriveMachineFacilityMachinery({ facilityAssemblies });
+      const topology = buildMachineWorldTopology({
+        scene,
+        facilityAssemblies,
+        facilityMachinery,
+      });
+      const coreEdges = topology.edges.filter((edge) =>
+        ['inner-spoke', 'outer-spine', 'lattice-link'].includes(edge.kind)
+      );
+      assert.ok(coreEdges.length > 0);
+      assert.ok(
+        coreEdges.every((edge) => edge.obstacleAvoidance === true && edge.routeContinuous === true),
+        `core route clearance failed at seats=${seatCount}, expansion=${expansionAmount}`,
+      );
+      assert.equal(
+        validateMachineWorldTopology(topology, { expectedSeatCount: seatCount }).valid,
+        true,
+        `aggregate topology invalid at seats=${seatCount}, expansion=${expansionAmount}`,
+      );
+    }
+  }
+});
