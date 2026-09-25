@@ -1,6 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { STRUCTURAL_ROOT_SLICES, validateSpatialConstructionNode } from '../frontend/spatial/machine-spatial-root-contract.js';
 import { readFileSync } from 'node:fs';
+
+test('S13 Workspace HQ inherits the complete S0-S10 structural root contract', async () => {
+  const { WORKSPACE_FACILITY_SPATIAL_CONTEXT } = await import('../frontend/spatial/workspace-capability-facility.js');
+  assert.equal(WORKSPACE_FACILITY_SPATIAL_CONTEXT.constructionSlice, 'S13');
+  assert.equal(WORKSPACE_FACILITY_SPATIAL_CONTEXT.constructionOwner, 'frontend/spatial/workspace-capability-facility.js');
+  assert.equal(WORKSPACE_FACILITY_SPATIAL_CONTEXT.semanticId, 'WORKSPACE_CENTER');
+  assert.deepEqual(WORKSPACE_FACILITY_SPATIAL_CONTEXT.inheritedStructuralRoots, STRUCTURAL_ROOT_SLICES);
+  assert.equal(validateSpatialConstructionNode(WORKSPACE_FACILITY_SPATIAL_CONTEXT).valid, true);
+});
 
 test('live Hero surface exposes Workspace HQ as a first-party capability facility', () => {
   const html = readFileSync('public/index.html', 'utf8');
