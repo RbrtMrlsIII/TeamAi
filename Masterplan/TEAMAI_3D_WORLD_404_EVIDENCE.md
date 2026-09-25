@@ -312,3 +312,25 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED once the fresh exact-head CI run passes.
 
+
+### E404-S14 — Team / Agents runtime read-model seam
+
+**Claim:** S14 Team / Agents participates through the inherited spatial machine while Agent identity, Seat assignment context, skill bundle, capability profile, readiness, and assignment intent are supplied through a fail-closed runtime read-model boundary.
+
+**Primary source**
+- frontend/spatial/team-agents-runtime-read-model.js
+- frontend/spatial/team-agents-facility.js
+- frontend/spatial/team-agents.js
+- public mirrors of the runtime read-model/facility modules
+
+**Repository proof**
+- tests/team-agents-facility.test.mjs
+- tests/team-agents.test.mjs
+- S14 construction context validates canonical owner, semantic target `TEAM_AGENTS`, and inherited S0-S10 roots.
+- Assignment branch generation no longer requires Agent membership in the static presentation catalog; only the governed role vocabulary remains canonical.
+- The facility does not embed Agent or Seat identities and cannot request assignment intent until an authorized, healthy Team/Seat read model is available.
+
+**Boundary:** this proves the repository-side S14 product/runtime presentation seam. It does not prove live Firestore Agent/Team data, authorization, entitlement, scheduler eligibility, persistence, provider execution, or human acceptance.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED once fresh exact-head CI passes.
+
