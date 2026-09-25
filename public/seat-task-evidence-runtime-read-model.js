@@ -53,8 +53,9 @@ function safeEvidenceRefs(value) {
 
 export function normalizeSeatTaskEvidenceReadModel(input = {}) {
   const ready = input && typeof input === 'object' ? input : {};
+  const source = text(ready.source);
   const authorized = ready.authorized === true;
-  const available = ready.available === true;
+  const available = source === 'backend-read-model' && ready.available === true;
   const seatId = text(ready.seatId);
   const turnId = text(ready.turnId || ready.latest?.turnId || ready.latest?.executionId);
 
@@ -87,7 +88,7 @@ export function normalizeSeatTaskEvidenceReadModel(input = {}) {
     : null;
 
   return Object.freeze({
-    source: 'backend-read-model',
+    source: source || 'backend-read-model',
     state: authorized && available && report.available ? 'READY' : available ? 'BACKEND_STATE_REQUIRED' : 'UNAVAILABLE',
     available: available && report.available,
     authorized,
