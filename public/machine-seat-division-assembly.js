@@ -146,16 +146,63 @@ function localDimensions(componentEntry) {
   });
 }
 
-function makePhysicalSubjectParts(center, componentEntries) {
-  return componentEntries.map((entry) => ({
-    id: entry.id,
-    center: {
-      x: center.x + entry.offset.x,
-      y: center.y + entry.offset.y,
-      z: center.z + entry.offset.z,
-    },
-    dimensions: localDimensions(entry),
-  }));
+function makePhysicalSubjectParts({
+  semanticId,
+  center,
+  geometry,
+  componentEntries,
+  amount,
+}) {
+  const attachment = MACHINE_SEAT_DIVISION_ATTACHMENT_PROFILES[semanticId] || null;
+  const progress = clamp01(amount);
+  const outwardAngle = finite(geometry?.angle, 0) + Math.PI;
+  const dynamicRotationRoles = new Set(['articulation-pivots', 'tool-cartridges']);
+
+  return componentEntries.map((entry) => {
+    const normalizedScale = normalizeScale(entry.scale);
+    const isPrimary = entry.profile === attachment?.primaryComponent;
+    const travel = isPrimary ? finite(attachment?.travel, 0) * progress : 0;
+    const rotated = Boolean(
+      attachment?.motion === 'rotate' && isPrimary,
+    );
+    const rotationY = finite(entry.rotationY)
+      + (rotated ? travel : 0);
+
+    let extentX;
+    let extentZ;
+    if (dynamicRotationRoles.has(entry.role)) {
+      const diagonal = Math.hypot(normalizedScale.x, normalizedScale.z);
+      extentX = diagonal;
+      extentZ = diagonal;
+    } else {
+      const cosine = Math.abs(Math.cos(rotationY));
+      const sine = Math.abs(Math.sin(rotationY));
+      extentX = cosine * normalizedScale.x + sine * normalizedScale.z;
+      extentZ = sine * normalizedScale.x + cosine * normalizedScale.z;
+    }
+
+    return {
+      id: entry.id,
+      center: {
+        x: center.x + entry.offset.x + (
+          isPrimary && attachment?.motion === 'translate'
+            ? Math.cos(outwardAngle) * travel
+            : 0
+        ),
+        y: center.y + entry.offset.y - normalizedScale.y * 0.5,
+        z: center.z + entry.offset.z + (
+          isPrimary && attachment?.motion === 'translate'
+            ? Math.sin(outwardAngle) * travel
+            : 0
+        ),
+      },
+      dimensions: {
+        x: extentX * 2,
+        y: normalizedScale.y,
+        z: extentZ * 2,
+      },
+    };
+  });
 }
 
 function makeInterfaceSubjectParts(ports) {
@@ -489,7 +536,13 @@ export function deriveMachineSeatDivisionAssembly({
   const ports = Object.freeze([divisionPort, workspacePort]);
   const subjectPadding = Math.max(0.06, finite(geometry.clearance, 0.16) * 0.5);
   const subject = deriveMachineSubject(
-    makePhysicalSubjectParts(center, components),
+    makePhysicalSubjectParts({
+      semanticId,
+      center,
+      geometry,
+      componentEntries: components,
+      amount: expansion,
+    }),
     subjectPadding,
   );
   const interfaceSubject = deriveMachineSubject(
