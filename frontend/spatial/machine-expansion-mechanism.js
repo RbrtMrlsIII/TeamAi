@@ -160,12 +160,21 @@ function makeCorridorReservation(corridor, clearance = 0.16) {
   });
 }
 
-function resolveMaxSafeAmount(startBounds, endBounds, obstacles, clearance, samples = 64) {
+function resolveMaxSafeAmount(startBounds, endBounds, obstacles, clearance, samples = 64, subjectAtAmount = null) {
   const normalizedObstacles = Array.isArray(obstacles) ? obstacles.filter(Boolean) : [];
   const pad = Math.max(0, finite(clearance));
 
+  const candidateBoundsAt = (amount) => {
+    if (typeof subjectAtAmount === 'function') {
+      const sampledSubject = subjectAtAmount(clamp01(amount));
+      const sampledBounds = subjectBounds(sampledSubject);
+      if (sampledBounds) return sampledBounds;
+    }
+    return interpolateBounds(startBounds, endBounds, amount);
+  };
+
   const collidesAt = (amount) => {
-    const candidate = interpolateBounds(startBounds, endBounds, amount);
+    const candidate = candidateBoundsAt(amount);
     return normalizedObstacles.some((obstacle) =>
       intersectsAabb(candidate, obstacle, pad),
     );
@@ -218,6 +227,7 @@ export function deriveMachineExpansionClearancePlan({
   obstacles = [],
   clearance = 0.16,
   corridor = null,
+  subjectAtAmount = null,
 } = {}) {
   const startBounds = subjectBounds(startSubject);
   const endBounds = subjectBounds(endSubject);
@@ -239,6 +249,8 @@ export function deriveMachineExpansionClearancePlan({
     endBounds,
     Array.isArray(obstacles) ? obstacles : [],
     clearance,
+    64,
+    subjectAtAmount,
   );
 
   const startCenter = startSubject.center || {
@@ -287,36 +299,26 @@ export function deriveMachineSeatDivisionExpansionPlan({
 } = {}) {
   if (!parent || !childId) return null;
 
-  const startGeometry = deriveFocusedSeatDivisionGeometry({
-    parent,
-    childId,
-    childIndex,
-    amount: 0,
-    workspaceTarget,
-  });
-  const endGeometry = deriveFocusedSeatDivisionGeometry({
-    parent,
-    childId,
-    childIndex,
-    amount: 1,
-    workspaceTarget,
-  });
-  if (!startGeometry || !endGeometry) return null;
+  const assemblyAtAmount = (amount) => {
+    const geometry = deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId,
+      childIndex,
+      amount,
+      workspaceTarget,
+    });
+    if (!geometry) return null;
+    return deriveMachineSeatDivisionAssembly({
+      parent,
+      childId,
+      childIndex,
+      amount,
+      geometry,
+    });
+  };
 
-  const startAssembly = deriveMachineSeatDivisionAssembly({
-    parent,
-    childId,
-    childIndex,
-    amount: 0,
-    geometry: startGeometry,
-  });
-  const endAssembly = deriveMachineSeatDivisionAssembly({
-    parent,
-    childId,
-    childIndex,
-    amount: 1,
-    geometry: endGeometry,
-  });
+  const startAssembly = assemblyAtAmount(0);
+  const endAssembly = assemblyAtAmount(1);
   if (!startAssembly?.subject || !endAssembly?.subject) return null;
 
   const plan = deriveMachineExpansionClearancePlan({
@@ -332,7 +334,8 @@ export function deriveMachineSeatDivisionExpansionPlan({
       ).filter(Boolean)
       : [],
     clearance,
-    corridor: endGeometry.corridor,
+    corridor: endAssembly.geometry.corridor,
+    subjectAtAmount: (amount) => assemblyAtAmount(amount)?.subject || null,
   });
 
   const cameraEnvelope = Object.freeze({
@@ -361,6 +364,7 @@ export function deriveMachineSeatDivisionExpansionPlan({
     endAssembly,
     clearancePlan: plan,
     cameraSubject: endAssembly.subject,
+    subjectAtAmount: (amount) => assemblyAtAmount(amount)?.subject || null,
     cameraEnvelope,
     semanticContinuity: true,
     payloadDrivenTravel: plan.travelDistance > 0,
@@ -476,6 +480,18 @@ export function resolveMachineFocusedExpansionPhase({
 
 export function subjectAtExpansionAmount(plan, amount = 0) {
   if (!plan?.startAssembly?.subject || !plan?.endAssembly?.subject) return null;
+  const sampled = typeof plan.subjectAtAmount === 'function'
+    ? plan.subjectAtAmount(clamp01(amount))
+    : null;
+  if (sampled?.min && sampled?.max && sampled?.center) {
+    return Object.freeze({
+      ...sampled,
+      ...rootContext('S5:SEMANTIC_EXPANSION_SUBJECT'),
+      kind: 'semantic-expansion-subject',
+      sourcePartIds: [...(sampled.sourcePartIds || [])],
+    });
+  }
+
   const start = plan.startAssembly.subject;
   const end = plan.endAssembly.subject;
   const t = clamp01(amount);
