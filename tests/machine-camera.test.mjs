@@ -49,6 +49,27 @@ test('S10 resolves world, pod, division, facility, expansion, and return camera 
   );
 });
 
+test('S10 Workspace camera resolves to the canonical S2 Core subject', () => {
+  const world = subject(0, 0, 8);
+  const core = subject(1.5, -2.5, 2.2);
+  assert.equal(
+    resolveMachineCameraMode({ cameraId: MACHINE_CAMERA_ID.WORKSPACE }),
+    MACHINE_CAMERA_MODE.CORE_FOCUS,
+  );
+  const spec = deriveMachineCameraSpec({
+    cameraId: MACHINE_CAMERA_ID.WORKSPACE,
+    worldSubject: world,
+    coreSubject: core,
+    viewport: { width: 1280, height: 800 },
+  });
+  assert.equal(spec.mode, MACHINE_CAMERA_MODE.CORE_FOCUS);
+  assert.deepEqual(spec.target, core.center);
+  assert.deepEqual(spec.subjectEnvelope, {
+    min: core.min,
+    max: core.max,
+  });
+});
+
 test('S10 division focus follows the actual division subject envelope', () => {
   const spec = deriveMachineCameraSpec({
     cameraId: MACHINE_CAMERA_ID.DETAIL,
