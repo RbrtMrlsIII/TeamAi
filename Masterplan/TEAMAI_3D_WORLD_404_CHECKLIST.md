@@ -346,21 +346,21 @@ Exit: participation is spatially legible.
 Exit: capabilities become physical equipment without authority leakage.
 
 ## R. S16 — #392 budget / energy / handoff / continuation
-- [ ] Configured budget.
-- [ ] Effective budget.
-- [ ] Reasoning allocation where supported.
-- [ ] Work/output allocation.
-- [ ] Consumption.
-- [ ] Remaining.
-- [ ] Handoff reserve.
-- [ ] Warning threshold.
-- [ ] HANDOFF_REQUIRED.
-- [ ] WAITING_FOR_CONTINUATION.
-- [ ] EXHAUSTED.
-- [ ] COMPLETED.
-- [ ] BLOCKED.
-- [ ] Continue/reconfigure/close/new-command presentation.
-- [ ] Backend remains authoritative.
+- [x] Configured budget. Evidence: E404-S16.
+- [x] Effective budget. Evidence: E404-S16.
+- [x] Reasoning allocation where supported. Evidence: E404-S16.
+- [x] Work/output allocation. Evidence: E404-S16.
+- [x] Consumption. Evidence: E404-S16.
+- [x] Remaining. Evidence: E404-S16.
+- [x] Handoff reserve. Evidence: E404-S16.
+- [x] Warning threshold. Evidence: E404-S16.
+- [x] HANDOFF_REQUIRED. Evidence: E404-S16.
+- [x] WAITING_FOR_CONTINUATION. Evidence: E404-S16.
+- [x] EXHAUSTED. Evidence: E404-S16.
+- [x] COMPLETED. Evidence: E404-S16.
+- [x] BLOCKED. Evidence: E404-S16.
+- [x] Continue/reconfigure/close/new-command presentation. Evidence: E404-S16.
+- [x] Backend remains authoritative. Evidence: E404-S16.
 Exit: execution envelope is understandable without invented accounting.
 
 ## S17 — Task / evidence / report
