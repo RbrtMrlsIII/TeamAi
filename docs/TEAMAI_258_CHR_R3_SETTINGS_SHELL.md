@@ -13,4 +13,4 @@ On machine layer, the **dedicated Settings shell** remains a single instrument c
 ## Proof
 
 - CSS: `public/hero-res-258-layer.css` (CHR-R3 block)
-- Unit: `tests/hero-chr-r3-settings-beside-nav.test.mjs`
+- Unit: `tests/hero-chr-r3-settings-shell.test.mjs`
