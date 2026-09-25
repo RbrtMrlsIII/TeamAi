@@ -59,9 +59,10 @@ test('S10 division focus follows the actual division subject envelope', () => {
     viewport: { width: 1200, height: 800 },
   });
   assert.deepEqual(spec.target, { x: -3, y: 1, z: 7 });
-  assert.deepEqual(spec.subjectEnvelope, subject(-3, 7, 0.6).min
-    ? subject(-3, 7, 0.6)
-    : null);
+  assert.deepEqual(spec.subjectEnvelope, {
+    min: { x: -3.6, y: 0.4, z: 6.4 },
+    max: { x: -2.4, y: 1.6, z: 7.6 },
+  });
   assert.equal(spec.mode, MACHINE_CAMERA_MODE.DIVISION_FOCUS);
   assert.ok(spec.radius >= 8);
   assert.ok(spec.fov <= 44);
