@@ -119,9 +119,9 @@ TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 con
 
 ## 2026-09-24 029 spatial acceptance companion
 
-PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Current exact branch head is `8944ececfd6dfee15a39833107dd3bac932411bd`. The detailed spatial evidence is maintained in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` retaining status-only execution tracking. The current implementation includes authored S4 articulated subjects, intermediate expansion sampling, the 1–10 Seat × 3 shell-state × 7-division clearance matrix, physical-port validation, S8 route clearance, S9 semantic signal projection, and S10 semantic camera contracts.
+PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Latest validated spatial implementation head is `8944ececfd6dfee15a39833107dd3bac932411bd`; subsequent branch movement is documentation-only reconciliation. The detailed spatial evidence is maintained in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` retaining status-only execution tracking. The current implementation includes authored S4 articulated subjects, intermediate expansion sampling, the 1–10 Seat × 3 shell-state × 7-division clearance matrix, physical-port validation, S8 route clearance, S9 semantic signal projection, and S10 semantic camera contracts.
 
-These are repository implementation/evidence facts, not 029 completion claims. Exact-head CI and Browser validation are green on `8944ece`. No production deployment, human acceptance, or merge authorization is inferred from these repository results.
+These are repository implementation/evidence facts, not 029 completion claims. Exact-head CI and Browser validation are green on `8944ece`; subsequent documentation-only reconciliation does not change the validated spatial implementation. No production deployment, human acceptance, or merge authorization is inferred from these repository results.
 
 ## 030 successor frontier
 
