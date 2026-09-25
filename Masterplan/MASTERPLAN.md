@@ -184,5 +184,6 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 `main` remains the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. The #393 governance/advisory normalization is implemented in PR #395 and is closure-pending rather than an active implementation stream. Superseded vehicles remain historical and must not become parallel current slices.
 
 ## 2026-09-23 advisory control-plane reconciliation
+Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
 Issue #406 is being addressed through PR #407 as shared CI infrastructure, not as a product implementation slice. Automatic advisory fan-out now has a single preflight for the explicit `Owning Issue:` / `Governing Issue:` declaration, while `none`/`n/a` are valid explicit no-issue states. This does not change the current 029 spatial implementation frontier or merge authority.

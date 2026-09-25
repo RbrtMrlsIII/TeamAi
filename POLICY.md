@@ -25,6 +25,7 @@ Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757
 - **M — Minimalistic Efficiency / Resource Use:** final implementation and evidence surface is no larger than required.
 
 ## Governance
+Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
 - `Product_Law/PRODUCT_LAW.md` is the single product authority.
 - `Product_Law/WIRING.md` owns field purposes and navigation only.

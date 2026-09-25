@@ -76,5 +76,6 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 The current implementation frontier is resolved from `Masterplan/NEXT_SLICES.md`: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence. This Wiring file only routes the field; it does not create new production/runtime authority.
 
 ### Advisory control-plane wiring note
+Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
 The advisory review mechanism is repository governance infrastructure only. PR metadata is parsed for routing context before provider fan-out; no advisory result becomes Product Law authority, runtime authority, or merge authorization. Explicit no-issue declarations remain valid for repository changes without an owning Issue.

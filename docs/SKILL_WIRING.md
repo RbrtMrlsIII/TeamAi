@@ -22,6 +22,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 | Delivery & Operations | applicable delivery/tool Skills | delivery verification |
 
 ## Governance routing
+Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
 - Repository synchronization: `skills/governance/repository-synchronization/SKILL.md`
 - User-directed validation changes: `skills/governance/user-directed-validation/SKILL.md`
