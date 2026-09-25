@@ -13,7 +13,7 @@ test('guest remains discoverable but receives no backend capability or target st
   assert.equal(model.contextAvailable, false);
   assert.equal(model.capabilities.length, 0);
   assert.equal(model.targets.length, 0);
-  assert.equal(model.credentialBoundary, 'EXTERNAL_PROVIDER');
+  assert.equal(model.credentialBoundary, 'MIXED_BY_CAPABILITY_KIND');
 });
 
 test('authenticated runtime state is fail-closed until authoritative context is complete', () => {
@@ -29,7 +29,7 @@ test('authenticated runtime state is fail-closed until authoritative context is 
   assert.equal(model.state, 'BACKEND_STATE_REQUIRED');
   assert.equal(model.contextAvailable, false);
   assert.equal(model.capabilities.length, 1);
-  assert.equal(model.targets.length, 1);
+  assert.equal(model.targets.length, 0);
   assert.equal(model.usable, false);
 });
 
@@ -69,6 +69,7 @@ test('ready runtime state preserves distinct readiness dimensions and dynamic ta
   assert.equal(model.contextAvailable, true);
   assert.equal(model.usable, true);
   assert.equal(model.capabilities[0].readiness.state, 'READY');
+  assert.equal(model.capabilities[0].providerCredentialBoundary, 'EXTERNAL_PROVIDER');
   assert.deepEqual(model.capabilities[0].branchPaths, [
     ['repository'],
     ['repository', 'pull-requests'],
@@ -77,6 +78,35 @@ test('ready runtime state preserves distinct readiness dimensions and dynamic ta
     { type: 'SEAT', id: 'runtime-seat-7', label: 'Seat 7', eligible: true },
   ]);
 });
+
+test('TeamAi-native capabilities do not inherit an external provider credential boundary', () => {
+  const model = normalizeMcpRuntimeReadModel({
+    readiness: {
+      authenticated: true,
+      contextKnown: true,
+      authorized: true,
+      entitled: true,
+      healthy: true,
+    },
+    capabilities: [{
+      id: 'workspace',
+      label: 'Workspace',
+      kind: 'TEAMAI_NATIVE',
+      source: 'TeamAi',
+      installed: true,
+      teamAiEntitled: true,
+      providerCompatible: true,
+      authorized: true,
+      permissionsConfigured: true,
+      projectScoped: true,
+      seatAllowed: true,
+      connectionTestPassed: true,
+      healthy: true,
+    }],
+  });
+  assert.equal(model.capabilities[0].providerCredentialBoundary, 'NONE');
+});
+
 
 test('guest discovery vocabulary is intentionally presentation-only and target-free', () => {
   const entries = listMcpDiscoveryVocabulary();
