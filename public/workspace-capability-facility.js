@@ -116,10 +116,16 @@ function requestAuth() {
 }
 
 function requestCapabilityIntent() {
+  const status = panel?.querySelector('[data-workspace-result]');
+  if (!readModel.contextAvailable) {
+    if (status) status.textContent = 'Workspace capability intent is unavailable until an authorized Workspace read model is present.';
+    return;
+  }
+
   const intent = createWorkspaceCapabilityIntent({
     capabilityId: activeCapabilityId,
-    workspaceId,
-    projectId,
+    workspaceId: readModel.workplace.id,
+    projectId: readModel.project.id,
     action: 'inspect',
   });
   dispatch('teamai:workspace-capability-intent', intent);
