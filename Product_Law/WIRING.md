@@ -53,7 +53,7 @@ The requested route is openrouter/free. The actual routed model/provider returne
 
 ## Reviewer runner repair boundary
 Implementation repairs to the reusable advisory-review runner belong to Verification & CI/Browser and do not create new Product Law authority. Runtime proof must distinguish configured routing from actual provider invocation. The fresh runtime vehicles that exposed the historical parser defects remain immutable evidence for those heads. The current runner records the OpenRouter response model and routing metadata so the repository does not mistake a dynamic router request for a fixed reviewer identity.
-The reusable runner path is `.github/workflows/ai-advisory-review-runner-v2.yml`. Direct push is not an advisory invocation. The runner defines a non-provider job so a GitHub push evaluation cannot conclude failure with zero jobs. Provider work remains `workflow_call` only from the sequence and manual workflows.
+The reusable runner path is `.github/workflows/ai-advisory-review-runner.yml`. It is `workflow_call`-only. Provider work is entered only through the automatic sequence and manual workflows.
 
 ### Validation parser alignment
 
@@ -80,5 +80,6 @@ PR #404 is routed as a bounded 029 Frontend & Experience implementation/evidence
 The current implementation frontier is resolved from `Masterplan/NEXT_SLICES.md`: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence. This Wiring file only routes the field; it does not create new production/runtime authority.
 
 ### Advisory control-plane wiring note
+Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
 The advisory review mechanism is repository governance infrastructure only. PR metadata is parsed for routing context before provider fan-out; no advisory result becomes Product Law authority, runtime authority, or merge authorization. Explicit no-issue declarations remain valid for repository changes without an owning Issue.
