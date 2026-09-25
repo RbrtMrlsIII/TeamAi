@@ -88,17 +88,21 @@ export function normalizeMcpRuntimeReadModel(input = {}) {
     ? input.readiness
     : input;
   const authenticated = Boolean(readiness.authenticated);
-  const capabilities = authenticated && Array.isArray(input.capabilities)
-    ? Object.freeze(input.capabilities
-      .slice(0, MAX_CAPABILITIES)
-      .map(normalizeCapability)
-      .filter(Boolean))
-    : Object.freeze([]);
   const readyContext = authenticated &&
     Boolean(readiness.contextKnown) &&
     Boolean(readiness.authorized) &&
     Boolean(readiness.entitled) &&
     Boolean(readiness.healthy);
+
+  const capabilities = authenticated && Array.isArray(input.capabilities)
+    ? Object.freeze(input.capabilities
+      .slice(0, MAX_CAPABILITIES)
+      .map(normalizeCapability)
+      .filter(Boolean)
+      .map((capability) => readyContext
+        ? capability
+        : Object.freeze({ ...capability, targets: Object.freeze([]) })))
+    : Object.freeze([]);
 
   const targets = readyContext && Array.isArray(input.targets)
     ? Object.freeze(input.targets
