@@ -288,13 +288,27 @@ export function buildMachineWorldTopology({
       outerHousings,
       seatCount: scene.seatCount,
       expansionAmount: scene.expansionAmount,
-    }).map((edge) => Object.freeze({
-      ...edge,
-      ...rootContext(edge.semanticEdgeId || edge.id),
-      corridorReserved: false,
-      obstacleAvoidance: true,
-      routeContinuous: true,
-    })),
+    }).map((edge) => {
+      const obstacles = scene.parts.filter(
+        (part) =>
+          part.branchId !== edge.sourceBranchId
+          && part.branchId !== edge.targetBranchId,
+      );
+      const obstacleAvoidance = routeAvoidsObstacles(
+        edge.route,
+        obstacles,
+        clearance,
+      );
+      const topologyValid = edge?.route?.length >= 2
+        && edge?.topology?.valid !== false;
+      return Object.freeze({
+        ...edge,
+        ...rootContext(edge.semanticEdgeId || edge.id),
+        corridorReserved: false,
+        obstacleAvoidance,
+        routeContinuous: topologyValid && obstacleAvoidance,
+      });
+    }),
   ];
 
   const divisionIds = Object.freeze([
