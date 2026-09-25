@@ -107,3 +107,17 @@ test('S17 browser-delivered read-model mirror remains exact', () => {
     readFileSync('public/seat-runtime-presentation.js', 'utf8'),
   );
 });
+
+test('S17 rejects an availability flag that is not sourced from the backend read model', () => {
+  const model = normalizeSeatTaskEvidenceReadModel({
+    source: 'fixture',
+    available: true,
+    authorized: true,
+    seatId: 'seat-runtime-7',
+    turnId: 'turn-fixture',
+    completionState: 'COMPLETED',
+  });
+  assert.equal(model.state, 'BACKEND_STATE_REQUIRED');
+  assert.equal(model.available, false);
+  assert.equal(model.report.available, false);
+});
