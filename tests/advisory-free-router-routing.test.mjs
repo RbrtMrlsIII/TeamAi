@@ -68,13 +68,17 @@ test('PR template and governance parser agree on the proof-target heading contra
   assert.match(template,/AI advisory review is downstream evidence only/);
 });
 test('review-readiness guidance defines proof-target-first AI advisory semantics',()=>{
-  for(const text of [policy,skill,wiring,productWiring,master,session]){
+  for(const text of [policy,skill,session]){
     assert.match(text,/proof target/i);
     assert.match(text,/verification_gaps/);
     assert.match(text,/review_basis/);
     assert.match(text,/governance_and_evidence/);
   }
-  assert.match(skill,/open Issue item is **not automatically a verification gap for the PR**/);
+  for(const text of [wiring,productWiring,master]){
+    assert.match(text,/review-readiness/i);
+    assert.match(text,/proof target/i);
+  }
+  assert.match(skill,/open Issue item is \*\*not automatically a verification gap for the PR\*\*/);
   assert.match(skill,/ADVISORY_ONLY.*required when evidence, Issue context, or governing context is materially missing/i);
   assert.match(session,/Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence/i);
   assert.match(session,/open owning Issue item or downstream production gate is not automatically a PR gap/i);
