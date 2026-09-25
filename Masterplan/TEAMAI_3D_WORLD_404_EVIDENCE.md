@@ -292,3 +292,20 @@ Historical evidence remains historical. Do not silently refresh old claims to a 
 PR #404 is the human-readable entry point. It points here for detailed proof references and then to the execution checklist for slice status. Later documentation-only commits do not invalidate the immutable proof records linked above.
 
 That keeps the PR body understandable without turning it into a second 476-row execution plan.
+
+### E404-S13 — Workspace HQ root inheritance
+
+**Claim:** The S13 Workspace HQ spatial facility explicitly inherits the complete S0–S10 structural root contract instead of introducing a parallel product-space grammar.
+
+**Primary source**
+- frontend/spatial/workspace-capability-facility.js — `WORKSPACE_FACILITY_SPATIAL_CONTEXT`
+- public/workspace-capability-facility.js — exact runtime mirror
+
+**Repository proof**
+- tests/workspace-capability-facility.test.mjs — S13 root inheritance contract test
+- validation requires construction slice `S13`, canonical owner `frontend/spatial/workspace-capability-facility.js`, semantic target `WORKSPACE_CENTER`, and inherited roots exactly equal to `S0` through `S10`.
+
+**Boundary:** this proves the spatial inheritance contract only. It does not prove live Workspace data, authorization, scheduler eligibility, durable state, or execution.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED once the fresh exact-head CI run passes.
+
