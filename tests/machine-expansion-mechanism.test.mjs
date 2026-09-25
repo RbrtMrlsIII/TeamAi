@@ -279,52 +279,6 @@ test('S5 full Seat-density expansion stays clear of all authored machine obstacl
             plan?.clearancePlan?.clearanceSatisfiedAtClosed,
             `closed clearance rejected: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}`,
           );
-          if (
-            plan?.clearancePlan?.collision
-            && seatCount === 3
-            && shellAmount === 0
-            && seat.branchId === 'BRANCH-SEAT-03'
-            && childId === 'SEAT_TOOLKIT'
-          ) {
-            console.error('S5_TOOLKIT_COLLISION_DIAGNOSTIC', JSON.stringify({
-              maxSafeAmount: plan.clearancePlan.maxSafeAmount,
-              firstCollisionAmount: plan.clearancePlan.firstCollisionAmount,
-              startBounds: plan.clearancePlan.startBounds,
-              endBounds: plan.clearancePlan.endBounds,
-              parent: seat,
-              obstacles: obstaclesFor(seat),
-              endComponents: plan.endAssembly.components.map((component) => ({
-                id: component.id,
-                role: component.role,
-                profile: component.profile,
-                offset: component.offset,
-                scale: component.scale,
-                rotationY: component.rotationY,
-              })),
-              collisionSubject: (() => {
-                const amount = plan.clearancePlan.firstCollisionAmount;
-                const geometry = deriveFocusedSeatDivisionGeometry({
-                  parent: seat,
-                  childId,
-                  childIndex,
-                  amount,
-                });
-                const assembly = deriveMachineSeatDivisionAssembly({
-                  parent: seat,
-                  childId,
-                  childIndex,
-                  amount,
-                  geometry,
-                });
-                return {
-                  amount,
-                  geometry,
-                  subject: assembly?.subject,
-                  components: assembly?.components,
-                };
-              })(),
-            }));
-          }
           assert.equal(
             plan?.clearancePlan?.collision,
             false,
