@@ -105,6 +105,7 @@ export function buildSeatDivisionGeometry({
   return {
     id,
     semantic: resolveSeatDivisionSemanticId(id) || 'UNKNOWN',
+    angle: normalize(angle),
     center: {
       x: normalize(Number(center.x) || 0),
       y: normalize(Number(center.y) || 0),
