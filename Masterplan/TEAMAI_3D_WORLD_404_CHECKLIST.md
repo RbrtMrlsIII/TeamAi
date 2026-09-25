@@ -364,14 +364,14 @@ Exit: capabilities become physical equipment without authority leakage.
 Exit: execution envelope is understandable without invented accounting.
 
 ## S17 — Task / evidence / report
-- [ ] Active task presentation.
-- [ ] Task lifecycle.
-- [ ] Evidence state.
-- [ ] Result state.
-- [ ] Seat report/handoff.
-- [ ] Historical/live separation.
-- [ ] Provenance.
-- [ ] Artifact inspection.
+- [x] Active task presentation. The existing Seat Task/Evidence branch remains the semantic presentation surface. Evidence: E404-S17.
+- [x] Task lifecycle. Completion state and transaction state remain backend-derived presentations. Evidence: E404-S17.
+- [x] Evidence state. Evidence references are normalized from the supplied runtime read model. Evidence: E404-S17.
+- [x] Result state. Result and summary are projected without local execution inference. Evidence: E404-S17.
+- [x] Seat report/handoff. Existing Seat report surface now exposes result, summary, findings, unresolved items, decisions, evidence refs, and next handoff context. Evidence: E404-S17.
+- [x] Historical/live separation. The shell accepts the dedicated backend-read-model event rather than a direct fixture-style report event. Evidence: E404-S17.
+- [x] Provenance. Read-model source is explicitly required to be backend-read-model. Evidence: E404-S17.
+- [x] Artifact inspection. Evidence references are exposed as metadata only; artifact content remains outside this presentation seam. Evidence: E404-S17.
 Exit: users can follow work and continuity.
 
 ## T. S18 — Storage / artifacts
