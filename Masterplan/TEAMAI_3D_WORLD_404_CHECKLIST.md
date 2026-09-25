@@ -318,6 +318,8 @@ Exit: authenticated world reflects authoritative state.
 - [ ] Read-model driven state.
 Exit: Workspace is both physical core and capability surface.
 
+- [x] S13 Workspace HQ records and validates its spatial construction context as S13-owned and inheriting the complete S0-S10 structural root set. Evidence: E404-S13.
+
 ## P. S14 — Team / Agents
 - [ ] Agent/application identity.
 - [ ] Responsibility.
