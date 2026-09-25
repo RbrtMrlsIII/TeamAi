@@ -1,6 +1,6 @@
 # PR #404 / S1-C1 Authority Matrix
 
-Status: reconciled at PR #404 head f57c5b11200e00a55858048128e70a561baaf385 and enforced by tests/machine-authority-boundaries.test.mjs.
+Status: reconciled on PR #404 and enforced by tests/machine-authority-boundaries.test.mjs; the PR head is the authoritative current revision.
 
 ## Governing rule
 
