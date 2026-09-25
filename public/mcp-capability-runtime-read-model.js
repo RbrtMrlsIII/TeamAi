@@ -43,11 +43,15 @@ function normalizeCapability(value) {
     },
   );
 
+  const kind = text(value.kind, 'CAPABILITY');
+  const source = text(value.source, 'backend');
+  const externalProvider = kind === 'EXTERNAL_CONNECTION' || source === 'external-provider';
+
   return Object.freeze({
     id,
     label,
-    kind: text(value.kind, 'CAPABILITY'),
-    source: text(value.source, 'backend'),
+    kind,
+    source,
     custom: Boolean(value.custom),
     readiness,
     branchPaths: Object.freeze(
@@ -61,7 +65,7 @@ function normalizeCapability(value) {
         ? value.targets.map(normalizeTarget).filter(Boolean).slice(0, MAX_TARGETS)
         : [],
     ),
-    providerCredentialBoundary: 'EXTERNAL_PROVIDER',
+    providerCredentialBoundary: externalProvider ? 'EXTERNAL_PROVIDER' : 'NONE',
   });
 }
 
@@ -90,18 +94,18 @@ export function normalizeMcpRuntimeReadModel(input = {}) {
       .map(normalizeCapability)
       .filter(Boolean))
     : Object.freeze([]);
-  const targets = authenticated && Array.isArray(input.targets)
-    ? Object.freeze(input.targets
-      .slice(0, MAX_TARGETS)
-      .map(normalizeTarget)
-      .filter((target) => target?.eligible))
-    : Object.freeze([]);
-
   const readyContext = authenticated &&
     Boolean(readiness.contextKnown) &&
     Boolean(readiness.authorized) &&
     Boolean(readiness.entitled) &&
     Boolean(readiness.healthy);
+
+  const targets = readyContext && Array.isArray(input.targets)
+    ? Object.freeze(input.targets
+      .slice(0, MAX_TARGETS)
+      .map(normalizeTarget)
+      .filter((target) => target?.eligible))
+    : Object.freeze([]);
 
   return Object.freeze({
     source: 'backend-read-model',
@@ -115,7 +119,7 @@ export function normalizeMcpRuntimeReadModel(input = {}) {
     usable: readyContext && capabilities.some((capability) => capability.readiness.usable),
     capabilities,
     targets,
-    credentialBoundary: 'EXTERNAL_PROVIDER',
+    credentialBoundary: 'MIXED_BY_CAPABILITY_KIND',
   });
 }
 
