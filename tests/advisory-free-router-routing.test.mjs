@@ -59,4 +59,17 @@ for(const text of [sequence,runner,manual,policy,wiring,skill,next]) for(const t
 test('retired files are archived, not active',()=>{assert.equal(fs.existsSync(path.join(root,'docs/TEAMAI_029_CURRENT_STATE_MAP.md')),false);assert.equal(fs.existsSync(path.join(root,'.github/workflows/nemotron-copilot-review.yml')),false);assert.equal(fs.existsSync(path.join(root,'skills/governance/nemotron-copilot-review/SKILL.md')),false);assert.equal(fs.existsSync(path.join(root,'docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md')),true);});
 test('session snapshot and current slice are explicit',()=>{assert.match(session,/## SESSION SNAPSHOT/);assert.ok(session.includes('main baseline: `87f466fb0edac3784280128785a8fd2dc757e749`'));const currentSlice=next.match(/^## Current Slice\s*\n([^\n]+)/m)?.[1]?.trim();assert.ok(currentSlice);assert.match(session,new RegExp('current slice:\\s*'+escapeRegExp(currentSlice)));});
 assert.match(productWiring,/non-authoritative Wiring interpretation only/);
+test('review-readiness guidance defines proof-target-first AI advisory semantics',()=>{
+  for(const text of [policy,skill,wiring,productWiring,master,session]){
+    assert.match(text,/proof target/i);
+    assert.match(text,/verification_gaps/);
+    assert.match(text,/review_basis/);
+    assert.match(text,/governance_and_evidence/);
+  }
+  assert.match(skill,/open Issue item is **not automatically a verification gap for the PR**/);
+  assert.match(skill,/ADVISORY_ONLY.*required when evidence, Issue context, or governing context is materially missing/i);
+  assert.match(session,/Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence/i);
+  assert.match(session,/open owning Issue item or downstream production gate is not automatically a PR gap/i);
+  assert.match(policy,/APPROVE.*no material verification gaps/i);
+});
 test('active advisory contracts mirror the terminal-state machine',()=>{for(const text of [wiring,skill,productWiring,master]) assert.match(text,/REVIEW_QUALITY_FAILED/);assert.match(skill,/There is no inter-stage barrier or pre-sequence timer/);assert.doesNotMatch(skill,/There is no automatic interval before or between slots/);assert.doesNotMatch(policy,/Automatic sequence runs serialize per PR/);assert.match(policy,/isolated by PR exact head/);assert.match(skill,/\/openrouter-free-all/);assert.match(wiring,/\/openrouter-free-all/);});
