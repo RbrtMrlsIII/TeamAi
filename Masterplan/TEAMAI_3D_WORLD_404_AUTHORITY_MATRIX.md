@@ -17,7 +17,8 @@ A responsibility has one canonical authority. Layered ownership is allowed only 
 | Port derivation | each physical assembly derives its own ports; topology validates endpoint continuity | S8 world topology | machine-world-topology.js consumes ports and must not silently replace authored port positions | C1 regression test |
 | Corridor reservation | S8 owns the canonical aggregate topology corridor; S5 owns only the expansion-local reservation projection returned with its clearance plan | renderable-edge projection and later consumers; S5 expansion presentation consumes its local plan | renderer consumes corridor geometry; it does not create the canonical aggregate reservation | C1 regression test + S8 tests |
 | Edge identity/topology | frontend/spatial/machine-world-topology.js is the canonical aggregate graph; local builders own only their typed subgraphs | S9+ signal/camera/world expression | renderer and signal projection cannot create semantic edges or identities | unique-ID/owner assertions + S8 validator |
-| CameraSubject | frontend/spatial/machine-subject.js | renderer/camera | subject derivation does not own scene graph or topology | existing S1 C1 row + source contract |
+| CameraSubject | frontend/spatial/machine-subject.js | renderer, S10 camera | subject derivation does not own scene graph, topology, or camera policy | S1 C1 row + subject contract |
+| Semantic camera specification | frontend/spatial/machine-camera.js | canonical world renderer, controller state | camera spec consumes semantic camera ids and subjects; it does not create geometry, hierarchy state, topology, or backend authority | S10 camera contract tests |
 | State/effect projection | DEFERRED: S9+ effect/state owners remain slice-specific | later renderer/world-expression layers | no S1 closure claim is made until S9/S28/S29 reconcile the remaining projection responsibilities | checklist row 117 remains open |
 
 ## Boundary decisions
