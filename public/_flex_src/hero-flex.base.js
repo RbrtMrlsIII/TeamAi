@@ -107,6 +107,7 @@ import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
+import { resolveMachineGuestPresentation } from './machine-guest-state.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
@@ -146,6 +147,9 @@ let navOrbitYaw = 0;
 let navOrbitPitch = 0;
 let navZoom = 1;
 let lastNavBaseCameraId = 'HERO_WIDE';
+let authTransitionOpen = false;
+let lastFrameAt = performance.now();
+let lastNavigationInputAt = performance.now();
 let touchState = null;
 let pinchStart = null;
 let seats = [];
@@ -354,6 +358,47 @@ function cycleTurn(now) {
   }
 }
 
+function getGuestMachineState() {
+  return resolveMachineGuestPresentation({
+    authenticated: false,
+    authTransition: authTransitionOpen,
+    worldLayer: shell.dataset.heroLayer === 'machine',
+    reducedMotion,
+  });
+}
+
+function updateGuestPresentation() {
+  const guest = getGuestMachineState();
+  shell.dataset.guestState = guest.state;
+  shell.dataset.guestLimited = String(guest.limited);
+  shell.dataset.guestOrbit = String(guest.autoOrbitEnabled);
+  const status = document.querySelector('.world-navigation__status');
+  if (status) {
+    status.textContent = guest.authTransition
+      ? 'Authentication · orbit paused'
+      : guest.limited
+        ? 'Guest · limited actions'
+        : '3D workspace';
+  }
+
+  document.querySelectorAll('[data-feature-id]').forEach((button) => {
+    const locked = guest.lockedFeatureIds.includes(button.dataset.featureId || '');
+    button.dataset.guestState = locked ? 'locked' : 'available';
+    button.setAttribute('aria-disabled', String(locked));
+  });
+  return guest;
+}
+
+function applyGuestOrbit(now, guest) {
+  const elapsed = Math.max(0, Math.min(64, now - lastFrameAt));
+  lastFrameAt = now;
+  if (!guest.autoOrbitEnabled || cameraId !== 'HERO_WIDE') return;
+  if (hierarchyRuntime.openParentId) return;
+  if (now - lastNavigationInputAt < 1800) return;
+  navOrbitYaw += elapsed * 0.000025;
+  if (navOrbitYaw > Math.PI * 2) navOrbitYaw -= Math.PI * 2;
+}
+
 function updateLabels() {
   if (stateLabel) stateLabel.textContent = state;
   const seat = seats[selectedSeat] || seats[0];
@@ -426,6 +471,7 @@ function applyNavCamera() {
 
 function onWheel(event) {
   event.preventDefault();
+  lastNavigationInputAt = performance.now();
   const delta = Math.sign(event.deltaY) * 0.08;
   navZoom = clamp(navZoom + delta, NAV_ZOOM_MIN, NAV_ZOOM_MAX);
   if (reducedMotion) navZoom = clamp(navZoom, NAV_ZOOM_REDUCED_MIN, NAV_ZOOM_REDUCED_MAX);
@@ -442,6 +488,7 @@ function onPointerDown(event) {
 
 function onPointerMove(event) {
   if (!touchState || touchState.id !== event.pointerId) return;
+  lastNavigationInputAt = performance.now();
   const dx = (event.clientX - touchState.x) / Math.max(1, canvas.clientWidth);
   const dy = (event.clientY - touchState.y) / Math.max(1, canvas.clientHeight);
   touchState.x = event.clientX;
@@ -471,6 +518,7 @@ function onTouchStart(event) {
 
 function onTouchMove(event) {
   if (event.touches.length !== 2 || !pinchStart) return;
+  lastNavigationInputAt = performance.now();
   const [a, b] = event.touches;
   const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   navZoom = clamp(
@@ -620,6 +668,8 @@ function handleKeyDown(event) {
 
 function frame(now) {
   syncReducedMotionFromDocument();
+  const guest = updateGuestPresentation();
+  applyGuestOrbit(now, guest);
   cycleTurn(now);
   tickHierarchyPose(hierarchyRuntime, now, reducedMotion);
   tickDivisionFocusTransition(hierarchyRuntime, now, reducedMotion);
@@ -687,6 +737,11 @@ window.addEventListener('teamai:web-ai-seat-unlocked', (event) => {
   setSeatCount(event.detail?.seatCount ?? event.detail?.count ?? seatCount + 1);
 });
 
+window.addEventListener('teamai:hero-auth-visibility', (event) => {
+  authTransitionOpen = event.detail?.open === true;
+  updateGuestPresentation();
+});
+
 window.TeamAiHero = {
   setSeatCount,
   getSeatCount: () => seatCount,
@@ -700,6 +755,8 @@ window.TeamAiHero = {
   getContributionProgress: () => contribution,
   getReducedMotion: () => reducedMotion,
   setReducedMotion,
+  getGuestMachineState,
+  getNavOrbitYaw: () => navOrbitYaw,
   getHierarchyState,
   selectSeatShell,
   closeHierarchyParent,
