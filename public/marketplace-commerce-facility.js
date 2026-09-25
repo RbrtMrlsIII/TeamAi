@@ -12,7 +12,7 @@ import {
 export const MARKETPLACE_FACILITY_SPATIAL_CONTEXT = Object.freeze(
   createSpatialConstructionContext({
     slice: 'S19',
-    owner: 'public/marketplace-commerce-facility.js',
+    owner: 'frontend/spatial/marketplace-commerce-facility.js',
     semanticId: MARKETPLACE_ROOT_ID,
     semanticBoundary: 'presentation-only',
   }),
