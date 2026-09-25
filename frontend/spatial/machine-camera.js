@@ -9,6 +9,7 @@
 export const MACHINE_CAMERA_MODE = Object.freeze({
   WORLD_OVERVIEW: 'WORLD_OVERVIEW',
   POD_FOCUS: 'POD_FOCUS',
+  CORE_FOCUS: 'CORE_FOCUS',
   DIVISION_FOCUS: 'DIVISION_FOCUS',
   FACILITY_FOCUS: 'FACILITY_FOCUS',
   EXPANSION_FOLLOW: 'EXPANSION_FOLLOW',
@@ -57,6 +58,7 @@ function chooseSubject({
   worldSubject,
   podSubject,
   divisionSubject,
+  coreSubject,
   facilitySubject,
   parentSubject,
 } = {}) {
@@ -68,6 +70,8 @@ function chooseSubject({
         : (validSubject(podSubject) ? podSubject : worldSubject);
     case MACHINE_CAMERA_MODE.POD_FOCUS:
       return validSubject(podSubject) ? podSubject : worldSubject;
+    case MACHINE_CAMERA_MODE.CORE_FOCUS:
+      return validSubject(coreSubject) ? coreSubject : worldSubject;
     case MACHINE_CAMERA_MODE.FACILITY_FOCUS:
       return validSubject(facilitySubject) ? facilitySubject : worldSubject;
     case MACHINE_CAMERA_MODE.RETURN_TO_PARENT:
@@ -116,6 +120,7 @@ export function deriveMachineCameraSpec({
   worldSubject = null,
   podSubject = null,
   divisionSubject = null,
+  coreSubject = null,
   facilitySubject = null,
   parentSubject = null,
   viewport = { width: 1, height: 1 },
@@ -127,6 +132,7 @@ export function deriveMachineCameraSpec({
     worldSubject,
     podSubject,
     divisionSubject,
+    coreSubject,
     facilitySubject,
     parentSubject,
   });
@@ -142,6 +148,8 @@ export function deriveMachineCameraSpec({
         ? 1.55
         : resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
           ? 1.35
+          : resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
+            ? 1.28
           : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
             ? 1.48
             : 1.12
