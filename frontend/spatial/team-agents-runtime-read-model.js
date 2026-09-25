@@ -1,4 +1,4 @@
-import { resolveAgentReadiness } from './team-agents.js';
+import { getAgentRole, resolveAgentReadiness } from './team-agents.js';
 
 const MAX_AGENTS = 50;
 const MAX_SEATS = 10;
@@ -39,7 +39,7 @@ function normalizeAgents(value) {
     const label = text(agent.label || agent.name);
     const role = text(agent.role);
     const seatId = text(agent.seatId);
-    if (!id || !label || !role || !seatId) return null;
+    if (!id || !label || !role || !seatId || !getAgentRole(role)) return null;
     return Object.freeze({
       id,
       label,
@@ -75,7 +75,7 @@ export function normalizeTeamAgentsReadModel(input = {}) {
   const authorized = Boolean(readinessInput.authorized);
   const entitled = Boolean(readinessInput.entitled);
 
-  const completeContext = authenticated && workspaceKnown && authorized && entitled && Boolean(team);
+  const completeContext = authenticated && workspaceKnown && authorized && entitled && Boolean(readinessInput.healthy) && Boolean(team);
   const usableAgents = completeContext
     ? agents.filter((agent) => agent.readiness.usable)
     : [];
