@@ -334,3 +334,39 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED once fresh exact-head CI passes.
 
+
+
+### E404-S18 — Storage / artifact inventory contract
+
+**Claim:** The S18 Storage facility now has an explicit inherited-machine contract and separates item inventory state from explicit artifact state while remaining read-only presentation.
+
+**Primary source**
+- frontend/spatial/storage-inventory-facility.js — `STORAGE_FACILITY_SPATIAL_CONTEXT`
+- frontend/spatial/storage-inventory.js — `STORAGE_ARTIFACT_STATES` and normalized item contract
+- public mirrors of both modules
+
+**Repository proof**
+- tests/storage-inventory.test.mjs — S18 root inheritance, explicit artifact-state, no-upload/content-transfer, and source/public parity contracts
+- tests/e2e/storage-inventory.spec.ts — guest lock, authenticated read-model metadata/selection/inspection, and reduced-motion browser behavior
+- exact-head machine source/public parity verified by CI
+
+**Boundaries**
+- The facility does not read Firestore directly, call Supabase Storage, upload, transfer binaries, or write content.
+- An item without an explicit `artifactState` remains `UNKNOWN`; generic item `status` does not manufacture artifact readiness.
+- The semantic branch remains item-owned and presentation-only.
+- Production content, authorization, entitlement, retention, quotas, and storage mutation remain outside this spatial facility.
+
+**Exact-head verification — 2026-09-25**
+- PR #404 head: `292346063ad47b6022f40655de41399b8f9369e3`
+- Base: `529fede864df0218947377e1d50e48f096c4a7c7`
+- Repository Full-System Verification: [36137892064](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36137892064) — **PASS**
+- Project tests: **1,082 passed / 0 failed**
+- Browser verification: [36137892131](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36137892131) — **PASS**
+- Machine spatial runtime parity: **68 modules verified**
+- Governance Integrity: [36137892051](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36137892051) — **PASS**
+- Security Static Analysis: [36137892231](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36137892231) — **PASS**
+- Deep Security Static Analysis: [36137892141](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36137892141) — **PASS**
+- Browser artifact: `browser-verification-292346063ad47b6022f40655de41399b8f9369e3`, artifact ID `10864623660`, SHA-256 `42731647b19890004135f70ae61b8a27413ab9f924802f5fa2274654299e27cd`
+- Full-project artifact: `full-project-292346063ad47b6022f40655de41399b8f9369e3`, artifact ID `10864763276`, SHA-256 `cf08976b37a554dba90f7fd0519c32c8c21a9d2d097bf31c4914224c454f9c93`
+
+**Status:** REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.

@@ -375,13 +375,13 @@ Exit: execution envelope is understandable without invented accounting.
 Exit: users can follow work and continuity.
 
 ## T. S18 — Storage / artifacts
-- [ ] Inventory state.
-- [ ] Item selection.
-- [ ] Metadata.
-- [ ] Ready/empty/blocked states.
-- [ ] Artifact state.
-- [ ] Deferred upload remains deferred.
-- [ ] No fabricated content.
+- [x] Inventory state. Evidence: E404-S18.
+- [x] Item selection. Evidence: E404-S18.
+- [x] Metadata. Evidence: E404-S18.
+- [x] Ready/empty/blocked states. Evidence: E404-S18.
+- [x] Artifact state. Evidence: E404-S18.
+- [x] Deferred upload remains deferred. Evidence: E404-S18.
+- [x] No fabricated content. Evidence: E404-S18.
 Exit: storage and artifacts are distinct honest facilities.
 
 ## U. S19 — Marketplace / commerce
