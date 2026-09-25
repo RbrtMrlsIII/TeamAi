@@ -3,18 +3,19 @@ import {
   createAgentAssignmentBranch,
   createAgentAssignmentIntent,
   getAgentRole,
-  getTeamAgent,
-  listTeamAgents,
-  resolveAgentReadiness,
 } from './team-agents.js';
+import {
+  createEmptyTeamAgentsReadModel,
+  normalizeTeamAgentsReadModel,
+} from './team-agents-runtime-read-model.js';
 
 export const TEAM_AGENTS_FACILITY_ROOT_ID = 'hero-team-agents-facility';
 
 let panel = null;
-let activeAgentId = 'agent-alpha';
-let selectedSeatId = 'seat-01';
-let selectedRole = 'planner';
-let authenticated = false;
+let activeAgentId = null;
+let selectedSeatId = null;
+let selectedRole = null;
+let readModel = createEmptyTeamAgentsReadModel();
 
 function dispatch(name, detail) {
   if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
@@ -24,7 +25,7 @@ function dispatch(name, detail) {
 }
 
 function getAgent() {
-  return getTeamAgent(activeAgentId) || listTeamAgents()[0];
+  return readModel.agents.find((agent) => agent.id === activeAgentId) || readModel.agents[0] || null;
 }
 
 function renderBranch() {
