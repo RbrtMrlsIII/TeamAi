@@ -85,3 +85,42 @@ test('S9 reduced motion preserves state while removing continuous pulse movement
   assert.equal(full.state, reduced.state);
   assert.equal(reduced.pulse, reduced.amount);
 });
+
+
+test('S9 keeps declared but inactive world edges semantically idle', () => {
+  const inactiveFacility = resolveMachineSignalState({
+    edge: { ...edge, kind: 'pod-facility' },
+    state: {},
+    selectedBranchId: null,
+    reducedMotion: true,
+  });
+  const inactiveWorkspace = resolveMachineSignalState({
+    edge: { ...edge, kind: 'workspace-contribution' },
+    state: {},
+    selectedBranchId: null,
+    reducedMotion: true,
+  });
+  assert.equal(inactiveFacility.state, MACHINE_SIGNAL_STATE.IDLE);
+  assert.equal(inactiveFacility.amount, 0);
+  assert.equal(inactiveWorkspace.state, MACHINE_SIGNAL_STATE.IDLE);
+  assert.equal(inactiveWorkspace.amount, 0);
+});
+
+test('S9 semantic activity activates only the corresponding declared edge state', () => {
+  const contribution = resolveMachineSignalState({
+    edge: { ...edge, kind: 'facility-facility' },
+    state: { contributionAmount: 0.65 },
+    selectedBranchId: null,
+    reducedMotion: true,
+  });
+  const reception = resolveMachineSignalState({
+    edge: { ...edge, kind: 'workspace-contribution' },
+    state: { workspaceReceptionAmount: 0.8 },
+    selectedBranchId: null,
+    reducedMotion: true,
+  });
+  assert.equal(contribution.state, MACHINE_SIGNAL_STATE.CONTRIBUTION_TRANSFER);
+  assert.equal(contribution.amount, 0.65);
+  assert.equal(reception.state, MACHINE_SIGNAL_STATE.WORKSPACE_RECEIVING);
+  assert.equal(reception.amount, 0.8);
+});
