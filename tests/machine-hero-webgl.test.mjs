@@ -52,7 +52,10 @@ test('S10 semantic camera owner is wired between controller and canonical render
   assert.match(renderer, /resolveMachineCameraMode/);
   assert.match(renderer, /state\.cameraId/);
   assert.match(renderer, /coreSubject: coreAssembly\?\.subject/);
-  assert.match(controller, /machineWorldRenderer\.render\(now, \{[\s\S]*cameraId,/);
+  const renderStart = controller.indexOf('machineWorldRenderer.render(now, {');
+  const renderEnd = controller.indexOf('\n  });', renderStart);
+  assert.ok(renderStart >= 0 && renderEnd > renderStart);
+  assert.match(controller.slice(renderStart, renderEnd), /\bcameraId,/);
   assert.match(camera, /WORKSPACE_CLOSE/);
   assert.match(camera, /CORE_FOCUS/);
 });
@@ -209,12 +212,15 @@ test('canonical world renderer uses the S5 stateful expansion mechanism for expa
   assert.match(renderer, /if \(wantedExpanded !== targetExpanded\)/);
 });
 
-test('canonical world renderer keeps branch camera identity separate from physical subject', async () => {
+test('canonical world renderer keeps branch identity separate from semantic camera identity', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
-  assert.match(renderer, /resolveBranchCamera/);
   assert.match(renderer, /effectiveCameraId/);
+  assert.match(renderer, /navigationCameraId/);
   assert.match(renderer, /fitWorldCamera/);
   assert.match(renderer, /deriveMachineSubject/);
+  assert.match(renderer, /machineWorldCameraId/);
+  assert.match(renderer, /machineWorldCameraMode/);
+  assert.doesNotMatch(renderer, /resolveBranchCamera/);
 });
 
 test('magnificent compatibility preview delegates to the canonical renderer', () => {
