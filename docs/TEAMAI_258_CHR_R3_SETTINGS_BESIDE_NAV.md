@@ -1,11 +1,11 @@
-# CHR-R3 — Settings beside machine-nav
+# CHR-R3 — Dedicated Settings shell on machine layer
 
 **Status:** IMPLEMENTATION (presentation only) · **no 029-released claim**  
 **Depends on:** #259 CHR-R1/R2 · ENT-R4 (#265)
 
 ## Intent
 
-On machine layer, **settings** and **machine-nav** form one chrome strip (beside, not a second island).
+On machine layer, the **dedicated Settings shell** remains a single instrument chrome surface and does not depend on the retired machine-nav.
 
 - No second settings root outside residual owners
 - Does not set `data-hero-machine-ui`
