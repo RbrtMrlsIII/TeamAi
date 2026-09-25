@@ -1,3 +1,4 @@
+import { createSpatialConstructionContext, validateSpatialConstructionNode } from './machine-spatial-root-contract.js';
 import {
   createMarketplaceOfferBranch,
   getMarketplaceModule,
@@ -7,6 +8,19 @@ import {
   MARKETPLACE_ROOT_ID,
   resolveMarketplaceTierPresentation,
 } from './marketplace-commerce.js';
+
+export const MARKETPLACE_FACILITY_SPATIAL_CONTEXT = Object.freeze(
+  createSpatialConstructionContext({
+    slice: 'S19',
+    owner: 'public/marketplace-commerce-facility.js',
+    semanticId: MARKETPLACE_ROOT_ID,
+    semanticBoundary: 'presentation-only',
+  }),
+);
+
+if (!validateSpatialConstructionNode(MARKETPLACE_FACILITY_SPATIAL_CONTEXT).valid) {
+  throw new Error('invalid S19 Marketplace spatial root contract');
+}
 
 let panel = null;
 let activeFamily = 'team-quality';
