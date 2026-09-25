@@ -7,7 +7,7 @@ test.describe('Seat Task / Evidence report', () => {
     await page.waitForFunction(() => Boolean((window as any).TeamAiHero?.selectSeatShell));
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
-    for (let i = 0; i < 6; i += 1) {
+    for (let i = 0; i < 7; i += 1) {
       await page.keyboard.press('ArrowRight');
     }
 
