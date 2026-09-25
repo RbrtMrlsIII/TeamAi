@@ -189,6 +189,15 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 
 `main` remains the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. The #393 governance/advisory normalization is implemented in PR #395 and is closure-pending rather than an active implementation stream. Superseded vehicles remain historical and must not become parallel current slices.
 
+## 2026-09-25 review-readiness guidance reconciliation
+
+- [x] Issue #415 established as the bounded governance vehicle for review-readiness semantic guidance.
+- [x] Define the lifecycle contract: Draft → exact-head substantive validation → Ready for review → review-readiness → advisory evidence → independent human approval → merge candidate → governed merge → post-merge proof.
+- [x] Define advisory field semantics so `verification_gaps` is limited to material unproven requirements of the PR's own proof target.
+- [x] Define the distinction between owning Issue backlog/downstream gates and PR verification gaps.
+- [x] Preserve the existing fail-closed structured-output validator and five-slot OpenRouter routing; no provider-routing or validator relaxation is part of this slice.
+- [x] Add operator-facing guidance to the PR template and AI Assistant session guide, with the reusable Skill remaining the procedural source.
+
 ## 2026-09-23 advisory control-plane reconciliation
 Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
