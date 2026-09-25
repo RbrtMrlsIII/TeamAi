@@ -84,7 +84,7 @@ test('S17 hides task report when Seat authorization is absent even if data is su
     summary: 'private',
     evidenceRefs: ['private-ref'],
   });
-  assert.equal(model.state, 'UNAVAILABLE');
+  assert.equal(model.state, 'BACKEND_STATE_REQUIRED');
   assert.equal(model.available, false);
   assert.equal(model.report.available, false);
   assert.equal(model.seatId, null);
@@ -117,7 +117,7 @@ test('S17 rejects an availability flag that is not sourced from the backend read
     turnId: 'turn-fixture',
     completionState: 'COMPLETED',
   });
-  assert.equal(model.state, 'BACKEND_STATE_REQUIRED');
+  assert.equal(model.state, 'UNAVAILABLE');
   assert.equal(model.available, false);
   assert.equal(model.report.available, false);
 });

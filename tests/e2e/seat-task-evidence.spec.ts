@@ -1,13 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Seat Task / Evidence report', () => {
-  test('renders unavailable until backend read-model ingress and then projects the supplied report', async ({ page }) => {
-    await page.goto('/spatial/');
-    await page.getByRole('button', { name: 'Seats' }).click();
+  test('projects backend-shaped task/evidence state into the live Hero Seat stack', async ({ page }) => {
+    await page.goto('/hero/');
 
-    const runtime = page.locator('[data-seat-runtime-state]');
-    await expect(runtime).toHaveText('UNAVAILABLE');
-    await expect(page.locator('[data-seat-runtime-empty]')).toBeVisible();
+    const taskLayer = page.getByRole('button', { name: /Task \/ Evidence: inspect SEAT_TASK_EVIDENCE/ });
+    await expect(taskLayer).toBeVisible();
+    await taskLayer.click();
+
+    await expect(taskLayer).toHaveAttribute('data-task-state', 'idle');
+    await expect(taskLayer).toHaveAttribute('data-result-state', 'none');
+    await expect(taskLayer).toHaveAttribute('data-evidence-state', 'none');
 
     await page.evaluate(() => {
       window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
@@ -41,14 +44,12 @@ test.describe('Seat Task / Evidence report', () => {
       }));
     });
 
-    await expect(runtime).toHaveText('COMPLETED');
-    await expect(page.locator('[data-seat-runtime-turn]')).toHaveText('turn-e2e-17');
-    await expect(page.locator('[data-seat-runtime-result]')).toHaveText('Browser-projected runtime result.');
-    await expect(page.locator('[data-seat-runtime-summary]')).toHaveText('S17 browser contract received backend-shaped read model.');
-    await expect(page.locator('[data-seat-runtime-findings]')).toHaveText('Read model accepted.');
-    await expect(page.locator('[data-seat-runtime-evidence]')).toHaveText('S17 evidence · E404-S17');
-    await expect(page.locator('[data-seat-runtime-handoff]')).toHaveText('Continue from exact verified head.');
-    await expect(page.locator('[data-seat-transaction-state]')).toHaveText('COMPLETED');
-    await expect(page.locator('[data-seat-transaction-kind]')).toHaveText('ai execution');
+    await expect(taskLayer).toHaveAttribute('data-task-state', 'complete');
+    await expect(taskLayer).toHaveAttribute('data-result-state', 'attached');
+    await expect(taskLayer).toHaveAttribute('data-evidence-state', 'recorded');
+    await expect(taskLayer).toHaveAttribute('data-provenance', 'E404-S17');
+
+    const bridge = await page.evaluate(() => Boolean(window.TeamAiHeroSeatTaskEvidence?.projectReadModel));
+    expect(bridge).toBe(true);
   });
 });

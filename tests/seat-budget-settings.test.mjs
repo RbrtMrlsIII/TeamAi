@@ -81,13 +81,14 @@ test('Seat Budget control intents remain presentation-only and require an author
   assert.throws(() => createSeatBudgetControlIntent({ seatId: 'runtime-seat-7', action: 'EQUIP' }));
 });
 
-test('Seat Budget facility inherits the complete S0-S10 spatial root contract and does not infer Seat identity', () => {
+test('Seat Budget facility uses the live Hero selection only to seed a backend read request', () => {
   const facility = readFileSync('frontend/spatial/seat-budget-settings-facility.js', 'utf8');
   assert.match(facility, /createSpatialConstructionContext/);
   assert.match(facility, /slice: 'S16'/);
   assert.match(facility, /SEAT_BUDGET_FACILITY_SPATIAL_CONTEXT/);
-  assert.match(facility, /return readModel\.seatId \|\| null/);
-  assert.doesNotMatch(facility, /getSelectedSeat/);
+  assert.match(facility, /readModel\.seatId/);
+  assert.match(facility, /TeamAiHero\?\.getSelectedSeat/);
+  assert.match(facility, /seat-\$\{index \+ 1\}/);
 });
 
 test('Seat Budget facility remains free of direct backend/storage calls', () => {

@@ -44,7 +44,9 @@ function currentPercent(value, total) {
 }
 
 function selectedSeatId() {
-  return readModel.seatId || null;
+  if (readModel.seatId) return readModel.seatId;
+  const index = Number(globalThis.window?.TeamAiHero?.getSelectedSeat?.());
+  return Number.isInteger(index) && index >= 0 ? `seat-${index + 1}` : null;
 }
 
 function editorValue(name) {

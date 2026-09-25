@@ -142,9 +142,11 @@ function updateNextAction(entry) {
     (stage === 'EQUIP' && (!readModel.contextAvailable || readiness?.usable !== true));
   button.hidden = !readModel.authenticated || !entry || !stage;
   button.disabled = blocked;
-  button.textContent = stage === 'EQUIP'
-    ? 'Request equip intent'
-    : 'Request ' + stage.replaceAll('_', ' ').toLowerCase();
+  button.textContent = !stage
+    ? 'Lifecycle step unavailable'
+    : stage === 'EQUIP'
+      ? 'Request equip intent'
+      : 'Request ' + stage.replaceAll('_', ' ').toLowerCase();
 }
 
 function updateBranchPreview(entry) {
