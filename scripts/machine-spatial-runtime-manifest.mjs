@@ -38,6 +38,7 @@ export const MACHINE_SPATIAL_RUNTIME_FILES = Object.freeze([
   'hero-r1-backend-threads.js',
   'hero-r2-setup-ring.js',
   'machine-world-renderer.js',
+  'machine-camera.js',
   'machine-seat-division-presentation.js',
   'machine-seat-division-topology.js',
   'machine-seat-division-payload.js',
