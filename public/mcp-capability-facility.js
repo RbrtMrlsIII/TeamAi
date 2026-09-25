@@ -136,10 +136,15 @@ function updateNextAction(entry) {
 
   const readiness = getReadiness(entry);
   const stage = nextLifecycleStage(readiness);
-  const blocked = !readModel.authenticated || !readModel.contextAvailable || !entry || !stage;
+  const blocked = !readModel.authenticated ||
+    !entry ||
+    !stage ||
+    (stage === 'EQUIP' && (!readModel.contextAvailable || readiness?.usable !== true));
   button.hidden = !readModel.authenticated || !entry || !stage;
   button.disabled = blocked;
-  button.textContent = stage === 'EQUIP' ? 'Request equip intent' : 'Request ' + stage.replaceAll('_', ' ').toLowerCase();
+  button.textContent = stage === 'EQUIP'
+    ? 'Request equip intent'
+    : 'Request ' + stage.replaceAll('_', ' ').toLowerCase();
 }
 
 function updateBranchPreview(entry) {
