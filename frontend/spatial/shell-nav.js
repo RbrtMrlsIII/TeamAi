@@ -6,6 +6,7 @@
 
 import { getFrontendFeature } from "./feature-registry.js";
 import { createSeatReportPresentation, createSeatTransactionPresentation } from "./seat-runtime-presentation.js";
+import { normalizeSeatTaskEvidenceReadModel, createEmptySeatTaskEvidenceReadModel } from "./seat-task-evidence-runtime-read-model.js";
 import { projectSeat, normalizeConnectionHealth, applyProjectionToHeroSeatStack } from "./seat-read-model.js";
 import { runSeatConnectionTest, formatConnectionTestMessage } from "./seat-connection-wire.js";
 import { ensureProviderBindOnSeatsPage, syncProviderBindSeat } from "./seat-provider-bind-wire.js";
@@ -142,8 +143,9 @@ let seatsBuilt = false;
 let approvalsBuilt = false;
 let activeSeat = "alpha";
 let activeApproval = "runtime-alpha";
-let activeSeatReport = createSeatReportPresentation({ authoritative: false });
-let activeSeatTransaction = null;
+let activeSeatTaskEvidence = createEmptySeatTaskEvidenceReadModel();
+let activeSeatReport = activeSeatTaskEvidence.report;
+let activeSeatTransaction = activeSeatTaskEvidence.transaction;
 
 function refreshThemeControls() {
   const mode = resolveMode(readSource(), readStoredMode());
@@ -354,6 +356,14 @@ function buildSeats() {
           <div><dt class="ta-type-meta">Responsibility</dt><dd class="ta-type-body" data-seat-runtime-responsibility></dd></div>
           <div><dt class="ta-type-meta">Remaining budget</dt><dd class="ta-type-body" data-seat-runtime-budget></dd></div>
           <div><dt class="ta-type-meta">Next action</dt><dd class="ta-type-body" data-seat-runtime-next></dd></div>
+          <div><dt class="ta-type-meta">Result</dt><dd class="ta-type-body" data-seat-runtime-result></dd></div>
+          <div><dt class="ta-type-meta">Summary</dt><dd class="ta-type-body" data-seat-runtime-summary></dd></div>
+          <div><dt class="ta-type-meta">Findings</dt><dd class="ta-type-body" data-seat-runtime-findings></dd></div>
+          <div><dt class="ta-type-meta">Completed</dt><dd class="ta-type-body" data-seat-runtime-completed></dd></div>
+          <div><dt class="ta-type-meta">Unresolved</dt><dd class="ta-type-body" data-seat-runtime-unresolved></dd></div>
+          <div><dt class="ta-type-meta">Decisions</dt><dd class="ta-type-body" data-seat-runtime-decisions></dd></div>
+          <div><dt class="ta-type-meta">Evidence references</dt><dd class="ta-type-body" data-seat-runtime-evidence></dd></div>
+          <div><dt class="ta-type-meta">Next handoff</dt><dd class="ta-type-body" data-seat-runtime-handoff></dd></div>
         </dl>
         <div class="ta-seat-runtime__transaction ta-card" data-seat-transaction>
           <span class="ta-type-label">Semantic transaction state</span>
@@ -413,6 +423,14 @@ function renderSeatRuntime() {
   const responsibility = document.querySelector("[data-seat-runtime-responsibility]");
   const budget = document.querySelector("[data-seat-runtime-budget]");
   const next = document.querySelector("[data-seat-runtime-next]");
+  const result = document.querySelector("[data-seat-runtime-result]");
+  const summary = document.querySelector("[data-seat-runtime-summary]");
+  const findings = document.querySelector("[data-seat-runtime-findings]");
+  const completed = document.querySelector("[data-seat-runtime-completed]");
+  const unresolved = document.querySelector("[data-seat-runtime-unresolved]");
+  const decisions = document.querySelector("[data-seat-runtime-decisions]");
+  const evidence = document.querySelector("[data-seat-runtime-evidence]");
+  const handoff = document.querySelector("[data-seat-runtime-handoff]");
   const transactionState = document.querySelector("[data-seat-transaction-state]");
   const transactionKind = document.querySelector("[data-seat-transaction-kind]");
 
@@ -426,6 +444,16 @@ function renderSeatRuntime() {
     if (responsibility) responsibility.textContent = report.responsibility || "unreported";
     if (budget) budget.textContent = report.remainingBudget == null ? "unreported" : String(report.remainingBudget);
     if (next) next.textContent = report.nextAction || "No next action reported";
+    if (result) result.textContent = report.result || "Not reported";
+    if (summary) summary.textContent = report.summary || "Not reported";
+    if (findings) findings.textContent = report.findings?.length ? report.findings.join(" · ") : "None reported";
+    if (completed) completed.textContent = report.completed?.length ? report.completed.join(" · ") : "None reported";
+    if (unresolved) unresolved.textContent = report.unresolved?.length ? report.unresolved.join(" · ") : "None reported";
+    if (decisions) decisions.textContent = report.decisions?.length ? report.decisions.join(" · ") : "None reported";
+    if (evidence) evidence.textContent = report.evidenceRefs?.length
+      ? report.evidenceRefs.map((entry) => entry.label ? entry.label + " · " + entry.ref : entry.ref).join(" · ")
+      : "None reported";
+    if (handoff) handoff.textContent = report.nextHandoffContext || "None reported";
   }
 
   if (transactionState) transactionState.textContent = activeSeatTransaction?.state || "UNAVAILABLE";
@@ -773,17 +801,12 @@ function wire() {
   showComposition("deck");
   setStage("planning");
 
-  window.addEventListener("teamai:seat-runtime-report", (event) => {
-    const detail = event.detail || {};
-    if (detail.authoritative !== true) return;
-    activeSeatReport = createSeatReportPresentation(detail);
-    renderSeatRuntime();
-  });
-
-  window.addEventListener("teamai:seat-transaction-state", (event) => {
-    const detail = event.detail || {};
-    if (detail.authoritative !== true) return;
-    activeSeatTransaction = createSeatTransactionPresentation(detail);
+  window.addEventListener("teamai:seat-task-evidence-runtime-read-model", (event) => {
+    const detail = event.detail?.readModel || event.detail || {};
+    if (detail.source !== "backend-read-model") return;
+    activeSeatTaskEvidence = normalizeSeatTaskEvidenceReadModel(detail);
+    activeSeatReport = activeSeatTaskEvidence.report;
+    activeSeatTransaction = activeSeatTaskEvidence.transaction;
     renderSeatRuntime();
   });
 
