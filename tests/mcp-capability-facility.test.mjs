@@ -29,7 +29,7 @@ test('MCP facility lifecycle intent remains separate from backend authority', ()
   const facility = readFileSync('frontend/spatial/mcp-capability-facility.js', 'utf8');
   assert.match(facility, /createMcpLifecycleIntent/);
   assert.match(facility, /teamai:mcp-lifecycle-intent/);
-  assert.match(facility, /authoritative runtime confirmation is still required/);
+  assert.match(facility, /authoritative runtime confirmation is still required/i);
 });
 
 test('live Hero surface wires the MCP facility to the existing capability contract', () => {
