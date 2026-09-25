@@ -5,6 +5,13 @@ Dedicated Issue: #405
 Scope: all remaining 029 spatial construction, feature integration, cleanup, documentation alignment, verification, acceptance, and ProMax polish.
 Rule: no additional implementation PRs for S0-S33. PR #404 remains the sole spatial implementation vehicle.
 
+## Evidence navigation contract
+
+This checklist is the **status ledger**. It does not duplicate proof details.
+Detailed proof references, exact-head runs, geometry-history evidence, artifact hashes, and evidence-state boundaries are maintained in [TEAMAI_3D_WORLD_404_EVIDENCE.md](./TEAMAI_3D_WORLD_404_EVIDENCE.md).
+
+Use the evidence IDs in section-level notes below rather than creating one evidence record per checkbox. The PR #404 description is the newcomer-readable entry point and links back to this checklist and the evidence registry.
+
 ## A. Verified starting-state diagnosis
 
 ### A1. Repository baseline
@@ -28,14 +35,20 @@ Rule: no additional implementation PRs for S0-S33. PR #404 remains the sole spat
 ### A3. Current numeric spatial findings
 At the current maximum 10-seat profile:
 - [x] workspace footprint = 5.95
-- [x] Seat-shell centerline radius = 4.55
-- [x] expanded Seat-shell centerline radius at full expansion = 5.05
-- [x] outer-housing centerline radius = 7.15
-- [x] expanded outer-housing radius at full expansion = 7.85
+- [x] authored Seat-shell centerline radius = 4.55
+- [x] runtime closed Seat-shell radius = 5.05
+- [x] runtime fully expanded Seat-shell radius = 5.55
+- [x] authored outer-housing centerline radius = 7.15
+- [x] runtime closed outer-housing radius = 9.85
+- [x] runtime fully expanded outer-housing radius = 10.55
 - [x] R0 receiving-core radius = 4.046 at the current non-expanded workspace geometry
 - [x] current 10-seat ring envelope resolves approximately R1 = 4.214, R2 = 4.382, R3 = 4.55 with approximately 0.168 inter-ring gap
-- [x] current maximum-density adjacent Seat center spacing = approximately 2.812
+- [x] current maximum-density closed adjacent Seat center spacing = approximately 2.812
+- [x] current maximum-density fully expanded adjacent Seat center spacing = approximately 3.430
 - [x] current Pod max horizontal dimension = 1.34
+- [x] full-expansion Seat + division radial-center reach = approximately 8.498, with approximately 2.052 radial-envelope margin before component extents
+
+Evidence: E404-NUMERIC in TEAMAI_3D_WORLD_404_EVIDENCE.md.
 
 ### A5. Root inheritance and world-expression contract
 - [x] S0-S10 are explicitly declared as the canonical structural roots of the 029 spatial machine, not merely sequential implementation phases.
@@ -65,10 +78,12 @@ Exit: root inheritance is explicit, traceable, and enforceable across the entire
 - [x] Current full-expansion Seat + division theoretical reach is approximately 7.998 from world center.
 - [x] At the current 10-seat density, the adaptive world profile yields an expanded outer-housing radius of 10.55, exceeding the 7.998 Seat + division theoretical reach by 2.552 units.
 - [x] The previously reported approximately 0.148-unit radial overrun is resolved in the current adaptive world profile: the 10-seat expanded outer-housing envelope is 10.55 versus a 7.998 Seat + division theoretical reach.
-- [ ] Verify actual articulated division paths against all seven-child index positions and outer-facility envelopes.
-- [ ] Replace the current simple envelope assumptions with geometry-aware collision/clearance calculation.
+- [x] Verify actual articulated division paths against all seven-child index positions and outer-facility envelopes.
+- [x] Replace the current simple envelope assumptions with geometry-aware collision/clearance calculation.
 
-Diagnosis: the structural graph, first-frame renderer, adaptive clearance foundations, and S7 specialized machine grammars are now operational. The previous 0.148-unit radial envelope discrepancy is closed at the current 10-seat profile; remaining physical gaps are exact articulated-path verification, geometry-aware collision/clearance, later product/runtime slices, and human acceptance.
+Evidence: E404-GEOM. The current proof uses authored component subjects sampled through travel, conservative AABB clearance, and the full 1–10 Seat × 3 shell-state × 7-division matrix. Triangle-level mesh collision is not claimed.
+
+Diagnosis: the earlier 0.148-unit radial-envelope discrepancy is closed. Current proof closes the authored-path and conservative geometry-clearance contract; remaining gaps are formal acceptance, production/runtime evidence, human acceptance, and final visual/product integration.
 
 ## B. S0 — Forensics and baseline freeze
 - [ ] Re-read Product Law, #278, #396, #400, #392, #83 and current Masterplan.
@@ -119,6 +134,7 @@ Exit: every physical system has one explicit owner.
 **Exit:** S1 is not considered structurally closed while a partitioned row can still produce a second competing authority. Established rows may be consumed immediately; unresolved rows must be closed at their owning construction slice.
 
 ## D. S2 — Central Core reconstruction
+**Evidence:** E404-S2
 - [ ] Authored outer shell.
 - [ ] Layered core chamber.
 - [ ] Receiving surface.
@@ -132,6 +148,7 @@ Exit: every physical system has one explicit owner.
 Exit: center is an authored machine assembly.
 
 ## E. S3 — Pod assembly reconstruction
+**Evidence:** E404-S3
 **Implementation status:** checked rows below mean the Pod capability is implemented in the repository. They do not, by themselves, close the final A4 mathematical/geometry proof or later runtime/acceptance gates.
 - [x] Reusable authored Pod shell.
 - [x] Outer collar.
@@ -147,6 +164,7 @@ Exit: center is an authored machine assembly.
 Exit: Pods are true assemblies and safely replicable.
 
 ## F. S4 — Division system reconstruction
+**Evidence:** E404-S4 + E404-GEOM
 **Implementation status:** checked rows below mean the division construction capability is implemented. Final articulated-path collision/clearance evidence remains governed by A4 and S30 proof gates.
 - [x] Payload-driven division envelope.
 - [x] Connection division.
@@ -164,6 +182,7 @@ Exit: Pods are true assemblies and safely replicable.
 Exit: divisions are subsystems, not scaled primitives.
 
 ## G. S5 — Expansion mechanisms
+**Evidence:** E404-S5 + E404-GEOM
 **Implementation status:** checked rows below mean the expansion lifecycle/mechanism capability is implemented. They do not establish exhaustive exact-path safety across every articulated child/facility combination.
 - [x] CLOSED.
 - [x] PREPARING.
@@ -180,6 +199,7 @@ Exit: divisions are subsystems, not scaled primitives.
 Exit: expansion is mechanically authored and spatially safe.
 
 ## H. S6 — Product facility assemblies
+**Evidence:** E404-S3/S4/S5 implementation ancestry and current facility tests
 - [x] Workspace HQ.
 - [x] Projects Library.
 - [x] Artifacts / Inventory.
@@ -195,6 +215,7 @@ Exit: expansion is mechanically authored and spatially safe.
 Exit: product facilities have deliberate physical destinations.
 
 ## I. S7 — Specialized facility machinery
+**Evidence:** current facility machinery tests + E404-S8 topology dependency
 **Implementation status:** checked rows below mean the specialized machinery capability is implemented. Final world-wide spatial validation remains a separate proof concern.
 - [x] Telescoping analysis facility.
 - [x] Fin/structural deployment facility.
@@ -208,6 +229,7 @@ Exit: product facilities have deliberate physical destinations.
 Exit: outer world contains genuinely different machines.
 
 ## J. S8 — Topology and corridors
+**Evidence:** E404-S8
 **Implementation status:** checked rows below mean the topology/routing capability is implemented and tested. They do not replace the final geometry-aware clearance proof required by A4/S30.
 - [x] Core ↔ Pod edges.
 - [x] Pod ↔ Division edges.
@@ -225,6 +247,7 @@ Exit: outer world contains genuinely different machines.
 Exit: every meaningful connection is real in the semantic graph and physical route.
 
 ## K. S9 — Electricity / signal
+**Evidence:** E404-S9
 - [ ] Idle state.
 - [ ] Active Seat state.
 - [ ] Active branch state.
@@ -240,6 +263,7 @@ Exit: every meaningful connection is real in the semantic graph and physical rou
 Exit: energy flow is a projection of the declared machine graph.
 
 ## L. S10 — Camera/navigation
+**Evidence:** E404-S10
 - [ ] WORLD_OVERVIEW.
 - [ ] POD_FOCUS.
 - [ ] DIVISION_FOCUS.
@@ -512,6 +536,7 @@ Exit: one machine grammar spans the product.
 Exit: major feature classes behave consistently.
 
 ## AF. S30 — Exact-head repository verification
+**Evidence:** E404-CI
 - [ ] Governance Integrity.
 - [ ] Full-System.
 - [ ] Security.
@@ -609,7 +634,7 @@ Exit: polish improves a correct machine.
 - [ ] Remove claims that imply current primitive renderer is final.
 - [ ] State clearly that R1/R2 are implemented-partial, not final machine completion.
 - [ ] Record the 10-seat geometry discrepancy and its resolution when closed.
-- [ ] Record actual evidence runs by exact head.
+- [x] Record actual evidence runs by exact head in TEAMAI_3D_WORLD_404_EVIDENCE.md.
 - [ ] Keep screenshots/video references separate from Product Law.
 - [ ] Update session/recovery state after major slice boundaries.
 
