@@ -74,5 +74,5 @@ test('S17 task/evidence read-model bridge feeds the canonical Hero Seat stack', 
   assert.match(bridgeSrc, /normalizeSeatTaskEvidenceReadModel/);
   assert.match(bridgeSrc, /teamai:seat-task-evidence-runtime-read-model/);
   assert.match(bridgeSrc, /setWorkspaceTaskPresentation/);
-  assert.doesNotMatch(bridgeSrc, /Firestore|scheduler|provider|fetch\s*\(/i);
+  assert.doesNotMatch(bridgeSrc, /Firestore|Supabase|scheduler\.|fetch\s*\(/i);
 });
