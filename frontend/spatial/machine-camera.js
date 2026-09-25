@@ -1,3 +1,5 @@
+import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
+
 /**
  * TEAM-EXPERIENCE-029 / S10
  * Semantic machine camera specification.
@@ -30,6 +32,17 @@ const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, finite(value, min)));
+
+const ROOT_OWNER = 'frontend/spatial/machine-camera.js';
+
+function rootContext(semanticId = null) {
+  return createSpatialConstructionContext({
+    slice: 'S10',
+    owner: ROOT_OWNER,
+    semanticId,
+    semanticBoundary: 'presentation-only',
+  });
+}
 
 function validSubject(subject) {
   return Boolean(
@@ -197,6 +210,7 @@ export function deriveMachineCameraSpec({
   }
 
   return Object.freeze({
+    ...rootContext('S10:CAMERA-SPEC:' + String(cameraId || MACHINE_CAMERA_ID.WORLD)),
     cameraId: String(cameraId || MACHINE_CAMERA_ID.WORLD),
     mode: resolvedMode,
     target: Object.freeze(validSubject(subject)
