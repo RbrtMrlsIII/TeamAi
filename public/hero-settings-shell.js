@@ -24,15 +24,13 @@ export const SETTINGS_SHELL_ID = 'hero-settings-shell';
 export function resolveSettingsShellMount(root = document) {
   const explicit = root.querySelector('[data-settings-shell]');
   if (explicit) return explicit;
-  const nav = root.querySelector('.machine-nav');
-  if (nav && nav.parentElement) return nav.parentElement;
   return root.querySelector('.seat-stack');
 }
 
 export function buildSettingsShellButton() {
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'machine-nav__settings';
+  btn.className = 'hero-settings-button';
   btn.id = SETTINGS_SHELL_ID;
   btn.setAttribute('aria-expanded', 'false');
   btn.setAttribute('aria-controls', 'hero-settings-panel');
@@ -180,15 +178,8 @@ export function mountSettingsShell(root = document) {
   wrap.appendChild(btn);
   wrap.appendChild(panel);
 
-  const machineNav = mount.querySelector('.machine-nav');
-  if (machineNav && machineNav.nextSibling) {
-    mount.insertBefore(wrap, machineNav.nextSibling);
-  } else if (machineNav) {
-    machineNav.after(wrap);
-  } else {
-    mount.insertBefore(wrap, mount.firstChild);
-  }
-
+  mount.insertBefore(wrap, mount.firstChild);
+  
   btn.addEventListener('click', () => {
     const open = panel.hidden;
     panel.hidden = !open;
