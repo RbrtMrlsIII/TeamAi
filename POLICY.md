@@ -10,9 +10,15 @@ PR #398 is the reviewed 029 structural baseline merged into `main`. Current prod
 
 Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757e749`. Issue #401 / successor PR #402 now owns the production Firestore authority, security, and runtime-evidence frontier. This is a current routing clarification only; it does not change Product Law authority or the draft-first/no-auto-merge discipline.
 
+## 2026-09-26 Gate 3 operator-hierarchy checkpoint
+
+PR #413 merged to `main` at `ce1656b7190fa8657253385fd884837ff7d12653`. Fresh default-branch run `36146692843` proved Firestore index deploy and normalized readback (`requiredCount=1`, `deployedCount=2`, `missing=[]`). Index verification is therefore RUNTIME-PROVEN and is no longer the current #401 implementation blocker.
+
+The remaining Issue #401 successor is Gate 3 Seat-shape evidence. Fresh run `36141179411` listed zero team documents for the documented selectors. That condition is classified as `operator_hierarchy_absent`. Agents must not invent or create live Seat/Connection documents to clear it. The correct next action is an operator-authorized hierarchy or a different authorized inspection path.
+
 ## 2026-09-25 Firestore index verification checkpoint
 
-PR #413 is the current Draft successor for Issue #401's Firestore index verification false negative. Production run 36140968869 deployed the checked-in index successfully; diagnostic run 36141481871 showed the required execution-results collection-group index is present with Firestore's implicit __name__ suffix. The correct action is to normalize verifier semantics, not delete live indexes or use --force.
+PR #413 merged as the Issue #401 Firestore index verification false-negative repair. Production run 36140968869 deployed the checked-in index successfully; diagnostic run 36141481871 showed the required execution-results collection-group index is present with Firestore's implicit __name__ suffix; post-merge run 36146692843 proved the normalized verifier. The correct historical action was to normalize verifier semantics, not delete live indexes or use --force.
 
 ## ORUCAVEAM
 

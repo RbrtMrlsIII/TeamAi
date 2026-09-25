@@ -7,9 +7,16 @@
 **Role:** chronology and executable checklist only.  
 **Current governing program:** TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
 
+## 2026-09-26 Issue #401 Gate 3 operator-hierarchy blocker
+
+- [x] Firestore index verification is RUNTIME-PROVEN on exact main `ce1656b7190fa8657253385fd884837ff7d12653` by default-branch run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`). PR #413 verifier normalization is merged. The unrelated extra live index was preserved; no `--force` deletion occurred.
+- [x] The missing-Seat production probe now classifies `teamDocumentCount=0` with a successful team list as `operator_hierarchy_absent`. This is an operator-authorized hierarchy blocker, not a probe or index defect. The probe still writes only additive `runtime-diagnostics/{runId}` evidence and does not create Seat documents.
+- [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented `gate3-test-team` / `gate3-test-seat` and listed zero team documents. Inspection cannot proceed until an operator-authorized hierarchy exists or a different authorized path is supplied.
+
+
 ## 2026-09-25 Issue #401 production-readback reconciliation
 
-- [ ] Firestore index verification is not considered complete until PR #413 normalizes the live deployed index representation and a fresh default-branch workflow passes. The live required execution-results index is already present; the prior verifier result was a false negative caused by Firestore's implicit trailing __name__ field in deployed readback.
+- [x] Firestore index verification is RUNTIME-PROVEN after PR #413 merged and default-branch run `36146692843` passed deploy plus normalized readback. The live required execution-results index is present; the prior verifier result was a false negative caused by Firestore's implicit trailing __name__ field in deployed readback.
 - [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented gate3-test-team / gate3-test-seat and listed zero team documents.
 
 
@@ -72,7 +79,7 @@ Issue #396 / PR #398 is the reviewed 029 structural baseline now merged into `ma
 - [ ] New real-provider `teamai-task-execute` deployment remains gated by the production Seat diagnostic.
 - [ ] Real provider incomplete termination → checkpoint → explicit continuation → fresh target-Seat turn → truthful completion remains unproven in production.
 - [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
-- [ ] Firestore index readback verification remains pending until PR #413 is validated and a fresh default-branch workflow passes against the normalized verifier. The live `execution-results` index is already deployed.
+- [x] Firestore index readback verification is RUNTIME-PROVEN on exact main `ce1656b7190fa8657253385fd884837ff7d12653` by default-branch run `36146692843` against the PR #413 normalized verifier. The live `execution-results` index is deployed and present.
 - [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
 
 
@@ -89,7 +96,7 @@ Issue #401 is now the sole successor implementation frontier. The remaining 029/
 
 
 - [ ] Real Seat field inventory reconciled with field-level Firestore Rules.
-- [ ] Live `execution-results` index deployed/read back.
+- [x] Live `execution-results` index deployed/read back on exact main `ce1656b7190fa8657253385fd884837ff7d12653` by run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`).
 - [ ] `teamai-seat-budget-runtime` live validation/promotion completed.
 - [ ] Real-provider `teamai-task-execute` promotion completed.
 - [ ] Provider incomplete termination → durable checkpoint → explicit continuation → fresh Seat-owned turn → truthful completion proven.

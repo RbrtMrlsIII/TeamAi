@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { createSign } from 'node:crypto';
+import { classifyMissingSeatProbe } from './classify-production-firestore-seat-probe.mjs';
 
 const ROOT = 'https://firestore.googleapis.com/v1';
 const PROJECT = process.env.TEAMAI_FIREBASE_PROJECT_ID || 'team-ai-official';
@@ -240,6 +241,7 @@ if (!seatDocument) {
   } catch (error) {
     teamListError = error instanceof Error ? error.message : 'team_list_failed';
   }
+  const classification = classifyMissingSeatProbe({ teamIds, teamListError });
   const evidence = {
     runId,
     createdAt: new Date().toISOString(),
@@ -247,9 +249,12 @@ if (!seatDocument) {
     source: 'firestore-rest-service-account',
     teamId,
     seatId,
-    result: 'canonical_seat_not_found',
+    result: classification.result,
+    blockerClass: classification.blockerClass,
+    operatorActionRequired: classification.operatorActionRequired,
     seatPresent: false,
     teamDocumentIds: teamIds,
+    teamDocumentCount: teamIds.length,
     teamListError,
     connections: {
       activeCount: 0,
@@ -260,7 +265,9 @@ if (!seatDocument) {
   await write(runPath, evidence, token);
   console.log(JSON.stringify({
     ok: false,
-    error: 'canonical_seat_not_found',
+    error: classification.result,
+    blockerClass: classification.blockerClass,
+    operatorActionRequired: classification.operatorActionRequired,
     runId,
     evidenceClass: evidence.evidenceClass,
     teamId,
@@ -268,7 +275,9 @@ if (!seatDocument) {
     seatPresent: false,
     teamDocumentCount: teamIds.length,
     teamListError,
-    note: 'Exact team-nested Seat document returned 404. Negative run-scoped evidence was written under runtime-diagnostics. Secret path components are not printed.'
+    note: classification.blockerClass === 'operator_hierarchy_absent'
+      ? 'Exact team-nested Seat document returned 404 and the protected project listed zero team documents. This is an operator-authorized hierarchy blocker, not a probe or index defect. Negative run-scoped evidence was written under runtime-diagnostics. The probe does not create Seat documents. Secret path components are not printed.'
+      : 'Exact team-nested Seat document returned 404. Negative run-scoped evidence was written under runtime-diagnostics. Secret path components are not printed.'
   }, null, 2));
   process.exit(2);
 }

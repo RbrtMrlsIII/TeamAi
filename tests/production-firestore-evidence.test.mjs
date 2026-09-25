@@ -32,15 +32,25 @@ test('fresh evidence writes only to runtime-diagnostics', () => {
 });
 
 test('missing canonical Seat still writes negative run-scoped evidence', () => {
-  assert.match(script, /result: 'canonical_seat_not_found'/);
+  assert.match(script, /result: classification\.result/);
   assert.match(script, /seatPresent: false/);
   assert.match(script, /process\.exit\(2\)/);
   assert.match(script, /listDocumentIds\(parent, 'teams'/);
   assert.match(script, /const runPath = parent \+ '\/runtime-diagnostics\/' \+ runId/);
   assert.doesNotMatch(script, /throw new Error\('canonical Seat document not found'\)/);
   const runPathIndex = script.indexOf("const runPath = parent + '/runtime-diagnostics/' + runId");
-  const missingIndex = script.indexOf("result: 'canonical_seat_not_found'");
+  const missingIndex = script.indexOf('classifyMissingSeatProbe({ teamIds, teamListError })');
   assert.ok(runPathIndex >= 0 && missingIndex > runPathIndex);
+});
+
+test('missing-Seat path classifies operator hierarchy absence and does not create Seat documents', () => {
+  assert.match(script, /classifyMissingSeatProbe/);
+  assert.match(script, /blockerClass: classification\.blockerClass/);
+  assert.match(script, /operatorActionRequired: classification\.operatorActionRequired/);
+  assert.match(script, /operator_hierarchy_absent/);
+  assert.match(script, /The probe does not create Seat documents/);
+  assert.doesNotMatch(script, /await write\(seatPath/);
+  assert.doesNotMatch(script, /await write\(parent \+ '\/teams/);
 });
 
 

@@ -1,10 +1,23 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
+## 2026-09-26 Gate 3 operator-hierarchy blocker
+
+- current main: `ce1656b7190fa8657253385fd884837ff7d12653`
+- current global slice: Issue #401 production Firestore authority, security, and runtime evidence
+- PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
+- index verification is RUNTIME-PROVEN and is no longer the current #401 implementation blocker
+- Gate 3 Seat run `36141179411` still reports `gate3-test-seat` absent with `teamDocumentCount=0` / `teamListError=null`
+- the missing-Seat probe now classifies that condition as `operator_hierarchy_absent`; it does not create Seat documents
+- next allowed work: operator-authorized Gate 3 hierarchy or a different authorized inspection path, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion
+- #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
+- PR #416 is governance/review-readiness infrastructure only
+
+
 ## 2026-09-25 production frontier reconciliation
 
-- current main: 529fede864df0218947377e1d50e48f096c4a7c7
+- current main: ce1656b7190fa8657253385fd884837ff7d12653
 - current global slice: Issue #401 production Firestore authority, security, and runtime evidence
-- PR #402 is merged; PR #413 is the current draft successor for Firestore index readback normalization
+- PR #402 is merged; PR #413 is merged and its verifier defect is closed
 - fresh index run 36140968869 proved deployment succeeds; readback failed because the live export includes Firestore's implicit trailing __name__ field
 - diagnostic run 36141481871 exposed the exact live index shape; the required execution-results index is present
 - fresh Gate 3 Seat run 36141179411 still reports gate3-test-seat absent and teamDocumentCount=0
@@ -14,21 +27,21 @@
 
 ## SESSION SNAPSHOT
 
-- Last given prompt: apply the advisory-runner direct-push event-graph repair without mixing it into #404.
+- Last given prompt: continue TeamAi from the connected GitHub repository using the first open NEXT_SLICES / MASTERPLAN item.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
+- current main: `ce1656b7190fa8657253385fd884837ff7d12653`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
-- replacement branch: backend/030-production-runtime-evidence
-- open implementation vehicles: PR #402 / Issue #401 (active Draft); Draft PR #404 remains the 029 reconstruction vehicle; advisory-runner push-noise repair is infrastructure only
+- replacement branch: backend/401-gate3-operator-hierarchy-blocker
+- open implementation vehicles: Issue #401 / Draft successor for Gate 3 operator-hierarchy classification; Draft PR #404 remains the 029 reconstruction vehicle; PR #416 is governance infrastructure only
 - active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
-- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
-- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, the retired current-state map, or treating reusable-runner zero-job push failures as product proof
-- next allowed work: the protected test project currently lists zero team documents, so Gate 3 Seat inspection cannot proceed until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/index/runtime gates from observed production state.
+- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398, #413
+- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, the retired current-state map, treating reusable-runner zero-job push failures as product proof, or creating live Gate 3 Seat documents
+- next allowed work: Gate 3 remains `operator_hierarchy_absent` until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/runtime gates from observed production state. Do not re-open the proven index verifier lane.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.

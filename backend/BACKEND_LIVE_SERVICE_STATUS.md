@@ -38,7 +38,7 @@ The connected Supabase project **TeamAi** (`srpgzzretfyqdsfclnuo`) reports these
 - `teamai-task-continuation-request` v2
 - `teamai-seat-budget-settings` v1
 
-The new `teamai-seat-budget-runtime` read-model function is repository-complete and exact-head verified, but is **not yet deployed** because its Firestore collection-group composite index must first exist in the live Firebase project.
+The new `teamai-seat-budget-runtime` read-model function is repository-complete and exact-head verified, but is **not yet deployed**. The former Firestore collection-group index prerequisite is now RUNTIME-PROVEN by default-branch run `36146692843` after PR #413. Live promotion is gated on Gate 3 Seat-shape evidence (`operator_hierarchy_absent` until an operator-authorized hierarchy exists), not on index presence.
 
 The checked-in `firestore.indexes.json` now declares the required `execution-results` collection-group index on `seatId ASC, recordedAt DESC`. The manual workflow `.github/workflows/firestore-index-deploy.yml` is intentionally `workflow_dispatch` only and performs an indexes-only Firebase deployment.
 
@@ -142,7 +142,7 @@ The live `teamai-task-execute` function remains version 12 and the production Se
 
 Repository-side hardening on the active 029 branch now makes normal task execution resolve the active connection from the canonical Firestore Seat scope, matching the continuation execution boundary. Provider results that omit normalized termination are durably terminalized as `PROVIDER_TERMINATION_INVALID` rather than leaving a leased task/request running.
 
-The checked-in Firestore index set retains the required `execution-results` collection-group index (`seatId ASC, recordedAt DESC`). An equality-only `connections(seatId,status)` composite was deliberately not retained because Firestore supports compound equality queries through index merging. The indexes-only workflow now deploys and then reads back deployed indexes, verifying required repository indexes without deleting unrelated live indexes.
+The checked-in Firestore index set retains the required `execution-results` collection-group index (`seatId ASC, recordedAt DESC`). An equality-only `connections(seatId,status)` composite was deliberately not retained because Firestore supports compound equality queries through index merging. Default-branch run `36146692843` on exact main `ce1656b7190fa8657253385fd884837ff7d12653` deployed and read back that required index (`requiredCount=1`, `deployedCount=2`, `missing=[]`). The unrelated extra live index remains preserved; the workflow does not use `--force`.
 
 
 ## Seat Budget runtime read model — 2026-09-22
@@ -151,5 +151,5 @@ The repository now contains a trusted `teamai-seat-budget-runtime` read boundary
 
 The projection is intentionally backward-compatible with the live v12 stub: raw usage may be shown as recorded usage while remaining/usable capacity stays unknown when server-side budget accounting is absent. This is explicitly not treated as authoritative remaining capacity.
 
-The runtime endpoint is held from production deployment until the declared Firestore collection-group index is deployed. This is an infrastructure prerequisite, not a code-validation gap.
+The runtime endpoint is held from production deployment until Gate 3 produces an authorized canonical Seat. The collection-group index prerequisite is already RUNTIME-PROVEN and is not the current blocker. This remains an evidence gate, not a code-validation gap.
 
