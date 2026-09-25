@@ -320,6 +320,8 @@ export function deriveMachineSeatDivisionExpansionPlan({
   const startAssembly = assemblyAtAmount(0);
   const endAssembly = assemblyAtAmount(1);
   if (!startAssembly?.subject || !endAssembly?.subject) return null;
+  const startGeometry = startAssembly.geometry;
+  const endGeometry = endAssembly.geometry;
 
   const plan = deriveMachineExpansionClearancePlan({
     startSubject: startAssembly.subject,
