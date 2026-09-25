@@ -39,19 +39,18 @@ const outerAngle = (count, outerIndex) => {
   return (nearestSeatIndex + 0.5) * step;
 };
 
-function radialHalfExtent(dimensions, angle) {
-  const width = Math.abs(Number(dimensions?.x) || 0);
-  const depth = Math.abs(Number(dimensions?.z) || 0);
-  return 0.5 * (
-    Math.abs(Math.cos(angle)) * width
-    + Math.abs(Math.sin(angle)) * depth
-  );
+function radialBoundaryDistance(dimensions, angle) {
+  const halfX = Math.max(0.01, Math.abs(Number(dimensions?.x) || 0) * 0.5);
+  const halfZ = Math.max(0.01, Math.abs(Number(dimensions?.z) || 0) * 0.5);
+  const cosine = Math.abs(Math.cos(angle));
+  const sine = Math.abs(Math.sin(angle));
+  return 1 / (cosine / halfX + sine / halfZ);
 }
 
 function deriveOuterHousingPort(center, dimensions, angle, seam, y) {
   const radial = Math.hypot(Number(center?.x) || 0, Number(center?.z) || 0);
-  const halfExtent = radialHalfExtent(dimensions, angle);
-  const innerOffset = halfExtent + Math.max(0.05, (Number(seam) || 0) * 0.25);
+  const boundaryDistance = radialBoundaryDistance(dimensions, angle);
+  const innerOffset = boundaryDistance + Math.max(0.05, (Number(seam) || 0) * 0.25);
   return polar(
     Math.max(0.2, radial - innerOffset),
     angle,
