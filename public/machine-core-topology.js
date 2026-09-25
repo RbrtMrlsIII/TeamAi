@@ -33,6 +33,18 @@ function rootedEdge(semanticEdgeId, payload) {
   };
 }
 
+function portAttachedToPart(part, port, tolerance = 0.18) {
+  if (!part?.center || !part?.dimensions || !port) return false;
+  const halfX = Math.abs(Number(part.dimensions.x) || 0) * 0.5 + tolerance;
+  const halfY = Math.abs(Number(part.dimensions.y) || 0) * 0.5 + tolerance;
+  const halfZ = Math.abs(Number(part.dimensions.z) || 0) * 0.5 + tolerance;
+  return (
+    Math.abs(Number(port.x) - Number(part.center.x)) <= halfX
+    && Math.abs(Number(port.y) - Number(part.center.y)) <= halfY
+    && Math.abs(Number(port.z) - Number(part.center.z)) <= halfZ
+  );
+}
+
 export function buildMachineCoreConnections({
   hub,
   innerPods = [],
@@ -141,7 +153,13 @@ export function validateMachineCoreConnections(core, { epsilon = EPSILON } = {})
     } else if (!source?.port || !pointEqual(edge?.sourcePort, source.port, epsilon)) {
       reasons.push('SOURCE_PORT_MISMATCH');
     }
+    if (edge?.sourceBranchId !== 'HUB-CORE' && source && !portAttachedToPart(source, edge.sourcePort)) {
+      reasons.push('SOURCE_PORT_DETACHED_FROM_PART');
+    }
     if (!target?.port || !pointEqual(edge?.targetPort, target.port, epsilon)) reasons.push('TARGET_PORT_MISMATCH');
+    if (target && !portAttachedToPart(target, edge.targetPort)) {
+      reasons.push('TARGET_PORT_DETACHED_FROM_PART');
+    }
     if (!Array.isArray(edge?.route) || edge.route.length < 2) reasons.push('INVALID_EDGE_ROUTE');
     if (Array.isArray(edge?.route) && edge.route.some((point) => !pointEqual(point, point, epsilon))) reasons.push('NONFINITE_EDGE_ROUTE');
     if (Array.isArray(edge?.route) && edge.route.length >= 2) {
