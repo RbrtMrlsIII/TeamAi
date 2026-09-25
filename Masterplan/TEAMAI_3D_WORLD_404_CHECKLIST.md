@@ -396,14 +396,14 @@ Exit: storage and artifacts are distinct honest facilities.
 Exit: commerce state is a projection of authoritative entitlement.
 
 ## V. S20 — Settings / control
-- [ ] Settings facility.
+- [x] Settings facility. Evidence: E404-S20.
 - [ ] Semantic tree/branch navigation.
 - [ ] Seat settings.
-- [ ] Budget settings.
-- [ ] Feature controls.
-- [ ] Login/Sign Up separation.
+- [x] Budget settings. Evidence: E404-S16 + E404-S20.
+- [x] Feature controls. Evidence: E404-S20.
+- [x] Login/Sign Up separation. Evidence: E404-S20.
 - [ ] Logout.
-- [ ] Return.
+- [x] Return. Evidence: E404-S20.
 - [ ] Back.
 Exit: controls are consistently discoverable.
 

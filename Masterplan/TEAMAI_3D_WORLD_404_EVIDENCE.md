@@ -406,3 +406,47 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - Full-project artifact: `full-project-6e1950302ea92929bf01edf24f08c2582a69bd90`, artifact ID `10866000612`, SHA-256 `f2a3d13159ec9ca2a4e231524c8e05d998b0a6449f74b051ab46f30299b8e452`
 
 **Status:** REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
+
+### E404-S20 — Settings / control boundary
+
+**Claim:** The current Settings experience is a cross-cutting normal-UI control taxonomy. It consumes the canonical Hero machine without creating a second hierarchy and delegates durable configuration/authentication authority to their owning application/backend boundaries.
+
+**Primary source**
+- frontend/spatial/hero-root-contract.js — canonical Hero Settings root with S20 control metadata and inherited S0–S10 structural roots
+- public/hero-root-contract.js — browser delivery mirror
+- public/hero-settings-shell.js — Settings shell owner for theme, motion, UI scale, language scaffold, and presentation smoke controls
+- public/experience-rebaseline.js — world navigation / Settings entry / world↔classic return orchestration
+- public/hero-auth-handoff.js — authentication handoff owner
+- public/seat-budget-settings-facility.js — budget control facility remains separately owned
+
+**Proven repository/browser proof**
+- tests/hero-root-contract.test.mjs — S20 Settings root is explicitly normal-UI, presentation-only, inherits S0–S10, and is not a Seat child
+- tests/hero-experience-rebaseline.test.mjs — one coherent world navigation/settings destination and dedicated auth ownership
+- tests/hero-v2.3-settings-shell.test.mjs — Settings shell scaffold, dedicated settings mount, retired machine-nav boot, and settings chrome ownership
+- tests/hero-v2.4-theme-polish.test.mjs — Settings uses the single document theme root
+- tests/hero-v2.5-ui-scale.test.mjs — bounded UI scale control
+- tests/hero-v2.6-language-scaffold.test.mjs — language scaffold remains explicitly scaffolded until copy catalog exists
+- tests/e2e/hero.spec.ts — Settings smoke, authentication Login/Sign up separation, return-to-entrance flow, reduced-motion presentation
+- tests/e2e/seat-budget-settings.spec.ts — Budget settings access/read/write flow remains independently verified under its S16 owner
+
+**Open boundaries intentionally retained**
+- Semantic Settings tree/branch navigation is not yet a separately verified integrated taxonomy over every product branch.
+- Seat settings remain owned by the Seat hierarchy and dedicated Seat/runtime contracts rather than duplicated into Settings.
+- Logout is not claimed because live Firebase Auth session authority is not yet established in this browser build.
+- A universal Back contract is not claimed; individual facilities expose their own governed close/back-to-world controls.
+
+**Exact-head verification — 2026-09-25**
+- Verified code head: `ce25a4b4de2f3e9b7c2174a18af0ff0b730ff940`
+- PR #404 base: `529fede864df0218947377e1d50e48f096c4a7c7`
+- Repository Full-System Verification: [36139736678](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36139736678) — **PASS**
+- Project tests: **1,082 passed / 0 failed**
+- Browser verification: [36139736547](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36139736547) — **PASS**
+- Machine spatial runtime parity: **68 modules verified**
+- Governance Integrity: [36139736561](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36139736561) — **PASS**
+- Security Static Analysis: [36139736714](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36139736714) — **PASS**
+- Deep Security Static Analysis: [36139736711](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36139736711) — **PASS**
+- Full-project artifact: `full-project-ce25a4b4de2f3e9b7c2174a18af0ff0b730ff940`, artifact ID `10865782523`, SHA-256 `1042094c8e66f3cd2f04651dfbd2bf9b40c0ba6c821d7fdaf52a96c1ddfd5d59`
+- Browser artifact: `browser-verification-ce25a4b4de2f3e9b7c2174a18af0ff0b730ff940`, artifact ID `10865903169`, SHA-256 `2865cd8dc35bc55f01575f0f105367d9f814ec01626be8b65ed53f3311e7deae`
+
+**Status:** PARTIALLY REPOSITORY-VERIFIED. The checked items above have current proof; S20 is not a release-complete exit while the remaining boundaries are open.
