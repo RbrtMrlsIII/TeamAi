@@ -385,14 +385,14 @@ Exit: users can follow work and continuity.
 Exit: storage and artifacts are distinct honest facilities.
 
 ## U. S19 — Marketplace / commerce
-- [ ] Team Quality presentation.
-- [ ] Team Population presentation.
-- [ ] Seat capacity state.
-- [ ] Entitlement state.
-- [ ] Purchase intent.
-- [ ] Transaction verification/loading.
-- [ ] External billing authority.
-- [ ] No visual-only purchase completion.
+- [x] Team Quality presentation. Evidence: E404-S19.
+- [x] Team Population presentation. Evidence: E404-S19.
+- [x] Seat capacity state. Evidence: E404-S19.
+- [x] Entitlement state. Evidence: E404-S19.
+- [x] Purchase intent. Evidence: E404-S19.
+- [x] Transaction verification/loading. Evidence: E404-S19.
+- [x] External billing authority. Evidence: E404-S19.
+- [x] No visual-only purchase completion. Evidence: E404-S19.
 Exit: commerce state is a projection of authoritative entitlement.
 
 ## V. S20 — Settings / control

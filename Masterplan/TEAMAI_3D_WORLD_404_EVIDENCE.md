@@ -370,3 +370,39 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - Full-project artifact: `full-project-292346063ad47b6022f40655de41399b8f9369e3`, artifact ID `10864763276`, SHA-256 `cf08976b37a554dba90f7fd0519c32c8c21a9d2d097bf31c4914224c454f9c93`
 
 **Status:** REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
+
+### E404-S19 — Marketplace / commerce spatial contract
+
+**Claim:** S19 Marketplace / Commerce is represented by one spatial facility with a formal inherited S0–S10 machine contract while payment, entitlement, and durable commerce authority remain outside the renderer.
+
+**Primary source**
+- frontend/spatial/marketplace-commerce-facility.js — `MARKETPLACE_FACILITY_SPATIAL_CONTEXT`
+- frontend/spatial/marketplace-commerce.js — offer families, tier catalog, dynamic offer-owned branch, and presentation decisions
+- public mirrors of both modules
+
+**Repository proof**
+- tests/marketplace-commerce-facility.test.mjs — S19 root inheritance and source/public parity
+- tests/e2e/marketplace-commerce.spec.ts — guest catalog, Team Quality/Team Population presentation, Seat 2–10 capacity catalog, entitlement projection, higher-tier replacement warning, lower-tier locking, checkout gating, hosted billing boundary, and authentication handoff
+- exact-head machine source/public parity and project verification passed
+
+**Boundary**
+- The facility emits a presentation-only commerce intent; it does not charge, mutate entitlement, write Firestore, or become payment authority.
+- Hosted billing is external and the facility does not collect or store card credentials.
+- Visual tier state never self-attests payment completion or durable entitlement.
+- The Marketplace offer branch is dynamic and offer-owned; it does not become a new Seat hierarchy or authority root.
+
+**Exact-head verification — 2026-09-25**
+- PR #404 head: `6e1950302ea92929bf01edf24f08c2582a69bd90`
+- Base: `529fede864df0218947377e1d50e48f096c4a7c7`
+- Repository Full-System Verification: [36138780358](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36138780358) — **PASS**
+- Project tests: **1,082 passed / 0 failed**
+- Browser verification: [36138780475](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36138780475) — **PASS**
+- Machine spatial runtime parity: **68 modules verified**
+- Governance Integrity: [36138780512](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36138780512) — **PASS**
+- Security Static Analysis: [36138780437](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36138780437) — **PASS**
+- Deep Security Static Analysis: [36138780384](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36138780384) — **PASS**
+- Browser artifact: `browser-verification-6e1950302ea92929bf01edf24f08c2582a69bd90`, artifact ID `10865826119`, SHA-256 `0e6afa8e9a5ac639c0062a818a251ee25e9ba7a48ab8eebb9dc7ec4fa0ff834f`
+- Full-project artifact: `full-project-6e1950302ea92929bf01edf24f08c2582a69bd90`, artifact ID `10866000612`, SHA-256 `f2a3d13159ec9ca2a4e231524c8e05d998b0a6449f74b051ab46f30299b8e452`
+
+**Status:** REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
