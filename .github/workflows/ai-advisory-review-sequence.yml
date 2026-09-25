@@ -306,10 +306,10 @@ jobs:
           advisory_status="HEALTHY"
           if (( terminal_failures > 0 )); then advisory_status="DEGRADED"; fi
           {
-            printf '%s\n' '<!-- teamai-ai-review-current-summary -->'
-            printf '%s\n' '# Current-head OpenRouter Free Advisory Summary'
+            printf '%s\n' "<!-- teamai-ai-review-exact-head-summary-$HEAD -->"
+            printf '%s\n' '# Exact-head OpenRouter Free Advisory Summary'
             printf '\n'
-            printf 'This is the current-head summary. Earlier advisory comments remain immutable evidence for their original heads.\n'
+            printf 'This summary is immutable evidence for exactly one PR head; earlier summaries remain historical evidence for their own heads.\n'
             printf 'Model verdicts are advisory analysis only and do not represent GitHub review state, merge authorization, or product acceptance.\n'
             printf '\n'
             printf 'Exact PR head: %s\n' "$HEAD"
