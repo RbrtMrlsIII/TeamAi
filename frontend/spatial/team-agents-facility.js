@@ -1,3 +1,4 @@
+import { createSpatialConstructionContext, validateSpatialConstructionNode } from './machine-spatial-root-contract.js';
 import {
   AGENT_ROLES,
   createAgentAssignmentBranch,
@@ -8,6 +9,19 @@ import {
   createEmptyTeamAgentsReadModel,
   normalizeTeamAgentsReadModel,
 } from './team-agents-runtime-read-model.js';
+
+export const TEAM_AGENTS_FACILITY_SPATIAL_CONTEXT = Object.freeze(
+  createSpatialConstructionContext({
+    slice: 'S14',
+    owner: 'frontend/spatial/team-agents-facility.js',
+    semanticId: 'TEAM_AGENTS',
+    semanticBoundary: 'presentation-only',
+  }),
+);
+
+if (!validateSpatialConstructionNode(TEAM_AGENTS_FACILITY_SPATIAL_CONTEXT).valid) {
+  throw new Error('invalid S14 Team / Agents spatial root contract');
+}
 
 export const TEAM_AGENTS_FACILITY_ROOT_ID = 'hero-team-agents-facility';
 
