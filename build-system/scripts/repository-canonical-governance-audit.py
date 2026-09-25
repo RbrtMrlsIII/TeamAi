@@ -286,6 +286,7 @@ def assert_proof_target(payload: dict, paths: set[str]) -> None:
         ".github/workflows/ai-advisory-review-runner-v2.yml",
         ".github/workflows/ai-advisory-review-sequence.yml",
         ".github/workflows/governance.yml",
+        "build-system/scripts/repository-canonical-governance-audit.py",
         "Product_Law/WIRING.md",
         "Masterplan/MASTERPLAN.md",
         "POLICY.md",
