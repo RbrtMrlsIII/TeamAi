@@ -6,7 +6,9 @@
 - Owning Issue: <!-- issue -->
 - Skill routing: <!-- concrete paths from `docs/SKILL_WIRING.md` -->
 - ORUCAVEAM: <!-- applicable letters -->
-- Draft proof target: <!-- what this PR is trying to prove -->
+### Draft proof target
+
+<!-- what this PR is trying to prove -->
 - Claimed scope: <!-- exact behavior/change -->
 - Verification/evidence: <!-- exact scope -->
 - Limitations: <!-- exact unproven boundary -->
