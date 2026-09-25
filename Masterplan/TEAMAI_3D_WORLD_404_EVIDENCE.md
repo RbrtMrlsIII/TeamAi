@@ -22,11 +22,11 @@ IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → RUNTIME-PROVEN → HUM
 
 A higher state does not follow automatically from a lower one.
 
-## Current exact-head anchor
+## Latest validated spatial implementation anchor
 
-- **#404 head:** 8944ececfd6dfee15a39833107dd3bac932411bd
+- **latest validated spatial implementation head:** 8944ececfd6dfee15a39833107dd3bac932411bd
 - **main:** 529fede864df0218947377e1d50e48f096c4a7c7
-- **relationship:** #404 is **117 commits ahead / 0 behind**
+- **at that validation point:** #404 was **117 commits ahead / 0 behind**
 - **PR state:** OPEN / DRAFT / GitHub reports mergeable
 - **reconciliation commit:** 8944ecec
 - **full project tests:** **1,050 passed / 0 failed / 0 skipped**
@@ -289,6 +289,6 @@ Historical evidence remains historical. Do not silently refresh old claims to a 
 
 ## Navigation from PR #404
 
-PR #404 is the human-readable entry point. It points here for detailed proof references and then to the execution checklist for slice status.
+PR #404 is the human-readable entry point. It points here for detailed proof references and then to the execution checklist for slice status. Later documentation-only commits do not invalidate the immutable proof records linked above.
 
 That keeps the PR body understandable without turning it into a second 476-row execution plan.
