@@ -1,10 +1,18 @@
+import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 import {
+  createSeatBudgetControlIntent,
   createSeatBudgetSaveIntent,
   normalizeSeatBudgetReadModel,
   seatBudgetEnergySegments,
 } from './seat-budget-settings.js';
 
 export const SEAT_BUDGET_FACILITY_ROOT_ID = 'hero-seat-budget-facility';
+export const SEAT_BUDGET_FACILITY_SPATIAL_CONTEXT = createSpatialConstructionContext({
+  slice: 'S16',
+  owner: 'frontend/spatial/seat-budget-settings-facility.js',
+  semanticId: SEAT_BUDGET_FACILITY_ROOT_ID,
+  semanticBoundary: 'presentation-only',
+});
 
 let panel = null;
 let readModel = normalizeSeatBudgetReadModel();
@@ -22,10 +30,13 @@ function stateLabel() {
   if (readModel.state === 'EXHAUSTED') return 'Exhausted · waiting for continuation';
   if (readModel.state === 'COMPLETED') return 'Completed';
   if (readModel.state === 'BLOCKED') return 'Blocked';
+  if (readModel.state === 'PROVIDER_FAILED') return 'Provider failed · recoverable state';
+  if (readModel.state === 'CANCELLED') return 'Cancelled';
+  if (readModel.state === 'WAITING_FOR_CONTINUATION') return 'Waiting for continuation';
+  if (!readModel.healthy) return 'Unavailable · backend health degraded';
   if (readModel.usageReported) return 'Ready · server-authoritative accounting';
   if (readModel.accountingSource === 'durable-execution-result-raw-usage') return 'Ready · raw usage recorded; remaining capacity not recorded';
   return 'Ready · configuration loaded';
-  return 'Unavailable · backend health degraded';
 }
 
 function currentPercent(value, total) {
@@ -33,9 +44,7 @@ function currentPercent(value, total) {
 }
 
 function selectedSeatId() {
-  if (readModel.seatId) return readModel.seatId;
-  const index = Number(globalThis.window?.TeamAiHero?.getSelectedSeat?.());
-  return Number.isInteger(index) && index >= 0 ? `seat-${index + 1}` : null;
+  return readModel.seatId || null;
 }
 
 function editorValue(name) {
@@ -57,6 +66,8 @@ function render() {
   const remaining = panel.querySelector('[data-seat-budget-remaining]');
   const completion = panel.querySelector('[data-seat-budget-completion]');
   const continuation = panel.querySelector('[data-seat-budget-continuation]');
+  const effectiveBudget = panel.querySelector('[data-seat-budget-effective]');
+  const reserved = panel.querySelector('[data-seat-budget-reserved]');
   const meter = panel.querySelector('[data-seat-budget-meter]');
   const note = panel.querySelector('[data-seat-budget-note]');
   const save = panel.querySelector('[data-seat-budget-save]');
@@ -66,10 +77,11 @@ function render() {
   const reserveInput = panel.querySelector('[data-seat-budget-input="handoffReserveTokens"]');
   const warningInput = panel.querySelector('[data-seat-budget-input="warningThresholdPercent"]');
   const hardStopInput = panel.querySelector('[data-seat-budget-input="hardStopPolicy"]');
-  if (!state || !title || !seat || !responsibility || !provider || !budget || !output || !reasoning || !reserve || !consumed || !remaining || !completion || !continuation || !meter || !note || !save || !turnBudgetInput || !outputBudgetInput || !reasoningBudgetInput || !reserveInput || !warningInput || !hardStopInput) return;
+  if (!state || !title || !seat || !responsibility || !provider || !budget || !effectiveBudget || !output || !reasoning || !reserve || !reserved || !consumed || !remaining || !completion || !continuation || !meter || !note || !save || !turnBudgetInput || !outputBudgetInput || !reasoningBudgetInput || !reserveInput || !warningInput || !hardStopInput) return;
 
   const locked = !readModel.available || !readModel.authorized;
   const editingDisabled = locked || !readModel.configurable;
+  const controlDisabled = editingDisabled || !readModel.seatId;
   const segments = seatBudgetEnergySegments(readModel);
   const consumedPercent = currentPercent(readModel.consumedTokens, readModel.turnBudgetTokens);
 
@@ -80,9 +92,11 @@ function render() {
   responsibility.textContent = readModel.responsibilityProfile || 'Not configured';
   provider.textContent = [readModel.provider, readModel.model].filter(Boolean).join(' / ') || 'Provider route unavailable';
   budget.textContent = `${readModel.turnBudgetTokens.toLocaleString()} tokens`;
+  effectiveBudget.textContent = `${readModel.effectiveTurnBudgetTokens.toLocaleString()} tokens`;
   output.textContent = `${readModel.outputBudgetTokens.toLocaleString()} tokens`;
   reasoning.textContent = `${readModel.reasoningBudgetTokens.toLocaleString()} tokens${readModel.reasoningUsedTokens ? ` · used ${readModel.reasoningUsedTokens.toLocaleString()}` : ''}`;
   reserve.textContent = `${readModel.handoffReserveTokens.toLocaleString()} tokens`;
+  reserved.textContent = `${readModel.reservedTokens.toLocaleString()} tokens`;
   consumed.textContent = `${readModel.consumedTokens.toLocaleString()} tokens · ${consumedPercent}%`;
   remaining.textContent = readModel.remainingTokens === null ? 'Not reported' : `${readModel.remainingTokens.toLocaleString()} tokens`;
   completion.textContent = readModel.completionState || 'No terminal state recorded';
@@ -105,6 +119,12 @@ function render() {
   meter.style.setProperty('--seat-budget-remaining', String(segments.remainingFraction));
   save.disabled = editingDisabled;
   for (const input of [turnBudgetInput, outputBudgetInput, reasoningBudgetInput, reserveInput, warningInput, hardStopInput]) input.disabled = editingDisabled;
+  const continueButton = panel.querySelector('[data-seat-budget-continue]');
+  const reconfigureButton = panel.querySelector('[data-seat-budget-reconfigure]');
+  const newCommandButton = panel.querySelector('[data-seat-budget-new-command]');
+  if (continueButton) continueButton.disabled = controlDisabled || !readModel.continuationAvailable;
+  if (reconfigureButton) reconfigureButton.disabled = editingDisabled;
+  if (newCommandButton) newCommandButton.disabled = controlDisabled || ['HEALTHY', 'LOW'].includes(readModel.state);
 }
 
 function open() {
@@ -123,6 +143,15 @@ function close() {
   panel.hidden = true;
   panel.setAttribute('aria-hidden', 'true');
   document.documentElement.removeAttribute('data-seat-budget-open');
+}
+
+function controlIntent(action) {
+  const seatId = selectedSeatId();
+  if (!seatId) return;
+  const intent = createSeatBudgetControlIntent({ seatId, action });
+  dispatch('teamai:seat-budget-control-intent', intent);
+  const result = panel?.querySelector('[data-seat-budget-result]');
+  if (result) result.textContent = action.replaceAll('_', ' ') + ' intent dispatched. Authoritative runtime confirmation is required.';
 }
 
 function saveIntent() {
@@ -183,10 +212,12 @@ function build() {
       '<div><dt>Seat</dt><dd data-seat-budget-seat>Unavailable</dd></div>' +
       '<div><dt>Responsibility</dt><dd data-seat-budget-responsibility>Not configured</dd></div>' +
       '<div><dt>Provider / model</dt><dd data-seat-budget-provider>Provider route unavailable</dd></div>' +
-      '<div><dt>Turn Budget</dt><dd data-seat-budget-total>0 tokens</dd></div>' +
+      '<div><dt>Configured Turn Budget</dt><dd data-seat-budget-total>0 tokens</dd></div>' +
+      '<div><dt>Effective Turn Budget</dt><dd data-seat-budget-effective>0 tokens</dd></div>' +
       '<div><dt>Work / Output Budget</dt><dd data-seat-budget-output>0 tokens</dd></div>' +
       '<div><dt>Reasoning Budget</dt><dd data-seat-budget-reasoning>0 tokens</dd></div>' +
       '<div><dt>Handoff Reserve</dt><dd data-seat-budget-reserve>0 tokens</dd></div>' +
+      '<div><dt>Reserved</dt><dd data-seat-budget-reserved>0 tokens</dd></div>' +
       '<div><dt>Consumed</dt><dd data-seat-budget-consumed>0 tokens</dd></div>' +
       '<div><dt>Remaining usable</dt><dd data-seat-budget-remaining>0 tokens</dd></div>' +
       '<div><dt>Last completion state</dt><dd data-seat-budget-completion>No terminal state recorded</dd></div>' +
@@ -206,6 +237,9 @@ function build() {
     '</div>' +
     '<div class="seat-budget-facility__actions">' +
       '<button type="button" data-seat-budget-save disabled>Request configuration save</button>' +
+      '<button type="button" data-seat-budget-continue disabled>Continue</button>' +
+      '<button type="button" data-seat-budget-reconfigure disabled>Reconfigure</button>' +
+      '<button type="button" data-seat-budget-new-command disabled>New command</button>' +
       '<button type="button" data-seat-budget-close>Back to world</button>' +
     '</div>' +
     '<p class="seat-budget-facility__result" data-seat-budget-result role="status">No durable configuration was changed.</p>';
@@ -220,6 +254,9 @@ export function mountSeatBudgetFacility(root = document) {
   host.append(panel);
   panel.querySelectorAll('[data-seat-budget-close]').forEach((button) => button.addEventListener('click', close));
   panel.querySelector('[data-seat-budget-save]')?.addEventListener('click', saveIntent);
+  panel.querySelector('[data-seat-budget-continue]')?.addEventListener('click', () => controlIntent('CONTINUE'));
+  panel.querySelector('[data-seat-budget-reconfigure]')?.addEventListener('click', () => controlIntent('RECONFIGURE'));
+  panel.querySelector('[data-seat-budget-new-command]')?.addEventListener('click', () => controlIntent('NEW_COMMAND'));
   render();
   return panel;
 }
