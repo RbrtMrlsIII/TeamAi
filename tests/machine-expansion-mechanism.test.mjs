@@ -165,6 +165,69 @@ test('S5 physical expansion plan inherits the complete predecessor root contract
   );
 });
 
+test('S5 clearance samples canonical intermediate subjects instead of only endpoint envelopes', () => {
+  const start = {
+    min: { x: 0, y: 0, z: 0 },
+    max: { x: 1, y: 1, z: 1 },
+    center: { x: 0.5, y: 0.5, z: 0.5 },
+  };
+  const end = {
+    min: { x: 4, y: 0, z: 0 },
+    max: { x: 5, y: 1, z: 1 },
+    center: { x: 4.5, y: 0.5, z: 0.5 },
+  };
+  const obstacle = {
+    min: { x: 7.9, y: -1, z: -1 },
+    max: { x: 9.1, y: 2, z: 2 },
+  };
+  const plan = deriveMachineExpansionClearancePlan({
+    startSubject: start,
+    endSubject: end,
+    obstacles: [obstacle],
+    clearance: 0.1,
+    subjectAtAmount: (amount) => {
+      const t = amount <= 0.5 ? amount * 20 : 10 - amount * 12;
+      return {
+        min: { x: t, y: 0, z: 0 },
+        max: { x: t + 1, y: 1, z: 1 },
+        center: { x: t + 0.5, y: 0.5, z: 0.5 },
+      };
+    },
+  });
+  assert.equal(plan.valid, true);
+  assert.equal(plan.collision, true);
+  assert.ok(plan.firstCollisionAmount > 0 && plan.firstCollisionAmount < 1);
+  assert.ok(plan.maxSafeAmount < 1);
+});
+
+test('S5 division subject sampling matches the owning S4 assembly at intermediate travel', () => {
+  const p = deriveMachineSeatDivisionExpansionPlan({
+    parent: parent(),
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    clearance: 0.16,
+  });
+  const amount = 0.43;
+  const sampled = subjectAtExpansionAmount(p, amount);
+  const geometry = deriveFocusedSeatDivisionGeometry({
+    parent: parent(),
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: parent(),
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount,
+    geometry,
+  });
+  assert.deepEqual(
+    { min: sampled.min, max: sampled.max, center: sampled.center },
+    { min: assembly.subject.min, max: assembly.subject.max, center: assembly.subject.center },
+  );
+});
+
 test('S5 resolved amount feeds a recomputed semantic subject', () => {
   const p = deriveMachineSeatDivisionExpansionPlan({
     parent: parent(),
