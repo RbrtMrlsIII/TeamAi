@@ -1,6 +1,9 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { MACHINE_SPATIAL_RUNTIME_FILES } from './machine-spatial-runtime-manifest.mjs';
+import {
+  MACHINE_SPATIAL_RUNTIME_FILES,
+  resolveMachineSpatialRuntimePublicFile,
+} from './machine-spatial-runtime-manifest.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 
@@ -9,7 +12,7 @@ const drifted = [];
 
 for (const file of MACHINE_SPATIAL_RUNTIME_FILES) {
   const sourcePath = resolve(root, 'frontend/spatial', file);
-  const publicPath = resolve(root, 'public', file);
+  const publicPath = resolve(root, 'public', resolveMachineSpatialRuntimePublicFile(file));
   const source = await readFile(sourcePath, 'utf8');
   const current = await readFile(publicPath, 'utf8').catch(() => null);
 
