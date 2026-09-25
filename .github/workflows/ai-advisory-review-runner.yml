@@ -208,11 +208,11 @@ jobs:
           issue_kind="$GOVERNING_ISSUE_KIND"
           issue_number="$GOVERNING_ISSUE_NUMBER"
           if [[ "$issue_kind" == "NONE" ]]; then
-            cat > /tmp/issue-context.txt <<'EOF'
-            === GOVERNING ISSUE ===
-            No governing issue declared for this advisory review.
-            The explicit PR field uses the accepted no-issue value (none or n/a).
-            EOF
+            printf '%s\n' \
+              '=== GOVERNING ISSUE ===' \
+              'No governing issue declared for this advisory review.' \
+              'The explicit PR field uses the accepted no-issue value (none or n/a).' \
+              > /tmp/issue-context.txt
             exit 0
           fi
           if [[ "$issue_kind" != "ISSUE" || -z "$issue_number" ]]; then
