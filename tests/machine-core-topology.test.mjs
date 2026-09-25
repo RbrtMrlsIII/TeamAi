@@ -47,3 +47,52 @@ test('core topology uses S2 port positions rather than the legacy hub placeholde
     ));
   }
 });
+
+
+test('outer-housing topology ports remain physically attached to their owning module', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    const core = createBranchConnectionCore({ seatCount, expansionAmount: 1 });
+    const outer = core.parts.filter((part) => part.kind === 'outer-housing');
+    assert.ok(
+      outer.every((part) => {
+        const halfX = part.dimensions.x * 0.5 + 0.18;
+        const halfY = part.dimensions.y * 0.5 + 0.18;
+        const halfZ = part.dimensions.z * 0.5 + 0.18;
+        return (
+          Math.abs(part.port.x - part.center.x) <= halfX
+          && Math.abs(part.port.y - part.center.y) <= halfY
+          && Math.abs(part.port.z - part.center.z) <= halfZ
+        );
+      }),
+      `detached outer-housing port at seats=${seatCount}`,
+    );
+    assert.equal(
+      validateMachineCoreConnections(core).valid,
+      true,
+      `attached-port validation failed at seats=${seatCount}`,
+    );
+  }
+});
+
+test('topology validation fails closed when a module port is detached from its owner', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
+  const target = core.connections.find(
+    (edge) => edge.kind === 'lattice-link' && edge.sourceBranchId === 'BRANCH-OUTER-ALPHA',
+  );
+  assert.ok(target);
+  const detached = {
+    ...core,
+    connections: core.connections.map((edge) =>
+      edge === target
+        ? {
+          ...edge,
+          sourcePort: { x: 0, y: edge.sourcePort.y, z: 0 },
+          route: [edge.sourcePort, ...edge.route.slice(1)],
+        }
+        : edge,
+    ),
+  };
+  const validation = validateMachineCoreConnections(detached);
+  assert.equal(validation.valid, false);
+  assert.ok(validation.reasons.includes('SOURCE_PORT_DETACHED_FROM_PART'));
+});
