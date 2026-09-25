@@ -80,3 +80,10 @@ test('Workspace facility never embeds invented Workplace or Project choices', ()
   assert.match(facility, /readModel\.workplace\.id/);
   assert.match(facility, /readModel\.project\.id/);
 });
+
+test('Workspace runtime read-model source/public copies remain exact', () => {
+  assert.equal(
+    readFileSync('frontend/spatial/workspace-runtime-read-model.js', 'utf8'),
+    readFileSync('public/workspace-runtime-read-model.js', 'utf8'),
+  );
+});
