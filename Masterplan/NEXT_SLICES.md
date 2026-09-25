@@ -133,10 +133,10 @@ The first successor implementation slice is deliberately additive:
 - **Production Firestore Seat shape remains unverified.** Exact-path run `35763013851` wrote negative evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897`: Seat `gate3-test-seat` under team `gate3-test-team` is absent, and the protected test project currently lists **zero** team documents. This is not collection-group HTTP 400. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
 - **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
 - **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
-- **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted. The 2026-09-22 CLI attempt failed on Service Usage GET 403, not on index write.
+- **Firestore index definition is deployed in the live project, but repository readback verification is currently blocked by a verifier false-negative.** Fresh run `36140968869` on main confirmed `firebase deploy --only firestore:indexes` succeeds. Diagnostic run `36141481871` showed the required `execution-results` collection-group index is present with Firestore's implicit trailing `__name__ DESCENDING` field. PR #413 normalizes that implicit representation; a fresh default-branch verification run is required after the fix reaches `main`.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398 is already merged as the reviewed structural baseline; #402 remains Draft until its own exact-head evidence, review, and human acceptance satisfy the governed promotion path.
+- **Merge authority remains separate.** #398 and #402 are already merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle; PR #413 is the current Draft #401 verifier successor and remains separate from spatial implementation.
 
 ### Shared CI support: advisory issue preflight
 
