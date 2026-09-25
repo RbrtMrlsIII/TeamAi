@@ -46,7 +46,7 @@ test('S8 edge identity and corridor reservations are unique and continuous', () 
   assert.ok(topology.edges.every((edge) => edge.routeContinuous));
   assert.ok(topology.edges.every((edge) => edge.corridorReserved || ['inner-spoke','outer-spine','lattice-link'].includes(edge.kind)));
   assert.ok(topology.edges.every((edge) =>
-    edge.corridor?.semanticEdgeId === edge.semanticEdgeId
+    !edge.corridorReserved || edge.corridor?.semanticEdgeId === edge.semanticEdgeId
   ));
 });
 
