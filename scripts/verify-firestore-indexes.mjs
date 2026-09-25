@@ -64,9 +64,17 @@ async function main() {
   const expectedConfig = JSON.parse(await readFile(configPath, "utf8"));
   const deployedPayload = JSON.parse(await readFile(deployedPath, "utf8"));
   const result = verifyRequiredIndexes(expectedConfig, deployedPayload);
+  const unwrapped = unwrapDeployedIndexPayload(deployedPayload);
+  const deployed = Array.isArray(unwrapped?.indexes)
+    ? unwrapped.indexes
+    : Array.isArray(unwrapped)
+      ? unwrapped
+      : [];
 
   console.log(JSON.stringify({
     ...result,
+    expectedIndexes: expectedConfig.indexes.map(normalizeIndex),
+    observedIndexes: deployed.map(normalizeIndex),
     note: "Required repository indexes are present in the deployed Firestore index set. Additional historical/live indexes are preserved and are not treated as drift.",
   }, null, 2));
 
