@@ -9,7 +9,7 @@
  * second canvas or a second WebGL context. hero-flex remains the interaction
  * and DOM compatibility controller during migration.
  */
-import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
+import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
 import {
   createMachineExpansionMechanism,
   deriveMachineSeatDivisionExpansionPlan,
@@ -19,6 +19,7 @@ import {
   toMachineDisplayState,
 } from './machine-expansion-mechanism.js';
 import { deriveMachineSubject } from './machine-subject.js';
+import { deriveMachineCameraSpec, resolveMachineCameraMode } from './machine-camera.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
@@ -597,25 +598,38 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     return entry;
   }
 
-  function fitWorldCamera(scene, viewport, cameraId) {
-    const subject = deriveMachineSubject(scene.parts, 0.2);
-    const selected = resolveBranchCamera(scene, cameraId) || resolveBranchCamera(scene, 'HUB-CORE') || scene.cameras[0];
-    const span = subject ? Math.max(subject.max.x - subject.min.x, subject.max.z - subject.min.z) : 1;
-    const distance = clamp(span * 1.12 + 6, 10, 22);
-    const target = selected?.target || subject?.center || {x:0,y:.5,z:0};
-    const side = finite(selected?.position?.x, 0);
-    const depth = finite(selected?.position?.z, distance);
-    const bearing = Math.atan2(side, depth);
-    const pitch = Math.max(2.8, distance * .34);
-    const aspect = viewport.width / Math.max(1, viewport.height);
-    const responsive = aspect < .8 ? 1.25 : aspect < 1.1 ? 1.10 : 1;
-    return {
-      target: { x: target.x, y: target.y, z: target.z },
-      radius: distance * responsive,
-      pitch,
-      bearing: bearing + .10,
-      fov: aspect < .8 ? 48 : 44,
-    };
+  function fitWorldCamera(scene, viewport, context = {}) {
+    const branch = context.branchId
+      ? scene.byBranch?.get(context.branchId)
+      : null;
+    const worldSubject = deriveMachineSubject(scene.parts, 0.2);
+    const podSubject = branch?.podAssembly?.subject
+      || (branch ? deriveMachineSubject([branch], 0.12) : null);
+    const mode = resolveMachineCameraMode({
+      cameraId: context.cameraId || 'HERO_WIDE',
+      hierarchyOpen: Boolean(context.hierarchyOpen),
+      focusedChildId: context.focusedChildId || null,
+      focusedDivision: Boolean(context.divisionSubject),
+      expansionFollowing: Boolean(
+        context.divisionSubject
+        && Number(context.focusedChildAmount) > 0.02
+        && Number(context.focusedChildAmount) < 0.999,
+      ),
+      returningToParent: Boolean(context.returningToParent),
+      returningToWorld: Boolean(context.returningToWorld),
+      facilityFocused: Boolean(context.facilityFocused),
+    });
+    return deriveMachineCameraSpec({
+      cameraId: context.cameraId || 'HERO_WIDE',
+      mode,
+      worldSubject,
+      podSubject,
+      divisionSubject: context.divisionSubject || null,
+      facilitySubject: context.facilitySubject || null,
+      parentSubject: context.parentSubject || podSubject,
+      viewport,
+      reducedMotion: Boolean(context.reducedMotion),
+    });
   }
 
   function renderSeat1ConnectionChild(scene, amount, selectedBranch, reducedMotion, now) {
@@ -1093,15 +1107,34 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
 
     const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
-    const cameraSpec = fitWorldCamera(scene,{width,height},effectiveCameraId);
+    const navigationCameraId = String(
+      state.cameraId || (hierarchyOpen ? 'SEAT_CLOSE' : 'HERO_WIDE'),
+    );
+    const cameraSpec = fitWorldCamera(scene, { width, height }, {
+      cameraId: navigationCameraId,
+      branchId,
+      hierarchyOpen,
+      focusedChildId: state.focusedChildId,
+      focusedChildAmount,
+      divisionSubject: focusedSubject,
+      facilitySubject: state.facilitySubject || null,
+      parentSubject: previewShell?.podAssembly?.subject || null,
+      facilityFocused: Boolean(state.facilityFocused),
+      returningToParent: Boolean(state.returningToParent),
+      returningToWorld: Boolean(state.returningToWorld),
+      reducedMotion,
+    });
     const focusedCameraSubject = focusedSubject || null;
-    const cameraTarget = focusedCameraSubject?.center || cameraSpec.target;
-    const cameraRadius = focusedCameraSubject
-      ? Math.max(cameraSpec.radius, Math.max(
-        focusedCameraSubject.max.x - focusedCameraSubject.min.x,
-        focusedCameraSubject.max.z - focusedCameraSubject.min.z,
-      ) * 1.25)
-      : cameraSpec.radius;
+    const cameraTarget = cameraSpec.target;
+    const cameraRadius = Math.max(
+      cameraSpec.radius,
+      focusedCameraSubject
+        ? Math.max(
+          focusedCameraSubject.max.x - focusedCameraSubject.min.x,
+          focusedCameraSubject.max.z - focusedCameraSubject.min.z,
+        ) * 1.25
+        : 0,
+    );
     const zoom = clamp(finite(state.navZoom,1),.78,NAV_ZOOM_MAX);
     const pullback = hierarchyOpen ? worldPullbackProgress(zoom, NAV_ZOOM_MAX) : 0;
     const subjectTarget = cameraTarget;
@@ -1151,6 +1184,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.drawArrays(gl.POINTS,0,STAR_FIELD.length);
     gl.depthMask(true);
 
+    canvas.dataset.machineWorldCameraId = cameraSpec.cameraId;
+    canvas.dataset.machineWorldCameraMode = cameraSpec.mode;
+    canvas.dataset.machineWorldCameraReducedMotion = String(cameraSpec.reducedMotion);
     const seatRingRadius = Math.max(
       ...scene.parts
         .filter((part) => part.kind === 'inner-pod' && Number.isInteger(part.seatIndex))
