@@ -72,7 +72,7 @@ Issue #396 / PR #398 is the reviewed 029 structural baseline now merged into `ma
 - [ ] New real-provider `teamai-task-execute` deployment remains gated by the production Seat diagnostic.
 - [ ] Real provider incomplete termination → checkpoint → explicit continuation → fresh target-Seat turn → truthful completion remains unproven in production.
 - [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
-- [ ] Firestore index deployment remains pending before live promotion of `teamai-seat-budget-runtime`.
+- [ ] Firestore index readback verification remains pending until PR #413 is validated and a fresh default-branch workflow passes against the normalized verifier. The live `execution-results` index is already deployed.
 - [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
 
 
