@@ -1,16 +1,35 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Seat Task / Evidence report', () => {
-  test('projects backend-shaped task/evidence state into the live Hero Seat stack', async ({ page }) => {
+  test('projects backend-shaped task/evidence state into the live Hero Seat hierarchy', async ({ page }) => {
     await page.goto('/hero/');
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await page.waitForFunction(() => Boolean((window as any).TeamAiHero?.selectSeatShell));
 
-    const taskLayer = page.getByRole('button', { name: /Task \/ Evidence: inspect SEAT_TASK_EVIDENCE/ });
-    await expect(taskLayer).toBeVisible();
-    await taskLayer.click();
+    await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
+    for (let i = 0; i < 6; i += 1) {
+      await page.keyboard.press('ArrowRight');
+    }
 
-    await expect(taskLayer).toHaveAttribute('data-task-state', 'idle');
-    await expect(taskLayer).toHaveAttribute('data-result-state', 'none');
-    await expect(taskLayer).toHaveAttribute('data-evidence-state', 'none');
+    await expect.poll(
+      async () => page.evaluate(() => {
+        const hero = (window as any).TeamAiHero;
+        return {
+          hierarchy: hero.getHierarchyState?.(),
+          taskBranchAmount: hero.getTaskEvidenceBranchAmount?.(),
+        };
+      }),
+      { timeout: 5000 },
+    ).toMatchObject({
+      hierarchy: {
+        openParentId: 'SEAT_SHELL#0',
+        focusedChildId: 'SEAT_TASK_EVIDENCE',
+        phase: 'open',
+      },
+      taskBranchAmount: 1,
+    });
+
+    await expect(page.locator('#seat-label')).toContainText(/Task evidence face \(expanded\)/i);
 
     await page.evaluate(() => {
       window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
@@ -44,12 +63,19 @@ test.describe('Seat Task / Evidence report', () => {
       }));
     });
 
-    await expect(taskLayer).toHaveAttribute('data-task-state', 'complete');
-    await expect(taskLayer).toHaveAttribute('data-result-state', 'attached');
-    await expect(taskLayer).toHaveAttribute('data-evidence-state', 'recorded');
-    await expect(taskLayer).toHaveAttribute('data-provenance', 'E404-S17');
+    await expect.poll(
+      async () => page.evaluate(() => (window as any).TeamAiHeroSeatStack?.getWorkspaceTaskPresentation?.()),
+      { timeout: 5000 },
+    ).toMatchObject({
+      taskState: 'complete',
+      resultState: 'attached',
+      evidenceState: 'recorded',
+      provenance: 'E404-S17',
+      presentationOnly: true,
+      durable: false,
+    });
 
-    const bridge = await page.evaluate(() => Boolean(window.TeamAiHeroSeatTaskEvidence?.projectReadModel));
+    const bridge = await page.evaluate(() => Boolean((window as any).TeamAiHeroSeatTaskEvidence?.projectReadModel));
     expect(bridge).toBe(true);
   });
 });
