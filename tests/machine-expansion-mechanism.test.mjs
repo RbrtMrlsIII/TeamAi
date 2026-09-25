@@ -301,6 +301,28 @@ test('S5 full Seat-density expansion stays clear of all authored machine obstacl
                 scale: component.scale,
                 rotationY: component.rotationY,
               })),
+              collisionSubject: (() => {
+                const amount = plan.clearancePlan.firstCollisionAmount;
+                const geometry = deriveFocusedSeatDivisionGeometry({
+                  parent: seat,
+                  childId,
+                  childIndex,
+                  amount,
+                });
+                const assembly = deriveMachineSeatDivisionAssembly({
+                  parent: seat,
+                  childId,
+                  childIndex,
+                  amount,
+                  geometry,
+                });
+                return {
+                  amount,
+                  geometry,
+                  subject: assembly?.subject,
+                  components: assembly?.components,
+                };
+              })(),
             }));
           }
           assert.equal(
