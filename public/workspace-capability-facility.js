@@ -129,7 +129,6 @@ function requestCapabilityIntent() {
     action: 'inspect',
   });
   dispatch('teamai:workspace-capability-intent', intent);
-  const status = panel?.querySelector('[data-workspace-result]');
   if (status) status.textContent = 'Workspace capability intent requested. Authoritative runtime confirmation is still required.';
 }
 
