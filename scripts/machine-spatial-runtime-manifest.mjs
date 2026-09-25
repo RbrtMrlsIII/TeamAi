@@ -66,3 +66,13 @@ export const MACHINE_SPATIAL_RUNTIME_FILES = Object.freeze([
   'marketplace-commerce-facility.js',
   'marketplace-commerce.css',
 ]);
+
+export const MACHINE_SPATIAL_RUNTIME_PUBLIC_TARGETS = Object.freeze({
+  // Source-side canonical owner is intentionally published under the established
+  // browser runtime filename for backward compatibility.
+  'machine-core-layout.js': 'machine-core-layout-runtime.js',
+});
+
+export function resolveMachineSpatialRuntimePublicFile(sourceFile) {
+  return MACHINE_SPATIAL_RUNTIME_PUBLIC_TARGETS[sourceFile] || sourceFile;
+}
