@@ -17,6 +17,7 @@ const productWiring=read('Product_Law/WIRING.md');
 const next=read('Masterplan/NEXT_SLICES.md');
 const master=read('Masterplan/MASTERPLAN.md');
 const session=read('AI_ASSISTANT_READ_ME.md');
+const template=read('.github/pull_request_template.md');
 const manifest=JSON.parse(read('.github/teamai/authority-manifest.yml'));
 const slots=manifest.advisory_review.slots;
 const aliases=slots.map(slot=>slot.credential_alias);
@@ -59,6 +60,13 @@ for(const text of [sequence,runner,manual,policy,wiring,skill,next]) for(const t
 test('retired files are archived, not active',()=>{assert.equal(fs.existsSync(path.join(root,'docs/TEAMAI_029_CURRENT_STATE_MAP.md')),false);assert.equal(fs.existsSync(path.join(root,'.github/workflows/nemotron-copilot-review.yml')),false);assert.equal(fs.existsSync(path.join(root,'skills/governance/nemotron-copilot-review/SKILL.md')),false);assert.equal(fs.existsSync(path.join(root,'docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md')),true);});
 test('session snapshot and current slice are explicit',()=>{assert.match(session,/## SESSION SNAPSHOT/);assert.ok(session.includes('main baseline: `87f466fb0edac3784280128785a8fd2dc757e749`'));const currentSlice=next.match(/^## Current Slice\s*\n([^\n]+)/m)?.[1]?.trim();assert.ok(currentSlice);assert.match(session,new RegExp('current slice:\\s*'+escapeRegExp(currentSlice)));});
 assert.match(productWiring,/non-authoritative Wiring interpretation only/);
+test('PR template and governance parser agree on the proof-target heading contract',()=>{
+  assert.match(template,/^### Draft proof target\s*$/m);
+  assert.match(template,/Draft proof target[\s\S]*what this PR is trying to prove/);
+  assert.match(template,/Ready-for-review occurs only after required checks, evidence, canonical synchronization, and governing review conditions pass/);
+  assert.match(template,/Open Issue checklist items, downstream production gates, and future slices are listed as limitations\/observations/);
+  assert.match(template,/AI advisory review is downstream evidence only/);
+});
 test('review-readiness guidance defines proof-target-first AI advisory semantics',()=>{
   for(const text of [policy,skill,wiring,productWiring,master,session]){
     assert.match(text,/proof target/i);
