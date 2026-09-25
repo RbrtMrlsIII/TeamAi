@@ -70,6 +70,20 @@ test('S10 Workspace camera resolves to the canonical S2 Core subject', () => {
   });
 });
 
+test('S10 camera specifications carry the canonical structural-root inheritance', () => {
+  const spec = deriveMachineCameraSpec({
+    cameraId: MACHINE_CAMERA_ID.WORLD,
+    worldSubject: subject(0, 0, 6),
+    viewport: { width: 1200, height: 800 },
+  });
+  assert.equal(spec.constructionSlice, 'S10');
+  assert.equal(spec.constructionOwner, 'frontend/spatial/machine-camera.js');
+  assert.deepEqual(spec.inheritedStructuralRoots, [
+    'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9',
+  ]);
+  assert.equal(spec.semanticBoundary, 'presentation-only');
+});
+
 test('S10 division focus follows the actual division subject envelope', () => {
   const spec = deriveMachineCameraSpec({
     cameraId: MACHINE_CAMERA_ID.DETAIL,
