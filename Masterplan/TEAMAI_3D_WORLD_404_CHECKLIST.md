@@ -321,14 +321,14 @@ Exit: Workspace is both physical core and capability surface.
 - [x] S13 Workspace HQ records and validates its spatial construction context as S13-owned and inheriting the complete S0-S10 structural root set. Evidence: E404-S13.
 
 ## P. S14 — Team / Agents
-- [ ] Agent/application identity.
-- [ ] Responsibility.
-- [ ] Seat assignment.
-- [ ] Skill bundle.
-- [ ] Capability profile.
-- [ ] Readiness.
-- [ ] Assignment/configuration intent.
-- [ ] No implied authorization from role.
+- [x] Agent/application identity comes from the runtime Team / Agents read model; no facility-local Agent identity. Evidence: E404-S14.
+- [x] Responsibility uses the governed Agent role vocabulary; role labels do not grant authorization. Evidence: E404-S14.
+- [x] Seat assignment context comes from the runtime Team / Seat read model rather than local sample Seat choices. Evidence: E404-S14.
+- [x] Skill bundle is normalized as presentation metadata and remains distinct from authorization/entitlement. Evidence: E404-S14.
+- [x] Capability profile is projected from runtime Agent metadata. Evidence: E404-S14.
+- [x] Readiness preserves authenticated/context/authorization/entitlement/health boundaries and fails closed. Evidence: E404-S14.
+- [x] Assignment/configuration is an explicit presentation intent, not durable mutation authority. Evidence: E404-S14.
+- [x] Role selection cannot imply authorization. Evidence: E404-S14.
 Exit: participation is spatially legible.
 
 ## Q. S15 — MCP / Capability / Toolkit
