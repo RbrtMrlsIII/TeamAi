@@ -1,3 +1,4 @@
+import { createSpatialConstructionContext, validateSpatialConstructionNode } from './machine-spatial-root-contract.js';
 import {
   createWorkspaceCapabilityBranch,
   createWorkspaceCapabilityIntent,
@@ -8,6 +9,19 @@ import {
 } from './workspace-capability.js';
 
 export const WORKSPACE_FACILITY_ROOT_ID = 'hero-workspace-facility';
+
+export const WORKSPACE_FACILITY_SPATIAL_CONTEXT = Object.freeze(
+  createSpatialConstructionContext({
+    slice: 'S13',
+    owner: 'frontend/spatial/workspace-capability-facility.js',
+    semanticId: WORKSPACE_CENTER_ID,
+    semanticBoundary: 'presentation-only',
+  }),
+);
+
+if (!validateSpatialConstructionNode(WORKSPACE_FACILITY_SPATIAL_CONTEXT).valid) {
+  throw new Error('invalid S13 Workspace spatial root contract');
+}
 
 let panel = null;
 let activeCapabilityId = 'workspace-context';
