@@ -104,6 +104,9 @@ export function resolveMachineCameraMode({
       ? MACHINE_CAMERA_MODE.POD_FOCUS
       : MACHINE_CAMERA_MODE.DIVISION_FOCUS;
   }
+  if (cameraId === MACHINE_CAMERA_ID.WORKSPACE) {
+    return MACHINE_CAMERA_MODE.CORE_FOCUS;
+  }
   if (
     hierarchyOpen
     || cameraId === MACHINE_CAMERA_ID.SEAT
