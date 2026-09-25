@@ -43,6 +43,20 @@ test('canonical renderer exposes lifecycle-driven R1/R2 articulation state', asy
   assert.match(renderer, /machineWorldR2Signal/);
 });
 
+test('S10 semantic camera owner is wired between controller and canonical renderer', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const controller = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+  const camera = await readFile(new URL('../public/machine-camera.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine-camera\.js/);
+  assert.match(renderer, /deriveMachineCameraSpec/);
+  assert.match(renderer, /resolveMachineCameraMode/);
+  assert.match(renderer, /state\.cameraId/);
+  assert.match(renderer, /coreSubject: coreAssembly\?\.subject/);
+  assert.match(controller, /machineWorldRenderer\.render\(now, \{[\s\S]*cameraId,/);
+  assert.match(camera, /WORKSPACE_CLOSE/);
+  assert.match(camera, /CORE_FOCUS/);
+});
+
 test('canonical renderer owns the R0 workspace receiving presentation pass', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /machine-r0-receiving\.js/);
