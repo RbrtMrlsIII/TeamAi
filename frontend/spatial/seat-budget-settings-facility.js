@@ -30,6 +30,9 @@ function stateLabel() {
   if (readModel.state === 'EXHAUSTED') return 'Exhausted · waiting for continuation';
   if (readModel.state === 'COMPLETED') return 'Completed';
   if (readModel.state === 'BLOCKED') return 'Blocked';
+  if (readModel.state === 'PROVIDER_FAILED') return 'Provider failed · recoverable state';
+  if (readModel.state === 'CANCELLED') return 'Cancelled';
+  if (readModel.state === 'WAITING_FOR_CONTINUATION') return 'Waiting for continuation';
   if (!readModel.healthy) return 'Unavailable · backend health degraded';
   if (readModel.usageReported) return 'Ready · server-authoritative accounting';
   if (readModel.accountingSource === 'durable-execution-result-raw-usage') return 'Ready · raw usage recorded; remaining capacity not recorded';
@@ -116,10 +119,12 @@ function render() {
   meter.style.setProperty('--seat-budget-remaining', String(segments.remainingFraction));
   save.disabled = editingDisabled;
   for (const input of [turnBudgetInput, outputBudgetInput, reasoningBudgetInput, reserveInput, warningInput, hardStopInput]) input.disabled = editingDisabled;
-  for (const action of ['continue', 'reconfigure', 'new-command']) {
-    const button = panel.querySelector('[data-seat-budget-' + action + ']');
-    if (button) button.disabled = controlDisabled;
-  }
+  const continueButton = panel.querySelector('[data-seat-budget-continue]');
+  const reconfigureButton = panel.querySelector('[data-seat-budget-reconfigure]');
+  const newCommandButton = panel.querySelector('[data-seat-budget-new-command]');
+  if (continueButton) continueButton.disabled = controlDisabled || !readModel.continuationAvailable;
+  if (reconfigureButton) reconfigureButton.disabled = editingDisabled;
+  if (newCommandButton) newCommandButton.disabled = controlDisabled || ['HEALTHY', 'LOW'].includes(readModel.state);
 }
 
 function open() {
