@@ -384,7 +384,6 @@ function updateGuestPresentation() {
   document.querySelectorAll('[data-feature-id]').forEach((button) => {
     const locked = guest.lockedFeatureIds.includes(button.dataset.featureId || '');
     button.dataset.guestState = locked ? 'locked' : 'available';
-    button.setAttribute('aria-disabled', String(locked));
   });
   return guest;
 }

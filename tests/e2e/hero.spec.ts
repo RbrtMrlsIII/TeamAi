@@ -21,6 +21,20 @@ test.describe('Living Web AI Workspace Hero', () => {
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
   });
 
+  test('S11 locked guest facilities remain inspectable while mutation controls stay locked', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+
+    const workspaceMenu = page.locator('#world-menu [data-workspace-open]');
+    await expect(workspaceMenu).toHaveAttribute('data-guest-state', 'locked');
+    await expect(workspaceMenu).not.toHaveAttribute('aria-disabled', 'true');
+    await workspaceMenu.click();
+
+    const facility = page.locator('#hero-workspace-facility');
+    await expect(facility).toBeVisible();
+    await expect(facility.locator('[data-workspace-request]')).toBeDisabled();
+  });
+
   test('S11 guest machine auto-orbits and freezes during authentication transition', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('#hero-canvas')).toBeVisible();
