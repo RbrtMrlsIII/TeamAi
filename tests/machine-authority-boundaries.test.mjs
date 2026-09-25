@@ -115,8 +115,27 @@ test('C1 authored ports, corridor reservations, and aggregate edges stay single-
   }
 
   for (const machine of facilityMachinery) {
+    const inheritedFacilityPorts = machine.ports.filter((port) => port.role === 'facility-port');
+    const authoredMachinePorts = machine.ports.filter((port) => port.role !== 'facility-port');
+
     assert.equal(
-      machine.ports.every(
+      inheritedFacilityPorts.length > 0,
+      true,
+    );
+    assert.equal(
+      inheritedFacilityPorts.every(
+        (port) =>
+          port.constructionSlice === 'S6' &&
+          port.constructionOwner === 'frontend/spatial/machine-facility-assembly.js',
+      ),
+      true,
+    );
+    assert.equal(
+      authoredMachinePorts.length,
+      2,
+    );
+    assert.equal(
+      authoredMachinePorts.every(
         (port) =>
           port.constructionSlice === 'S7' &&
           port.constructionOwner === 'frontend/spatial/machine-facility-machinery.js',

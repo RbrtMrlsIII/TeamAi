@@ -108,7 +108,7 @@ Exit: every physical system has one explicit owner.
 - [x] Resolve partitioned FacilityAssembly ownership before S6/S7 completion.
 - [x] Resolve partitioned Division contract ownership before S4 completion.
 - [x] Resolve partitioned ExpansionMechanism lifecycle ownership before S5 completion.
-  - Current reconciliation: public/hero-hierarchy-runtime.js remains semantic OPEN/CLOSE state authority; frontend/spatial/machine-expansion-mechanism.js owns physical travel, clearance, corridor reservation, and camera-subject projection constraints. S5 must not create a competing semantic hierarchy state machine.
+  - Current reconciliation: public/hero-hierarchy-runtime.js remains semantic OPEN/CLOSE state authority; frontend/spatial/machine-expansion-mechanism.js owns physical travel, clearance, expansion-local corridor reservation projection, and camera-subject projection constraints; frontend/spatial/machine-world-topology.js owns canonical aggregate corridor reservations. S5 must not create a competing semantic hierarchy state machine or replace S8 topology ownership.
 
 - [x] Resolve partitioned Port derivation before S8 completion.
 - [x] Resolve partitioned Corridor reservation ownership before S8 completion.
