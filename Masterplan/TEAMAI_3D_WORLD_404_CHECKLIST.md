@@ -332,17 +332,17 @@ Exit: Workspace is both physical core and capability surface.
 Exit: participation is spatially legible.
 
 ## Q. S15 — MCP / Capability / Toolkit
-- [ ] Discover.
-- [ ] Inspect.
-- [ ] Install.
-- [ ] Authentication handoff.
-- [ ] Configure.
-- [ ] Health/test.
-- [ ] Equip.
-- [ ] Dynamic target-owned branch.
-- [ ] Recursive capability branches.
-- [ ] Credential boundary.
-- [ ] Presentation/runtime truth separation.
+- [x] Discover. Guest inventory is vocabulary-only; authenticated inventory is supplied through the MCP runtime read model. Evidence: E404-S15.
+- [x] Inspect. Capability metadata and independent readiness dimensions are normalized without inventing backend state. Evidence: E404-S15.
+- [x] Install. Lifecycle intent resolves the next canonical stage from backend-supplied readiness rather than a local installed flag. Evidence: E404-S15.
+- [x] Authentication handoff. Guest/authenticated separation dispatches the existing auth handoff without owning provider credentials. Evidence: E404-S15.
+- [x] Configure. Permission/project-scope requirements remain distinct lifecycle states and produce explicit presentation intents. Evidence: E404-S15.
+- [x] Health/test. Connection-test and health states remain distinct from usable/READY. Evidence: E404-S15.
+- [x] Equip. Equip is an explicit presentation intent and requires backend confirmation; target eligibility comes from the runtime read model. Evidence: E404-S15.
+- [x] Dynamic target-owned branch. Branch identity derives from capability + runtime target + runtime branch path. Evidence: E404-S15.
+- [x] Recursive capability branches. Branch paths are payload-driven and bounded, with no universal fixed branch shape. Evidence: E404-S15.
+- [x] Credential boundary. External-provider credentials remain outside TeamAi presentation; TeamAi-native capabilities do not inherit that provider boundary. Evidence: E404-S15.
+- [x] Presentation/runtime truth separation. Guest state is discoverable/locked, incomplete authenticated state is backend-state-required, and no target/branch is exposed without ready context. Evidence: E404-S15.
 Exit: capabilities become physical equipment without authority leakage.
 
 ## R. S16 — #392 budget / energy / handoff / continuation
