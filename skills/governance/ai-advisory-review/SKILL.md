@@ -19,6 +19,26 @@ This Skill does not create Product Law, grant merge authority, replace human rev
 9. Post the model result as advisory evidence tied to the exact head and identify the execution-gate boundary.
 10. Model approval, when supported by a specific workflow, is a separately authorized action only. It never satisfies TeamAi's human review-readiness requirement.
 
+## Review-readiness semantic contract
+
+The review packet is evaluated against the PR's declared proof target and claimed scope before the reviewer considers the broader Issue backlog. The owning Issue provides current workstream context, but an open Issue item is **not automatically a verification gap for the PR**.
+
+Use the structured fields with these meanings:
+
+- `blocking_findings`: concrete defects or governance conflicts that materially prevent the PR from proving its declared scope/proof target and therefore can justify `CHANGES_REQUESTED`.
+- `governance_and_evidence`: concrete governance, validation, or evidence observations that were actually inspected and establish why the review is grounded in current repository truth. This is required even when the verdict is `APPROVE`.
+- `verification_gaps`: material requirements of the PR's own proof target that remain unproven. Do not place unrelated future work, downstream production gates, or merely-open Issue checklist items here unless they directly prevent the PR's declared proof.
+- `non_blocking_observations`: relevant context that does not block the current PR, including downstream work that remains open outside the declared proof target.
+- `review_basis`: the concise reasoning that connects the inspected evidence to the verdict. This is required even when the verdict is `APPROVE`.
+
+Verdict discipline:
+
+1. `APPROVE` means the reviewer found the declared proof target sufficiently supported by current exact-head evidence and has **no material verification gaps for that target**. It does not mean the owning Issue is complete, production is complete, or merge is authorized.
+2. `CHANGES_REQUESTED` requires a concrete blocking finding or material verification gap against the declared proof target.
+3. `ADVISORY_ONLY` is required when evidence, Issue context, or governing context is materially missing, ambiguous, truncated, or insufficient to support a stronger verdict.
+4. Historical run IDs, prior advisory comments, stale checks, and unrelated Issue work are context unless they are tied directly to the current target head and proof target.
+5. A reviewer should first answer "What is this PR proving?" and only then classify evidence or gaps against that question.
+
 ## Execution-evidence gate
 
 GitHub Actions validator workflows run concurrently, so reviewer workflows perform a separate **exact-head check-run gate** rather than depending on an aggregate workflow conclusion. For every required check-run, accept only `completed / success` for the exact PR head SHA. Missing, queued, in-progress, skipped, cancelled, failed, or head-mismatched checks do not pass. A failed required check fails closed; pending checks may be polled; timeout fails closed. A PR head change aborts the gate so the model cannot review a stale revision.
