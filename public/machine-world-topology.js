@@ -185,6 +185,7 @@ function makeEdge({
     topology,
     corridor: Object.freeze({
       id: 'CORRIDOR:' + semanticEdgeId,
+      semanticEdgeId,
       radius: corridorRadius,
       bounds: routeBounds(route, corridorRadius),
       reserved: Boolean(corridorReserved),

@@ -45,6 +45,9 @@ test('S8 edge identity and corridor reservations are unique and continuous', () 
   assert.ok(topology.edges.every((edge) => Array.isArray(edge.route) && edge.route.length >= 2));
   assert.ok(topology.edges.every((edge) => edge.routeContinuous));
   assert.ok(topology.edges.every((edge) => edge.corridorReserved || ['inner-spoke','outer-spine','lattice-link'].includes(edge.kind)));
+  assert.ok(topology.edges.every((edge) =>
+    edge.corridor?.semanticEdgeId === edge.semanticEdgeId
+  ));
 });
 
 test('S8 sparse Seat populations retain all four facility-machine links', () => {
