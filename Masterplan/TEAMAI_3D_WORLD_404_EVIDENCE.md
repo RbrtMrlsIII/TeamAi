@@ -304,8 +304,11 @@ That keeps the PR body understandable without turning it into a second 476-row e
 **Repository proof**
 - tests/workspace-capability-facility.test.mjs — S13 root inheritance contract test
 - validation requires construction slice `S13`, canonical owner `frontend/spatial/workspace-capability-facility.js`, semantic target `WORKSPACE_CENTER`, and inherited roots exactly equal to `S0` through `S10`.
+- frontend/spatial/workspace-runtime-read-model.js + public mirror — explicit backend-read-model normalization seam
+- the read-model contract fails closed without authenticated/authorized/entitled/healthy context and only exposes Workplace / Project / Team context when the complete readiness contract is satisfied
+- the facility derives project-scoped Workspace branch identity from the read model and no longer contains fixed Workplace/Project choices
 
-**Boundary:** this proves the spatial inheritance contract only. It does not prove live Workspace data, authorization, scheduler eligibility, durable state, or execution.
+**Boundary:** this proves spatial inheritance and the presentation read-model seam. It does not prove that a live backend currently supplies Workspace state, nor does it prove live authorization, entitlement, scheduler eligibility, durable state, or execution.
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED once the fresh exact-head CI run passes.
 
