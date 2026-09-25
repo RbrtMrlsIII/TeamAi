@@ -45,6 +45,33 @@ function portAttachedToPart(part, port, tolerance = 0.18) {
   );
 }
 
+function deriveLatticeDeckY(innerPods, outerHousings, clearance = 0.16) {
+  const candidates = [
+    ...(Array.isArray(innerPods) ? innerPods : []),
+    ...(Array.isArray(outerHousings) ? outerHousings : []),
+  ];
+  const required = candidates.reduce(
+    (max, part) =>
+      Math.max(
+        max,
+        (Number(part?.center?.y) || 0)
+        + Math.abs(Number(part?.dimensions?.y) || 0) * 0.5
+        + Math.max(0, Number(clearance) || 0),
+      ),
+    1.45,
+  );
+  return required + 0.08;
+}
+
+function raisedLatticeRoute(sourcePort, targetPort, deckY) {
+  return [
+    sourcePort,
+    { x: sourcePort.x, y: deckY, z: sourcePort.z },
+    { x: targetPort.x, y: deckY, z: targetPort.z },
+    targetPort,
+  ];
+}
+
 export function buildMachineCoreConnections({
   hub,
   innerPods = [],
@@ -103,6 +130,7 @@ export function buildMachineCoreConnections({
     const base = Math.floor(index * count / 4 + 0.5);
     const left = innerPods[base % Math.max(1, innerPods.length)];
     const right = innerPods[(base + 1) % Math.max(1, innerPods.length)];
+    const latticeDeckY = deriveLatticeDeckY(innerPods, outerHousings, requestedClearance);
     for (const pod of new Set([left, right])) {
       if (!pod?.port || !housing?.port) continue;
       const latticeSemanticEdgeId = makeSemanticEdgeId(housing.branchId, pod.branchId, 'lattice-link');
@@ -114,11 +142,7 @@ export function buildMachineCoreConnections({
         sourcePort: housing.port,
         targetPort: pod.port,
         kind: 'lattice-link',
-        route: [
-          housing.port,
-          { x: (housing.center.x + pod.center.x) / 2, y: Math.max(housing.level, pod.level) + 0.36, z: (housing.center.z + pod.center.z) / 2 },
-          pod.port,
-        ],
+        route: raisedLatticeRoute(housing.port, pod.port, latticeDeckY),
       }));
     }
   });
