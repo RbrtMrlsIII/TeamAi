@@ -59,7 +59,7 @@ export function normalizeSeatTaskEvidenceReadModel(input = {}) {
   const seatId = text(ready.seatId);
   const turnId = text(ready.turnId || ready.latest?.turnId || ready.latest?.executionId);
 
-  const report = authorized && seatId
+  const report = authorized && available && seatId
     ? createSeatReportPresentation({
       seatId,
       turnId,
