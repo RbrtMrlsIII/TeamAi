@@ -132,6 +132,7 @@ Exit: every physical system has one explicit owner.
 Exit: center is an authored machine assembly.
 
 ## E. S3 — Pod assembly reconstruction
+**Implementation status:** checked rows below mean the Pod capability is implemented in the repository. They do not, by themselves, close the final A4 mathematical/geometry proof or later runtime/acceptance gates.
 - [x] Reusable authored Pod shell.
 - [x] Outer collar.
 - [x] Inner chamber.
@@ -146,6 +147,7 @@ Exit: center is an authored machine assembly.
 Exit: Pods are true assemblies and safely replicable.
 
 ## F. S4 — Division system reconstruction
+**Implementation status:** checked rows below mean the division construction capability is implemented. Final articulated-path collision/clearance evidence remains governed by A4 and S30 proof gates.
 - [x] Payload-driven division envelope.
 - [x] Connection division.
 - [x] Behavior division.
@@ -162,6 +164,7 @@ Exit: Pods are true assemblies and safely replicable.
 Exit: divisions are subsystems, not scaled primitives.
 
 ## G. S5 — Expansion mechanisms
+**Implementation status:** checked rows below mean the expansion lifecycle/mechanism capability is implemented. They do not establish exhaustive exact-path safety across every articulated child/facility combination.
 - [x] CLOSED.
 - [x] PREPARING.
 - [x] OPENING.
@@ -192,6 +195,7 @@ Exit: expansion is mechanically authored and spatially safe.
 Exit: product facilities have deliberate physical destinations.
 
 ## I. S7 — Specialized facility machinery
+**Implementation status:** checked rows below mean the specialized machinery capability is implemented. Final world-wide spatial validation remains a separate proof concern.
 - [x] Telescoping analysis facility.
 - [x] Fin/structural deployment facility.
 - [x] Rotational core/analysis facility.
@@ -204,6 +208,7 @@ Exit: product facilities have deliberate physical destinations.
 Exit: outer world contains genuinely different machines.
 
 ## J. S8 — Topology and corridors
+**Implementation status:** checked rows below mean the topology/routing capability is implemented and tested. They do not replace the final geometry-aware clearance proof required by A4/S30.
 - [x] Core ↔ Pod edges.
 - [x] Pod ↔ Division edges.
 - [x] Pod ↔ Facility edges.
