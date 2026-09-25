@@ -30,7 +30,7 @@ test('ENT-R3 return control wired in index and residual CSS', async () => {
 test('CHR-R2 soft-hides seat-stack modules; does not own data-hero-machine-ui', async () => {
   const css = await readFile(join(root, 'public/hero-res-258-layer.css'), 'utf8');
   assert.match(css, /seat-stack__module/);
-  assert.match(css, /machine-nav/);
+  assert.doesNotMatch(css, /machine-nav/);
   assert.match(css, /Does not set data-hero-machine-ui|hierarchy absorption/i);
 });
 
