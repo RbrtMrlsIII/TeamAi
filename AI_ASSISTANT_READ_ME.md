@@ -1,5 +1,17 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
+## 2026-09-25 production frontier reconciliation
+
+- current main: 529fede864df0218947377e1d50e48f096c4a7c7
+- current global slice: Issue #401 production Firestore authority, security, and runtime evidence
+- PR #402 is merged; PR #413 is the current draft successor for Firestore index readback normalization
+- fresh index run 36140968869 proved deployment succeeds; readback failed because the live export includes Firestore's implicit trailing __name__ field
+- diagnostic run 36141481871 exposed the exact live index shape; the required execution-results index is present
+- fresh Gate 3 Seat run 36141179411 still reports gate3-test-seat absent and teamDocumentCount=0
+- never treat the pre-normalization index verifier failure as proof that the required live index is absent
+- #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
+
+
 ## SESSION SNAPSHOT
 
 - Last given prompt: apply the advisory-runner direct-push event-graph repair without mixing it into #404.

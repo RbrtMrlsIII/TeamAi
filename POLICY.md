@@ -10,6 +10,10 @@ PR #398 is the reviewed 029 structural baseline merged into `main`. Current prod
 
 Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757e749`. Issue #401 / successor PR #402 now owns the production Firestore authority, security, and runtime-evidence frontier. This is a current routing clarification only; it does not change Product Law authority or the draft-first/no-auto-merge discipline.
 
+## 2026-09-25 Firestore index verification checkpoint
+
+PR #413 is the current Draft successor for Issue #401's Firestore index verification false negative. Production run 36140968869 deployed the checked-in index successfully; diagnostic run 36141481871 showed the required execution-results collection-group index is present with Firestore's implicit __name__ suffix. The correct action is to normalize verifier semantics, not delete live indexes or use --force.
+
 ## ORUCAVEAM
 
 `O → R → U → C → A → V → E → A → M`

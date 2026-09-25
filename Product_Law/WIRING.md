@@ -71,6 +71,10 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.
 
 
+## 2026-09-25 production verification routing
+
+The live Firestore production index is now confirmed present by sanitized readback run `36141481871`; the remaining verification defect belongs to the repository verifier and is carried by Draft PR #413. This Wiring entry only routes the verification responsibility to Issue #401 / PR #413. It does not create production authority, change the checked-in index definition, or authorize live runtime promotion.
+
 ### 030 successor routing
 
 The current implementation frontier is resolved from `Masterplan/NEXT_SLICES.md`: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence. This Wiring file only routes the field; it does not create new production/runtime authority.
