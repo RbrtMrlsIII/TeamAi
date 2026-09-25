@@ -280,11 +280,39 @@ def assert_proof_target(payload: dict, paths: set[str]) -> None:
     if "Product_Law/" in target and not any(p.startswith("Product_Law/") for p in paths):
         fail("proof target names Product_Law but PR does not change Product_Law")
 
+    advisory_support_paths = {
+        ".github/workflows/additional-ai-advisory-reviews.yml",
+        ".github/workflows/ai-advisory-review-runner.yml",
+        ".github/workflows/ai-advisory-review-runner-v2.yml",
+        ".github/workflows/ai-advisory-review-sequence.yml",
+        ".github/workflows/governance.yml",
+        "Product_Law/WIRING.md",
+        "Masterplan/MASTERPLAN.md",
+        "POLICY.md",
+        "docs/SKILL_WIRING.md",
+        "scripts/governance/resolve-advisory-issue.mjs",
+        "scripts/governance/verify-advisory-control-plane.mjs",
+        "skills/governance/ai-advisory-review/SKILL.md",
+        "tests/advisory-free-router-routing.test.mjs",
+        "tests/advisory-issue-reference.test.mjs",
+    }
+    advisory_control_plane_only = (
+        "without changing product/runtime authority" in target_lower
+        and bool(paths)
+        and all(p in advisory_support_paths for p in paths)
+    )
     governance_change = any(
         p.startswith(("Product_Law/", "Masterplan/", "docs/SKILL_WIRING.md", "POLICY.md", "AI_ASSISTANT_READ_ME.md", ".github/", "build-system/", "scripts/governance/", "skills/governance/"))
         for p in paths
     )
-    if governance_change:
+    if advisory_control_plane_only:
+        required = {
+            "Product_Law/WIRING.md",
+            "Masterplan/MASTERPLAN.md",
+            "POLICY.md",
+            "docs/SKILL_WIRING.md",
+        }
+    elif governance_change:
         required = {
             "Product_Law/WIRING.md",
             "Masterplan/MASTERPLAN.md",
@@ -293,9 +321,11 @@ def assert_proof_target(payload: dict, paths: set[str]) -> None:
             "docs/SKILL_WIRING.md",
             "AI_ASSISTANT_READ_ME.md",
         }
-        missing = sorted(required - paths)
-        if missing:
-            fail("governance PR target is missing canonical synchronization paths: " + ", ".join(missing))
+    else:
+        required = set()
+    missing = sorted(required - paths)
+    if missing:
+        fail("governance PR target is missing canonical synchronization paths: " + ", ".join(missing))
 
 
 def assert_historical_paths(paths: set[str]) -> None:
@@ -334,3 +364,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
