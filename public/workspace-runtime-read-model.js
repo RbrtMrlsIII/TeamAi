@@ -50,7 +50,7 @@ export function normalizeWorkspaceReadModel(input = {}) {
   const project = normalizeEntity(input.project, 'project');
   const team = normalizeEntity(input.team, 'team');
 
-  const contextValid = readiness.ready &&
+  const contextValid = readiness.usable &&
     workplace &&
     project &&
     team;
