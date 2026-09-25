@@ -186,7 +186,7 @@ function build() {
         '<label>Role<select data-agent-role>' + AGENT_ROLES.map((role) => '<option value="' + role.id + '">' + role.label + '</option>').join('') + '</select></label>' +
       '</div>' +
       '<p class="team-agents-facility__skills" data-agent-skills>Skill bundle unavailable</p>' +
-      '<code class="team-agents-facility__branch" data-agent-branch>BRANCH-TEAM::agent/agent-alpha/seat/seat-01/role/planner/configuration</code>' +
+      '<code class="team-agents-facility__branch" data-agent-branch>Assignment preview unavailable</code>' +
       '<p class="team-agents-facility__branch-note" data-agent-branch-note>Assignment preview only. Role and Seat mutation remain backend-authoritative.</p>' +
     '</section>' +
     '<div class="team-agents-facility__actions">' +
