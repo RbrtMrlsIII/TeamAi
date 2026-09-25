@@ -85,13 +85,13 @@ export function resolveMachineSignalState({
     phase = MACHINE_SIGNAL_STATE.ABSORB;
     amount = selected ? 1 : 0.72;
     direction = 'target';
-  } else if (reception > 0.02 || edge.kind === 'workspace-contribution') {
+  } else if (reception > 0.02) {
     phase = MACHINE_SIGNAL_STATE.WORKSPACE_RECEIVING;
-    amount = Math.max(0.16, reception);
+    amount = reception;
     direction = 'target';
-  } else if (contribution > 0.02 || edge.kind === 'pod-facility' || edge.kind === 'facility-facility') {
+  } else if (contribution > 0.02) {
     phase = MACHINE_SIGNAL_STATE.CONTRIBUTION_TRANSFER;
-    amount = contribution > 0.02 ? contribution : (selected ? 0.7 : 0.35);
+    amount = contribution;
     direction = 'target';
   } else if (focusedAmount > 0.02 && edge.kind === 'pod-division') {
     phase = MACHINE_SIGNAL_STATE.ACTIVE_BRANCH;
