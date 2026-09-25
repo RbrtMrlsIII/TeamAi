@@ -4,7 +4,7 @@
 
 ## Current Slice
 
-TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
+TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401; implementation PR #402 merged)
 
 ## Status
 
@@ -119,9 +119,9 @@ TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 con
 
 ## 2026-09-24 029 spatial acceptance companion
 
-PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Exact branch head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` contains the current structural acceptance hardening: S5 now evaluates both outer housings and sibling inner Pods as clearance obstacles; the shared world profile carries explicit structural safety envelopes for the Seat shell and outer housing; the canonical renderer source-contract tests now assert the S5 expansion mechanism rather than the retired renderer-local animation factory. The authored S4 fan geometry remains unchanged after the earlier separation regression was identified.
+PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Current exact branch head is `8944ececfd6dfee15a39833107dd3bac932411bd`. The detailed spatial evidence is maintained in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` retaining status-only execution tracking. The current implementation includes authored S4 articulated subjects, intermediate expansion sampling, the 1–10 Seat × 3 shell-state × 7-division clearance matrix, physical-port validation, S8 route clearance, S9 semantic signal projection, and S10 semantic camera contracts.
 
-These are repository implementation facts, not completion claims. Exact-head Full-System and Browser validation remain required, and Governance Integrity must see the synchronized canonical documents. No 029 completion, visual acceptance, deployment, or merge authorization is inferred from this checkpoint.
+These are repository implementation/evidence facts, not 029 completion claims. Exact-head CI and Browser validation are green on `8944ece`. No production deployment, human acceptance, or merge authorization is inferred from these repository results.
 
 ## 030 successor frontier
 
@@ -142,7 +142,7 @@ The first successor implementation slice is deliberately additive:
 - **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted. The 2026-09-22 CLI attempt failed on Service Usage GET 403, not on index write.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398 is already merged as the reviewed structural baseline; #402 remains Draft until its own exact-head evidence, review, and human acceptance satisfy the governed promotion path.
+- **Merge authority remains separate.** #398 is already merged as the reviewed structural baseline. PR #402 is already merged into `main`; Issue #401 remains open for the remaining production Firestore evidence and runtime-gated work.
 
 ### Shared CI support: advisory issue preflight
 
