@@ -21,10 +21,14 @@ function normalizeIndex(index) {
 function sameIndex(expected, actual) {
   const left = normalizeIndex(expected);
   const right = normalizeIndex(actual);
+  const actualFields = right.fields[right.fields.length - 1]?.fieldPath === "__name__"
+    ? right.fields.slice(0, -1)
+    : right.fields;
+
   return left.collectionGroup === right.collectionGroup
     && left.queryScope === right.queryScope
     && (!left.apiScope || left.apiScope === right.apiScope)
-    && JSON.stringify(left.fields) === JSON.stringify(right.fields);
+    && JSON.stringify(left.fields) === JSON.stringify(actualFields);
 }
 
 function unwrapDeployedIndexPayload(payload) {
