@@ -77,3 +77,27 @@ The run did not deploy the index configuration. Firebase CLI failed during its F
 Therefore the production index state remains unverified.
 
 The next action after the fresh Seat evidence run is an IAM diagnosis of the exact deployment identity and its effective permissions. Do not broaden IAM to Owner or Editor merely to force the CLI through the preflight. The minimum required Service Usage and Firestore index permissions must be established first.
+
+## Current production verification findings — 2026-09-25
+
+### Firestore indexes
+
+- Main head tested: `529fede864df0218947377e1d50e48f096c4a7c7`
+- Workflow: `.github/workflows/firestore-index-deploy.yml`
+- Run `36140968869`: deployment **PASS**, repository readback **FAIL**.
+- Temporary sanitized diagnostic run `36141481871` exposed the deployed set. The required `execution-results` collection-group index is present with fields `seatId ASCENDING`, `recordedAt DESCENDING`, and Firestore's implicit trailing `__name__ DESCENDING`. An unrelated `Posts` index is also present.
+- Root cause: the repository verifier compared authored fields literally against the deployed export and did not normalize the implicit `__name__` suffix. PR #413 fixes the comparison and adds a regression test. The production index definition itself is not being changed.
+
+### Canonical Gate 3 Seat
+
+- Main head tested: `529fede864df0218947377e1d50e48f096c4a7c7`
+- Workflow: `.github/workflows/firestore-seat-shape-diagnostic.yml`
+- Run `36141179411` using documented selector `gate3-test-team / gate3-test-seat`.
+- Exact team-nested Seat GET returned **404**.
+- `teamDocumentCount=0`, `teamListError=null`.
+- Negative run-scoped evidence was written with run ID `run-2026-09-25T13-28-39-012Z-7f6a60cf-a26`.
+- This does not prove every production Seat is absent. It proves the documented Gate 3 test Seat remains unverified and prevents live Seat authorization/entitlement/budget/execution claims.
+
+### Authority boundary
+
+These findings are production evidence, not release authorization. No live index deletion, `--force` reconciliation, Seat creation, Rules closure, provider execution promotion, or continuation claim is made here.
