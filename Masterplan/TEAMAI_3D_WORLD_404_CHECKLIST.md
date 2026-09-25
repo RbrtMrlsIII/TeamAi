@@ -75,9 +75,9 @@ Exit: root inheritance is explicit, traceable, and enforceable across the entire
 
 ### A4. Active geometry discrepancy
 - [x] Current full-division radial offset is approximately 2.948 for the current Pod dimension.
-- [x] Current full-expansion Seat + division theoretical reach is approximately 7.998 from world center.
-- [x] At the current 10-seat density, the adaptive world profile yields an expanded outer-housing radius of 10.55, exceeding the 7.998 Seat + division theoretical reach by 2.552 units.
-- [x] The previously reported approximately 0.148-unit radial overrun is resolved in the current adaptive world profile: the 10-seat expanded outer-housing envelope is 10.55 versus a 7.998 Seat + division theoretical reach.
+- [x] Current full-expansion Seat + division radial-center reach is approximately 8.498 from world center.
+- [x] At the current 10-seat density, the adaptive world profile yields a fully expanded outer-housing radius of 10.55, exceeding the 8.498 Seat + division radial-center reach by 2.052 units before component extents.
+- [x] The previously reported approximately 0.148-unit radial overrun is resolved in the current adaptive world profile: the 10-seat fully expanded outer-housing envelope is 10.55 versus an 8.498 Seat + division radial-center reach.
 - [x] Verify actual articulated division paths against all seven-child index positions and outer-facility envelopes.
 - [x] Replace the current simple envelope assumptions with geometry-aware collision/clearance calculation.
 
