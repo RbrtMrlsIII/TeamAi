@@ -21,6 +21,33 @@ test.describe('Living Web AI Workspace Hero', () => {
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
   });
 
+  test('S11 guest machine auto-orbits and freezes during authentication transition', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'GUEST_LIMITED');
+    await expect(page.locator('.world-navigation__status')).toHaveText('Guest · limited actions');
+
+    await page.evaluate(() => (window as any).TeamAiHero.resetNav());
+    const before = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    await page.waitForTimeout(2200);
+    const after = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    expect(Math.abs(after - before)).toBeGreaterThan(0.001);
+
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.locator('#world-menu').getByRole('button', { name: 'Sign in', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeVisible();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'AUTH_TRANSITION');
+
+    const frozenBefore = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    await page.waitForTimeout(500);
+    const frozenAfter = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    expect(frozenAfter).toBe(frozenBefore);
+
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeHidden();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'GUEST_LIMITED');
+  });
+
   test('Hero exposes the governed 1-10 Seat capacity', async ({ page }) => {
     await page.goto('/hero/');
     const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
