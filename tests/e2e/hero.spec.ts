@@ -319,6 +319,77 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(orb).toBeHidden();
   });
 
+  test('S21 recovery actions expose authoritative Retry/Cancel intents without claiming execution', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-1',
+        transactionId: 'tx-browser-recovery',
+        kind: 'recovery',
+        state: 'UNAVAILABLE',
+        errorCode: 'PROVIDER_UNAVAILABLE',
+        retryable: true,
+        cancelable: false,
+        authoritative: true,
+      });
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-detail]')).toHaveText(
+      'Transaction tx-browser-recovery · PROVIDER_UNAVAILABLE'
+    );
+    await expect(orb.locator('[data-transaction-orb-retry]')).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-cancel]')).toBeHidden();
+
+    const retryIntent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:seat-transaction-retry-request', (event: any) => resolve(event.detail), { once: true });
+    }));
+    await orb.locator('[data-transaction-orb-retry]').click();
+    await expect(retryIntent).resolves.toMatchObject({
+      seatId: 'seat-browser-1',
+      transactionId: 'tx-browser-recovery',
+      kind: 'recovery',
+      state: 'UNAVAILABLE',
+      errorCode: 'PROVIDER_UNAVAILABLE',
+      presentationOnly: true,
+      notAuthority: true,
+      authoritativeConfirmationRequired: true,
+    });
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-1',
+        transactionId: 'tx-browser-active',
+        kind: 'ai-execution',
+        state: 'ACTIVE',
+        retryable: false,
+        cancelable: true,
+        authoritative: true,
+      });
+    });
+    await expect(orb.locator('[data-transaction-orb-retry]')).toBeHidden();
+    await expect(orb.locator('[data-transaction-orb-cancel]')).toBeVisible();
+
+    const cancelIntent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:seat-transaction-cancel-request', (event: any) => resolve(event.detail), { once: true });
+    }));
+    await orb.locator('[data-transaction-orb-cancel]').click();
+    await expect(cancelIntent).resolves.toMatchObject({
+      seatId: 'seat-browser-1',
+      transactionId: 'tx-browser-active',
+      kind: 'ai-execution',
+      state: 'ACTIVE',
+      presentationOnly: true,
+      notAuthority: true,
+      authoritativeConfirmationRequired: true,
+    });
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+    await expect(orb).toBeHidden();
+  });
+
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.world-navigation')).toBeVisible();
