@@ -19,6 +19,9 @@ test('S11 guest presentation is limited and exposes locked feature vocabulary', 
   assert.ok(!state.lockedFeatureIds.includes('auth-gateway'));
   assert.equal(state.presentationOnly, true);
   assert.equal(state.constructionSlice, 'S11');
+  assert.equal(state.constructionLayer, 'product-runtime');
+  assert.equal(state.semanticBoundary, 'presentation-only');
+  assert.deepEqual(state.inheritedStructuralRoots, Array.from({ length: 11 }, (_, index) => `S${index}`));
 });
 
 test('S11 auth transition disables guest orbit without granting feature access', () => {
@@ -52,4 +55,13 @@ test('S11 authenticated projection exits guest-limited mode without creating aut
   assert.equal(state.limited, false);
   assert.equal(state.autoOrbitEnabled, false);
   assert.ok(state.lockedFeatureIds.includes('workspace-hq') === false);
+});
+
+import { readFileSync } from 'node:fs';
+
+test('S11 guest-state source and browser copies remain exact', () => {
+  assert.equal(
+    readFileSync('frontend/spatial/machine-guest-state.js', 'utf8'),
+    readFileSync('public/machine-guest-state.js', 'utf8'),
+  );
 });
