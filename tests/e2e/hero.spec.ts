@@ -173,6 +173,48 @@ test.describe('Living Web AI Workspace Hero', () => {
   });
 
 
+  test('S12 keeps restored Seat population visible while readiness remains unavailable', async ({ page }) => {
+    await page.goto('/hero/');
+    const snapshot = await page.evaluate(() => {
+      const restoration = (window as any).TeamAiAuthenticatedRestoration;
+      const result = restoration.setPresentationReadModel({
+        identity: { provider: 'firebase', subjectId: 'uid-s12-readiness' },
+        authenticated: true,
+        workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
+        project: { id: 'project-browser', label: 'Project Browser' },
+        team: { id: 'team-browser', label: 'Team Browser' },
+        readiness: {
+          authenticated: true,
+          workspaceKnown: true,
+          projectKnown: true,
+          authorized: true,
+          entitled: true,
+          schedulerEligible: false,
+          healthy: true,
+        },
+        seats: [
+          { id: 'seat-browser-1', label: 'Web AI Seat 1', durable: true, state: 'READY' },
+          { id: 'seat-browser-2', label: 'Web AI Seat 2', durable: true, state: 'READY' },
+        ],
+      });
+      return {
+        state: result.state,
+        reason: result.reason,
+        available: result.available,
+        durableSeatCount: result.durableSeatCount,
+        heroSeatCount: (window as any).TeamAiHero.getSeatCount(),
+      };
+    });
+
+    expect(snapshot.state).toBe('AUTHENTICATED_UNAVAILABLE');
+    expect(snapshot.reason).toBe('SCHEDULER_UNAVAILABLE');
+    expect(snapshot.available).toBe(false);
+    expect(snapshot.durableSeatCount).toBe(2);
+    expect(snapshot.heroSeatCount).toBe(2);
+    await expect(page.locator('#seat-label')).toContainText('Authenticated · SCHEDULER_UNAVAILABLE');
+  });
+
+
   test('Hero exposes the governed 1-10 Seat capacity', async ({ page }) => {
     await page.goto('/hero/');
     const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
