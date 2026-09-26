@@ -122,7 +122,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(snapshot.layer).toBe('machine');
     expect(snapshot.authOpen).toBe(false);
     await expect(page.locator('#seat-label')).toContainText('2 durable seats restored');
-    await expect(page.locator('[data-authenticated-restoration-state]')).toHaveValue?.;
+    await expect.poll(() => page.evaluate(() => document.documentElement.getAttribute('data-authenticated-restoration-state'))).toBe('AUTHENTICATED_READY');
   });
 
   test('S12 fails closed with a reason when authenticated context cannot be restored', async ({ page }) => {
