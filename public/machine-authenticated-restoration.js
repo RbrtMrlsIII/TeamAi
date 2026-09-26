@@ -198,7 +198,7 @@ function publish(model) {
   return model;
 }
 
-export function setAuthenticatedRestorationReadModel(input = {}) {
+export function setAuthenticatedRestorationPresentationReadModel(input = {}) {
   current = normalizeAuthenticatedRestorationReadModel(input);
   return publish(current);
 }
@@ -218,7 +218,7 @@ export function restorationReasons() {
 export const machineAuthenticatedRestoration = Object.freeze({
   context: AUTHENTICATED_RESTORATION_SPATIAL_CONTEXT,
   normalize: normalizeAuthenticatedRestorationReadModel,
-  setReadModel: setAuthenticatedRestorationReadModel,
+  setPresentationReadModel: setAuthenticatedRestorationPresentationReadModel,
   getReadModel: getAuthenticatedRestorationReadModel,
   states: restorationStates,
   reasons: restorationReasons,
@@ -227,6 +227,6 @@ export const machineAuthenticatedRestoration = Object.freeze({
 if (typeof window !== 'undefined') {
   window.TeamAiAuthenticatedRestoration = machineAuthenticatedRestoration;
   window.addEventListener('teamai:authenticated-restoration-read-model', (event) => {
-    if (event.detail?.readModel) setAuthenticatedRestorationReadModel(event.detail.readModel);
+    if (event.detail?.readModel) setAuthenticatedRestorationPresentationReadModel(event.detail.readModel);
   });
 }
