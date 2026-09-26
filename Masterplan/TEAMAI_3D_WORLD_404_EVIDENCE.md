@@ -318,40 +318,44 @@ S11 does not create durable Seats, grant entitlement, authenticate users, execut
 
 ### E404-S12 — Authenticated restoration presentation/read-model seam
 
-**Claim:** S12 adds an authenticated-world restoration projection seam that consumes an already-authoritative backend read model and projects truthful identity/context/readiness/durable Seat state into the existing spatial machine without introducing Firebase, Firestore, authorization, entitlement, scheduler, provider, or durable-write authority into the renderer.
+**Claim:** S12 provides an authenticated-world restoration projection seam that consumes an already-authoritative backend read model and projects truthful identity/context/readiness/durable Seat state into the existing spatial machine without introducing Firebase, Firestore, authorization, entitlement, scheduler, provider, or durable-write authority into the renderer.
 
 **Primary implementation**
-- frontend/spatial/machine-authenticated-restoration.js — canonical S12 normalization/projection contract
-- public/machine-authenticated-restoration.js — exact browser-delivered mirror
-- public/_flex_src/hero-flex.base.js — canonical Hero application seam for authenticated/restored presentation state
-- public/hero-flex.js — synchronized browser runtime
-- public/hero-layer-handoff.js — existing machine-layer return owner
-- frontend/spatial/workspace-runtime-read-model.js — existing readiness/context normalization owner
+- `frontend/spatial/machine-authenticated-restoration.js` — canonical S12 normalization/projection contract
+- `public/machine-authenticated-restoration.js` — exact browser-delivered mirror
+- `public/_flex_src/hero-flex.base.js` — canonical Hero application seam for authenticated/restored presentation state
+- `public/hero-flex.js` — synchronized browser runtime
+- `public/hero-layer-handoff.js` — existing machine-layer return owner
+- `frontend/spatial/workspace-runtime-read-model.js` — existing Workspace readiness/context normalization owner
 
-**Exact implementation-head verification — 2026-09-26**
-- implementation head: `6e67b75e33c89a25ee713e61d959252d1defb7e7`
+**Implementation proof head — 2026-09-26**
+- implementation head: `e571ef4032b7843ac2074861a0a7cebead613623`
 - PR #404: OPEN / DRAFT
 - main base: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- Full-System: [36242949781](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949781) — **PASS**
-  - project tests: **1,107 passed / 0 failed**
+- Full-System: [36244319117](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36244319117) — **PASS**
+  - project tests: **1,107 passed / 0 failed / 0 skipped**
   - machine source/public parity passed
   - typecheck, trusted Edge typecheck, recovery integrity, and package artifact passed
-- Canonical Browser: [36242949820](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949820) — **PASS**
-  - Playwright: **69 passed**
+- Canonical Browser: [36244319104](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36244319104) — **PASS**
+  - Playwright: **70 passed / 4 skipped**
   - exact-head checkout, canonical Hero synchronization, machine parity, and browser verification passed
-- Security: [36242949550](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949550) — **PASS**
-- Deep Security: [36242949749](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949749) — **PASS**
-- Governance Integrity: [36242949695](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949695) — **PASS**
+  - Browser S12 scenarios covered successful restoration, fail-closed incomplete context, and durable Seat preservation during readiness degradation
+- Security: [36244319106](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36244319106) — **PASS**
+- Deep Security: [36244319130](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36244319130) — **PASS**
+- The Governance Integrity run [36244319114](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36244319114) is **historical / inadmissible for promotion** because it began while #404 was accidentally Ready for Review and failed only after the PR was returned to Draft; its log records that exact lifecycle transition. A fresh Draft-state Governance run is required for current-head governance evidence.
 
 **Contract proof**
-- S12 construction context is `S12`, `product-runtime`, `presentation-only`, owned by `frontend/spatial/machine-authenticated-restoration.js`, and inherits the complete S0–S10 root set.
-- Authenticated readiness is composed from the existing Workspace read-model dimensions rather than recreated.
+- S12 construction context is `S12`, `product-runtime`, `presentation-only`, owned by `frontend/spatial/machine-authenticated-restoration.js`, and inherits the complete S0–S10 structural root set.
 - Identity requires an explicit Firebase-backed subject identifier in the supplied read model; the module does not acquire tokens or establish sessions.
+- Workplace / Project / Team restoration consumes explicit backend-owned context.
+- Authorization and entitlement remain explicit read-model facts and are never inferred from presentation state.
 - Durable Seat projection requires explicit `durable: true` Seat records and rejects populations above the canonical maximum instead of silently clamping impossible durable state.
-- Authenticated context without a valid Workplace/Project/Team, authorization, entitlement, scheduler readiness, health, or durable Seat population becomes `AUTHENTICATED_UNAVAILABLE` with a concrete reason code.
-- Successful restoration becomes `AUTHENTICATED_READY`, projects the exact durable Seat count through the canonical Hero `setSeatCount` presentation API, closes the temporary auth handoff, and returns to the existing machine layer.
+- Restoration is evaluated before final readiness. An authorized durable Seat population remains represented even when scheduler eligibility or runtime health is unavailable.
+- Fully usable state requires the existing readiness dimensions, including scheduler eligibility and health.
+- Incomplete authenticated context becomes `AUTHENTICATED_UNAVAILABLE` with a concrete reason code.
+- Successful restoration becomes `AUTHENTICATED_READY`, projects the exact durable Seat count through the canonical Hero presentation API, closes the temporary auth handoff, and returns to the existing machine layer.
 - The module emits the existing Workspace runtime read-model event rather than creating a duplicate Workspace data store.
-- Browser proof explicitly exercises both successful two-Seat restoration and fail-closed Project-unavailable restoration.
+- Browser proof exercises both successful two-Seat restoration, fail-closed Project-unavailable restoration, and restored Seats surviving scheduler-unavailable readiness.
 - Source/public S12 runtime copies are byte-identical.
 
 **Authority boundary**
