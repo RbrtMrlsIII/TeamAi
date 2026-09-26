@@ -55,3 +55,30 @@ test('S21 never presents completion without authoritative runtime state', () => 
   assert.equal(model?.authoritative, true);
   clearSeatTransactionPresentation();
 });
+test('S21 transaction recovery actions are only exposed for authoritative transactions', () => {
+  const untrusted = setSeatTransactionPresentation({
+    seatId: 'seat-1',
+    transactionId: 'tx-untrusted-recovery',
+    kind: 'recovery',
+    state: 'UNAVAILABLE',
+    retryable: true,
+    cancelable: true,
+    authoritative: false,
+  });
+  assert.equal(untrusted?.retryable, false);
+  assert.equal(untrusted?.cancelable, false);
+  clearSeatTransactionPresentation();
+
+  const trusted = setSeatTransactionPresentation({
+    seatId: 'seat-1',
+    transactionId: 'tx-trusted-recovery',
+    kind: 'recovery',
+    state: 'UNAVAILABLE',
+    retryable: true,
+    cancelable: false,
+    authoritative: true,
+  });
+  assert.equal(trusted?.retryable, true);
+  assert.equal(trusted?.cancelable, false);
+  clearSeatTransactionPresentation();
+});
