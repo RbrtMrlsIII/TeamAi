@@ -263,16 +263,16 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('#state-label')).toHaveText('IDLE');
   });
 
-  test('scales the same stage from one seat to eight unlocked seats', async ({ page }) => {
+  test('scales the same stage from one seat to eight presented Seat slots', async ({ page }) => {
     await page.goto('/hero/?seats=1');
-    await expect(page.locator('#seat-label')).toContainText('1 seat unlocked');
+    await expect(page.locator('#seat-label')).toContainText('1 seat presented');
     await expect(page.locator('#state-label')).toHaveText('IDLE');
     await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(8));
-    await expect(page.locator('#seat-label')).toContainText('8 seats unlocked');
+    await expect(page.locator('#seat-label')).toContainText('8 seats presented');
     const count = await page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
     expect(count).toBe(8);
     await page.evaluate(() => window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-unlocked', { detail: { seatCount: 6 } })));
-    await expect(page.locator('#seat-label')).toContainText('6 seats unlocked');
+    await expect(page.locator('#seat-label')).toContainText('6 seats presented');
   });
 });
 
