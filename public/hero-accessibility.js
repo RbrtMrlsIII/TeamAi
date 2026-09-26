@@ -7,7 +7,7 @@
 
 const DIALOGS = Object.freeze([
   { selector: '#hero-auth-panel', trigger: '[data-auth-open]', close: () => window.TeamAiHeroAuthHandoff?.close?.() },
-  { selector: '#hero-settings-panel', trigger: '[data-settings-open], #hero-settings-shell', close: () => document.getElementById('hero-settings-shell')?.click() },
+  { selector: '#hero-settings-panel', trigger: '[data-settings-open]', close: () => document.getElementById('hero-settings-shell')?.click() },
   { selector: '#hero-workspace-facility', trigger: '[data-workspace-open]', close: () => window.TeamAiWorkspaceCapabilityFacility?.close?.() },
   { selector: '#hero-mcp-facility', trigger: '[data-mcp-open]', close: () => window.TeamAiMcpCapabilityFacility?.close?.() },
   { selector: '#hero-team-agents-facility', trigger: '[data-team-agents-open]', close: () => window.TeamAiTeamAgentsFacility?.close?.() },
