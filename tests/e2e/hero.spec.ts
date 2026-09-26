@@ -279,6 +279,46 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page).toHaveURL(/\/hero\/?$/);
   });
 
+  test('S21 transaction presentation uses semantic operation families without claiming execution authority', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-transaction-presentation', {
+        detail: {
+          transaction: {
+            seatId: 'seat-browser-1',
+            transactionId: 'tx-browser-1',
+            kind: 'mcp-invocation',
+            state: 'LOADING',
+            progress: 0.4,
+            authoritative: true,
+          },
+        },
+      }));
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-label]')).toHaveText('MCP invocation');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Loading');
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-1',
+        transactionId: 'tx-browser-1',
+        kind: 'handoff-continuation',
+        state: 'WAITING_FOR_CONTINUATION',
+        authoritative: true,
+      });
+    });
+    await expect(orb.locator('[data-transaction-orb-label]')).toHaveText('Handoff / continuation');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Waiting for continuation');
+    await expect(orb).toHaveAttribute('data-kind', 'handoff-continuation');
+    await expect(orb).toHaveAttribute('data-state', 'WAITING_FOR_CONTINUATION');
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+    await expect(orb).toBeHidden();
+  });
+
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.world-navigation')).toBeVisible();

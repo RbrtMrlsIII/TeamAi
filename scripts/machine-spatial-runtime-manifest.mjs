@@ -32,6 +32,8 @@ export const MACHINE_SPATIAL_RUNTIME_FILES = Object.freeze([
   'machine-world-topology.js',
   'theme-root.js',
   'hero-root-runtime.js',
+  'machine-transaction-presentation.js',
+  'machine-transaction-presentation.css',
   'hero-ring-envelope.js',
   'hero-workspace-core.js',
   'hero-r1-backend-display.js',
