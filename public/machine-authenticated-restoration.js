@@ -123,7 +123,7 @@ export function normalizeAuthenticatedRestorationReadModel(input = {}) {
   const durableSeats = sourceSeats.map(normalizeDurableSeat).filter(Boolean);
 
   if (durableSeats.length > MAX_SEAT_COUNT) {
-    return unavailable(REASONS.DURABLE_SEAT_CAPACITY_INVALID, workspace, identity, durableSeats);
+    return unavailable(REASONS.DURABLE_SEAT_CAPACITY_INVALID, workspace, identity);
   }
 
   if (durableSeats.length < 1) {
