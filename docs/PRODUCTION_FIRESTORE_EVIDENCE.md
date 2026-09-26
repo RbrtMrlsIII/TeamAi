@@ -24,7 +24,7 @@ The workflow is workflow_dispatch only and uses the existing protected Firebase 
 
 ## Next gates
 
-After the first successful run, use the observed Seat field inventory to reconcile Firestore Rules. Then deploy/read back the checked-in execution-results index, validate the Seat budget runtime read surface, and proceed to controlled real-provider execution and continuation.
+After the first successful Seat-shape run, use the observed Seat field inventory to reconcile Firestore Rules. Index deploy/readback is already RUNTIME-PROVEN. Then validate the Seat budget runtime read surface, and proceed to controlled real-provider execution and continuation.
 
 
 ## Exact Seat read
@@ -40,9 +40,7 @@ The verified Gate 3 diagnostic selectors are:
 
 These are historical test hierarchy identifiers and are safe to use as selectors for the fresh diagnostic.
 
-The dedicated `firestore-production-evidence.yml` workflow remains on the PR #402 branch and still cannot be dispatched until that file exists on the repository default branch.
-
-The existing default-branch vehicle `firestore-seat-shape-diagnostic.yml` is now the safe dispatch path for the same exact-path probe. GitHub already knows that workflow on `main`, so a manual run against `backend/030-production-runtime-evidence` executes the PR-branch workflow file. That file no longer uses the collection-group Seat query. It runs `scripts/run-production-firestore-evidence.mjs` with Team ID `gate3-test-team` and the dispatched Seat ID.
+The dedicated `firestore-production-evidence.yml` workflow exists on the default branch as a protected `workflow_dispatch` vehicle. The existing default-branch vehicle `firestore-seat-shape-diagnostic.yml` remains the current Gate 3 dispatch path for the exact-path probe. It runs `scripts/run-production-firestore-evidence.mjs` with Team ID `gate3-test-team` and the dispatched Seat ID.
 
 First exact-path dispatch after that rewiring:
 
@@ -64,7 +62,7 @@ Durable negative evidence from the corrected probe:
 - exit code 2, as designed for a missing Seat
 - additive `runtime-diagnostics` document written; canonical Seat/Connection documents were not patched
 
-The protected test project currently has no `teams` documents, so Gate 3 selectors cannot inspect a Coder Seat until that hierarchy exists again or a different authorized path is supplied. Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. None of these runs is Seat-shape verification or 029 completion.
+The protected test project currently has no `teams` documents, so Gate 3 selectors cannot inspect a Coder Seat until that hierarchy exists again or a different authorized path is supplied. The missing-Seat probe now classifies that condition as `operator_hierarchy_absent`. It writes only additive `runtime-diagnostics/{runId}` evidence and does not create Seat or Connection documents. Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. None of these runs is Seat-shape verification or 029 completion.
 
 ## Index deployment execution boundary
 
@@ -72,9 +70,9 @@ The existing default-branch firestore-index-deploy.yml is the authorized product
 
 On 2026-09-22 it was dispatched as run 35734239293 against main commit 87f466fb0edac3784280128785a8fd2dc757e749.
 
-The 2026-09-22 run above is historical evidence for the earlier Service Usage preflight failure and remains immutable. A fresh default-branch production run on 2026-09-25, run `36140968869`, deployed the checked-in index successfully but the repository verifier reported a false negative. Sanitized diagnostic run `36141481871` then exposed the live shape and confirmed the required `execution-results` index is present with Firestore's implicit trailing `__name__ DESCENDING` field.
+A fresh default-branch production run on 2026-09-25, run `36140968869`, deployed the checked-in index successfully but the repository verifier reported a false negative. Sanitized diagnostic run `36141481871` then exposed the live shape and confirmed the required `execution-results` index is present with Firestore's implicit trailing `__name__ DESCENDING` field.
 
-Therefore the current production issue is verifier normalization, not missing index deployment. PR #413 is the bounded remediation vehicle. No IAM expansion, live index deletion, or `--force` reconciliation is indicated by the current evidence.
+PR #413 repaired that verifier comparison and merged at `ce1656b7190fa8657253385fd884837ff7d12653`. Post-merge default-branch run `36146692843` passed deploy and normalized readback (`requiredCount=1`, `deployedCount=2`, `missing=[]`). Index verification is therefore RUNTIME-PROVEN. No IAM expansion, live index deletion, or `--force` reconciliation is indicated.
 
 ## Current production verification findings — 2026-09-25
 
@@ -84,7 +82,7 @@ Therefore the current production issue is verifier normalization, not missing in
 - Workflow: `.github/workflows/firestore-index-deploy.yml`
 - Run `36140968869`: deployment **PASS**, repository readback **FAIL**.
 - Temporary sanitized diagnostic run `36141481871` exposed the deployed set. The required `execution-results` collection-group index is present with fields `seatId ASCENDING`, `recordedAt DESCENDING`, and Firestore's implicit trailing `__name__ DESCENDING`. An unrelated `Posts` index is also present.
-- Root cause: the repository verifier compared authored fields literally against the deployed export and did not normalize the implicit `__name__` suffix. PR #413 fixes the comparison and adds a regression test. The production index definition itself is not being changed.
+- Root cause of the earlier false negative: the repository verifier compared authored fields literally against the deployed export and did not normalize the implicit `__name__` suffix. PR #413 fixed the comparison and added a regression test. Post-merge run `36146692843` on exact main `ce1656b7190fa8657253385fd884837ff7d12653` is the RUNTIME-PROVEN readback.
 
 ### Canonical Gate 3 Seat
 
@@ -94,7 +92,7 @@ Therefore the current production issue is verifier normalization, not missing in
 - Exact team-nested Seat GET returned **404**.
 - `teamDocumentCount=0`, `teamListError=null`.
 - Negative run-scoped evidence was written with run ID `run-2026-09-25T13-28-39-012Z-7f6a60cf-a26`.
-- This does not prove every production Seat is absent. It proves the documented Gate 3 test Seat remains unverified and prevents live Seat authorization/entitlement/budget/execution claims.
+- This does not prove every production Seat is absent. It proves the documented Gate 3 test Seat remains unverified and is classified as `operator_hierarchy_absent`. The probe does not create Seat documents and therefore prevents live Seat authorization/entitlement/budget/execution claims until an operator-authorized hierarchy exists or a different authorized path is supplied.
 
 ### Authority boundary
 
