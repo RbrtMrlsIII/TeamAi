@@ -94,6 +94,22 @@ test('S12 remains reason-bearing when authoritative context is incomplete', () =
   assert.equal(result.available, false);
 });
 
+test('S12 restores durable Seats before evaluating scheduler/runtime readiness', () => {
+  const result = normalizeAuthenticatedRestorationReadModel({
+    ...READY_INPUT,
+    readiness: {
+      ...READY_INPUT.readiness,
+      schedulerEligible: false,
+      healthy: false,
+    },
+  });
+  assert.equal(result.state, restorationStates().AUTHENTICATED_UNAVAILABLE);
+  assert.equal(result.reason, restorationReasons().SCHEDULER_UNAVAILABLE);
+  assert.equal(result.available, false);
+  assert.equal(result.durableSeatCount, 2);
+  assert.deepEqual(result.durableSeats.map((seat) => seat.id), ['seat-1', 'seat-2']);
+});
+
 test('S12 does not fabricate durable Seats from presentation slots', () => {
   const result = normalizeAuthenticatedRestorationReadModel({
     ...READY_INPUT,
