@@ -1,6 +1,6 @@
 # TEAM-EXPERIENCE-029 — GitHub OAuth mint of UID ↔ installation_id (Conn-3)
 
-**Status:** IMPLEMENTED in repository · operator-confirmed installation success · **live deployed Edge still terminal text callback** · **303 return on `main` source** · browser return proof pending  
+**Status:** IMPLEMENTED in repository · operator-confirmed installation success · **live callback 303/browser-return path RUNTIME-PROVEN** · **durable UID ↔ installation mapping remains unproven**  
 **Not a Hero live bind.** **No 029 production-release claim.**
 
 ## Purpose
@@ -42,7 +42,7 @@ GitHub install callback GET (intended)
   → optional install/setup/error context is carried in query parameters
 ```
 
-Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verification is still open.
+Tracked under canonical Conn-3 Issue **#204**; Issue #244 remains historical lineage. Fresh 2026-09-26 browser validation against the deployed callback using installation parameters returned **303 See Other**, followed by GitHub Pages **301** slash canonicalization and final **200 OK** HTML at the TeamAi Hero. The GET callback did not write UID state.
 
 ## Ownership
 
@@ -73,8 +73,8 @@ Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verific
 6. [x] GitHub App installation completed in the real GitHub flow (operator-confirmed)
 7. [x] CLI 401 classified separately from product installation evidence
 8. [x] GET callback changed from terminal HTML page to HTTP 303 canonical TeamAi return (**source on main**)
-9. [ ] Deploy the revised Edge function (303) — **live still HTML as of 2026-09-10 screenshot**
-10. [ ] Real browser proof: install → callback → TeamAi return
+9. [x] Deploy/reconcile the revised Edge callback behavior (303) — fresh 2026-09-26 browser validation proves the deployed callback returns 303
+10. [ ] Real browser proof: complete GitHub App install → callback → TeamAi return (the current fresh browser check proves the callback/return leg only, using installation parameters)
 11. [ ] Verify durable UID ↔ installation mapping after the revised flow
 12. [ ] Conn-3 / 029 acceptance decision after the complete evidence packet
 
@@ -89,10 +89,28 @@ Tracked as **Issue #244**. Source-contract 303 is on `main`. Live deploy verific
 - `src/backend/github-installation.ts`
 
 
-## Current deployment revalidation — 2026-09-19
+## Current browser deployment proof — 2026-09-26
 
-Fresh browser validation against the deployed Edge callback with installation parameters returned **HTTP 200 OK**, no `Location` header, `text/plain`, and terminal callback text at the Supabase function URL. It did not reach the TeamAi Hero. This confirms deployment drift between the repository source contract and the live deployed Edge.
+Fresh read-only browser validation against the deployed `teamai-github-oauth-bind` callback with the historical installation parameter `160609752` and `setup_action=install` produced:
+
+- callback: **303 See Other**
+- redirect chain then performed GitHub Pages trailing-slash canonicalization with **301**
+- final destination: TeamAi Hero
+- final response: **200 OK**
+- final content type: `text/html; charset=utf-8`
+- callback GET did not mint or write Firebase UID state
+
+This closes the previously observed deployment/browser-return drift for the **callback routing leg**. It does not prove a fresh end-to-end GitHub installation, OAuth consent, Firebase-authenticated POST, or durable UID ↔ installation mapping.
+
+The remaining Conn-3 acceptance boundary is therefore the server-owned durable identity bridge:
+
+`Firebase-authenticated user → verified Firebase UID → installation_id → durable Firestore binding`
+
+
+## Historical deployment revalidation — 2026-09-19
+
+Historical browser validation against the deployed Edge callback on 2026-09-19 returned **HTTP 200 OK**, no `Location` header, `text/plain`, and terminal callback text at the Supabase function URL. That observation was superseded by the fresh 2026-09-26 callback proof above.
 
 The repository `main` source still implements GET → HTTP 303 to the TeamAi Hero destination and does not mint UID on GET. No authenticated POST or UID bind write was exercised during this revalidation.
 
-**Current acceptance boundary:** deploy the revised Edge, re-run browser install → callback → TeamAi return, then prove the durable Firebase UID ↔ installation mapping. This remains Conn-3 work under #204 / backend baseline #284, not a governance cleanup item.
+**Historical acceptance boundary:** deploy the revised Edge, re-run browser install → callback → TeamAi return, then prove the durable Firebase UID ↔ installation mapping. The deployment/callback leg is now proven; the durable UID ↔ installation mapping remains open under #204 / backend baseline #284.
