@@ -72,7 +72,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     const snapshot = await page.evaluate(() => {
       const restoration = (window as any).TeamAiAuthenticatedRestoration;
       if (!restoration) throw new Error('S12 restoration runtime is unavailable');
-      const result = restoration.setReadModel({
+      const result = restoration.setPresentationReadModel({
         identity: { provider: 'firebase', subjectId: 'uid-s12-browser' },
         authenticated: true,
         workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
@@ -130,7 +130,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     const snapshot = await page.evaluate(() => {
       const restoration = (window as any).TeamAiAuthenticatedRestoration;
       const before = (window as any).TeamAiHero.getSeatCount();
-      const result = restoration.setReadModel({
+      const result = restoration.setPresentationReadModel({
         identity: { provider: 'firebase', subjectId: 'uid-s12-unavailable' },
         authenticated: true,
         workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
