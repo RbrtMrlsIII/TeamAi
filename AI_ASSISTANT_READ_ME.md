@@ -8,6 +8,7 @@
 - index verification is RUNTIME-PROVEN and is no longer the current #401 implementation blocker
 - Gate 3 Seat run `36141179411` still reports `gate3-test-seat` absent with `teamDocumentCount=0` / `teamListError=null`
 - the missing-Seat probe now classifies that condition as `operator_hierarchy_absent`; it does not create Seat documents
+- the archived 2026-09-03 Gate 3 PASS used the same named hierarchy under a verified UID, but the UID is redacted from repository evidence; current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID`, so do not infer deletion/reset causality
 - next allowed work: operator-authorized Gate 3 hierarchy or a different authorized inspection path, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion
 - #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
 - PR #416 is governance/review-readiness infrastructure only
@@ -136,7 +137,7 @@ Residual uncertainty: live secrets, Seat document presence, and the connections 
 
 ### 2026-09-22 production Seat diagnostic gate hardening
 
-- The live production Seat diagnostic remains workflow-dispatch-only and is not auto-triggered.
+- The live production Seat diagnostic remains workflow-dispatch-only and is not auto-triggered. The current negative evidence applies to the configured diagnostic UID/workplace/project scope; historical same-name hierarchy evidence does not prove identity continuity.
 - Added `tests/firestore-seat-shape-diagnostic.test.mjs` to lock the workflow/script environment mapping, canonical Seat filtering, one-active-connection fail-closed rule, and metadata-only reporting posture.
 - The first version of this guard failed because its test assertion contained malformed JavaScript quoting. That was corrected in `48c688f1ed033803002d5f6e594c51d3a255fc0c` without changing the production diagnostic or workflow.
 - Exact-head validation on `48c688f1ed033803002d5f6e594c51d3a255fc0c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS.
@@ -324,7 +325,7 @@ Historical Issues are evidence, not active routing.
 - The repository now carries the next bounded continuation chain: incomplete provider result → durable handoff checkpoint → explicit continuation request → atomic task transition to `waiting_for_continuation` plus `CONTINUE_WAIT` durable event → trusted user-authenticated Edge continuation-request boundary.
 - Continuation requests preserve task/project/checkpoint/request identity, are idempotent on exact retry, and conflict on relation/instruction changes. The continuation boundary does not invoke a provider and does not treat a request as implicit execution approval.
 - The real Edge task-execute source now persists the handoff checkpoint before its durable `handoff_required` result and references that checkpoint in task/result evidence.
-- Live Supabase currently reports `teamai-task-execute` v12, `teamai-seat-provider-bind` v8, `teamai-task-continuation-request` v2, and `teamai-seat-budget-settings` v1. The new `teamai-seat-budget-runtime` Edge source is repository-complete but held from deployment until its Firestore collection-group index is deployed.
+- Live Supabase currently reports `teamai-task-execute` v12, `teamai-seat-provider-bind` v8, `teamai-task-continuation-request` v2, and `teamai-seat-budget-settings` v1. At this 2026-09-22 checkpoint, the new `teamai-seat-budget-runtime` Edge source was repository-complete but held from deployment pending the Firestore collection-group index; that prerequisite was subsequently satisfied by run `36146692843`.
 - Live production Firestore Seat document shape remains unverified from the real dataset. Do not deploy the new runtime path until the real authorized Coder Seat shape and connection relationship are directly inspected.
 - Remaining #392 execution gap: continuation request → authorized fresh-budgeted continuation turn → provider execution → truthful final completion. Gate 4 Firebase emulator proof remains parked/unproven.
 
@@ -333,7 +334,7 @@ Historical Issues are evidence, not active routing.
 - The live `teamai-seat-budget-settings` function is v1 and was source-matched after deployment. An unauthenticated browser-origin smoke returns HTTP 401 with `missing_firebase_id_token`.
 - Seat Budget durable runtime read model is repository-complete. `teamai-seat-budget-runtime` resolves the active/authorized canonical Seat, reads the latest Seat-owned durable `execution-results` record, and exposes usage/accounting provenance without returning provider output.
 - Legacy v12 stub execution is handled truthfully: raw usage may be shown as durable evidence, while remaining/usable generation capacity stays unknown until server-side budget accounting exists.
-- Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. Live runtime-read-model promotion is blocked until that index exists in production.
+- Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. At this 2026-09-22 checkpoint, live runtime-read-model promotion was blocked pending that index; the prerequisite was subsequently satisfied by run `36146692843`.
 - R0 workspace receiving choreography is implemented and independently verified as a renderer-owned presentation capability from the Seat connection route into WORKSPACE_CENTER.
 
 ### 2026-09-23 shared advisory control-plane support

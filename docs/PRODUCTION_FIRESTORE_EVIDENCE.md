@@ -64,6 +64,14 @@ Durable negative evidence from the corrected probe:
 
 The protected test project currently has no `teams` documents, so Gate 3 selectors cannot inspect a Coder Seat until that hierarchy exists again or a different authorized path is supplied. The missing-Seat probe now classifies that condition as `operator_hierarchy_absent`. It writes only additive `runtime-diagnostics/{runId}` evidence and does not create Seat or Connection documents. Historical Gate 3 collection-group run `35726408785` remains immutable evidence of the HTTP 400 query boundary. None of these runs is Seat-shape verification or 029 completion.
 
+## Historical continuity and scope caveat
+
+The archived 2026-09-03 Gate 3 evidence proves that the named `gate3-test-workplace / gate3-test-project / gate3-test-team / gate3-test-seat` hierarchy was successfully exercised through `teamai-domain-bootstrap` and independently read from Firestore under a verified Firebase UID at that time. The archived record intentionally does not expose the UID value.
+
+The current 030 diagnostic resolves its parent path from the protected `TEAMAI_FIREBASE_TEST_UID`, `TEAMAI_FIREBASE_TEST_WORKPLACE_ID`, and `TEAMAI_FIREBASE_TEST_PROJECT_ID` secrets. The repository can therefore prove the current empty-hierarchy condition only for that configured diagnostic scope. It cannot prove from repository-visible evidence alone that the September 3 UID is identical to today's diagnostic UID, nor can it prove that the hierarchy was deleted or reset rather than that the protected diagnostic scope changed.
+
+**Operational consequence:** preserve both evidence records as valid observations. Do not rewrite the September 3 PASS, do not infer deletion/reset causality, and do not fabricate a replacement Seat. An operator-authorized hierarchy or a different authorized inspection path is required for the next Gate 3 read.
+
 ## Index deployment execution boundary
 
 The existing default-branch firestore-index-deploy.yml is the authorized production deployment vehicle for the repository checked-in Firestore indexes.
