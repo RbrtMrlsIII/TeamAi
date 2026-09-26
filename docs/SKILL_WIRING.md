@@ -65,7 +65,7 @@ The authoritative advisory slot registry is `.github/teamai/authority-manifest.y
 
 ## 2026-09-26 production verification routing
 
-Current canonical `main` is `59a871f440dd1d15405164948da9985d1537a6be` after PR #419 and PR #417 merged. Issue #401 remains the current implementation frontier. The existing default-branch `firestore-production-evidence.yml` is the generalized protected Gate 3 dispatch vehicle and already accepts explicit `team_id` + `seat_id` selectors. This routing note does not authorize a production selector or mutate live Firestore state.
+Current canonical `main` is `1b89879b52defea894795e2b72d6176f8c89ce09` after PR #419, PR #417, and PR #421 merged. Issue #401 remains the current implementation frontier. The existing default-branch `firestore-production-evidence.yml` is the generalized protected Gate 3 dispatch vehicle and already accepts explicit `team_id` + `seat_id` selectors. This routing note does not authorize a production selector or mutate live Firestore state.
 
 ## Canonical live-site routing reference
 
