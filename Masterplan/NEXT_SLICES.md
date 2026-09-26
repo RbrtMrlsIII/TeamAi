@@ -128,6 +128,10 @@ The first successor implementation slice is deliberately additive:
 - Rules hardening is downstream of observed field inventory;
 - live index deployment and real-provider execution remain separately gated.
 
+## Review-readiness guidance checkpoint
+
+Issue #415 is a governance/verification infrastructure vehicle and does **not** replace or create the singular current slice above. It reconciles the active reviewer procedure with the PR lifecycle: proof-target-first review, exact-head evidence, explicit distinction between PR verification gaps and broader Issue backlog, and the boundary between AI advisory evidence, `review-readiness`, human approval, and merge authorization. Issue #414 remains historical runtime evidence for the underlying advisory-output symptom.
+
 ## Current blocker
 
 - **Production Firestore Seat shape remains unverified.** Exact-path run `35763013851` wrote negative evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897`: Seat `gate3-test-seat` under team `gate3-test-team` is absent, and the protected test project currently lists **zero** team documents. This is not collection-group HTTP 400. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.

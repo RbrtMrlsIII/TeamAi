@@ -111,6 +111,10 @@ The following classes are forbidden as active routing: retired root Product Law,
 
 <!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; #370/#371 runner runtime-proof investigation is a bounded Verification & CI/Browser concern. -->
 
+### Review-readiness guidance routing
+
+Issue #415 adds the active review-readiness semantic guidance to `skills/governance/ai-advisory-review/SKILL.md` and `.github/pull_request_template.md`. The reviewer procedure is proof-target-first: current exact-head evidence is assessed against the PR's declared scope before broader Issue backlog is classified. The runner's fail-closed structured-output contract remains unchanged.
+
 ### Draft proof target parser boundary
 
 Governance validation consumes the PR body's `Draft proof target` section. The accepted heading contract is level-2 or level-3 Markdown, including the canonical `### Draft proof target` form. Skills do not create this authority; they route the governed procedure.

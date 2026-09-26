@@ -17,6 +17,7 @@ const productWiring=read('Product_Law/WIRING.md');
 const next=read('Masterplan/NEXT_SLICES.md');
 const master=read('Masterplan/MASTERPLAN.md');
 const session=read('AI_ASSISTANT_READ_ME.md');
+const template=read('.github/pull_request_template.md');
 const manifest=JSON.parse(read('.github/teamai/authority-manifest.yml'));
 const slots=manifest.advisory_review.slots;
 const aliases=slots.map(slot=>slot.credential_alias);
@@ -34,12 +35,20 @@ test('review-readiness distinguishes pending checks from completed failures',()=
   assert.match(governance,/REVIEW_READINESS=WAITING_FOR_REQUIRED_CHECKS/);
   assert.match(governance,/if \[ \"\$failed\" -gt 0 \]/);
 });
-test('advisory terminal telemetry separates transport from review quality',()=>{assert.doesNotMatch(runner,/ROUTER_PROVENANCE_FAILURE/);assert.match(runner,/PROVIDER_WALL_CLOCK_TIMEOUT/);assert.match(runner,/timeout-minutes: 35/);assert.match(runner,/PROVIDER_RESPONSE_ERROR_PAYLOAD/);assert.match(runner,/provenance_status/);assert.match(sequence,/Provider HTTP 2xx responses/);assert.match(sequence,/Published model reviews/);assert.match(sequence,/Generation-limit truncations/);assert.match(sequence,/Model\/provider provenance gaps/);});
+test('advisory terminal telemetry separates transport from review quality',()=>{assert.doesNotMatch(runner,/ROUTER_PROVENANCE_FAILURE/);assert.match(runner,/PROVIDER_WALL_CLOCK_TIMEOUT/);assert.match(runner,/PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: '330'/);assert.match(runner,/urlopen\(request, timeout=wall_timeout \+ 15\)/);assert.match(runner,/timeout-minutes: 35/);assert.match(runner,/PROVIDER_RESPONSE_ERROR_PAYLOAD/);assert.match(runner,/provenance_status/);assert.match(sequence,/Provider HTTP 2xx responses/);assert.match(sequence,/Published model reviews/);assert.match(sequence,/Generation-limit truncations/);assert.match(sequence,/Model\/provider provenance gaps/);});
 test('automatic fan-out uses the canonical two-second stagger',()=>{assert.deepEqual(slots.map(s=>s.start_delay_seconds),[0,2,4,6,8]);assert.equal(manifest.advisory_review.automatic.max_spread_seconds,8);assert.match(sequence,/Resolved canonical advisory slot matrix/);assert.match(runner,/START_DELAY_SECONDS/);});
 test('advisory runner quality-validation block preserves Python indentation',()=>{const lines=runner.split('\n');const start=lines.findIndex(line=>line.trim()==='for field in fields:');const end=lines.findIndex((line,index)=>index>start&&line.trim()==='def compact_items(items):');assert.ok(start>0&&end>start);assert.equal(lines[start].match(/^ */)[0].length,18);assert.ok(lines.slice(start+1,end).every(line=>!line.trim()||line.match(/^ */)[0].length>=18));});
 test('provider and review-quality failures remain evidence, not repository validation failures',()=>{assert.match(runner,/REVIEW_QUALITY_FAILED/);assert.match(sequence,/REVIEW_QUALITY_FAILED/);assert.match(sequence,/Advisory evidence status:/);assert.match(sequence,/Provider failures:/);assert.match(sequence,/Review-content quality failures:/);assert.match(runner,/REVIEW_CONTENT_QUALITY_FAILURE/);});
 test('automatic advisory generation does not run on synchronize edits',()=>{assert.match(sequence,/types: \[opened, reopened, ready_for_review\]/);assert.doesNotMatch(sequence,/synchronize, ready_for_review/);});
 test('explicit all-slot final review is available after editing settles',()=>{assert.equal(manifest.advisory_review.manual_final_review.command,'/openrouter-free-all');assert.equal(manifest.advisory_review.manual_final_review.slot_count,5);assert.match(manual,/all-free, free-1, free-2, free-3, free-4, free-5/);assert.match(manual,/openrouter-free-all/);assert.match(manual,/start_delay_seconds: \$\{\{ matrix\.start_delay_seconds \}\}/);});
+test('reviewer prompt enforces proof-target-first classification',()=>{
+  assert.match(runner,/Proof-target classification gate: identify the current PR Draft proof target and Claimed scope first/);
+  assert.match(runner,/A requirement may be a blocking finding or verification gap only when the PR explicitly claims it/);
+  assert.match(runner,/Do not promote an unfinished owning-Issue item, downstream production gate, future slice, or unrelated runtime capability into a PR blocker/);
+  assert.match(runner,/When the packet does not establish whether a requirement belongs to the PR proof target, use ADVISORY_ONLY/);
+  assert.match(skill,/Proof-target classification procedure/);
+  assert.match(skill,/open owning Issue checklist item, downstream production gate, future slice, or unrelated runtime capability must not become a PR blocker/);
+});
 test('advisory review rejects empty or unsupported verdict evidence',()=>{assert.match(runner,/REVIEW_CONTENT_QUALITY_FAILURE/);assert.match(runner,/governance_and_evidence must contain at least one concrete statement/);assert.match(runner,/review_basis must contain at least one concrete statement/);assert.match(runner,/=== EVIDENCE POLICY ===/);assert.match(runner,/Historical commit\/run IDs, prior advisory comments, and earlier measurements are context only/);assert.match(runner,/No requirement for 5\/5 published advisory reviews/);});
 test('advisory output contract is bounded while generation remains provider-native',()=>{assert.equal(manifest.advisory_review.budget,undefined);assert.equal(manifest.advisory_review.output_contract.max_findings_per_section,3);assert.equal(manifest.advisory_review.output_contract.max_item_chars,400);assert.match(manifest.advisory_review.output_contract.selection_policy,/provider\/model-native generation and reasoning limits/);assert.equal(manifest.advisory_review.packet.max_review_packet_chars,260000);assert.equal(manifest.advisory_review.packet.max_governance_context_chars,120000);assert.equal(manifest.advisory_review.packet.max_diff_chars,120000);assert.doesNotMatch(runner,/ADVISORY_MAX_COMPLETION_TOKENS/);assert.doesNotMatch(runner,/max_tokens\s*:/);assert.doesNotMatch(policy,/30,?000-token maximum completion ceiling/i);assert.doesNotMatch(skill,/30,?000 maximum completion tokens/i);assert.doesNotMatch(runner,/ADVISORY_REASONING_EFFORT/);assert.doesNotMatch(runner,/ADVISORY_REASONING_EXCLUDE/);assert.match(runner,/maxItems.: 3/);assert.match(runner,/maxLength.: 400/);assert.equal((runner.match(/'type': 'array'.*?maxItems': 3/g)||[]).length >= 5,true);});
 test('runner hard-locks route and uses structured advisory output',()=>{assert.match(runner,/MODEL:\s*openrouter\/free/);assert.doesNotMatch(runner,/^\s+model:\s*$/m);assert.doesNotMatch(runner,/approve:/i);assert.match(runner,/response_format/);assert.match(runner,/'type': 'json_schema'/);assert.match(runner,/teamai_advisory_review/);assert.match(runner,/failure_path\.exists\(\)/);assert.match(runner,/actions\/upload-artifact@v4/);assert.doesNotMatch(runner,/automatic_outcome_marker/);});
@@ -59,4 +68,28 @@ for(const text of [sequence,runner,manual,policy,wiring,skill,next]) for(const t
 test('retired files are archived, not active',()=>{assert.equal(fs.existsSync(path.join(root,'docs/TEAMAI_029_CURRENT_STATE_MAP.md')),false);assert.equal(fs.existsSync(path.join(root,'.github/workflows/nemotron-copilot-review.yml')),false);assert.equal(fs.existsSync(path.join(root,'skills/governance/nemotron-copilot-review/SKILL.md')),false);assert.equal(fs.existsSync(path.join(root,'docs/archive/TEAMAI_029_CURRENT_STATE_MAP_legacy_2026-09-19.md')),true);});
 test('session snapshot and current slice are explicit',()=>{assert.match(session,/## SESSION SNAPSHOT/);assert.ok(session.includes('main baseline: `87f466fb0edac3784280128785a8fd2dc757e749`'));const currentSlice=next.match(/^## Current Slice\s*\n([^\n]+)/m)?.[1]?.trim();assert.ok(currentSlice);assert.match(session,new RegExp('current slice:\\s*'+escapeRegExp(currentSlice)));});
 assert.match(productWiring,/non-authoritative Wiring interpretation only/);
+test('PR template and governance parser agree on the proof-target heading contract',()=>{
+  assert.match(template,/^### Draft proof target\s*$/m);
+  assert.match(template,/Draft proof target[\s\S]*what this PR is trying to prove/);
+  assert.match(template,/Ready-for-review occurs only after required checks, evidence, canonical synchronization, and governing review conditions pass/);
+  assert.match(template,/Open Issue checklist items, downstream production gates, and future slices are listed as limitations\/observations/);
+  assert.match(template,/AI advisory review is downstream evidence only/);
+});
+test('review-readiness guidance defines proof-target-first AI advisory semantics',()=>{
+  for(const text of [policy,skill,session]){
+    assert.match(text,/proof target/i);
+    assert.match(text,/verification_gaps/);
+    assert.match(text,/review_basis/);
+    assert.match(text,/governance_and_evidence/);
+  }
+  for(const text of [wiring,productWiring,master]){
+    assert.match(text,/review-readiness/i);
+    assert.match(text,/proof target/i);
+  }
+  assert.match(skill,/open Issue item is \*\*not automatically a verification gap for the PR\*\*/);
+  assert.match(skill,/ADVISORY_ONLY.*required when evidence, Issue context, or governing context is materially missing/i);
+  assert.match(session,/Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence/i);
+  assert.match(session,/open owning Issue item or downstream production gate is not automatically a PR gap/i);
+  assert.match(policy,/APPROVE.*no material verification gaps/i);
+});
 test('active advisory contracts mirror the terminal-state machine',()=>{for(const text of [wiring,skill,productWiring,master]) assert.match(text,/REVIEW_QUALITY_FAILED/);assert.match(skill,/There is no inter-stage barrier or pre-sequence timer/);assert.doesNotMatch(skill,/There is no automatic interval before or between slots/);assert.doesNotMatch(policy,/Automatic sequence runs serialize per PR/);assert.match(policy,/isolated by PR exact head/);assert.match(skill,/\/openrouter-free-all/);assert.match(wiring,/\/openrouter-free-all/);});

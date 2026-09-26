@@ -2,9 +2,9 @@
 
 ## 2026-09-25 production frontier reconciliation
 
-- current main: 529fede864df0218947377e1d50e48f096c4a7c7
+- current main: ce1656b7190fa8657253385fd884837ff7d12653
 - current global slice: Issue #401 production Firestore authority, security, and runtime evidence
-- PR #402 is merged; PR #413 is the current draft successor for Firestore index readback normalization
+- PR #402 is merged; PR #413 is merged and its verifier defect is closed
 - fresh index run 36140968869 proved deployment succeeds; readback failed because the live export includes Firestore's implicit trailing __name__ field
 - diagnostic run 36141481871 exposed the exact live index shape; the required execution-results index is present
 - fresh Gate 3 Seat run 36141179411 still reports gate3-test-seat absent and teamDocumentCount=0
@@ -12,18 +12,30 @@
 - #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
 
 
+## 2026-09-25 review-readiness guidance reconciliation
+
+- current main after PR #413 merge: `ce1656b7190fa8657253385fd884837ff7d12653`
+- #413 is merged; the post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843`.
+- Issue #414 records the advisory runtime symptom observed on #413 exact head `76a31a67de08345a5752d87af4808b8a54c86770`: three HTTP-200 reviewer responses failed the existing structured review contract.
+- Issue #415 is the active bounded guidance reconciliation for that symptom. No validator weakening or provider-routing change is authorized by this work.
+- Review lifecycle is: **Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence (when eligible) → independent human review/approval → merge candidate → governed merge → post-merge/runtime/production proof**.
+- `review-readiness` is a promotion/authorization check, not the AI model gate. AI advisory output is evidence only and never authorizes merge.
+- Reviewer semantics are proof-target-first: the PR's declared proof target defines what can be a material `verification_gaps`; an open owning Issue item or downstream production gate is not automatically a PR gap.
+- `governance_and_evidence` records concrete evidence inspected; `review_basis` explains why that evidence supports the verdict; `blocking_findings` identifies material defects; `verification_gaps` contains only material unproven proof-target requirements; `non_blocking_observations` carries relevant but non-blocking context.
+- `APPROVE` requires defensible exact-head evidence and no material proof-target verification gaps. `CHANGES_REQUESTED` requires a finding/gap. `ADVISORY_ONLY` is used when material context or evidence is insufficient or ambiguous.
+- The PR template and `skills/governance/ai-advisory-review/SKILL.md` are the active operator-facing guidance for this semantic contract. The runner's structured validator remains fail-closed.
+
 ## SESSION SNAPSHOT
 
-- Last given prompt: apply the advisory-runner direct-push event-graph repair without mixing it into #404.
+- Last given prompt: reconcile the review-readiness guidance exposed by the #413 advisory review without mixing it into #404.
 - #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
-- main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
-- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
-- replacement branch: backend/030-production-runtime-evidence
-- open implementation vehicles: PR #402 / Issue #401 (active Draft); Draft PR #404 remains the 029 reconstruction vehicle; advisory-runner push-noise repair is infrastructure only
-- active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
+- historical baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
+- current main: `ce1656b7190fa8657253385fd884837ff7d12653`
+- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
+- open implementation/governance vehicles: Issue #401 and its current successor vehicle; Draft PR #404 remains the 029 spatial implementation vehicle; PR #416 / Issue #415 is review-readiness governance infrastructure only
+- active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance; #416 is a governance-only slice and does not replace the product frontier
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
