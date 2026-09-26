@@ -1,10 +1,10 @@
 # TEAM-BACKEND-001 — Live Service Status
 
-**Current observation:** 2026-09-22  
+**Current observation:** 2026-09-26  
 **Phase:** TEAM-BACKEND-001 / backend continuation  
 **Status:** **ENDORSED for bounded recorded scope; residual boundaries remain explicit**
 
-> **Current live-state reconciliation — 2026-09-22:** The active inventory has moved beyond the dated 2026-09-12 census: the trusted `teamai-task-continuation-request` boundary is now deployed as v2. The dated census remains historical evidence; this active status record is the current claim-level inventory and must be re-read before relying on versions.
+> **Current live-state reconciliation — 2026-09-26:** This record includes Gate 3 and Firestore-index reconciliation through 2026-09-26. The service-version inventory below remains the last directly observed connected inventory from 2026-09-22 unless a later date is explicitly attached to a claim; the dated census is historical evidence.
 
 ## Current boundary state
 
