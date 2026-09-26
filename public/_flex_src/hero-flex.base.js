@@ -551,8 +551,19 @@ function cycleRing(ring, direction = 1) {
   return ringFocusAccessibleName(ringFocus);
 }
 
+function isEditableKeyTarget(target) {
+  return target instanceof HTMLElement
+    && (
+      target.isContentEditable
+      || target.matches('input, textarea, select, [contenteditable="true"], [role="textbox"]')
+    );
+}
+
 function handleKeyDown(event) {
   const key = event.key;
+  // Global spatial shortcuts must never hijack native form/text interaction.
+  // Escape remains available so the accessibility/parent-return layer can close context.
+  if (isEditableKeyTarget(event.target) && key !== 'Escape') return;
   if (key.toLowerCase() === 'd') {
     demo ? stopLoop() : startLoop();
     return;
