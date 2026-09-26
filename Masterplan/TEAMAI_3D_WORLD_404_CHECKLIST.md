@@ -315,16 +315,16 @@ Exit: a cold reviewer can trace each product/runtime feature back to the S0-S10 
 Exit: guest machine is coherent showroom behavior. Evidence: E404-S11.
 
 ## N. S12 — Authenticated restoration
-- [ ] Firebase identity handoff.
-- [ ] Workplace restore.
-- [ ] Project restore.
-- [ ] Actual durable Seat population.
-- [ ] Seat-to-Pod projection.
-- [ ] Readiness dimensions.
-- [ ] Reason-bearing unavailable state.
-- [ ] No fabricated durable state.
-- [ ] Correct return path.
-Exit: authenticated world reflects authoritative state.
+- [ ] Firebase identity handoff. Live Firebase identity/session establishment remains external to #404.
+- [x] Workplace restore. The S12 presentation seam consumes an explicit backend-owned Workplace identity from the supplied read model. Evidence: E404-S12.
+- [x] Project restore. The S12 presentation seam consumes an explicit backend-owned Project identity from the supplied read model. Evidence: E404-S12.
+- [ ] Actual durable Seat population. The renderer does not establish live durable Seats; #401 remains the production evidence authority.
+- [x] Seat-to-Pod projection. Explicit durable Seats from the read model project to the canonical 1–10 Seat world presentation through the existing Hero controller. Evidence: E404-S12.
+- [x] Readiness dimensions. Authentication, context, authorization, entitlement, scheduler eligibility, and health remain distinct through the existing Workspace readiness contract. Evidence: E404-S12.
+- [x] Reason-bearing unavailable state. Missing identity, context, authorization, entitlement, scheduler eligibility, health, or durable Seat capacity produces an explicit reason code. Evidence: E404-S12.
+- [x] No fabricated durable state. Presented slots are not accepted as durable Seats; durable projection requires explicit `durable: true` records.
+- [x] Correct return path. Authenticated restoration closes the temporary auth handoff and returns the Hero to the existing machine layer / HERO_WIDE baseline without creating a second runtime.
+Exit: authenticated world reflects authoritative state through an explicit read-model projection. Live Firebase identity and durable-state proof remain separate runtime gates.
 
 ## O. S13 — Workspace capability facility
 - [ ] Workspace center.
