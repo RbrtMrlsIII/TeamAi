@@ -498,6 +498,65 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('[data-transaction-orb]')).toBeHidden();
   });
 
+  test('S22 accessibility baseline supports keyboard focus, Escape parent return, and transaction announcements', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.keyboard.press('Tab');
+    const focus = await page.evaluate(() => {
+      const active = document.activeElement;
+      if (!(active instanceof HTMLElement)) return { focused: false, focusVisible: false, outlineWidth: '0px' };
+      return {
+        focused: true,
+        focusVisible: active.matches(':focus-visible'),
+        outlineWidth: getComputedStyle(active).outlineWidth,
+      };
+    });
+    expect(focus.focused).toBe(true);
+    expect(focus.focusVisible).toBe(true);
+    expect(parseFloat(focus.outlineWidth)).toBeGreaterThan(0);
+
+    const menu = page.getByRole('button', { name: 'Menu', exact: true });
+    await menu.focus();
+    await expect(menu).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(menu).toHaveAttribute('aria-expanded', 'true');
+
+    const settingsTrigger = page.locator('#world-menu [data-settings-open]');
+    await expect(settingsTrigger).toBeVisible();
+    await settingsTrigger.click();
+    const settingsPanel = page.locator('#hero-settings-panel');
+    await expect(settingsPanel).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(settingsPanel).toBeHidden();
+    await expect(settingsTrigger).toBeFocused();
+
+    const authTrigger = page.locator('[data-auth-open]').first();
+    await authTrigger.focus();
+    await page.keyboard.press('Enter');
+    const authPanel = page.locator('#hero-auth-panel');
+    await expect(authPanel).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(authPanel).toBeHidden();
+    await expect(authTrigger).toBeFocused();
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-accessibility',
+        transactionId: 'tx-accessibility',
+        kind: 'recovery',
+        state: 'UNAVAILABLE',
+        errorCode: 'PROVIDER_UNAVAILABLE',
+        authoritative: true,
+      });
+    });
+    await expect(page.locator('[data-hero-accessibility-announcement]')).toHaveText(
+      'Seat transaction recovery is unavailable · PROVIDER_UNAVAILABLE.'
+    );
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+  });
+
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.world-navigation')).toBeVisible();
