@@ -531,7 +531,8 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(settingsPanel).toBeHidden();
     await expect(settingsTrigger).toBeFocused();
 
-    const authTrigger = page.locator('[data-auth-open]').first();
+    const authTrigger = page.locator('#world-menu [data-auth-open]');
+    await expect(authTrigger).toBeVisible();
     await authTrigger.focus();
     await page.keyboard.press('Enter');
     const authPanel = page.locator('#hero-auth-panel');
