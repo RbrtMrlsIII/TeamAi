@@ -518,7 +518,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     const menu = page.getByRole('button', { name: 'Menu', exact: true });
     await menu.focus();
     await expect(menu).toBeFocused();
-    await page.keyboard.press('Enter');
+    await menu.press('Enter');
     await expect(menu).toHaveAttribute('aria-expanded', 'true');
 
     const settingsTrigger = page.locator('#world-menu [data-settings-open]');
