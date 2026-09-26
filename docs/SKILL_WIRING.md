@@ -63,6 +63,10 @@ The active manual commands are /openrouter-free or /free-1 through /free-5 for d
 ### Reviewer configuration
 The authoritative advisory slot registry is `.github/teamai/authority-manifest.yml`. It defines slot numbers, credential aliases, requested `openrouter/free` route, and automatic launch timing. This document intentionally does not duplicate the registry. The reusable runner records actual routed model/provider provenance when exposed. Free does not imply suitable handling for confidential material; provider data-use terms remain a separate governance concern.
 
+## 2026-09-26 production verification routing
+
+Current canonical `main` is `59a871f440dd1d15405164948da9985d1537a6be` after PR #419 and PR #417 merged. Issue #401 remains the current implementation frontier. The existing default-branch `firestore-production-evidence.yml` is the generalized protected Gate 3 dispatch vehicle and already accepts explicit `team_id` + `seat_id` selectors. This routing note does not authorize a production selector or mutate live Firestore state.
+
 ## Canonical live-site routing reference
 
 For public live website validation, all applicable verification routes converge on exactly `https://RbrtMrlsIII.github.io/TeamAi/`. Preserve the `TeamAi` path casing in recorded evidence. Public live-site validation is separate from PR/candidate validation, which remains exact-head CI/browser evidence.
