@@ -1,5 +1,20 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
+## 2026-09-26 Gate 3 operator-hierarchy blocker
+
+- current main: `ce1656b7190fa8657253385fd884837ff7d12653`
+- current global slice: Issue #401 production Firestore authority, security, and runtime evidence
+- PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
+- index verification is RUNTIME-PROVEN and is no longer the current #401 implementation blocker
+- Gate 3 Seat run `36141179411` still reports `gate3-test-seat` absent with `teamDocumentCount=0` / `teamListError=null`
+- the missing-Seat probe now classifies that condition as `operator_hierarchy_absent`; it does not create Seat documents
+- the archived 2026-09-03 Gate 3 PASS used the same named hierarchy under a verified UID, but the UID is redacted from repository evidence; current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID`, so do not infer deletion/reset causality
+- next allowed work: operator-authorized Gate 3 hierarchy or a different authorized inspection path, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion
+- #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
+- PR #416 is governance/review-readiness infrastructure only
+
+
+
 ## 2026-09-25 production frontier reconciliation
 
 - current main: ce1656b7190fa8657253385fd884837ff7d12653
@@ -38,9 +53,9 @@
 - active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance; #416 is a governance-only slice and does not replace the product frontier
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
-- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
-- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, the retired current-state map, or treating reusable-runner zero-job push failures as product proof
-- next allowed work: the protected test project currently lists zero team documents, so Gate 3 Seat inspection cannot proceed until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/index/runtime gates from observed production state.
+- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398, #413
+- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, the retired current-state map, treating reusable-runner zero-job push failures as product proof, or creating live Gate 3 Seat documents
+- next allowed work: Gate 3 remains `operator_hierarchy_absent` until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/runtime gates from observed production state. Do not re-open the proven index verifier lane.
 - handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
 - validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
 - live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
@@ -73,8 +88,8 @@ Residual uncertainty: live secrets, Seat document presence, and the connections 
 - main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
 - current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
-- replacement branch: backend/030-production-runtime-evidence
-- open implementation vehicles: PR #402 / Issue #401 (active Draft); Draft PR #404 remains the 029 reconstruction vehicle; advisory-runner push-noise repair is infrastructure only
+- replacement branch: backend/401-gate3-operator-hierarchy-blocker
+- open implementation vehicles: Issue #401 / Draft successor for Gate 3 operator-hierarchy classification; Draft PR #404 remains the 029 reconstruction vehicle; PR #416 is governance infrastructure only
 - active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
@@ -122,7 +137,7 @@ Residual uncertainty: live secrets, Seat document presence, and the connections 
 
 ### 2026-09-22 production Seat diagnostic gate hardening
 
-- The live production Seat diagnostic remains workflow-dispatch-only and is not auto-triggered.
+- The live production Seat diagnostic remains workflow-dispatch-only and is not auto-triggered. The current negative evidence applies to the configured diagnostic UID/workplace/project scope; historical same-name hierarchy evidence does not prove identity continuity.
 - Added `tests/firestore-seat-shape-diagnostic.test.mjs` to lock the workflow/script environment mapping, canonical Seat filtering, one-active-connection fail-closed rule, and metadata-only reporting posture.
 - The first version of this guard failed because its test assertion contained malformed JavaScript quoting. That was corrected in `48c688f1ed033803002d5f6e594c51d3a255fc0c` without changing the production diagnostic or workflow.
 - Exact-head validation on `48c688f1ed033803002d5f6e594c51d3a255fc0c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS.
@@ -310,7 +325,7 @@ Historical Issues are evidence, not active routing.
 - The repository now carries the next bounded continuation chain: incomplete provider result → durable handoff checkpoint → explicit continuation request → atomic task transition to `waiting_for_continuation` plus `CONTINUE_WAIT` durable event → trusted user-authenticated Edge continuation-request boundary.
 - Continuation requests preserve task/project/checkpoint/request identity, are idempotent on exact retry, and conflict on relation/instruction changes. The continuation boundary does not invoke a provider and does not treat a request as implicit execution approval.
 - The real Edge task-execute source now persists the handoff checkpoint before its durable `handoff_required` result and references that checkpoint in task/result evidence.
-- Live Supabase currently reports `teamai-task-execute` v12, `teamai-seat-provider-bind` v8, `teamai-task-continuation-request` v2, and `teamai-seat-budget-settings` v1. The new `teamai-seat-budget-runtime` Edge source is repository-complete but held from deployment until its Firestore collection-group index is deployed.
+- Live Supabase currently reports `teamai-task-execute` v12, `teamai-seat-provider-bind` v8, `teamai-task-continuation-request` v2, and `teamai-seat-budget-settings` v1. At this 2026-09-22 checkpoint, the new `teamai-seat-budget-runtime` Edge source was repository-complete but held from deployment pending the Firestore collection-group index; that prerequisite was subsequently satisfied by run `36146692843`.
 - Live production Firestore Seat document shape remains unverified from the real dataset. Do not deploy the new runtime path until the real authorized Coder Seat shape and connection relationship are directly inspected.
 - Remaining #392 execution gap: continuation request → authorized fresh-budgeted continuation turn → provider execution → truthful final completion. Gate 4 Firebase emulator proof remains parked/unproven.
 
@@ -319,7 +334,7 @@ Historical Issues are evidence, not active routing.
 - The live `teamai-seat-budget-settings` function is v1 and was source-matched after deployment. An unauthenticated browser-origin smoke returns HTTP 401 with `missing_firebase_id_token`.
 - Seat Budget durable runtime read model is repository-complete. `teamai-seat-budget-runtime` resolves the active/authorized canonical Seat, reads the latest Seat-owned durable `execution-results` record, and exposes usage/accounting provenance without returning provider output.
 - Legacy v12 stub execution is handled truthfully: raw usage may be shown as durable evidence, while remaining/usable generation capacity stays unknown until server-side budget accounting exists.
-- Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. Live runtime-read-model promotion is blocked until that index exists in production.
+- Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. At this 2026-09-22 checkpoint, live runtime-read-model promotion was blocked pending that index; the prerequisite was subsequently satisfied by run `36146692843`.
 - R0 workspace receiving choreography is implemented and independently verified as a renderer-owned presentation capability from the Seat connection route into WORKSPACE_CENTER.
 
 ### 2026-09-23 shared advisory control-plane support
