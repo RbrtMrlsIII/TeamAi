@@ -50,6 +50,23 @@ function normalize(value) {
   return model;
 }
 
+function dispatchTransactionIntent(name, model) {
+  if (typeof window === 'undefined' || !model?.authoritative || !model.transactionId) return false;
+  window.dispatchEvent(new CustomEvent(name, {
+    detail: Object.freeze({
+      seatId: model.seatId,
+      transactionId: model.transactionId,
+      kind: model.kind,
+      state: model.state,
+      errorCode: model.errorCode,
+      presentationOnly: true,
+      notAuthority: true,
+      authoritativeConfirmationRequired: true,
+    }),
+  }));
+  return true;
+}
+
 function render(model) {
   if (typeof document === 'undefined') return;
   const root = document.querySelector('[data-transaction-orb]');
@@ -71,9 +88,16 @@ function render(model) {
   root.dataset.motion = meta.continuousMotionAllowed ? 'motion-allowed' : 'static';
   root.querySelector('[data-transaction-orb-label]').textContent = labelForKind(model.kind);
   root.querySelector('[data-transaction-orb-state]').textContent = state;
-  root.querySelector('[data-transaction-orb-detail]').textContent = model.transactionId
-    ? 'Transaction ' + model.transactionId
-    : 'Presentation state supplied by the runtime read model';
+  root.querySelector('[data-transaction-orb-detail]').textContent = model.errorCode
+    ? (model.transactionId ? 'Transaction ' + model.transactionId + ' · ' + model.errorCode : 'Runtime reason ' + model.errorCode)
+    : (model.transactionId
+      ? 'Transaction ' + model.transactionId
+      : 'Presentation state supplied by the runtime read model');
+  const retry = root.querySelector('[data-transaction-orb-retry]');
+  const cancel = root.querySelector('[data-transaction-orb-cancel]');
+  const actionable = model.authoritative && Boolean(model.transactionId);
+  if (retry) retry.hidden = !(actionable && model.retryable);
+  if (cancel) cancel.hidden = !(actionable && model.cancelable);
   const progress = root.querySelector('[data-transaction-orb-progress]');
   if (model.progress == null) {
     progress.hidden = true;
@@ -101,9 +125,19 @@ function mount(rootNode = document) {
       '<strong data-transaction-orb-label>Transaction</strong>' +
       '<span data-transaction-orb-state>Unavailable</span>' +
       '<small data-transaction-orb-detail>Presentation state supplied by the runtime read model</small>' +
+    '<div class="hero-transaction-orb__actions" data-transaction-orb-actions role="group" aria-label="Transaction actions">' +
+      '<button type="button" data-transaction-orb-retry hidden>Retry</button>' +
+      '<button type="button" data-transaction-orb-cancel hidden>Cancel</button>' +
+    '</div>' +
     '</div>' +
     '<span class="hero-transaction-orb__progress" data-transaction-orb-progress hidden aria-hidden="true"></span>';
 
+  root.querySelector('[data-transaction-orb-retry]').addEventListener('click', () => {
+    dispatchTransactionIntent('teamai:seat-transaction-retry-request', current);
+  });
+  root.querySelector('[data-transaction-orb-cancel]').addEventListener('click', () => {
+    dispatchTransactionIntent('teamai:seat-transaction-cancel-request', current);
+  });
   rootNode.querySelector('.hero-shell')?.append(root);
   return root;
 }
