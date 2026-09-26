@@ -66,7 +66,7 @@ concurrency:
 
 env:
   MAX_REVIEW_CHARS: '12000'
-  PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: '300'
+  PROVIDER_WALL_CLOCK_TIMEOUT_SECONDS: '330'
   VALIDATION_POLL_SECONDS: '10'
   VALIDATION_TIMEOUT_SECONDS: '900'
   REQUIRED_CHECKS: '["governance-drift","evidence-consistency","agent-validation","Recovery integrity","Project tests + canonical package","CodeQL analyze (javascript-typescript)","Playwright browser verification"]'
@@ -544,7 +544,7 @@ jobs:
                       'attempt': attempt,
                       'requested_model': model,
                   }, sort_keys=True), encoding='utf-8')
-                  with urllib.request.urlopen(request, timeout=180) as response:
+                  with urllib.request.urlopen(request, timeout=wall_timeout + 15) as response:
                       status = int(response.status)
                       raw = response.read()
                       headers = dict(response.headers.items())
