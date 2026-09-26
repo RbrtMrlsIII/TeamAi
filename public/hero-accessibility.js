@@ -84,12 +84,14 @@ function handleKeydown(event) {
   const target = event.target;
   if (!(target instanceof Element)) return;
 
-  if ((event.key === 'Enter' || event.key === ' ') && target.closest('[data-world-menu-toggle]')) {
-    const button = target.closest('[data-world-menu-toggle]');
-    if (button instanceof HTMLButtonElement && !event.defaultPrevented) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    const activation = target.closest(
+      '[data-world-menu-toggle], [data-auth-open], [data-settings-open], [data-workspace-open], [data-mcp-open], [data-team-agents-open], [data-storage-open], [data-seat-budget-open], [data-marketplace-open]'
+    );
+    if (activation instanceof HTMLButtonElement && !activation.disabled && !event.defaultPrevented) {
       event.preventDefault();
       event.stopPropagation();
-      button.click();
+      activation.click();
       return;
     }
   }
