@@ -24,7 +24,13 @@ test('live Hero surface exposes Workspace HQ as a first-party capability facilit
   assert.match(facility, /WORKSPACE_CENTER_ID/);
   assert.match(facility, /teamai:workspace-capability-intent/);
   assert.match(facility, /TeamAiWorkspaceFacility/);
-  assert.match(css, /workspace-facility/);
+  assert.match(facility, /data-workspace-team-label/);
+  assert.match(facility, /data-workspace-seat-summary/);
+  assert.match(facility, /data-workspace-task/);
+  assert.match(facility, /data-workspace-evidence/);
+  assert.match(facility, /data-workspace-results/);
+  assert.match(facility, /renderReadModelContext/);
+  assert.match(css, /workspace-facility__read-model-grid/);
 });
 
 test('Workspace facility source/public copies remain exact', () => {
@@ -40,6 +46,37 @@ test('Workspace read-model fails closed without authoritative context', () => {
   assert.equal(model.workplace, null);
   assert.equal(model.project, null);
   assert.equal(model.team, null);
+  assert.deepEqual(model.seats, []);
+  assert.equal(model.activeTask, null);
+  assert.deepEqual(model.evidence, []);
+  assert.deepEqual(model.results, []);
+});
+
+test('Workspace read-model strips runtime metadata when context is not usable', () => {
+  const model = normalizeWorkspaceReadModel({
+    readiness: {
+      authenticated: true,
+      workspaceKnown: false,
+      projectKnown: false,
+      authorized: false,
+      entitled: false,
+      schedulerEligible: false,
+      healthy: false,
+    },
+    workplace: { id: 'private-workplace', label: 'Should not leak' },
+    project: { id: 'private-project', label: 'Should not leak' },
+    team: { id: 'private-team', label: 'Should not leak' },
+    seats: [{ id: 'private-seat', label: 'Should not leak', state: 'READY', kind: 'seat' }],
+    activeTask: { id: 'private-task', label: 'Should not leak' },
+    evidence: [{ id: 'private-evidence', label: 'Should not leak', kind: 'evidence' }],
+    results: [{ id: 'private-result', label: 'Should not leak', kind: 'result' }],
+  });
+
+  assert.equal(model.contextAvailable, false);
+  assert.deepEqual(model.seats, []);
+  assert.equal(model.activeTask, null);
+  assert.deepEqual(model.evidence, []);
+  assert.deepEqual(model.results, []);
 });
 
 test('Workspace read-model exposes normalized context only when all readiness gates are true', () => {
@@ -70,6 +107,28 @@ test('Workspace read-model exposes normalized context only when all readiness ga
   });
   assert.deepEqual(model.seats, [{ id: 'seat-real', label: 'Seat 1', state: 'READY', kind: 'seat' }]);
   assert.deepEqual(model.activeTask, { id: 'task-real', label: 'Active Task' });
+  assert.deepEqual(model.evidence, []);
+  assert.deepEqual(model.results, []);
+});
+
+test('Workspace read-model caps Seat projections at the canonical 10-seat presentation limit', () => {
+  const model = normalizeWorkspaceReadModel({
+    readiness: {
+      authenticated: true,
+      workspaceKnown: true,
+      projectKnown: true,
+      authorized: true,
+      entitled: true,
+      schedulerEligible: true,
+      healthy: true,
+    },
+    workplace: { id: 'workplace-real', label: 'Real Workplace' },
+    project: { id: 'project-real', label: 'Real Project' },
+    team: { id: 'team-real', label: 'Real Team' },
+    seats: Array.from({ length: 14 }, (_, index) => ({ id: 'seat-' + (index + 1), label: 'Seat ' + (index + 1) })),
+  });
+  assert.equal(model.contextAvailable, true);
+  assert.equal(model.seats.length, 10);
 });
 
 test('Workspace facility never embeds invented Workplace or Project choices', () => {

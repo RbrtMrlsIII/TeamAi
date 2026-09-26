@@ -1,6 +1,7 @@
 import { resolveWorkspaceCapabilityReadiness } from './workspace-capability.js';
 
 const MAX_ITEMS = 50;
+const MAX_SEATS = 10;
 
 function text(value, fallback = '') {
   const normalized = String(value ?? '').trim();
@@ -54,6 +55,15 @@ export function normalizeWorkspaceReadModel(input = {}) {
     workplace &&
     project &&
     team;
+  const contextAvailable = Boolean(contextValid);
+  const seats = contextAvailable
+    ? Object.freeze(normalizeItems(input.seats).slice(0, MAX_SEATS))
+    : Object.freeze([]);
+  const activeTask = contextAvailable
+    ? normalizeEntity(input.activeTask || input.task, 'task')
+    : null;
+  const evidence = contextAvailable ? normalizeItems(input.evidence) : Object.freeze([]);
+  const results = contextAvailable ? normalizeItems(input.results) : Object.freeze([]);
 
   return Object.freeze({
     ...readiness,
@@ -61,11 +71,11 @@ export function normalizeWorkspaceReadModel(input = {}) {
     workplace,
     project,
     team,
-    seats: normalizeItems(input.seats),
-    activeTask: normalizeEntity(input.activeTask || input.task, 'task'),
-    evidence: normalizeItems(input.evidence),
-    results: normalizeItems(input.results),
-    contextAvailable: Boolean(contextValid),
+    seats,
+    activeTask,
+    evidence,
+    results,
+    contextAvailable,
     context: contextValid
       ? Object.freeze({ workplace, project, team })
       : null,

@@ -41,6 +41,55 @@ function getReadiness() {
   return readModel;
 }
 
+function renderReadModelList(selector, items, emptyText) {
+  const target = panel?.querySelector(selector);
+  if (!target) return;
+  target.replaceChildren();
+
+  if (!readModel.contextAvailable || !items.length) {
+    const empty = document.createElement('span');
+    empty.className = 'workspace-facility__empty';
+    empty.textContent = emptyText;
+    target.append(empty);
+    return;
+  }
+
+  const list = document.createElement('ul');
+  list.className = 'workspace-facility__read-model-list';
+  items.slice(0, 6).forEach((item) => {
+    const entry = document.createElement('li');
+    const label = document.createElement('strong');
+    label.textContent = item.label;
+    entry.append(label);
+    if (item.state || item.kind) {
+      const meta = document.createElement('span');
+      meta.textContent = [item.kind, item.state].filter(Boolean).join(' · ');
+      entry.append(meta);
+    }
+    list.append(entry);
+  });
+  target.append(list);
+}
+
+function renderReadModelContext() {
+  const teamLabel = panel?.querySelector('[data-workspace-team-label]');
+  const seatSummary = panel?.querySelector('[data-workspace-seat-summary]');
+  const task = panel?.querySelector('[data-workspace-task]');
+
+  if (!readModel.contextAvailable) {
+    if (teamLabel) teamLabel.textContent = 'Unavailable until authorized Workspace read model is available';
+    if (seatSummary) seatSummary.textContent = 'Seat projection unavailable';
+    if (task) task.textContent = 'Active task unavailable';
+  } else {
+    if (teamLabel) teamLabel.textContent = readModel.team?.label || 'Team unavailable';
+    if (seatSummary) seatSummary.textContent = \`\${readModel.seats.length} Seat projection\${readModel.seats.length === 1 ? '' : 's'} supplied by the backend read model\`;
+    if (task) task.textContent = readModel.activeTask?.label || 'No active task reported by the backend read model';
+  }
+
+  renderReadModelList('[data-workspace-evidence]', readModel.evidence, 'No evidence records reported by the backend read model');
+  renderReadModelList('[data-workspace-results]', readModel.results, 'No result records reported by the backend read model');
+}
+
 function updateBranchPreview() {
   const field = panel?.querySelector('[data-workspace-branch]');
   const note = panel?.querySelector('[data-workspace-branch-note]');
@@ -86,6 +135,7 @@ function render() {
   const projectLabel = panel?.querySelector('[data-workspace-project-label]');
   if (workplaceLabel) workplaceLabel.textContent = readModel.workplace?.label || 'Unavailable until authorized Workspace read model is available';
   if (projectLabel) projectLabel.textContent = readModel.project?.label || 'Unavailable until authorized Workspace read model is available';
+  renderReadModelContext();
 
   inventory.innerHTML = listWorkspaceCapabilities().map((capability) => {
     const selected = capability.id === activeCapabilityId;
@@ -99,7 +149,7 @@ function render() {
   }).join('');
 
   request.hidden = false;
-  request.disabled = !readiness.usable;
+  request.disabled = !readiness.usable || !readModel.contextAvailable;
   updateBranchPreview();
 }
 
@@ -176,7 +226,22 @@ function build() {
       '<div><span>Semantic target</span><strong>' + WORKSPACE_CENTER_ID + '</strong></div>' +
       '<div><span>Current Workplace</span><strong data-workspace-name>Unavailable until authorized Workspace read model is available</strong></div>' +
       '<div><span>Current Project</span><strong data-workspace-project-label>Unavailable until authorized Workspace read model is available</strong></div>' +
+      '<div><span>Current Team</span><strong data-workspace-team-label>Unavailable until authorized Workspace read model is available</strong></div>' +
     '</div>' +
+    '<section class="workspace-facility__section" aria-labelledby="workspace-runtime-context-title">' +
+      '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Runtime context</p><h3 id="workspace-runtime-context-title">Current work</h3></div><span>Backend read model</span></div>' +
+      '<div class="workspace-facility__read-model-grid">' +
+        '<div class="workspace-facility__read-model-card"><span>Seat projection</span><strong data-workspace-seat-summary>Seat projection unavailable</strong></div>' +
+        '<div class="workspace-facility__read-model-card"><span>Active task</span><strong data-workspace-task>Active task unavailable</strong></div>' +
+      '</div>' +
+    '</section>' +
+    '<section class="workspace-facility__section" aria-labelledby="workspace-evidence-title">' +
+      '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Continuity</p><h3 id="workspace-evidence-title">Evidence / results</h3></div><span>Metadata only</span></div>' +
+      '<div class="workspace-facility__read-model-grid">' +
+        '<div class="workspace-facility__read-model-card"><span>Evidence</span><div data-workspace-evidence>Evidence unavailable</div></div>' +
+        '<div class="workspace-facility__read-model-card"><span>Results</span><div data-workspace-results>Results unavailable</div></div>' +
+      '</div>' +
+    '</section>' +
     '<section class="workspace-facility__section" aria-labelledby="workspace-capabilities-title">' +
       '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Capability surface</p><h3 id="workspace-capabilities-title">Workspace capabilities</h3></div><span data-workspace-result role="status">Inspection changes presentation only.</span></div>' +
       '<div class="workspace-facility__inventory" data-workspace-inventory role="list"></div>' +
