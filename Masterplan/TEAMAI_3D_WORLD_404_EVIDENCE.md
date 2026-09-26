@@ -122,6 +122,54 @@ Primary sources:
 - [hero-world-profile.js](https://github.com/RbrtMrlsIII/TeamAi/blob/8944ececfd6dfee15a39833107dd3bac932411bd/frontend/spatial/hero-world-profile.js)
 - [machine-core-layout.js](https://github.com/RbrtMrlsIII/TeamAi/blob/8944ececfd6dfee15a39833107dd3bac932411bd/frontend/spatial/machine-core-layout.js)
 
+### E404-S0 — baseline freeze and formal S0–S10 ledger reconciliation
+
+**Claim:** The 029 baseline is frozen as a truthful, replaceable implementation baseline, and the current S0–S10 ledger is reconciled without converting repository capability evidence into premature release completion.
+
+**Audit basis**
+- current #404 repository state before this documentation reconciliation: `0e07fad0ff00503491d9b65a3938f9514b771f31`
+- canonical `main`: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- reviewed #398 merge baseline: `87f466fb0edac3784280128785a8fd2dc757e749`
+
+**Authority sources inspected**
+- `Product_Law/PRODUCT_LAW.md`
+- Issue #278 — 029 product-experience execution ledger
+- Issue #396 — 029 spatial construction guide
+- Issue #400 — canonical frontend/product contract
+- Issue #392 — Seat budget / handoff / continuation authority
+- Issue #83 — visual/material direction
+- `Masterplan/MASTERPLAN.md`
+- `POLICY.md`
+- `docs/SKILL_WIRING.md`
+- `docs/TEAMAI_3D_HERO_TREE_CENSUS.{csv,json,md}`
+- `docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml`
+- `Masterplan/TEAMAI_3D_WORLD_404_AUTHORITY_MATRIX.md`
+
+**Frozen baseline inventory**
+- Top-level physical machine composition: **1 HUB-CORE + up to 10 Seat/Pod assemblies + 4 outer facility housings**. Internal authored component roles remain owned by their existing S2/S3/S6/S7 assemblies.
+- Semantic domain tree remains `Account → Workplace → Project → Seat`.
+- Hero Seat hierarchy remains `Seat Shell → Connection → Behavior → Toolkit → Capabilities → Authorization → Workspace Scope → Task/Evidence`.
+- Seat division inventory remains the seven authored divisions: `SEAT_CONNECTION`, `SEAT_BEHAVIOR`, `SEAT_TOOLKIT`, `SEAT_CAPABILITIES`, `SEAT_AUTHORIZATION`, `SEAT_WORKSPACE_SCOPE`, `SEAT_TASK_EVIDENCE`.
+- Product facilities remain broader than the Seat hierarchy and are not converted into invented Seat children.
+- Geometry ownership remains separated between authored world profile/core layout, S4 division assembly/presentation, S5 expansion mechanism, S6 facility assembly, S7 facility machinery, and camera subjects.
+- Choreography ownership remains partitioned across semantic hierarchy state, physical expansion, S8 topology, S9 signal projection, S10 camera specification, and the renderer/controller orchestration boundary.
+- Aggregate topology remains owned by `frontend/spatial/machine-world-topology.js`; renderable connections remain projections of semantic edges.
+- Browser entrypoints remain the classic public entrance at `/` plus the direct world surface at `/hero/`, with `public/experience-rebaseline.js` owning layer/route choreography and `public/hero-flex.js` owning the controller/input boundary.
+- Active structural implementation is in `frontend/spatial/*` with synchronized public delivery copies; historical material remains under `docs/archive/` and retired routing is not treated as active authority.
+- The available endorsed visual reference is `assets/3D_Vision/hailuo.mp4`, explicitly non-authoritative and interpreted by `docs/TEAMAI_3D_HERO_VISION_REFERENCE_HAILUO.md`. The archived PRE-029 reference board `docs/spatial-exploration/TEAM-EXPERIENCE-027-SPATIAL-EXPLORATION-REFERENCE-BOARD.png` remains preserved as archive material.
+- No unavailable video timing is inferred. Current timing values remain implementation measurements / starting values until final browser evidence establishes a better motion contract.
+
+**Formal ledger decision**
+- **S0: CLOSED** as a baseline-freeze/inventory slice.
+- **S1: PARTIAL / OPEN** because state/effect projection remains deliberately unresolved until S9/S28/S29.
+- **S2: CAPABILITY PROVEN / FORMAL EXIT OPEN**.
+- **S9: CAPABILITY PROVEN / FORMAL EXIT OPEN**.
+- **S10: CAPABILITY PROVEN / FORMAL EXIT OPEN**.
+- S3–S8 remain repository-verified capabilities under their existing evidence records; they are not reopened.
+
+**Status:** RECONCILED. This record distinguishes baseline closure from implementation completion and preserves the remaining formal gaps without creating a new implementation authority.
+
+
 ### E404-S1 — root inheritance and authority
 
 Primary evidence:
