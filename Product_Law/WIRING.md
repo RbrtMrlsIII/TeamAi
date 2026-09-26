@@ -75,7 +75,11 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.
 
 
-## 2026-09-26 production verification routing\n\nCurrent canonical `main` is `59a871f440dd1d15405164948da9985d1537a6be` after PR #419 and PR #417 merged. The remaining Issue #401 Gate 3 responsibility is live Seat-shape evidence. The default-branch `firestore-production-evidence.yml` already provides the generalized protected Team/Seat selector path; this Wiring entry does not authorize a selector or create production data.\n\nFirestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843` after PR #413 merged. This Wiring entry only routes the remaining Issue #401 verification responsibility to Gate 3 Seat-shape evidence. A `teamDocumentCount=0` result with a successful team list is classified as `operator_hierarchy_absent` and does not authorize Seat creation, Rules closure, or runtime promotion.
+## 2026-09-26 production verification routing
+
+Current canonical `main` is `59a871f440dd1d15405164948da9985d1537a6be` after PR #419 and PR #417 merged. The remaining Issue #401 Gate 3 responsibility is live Seat-shape evidence. The default-branch `firestore-production-evidence.yml` already provides the generalized protected Team/Seat selector path; this Wiring entry does not authorize a selector or create production data.
+
+Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843` after PR #413 merged. This Wiring entry only routes the remaining Issue #401 verification responsibility to Gate 3 Seat-shape evidence. A `teamDocumentCount=0` result with a successful team list is classified as `operator_hierarchy_absent` and does not authorize Seat creation, Rules closure, or runtime promotion.
 
 ## 2026-09-25 production verification routing
 
