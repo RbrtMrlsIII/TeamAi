@@ -390,6 +390,76 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(orb).toBeHidden();
   });
 
+  test('S21 read-model bridge forwards transaction state into the live Hero presenter', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+          transaction: {
+            transactionId: 'tx-read-model',
+            kind: 'mcp-invocation',
+            state: 'LOADING',
+            progress: 0.6,
+            authoritative: true,
+          },
+        },
+      }));
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-label]')).toHaveText('MCP invocation');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Loading');
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+          transaction: {
+            transactionId: 'tx-read-model',
+            kind: 'mcp-invocation',
+            state: 'COMPLETED',
+            authoritative: true,
+          },
+        },
+      }));
+    });
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Completed');
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+        },
+      }));
+    });
+    await expect(orb).toBeVisible();
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+          transaction: null,
+        },
+      }));
+    });
+    await expect(orb).toBeHidden();
+  });
+
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.world-navigation')).toBeVisible();
