@@ -498,6 +498,64 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('[data-transaction-orb]')).toBeHidden();
   });
 
+  test('S22 accessibility preserves menu disclosure semantics and native form typing', async ({ page }) => {
+    await page.goto('/hero/');
+
+    const menu = page.getByRole('button', { name: 'Menu', exact: true });
+    const popover = page.locator('#world-menu');
+
+    await expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await expect(popover).toBeHidden();
+    await expect(popover).toHaveAttribute('aria-hidden', 'true');
+
+    await menu.focus();
+    await menu.press('Enter');
+    await expect(menu).toHaveAttribute('aria-expanded', 'true');
+    await expect(popover).toBeVisible();
+    await expect(popover).toHaveAttribute('aria-hidden', 'false');
+
+    await page.keyboard.press('Escape');
+    await expect(popover).toBeHidden();
+    await expect(popover).toHaveAttribute('aria-hidden', 'true');
+    await expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeFocused();
+
+    await menu.press('Enter');
+    const authTrigger = page.locator('#world-menu [data-auth-open]').first();
+    await authTrigger.click();
+
+    const email = page.getByLabel('Email').first();
+    await expect(email).toBeVisible();
+
+    const before = await page.evaluate(() => ({
+      motion: (window as any).TeamAiHero.getReducedMotion(),
+      seatCount: (window as any).TeamAiHero.getSeatCount(),
+      state: (window as any).TeamAiHero.getState(),
+    }));
+
+    await email.fill('');
+    await email.press('m');
+    await email.press('1');
+    await email.press('d');
+
+    await expect(email).toHaveValue('m1d');
+
+    const after = await page.evaluate(() => ({
+      motion: (window as any).TeamAiHero.getReducedMotion(),
+      seatCount: (window as any).TeamAiHero.getSeatCount(),
+      state: (window as any).TeamAiHero.getState(),
+    }));
+    expect(after).toEqual(before);
+
+    await email.press('Enter');
+    const afterEnter = await page.evaluate(() => ({
+      motion: (window as any).TeamAiHero.getReducedMotion(),
+      seatCount: (window as any).TeamAiHero.getSeatCount(),
+      state: (window as any).TeamAiHero.getState(),
+    }));
+    expect(afterEnter).toEqual(before);
+  });
+
   test('S22 accessibility baseline supports keyboard focus, Escape parent return, and transaction announcements', async ({ page }) => {
     await page.goto('/hero/');
 
