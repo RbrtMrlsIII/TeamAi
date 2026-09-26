@@ -34,3 +34,24 @@ test('S21 transaction presentation rejects unknown operation kinds', () => {
   }), null);
   assert.equal(getSeatTransactionPresentation(), null);
 });
+test('S21 never presents completion without authoritative runtime state', () => {
+  assert.equal(setSeatTransactionPresentation({
+    seatId: 'seat-1',
+    transactionId: 'tx-complete-untrusted',
+    kind: 'ai-execution',
+    state: 'COMPLETED',
+    authoritative: false,
+  }), null);
+  assert.equal(getSeatTransactionPresentation(), null);
+
+  const model = setSeatTransactionPresentation({
+    seatId: 'seat-1',
+    transactionId: 'tx-complete-trusted',
+    kind: 'ai-execution',
+    state: 'COMPLETED',
+    authoritative: true,
+  });
+  assert.equal(model?.state, 'COMPLETED');
+  assert.equal(model?.authoritative, true);
+  clearSeatTransactionPresentation();
+});
