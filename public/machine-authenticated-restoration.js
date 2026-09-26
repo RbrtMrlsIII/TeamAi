@@ -67,14 +67,14 @@ function normalizeDurableSeat(value) {
   });
 }
 
-function unavailable(reason, workspace, identity) {
+function unavailable(reason, workspace, identity, durableSeats = []) {
   return Object.freeze({
     ...AUTHENTICATED_RESTORATION_SPATIAL_CONTEXT,
     source: 'backend-read-model',
     identity,
     workspace,
-    durableSeats: Object.freeze([]),
-    durableSeatCount: 0,
+    durableSeats: Object.freeze(durableSeats),
+    durableSeatCount: durableSeats.length ? clampSeatCount(durableSeats.length) : 0,
     state: workspace.authenticated
       ? RESTORATION_STATES.AUTHENTICATED_UNAVAILABLE
       : RESTORATION_STATES.AUTHENTICATION_REQUIRED,
@@ -119,24 +119,20 @@ export function normalizeAuthenticatedRestorationReadModel(input = {}) {
     return unavailable(REASONS.NOT_ENTITLED, workspace, identity);
   }
 
-  if (!workspace.schedulerEligible) {
-    return unavailable(REASONS.SCHEDULER_UNAVAILABLE, workspace, identity);
-  }
-
-  if (!workspace.healthy) {
-    return unavailable(REASONS.RUNTIME_UNHEALTHY, workspace, identity);
-  }
-
   const sourceSeats = Array.isArray(input.seats) ? input.seats : [];
   const durableSeats = sourceSeats.map(normalizeDurableSeat).filter(Boolean);
 
   if (durableSeats.length > MAX_SEAT_COUNT) {
-    return unavailable(REASONS.DURABLE_SEAT_CAPACITY_INVALID, workspace, identity);
+    return unavailable(REASONS.DURABLE_SEAT_CAPACITY_INVALID, workspace, identity, durableSeats);
   }
 
   if (durableSeats.length < 1) {
     return unavailable(REASONS.DURABLE_SEATS_UNAVAILABLE, workspace, identity);
   }
+
+  let readinessReason = null;
+  if (!workspace.schedulerEligible) readinessReason = REASONS.SCHEDULER_UNAVAILABLE;
+  else if (!workspace.healthy) readinessReason = REASONS.RUNTIME_UNHEALTHY;
 
   return Object.freeze({
     ...AUTHENTICATED_RESTORATION_SPATIAL_CONTEXT,
@@ -145,9 +141,11 @@ export function normalizeAuthenticatedRestorationReadModel(input = {}) {
     workspace,
     durableSeats: Object.freeze(durableSeats),
     durableSeatCount: clampSeatCount(durableSeats.length),
-    state: RESTORATION_STATES.AUTHENTICATED_READY,
-    available: true,
-    reason: null,
+    state: readinessReason
+      ? RESTORATION_STATES.AUTHENTICATED_UNAVAILABLE
+      : RESTORATION_STATES.AUTHENTICATED_READY,
+    available: readinessReason == null,
+    reason: readinessReason,
     returnPath: 'world',
     presentationOnly: true,
     notAuthority: true,
