@@ -16,6 +16,10 @@
 - [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented `gate3-test-team` / `gate3-test-seat` and listed zero team documents. Inspection cannot proceed until an operator-authorized Team/Seat pair is supplied through the existing generalized dispatch vehicle or an authorized hierarchy exists under the documented selector.
 
 
+## 2026-09-26 Post-#421 current-head reconciliation
+
+- [x] PR #421 merged into canonical `main` as `1b89879b52defea894795e2b72d6176f8c89ce09`; the governance/current-state reconciliation is now landed. This merge changed documentation authority records only; no product, runtime, Seat, Connection, Rules, provider, or deployment state was changed by #421.
+
 ## 2026-09-25 Issue #401 production-readback reconciliation
 
 [x] Firestore index verification is RUNTIME-PROVEN after PR #413 merged and default-branch run `36146692843` passed deploy plus normalized readback. The live required execution-results index is present; the prior verifier result was a false negative caused by Firestore's implicit trailing __name__ field in deployed readback.
