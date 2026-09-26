@@ -99,15 +99,26 @@ export function normalizeAuthenticatedRestorationReadModel(input = {}) {
     return unavailable(REASONS.IDENTITY_UNAVAILABLE, workspace, null);
   }
 
-  if (!workspace.workplace) {
+  const sourceWorkplace = input.workplace || input.workspace;
+  const sourceProject = input.project;
+  const sourceTeam = input.team;
+
+  const hasEntity = (value) => {
+    if (!value || typeof value !== 'object') return false;
+    const id = text(value.id || value.workplaceId || value.projectId || value.teamId);
+    const label = text(value.label || value.name);
+    return Boolean(id && label);
+  };
+
+  if (!hasEntity(sourceWorkplace)) {
     return unavailable(REASONS.WORKPLACE_UNAVAILABLE, workspace, identity);
   }
 
-  if (!workspace.project) {
+  if (!hasEntity(sourceProject)) {
     return unavailable(REASONS.PROJECT_UNAVAILABLE, workspace, identity);
   }
 
-  if (!workspace.team) {
+  if (!hasEntity(sourceTeam)) {
     return unavailable(REASONS.TEAM_UNAVAILABLE, workspace, identity);
   }
 
