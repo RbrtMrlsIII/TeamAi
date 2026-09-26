@@ -174,7 +174,7 @@ function publish(model) {
       authenticated: Boolean(model.workspace.authenticated),
       state: model.state,
       reason: model.reason,
-      seatCount: model.available ? model.durableSeatCount : null,
+      seatCount: model.durableSeatCount > 0 ? model.durableSeatCount : null,
     });
   }
 
