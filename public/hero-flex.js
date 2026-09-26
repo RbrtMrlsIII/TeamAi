@@ -148,6 +148,9 @@ let navOrbitPitch = 0;
 let navZoom = 1;
 let lastNavBaseCameraId = 'HERO_WIDE';
 let authTransitionOpen = false;
+let authenticatedContext = false;
+let authenticatedRestorationState = 'AUTHENTICATION_REQUIRED';
+let authenticatedRestorationReason = null;
 let lastFrameAt = performance.now();
 let lastNavigationInputAt = performance.now();
 let touchState = null;
@@ -360,7 +363,7 @@ function cycleTurn(now) {
 
 function getGuestMachineState() {
   return resolveMachineGuestPresentation({
-    authenticated: false,
+    authenticated: authenticatedContext,
     authTransition: authTransitionOpen,
     worldLayer: shell.dataset.heroLayer === 'machine',
     reducedMotion,
@@ -402,6 +405,11 @@ function updateLabels() {
   if (stateLabel) stateLabel.textContent = state;
   const seat = seats[selectedSeat] || seats[0];
   let seatText = `${state === 'IDLE' ? 'Next: ' : ''}${seat?.label || 'Web AI Seat'} · ${seatCount} seat${seatCount === 1 ? '' : 's'} presented`;
+  if (authenticatedContext && authenticatedRestorationState === 'AUTHENTICATED_READY') {
+    seatText = `${seat?.label || 'Web AI Seat'} · ${seatCount} durable seat${seatCount === 1 ? '' : 's'} restored`;
+  } else if (authenticatedContext && authenticatedRestorationState === 'AUTHENTICATED_UNAVAILABLE') {
+    seatText = `Authenticated · ${authenticatedRestorationReason || 'backend context unavailable'}`;
+  }
 
   if (hierarchyRuntime.openParentId && hierarchyRuntime.focusedLeafId === HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE) {
     seatText = healthLeafAccessibleName(hierarchyRuntime.healthStatus);
@@ -741,6 +749,41 @@ window.addEventListener('teamai:hero-auth-visibility', (event) => {
   updateGuestPresentation();
 });
 
+function setAuthenticatedRestorationState(next = {}) {
+  authenticatedContext = next.authenticated === true;
+  authenticatedRestorationState = String(next.state || (authenticatedContext
+    ? 'AUTHENTICATED_UNAVAILABLE'
+    : 'AUTHENTICATION_REQUIRED'));
+  authenticatedRestorationReason = next.reason ? String(next.reason) : null;
+  if (!authenticatedContext) {
+    setSeatCount(GUEST_SEAT_COUNT);
+  } else if (Number.isInteger(next.seatCount) && next.seatCount >= 1) {
+    setSeatCount(next.seatCount);
+  }
+  if (authenticatedContext) authTransitionOpen = false;
+  updateGuestPresentation();
+  updateLabels();
+  return Object.freeze({
+    authenticated: authenticatedContext,
+    state: authenticatedRestorationState,
+    reason: authenticatedRestorationReason,
+    seatCount,
+    presentationOnly: true,
+  });
+}
+
+window.addEventListener('teamai:authenticated-restoration-state', (event) => {
+  const detail = event.detail || {};
+  if (detail.workspace && detail.state) {
+    setAuthenticatedRestorationState({
+      authenticated: detail.workspace.authenticated === true,
+      state: detail.state,
+      reason: detail.reason,
+      seatCount: detail.available ? detail.durableSeatCount : null,
+    });
+  }
+});
+
 window.TeamAiHero = {
   setSeatCount,
   getSeatCount: () => seatCount,
@@ -755,6 +798,7 @@ window.TeamAiHero = {
   getReducedMotion: () => reducedMotion,
   setReducedMotion,
   getGuestMachineState,
+  setAuthenticatedRestorationState,
   getNavOrbitYaw: () => navOrbitYaw,
   getHierarchyState,
   selectSeatShell,
