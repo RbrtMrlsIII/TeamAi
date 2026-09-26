@@ -75,9 +75,13 @@ This clarification is a non-authoritative Wiring interpretation only; it does no
 `Masterplan/NEXT_SLICES.md` is the single current-slice authority. Downstream field wiring, validation, and procedural tooling should derive the current slice from that source rather than duplicating an Issue number or creating a parallel current-state pointer. Historical Issue/PR references remain provenance only.
 
 
+## 2026-09-26 production verification routing
+
+Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843` after PR #413 merged. This Wiring entry only routes the remaining Issue #401 verification responsibility to Gate 3 Seat-shape evidence. A `teamDocumentCount=0` result with a successful team list is classified as `operator_hierarchy_absent` and does not authorize Seat creation, Rules closure, or runtime promotion.
+
 ## 2026-09-25 production verification routing
 
-The live Firestore production index is now confirmed present by sanitized readback run `36141481871`; the remaining verification defect belongs to the repository verifier and is carried by Draft PR #413. This Wiring entry only routes the verification responsibility to Issue #401 / PR #413. It does not create production authority, change the checked-in index definition, or authorize live runtime promotion.
+The live Firestore production index was confirmed present by sanitized readback run `36141481871`; the historical verification defect belonged to the repository verifier and was repaired by merged PR #413. This Wiring entry only routed that verification responsibility to Issue #401 / PR #413. It did not create production authority, change the checked-in index definition, or authorize live runtime promotion.
 
 ### 2026-09-24 029 spatial acceptance routing
 

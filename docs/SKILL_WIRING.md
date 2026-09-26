@@ -14,7 +14,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 |---|---|---|
 | Product & Governance | `skills/governance/**` + ORUCAVEAM | governance validators |
 | Backend & Runtime | `skills/backend/**` | backend/runtime verification |
-| Issue #401 verifier-readback successor | applicable backend/verification Skills | Firestore index readback + production-evidence verification |
+| Issue #401 Gate 3 Seat-shape successor | applicable backend/verification Skills | production Firestore Seat probe + operator-hierarchy classification |
 | Frontend & Experience | `skills/frontend/**` | tests + browser verification |
 | Integration & Contracts | applicable backend/frontend contract Skills | contract/integration tests |
 | Verification & CI/Browser | `skills/verification/**` | CI/browser/evidence |
@@ -138,7 +138,7 @@ The 029 PR #404 structural correction stays within the existing Machine Builder 
 
 ## 030 successor routing
 
-PR #398 is the reviewed 029 structural baseline now landed on `main`. The active Skill-routing frontier is Issue #401 / successor PR #402 for production Firestore authority, security, and runtime evidence. Skills continue to provide reusable procedures only; they do not acquire production-data, entitlement, runtime, or merge authority.
+PR #398 is the reviewed 029 structural baseline now landed on `main`. The active Skill-routing frontier is Issue #401 for production Firestore authority, security, and runtime evidence. PR #413 closed the index-verifier false negative; remaining #401 routing is Gate 3 Seat-shape evidence classified as `operator_hierarchy_absent` until an operator-authorized hierarchy exists. Skills continue to provide reusable procedures only; they do not acquire production-data, entitlement, runtime, or merge authority, and they must not create live Seat documents.
 
 ### 2026-09-23 advisory issue preflight
 

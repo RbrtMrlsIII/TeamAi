@@ -8,12 +8,12 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / IN PROGRESS. PR #398 is merged as the reviewed 029 structural baseline. Issue #401 and successor PR #402 are now the sole implementation frontier for production Firestore authority, security, and runtime evidence. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / IN PROGRESS. PR #398 is merged as the reviewed 029 structural baseline. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier; the current successor is Gate 3 Seat-shape evidence, which is blocked by an absent operator-authorized test hierarchy. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
 | Spatial renderer | Canonical source renderer, controller split, semantic topology, adaptive geometry, R0/R1/R2, Seat-1 wiring, camera choreography | exact-head source/test + Browser proof on current head | final deployed visual acceptance remains open |
-| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository contracts and tests | real production Seat inspection remains open; default-branch diagnostic vehicle now runs the exact-path probe |
+| Firestore Seat | Canonical team-nested resolver, explicit persisted-to-domain identity mapping, Seat-owned budget/config | repository contracts and tests; missing-Seat path classifies `operator_hierarchy_absent` | real production Seat inspection remains open; documented Gate 3 selectors currently list zero team documents |
 | Seat connection/provider | Seat-owned binding, credential loading, active connection resolution | repository + deployed function source reconciliation | production execution-capable relationship remains unproven |
 | Task execution | Real-provider Edge source with canonical Seat-owned connection authority, truthful termination, durable handoff checkpoint, continuation execution | Full-System/Security/contract proof | live `teamai-task-execute` remains v12; promotion gated |
 | Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E + deployed request boundary | live provider continuation remains open |
@@ -80,7 +80,7 @@ Green CI does not prove Firebase runtime state, provider execution, production d
 - R0 workspace receiving choreography now has a semantic presentation model and canonical WebGL rendering pass from the Seat connection route into `WORKSPACE_CENTER`.
 - Seat Budget Settings is a real end-to-end configuration capability through a trusted Edge boundary and canonical Seat transaction. Its live function is deployed as `teamai-seat-budget-settings` v1.
 - Seat Budget durable runtime read model is implemented and exact-head verified. It reads the latest Seat-owned `execution-results` evidence and distinguishes authoritative budget accounting from legacy raw usage.
-- Firestore collection-group index configuration is checked into `firestore.indexes.json`, with a manual indexes-only deployment workflow. Live promotion of `teamai-seat-budget-runtime` remains blocked until that index exists in production.
+- Firestore collection-group index configuration is checked into `firestore.indexes.json`, with a manual indexes-only deployment workflow. At this 2026-09-22 checkpoint, live promotion of `teamai-seat-budget-runtime` was blocked pending index deployment; the prerequisite was subsequently satisfied and is now RUNTIME-PROVEN by run `36146692843`.
 
 - R1/R2 browser regression was diagnosed from the exact-head Browser artifact and repaired at `b2957c4430ac66d970ab0db695bc04b3f90eed4c`; the canonical Browser gate passes. A dedicated canonical R1/R2 articulation browser contract now runs on every exact head. This closes the observed render-loop exception and adds runtime proof, but does not complete final spatial visual acceptance.
 
@@ -132,7 +132,8 @@ The first successor implementation slice is deliberately additive:
 - production evidence remains manually dispatched and protected by Actions secrets;
 - the default-branch `firestore-seat-shape-diagnostic.yml` filename is the current dispatch vehicle for that probe;
 - Rules hardening is downstream of observed field inventory;
-- live index deployment and real-provider execution remain separately gated.
+- live `execution-results` index deployment/readback is RUNTIME-PROVEN by run `36146692843`;
+- real-provider execution remains separately gated behind Gate 3 Seat proof.
 
 ## Review-readiness guidance checkpoint
 
@@ -140,13 +141,14 @@ Issue #415 is a governance/verification infrastructure vehicle and does **not** 
 
 ## Current blocker
 
-- **Production Firestore Seat shape remains unverified.** Exact-path run `35763013851` wrote negative evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897`: Seat `gate3-test-seat` under team `gate3-test-team` is absent, and the protected test project currently lists **zero** team documents. This is not collection-group HTTP 400. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
+- **Production Firestore Seat shape remains unverified and is classified as `operator_hierarchy_absent`.** Fresh Gate 3 run `36141179411` on main `529fede864df0218947377e1d50e48f096c4a7c7` returned 404 for documented `gate3-test-team` / `gate3-test-seat` with `teamDocumentCount=0` and `teamListError=null` (run-scoped evidence `run-2026-09-25T13-28-39-012Z-7f6a60cf-a26`). Earlier exact-path run `35763013851` recorded the same empty-hierarchy condition. This is not a collection-group HTTP 400, not an index defect, and not a probe-auth failure. The probe does not create Seat documents. The archived 2026-09-03 Gate 3 PASS proves that the same named hierarchy was successfully exercised under a verified Firebase UID at that earlier time, but the archived record does not expose the UID value; the current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID` secret. Therefore repository evidence does not establish whether the current empty hierarchy is a deletion/reset event or a scope/identity change. Inspection cannot proceed until an operator-authorized team/Seat hierarchy exists or a different authorized path is supplied. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
 - **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
 - **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
-- **Firestore index definition is deployed in the live project, but repository readback verification is currently blocked by a verifier false-negative.** Fresh run `36140968869` on main confirmed `firebase deploy --only firestore:indexes` succeeds. Diagnostic run `36141481871` showed the required `execution-results` collection-group index is present with Firestore's implicit trailing `__name__ DESCENDING` field. PR #413 normalizes that implicit representation; a fresh default-branch verification run is required after the fix reaches `main`.
+- **Firestore index verification is RUNTIME-PROVEN.** PR #413 merged at `ce1656b7190fa8657253385fd884837ff7d12653`. Fresh default-branch run `36146692843` passed deploy and normalized readback (`requiredCount=1`, `deployedCount=2`, `missing=[]`). The unrelated extra live index remains preserved; no `--force` deletion was used. This is no longer a current implementation blocker.
+- **`teamai-seat-budget-runtime` remains undeployed.** The former index prerequisite is satisfied; live promotion is now gated on Gate 3 Seat-shape evidence, not on index presence.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398 and #402 are already merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle; PR #413 is the current Draft #401 verifier successor and remains separate from spatial implementation.
+- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
 
 ### Shared CI support: advisory issue preflight
 
