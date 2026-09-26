@@ -232,15 +232,21 @@ Exact-head tests prove world, pod, division, facility, expansion, and return mod
 - public/index.html — public entrance and world surfaces
 - frontend/spatial/seat-capacity.js — canonical 1–10 Seat capacity rule
 
-**Fresh exact-head evidence**
-- head: d7c442a2744f1eb7174a373a7625f37d332a1fc1
+**Exact-head evidence — 2026-09-26**
+- head: `6ac89b6afea376adfa5232621ac22c62a983baa9`
 - PR #404: OPEN / DRAFT
-- main base: 76da305f0ec3efb3d368b22fb70748f0051f4d15
-- Full-System run 36237775981 — PASS; project tests, typecheck, trusted Edge typecheck, runtime parity, Full Project ZIP all completed successfully.
-- Browser run 36237775975 — PASS; exact-head checkout, canonical Hero synchronization, runtime parity, Playwright browser verification, and browser artifact upload completed successfully.
-- Security run 36237775974 — PASS; CodeQL analysis completed successfully.
-- Deep Security run 36237776017 — PASS.
-- Governance Integrity run 36237775966 — PASS; evidence-consistency, governance-drift, and agent-validation succeeded; review-readiness was skipped because #404 remains Draft.
+- main base: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- Repository Full-System Verification: [36238256329](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36238256329) — **PASS**
+  - Project tests: **1,098 passed / 0 failed / 0 skipped**
+  - typecheck, trusted Edge typecheck, committed machine spatial runtime parity, Full Project ZIP, and recovery integrity all passed.
+- Canonical Browser Verification: [36238256320](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36238256320) — **PASS**
+  - exact-head checkout, canonical Hero synchronization, machine runtime parity, focused browser machine tests, and Playwright verification all passed.
+  - Playwright result: **67 passed**.
+- Security Static Analysis: [36238256336](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36238256336) — **PASS**; CodeQL completed successfully.
+- Deep Security Static Analysis: [36238256378](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36238256378) — **PASS**; gosec, MobSF, Semgrep CE, Bandit, SonarQube/SonarCloud, and Brakeman completed successfully.
+- Governance Integrity: [36238299283](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36238299283) — **PASS**; evidence-consistency, governance-drift, and agent-validation succeeded. Review-readiness was skipped because #404 remains Draft.
+- Browser artifact: `browser-verification-6ac89b6afea376adfa5232621ac22c62a983baa9`, artifact ID `10904517583`, 1,962,265 bytes, SHA-256 `e60f744b049855ae467d3fa06ef52ae841d736a72ca936cbf2caf5f0694a9db5`, expires 2026-10-11.
+- Full-project artifact: `full-project-6ac89b6afea376adfa5232621ac22c62a983baa9`, artifact ID `10905081338`, 6,467,023 bytes, SHA-256 `467935385cf13acde40ccacd21733f0e491ad8b8cc9d636e61eb1f5b8ac59bfd`, expires 2026-10-11.
 
 **Browser / product proof exercised by the current suite**
 - classic / entrance exposes explicit Enter 3D world and returns through the Website control.
@@ -249,7 +255,7 @@ Exact-head tests prove world, pod, division, facility, expansion, and return mod
 - guest automatic orbit advances after the navigation quiet period and freezes when authentication transition opens.
 - Login and Sign up remain presentation-only and do not submit credentials.
 - reduced-motion disables automatic orbit while preserving semantic guest state.
-- the capacity rule clamps presentation from 1 through 10 slots; this proof now explicitly covers the full 1–10 range at the browser boundary.
+- the capacity rule clamps presentation from 1 through 10 slots; the browser proof uses the canonical presentation API rather than an entitlement-named event.
 
 **Root inheritance**
 `machine-guest-state.js` constructs S11 with `constructionLayer=product-runtime`, `semanticBoundary=presentation-only`, and the complete inherited structural root set `S0` through `S10`. This is the intended dependency relationship: S11 consumes the roots; it does not reopen or rebuild them.
@@ -260,7 +266,7 @@ The Hero status label previously described the default presented Seat slots as "
 **Boundary**
 S11 does not create durable Seats, grant entitlement, authenticate users, execute turns, or establish provider/runtime state. Authenticated restoration remains S12 / backend-owned and production Firestore evidence remains Issue #401.
 
-**Status:** implemented and repository-verified. Formal downstream acceptance remains S30–S32; S11 itself is closed as an implementation/evidence slice.
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED at exact head `6ac89b6afea376adfa5232621ac22c62a983baa9`. Formal downstream acceptance remains S30–S32; S11 is closed as an implementation/evidence slice.
 
 ### E404-CI — exact-head repository verification
 
