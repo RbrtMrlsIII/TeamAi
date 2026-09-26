@@ -45,10 +45,16 @@ function returnClassic(source = 'world-return') {
   return { ok: true, mode: 'classic' };
 }
 
+function setMenuState(button, popover, open) {
+  popover.classList.toggle('is-open', open);
+  popover.hidden = !open;
+  popover.setAttribute('aria-hidden', String(!open));
+  button.setAttribute('aria-expanded', String(open));
+}
+
 function toggleMenu(button, popover) {
   const open = !popover.classList.contains('is-open');
-  popover.classList.toggle('is-open', open);
-  button.setAttribute('aria-expanded', String(open));
+  setMenuState(button, popover, open);
 }
 
 function openSettings() {
@@ -158,7 +164,20 @@ function bind() {
     const popoverId = button.getAttribute('aria-controls');
     const popover = popoverId ? document.getElementById(popoverId) : null;
     if (!popover) return;
+    setMenuState(button, popover, false);
     button.addEventListener('click', () => toggleMenu(button, popover));
+    popover.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      setMenuState(button, popover, false);
+      button.focus({ preventScroll: true });
+    });
+    popover.addEventListener('click', (event) => {
+      const item = event.target instanceof Element ? event.target.closest('button') : null;
+      if (!item) return;
+      queueMicrotask(() => setMenuState(button, popover, false));
+    });
   });
 
   document.querySelectorAll('[data-world-camera-request]').forEach((button) => {
