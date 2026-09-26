@@ -8,7 +8,7 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #417, and PR #421 are merged baselines. Current canonical `main` is `1b89879b52defea894795e2b72d6176f8c89ce09`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `76da305f0ec3efb3d368b22fb70748f0051f4d15`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
