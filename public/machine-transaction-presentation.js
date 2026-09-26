@@ -48,6 +48,7 @@ function normalize(value) {
 }
 
 function render(model) {
+  if (typeof document === 'undefined') return;
   const root = document.querySelector('[data-transaction-orb]');
   if (!root) return;
 
