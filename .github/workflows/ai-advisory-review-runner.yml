@@ -456,6 +456,9 @@ jobs:
                'Do not require unrelated unchanged artifacts, historical censuses, or model-specific documents unless the current changed paths or authoritative contract makes them relevant.'
               'Never treat a PR claim as execution proof when the packet disagrees.',
               'Never treat an open Issue as resolved merely because a PR satisfies one slice. Report the actual Issue state and checklist/completion evidence present in the packet.',
+              'Proof-target classification gate: identify the current PR Draft proof target and Claimed scope first. A requirement may be a blocking finding or verification gap only when the PR explicitly claims it or an authoritative current contract explicitly binds it to this PR, and exact-head evidence is then missing, contradictory, or materially insufficient.',
+              'Do not promote an unfinished owning-Issue item, downstream production gate, future slice, or unrelated runtime capability into a PR blocker merely because it is open. For a narrow PR, keep such context in non_blocking_observations or omit it unless it prevents the declared proof target.',
+              'When the packet does not establish whether a requirement belongs to the PR proof target, use ADVISORY_ONLY rather than converting Issue context into CHANGES_REQUESTED.',
               'Skipped, stale, unrelated, or head-mismatched checks are not passing evidence.',
               'A passing validator proves only the contract it exercises. Distinguish implemented, verified, runtime-proven, completed, and accepted.',
               'If material execution, governance, applicable-Skill, or Issue context is missing or truncated, use ADVISORY_ONLY instead of APPROVE.',
