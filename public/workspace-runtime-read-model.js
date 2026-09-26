@@ -65,19 +65,23 @@ export function normalizeWorkspaceReadModel(input = {}) {
   const evidence = contextAvailable ? normalizeItems(input.evidence) : Object.freeze([]);
   const results = contextAvailable ? normalizeItems(input.results) : Object.freeze([]);
 
+  const visibleWorkplace = contextAvailable ? workplace : null;
+  const visibleProject = contextAvailable ? project : null;
+  const visibleTeam = contextAvailable ? team : null;
+
   return Object.freeze({
     ...readiness,
     source: 'backend-read-model',
-    workplace,
-    project,
-    team,
+    workplace: visibleWorkplace,
+    project: visibleProject,
+    team: visibleTeam,
     seats,
     activeTask,
     evidence,
     results,
     contextAvailable,
     context: contextValid
-      ? Object.freeze({ workplace, project, team })
+      ? Object.freeze({ workplace: visibleWorkplace, project: visibleProject, team: visibleTeam })
       : null,
   });
 }

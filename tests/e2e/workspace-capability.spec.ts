@@ -77,6 +77,32 @@ test('authorized Workspace read model projects team, Seats, task, evidence, and 
   await expect(facility.locator('[data-workspace-results]')).toContainText('Latest spatial verification');
   await expect(facility.locator('[data-workspace-request]')).toBeEnabled();
 
+  await page.evaluate(() => window.TeamAiWorkspaceFacility.setPresentationAuthState(false));
+  await expect(facility.locator('[data-workspace-state]')).toHaveText('Guest · DISCOVERABLE LOCKED');
+  await expect(facility.locator('[data-workspace-name]')).toHaveText('Unavailable until authorized Workspace read model is available');
+  await expect(facility.locator('[data-workspace-project-label]')).toHaveText('Unavailable until authorized Workspace read model is available');
+  await expect(facility.locator('[data-workspace-team-label]')).toHaveText('Unavailable until authorized Workspace read model is available');
+  await expect(facility.locator('[data-workspace-task]')).toHaveText('Active task unavailable');
+  await expect(facility.locator('[data-workspace-request]')).toBeDisabled();
+
+  await page.evaluate(() => window.TeamAiWorkspaceFacility.setReadModel({
+    readiness: {
+      authenticated: true,
+      workspaceKnown: true,
+      projectKnown: true,
+      authorized: true,
+      entitled: true,
+      schedulerEligible: true,
+      healthy: true,
+    },
+    workplace: { id: 'workplace-live', label: 'Studio Workplace' },
+    project: { id: 'project-live', label: 'Spatial Console' },
+    team: { id: 'team-live', label: 'Spatial Team' },
+    seats: [{ id: 'seat-1', label: 'Seat 1', state: 'READY', kind: 'seat' }],
+  }));
+  await expect(facility.locator('[data-workspace-state]')).toHaveText('Authenticated · Workspace context READY');
+  await expect(facility.locator('[data-workspace-request]')).toBeEnabled();
+
   await facility.locator('[data-workspace-request]').click();
   await expect(facility.locator('[data-workspace-result]')).toHaveText('Workspace capability intent requested. Authoritative runtime confirmation is still required.');
 });

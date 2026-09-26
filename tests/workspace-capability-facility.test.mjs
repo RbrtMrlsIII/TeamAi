@@ -73,6 +73,9 @@ test('Workspace read-model strips runtime metadata when context is not usable', 
   });
 
   assert.equal(model.contextAvailable, false);
+  assert.equal(model.workplace, null);
+  assert.equal(model.project, null);
+  assert.equal(model.team, null);
   assert.deepEqual(model.seats, []);
   assert.equal(model.activeTask, null);
   assert.deepEqual(model.evidence, []);
