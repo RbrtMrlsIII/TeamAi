@@ -81,6 +81,19 @@ function rememberTriggerFromClick(event) {
 }
 
 function handleKeydown(event) {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+
+  if ((event.key === 'Enter' || event.key === ' ') && target.closest('[data-world-menu-toggle]')) {
+    const button = target.closest('[data-world-menu-toggle]');
+    if (button instanceof HTMLButtonElement && !event.defaultPrevented) {
+      event.preventDefault();
+      event.stopPropagation();
+      button.click();
+      return;
+    }
+  }
+
   if (event.key !== 'Escape') return;
   const active = visibleDialog();
   if (!active) return;
