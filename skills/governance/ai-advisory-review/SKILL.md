@@ -39,6 +39,19 @@ Verdict discipline:
 4. Historical run IDs, prior advisory comments, stale checks, and unrelated Issue work are context unless they are tied directly to the current target head and proof target.
 5. A reviewer should first answer "What is this PR proving?" and only then classify evidence or gaps against that question.
 
+## Proof-target classification procedure
+
+Before assigning any Issue item to `blocking_findings` or `verification_gaps`, evaluate it against the PR contract in this order:
+
+1. Identify the exact `Draft proof target` and `Claimed scope` from the current PR.
+2. Ask whether the requirement is explicitly claimed by that scope or explicitly mandated by the governing contract for this PR.
+3. Confirm that current exact-head evidence is missing, contradictory, or materially insufficient for that requirement.
+4. Only then classify it as a proof-target defect/gap. Otherwise keep it in `non_blocking_observations` or omit it.
+
+An open owning Issue checklist item, downstream production gate, future slice, or unrelated runtime capability must not become a PR blocker merely because it is unfinished. For example, a narrow Firestore index-readback repair is not blocked by an independently open Seat-runtime gate unless the PR explicitly claims to prove that Seat-runtime requirement or a governing contract binds that requirement to the PR.
+
+When the reviewer cannot determine whether a requirement is actually bound to the PR proof target, use `ADVISORY_ONLY` rather than upgrading unrelated Issue context into `CHANGES_REQUESTED`.
+
 ## Execution-evidence gate
 
 GitHub Actions validator workflows run concurrently, so reviewer workflows perform a separate **exact-head check-run gate** rather than depending on an aggregate workflow conclusion. For every required check-run, accept only `completed / success` for the exact PR head SHA. Missing, queued, in-progress, skipped, cancelled, failed, or head-mismatched checks do not pass. A failed required check fails closed; pending checks may be polled; timeout fails closed. A PR head change aborts the gate so the model cannot review a stale revision.
