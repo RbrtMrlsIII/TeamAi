@@ -185,6 +185,7 @@ function publish(model) {
   }));
 
   if (model.workspace.authenticated) {
+    window.TeamAiHeroAuthHandoff?.close?.();
     window.TeamAiHeroLayerHandoff?.enterMachineLayer?.({
       source: 'authenticated-restoration',
     });
