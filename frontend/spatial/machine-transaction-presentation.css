@@ -36,6 +36,27 @@
 .hero-transaction-orb__copy strong { font-size: .78rem; }
 .hero-transaction-orb__copy span { font-size: .7rem; opacity: .72; }
 .hero-transaction-orb__copy small { font-size: .62rem; opacity: .58; }
+.hero-transaction-orb__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+.hero-transaction-orb__actions button {
+  min-height: 26px;
+  padding: 3px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 6%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: .62rem;
+  cursor: pointer;
+}
+.hero-transaction-orb__actions button:hover,
+.hero-transaction-orb__actions button:focus-visible {
+  background: color-mix(in srgb, currentColor 11%, transparent);
+}
 .hero-transaction-orb__progress {
   position: absolute;
   left: 11px;
