@@ -316,6 +316,52 @@ S11 does not create durable Seats, grant entitlement, authenticate users, execut
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED at exact head `6ac89b6afea376adfa5232621ac22c62a983baa9`. Formal downstream acceptance remains S30–S32; S11 is closed as an implementation/evidence slice.
 
+### E404-S12 — Authenticated restoration presentation/read-model seam
+
+**Claim:** S12 adds an authenticated-world restoration projection seam that consumes an already-authoritative backend read model and projects truthful identity/context/readiness/durable Seat state into the existing spatial machine without introducing Firebase, Firestore, authorization, entitlement, scheduler, provider, or durable-write authority into the renderer.
+
+**Primary implementation**
+- frontend/spatial/machine-authenticated-restoration.js — canonical S12 normalization/projection contract
+- public/machine-authenticated-restoration.js — exact browser-delivered mirror
+- public/_flex_src/hero-flex.base.js — canonical Hero application seam for authenticated/restored presentation state
+- public/hero-flex.js — synchronized browser runtime
+- public/hero-layer-handoff.js — existing machine-layer return owner
+- frontend/spatial/workspace-runtime-read-model.js — existing readiness/context normalization owner
+
+**Exact implementation-head verification — 2026-09-26**
+- implementation head: `6e67b75e33c89a25ee713e61d959252d1defb7e7`
+- PR #404: OPEN / DRAFT
+- main base: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- Full-System: [36242949781](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949781) — **PASS**
+  - project tests: **1,107 passed / 0 failed**
+  - machine source/public parity passed
+  - typecheck, trusted Edge typecheck, recovery integrity, and package artifact passed
+- Canonical Browser: [36242949820](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949820) — **PASS**
+  - Playwright: **69 passed**
+  - exact-head checkout, canonical Hero synchronization, machine parity, and browser verification passed
+- Security: [36242949550](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949550) — **PASS**
+- Deep Security: [36242949749](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949749) — **PASS**
+- Governance Integrity: [36242949695](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36242949695) — **PASS**
+
+**Contract proof**
+- S12 construction context is `S12`, `product-runtime`, `presentation-only`, owned by `frontend/spatial/machine-authenticated-restoration.js`, and inherits the complete S0–S10 root set.
+- Authenticated readiness is composed from the existing Workspace read-model dimensions rather than recreated.
+- Identity requires an explicit Firebase-backed subject identifier in the supplied read model; the module does not acquire tokens or establish sessions.
+- Durable Seat projection requires explicit `durable: true` Seat records and rejects populations above the canonical maximum instead of silently clamping impossible durable state.
+- Authenticated context without a valid Workplace/Project/Team, authorization, entitlement, scheduler readiness, health, or durable Seat population becomes `AUTHENTICATED_UNAVAILABLE` with a concrete reason code.
+- Successful restoration becomes `AUTHENTICATED_READY`, projects the exact durable Seat count through the canonical Hero `setSeatCount` presentation API, closes the temporary auth handoff, and returns to the existing machine layer.
+- The module emits the existing Workspace runtime read-model event rather than creating a duplicate Workspace data store.
+- Browser proof explicitly exercises both successful two-Seat restoration and fail-closed Project-unavailable restoration.
+- Source/public S12 runtime copies are byte-identical.
+
+**Authority boundary**
+S12 is a presentation/read-model seam. It does not call Firebase SDK APIs, read/write Firestore, authorize users, grant entitlement, select scheduler actors, hold provider credentials, execute tasks, or establish durable domain state.
+
+**Important limitation**
+The browser tests use synthetic backend-read-model fixtures to validate the renderer contract. They do **not** establish that production Firebase Auth or Firestore currently supplies those records. Live identity, durable Seat population, and production runtime evidence remain owned by the existing backend/runtime gates, especially Issue #401.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED as an S12 presentation/read-model slice. It does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
 ### E404-CI — exact-head repository verification
 
 Exact head 8944ece was checked out by GitHub Actions.
