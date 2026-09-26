@@ -147,6 +147,13 @@ let current = null;
 export function setSeatTransactionPresentation(input = {}) {
   current = normalize(input);
   render(current);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('teamai:seat-transaction-state-change', {
+      detail: Object.freeze(current
+        ? { transaction: current }
+        : { transaction: null, presentationOnly: true }),
+    }));
+  }
   return current;
 }
 
