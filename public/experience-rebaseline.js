@@ -57,6 +57,17 @@ function toggleMenu(button, popover) {
   setMenuState(button, popover, open);
 }
 
+const MENU_CHILD_PANEL_OPENERS = [
+  '[data-auth-open]',
+  '[data-workspace-open]',
+  '[data-mcp-open]',
+  '[data-team-agents-open]',
+  '[data-storage-open]',
+  '[data-seat-budget-open]',
+  '[data-marketplace-open]',
+  '[data-settings-open]',
+].join(', ');
+
 function openSettings() {
   const btn = document.getElementById('hero-settings-shell');
   if (btn instanceof HTMLButtonElement) {
@@ -166,6 +177,13 @@ function bind() {
     if (!popover) return;
     setMenuState(button, popover, false);
     button.addEventListener('click', () => toggleMenu(button, popover));
+    button.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !popover.classList.contains('is-open')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setMenuState(button, popover, false);
+      button.focus({ preventScroll: true });
+    });
     popover.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
       event.preventDefault();
@@ -175,7 +193,7 @@ function bind() {
     });
     popover.addEventListener('click', (event) => {
       const item = event.target instanceof Element ? event.target.closest('button') : null;
-      if (!item) return;
+      if (!item || item.matches(MENU_CHILD_PANEL_OPENERS)) return;
       queueMicrotask(() => setMenuState(button, popover, false));
     });
   });
