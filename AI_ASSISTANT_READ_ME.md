@@ -2,7 +2,7 @@
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
 
-- current main: `59a871f440dd1d15405164948da9985d1537a6be`
+- current main: `1b89879b52defea894795e2b72d6176f8c89ce09`
 - current global slice: Issue #401 production Firestore authority, security, and runtime evidence
 - PR #417 merged into this mainline at `59a871f440dd1d15405164948da9985d1537a6be`; its Gate 3 classifier remains repository evidence only and did not create Seat/Connection documents
 - PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
@@ -12,6 +12,7 @@
 - the archived 2026-09-03 Gate 3 PASS used the same named hierarchy under a verified UID, but the UID is redacted from repository evidence; current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID`, so do not infer deletion/reset causality
 - next allowed work: supply an operator-authorized Team/Seat pair through the existing default-branch `firestore-production-evidence.yml` dispatch vehicle, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion. No new selector implementation is required.
 - #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
+- PR #421 is now merged as `1b89879b52defea894795e2b72d6176f8c89ce09`; its governance reconciliation remains documentation-only.
 - PR #416 is merged governance/review-readiness infrastructure; Issue #415 remains procedural guidance only
 
 
