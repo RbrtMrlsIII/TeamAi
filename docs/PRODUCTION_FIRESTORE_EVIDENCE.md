@@ -29,7 +29,7 @@ After the first successful Seat-shape run, use the observed Seat field inventory
 
 ## Exact Seat read
 
-The diagnostic now requires the Team ID as an explicit workflow input and performs a direct document read at the canonical team-nested Seat path. This intentionally avoids using a collection-group Seat query for a proof that already has an exact Team/Seat identity. Collection-group queries remain separately governed and indexed where they are needed by application behavior.
+The diagnostic requires both Team ID and Seat ID as explicit workflow inputs and performs a direct document read at the canonical team-nested Seat path. This intentionally avoids using a collection-group Seat query for a proof that already has an exact Team/Seat identity. Collection-group queries remain separately governed and indexed where they are needed by application behavior.
 
 ## Current execution boundary
 
@@ -40,7 +40,7 @@ The verified Gate 3 diagnostic selectors are:
 
 These are historical test hierarchy identifiers and are safe to use as selectors for the fresh diagnostic.
 
-The dedicated `firestore-production-evidence.yml` workflow exists on the default branch as a protected `workflow_dispatch` vehicle. The existing default-branch vehicle `firestore-seat-shape-diagnostic.yml` remains the current Gate 3 dispatch path for the exact-path probe. It runs `scripts/run-production-firestore-evidence.mjs` with Team ID `gate3-test-team` and the dispatched Seat ID.
+The dedicated `firestore-production-evidence.yml` workflow exists on the default branch as a protected `workflow_dispatch` vehicle. The existing default-branch vehicle `firestore-seat-shape-diagnostic.yml` remains the current Gate 3 dispatch path for the exact-path probe. It now requires both Team ID and Seat ID at manual dispatch so an operator can select another authorized Team/Seat pair without changing the service-account, UID, workplace, project, or probe write boundary.
 
 First exact-path dispatch after that rewiring:
 

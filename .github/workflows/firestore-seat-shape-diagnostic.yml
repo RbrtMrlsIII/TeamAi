@@ -3,8 +3,12 @@ name: Firestore production Seat shape diagnostic
 on:
   workflow_dispatch:
     inputs:
+      team_id:
+        description: 'Authorized Team ID to inspect'
+        required: true
+        type: string
       seat_id:
-        description: 'Canonical Seat ID to inspect'
+        description: 'Authorized Seat ID to inspect'
         required: true
         type: string
 
@@ -29,6 +33,6 @@ jobs:
           TEAMAI_DIAGNOSTIC_UID: ${{ secrets.TEAMAI_FIREBASE_TEST_UID }}
           TEAMAI_WORKPLACE_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_WORKPLACE_ID }}
           TEAMAI_PROJECT_ID: ${{ secrets.TEAMAI_FIREBASE_TEST_PROJECT_ID }}
-          TEAMAI_TEAM_ID: gate3-test-team
+          TEAMAI_TEAM_ID: ${{ inputs.team_id }}
           TEAMAI_SEAT_ID: ${{ inputs.seat_id }}
         run: node scripts/run-production-firestore-evidence.mjs

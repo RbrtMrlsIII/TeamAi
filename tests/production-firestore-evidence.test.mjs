@@ -67,10 +67,13 @@ test('secret detection traverses nested Firestore maps rather than only top-leve
   assert.match(script, /assertNoSecretFields\(raw\)/);
 });
 
-test('default-branch Seat diagnostic vehicle now runs the exact-path evidence probe', () => {
+test('default-branch Seat diagnostic supports an operator-authorized Team/Seat pair', () => {
   assert.match(diagnosticWorkflow, /workflow_dispatch:/);
+  assert.match(diagnosticWorkflow, /team_id:/);
   assert.match(diagnosticWorkflow, /seat_id:/);
-  assert.match(diagnosticWorkflow, /TEAMAI_TEAM_ID: gate3-test-team/);
+  assert.match(diagnosticWorkflow, /TEAMAI_TEAM_ID: \\$\\{\\{ inputs\\.team_id \\}\\}/);
+  assert.match(diagnosticWorkflow, /TEAMAI_SEAT_ID: \\$\\{\\{ inputs\\.seat_id \\}\\}/);
+  assert.doesNotMatch(diagnosticWorkflow, /TEAMAI_TEAM_ID: gate3-test-team/);
   assert.match(diagnosticWorkflow, /node scripts\/run-production-firestore-evidence\.mjs/);
   assert.doesNotMatch(diagnosticWorkflow, /diagnose-production-firestore-seat\.mjs/);
   assert.doesNotMatch(diagnosticWorkflow, /pull_request:/);
