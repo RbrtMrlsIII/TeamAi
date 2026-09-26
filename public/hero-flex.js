@@ -401,7 +401,7 @@ function applyGuestOrbit(now, guest) {
 function updateLabels() {
   if (stateLabel) stateLabel.textContent = state;
   const seat = seats[selectedSeat] || seats[0];
-  let seatText = `${state === 'IDLE' ? 'Next: ' : ''}${seat?.label || 'Web AI Seat'} · ${seatCount} seat${seatCount === 1 ? '' : 's'} unlocked`;
+  let seatText = `${state === 'IDLE' ? 'Next: ' : ''}${seat?.label || 'Web AI Seat'} · ${seatCount} seat${seatCount === 1 ? '' : 's'} presented`;
 
   if (hierarchyRuntime.openParentId && hierarchyRuntime.focusedLeafId === HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE) {
     seatText = healthLeafAccessibleName(hierarchyRuntime.healthStatus);
