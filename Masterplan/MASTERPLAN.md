@@ -9,10 +9,16 @@
 
 ## 2026-09-26 Issue #401 Gate 3 operator-hierarchy blocker
 
+- [x] PR #417 merged into canonical `main` at `59a871f440dd1d15405164948da9985d1537a6be`; its Gate 3 classifier is now part of the mainline and did not create Seat/Connection documents.
+- [x] Existing generalized protected Gate 3 inspection vehicle confirmed on canonical `main`: `.github/workflows/firestore-production-evidence.yml` requires explicit `team_id` and `seat_id` inputs and passes them to the existing metadata-only probe.
 - [x] Firestore index verification is RUNTIME-PROVEN on exact main `ce1656b7190fa8657253385fd884837ff7d12653` by default-branch run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`). PR #413 verifier normalization is merged. The unrelated extra live index was preserved; no `--force` deletion occurred.
 - [x] The missing-Seat production probe now classifies `teamDocumentCount=0` with a successful team list as `operator_hierarchy_absent`. This is an operator-authorized hierarchy blocker, not a probe or index defect. The probe still writes only additive `runtime-diagnostics/{runId}` evidence and does not create Seat documents.
-- [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented `gate3-test-team` / `gate3-test-seat` and listed zero team documents. Inspection cannot proceed until an operator-authorized hierarchy exists or a different authorized path is supplied.
+- [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented `gate3-test-team` / `gate3-test-seat` and listed zero team documents. Inspection cannot proceed until an operator-authorized Team/Seat pair is supplied through the existing generalized dispatch vehicle or an authorized hierarchy exists under the documented selector.
 
+
+## 2026-09-26 Post-#421 current-head reconciliation
+
+- [x] PR #421 merged into canonical `main` as `1b89879b52defea894795e2b72d6176f8c89ce09`; the governance/current-state reconciliation is now landed. This merge changed documentation authority records only; no product, runtime, Seat, Connection, Rules, provider, or deployment state was changed by #421.
 
 ## 2026-09-25 Issue #401 production-readback reconciliation
 

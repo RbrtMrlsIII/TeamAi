@@ -12,9 +12,9 @@ Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757
 
 ## 2026-09-26 Gate 3 operator-hierarchy checkpoint
 
-PR #413 merged to `main` at `ce1656b7190fa8657253385fd884837ff7d12653`. Fresh default-branch run `36146692843` proved Firestore index deploy and normalized readback (`requiredCount=1`, `deployedCount=2`, `missing=[]`). Index verification is therefore RUNTIME-PROVEN and is no longer the current #401 implementation blocker.
+PR #413 merged to `main` at `ce1656b7190fa8657253385fd884837ff7d12653`. Fresh default-branch run `36146692843` proved Firestore index deploy and normalized readback (`requiredCount=1`, `deployedCount=2`, `missing=[]`). Current canonical `main` subsequently advanced through PR #419 and PR #417, then PR #421 to `1b89879b52defea894795e2b72d6176f8c89ce09`; the index proof remains anchored to its actual tested head. Index verification is therefore RUNTIME-PROVEN and is no longer the current #401 implementation blocker.
 
-The remaining Issue #401 successor is Gate 3 Seat-shape evidence. Fresh run `36141179411` listed zero team documents for the documented selectors. That condition is classified as `operator_hierarchy_absent`. Agents must not invent or create live Seat/Connection documents to clear it. The correct next action is an operator-authorized hierarchy or a different authorized inspection path.
+The remaining Issue #401 successor is Gate 3 Seat-shape evidence. Fresh run `36141179411` listed zero team documents for the documented selectors. That condition is classified as `operator_hierarchy_absent`. Agents must not invent or create live Seat/Connection documents to clear it. The correct next action is an operator-authorized Team/Seat pair through the existing generalized protected `firestore-production-evidence.yml` dispatch vehicle, or an authorized hierarchy under the documented selector.
 
 ## 2026-09-25 Firestore index verification checkpoint
 
