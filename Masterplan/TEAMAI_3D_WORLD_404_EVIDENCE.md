@@ -24,15 +24,15 @@ A higher state does not follow automatically from a lower one.
 
 ## Latest validated spatial implementation anchor
 
-- **latest validated spatial implementation head:** 8944ececfd6dfee15a39833107dd3bac932411bd
-- **main:** 529fede864df0218947377e1d50e48f096c4a7c7
-- **at that validation point:** #404 was **117 commits ahead / 0 behind**
+- **latest validated spatial implementation head:** f4132eb5e3f6c5d730d698a6cbf6d72586e514cc
+- **main at that validation point:** 76da305f0ec3efb3d368b22fb70748f0051f4d15
+- **at that validation point:** #404 was **290 commits ahead / 0 behind**
 - **PR state:** OPEN / DRAFT / GitHub reports mergeable
-- **reconciliation commit:** 8944ecec
-- **full project tests:** **1,050 passed / 0 failed / 0 skipped**
-- **canonical browser verification:** PASS
+- **full project tests:** **1,117 passed / 0 failed / 0 skipped**
+- **canonical browser verification:** **PASS, 76 passed / 4 skipped**
 - **security/governance checks:** PASS
 - **review-readiness:** SKIPPED because the PR remains Draft. This is lifecycle state, not approval.
+- **evidence note:** later documentation-only commits may advance the branch head without changing this implementation anchor.
 
 ## Evidence index
 
@@ -365,6 +365,50 @@ S12 is a presentation/read-model seam. It does not call Firebase SDK APIs, read/
 The browser tests use synthetic backend-read-model fixtures to validate the renderer contract. They do **not** establish that production Firebase Auth or Firestore currently supplies those records. Live identity, durable Seat population, and production runtime evidence remain owned by the existing backend/runtime gates, especially Issue #401.
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED as an S12 presentation/read-model slice. It does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
+### E404-S21 — Loading / recovery presentation contract
+
+**Claim:** S21 now has an exact-head repository-verified transaction presentation layer spanning the governed transaction vocabulary, read-model ingress, failure/recovery affordances, cancellation intent capture, and false-success protection. This is presentation/read-model proof only; it does not establish live provider execution, runtime cancellation, Firebase/Firestore authority, or production recovery.
+
+**Primary implementation**
+- `frontend/spatial/seat-runtime-presentation.js` — governed transaction kinds and normalized authority/action flags
+- `public/seat-runtime-presentation.js` — synchronized browser contract
+- `frontend/spatial/machine-transaction-presentation.js` — guarded transaction orb/presentation seam
+- `public/machine-transaction-presentation.js` — synchronized browser presenter
+- `frontend/spatial/machine-transaction-presentation.css`
+- `public/machine-transaction-presentation.css`
+- `public/hero-seat-stack-action-bridge.js` — existing task/evidence read-model → spatial presentation bridge
+
+**Exact-head evidence — implementation head `f4132eb5e3f6c5d730d698a6cbf6d72586e514cc`**
+- Repository Full-System Verification: [36249899816](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36249899816) — **PASS**
+  - project tests: **1,117 passed / 0 failed / 0 skipped**
+  - canonical package, source/public parity, and recovery integrity passed.
+- Canonical Browser Verification: [36249899841](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36249899841) — **PASS**
+  - Playwright: **76 passed / 4 skipped**
+  - exact-head checkout, Hero source synchronization, runtime parity, and browser verification passed.
+- Security Static Analysis: [36249899874](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36249899874) — **PASS**
+- Deep Security Static Analysis: [36249899828](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36249899828) — **PASS**
+- Governance Integrity: [36249899835](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/36249899835) — **PASS**
+
+**S21 implementation checkpoints**
+- `2cfe242a` — non-authoritative `COMPLETED` transaction presentations fail closed.
+- `50291d37` — authoritative backend-supplied Retry / Cancel flags become guarded presentation affordances and emit explicit non-authoritative intent events.
+- `52bbd140` — existing task/evidence read-model transactions are forwarded into the S21 presenter through the live Hero bridge.
+- `f4132eb5` — browser matrix proof exercises all ten governed transaction operation families through the public transaction API:
+  navigation, retrieval, connection-test, MCP invocation, AI execution, handoff/continuation, storage operation, commerce verification, authorization, recovery.
+
+**Proven presentation rows**
+The exact-head browser contract proves shared LOADING presentation for all ten governed operation families, plus:
+- provider-unavailable reason-bearing recovery presentation;
+- guarded Retry intent;
+- guarded Cancel intent;
+- non-authoritative completion rejection / no false-success effect;
+- transaction-state ingress from the existing task/evidence runtime read model.
+
+**Authority boundary**
+S21 remains presentation/read-model only. Retry and Cancel are user intents, not executions. Runtime/provider layers must re-check authorization, transaction validity, idempotency, entitlement, provider state, and cancellation/retry semantics in their owning domains.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED for the S21 spatial presentation/read-model layer. LIVE-DEPLOYED, RUNTIME-PROVEN, and HUMAN-ACCEPTED remain separate gates.
 
 ### E404-CI — exact-head repository verification
 
