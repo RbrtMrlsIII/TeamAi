@@ -4,6 +4,10 @@
  */
 import { applyResolvedCamera } from './hero-dom-action-map.js';
 import { normalizeSeatTaskEvidenceReadModel } from './seat-task-evidence-runtime-read-model.js';
+import {
+  clearSeatTransactionPresentation,
+  setSeatTransactionPresentation,
+} from './machine-transaction-presentation.js';
 import './hero-division-label-sync.js';
 
 function projectSeatTaskEvidence(model) {
@@ -51,7 +55,15 @@ window.addEventListener('teamai:web-ai-seat-inspection', (event) => {
 });
 
 window.addEventListener('teamai:seat-task-evidence-runtime-read-model', (event) => {
-  projectSeatTaskEvidence(event.detail || {});
+  const input = event.detail || {};
+  const normalized = projectSeatTaskEvidence(input);
+  if (Object.prototype.hasOwnProperty.call(input, 'transaction')) {
+    if (normalized.transaction) {
+      setSeatTransactionPresentation(normalized.transaction);
+    } else {
+      clearSeatTransactionPresentation();
+    }
+  }
 });
 
 window.TeamAiHeroSeatTaskEvidence = Object.freeze({
