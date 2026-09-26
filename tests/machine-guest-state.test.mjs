@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   MACHINE_GUEST_STATE,
   resolveMachineGuestPresentation,
@@ -57,7 +58,6 @@ test('S11 authenticated projection exits guest-limited mode without creating aut
   assert.ok(state.lockedFeatureIds.includes('workspace-hq') === false);
 });
 
-import { readFileSync } from 'node:fs';
 
 test('S11 guest-state source and browser copies remain exact', () => {
   assert.equal(
