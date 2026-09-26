@@ -15,6 +15,7 @@ const materials = await readFile(new URL('../public/hero-materials.css', import.
 const partsCss = await readFile(new URL('../public/hero-parts.css', import.meta.url), 'utf8');
 const depthDoc = await readFile(new URL('../docs/TEAMAI_3D_HERO_SPATIAL_DEPTH_MODEL.md', import.meta.url), 'utf8');
 const capacity = await readFile(new URL('../public/seat-capacity.js', import.meta.url), 'utf8');
+const restoration = await readFile(new URL('../public/machine-authenticated-restoration.js', import.meta.url), 'utf8');
 
 test('3D Hero static shell is wired', () => {
   assert.match(html, /hero-flex\.js/);
@@ -22,6 +23,7 @@ test('3D Hero static shell is wired', () => {
   assert.match(html, /hero-parts\.js/);
   assert.match(html, /hero-semantic-camera\.js/);
   assert.match(html, /hero-auth-handoff\.js/);
+  assert.match(html, /machine-authenticated-restoration\.js/);
   assert.match(html, /hero-canvas/);
   assert.match(html, /Living Web AI Workspace/);
 });
@@ -75,6 +77,12 @@ test('spatial depth layer is wired', () => {
   ]) assert.ok(depthDoc.toLowerCase().includes(marker.toLowerCase()), marker);
   assert.match(materials, /--/);
   assert.match(partsCss, /spatial-parts|data-part/);
+});
+
+test('S12 authenticated restoration remains presentation-only in the public boot graph', () => {
+  assert.match(restoration, /constructionSlice.*S12|slice: 'S12'/s);
+  assert.match(restoration, /backend-read-model/);
+  assert.match(restoration, /notAuthority: true/);
 });
 
 test('authentication handoff is presentation-only and uses normal form semantics', () => {
