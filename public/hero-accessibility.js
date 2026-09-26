@@ -126,6 +126,9 @@ function boot() {
   window.addEventListener('teamai:seat-transaction-presentation', (event) => {
     publishTransactionState(event.detail?.transaction || event.detail || {});
   });
+  window.addEventListener('teamai:seat-transaction-state-change', (event) => {
+    if (event.detail?.transaction) publishTransactionState(event.detail.transaction);
+  });
   window.addEventListener('teamai:seat-task-evidence-runtime-read-model', (event) => {
     if (event.detail?.transaction) publishTransactionState(event.detail.transaction);
   });
