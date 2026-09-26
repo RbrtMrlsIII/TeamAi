@@ -261,6 +261,24 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(baseAtFullZoomOut).toBe('HERO_WIDE');
   });
 
+  test('S20 Settings semantic navigation stays on the Hero surface and changes only the reference presentation', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.locator('#world-menu [data-settings-open]').click();
+
+    const settings = page.locator('#hero-settings-panel');
+    await expect(settings).toBeVisible();
+    await expect(settings.locator('[data-settings-semantic-ref]')).toHaveCount(9);
+    await expect(settings.locator('[data-settings-semantic-title]')).toHaveText('TREE-SETTINGS · Settings');
+
+    await settings.locator('[data-settings-semantic-ref="TREE-WORKSPACE"]').click();
+    await expect(settings.locator('[data-settings-semantic-title]')).toHaveText('TREE-WORKSPACE · Workspace');
+    await expect(settings.locator('[data-settings-semantic-responsibility]')).toHaveText('Workplace/project/repository/runtime scope');
+    await expect(settings.locator('[data-settings-semantic-branches]')).toContainText('project');
+    await expect(settings.locator('[data-settings-semantic-ref="TREE-WORKSPACE"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page).toHaveURL(/\/hero\/?$/);
+  });
+
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.world-navigation')).toBeVisible();

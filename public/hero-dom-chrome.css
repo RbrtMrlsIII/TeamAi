@@ -200,3 +200,61 @@ html {
     width: min(300px, calc(100vw - 24px));
   }
 }
+
+.hero-settings-panel__semantic {
+  margin: 0.65rem 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+}
+.hero-settings-panel__semantic-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 0.45rem;
+}
+.hero-settings-panel__semantic-list {
+  display: grid;
+  gap: 0.25rem;
+}
+.hero-settings-panel__semantic-list button {
+  font: inherit;
+  text-align: left;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.hero-settings-panel__semantic-list button[aria-pressed="true"] {
+  border-color: currentColor;
+  box-shadow: 0 0 0 1px currentColor;
+}
+.hero-settings-panel__semantic-detail {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.45rem;
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, Canvas 86%, transparent);
+}
+.hero-settings-panel__semantic-detail strong,
+.hero-settings-panel__semantic-detail span,
+.hero-settings-panel__semantic-detail small {
+  overflow-wrap: anywhere;
+}
+.hero-settings-panel__semantic-detail strong { font-size: 0.78rem; }
+.hero-settings-panel__semantic-detail span,
+.hero-settings-panel__semantic-detail small { font-size: 0.68rem; opacity: 0.75; }
+.hero-settings-panel__semantic-detail ul {
+  margin: 0.2rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.1rem;
+  font-size: 0.68rem;
+}
+@media(max-width:520px){
+  .hero-settings-panel__semantic-grid {
+    grid-template-columns: 1fr;
+  }
+}
