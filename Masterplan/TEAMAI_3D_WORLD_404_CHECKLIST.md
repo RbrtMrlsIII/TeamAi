@@ -85,38 +85,53 @@ Evidence: E404-GEOM. The current proof uses authored component subjects sampled 
 
 Diagnosis: the earlier 0.148-unit radial-envelope discrepancy is closed. Current proof closes the authored-path and conservative geometry-clearance contract; remaining gaps are formal acceptance, production/runtime evidence, human acceptance, and final visual/product integration.
 
+## A1. 2026-09-26 formal S0–S10 ledger reconciliation
+
+| Slice | Current evidence state | Formal ledger decision |
+|---|---|---|
+| S0 | Baseline audit completed against the current #404 repository state, with Product Law / 029 authorities, machine inventories, owners, entrypoints, reference media, and historical-vs-active classification reconciled | **CLOSED** as a formal baseline-freeze slice |
+| S1 | Ownership matrix and C1 owner reconciliation are repository-backed; state/effect projection remains intentionally partitioned for S9/S28/S29 | **PARTIAL / OPEN** |
+| S2 | Core assembly capability is repository-proven with authored components, ports, ownership guards, and clearance checks | **CAPABILITY PROVEN / FORMAL EXIT OPEN** |
+| S3–S8 | Capability rows are already repository-verified and recorded in the existing evidence registry | **RETAIN EXISTING STATUS; no reopening required** |
+| S9 | Signal capability is repository-proven as projection over declared S8 edges | **CAPABILITY PROVEN / FORMAL EXIT OPEN** |
+| S10 | Camera capability is repository-proven across semantic camera modes and subjects | **CAPABILITY PROVEN / FORMAL EXIT OPEN** |
+
+This reconciliation deliberately avoids promoting capability evidence into formal release completion. The remaining formal gaps are owned by their existing construction/acceptance boundaries rather than by S12.
+
 ## B. S0 — Forensics and baseline freeze
-- [ ] Re-read Product Law, #278, #396, #400, #392, #83 and current Masterplan.
-- [ ] Reconcile merged #398 state against main.
-- [ ] Freeze physical module inventory.
-- [ ] Freeze semantic tree/branch/division inventory.
-- [ ] Inventory geometry owners.
-- [ ] Inventory choreography owners.
-- [ ] Inventory topology owners.
-- [ ] Inventory browser entrypoints.
-- [ ] Classify structural, compatibility, historical and obsolete files.
-- [ ] Record available visual reference assets.
-- [ ] Do not infer unavailable video timing.
+**Evidence:** E404-S0
+- [x] Re-read Product Law, #278, #396, #400, #392, #83 and current Masterplan.
+- [x] Reconcile merged #398 state against main.
+- [x] Freeze physical module inventory.
+- [x] Freeze semantic tree/branch/division inventory.
+- [x] Inventory geometry owners.
+- [x] Inventory choreography owners.
+- [x] Inventory topology owners.
+- [x] Inventory browser entrypoints.
+- [x] Classify structural, compatibility, historical and obsolete files.
+- [x] Record available visual reference assets.
+- [x] Do not infer unavailable video timing.
 Exit: one authoritative baseline and replaceable scaffolding list.
 
 ## C. S1 — Spatial scene grammar
 - [x] Establish the canonical structural-root inheritance metadata contract (owner, semantic boundary, construction slice, required S0-S10 roots for later slices).
-- [ ] Define World scene graph.
-- [ ] Define PhysicalModule contract.
-- [ ] Define PodAssembly contract.
-- [ ] Define FacilityAssembly contract.
-- [ ] Define Division contract.
-- [ ] Define ExpansionMechanism contract.
-- [ ] Define Port contract.
-- [ ] Define Corridor contract.
-- [ ] Define Edge contract.
-- [ ] Define CameraSubject contract.
+- [x] Define World scene graph.
+- [x] Define PhysicalModule contract.
+- [x] Define PodAssembly contract.
+- [x] Define FacilityAssembly contract.
+- [x] Define Division contract.
+- [x] Define ExpansionMechanism contract.
+- [x] Define Port contract.
+- [x] Define Corridor contract.
+- [x] Define Edge contract.
+- [x] Define CameraSubject contract.
 - [ ] Define state/effect projection contract.
-- [ ] Keep semantic identity independent of mesh index and coordinates.
-- [ ] Keep renderer as projection/orchestration layer.
+- [x] Keep semantic identity independent of mesh index and coordinates.
+- [x] Keep renderer as projection/orchestration layer.
 Exit: every physical system has one explicit owner.
 
 ### C1. S1 existing-owner reconciliation
+**Formal ledger status:** PARTIALLY RECONCILED. Ownership rows are closed below; state/effect projection remains the single deliberate structural gap for later S9/S28/S29 closure.
 - [x] World scene graph ownership identified in `machine-hero-scene.js`, with WebGL orchestration remaining in `machine-world-renderer.js`.
 - [x] PhysicalModule ownership identified in `machine-hero-scene.js::makeMachinePart`.
 - [x] PodAssembly ownership established in `machine-pod-assembly.js::deriveMachinePodAssembly`; `machine-core-layout.js::createBranchConnectionCore` retains population/placement responsibility.
@@ -135,6 +150,7 @@ Exit: every physical system has one explicit owner.
 
 ## D. S2 — Central Core reconstruction
 **Evidence:** E404-S2
+**Capability status:** REPOSITORY-VERIFIED. The authored Core assembly, ports, ownership checks, and clearance tests are proven; the formal S2 exit remains open because the exit includes broader acceptance than repository capability existence.
 - [ ] Authored outer shell.
 - [ ] Layered core chamber.
 - [ ] Receiving surface.
@@ -248,6 +264,7 @@ Exit: every meaningful connection is real in the semantic graph and physical rou
 
 ## K. S9 — Electricity / signal
 **Evidence:** E404-S9
+**Capability status:** REPOSITORY-VERIFIED. Signal projection is implemented and tested against semantic S8 edges; the formal S9 exit remains open until the broader state/effect and acceptance boundaries are closed.
 - [ ] Idle state.
 - [ ] Active Seat state.
 - [ ] Active branch state.
@@ -264,6 +281,7 @@ Exit: energy flow is a projection of the declared machine graph.
 
 ## L. S10 — Camera/navigation
 **Evidence:** E404-S10
+**Capability status:** REPOSITORY-VERIFIED. Camera modes, semantic subjects, expanded-envelope following, and retired-ID protection are implemented and tested; the formal S10 exit remains open until continuous travel/responsive/final acceptance evidence is closed.
 - [ ] WORLD_OVERVIEW.
 - [ ] POD_FOCUS.
 - [ ] DIVISION_FOCUS.
