@@ -2,16 +2,17 @@
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
 
-- current main: `ce1656b7190fa8657253385fd884837ff7d12653`
+- current main: `59a871f440dd1d15405164948da9985d1537a6be`
 - current global slice: Issue #401 production Firestore authority, security, and runtime evidence
+- PR #417 merged into this mainline at `59a871f440dd1d15405164948da9985d1537a6be`; its Gate 3 classifier remains repository evidence only and did not create Seat/Connection documents
 - PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
 - index verification is RUNTIME-PROVEN and is no longer the current #401 implementation blocker
 - Gate 3 Seat run `36141179411` still reports `gate3-test-seat` absent with `teamDocumentCount=0` / `teamListError=null`
 - the missing-Seat probe now classifies that condition as `operator_hierarchy_absent`; it does not create Seat documents
 - the archived 2026-09-03 Gate 3 PASS used the same named hierarchy under a verified UID, but the UID is redacted from repository evidence; current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID`, so do not infer deletion/reset causality
-- next allowed work: operator-authorized Gate 3 hierarchy or a different authorized inspection path, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion
+- next allowed work: supply an operator-authorized Team/Seat pair through the existing default-branch `firestore-production-evidence.yml` dispatch vehicle, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion. No new selector implementation is required.
 - #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
-- PR #416 is governance/review-readiness infrastructure only
+- PR #416 is merged governance/review-readiness infrastructure; Issue #415 remains procedural guidance only
 
 
 
@@ -47,10 +48,10 @@
 - #353 machine Hero candidate is merged on main as the non-production implementation baseline.
 
 - historical baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `ce1656b7190fa8657253385fd884837ff7d12653`
+- current main: `59a871f440dd1d15405164948da9985d1537a6be`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
-- open implementation/governance vehicles: Issue #401 and its current successor vehicle; Draft PR #404 remains the 029 spatial implementation vehicle; PR #416 / Issue #415 is review-readiness governance infrastructure only
-- active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance; #416 is a governance-only slice and does not replace the product frontier
+- open implementation/governance vehicles: Issue #401 remains the current production-runtime frontier; Draft PR #404 remains the bounded 029 spatial implementation vehicle; Issue #415 is review-readiness guidance infrastructure and PR #416 is already merged
+- active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance. Issue #415 remains procedural guidance only and does not replace the product frontier.
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
 - historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398, #413

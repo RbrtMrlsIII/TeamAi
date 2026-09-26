@@ -4,11 +4,11 @@
 
 ## Current Slice
 
-TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
+TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
 
 ## Status
 
-IMPLEMENTATION ACTIVE / IN PROGRESS. PR #398 is merged as the reviewed 029 structural baseline. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier; the current successor is Gate 3 Seat-shape evidence, which is blocked by an absent operator-authorized test hierarchy. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398 and PR #417 are merged baselines. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
@@ -124,7 +124,8 @@ The first successor implementation slice is deliberately additive:
 - fresh run-scoped Firestore metadata evidence under `runtime-diagnostics/{runId}`;
 - exact canonical Seat/connection inspection without mutation of canonical Seat/Connection documents;
 - production evidence remains manually dispatched and protected by Actions secrets;
-- the default-branch `firestore-seat-shape-diagnostic.yml` filename is the current dispatch vehicle for that probe;
+- the default-branch `firestore-seat-shape-diagnostic.yml` filename remains the historical Gate 3 fixed-selector dispatch vehicle;
+- the default-branch `firestore-production-evidence.yml` is the existing generalized protected dispatch vehicle and accepts explicit `team_id` + `seat_id` selectors;
 - Rules hardening is downstream of observed field inventory;
 - live `execution-results` index deployment/readback is RUNTIME-PROVEN by run `36146692843`;
 - real-provider execution remains separately gated behind Gate 3 Seat proof.
@@ -135,7 +136,9 @@ Issue #415 is a governance/verification infrastructure vehicle and does **not** 
 
 ## Current blocker
 
-- **Production Firestore Seat shape remains unverified and is classified as `operator_hierarchy_absent`.** Fresh Gate 3 run `36141179411` on main `529fede864df0218947377e1d50e48f096c4a7c7` returned 404 for documented `gate3-test-team` / `gate3-test-seat` with `teamDocumentCount=0` and `teamListError=null` (run-scoped evidence `run-2026-09-25T13-28-39-012Z-7f6a60cf-a26`). Earlier exact-path run `35763013851` recorded the same empty-hierarchy condition. This is not a collection-group HTTP 400, not an index defect, and not a probe-auth failure. The probe does not create Seat documents. The archived 2026-09-03 Gate 3 PASS proves that the same named hierarchy was successfully exercised under a verified Firebase UID at that earlier time, but the archived record does not expose the UID value; the current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID` secret. Therefore repository evidence does not establish whether the current empty hierarchy is a deletion/reset event or a scope/identity change. Inspection cannot proceed until an operator-authorized team/Seat hierarchy exists or a different authorized path is supplied. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
+- **Alternate Gate 3 dispatch capability is already present.** The default-branch `firestore-production-evidence.yml` requires `team_id` and `seat_id` and passes them to the existing metadata-only probe. This is a capability fact only; it does not authorize a live Team/Seat pair.
+
+- **Production Firestore Seat shape remains unverified and is classified as `operator_hierarchy_absent`.** Fresh Gate 3 run `36141179411` on main `529fede864df0218947377e1d50e48f096c4a7c7` returned 404 for documented `gate3-test-team` / `gate3-test-seat` with `teamDocumentCount=0` and `teamListError=null` (run-scoped evidence `run-2026-09-25T13-28-39-012Z-7f6a60cf-a26`). Earlier exact-path run `35763013851` recorded the same empty-hierarchy condition. This is not a collection-group HTTP 400, not an index defect, and not a probe-auth failure. The probe does not create Seat documents. The archived 2026-09-03 Gate 3 PASS proves that the same named hierarchy was successfully exercised under a verified Firebase UID at that earlier time, but the archived record does not expose the UID value; the current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID` secret. Therefore repository evidence does not establish whether the current empty hierarchy is a deletion/reset event or a scope/identity change. Inspection cannot proceed until an operator-authorized Team/Seat pair is supplied through the existing generalized dispatch vehicle or an authorized hierarchy exists under the documented selector. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
 - **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
 - **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
 - **Firestore index verification is RUNTIME-PROVEN.** PR #413 merged at `ce1656b7190fa8657253385fd884837ff7d12653`. Fresh default-branch run `36146692843` passed deploy and normalized readback (`requiredCount=1`, `deployedCount=2`, `missing=[]`). The unrelated extra live index remains preserved; no `--force` deletion was used. This is no longer a current implementation blocker.
