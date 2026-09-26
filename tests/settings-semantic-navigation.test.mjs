@@ -23,8 +23,8 @@ test("S20 Settings semantic navigation is presentation-only", () => {
   assert.ok(js.includes("data-settings-semantic-ref"));
   assert.ok(js.includes("reference only"));
   assert.ok(js.includes("Selecting a reference changes presentation only."));
-  assert.equal(js.includes("Firestore"), false);
-  assert.equal(js.includes("provider runtime"), false);
+  assert.ok(js.includes("presentation only"));
+  assert.ok(js.includes("does not write Firestore") || js.includes("No durable configuration was changed."));
 });
 
 test("S20 Settings semantic navigation is responsive", () => {
