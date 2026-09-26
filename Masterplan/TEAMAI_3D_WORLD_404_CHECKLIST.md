@@ -287,14 +287,14 @@ Exit: camera movement is spatially meaningful and payload-aware.
 Exit: a cold reviewer can trace each product/runtime feature back to the S0-S10 structural roots before reviewing feature-specific behavior.
 
 ## M. S11 — Guest machine
-- [ ] Public entrance.
-- [ ] Explicit Enter 3D world.
-- [ ] Ten-seat presentation capacity.
-- [ ] Gentle automatic orbit.
-- [ ] Guest lock/limited-action state.
-- [ ] Login/Sign Up invitation.
-- [ ] Orbit stop during auth transition.
-Exit: guest machine is coherent showroom behavior.
+- [x] Public entrance.
+- [x] Explicit Enter 3D world.
+- [x] Ten-seat presentation capacity.
+- [x] Gentle automatic orbit.
+- [x] Guest lock/limited-action state.
+- [x] Login/Sign Up invitation.
+- [x] Orbit stop during auth transition.
+Exit: guest machine is coherent showroom behavior. Evidence: E404-S11.
 
 ## N. S12 — Authenticated restoration
 - [ ] Firebase identity handoff.
