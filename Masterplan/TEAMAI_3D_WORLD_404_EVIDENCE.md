@@ -218,6 +218,50 @@ Exact-head tests prove world, pod, division, facility, expansion, and return mod
 
 **Status:** implemented and repository-verified capability. Continuous tree travel and final camera acceptance remain later gates.
 
+### E404-S11 — Guest machine
+
+**Claim:** S11 is a coherent guest showroom boundary over the existing S0–S10 machine, with ten-slot presentation capacity, limited guest interaction, automatic world orbit, and authentication handoff that stops guest orbit without granting backend authority.
+
+**Primary implementation**
+- frontend/spatial/machine-guest-state.js — canonical S11 guest-state projection
+- public/machine-guest-state.js — browser-delivered synchronized copy
+- public/_flex_src/hero-flex.base.js — canonical Hero controller/input boundary
+- public/hero-flex.js — browser runtime artifact
+- public/experience-rebaseline.js — classic entrance → world transition and auth intent wiring
+- public/hero-auth-handoff.js — presentation-only Login / Sign up handoff
+- public/index.html — public entrance and world surfaces
+- frontend/spatial/seat-capacity.js — canonical 1–10 Seat capacity rule
+
+**Fresh exact-head evidence**
+- head: d7c442a2744f1eb7174a373a7625f37d332a1fc1
+- PR #404: OPEN / DRAFT
+- main base: 76da305f0ec3efb3d368b22fb70748f0051f4d15
+- Full-System run 36237775981 — PASS; project tests, typecheck, trusted Edge typecheck, runtime parity, Full Project ZIP all completed successfully.
+- Browser run 36237775975 — PASS; exact-head checkout, canonical Hero synchronization, runtime parity, Playwright browser verification, and browser artifact upload completed successfully.
+- Security run 36237775974 — PASS; CodeQL analysis completed successfully.
+- Deep Security run 36237776017 — PASS.
+- Governance Integrity run 36237775966 — PASS; evidence-consistency, governance-drift, and agent-validation succeeded; review-readiness was skipped because #404 remains Draft.
+
+**Browser / product proof exercised by the current suite**
+- classic / entrance exposes explicit Enter 3D world and returns through the Website control.
+- /hero/ exposes the complete ten-seat presentation surface.
+- guest state is GUEST_LIMITED; restricted product facilities are presented as discoverable but locked.
+- guest automatic orbit advances after the navigation quiet period and freezes when authentication transition opens.
+- Login and Sign up remain presentation-only and do not submit credentials.
+- reduced-motion disables automatic orbit while preserving semantic guest state.
+- the capacity rule clamps presentation from 1 through 10 slots; this proof now explicitly covers the full 1–10 range at the browser boundary.
+
+**Root inheritance**
+`machine-guest-state.js` constructs S11 with `constructionLayer=product-runtime`, `semanticBoundary=presentation-only`, and the complete inherited structural root set `S0` through `S10`. This is the intended dependency relationship: S11 consumes the roots; it does not reopen or rebuild them.
+
+**Discrepancy corrected in this slice**
+The Hero status label previously described the default presented Seat slots as "unlocked". That wording conflicted with Product Law and the S11 guest-state contract because guest presentation capacity is not durable Seat entitlement. It is now "presented", and the browser proof follows the same semantic vocabulary. This is a semantic-contract correction, not a capacity or authorization change.
+
+**Boundary**
+S11 does not create durable Seats, grant entitlement, authenticate users, execute turns, or establish provider/runtime state. Authenticated restoration remains S12 / backend-owned and production Firestore evidence remains Issue #401.
+
+**Status:** implemented and repository-verified. Formal downstream acceptance remains S30–S32; S11 itself is closed as an implementation/evidence slice.
+
 ### E404-CI — exact-head repository verification
 
 Exact head 8944ece was checked out by GitHub Actions.
