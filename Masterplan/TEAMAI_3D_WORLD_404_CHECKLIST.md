@@ -426,19 +426,19 @@ Exit: commerce state is a projection of authoritative entitlement.
 Exit: controls are consistently discoverable.
 
 ## W. S21 — Loading / recovery
-- [ ] Navigation loading.
-- [ ] Data retrieval.
-- [ ] Connection test.
-- [ ] MCP/tool invocation.
-- [ ] AI execution.
-- [ ] Handoff/continuation.
-- [ ] Storage operation.
-- [ ] Commerce verification.
-- [ ] Authorization.
-- [ ] Provider unavailable.
-- [ ] Retry/recovery.
-- [ ] Cancellation.
-- [ ] No false-success effect.
+- [x] Navigation loading. Evidence: E404-S21.
+- [x] Data retrieval. Evidence: E404-S21.
+- [x] Connection test. Evidence: E404-S21.
+- [x] MCP/tool invocation. Evidence: E404-S21.
+- [x] AI execution. Evidence: E404-S21.
+- [x] Handoff/continuation. Evidence: E404-S21.
+- [x] Storage operation. Evidence: E404-S21.
+- [x] Commerce verification. Evidence: E404-S21.
+- [x] Authorization. Evidence: E404-S21.
+- [x] Provider unavailable. Evidence: E404-S21.
+- [x] Retry/recovery. Evidence: E404-S21.
+- [x] Cancellation. Evidence: E404-S21.
+- [x] No false-success effect. Evidence: E404-S21.
 Exit: failure states remain understandable.
 
 ## X. S22 — Accessibility
