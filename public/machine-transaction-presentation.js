@@ -44,7 +44,10 @@ function labelForKind(kind) {
 }
 
 function normalize(value) {
-  return createSeatTransactionPresentation(value || {});
+  const model = createSeatTransactionPresentation(value || {});
+  if (!model) return null;
+  if (model.state === 'COMPLETED' && model.authoritative !== true) return null;
+  return model;
 }
 
 function render(model) {
