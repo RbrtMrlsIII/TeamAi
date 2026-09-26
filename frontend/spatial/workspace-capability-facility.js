@@ -82,7 +82,7 @@ function renderReadModelContext() {
     if (task) task.textContent = 'Active task unavailable';
   } else {
     if (teamLabel) teamLabel.textContent = readModel.team?.label || 'Team unavailable';
-    if (seatSummary) seatSummary.textContent = \`\${readModel.seats.length} Seat projection\${readModel.seats.length === 1 ? '' : 's'} supplied by the backend read model\`;
+    if (seatSummary) seatSummary.textContent = String(readModel.seats.length) + ' Seat projection' + (readModel.seats.length === 1 ? '' : 's') + ' supplied by the backend read model';
     if (task) task.textContent = readModel.activeTask?.label || 'No active task reported by the backend read model';
   }
 
