@@ -4,7 +4,7 @@
 
 ## Current Slice
 
-TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401; implementation PR #402 merged)
+TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
 
 ## Status
 
@@ -134,15 +134,19 @@ The first successor implementation slice is deliberately additive:
 - Rules hardening is downstream of observed field inventory;
 - live index deployment and real-provider execution remain separately gated.
 
+## Review-readiness guidance checkpoint
+
+Issue #415 is a governance/verification infrastructure vehicle and does **not** replace or create the singular current slice above. It reconciles the active reviewer procedure with the PR lifecycle: proof-target-first review, exact-head evidence, explicit distinction between PR verification gaps and broader Issue backlog, and the boundary between AI advisory evidence, `review-readiness`, human approval, and merge authorization. Issue #414 remains historical runtime evidence for the underlying advisory-output symptom.
+
 ## Current blocker
 
 - **Production Firestore Seat shape remains unverified.** Exact-path run `35763013851` wrote negative evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897`: Seat `gate3-test-seat` under team `gate3-test-team` is absent, and the protected test project currently lists **zero** team documents. This is not collection-group HTTP 400. Seat authorization, entitlement, budget, and execute-capable connection remain unproven.
 - **The live task executor is still v12.** The newer repository Edge implementation remains gated behind the production Seat proof.
 - **Real provider continuation is unproven.** Repository continuation tests cannot substitute for the live exhaustion/checkpoint/continuation/completion chain.
-- **Firestore index deployment remains pending for `teamai-seat-budget-runtime`.** The checked-in collection-group index must be deployed in the live Firebase project before the new runtime read boundary can be promoted. The 2026-09-22 CLI attempt failed on Service Usage GET 403, not on index write.
+- **Firestore index definition is deployed in the live project, but repository readback verification is currently blocked by a verifier false-negative.** Fresh run `36140968869` on main confirmed `firebase deploy --only firestore:indexes` succeeds. Diagnostic run `36141481871` showed the required `execution-results` collection-group index is present with Firestore's implicit trailing `__name__ DESCENDING` field. PR #413 normalizes that implicit representation; a fresh default-branch verification run is required after the fix reaches `main`.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398 is already merged as the reviewed structural baseline. PR #402 is already merged into `main`; Issue #401 remains open for the remaining production Firestore evidence and runtime-gated work.
+- **Merge authority remains separate.** #398 and #402 are already merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle; PR #413 is the current Draft #401 verifier successor and remains separate from spatial implementation.
 
 ### Shared CI support: advisory issue preflight
 

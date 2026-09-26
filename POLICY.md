@@ -10,6 +10,23 @@ PR #398 is the reviewed 029 structural baseline merged into `main`. Current prod
 
 Reviewed PR #398 has merged into `main` at `87f466fb0edac3784280128785a8fd2dc757e749`. Issue #401 / successor PR #402 now owns the production Firestore authority, security, and runtime-evidence frontier. This is a current routing clarification only; it does not change Product Law authority or the draft-first/no-auto-merge discipline.
 
+## 2026-09-25 Firestore index verification checkpoint
+
+PR #413 is the current Draft successor for Issue #401's Firestore index verification false negative. Production run 36140968869 deployed the checked-in index successfully; diagnostic run 36141481871 showed the required execution-results collection-group index is present with Firestore's implicit __name__ suffix. The correct action is to normalize verifier semantics, not delete live indexes or use --force.
+
+## 2026-09-25 review-readiness guidance checkpoint
+
+Issue #415 formalizes the semantic handoff between substantive exact-head validation, `review-readiness`, AI advisory evidence, human approval, and governed merge. This is a guidance/procedure reconciliation only.
+
+The review unit is the PR's declared proof target and claimed scope. The owning Issue supplies current workstream context but does not turn every open Issue item into a PR verification gap. Advisory reviewers must distinguish:
+- concrete evidence inspected (`governance_and_evidence`);
+- rationale linking evidence to verdict (`review_basis`);
+- material proof-target defects (`blocking_findings`);
+- material proof-target requirements still unproven (`verification_gaps`);
+- relevant but non-blocking Issue/downstream context (`non_blocking_observations`).
+
+`APPROVE` requires defensible exact-head evidence and no material verification gaps for the declared proof target. `CHANGES_REQUESTED` requires a concrete finding or proof-target gap. `ADVISORY_ONLY` is required where material evidence or context is insufficient or ambiguous. These advisory semantics never grant merge or acceptance authority.
+
 ## ORUCAVEAM
 
 `O → R → U → C → A → V → E → A → M`
@@ -64,7 +81,7 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 ### Model-review sequence discipline
 
 The advisory reviewer uses provider/model-native generation and reasoning controls rather than a TeamAi-imposed generation ceiling. TeamAi keeps only the structured evidence contract bounded: three concise items per section at 400 characters each, with authority-first packet selection. Provider HTTP 200, generation-limit truncation, unavailable routed-model provenance, and provider error payloads are terminal evidence states, not merge blockers; transport success, publication, provenance, completeness, and quality remain separate signals.
-Model-assisted advisory review is a bounded verification resource. The automatic path is one provider-consuming five-slot sequence per exact PR head: OpenRouter Free Router → 5 parallel credential-isolated slots → 2-second launch stagger, capped at an 8-second spread. Each provider call has a 300-second wall-clock fail-closed and each reusable runner job has a 35-minute outer timeout; timeout is terminal slot evidence, not a retry signal.
+Model-assisted advisory review is a bounded verification resource. The automatic path is one provider-consuming five-slot sequence per exact PR head: OpenRouter Free Router → 5 parallel credential-isolated slots → 2-second launch stagger, capped at an 8-second spread. Each provider call has a 330-second (5.5-minute) wall-clock fail-closed and each reusable runner job has a 35-minute outer timeout; timeout is terminal slot evidence, not a retry signal.
 The workflow run is the sequence boundary and structured terminal slot artifacts are the execution state. PR comments are publication/evidence only and are never read as orchestration state. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
 Each slot uses its dedicated credential alias, revalidates the original triggering head immediately before provider invocation, and fails closed on drift. Provider failure is terminal slot evidence and never authorizes secret substitution or replacement calls. Automatic provider failures are recorded in the structured slot artifact and do not become provider-success claims; the orchestration may complete once every slot reaches a terminal state, while sequence completion remains distinct from provider success. Automatic sequence concurrency is isolated by PR exact head, so a duplicate lifecycle event for the same exact head cannot cancel a live sequence before its provider fan-out is recorded.
 

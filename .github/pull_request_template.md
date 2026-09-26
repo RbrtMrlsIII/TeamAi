@@ -6,7 +6,9 @@
 - Owning Issue: <!-- issue -->
 - Skill routing: <!-- concrete paths from `docs/SKILL_WIRING.md` -->
 - ORUCAVEAM: <!-- applicable letters -->
-- Draft proof target: <!-- what this PR is trying to prove -->
+### Draft proof target
+
+<!-- what this PR is trying to prove -->
 - Claimed scope: <!-- exact behavior/change -->
 - Verification/evidence: <!-- exact scope -->
 - Limitations: <!-- exact unproven boundary -->
@@ -20,6 +22,15 @@
 - [ ] `docs/SKILL_WIRING.md` and the owning Skill updated when procedure/routing changed.
 - [ ] `PRODUCT-KNOWLEDGE.md` updated only for validated reusable learning.
 - [ ] Retired material preserved in `docs/archive/` or `handover/` and removed from active routing.
+
+## Review-readiness handoff
+
+- [ ] The declared **Draft proof target** is the specific behavior this PR is proving, not the whole owning Issue.
+- [ ] Verification/evidence claims refer to the exact current PR head; historical runs are identified as historical context.
+- [ ] Open Issue checklist items, downstream production gates, and future slices are listed as limitations/observations unless they materially prevent the PR's own proof target.
+- [ ] The PR is still **Draft** while required substantive exact-head validation is running or incomplete.
+- [ ] **Ready for review** is a lifecycle promotion step after the required substantive validation set is successful on the exact head; it does not itself mean merge authorization.
+- [ ] AI advisory review is downstream evidence only and never replaces `review-readiness`, independent human approval, or normal merge authorization.
 
 ## Validation / promotion
 

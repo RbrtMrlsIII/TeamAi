@@ -7,6 +7,12 @@
 **Role:** chronology and executable checklist only.  
 **Current governing program:** TEAM-EXPERIENCE-029 progression before any Machine Hero promotion.
 
+## 2026-09-25 Issue #401 production-readback reconciliation
+
+- [ ] Firestore index verification is not considered complete until PR #413 normalizes the live deployed index representation and a fresh default-branch workflow passes. The live required execution-results index is already present; the prior verifier result was a false negative caused by Firestore's implicit trailing __name__ field in deployed readback.
+- [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented gate3-test-team / gate3-test-seat and listed zero team documents.
+
+
 ## Repository foundation
 
 - [x] Product Law moved to `Product_Law/PRODUCT_LAW.md` and remains the single product authority.
@@ -66,7 +72,7 @@ Issue #396 / PR #398 is the reviewed 029 structural baseline now merged into `ma
 - [ ] New real-provider `teamai-task-execute` deployment remains gated by the production Seat diagnostic.
 - [ ] Real provider incomplete termination → checkpoint → explicit continuation → fresh target-Seat turn → truthful completion remains unproven in production.
 - [ ] Firestore field-level Rules hardening remains pending canonical production Seat field inventory.
-- [ ] Firestore index deployment remains pending before live promotion of `teamai-seat-budget-runtime`.
+- [ ] Firestore index readback verification remains pending until PR #413 is validated and a fresh default-branch workflow passes against the normalized verifier. The live `execution-results` index is already deployed.
 - [ ] Final spatial acceptance, production deployment/browser observation, human acceptance, and merge authorization remain open.
 
 
@@ -182,6 +188,15 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 ## Current Issue topology baseline — Issue #394
 
 `main` remains the canonical assembled state after PR #391. Current execution is intentionally split by responsibility: #278 and #360 own 029 product/runtime; #392 owns AI Seat/product cooperation; #83 owns visual/material expression; #284 owns backend durable/runtime state; #204 owns Conn-3; #133 owns enduring governance. The #393 governance/advisory normalization is implemented in PR #395 and is closure-pending rather than an active implementation stream. Superseded vehicles remain historical and must not become parallel current slices.
+
+## 2026-09-25 review-readiness guidance reconciliation
+
+- [x] Issue #415 established as the bounded governance vehicle for review-readiness semantic guidance.
+- [x] Define the lifecycle contract: Draft → exact-head substantive validation → Ready for review → review-readiness → advisory evidence → independent human approval → merge candidate → governed merge → post-merge proof.
+- [x] Define advisory field semantics so `verification_gaps` is limited to material unproven requirements of the PR's own proof target.
+- [x] Define the distinction between owning Issue backlog/downstream gates and PR verification gaps.
+- [x] Preserve the existing fail-closed structured-output validator and five-slot OpenRouter routing; no provider-routing or validator relaxation is part of this slice.
+- [x] Add operator-facing guidance to the PR template and AI Assistant session guide, with the reusable Skill remaining the procedural source.
 
 ## 2026-09-24 029 exact-head spatial acceptance hardening
 

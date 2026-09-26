@@ -14,6 +14,7 @@ The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are 
 |---|---|---|
 | Product & Governance | `skills/governance/**` + ORUCAVEAM | governance validators |
 | Backend & Runtime | `skills/backend/**` | backend/runtime verification |
+| Issue #401 verifier-readback successor | applicable backend/verification Skills | Firestore index readback + production-evidence verification |
 | Frontend & Experience | `skills/frontend/**` | tests + browser verification |
 | Integration & Contracts | applicable backend/frontend contract Skills | contract/integration tests |
 | Verification & CI/Browser | `skills/verification/**` | CI/browser/evidence |
@@ -109,6 +110,10 @@ Retired procedures live under `docs/archive/` only. Historical handover evidence
 The following classes are forbidden as active routing: retired root Product Law, retired root Masterplan, retired root current-slice files, the legacy `docs/skills/` namespace, retired project-guide handover/acceptance documents, and `OBSOLETE_FILES.md` registry.
 
 <!-- #361 reconciliation: post-merge semantic topology/adaptive-clearance baseline is current; #370/#371 runner runtime-proof investigation is a bounded Verification & CI/Browser concern. -->
+
+### Review-readiness guidance routing
+
+Issue #415 adds the active review-readiness semantic guidance to `skills/governance/ai-advisory-review/SKILL.md` and `.github/pull_request_template.md`. The reviewer procedure is proof-target-first: current exact-head evidence is assessed against the PR's declared scope before broader Issue backlog is classified. The runner's fail-closed structured-output contract remains unchanged.
 
 ### Draft proof target parser boundary
 
