@@ -3,6 +3,18 @@
  * Must not: Firestore, provider calls, scheduler selection, entitlements, PayPal, account mutation, durable config writes.
  */
 
+// Read-only crosswalk of existing Product Law tree identities.
+// Navigation metadata only. This is not a second tree registry or authority.
+const SETTINGS_SEMANTIC_REFERENCES = Object.freeze([
+  Object.freeze({ id: "TREE-SETTINGS", label: "Settings", responsibility: "Cross-cutting presentation/account controls", branches: Object.freeze(["appearance", "account", "controls"]) }),
+  Object.freeze({ id: "TREE-DOMAIN", label: "Domain", responsibility: "Account → Workplace → Project → Seat", branches: Object.freeze(["account", "workplace", "project", "seat"]) }),
+  Object.freeze({ id: "TREE-SEAT", label: "Seat", responsibility: "Web AI Seat operational machine", branches: Object.freeze(["SEAT_SHELL", "SEAT_CONNECTION", "SEAT_BEHAVIOR", "SEAT_TOOLKIT"]) }),
+  Object.freeze({ id: "TREE-WORKSPACE", label: "Workspace", responsibility: "Workplace/project/repository/runtime scope", branches: Object.freeze(["workspace", "project", "repository", "scope"]) }),
+  Object.freeze({ id: "TREE-ORCHESTRATION", label: "Orchestration", responsibility: "Active turn and next-eligible Seat", branches: Object.freeze(["turn", "next-seat", "scheduler"]) }),
+  Object.freeze({ id: "TREE-EVIDENCE", label: "Evidence", responsibility: "Results, artifacts, and history", branches: Object.freeze(["results", "artifacts", "history"]) }),
+  Object.freeze({ id: "TREE-COMMERCE", label: "Commerce", responsibility: "Billing and entitlement projection", branches: Object.freeze(["billing", "entitlement"]) }),
+]);
+
 const SETTINGS_SECTIONS = {
   appearance: {
     title: "Appearance",
@@ -23,6 +35,32 @@ const SETTINGS_SECTIONS = {
 
 let settingsBuilt = false;
 let activeSettingsSection = "appearance";
+let activeSemanticReferenceId = "TREE-SETTINGS";
+
+function getSemanticReference(id) {
+  return SETTINGS_SEMANTIC_REFERENCES.find((item) => item.id === id) || SETTINGS_SEMANTIC_REFERENCES[0];
+}
+
+function renderSemanticReference(section) {
+  const ref = getSemanticReference(activeSemanticReferenceId);
+  section.querySelectorAll("[data-settings-semantic-ref]").forEach((button) => {
+    button.setAttribute("aria-pressed", button.getAttribute("data-settings-semantic-ref") === ref.id ? "true" : "false");
+  });
+  const title = section.querySelector("[data-settings-semantic-title]");
+  const responsibility = section.querySelector("[data-settings-semantic-responsibility]");
+  const branches = section.querySelector("[data-settings-semantic-branches]");
+  if (title) title.textContent = ref.id + " · " + ref.label;
+  if (responsibility) responsibility.textContent = ref.responsibility;
+  if (branches) {
+    branches.replaceChildren();
+    ref.branches.forEach((branch) => {
+      const item = document.createElement("li");
+      item.textContent = branch;
+      branches.append(item);
+    });
+  }
+}
+
 
 function currentVisualFacts() {
   const root = document.documentElement;
@@ -68,6 +106,43 @@ function buildSettings() {
       </ul>
     </div>
 
+    <section class="ta-settings__semantic ta-panel" data-field="F3" aria-labelledby="settings-semantic-title">
+      <div class="ta-region-heading">
+        <div>
+          <p class="ta-type-label">Semantic navigation</p>
+          <h2 id="settings-semantic-title" class="ta-type-title">Existing tree crosswalk</h2>
+        </div>
+        <span class="ta-type-meta">reference only</span>
+      </div>
+      <p class="ta-type-body">Navigate existing Product Law tree identities without creating a second Settings hierarchy. Selecting a reference changes presentation only.</p>
+      <div class="ta-settings__semantic-grid">
+        <nav aria-label="Semantic tree references">
+          <ul class="ta-settings-list" role="list">
+            ${SETTINGS_SEMANTIC_REFERENCES.map((item, index) => `
+              <li>
+                <button type="button" class="ta-card ta-settings-card" data-settings-semantic-ref="${item.id}" aria-pressed="${index === 0 ? "true" : "false"}">
+                  <span class="ta-type-title">${item.id}</span>
+                  <span class="ta-type-meta">${item.label}</span>
+                </button>
+              </li>
+            `).join("")}
+          </ul>
+        </nav>
+        <section class="ta-card ta-settings__semantic-detail" aria-live="polite" aria-labelledby="settings-semantic-detail-title">
+          <p class="ta-type-label">Selected reference</p>
+          <h3 id="settings-semantic-detail-title" class="ta-type-title" data-settings-semantic-title>TREE-SETTINGS · Settings</h3>
+          <p class="ta-type-body" data-settings-semantic-responsibility>Cross-cutting presentation/account controls</p>
+          <p class="ta-type-label">Known branch references</p>
+          <ul class="ta-settings__semantic-branches" data-settings-semantic-branches>
+            <li>appearance</li>
+            <li>account</li>
+            <li>controls</li>
+          </ul>
+          <p class="ta-type-meta">Branch labels are references to existing semantic contracts. They do not grant authorization, entitlement, execution, or durable-state authority.</p>
+        </section>
+      </div>
+    </section>
+
     <section class="ta-settings__detail ta-panel" data-field="F3" data-elevation="e3" aria-labelledby="settings-detail-title">
       <div class="ta-region-heading">
         <div>
@@ -110,6 +185,12 @@ function buildSettings() {
   section.querySelectorAll("[data-settings-section]").forEach((card) => {
     card.addEventListener("click", () => selectSettingsSection(card.getAttribute("data-settings-section") || "appearance"));
   });
+  section.querySelectorAll("[data-settings-semantic-ref]").forEach((button) => {
+    button.addEventListener("click", () => {
+      activeSemanticReferenceId = button.getAttribute("data-settings-semantic-ref") || "TREE-SETTINGS";
+      renderSemanticReference(section);
+    });
+  });
   section.querySelector('[data-action="settings-refresh"]')?.addEventListener("click", refreshSettingsFacts);
   section.querySelector('[data-action="settings-preview"]')?.addEventListener("click", () => {
     const facts = currentVisualFacts();
@@ -122,6 +203,7 @@ function buildSettings() {
 
   settingsBuilt = true;
   refreshSettingsFacts();
+  renderSemanticReference(section);
 }
 
 function refreshSettingsFacts() {

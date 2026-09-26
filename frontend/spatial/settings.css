@@ -130,3 +130,21 @@
     flex: 1 1 12rem;
   }
 }
+
+.ta-settings__semantic-grid {
+  display: grid;
+  grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
+  gap: var(--space-inset-md);
+  margin-top: var(--space-stack-md);
+}
+.ta-settings__semantic-detail { min-width: 0; }
+.ta-settings__semantic-branches {
+  margin: var(--space-stack-sm) 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-stack-xs);
+}
+.ta-settings__semantic-branches li { overflow-wrap: anywhere; }
+@media (max-width: 56rem) {
+  .ta-settings__semantic-grid { grid-template-columns: minmax(0, 1fr); }
+}
