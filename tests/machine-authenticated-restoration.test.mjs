@@ -131,6 +131,8 @@ test('S12 rejects impossible durable population instead of silently clamping it'
   const result = normalizeAuthenticatedRestorationReadModel({ ...READY_INPUT, seats });
   assert.equal(result.state, restorationStates().AUTHENTICATED_UNAVAILABLE);
   assert.equal(result.reason, restorationReasons().DURABLE_SEAT_CAPACITY_INVALID);
+  assert.equal(result.durableSeatCount, 0);
+  assert.deepEqual(result.durableSeats, []);
 });
 
 test('S12 source and public runtime copies remain exact', () => {
