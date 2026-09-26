@@ -779,7 +779,7 @@ window.addEventListener('teamai:authenticated-restoration-state', (event) => {
       authenticated: detail.workspace.authenticated === true,
       state: detail.state,
       reason: detail.reason,
-      seatCount: detail.available ? detail.durableSeatCount : null,
+      seatCount: detail.durableSeatCount > 0 ? detail.durableSeatCount : null,
     });
   }
 });
