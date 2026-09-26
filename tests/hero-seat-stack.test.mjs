@@ -68,3 +68,11 @@ test('workspace task evidence anchors are presentation-only', () => {
   assert.match(cssSrc, /data-evidence-state=disputed/);
   assert.match(stackSrc, /Workspace ≠ Firestore/);
 });
+
+test('S17 task/evidence read-model bridge feeds the canonical Hero Seat stack', () => {
+  const bridgeSrc = fs.readFileSync(path.join(process.cwd(), 'public/hero-seat-stack-action-bridge.js'), 'utf8');
+  assert.match(bridgeSrc, /normalizeSeatTaskEvidenceReadModel/);
+  assert.match(bridgeSrc, /teamai:seat-task-evidence-runtime-read-model/);
+  assert.match(bridgeSrc, /setWorkspaceTaskPresentation/);
+  assert.doesNotMatch(bridgeSrc, /Firestore|Supabase|scheduler\.|fetch\s*\(/i);
+});

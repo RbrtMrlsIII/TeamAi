@@ -62,6 +62,15 @@ The following prototype-era and PR-lifecycle records were moved here without con
 
 They are not implementation authority. Current spatial routing uses the active Product Law, Masterplan/current slice, Tree Census/contracts, and applicable Skills.
 
+## 2026-09-23 029 spatial debris cleanup
+
+Two unreferenced active documents were removed from current routing because they describe retired Command Deck composition rather than the current S0-S10-rooted spatial machine. Their original contents are preserved verbatim here as historical provenance:
+
+- `TEAM-EXPERIENCE-029_COMMAND_DECK_FINISHING_CONTRACT_legacy_2026-09-23.md` — prior Command Deck finishing/catch-up contract.
+- `TEAM-EXPERIENCE-029_BACKEND_VALIDATOR_UI_CONTRACT_legacy_2026-09-23.md` — prior backend-validator presentation contract.
+
+They are not current execution authority and must not be used to revive the retired Command Deck as a parallel spatial composition.
+
 ## Rules
 
 - Preserve historical material; do not rewrite it into current state.

@@ -8,7 +8,7 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #417, and PR #421 are merged baselines. Current canonical `main` is `1b89879b52defea894795e2b72d6176f8c89ce09`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `76da305f0ec3efb3d368b22fb70748f0051f4d15`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
@@ -116,6 +116,12 @@ After #398 is merged, the next vehicle should create **fresh run-scoped Firestor
 ## Historical 029 continuity
 
 TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 control-plane reconstruction remains historical context; PR #398 is the reviewed structural baseline now landed on `main`. No historical vehicle is reopened as a parallel current implementation path.
+
+## 2026-09-24 029 spatial acceptance companion
+
+PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Latest validated spatial implementation head is `8944ececfd6dfee15a39833107dd3bac932411bd`; subsequent branch movement is documentation-only reconciliation. The detailed spatial evidence is maintained in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` retaining status-only execution tracking. The current implementation includes authored S4 articulated subjects, intermediate expansion sampling, the 1–10 Seat × 3 shell-state × 7-division clearance matrix, physical-port validation, S8 route clearance, S9 semantic signal projection, and S10 semantic camera contracts.
+
+These are repository implementation/evidence facts, not 029 completion claims. Exact-head CI and Browser validation are green on `8944ece`; subsequent documentation-only reconciliation does not change the validated spatial implementation. No production deployment, human acceptance, or merge authorization is inferred from these repository results.
 
 ## 030 successor frontier
 

@@ -211,6 +211,12 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 - [x] Preserve the existing fail-closed structured-output validator and five-slot OpenRouter routing; no provider-routing or validator relaxation is part of this slice.
 - [x] Add operator-facing guidance to the PR template and AI Assistant session guide, with the reusable Skill remaining the procedural source.
 
+## 2026-09-24 029 exact-head spatial acceptance hardening
+
+PR #404 remains the Draft reconstruction vehicle for the remaining 029 spatial acceptance work. Its latest validated spatial implementation head is `8944ececfd6dfee15a39833107dd3bac932411bd`; subsequent branch movement is documentation-only reconciliation. The canonical evidence registry is `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md`. The implementation history now includes explicit authored S4 articulated subjects, intermediate travel sampling, structural safety envelopes, dense Seat/Pod/facility clearance proof, and S8/S9/S10 exact-head verification. Current 10-seat effective runtime envelopes are Seat-shell 5.05 closed / 5.55 fully expanded and outer housing 9.85 closed / 10.55 fully expanded. The current S5 proof covers Seat counts 1–10, shell states 0/0.5/1, all seven divisions, outer housings, and sibling Pods under the same conservative AABB clearance model used by the planner.
+
+This checkpoint records the current implementation/evidence state. Exact-head CI on `8944ece` passed the geometry/test/browser contracts; subsequent branch movement is documentation-only reconciliation. Remaining gates concern formal slice closure, production/runtime observation, human acceptance, and final 029 integration. See `TEAMAI_3D_WORLD_404_EVIDENCE.md` for the evidence trail.
+
 ## 2026-09-23 advisory control-plane reconciliation
 Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 

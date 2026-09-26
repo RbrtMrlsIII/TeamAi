@@ -15,7 +15,7 @@ Define the **information architecture and layout regions** for Layer A (website 
 | **A — Entrance** | Public product face; not “inside the machine” | Page chrome + optional gentle Hero backdrop |
 | **B — Machine** | After get-started; spatial instrument | 3D Hero + hierarchy / seat chrome |
 
-V3.1 only contracts **Layer A**. Layer B remains under existing camera / hierarchy / machine-nav owners.
+V3.1 only contracts **Layer A**. Layer B remains under existing camera / hierarchy / Settings owners.
 
 ## Layout regions (owners)
 
@@ -25,7 +25,7 @@ V3.1 only contracts **Layer A**. Layer B remains under existing camera / hierarc
 | `entrance-atmosphere` | `#hero-canvas` + `.hero-aura-*` | Gentle rotating Hero / auras as **backdrop** | Intensity, reduced-motion — **no second WebGL app** |
 | `entrance-primary-actions` | `.hero-controls` primary buttons (Open engine / demo) + auth handoff | Ordinary web actions: learn / sign in / get started | Labels, order; not seat config |
 | `entrance-far` | `aside.far-environment` | Legal / about / contact outside machine shell | Link set only |
-| `machine-chrome` | `.seat-stack`, `.machine-nav`, settings shell | **Layer B** chrome — soft-absorbed when machine UI open | Not entrance primary |
+| `machine-chrome` | `.seat-stack`, dedicated Settings shell | **Layer B** chrome — soft-absorbed when machine UI open | Not entrance primary |
 
 ### Forbidden (clash tests)
 

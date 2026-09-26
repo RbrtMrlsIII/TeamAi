@@ -107,6 +107,7 @@ import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
+import { resolveMachineGuestPresentation } from './machine-guest-state.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
@@ -146,6 +147,12 @@ let navOrbitYaw = 0;
 let navOrbitPitch = 0;
 let navZoom = 1;
 let lastNavBaseCameraId = 'HERO_WIDE';
+let authTransitionOpen = false;
+let authenticatedContext = false;
+let authenticatedRestorationState = 'AUTHENTICATION_REQUIRED';
+let authenticatedRestorationReason = null;
+let lastFrameAt = performance.now();
+let lastNavigationInputAt = performance.now();
 let touchState = null;
 let pinchStart = null;
 let seats = [];
@@ -354,10 +361,55 @@ function cycleTurn(now) {
   }
 }
 
+function getGuestMachineState() {
+  return resolveMachineGuestPresentation({
+    authenticated: authenticatedContext,
+    authTransition: authTransitionOpen,
+    worldLayer: shell.dataset.heroLayer === 'machine',
+    reducedMotion,
+  });
+}
+
+function updateGuestPresentation() {
+  const guest = getGuestMachineState();
+  shell.dataset.guestState = guest.state;
+  shell.dataset.guestLimited = String(guest.limited);
+  shell.dataset.guestOrbit = String(guest.autoOrbitEnabled);
+  const status = document.querySelector('.world-navigation__status');
+  if (status) {
+    status.textContent = guest.authTransition
+      ? 'Authentication · orbit paused'
+      : guest.limited
+        ? 'Guest · limited actions'
+        : '3D workspace';
+  }
+
+  document.querySelectorAll('[data-feature-id]').forEach((button) => {
+    const locked = guest.lockedFeatureIds.includes(button.dataset.featureId || '');
+    button.dataset.guestState = locked ? 'locked' : 'available';
+  });
+  return guest;
+}
+
+function applyGuestOrbit(now, guest) {
+  const elapsed = Math.max(0, Math.min(64, now - lastFrameAt));
+  lastFrameAt = now;
+  if (!guest.autoOrbitEnabled || cameraId !== 'HERO_WIDE') return;
+  if (hierarchyRuntime.openParentId) return;
+  if (now - lastNavigationInputAt < 1800) return;
+  navOrbitYaw += elapsed * 0.000025;
+  if (navOrbitYaw > Math.PI * 2) navOrbitYaw -= Math.PI * 2;
+}
+
 function updateLabels() {
   if (stateLabel) stateLabel.textContent = state;
   const seat = seats[selectedSeat] || seats[0];
-  let seatText = `${state === 'IDLE' ? 'Next: ' : ''}${seat?.label || 'Web AI Seat'} · ${seatCount} seat${seatCount === 1 ? '' : 's'} unlocked`;
+  let seatText = `${state === 'IDLE' ? 'Next: ' : ''}${seat?.label || 'Web AI Seat'} · ${seatCount} seat${seatCount === 1 ? '' : 's'} presented`;
+  if (authenticatedContext && authenticatedRestorationState === 'AUTHENTICATED_READY') {
+    seatText = `${seat?.label || 'Web AI Seat'} · ${seatCount} durable seat${seatCount === 1 ? '' : 's'} restored`;
+  } else if (authenticatedContext && authenticatedRestorationState === 'AUTHENTICATED_UNAVAILABLE') {
+    seatText = `Authenticated · ${authenticatedRestorationReason || 'backend context unavailable'}`;
+  }
 
   if (hierarchyRuntime.openParentId && hierarchyRuntime.focusedLeafId === HIERARCHY_PART.SEAT_CONNECTION_HEALTH_FACE) {
     seatText = healthLeafAccessibleName(hierarchyRuntime.healthStatus);
@@ -426,6 +478,7 @@ function applyNavCamera() {
 
 function onWheel(event) {
   event.preventDefault();
+  lastNavigationInputAt = performance.now();
   const delta = Math.sign(event.deltaY) * 0.08;
   navZoom = clamp(navZoom + delta, NAV_ZOOM_MIN, NAV_ZOOM_MAX);
   if (reducedMotion) navZoom = clamp(navZoom, NAV_ZOOM_REDUCED_MIN, NAV_ZOOM_REDUCED_MAX);
@@ -442,6 +495,7 @@ function onPointerDown(event) {
 
 function onPointerMove(event) {
   if (!touchState || touchState.id !== event.pointerId) return;
+  lastNavigationInputAt = performance.now();
   const dx = (event.clientX - touchState.x) / Math.max(1, canvas.clientWidth);
   const dy = (event.clientY - touchState.y) / Math.max(1, canvas.clientHeight);
   touchState.x = event.clientX;
@@ -471,6 +525,7 @@ function onTouchStart(event) {
 
 function onTouchMove(event) {
   if (event.touches.length !== 2 || !pinchStart) return;
+  lastNavigationInputAt = performance.now();
   const [a, b] = event.touches;
   const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   navZoom = clamp(
@@ -620,6 +675,8 @@ function handleKeyDown(event) {
 
 function frame(now) {
   syncReducedMotionFromDocument();
+  const guest = updateGuestPresentation();
+  applyGuestOrbit(now, guest);
   cycleTurn(now);
   tickHierarchyPose(hierarchyRuntime, now, reducedMotion);
   tickDivisionFocusTransition(hierarchyRuntime, now, reducedMotion);
@@ -634,6 +691,7 @@ function frame(now) {
     hierarchyOpen: Boolean(hierarchyRuntime.openParentId),
     expanded: Boolean(hierarchyRuntime.openParentId || ['FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB'].includes(state)),
     branchId: `BRANCH-SEAT-${String(selectedSeat + 1).padStart(2, '0')}`,
+    cameraId,
     reducedMotion,
     navOrbitYaw,
     navOrbitPitch,
@@ -686,6 +744,46 @@ window.addEventListener('teamai:web-ai-seat-unlocked', (event) => {
   setSeatCount(event.detail?.seatCount ?? event.detail?.count ?? seatCount + 1);
 });
 
+window.addEventListener('teamai:hero-auth-visibility', (event) => {
+  authTransitionOpen = event.detail?.open === true;
+  updateGuestPresentation();
+});
+
+function setAuthenticatedRestorationState(next = {}) {
+  authenticatedContext = next.authenticated === true;
+  authenticatedRestorationState = String(next.state || (authenticatedContext
+    ? 'AUTHENTICATED_UNAVAILABLE'
+    : 'AUTHENTICATION_REQUIRED'));
+  authenticatedRestorationReason = next.reason ? String(next.reason) : null;
+  if (!authenticatedContext) {
+    setSeatCount(GUEST_SEAT_COUNT);
+  } else if (Number.isInteger(next.seatCount) && next.seatCount >= 1) {
+    setSeatCount(next.seatCount);
+  }
+  if (authenticatedContext) authTransitionOpen = false;
+  updateGuestPresentation();
+  updateLabels();
+  return Object.freeze({
+    authenticated: authenticatedContext,
+    state: authenticatedRestorationState,
+    reason: authenticatedRestorationReason,
+    seatCount,
+    presentationOnly: true,
+  });
+}
+
+window.addEventListener('teamai:authenticated-restoration-state', (event) => {
+  const detail = event.detail || {};
+  if (detail.workspace && detail.state) {
+    setAuthenticatedRestorationState({
+      authenticated: detail.workspace.authenticated === true,
+      state: detail.state,
+      reason: detail.reason,
+      seatCount: detail.durableSeatCount > 0 ? detail.durableSeatCount : null,
+    });
+  }
+});
+
 window.TeamAiHero = {
   setSeatCount,
   getSeatCount: () => seatCount,
@@ -699,6 +797,9 @@ window.TeamAiHero = {
   getContributionProgress: () => contribution,
   getReducedMotion: () => reducedMotion,
   setReducedMotion,
+  getGuestMachineState,
+  setAuthenticatedRestorationState,
+  getNavOrbitYaw: () => navOrbitYaw,
   getHierarchyState,
   selectSeatShell,
   closeHierarchyParent,

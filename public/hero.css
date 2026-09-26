@@ -201,7 +201,7 @@ button.quiet {
   width: min(360px, calc(100vw - 48px));
   max-height: calc(100vh - 140px);
   overflow: auto;
-  z-index: 6;
+  z-index: 14;
   padding: 18px;
   border-radius: 18px;
   background: rgba(255,252,246,.94);

@@ -73,7 +73,7 @@ R3  SEAT RING
 
 ## 6. Current 029 execution reconciliation
 
-The original SP-06 classification predates Issue #396's active Slice D implementation program. The current execution has now established a concrete R1 owner:
+The original SP-06 classification predates the later #396 implementation program. The current execution has now established a concrete R1 owner:
 
 - `frontend/spatial/hero-r1-backend-display.js` is the source owner.
 - `public/hero-r1-backend-display.js` is the browser runtime copy.
@@ -84,7 +84,7 @@ The original SP-06 classification predates Issue #396's active Slice D implement
 
 The older rule saying not to create an R1 module is historical guidance for the pre-Slice-D state. Current execution keeps R1 under one canonical machine-world renderer and avoids duplicate geometry authority.
 
-The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, and complete R2 mechanical choreography remain bounded work under Issue #396.
+The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, complete R2 mechanical choreography, and final physical machine construction continue through PR #404 / Issue #405 under Issue #396 authority.
 
 ## 7. Current structural reconciliation
 

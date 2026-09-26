@@ -45,6 +45,7 @@ test.describe('Storage item inventory facility', () => {
             updatedAt: '2026-09-21T00:00:00.000Z',
             sizeLabel: '24 KB',
             status: 'AVAILABLE',
+            artifactState: 'AVAILABLE',
             provenance: 'backend-read-model',
           },
           {
@@ -67,6 +68,7 @@ test.describe('Storage item inventory facility', () => {
     await expect(facility.locator('[data-storage-state]')).toHaveText('Authenticated · inventory ready');
     await expect(facility.locator('[data-storage-inventory] [data-storage-item]')).toHaveCount(2);
     await expect(facility.locator('[data-storage-source]')).toHaveText('Source: authorized-backend-fixture');
+    await expect(facility.locator('[data-storage-inventory]')).toContainText('artifact=AVAILABLE');
     await expect(facility.locator('[data-storage-inspect]')).toBeEnabled();
 
     await facility.locator('[data-storage-item="item-beta"]').click();

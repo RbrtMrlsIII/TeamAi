@@ -5,6 +5,8 @@ import { parseSeatCountParam } from './seat-capacity.js';
 function mountSemanticFallback() {
   const panel = document.querySelector('[data-machine-core-visual]');
   if (!panel) return null;
+  if (panel.dataset.machineCoreRenderer === 'canonical') return panel;
+  if (panel.dataset.machineCoreRenderer !== 'unavailable') return null;
   const countNode = panel.querySelector('[data-core-count]');
   const cameraSelect = panel.querySelector('[data-core-camera]');
   const stateNode = panel.querySelector('[data-core-state]');
@@ -31,7 +33,7 @@ function mountSemanticFallback() {
   const update = (now = performance.now()) => {
     const sample = animation.sample(now);
     const branchId = cameraSelect.value || 'HUB-CORE';
-    stateNode.textContent = `${reducedMotion ? 'reduced-motion ' : ''}${sample.state} · ${Math.round(sample.amount * 100)}% · ${core.parts.length} independent modules · camera ${core.byBranch.has(branchId) ? core.byBranch.get(branchId).camera.cameraId : 'BRANCH_CAMERA_HUB-CORE'}`;
+    stateNode.textContent = `${reducedMotion ? 'reduced-motion ' : ''}${sample.state} · ${Math.round(sample.amount * 100)}% · ${core.parts.length} independent modules · camera ${core.byBranch.has(branchId) ? core.byBranch.get(branchId).camera.camera.cameraId : 'BRANCH_CAMERA_HUB-CORE'}`;
     return sample;
   };
 

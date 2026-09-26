@@ -43,6 +43,6 @@ Breakpoints used, primitives/fields that collapsed, surfaces still reachable inc
 ## SEE ALSO
 - `skills/frontend/spatial/UI_UX-Promax-Skill.md`
 - `skills/frontend/spatial/accessibility/SKILL.md`
-- `docs/TEAM-EXPERIENCE-029_COMMAND_DECK_AND_TOKEN_FREEZE.md`
+- `docs/TEAM-EXPERIENCE-029_COMMAND_DECK_AND_TOKEN_FREEZE.md` (planning/token reference only; current spatial composition follows Product Law + S0-S10 roots)
 - `docs/TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md`
 - `skills/verification/browser-smoke/SKILL.md`

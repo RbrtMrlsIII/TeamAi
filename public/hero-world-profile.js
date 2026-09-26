@@ -9,12 +9,27 @@ export const MACHINE_WORLD_PROFILE = Object.freeze({
   seatScale: Object.freeze({ min: 1, max: 0.78 }),
 });
 
+// Structural safety envelopes keep S5 clearance solvable without allowing the
+// expansion layer to become a second source of world-scale geometry.
+export const MACHINE_SEAT_SHELL_SAFETY_BUFFER = 0.5;
+export const MACHINE_OUTER_HOUSING_SAFETY_BUFFER = 2.7;
+
 export function seatPopulationDensity(seatCount) {
   return clamp01((Math.max(1, Number(seatCount) || 1) - 1) / 9);
 }
 
 export function deriveMachineWorldProfile(seatCount) {
   const density = seatPopulationDensity(seatCount);
+  const seatShellRadius = lerp(
+    MACHINE_WORLD_PROFILE.seatShellRadius.min,
+    MACHINE_WORLD_PROFILE.seatShellRadius.max,
+    density,
+  ) + MACHINE_SEAT_SHELL_SAFETY_BUFFER;
+  const outerHousingRadius = lerp(
+    MACHINE_WORLD_PROFILE.outerHousingRadius.min,
+    MACHINE_WORLD_PROFILE.outerHousingRadius.max,
+    density,
+  ) + MACHINE_OUTER_HOUSING_SAFETY_BUFFER;
   return Object.freeze({
     density,
     workspaceFootprint: lerp(
@@ -22,16 +37,8 @@ export function deriveMachineWorldProfile(seatCount) {
       MACHINE_WORLD_PROFILE.workspaceFootprint.max,
       density,
     ),
-    seatShellRadius: lerp(
-      MACHINE_WORLD_PROFILE.seatShellRadius.min,
-      MACHINE_WORLD_PROFILE.seatShellRadius.max,
-      density,
-    ),
-    outerHousingRadius: lerp(
-      MACHINE_WORLD_PROFILE.outerHousingRadius.min,
-      MACHINE_WORLD_PROFILE.outerHousingRadius.max,
-      density,
-    ),
+    seatShellRadius,
+    outerHousingRadius,
     cameraDistance: lerp(
       MACHINE_WORLD_PROFILE.cameraDistance.min,
       MACHINE_WORLD_PROFILE.cameraDistance.max,
@@ -48,17 +55,29 @@ export function deriveMachineWorldProfile(seatCount) {
 export function deriveExpandedMachineCoreRadii(seatCount, expansionAmount = 0) {
   const density = seatPopulationDensity(seatCount);
   const amount = clamp01(expansionAmount);
+  const baseSeatShellRadius = lerp(
+    MACHINE_WORLD_PROFILE.seatShellRadius.min,
+    MACHINE_WORLD_PROFILE.seatShellRadius.max,
+    density,
+  ) + MACHINE_SEAT_SHELL_SAFETY_BUFFER;
+  const expandedSeatShellRadius = baseSeatShellRadius + 0.5;
+  const baseOuterHousingRadius = lerp(
+    MACHINE_WORLD_PROFILE.outerHousingRadius.min,
+    MACHINE_WORLD_PROFILE.outerHousingRadius.max,
+    density,
+  ) + MACHINE_OUTER_HOUSING_SAFETY_BUFFER;
+  const expandedOuterHousingRadius = baseOuterHousingRadius + 0.7;
   return Object.freeze({
     density,
     expansionAmount: amount,
     seatShellRadius: lerp(
-      lerp(MACHINE_WORLD_PROFILE.seatShellRadius.min, MACHINE_WORLD_PROFILE.seatShellRadius.max, density),
-      lerp(MACHINE_WORLD_PROFILE.seatShellRadius.min + 0.5, MACHINE_WORLD_PROFILE.seatShellRadius.max + 0.5, density),
+      baseSeatShellRadius,
+      expandedSeatShellRadius,
       amount,
     ),
     outerHousingRadius: lerp(
-      lerp(MACHINE_WORLD_PROFILE.outerHousingRadius.min, MACHINE_WORLD_PROFILE.outerHousingRadius.max, density),
-      lerp(MACHINE_WORLD_PROFILE.outerHousingRadius.min + 0.7, MACHINE_WORLD_PROFILE.outerHousingRadius.max + 0.7, density),
+      baseOuterHousingRadius,
+      expandedOuterHousingRadius,
       amount,
     ),
   });

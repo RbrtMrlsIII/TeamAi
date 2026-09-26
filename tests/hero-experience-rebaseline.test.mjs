@@ -46,6 +46,14 @@ test('retired camera concepts are not reintroduced by the new experience layer',
 });
 
 
+test('S20 settings shell keeps authority outside the browser presentation', async () => {
+  const src = await readFile(new URL('../public/hero-settings-shell.js', import.meta.url), 'utf8');
+  assert.match(src, /single document theme root/i);
+  assert.match(src, /Full settings remain on the application settings surface/i);
+  assert.doesNotMatch(src, /Firestore|Supabase|provider credential|fetch\s*\(/i);
+  assert.doesNotMatch(src, /setSeatCount|selectSeatShell|SEAT_TASK_EVIDENCE/);
+});
+
 test('experience layer delegates auth ownership to the dedicated auth root', async () => {
   const src = await readFile(new URL('../public/experience-rebaseline.js', import.meta.url), 'utf8');
   assert.match(src, /TeamAiHeroAuthHandoff\?\.open/);

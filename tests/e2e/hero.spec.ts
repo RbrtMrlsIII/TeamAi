@@ -21,6 +21,200 @@ test.describe('Living Web AI Workspace Hero', () => {
     await testInfo.attach('hero-wide', { path, contentType: 'image/png' });
   });
 
+  test('S11 locked guest facilities remain inspectable while mutation controls stay locked', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+
+    const workspaceMenu = page.locator('#world-menu [data-workspace-open]');
+    await expect(workspaceMenu).toHaveAttribute('data-guest-state', 'locked');
+    await expect(workspaceMenu).not.toHaveAttribute('aria-disabled', 'true');
+    await workspaceMenu.click();
+
+    const facility = page.locator('#hero-workspace-facility');
+    await expect(facility).toBeVisible();
+    await expect(facility.locator('[data-workspace-request]')).toBeDisabled();
+  });
+
+  test('S11 guest machine auto-orbits and freezes during authentication transition', async ({ page }) => {
+    await page.goto('/hero/');
+    await expect(page.locator('#hero-canvas')).toBeVisible();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'GUEST_LIMITED');
+    await expect(page.locator('.world-navigation__status')).toHaveText('Guest · limited actions');
+
+    await page.evaluate(() => (window as any).TeamAiHero.resetNav());
+    const before = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    await page.waitForTimeout(2200);
+    const after = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    expect(Math.abs(after - before)).toBeGreaterThan(0.001);
+
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.locator('#world-menu').getByRole('button', { name: 'Sign in', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeVisible();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'AUTH_TRANSITION');
+
+    const frozenBefore = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    await page.waitForTimeout(500);
+    const frozenAfter = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+    expect(frozenAfter).toBe(frozenBefore);
+
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeHidden();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'GUEST_LIMITED');
+  });
+
+  test('S12 restores authoritative context and durable Seat population through the presentation seam', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.locator('#world-menu').getByRole('button', { name: 'Sign in', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeVisible();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'AUTH_TRANSITION');
+
+    const snapshot = await page.evaluate(() => {
+      const restoration = (window as any).TeamAiAuthenticatedRestoration;
+      if (!restoration) throw new Error('S12 restoration runtime is unavailable');
+      const result = restoration.setPresentationReadModel({
+        identity: { provider: 'firebase', subjectId: 'uid-s12-browser' },
+        authenticated: true,
+        workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
+        project: { id: 'project-browser', label: 'Project Browser' },
+        team: { id: 'team-browser', label: 'Team Browser' },
+        readiness: {
+          authenticated: true,
+          workspaceKnown: true,
+          projectKnown: true,
+          authorized: true,
+          entitled: true,
+          schedulerEligible: true,
+          healthy: true,
+        },
+        seats: [
+          { id: 'seat-browser-1', label: 'Web AI Seat 1', durable: true, state: 'READY' },
+          { id: 'seat-browser-2', label: 'Web AI Seat 2', durable: true, state: 'READY' },
+        ],
+      });
+      return {
+        state: result.state,
+        reason: result.reason,
+        available: result.available,
+        durableSeatCount: result.durableSeatCount,
+        durableSeatIds: result.durableSeats.map((seat: any) => seat.id),
+        heroState: (window as any).TeamAiHero.getGuestMachineState().state,
+        heroSeatCount: (window as any).TeamAiHero.getSeatCount(),
+        workspace: (window as any).TeamAiWorkspaceFacility.getState(),
+        layer: document.querySelector('.hero-shell')?.getAttribute('data-hero-layer'),
+        authOpen: (window as any).TeamAiHeroAuthHandoff.getState().open,
+      };
+    });
+
+    expect(snapshot.state).toBe('AUTHENTICATED_READY');
+    expect(snapshot.reason).toBeNull();
+    expect(snapshot.available).toBe(true);
+    expect(snapshot.durableSeatCount).toBe(2);
+    expect(snapshot.durableSeatIds).toEqual(['seat-browser-1', 'seat-browser-2']);
+    expect(snapshot.heroState).toBe('AUTHENTICATED');
+    expect(snapshot.heroSeatCount).toBe(2);
+    expect(snapshot.workspace).toMatchObject({
+      authenticated: true,
+      contextAvailable: true,
+      workplaceId: 'workplace-browser',
+      projectId: 'project-browser',
+    });
+    expect(snapshot.layer).toBe('machine');
+    expect(snapshot.authOpen).toBe(false);
+    await expect(page.locator('#seat-label')).toContainText('2 durable seats restored');
+    await expect.poll(() => page.evaluate(() => document.documentElement.getAttribute('data-authenticated-restoration-state'))).toBe('AUTHENTICATED_READY');
+  });
+
+  test('S12 fails closed with a reason when authenticated context cannot be restored', async ({ page }) => {
+    await page.goto('/hero/');
+    const snapshot = await page.evaluate(() => {
+      const restoration = (window as any).TeamAiAuthenticatedRestoration;
+      const before = (window as any).TeamAiHero.getSeatCount();
+      const result = restoration.setPresentationReadModel({
+        identity: { provider: 'firebase', subjectId: 'uid-s12-unavailable' },
+        authenticated: true,
+        workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
+        project: null,
+        team: { id: 'team-browser', label: 'Team Browser' },
+        readiness: {
+          authenticated: true,
+          workspaceKnown: true,
+          projectKnown: false,
+          authorized: true,
+          entitled: true,
+          schedulerEligible: true,
+          healthy: true,
+        },
+        seats: [
+          { id: 'seat-presented', label: 'Presented Seat', durable: false },
+        ],
+      });
+      return {
+        result: { state: result.state, reason: result.reason, available: result.available, durableSeatCount: result.durableSeatCount },
+        seatCountBefore: before,
+        seatCountAfter: (window as any).TeamAiHero.getSeatCount(),
+        workspace: (window as any).TeamAiWorkspaceFacility.getState(),
+        domState: document.documentElement.getAttribute('data-authenticated-restoration-state'),
+        domReason: document.documentElement.getAttribute('data-authenticated-restoration-reason'),
+      };
+    });
+
+    expect(snapshot.result).toEqual({
+      state: 'AUTHENTICATED_UNAVAILABLE',
+      reason: 'PROJECT_UNAVAILABLE',
+      available: false,
+      durableSeatCount: 0,
+    });
+    expect(snapshot.seatCountAfter).toBe(snapshot.seatCountBefore);
+    expect(snapshot.workspace.contextAvailable).toBe(false);
+    expect(snapshot.domState).toBe('AUTHENTICATED_UNAVAILABLE');
+    expect(snapshot.domReason).toBe('PROJECT_UNAVAILABLE');
+    await expect(page.locator('#seat-label')).toContainText('Authenticated · PROJECT_UNAVAILABLE');
+  });
+
+
+  test('S12 keeps restored Seat population visible while readiness remains unavailable', async ({ page }) => {
+    await page.goto('/hero/');
+    const snapshot = await page.evaluate(() => {
+      const restoration = (window as any).TeamAiAuthenticatedRestoration;
+      const result = restoration.setPresentationReadModel({
+        identity: { provider: 'firebase', subjectId: 'uid-s12-readiness' },
+        authenticated: true,
+        workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
+        project: { id: 'project-browser', label: 'Project Browser' },
+        team: { id: 'team-browser', label: 'Team Browser' },
+        readiness: {
+          authenticated: true,
+          workspaceKnown: true,
+          projectKnown: true,
+          authorized: true,
+          entitled: true,
+          schedulerEligible: false,
+          healthy: true,
+        },
+        seats: [
+          { id: 'seat-browser-1', label: 'Web AI Seat 1', durable: true, state: 'READY' },
+          { id: 'seat-browser-2', label: 'Web AI Seat 2', durable: true, state: 'READY' },
+        ],
+      });
+      return {
+        state: result.state,
+        reason: result.reason,
+        available: result.available,
+        durableSeatCount: result.durableSeatCount,
+        heroSeatCount: (window as any).TeamAiHero.getSeatCount(),
+      };
+    });
+
+    expect(snapshot.state).toBe('AUTHENTICATED_UNAVAILABLE');
+    expect(snapshot.reason).toBe('SCHEDULER_UNAVAILABLE');
+    expect(snapshot.available).toBe(false);
+    expect(snapshot.durableSeatCount).toBe(2);
+    expect(snapshot.heroSeatCount).toBe(2);
+    await expect(page.locator('#seat-label')).toContainText('Authenticated · SCHEDULER_UNAVAILABLE');
+  });
+
+
   test('Hero exposes the governed 1-10 Seat capacity', async ({ page }) => {
     await page.goto('/hero/');
     const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
@@ -65,6 +259,243 @@ test.describe('Living Web AI Workspace Hero', () => {
       await page.evaluate(() => (window as any).TeamAiHero.NAV_ZOOM_MAX) - 1e-6
     );
     expect(baseAtFullZoomOut).toBe('HERO_WIDE');
+  });
+
+  test('S20 Settings semantic navigation stays on the Hero surface and changes only the reference presentation', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.locator('#world-menu [data-settings-open]').click();
+
+    const settings = page.locator('#hero-settings-panel');
+    await expect(settings).toBeVisible();
+    await expect(settings.locator('[data-settings-semantic-ref]')).toHaveCount(9);
+    await expect(settings.locator('[data-settings-semantic-title]')).toHaveText('TREE-SETTINGS · Settings');
+
+    await settings.locator('[data-settings-semantic-ref="TREE-WORKSPACE"]').click();
+    await expect(settings.locator('[data-settings-semantic-title]')).toHaveText('TREE-WORKSPACE · Workspace');
+    await expect(settings.locator('[data-settings-semantic-responsibility]')).toHaveText('Workplace/project/repository/runtime scope');
+    await expect(settings.locator('[data-settings-semantic-branches]')).toContainText('project');
+    await expect(settings.locator('[data-settings-semantic-ref="TREE-WORKSPACE"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page).toHaveURL(/\/hero\/?$/);
+  });
+
+  test('S21 transaction presentation uses semantic operation families without claiming execution authority', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-transaction-presentation', {
+        detail: {
+          transaction: {
+            seatId: 'seat-browser-1',
+            transactionId: 'tx-browser-1',
+            kind: 'mcp-invocation',
+            state: 'LOADING',
+            progress: 0.4,
+            authoritative: true,
+          },
+        },
+      }));
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-label]')).toHaveText('MCP invocation');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Loading');
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-1',
+        transactionId: 'tx-browser-1',
+        kind: 'handoff-continuation',
+        state: 'WAITING_FOR_CONTINUATION',
+        authoritative: true,
+      });
+    });
+    await expect(orb.locator('[data-transaction-orb-label]')).toHaveText('Handoff / continuation');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Waiting for continuation');
+    await expect(orb).toHaveAttribute('data-kind', 'handoff-continuation');
+    await expect(orb).toHaveAttribute('data-state', 'WAITING_FOR_CONTINUATION');
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+    await expect(orb).toBeHidden();
+  });
+
+  test('S21 recovery actions expose authoritative Retry/Cancel intents without claiming execution', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-1',
+        transactionId: 'tx-browser-recovery',
+        kind: 'recovery',
+        state: 'UNAVAILABLE',
+        errorCode: 'PROVIDER_UNAVAILABLE',
+        retryable: true,
+        cancelable: false,
+        authoritative: true,
+      });
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-detail]')).toHaveText(
+      'Transaction tx-browser-recovery · PROVIDER_UNAVAILABLE'
+    );
+    await expect(orb.locator('[data-transaction-orb-retry]')).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-cancel]')).toBeHidden();
+
+    const retryIntent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:seat-transaction-retry-request', (event: any) => resolve(event.detail), { once: true });
+    }));
+    await orb.locator('[data-transaction-orb-retry]').click();
+    await expect(retryIntent).resolves.toMatchObject({
+      seatId: 'seat-browser-1',
+      transactionId: 'tx-browser-recovery',
+      kind: 'recovery',
+      state: 'UNAVAILABLE',
+      errorCode: 'PROVIDER_UNAVAILABLE',
+      presentationOnly: true,
+      notAuthority: true,
+      authoritativeConfirmationRequired: true,
+    });
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-1',
+        transactionId: 'tx-browser-active',
+        kind: 'ai-execution',
+        state: 'ACTIVE',
+        retryable: false,
+        cancelable: true,
+        authoritative: true,
+      });
+    });
+    await expect(orb.locator('[data-transaction-orb-retry]')).toBeHidden();
+    await expect(orb.locator('[data-transaction-orb-cancel]')).toBeVisible();
+
+    const cancelIntent = page.evaluate(() => new Promise((resolve) => {
+      window.addEventListener('teamai:seat-transaction-cancel-request', (event: any) => resolve(event.detail), { once: true });
+    }));
+    await orb.locator('[data-transaction-orb-cancel]').click();
+    await expect(cancelIntent).resolves.toMatchObject({
+      seatId: 'seat-browser-1',
+      transactionId: 'tx-browser-active',
+      kind: 'ai-execution',
+      state: 'ACTIVE',
+      presentationOnly: true,
+      notAuthority: true,
+      authoritativeConfirmationRequired: true,
+    });
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+    await expect(orb).toBeHidden();
+  });
+
+  test('S21 read-model bridge forwards transaction state into the live Hero presenter', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+          transaction: {
+            transactionId: 'tx-read-model',
+            kind: 'mcp-invocation',
+            state: 'LOADING',
+            progress: 0.6,
+            authoritative: true,
+          },
+        },
+      }));
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb).toBeVisible();
+    await expect(orb.locator('[data-transaction-orb-label]')).toHaveText('MCP invocation');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Loading');
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+          transaction: {
+            transactionId: 'tx-read-model',
+            kind: 'mcp-invocation',
+            state: 'COMPLETED',
+            authoritative: true,
+          },
+        },
+      }));
+    });
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Completed');
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+        },
+      }));
+    });
+    await expect(orb).toBeVisible();
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('teamai:seat-task-evidence-runtime-read-model', {
+        detail: {
+          source: 'backend-read-model',
+          available: true,
+          authorized: true,
+          seatId: 'seat-browser-read-model',
+          transaction: null,
+        },
+      }));
+    });
+    await expect(orb).toBeHidden();
+  });
+
+  test('S21 governed transaction matrix presents all operation families without local execution authority', async ({ page }) => {
+    await page.goto('/hero/');
+
+    const expected = [
+      ['navigation', 'Navigation'],
+      ['retrieval', 'Data retrieval'],
+      ['connection-test', 'Connection test'],
+      ['mcp-invocation', 'MCP invocation'],
+      ['ai-execution', 'AI execution'],
+      ['handoff-continuation', 'Handoff / continuation'],
+      ['storage-operation', 'Storage operation'],
+      ['commerce-verification', 'Commerce verification'],
+      ['authorization', 'Authorization'],
+      ['recovery', 'Recovery'],
+    ];
+
+    for (const [kind, label] of expected) {
+      await page.evaluate(({ transactionKind }) => {
+        window.TeamAiTransactionPresentation.set({
+          seatId: 'seat-browser-matrix',
+          transactionId: 'tx-matrix-' + transactionKind,
+          kind: transactionKind,
+          state: 'LOADING',
+          authoritative: true,
+        });
+      }, { transactionKind: kind });
+
+      const orb = page.locator('[data-transaction-orb]');
+      await expect(orb).toBeVisible();
+      await expect(orb.locator('[data-transaction-orb-label]')).toHaveText(label);
+      await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Loading');
+      await expect(orb).toHaveAttribute('data-kind', kind);
+    }
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+    await expect(page.locator('[data-transaction-orb]')).toBeHidden();
   });
 
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
@@ -222,16 +653,16 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('#state-label')).toHaveText('IDLE');
   });
 
-  test('scales the same stage from one seat to eight unlocked seats', async ({ page }) => {
+  test('scales the same presentation from one to ten Seat slots', async ({ page }) => {
     await page.goto('/hero/?seats=1');
-    await expect(page.locator('#seat-label')).toContainText('1 seat unlocked');
+    const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
+    await expect(page.locator('#seat-label')).toContainText('1 seat presented');
     await expect(page.locator('#state-label')).toHaveText('IDLE');
-    await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(8));
-    await expect(page.locator('#seat-label')).toContainText('8 seats unlocked');
-    const count = await page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
-    expect(count).toBe(8);
-    await page.evaluate(() => window.dispatchEvent(new CustomEvent('teamai:web-ai-seat-unlocked', { detail: { seatCount: 6 } })));
-    await expect(page.locator('#seat-label')).toContainText('6 seats unlocked');
+    await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(10));
+    await expect(page.locator('#seat-label')).toContainText('10 seats presented');
+    expect(await count()).toBe(10);
+    await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(6));
+    await expect(page.locator('#seat-label')).toContainText('6 seats presented');
   });
 });
 

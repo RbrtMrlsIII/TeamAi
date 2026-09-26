@@ -1,3 +1,4 @@
+import { createSpatialConstructionContext, validateSpatialConstructionNode } from './machine-spatial-root-contract.js';
 import {
   createStorageItemBranch,
   normalizeStorageInventoryReadModel,
@@ -5,6 +6,19 @@ import {
 } from './storage-inventory.js';
 
 export const STORAGE_FACILITY_ROOT_ID = 'hero-storage-inventory-facility';
+
+export const STORAGE_FACILITY_SPATIAL_CONTEXT = Object.freeze(
+  createSpatialConstructionContext({
+    slice: 'S18',
+    owner: 'frontend/spatial/storage-inventory-facility.js',
+    semanticId: STORAGE_FACILITY_ROOT_ID,
+    semanticBoundary: 'presentation-only',
+  }),
+);
+
+if (!validateSpatialConstructionNode(STORAGE_FACILITY_SPATIAL_CONTEXT).valid) {
+  throw new Error('invalid S18 Storage spatial root contract');
+}
 
 let panel = null;
 let activeItemId = null;
@@ -114,6 +128,7 @@ function render() {
         const metadata = [
           item.kind,
           item.status,
+          `artifact=${item.artifactState}`,
           item.sizeLabel,
         ].filter(Boolean).join(' · ');
         return '<button type="button" class="storage-inventory-facility__item' +

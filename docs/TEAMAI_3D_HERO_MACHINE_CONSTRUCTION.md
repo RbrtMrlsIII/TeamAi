@@ -27,6 +27,8 @@ Use those for authority and program order. Use **this** file when an agent asks:
 
 ```text
 ROOT TRUTH
+
+**Spatial construction root rule:** S0-S10 are the canonical structural roots of the 029 machine. Every physical feature, Pod, Division, facility, topology edge, signal route, and camera subject introduced after the root slices must inherit the applicable root contracts. Later product slices may add semantics and runtime projection, but they do not create a parallel machine grammar.
   → stable treeID / branchId
   → purpose / responsibility
   → UI / product payload
@@ -58,7 +60,7 @@ The active Draft implementation keeps the construction law above, but the curren
 
 The world-profile distinction is deliberate: workspace footprint, R0 centerline, Seat-shell radius, and outer-housing radius are separate physical concepts. A geometry value must not be copied between those layers simply because the numbers are similar.
 
-The root model is provisional. Its purpose is to expose missing or duplicate ownership while the product architecture is still settling, not to freeze today's composition as final.
+`hero-root-contract.js` / `hero-root-runtime.js` remain provisional DOM/root-presence observability. The canonical machine inheritance contract is `machine-spatial-root-contract.js`; it governs construction metadata and S0-S10 dependency inheritance without freezing today's geometry as final.
 
 ## 2. Layer dependency map
 
@@ -103,7 +105,7 @@ RETURN_TO_PARENT · RETURN_TO_WORLD · CONTINUOUS_TREE_TRAVEL
 RESPONSIVE_FRAMING · REDUCED_MOTION_EQUIVALENT
 ```
 
-Subject identity is semantic. Named docks and ~`700 ms` lerp are **implementation baselines**, not final travel law. Continuous tree-to-tree travel and deep branch subject resolution remain incomplete in the current #398 implementation.
+Subject identity is semantic. Named docks and ~`700 ms` lerp are implementation baselines, not final travel law. Continuous tree-to-tree travel and deep branch subject resolution remain incomplete. PR #398 is the merged structural baseline; remaining construction is governed by PR #404 / Issue #405.
 
 ### Electricity law
 
@@ -125,7 +127,7 @@ Effects communicate semantics: pulse → activity; flow → **real edge**; error
 
 ## 3. Establish-one-tree checklist (Phases A–H)
 
-Execute under Issue **#278**. One vertical at a time. Comments on #278 remain evidence-only.
+Execute through PR #404 / dedicated Issue #405 under the broader Issue #278 / #396 authority chain. One coherent slice at a time; do not open another implementation PR. Evidence remains evidence-only.
 
 ### Phase A — Define before drawing
 

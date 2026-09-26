@@ -9,9 +9,17 @@
  * second canvas or a second WebGL context. hero-flex remains the interaction
  * and DOM compatibility controller during migration.
  */
-import { createBranchConnectionCore, resolveBranchCamera } from './machine-core-layout-runtime.js';
-import { createMachineAnimation } from './machine-core-animation.js';
+import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
+import {
+  createMachineExpansionMechanism,
+  deriveMachineSeatDivisionExpansionPlan,
+  resolveMachineExpansionAmount,
+  subjectAtExpansionAmount,
+  resolveMachineFocusedExpansionPhase,
+  toMachineDisplayState,
+} from './machine-expansion-mechanism.js';
 import { deriveMachineSubject } from './machine-subject.js';
+import { deriveMachineCameraSpec, resolveMachineCameraMode } from './machine-camera.js';
 import { buildMachineCoreSeat1Connection } from './machine-core-seat-connection.js';
 import { buildAdjacentDivisionWiring, adjacentDivisionWiringPoint } from './seat-adjacent-division-wiring.js';
 import { createDeepSpaceField, DEEP_SPACE_NEBULA_ANCHORS } from './hero-environment.js';
@@ -29,8 +37,13 @@ import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './ma
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
 import { deriveMachineTransformationChoreography } from './machine-choreography.js';
+import { resolveMachineSignalState, machineSignalVisualProfile } from './machine-signal-state.js';
 import { deriveMachineRingArticulation } from './machine-ring-articulation.js';
 import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './machine-r0-receiving.js';
+import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machine-core-assembly.js';
+import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
+import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
+import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges } from './machine-world-topology.js';
 const TAU = Math.PI * 2;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -176,6 +189,9 @@ function regularPolygon(sides, phase = 0) {
 }
 
 const PRIMITIVE_POLYGONS = Object.freeze({
+  CORE_HEX: regularPolygon(6, Math.PI / 6),
+  CORE_OCT: regularPolygon(8, Math.PI / 8),
+  CORE_DODEC: regularPolygon(12, Math.PI / 12),
   CUBE: POLYS.pod,
   CYL: regularPolygon(16),
   TORUS: regularPolygon(12),
@@ -279,12 +295,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   gl.bindBuffer(gl.ARRAY_BUFFER, starBuffers.phase);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(phases), gl.STATIC_DRAW);
 
-  const animation = createMachineAnimation({ duration: 950 });
+  const expansionMechanism = createMachineExpansionMechanism({ duration: 950 });
   let targetExpanded = false;
   let branchId = 'HUB-CORE';
   let lastSeat1AdjacentWiring = null;
   let disposed = false;
   const primitiveBuffers = new Map();
+  const SPATIAL_TOPOLOGY_RESOLUTION = 24;
+  let machineWorldSpatialCache = null;
 
   function worldProfile(seatCount) {
     const profile = deriveMachineWorldProfile(seatCount);
@@ -306,6 +324,177 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     entry = { buffer, count: data.length / 3 };
     primitiveBuffers.set(key, entry);
     return entry;
+  }
+
+  function drawMachineCoreAssembly({ assembly, reducedMotion }) {
+    if (!assembly) return null;
+
+    const shapeForRole = Object.freeze({
+      'foundation-shell': 'CORE_HEX',
+      'upper-shell': 'CORE_HEX',
+      'receiving-deck': 'CORE_DODEC',
+      'reactor-chamber': 'CORE_OCT',
+      'reactor-cap': 'CORE_DODEC',
+      'conductor-collar': 'CORE_HEX',
+    });
+
+    const materialForRole = (role) => {
+      if (role === 'reactor-chamber') return RING_MATERIALS.energy;
+      if (role === 'receiving-deck') return RING_MATERIALS.glass;
+      if (role === 'upper-shell') return RING_MATERIALS.metal;
+      if (role === 'conductor-collar') return RING_MATERIALS.metal;
+      return RING_MATERIALS.metal2;
+    };
+
+    for (const component of assembly.components) {
+      const material = materialForRole(component.role);
+      const baseY = component.center.y - component.height / 2;
+      const transform = multiplyMatrix(
+        translateMatrix(component.center.x, baseY, component.center.z),
+        scaleMatrix(component.radius, component.height, component.radius),
+      );
+      ringDraw(shapeForRole[component.role] || 'CORE_HEX', transform, material, {
+        emit: component.role === 'reactor-chamber' ? 0.18 : finite(material?.emit, 0),
+        glow: component.role === 'reactor-chamber' ? 0.22 : 0.03,
+        alpha: component.role === 'receiving-deck'
+          ? (reducedMotion ? 0.42 : 0.62)
+          : 1,
+      });
+    }
+
+    for (const mechanism of assembly.concentricMechanisms) {
+      const ring = ringPoints(96, mechanism.radius, mechanism.y);
+      gl.useProgram(line);
+      gl.uniformMatrix4fv(lineP, false, projection);
+      gl.uniformMatrix4fv(lineV, false, view);
+      gl.uniformMatrix4fv(lineM, false, identity);
+      gl.bindBuffer(gl.ARRAY_BUFFER, wireBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, ring, gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(linePos);
+      gl.vertexAttribPointer(linePos, 3, gl.FLOAT, false, 0, 0);
+      gl.uniform4f(
+        lineColor,
+        0.28,
+        0.74,
+        1,
+        reducedMotion
+          ? 0.12 + mechanism.signal * 0.18
+          : 0.16 + mechanism.signal * 0.28,
+      );
+      gl.drawArrays(gl.LINE_STRIP, 0, 97);
+    }
+
+    for (const port of assembly.ports) {
+      const scale = port.radius;
+      ringDraw(
+        'SPH',
+        multiplyMatrix(
+          translateMatrix(port.point.x, port.point.y, port.point.z),
+          scaleMatrix(scale, scale, scale),
+        ),
+        RING_MATERIALS.energy,
+        {
+          emit: 0.10,
+          glow: 0.12,
+          alpha: reducedMotion ? 0.24 : 0.44,
+        },
+      );
+    }
+
+    canvas.dataset.machineWorldCoreAssembly = assembly.id;
+    canvas.dataset.machineWorldCoreAssemblyVersion = assembly.version;
+    canvas.dataset.machineWorldCoreComponents = String(assembly.components.length);
+    canvas.dataset.machineWorldCorePorts = String(assembly.ports.length);
+    canvas.dataset.machineWorldCoreValidation = 'pass';
+    return assembly;
+  }
+
+  function drawMachinePodAssembly({
+    assembly,
+    reducedMotion,
+    selected,
+    shellMaterial,
+    insetMaterial,
+  }) {
+    if (!assembly) return null;
+
+    const shapeForRole = Object.freeze({
+      'outer-shell': 'CUBE',
+      'structural-collar': 'TORUS',
+      'inner-chamber': 'CORE_OCT',
+      'articulation-mechanism': 'TORUS',
+      'payload-surface': 'CUBE',
+      'connection-interface': 'SPH',
+      'status-indicator': 'TORUS',
+    });
+
+    const materialForRole = (role) => {
+      if (role === 'outer-shell') return shellMaterial;
+      if (role === 'payload-surface') return insetMaterial;
+      if (role === 'connection-interface') return RING_MATERIALS.energy;
+      if (role === 'status-indicator') return RING_MATERIALS.trace;
+      if (role === 'articulation-mechanism') return RING_MATERIALS.glass;
+      if (role === 'inner-chamber') return RING_MATERIALS.metal2;
+      return RING_MATERIALS.metal;
+    };
+
+    for (const component of assembly.components) {
+      const shape = shapeForRole[component.role] || 'CUBE';
+      const material = materialForRole(component.role);
+      const phase = component.role === 'articulation-mechanism'
+        ? assembly.articulation.phase
+        : 0;
+      const sx = Number(component.dimensions?.x || component.radius * 2) * 0.5;
+      const sy = Math.max(0.025, Number(component.dimensions?.y || component.height));
+      const sz = Number(component.dimensions?.z || component.radius * 2) * 0.5;
+      const transform = multiplyMatrix(
+        translateMatrix(
+          component.center.x,
+          component.center.y - sy * 0.5,
+          component.center.z,
+        ),
+        multiplyMatrix(
+          rotateYMatrix(phase),
+          scaleMatrix(sx, sy, sz),
+        ),
+      );
+      ringDraw(shape, transform, material, {
+        emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
+        glow: (selected ? 0.16 : 0.035) + (
+          component.role === 'connection-interface' || component.role === 'status-indicator'
+            ? 0.08
+            : 0
+        ),
+        alpha: component.role === 'payload-surface'
+          ? (reducedMotion ? 0.38 : 0.62)
+          : component.role === 'connection-interface'
+            ? (reducedMotion ? 0.34 : 0.64)
+            : component.role === 'status-indicator'
+              ? (reducedMotion ? 0.28 : 0.54)
+              : 1,
+      });
+    }
+
+    for (const podPort of assembly.ports) {
+      const scale = Number(podPort.radius) || 0.08;
+      ringDraw(
+        'SPH',
+        multiplyMatrix(
+          translateMatrix(podPort.point.x, podPort.point.y, podPort.point.z),
+          scaleMatrix(scale, scale, scale),
+        ),
+        podPort.role === 'connection'
+          ? RING_MATERIALS.energy
+          : RING_MATERIALS.trace,
+        {
+          emit: podPort.role === 'connection' ? 0.10 : 0.045,
+          glow: selected ? 0.16 : 0.05,
+          alpha: reducedMotion ? 0.28 : 0.50,
+        },
+      );
+    }
+
+    return assembly;
   }
 
   function ringDraw(shape, transform, material, options = {}) {
@@ -409,25 +598,39 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     return entry;
   }
 
-  function fitWorldCamera(scene, viewport, cameraId) {
-    const subject = deriveMachineSubject(scene.parts, 0.2);
-    const selected = resolveBranchCamera(scene, cameraId) || resolveBranchCamera(scene, 'HUB-CORE') || scene.cameras[0];
-    const span = subject ? Math.max(subject.max.x - subject.min.x, subject.max.z - subject.min.z) : 1;
-    const distance = clamp(span * 1.12 + 6, 10, 22);
-    const target = selected?.target || subject?.center || {x:0,y:.5,z:0};
-    const side = finite(selected?.position?.x, 0);
-    const depth = finite(selected?.position?.z, distance);
-    const bearing = Math.atan2(side, depth);
-    const pitch = Math.max(2.8, distance * .34);
-    const aspect = viewport.width / Math.max(1, viewport.height);
-    const responsive = aspect < .8 ? 1.25 : aspect < 1.1 ? 1.10 : 1;
-    return {
-      target: { x: target.x, y: target.y, z: target.z },
-      radius: distance * responsive,
-      pitch,
-      bearing: bearing + .10,
-      fov: aspect < .8 ? 48 : 44,
-    };
+  function fitWorldCamera(scene, viewport, context = {}) {
+    const branch = context.branchId
+      ? scene.byBranch?.get(context.branchId)
+      : null;
+    const worldSubject = deriveMachineSubject(scene.parts, 0.2);
+    const podSubject = branch?.podAssembly?.subject
+      || (branch ? deriveMachineSubject([branch], 0.12) : null);
+    const mode = resolveMachineCameraMode({
+      cameraId: context.cameraId || 'HERO_WIDE',
+      hierarchyOpen: Boolean(context.hierarchyOpen),
+      focusedChildId: context.focusedChildId || null,
+      focusedDivision: Boolean(context.divisionSubject),
+      expansionFollowing: Boolean(
+        context.divisionSubject
+        && Number(context.focusedChildAmount) > 0.02
+        && Number(context.focusedChildAmount) < 0.999,
+      ),
+      returningToParent: Boolean(context.returningToParent),
+      returningToWorld: Boolean(context.returningToWorld),
+      facilityFocused: Boolean(context.facilityFocused),
+    });
+    return deriveMachineCameraSpec({
+      cameraId: context.cameraId || 'HERO_WIDE',
+      mode,
+      worldSubject,
+      podSubject,
+      divisionSubject: context.divisionSubject || null,
+      coreSubject: context.coreSubject || null,
+      facilitySubject: context.facilitySubject || null,
+      parentSubject: context.parentSubject || podSubject,
+      viewport,
+      reducedMotion: Boolean(context.reducedMotion),
+    });
   }
 
   function renderSeat1ConnectionChild(scene, amount, selectedBranch, reducedMotion, now) {
@@ -613,6 +816,51 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   }
 
+  function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}) {
+    const edges = getRenderableMachineWorldEdges(topology);
+    let rendered = 0;
+    gl.useProgram(line);
+    gl.uniformMatrix4fv(lineP,false,projection);
+    gl.uniformMatrix4fv(lineV,false,view);
+    gl.uniformMatrix4fv(lineM,false,identity);
+    const renderedSignals = [];
+    for (const edge of edges) {
+      const route = edge.route;
+      const values = route.flatMap((point) => [point.x, point.y, point.z]);
+      const signal = resolveMachineSignalState({
+        edge,
+        state: signalState,
+        selectedBranchId,
+        reducedMotion,
+        now,
+      });
+      const visual = machineSignalVisualProfile(signal);
+      const selected = edge.sourceBranchId === selectedBranchId || edge.targetBranchId === selectedBranchId;
+      const alpha = Math.min(
+        0.84,
+        visual.alpha + (selected ? 0.12 : 0) + visual.pulse * 0.16,
+      );
+      gl.bindBuffer(gl.ARRAY_BUFFER,wireBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(linePos);
+      gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
+      gl.uniform4f(
+        lineColor,
+        visual.state === 'BLOCKED' || visual.state === 'ERROR' ? .82 : selected ? .34 : .16,
+        visual.state === 'ERROR' ? .30 : visual.state === 'BLOCKED' ? .56 : selected ? .82 : .54,
+        visual.state === 'HANDOFF_READY' || visual.state === 'REFLECT' ? .92 : 1,
+        alpha,
+      );
+      gl.drawArrays(gl.LINE_STRIP,0,route.length);
+      renderedSignals.push(signal?.state || 'IDLE');
+      rendered += 1;
+    }
+    canvas.dataset.machineWorldSignalEdgeCount = String(rendered);
+    canvas.dataset.machineWorldSignalStates = renderedSignals.join(',');
+    canvas.dataset.machineWorldSignalReducedMotion = String(Boolean(reducedMotion));
+    return rendered;
+  }
+
   function renderSemanticEdgeTrace(edge, amount, reducedMotion) {
     const route = Array.isArray(edge?.route) ? edge.route : [];
     if (route.length < 2) return null;
@@ -793,17 +1041,49 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const wantedExpanded = hierarchyOpen || Boolean(state.expanded);
     if (wantedExpanded !== targetExpanded) {
       targetExpanded = wantedExpanded;
-      animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
+      expansionMechanism.setTarget(targetExpanded, now);
     }
-    const sample = animation.sample(now);
+    const sample = expansionMechanism.sample(now, { reducedMotion });
     const branchAmounts = state.seatDivisionBranchAmounts || {};
     const connectionAmount = finite(
       branchAmounts.connectionBranchAmount ?? state.connectionBranchAmount,
       0,
     );
+    const seatCount = clamp(Math.floor(Number(state.seatCount) || 10), 1, 10);
+    const focusedChildIndex = Number.isInteger(state.focusedChildIndex)
+      ? state.focusedChildIndex
+      : SEAT_DIVISION_ORDER.indexOf(state.focusedChildId);
+    const expansionSample = expansionMechanism.sample(now, {
+      maxSafeAmount: 1,
+      reducedMotion,
+    });
+    const workspaceProfile = worldProfile(seatCount);
+    const selectedSeat = clamp(Math.floor(Number(state.selectedSeat) || 0), 0, seatCount - 1);
+    branchId = state.branchId || `BRANCH-SEAT-${String(selectedSeat+1).padStart(2,'0')}`;
+    const scene = createBranchConnectionCore({ seatCount, expansionAmount: sample.amount });
+    const previewShell = scene.byBranch.get(branchId);
+    const focusedExpansionPlan = hierarchyOpen && previewShell && state.focusedChildId && focusedChildIndex >= 0
+      ? deriveMachineSeatDivisionExpansionPlan({
+          parent: previewShell,
+          childId: state.focusedChildId,
+          childIndex: focusedChildIndex,
+          obstacles: scene.parts.filter((part) =>
+            part.kind === 'outer-housing'
+            || (part.kind === 'inner-pod' && part.branchId !== branchId)
+          ),
+          clearance: 0.16,
+        })
+      : null;
+    const rawFocusedChildAmount = finite(state.focusedChildAmount, 0);
+    const focusedChildAmount = focusedExpansionPlan
+      ? resolveMachineExpansionAmount(rawFocusedChildAmount, focusedExpansionPlan)
+      : clamp(rawFocusedChildAmount, 0, 1);
+    const focusedSubject = focusedExpansionPlan
+      ? subjectAtExpansionAmount(focusedExpansionPlan, focusedChildAmount)
+      : null;
     const choreography = deriveMachineTransformationChoreography({
-      shellAmount: finite(state.hierarchyOpenAmount, sample.amount),
-      divisionAmount: finite(state.focusedChildAmount, 0),
+      shellAmount: finite(state.hierarchyOpenAmount, expansionSample.amount),
+      divisionAmount: focusedChildAmount,
       connectionAmount,
       heroState: state.heroState,
       contributionAmount: finite(state.contributionAmount, 0),
@@ -811,17 +1091,56 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       focusedChildId: state.focusedChildId,
       reducedMotion,
     });
-    const seatCount = clamp(Math.floor(Number(state.seatCount) || 10), 1, 10);
-    const workspaceProfile = worldProfile(seatCount);
-    const selectedSeat = clamp(Math.floor(Number(state.selectedSeat) || 0), 0, seatCount - 1);
-    branchId = state.branchId || `BRANCH-SEAT-${String(selectedSeat+1).padStart(2,'0')}`;
-    const scene = createBranchConnectionCore({ seatCount, expansionAmount: sample.amount });
+    const workspaceCoreForAssembly = deriveWorkspaceCoreGeometry({
+      workspaceRadius: workspaceProfile.workspace,
+      expansionAmount: choreography.transformation,
+    });
+    const coreAssembly = deriveMachineCoreAssembly({
+      hub: scene.hub,
+      workspaceCore: workspaceCoreForAssembly,
+      expansionAmount: choreography.transformation,
+      receptionAmount: choreography.workspaceReception,
+      adjacentSeatRadius: workspaceProfile.seatRadius,
+    });
+    const coreAssemblyValidation = validateMachineCoreAssembly(coreAssembly);
+    if (!coreAssemblyValidation.valid) {
+      throw new Error(`invalid S2 core assembly: ${coreAssemblyValidation.reasons.join(', ')}`);
+    }
+
     const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
-    const cameraSpec = fitWorldCamera(scene,{width,height},effectiveCameraId);
+    const navigationCameraId = String(
+      state.cameraId || (hierarchyOpen ? 'SEAT_CLOSE' : 'HERO_WIDE'),
+    );
+    const cameraSpec = fitWorldCamera(scene, { width, height }, {
+      cameraId: navigationCameraId,
+      branchId,
+      hierarchyOpen,
+      focusedChildId: state.focusedChildId,
+      focusedChildAmount,
+      divisionSubject: focusedSubject,
+      coreSubject: coreAssembly?.subject || null,
+      facilitySubject: state.facilitySubject || null,
+      parentSubject: previewShell?.podAssembly?.subject || null,
+      facilityFocused: Boolean(state.facilityFocused),
+      returningToParent: Boolean(state.returningToParent),
+      returningToWorld: Boolean(state.returningToWorld),
+      reducedMotion,
+    });
+    const focusedCameraSubject = focusedSubject || null;
+    const cameraTarget = cameraSpec.target;
+    const cameraRadius = Math.max(
+      cameraSpec.radius,
+      focusedCameraSubject
+        ? Math.max(
+          focusedCameraSubject.max.x - focusedCameraSubject.min.x,
+          focusedCameraSubject.max.z - focusedCameraSubject.min.z,
+        ) * 1.25
+        : 0,
+    );
     const zoom = clamp(finite(state.navZoom,1),.78,NAV_ZOOM_MAX);
     const pullback = hierarchyOpen ? worldPullbackProgress(zoom, NAV_ZOOM_MAX) : 0;
-    const subjectTarget = cameraSpec.target;
-    const subjectRadius = cameraSpec.radius * clamp(zoom,.78,1);
+    const subjectTarget = cameraTarget;
+    const subjectRadius = cameraRadius * clamp(zoom,.78,1);
     const subjectPose = {
       p: [
         subjectTarget.x + Math.sin(cameraSpec.bearing + finite(state.navOrbitYaw,0)) * subjectRadius * .82,
@@ -867,6 +1186,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.drawArrays(gl.POINTS,0,STAR_FIELD.length);
     gl.depthMask(true);
 
+    canvas.dataset.machineWorldCameraId = cameraSpec.cameraId;
+    canvas.dataset.machineWorldCameraMode = cameraSpec.mode;
+    canvas.dataset.machineWorldCameraReducedMotion = String(cameraSpec.reducedMotion);
     const seatRingRadius = Math.max(
       ...scene.parts
         .filter((part) => part.kind === 'inner-pod' && Number.isInteger(part.seatIndex))
@@ -906,46 +1228,223 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       gl.drawArrays(gl.TRIANGLES,0,entry.count);
     }
 
-    for (const part of scene.parts) {
-      const entry = ensureBuffer(part);
-      gl.useProgram(solid);
-      gl.bindBuffer(gl.ARRAY_BUFFER,entry.buffer);
-      gl.enableVertexAttribArray(solidPos);
-      gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
-      modelMatrix(model,[part.center.x,part.level - part.dimensions.y*.25,part.center.z],[
-        part.dimensions.x*.58,
-        part.dimensions.y*.62,
-        part.dimensions.z*.58,
-      ]);
-      gl.uniformMatrix4fv(solidP,false,projection);
-      gl.uniformMatrix4fv(solidV,false,view);
-      gl.uniformMatrix4fv(solidM,false,model);
-      const fallbackColor = COLORS[part.silhouette || 'pod'] || COLORS.pod;
-      const partMaterial = part.kind === 'inner-pod' ? authoredSeatShell : null;
-      const color = partMaterial?.color || fallbackColor;
-      const selected = part.branchId === branchId;
-      gl.uniform4f(solidColor,
-        clamp(color[0] + (selected ? .14 : 0),0,1),
-        clamp(color[1] + (selected ? .14 : 0),0,1),
-        clamp(color[2] + (selected ? .14 : 0),0,1),
-        1
-      );
-      gl.uniform1f(solidGlow, (partMaterial?.emit || 0) + (selected ? .75 : .16));
-      gl.drawArrays(gl.TRIANGLES,0,entry.count);
+    drawMachineCoreAssembly({
+      assembly: coreAssembly,
+      reducedMotion,
+    });
 
-      if (part.kind === 'inner-pod') {
-        modelMatrix(model,[part.center.x,part.level - part.dimensions.y*.26,part.center.z],[
-          part.dimensions.x*.54,
-          part.dimensions.y*.52,
-          part.dimensions.z*.54,
+    const spatialGeometryKey = [
+      seatCount,
+      Math.round(sample.amount * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
+      Math.round((hierarchyOpen ? focusedChildAmount : 1) * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
+    ].join(':');
+    let facilityAssemblies;
+    let facilityAssemblyValidation;
+    let facilityMachinery;
+    let facilityMachineryValidation;
+    let machineWorldTopology;
+    let machineWorldTopologyValidation;
+
+    if (machineWorldSpatialCache?.key === spatialGeometryKey) {
+      ({
+        facilityAssemblies,
+        facilityAssemblyValidation,
+        facilityMachinery,
+        facilityMachineryValidation,
+        machineWorldTopology,
+        machineWorldTopologyValidation,
+      } = machineWorldSpatialCache);
+    } else {
+      facilityAssemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      facilityAssemblyValidation = validateMachineFacilityAssemblies(facilityAssemblies);
+      if (!facilityAssemblyValidation.valid) {
+        throw new Error(`invalid S6 facility assembly: ${facilityAssemblyValidation.reasons.join(', ')}`);
+      }
+
+      facilityMachinery = deriveMachineFacilityMachinery({
+        facilityAssemblies,
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      facilityMachineryValidation = validateMachineFacilityMachinery(facilityMachinery);
+      if (!facilityMachineryValidation.valid) {
+        throw new Error(`invalid S7 facility machinery: ${facilityMachineryValidation.reasons.join(', ')}`);
+      }
+
+      machineWorldTopology = buildMachineWorldTopology({
+        scene,
+        facilityAssemblies,
+        facilityMachinery,
+        seatDivisionAmount: hierarchyOpen ? Math.max(0, finite(focusedChildAmount, 1)) : 1,
+        clearance: 0.16,
+      });
+      machineWorldTopologyValidation = validateMachineWorldTopology(
+        machineWorldTopology,
+        { expectedSeatCount: scene.seatCount },
+      );
+      if (!machineWorldTopologyValidation.valid) {
+        throw new Error(`invalid S8 world topology: ${machineWorldTopologyValidation.reasons.join(', ')}`);
+      }
+
+      machineWorldSpatialCache = Object.freeze({
+        key: spatialGeometryKey,
+        facilityAssemblies,
+        facilityAssemblyValidation,
+        facilityMachinery,
+        facilityMachineryValidation,
+        machineWorldTopology,
+        machineWorldTopologyValidation,
+      });
+    }
+
+    let facilityAssemblyCount = 0;
+    let facilityComponentCount = 0;
+    let facilityPortCount = 0;
+    let facilityMachineryCount = 0;
+    let facilityMachineryComponentCount = 0;
+    let facilityMachineryPortCount = 0;
+    const facilityMechanismPhases = [];
+    for (const machine of facilityMachinery) {
+      const selected = machine.branchId === branchId;
+      const facilityPresentation = deriveMachineFacilityMechanismPresentation(machine, {
+        amount: choreography.transformation,
+        reducedMotion,
+      });
+      facilityMechanismPhases.push(machine.branchId + ':' + facilityPresentation.phase);
+      const presentationById = new Map(
+        facilityPresentation.components.map((entry) => [entry.id, entry]),
+      );
+      for (const component of machine.components) {
+        const presentation = presentationById.get(component.id);
+        ringDraw(
+          component.shape,
+          multiplyMatrix(
+            translateMatrix(
+              component.center.x + finite(presentation?.dx),
+              component.center.y + finite(presentation?.dy),
+              component.center.z + finite(presentation?.dz),
+            ),
+            multiplyMatrix(
+              rotateYMatrix(
+                reducedMotion
+                  ? component.rotationY
+                  : finite(presentation?.rotationY, component.rotationY),
+              ),
+              scaleMatrix(
+                Math.max(0.08, component.dimensions.x * 0.5),
+                Math.max(0.04, component.dimensions.y),
+                Math.max(0.08, component.dimensions.z * 0.5),
+              ),
+            ),
+          ),
+          component.materialRole === 'energy'
+            ? RING_MATERIALS.energy
+            : component.materialRole === 'trace'
+              ? RING_MATERIALS.trace
+              : component.materialRole === 'glass'
+                ? RING_MATERIALS.glass
+                : component.materialRole === 'metal2'
+                  ? RING_MATERIALS.metal2
+                  : RING_MATERIALS.metal,
+          {
+            emit: selected ? 0.18 : 0.07,
+            glow: selected ? 0.26 : 0.09,
+            alpha: selected ? 0.86 : 0.58,
+          },
+        );
+      }
+      facilityMachineryCount += 1;
+      facilityMachineryComponentCount += machine.components.length;
+      facilityMachineryPortCount += machine.ports.length;
+    }
+    const facilityMaterial = {
+      glass: RING_MATERIALS.glass,
+      energy: RING_MATERIALS.energy,
+    };
+    for (const assembly of facilityAssemblies) {
+      const selected = assembly.branchId === branchId;
+      for (const component of assembly.components) {
+        const dx = component.center.x;
+        const dy = component.center.y;
+        const dz = component.center.z;
+        const material = facilityMaterial[component.materialRole] || RING_MATERIALS.glass;
+        ringDraw(
+          component.shape,
+          multiplyMatrix(
+            translateMatrix(dx, dy, dz),
+            scaleMatrix(
+              Math.max(0.12, component.dimensions.x * 0.5),
+              Math.max(0.045, component.dimensions.y),
+              Math.max(0.12, component.dimensions.z * 0.5),
+            ),
+          ),
+          material,
+          {
+            emit: selected ? 0.16 : 0.06,
+            glow: selected ? 0.24 : 0.08,
+            alpha: selected ? 0.78 : 0.52,
+          },
+        );
+      }
+      facilityAssemblyCount += 1;
+      facilityComponentCount += assembly.components.length;
+      facilityPortCount += assembly.ports.length;
+    }
+
+    let podAssemblyCount = 0;
+    let podAssemblyComponentCount = 0;
+    let podAssemblyPortCount = 0;
+    let podAssemblySelectedBranch = '';
+    for (const part of scene.parts) {
+      if (part.kind === 'hub') continue;
+      const selected = part.branchId === branchId;
+      let entry = null;
+
+      if (part.kind === 'inner-pod' && part.podAssembly) {
+        const projected = drawMachinePodAssembly({
+          assembly: part.podAssembly,
+          reducedMotion,
+          selected,
+          shellMaterial: authoredSeatShell,
+          insetMaterial: authoredSeatInset,
+        });
+        if (projected) {
+          podAssemblyCount += 1;
+          podAssemblyComponentCount += projected.components.length;
+          podAssemblyPortCount += projected.ports.length;
+          if (selected) podAssemblySelectedBranch = projected.branchId;
+        }
+      } else {
+        entry = ensureBuffer(part);
+        gl.useProgram(solid);
+        gl.bindBuffer(gl.ARRAY_BUFFER,entry.buffer);
+        gl.enableVertexAttribArray(solidPos);
+        gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
+        modelMatrix(model,[part.center.x,part.level - part.dimensions.y*.25,part.center.z],[
+          part.dimensions.x*.58,
+          part.dimensions.y*.62,
+          part.dimensions.z*.58,
         ]);
+        gl.uniformMatrix4fv(solidP,false,projection);
+        gl.uniformMatrix4fv(solidV,false,view);
         gl.uniformMatrix4fv(solidM,false,model);
-        gl.uniform4f(solidColor,authoredSeatInset.color[0],authoredSeatInset.color[1],authoredSeatInset.color[2],1);
-        gl.uniform1f(solidGlow,authoredSeatInset.emit || 0);
+        const fallbackColor = COLORS[part.silhouette || 'pod'] || COLORS.pod;
+        const color = fallbackColor;
+        gl.uniform4f(solidColor,
+          clamp(color[0] + (selected ? .14 : 0),0,1),
+          clamp(color[1] + (selected ? .14 : 0),0,1),
+          clamp(color[2] + (selected ? .14 : 0),0,1),
+          1
+        );
+        gl.uniform1f(solidGlow, selected ? .75 : .16);
         gl.drawArrays(gl.TRIANGLES,0,entry.count);
       }
 
       if (part.uiSurface) {
+        entry = entry || ensureBuffer(part);
         modelMatrix(model,
           [part.uiSurface.anchor.x,part.uiSurface.anchor.y,part.uiSurface.anchor.z],
           [Math.max(.16,part.uiSurface.width*.34),.024,Math.max(.14,part.uiSurface.depth*.32)]
@@ -957,23 +1456,73 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         gl.drawArrays(gl.TRIANGLES,0,entry.count);
       }
     }
+    canvas.dataset.machineWorldPodAssemblies = String(podAssemblyCount);
+    canvas.dataset.machineWorldPodAssemblyComponents = String(podAssemblyComponentCount);
+    canvas.dataset.machineWorldPodAssemblyPorts = String(podAssemblyPortCount);
+    canvas.dataset.machineWorldPodAssemblyValidation =
+      podAssemblyCount === scene.parts.filter((part) => part.kind === 'inner-pod').length
+        ? 'pass'
+        : 'partial';
+    canvas.dataset.machineWorldPodAssemblyBranch = podAssemblySelectedBranch;
+    canvas.dataset.machineWorldFacilityAssemblies = String(facilityAssemblyCount);
+    canvas.dataset.machineWorldFacilityComponents = String(facilityComponentCount);
+    canvas.dataset.machineWorldFacilityPorts = String(facilityPortCount);
+    canvas.dataset.machineWorldFacilityValidation = 'pass';
+    canvas.dataset.machineWorldFacilitySeatHierarchy = 'separate';
+    canvas.dataset.machineWorldFacilityMachinery = String(facilityMachineryCount);
+    canvas.dataset.machineWorldFacilityMachineryComponents = String(facilityMachineryComponentCount);
+    canvas.dataset.machineWorldFacilityMachineryPorts = String(facilityMachineryPortCount);
+    canvas.dataset.machineWorldFacilityMachineryValidation = 'pass';
+    canvas.dataset.machineWorldFacilityMechanismPhases = facilityMechanismPhases.join('|');
+    canvas.dataset.machineWorldFacilityMechanismState = choreography.transformation <= 0.001
+      ? 'STOWED'
+      : choreography.transformation >= 0.999
+        ? 'ACTIVE'
+        : 'DEPLOYING';
+    const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(
+      machineWorldTopology,
+      branchId,
+      reducedMotion,
+      now,
+      {
+        ...state,
+        workspaceReceptionAmount: choreography.workspaceReception,
+      },
+    );
+    canvas.dataset.machineWorldTopology = machineWorldTopology.id;
+    canvas.dataset.machineWorldTopologyVersion = machineWorldTopology.version;
+    canvas.dataset.machineWorldTopologyValidation = 'pass';
+    canvas.dataset.machineWorldTopologyEdges = String(machineWorldTopology.edgeCount);
+    canvas.dataset.machineWorldTopologyRenderedEdges = String(renderedWorldTopologyEdges);
+    canvas.dataset.machineWorldTopologyCorridors = String(machineWorldTopology.corridors.length);
+    canvas.dataset.machineWorldTopologyDivisionEdges = String(machineWorldTopology.divisionEdgeCount);
+    canvas.dataset.machineWorldTopologyFacilityEdges = String(machineWorldTopology.facilityEdgeCount);
+    canvas.dataset.machineWorldTopologyFacilityFacilityEdges = String(machineWorldTopology.facilityFacilityEdgeCount);
 
     // Seat-1 child and adjacent wiring are frame-level passes, not per-part draws.
     // Reuse the canonical branch aggregate resolved at the top of the frame.
-    const seat1ConnectionAmount = clamp(
+    const rawSeat1ConnectionAmount = clamp(
       finite(branchAmounts.connectionBranchAmount ?? state.connectionBranchAmount, 0),
       0,
       1,
     );
+    const seat1ConnectionAmount = state.focusedChildId === 'SEAT_CONNECTION'
+      ? focusedChildAmount
+      : rawSeat1ConnectionAmount;
     const seat1Child = renderSeat1ConnectionChild(scene, seat1ConnectionAmount, effectiveCameraId, reducedMotion, now);
-    renderAdjacentDivisionWiring(scene, effectiveCameraId, state, reducedMotion);
+    renderAdjacentDivisionWiring(
+      scene,
+      effectiveCameraId,
+      { ...state, focusedChildAmount },
+      reducedMotion,
+    );
     if (hierarchyOpen && state.focusedChildId && state.focusedChildId !== 'SEAT_CONNECTION') {
       const shell = scene.byBranch.get(effectiveCameraId);
       const focusedDivision = drawFocusedSeatDivision({
         parent: shell,
         childId: state.focusedChildId,
         childIndex: state.focusedChildIndex,
-        amount: state.focusedChildAmount,
+        amount: focusedChildAmount,
         reducedMotion,
         draw: ringDraw,
         CYL: 'CYL',
@@ -990,15 +1539,36 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       canvas.dataset.machineWorldFocusedDivisionCamera = focusedDivision?.cameraId || '';
       const focusedDivisionTrace = renderSemanticEdgeTrace(
         focusedDivision?.edge,
-        state.focusedChildAmount,
+        focusedChildAmount,
         reducedMotion,
       );
       canvas.dataset.machineWorldFocusedDivisionEdge = focusedDivisionTrace?.semanticEdgeId || '';
+      canvas.dataset.machineWorldFocusedDivisionAmount = String(focusedChildAmount);
+      canvas.dataset.machineWorldFocusedExpansionPhase = resolveMachineFocusedExpansionPhase({
+        rawAmount: rawFocusedChildAmount,
+        resolvedAmount: focusedChildAmount,
+        hierarchyPhase: state.hierarchyPhase,
+        reducedMotion,
+      });
+      canvas.dataset.machineWorldFocusedExpansionMaxSafeAmount = String(
+        focusedExpansionPlan?.clearancePlan?.maxSafeAmount ?? 1,
+      );
+      canvas.dataset.machineWorldFocusedExpansionCollision = String(
+        Boolean(focusedExpansionPlan?.clearancePlan?.collision),
+      );
+      canvas.dataset.machineWorldFocusedExpansionCorridor = String(
+        Boolean(focusedExpansionPlan?.clearancePlan?.corridorReservation),
+      );
     } else {
       canvas.dataset.machineWorldFocusedDivision = '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = '';
       canvas.dataset.machineWorldFocusedDivisionCamera = '';
       canvas.dataset.machineWorldFocusedDivisionEdge = '';
+      canvas.dataset.machineWorldFocusedDivisionAmount = '';
+      canvas.dataset.machineWorldFocusedExpansionPhase = expansionSample.phase;
+      canvas.dataset.machineWorldFocusedExpansionMaxSafeAmount = '1';
+      canvas.dataset.machineWorldFocusedExpansionCollision = 'false';
+      canvas.dataset.machineWorldFocusedExpansionCorridor = 'false';
     }
 
     let electricalMachineFlow = null;
@@ -1036,6 +1606,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldElectricalProgress = String(electricalMachineFlow?.progress ?? '');
     canvas.dataset.machineWorldWorkspaceElectricalEdge = electricalWorkspaceFlow?.semanticEdgeId || '';
     canvas.dataset.machineWorldWorkspaceReceptionPhase = electricalWorkspaceFlow?.phase || R0_RECEIVING_PHASE.DORMANT;
+    canvas.dataset.machineWorldSignalModel = 'S9-semantic-edge-state';
     canvas.dataset.machineWorldElectricalProof = electricalWorkspaceFlow
       ? 'semantic-edge-route+workspace-center'
       : electricalMachineFlow
@@ -1062,15 +1633,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
       gl.drawArrays(gl.LINE_STRIP,0,connection.route.length);
     }
-    const workspaceCore = deriveWorkspaceCoreGeometry({
-      workspaceRadius: workspaceProfile.workspace,
-      expansionAmount: choreography.transformation,
-    });
     ringDraw(
       'CYL',
       multiplyMatrix(
-        translateMatrix(workspaceCore.center.x, workspaceCore.center.y, workspaceCore.center.z),
-        scaleMatrix(workspaceCore.innerRadius * (0.20 + 0.08 * choreography.workspaceReception), 0.12 + 0.06 * choreography.workspaceReception, workspaceCore.innerRadius * (0.20 + 0.08 * choreography.workspaceReception)),
+        translateMatrix(workspaceCoreForAssembly.center.x, workspaceCoreForAssembly.center.y, workspaceCoreForAssembly.center.z),
+        scaleMatrix(workspaceCoreForAssembly.innerRadius * (0.20 + 0.08 * choreography.workspaceReception), 0.12 + 0.06 * choreography.workspaceReception, workspaceCoreForAssembly.innerRadius * (0.20 + 0.08 * choreography.workspaceReception)),
       ),
       RING_MATERIALS.metal2,
       {
@@ -1082,8 +1649,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     ringDraw(
       'TORUS',
       multiplyMatrix(
-        translateMatrix(workspaceCore.center.x, workspaceCore.center.y + 0.08, workspaceCore.center.z),
-        scaleMatrix(workspaceCore.radius, 1, workspaceCore.radius),
+        translateMatrix(workspaceCoreForAssembly.center.x, workspaceCoreForAssembly.center.y + 0.08, workspaceCoreForAssembly.center.z),
+        scaleMatrix(workspaceCoreForAssembly.radius, 1, workspaceCoreForAssembly.radius),
       ),
       authoredRing,
       {
@@ -1093,7 +1660,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       },
     );
     if (!reducedMotion) {
-      const ring = ringPoints(144, workspaceCore.radius, workspaceCore.center.y + 0.03);
+      const ring = ringPoints(144, workspaceCoreForAssembly.radius, workspaceCoreForAssembly.center.y + 0.03);
       gl.useProgram(line);
       gl.uniformMatrix4fv(lineP,false,projection);
       gl.uniformMatrix4fv(lineV,false,view);
@@ -1105,9 +1672,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       gl.uniform4f(lineColor,.38,.68,.96,.22);
       gl.drawArrays(gl.LINE_STRIP,0,145);
     }
-    canvas.dataset.machineWorldWorkspaceCore = workspaceCore.id;
-    canvas.dataset.machineWorldWorkspaceCenter = String(workspaceCore.center.x) + ',' + String(workspaceCore.center.y) + ',' + String(workspaceCore.center.z);
-    canvas.dataset.machineWorldWorkspaceRadius = String(workspaceCore.radius);
+    canvas.dataset.machineWorldWorkspaceCore = workspaceCoreForAssembly.id;
+    canvas.dataset.machineWorldWorkspaceCenter = String(workspaceCoreForAssembly.center.x) + ',' + String(workspaceCoreForAssembly.center.y) + ',' + String(workspaceCoreForAssembly.center.z);
+    canvas.dataset.machineWorldWorkspaceRadius = String(workspaceCoreForAssembly.radius);
     canvas.dataset.machineWorldWorkspaceReception = String(choreography.workspaceReception);
     canvas.dataset.machineWorldState = sample.state;
     canvas.dataset.machineWorldAmount = String(sample.amount);
@@ -1118,17 +1685,26 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldChoreographyPhase = choreography.phase;
     canvas.dataset.machineWorldChoreographyElectrical = String(choreography.electrical);
     canvas.dataset.machineWorldChoreographyWorkspaceReception = String(choreography.workspaceReception);
+    canvas.dataset.machineWorldExpansionPhase = expansionSample.phase;
+    canvas.dataset.machineWorldExpansionAmount = String(expansionSample.amount);
+    canvas.dataset.machineWorldExpansionTarget = String(expansionSample.targetOpen);
+    canvas.dataset.machineWorldExpansionInterrupted = String(expansionSample.interrupted);
+    canvas.dataset.machineWorldExpansionClearanceLimited = String(expansionSample.clearanceLimited);
     canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
     canvas.dataset.machineWorldMaterialModel = 'hero-authored-v1';
 
     return Object.freeze({
-      state: sample.state,
-      amount: sample.amount,
+      state: toMachineDisplayState(expansionSample.phase, expansionSample.amount),
+      amount: expansionSample.amount,
       branchId,
       moduleCount: scene.parts.length,
       seatCount: scene.seatCount,
       subject: deriveMachineSubject(scene.parts, .2),
       seat1AdjacentWiring: lastSeat1AdjacentWiring,
+      expansion: expansionSample,
+      focusedDivisionSubject: focusedSubject,
+      focusedDivisionExpansionPlan: focusedExpansionPlan,
+      facilityAssemblies,
     });
   }
 
@@ -1136,7 +1712,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     render,
     setExpanded(value, now = performance.now()) {
       targetExpanded = Boolean(value);
-      animation.setTarget(targetExpanded ? 'expanded' : 'collapsed', now);
+      expansionMechanism.setTarget(targetExpanded, now);
     },
     getSeat1AdjacentWiring() { return lastSeat1AdjacentWiring; },
     dispose() { disposed = true; },
