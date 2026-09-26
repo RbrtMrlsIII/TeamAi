@@ -62,6 +62,117 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'GUEST_LIMITED');
   });
 
+  test('S12 restores authoritative context and durable Seat population through the presentation seam', async ({ page }) => {
+    await page.goto('/hero/');
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.locator('#world-menu').getByRole('button', { name: 'Sign in', exact: true }).click();
+    await expect(page.locator('#hero-auth-panel')).toBeVisible();
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-guest-state', 'AUTH_TRANSITION');
+
+    const snapshot = await page.evaluate(() => {
+      const restoration = (window as any).TeamAiAuthenticatedRestoration;
+      if (!restoration) throw new Error('S12 restoration runtime is unavailable');
+      const result = restoration.setReadModel({
+        identity: { provider: 'firebase', subjectId: 'uid-s12-browser' },
+        authenticated: true,
+        workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
+        project: { id: 'project-browser', label: 'Project Browser' },
+        team: { id: 'team-browser', label: 'Team Browser' },
+        readiness: {
+          authenticated: true,
+          workspaceKnown: true,
+          projectKnown: true,
+          authorized: true,
+          entitled: true,
+          schedulerEligible: true,
+          healthy: true,
+        },
+        seats: [
+          { id: 'seat-browser-1', label: 'Web AI Seat 1', durable: true, state: 'READY' },
+          { id: 'seat-browser-2', label: 'Web AI Seat 2', durable: true, state: 'READY' },
+        ],
+      });
+      return {
+        state: result.state,
+        reason: result.reason,
+        available: result.available,
+        durableSeatCount: result.durableSeatCount,
+        durableSeatIds: result.durableSeats.map((seat: any) => seat.id),
+        heroState: (window as any).TeamAiHero.getGuestMachineState().state,
+        heroSeatCount: (window as any).TeamAiHero.getSeatCount(),
+        workspace: (window as any).TeamAiWorkspaceFacility.getState(),
+        layer: document.querySelector('.hero-shell')?.getAttribute('data-hero-layer'),
+        authOpen: (window as any).TeamAiHeroAuthHandoff.getState().open,
+      };
+    });
+
+    expect(snapshot.state).toBe('AUTHENTICATED_READY');
+    expect(snapshot.reason).toBeNull();
+    expect(snapshot.available).toBe(true);
+    expect(snapshot.durableSeatCount).toBe(2);
+    expect(snapshot.durableSeatIds).toEqual(['seat-browser-1', 'seat-browser-2']);
+    expect(snapshot.heroState).toBe('AUTHENTICATED');
+    expect(snapshot.heroSeatCount).toBe(2);
+    expect(snapshot.workspace).toMatchObject({
+      authenticated: true,
+      contextAvailable: true,
+      workplaceId: 'workplace-browser',
+      projectId: 'project-browser',
+    });
+    expect(snapshot.layer).toBe('machine');
+    expect(snapshot.authOpen).toBe(false);
+    await expect(page.locator('#seat-label')).toContainText('2 durable seats restored');
+    await expect(page.locator('[data-authenticated-restoration-state]')).toHaveValue?.;
+  });
+
+  test('S12 fails closed with a reason when authenticated context cannot be restored', async ({ page }) => {
+    await page.goto('/hero/');
+    const snapshot = await page.evaluate(() => {
+      const restoration = (window as any).TeamAiAuthenticatedRestoration;
+      const before = (window as any).TeamAiHero.getSeatCount();
+      const result = restoration.setReadModel({
+        identity: { provider: 'firebase', subjectId: 'uid-s12-unavailable' },
+        authenticated: true,
+        workplace: { id: 'workplace-browser', label: 'Operator Workplace' },
+        project: null,
+        team: { id: 'team-browser', label: 'Team Browser' },
+        readiness: {
+          authenticated: true,
+          workspaceKnown: true,
+          projectKnown: false,
+          authorized: true,
+          entitled: true,
+          schedulerEligible: true,
+          healthy: true,
+        },
+        seats: [
+          { id: 'seat-presented', label: 'Presented Seat', durable: false },
+        ],
+      });
+      return {
+        result: { state: result.state, reason: result.reason, available: result.available, durableSeatCount: result.durableSeatCount },
+        seatCountBefore: before,
+        seatCountAfter: (window as any).TeamAiHero.getSeatCount(),
+        workspace: (window as any).TeamAiWorkspaceFacility.getState(),
+        domState: document.documentElement.getAttribute('data-authenticated-restoration-state'),
+        domReason: document.documentElement.getAttribute('data-authenticated-restoration-reason'),
+      };
+    });
+
+    expect(snapshot.result).toEqual({
+      state: 'AUTHENTICATED_UNAVAILABLE',
+      reason: 'PROJECT_UNAVAILABLE',
+      available: false,
+      durableSeatCount: 0,
+    });
+    expect(snapshot.seatCountAfter).toBe(snapshot.seatCountBefore);
+    expect(snapshot.workspace.contextAvailable).toBe(false);
+    expect(snapshot.domState).toBe('AUTHENTICATED_UNAVAILABLE');
+    expect(snapshot.domReason).toBe('PROJECT_UNAVAILABLE');
+    await expect(page.locator('#seat-label')).toContainText('Authenticated · PROJECT_UNAVAILABLE');
+  });
+
+
   test('Hero exposes the governed 1-10 Seat capacity', async ({ page }) => {
     await page.goto('/hero/');
     const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
