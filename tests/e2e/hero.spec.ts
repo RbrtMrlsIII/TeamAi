@@ -460,6 +460,44 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(orb).toBeHidden();
   });
 
+  test('S21 governed transaction matrix presents all operation families without local execution authority', async ({ page }) => {
+    await page.goto('/hero/');
+
+    const expected = [
+      ['navigation', 'Navigation'],
+      ['retrieval', 'Data retrieval'],
+      ['connection-test', 'Connection test'],
+      ['mcp-invocation', 'MCP invocation'],
+      ['ai-execution', 'AI execution'],
+      ['handoff-continuation', 'Handoff / continuation'],
+      ['storage-operation', 'Storage operation'],
+      ['commerce-verification', 'Commerce verification'],
+      ['authorization', 'Authorization'],
+      ['recovery', 'Recovery'],
+    ];
+
+    for (const [kind, label] of expected) {
+      await page.evaluate(({ transactionKind }) => {
+        window.TeamAiTransactionPresentation.set({
+          seatId: 'seat-browser-matrix',
+          transactionId: 'tx-matrix-' + transactionKind,
+          kind: transactionKind,
+          state: 'LOADING',
+          authoritative: true,
+        });
+      }, { transactionKind: kind });
+
+      const orb = page.locator('[data-transaction-orb]');
+      await expect(orb).toBeVisible();
+      await expect(orb.locator('[data-transaction-orb-label]')).toHaveText(label);
+      await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Loading');
+      await expect(orb).toHaveAttribute('data-kind', kind);
+    }
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+    await expect(page.locator('[data-transaction-orb]')).toBeHidden();
+  });
+
   test('Settings Smoke applies an exact camera dock in-place without navigation', async ({ page }) => {
     await page.goto('/hero/');
     await expect(page.locator('.world-navigation')).toBeVisible();
