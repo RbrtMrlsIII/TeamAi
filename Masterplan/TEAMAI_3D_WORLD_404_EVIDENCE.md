@@ -642,3 +642,23 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - Browser artifact: `browser-verification-ce25a4b4de2f3e9b7c2174a18af0ff0b730ff940`, artifact ID `10865903169`, SHA-256 `2865cd8dc35bc55f01575f0f105367d9f814ec01626be8b65ed53f3311e7deae`
 
 **Status:** PARTIALLY REPOSITORY-VERIFIED. The checked items above have current proof; S20 is not a release-complete exit while the remaining boundaries are open.
+
+### E404-S22 — Accessibility keyboard navigation
+
+**Claim:** S22 keyboard navigation makes the live Hero world-menu disclosure operable without a pointer and isolates spatial shortcuts from focused chrome. This is presentation/keyboard proof only. It does not complete S22, prove visible-focus/announcement/reduced-motion rows, or authorize 029 release.
+
+**Primary source**
+- `public/hero-accessibility.js` — S22 keyboard owner: menu arrow/Home/End traversal, chrome Enter/Space activation, spatial-shortcut isolation, existing dialog Escape restore
+- `public/experience-rebaseline.js` — existing disclosure open/close/Escape return
+- `public/index.html` — world-menu disclosure buttons remain buttons, not `role="menu"`
+
+**Repository proof**
+- `tests/hero-accessibility.test.mjs` — menu-index contract and chrome-isolation source contract
+- `tests/e2e/hero.spec.ts` — keyboard open, first-item focus, Arrow/Home/End traversal, keyboard Settings activation; prior S22 Escape/announcement/form-isolation scenarios retained
+
+**Boundary**
+- Spatial canvas shortcuts remain available when focus is not on chrome.
+- Visible focus, deterministic names, announcements, non-color meaning, reduced-motion equivalence, and accessibility smoke remain later S22 rows.
+- No Firebase/Firestore/auth/scheduler/commerce authority is introduced.
+
+**Status:** IMPLEMENTED. Exact-head CI on this head is the repository-verification vehicle. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.

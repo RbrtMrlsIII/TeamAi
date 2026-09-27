@@ -16,12 +16,69 @@ const DIALOGS = Object.freeze([
   { selector: '#hero-marketplace-facility', trigger: '[data-marketplace-open]', close: () => window.TeamAiMarketplaceFacility?.close?.() },
 ]);
 
+const MENU_ARROW_KEYS = new Set(['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End']);
+const CHROME_ROOT = [
+  'button',
+  'a[href]',
+  '[role="button"]',
+  '.world-navigation',
+  '.hero-controls',
+  '.hero-settings-mount',
+  '#hero-auth-panel',
+  '#hero-settings-panel',
+  '#hero-workspace-facility',
+  '#hero-mcp-facility',
+  '#hero-team-agents-facility',
+  '#hero-storage-facility',
+  '#hero-seat-budget-facility',
+  '#hero-marketplace-facility',
+].join(', ');
+
 const lastTriggers = new Map();
 const visibility = new Map();
 const registered = new Set();
 
 function isVisible(el) {
   return el instanceof Element && !el.hidden && el.getAttribute('aria-hidden') !== 'true';
+}
+
+function isEditableLike(target) {
+  return target instanceof HTMLElement
+    && (
+      target.isContentEditable
+      || target.matches('input, textarea, select, [contenteditable="true"], [role="textbox"]')
+    );
+}
+
+function shouldIsolateSpatialShortcuts(target) {
+  if (!(target instanceof HTMLElement) || isEditableLike(target)) return false;
+  return Boolean(target.closest(CHROME_ROOT));
+}
+
+export function nextMenuIndex(current, length, key) {
+  if (!Number.isInteger(length) || length <= 0) return 0;
+  if (key === 'Home') return 0;
+  if (key === 'End') return length - 1;
+  if (key !== 'ArrowDown' && key !== 'ArrowRight' && key !== 'ArrowUp' && key !== 'ArrowLeft') {
+    return current >= 0 && current < length ? current : 0;
+  }
+  const forward = key === 'ArrowDown' || key === 'ArrowRight';
+  if (current < 0 || current >= length) return forward ? 0 : length - 1;
+  return (current + (forward ? 1 : -1) + length) % length;
+}
+
+function menuItems(popover) {
+  if (!(popover instanceof Element)) return [];
+  return [...popover.querySelectorAll('button')].filter((item) => (
+    item instanceof HTMLButtonElement && !item.disabled && isVisible(item)
+  ));
+}
+
+function moveMenuFocus(popover, key, from) {
+  const items = menuItems(popover);
+  if (!items.length) return;
+  const current = from instanceof HTMLButtonElement ? items.indexOf(from) : -1;
+  items[nextMenuIndex(current, items.length, key)]?.focus({ preventScroll: true });
 }
 
 function visibleDialog() {
@@ -80,20 +137,50 @@ function rememberTriggerFromClick(event) {
   }
 }
 
+function handleMenuKeys(event, target) {
+  if (!MENU_ARROW_KEYS.has(event.key)) return false;
+  const toggle = document.querySelector('[data-world-menu-toggle]');
+  const popover = document.getElementById('world-menu');
+  if (!(toggle instanceof HTMLElement) || !(popover instanceof HTMLElement)) return false;
+  const open = popover.classList.contains('is-open') && isVisible(popover);
+  if (!open) return false;
+  if (!toggle.contains(target) && !popover.contains(target)) return false;
+  event.preventDefault();
+  event.stopPropagation();
+  moveMenuFocus(popover, event.key, target);
+  return true;
+}
+
+function handleChromeActivation(event, target) {
+  if (event.key !== 'Enter' && event.key !== ' ') return false;
+  if (!shouldIsolateSpatialShortcuts(target)) return false;
+  const activation = target.closest('button, [role="button"]');
+  if (!(activation instanceof HTMLButtonElement) || activation.disabled || event.defaultPrevented) {
+    return false;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  activation.click();
+  if (activation.matches('[data-world-menu-toggle]')) {
+    queueMicrotask(() => {
+      const popover = document.getElementById('world-menu');
+      if (popover?.classList.contains('is-open')) {
+        menuItems(popover)[0]?.focus({ preventScroll: true });
+      }
+    });
+  }
+  return true;
+}
+
 function handleKeydown(event) {
   const target = event.target;
   if (!(target instanceof Element)) return;
 
-  if (event.key === 'Enter' || event.key === ' ') {
-    const activation = target.closest(
-      '[data-world-menu-toggle], [data-auth-open], [data-settings-open], [data-workspace-open], [data-mcp-open], [data-team-agents-open], [data-storage-open], [data-seat-budget-open], [data-marketplace-open]'
-    );
-    if (activation instanceof HTMLButtonElement && !activation.disabled && !event.defaultPrevented) {
-      event.preventDefault();
-      event.stopPropagation();
-      activation.click();
-      return;
-    }
+  if (handleMenuKeys(event, target)) return;
+  if (handleChromeActivation(event, target)) return;
+
+  if (shouldIsolateSpatialShortcuts(target) && event.key !== 'Escape' && event.key !== 'Tab') {
+    event.stopPropagation();
   }
 
   if (event.key !== 'Escape') return;
@@ -157,7 +244,10 @@ if (typeof document !== 'undefined') {
   }
 }
 
-window.TeamAiHeroAccessibility = Object.freeze({
-  refresh: observeDialogs,
-  visibleDialog,
-});
+if (typeof window !== 'undefined') {
+  window.TeamAiHeroAccessibility = Object.freeze({
+    refresh: observeDialogs,
+    visibleDialog,
+    nextMenuIndex,
+  });
+}

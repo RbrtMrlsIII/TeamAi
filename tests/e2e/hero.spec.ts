@@ -556,6 +556,37 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(afterEnter).toEqual(before);
   });
 
+  test('S22 keyboard navigation traverses the world menu without a pointer', async ({ page }) => {
+    await page.goto('/hero/');
+
+    const menu = page.getByRole('button', { name: 'Menu', exact: true });
+    await menu.focus();
+    await menu.press('Enter');
+
+    const items = page.locator('#world-menu button');
+    await expect(items.first()).toBeFocused();
+    await expect(items.first()).toHaveText('Sign in');
+
+    await page.keyboard.press('ArrowDown');
+    await expect(items.nth(1)).toBeFocused();
+    await expect(items.nth(1)).toHaveText('Selected seat');
+
+    await page.keyboard.press('ArrowUp');
+    await expect(items.first()).toBeFocused();
+
+    await page.keyboard.press('End');
+    await expect(items.last()).toBeFocused();
+    await expect(items.last()).toHaveText('Seat Budget');
+
+    await page.keyboard.press('Home');
+    await expect(items.first()).toBeFocused();
+
+    const settings = page.locator('#world-menu [data-settings-open]');
+    await settings.focus();
+    await settings.press('Enter');
+    await expect(page.locator('#hero-settings-panel')).toBeVisible();
+  });
+
   test('S22 accessibility baseline supports keyboard focus, Escape parent return, and transaction announcements', async ({ page }) => {
     await page.goto('/hero/');
 

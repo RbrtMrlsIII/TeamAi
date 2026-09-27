@@ -1,5 +1,18 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
+## 2026-09-28 S22 keyboard navigation on #404
+
+- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- current #404 head at session start: `27750a46032d390d34c9410d62189b2ef071ee7f`
+- current global slice remains Issue #401 (Gate 3 `operator_hierarchy_absent`); no Seat documents were created
+- executed bounded 029 row: **S22 Keyboard navigation** on Draft PR #404 only
+- `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` is historical/forbidden; 404 checklist is the 029 status ledger
+- world-menu disclosure is now keyboard-traversable (Arrow/Home/End); chrome keys no longer fire spatial shortcuts
+- remaining S22 rows stay open: visible focus, names, announcements, error reasons, non-color, Escape/back, return-to-parent, reduced-motion, browser smoke
+- next 029 row: S22 Visible focus
+- next #401 work: operator-authorized Team/Seat pair via existing `firestore-production-evidence.yml`
+- no 029-released claim; no TEAM-BACKEND-001 completion; #404 does not absorb #401
+
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
 
 - current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`

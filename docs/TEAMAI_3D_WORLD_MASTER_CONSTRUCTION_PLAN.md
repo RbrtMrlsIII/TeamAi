@@ -877,7 +877,8 @@ Exit: controls are discoverable and consistent.
 Exit: failure remains intelligible.
 
 ### S22 - Accessibility
-- [ ] Keyboard navigation.
+- [x] Keyboard navigation.
+
 - [ ] Visible focus.
 - [ ] Accessible names.
 - [ ] State announcements.

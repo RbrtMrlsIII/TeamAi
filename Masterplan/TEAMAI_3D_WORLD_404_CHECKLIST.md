@@ -443,7 +443,8 @@ Exit: failure states remain understandable.
 
 ## X. S22 — Accessibility
 **Inherited roots: S0-S10. Cross-cutting over S0-S21; must not fork machine meaning.**
-- [ ] Keyboard navigation.
+- [x] Keyboard navigation. World-menu disclosure is keyboard-traversable; chrome keys no longer fire spatial shortcuts. Evidence: E404-S22. Remaining S22 rows stay open.
+
 - [ ] Visible focus.
 - [ ] Deterministic accessible names.
 - [ ] State announcements.
