@@ -117,11 +117,11 @@ After #398 is merged, the next vehicle should create **fresh run-scoped Firestor
 
 TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 control-plane reconstruction remains historical context; PR #398 is the reviewed structural baseline now landed on `main`. No historical vehicle is reopened as a parallel current implementation path.
 
-## 2026-09-24 029 spatial acceptance companion
+## 2026-09-28 029 spatial acceptance companion
 
-PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. Latest validated spatial implementation head is `8944ececfd6dfee15a39833107dd3bac932411bd`; subsequent branch movement is documentation-only reconciliation. The detailed spatial evidence is maintained in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` retaining status-only execution tracking. The current implementation includes authored S4 articulated subjects, intermediate expansion sampling, the 1–10 Seat × 3 shell-state × 7-division clearance matrix, physical-port validation, S8 route clearance, S9 semantic signal projection, and S10 semantic camera contracts.
+PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
 
-These are repository implementation/evidence facts, not 029 completion claims. Exact-head CI and Browser validation are green on `8944ece`; subsequent documentation-only reconciliation does not change the validated spatial implementation. No production deployment, human acceptance, or merge authorization is inferred from these repository results.
+S22 now has repository/browser proof for keyboard navigation, visible focus, deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and Browser accessibility smoke. These are repository implementation/evidence facts, not 029 completion claims. No production deployment, human acceptance, provider execution, or merge authorization is inferred from these results.
 
 ## 030 successor frontier
 
