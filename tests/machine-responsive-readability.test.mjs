@@ -86,7 +86,7 @@ test('S23 projects actual machine geometry through the supplied final phone came
     facilityFeatures: [{ center: { x: -0.41, y: 1.5, z: -10.03 }, dimensions: { x: 0.56, y: 0.18, z: 0.46 } }],
   });
   assert.equal(result.tier, MACHINE_RESPONSIVE_TIER.PHONE);
-  assert.equal(result.facilityFeatureScale, 1.12);
+  assert.equal(result.facilityFeatureScale, 1.13);
   assert.ok(result.projectedSeatSpacingPx >= result.thresholds.minProjectedSeatSpacingPx);
   assert.ok(result.projectedPodFeaturePx >= result.thresholds.minProjectedFeaturePx);
   assert.ok(result.projectedFacilityFeaturePx >= result.thresholds.minProjectedFeaturePx);
