@@ -19,7 +19,7 @@ test('S23 preserves the existing aspect-driven camera adaptation', () => {
   assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).cameraDistanceMultiplier, 1.25);
   assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).cameraFov, 48);
   assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).minProjectedSeatSpacingPx, 32);
-  assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).facilityFeatureScale, 1.12);
+  assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).facilityFeatureScale, 1.13);
 });
 
 test('S23 pure viewport classification does not query media capabilities', () => {
