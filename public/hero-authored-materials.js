@@ -73,8 +73,91 @@ export function authoredSeatInsetMaterial(L = {}) {
   });
 }
 
+
+const mixColor = (a, b, amount) => Object.freeze(a.map((value, index) =>
+  clamp(value + (b[index] - value) * amount)
+));
+
+const authoredPresentationMaterial = (role, color, rough, spec, emit) => Object.freeze({
+  role,
+  color: Object.freeze(color),
+  rough: clamp(rough),
+  spec: Object.freeze(spec.map((value) => clamp(value))),
+  emit: clamp(emit),
+});
+
+/**
+ * Complete renderer-facing authored material family.
+ * Theme meaning enters only through mapHeroThemeLighting output.
+ */
+export function authoredHeroMaterialSet(L = {}) {
+  const ring = authoredRingMaterial(L);
+  const shell = authoredSeatShellMaterial(L);
+  const inset = authoredSeatInsetMaterial(L);
+  const mode = L.themeMode === 'dark' ? 'dark' : 'light';
+  const signalFloor = clamp(L.emissiveCeilingFloor ?? 0.08);
+  const shadow = clamp(L.shadowSeparationStrength ?? 0.56);
+
+  const energyColor = mode === 'dark'
+    ? [0.25, 0.72, 1.00]
+    : [0.16, 0.55, 0.88];
+  const traceColor = mode === 'dark'
+    ? [0.30, 0.52, 0.66]
+    : [0.28, 0.56, 0.72];
+
+  const glassColor = mixColor(
+    shell.color,
+    energyColor,
+    mode === 'dark' ? 0.22 : 0.14,
+  );
+  const secondaryColor = mixColor(ring.color, inset.color, 0.42);
+
+  return Object.freeze({
+    metal: ring,
+    metal2: authoredPresentationMaterial(
+      'secondaryStructure',
+      secondaryColor,
+      ring.rough + 0.16,
+      mixColor(ring.spec, inset.spec, 0.34),
+      Math.min(ring.emit + signalFloor * 0.02, 1),
+    ),
+    glass: authoredPresentationMaterial(
+      'glassSurface',
+      glassColor,
+      shell.rough * 0.72,
+      mixColor(shell.spec, ring.spec, 0.45),
+      signalFloor * 0.65,
+    ),
+    energy: authoredPresentationMaterial(
+      'energySignal',
+      energyColor,
+      0.22 + ring.rough * 0.08,
+      mode === 'dark' ? [0.82, 0.90, 1.00] : [0.70, 0.84, 1.00],
+      signalFloor * 1.15,
+    ),
+    trace: authoredPresentationMaterial(
+      'signalTrace',
+      traceColor,
+      0.28 + shadow * 0.08,
+      mode === 'dark' ? [0.58, 0.72, 0.82] : [0.52, 0.68, 0.78],
+      signalFloor * 0.42,
+    ),
+    workspaceRing: ring,
+    seatShell: shell,
+    seatShellInset: inset,
+  });
+}
+
 export const HERO_AUTHORED_MATERIAL_ROLES = Object.freeze([
   'workspaceRing',
   'seatShell',
   'seatShellInset',
+]);
+
+export const HERO_PRESENTATION_MATERIAL_ROLES = Object.freeze([
+  'metal',
+  'metal2',
+  'glass',
+  'energy',
+  'trace',
 ]);
