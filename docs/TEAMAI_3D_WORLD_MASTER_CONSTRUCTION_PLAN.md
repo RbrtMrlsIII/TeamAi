@@ -879,7 +879,7 @@ Exit: failure remains intelligible.
 ### S22 - Accessibility
 - [x] Keyboard navigation.
 
-- [ ] Visible focus.
+- [x] Visible focus.
 - [ ] Accessible names.
 - [ ] State announcements.
 - [ ] Error/blocked reasons.
