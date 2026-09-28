@@ -644,9 +644,9 @@ test.describe('Living Web AI Workspace Hero', () => {
         'Guest presentation: discoverable, blocked until authenticated runtime context is available.',
       );
       const label = await control.getAttribute('aria-label');
-      expect(label).not.toContain('Guest presentation:');
-      expect(label).not.toContain('unauthorized');
-      expect(label).not.toContain('permission denied');
+      expect(label || '').not.toContain('Guest presentation:');
+      expect(label || '').not.toContain('unauthorized');
+      expect(label || '').not.toContain('permission denied');
       await expect(control).toHaveAttribute('data-guest-reason', 'BLOCKED_UNTIL_AUTHENTICATED');
     }
 
