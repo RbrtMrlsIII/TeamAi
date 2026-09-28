@@ -625,6 +625,40 @@ test.describe('Living Web AI Workspace Hero', () => {
     }
   });
 
+  test('S22 Escape back unwinds hierarchy leaf to parent and returns to world', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      const parts = hero.HIERARCHY_PART;
+      hero.selectSeatShell(0);
+      hero.focusChild(parts.SEAT_CONNECTION);
+      hero.focusLeaf(parts.SEAT_CONNECTION_HEALTH_FACE);
+    });
+
+    const opened = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
+    expect(opened.openParentId).toBeTruthy();
+    expect(opened.focusedChildId).toBeTruthy();
+    expect(opened.focusedLeafId).toBeTruthy();
+
+    await page.keyboard.press('Escape');
+    const parentAfterLeafBack = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
+    expect(parentAfterLeafBack.openParentId).toBeTruthy();
+    expect(parentAfterLeafBack.focusedChildId).toBeTruthy();
+    expect(parentAfterLeafBack.focusedLeafId).toBeFalsy();
+
+    await page.keyboard.press('Escape');
+    const worldAfterParentBack = await page.evaluate(() => ({
+      hierarchy: (window as any).TeamAiHero.getHierarchyState(),
+      state: (window as any).TeamAiHero.getState(),
+      camera: (window as any).TeamAiHero.getBaseCameraId(),
+    }));
+    expect(worldAfterParentBack.hierarchy.openParentId).toBeFalsy();
+    expect(worldAfterParentBack.hierarchy.focusedChildId).toBeFalsy();
+    expect(worldAfterParentBack.state).toBe('IDLE');
+    expect(worldAfterParentBack.camera).toBe('HERO_WIDE');
+  });
+
   test('S22 non-color-only meaning remains available as text and semantic state', async ({ page }) => {
     await page.goto('/hero/');
 
