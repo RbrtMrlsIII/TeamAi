@@ -470,7 +470,7 @@ Exit: machine is operable without mouse/color/animation dependence.
 - [x] Touch interaction. Chromium exercises the canvas touch-pointer orbit path and proves navigation state changes; physical-device acceptance is still open. Evidence: E404-S23A.
 - [x] Reduced-motion interaction. Reduced-motion state retains the responsive tier and Hero semantic state; broader reduced-motion equivalence is governed by E404-S22H.
 
-**Current status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. Responsive classification, camera adaptation, panel containment, touch/reduced-motion execution, and Browser coverage are green. Density/readability effectiveness and physical-device acceptance remain open. Evidence: E404-S23A.
+**Current status:** IMPLEMENTED → **REPOSITORY-VERIFIED for the repository-level S23 responsive density/readability contract**. Responsive classification, camera adaptation, panel containment, measured Pod/Facility readability, maximum-density Seat spacing, touch/reduced-motion execution, and Browser coverage are green. Physical-device touch acceptance remains open. Evidence: E404-S23A.
 
 Exit: phone is a designed machine view.
 ## Z. S24 — Materials / lighting
