@@ -444,13 +444,13 @@ Exact head 8944ece was checked out by GitHub Actions.
 
 All substantive security scanners on the exact head completed successfully: CodeQL, Semgrep OSS, Bandit, Semgrep CE, gosec, Brakeman, MobSF, SonarQube/SonarCloud.
 
-### E404-CI current-head addendum — 2026-09-28
+### E404-CI exact-head addendum — 2026-09-28
 
-The historical `E404-CI` anchor above remains immutable provenance. The following is the current exact-head verification unit for PR #404 after the S23 governance/evidence reconciliation.
+The historical `E404-CI` anchor above remains immutable provenance. The following records the exact-head verification unit for PR #404 after the S23 governance/evidence reconciliation. Later documentation-only branch heads do not mutate this evidence record.
 
-**Current exact head**
-- PR #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
-- Branch relation: **380 ahead / 0 behind** main
+**Verified exact head**
+- Evidence-bearing head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- Branch relation at that verification point: **380 ahead / 0 behind** main
 - State: **OPEN / DRAFT**
 - This head is a documentation-only successor to behavior head `0607b2ddb5bf77355a1684135da3c924ad6f03b8`.
 
@@ -588,8 +588,8 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - Equip and lifecycle actions are explicit intents and require authoritative runtime confirmation; visual readiness is never execution proof.
 - Issue #412 remains the backend+frontend MCP capability contract owner.
 
-**Exact-head verification**
-- Current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+**Evidence-bearing verification anchor**
+- Exact-head verified parent: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
 - Current exact-head substantive verification is recorded in the **E404-CI current-head addendum** below.
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This is a spatial presentation/read-model proof, not live provider execution, live authorization, or 029 release acceptance.
@@ -614,8 +614,8 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - Provider usage and completion are not inferred from visual meters or local counters.
 - Authentication, authorization, Seat identity, provider credentials, scheduler state, durable execution results, and continuation authorization remain outside #404.
 
-**Exact-head verification**
-- Current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+**Evidence-bearing verification anchor**
+- Exact-head verified parent: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
 - Current exact-head substantive verification is recorded in the **E404-CI current-head addendum** below.
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED for the spatial presentation/read-model contract. This does not promote #392 completion, runtime proof, or 029 acceptance.
@@ -642,8 +642,8 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - Historical and live records remain distinguished by the dedicated runtime-read-model ingress.
 - No #401, #412, or #392 authority is moved into the spatial renderer.
 
-**Exact-head verification**
-- Current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+**Evidence-bearing verification anchor**
+- Exact-head verified parent: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
 - Current exact-head substantive verification is recorded in the **E404-CI current-head addendum** below.
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED for the presentation/read-model boundary. This does not prove live backend task execution, provider termination, or human acceptance.
@@ -1068,8 +1068,9 @@ That keeps the PR body understandable without turning it into a second 476-row e
 **Claim:** S23 has a single canonical responsive presentation contract across desktop, compact/tablet, and phone viewport tiers. The contract may adapt framing, panel containment, pointer affordances, and presentation density, but it does not change semantic identity or backend authority. This record captures the current repository/browser proof only; it does not close the S23 formal exit.
 
 **Current exact head**
-- PR #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
-- This is a documentation-only successor to behavior head `0607b2ddb5bf77355a1684135da3c924ad6f03b8`.
+- Evidence-bearing head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- The live branch may advance through documentation-only reconciliations; that does not rewrite this immutable evidence anchor.
+- Behavior head: `0607b2ddb5bf77355a1684135da3c924ad6f03b8`.
 - Canonical Browser: run `36382059034` — **PASS**, **87 passed / 4 skipped**
 - Full-System: run `36382059073` — **PASS**, **1,128 passed / 0 failed / 0 skipped**
 - Security: run `36382059095` — **PASS**

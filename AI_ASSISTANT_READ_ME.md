@@ -13,29 +13,22 @@
 
 ## 2026-09-28 CURRENT SESSION STATE
 
-This block supersedes older checkpoint snapshots below for live session routing.
+This block is the current session-routing summary. The live branch head is intentionally resolved from PR #404 / Issue #409 rather than self-stamped here, which avoids recursive drift when governance-only commits update this file.
 
 - canonical `main`: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
 - PR #404 branch: `frontend/029-spatial-world-reconstruction`
-- current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
-- #404 relation: **380 ahead / 0 behind** main
-- #404 remains **OPEN / DRAFT** and is the sole 029 spatial implementation vehicle
-- behavior head before this documentation reconciliation: `0607b2ddb5bf77355a1684135da3c924ad6f03b8`
+- live #404 head: **see PR #404 / Issue #409 current metadata**
+- latest immutable exact-head verification anchor: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- #404 remains the sole 029 spatial implementation vehicle and remains OPEN / DRAFT
 - current spatial slice: **S23 Responsive machine**
 - S22 Accessibility remains repository/browser-verified and formally closed
-- S23 remains **PARTIALLY REPOSITORY-VERIFIED**. Proven now: desktop/compact/phone classification, responsive camera adaptation, compact/phone panel containment, 10-seat presentation exercise, synthetic touch-pointer orbit response, and reduced-motion responsive/state continuity. Still open: distinct density policy, Pod/facility readability, and physical-device touch acceptance.
-- current exact-head Governance: run `36382059037` **PASS**; `review-readiness` **SKIPPED** because Draft
-- current exact-head Full-System: run `36382059073` **PASS**, **1,128 passed / 0 failed / 0 skipped**
-- current exact-head Security: run `36382059095` **PASS**
-- current exact-head Deep Security: run `36382059092` **PASS**
-- current exact-head Canonical Browser: run `36382059034` **PASS**, **87 passed / 4 skipped**
-- current Browser artifact: `10952998381`, SHA-256 `ee483ca8c51caf5539bb052ef33100c2b4af61113d01307d05645f5ea1a39046`
-- current Full Project artifact: `10952444638`, SHA-256 `a17794664b32d035fee52e80ddb5529420155530d2c3ba74cc63c36e3983cf7a`
-- current governance/evidence repair: E404-S15 / E404-S16 / E404-S17 restored; E404-S23 exact-head anchor reconciled; E404-CI current-head addendum recorded
+- S23 remains **PARTIALLY REPOSITORY-VERIFIED**. Proven at the evidence-bearing head: desktop/compact/phone classification, responsive camera adaptation, compact/phone panel containment, 10-seat presentation exercise, synthetic touch-pointer orbit response, and reduced-motion responsive/state continuity. Still open: distinct density policy, Pod/facility readability, and physical-device touch acceptance.
+- E404-S15 / E404-S16 / E404-S17 evidence records are now restored in the evidence registry.
+- E404-S23 is explicitly bounded and does not close the formal S23 exit.
 - global program frontier remains **Issue #401** in `Masterplan/NEXT_SLICES.md`
 - #401, #412, and #392 authority remains outside #404
 - next implementation focus remains S23 evidence depth, not structural-root reopening or a second responsive architecture
-- no production deployment, live Firestore proof, provider execution, human acceptance, or 029 release authorization is implied by these repository checks
+- no production deployment, live Firestore proof, provider execution, human acceptance, or 029 release authorization is implied by repository checks
 
 ## 2026-09-28 S22 accessibility closure on #404
 
