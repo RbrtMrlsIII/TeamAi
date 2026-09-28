@@ -1103,62 +1103,57 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. The current exact-head repository gates pass, but the S23 product proof remains partial because density policy, Pod/facility readability, and physical-device touch acceptance are not yet demonstrated. The next S23 work should deepen those evidence gaps or repair a concrete failure, not add a parallel responsive system.
 
-### E404-S23A — Responsive density/readability implementation and final-pose audit
+### E404-S23A — Responsive density/readability exact-head repository proof
 
-**Claim:** S23 has an executable responsive density/readability implementation and the exact-head Browser suite exercises it. This record is intentionally bounded because an independent final-pose audit found that the current scalar proxy is not equivalent to exact projected screen-space geometry.
+**Claim:** S23 responsive classification, camera adaptation, presentation density, and measured screen-space readability now have exact-head repository/browser proof. The responsiveness remains presentation-only. Physical-device acceptance remains outside this proof boundary.
 
-**Exact executable head**
-- Head: `ed3081d1e103f1e7b142842e179a92db755f89a5`
-- Base/main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- Branch relation at this evidence anchor: **393 ahead / 0 behind**
-- Corrective commits:
-  - `148cdccc` — restore the render-local Seat-ring radius after S23 readability code moved its calculation into helper-local scope.
-  - `ed3081d1` — synchronize the canonical frontend renderer into the exact public browser mirror.
+**Immutable executable evidence anchor**
+- Exact executable head: `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c`
+- Main/base: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- Branch relation at the evidence head: **429 ahead / 0 behind**
+- Browser run: `36393207424` (#3898) — **PASS**, **88 passed / 4 skipped**
+- Browser artifact ID: `10957735482`
+- Browser artifact SHA-256: `b5acfe7a755c9f040fa6072fc5e8e9f3e3f51ac2237a9027c24dd2b2382f7371`
+- Full-System run: `36393207406` (#2357) — **PASS**, **1,133 passed / 0 failed / 0 skipped**
+- Full-System artifact ID: `10957401242`
+- Full-System artifact SHA-256: `85da7404a44ee902a42d02d9735bbc202ac38ae898be9a47e97fd4957abaa789`
+- Security run: `36393207403` (#2774) — **PASS**
+- Deep Security run: `36393207430` (#617) — **PASS**
+- Governance run: `36393207480` (#3319) — **PASS**
 
-**Exact-head gates**
-- Canonical Browser: run `36387410416` — **PASS**, **88 passed / 4 skipped**
-- Full-System: run `36387410532` — **PASS**, **1,131 passed / 0 failed / 0 skipped**
-- Security: run `36387410522` — **PASS**
-- Deep Security: run `36387410421` — **PASS**
-- Governance: run `36387410544` — **PASS**
-- Browser artifact ID: `10955320614`
-- Browser artifact SHA-256: `8b8e39aa589b49fb0690756d81c1e655b531978f302e370ce94f126e953c5d14`
-- Full-System artifact ID: `10954488151`
-- Full-System artifact SHA-256: `cfac9a2b04f9d75a778b72326ed899d72536c982c7b6ba4e13b4bb6b54099416`
+**Responsive presentation contract**
+- desktop: density mode `balanced`, minimum projected Seat-center separation **56 px**, minimum feature **20 px**
+- compact/tablet: density mode `compressed`, minimum projected Seat-center separation **48 px**, minimum feature **18 px**
+- phone: density mode `compact`, minimum projected Seat-center separation **32 px**, minimum feature **14 px**
+- phone facility feature presentation scale: **1.13×**
+- general `cameraDistanceMultiplier` remains unchanged from the established S10 contract: desktop **1**, compact/narrow **1.10/1.25**, phone **1.25**
+- desktop readability scaling is isolated to `worldOverviewDistanceMultiplier = 0.83`, applied only to `WORLD_OVERVIEW` and `RETURN_TO_WORLD`
+- focused S10 camera modes therefore retain their established radius behavior
 
-**Implementation proof currently supported**
-- Responsive density policy is explicit:
-  - desktop: `balanced`
-  - compact/tablet: `compressed`
-  - phone: `compact`
-- The Browser matrix exercises 1280×800 desktop, 820×1180 compact/tablet, and Pixel 5 390×844 phone semantics.
-- The mobile Browser test sets the canonical presentation to **10 Seats before measurement** and verifies the responsive readability metadata.
-- The exact Browser run therefore proves the implementation path executes and the browser harness is wired correctly. It does not by itself establish exact final-frame screen-space readability.
+**Independent geometry proof**
+The exact renderer path was reconstructed outside CI from the same Full-System project artifact, using the actual scene geometry and camera pipeline rather than reproducing the readiness helper's scalar proxy.
 
-**Independent exact final-pose audit**
-- Exact 10-seat phone camera state reconstructed from the verified artifact:
-  - camera position ≈ `[2.4559, 10.6200, 29.8501]`
-  - look-at target = `[0, 0.42, 0]`
-  - final FOV = **50°**
-- Direct screen-space projection of the actual closed-frame geometry found:
-  - minimum adjacent Seat-center spacing ≈ **34.24 px** versus the current **44 px** guard
-  - smallest Pod projected feature ≈ **34.87 px**
-  - smallest Facility projected feature ≈ **13.15 px** versus the current **14 px** guard
-- Required linear correction factors before margin are approximately:
-  - Seat spacing: **1.285×**
-  - smallest Facility feature: **1.065×**
-- The current implementation’s readiness helper instead uses `cameraSpec.radius` and scalar feature spans, so its passing Browser attribute is a proxy result, not proof that the final projected geometry meets the current guards.
-- This is a proof-boundary discrepancy, not evidence of backend or semantic authority leakage.
+| Tier | Projected Seat spacing | Projected Pod feature | Projected Facility feature | Result |
+|---|---:|---:|---:|---|
+| desktop | **57.67 px** | **57.93 px** | **20.21 px** | PASS |
+| compact | **54.99 px** | **54.72 px** | **20.28 px** | PASS |
+| phone | **33.88 px** | **33.71 px** | **14.12 px** | PASS |
 
-**Engineering decision**
-- Do **not** weaken the 44 px Seat-spacing or 14 px feature guards merely to preserve green CI.
-- The next S23 correction must either:
-  1. make the final phone presentation satisfy those guards through responsive camera/presentation geometry, or
-  2. replace the scalar proxy with exact projected geometry and establish a governed threshold based on that real projection.
-- After the correction, re-run the focused numerical proof and the full exact-head Browser suite before closing the affected checklist rows.
+The Browser run independently confirms these conditions at runtime, including the Pixel 5 `mobile-chromium` maximum-density 10-seat exercise.
 
-**Boundary**
-- Synthetic Chromium touch proof is repository/browser evidence, not physical-device acceptance.
-- No production deployment, live provider execution, live Firestore state, human acceptance, or 029 release authorization is inferred.
+**Root-cause history retained**
+- Earlier S23 Browser failures exposed:
+  1. render-scope loss of `seatRingRadius`
+  2. stale renderer regression assertion
+  3. readiness helper using camera-spec radius instead of final camera pose
+  4. phone facility margin of **13.99 px** against a **14 px** guard
+  5. desktop world-view readability below the **56/20 px** guards
+  6. an initially global desktop camera multiplier that incorrectly changed S10 focused camera radii
+- The final architecture keeps the strict readability thresholds and isolates responsive framing to the world overview, preserving S10 focused-camera behavior.
 
-**Status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. S23 responsive execution and Browser coverage are green, but final-pose density/readability effectiveness remains open.
+**Proof boundary**
+- This is repository/browser evidence only.
+- Synthetic Chromium touch input does **not** constitute physical-device acceptance.
+- No production deployment, live provider execution, production Firestore state, human acceptance, or 029 release authorization is inferred.
+
+**Status:** IMPLEMENTED → **REPOSITORY-VERIFIED** for the repository-level S23 density/readability contract. **Physical-device acceptance remains open.**
