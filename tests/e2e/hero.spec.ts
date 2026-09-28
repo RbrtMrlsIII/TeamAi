@@ -566,10 +566,16 @@ test.describe('Living Web AI Workspace Hero', () => {
     const items = page.locator('#world-menu button');
     await expect(items.first()).toBeFocused();
     await expect(items.first()).toHaveText('Sign in');
+    await expect(items.first()).toHaveCSS('outline-style', 'solid');
+    await expect(items.first()).toHaveCSS('outline-width', '3px');
+    await expect(items.first()).toEvaluate((element) => element.matches(':focus-visible'));
 
     await page.keyboard.press('ArrowDown');
     await expect(items.nth(1)).toBeFocused();
     await expect(items.nth(1)).toHaveText('Selected seat');
+    await expect(items.nth(1)).toHaveCSS('outline-style', 'solid');
+    await expect(items.nth(1)).toHaveCSS('outline-width', '3px');
+    await expect(items.nth(1)).toHaveEvaluate((element) => element.matches(':focus-visible'));
 
     await page.keyboard.press('ArrowUp');
     await expect(items.first()).toBeFocused();
