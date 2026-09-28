@@ -323,6 +323,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     scene,
     facilityAssemblies,
     cameraSpec,
+    cameraPose,
     spatialGeometryKey,
   }) {
     const key = [
