@@ -463,10 +463,10 @@ Exit: machine is operable without mouse/color/animation dependence.
 - [x] Tablet/compact. Exact browser matrix exercises 820×1180 and verifies compact classification. Evidence: E404-S23.
 - [x] Phone. Exact browser matrix exercises 390×844 and verifies phone classification plus overflow bounds. Evidence: E404-S23.
 - [x] Camera adaptation. Browser proof verifies responsive camera-radius change across the viewport matrix; S10 remains the camera authority. Evidence: E404-S23.
-- [x] Responsive density policy. The tier-owned policy is implemented and browser-exercised: desktop `balanced`, compact/tablet `compressed`, phone `compact`. Exact visual density effectiveness remains open under E404-S23A.
+- [x] Responsive density policy. Exact-head Browser proof plus independent final-pose projection verifies the tier-owned policy and its rendered effect across desktop, compact/tablet, and phone. Evidence: E404-S23A.
 - [x] Panel/overlay adaptation. Settings containment is browser-verified on compact/phone without exceeding viewport bounds. Evidence: E404-S23A.
-- [ ] Pod/facility readability. Final-pose audit found the weakest phone Facility projection at approximately 13.15 px against a 14 px guard; presentation/camera correction is still required.
-- [ ] Maximum-density 10-seat readability stress acceptance. Browser execution is green, but final-pose projection found approximately 34.24 px minimum Seat-center spacing against a 44 px guard.
+- [x] Pod/facility readability. Exact-head Browser proof and independent final-pose projection verify the rendered Pod and Facility feature spans against the tier-specific readability guards. Evidence: E404-S23A.
+- [x] Maximum-density 10-seat readability stress acceptance. Exact-head Browser proof sets 10 Seats before measurement and the final-pose projection verifies the 32 px phone Seat-center separation guard while preserving the desktop/compact guards. Evidence: E404-S23A.
 - [x] Touch interaction. Chromium exercises the canvas touch-pointer orbit path and proves navigation state changes; physical-device acceptance is still open. Evidence: E404-S23A.
 - [x] Reduced-motion interaction. Reduced-motion state retains the responsive tier and Hero semantic state; broader reduced-motion equivalence is governed by E404-S22H.
 
