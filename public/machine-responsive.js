@@ -34,7 +34,7 @@ export const MACHINE_RESPONSIVE_DENSITY = Object.freeze({
     mode: 'compact',
     minProjectedSeatSpacingPx: 32,
     minProjectedFeaturePx: 14,
-    facilityFeatureScale: 1.12,
+    facilityFeatureScale: 1.13,
   }),
 });
 
