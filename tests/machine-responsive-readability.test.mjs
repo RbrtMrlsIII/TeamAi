@@ -62,3 +62,34 @@ test('S23 fails the readability contract when the projected machine is genuinely
   assert.equal(result.podReadabilityPass, false);
   assert.equal(result.facilityReadabilityPass, false);
 });
+
+
+test('S23 projects actual machine geometry through the supplied final phone camera pose', () => {
+  const responsive = resolveMachineResponsive({ width: 390, height: 844 });
+  const seatCenters = [
+    [0, 5.05, 0.6, 0], [1, 4.0855358216, 0.77, 2.9683155241],
+    [2, 1.5605358216, 0.63, 4.8028354073], [3, -1.5605358216, 0.8, 4.8028354073],
+    [4, -4.0855358216, 0.66, 2.9683155241], [5, -5.05, 0.83, 0],
+    [6, -4.0855358216, 0.69, -2.9683155241], [7, -1.5605358216, 0.86, -4.8028354073],
+    [8, 1.5605358216, 0.72, -4.8028354073], [9, 4.0855358216, 0.89, -2.9683155241],
+  ].map(([seatIndex, x, y, z]) => ({ seatIndex, center: { x, y, z } }));
+  const result = deriveMachineResponsiveReadability({
+    responsive,
+    viewport: { width: 390, height: 844 },
+    cameraRadius: 27.5,
+    cameraFov: 48,
+    cameraPosition: [2.4559020495, 10.62, 29.8501249583],
+    cameraTarget: [0, 0.42, 0],
+    seatCount: 10,
+    seatCenters,
+    podFeatures: [{ center: { x: 5.05, y: 0.6, z: 0 }, dimensions: { x: 1.34, y: 0.62, z: 1.08 } }],
+    facilityFeatures: [{ center: { x: -0.41, y: 1.5, z: -10.03 }, dimensions: { x: 0.56, y: 0.18, z: 0.46 } }],
+  });
+  assert.equal(result.tier, MACHINE_RESPONSIVE_TIER.PHONE);
+  assert.equal(result.facilityFeatureScale, 1.12);
+  assert.ok(result.projectedSeatSpacingPx >= result.thresholds.minProjectedSeatSpacingPx);
+  assert.ok(result.projectedPodFeaturePx >= result.thresholds.minProjectedFeaturePx);
+  assert.ok(result.projectedFacilityFeaturePx >= result.thresholds.minProjectedFeaturePx);
+  assert.ok(result.projectedFacilityFeaturePx >= 14);
+  assert.equal(result.readable, true);
+});
