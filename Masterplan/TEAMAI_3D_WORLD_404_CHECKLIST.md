@@ -1,9 +1,10 @@
 # TEAMAI 3D WORLD / PR #404 — MASTER EXECUTION CHECKLIST
 
-Owner vehicle: PR #404 frontend/029-spatial-world-reconstruction
+Historical baseline: PR #404 frontend/029-spatial-world-reconstruction (merged 2026-09-28)
+Active continuation vehicle: successor PR from post-#404 main
 Dedicated Issue: #405
 Scope: all remaining 029 spatial construction, feature integration, cleanup, documentation alignment, verification, acceptance, and ProMax polish.
-Rule: no additional implementation PRs for S0-S33. PR #404 remains the sole spatial implementation vehicle.
+Rule: remaining 029 work proceeds through the active successor PR from post-#404 main. Do not create parallel competing spatial authorities.
 
 ## Evidence navigation contract
 
