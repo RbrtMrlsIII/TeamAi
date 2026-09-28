@@ -1212,7 +1212,7 @@ test.describe('Living Web AI Workspace Hero', () => {
 
       await page.evaluate(() => (window as any).TeamAiHero.setReducedMotion(true));
       const reduced = await page.evaluate(() => ({
-        tier: (window as any).TeamAiHero.getResponsiveState().tier,
+        tier: (window as any).TeamAiResponsive.getState().tier,
         state: (window as any).TeamAiHero.getState(),
         reducedMotion: (window as any).TeamAiHero.getReducedMotion(),
       }));
