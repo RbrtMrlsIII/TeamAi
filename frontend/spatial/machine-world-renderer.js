@@ -1408,6 +1408,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       seatCount,
       scene,
       facilityAssemblies,
+      cameraSpec,
       cameraPose,
       spatialGeometryKey,
     });
