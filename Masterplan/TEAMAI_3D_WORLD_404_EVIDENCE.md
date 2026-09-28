@@ -444,6 +444,45 @@ Exact head 8944ece was checked out by GitHub Actions.
 
 All substantive security scanners on the exact head completed successfully: CodeQL, Semgrep OSS, Bandit, Semgrep CE, gosec, Brakeman, MobSF, SonarQube/SonarCloud.
 
+### E404-CI current-head addendum — 2026-09-28
+
+The historical `E404-CI` anchor above remains immutable provenance. The following is the current exact-head verification unit for PR #404 after the S23 governance/evidence reconciliation.
+
+**Current exact head**
+- PR #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- Branch relation: **380 ahead / 0 behind** main
+- State: **OPEN / DRAFT**
+- This head is a documentation-only successor to behavior head `0607b2ddb5bf77355a1684135da3c924ad6f03b8`.
+
+**Repository Governance Integrity**
+- Run `36382059037` — **PASS**
+- `governance-drift`, `evidence-consistency`, and `agent-validation` — PASS
+- `review-readiness` — **SKIPPED** because the PR remains Draft; this is not approval evidence.
+
+**Repository Full-System Verification**
+- Run `36382059073` — **PASS**
+- Project tests: **1,128 passed / 0 failed / 0 skipped**
+- build-system audit, backend authority audit, typecheck, trusted Edge typecheck, machine spatial source/public parity, recovery integrity, and Full Project ZIP verification all passed.
+
+**Security**
+- Security Static Analysis run `36382059095` — **PASS**; CodeQL JavaScript/TypeScript job passed.
+- Deep Security run `36382059092` — **PASS**; applicable configured scanners passed, while non-applicable language-specific scanners followed their normal skip paths.
+
+**Canonical Browser Verification**
+- Run `36382059034` — **PASS**
+- Exact-head checkout, Hero runtime parity, machine-spatial runtime parity, and Playwright verification all passed.
+- Browser: **87 passed / 4 skipped**
+- Artifact ID: `10952998381`
+- SHA-256: `ee483ca8c51caf5539bb052ef33100c2b4af61113d01307d05645f5ea1a39046`
+
+**Full Project artifact**
+- Artifact ID: `10952444638`
+- SHA-256: `a17794664b32d035fee52e80ddb5529420155530d2c3ba74cc63c36e3983cf7a`
+
+**Interpretation**
+- This exact-head set proves repository governance, source/runtime parity, tests, browser behavior, and configured security checks at `53d41d7`.
+- It does **not** prove production deployment, live Firestore state, live provider execution, human acceptance, or 029 release authorization.
+
 ### E404-RUNTIME — production boundary
 
 Repository proof does **not** prove live Firestore Seat shape, live provider execution, live continuation, production deployment observation, or human acceptance.
@@ -526,6 +565,88 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED once fresh exact-head CI passes.
 
+
+
+### E404-S15 — MCP / Capability runtime presentation seam
+
+**Claim:** S15 presents the governed MCP / Capability lifecycle through the inherited spatial machine without creating a second capability authority. Discovery, inspection, installation, authentication handoff, configuration, health/test, and equip remain presentation/runtime intents whose authoritative state belongs to the backend/runtime owner.
+
+**Primary source**
+- frontend/spatial/mcp-capability-facility.js — `MCP_FACILITY_SPATIAL_CONTEXT`, lifecycle presentation, target-owned branch projection, and intent dispatch
+- frontend/spatial/mcp-capability-runtime-read-model.js — fail-closed capability/readiness normalization and guest discovery vocabulary
+- public mirrors of the S15 runtime modules
+
+**Repository proof**
+- tests/mcp-capability-facility.test.mjs — S15 root inheritance, backend-read-model wiring, no local runtime identities, lifecycle-intent boundary, live Hero wiring, and source/public parity
+- tests/mcp-capability-runtime-read-model.test.mjs — guest lock, incomplete authenticated state, ready state, distinct credential boundary, target/branch normalization, and source/public parity
+- tests/e2e/mcp-capability.spec.ts — browser presentation/interaction coverage for the governed capability surface
+
+**Boundaries**
+- External provider credentials remain outside the spatial presentation layer.
+- Backend authorization, entitlement, installation, project scope, Seat eligibility, provider health, and execution remain authoritative outside #404.
+- Guest discovery is vocabulary-only; authenticated capability/target state must arrive through the runtime read model.
+- Equip and lifecycle actions are explicit intents and require authoritative runtime confirmation; visual readiness is never execution proof.
+- Issue #412 remains the backend+frontend MCP capability contract owner.
+
+**Exact-head verification**
+- Current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- Current exact-head substantive verification is recorded in the **E404-CI current-head addendum** below.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This is a spatial presentation/read-model proof, not live provider execution, live authorization, or 029 release acceptance.
+
+
+### E404-S16 — Seat budget / energy / handoff presentation contract
+
+**Claim:** S16 presents the #392-governed Seat budget, usage, handoff, continuation, and cooperation envelope through the spatial machine without creating a second accounting authority.
+
+**Primary source**
+- frontend/spatial/seat-budget-settings.js — normalized Seat budget read model, energy segments, save intent, and control intent
+- frontend/spatial/seat-budget-settings-facility.js — S16 spatial facility, backend-read-model rendering, configuration/control intent dispatch
+- public mirrors of both modules
+
+**Repository proof**
+- tests/seat-budget-settings.test.mjs — authorization/configurability separation, no invented live usage, protected handoff reserve, presentation-only save/control intents, S16 root inheritance, no direct backend/storage calls, and source/public parity
+- The normalized model keeps configured/effective/output/reasoning/reserve/consumed/remaining/completion/continuation dimensions distinct and leaves authoritative persistence to the trusted runtime.
+
+**Boundaries**
+- #392 remains authoritative for budget, usage, handoff, continuation, and cooperation semantics.
+- The spatial facility can dispatch configuration/control intents but cannot persist durable Seat budget state itself.
+- Provider usage and completion are not inferred from visual meters or local counters.
+- Authentication, authorization, Seat identity, provider credentials, scheduler state, durable execution results, and continuation authorization remain outside #404.
+
+**Exact-head verification**
+- Current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- Current exact-head substantive verification is recorded in the **E404-CI current-head addendum** below.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED for the spatial presentation/read-model contract. This does not promote #392 completion, runtime proof, or 029 acceptance.
+
+
+### E404-S17 — Task / Evidence / Report runtime read-model seam
+
+**Claim:** S17 presents task, evidence, result, report, and handoff continuity from a dedicated backend runtime read model while preserving the S0-S10 machine roots and refusing fixture-shaped or unauthorized truth.
+
+**Primary source**
+- frontend/spatial/seat-task-evidence-runtime-read-model.js — S17 spatial context and fail-closed task/evidence/report normalization
+- frontend/spatial/shell-nav.js — dedicated S17 read-model event consumption at the existing Hero shell
+- public mirrors of the S17 runtime/read-model modules
+
+**Repository proof**
+- tests/seat-task-evidence-runtime-read-model.test.mjs — S17 root inheritance, unavailable/default state, authorized completed-turn normalization, authorization fail-closed behavior, dedicated read-model event, browser mirror parity, and rejection of non-backend availability flags
+- tests/e2e/seat-task-evidence.spec.ts — browser-level task/evidence/report presentation through the canonical Hero machine
+- The read model requires backend-read-model provenance and explicit Seat authorization/readiness before exposing report content.
+- Artifact references remain metadata-only; binary/content transfer stays outside this presentation seam.
+
+**Boundaries**
+- Durable task execution, evidence creation, result persistence, authorization, and artifact content remain owned by the backend/runtime systems.
+- The spatial shell presents authoritative read-model state and dispatches intent; it does not declare a task completed, fabricate evidence, or grant continuation.
+- Historical and live records remain distinguished by the dedicated runtime-read-model ingress.
+- No #401, #412, or #392 authority is moved into the spatial renderer.
+
+**Exact-head verification**
+- Current #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- Current exact-head substantive verification is recorded in the **E404-CI current-head addendum** below.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED for the presentation/read-model boundary. This does not prove live backend task execution, provider termination, or human acceptance.
 
 
 ### E404-S18 — Storage / artifact inventory contract
@@ -947,12 +1068,14 @@ That keeps the PR body understandable without turning it into a second 476-row e
 **Claim:** S23 has a single canonical responsive presentation contract across desktop, compact/tablet, and phone viewport tiers. The contract may adapt framing, panel containment, pointer affordances, and presentation density, but it does not change semantic identity or backend authority. This record captures the current repository/browser proof only; it does not close the S23 formal exit.
 
 **Current exact head**
-- PR #404 head: `0607b2ddb5bf77355a1684135da3c924ad6f03b8`
-- Canonical Browser: run `36381105033` — **PASS**, **87 passed / 4 skipped**
-- Full-System: run `36381105039` — **PASS**, **1,128 passed / 0 failed / 0 skipped**
-- Security: run `36381104968` — **PASS**
-- Deep Security: run `36381105084` — **PASS**
-- Governance: run `36381105124` — **PASS**
+- PR #404 head: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- This is a documentation-only successor to behavior head `0607b2ddb5bf77355a1684135da3c924ad6f03b8`.
+- Canonical Browser: run `36382059034` — **PASS**, **87 passed / 4 skipped**
+- Full-System: run `36382059073` — **PASS**, **1,128 passed / 0 failed / 0 skipped**
+- Security: run `36382059095` — **PASS**
+- Deep Security: run `36382059092` — **PASS**
+- Governance: run `36382059037` — **PASS**
+- Governance `review-readiness` is **SKIPPED** because #404 remains Draft.
 - Browser proof runs the S23 viewport matrix at **1280×800 desktop**, **820×1180 compact**, and **390×844 phone**.
 - The Browser test checks responsive tier/orientation, canvas responsive metadata, zero horizontal/vertical overflow at those viewports, camera-radius adaptation, 10-seat presentation, settings-panel containment on compact/phone, touch-pointer orbit response, and reduced-motion state continuity.
 - Commit `0607b2dd` corrected the S23 browser harness to use the canonical `TeamAiResponsive.getState()` owner; no duplicate Hero responsive API was retained.
@@ -977,4 +1100,4 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Boundary:** Responsive behavior remains presentation-only. It does not alter Product Law, authorization, entitlement, Seat identity, provider state, scheduler authority, topology identity, or geometry ownership.
 
-**Status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. The next S23 work should deepen the missing density/readability/touch evidence or repair a concrete failure, not add a parallel responsive system.
+**Status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. The current exact-head repository gates pass, but the S23 product proof remains partial because density policy, Pod/facility readability, and physical-device touch acceptance are not yet demonstrated. The next S23 work should deepen those evidence gaps or repair a concrete failure, not add a parallel responsive system.
