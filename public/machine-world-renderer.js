@@ -9,6 +9,7 @@
  * second canvas or a second WebGL context. hero-flex remains the interaction
  * and DOM compatibility controller during migration.
  */
+import { resolveMachineResponsive } from './machine-responsive.js';
 import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
 import {
   createMachineExpansionMechanism,
@@ -1025,6 +1026,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const width = canvas.clientWidth || 1180;
     const height = canvas.clientHeight || 760;
     const dpr = Math.min(2, globalThis.devicePixelRatio || 1);
+    const responsive = resolveMachineResponsive({ width, height });
+    canvas.dataset.machineWorldResponsiveTier = responsive.tier;
+    canvas.dataset.machineWorldResponsiveOrientation = responsive.orientation;
     resizeCanvasIfNeeded(width, height, dpr);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
@@ -1167,6 +1171,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       cameraPose.p[2],
     ];
     lookAt(view,eye,cameraPose.t);
+    canvas.dataset.machineWorldCameraRadius = String(cameraSpec.radius);
+    canvas.dataset.machineWorldCameraFov = String(cameraPose.f);
     perspective(projection,cameraPose.f,width/Math.max(1,height),.1,120);
 
     gl.useProgram(star);

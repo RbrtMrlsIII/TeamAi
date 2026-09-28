@@ -108,6 +108,7 @@ import { shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { resolveMachineGuestPresentation } from './machine-guest-state.js';
+import { applyMachineResponsiveState, getMachineResponsiveViewport } from './machine-responsive.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
@@ -157,6 +158,16 @@ let touchState = null;
 let pinchStart = null;
 let seats = [];
 let traces = [];
+let responsiveState = null;
+
+function syncMachineResponsiveState() {
+  responsiveState = applyMachineResponsiveState(document.documentElement, getMachineResponsiveViewport());
+  return responsiveState;
+}
+
+syncMachineResponsiveState();
+window.addEventListener('resize', syncMachineResponsiveState, { passive: true });
+globalThis.visualViewport?.addEventListener?.('resize', syncMachineResponsiveState, { passive: true });
 
 const hierarchyRuntime = createHierarchyRuntime({
   selectedSeatIndex: selectedSeat,
@@ -807,6 +818,7 @@ window.TeamAiHero = {
   getSelectedSeat: () => selectedSeat,
   getContributionProgress: () => contribution,
   getReducedMotion: () => reducedMotion,
+  getResponsiveState: () => responsiveState ? { ...responsiveState } : null,
   setReducedMotion,
   getGuestMachineState,
   setAuthenticatedRestorationState,

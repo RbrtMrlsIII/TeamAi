@@ -1,3 +1,4 @@
+import { resolveMachineResponsive } from './machine-responsive.js';
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 /**
@@ -153,9 +154,7 @@ export function deriveMachineCameraSpec({
     parentSubject,
   });
   const span = subjectSpan(subject);
-  const aspect = finite(viewport.width, 1) / Math.max(1, finite(viewport.height, 1));
-  const narrow = aspect < 0.8;
-  const compact = aspect < 1.1;
+  const responsive = resolveMachineResponsive(viewport);
 
   let distance = clamp(
     span * (
@@ -175,8 +174,7 @@ export function deriveMachineCameraSpec({
   );
 
   if (resolvedMode === MACHINE_CAMERA_MODE.RETURN_TO_WORLD) distance = Math.max(distance, 12);
-  if (narrow) distance *= 1.25;
-  else if (compact) distance *= 1.10;
+  distance *= responsive.cameraDistanceMultiplier;
 
   let pitch = resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
     ? Math.max(2.6, distance * 0.30)
@@ -219,11 +217,15 @@ export function deriveMachineCameraSpec({
     radius: distance,
     pitch,
     bearing,
-    fov: narrow ? 48 : resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS ? 40 : 44,
+    fov: responsive.isNarrowAspect ? 48 : resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS ? 40 : 44,
     subjectEnvelope: validSubject(subject)
       ? Object.freeze({ min: { ...subject.min }, max: { ...subject.max } })
       : null,
     reducedMotion: Boolean(reducedMotion),
+    responsiveTier: responsive.tier,
+    responsiveAspect: responsive.aspect,
+    responsivePointer: responsive.pointer,
+    responsiveHover: responsive.hover,
     presentationOnly: true,
   });
 }
