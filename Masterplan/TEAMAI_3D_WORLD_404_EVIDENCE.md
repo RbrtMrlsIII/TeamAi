@@ -940,3 +940,41 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - No backend/runtime/geometry authority moved.
 
 **Status:** IMPLEMENTED -> REPOSITORY-VERIFIED.
+
+
+### E404-S23 — Responsive machine bounded proof
+
+**Claim:** S23 has a single canonical responsive presentation contract across desktop, compact/tablet, and phone viewport tiers. The contract may adapt framing, panel containment, pointer affordances, and presentation density, but it does not change semantic identity or backend authority. This record captures the current repository/browser proof only; it does not close the S23 formal exit.
+
+**Current exact head**
+- PR #404 head: `0607b2ddb5bf77355a1684135da3c924ad6f03b8`
+- Canonical Browser: run `36381105033` — **PASS**, **87 passed / 4 skipped**
+- Full-System: run `36381105039` — **PASS**, **1,128 passed / 0 failed / 0 skipped**
+- Security: run `36381104968` — **PASS**
+- Deep Security: run `36381105084` — **PASS**
+- Governance: run `36381105124` — **PASS**
+- Browser proof runs the S23 viewport matrix at **1280×800 desktop**, **820×1180 compact**, and **390×844 phone**.
+- The Browser test checks responsive tier/orientation, canvas responsive metadata, zero horizontal/vertical overflow at those viewports, camera-radius adaptation, 10-seat presentation, settings-panel containment on compact/phone, touch-pointer orbit response, and reduced-motion state continuity.
+- Commit `0607b2dd` corrected the S23 browser harness to use the canonical `TeamAiResponsive.getState()` owner; no duplicate Hero responsive API was retained.
+- Independent Node/container reproduction of the responsive contract passed for the same desktop/compact/phone cases, aspect-driven camera multipliers, capability metadata, and preservation of the user-controlled `data-density` attribute.
+- Source/public parity is exact for the responsive module (`c384a69...`), camera (`48df62...`), world renderer (`64c198...`), and Hero base/runtime (`b04a22...`).
+
+**Rows directly supported by current proof**
+- Desktop classification
+- Tablet/compact classification
+- Phone classification
+- Camera adaptation
+- Panel/overlay containment on compact/phone
+- 10-seat presentation/capacity exercise
+- Browser-level touch-pointer orbit response
+- Reduced-motion tier/state continuity, with deeper semantic equivalence already covered by E404-S22H
+
+**Still open / not overclaimed**
+- Responsive density adaptation as a measured layout policy is not yet separately proven.
+- Pod/facility readability at compact/phone and maximum-density configurations is not yet demonstrated with a semantic readability/visual acceptance contract.
+- The touch proof uses synthetic `PointerEvent` input in Chromium; it is not a physical-device acceptance test.
+- No production deployment, production runtime, human acceptance, or 029 release authorization is inferred.
+
+**Boundary:** Responsive behavior remains presentation-only. It does not alter Product Law, authorization, entitlement, Seat identity, provider state, scheduler authority, topology identity, or geometry ownership.
+
+**Status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. The next S23 work should deepen the missing density/readability/touch evidence or repair a concrete failure, not add a parallel responsive system.
