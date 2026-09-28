@@ -625,6 +625,67 @@ test.describe('Living Web AI Workspace Hero', () => {
     }
   });
 
+  test('S22 non-color-only meaning remains available as text and semantic state', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await page.locator('[data-part="focus"]').click();
+    await expect(page.locator('[data-part="focus"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-part="focus"] .spatial-part__text')).toContainText('Focus');
+
+    const seatStack = page.locator('.seat-stack');
+    await expect(seatStack).toBeAttached();
+
+    await page.evaluate(() => {
+      window.TeamAiHeroSeatStack.setConnectionHealth('offline');
+      window.TeamAiHeroSeatStack.setAuthorizationPresentation({
+        state: 'blocked',
+        scope: 'project',
+        approvalRequired: true,
+        entitlement: 'none',
+      });
+      window.TeamAiHeroSeatStack.setWorkspaceTaskPresentation({
+        taskState: 'blocked',
+        resultState: 'none',
+        evidenceState: 'none',
+        provenance: 'no-trace',
+      });
+    });
+
+    const connection = page.locator('[data-seat-layer="connection"]');
+    await expect(connection).toHaveAttribute('data-health', 'offline');
+    await expect(connection.locator('.seat-stack__state')).toHaveText('OFF');
+    await expect(connection.locator('.seat-stack__state')).toHaveAttribute('title', /Offline/);
+
+    const authorization = page.locator('[data-seat-layer="authorization"]');
+    await expect(authorization).toHaveAttribute('data-auth-state', 'blocked');
+    await expect(authorization.locator('.seat-stack__state')).toHaveText('BLK');
+    await expect(authorization.locator('.seat-stack__state')).toHaveAttribute('title', /Blocked/);
+    await expect(authorization).toHaveAccessibleName(/Authorization:.*Blocked/);
+
+    const task = page.locator('[data-seat-layer="task"]');
+    await expect(task).toHaveAttribute('data-task-state', 'blocked');
+    await expect(task.locator('.seat-stack__state')).toHaveText('BLK');
+    await expect(task.locator('.seat-stack__state')).toHaveAttribute('title', /Blocked/);
+    await expect(task).toHaveAccessibleName(/Task \/ Evidence:.*Blocked/);
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-browser-non-color',
+        transactionId: 'tx-browser-non-color',
+        kind: 'recovery',
+        state: 'UNAVAILABLE',
+        errorCode: 'PROVIDER_UNAVAILABLE',
+        authoritative: true,
+      });
+    });
+
+    const orb = page.locator('[data-transaction-orb]');
+    await expect(orb.locator('[data-transaction-orb-state]')).toHaveText('Unavailable');
+    await expect(orb.locator('[data-transaction-orb-detail]')).toContainText('PROVIDER_UNAVAILABLE');
+
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+  });
+
   test('S22 blocked feature reasons are exposed without claiming authorization', async ({ page }) => {
     await page.goto('/hero/');
 
