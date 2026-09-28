@@ -593,6 +593,45 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('#hero-settings-panel')).toBeVisible();
   });
 
+  test('S22 deterministic accessible names cover the visible Hero interaction surface', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await expect(page.locator('#hero-canvas')).toHaveAccessibleName('Interactive 3D Web AI workspace');
+
+    const initialControls = page.locator('button:visible, a[href]:visible, input:visible, select:visible, textarea:visible');
+    const initialCount = await initialControls.count();
+    expect(initialCount).toBeGreaterThan(0);
+    for (let index = 0; index < initialCount; index += 1) {
+      await expect(initialControls.nth(index)).toHaveAccessibleName(/\S+/);
+    }
+
+    const seatButtons = page.locator('.seat-stack button:visible');
+    const seatCount = await seatButtons.count();
+    expect(seatCount).toBeGreaterThan(0);
+    for (let index = 0; index < seatCount; index += 1) {
+      await expect(seatButtons.nth(index)).toHaveAccessibleName(/\S+/);
+    }
+
+    const menu = page.getByRole('button', { name: 'Menu', exact: true });
+    await menu.click();
+    const menuItems = page.locator('#world-menu button:visible');
+    const menuItemCount = await menuItems.count();
+    expect(menuItemCount).toBeGreaterThan(0);
+    for (let index = 0; index < menuItemCount; index += 1) {
+      await expect(menuItems.nth(index)).toHaveAccessibleName(/\S+/);
+    }
+
+    await menuItems.getByRole('button', { name: 'Settings', exact: true }).click();
+    const settingsPanel = page.locator('#hero-settings-panel');
+    await expect(settingsPanel).toBeVisible();
+    const settingsControls = settingsPanel.locator('button:visible, input:visible, select:visible');
+    const settingsCount = await settingsControls.count();
+    expect(settingsCount).toBeGreaterThan(0);
+    for (let index = 0; index < settingsCount; index += 1) {
+      await expect(settingsControls.nth(index)).toHaveAccessibleName(/\S+/);
+    }
+  });
+
   test('S22 accessibility baseline supports keyboard focus, Escape parent return, and transaction announcements', async ({ page }) => {
     await page.goto('/hero/');
 
