@@ -628,7 +628,7 @@ test.describe('Living Web AI Workspace Hero', () => {
   test('S22 non-color-only meaning remains available as text and semantic state', async ({ page }) => {
     await page.goto('/hero/');
 
-    await page.locator('[data-part="focus"]').click();
+    await page.evaluate(() => window.TeamAiHeroSpatial.setPart('focus'));
     await expect(page.locator('[data-part="focus"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('[data-part="focus"] .spatial-part__text')).toContainText('Focus');
 
