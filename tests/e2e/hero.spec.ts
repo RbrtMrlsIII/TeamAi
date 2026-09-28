@@ -861,6 +861,10 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(settingsPanel).toBeHidden();
     await expect(settingsTrigger).toBeFocused();
 
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeFocused();
+
     await page.evaluate(() => {
       const hero = (window as any).TeamAiHero;
       const parts = hero.HIERARCHY_PART;
