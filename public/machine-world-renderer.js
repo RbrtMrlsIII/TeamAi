@@ -333,6 +333,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       seatCount,
       cameraSpec.cameraId,
       cameraSpec.mode,
+      Math.round(finite(cameraSpec.radius) * 100) / 100,
+      Math.round(finite(cameraSpec.fov) * 100) / 100,
     ].join('|');
 
     if (responsiveReadabilityCache?.key === key) {
