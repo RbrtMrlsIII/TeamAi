@@ -111,9 +111,9 @@ function applyGuestAccessibilityReason(button) {
   const visibleLabel = button.textContent?.trim() || feature.label;
   button.setAttribute(
     'aria-label',
-    visibleLabel + '. Guest presentation: discoverable but locked until authoritative runtime availability is available.',
+    visibleLabel + '. Guest presentation: discoverable, blocked until authenticated runtime context is available.',
   );
-  button.dataset.guestReason = 'authoritative runtime availability required';
+  button.dataset.guestReason = 'BLOCKED_UNTIL_AUTHENTICATED';
   button.dataset.guestReasonApplied = 'true';
 }
 
