@@ -575,7 +575,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(items.nth(1)).toHaveText('Selected seat');
     await expect(items.nth(1)).toHaveCSS('outline-style', 'solid');
     await expect(items.nth(1)).toHaveCSS('outline-width', '3px');
-    await expect(items.nth(1)).toHaveEvaluate((element) => element.matches(':focus-visible'));
+    await expect.poll(async () => items.nth(1).evaluate((element) => element.matches(':focus-visible'))).toBe(true);
 
     await page.keyboard.press('ArrowUp');
     await expect(items.first()).toBeFocused();
