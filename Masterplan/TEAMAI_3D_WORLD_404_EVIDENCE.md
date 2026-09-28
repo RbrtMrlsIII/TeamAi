@@ -872,3 +872,71 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
 
+
+### E404-S22H - Accessibility reduced-motion semantic equivalence
+
+**Claim:** Reduced-motion presentation preserves the same semantic machine states and hierarchy/backstack meaning while removing or snapping non-essential motion. It does not create a second accessibility state machine.
+
+**Implementation**
+- `public/hero-flex.js` and `public/hero-hierarchy-runtime.js` carry reduced-motion state through the existing hierarchy/camera/turn owners.
+- Reduced motion snaps hierarchy opening/closing, disables non-essential ambient motion, and retains the same semantic turn lifecycle.
+- The canonical S22 reduced-motion browser scenario remains part of the full Hero suite.
+
+**Fresh exact-head proof - 2026-09-28**
+- exact PR head: `9515f57b63fc043600812c445cb267dcbe6dd954`
+- Canonical Browser run: `36376500367` - **PASS**
+- Playwright: **86 passed / 4 skipped**
+- Reduced-motion test: **PASS**
+  - hierarchy opened at `SEAT_SHELL#0`
+  - canonical phase `open`
+  - `openAmount=1`
+  - focused child remained semantically addressable
+  - camera remained `SEAT_CLOSE`
+  - Hero state remained `FOCUS`
+  - reduced-motion state remained enabled
+  - the turn lifecycle retained the semantic sequence through `HANDOFF`
+- Full-System run `36376500301`: **PASS**, **1,122 passed / 0 failed**, package create/verify **PASS**, 1,059 files.
+- Security run `36376500318`: **PASS**
+- Deep Security run `36376500400`: **PASS**
+- Governance run `36376500340`: **PASS**
+
+**Boundary**
+- This is repository/browser proof only.
+- It does not certify complete reduced-motion behavior across every route or certify human acceptance.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED -> REPOSITORY-VERIFIED.
+
+### E404-S22I - Accessibility browser smoke coverage
+
+**Claim:** The canonical `/hero/` browser surface has a compact accessibility smoke contract that checks the integrated seams already proven by the individual S22 rows without creating a second accessibility architecture.
+
+**Implementation**
+- `tests/e2e/hero.spec.ts` adds a single canonical Hero-route smoke test.
+- The smoke contract covers accessible names, live state, Menu disclosure/focus, blocked reasons, Settings Escape/trigger restoration, menu Escape ordering, leaf -> parent -> world backstack, reduced-motion state, HERO_WIDE/IDLE restoration, and transaction error announcement.
+
+**Fresh exact-head proof - 2026-09-28**
+- exact PR head: `9515f57b63fc043600812c445cb267dcbe6dd954`
+- Canonical Browser run: `36376500367` - **PASS**
+- Playwright: **86 passed / 4 skipped**
+- New S22 browser accessibility smoke: **PASS**
+- Browser artifact: `browser-verification-9515f57b63fc043600812c445cb267dcbe6dd954`
+- Artifact ID: `10951336520`
+- Artifact digest: `sha256:50bcbcdb2d7d603af5561bec1dab36d080390cddff8be47d9ea04d3c9761e71b`
+- Full-System run `36376500301`: **PASS**, **1,122 passed / 0 failed**, package create/verify **PASS**, 1,059 files.
+- Security run `36376500318`: **PASS**
+- Deep Security run `36376500400`: **PASS**
+- Governance run `36376500340`: **PASS**
+
+**Trial/error record**
+1. Initial smoke sequencing on `e61fd23c12023ce22fbdf27dbb88a18c7e32e4cd` failed because the world-menu popover remained open after Settings closed; its owning Escape handler correctly consumed the next Escape before machine hierarchy handling.
+2. Source inspection confirmed this was an intentional ownership boundary in `public/experience-rebaseline.js`, not a product defect.
+3. The smoke setup was corrected to close the world menu and verify focus returned to the Menu trigger before exercising machine hierarchy Escape.
+4. Corrected exact-head `9515f57b63fc043600812c445cb267dcbe6dd954` passed the complete five-gate verification set.
+
+**Boundary**
+- This closes S22 Browser accessibility smoke coverage at repository/browser verification level.
+- It does not claim universal WCAG conformance, live deployment, runtime proof, human acceptance, or 029 release authorization.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED -> REPOSITORY-VERIFIED.
