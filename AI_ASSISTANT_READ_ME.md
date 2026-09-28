@@ -5,9 +5,9 @@
 - Issue #409 is the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
 - PR #404 remains **OPEN / DRAFT** and the sole 029 spatial implementation vehicle.
 - S22 Accessibility is **repository/browser-verified and formally closed**.
-- The final S22 closure includes Keyboard navigation, Visible focus, deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and canonical Browser accessibility smoke.
-- The current next spatial slice is **S23 Responsive machine**, subject to a fresh live-ref read from #409 before implementation.
-- #401 remains the separate production Firestore/security/runtime frontier. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics.
+- S23 Responsive machine is **repository/browser-verified at the exact executable evidence head `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c`**; its later descendants are documentation-only reconciliation. Physical-device acceptance remains open.
+- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`. The spatial checklist's next numbered layer is S24, but it is **not automatically the current global slice**.
+- #401 remains the production Firestore/security/runtime authority. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics. #400 remains the frontend/product feature grammar.
 - No repository Browser result is production evidence; no green CI result is human acceptance.
 - Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
 
@@ -18,18 +18,15 @@ This block is the current session-routing summary. The live branch head is inten
 - canonical `main`: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
 - PR #404 branch: `frontend/029-spatial-world-reconstruction`
 - live #404 head: **see PR #404 / Issue #409 current metadata**
-- latest immutable exact-head verification anchor: `53d41d7ecc38e617a1f108ba52e1d8490ac66819`
+- current spatial proof anchor: `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c` with Browser `36393207424` **PASS, 88 passed / 4 skipped**
+- current #404 live head: `50c5fb215dc392533ba9ac5cdef9f9fb8fe56962`, a later documentation-reconciliation descendant
 - #404 remains the sole 029 spatial implementation vehicle and remains OPEN / DRAFT
-- current spatial slice: **S23 Responsive machine**
-- S22 Accessibility remains repository/browser-verified and formally closed
-- S23 remains **PARTIALLY REPOSITORY-VERIFIED**. Proven at the evidence-bearing head: desktop/compact/phone classification, responsive camera adaptation, compact/phone panel containment, 10-seat presentation exercise, synthetic touch-pointer orbit response, and reduced-motion responsive/state continuity. Still open: distinct density policy, Pod/facility readability, and physical-device touch acceptance.
-- E404-S15 / E404-S16 / E404-S17 evidence records are now restored in the evidence registry.
-- E404-S23 is explicitly bounded and does not close the formal S23 exit.
+- S23 Responsive machine is repository/browser-verified; projected proof: desktop `57.67 / 57.93 / 20.21 px`, compact `54.99 / 54.72 / 20.28 px`, phone `33.88 / 33.71 / 14.12 px` for Seat / Pod / Facility
+- S23 strict projected guards: desktop `56 / 20`, compact `48 / 18`, phone `32 / 14`; phone Facility presentation scale `1.13x`
+- S23 remains bounded to presentation/read-model projection. Physical-device acceptance, production deployment/runtime, live provider execution, human acceptance, and 029 release authorization remain unproven.
+- E404-S15 / E404-S16 / E404-S17 remain bounded evidence records; E404-S23A is the active S23 density/readability proof record.
 - global program frontier remains **Issue #401** in `Masterplan/NEXT_SLICES.md`
-- #401, #412, and #392 authority remains outside #404
-- next implementation focus remains S23 evidence depth, not structural-root reopening or a second responsive architecture
-- no production deployment, live Firestore proof, provider execution, human acceptance, or 029 release authorization is implied by repository checks
-
+- do not start S24 merely because S23 is closed; resolve the current-slice authority first
 ## 2026-09-28 S22 accessibility closure on #404
 
 - canonical main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
