@@ -67,8 +67,8 @@ export function resolveMachineResponsive({
   width = 1,
   height = 1,
   pointerType = null,
-  pointer = null,
-  hover = null,
+  pointer = 'unknown',
+  hover = 'unknown',
 } = {}) {
   const resolvedWidth = normalizeFinite(width);
   const resolvedHeight = normalizeFinite(height);
@@ -89,8 +89,8 @@ export function resolveMachineResponsive({
     aspect,
     tier,
     orientation: resolvedHeight >= resolvedWidth ? 'portrait' : 'landscape',
-    pointer: resolvePointerCapability(pointerType, pointer),
-    hover: resolveHoverCapability(hover),
+    pointer: pointerType ? resolvePointerCapability(pointerType, null) : normalizePointer(pointer),
+    hover: normalizeHover(hover),
     isNarrowAspect,
     isCompactAspect,
     cameraDistanceMultiplier,
@@ -103,7 +103,11 @@ export function applyMachineResponsiveState(
   root = globalThis.document?.documentElement,
   viewport = getMachineResponsiveViewport(),
 ) {
-  const state = resolveMachineResponsive(viewport);
+  const state = resolveMachineResponsive({
+    ...viewport,
+    pointer: resolvePointerCapability(),
+    hover: resolveHoverCapability(),
+  });
   if (root?.setAttribute) {
     root.setAttribute('data-spatial-responsive', state.tier);
     root.setAttribute('data-spatial-pointer', state.pointer);

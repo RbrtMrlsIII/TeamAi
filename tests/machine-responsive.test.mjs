@@ -20,6 +20,22 @@ test('S23 preserves the existing aspect-driven camera adaptation', () => {
   assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).cameraFov, 48);
 });
 
+test('S23 pure viewport classification does not query media capabilities', () => {
+  const previous = globalThis.matchMedia;
+  let calls = 0;
+  globalThis.matchMedia = () => {
+    calls += 1;
+    return { matches: false };
+  };
+  try {
+    resolveMachineResponsive({ width: 390, height: 844 });
+    assert.equal(calls, 0);
+  } finally {
+    if (previous) globalThis.matchMedia = previous;
+    else delete globalThis.matchMedia;
+  }
+});
+
 test('S23 pointer and hover capabilities are presentation metadata only', () => {
   assert.equal(resolveMachineResponsive({ width: 820, height: 1180, pointerType: 'touch' }).pointer, 'coarse');
   assert.equal(resolveMachineResponsive({ width: 1280, height: 800, pointerType: 'mouse' }).pointer, 'fine');
