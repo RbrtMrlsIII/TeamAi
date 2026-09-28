@@ -463,14 +463,14 @@ Exit: machine is operable without mouse/color/animation dependence.
 - [x] Tablet/compact. Exact browser matrix exercises 820×1180 and verifies compact classification. Evidence: E404-S23.
 - [x] Phone. Exact browser matrix exercises 390×844 and verifies phone classification plus overflow bounds. Evidence: E404-S23.
 - [x] Camera adaptation. Browser proof verifies responsive camera-radius change across the viewport matrix; S10 remains the camera authority. Evidence: E404-S23.
-- [ ] Density adaptation. The current proof exercises 10-seat capacity but does not yet establish a distinct responsive density policy.
-- [x] Panel/overlay adaptation. Settings containment is browser-verified on compact/phone without exceeding viewport bounds. Evidence: E404-S23.
-- [ ] Pod/facility readability. No dedicated semantic readability/visual acceptance contract exists yet.
-- [x] Maximum-density 10-seat case. The exact browser matrix expands the canonical presentation to 10 Seats and confirms the 10-seat presentation state. Geometry/readability stress acceptance remains open.
-- [x] Touch interaction. Chromium exercises the canvas touch-pointer orbit path and proves navigation state changes; physical-device acceptance is still open.
+- [x] Density adaptation. The exact-head Browser proof verifies the tier-owned presentation policy: desktop `balanced`, compact/tablet `compressed`, phone `compact`. Evidence: E404-S23A.
+- [x] Panel/overlay adaptation. Settings containment is browser-verified on compact/phone without exceeding viewport bounds. Evidence: E404-S23A.
+- [x] Pod/facility readability. The exact-head Browser proof verifies projected Pod and Facility feature spans against the tier-owned readability threshold at the responsive matrix, including 10-seat phone density. Evidence: E404-S23A.
+- [x] Maximum-density 10-seat case. The exact browser matrix sets the canonical presentation to 10 Seats before readability measurement and verifies the resulting density/readability state. Evidence: E404-S23A.
+- [x] Touch interaction. Chromium exercises the canvas touch-pointer orbit path and proves navigation state changes; physical-device acceptance is still open. Evidence: E404-S23A.
 - [x] Reduced-motion interaction. Reduced-motion state retains the responsive tier and Hero semantic state; broader reduced-motion equivalence is governed by E404-S22H.
 
-**Current status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. E404-S23 records the exact-head proof and deliberately leaves the density/readability gaps open.
+**Current status:** IMPLEMENTED → REPOSITORY-VERIFIED FOR THE REPOSITORY-LEVEL S23 CONTRACT, with physical-device acceptance still open. Evidence: E404-S23A.
 
 Exit: phone is a designed machine view.
 
