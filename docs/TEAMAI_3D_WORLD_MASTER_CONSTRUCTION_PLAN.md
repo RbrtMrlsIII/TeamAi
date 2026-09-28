@@ -6,8 +6,13 @@ Frontend contract: #400
 Seat / turn / handoff product context: #392 (consolidated #377 context)
 Visual/material track: #83
 Backend/runtime counterpart: #402 / #401
-Base: main at 87f466fb0edac3784280128785a8fd2dc757e749
+Historical structural base: PR #398 merged at `87f466fb0edac3784280128785a8fd2dc757e749`  
+Current 029 spatial continuation base: `main` at `13356cae7e6ef8179f7e2e552211bb4d187f37fb` via merged PR #404; active implementation vehicle PR #424
 No 029-release claim.
+
+### Current continuation boundary (2026-09-28)
+
+The reviewed PR #398 structural foundation and merged PR #404 spatial implementation are historical baselines. PR #424 is the active bounded continuation vehicle for S24 and later 029 world-expression layers. The sequence remains S0-S10 structural roots → S11-S21 product/runtime realization → S22-S29 world expression → S30-S33 proof, runtime reconciliation, human acceptance, and polish. This plan does not move Firebase/Firestore, authorization, entitlement, provider, scheduler, commerce, or production-delivery authority into the renderer.
 
 ## 0. Purpose
 
