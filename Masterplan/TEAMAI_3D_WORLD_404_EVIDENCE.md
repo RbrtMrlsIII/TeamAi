@@ -665,6 +665,45 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 
 
+### E404-S22F — Accessibility non-color-only meaning
+
+**Claim:** Semantic state meaning on the Hero remains understandable without relying on hue alone. State-bearing surfaces expose text labels and/or programmatic state, while color and glow remain supplemental visual styling.
+
+**Repository findings**
+- `public/hero-seat-stack.js` maps health states to text labels: `OFF`, `DEG`, `OK`; authorization states to `AVL`, `BLK`, `UNA`, `DEG`, `NAV`; task states to `IDL`, `QUE`, `RUN`, `BLK`, `DONE`, `FAIL`.
+- The same state-bearing layers expose `data-*` state attributes, `aria-pressed`, or reason-bearing `title` / `aria-label` values.
+- `public/index.html` spatial-part controls use visible labels such as Surface / Focus / Trace and programmatic `aria-pressed` state.
+- `public/machine-transaction-presentation.js` exposes transaction state as visible text and error detail; the glow/progress styling is supplemental.
+- This matches WCAG 2.2 SC 1.4.1 guidance that color must not be the only visual means of conveying information. 
+
+**Fresh exact-head proof — 2026-09-28**
+- behavior head: `58a46235f90d00e5d5d3574a7f85288a0eeae4cf`
+- Canonical Browser run: `36373842367` — **PASS**
+- Playwright: **83 passed / 4 skipped**
+- S22 non-color-only test: **PASS**
+  - spatial part selected state: visible `Focus` text + `aria-pressed=true`
+  - connection offline state: visible `OFF` text + `title`
+  - authorization blocked state: visible `BLK` text + reason-bearing `aria-label`
+  - task blocked state: visible `BLK` text + reason-bearing `aria-label`
+  - transaction unavailable state: visible `Unavailable` text + `PROVIDER_UNAVAILABLE` detail
+- Full-System run `36373842458`: **PASS**, **1,122 passed / 0 failed**, package create/verify **PASS**, 1,059 files.
+- Security run `36373842355`: **PASS**
+- Deep Security run `36373842522`: **PASS**
+- Governance run `36373842452`: **PASS**
+- Browser artifact: `browser-verification-58a46235f90d00e5d5d3574a7f85288a0eeae4cf`, artifact ID `10950123775`, SHA-256 `97278818cda3ad243c958000c80439769732cf81f890d15ff8b0944cd2c797dc`
+
+**Trial/error record**
+- First browser attempt failed because the test used a pointer click on the spatial-part button, which the current 3D composition does not reliably expose to pointer hit-testing. The existing semantic owner `TeamAiHeroSpatial.setPart()` was used instead.
+- A second assertion pass targeted computed accessible names on Seat-stack containers. Those names are already owned/proved separately by S22 Deterministic accessible names, so this non-color row was narrowed to state attributes, text cues, and reason-bearing metadata.
+
+**Boundary**
+- This closes the Non-color-only meaning row at repository/browser verification level.
+- It does not certify full WCAG conformance across every route or every visual surface.
+- Escape / back, Return-to-parent, Reduced-motion semantic equivalence, and Browser accessibility smoke remain open S22 rows.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
 ### E404-S22E — Accessibility error / blocked reasons
 
 **Claim:** User-facing blocked states expose a deterministic, presentation-only reason without changing the control's existing accessible name or claiming backend authorization failure. Transaction error codes remain separately exposed by the existing transaction presenter.
