@@ -148,7 +148,7 @@ test('Seat-1 child render path is owned by the canonical frame and is not recurs
   assert.match(renderBody, /hierarchyOpen && sample\.amount > 0\.02/);
   assert.match(renderBody, /updateResponsiveReadability\(\{/);
   assert.match(renderer, /kind === 'inner-pod' && Number\.isInteger\(part\.seatIndex\)/);
-  assert.match(renderer, /machineWorldResponsiveReadability/);
+  assert.match(renderer, /machineWorldReadability/);
   const partsLoopStart = renderBody.indexOf('for (const part of scene.parts) {');
   const partsLoopOpen = renderBody.indexOf('{', partsLoopStart);
   const framePassMarker = renderBody.indexOf(
