@@ -665,6 +665,41 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 
 
+### E404-S22G — Accessibility Escape / back and return-to-parent
+
+**Claim:** Existing Hero Escape behavior respects the semantic hierarchy: dialog context returns to its real trigger, while machine hierarchy context unwinds from leaf to parent to world. No second navigation stack is introduced.
+
+**Implementation**
+- `public/hero-accessibility.js` owns dialog Escape/trigger restoration.
+- `public/hero-flex.js` owns machine hierarchy Escape semantics.
+- `public/hero-hierarchy-runtime.js` owns leaf clearing and animated parent closure.
+
+**Fresh exact-head proof — 2026-09-28**
+- behavior head: `69e69071a6df97e977328f2d5eebb310d33d23ba`
+- Canonical Browser run: `36374403519` — **PASS**
+- Playwright: **84 passed / 4 skipped**
+- S22 Escape test: **PASS**
+  - opened `SEAT_SHELL#0`
+  - first Escape cleared `focusedLeafId` while retaining the parent and focused child
+  - second Escape completed the hierarchy return
+  - final semantic state: no open parent, no focused child, `IDLE`, `HERO_WIDE`
+- Existing accessibility baseline simultaneously proves dialog Escape from Settings/Auth restores focus to the real invoking trigger.
+- Full-System run `36374403524`: **PASS**, **1,122 passed / 0 failed**, package create/verify **PASS**, 1,059 files.
+- Security run `36374403526`: **PASS**
+- Deep Security run `36374403677`: **PASS**
+- Governance run `36374403543`: **PASS**
+- Browser artifact: `browser-verification-69e69071a6df97e977328f2d5eebb310d33d23ba`, artifact ID `10950890364`, SHA-256 `69dc440638b396ad33fa1b3e58392844a8217db8056dc710c7c816647b177938`
+
+**Trial/error record**
+- First browser attempt checked for immediate hierarchy closure and observed `SEAT_SHELL#0` still present after the second Escape. The source showed an intentional animated `CLOSING` phase, so the test was corrected to wait for semantic closure instead of changing implementation timing.
+
+**Boundary**
+- This closes Escape/back and Return-to-parent at repository/browser verification level.
+- Reduced-motion semantic equivalence and broader accessibility smoke remain open.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
 ### E404-S22F — Accessibility non-color-only meaning
 
 **Claim:** Semantic state meaning on the Hero remains understandable without relying on hue alone. State-bearing surfaces expose text labels and/or programmatic state, while color and glow remain supplemental visual styling.
