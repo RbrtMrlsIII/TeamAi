@@ -305,6 +305,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const primitiveBuffers = new Map();
   const SPATIAL_TOPOLOGY_RESOLUTION = 24;
   let machineWorldSpatialCache = null;
+  let responsiveReadabilityCache = null;
 
   function worldProfile(seatCount) {
     const profile = deriveMachineWorldProfile(seatCount);
@@ -312,6 +313,88 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       workspace: profile.workspaceFootprint,
       seatRadius: profile.seatShellRadius,
     };
+  }
+
+  function updateResponsiveReadability({
+    responsive,
+    width,
+    height,
+    seatCount,
+    scene,
+    facilityAssemblies,
+    cameraSpec,
+    spatialGeometryKey,
+  }) {
+    const key = [
+      spatialGeometryKey,
+      responsive.tier,
+      Math.round(width),
+      Math.round(height),
+      seatCount,
+      cameraSpec.cameraId,
+      cameraSpec.mode,
+    ].join('|');
+
+    if (responsiveReadabilityCache?.key === key) {
+      return responsiveReadabilityCache.value;
+    }
+
+    let seatRingRadius = 0;
+    let podSpan = Infinity;
+    for (const part of scene.parts) {
+      if (part.kind === 'inner-pod' && Number.isInteger(part.seatIndex)) {
+        seatRingRadius = Math.max(
+          seatRingRadius,
+          Math.hypot(part.center.x, part.center.z),
+        );
+        if (part.dimensions) {
+          podSpan = Math.min(
+            podSpan,
+            Math.max(finite(part.dimensions.x), finite(part.dimensions.z)),
+          );
+        }
+      }
+    }
+
+    let facilitySpan = Infinity;
+    for (const assembly of facilityAssemblies) {
+      for (const component of assembly.components || []) {
+        facilitySpan = Math.min(
+          facilitySpan,
+          Math.max(
+            finite(component?.dimensions?.x),
+            finite(component?.dimensions?.z),
+          ),
+        );
+      }
+    }
+
+    const readability = deriveMachineResponsiveReadability({
+      responsive,
+      viewport: { width, height },
+      cameraRadius: cameraSpec.radius,
+      cameraFov: cameraSpec.fov,
+      seatRingRadius,
+      seatCount,
+      podSpan: Number.isFinite(podSpan) ? podSpan : 0,
+      facilitySpan: Number.isFinite(facilitySpan) ? facilitySpan : 0,
+    });
+
+    canvas.dataset.machineWorldResponsiveDensity = readability.densityMode;
+    canvas.dataset.machineWorldReadability = readability.readable ? 'pass' : 'fail';
+    canvas.dataset.machineWorldReadabilitySeatSpacingPx = readability.projectedSeatSpacingPx.toFixed(2);
+    canvas.dataset.machineWorldReadabilityPodFeaturePx = readability.projectedPodFeaturePx.toFixed(2);
+    canvas.dataset.machineWorldReadabilityFacilityFeaturePx = readability.projectedFacilityFeaturePx.toFixed(2);
+    canvas.dataset.machineWorldReadabilitySeatThresholdPx =
+      String(readability.thresholds.minProjectedSeatSpacingPx);
+    canvas.dataset.machineWorldReadabilityFeatureThresholdPx =
+      String(readability.thresholds.minProjectedFeaturePx);
+
+    responsiveReadabilityCache = Object.freeze({
+      key,
+      value: readability,
+    });
+    return readability;
   }
 
   function ensurePrimitiveBuffer(kind) {
@@ -1196,39 +1279,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldCameraId = cameraSpec.cameraId;
     canvas.dataset.machineWorldCameraMode = cameraSpec.mode;
     canvas.dataset.machineWorldCameraReducedMotion = String(cameraSpec.reducedMotion);
-    const seatRingRadius = Math.max(
-      ...scene.parts
-        .filter((part) => part.kind === 'inner-pod' && Number.isInteger(part.seatIndex))
-        .map((part) => Math.hypot(part.center.x, part.center.z)),
-      0,
-    );
-    const podSpans = scene.parts
-      .filter((part) => part.kind === 'inner-pod' && part.dimensions)
-      .map((part) => Math.max(finite(part.dimensions.x), finite(part.dimensions.z)))
-      .filter((value) => value > 0);
-    const facilitySpans = facilityAssemblies
-      .flatMap((assembly) => assembly.components || [])
-      .map((component) => Math.max(finite(component?.dimensions?.x), finite(component?.dimensions?.z)))
-      .filter((value) => value > 0);
-    const responsiveReadability = deriveMachineResponsiveReadability({
-      responsive,
-      viewport: { width, height },
-      cameraRadius: cameraSpec.radius,
-      cameraFov: cameraSpec.fov,
-      seatRingRadius,
-      seatCount,
-      podSpan: podSpans.length ? Math.min(...podSpans) : 0,
-      facilitySpan: facilitySpans.length ? Math.min(...facilitySpans) : 0,
-    });
-    canvas.dataset.machineWorldResponsiveDensity = responsiveReadability.densityMode;
-    canvas.dataset.machineWorldReadability = responsiveReadability.readable ? 'pass' : 'fail';
-    canvas.dataset.machineWorldReadabilitySeatSpacingPx = responsiveReadability.projectedSeatSpacingPx.toFixed(2);
-    canvas.dataset.machineWorldReadabilityPodFeaturePx = responsiveReadability.projectedPodFeaturePx.toFixed(2);
-    canvas.dataset.machineWorldReadabilityFacilityFeaturePx = responsiveReadability.projectedFacilityFeaturePx.toFixed(2);
-    canvas.dataset.machineWorldReadabilitySeatThresholdPx =
-      String(responsiveReadability.thresholds.minProjectedSeatSpacingPx);
-    canvas.dataset.machineWorldReadabilityFeatureThresholdPx =
-      String(responsiveReadability.thresholds.minProjectedFeaturePx);
     const ringArticulation = deriveMachineRingArticulation({
       hierarchyOpen,
       choreography,
@@ -1333,6 +1383,17 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         machineWorldTopologyValidation,
       });
     }
+
+    updateResponsiveReadability({
+      responsive,
+      width,
+      height,
+      seatCount,
+      scene,
+      facilityAssemblies,
+      cameraSpec,
+      spatialGeometryKey,
+    });
 
     let facilityAssemblyCount = 0;
     let facilityComponentCount = 0;

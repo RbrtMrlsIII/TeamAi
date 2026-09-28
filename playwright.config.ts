@@ -17,11 +17,12 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: '**/responsive-device.spec.ts',
     },
     {
       name: 'mobile-chromium',
       testMatch: '**/responsive-device.spec.ts',
-      use: { ...devices['iPhone 13'] },
+      use: { ...devices['Pixel 5'] },
     },
   ],
   webServer: {
