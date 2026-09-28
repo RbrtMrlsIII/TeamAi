@@ -816,6 +816,86 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(state).toHaveText('IDLE');
   });
 
+  test('S22 browser accessibility smoke covers the canonical Hero route', async ({ page }) => {
+    await page.goto('/hero/');
+
+    await expect(page.locator('#hero-canvas')).toHaveAccessibleName('Interactive 3D Web AI workspace');
+    const visibleControls = page.locator('button:visible, a[href]:visible, input:visible, select:visible, textarea:visible');
+    const visibleCount = await visibleControls.count();
+    expect(visibleCount).toBeGreaterThan(0);
+    for (let index = 0; index < visibleCount; index += 1) {
+      await expect(visibleControls.nth(index)).toHaveAccessibleName(/\\S+/);
+    }
+
+    const state = page.locator('#state-label');
+    await expect(state).toHaveAttribute('role', 'status');
+    await expect(state).toHaveAttribute('aria-live', 'polite');
+    await expect(state).toHaveText('IDLE');
+
+    const menu = page.getByRole('button', { name: 'Menu', exact: true });
+    await menu.focus();
+    await expect(menu).toBeFocused();
+    await expect.poll(async () => menu.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+    await menu.press('Enter');
+    await expect(menu).toHaveAttribute('aria-expanded', 'true');
+
+    const menuItems = page.locator('#world-menu button:visible');
+    expect(await menuItems.count()).toBeGreaterThan(0);
+    await expect(menuItems.first()).toBeFocused();
+    await expect(menuItems.first()).toHaveAccessibleName(/\\S+/);
+
+    const lockedFeatures = page.locator('#world-menu button[data-feature-id]:visible');
+    const lockedCount = await lockedFeatures.count();
+    expect(lockedCount).toBeGreaterThan(0);
+    await expect(lockedFeatures.first()).toHaveAttribute('aria-describedby', 'hero-guest-feature-blocked-reason');
+    await expect(lockedFeatures.first()).toHaveAccessibleDescription(
+      'Guest presentation: discoverable, blocked until authenticated runtime context is available.',
+    );
+
+    const settingsTrigger = page.locator('#world-menu [data-settings-open]');
+    await settingsTrigger.focus();
+    await settingsTrigger.press('Enter');
+    const settingsPanel = page.locator('#hero-settings-panel');
+    await expect(settingsPanel).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(settingsPanel).toBeHidden();
+    await expect(settingsTrigger).toBeFocused();
+
+    await page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      const parts = hero.HIERARCHY_PART;
+      hero.selectSeatShell(0);
+      hero.focusChild(parts.SEAT_CONNECTION);
+      hero.focusLeaf(parts.SEAT_CONNECTION_HEALTH_FACE);
+      hero.setReducedMotion(true);
+    });
+    await page.keyboard.press('Escape');
+    const parentState = await page.evaluate(() => (window as any).TeamAiHero.getHierarchyState());
+    expect(parentState.openParentId).toBeTruthy();
+    expect(parentState.focusedLeafId).toBeFalsy();
+    await page.keyboard.press('Escape');
+    await expect.poll(async () => page.evaluate(() => Boolean((window as any).TeamAiHero.getHierarchyState().openParentId))).toBe(false);
+    await expect(state).toHaveText('IDLE');
+    await expect(page.locator('.hero-shell')).toHaveAttribute('data-state', 'IDLE');
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getReducedMotion())).toBe(true);
+    await expect.poll(async () => page.evaluate(() => (window as any).TeamAiHero.getBaseCameraId())).toBe('HERO_WIDE');
+
+    await page.evaluate(() => {
+      window.TeamAiTransactionPresentation.set({
+        seatId: 'seat-accessibility-smoke',
+        transactionId: 'tx-accessibility-smoke',
+        kind: 'recovery',
+        state: 'UNAVAILABLE',
+        errorCode: 'PROVIDER_UNAVAILABLE',
+        authoritative: true,
+      });
+    });
+    await expect(page.locator('[data-hero-accessibility-announcement]')).toHaveText(
+      'Seat transaction recovery is unavailable · PROVIDER_UNAVAILABLE.'
+    );
+    await page.evaluate(() => window.TeamAiTransactionPresentation.clear());
+  });
+
   test('S22 accessibility baseline supports keyboard focus, Escape parent return, and transaction announcements', async ({ page }) => {
     await page.goto('/hero/');
 
