@@ -1,17 +1,18 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
-## 2026-09-28 S22 keyboard navigation on #404
+## 2026-09-28 S22 visible focus on #404
 
 - current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head at session start: `27750a46032d390d34c9410d62189b2ef071ee7f`
-- current global slice remains Issue #401 (Gate 3 `operator_hierarchy_absent`); no Seat documents were created
-- executed bounded 029 row: **S22 Keyboard navigation** on Draft PR #404 only
-- `docs/TEAMAI_3D_HERO_NEXT_SLICES.md` is historical/forbidden; 404 checklist is the 029 status ledger
-- world-menu disclosure is now keyboard-traversable (Arrow/Home/End); chrome keys no longer fire spatial shortcuts
-- remaining S22 rows stay open: visible focus, names, announcements, error reasons, non-color, Escape/back, return-to-parent, reduced-motion, browser smoke
-- next 029 row: S22 Visible focus
-- next #401 work: operator-authorized Team/Seat pair via existing `firestore-production-evidence.yml`
-- no 029-released claim; no TEAM-BACKEND-001 completion; #404 does not absorb #401
+- current #404 head: `5f4583b5d585350a2100f1ba2c361663392b2b56`
+- global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
+- #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
+- S22 Keyboard navigation is repository-verified
+- S22 Visible focus is now directly browser-verified on keyboard-traversed world-menu controls with a solid 3px focus ring and `:focus-visible`
+- fresh Browser proof before this documentation-only reconciliation: **79 passed / 4 skipped**
+- the intermediate `5f6eace...` browser run failed only because a newly added assertion still used the nonexistent Playwright `toEvaluate` matcher; this was classified as a test defect and corrected at `3e08cb7...`
+- remaining S22 rows: deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
+- next 029 row: deterministic accessible names
+- no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
 
