@@ -9,6 +9,8 @@ import { nextMenuIndex } from '../public/hero-accessibility.js';
 
 const a11y = () => readFile(new URL('../public/hero-accessibility.js', import.meta.url), 'utf8');
 const flex = () => readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const heroCss = () => readFile(new URL('../public/hero.css', import.meta.url), 'utf8');
+
 
 test('S22 menu index walks a disclosure list without inventing a second menu role', () => {
   assert.equal(nextMenuIndex(-1, 10, 'ArrowDown'), 0);
@@ -36,4 +38,11 @@ test('Hero controller still keeps editable-target isolation as the spatial fallb
   const src = await flex();
   assert.match(src, /function isEditableKeyTarget/);
   assert.match(src, /isEditableKeyTarget\(event\.target\) && key !== 'Escape'/);
+});
+
+test('S22 visible focus contract covers keyboard-operable public controls', async () => {
+  const src = await heroCss();
+  assert.match(src, /:where\(a, button, input, select, textarea, \[tabindex\]\):focus-visible/);
+  assert.match(src, /outline: 3px solid currentColor/);
+  assert.match(src, /outline-offset: 3px/);
 });
