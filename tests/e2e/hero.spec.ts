@@ -614,7 +614,7 @@ test.describe('Living Web AI Workspace Hero', () => {
       await expect(menuItems.nth(index)).toHaveAccessibleName(/\S+/);
     }
 
-    await menuItems.getByRole('button', { name: 'Settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     const settingsPanel = page.locator('#hero-settings-panel');
     await expect(settingsPanel).toBeVisible();
     const settingsControls = settingsPanel.locator('button:visible, input:visible, select:visible');
