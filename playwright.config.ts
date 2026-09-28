@@ -18,6 +18,11 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'mobile-chromium',
+      testMatch: '**/responsive-device.spec.ts',
+      use: { ...devices['iPhone 13'] },
+    },
   ],
   webServer: {
     command: 'npm start',
