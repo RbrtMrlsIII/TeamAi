@@ -103,7 +103,8 @@ export function resolveMachineResponsive({
       : MACHINE_RESPONSIVE_TIER.DESKTOP;
   const isNarrowAspect = aspect < MACHINE_RESPONSIVE_LIMITS.NARROW_ASPECT;
   const isCompactAspect = aspect < MACHINE_RESPONSIVE_LIMITS.COMPACT_ASPECT;
-  const cameraDistanceMultiplier = isNarrowAspect ? 1.25 : isCompactAspect ? 1.10 : 0.83;
+  const cameraDistanceMultiplier = isNarrowAspect ? 1.25 : isCompactAspect ? 1.10 : 1;
+  const worldOverviewDistanceMultiplier = isNarrowAspect || isCompactAspect ? 1 : 0.83;
   const densityPolicy = resolveMachineResponsiveDensity(tier);
   const cameraFov = isNarrowAspect ? 48 : 44;
 
@@ -118,6 +119,7 @@ export function resolveMachineResponsive({
     isNarrowAspect,
     isCompactAspect,
     cameraDistanceMultiplier,
+    worldOverviewDistanceMultiplier,
     cameraFov,
     presentationDensity: densityPolicy.mode,
     facilityFeatureScale: densityPolicy.facilityFeatureScale,
