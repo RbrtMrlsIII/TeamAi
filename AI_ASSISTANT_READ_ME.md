@@ -1,4 +1,15 @@
-# AI_ASSISTANT_READ_ME — current session boundary
+# AI_ASSISTANT_READ_ME - current session boundary
+
+## Canonical recovery routing
+
+- Issue #409 is the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
+- PR #404 remains **OPEN / DRAFT** and the sole 029 spatial implementation vehicle.
+- S22 Accessibility is **repository/browser-verified and formally closed**.
+- The final S22 closure includes Keyboard navigation, Visible focus, deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and canonical Browser accessibility smoke.
+- The current next spatial slice is **S23 Responsive machine**, subject to a fresh live-ref read from #409 before implementation.
+- #401 remains the separate production Firestore/security/runtime frontier. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics.
+- No repository Browser result is production evidence; no green CI result is human acceptance.
+- Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
 
 ## 2026-09-28 S22 accessibility closure on #404
 
