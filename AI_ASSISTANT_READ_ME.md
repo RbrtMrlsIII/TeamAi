@@ -5,7 +5,7 @@
 - Issue #409 is the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
 - PR #404 remains **OPEN / DRAFT** and the sole 029 spatial implementation vehicle.
 - S22 Accessibility is **repository/browser-verified and formally closed**.
-- S23 Responsive machine is **repository/browser-verified at the exact executable evidence head `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c`**; its later descendants are documentation-only reconciliation. Physical-device acceptance remains open.
+- S23 Responsive machine is **repository/browser-verified at the current exact branch head `35423b86ba563181055c70103364662bed574c5e`**. The current head has fresh five-gate proof; physical-device acceptance remains open.
 - The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`. The spatial checklist's next numbered layer is S24, but it is **not automatically the current global slice**.
 - #401 remains the production Firestore/security/runtime authority. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics. #400 remains the frontend/product feature grammar.
 - No repository Browser result is production evidence; no green CI result is human acceptance.
