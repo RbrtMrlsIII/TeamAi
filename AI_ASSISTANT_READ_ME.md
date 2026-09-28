@@ -1,17 +1,19 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
-## 2026-09-28 S22 visible focus on #404
+## 2026-09-28 S22 deterministic accessible names on #404
 
 - current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head before this handoff reconciliation: `3104bbe820f685249f90e4dadb67f17bff692254`
+- current #404 head before this handoff reconciliation: `3c9351bc01baed3e106b4844efcce5a77e082162`
 - global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
 - #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
-- S22 Keyboard navigation is repository-verified
-- S22 Visible focus is now directly browser-verified on keyboard-traversed world-menu controls with a solid 3px focus ring and `:focus-visible`
-- fresh Browser proof before this documentation-only reconciliation: **79 passed / 4 skipped**
-- the intermediate `5f6eace...` browser run failed only because a newly added assertion still used the nonexistent Playwright `toEvaluate` matcher; this was classified as a test defect and corrected at `3e08cb7...`
-- remaining S22 rows: deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
-- next 029 row: deterministic accessible names
+- S22 Keyboard navigation: repository-verified
+- S22 Visible focus: repository/browser-verified
+- S22 Deterministic accessible names: repository/browser-verified at behavior head `bc4eb576d7079eb61257e2ee3cc1f9f09f9af2df`
+- Browser proof: **80 passed / 4 skipped**
+- Full-System proof on the same behavior head: **1,121 passed / 0 failed**, package create/verify PASS
+- The accessible-name test was intentionally scoped to active controls. Two intermediate failures were classified as test-contract defects, not product defects: hidden legacy Seat-stack buttons were counted although machine mode hides them; then a nested role locator searched for a descendant Settings button inside a button locator.
+- remaining S22 rows: state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
+- next 029 row: state announcements, starting with the existing transaction/accessibility semantic seam
 - no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
