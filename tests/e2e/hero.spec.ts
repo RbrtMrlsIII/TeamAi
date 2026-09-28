@@ -625,6 +625,23 @@ test.describe('Living Web AI Workspace Hero', () => {
     }
   });
 
+  test('S22 state announcements expose the existing Hero state as a live status', async ({ page }) => {
+    await page.goto('/hero/');
+
+    const state = page.locator('#state-label');
+    await expect(state).toHaveAttribute('role', 'status');
+    await expect(state).toHaveAttribute('aria-live', 'polite');
+    await expect(state).toHaveAttribute('aria-atomic', 'true');
+    await expect(state).toHaveText('IDLE');
+
+    await page.getByRole('button', { name: 'Start turn loop', exact: true }).click();
+    await expect(state).toHaveText('FOCUS');
+    await expect(state).toBeAccessibleName('FOCUS');
+
+    await page.getByRole('button', { name: 'Stop turn loop', exact: true }).click();
+    await expect(state).toHaveText('IDLE');
+  });
+
   test('S22 accessibility baseline supports keyboard focus, Escape parent return, and transaction announcements', async ({ page }) => {
     await page.goto('/hero/');
 
