@@ -648,12 +648,12 @@ test.describe('Living Web AI Workspace Hero', () => {
     expect(parentAfterLeafBack.focusedLeafId).toBeFalsy();
 
     await page.keyboard.press('Escape');
+    await expect.poll(async () => page.evaluate(() => Boolean((window as any).TeamAiHero.getHierarchyState().openParentId))).toBe(false);
     const worldAfterParentBack = await page.evaluate(() => ({
       hierarchy: (window as any).TeamAiHero.getHierarchyState(),
       state: (window as any).TeamAiHero.getState(),
       camera: (window as any).TeamAiHero.getBaseCameraId(),
     }));
-    expect(worldAfterParentBack.hierarchy.openParentId).toBeFalsy();
     expect(worldAfterParentBack.hierarchy.focusedChildId).toBeFalsy();
     expect(worldAfterParentBack.state).toBe('IDLE');
     expect(worldAfterParentBack.camera).toBe('HERO_WIDE');
