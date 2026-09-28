@@ -1129,6 +1129,8 @@ test.describe('Living Web AI Workspace Hero', () => {
       await page.goto('/hero/');
       await expect(page.locator('#hero-canvas')).toBeVisible();
       await expect(page.locator('.world-navigation')).toBeVisible();
+      await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(10));
+      await expect(page.locator('#seat-label')).toContainText('10 seats presented');
 
       const state = await page.evaluate(() => {
         const canvas = document.querySelector('#hero-canvas') as HTMLCanvasElement | null;
@@ -1172,8 +1174,6 @@ test.describe('Living Web AI Workspace Hero', () => {
       expect(state.facilityFeaturePx).toBeGreaterThanOrEqual(state.featureThresholdPx);
       cameraRadii.push(state.cameraRadius);
 
-      await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(10));
-      await expect(page.locator('#seat-label')).toContainText('10 seats presented');
       expect(await page.evaluate(() => (window as any).TeamAiHero.getSeatCount())).toBe(10);
 
       const beforeOrbit = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
