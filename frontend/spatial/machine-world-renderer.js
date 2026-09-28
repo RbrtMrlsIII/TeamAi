@@ -201,14 +201,6 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   SPH: regularPolygon(10),
 });
 
-const activeHeroMaterials = Object.freeze({
-  metal: Object.freeze({ color: [0.42, 0.50, 0.56], emit: 0.02 }),
-  metal2: Object.freeze({ color: [0.28, 0.36, 0.42], emit: 0.01 }),
-  glass: Object.freeze({ color: [0.58, 0.72, 0.82], emit: 0.06 }),
-  energy: Object.freeze({ color: [0.28, 0.76, 1.00], emit: 0.16 }),
-  trace: Object.freeze({ color: [0.30, 0.52, 0.66], emit: 0.03 }),
-});
-
 function translateMatrix(x, y, z) {
   return new Float32Array([
     1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1,
