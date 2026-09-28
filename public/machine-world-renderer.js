@@ -1151,6 +1151,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const selectedSeat = clamp(Math.floor(Number(state.selectedSeat) || 0), 0, seatCount - 1);
     branchId = state.branchId || `BRANCH-SEAT-${String(selectedSeat+1).padStart(2,'0')}`;
     const scene = createBranchConnectionCore({ seatCount, expansionAmount: sample.amount });
+    const seatRingRadius = scene.parts.reduce((radius, part) => {
+      if (part.kind !== 'inner-pod' || !Number.isInteger(part.seatIndex)) return radius;
+      return Math.max(radius, Math.hypot(part.center.x, part.center.z));
+    }, 0);
     const previewShell = scene.byBranch.get(branchId);
     const focusedExpansionPlan = hierarchyOpen && previewShell && state.focusedChildId && focusedChildIndex >= 0
       ? deriveMachineSeatDivisionExpansionPlan({
