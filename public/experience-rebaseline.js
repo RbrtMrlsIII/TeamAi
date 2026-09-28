@@ -99,6 +99,24 @@ function publishFeatureRegistry() {
   });
 }
 
+function applyGuestAccessibilityReason(button) {
+  if (!(button instanceof HTMLButtonElement)) return;
+  const featureId = button.dataset.featureId;
+  if (!featureId || button.dataset.guestReasonApplied === 'true') return;
+
+  const feature = getFrontendFeature(featureId);
+  const guestState = getGuestPresentationState(feature);
+  if (!feature || guestState?.presentation !== 'DISCOVERABLE_LOCKED') return;
+
+  const visibleLabel = button.textContent?.trim() || feature.label;
+  button.setAttribute(
+    'aria-label',
+    visibleLabel + '. Guest presentation: discoverable but locked until authoritative runtime availability is available.',
+  );
+  button.dataset.guestReason = 'authoritative runtime availability required';
+  button.dataset.guestReasonApplied = 'true';
+}
+
 function dispatchFeatureIntent(button, source) {
   const featureId = button?.dataset?.featureId;
   if (!featureId) return null;
@@ -153,6 +171,7 @@ function bind() {
   // layer together so the world controls are usable on direct load.
   document.querySelectorAll('[data-feature-id]').forEach((button) => {
     if (!button.dataset.featureState) button.dataset.featureState = 'INACTIVE';
+    applyGuestAccessibilityReason(button);
   });
 
   if (isWorldRoute()) {
