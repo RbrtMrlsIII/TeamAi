@@ -665,6 +665,43 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 
 
+### E404-S22E — Accessibility error / blocked reasons
+
+**Claim:** User-facing blocked states expose a deterministic, presentation-only reason without changing the control's existing accessible name or claiming backend authorization failure. Transaction error codes remain separately exposed by the existing transaction presenter.
+
+**Implementation**
+- `public/experience-rebaseline.js` — guest `DISCOVERABLE_LOCKED` feature controls receive `aria-describedby="hero-guest-feature-blocked-reason"`.
+- The referenced description states: `Guest presentation: discoverable, blocked until authenticated runtime context is available.`
+- `data-guest-reason="BLOCKED_UNTIL_AUTHENTICATED"` records the same canonical presentation vocabulary for the testable surface.
+- Existing `aria-label` values are preserved, preventing accessible-name drift.
+- No authorization, entitlement, or backend decision is inferred in the browser.
+
+**Fresh exact-head proof — 2026-09-28**
+- behavior head: `e3000a4a682d9e226f86f533404099cb1215ce96`
+- Canonical Browser run: `36372895502` — **PASS**
+- Playwright: **82 passed / 4 skipped**
+- S22 blocked-reason test: **PASS** across all visible `[data-feature-id]` world-menu controls.
+- Each control retained its existing accessible name, referenced the shared reason node through `aria-describedby`, exposed the exact blocked description, and avoided misleading `unauthorized` / `permission denied` language.
+- Existing transaction recovery test continues to expose `PROVIDER_UNAVAILABLE` through the transaction detail surface.
+- Full-System run `36372895448`: **PASS**, **1,122 passed / 0 failed**, package create/verify **PASS**, 1,059 files.
+- Security run `36372895500`: **PASS**
+- Deep Security run `36372895646`: **PASS**
+- Governance run `36372895461`: **PASS**
+
+**Trial/error record**
+1. The first blocked-reason attempt put the descriptive text into `aria-label`, which changed the computed accessible names and broke existing navigation/name contracts.
+2. The implementation was redesigned to preserve the name and use `aria-describedby` for the additional reason.
+3. The next browser attempt failed only because the test called `toContain` on a nullable `aria-label` result when the attribute was intentionally absent; the test was normalized to an empty string.
+4. The corrected implementation/test pair passed without weakening validators.
+
+**Boundary**
+- This closes the Error / blocked reasons row at repository/browser verification level.
+- Non-color-only meaning remains a distinct S22 row. The current proof does not claim that every state across every facility is independently non-color dependent.
+- Escape/back, return-to-parent, reduced-motion semantic equivalence, and browser accessibility smoke remain open.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
 ### E404-S22D — Accessibility state announcements
 
 **Claim:** The existing Hero state display is itself a live status region, so semantic state transitions are announced without a second accessibility event bus. This closes the S22 State announcements row at repository/browser verification level.
