@@ -647,7 +647,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     });
 
     expect(hierarchy.openParentId).toBe('SEAT_SHELL#0');
-    expect(hierarchy.phase).toBe('OPEN');
+    expect(hierarchy.phase).toBe('open');
     expect(hierarchy.openAmount).toBe(1);
     expect(hierarchy.focusedChildId).toBeTruthy();
     expect(hierarchy.camera).toBe('SEAT_CLOSE');
