@@ -238,10 +238,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const gl = providedGl || canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!canvas || !gl) throw new Error('machine-world renderer requires the canonical Hero canvas and WebGL context');
   let activeHeroMaterials = authoredHeroMaterialSet({ themeMode: 'light', density: 'default' });
+  let activeHeroLighting = mapHeroThemeLighting({ themeMode: 'light', density: 'default' });
 
   const solid = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; varying vec3 W; void main(){vec4 wp=M*vec4(p,1.0);W=wp.xyz;gl_Position=P*V*wp;}',
-    'precision mediump float; uniform vec4 c; uniform float glow; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));float d=.34+.66*max(dot(n,normalize(vec3(-.42,.86,.32))),0.0);float rim=pow(1.0-max(dot(n,normalize(vec3(.15,.85,.50))),0.0),3.0);gl_FragColor=vec4(c.rgb*(d+.10*rim)+vec3(.05,.08,.11)*glow,c.a);}'
+    'precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*.18+c.rgb*(rimStrength*.10*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}'
   );
   const line = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; void main(){gl_Position=P*V*M*vec4(p,1.0);}',
@@ -258,6 +259,12 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const solidM = gl.getUniformLocation(solid,'M');
   const solidColor = gl.getUniformLocation(solid,'c');
   const solidGlow = gl.getUniformLocation(solid,'glow');
+  const solidKeyIntensity = gl.getUniformLocation(solid,'keyIntensity');
+  const solidFillIntensity = gl.getUniformLocation(solid,'fillIntensity');
+  const solidKeyDirection = gl.getUniformLocation(solid,'keyDirection');
+  const solidRimStrength = gl.getUniformLocation(solid,'rimStrength');
+  const solidRoughness = gl.getUniformLocation(solid,'roughness');
+  const solidSpecular = gl.getUniformLocation(solid,'spec');
   const linePos = gl.getAttribLocation(line,'p');
   const lineP = gl.getUniformLocation(line,'P');
   const lineV = gl.getUniformLocation(line,'V');
@@ -592,6 +599,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const entry = ensurePrimitiveBuffer(shape);
     const color = material?.color || [0.5, 0.6, 0.7];
     const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
+    const spec = Array.isArray(material?.spec) ? material.spec : [0, 0, 0];
+    const roughness = clamp(options.rough, material?.rough ?? 0.5, 1);
     gl.useProgram(solid);
     gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
     gl.enableVertexAttribArray(solidPos);
@@ -601,6 +610,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.uniformMatrix4fv(solidM,false,transform);
     gl.uniform4f(solidColor,color[0],color[1],color[2],finite(options.alpha, 1));
     gl.uniform1f(solidGlow,glow);
+    gl.uniform1f(solidKeyIntensity, finite(activeHeroLighting?.keyLight?.intensity, 0.8));
+    gl.uniform1f(solidFillIntensity, finite(activeHeroLighting?.environmentalFillIntensity, 0.6));
+    gl.uniform3f(solidKeyDirection,
+      finite(activeHeroLighting?.keyLight?.direction?.[0], -0.52),
+      finite(activeHeroLighting?.keyLight?.direction?.[1], 0.82),
+      finite(activeHeroLighting?.keyLight?.direction?.[2], 0.28));
+    gl.uniform1f(solidRimStrength, finite(activeHeroLighting?.grazingRimStrength, 0.5));
+    gl.uniform1f(solidRoughness, roughness);
+    gl.uniform3f(solidSpecular, spec[0], spec[1], spec[2]);
     gl.drawArrays(gl.TRIANGLES,0,entry.count);
   }
 
@@ -1129,6 +1147,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const reducedMotion = Boolean(state.reducedMotion);
     const hierarchyOpen = Boolean(state.hierarchyOpen);
     const materialLighting = resolveHeroMaterialContext(state, reducedMotion);
+    activeHeroLighting = materialLighting;
     activeHeroMaterials = authoredHeroMaterialSet(materialLighting);
     const authoredRing = authoredRingMaterial(materialLighting);
     const authoredSeatShell = authoredSeatShellMaterial(materialLighting);
@@ -1803,6 +1822,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldExpansionClearanceLimited = String(expansionSample.clearanceLimited);
     canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
     canvas.dataset.machineWorldMaterialModel = 'hero-authored-v2';
+    canvas.dataset.machineWorldMaterialShader = 'bounded-lit-v1';
     canvas.dataset.machineWorldMaterialTheme = materialLighting.themeMode;
 
     return Object.freeze({

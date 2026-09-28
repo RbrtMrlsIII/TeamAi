@@ -82,6 +82,11 @@ test('canonical machine renderer owns authored-material consumption', async () =
   assert.match(renderer, /authoredRingMaterial/);
   assert.match(renderer, /authoredHeroMaterialSet/);
   assert.match(renderer, /activeHeroMaterials/);
+  assert.match(renderer, /activeHeroLighting/);
+  assert.match(renderer, /solidRoughness/);
+  assert.match(renderer, /solidSpecular/);
+  assert.match(renderer, /solidKeyDirection/);
+  assert.match(renderer, /bounded-lit-v1/);
   assert.doesNotMatch(renderer, /const RING_MATERIALS/);
   const rendererSource = await fs.promises.readFile(path.join(process.cwd(), 'frontend/spatial/machine-world-renderer.js'), 'utf8');
   assert.equal(rendererSource, renderer);
