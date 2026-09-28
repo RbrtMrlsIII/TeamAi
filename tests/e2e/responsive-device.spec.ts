@@ -20,6 +20,7 @@ test('S23 mobile device semantics exercise the responsive machine at maximum sea
       canvasTier: canvas?.dataset.machineWorldResponsiveTier || '',
       canvasOrientation: canvas?.dataset.machineWorldResponsiveOrientation || '',
       density: canvas?.dataset.machineWorldResponsiveDensity || '',
+      facilityFeatureScale: Number(canvas?.dataset.machineWorldResponsiveFacilityFeatureScale || 0),
       readability: canvas?.dataset.machineWorldReadability || '',
       seatSpacingPx: Number(canvas?.dataset.machineWorldReadabilitySeatSpacingPx || 0),
       podFeaturePx: Number(canvas?.dataset.machineWorldReadabilityPodFeaturePx || 0),
@@ -42,6 +43,8 @@ test('S23 mobile device semantics exercise the responsive machine at maximum sea
   expect(state.canvasTier).toBe('phone');
   expect(state.canvasOrientation).toBe('portrait');
   expect(state.density).toBe('compact');
+  expect(state.facilityFeatureScale).toBeGreaterThan(1);
+  expect(state.seatSpacingThresholdPx).toBe(32);
   expect(state.readability).toBe('pass');
   expect(state.seatSpacingPx).toBeGreaterThanOrEqual(state.seatSpacingThresholdPx);
   expect(state.podFeaturePx).toBeGreaterThanOrEqual(state.featureThresholdPx);
