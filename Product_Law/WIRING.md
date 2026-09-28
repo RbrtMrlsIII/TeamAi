@@ -8,7 +8,11 @@
 
 ## Current execution routing
 
-Reviewed PR #398 is the landed 029 structural baseline. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority. Production-data/runtime routing now continues through Issue #401 / successor PR #402, without changing the Product Law authority chain.
+PR #398 is the historical 029 structural baseline. PR #404 is the merged historical spatial implementation vehicle; PR #424 on `frontend/029-spatial-world-continuation` is the active 029 spatial continuation vehicle. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority. Production-data/runtime routing remains with Issue #401 / merged PR #402, without changing the Product Law authority chain.
+
+## 2026-09-28 029 spatial continuation routing
+
+PR #424 is the active bounded spatial implementation vehicle after merged PR #404. It may advance S24 and later world-expression slices without changing the one-current-slice rule in `Masterplan/NEXT_SLICES.md` or absorbing Issue #401 backend/runtime authority.
 
 ## Development fields
 
