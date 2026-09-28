@@ -824,7 +824,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     const visibleCount = await visibleControls.count();
     expect(visibleCount).toBeGreaterThan(0);
     for (let index = 0; index < visibleCount; index += 1) {
-      await expect(visibleControls.nth(index)).toHaveAccessibleName(/\\S+/);
+      await expect(visibleControls.nth(index)).toHaveAccessibleName(/\S+/);
     }
 
     const state = page.locator('#state-label');
@@ -842,7 +842,7 @@ test.describe('Living Web AI Workspace Hero', () => {
     const menuItems = page.locator('#world-menu button:visible');
     expect(await menuItems.count()).toBeGreaterThan(0);
     await expect(menuItems.first()).toBeFocused();
-    await expect(menuItems.first()).toHaveAccessibleName(/\\S+/);
+    await expect(menuItems.first()).toHaveAccessibleName(/\S+/);
 
     const lockedFeatures = page.locator('#world-menu button[data-feature-id]:visible');
     const lockedCount = await lockedFeatures.count();
