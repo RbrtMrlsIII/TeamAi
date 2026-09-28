@@ -1102,3 +1102,61 @@ That keeps the PR body understandable without turning it into a second 476-row e
 **Boundary:** Responsive behavior remains presentation-only. It does not alter Product Law, authorization, entitlement, Seat identity, provider state, scheduler authority, topology identity, or geometry ownership.
 
 **Status:** IMPLEMENTED → PARTIALLY REPOSITORY-VERIFIED. The current exact-head repository gates pass, but the S23 product proof remains partial because density policy, Pod/facility readability, and physical-device touch acceptance are not yet demonstrated. The next S23 work should deepen those evidence gaps or repair a concrete failure, not add a parallel responsive system.
+
+### E404-S23A — Responsive density/readability exact-head correction and executable proof
+
+**Claim:** The S23 responsive presentation contract now has an executable, measured density/readability layer on top of the existing desktop/compact/phone responsive contract. The layer remains presentation-only and derives its evidence from the actual rendered machine scene, not from backend state or a duplicate responsive authority.
+
+**Exact executable head**
+- Head: `ed3081d1e103f1e7b142842e179a92db755f89a5`
+- Base/main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- Branch relation: **393 ahead / 0 behind**
+- Corrective commits:
+  - `148cdccc` — restore the render-local Seat-ring radius after S23 readability code moved its calculation into helper-local scope.
+  - `ed3081d1` — synchronize the canonical frontend renderer into the exact public browser mirror.
+
+**Exact-head gates**
+- Canonical Browser: run `36387410416` — **PASS**, **88 passed / 4 skipped**
+- Full-System: run `36387410532` — **PASS**
+- Security: run `36387410522` — **PASS**
+- Deep Security: run `36387410421` — **PASS**
+- Governance: run `36387410544` — **PASS**
+- Browser artifact: `browser-verification-ed3081d1e103f1e7b142842e179a92db755f89a5`
+- Browser artifact ID: `10955320614`
+- Browser artifact SHA-256: `8b8e39aa589b49fb0690756d81c1e655b531978f302e370ce94f126e953c5d14`
+- Full-System artifact: `full-project-ed3081d1e103f1e7b142842e179a92db755f89a5`
+- Full-System artifact ID: `10954488151`
+- Full-System artifact SHA-256: `cfac9a2b04f9d75a778b72326ed899d72536c982c7b6ba4e13b4bb6b54099416`
+
+**S23 density/readability evidence**
+- Responsive density policy is explicit and tier-owned:
+  - desktop: `balanced`, seat spacing threshold 56 px, feature threshold 20 px
+  - compact/tablet: `compressed`, seat spacing threshold 48 px, feature threshold 18 px
+  - phone: `compact`, seat spacing threshold 44 px, feature threshold 14 px
+- Readability is derived from projected screen-space measurements of the actual scene:
+  - maximum-density Seat spacing
+  - rendered Pod feature span
+  - rendered Facility feature span
+- The Browser matrix exercises:
+  - 1280×800 desktop
+  - 820×1180 compact/tablet
+  - Pixel 5 phone viewport at 390×844
+- The mobile Browser exercise sets the canonical Seat presentation to **10 Seats before measurement**, then verifies:
+  - phone/portrait classification
+  - coarse pointer and no-hover capability
+  - `touch-action: none`
+  - presentation density = `compact`
+  - readability = `pass`
+  - Seat/Pod/Facility projected dimensions meet their tier thresholds
+  - no document overflow
+  - settings-panel containment
+- The corrective failure on the prior `425a3685` head was causal and localized: `render()` referenced `seatRingRadius` outside its helper-local scope, producing a `ReferenceError` and aborting the frame loop. The resulting 25 browser failures were cascade failures, not 25 independent S23/product regressions.
+- The correction restores a render-scoped Seat-ring radius before canonical ring rendering. Source/public parity remains exact.
+
+**Proof boundary**
+- This closes the repository-level density and measured Pod/Facility readability rows for S23.
+- Synthetic Chromium touch proof is repository/browser evidence, not physical-device acceptance.
+- No production deployment, live provider execution, live Firestore evidence, human acceptance, or 029 release authorization is inferred.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED FOR THE REPOSITORY-LEVEL S23 CONTRACT, with **physical-device acceptance still open**.
+
