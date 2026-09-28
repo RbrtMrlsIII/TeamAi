@@ -6,12 +6,15 @@ const html = () => readFile(new URL('../public/index.html', import.meta.url), 'u
 const css = () => readFile(new URL('../public/experience-rebaseline.css', import.meta.url), 'utf8');
 const js = () => readFile(new URL('../public/experience-rebaseline.js', import.meta.url), 'utf8');
 
-test('guest-locked feature controls expose a reason-bearing accessibility state', async () => {
+test('guest-locked feature controls expose a reason-bearing accessibility description', async () => {
   const src = await js();
   assert.match(src, /applyGuestAccessibilityReason/);
+  assert.match(src, /aria-describedby/);
   assert.match(src, /DISCOVERABLE_LOCKED/);
   assert.match(src, /BLOCKED_UNTIL_AUTHENTICATED/);
+  assert.match(src, /GUEST_BLOCKED_REASON_ID/);
   assert.match(src, /Guest presentation: discoverable, blocked until authenticated runtime context is available\./);
+  assert.doesNotMatch(src, /Guest presentation: discoverable, blocked until authenticated runtime context is available[^;\n]*aria-label/);
 });
  
 test('classic entrance is explicit and 3D is an intentional destination', async () => {
