@@ -660,13 +660,13 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(authorization).toHaveAttribute('data-auth-state', 'blocked');
     await expect(authorization.locator('.seat-stack__state')).toHaveText('BLK');
     await expect(authorization.locator('.seat-stack__state')).toHaveAttribute('title', /Blocked/);
-    await expect(authorization).toHaveAccessibleName(/Authorization:.*Blocked/);
+    await expect(authorization).toHaveAttribute('aria-label', /Authorization:.*Blocked/);
 
     const task = page.locator('[data-seat-layer="task"]');
     await expect(task).toHaveAttribute('data-task-state', 'blocked');
     await expect(task.locator('.seat-stack__state')).toHaveText('BLK');
     await expect(task.locator('.seat-stack__state')).toHaveAttribute('title', /Blocked/);
-    await expect(task).toHaveAccessibleName(/Task \/ Evidence:.*Blocked/);
+    await expect(task).toHaveAttribute('aria-label', /Task \/ Evidence:.*Blocked/);
 
     await page.evaluate(() => {
       window.TeamAiTransactionPresentation.set({
