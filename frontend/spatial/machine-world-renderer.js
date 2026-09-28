@@ -34,7 +34,7 @@ import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
-import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial } from './hero-authored-materials.js';
+import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial, authoredHeroMaterialSet } from './hero-authored-materials.js';
 import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './machine-seat-division-presentation.js';
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
@@ -201,7 +201,7 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   SPH: regularPolygon(10),
 });
 
-const RING_MATERIALS = Object.freeze({
+const activeHeroMaterials = Object.freeze({
   metal: Object.freeze({ color: [0.42, 0.50, 0.56], emit: 0.02 }),
   metal2: Object.freeze({ color: [0.28, 0.36, 0.42], emit: 0.01 }),
   glass: Object.freeze({ color: [0.58, 0.72, 0.82], emit: 0.06 }),
@@ -245,6 +245,7 @@ function multiplyMatrix(a, b) {
 export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const gl = providedGl || canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!canvas || !gl) throw new Error('machine-world renderer requires the canonical Hero canvas and WebGL context');
+  let activeHeroMaterials = authoredHeroMaterialSet({ themeMode: 'light', density: 'default' });
 
   const solid = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; varying vec3 W; void main(){vec4 wp=M*vec4(p,1.0);W=wp.xyz;gl_Position=P*V*wp;}',
@@ -437,11 +438,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     });
 
     const materialForRole = (role) => {
-      if (role === 'reactor-chamber') return RING_MATERIALS.energy;
-      if (role === 'receiving-deck') return RING_MATERIALS.glass;
-      if (role === 'upper-shell') return RING_MATERIALS.metal;
-      if (role === 'conductor-collar') return RING_MATERIALS.metal;
-      return RING_MATERIALS.metal2;
+      if (role === 'reactor-chamber') return activeHeroMaterials.energy;
+      if (role === 'receiving-deck') return activeHeroMaterials.glass;
+      if (role === 'upper-shell') return activeHeroMaterials.metal;
+      if (role === 'conductor-collar') return activeHeroMaterials.metal;
+      return activeHeroMaterials.metal2;
     };
 
     for (const component of assembly.components) {
@@ -490,7 +491,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           translateMatrix(port.point.x, port.point.y, port.point.z),
           scaleMatrix(scale, scale, scale),
         ),
-        RING_MATERIALS.energy,
+        activeHeroMaterials.energy,
         {
           emit: 0.10,
           glow: 0.12,
@@ -529,11 +530,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const materialForRole = (role) => {
       if (role === 'outer-shell') return shellMaterial;
       if (role === 'payload-surface') return insetMaterial;
-      if (role === 'connection-interface') return RING_MATERIALS.energy;
-      if (role === 'status-indicator') return RING_MATERIALS.trace;
-      if (role === 'articulation-mechanism') return RING_MATERIALS.glass;
-      if (role === 'inner-chamber') return RING_MATERIALS.metal2;
-      return RING_MATERIALS.metal;
+      if (role === 'connection-interface') return activeHeroMaterials.energy;
+      if (role === 'status-indicator') return activeHeroMaterials.trace;
+      if (role === 'articulation-mechanism') return activeHeroMaterials.glass;
+      if (role === 'inner-chamber') return activeHeroMaterials.metal2;
+      return activeHeroMaterials.metal;
     };
 
     for (const component of assembly.components) {
@@ -582,8 +583,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           scaleMatrix(scale, scale, scale),
         ),
         podPort.role === 'connection'
-          ? RING_MATERIALS.energy
-          : RING_MATERIALS.trace,
+          ? activeHeroMaterials.energy
+          : activeHeroMaterials.trace,
         {
           emit: podPort.role === 'connection' ? 0.10 : 0.045,
           glow: selected ? 0.16 : 0.05,
@@ -637,7 +638,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       S: scaleMatrix,
       RY: rotateYMatrix,
       mul: multiplyMatrix,
-      M: RING_MATERIALS,
+      M: activeHeroMaterials,
     };
     drawBackendDisplayRing({
       ...common,
@@ -1011,7 +1012,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         translateMatrix(point.x, point.y, point.z),
         scaleMatrix(.12, .12, .12),
       ),
-      RING_MATERIALS.energy,
+      activeHeroMaterials.energy,
       {
         glow: reducedMotion ? .12 : .26,
         emit: reducedMotion ? .08 + .08 * activation : .12 + .18 * activation,
@@ -1055,7 +1056,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     ringDraw('SPH', multiplyMatrix(
       translateMatrix(point.x, point.y, point.z),
       scaleMatrix(receiverScale, receiverScale, receiverScale),
-    ), RING_MATERIALS.energy, {
+    ), activeHeroMaterials.energy, {
       emit: 0.12 + 0.22 * presentation.receiverAmount,
       glow: reducedMotion ? 0.08 : 0.24,
       alpha: 0.48 + 0.36 * presentation.receiverAmount,
@@ -1066,7 +1067,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     ringDraw('TORUS', multiplyMatrix(
       translateMatrix(target.x, target.y + 0.02, target.z),
       scaleMatrix(targetScale, 1, targetScale),
-    ), presentation.reflectionAmount > 0 ? RING_MATERIALS.energy : RING_MATERIALS.glass, {
+    ), presentation.reflectionAmount > 0 ? activeHeroMaterials.energy : activeHeroMaterials.glass, {
       emit: 0.10 + 0.28 * presentation.receiverAmount + 0.12 * presentation.reflectionAmount,
       alpha: 0.50 + 0.30 * presentation.receiverAmount,
     });
@@ -1077,7 +1078,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ringDraw('TORUS', multiplyMatrix(
         translateMatrix(target.x, target.y + 0.05, target.z),
         scaleMatrix(radius, 1, radius),
-      ), RING_MATERIALS.energy, {
+      ), activeHeroMaterials.energy, {
         emit: 0.08 + 0.12 * presentation.reflectionAmount,
         alpha: 0.24 + 0.18 * presentation.reflectionAmount,
       });
@@ -1136,6 +1137,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const reducedMotion = Boolean(state.reducedMotion);
     const hierarchyOpen = Boolean(state.hierarchyOpen);
     const materialLighting = resolveHeroMaterialContext(state, reducedMotion);
+    activeHeroMaterials = authoredHeroMaterialSet(materialLighting);
     const authoredRing = authoredRingMaterial(materialLighting);
     const authoredSeatShell = authoredSeatShellMaterial(materialLighting);
     const authoredSeatInset = authoredSeatInsetMaterial(materialLighting);
@@ -1454,14 +1456,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
             ),
           ),
           component.materialRole === 'energy'
-            ? RING_MATERIALS.energy
+            ? activeHeroMaterials.energy
             : component.materialRole === 'trace'
-              ? RING_MATERIALS.trace
+              ? activeHeroMaterials.trace
               : component.materialRole === 'glass'
-                ? RING_MATERIALS.glass
+                ? activeHeroMaterials.glass
                 : component.materialRole === 'metal2'
-                  ? RING_MATERIALS.metal2
-                  : RING_MATERIALS.metal,
+                  ? activeHeroMaterials.metal2
+                  : activeHeroMaterials.metal,
           {
             emit: selected ? 0.18 : 0.07,
             glow: selected ? 0.26 : 0.09,
@@ -1474,8 +1476,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       facilityMachineryPortCount += machine.ports.length;
     }
     const facilityMaterial = {
-      glass: RING_MATERIALS.glass,
-      energy: RING_MATERIALS.energy,
+      glass: activeHeroMaterials.glass,
+      energy: activeHeroMaterials.energy,
     };
     const facilityFeatureScale = Number(responsive.facilityFeatureScale) > 0
       ? Number(responsive.facilityFeatureScale)
@@ -1487,7 +1489,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         const dx = component.center.x;
         const dy = component.center.y;
         const dz = component.center.z;
-        const material = facilityMaterial[component.materialRole] || RING_MATERIALS.glass;
+        const material = facilityMaterial[component.materialRole] || activeHeroMaterials.glass;
         ringDraw(
           component.shape,
           multiplyMatrix(
@@ -1649,7 +1651,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         S: scaleMatrix,
         RY: rotateYMatrix,
         mul: multiplyMatrix,
-        M: RING_MATERIALS,
+        M: activeHeroMaterials,
       }, now / 1000);
       canvas.dataset.machineWorldFocusedDivision = focusedDivision?.childId || '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = focusedDivision?.id || '';
@@ -1756,7 +1758,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         translateMatrix(workspaceCoreForAssembly.center.x, workspaceCoreForAssembly.center.y, workspaceCoreForAssembly.center.z),
         scaleMatrix(workspaceCoreForAssembly.innerRadius * (0.20 + 0.08 * choreography.workspaceReception), 0.12 + 0.06 * choreography.workspaceReception, workspaceCoreForAssembly.innerRadius * (0.20 + 0.08 * choreography.workspaceReception)),
       ),
-      RING_MATERIALS.metal2,
+      activeHeroMaterials.metal2,
       {
         rough: 0.34,
         emit: 0.05 + 0.10 * choreography.workspaceReception,
@@ -1808,7 +1810,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldExpansionInterrupted = String(expansionSample.interrupted);
     canvas.dataset.machineWorldExpansionClearanceLimited = String(expansionSample.clearanceLimited);
     canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
-    canvas.dataset.machineWorldMaterialModel = 'hero-authored-v1';
+    canvas.dataset.machineWorldMaterialModel = 'hero-authored-v2';
+    canvas.dataset.machineWorldMaterialTheme = materialLighting.themeMode;
 
     return Object.freeze({
       state: toMachineDisplayState(expansionSample.phase, expansionSample.amount),
