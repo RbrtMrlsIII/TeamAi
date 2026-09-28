@@ -112,6 +112,8 @@ test('S10 pod focus falls back to world subject when pod subject is unavailable'
     viewport: { width: 390, height: 844 },
     reducedMotion: true,
   });
+  assert.equal(spec.responsiveTier, 'phone');
+  assert.equal(spec.responsivePointer, 'unknown');
   assert.deepEqual(spec.target, world.center);
   assert.equal(spec.reducedMotion, true);
   assert.ok(spec.radius > 8);

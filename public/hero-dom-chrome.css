@@ -186,19 +186,16 @@ html {
 .hero-settings-mount .hero-settings-button {
   display: none;
 }
-@media(max-width:760px){
-  .hero-settings-mount {
-    top: 68px;
-    right: 16px;
-    width: min(320px, calc(100vw - 32px));
-  }
+html[data-spatial-responsive="compact"] .hero-settings-mount {
+  top: calc(68px + env(safe-area-inset-top, 0px));
+  right: max(12px, calc(env(safe-area-inset-right, 0px) + 8px));
+  width: min(320px, calc(100vw - 32px));
 }
-@media(max-width:520px){
-  .hero-settings-mount {
-    top: 64px;
-    right: 12px;
-    width: min(300px, calc(100vw - 24px));
-  }
+
+html[data-spatial-responsive="phone"] .hero-settings-mount {
+  top: calc(64px + env(safe-area-inset-top, 0px));
+  right: max(12px, calc(env(safe-area-inset-right, 0px) + 8px));
+  width: calc(100vw - 24px);
 }
 
 .hero-settings-panel__semantic {

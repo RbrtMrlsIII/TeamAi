@@ -1116,6 +1116,115 @@ test.describe('Living Web AI Workspace Hero', () => {
     await expect(page.locator('#state-label')).toHaveText('IDLE');
   });
 
+  test('S23 responsive machine preserves semantic workflow across viewport tiers', async ({ page }) => {
+    const viewports = [
+      { width: 1280, height: 800, tier: 'desktop' },
+      { width: 820, height: 1180, tier: 'compact' },
+      { width: 390, height: 844, tier: 'phone' },
+    ];
+    const cameraRadii: number[] = [];
+
+    for (const viewport of viewports) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto('/hero/');
+      await expect(page.locator('#hero-canvas')).toBeVisible();
+      await expect(page.locator('.world-navigation')).toBeVisible();
+
+      const state = await page.evaluate(() => {
+        const canvas = document.querySelector('#hero-canvas') as HTMLCanvasElement | null;
+        const root = document.documentElement;
+        return {
+          responsive: (window as any).TeamAiHero.getResponsiveState(),
+          canvasTier: canvas?.dataset.machineWorldResponsiveTier,
+          canvasOrientation: canvas?.dataset.machineWorldResponsiveOrientation,
+          touchAction: canvas ? getComputedStyle(canvas).touchAction : '',
+          clientWidth: root.clientWidth,
+          clientHeight: root.clientHeight,
+          scrollWidth: root.scrollWidth,
+          scrollHeight: root.scrollHeight,
+          bodyScrollWidth: document.body.scrollWidth,
+          bodyScrollHeight: document.body.scrollHeight,
+          cameraRadius: Number(canvas?.dataset.machineWorldCameraRadius || 0),
+        };
+      });
+
+      expect(state.responsive.tier).toBe(viewport.tier);
+      expect(state.canvasTier).toBe(viewport.tier);
+      expect(state.touchAction).toBe('none');
+      expect(state.scrollWidth).toBeLessThanOrEqual(state.clientWidth);
+      expect(state.scrollHeight).toBeLessThanOrEqual(state.clientHeight);
+      expect(state.bodyScrollWidth).toBeLessThanOrEqual(state.clientWidth);
+      expect(state.bodyScrollHeight).toBeLessThanOrEqual(state.clientHeight);
+      expect(state.cameraRadius).toBeGreaterThan(0);
+      cameraRadii.push(state.cameraRadius);
+
+      await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(10));
+      await expect(page.locator('#seat-label')).toContainText('10 seats presented');
+      expect(await page.evaluate(() => (window as any).TeamAiHero.getSeatCount())).toBe(10);
+
+      const beforeOrbit = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+      await page.evaluate(() => {
+        const canvas = document.querySelector('#hero-canvas');
+        if (!(canvas instanceof HTMLCanvasElement)) throw new Error('missing hero canvas');
+        canvas.dispatchEvent(new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 9901,
+          pointerType: 'touch',
+          clientX: 100,
+          clientY: 180,
+        }));
+        canvas.dispatchEvent(new PointerEvent('pointermove', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 9901,
+          pointerType: 'touch',
+          clientX: 180,
+          clientY: 200,
+        }));
+        canvas.dispatchEvent(new PointerEvent('pointerup', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 9901,
+          pointerType: 'touch',
+          clientX: 180,
+          clientY: 200,
+        }));
+      });
+      const afterOrbit = await page.evaluate(() => (window as any).TeamAiHero.getNavOrbitYaw());
+      expect(afterOrbit).not.toBe(beforeOrbit);
+
+      if (viewport.tier !== 'desktop') {
+        await page.getByRole('button', { name: 'Menu', exact: true }).click();
+        const settingsTrigger = page.locator('#world-menu [data-settings-open]');
+        await expect(settingsTrigger).toBeVisible();
+        await settingsTrigger.click();
+        const panelBounds = await page.locator('#hero-settings-panel').evaluate((el) => {
+          const rect = (el as HTMLElement).getBoundingClientRect();
+          return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
+        });
+        expect(panelBounds.left).toBeGreaterThanOrEqual(0);
+        expect(panelBounds.top).toBeGreaterThanOrEqual(0);
+        expect(panelBounds.right).toBeLessThanOrEqual(viewport.width);
+        expect(panelBounds.bottom).toBeLessThanOrEqual(viewport.height);
+        await page.keyboard.press('Escape');
+      }
+
+      await page.evaluate(() => (window as any).TeamAiHero.setReducedMotion(true));
+      const reduced = await page.evaluate(() => ({
+        tier: (window as any).TeamAiHero.getResponsiveState().tier,
+        state: (window as any).TeamAiHero.getState(),
+        reducedMotion: (window as any).TeamAiHero.getReducedMotion(),
+      }));
+      expect(reduced.tier).toBe(viewport.tier);
+      expect(reduced.state).toBe('IDLE');
+      expect(reduced.reducedMotion).toBe(true);
+    }
+
+    expect(cameraRadii[1]).toBeGreaterThanOrEqual(cameraRadii[0]);
+    expect(cameraRadii[2]).toBeGreaterThan(cameraRadii[0]);
+  });
+
   test('scales the same presentation from one to ten Seat slots', async ({ page }) => {
     await page.goto('/hero/?seats=1');
     const count = () => page.evaluate(() => (window as any).TeamAiHero.getSeatCount());
