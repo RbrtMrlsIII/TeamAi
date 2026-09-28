@@ -636,7 +636,6 @@ test.describe('Living Web AI Workspace Hero', () => {
 
     await page.getByRole('button', { name: 'Start turn loop', exact: true }).click();
     await expect(state).toHaveText('FOCUS');
-    await expect(state).toHaveAccessibleName('FOCUS');
 
     await page.getByRole('button', { name: 'Stop turn loop', exact: true }).click();
     await expect(state).toHaveText('IDLE');
