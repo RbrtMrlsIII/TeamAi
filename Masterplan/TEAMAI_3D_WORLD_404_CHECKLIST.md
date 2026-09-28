@@ -446,7 +446,7 @@ Exit: failure states remain understandable.
 - [x] Keyboard navigation. World-menu disclosure is keyboard-traversable; chrome keys no longer fire spatial shortcuts. Evidence: E404-S22. Remaining S22 rows stay open.
 
 - [x] Visible focus. Global 3px focus ring is directly browser-verified on keyboard-traversed world-menu controls. Evidence: E404-S22.
-- [ ] Deterministic accessible names.
+- [x] Deterministic accessible names. Active Hero controls, canvas, world-menu items, and settings controls have non-empty computed accessible names in Chromium. Evidence: E404-S22C.
 - [ ] State announcements.
 - [ ] Error/blocked reasons.
 - [ ] Non-color-only meaning.
