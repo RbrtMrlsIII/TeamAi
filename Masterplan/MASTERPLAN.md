@@ -26,6 +26,12 @@
 - [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented gate3-test-team / gate3-test-seat and listed zero team documents.
 
 
+## 2026-09-28 029 spatial continuation boundary
+
+PR #404 is merged into canonical `main` at `13356cae7e6ef8179f7e2e552211bb4d187f37fb`. PR #424 (`frontend/029-spatial-world-continuation`) is the active bounded 029 spatial implementation vehicle. This does not replace the single global current slice in `Masterplan/NEXT_SLICES.md`; Issue #401 remains the production/runtime frontier and authority.
+
+The #424 continuation remains presentation/read-model projection only. Geometry, semantic state, topology, camera, Firebase/Firestore identity and durable state, authorization/entitlement, scheduler, provider execution, payment, and production delivery remain in their owning systems.
+
 ## Repository foundation
 
 - [x] Product Law moved to `Product_Law/PRODUCT_LAW.md` and remains the single product authority.
