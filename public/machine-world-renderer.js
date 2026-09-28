@@ -600,7 +600,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const color = material?.color || [0.5, 0.6, 0.7];
     const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
     const spec = Array.isArray(material?.spec) ? material.spec : [0, 0, 0];
-    const roughness = clamp(options.rough, material?.rough ?? 0.5, 1);
+    const roughness = clamp(finite(options.rough, material?.rough ?? 0.5), 0, 1);
     gl.useProgram(solid);
     gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
     gl.enableVertexAttribArray(solidPos);
