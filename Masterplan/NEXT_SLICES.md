@@ -8,7 +8,7 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `76da305f0ec3efb3d368b22fb70748f0051f4d15`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `13356cae7e6ef8179f7e2e552211bb4d187f37fb`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
@@ -119,9 +119,13 @@ TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 con
 
 ## 2026-09-28 029 spatial acceptance companion
 
-PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
+PR #404 is the merged historical 029 reconstruction vehicle. PR #424 `frontend/029-spatial-world-continuation` is the active bounded spatial continuation vehicle; it does not replace the single global current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
 
 S22 now has repository/browser proof for keyboard navigation, visible focus, deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and Browser accessibility smoke. These are repository implementation/evidence facts, not 029 completion claims. No production deployment, human acceptance, provider execution, or merge authorization is inferred from these results.
+
+### S24 continuation boundary
+
+S23 remains repository/browser-verified with physical-device touch acceptance open. PR #424 may advance S24 material/lighting integration as an explicitly bounded 029 companion while Issue #401 remains the global current-slice authority. S24 completion requires fresh exact-head proof and a post-material S23 readability/contrast recheck because materials can change perceived visibility without changing screen-space geometry.
 
 ## 030 successor frontier
 
