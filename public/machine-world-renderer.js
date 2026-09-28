@@ -47,6 +47,7 @@ import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } fr
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges } from './machine-world-topology.js';
 const TAU = Math.PI * 2;
+const READABILITY_CAMERA_QUANTUM = 0.25;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
   hex: [[-1,0],[-.5,-.86],[.5,-.86],[1,0],[.5,.86],[-.5,.86]],
@@ -332,9 +333,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       Math.round(width),
       Math.round(height),
       seatCount,
-      cameraPose?.p?.map((value) => Math.round(finite(value) * 100) / 100).join(','),
-      cameraPose?.t?.map((value) => Math.round(finite(value) * 100) / 100).join(','),
-      Math.round(finite(cameraPose?.f) * 100) / 100,
+      cameraPose?.p?.map((value) => Math.round(finite(value) / READABILITY_CAMERA_QUANTUM) * READABILITY_CAMERA_QUANTUM).join(','),
+      cameraPose?.t?.map((value) => Math.round(finite(value) / READABILITY_CAMERA_QUANTUM) * READABILITY_CAMERA_QUANTUM).join(','),
+      Math.round(finite(cameraPose?.f) * 4) / 4,
     ].join('|');
 
     if (responsiveReadabilityCache?.key === key) {
