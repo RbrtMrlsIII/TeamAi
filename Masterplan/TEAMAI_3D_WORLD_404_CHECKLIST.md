@@ -452,8 +452,8 @@ Exit: failure states remain understandable.
 - [x] Non-color-only meaning. Semantic state cues remain available as text and programmatic state, with color used only as supplemental styling. Evidence: E404-S22F.
 - [x] Escape/back. Dialog Escape returns to its real trigger and machine Escape unwinds hierarchy context. Evidence: E404-S22G.
 - [x] Return-to-parent. Leaf → parent → world Escape path is browser-verified, including final `HERO_WIDE / IDLE` restoration. Evidence: E404-S22G.
-- [ ] Reduced-motion semantic equivalence.
-- [ ] Browser accessibility smoke coverage.
+- [x] Reduced-motion semantic equivalence. Reduced-motion browser proof preserves hierarchy snap/state semantics and the turn lifecycle. Evidence: E404-S22H.
+- [x] Browser accessibility smoke coverage. Canonical Hero-route smoke covers names, focus-visible, menu disclosure, blocked reasons, dialog Escape restoration, hierarchy backstack, reduced-motion state, and transaction error announcement. Evidence: E404-S22I.
 Exit: machine is operable without mouse/color/animation dependence.
 
 ## Y. S23 — Responsive machine
