@@ -99,6 +99,21 @@ function publishFeatureRegistry() {
   });
 }
 
+const GUEST_BLOCKED_REASON_ID = 'hero-guest-feature-blocked-reason';
+const GUEST_BLOCKED_REASON_TEXT =
+  'Guest presentation: discoverable, blocked until authenticated runtime context is available.';
+
+function ensureGuestBlockedReasonNode() {
+  let node = document.getElementById(GUEST_BLOCKED_REASON_ID);
+  if (node) return node;
+  node = document.createElement('span');
+  node.id = GUEST_BLOCKED_REASON_ID;
+  node.hidden = true;
+  node.textContent = GUEST_BLOCKED_REASON_TEXT;
+  document.body.append(node);
+  return node;
+}
+
 function applyGuestAccessibilityReason(button) {
   if (!(button instanceof HTMLButtonElement)) return;
   const featureId = button.dataset.featureId;
@@ -108,11 +123,12 @@ function applyGuestAccessibilityReason(button) {
   const guestState = getGuestPresentationState(feature);
   if (!feature || guestState?.presentation !== 'DISCOVERABLE_LOCKED') return;
 
-  const visibleLabel = button.textContent?.trim() || feature.label;
-  button.setAttribute(
-    'aria-label',
-    visibleLabel + '. Guest presentation: discoverable, blocked until authenticated runtime context is available.',
+  const reasonNode = ensureGuestBlockedReasonNode();
+  const describedBy = new Set(
+    (button.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean),
   );
+  describedBy.add(reasonNode.id);
+  button.setAttribute('aria-describedby', Array.from(describedBy).join(' '));
   button.dataset.guestReason = 'BLOCKED_UNTIL_AUTHENTICATED';
   button.dataset.guestReasonApplied = 'true';
 }
