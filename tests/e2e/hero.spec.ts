@@ -635,16 +635,22 @@ test.describe('Living Web AI Workspace Hero', () => {
     const count = await lockedFeatures.count();
     expect(count).toBeGreaterThan(0);
 
+    const reasonId = 'hero-guest-feature-blocked-reason';
     for (let index = 0; index < count; index += 1) {
       const control = lockedFeatures.nth(index);
+      await expect(control).toHaveAccessibleName(await control.textContent());
+      await expect(control).toHaveAttribute('aria-describedby', reasonId);
+      await expect(control).toHaveAccessibleDescription(
+        'Guest presentation: discoverable, blocked until authenticated runtime context is available.',
+      );
       const label = await control.getAttribute('aria-label');
-      expect(label).toContain('Guest presentation: discoverable, blocked until authenticated runtime context is available.');
+      expect(label).not.toContain('Guest presentation:');
       expect(label).not.toContain('unauthorized');
       expect(label).not.toContain('permission denied');
       await expect(control).toHaveAttribute('data-guest-reason', 'BLOCKED_UNTIL_AUTHENTICATED');
     }
 
-    await expect(page.locator('#world-menu [data-settings-open]')).toHaveAccessibleName(/Settings.*Guest presentation: discoverable, blocked/);
+    await expect(page.locator('#world-menu [data-settings-open]')).toHaveAccessibleName('Settings');
   });
 
   test('S22 state announcements expose the existing Hero state as a live status', async ({ page }) => {
