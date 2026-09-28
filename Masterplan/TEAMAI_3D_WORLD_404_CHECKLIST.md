@@ -521,8 +521,8 @@ Exit: phone is a designed machine view.
 - [x] Glass/translucency.
 - [x] Energy material.
 - [ ] Holographic material. S25 owns hologram behavior and payload-specific presentation.
-- [x] Semantic emissive strength.
-- [x] Shadow/depth separation.
+- [ ] Semantic emissive strength. Base authored emission is integrated, but renderer-level state effect amplitudes can still override material emission; full bounded semantic emission remains open.
+- [ ] Shadow/depth separation. Authored inset color contributes to depth separation, but the current renderer shader does not yet consume roughness/specular or an actual shadow/light model; full lighting separation remains open.
 - [x] Canonical theme bridge. Document-root theme/density → lighting adapter → authored material set → canonical renderer; source/public mirrors are synchronized.
 - [ ] Dark-glass mode remains future-gated.
 Exit: materials reinforce hierarchy and state without creating a second visual or semantic authority.
