@@ -175,6 +175,12 @@ export function deriveMachineCameraSpec({
 
   if (resolvedMode === MACHINE_CAMERA_MODE.RETURN_TO_WORLD) distance = Math.max(distance, 12);
   distance *= responsive.cameraDistanceMultiplier;
+  if (
+    resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW
+    || resolvedMode === MACHINE_CAMERA_MODE.RETURN_TO_WORLD
+  ) {
+    distance *= finitePositive(responsive.worldOverviewDistanceMultiplier, 1);
+  }
 
   let pitch = resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
     ? Math.max(2.6, distance * 0.30)
