@@ -450,8 +450,8 @@ Exit: failure states remain understandable.
 - [x] State announcements. Existing Hero state is an `aria-live=polite` `role=status` region and Chromium directly verifies `IDLE → FOCUS → IDLE`. Evidence: E404-S22D.
 - [x] Error / blocked reasons. Guest-locked feature controls expose a deterministic presentation-only blocked reason through `aria-describedby`; transaction `errorCode` reasons remain covered. Evidence: E404-S22E.
 - [x] Non-color-only meaning. Semantic state cues remain available as text and programmatic state, with color used only as supplemental styling. Evidence: E404-S22F.
-- [ ] Escape/back.
-- [ ] Return-to-parent.
+- [x] Escape/back. Dialog Escape returns to its real trigger and machine Escape unwinds hierarchy context. Evidence: E404-S22G.
+- [x] Return-to-parent. Leaf → parent → world Escape path is browser-verified, including final `HERO_WIDE / IDLE` restoration. Evidence: E404-S22G.
 - [ ] Reduced-motion semantic equivalence.
 - [ ] Browser accessibility smoke coverage.
 Exit: machine is operable without mouse/color/animation dependence.
