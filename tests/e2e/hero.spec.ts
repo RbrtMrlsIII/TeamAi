@@ -625,6 +625,28 @@ test.describe('Living Web AI Workspace Hero', () => {
     }
   });
 
+  test('S22 blocked feature reasons are exposed without claiming authorization', async ({ page }) => {
+    await page.goto('/hero/');
+
+    const menu = page.getByRole('button', { name: 'Menu', exact: true });
+    await menu.click();
+
+    const lockedFeatures = page.locator('#world-menu button[data-feature-id]');
+    const count = await lockedFeatures.count();
+    expect(count).toBeGreaterThan(0);
+
+    for (let index = 0; index < count; index += 1) {
+      const control = lockedFeatures.nth(index);
+      const label = await control.getAttribute('aria-label');
+      expect(label).toContain('Guest presentation: discoverable, blocked until authenticated runtime context is available.');
+      expect(label).not.toContain('unauthorized');
+      expect(label).not.toContain('permission denied');
+      await expect(control).toHaveAttribute('data-guest-reason', 'BLOCKED_UNTIL_AUTHENTICATED');
+    }
+
+    await expect(page.locator('#world-menu [data-settings-open]')).toHaveAccessibleName(/Settings.*Guest presentation: discoverable, blocked/);
+  });
+
   test('S22 state announcements expose the existing Hero state as a live status', async ({ page }) => {
     await page.goto('/hero/');
 
