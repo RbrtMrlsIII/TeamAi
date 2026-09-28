@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {
+  MACHINE_SPATIAL_RUNTIME_FILES,
+  resolveMachineSpatialRuntimePublicFile,
+} from '../scripts/machine-spatial-runtime-manifest.mjs';
 import { readFile } from 'node:fs/promises';
 import {
   createDeepSpaceField,
@@ -66,6 +70,16 @@ test('029 Slice A renderer wiring and source/public sync are explicit', async ()
   assert.match(renderer, /clearColor\(\.012,\.020,\.032,1\)/);
   assert.match(renderer, /gl\.POINTS/);
   assert.equal(runtime, source);
-  assert.match(sync, /'hero-environment\.js'/);
-  assert.match(sync, /'machine-world-renderer\.js'/);
+  assert.ok(MACHINE_SPATIAL_RUNTIME_FILES.includes('hero-environment.js'));
+  assert.ok(MACHINE_SPATIAL_RUNTIME_FILES.includes('machine-world-renderer.js'));
+  assert.ok(MACHINE_SPATIAL_RUNTIME_FILES.includes('machine-expansion-mechanism.js'));
+  assert.ok(MACHINE_SPATIAL_RUNTIME_FILES.includes('machine-world-topology.js'));
+  assert.equal(
+    resolveMachineSpatialRuntimePublicFile('machine-core-layout.js'),
+    'machine-core-layout-runtime.js',
+  );
+  assert.equal(
+    resolveMachineSpatialRuntimePublicFile('machine-world-renderer.js'),
+    'machine-world-renderer.js',
+  );
 });

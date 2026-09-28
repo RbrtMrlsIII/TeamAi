@@ -1,8 +1,86 @@
-# AI_ASSISTANT_READ_ME — current session boundary
+# AI_ASSISTANT_READ_ME - current session boundary
+
+## Canonical recovery routing
+
+- Issue #409 is the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
+- PR #404 remains **OPEN / DRAFT** and the sole 029 spatial implementation vehicle.
+- S22 Accessibility is **repository/browser-verified and formally closed**.
+- S23 Responsive machine is **repository/browser-verified at the executable behavior/proof head `35423b86ba563181055c70103364662bed574c5e`**; current PR #404 descendants are documentation-only reconciliation unless a later source change is explicitly identified. Physical-device acceptance remains open.
+- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`. The spatial checklist's next numbered layer is S24, but it is **not automatically the current global slice**.
+- #401 remains the production Firestore/security/runtime authority. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics. #400 remains the frontend/product feature grammar.
+- No repository Browser result is production evidence; no green CI result is human acceptance.
+- Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
+
+## 2026-09-28 CURRENT SESSION STATE
+
+This block is the current session-routing summary. The live branch head is intentionally resolved from PR #404 / Issue #409 rather than self-stamped here, which avoids recursive drift when governance-only commits update this file.
+
+- canonical `main`: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- PR #404 branch: `frontend/029-spatial-world-reconstruction`
+- live #404 head: **see PR #404 / Issue #409 current metadata**
+- current spatial proof anchor: `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c` with Browser `36393207424` **PASS, 88 passed / 4 skipped**
+- current #404 live head: `50c5fb215dc392533ba9ac5cdef9f9fb8fe56962`, a later documentation-reconciliation descendant
+- #404 remains the sole 029 spatial implementation vehicle and remains OPEN / DRAFT
+- S23 Responsive machine is repository/browser-verified; projected proof: desktop `57.67 / 57.93 / 20.21 px`, compact `54.99 / 54.72 / 20.28 px`, phone `33.88 / 33.71 / 14.12 px` for Seat / Pod / Facility
+- S23 strict projected guards: desktop `56 / 20`, compact `48 / 18`, phone `32 / 14`; phone Facility presentation scale `1.13x`
+- S23 remains bounded to presentation/read-model projection. Physical-device acceptance, production deployment/runtime, live provider execution, human acceptance, and 029 release authorization remain unproven.
+- E404-S15 / E404-S16 / E404-S17 remain bounded evidence records; E404-S23A is the active S23 density/readability proof record.
+- global program frontier remains **Issue #401** in `Masterplan/NEXT_SLICES.md`
+- do not start S24 merely because S23 is closed; resolve the current-slice authority first
+## 2026-09-28 S22 accessibility closure on #404
+
+- canonical main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- current #404 head: `4e5428fd75af1ba57864dc9c92ca8e9439396dcd`
+- #404 remains OPEN / DRAFT and the sole 029 spatial implementation vehicle
+- branch relation: 367 commits ahead / 0 behind main at this reconciliation point
+- global current program frontier remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
+- #404 does not absorb #401 backend authority
+- S22 Keyboard navigation: repository/browser-verified
+- S22 Visible focus: repository/browser-verified
+- S22 Deterministic accessible names: repository/browser-verified
+- S22 State announcements: repository/browser-verified
+- S22 Error / blocked reasons: repository/browser-verified
+- S22 Non-color-only meaning: repository/browser-verified
+- S22 Escape/back: repository/browser-verified
+- S22 Return-to-parent: repository/browser-verified
+- S22 Reduced-motion semantic equivalence: repository/browser-verified
+- S22 Browser accessibility smoke: repository/browser-verified
+- Latest exact-head Browser proof on `4e5428fd...`: **86 passed / 4 skipped**
+- Latest exact-head Full-System proof on `4e5428fd...`: **1,122 passed / 0 failed**, package create/verify PASS, 1,059 files
+- Latest exact-head Security: PASS
+- Latest exact-head Deep Security: PASS
+- Latest exact-head Governance: PASS
+- Fresh Browser artifact ID: `10952030826`
+- Fresh Browser artifact digest: `sha256:233271129be6093fff8590ddedebdfc769784b74acac01f286db5485789b9856`
+- S22 exit is repository/browser proof only. It does not establish live deployment, provider execution, production runtime truth, human acceptance, or 029 release authorization.
+- Next spatial slice after formal S22 closure: S23 Responsive machine.
+- Preserve #401, #412, #392, and #400 ownership boundaries.
+- No production Seat documents were created or mutated by #404.
+
+## 2026-09-28 S22 error / blocked reasons on #404
+
+- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- current #404 head before this handoff reconciliation: `5e03fd5e754fed33e9686b16251dc957680fb319`
+- last behavior-changing S22 head: `e3000a4a682d9e226f86f533404099cb1215ce96`
+- global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
+- #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
+- S22 Keyboard navigation: repository/browser-verified
+- S22 Visible focus: repository/browser-verified
+- S22 Deterministic accessible names: repository/browser-verified
+- S22 State announcements: repository/browser-verified
+- S22 Error / blocked reasons: repository/browser-verified on behavior head `e3000a4...`
+- Browser proof on behavior head: **82 passed / 4 skipped**
+- Full-System proof: **1,122 passed / 0 failed**, package create/verify PASS
+- Guest-locked feature controls now preserve their existing accessible names while exposing the canonical `BLOCKED_UNTIL_AUTHENTICATED` reason through `aria-describedby`
+- Transaction `errorCode` presentation and Retry/Cancel intent boundaries remain intact
+- Remaining S22 rows: non-color-only meaning, Escape/back, Return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
+- next 029 row: non-color-only meaning
+- no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
 
-- current main: `1b89879b52defea894795e2b72d6176f8c89ce09`
+- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
+- current #404 head: `0e07fad0ff00503491d9b65a3938f9514b771f31`
 - current global slice: Issue #401 production Firestore authority, security, and runtime evidence
 - PR #417 merged into this mainline at `59a871f440dd1d15405164948da9985d1537a6be`; its Gate 3 classifier remains repository evidence only and did not create Seat/Connection documents
 - PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
@@ -12,7 +90,7 @@
 - the archived 2026-09-03 Gate 3 PASS used the same named hierarchy under a verified UID, but the UID is redacted from repository evidence; current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID`, so do not infer deletion/reset causality
 - next allowed work: supply an operator-authorized Team/Seat pair through the existing default-branch `firestore-production-evidence.yml` dispatch vehicle, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion. No new selector implementation is required.
 - #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
-- PR #421 is now merged as `1b89879b52defea894795e2b72d6176f8c89ce09`; its governance reconciliation remains documentation-only.
+- PR #421 is now merged as `1b89879b52defea894795e2b72d6176f8c89ce09`; PR #422 subsequently reconciled canonical `main` to `76da305f0ec3efb3d368b22fb70748f0051f4d15`. Both were documentation-only governance changes.
 - PR #416 is merged governance/review-readiness infrastructure; Issue #415 remains procedural guidance only
 
 
@@ -20,6 +98,7 @@
 ## 2026-09-25 production frontier reconciliation
 
 - current main: ce1656b7190fa8657253385fd884837ff7d12653
+- 2026-09-25 PR #404 evidence reconciliation: `8944ececfd6dfee15a39833107dd3bac932411bd` is the reconciled spatial head. The canonical `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md` records the authored S4 articulated geometry, intermediate S5 travel sampling, dense 1–10 Seat clearance matrix, S8 topology, S9 signal, S10 camera, and exact-head CI/browser evidence. This remains implementation/repository evidence, not 029 release or human acceptance.
 - current global slice: Issue #401 production Firestore authority, security, and runtime evidence
 - PR #402 is merged; PR #413 is merged and its verifier defect is closed
 - fresh index run 36140968869 proved deployment succeeds; readback failed because the live export includes Firestore's implicit trailing __name__ field

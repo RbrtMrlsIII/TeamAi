@@ -47,6 +47,9 @@ function setMode(mode) {
 
 function openAuth() {
   root.dataset.heroOpening = 'open';
+  window.dispatchEvent(new CustomEvent('teamai:hero-auth-visibility', {
+    detail: { open: true, presentationOnly: true },
+  }));
   const semantic = window.TeamAiHeroSemanticCamera?.inspect('MECHANISM_AUTHENTICATION', {
     source: 'hero-engine-opening',
     layer: 'authentication'
@@ -71,6 +74,9 @@ function closeAuth() {
     panel.hidden = true;
     panel.setAttribute('aria-hidden', 'true');
     root.dataset.heroOpening = 'closed';
+    window.dispatchEvent(new CustomEvent('teamai:hero-auth-visibility', {
+      detail: { open: false, presentationOnly: true },
+    }));
   };
   if (reducedMotion) finish(); else window.setTimeout(finish, 220);
 }

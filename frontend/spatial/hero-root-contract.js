@@ -1,3 +1,5 @@
+import { STRUCTURAL_ROOT_SLICES } from './machine-spatial-root-contract.js';
+
 /**
  * Provisional TeamAi Hero root lifecycle contract.
  * This is coordination metadata, not a renderer or state authority.
@@ -24,6 +26,12 @@ export const HERO_ROOTS = Object.freeze({
     id: 'hero-settings',
     layer: 'normal-ui',
     owner: 'hero-settings-shell',
+    spatialContract: Object.freeze({
+      constructionSlice: 'S20',
+      constructionLayer: 'product-runtime',
+      inheritedStructuralRoots: STRUCTURAL_ROOT_SLICES,
+      semanticBoundary: 'presentation-only',
+    }),
   }),
   mcp: Object.freeze({
     id: 'hero-mcp-facility',

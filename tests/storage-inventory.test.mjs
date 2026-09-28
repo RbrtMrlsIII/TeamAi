@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   createStorageItemBranch,
   normalizeStorageInventoryReadModel,
+  STORAGE_ARTIFACT_STATES,
   normalizeStorageItem,
   resolveStorageInventoryReadiness,
 } from '../frontend/spatial/storage-inventory.js';
@@ -110,6 +111,28 @@ test('Storage facility contains no upload or binary-transfer surface', () => {
   assert.doesNotMatch(facility, /<input/i);
   assert.doesNotMatch(facility, /fetch\s*\(/i);
   assert.doesNotMatch(facility, /method\s*:\s*["']POST["']/i);
+});
+
+test('S18 Storage facility inherits the full S0-S10 spatial root contract', async () => {
+  const { STORAGE_FACILITY_SPATIAL_CONTEXT } = await import('../frontend/spatial/storage-inventory-facility.js');
+  const { STRUCTURAL_ROOT_SLICES } = await import('../frontend/spatial/machine-spatial-root-contract.js');
+  assert.equal(STORAGE_FACILITY_SPATIAL_CONTEXT.constructionSlice, 'S18');
+  assert.equal(STORAGE_FACILITY_SPATIAL_CONTEXT.constructionOwner, 'frontend/spatial/storage-inventory-facility.js');
+  assert.equal(STORAGE_FACILITY_SPATIAL_CONTEXT.semanticId, 'hero-storage-inventory-facility');
+  assert.deepEqual(STORAGE_FACILITY_SPATIAL_CONTEXT.inheritedStructuralRoots, STRUCTURAL_ROOT_SLICES);
+});
+
+test('Storage artifact state is explicit and never inferred from generic item status', () => {
+  assert.deepEqual(STORAGE_ARTIFACT_STATES, ['UNKNOWN', 'AVAILABLE', 'ARCHIVED', 'BLOCKED', 'ERROR']);
+  const model = normalizeStorageInventoryReadModel({
+    inventoryKnown: true,
+    authorized: true,
+    entitled: true,
+    healthy: true,
+    items: [{ id: 'item-1', label: 'Artifact', status: 'AVAILABLE' }],
+  });
+  assert.equal(model.items[0].status, 'AVAILABLE');
+  assert.equal(model.items[0].artifactState, 'UNKNOWN');
 });
 
 test('Storage source and public runtime copies remain exact', () => {

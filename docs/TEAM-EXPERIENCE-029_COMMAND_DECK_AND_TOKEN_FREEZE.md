@@ -2,7 +2,8 @@
 
 **Status:** PLANNING STORYBOARD / NOT IMPLEMENTATION / NOT PRODUCT LAW  
 **Date:** 2026-09-04  
-**Authority of this file:** The Command Deck section below is the endorsed freeze. Earlier long-form E0–E5 drafts are superseded.  
+**Authority of this file:** The Command Deck section below is the endorsed freeze.  
+**Current-state boundary (2026-09-23):** This file remains a planning/token reference only. It does not own the current 029 composition, spatial geometry, or execution order. The historical Command Deck is retired as a current composition. Current 029 construction follows Product Law → S0-S10 structural roots → S11-S21 product/runtime realization → S22-S29 world expression. Token/material values in this file remain consumable only where they agree with the current canonical theme root and current construction plan. Earlier long-form E0–E5 drafts are superseded.  
 **Supersession (2026-09-04 hygiene):** Field numbers (F0–F7), first palette anchors, blur cap, and motion ms are assigned in `TEAM-EXPERIENCE-029_THEME_ROOT_RECONCILIATION_AND_IMPLEMENTATION_REVIEW.md`. The historical “Still not assigned” lists below are **stale for those items** and must not undo the reconciliation. Typeface *files* remain unassigned (stacks only).
 
 Command Deck is the first body on the skeleton — same bones in both modes, material only changes. Token *families* are frozen here. Size / Space / Type values, Seat E3 interior, and the shared E4 plate are in the companion scale document.

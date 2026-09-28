@@ -53,27 +53,29 @@ export function getAgentRole(id) {
 }
 
 export function createAgentAssignmentBranch({
-  agentId = 'agent-alpha',
-  seatId = 'seat-01',
-  role = 'planner',
+  agentId,
+  seatId,
+  role,
   path = ['configuration'],
 } = {}) {
-  const agent = getTeamAgent(agentId);
+  const normalizedAgentId = normalizePart(agentId, '');
+  const normalizedSeatId = normalizePart(seatId, '');
   const roleDefinition = getAgentRole(role);
-  if (!agent) throw new Error('unknown Team agent');
+  if (!normalizedAgentId) throw new Error('agent id required');
+  if (!normalizedSeatId) throw new Error('seat id required');
   if (!roleDefinition) throw new Error('unknown Agent role');
-  const seat = normalizePart(seatId, agent.seatId);
-  const normalizedRole = roleDefinition.id;
+
   const segments = Array.isArray(path)
     ? path.map((part) => normalizePart(part, '')).filter(Boolean)
     : [];
+
   return Object.freeze({
-    id: 'BRANCH-TEAM::agent/' + normalizePart(agent.id, 'agent') + '/seat/' + seat + '/role/' + normalizedRole + '/' + segments.join('/'),
+    id: 'BRANCH-TEAM::agent/' + normalizedAgentId + '/seat/' + normalizedSeatId + '/role/' + roleDefinition.id + '/' + segments.join('/'),
     featureId: TEAM_AGENTS_FEATURE_ID,
     semanticOwner: 'TEAM_AGENTS',
-    agentId: agent.id,
-    seatId: seat,
-    role: normalizedRole,
+    agentId: normalizedAgentId,
+    seatId: normalizedSeatId,
+    role: roleDefinition.id,
     path: Object.freeze([...segments]),
     presentationOnly: true,
     notAuthorization: true,
@@ -82,9 +84,9 @@ export function createAgentAssignmentBranch({
 }
 
 export function createAgentAssignmentIntent({
-  agentId = 'agent-alpha',
-  seatId = 'seat-01',
-  role = 'planner',
+  agentId,
+  seatId,
+  role,
 } = {}) {
   const branch = createAgentAssignmentBranch({ agentId, seatId, role, path: ['configuration'] });
   return Object.freeze({

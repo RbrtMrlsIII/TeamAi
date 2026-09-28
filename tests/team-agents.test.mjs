@@ -72,3 +72,17 @@ test('Agent source and browser copies remain exact', () => {
     readFileSync('public/team-agents.js', 'utf8'),
   );
 });
+
+test('Agent assignment branch accepts runtime Agent identity without static catalog membership', () => {
+  const branch = createAgentAssignmentBranch({
+    agentId: 'agent-from-firestore',
+    seatId: 'seat-from-firestore',
+    role: 'coder',
+  });
+  assert.equal(branch.id, 'BRANCH-TEAM::agent/agent-from-firestore/seat/seat-from-firestore/role/coder/configuration');
+});
+
+test('Agent assignment intent requires explicit runtime identity', () => {
+  assert.throws(() => createAgentAssignmentIntent({ role: 'coder' }), /agent id required/);
+  assert.throws(() => createAgentAssignmentIntent({ agentId: 'agent-real', role: 'coder' }), /seat id required/);
+});

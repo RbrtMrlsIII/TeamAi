@@ -241,37 +241,88 @@
   visibility: hidden;
 }
 
-@media (max-width: 720px) {
-  .classic-entrance {
-    padding: 16px;
-  }
+html[data-spatial-responsive="compact"] .classic-entrance {
+  padding: 16px;
+}
 
-  .classic-entrance__menu a:nth-child(n+3) {
-    display: none;
-  }
+html[data-spatial-responsive="compact"] .classic-entrance__content {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
 
-  .classic-entrance__content {
-    padding-top: 50px;
-    padding-bottom: 50px;
-  }
+html[data-spatial-responsive="compact"] .classic-entrance__title {
+  font-size: clamp(42px, 11vw, 66px);
+}
 
-  .classic-entrance__title {
-    font-size: clamp(42px, 13vw, 66px);
-  }
+html[data-spatial-responsive="compact"] .world-navigation {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+}
 
-  .classic-entrance__actions button {
-    width: 100%;
-  }
+html[data-spatial-responsive="compact"] .world-navigation__group {
+  min-width: 0;
+}
 
-  .world-navigation {
-    top: 12px;
-    width: calc(100vw - 24px);
-    align-items: flex-start;
-  }
+html[data-spatial-responsive="compact"] .world-navigation__status {
+  white-space: normal;
+}
 
-  .world-navigation__status {
-    display: none;
-  }
+html[data-spatial-responsive="phone"] .classic-entrance {
+  padding: 16px;
+}
+
+html[data-spatial-responsive="phone"] .classic-entrance__menu a:nth-child(n+3) {
+  display: none;
+}
+
+html[data-spatial-responsive="phone"] .classic-entrance__content {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+html[data-spatial-responsive="phone"] .classic-entrance__title {
+  font-size: clamp(42px, 13vw, 66px);
+}
+
+html[data-spatial-responsive="phone"] .classic-entrance__actions button {
+  width: 100%;
+}
+
+html[data-spatial-responsive="phone"] .world-navigation {
+  top: calc(8px + env(safe-area-inset-top, 0px));
+  width: calc(100vw - 16px);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px;
+  max-height: calc(100dvh - 16px);
+}
+
+html[data-spatial-responsive="phone"] .world-navigation__group {
+  width: 100%;
+  justify-content: space-between;
+}
+
+html[data-spatial-responsive="phone"] .world-navigation__menu {
+  width: 100%;
+}
+
+html[data-spatial-responsive="phone"] .world-navigation__menu > button {
+  width: 100%;
+}
+
+html[data-spatial-responsive="phone"] .world-navigation__popover {
+  position: static;
+  min-width: 0;
+  width: 100%;
+  max-height: calc(100dvh - 96px);
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+html[data-spatial-responsive="phone"] .world-navigation__status {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

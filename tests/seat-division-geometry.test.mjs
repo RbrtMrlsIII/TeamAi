@@ -44,3 +44,14 @@ test('connection corridor endpoint is derived from the explicit workspace target
   assert.deepEqual(end, { x: 0.2, y: 0.45, z: 0.1 });
   assert.ok(Math.abs(geometry.corridor.yaw) > 0);
 });
+
+
+test('division geometry preserves the authored travel angle for downstream physical consumers', () => {
+  const angle = Math.PI * 0.625;
+  const geometry = buildSeatDivisionGeometry({
+    center: { x: 2, y: 0.8, z: -1 },
+    angle,
+    payload: { labels: ['Toolkit'], controls: ['equip'] },
+  });
+  assert.equal(geometry.angle, Number(angle.toFixed(12)));
+});

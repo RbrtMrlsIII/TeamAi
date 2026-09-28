@@ -73,7 +73,9 @@ A direct manual mode selection becomes `source=user`; OS following is explicit. 
 
 **Instrument Space / Light Spatial Skeuomorphism:** warm foundation, bezel shell, inset fields, raised controls, pressed = inset; no glass fill; blur is 0px.
 
-The two modes share Size / Space / Type, elevation order, semantic meaning, motion durations, and interaction contracts. Theme switching retunes material only and never reshuffles layout.
+The two modes share Size / Space / Type, elevation order, semantic meaning, motion durations, and interaction contracts.
+
+**Spatial inheritance:** S22-S29 are cross-cutting world-expression layers over the S0-S21 machine. They consume the single canonical theme root and refine materials, lighting, accessibility, responsiveness, environment, performance, and choreography without creating an independent 3D visual grammar. Theme switching retunes material only and never reshuffles layout.
 
 First palette anchors remain:
 
@@ -107,7 +109,7 @@ Compact density steps spacing down one rung, never below `xs`, and never below t
 
 ## 7. Composition preservation
 
-The Command Deck remains the first inhabited skeleton, not a marketing hero. Workplace, Seats, Planning, Working, Artifacts, Approvals, and Settings remain rearrangements of the same primitives and E0–E4 law. Planning vs Working is an E3 stage, not a second theme. The Seat plate is full capability, not chat. The Deck seat rail is a compact projection and selecting a card does not change scheduler eligibility.
+The current 029 spatial machine is the inhabited product presentation. Workplace, Seats, Planning, Working, Artifacts, Approvals, and Settings remain rearrangements of the same primitives and E0–E4 law; the retired Command Deck is retained only as historical evidence and must not reassert a competing spatial composition. Planning vs Working is an E3 stage, not a second theme. The Seat plate is full capability, not chat. The Deck seat rail is a compact projection and selecting a card does not change scheduler eligibility.
 
 ## 8. Safety / authority boundary
 

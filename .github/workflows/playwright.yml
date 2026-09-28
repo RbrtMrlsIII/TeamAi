@@ -37,8 +37,8 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Synchronize canonical Hero source
-        run: node scripts/sync-hero-flex-runtime.mjs
+      - name: Verify committed Hero runtime parity
+        run: node scripts/sync-hero-flex-runtime.mjs --check
 
       - name: Verify committed machine spatial runtime parity
         run: npm run machine:sync:check
@@ -55,4 +55,4 @@ jobs:
             playwright-report/
             test-results/
           if-no-files-found: ignore
-          retention-days: 30
+          retention-days: 15

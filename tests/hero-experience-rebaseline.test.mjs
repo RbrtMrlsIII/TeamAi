@@ -6,6 +6,17 @@ const html = () => readFile(new URL('../public/index.html', import.meta.url), 'u
 const css = () => readFile(new URL('../public/experience-rebaseline.css', import.meta.url), 'utf8');
 const js = () => readFile(new URL('../public/experience-rebaseline.js', import.meta.url), 'utf8');
 
+test('guest-locked feature controls expose a reason-bearing accessibility description', async () => {
+  const src = await js();
+  assert.match(src, /applyGuestAccessibilityReason/);
+  assert.match(src, /aria-describedby/);
+  assert.match(src, /DISCOVERABLE_LOCKED/);
+  assert.match(src, /BLOCKED_UNTIL_AUTHENTICATED/);
+  assert.match(src, /GUEST_BLOCKED_REASON_ID/);
+  assert.match(src, /Guest presentation: discoverable, blocked until authenticated runtime context is available\./);
+  assert.doesNotMatch(src, /Guest presentation: discoverable, blocked until authenticated runtime context is available[^;\n]*aria-label/);
+});
+ 
 test('classic entrance is explicit and 3D is an intentional destination', async () => {
   const src = await html();
   assert.match(src, /data-experience="classic"/);
@@ -45,6 +56,14 @@ test('retired camera concepts are not reintroduced by the new experience layer',
   assert.doesNotMatch(src, /TURN_FOLLOW/);
 });
 
+
+test('S20 settings shell keeps authority outside the browser presentation', async () => {
+  const src = await readFile(new URL('../public/hero-settings-shell.js', import.meta.url), 'utf8');
+  assert.match(src, /single document theme root/i);
+  assert.match(src, /Full settings remain on the application settings surface/i);
+  assert.doesNotMatch(src, /Firestore|Supabase|provider credential|fetch\s*\(/i);
+  assert.doesNotMatch(src, /setSeatCount|selectSeatShell|SEAT_TASK_EVIDENCE/);
+});
 
 test('experience layer delegates auth ownership to the dedicated auth root', async () => {
   const src = await readFile(new URL('../public/experience-rebaseline.js', import.meta.url), 'utf8');

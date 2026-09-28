@@ -20,6 +20,14 @@ export const STORAGE_INVENTORY_STATES = Object.freeze([
   'ERROR',
 ]);
 
+export const STORAGE_ARTIFACT_STATES = Object.freeze([
+  'UNKNOWN',
+  'AVAILABLE',
+  'ARCHIVED',
+  'BLOCKED',
+  'ERROR',
+]);
+
 function requireNonEmpty(value, name) {
   if (typeof value !== 'string' || !value.trim()) throw new Error(`${name} is required`);
   return value.trim();
@@ -44,7 +52,8 @@ export function normalizeStorageItem(value) {
     workspaceId: optionalString(item.workspaceId),
     updatedAt: optionalString(item.updatedAt),
     sizeLabel: optionalString(item.sizeLabel),
-    status: optionalString(item.status) || 'AVAILABLE',
+    status: optionalString(item.status) || 'UNKNOWN',
+    artifactState: optionalString(item.artifactState) || 'UNKNOWN',
     provenance: optionalString(item.provenance) || 'backend-read-model',
   };
 

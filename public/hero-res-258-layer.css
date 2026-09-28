@@ -54,8 +54,7 @@
   pointer-events: none;
 }
 
-/* CHR-R1 — machine-nav + settings stay primary when machine */
-.hero-shell[data-hero-layer="machine"] .machine-nav,
+/* CHR-R1 — dedicated settings shell stays primary when machine */
 .hero-shell[data-hero-layer="machine"] .hero-settings-shell {
   opacity: 1;
   visibility: visible;
@@ -67,14 +66,7 @@
   opacity: 0.72;
 }
 
-/* CHR-R3 — settings shell sits beside machine-nav (one instrument chrome strip) */
-.hero-shell[data-hero-layer="machine"] .seat-stack {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.5rem 0.75rem;
-}
-.hero-shell[data-hero-layer="machine"] .machine-nav,
+/* CHR-R3 — dedicated settings shell remains an instrument chrome surface */
 .hero-shell[data-hero-layer="machine"] .hero-settings-shell {
   display: inline-flex;
   flex-direction: row;

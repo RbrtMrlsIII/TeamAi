@@ -95,9 +95,9 @@ Radii increase with ring index. Runtime centerlines are derived by the shared he
 - No 029-released claim  
 - No change to Seat Shell v1 child order  
 
-## 6.5 Current Slice-D reconciliation
+## 6.5 Historical Slice-D reconciliation
 
-Issue #396 Slice D now has concrete source owners for both intermediate rings:
+The historical #396 Slice-D work established concrete source owners for both intermediate rings:
 
 - R1 display: `frontend/spatial/hero-r1-backend-display.js` → `public/hero-r1-backend-display.js`
 - R1 presentation threads: `frontend/spatial/hero-r1-backend-threads.js` → `public/hero-r1-backend-threads.js`
@@ -106,7 +106,7 @@ Issue #396 Slice D now has concrete source owners for both intermediate rings:
 - R1/R2 placement is derived from the active workspace envelope and catalog rather than a second coordinate authority.
 - R1 threads consume declared display-face IDs, resolve missing endpoints by failing closed, and route deterministically outside the workspace center.
 - These ring modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
-- Final service/backend topology, richer mechanical R1 articulation, complete R2 choreography, and final electricity remain later work in #396.
+- Final service/backend topology, richer mechanical R1 articulation, complete R2 choreography, final electricity, and full machine construction now continue through PR #404 / Issue #405 under the #396 authority chain.
 
 ## 6.6 Current Slice-D/E/F/G/H reconciliation
 

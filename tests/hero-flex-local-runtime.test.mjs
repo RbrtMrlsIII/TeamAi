@@ -15,7 +15,7 @@ test('Hero delivery is repository-owned and renderer/controller boundaries are e
   assert.match(entry, /machineWorldRenderer\.render/);
   assert.doesNotMatch(entry, /gl\.createShader|gl\.createProgram|gl\.drawArrays|function mesh\(|function torus\(|function sphere\(/);
   assert.match(renderer, /createBranchConnectionCore/);
-  assert.match(renderer, /createMachineAnimation/);
+  assert.match(renderer, /createMachineExpansionMechanism/);
   assert.match(renderer, /createDeepSpaceField/);
   assert.match(renderer, /gl\.drawArrays/);
   assert.ok(statSync(baseUrl).size > 0);

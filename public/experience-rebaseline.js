@@ -45,11 +45,28 @@ function returnClassic(source = 'world-return') {
   return { ok: true, mode: 'classic' };
 }
 
-function toggleMenu(button, popover) {
-  const open = !popover.classList.contains('is-open');
+function setMenuState(button, popover, open) {
   popover.classList.toggle('is-open', open);
+  popover.hidden = !open;
+  popover.setAttribute('aria-hidden', String(!open));
   button.setAttribute('aria-expanded', String(open));
 }
+
+function toggleMenu(button, popover) {
+  const open = !popover.classList.contains('is-open');
+  setMenuState(button, popover, open);
+}
+
+const MENU_CHILD_PANEL_OPENERS = [
+  '[data-auth-open]',
+  '[data-workspace-open]',
+  '[data-mcp-open]',
+  '[data-team-agents-open]',
+  '[data-storage-open]',
+  '[data-seat-budget-open]',
+  '[data-marketplace-open]',
+  '[data-settings-open]',
+].join(', ');
 
 function openSettings() {
   const btn = document.getElementById('hero-settings-shell');
@@ -80,6 +97,40 @@ function publishFeatureRegistry() {
     resolve: (states) => resolveFeaturePresentationState(states),
     metadata: (state) => featureStateMetadata(state),
   });
+}
+
+const GUEST_BLOCKED_REASON_ID = 'hero-guest-feature-blocked-reason';
+const GUEST_BLOCKED_REASON_TEXT =
+  'Guest presentation: discoverable, blocked until authenticated runtime context is available.';
+
+function ensureGuestBlockedReasonNode() {
+  let node = document.getElementById(GUEST_BLOCKED_REASON_ID);
+  if (node) return node;
+  node = document.createElement('span');
+  node.id = GUEST_BLOCKED_REASON_ID;
+  node.hidden = true;
+  node.textContent = GUEST_BLOCKED_REASON_TEXT;
+  document.body.append(node);
+  return node;
+}
+
+function applyGuestAccessibilityReason(button) {
+  if (!(button instanceof HTMLButtonElement)) return;
+  const featureId = button.dataset.featureId;
+  if (!featureId || button.dataset.guestReasonApplied === 'true') return;
+
+  const feature = getFrontendFeature(featureId);
+  const guestState = getGuestPresentationState(feature);
+  if (!feature || guestState?.presentation !== 'DISCOVERABLE_LOCKED') return;
+
+  const reasonNode = ensureGuestBlockedReasonNode();
+  const describedBy = new Set(
+    (button.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean),
+  );
+  describedBy.add(reasonNode.id);
+  button.setAttribute('aria-describedby', Array.from(describedBy).join(' '));
+  button.dataset.guestReason = 'BLOCKED_UNTIL_AUTHENTICATED';
+  button.dataset.guestReasonApplied = 'true';
 }
 
 function dispatchFeatureIntent(button, source) {
@@ -136,6 +187,7 @@ function bind() {
   // layer together so the world controls are usable on direct load.
   document.querySelectorAll('[data-feature-id]').forEach((button) => {
     if (!button.dataset.featureState) button.dataset.featureState = 'INACTIVE';
+    applyGuestAccessibilityReason(button);
   });
 
   if (isWorldRoute()) {
@@ -158,7 +210,27 @@ function bind() {
     const popoverId = button.getAttribute('aria-controls');
     const popover = popoverId ? document.getElementById(popoverId) : null;
     if (!popover) return;
+    setMenuState(button, popover, false);
     button.addEventListener('click', () => toggleMenu(button, popover));
+    button.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !popover.classList.contains('is-open')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setMenuState(button, popover, false);
+      button.focus({ preventScroll: true });
+    });
+    popover.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      setMenuState(button, popover, false);
+      button.focus({ preventScroll: true });
+    });
+    popover.addEventListener('click', (event) => {
+      const item = event.target instanceof Element ? event.target.closest('button') : null;
+      if (!item || item.matches(MENU_CHILD_PANEL_OPENERS)) return;
+      queueMicrotask(() => setMenuState(button, popover, false));
+    });
   });
 
   document.querySelectorAll('[data-world-camera-request]').forEach((button) => {

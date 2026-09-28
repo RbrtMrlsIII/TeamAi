@@ -41,6 +41,7 @@ test('V2.3 button and panel scaffold exist', () => {
   };
   const btn = buildSettingsShellButton();
   assert.equal(btn.id, SETTINGS_SHELL_ID);
+  assert.equal(btn.className, 'hero-settings-button');
   assert.equal(btn.attrs['aria-expanded'], 'false');
   const panel = buildSettingsShellPanel();
   assert.equal(panel.id, 'hero-settings-panel');
@@ -49,14 +50,12 @@ test('V2.3 button and panel scaffold exist', () => {
   assert.match(panel.innerHTML, /data-settings-motion/);
 });
 
-test('V2.3 mount prefers data-settings-shell then machine-nav parent', () => {
+test('V2.3 mount prefers explicit data-settings-shell then seat-stack', () => {
   const explicit = { id: 'exp' };
-  const parent = { id: 'parent' };
-  const nav = { parentElement: parent };
+  const stack = { id: 'stack' };
   const rootDoc = {
     querySelector(sel) {
       if (sel === '[data-settings-shell]') return explicit;
-      if (sel === '.machine-nav') return nav;
       return null;
     },
   };
@@ -64,23 +63,23 @@ test('V2.3 mount prefers data-settings-shell then machine-nav parent', () => {
   const viaNav = {
     querySelector(sel) {
       if (sel === '[data-settings-shell]') return null;
-      if (sel === '.machine-nav') return nav;
-      if (sel === '.seat-stack') return { id: 'stack' };
+      if (sel === '.seat-stack') return stack;
       return null;
     },
   };
-  assert.equal(resolveSettingsShellMount(viaNav), parent);
+  assert.equal(resolveSettingsShellMount(viaNav), stack);
 });
 
-test('V2.3 index loads settings-shell after machine-nav-bind', async () => {
+test('V2.3 index keeps the dedicated settings shell and retires machine-nav boot', async () => {
   const html = await readFile(join(root, 'public/index.html'), 'utf8');
-  const nav = html.indexOf('hero-machine-nav-bind.js');
-  const settings = html.indexOf('hero-settings-shell.js');
-  assert.ok(nav > 0 && settings > nav);
+  assert.equal(html.includes('hero-machine-nav-bind.js'), false);
+  assert.ok(html.includes('hero-settings-shell.js'));
+  assert.ok(html.includes('data-settings-shell'));
 });
 
 test('V2.3 chrome css includes settings shell rules', async () => {
   const css = await readFile(join(root, 'public/hero-dom-chrome.css'), 'utf8');
   assert.match(css, /\.hero-settings-shell/);
-  assert.match(css, /\.machine-nav__settings/);
+  assert.match(css, /\.hero-settings-button/);
+  assert.doesNotMatch(css, /\.machine-nav__/);
 });

@@ -21,18 +21,29 @@ import {
 
 export const SETTINGS_SHELL_ID = 'hero-settings-shell';
 
+const SEMANTIC_SETTINGS_REFERENCES = Object.freeze([
+  Object.freeze({ id: 'TREE-SETTINGS', label: 'Settings', responsibility: 'Cross-cutting presentation/account controls', branches: Object.freeze(['appearance', 'account', 'controls']) }),
+  Object.freeze({ id: 'TREE-WORLD', label: 'World', responsibility: 'Spatial machine overview and Seat population', branches: Object.freeze(['workspace', 'seats', 'camera']) }),
+  Object.freeze({ id: 'TREE-SEAT', label: 'Seat', responsibility: 'Web AI Seat operational machine', branches: Object.freeze(['SEAT_SHELL', 'SEAT_CONNECTION', 'SEAT_BEHAVIOR', 'SEAT_TOOLKIT']) }),
+  Object.freeze({ id: 'TREE-CAPABILITY', label: 'Capability', responsibility: 'Available mechanisms and capability state', branches: Object.freeze(['discover', 'inspect', 'configure', 'equip']) }),
+  Object.freeze({ id: 'TREE-AUTHORIZATION', label: 'Authorization', responsibility: 'Permitted control and reason-bearing readiness', branches: Object.freeze(['authorized', 'entitled', 'allowed']) }),
+  Object.freeze({ id: 'TREE-WORKSPACE', label: 'Workspace', responsibility: 'Workplace/project/repository/runtime scope', branches: Object.freeze(['workplace', 'project', 'repository', 'scope']) }),
+  Object.freeze({ id: 'TREE-ORCHESTRATION', label: 'Orchestration', responsibility: 'Active turn and next-eligible Seat', branches: Object.freeze(['turn', 'next-seat', 'scheduler']) }),
+  Object.freeze({ id: 'TREE-EVIDENCE', label: 'Evidence', responsibility: 'Results, artifacts, and history', branches: Object.freeze(['results', 'artifacts', 'history']) }),
+  Object.freeze({ id: 'TREE-COMMERCE', label: 'Commerce', responsibility: 'Billing and entitlement projection', branches: Object.freeze(['billing', 'entitlement']) }),
+]);
+
+
 export function resolveSettingsShellMount(root = document) {
   const explicit = root.querySelector('[data-settings-shell]');
   if (explicit) return explicit;
-  const nav = root.querySelector('.machine-nav');
-  if (nav && nav.parentElement) return nav.parentElement;
   return root.querySelector('.seat-stack');
 }
 
 export function buildSettingsShellButton() {
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'machine-nav__settings';
+  btn.className = 'hero-settings-button';
   btn.id = SETTINGS_SHELL_ID;
   btn.setAttribute('aria-expanded', 'false');
   btn.setAttribute('aria-controls', 'hero-settings-panel');
@@ -54,6 +65,26 @@ function wireSmoke(root = document) {
     if (hero && typeof hero.setCamera === 'function') hero.setCamera(id);
     if (status) status.textContent = 'looking at ' + id;
   });
+}
+
+function renderSemanticSettingsReference(panel, referenceId = 'TREE-SETTINGS') {
+  const reference = SEMANTIC_SETTINGS_REFERENCES.find((item) => item.id === referenceId) || SEMANTIC_SETTINGS_REFERENCES[0];
+  panel.querySelectorAll('[data-settings-semantic-ref]').forEach((button) => {
+    button.setAttribute('aria-pressed', button.getAttribute('data-settings-semantic-ref') === reference.id ? 'true' : 'false');
+  });
+  const title = panel.querySelector('[data-settings-semantic-title]');
+  const responsibility = panel.querySelector('[data-settings-semantic-responsibility]');
+  const branches = panel.querySelector('[data-settings-semantic-branches]');
+  if (title) title.textContent = reference.id + ' · ' + reference.label;
+  if (responsibility) responsibility.textContent = reference.responsibility;
+  if (branches) {
+    branches.replaceChildren();
+    reference.branches.forEach((branch) => {
+      const item = document.createElement('li');
+      item.textContent = branch;
+      branches.append(item);
+    });
+  }
 }
 
 export function buildSettingsShellPanel() {
@@ -80,6 +111,28 @@ export function buildSettingsShellPanel() {
       </label>
       <span data-settings-scale-value aria-live="polite">100%</span>
     </div>
+    <section class="hero-settings-panel__semantic" aria-labelledby="hero-settings-semantic-title">
+      <div class="hero-settings-panel__kicker">Semantic navigation</div>
+      <p id="hero-settings-semantic-title" class="hero-settings-panel__note">Existing Product Law tree references. Presentation crosswalk only.</p>
+      <div class="hero-settings-panel__semantic-grid">
+        <nav aria-label="Semantic tree references">
+          <div class="hero-settings-panel__semantic-list">
+            ${SEMANTIC_SETTINGS_REFERENCES.map((item, index) => '<button type="button" data-settings-semantic-ref="' + item.id + '" aria-pressed="' + (index === 0 ? 'true' : 'false') + '">' + item.id + '</button>').join('')}
+          </div>
+        </nav>
+        <div class="hero-settings-panel__semantic-detail" aria-live="polite">
+          <strong data-settings-semantic-title>TREE-SETTINGS · Settings</strong>
+          <span data-settings-semantic-responsibility>Cross-cutting presentation/account controls</span>
+          <ul data-settings-semantic-branches>
+            <li>appearance</li>
+            <li>account</li>
+            <li>controls</li>
+          </ul>
+          <small>References do not grant authorization, entitlement, execution, or durable-state authority.</small>
+        </div>
+      </div>
+    </section>
+
     <div class="hero-settings-panel__row hero-settings-panel__lang">
       <label for="hero-ui-lang">Language
         <select id="hero-ui-lang" data-settings-lang>
@@ -180,15 +233,8 @@ export function mountSettingsShell(root = document) {
   wrap.appendChild(btn);
   wrap.appendChild(panel);
 
-  const machineNav = mount.querySelector('.machine-nav');
-  if (machineNav && machineNav.nextSibling) {
-    mount.insertBefore(wrap, machineNav.nextSibling);
-  } else if (machineNav) {
-    machineNav.after(wrap);
-  } else {
-    mount.insertBefore(wrap, mount.firstChild);
-  }
-
+  mount.insertBefore(wrap, mount.firstChild);
+  
   btn.addEventListener('click', () => {
     const open = panel.hidden;
     panel.hidden = !open;
@@ -205,11 +251,17 @@ export function mountSettingsShell(root = document) {
   panel.addEventListener('click', (event) => {
     const t = event.target;
     if (!(t instanceof Element)) return;
+    const semanticRef = t.closest?.('[data-settings-semantic-ref]')?.getAttribute('data-settings-semantic-ref');
+    if (semanticRef) {
+      renderSemanticSettingsReference(panel, semanticRef);
+      return;
+    }
     const theme = t.getAttribute('data-settings-theme');
     const motion = t.getAttribute('data-settings-motion');
     if (theme) applyThemeMode(theme);
     if (motion) applyMotion(motion);
   });
+  renderSemanticSettingsReference(panel);
 
   panel.addEventListener('input', (event) => {
     const t = event.target;

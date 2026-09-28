@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createBranchConnectionCore, getBranchCamera, resolveBranchCamera, bindSeatShellProjection } from '../frontend/spatial/machine-core-layout.js';
+import { validateMachinePodAssembly } from '../frontend/spatial/machine-pod-assembly.js';
 
 test('branch connection core defaults to ten seats with one hub and four distinct outer housings', () => {
   const core = createBranchConnectionCore();
@@ -8,6 +9,8 @@ test('branch connection core defaults to ten seats with one hub and four distinc
   assert.equal(core.parts.length, 15);
   assert.equal(core.parts.filter((part) => part.kind === 'hub').length, 1);
   assert.equal(core.parts.filter((part) => part.kind === 'inner-pod').length, 10);
+  assert.equal(core.parts.filter((part) => part.kind === 'inner-pod').every((part) => part.port && part.podAssembly?.localInterfaces?.connection?.point && JSON.stringify(part.port) === JSON.stringify(part.podAssembly.localInterfaces.connection.point)), true);
+  assert.equal(core.parts.filter((part) => part.kind === 'inner-pod').every((part) => validateMachinePodAssembly(part.podAssembly).valid), true);
   assert.equal(core.parts.filter((part) => part.kind === 'outer-housing').length, 4);
   assert.equal(new Set(core.parts.map((part) => part.branchId)).size, 15);
   assert.deepEqual(core.parts.filter((part) => part.kind === 'outer-housing').map((part) => part.silhouette), ['fin', 'arc', 'diamond', 'blade']);
@@ -93,6 +96,18 @@ test('outer modules interleave between seat-pod angles', () => {
     const angle = (Math.atan2(part.center.z, part.center.x) + Math.PI * 2) % (Math.PI * 2);
     const nearest = Math.min(...podAngles.map((podAngle) => Math.abs(angle - podAngle)));
     assert.ok(Math.abs(nearest - Math.PI / 10) < 0.02);
+  }
+});
+test('sparse seat populations keep all four outer facility modules distinct and off pod centerlines', () => {
+  const wrap = (angle) => Math.abs(((angle + Math.PI) % (Math.PI * 2)) - Math.PI);
+  for (const seatCount of [1, 2, 3]) {
+    const core = createBranchConnectionCore({ seatCount });
+    const pods = core.parts.filter((part) => part.kind === 'inner-pod');
+    const outer = core.parts.filter((part) => part.kind === 'outer-housing');
+    const podAngles = pods.map((part) => Math.atan2(part.center.z, part.center.x));
+    const outerAngles = outer.map((part) => Math.atan2(part.center.z, part.center.x));
+    assert.equal(new Set(outerAngles.map((angle) => angle.toFixed(6))).size, 4);
+    assert.ok(outerAngles.every((angle) => podAngles.every((podAngle) => wrap(angle - podAngle) > 0.05)));
   }
 });
 

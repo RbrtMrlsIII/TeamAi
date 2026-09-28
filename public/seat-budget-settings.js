@@ -8,6 +8,9 @@ export const SEAT_BUDGET_STATES = Object.freeze([
   'EXHAUSTED',
   'COMPLETED',
   'BLOCKED',
+  'PROVIDER_FAILED',
+  'CANCELLED',
+  'WAITING_FOR_CONTINUATION',
 ]);
 
 function optionalString(value) {
@@ -44,6 +47,7 @@ export function normalizeSeatBudgetReadModel(value = {}) {
     provider: optionalString(input.provider),
     model: optionalString(input.model),
     turnBudgetTokens: nonNegative(configured.turnBudgetTokens),
+    effectiveTurnBudgetTokens: nonNegative(input.effectiveTurnBudgetTokens ?? configured.turnBudgetTokens),
     outputBudgetTokens: nonNegative(configured.outputBudgetTokens),
     reasoningBudgetTokens: nonNegative(configured.reasoningBudgetTokens),
     handoffReserveTokens: nonNegative(configured.handoffReserveTokens),
@@ -55,6 +59,8 @@ export function normalizeSeatBudgetReadModel(value = {}) {
       : Object.freeze({ retention: 'minimal-durable-context' }),
     usageReported: input.usageReported === true || Boolean(input.usage && typeof input.usage === 'object' && usage.remainingGenerationTokens !== null && usage.remainingGenerationTokens !== undefined),
     accountingSource: optionalString(input.accountingSource),
+    reservedTokens: nonNegativeOrNull(usage.reservedTokens) ?? 0,
+    consumedInputTokens: nonNegativeOrNull(usage.consumedInputTokens) ?? 0,
     consumedTokens: nonNegativeOrNull(usage.consumedTotalTokens) ?? 0,
     remainingTokens: nonNegativeOrNull(usage.remainingGenerationTokens),
     usableTokens: nonNegativeOrNull(usage.usableGenerationTokens),
@@ -93,6 +99,31 @@ export function createSeatBudgetSaveIntent({ seatId, patch = {} } = {}) {
     intent: 'save-seat-turn-budget',
     seatId: String(seatId).trim(),
     patch: Object.freeze({ ...patch }),
+    presentationOnly: true,
+    authoritative: false,
+  });
+}
+
+
+export const SEAT_BUDGET_CONTROL_ACTIONS = Object.freeze([
+  'CONTINUE',
+  'RECONFIGURE',
+  'CLOSE',
+  'NEW_COMMAND',
+]);
+
+export function createSeatBudgetControlIntent({ seatId, action } = {}) {
+  const normalizedSeatId = optionalString(seatId);
+  const normalizedAction = String(action || '').toUpperCase();
+  if (!normalizedSeatId) throw new Error('seatId is required');
+  if (!SEAT_BUDGET_CONTROL_ACTIONS.includes(normalizedAction)) {
+    throw new Error('unsupported Seat Budget control action: ' + normalizedAction);
+  }
+
+  return Object.freeze({
+    intent: 'seat-budget-control',
+    action: normalizedAction,
+    seatId: normalizedSeatId,
     presentationOnly: true,
     authoritative: false,
   });

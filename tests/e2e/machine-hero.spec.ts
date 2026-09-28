@@ -40,6 +40,17 @@ test.describe('Machine Hero foundation', () => {
   });
 
 
+  test('WebGL preview projects the authored S3 Pod assemblies', async ({ page }) => {
+    await page.goto('/machine-core-preview.html?machine-preview=webgl');
+    const canvas = page.locator('canvas').first();
+    await expect.poll(async () => canvas.getAttribute('data-machine-world-pod-assemblies')).toBe('10');
+    await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-validation', 'pass');
+    await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-components', '70');
+    await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-ports', '20');
+    await page.getByRole('combobox', { name: 'Branch camera' }).selectOption({ label: 'SEAT-01 · SEAT_CLOSE' });
+    await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-branch', 'BRANCH-SEAT-01');
+  });
+
   test('M6 assembled Hero proof follows semantic subject after geometry mutation', async ({ page }) => {
     await page.goto('/hero/?machine-proof=1');
     const proof = page.locator('[data-hero-machine-proof]');

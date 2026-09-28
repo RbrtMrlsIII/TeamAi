@@ -6,38 +6,52 @@
 
 The Hero browser runtime must load its base source from the TeamAi repository/package being served to the user. Runtime source must not depend on `raw.githubusercontent.com`, a moving GitHub branch, or an unrelated remote commit for ordinary operation.
 
-`public/hero-flex.js` is the runtime entry artifact. `public/_flex_src/hero-flex.base.js` is the preserved repository-owned controller source used to assemble that artifact. The compatibility assembly script copies the base into the runtime entry and proves byte-for-byte parity. The former flex patch engine is retired from this path.
+`public/hero-flex.js` is the runtime entry artifact. `public/_flex_src/hero-flex.base.js` is the repository-owned controller source used to produce that artifact.
+
+There are now two explicit operations:
+
+- **verification:** `node scripts/sync-hero-flex-runtime.mjs --check` reads the committed base and runtime artifact and fails closed on drift; it never writes.
+- **assembly:** `node scripts/sync-hero-flex-runtime.mjs --write` intentionally refreshes the runtime artifact from the repository-owned base for build/deploy preparation.
+
+The historical `apply-cam2-tree-follow-flex.mjs` compatibility command is verification-only and delegates to `--check`.
 
 ## Why this matters
 
 A remote source fetched at page load makes the product runtime depend on an external repository snapshot and can diverge from the commit being tested or deployed. Exact-string runtime patching is also fragile because an upstream formatting change can prevent a replacement from applying.
 
-## Current migration
+A second failure mode is equally important: a **validation-time writer can erase a committed artifact diff before tests observe it**. That produces a green test result against a file state different from the exact commit under review.
 
-- Repository-owned base source is vendored from the exact historical pre-loader blob used by the existing Hero assembly.
-- `scripts/sync-hero-flex-runtime.mjs` now copies the repository-owned base into `public/hero-flex.js` and proves byte-for-byte parity.
-- The stable assembly command is deterministic, network-free, and keeps the runtime artifact synchronized with the repository-owned base source.
-- A static regression test forbids `raw.githubusercontent.com` in the runtime entry.
-- The browser/build path must be validated from the repository-owned artifact, not from a remote source.
+The repository previously demonstrated the same class of failure with the Hero Flex assembly path: changes made only to the generated `public/hero-flex.js` were overwritten from `public/_flex_src/hero-flex.base.js` before verification. The canonical fix there was to change the real source. The current hardening closes the remaining verification-time overwrite path.
 
-## Current implementation reconciliation
+## Current model
 
-The previous wording described hero-flex.js as a runtime loader. That is no longer the implementation model.
+```text
+repository-owned base controller source
+        │
+        ├── --check → compare only → verification
+        │
+        └── --write → deterministic assembly → committed/deployed artifact → browser
+```
 
-The current model is:
+The runtime artifact and preserved base are intentionally byte-identical today. The base remains the source-maintenance location, while `hero-flex.js` remains the delivery entry consumed by the page and existing verification.
 
-repository-owned base controller source → deterministic local assembly → committed runtime artifact → browser execution.
+## Validation invariant
 
-The runtime artifact and preserved base are intentionally byte-identical today. The base remains the source-maintenance location, while hero-flex.js remains the delivery entry consumed by the page and by existing verification.
+**No verification step may mutate the committed Hero runtime artifact before the behavior under test is observed.**
 
-This keeps the runtime repository-owned without introducing a second live loader layer.
+This means:
+
+- Canonical Browser Verification uses `--check`.
+- Historical Hero Flex compatibility tests use the verification-only `apply-cam2-tree-follow-flex.mjs`.
+- Full-System tests therefore fail on artifact drift instead of silently repairing it.
+- GitHub Pages may use `--write` because that is an explicit build/deploy assembly step, not verification.
 
 ## Remaining cleanup
 
-The former mutation scripts remain under their historical filenames for compatibility, but they are now verification-only wrappers and no longer rewrite hero-flex.js. Their non-mutating behavior is covered by a regression test.
+The former mutation engine is retired. Compatibility filenames remain only where historical tests/docs still reference them, and their active behavior is non-mutating.
 
 ## Product/governance boundary
 
-This hardening changes source delivery ownership only. It does not change Firebase identity, Firestore authority, scheduler authority, entitlement, provider execution, or Product Law.
+This hardening changes source-delivery verification only. It does not change Firebase identity, Firestore authority, scheduler authority, entitlement, provider execution, or Product Law.
 
-**Rule:** repository-owned source → deterministic assembly → tested artifact → deployed artifact. The browser must not source the live product from GitHub Raw.
+**Rule:** repository-owned source → explicit check → explicit assembly when needed → tested/deployed artifact. The browser must not source the live product from GitHub Raw.

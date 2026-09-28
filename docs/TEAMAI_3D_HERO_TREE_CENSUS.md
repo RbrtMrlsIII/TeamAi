@@ -8,6 +8,17 @@ The census is a **truth inventory**, not a product roadmap and not a second Mast
 
 It must never claim that a tree is complete merely because a Seat tree prototype works.
 
+## Spatial machine construction roots (non-semantic metadata)
+
+PR #404 now carries a geometry-neutral construction contract at `frontend/spatial/machine-spatial-root-contract.js` with the synchronized browser mirror in `public/`. This contract does **not** create another semantic tree or replace the Census. It records which construction slice owns a physical node and which structural roots it inherits.
+
+- **S0-S10:** canonical structural roots, constructed in dependency order.
+- **S11-S21:** product/runtime features inherit the complete S0-S10 machine.
+- **S22-S29:** cross-cutting world expression inherits the same machine and the single Product Law theme root.
+- **S30-S33:** verification, deployment observation, human acceptance, and polish consume the completed machine.
+
+Current core composition is explicitly rooted as: HUB-CORE → S2; inner Pod assemblies → S3; specialized outer housings → S7; semantic connection edges → S8. This is construction metadata, not a new Census identity hierarchy. Functional completion of prerequisite slices remains a separate acceptance question and is not claimed by this metadata alone.
+
 ## 1. Current semantic tree families
 
 ### TREE-DOMAIN
@@ -79,6 +90,8 @@ A real branch must have:
 A tree may contain broad branches, nested sub-branches, and multiple levels of depth. Do not assume a universal two-level tree, equal heights, equal widths, or equal branch counts.
 
 ## 4. Root-to-tree construction rule
+
+**S0-S10 are the structural roots of the spatial machine beneath every semantic tree projection.** Tree Census identity remains semantic; physical assemblies inherit the applicable S0-S10 construction contracts and must not create a second tree/geometry authority.
 
 Every new tree is built from authoritative semantics before geometry:
 
@@ -409,7 +422,7 @@ The canonical Seat renderer now consumes the governed adjacent-division wiring s
 
 ## 16. Current 029 spatial convergence reconciliation
 
-The active Draft PR #398 now contains a broader structural implementation than the historical Seat-1-only census described above. The current state remains IMPLEMENTED_PARTIAL and does not claim 029 completion.
+The merged PR #398 established the reviewed structural baseline for the machine-world renderer and topology. The remaining spatial construction is now governed by PR #404 / Issue #405. The current state remains IMPLEMENTED_PARTIAL and does not claim 029 completion.
 
 ### Workspace / R0
 - WORKSPACE_CENTER is a stable semantic receiving-core identity.

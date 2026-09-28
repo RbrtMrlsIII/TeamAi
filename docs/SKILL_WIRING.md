@@ -65,7 +65,7 @@ The authoritative advisory slot registry is `.github/teamai/authority-manifest.y
 
 ## 2026-09-26 production verification routing
 
-Current canonical `main` is `1b89879b52defea894795e2b72d6176f8c89ce09` after PR #419, PR #417, and PR #421 merged. Issue #401 remains the current implementation frontier. The existing default-branch `firestore-production-evidence.yml` is the generalized protected Gate 3 dispatch vehicle and already accepts explicit `team_id` + `seat_id` selectors. This routing note does not authorize a production selector or mutate live Firestore state.
+Current canonical `main` is `76da305f0ec3efb3d368b22fb70748f0051f4d15` after PR #419, PR #417, PR #421, and PR #422 merged. Issue #401 remains the current implementation frontier. The existing default-branch `firestore-production-evidence.yml` is the generalized protected Gate 3 dispatch vehicle and already accepts explicit `team_id` + `seat_id` selectors. This routing note does not authorize a production selector or mutate live Firestore state.
 
 ## Canonical live-site routing reference
 
@@ -135,6 +135,10 @@ Skills route implementation against these records but cannot override Product La
 
 Skills route the current procedure selected for the slice; they do not own current-slice identity. The active slice must be resolved from `Masterplan/NEXT_SLICES.md`. Skill bodies and validators must not hard-code a specific Issue as the current slice when the canonical current-slice source can be read directly.
 
+
+## 2026-09-24 029 spatial acceptance routing
+
+The 029 PR #404 structural correction stays within the existing Machine Builder and applicable frontend/spatial Skill families. No new Skill or governance authority is introduced. The implementation seam is: authored S4 division geometry → shared world-profile safety envelopes → S5 clearance planner → canonical renderer/runtime → exact-head Full-System and Browser verification. The exact current branch head is `965f0fb7db1ccf85fca8e30e7790d5f48404f768`; its implementation state must not be promoted to verified/completed status until the exact-head validators provide evidence.
 
 ## 030 successor routing
 

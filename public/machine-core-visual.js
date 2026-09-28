@@ -21,7 +21,9 @@ export function mountMachineCoreVisual(root = globalThis.document) {
   let renderer;
   try {
     renderer = createMachineWorldRenderer({ canvas });
+    panel.dataset.machineCoreRenderer = 'canonical';
   } catch {
+    panel.dataset.machineCoreRenderer = 'unavailable';
     panel.querySelector('[data-core-state]').textContent = 'WebGL unavailable';
     return panel;
   }

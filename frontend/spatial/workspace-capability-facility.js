@@ -1,19 +1,34 @@
+import { createSpatialConstructionContext, validateSpatialConstructionNode } from './machine-spatial-root-contract.js';
 import {
   createWorkspaceCapabilityBranch,
   createWorkspaceCapabilityIntent,
   getWorkspaceCapability,
   listWorkspaceCapabilities,
-  resolveWorkspaceCapabilityReadiness,
   WORKSPACE_CENTER_ID,
 } from './workspace-capability.js';
+import {
+  createEmptyWorkspaceReadModel,
+  normalizeWorkspaceReadModel,
+} from './workspace-runtime-read-model.js';
 
 export const WORKSPACE_FACILITY_ROOT_ID = 'hero-workspace-facility';
 
+export const WORKSPACE_FACILITY_SPATIAL_CONTEXT = Object.freeze(
+  createSpatialConstructionContext({
+    slice: 'S13',
+    owner: 'frontend/spatial/workspace-capability-facility.js',
+    semanticId: WORKSPACE_CENTER_ID,
+    semanticBoundary: 'presentation-only',
+  }),
+);
+
+if (!validateSpatialConstructionNode(WORKSPACE_FACILITY_SPATIAL_CONTEXT).valid) {
+  throw new Error('invalid S13 Workspace spatial root contract');
+}
+
 let panel = null;
 let activeCapabilityId = 'workspace-context';
-let workspaceId = 'workspace-main';
-let projectId = 'command-deck';
-let authenticated = false;
+let readModel = createEmptyWorkspaceReadModel();
 
 function dispatch(name, detail) {
   if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
@@ -23,15 +38,56 @@ function dispatch(name, detail) {
 }
 
 function getReadiness() {
-  return resolveWorkspaceCapabilityReadiness({
-    authenticated,
-    workspaceKnown: false,
-    projectKnown: false,
-    authorized: false,
-    entitled: false,
-    schedulerEligible: false,
-    healthy: false,
+  return readModel;
+}
+
+function renderReadModelList(selector, items, emptyText) {
+  const target = panel?.querySelector(selector);
+  if (!target) return;
+  target.replaceChildren();
+
+  if (!readModel.contextAvailable || !items.length) {
+    const empty = document.createElement('span');
+    empty.className = 'workspace-facility__empty';
+    empty.textContent = emptyText;
+    target.append(empty);
+    return;
+  }
+
+  const list = document.createElement('ul');
+  list.className = 'workspace-facility__read-model-list';
+  items.slice(0, 6).forEach((item) => {
+    const entry = document.createElement('li');
+    const label = document.createElement('strong');
+    label.textContent = item.label;
+    entry.append(label);
+    if (item.state || item.kind) {
+      const meta = document.createElement('span');
+      meta.textContent = [item.kind, item.state].filter(Boolean).join(' · ');
+      entry.append(meta);
+    }
+    list.append(entry);
   });
+  target.append(list);
+}
+
+function renderReadModelContext() {
+  const teamLabel = panel?.querySelector('[data-workspace-team-label]');
+  const seatSummary = panel?.querySelector('[data-workspace-seat-summary]');
+  const task = panel?.querySelector('[data-workspace-task]');
+
+  if (!readModel.contextAvailable) {
+    if (teamLabel) teamLabel.textContent = 'Unavailable until authorized Workspace read model is available';
+    if (seatSummary) seatSummary.textContent = 'Seat projection unavailable';
+    if (task) task.textContent = 'Active task unavailable';
+  } else {
+    if (teamLabel) teamLabel.textContent = readModel.team?.label || 'Team unavailable';
+    if (seatSummary) seatSummary.textContent = String(readModel.seats.length) + ' Seat projection' + (readModel.seats.length === 1 ? '' : 's') + ' supplied by the backend read model';
+    if (task) task.textContent = readModel.activeTask?.label || 'No active task reported by the backend read model';
+  }
+
+  renderReadModelList('[data-workspace-evidence]', readModel.evidence, 'No evidence records reported by the backend read model');
+  renderReadModelList('[data-workspace-results]', readModel.results, 'No result records reported by the backend read model');
 }
 
 function updateBranchPreview() {
@@ -39,18 +95,25 @@ function updateBranchPreview() {
   const note = panel?.querySelector('[data-workspace-branch-note]');
   const capability = getWorkspaceCapability(activeCapabilityId);
   if (!field || !note || !capability) return;
+
+  if (!readModel.contextAvailable) {
+    field.textContent = 'Branch preview unavailable';
+    note.textContent = 'An authorized backend Workspace read model is required before a project-scoped branch can be projected.';
+    return;
+  }
+
   try {
     const branch = createWorkspaceCapabilityBranch({
       capabilityId: capability.id,
-      workspaceId,
-      projectId,
+      workspaceId: readModel.workplace.id,
+      projectId: readModel.project.id,
       path: ['context'],
     });
     field.textContent = branch.id;
-    note.textContent = 'Workspace-owned semantic branch preview. Durable state and execution remain backend-owned.';
+    note.textContent = 'Workspace-owned semantic branch preview derived from the authorized read model. Durable state and execution remain backend-owned.';
   } catch {
     field.textContent = 'Branch preview unavailable';
-    note.textContent = 'A valid Workspace capability is required before a branch can be proposed.';
+    note.textContent = 'A valid authorized Workspace context is required before a branch can be projected.';
   }
 }
 
@@ -61,10 +124,18 @@ function render() {
   if (!state || !inventory || !request) return;
 
   const readiness = getReadiness();
-  state.textContent = authenticated
-    ? 'Authenticated context · backend Workspace state required'
+  state.textContent = readiness.authenticated
+    ? readiness.contextAvailable
+      ? 'Authenticated · Workspace context READY'
+      : 'Authenticated context · Workspace read model unavailable'
     : 'Guest · DISCOVERABLE LOCKED';
   state.dataset.state = readiness.state;
+
+  const workplaceLabel = panel?.querySelector('[data-workspace-name]');
+  const projectLabel = panel?.querySelector('[data-workspace-project-label]');
+  if (workplaceLabel) workplaceLabel.textContent = readModel.workplace?.label || 'Unavailable until authorized Workspace read model is available';
+  if (projectLabel) projectLabel.textContent = readModel.project?.label || 'Unavailable until authorized Workspace read model is available';
+  renderReadModelContext();
 
   inventory.innerHTML = listWorkspaceCapabilities().map((capability) => {
     const selected = capability.id === activeCapabilityId;
@@ -78,7 +149,7 @@ function render() {
   }).join('');
 
   request.hidden = false;
-  request.disabled = !authenticated;
+  request.disabled = !readiness.usable || !readModel.contextAvailable;
   updateBranchPreview();
 }
 
@@ -102,14 +173,19 @@ function requestAuth() {
 }
 
 function requestCapabilityIntent() {
+  const status = panel?.querySelector('[data-workspace-result]');
+  if (!readModel.contextAvailable) {
+    if (status) status.textContent = 'Workspace capability intent is unavailable until an authorized Workspace read model is present.';
+    return;
+  }
+
   const intent = createWorkspaceCapabilityIntent({
     capabilityId: activeCapabilityId,
-    workspaceId,
-    projectId,
+    workspaceId: readModel.workplace.id,
+    projectId: readModel.project.id,
     action: 'inspect',
   });
   dispatch('teamai:workspace-capability-intent', intent);
-  const status = panel?.querySelector('[data-workspace-result]');
   if (status) status.textContent = 'Workspace capability intent requested. Authoritative runtime confirmation is still required.';
 }
 
@@ -148,9 +224,24 @@ function build() {
     '<div class="workspace-facility__state-row"><span data-workspace-state data-state="DISCOVERABLE_LOCKED">Guest · DISCOVERABLE LOCKED</span><span>Presentation only</span></div>' +
     '<div class="workspace-facility__summary">' +
       '<div><span>Semantic target</span><strong>' + WORKSPACE_CENTER_ID + '</strong></div>' +
-      '<div><span>Current Workplace</span><strong data-workspace-name>Northstar Workplace</strong></div>' +
-      '<div><span>Current Project</span><strong data-workspace-project-label>Command Deck</strong></div>' +
+      '<div><span>Current Workplace</span><strong data-workspace-name>Unavailable until authorized Workspace read model is available</strong></div>' +
+      '<div><span>Current Project</span><strong data-workspace-project-label>Unavailable until authorized Workspace read model is available</strong></div>' +
+      '<div><span>Current Team</span><strong data-workspace-team-label>Unavailable until authorized Workspace read model is available</strong></div>' +
     '</div>' +
+    '<section class="workspace-facility__section" aria-labelledby="workspace-runtime-context-title">' +
+      '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Runtime context</p><h3 id="workspace-runtime-context-title">Current work</h3></div><span>Backend read model</span></div>' +
+      '<div class="workspace-facility__read-model-grid">' +
+        '<div class="workspace-facility__read-model-card"><span>Seat projection</span><strong data-workspace-seat-summary>Seat projection unavailable</strong></div>' +
+        '<div class="workspace-facility__read-model-card"><span>Active task</span><strong data-workspace-task>Active task unavailable</strong></div>' +
+      '</div>' +
+    '</section>' +
+    '<section class="workspace-facility__section" aria-labelledby="workspace-evidence-title">' +
+      '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Continuity</p><h3 id="workspace-evidence-title">Evidence / results</h3></div><span>Metadata only</span></div>' +
+      '<div class="workspace-facility__read-model-grid">' +
+        '<div class="workspace-facility__read-model-card"><span>Evidence</span><div data-workspace-evidence>Evidence unavailable</div></div>' +
+        '<div class="workspace-facility__read-model-card"><span>Results</span><div data-workspace-results>Results unavailable</div></div>' +
+      '</div>' +
+    '</section>' +
     '<section class="workspace-facility__section" aria-labelledby="workspace-capabilities-title">' +
       '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Capability surface</p><h3 id="workspace-capabilities-title">Workspace capabilities</h3></div><span data-workspace-result role="status">Inspection changes presentation only.</span></div>' +
       '<div class="workspace-facility__inventory" data-workspace-inventory role="list"></div>' +
@@ -158,10 +249,10 @@ function build() {
     '<section class="workspace-facility__section" aria-labelledby="workspace-branch-title">' +
       '<div class="workspace-facility__section-heading"><div><p class="workspace-facility__eyebrow">Target-owned branch</p><h3 id="workspace-branch-title">Semantic scope</h3></div><span>Workspace-owned / recursive</span></div>' +
       '<div class="workspace-facility__controls">' +
-        '<label>Project<select data-workspace-project-id><option value="command-deck">Command Deck</option><option value="atlas">Atlas Migration</option><option value="recovery">Recovery Lab</option></select></label>' +
+        '<span class="workspace-facility__context-note">Project scope is supplied by the authorized Workspace read model; the facility does not invent or switch project identity locally.</span>' +
       '</div>' +
-      '<code class="workspace-facility__branch" data-workspace-branch>BRANCH-WORKSPACE::workspace-main/workspace-context/command-deck/context</code>' +
-      '<p class="workspace-facility__branch-note" data-workspace-branch-note>Workspace-owned semantic branch preview. Durable state and execution remain backend-owned.</p>' +
+      '<code class="workspace-facility__branch" data-workspace-branch>Branch preview unavailable</code>' +
+      '<p class="workspace-facility__branch-note" data-workspace-branch-note>An authorized backend Workspace read model is required before a project-scoped branch can be projected.</p>' +
     '</section>' +
     '<div class="workspace-facility__actions">' +
       '<button type="button" data-workspace-focus>Center workspace</button>' +
@@ -183,13 +274,6 @@ export function mountWorkspaceFacility(rootNode = document) {
   panel.querySelector('[data-workspace-focus]')?.addEventListener('click', focusWorkspace);
   panel.querySelector('[data-workspace-auth]')?.addEventListener('click', requestAuth);
   panel.querySelector('[data-workspace-request]')?.addEventListener('click', requestCapabilityIntent);
-  panel.querySelector('[data-workspace-project-id]')?.addEventListener('change', (event) => {
-    projectId = String(event.target?.value || 'command-deck');
-    const display = panel?.querySelector('[data-workspace-project-label]');
-    const labels = { 'command-deck': 'Command Deck', atlas: 'Atlas Migration', recovery: 'Recovery Lab' };
-    if (display) display.textContent = labels[projectId] || projectId;
-    render();
-  });
   panel.querySelector('[data-workspace-inventory]')?.addEventListener('click', (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
@@ -204,7 +288,16 @@ export function mountWorkspaceFacility(rootNode = document) {
 }
 
 export function setWorkspacePresentationAuthState(value) {
-  authenticated = Boolean(value);
+  const authenticated = Boolean(value);
+  readModel = normalizeWorkspaceReadModel({
+    ...readModel,
+    readiness: { ...readModel, authenticated },
+  });
+  render();
+}
+
+export function setWorkspaceReadModel(value) {
+  readModel = normalizeWorkspaceReadModel(value);
   render();
 }
 
@@ -217,12 +310,23 @@ if (typeof document !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
+  window.addEventListener('teamai:workspace-runtime-read-model', (event) => {
+    if (event.detail?.readModel) setWorkspaceReadModel(event.detail.readModel);
+  });
+
   window.TeamAiWorkspaceFacility = Object.freeze({
     open: openWorkspaceFacility,
     close: closeWorkspaceFacility,
     mount: mountWorkspaceFacility,
     setPresentationAuthState: setWorkspacePresentationAuthState,
+    setReadModel: setWorkspaceReadModel,
     focusWorkspace,
-    getState: () => Object.freeze({ authenticated, activeCapabilityId, workspaceId, projectId }),
+    getState: () => Object.freeze({
+      authenticated: readModel.authenticated,
+      activeCapabilityId,
+      contextAvailable: readModel.contextAvailable,
+      workplaceId: readModel.workplace?.id || null,
+      projectId: readModel.project?.id || null,
+    }),
   });
 }

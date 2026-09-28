@@ -4,6 +4,8 @@ import test from 'node:test';
 import {
   deriveExpandedMachineCoreRadii,
   deriveMachineWorldProfile,
+  MACHINE_OUTER_HOUSING_SAFETY_BUFFER,
+  MACHINE_SEAT_SHELL_SAFETY_BUFFER,
   MACHINE_WORLD_PROFILE,
   seatPopulationDensity,
 } from '../frontend/spatial/hero-world-profile.js';
@@ -15,8 +17,22 @@ test('world profile is deterministic across the supported Seat range', () => {
   const ten = deriveMachineWorldProfile(10);
   assert.equal(one.workspaceFootprint, MACHINE_WORLD_PROFILE.workspaceFootprint.min);
   assert.equal(ten.workspaceFootprint, MACHINE_WORLD_PROFILE.workspaceFootprint.max);
-  assert.equal(one.seatShellRadius, MACHINE_WORLD_PROFILE.seatShellRadius.min);
-  assert.equal(ten.seatShellRadius, MACHINE_WORLD_PROFILE.seatShellRadius.max);
+  assert.equal(
+    one.seatShellRadius,
+    MACHINE_WORLD_PROFILE.seatShellRadius.min + MACHINE_SEAT_SHELL_SAFETY_BUFFER,
+  );
+  assert.equal(
+    ten.seatShellRadius,
+    MACHINE_WORLD_PROFILE.seatShellRadius.max + MACHINE_SEAT_SHELL_SAFETY_BUFFER,
+  );
+  assert.equal(
+    one.outerHousingRadius,
+    MACHINE_WORLD_PROFILE.outerHousingRadius.min + MACHINE_OUTER_HOUSING_SAFETY_BUFFER,
+  );
+  assert.equal(
+    ten.outerHousingRadius,
+    MACHINE_WORLD_PROFILE.outerHousingRadius.max + MACHINE_OUTER_HOUSING_SAFETY_BUFFER,
+  );
 });
 
 test('expanded machine-core radii remain monotonic without changing semantic population', () => {

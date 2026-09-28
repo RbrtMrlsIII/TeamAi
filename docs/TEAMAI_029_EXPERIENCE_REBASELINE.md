@@ -21,7 +21,7 @@ The following are real implementation strata and must not be erased:
 - #259 residual Layer A/B legibility and chrome work.
 - CAM-R1/R2/R3 selected-seat subject-lock.
 - ENT-R4 entrance ↔ machine Playwright proof.
-- CHR-R3 settings beside machine navigation.
+- CHR-R3 dedicated Settings shell on the machine layer.
 - #260 user-directed validation + superseded archive governance.
 - #267/#268 residual closeout and hierarchy-animation continuity repair.
 - #270 owner-directed experience rebase checklist and agent data tips.

@@ -42,3 +42,16 @@
   .workspace-facility { top:64px; left:12px; right:12px; bottom:84px; width:calc(100vw - 24px); max-height:none; transform:none; }
   .workspace-facility__summary, .workspace-facility__inventory { grid-template-columns:1fr; }
 }
+
+
+.workspace-facility__read-model-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:10px; }
+.workspace-facility__read-model-card { min-width:0; padding:10px; border:1px solid color-mix(in srgb,currentColor 11%,transparent); border-radius:12px; }
+.workspace-facility__read-model-card > span { display:block; margin-bottom:4px; font-size:.65rem; text-transform:uppercase; letter-spacing:.06em; opacity:.56; }
+.workspace-facility__read-model-card > strong { display:block; font-size:.75rem; line-height:1.4; }
+.workspace-facility__read-model-list { display:grid; gap:5px; margin:0; padding:0; list-style:none; }
+.workspace-facility__read-model-list li { display:grid; gap:2px; min-width:0; }
+.workspace-facility__read-model-list strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.73rem; }
+.workspace-facility__read-model-list span, .workspace-facility__empty { font-size:.66rem; opacity:.62; }
+@media (max-width:640px) {
+  .workspace-facility__read-model-grid { grid-template-columns:1fr; }
+}

@@ -33,7 +33,7 @@ Jump to: [Command Deck & fields](#command-deck--fields-f0f7) · [3D Hero](#3d-he
 
 **Status** and **Modal** are numbered fields so the UI can treat them with the same discipline as the original legal boxes, without inventing backend power.
 
-**See also:** Product Law (legal boxes / fields), `docs/TEAM-EXPERIENCE-029_COMMAND_DECK_AND_TOKEN_FREEZE.md`
+**See also:** Product Law (legal boxes / fields), `docs/TEAM-EXPERIENCE-029_COMMAND_DECK_AND_TOKEN_FREEZE.md` (planning/token reference only)
 
 ---
 

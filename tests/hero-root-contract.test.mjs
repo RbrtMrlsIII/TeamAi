@@ -20,6 +20,15 @@ test('provisional Hero roots have explicit owners without freezing spatial imple
   }
 });
 
+test('S20 Settings root remains cross-cutting and inherits the canonical structural machine without becoming a Seat child', () => {
+  const settings = HERO_ROOTS.settings;
+  assert.equal(settings.layer, 'normal-ui');
+  assert.equal(settings.owner, 'hero-settings-shell');
+  assert.equal(settings.spatialContract.constructionSlice, 'S20');
+  assert.deepEqual(settings.spatialContract.inheritedStructuralRoots, Array.from({ length: 11 }, (_, i) => `S${i}`));
+  assert.equal(settings.spatialContract.semanticBoundary, 'presentation-only');
+});
+
 test('Hero root registration is idempotent and observable', () => {
   const first = registerHeroRoot('machine', { status: 'ready' });
   const second = registerHeroRoot('machine', { status: 'ready' });
