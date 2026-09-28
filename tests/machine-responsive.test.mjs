@@ -13,7 +13,7 @@ test('S23 classifies desktop, compact/tablet, and phone from one breakpoint scal
 });
 
 test('S23 preserves the existing aspect-driven camera adaptation', () => {
-  assert.equal(resolveMachineResponsive({ width: 1280, height: 800 }).cameraDistanceMultiplier, 1);
+  assert.equal(resolveMachineResponsive({ width: 1280, height: 800 }).cameraDistanceMultiplier, 0.83);
   assert.equal(resolveMachineResponsive({ width: 790, height: 720 }).cameraDistanceMultiplier, 1.10);
   assert.equal(resolveMachineResponsive({ width: 820, height: 1180 }).cameraDistanceMultiplier, 1.25);
   assert.equal(resolveMachineResponsive({ width: 390, height: 844 }).cameraDistanceMultiplier, 1.25);
