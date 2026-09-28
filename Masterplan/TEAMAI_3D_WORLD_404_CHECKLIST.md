@@ -445,7 +445,7 @@ Exit: failure states remain understandable.
 **Inherited roots: S0-S10. Cross-cutting over S0-S21; must not fork machine meaning.**
 - [x] Keyboard navigation. World-menu disclosure is keyboard-traversable; chrome keys no longer fire spatial shortcuts. Evidence: E404-S22. Remaining S22 rows stay open.
 
-- [ ] Visible focus.
+- [x] Visible focus. Global 3px focus ring is directly browser-verified on keyboard-traversed world-menu controls. Evidence: E404-S22.
 - [ ] Deterministic accessible names.
 - [ ] State announcements.
 - [ ] Error/blocked reasons.
