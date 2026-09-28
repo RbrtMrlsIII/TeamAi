@@ -449,7 +449,7 @@ Exit: failure states remain understandable.
 - [x] Deterministic accessible names. Active Hero controls, canvas, world-menu items, and settings controls have non-empty computed accessible names in Chromium. Evidence: E404-S22C.
 - [x] State announcements. Existing Hero state is an `aria-live=polite` `role=status` region and Chromium directly verifies `IDLE → FOCUS → IDLE`. Evidence: E404-S22D.
 - [x] Error / blocked reasons. Guest-locked feature controls expose a deterministic presentation-only blocked reason through `aria-describedby`; transaction `errorCode` reasons remain covered. Evidence: E404-S22E.
-- [ ] Non-color-only meaning.
+- [x] Non-color-only meaning. Semantic state cues remain available as text and programmatic state, with color used only as supplemental styling. Evidence: E404-S22F.
 - [ ] Escape/back.
 - [ ] Return-to-parent.
 - [ ] Reduced-motion semantic equivalence.
