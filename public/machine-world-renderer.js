@@ -10,6 +10,7 @@
  * and DOM compatibility controller during migration.
  */
 import { resolveMachineResponsive } from './machine-responsive.js';
+import { deriveMachineResponsiveReadability } from './machine-responsive-readability.js';
 import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
 import {
   createMachineExpansionMechanism,
@@ -1201,6 +1202,33 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         .map((part) => Math.hypot(part.center.x, part.center.z)),
       0,
     );
+    const podSpans = scene.parts
+      .filter((part) => part.kind === 'inner-pod' && part.dimensions)
+      .map((part) => Math.max(finite(part.dimensions.x), finite(part.dimensions.z)))
+      .filter((value) => value > 0);
+    const facilitySpans = scene.parts
+      .filter((part) => part.kind === 'outer-housing' && part.dimensions)
+      .map((part) => Math.max(finite(part.dimensions.x), finite(part.dimensions.z)))
+      .filter((value) => value > 0);
+    const responsiveReadability = deriveMachineResponsiveReadability({
+      responsive,
+      viewport: { width, height },
+      cameraRadius: cameraSpec.radius,
+      cameraFov: cameraSpec.fov,
+      seatRingRadius,
+      seatCount,
+      podSpan: podSpans.length ? Math.min(...podSpans) : 0,
+      facilitySpan: facilitySpans.length ? Math.min(...facilitySpans) : 0,
+    });
+    canvas.dataset.machineWorldResponsiveDensity = responsiveReadability.densityMode;
+    canvas.dataset.machineWorldReadability = responsiveReadability.readable ? 'pass' : 'fail';
+    canvas.dataset.machineWorldReadabilitySeatSpacingPx = responsiveReadability.projectedSeatSpacingPx.toFixed(2);
+    canvas.dataset.machineWorldReadabilityPodFeaturePx = responsiveReadability.projectedPodFeaturePx.toFixed(2);
+    canvas.dataset.machineWorldReadabilityFacilityFeaturePx = responsiveReadability.projectedFacilityFeaturePx.toFixed(2);
+    canvas.dataset.machineWorldReadabilitySeatThresholdPx =
+      String(responsiveReadability.thresholds.minProjectedSeatSpacingPx);
+    canvas.dataset.machineWorldReadabilityFeatureThresholdPx =
+      String(responsiveReadability.thresholds.minProjectedFeaturePx);
     const ringArticulation = deriveMachineRingArticulation({
       hierarchyOpen,
       choreography,

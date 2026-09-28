@@ -1145,6 +1145,13 @@ test.describe('Living Web AI Workspace Hero', () => {
           bodyScrollWidth: document.body.scrollWidth,
           bodyScrollHeight: document.body.scrollHeight,
           cameraRadius: Number(canvas?.dataset.machineWorldCameraRadius || 0),
+          spatialDensity: canvas?.dataset.machineWorldResponsiveDensity || '',
+          readability: canvas?.dataset.machineWorldReadability || '',
+          seatSpacingPx: Number(canvas?.dataset.machineWorldReadabilitySeatSpacingPx || 0),
+          podFeaturePx: Number(canvas?.dataset.machineWorldReadabilityPodFeaturePx || 0),
+          facilityFeaturePx: Number(canvas?.dataset.machineWorldReadabilityFacilityFeaturePx || 0),
+          seatSpacingThresholdPx: Number(canvas?.dataset.machineWorldReadabilitySeatThresholdPx || 0),
+          featureThresholdPx: Number(canvas?.dataset.machineWorldReadabilityFeatureThresholdPx || 0),
         };
       });
 
@@ -1156,6 +1163,13 @@ test.describe('Living Web AI Workspace Hero', () => {
       expect(state.bodyScrollWidth).toBeLessThanOrEqual(state.clientWidth);
       expect(state.bodyScrollHeight).toBeLessThanOrEqual(state.clientHeight);
       expect(state.cameraRadius).toBeGreaterThan(0);
+      expect(state.spatialDensity).toBe(
+        viewport.tier === 'desktop' ? 'balanced' : viewport.tier === 'compact' ? 'compressed' : 'compact',
+      );
+      expect(state.readability).toBe('pass');
+      expect(state.seatSpacingPx).toBeGreaterThanOrEqual(state.seatSpacingThresholdPx);
+      expect(state.podFeaturePx).toBeGreaterThanOrEqual(state.featureThresholdPx);
+      expect(state.facilityFeaturePx).toBeGreaterThanOrEqual(state.featureThresholdPx);
       cameraRadii.push(state.cameraRadius);
 
       await page.evaluate(() => (window as any).TeamAiHero.setSeatCount(10));

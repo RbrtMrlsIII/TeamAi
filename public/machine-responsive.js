@@ -19,6 +19,28 @@ export const MACHINE_RESPONSIVE_LIMITS = Object.freeze({
   COMPACT_ASPECT: 1.1,
 });
 
+export const MACHINE_RESPONSIVE_DENSITY = Object.freeze({
+  desktop: Object.freeze({
+    mode: 'balanced',
+    minProjectedSeatSpacingPx: 56,
+    minProjectedFeaturePx: 24,
+  }),
+  compact: Object.freeze({
+    mode: 'compressed',
+    minProjectedSeatSpacingPx: 48,
+    minProjectedFeaturePx: 20,
+  }),
+  phone: Object.freeze({
+    mode: 'compact',
+    minProjectedSeatSpacingPx: 44,
+    minProjectedFeaturePx: 18,
+  }),
+});
+
+export function resolveMachineResponsiveDensity(tier) {
+  return MACHINE_RESPONSIVE_DENSITY[tier] || MACHINE_RESPONSIVE_DENSITY.desktop;
+}
+
 const normalizeFinite = (value, fallback = 1) => {
   const number = Number(value);
   return Number.isFinite(number) && number > 0 ? number : fallback;
@@ -81,6 +103,7 @@ export function resolveMachineResponsive({
   const isNarrowAspect = aspect < MACHINE_RESPONSIVE_LIMITS.NARROW_ASPECT;
   const isCompactAspect = aspect < MACHINE_RESPONSIVE_LIMITS.COMPACT_ASPECT;
   const cameraDistanceMultiplier = isNarrowAspect ? 1.25 : isCompactAspect ? 1.10 : 1;
+  const densityPolicy = resolveMachineResponsiveDensity(tier);
   const cameraFov = isNarrowAspect ? 48 : 44;
 
   return Object.freeze({
@@ -95,6 +118,9 @@ export function resolveMachineResponsive({
     isCompactAspect,
     cameraDistanceMultiplier,
     cameraFov,
+    presentationDensity: densityPolicy.mode,
+    minProjectedSeatSpacingPx: densityPolicy.minProjectedSeatSpacingPx,
+    minProjectedFeaturePx: densityPolicy.minProjectedFeaturePx,
     presentationOnly: true,
   });
 }
@@ -113,6 +139,7 @@ export function applyMachineResponsiveState(
     root.setAttribute('data-spatial-pointer', state.pointer);
     root.setAttribute('data-spatial-hover', state.hover);
     root.setAttribute('data-spatial-orientation', state.orientation);
+    root.setAttribute('data-spatial-density', state.presentationDensity);
   }
   return state;
 }
