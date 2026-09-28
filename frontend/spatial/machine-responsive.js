@@ -32,8 +32,9 @@ export const MACHINE_RESPONSIVE_DENSITY = Object.freeze({
   }),
   phone: Object.freeze({
     mode: 'compact',
-    minProjectedSeatSpacingPx: 44,
+    minProjectedSeatSpacingPx: 32,
     minProjectedFeaturePx: 14,
+    facilityFeatureScale: 1.12,
   }),
 });
 
@@ -119,6 +120,7 @@ export function resolveMachineResponsive({
     cameraDistanceMultiplier,
     cameraFov,
     presentationDensity: densityPolicy.mode,
+    facilityFeatureScale: densityPolicy.facilityFeatureScale,
     minProjectedSeatSpacingPx: densityPolicy.minProjectedSeatSpacingPx,
     minProjectedFeaturePx: densityPolicy.minProjectedFeaturePx,
     presentationOnly: true,
