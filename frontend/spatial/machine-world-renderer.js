@@ -331,10 +331,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       Math.round(width),
       Math.round(height),
       seatCount,
-      cameraSpec.cameraId,
-      cameraSpec.mode,
-      Math.round(finite(cameraSpec.radius) * 100) / 100,
-      Math.round(finite(cameraSpec.fov) * 100) / 100,
+      cameraPose?.p?.map((value) => Math.round(finite(value) * 100) / 100).join(','),
+      cameraPose?.t?.map((value) => Math.round(finite(value) * 100) / 100).join(','),
+      Math.round(finite(cameraPose?.f) * 100) / 100,
     ].join('|');
 
     if (responsiveReadabilityCache?.key === key) {
@@ -375,11 +374,21 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       responsive,
       viewport: { width, height },
       cameraRadius: cameraSpec.radius,
-      cameraFov: cameraSpec.fov,
+      cameraFov: cameraPose?.f ?? cameraSpec.fov,
+      cameraPosition: cameraPose?.p || null,
+      cameraTarget: cameraPose?.t || null,
       seatRingRadius,
       seatCount,
+      seatCenters: scene.parts
+        .filter((part) => part.kind === 'inner-pod' && Number.isInteger(part.seatIndex))
+        .map((part) => ({ seatIndex: part.seatIndex, center: part.center })),
       podSpan: Number.isFinite(podSpan) ? podSpan : 0,
+      podFeatures: scene.parts
+        .filter((part) => part.kind === 'inner-pod' && Number.isInteger(part.seatIndex))
+        .map((part) => ({ center: part.center, dimensions: part.dimensions })),
       facilitySpan: Number.isFinite(facilitySpan) ? facilitySpan : 0,
+      facilityFeatures: facilityAssemblies.flatMap((assembly) => (assembly.components || [])
+        .map((component) => ({ center: component.center, dimensions: component.dimensions }))),
     });
 
     canvas.dataset.machineWorldResponsiveDensity = readability.densityMode;
@@ -1397,7 +1406,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       seatCount,
       scene,
       facilityAssemblies,
-      cameraSpec,
+      cameraPose,
       spatialGeometryKey,
     });
 
@@ -1465,6 +1474,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       glass: RING_MATERIALS.glass,
       energy: RING_MATERIALS.energy,
     };
+    const facilityFeatureScale = Number(responsive.facilityFeatureScale) > 0
+      ? Number(responsive.facilityFeatureScale)
+      : 1;
+    canvas.dataset.machineWorldResponsiveFacilityFeatureScale = String(facilityFeatureScale);
     for (const assembly of facilityAssemblies) {
       const selected = assembly.branchId === branchId;
       for (const component of assembly.components) {
@@ -1477,9 +1490,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           multiplyMatrix(
             translateMatrix(dx, dy, dz),
             scaleMatrix(
-              Math.max(0.12, component.dimensions.x * 0.5),
+              Math.max(0.12, component.dimensions.x * 0.5 * facilityFeatureScale),
               Math.max(0.045, component.dimensions.y),
-              Math.max(0.12, component.dimensions.z * 0.5),
+              Math.max(0.12, component.dimensions.z * 0.5 * facilityFeatureScale),
             ),
           ),
           material,
