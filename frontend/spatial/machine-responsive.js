@@ -112,3 +112,32 @@ export function applyMachineResponsiveState(
   }
   return state;
 }
+
+let currentResponsiveState = null;
+
+export function syncMachineResponsiveState(
+  viewport = getMachineResponsiveViewport(),
+  root = globalThis.document?.documentElement,
+) {
+  currentResponsiveState = applyMachineResponsiveState(root, viewport);
+  return currentResponsiveState;
+}
+
+export function getMachineResponsiveState() {
+  return currentResponsiveState ? { ...currentResponsiveState } : null;
+}
+
+if (typeof document !== 'undefined') {
+  const boot = () => syncMachineResponsiveState();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+  window.addEventListener('resize', boot, { passive: true });
+  globalThis.visualViewport?.addEventListener?.('resize', boot, { passive: true });
+  globalThis.TeamAiResponsive = Object.freeze({
+    getState: getMachineResponsiveState,
+    sync: syncMachineResponsiveState,
+  });
+}

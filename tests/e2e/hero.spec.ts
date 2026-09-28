@@ -1134,7 +1134,7 @@ test.describe('Living Web AI Workspace Hero', () => {
         const canvas = document.querySelector('#hero-canvas') as HTMLCanvasElement | null;
         const root = document.documentElement;
         return {
-          responsive: (window as any).TeamAiHero.getResponsiveState(),
+          responsive: (window as any).TeamAiResponsive.getState(),
           canvasTier: canvas?.dataset.machineWorldResponsiveTier,
           canvasOrientation: canvas?.dataset.machineWorldResponsiveOrientation,
           touchAction: canvas ? getComputedStyle(canvas).touchAction : '',
