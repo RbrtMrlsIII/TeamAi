@@ -1,22 +1,23 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
-## 2026-09-28 S22 state announcements on #404
+## 2026-09-28 S22 error / blocked reasons on #404
 
 - current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head before this handoff reconciliation: `121a22a9582228f1b8b6825a487a5e6849c753ad`
-- last behavior-changing S22 head: `49ac0bc2da89d69eaab9072acabb1b60cc4e2125`
+- current #404 head before this handoff reconciliation: `5e03fd5e754fed33e9686b16251dc957680fb319`
+- last behavior-changing S22 head: `e3000a4a682d9e226f86f533404099cb1215ce96`
 - global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
 - #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
 - S22 Keyboard navigation: repository/browser-verified
 - S22 Visible focus: repository/browser-verified
 - S22 Deterministic accessible names: repository/browser-verified
 - S22 State announcements: repository/browser-verified
-- Browser proof at behavior head: **81 passed / 4 skipped**
-- Full-System proof: **1,121 passed / 0 failed**, package create/verify PASS
-- State announcements use the existing `#state-label` as `role=status aria-live=polite aria-atomic=true`; no second announcement bus was introduced
-- The first state-announcement test incorrectly expected a separate accessible name on the status node; that was classified as a test defect and removed
-- remaining S22 rows: error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
-- next 029 row: error / blocked reasons
+- S22 Error / blocked reasons: repository/browser-verified on behavior head `e3000a4...`
+- Browser proof on behavior head: **82 passed / 4 skipped**
+- Full-System proof: **1,122 passed / 0 failed**, package create/verify PASS
+- Guest-locked feature controls now preserve their existing accessible names while exposing the canonical `BLOCKED_UNTIL_AUTHENTICATED` reason through `aria-describedby`
+- Transaction `errorCode` presentation and Retry/Cancel intent boundaries remain intact
+- Remaining S22 rows: non-color-only meaning, Escape/back, Return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
+- next 029 row: non-color-only meaning
 - no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
