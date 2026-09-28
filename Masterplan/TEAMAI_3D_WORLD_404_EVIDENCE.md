@@ -1,6 +1,7 @@
 # PR #404 — Evidence Registry
 
-**Owner vehicle:** PR #404  
+**Historical implementation vehicle:** PR #404 (merged 2026-09-28)  
+**Active continuation vehicle:** successor PR from post-#404 main  
 **Governing issue:** #405  
 **Purpose:** one canonical evidence index for the 029 spatial reconstruction program.
 
@@ -10,7 +11,7 @@ This file is the **evidence ledger**, not a second roadmap. The detailed constru
 
 Use three layers, in this order:
 
-1. **PR #404** = newcomer-readable navigation and current-state summary.
+1. **Successor PR** = newcomer-readable navigation and current-state summary for the post-#404 continuation; PR #404 remains historical provenance.
 2. **Masterplan/** = durable execution status plus evidence references.
 3. **Source / tests / CI artifacts** = primary proof.
 
@@ -21,6 +22,10 @@ Evidence state remains:
 IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → RUNTIME-PROVEN → HUMAN-ACCEPTED
 
 A higher state does not follow automatically from a lower one.
+
+## Historical latest validated spatial implementation anchor
+
+> This anchor belongs to the merged PR #404 lineage. It must not be treated as current continuation proof. The successor PR must establish a fresh exact-head evidence record before new acceptance claims.
 
 ## Latest validated spatial implementation anchor
 
