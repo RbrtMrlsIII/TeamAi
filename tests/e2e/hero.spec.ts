@@ -625,6 +625,58 @@ test.describe('Living Web AI Workspace Hero', () => {
     }
   });
 
+  test('S22 reduced motion preserves semantic hierarchy and turn lifecycle', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/hero/');
+
+    await page.evaluate(() => (window as any).TeamAiHero.setReducedMotion(true));
+
+    await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
+    const hierarchy = await page.evaluate(() => {
+      const hero = (window as any).TeamAiHero;
+      const state = hero.getHierarchyState();
+      return {
+        openParentId: state.openParentId,
+        phase: state.phase,
+        openAmount: state.openAmount,
+        focusedChildId: state.focusedChildId,
+        camera: hero.getBaseCameraId(),
+        heroState: hero.getState(),
+        motion: hero.getReducedMotion(),
+      };
+    });
+
+    expect(hierarchy.openParentId).toBe('SEAT_SHELL#0');
+    expect(hierarchy.phase).toBe('OPEN');
+    expect(hierarchy.openAmount).toBe(1);
+    expect(hierarchy.focusedChildId).toBeTruthy();
+    expect(hierarchy.camera).toBe('SEAT_CLOSE');
+    expect(hierarchy.heroState).toBe('FOCUS');
+    expect(hierarchy.motion).toBe(true);
+
+    const lifecycle = await page.evaluate(() => new Promise<string[]>((resolve) => {
+      const seen: string[] = [];
+      const onState = (event: any) => {
+        seen.push(event.detail.state);
+        if (event.detail.state === 'FOCUS' && seen.includes('HANDOFF')) {
+          window.removeEventListener('teamai:hero-state-change', onState);
+          resolve(seen);
+        }
+      };
+      window.addEventListener('teamai:hero-state-change', onState);
+      (window as any).TeamAiHero.closeHierarchyParent();
+      (window as any).TeamAiHero.startLoop();
+    }));
+
+    expect(lifecycle.slice(0, 6)).toEqual([
+      'IDLE', 'FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB', 'REFLECT'
+    ]);
+    expect(lifecycle).toContain('HANDOFF');
+
+    await page.evaluate(() => (window as any).TeamAiHero.stopLoop());
+    await expect(page.locator('#state-label')).toHaveText('IDLE');
+  });
+
   test('S22 Escape back unwinds hierarchy leaf to parent and returns to world', async ({ page }) => {
     await page.goto('/hero/');
 
