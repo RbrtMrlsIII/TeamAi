@@ -443,7 +443,7 @@ Exit: failure states remain understandable.
 
 ## X. S22 — Accessibility
 **Inherited roots: S0-S10. Cross-cutting over S0-S21; must not fork machine meaning.**
-- [x] Keyboard navigation. World-menu disclosure is keyboard-traversable; chrome keys no longer fire spatial shortcuts. Evidence: E404-S22. Remaining S22 rows stay open.
+- [x] Keyboard navigation. World-menu disclosure is keyboard-traversable; chrome keys no longer fire spatial shortcuts. Evidence: E404-S22.
 
 - [x] Visible focus. Global 3px focus ring is directly browser-verified on keyboard-traversed world-menu controls. Evidence: E404-S22.
 - [x] Deterministic accessible names. Active Hero controls, canvas, world-menu items, and settings controls have non-empty computed accessible names in Chromium. Evidence: E404-S22C.
