@@ -179,7 +179,7 @@ export function deriveMachineCameraSpec({
     resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW
     || resolvedMode === MACHINE_CAMERA_MODE.RETURN_TO_WORLD
   ) {
-    distance *= finitePositive(responsive.worldOverviewDistanceMultiplier, 1);
+    distance *= Math.max(0.1, finite(responsive.worldOverviewDistanceMultiplier, 1));
   }
 
   let pitch = resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
