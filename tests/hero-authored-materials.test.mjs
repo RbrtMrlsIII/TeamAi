@@ -5,6 +5,7 @@ import {
   authoredRingMaterial,
   authoredSeatShellMaterial,
   authoredSeatInsetMaterial,
+  authoredHeroMaterialSet,
   HERO_AUTHORED_MATERIAL_ROLES,
 } from '../frontend/spatial/hero-authored-materials.js';
 import fs from 'node:fs';
@@ -36,6 +37,34 @@ test('Issue #88 material roles are explicit and pure', () => {
   assert.ok(inset.color[0] < shell.color[0]);
 });
 
+
+test('full renderer material set is derived from authored theme roles', () => {
+  const light = mapHeroThemeLighting({ themeMode: 'light', density: 'default', signal: 0.8 });
+  const dark = mapHeroThemeLighting({ themeMode: 'dark', density: 'default', signal: 0.8 });
+  const lightSet = authoredHeroMaterialSet(light);
+  const darkSet = authoredHeroMaterialSet(dark);
+
+  assert.deepEqual(Object.keys(lightSet), [
+    'metal', 'metal2', 'glass', 'energy', 'trace',
+    'workspaceRing', 'seatShell', 'seatShellInset',
+  ]);
+  assert.equal(lightSet.metal.role, 'workspaceRing');
+  assert.equal(lightSet.seatShell.role, 'seatShell');
+  assert.equal(lightSet.seatShellInset.role, 'seatShellInset');
+  assert.equal(lightSet.metal2.role, 'secondaryStructure');
+  assert.equal(lightSet.glass.role, 'glassSurface');
+  assert.equal(lightSet.energy.role, 'energySignal');
+  assert.equal(lightSet.trace.role, 'signalTrace');
+  assert.notDeepEqual(lightSet, darkSet);
+
+  for (const material of Object.values(lightSet)) {
+    assert.ok(material.rough >= 0 && material.rough <= 1);
+    assert.equal(material.color.length, 3);
+    assert.equal(material.spec.length, 3);
+    assert.ok(material.emit >= 0 && material.emit <= 1);
+  }
+});
+
 test('Light and Dark material families remain distinguishable', () => {
   const light = mapHeroThemeLighting({ themeMode: 'light' });
   const dark = mapHeroThemeLighting({ themeMode: 'dark' });
@@ -51,6 +80,11 @@ test('canonical machine renderer owns authored-material consumption', async () =
   assert.match(renderer, /authoredSeatShellMaterial/);
   assert.match(renderer, /authoredSeatInsetMaterial/);
   assert.match(renderer, /authoredRingMaterial/);
+  assert.match(renderer, /authoredHeroMaterialSet/);
+  assert.match(renderer, /activeHeroMaterials/);
+  assert.doesNotMatch(renderer, /const RING_MATERIALS/);
+  const rendererSource = await fs.promises.readFile(path.join(process.cwd(), 'frontend/spatial/machine-world-renderer.js'), 'utf8');
+  assert.equal(rendererSource, renderer);
   assert.equal(authoredSource, authoredPublic);
   assert.match(renderer, /gl.drawArrays/);
   assert.doesNotMatch(heroFlex, /gl\.createShader|gl\.createProgram|gl\.drawArrays/);
