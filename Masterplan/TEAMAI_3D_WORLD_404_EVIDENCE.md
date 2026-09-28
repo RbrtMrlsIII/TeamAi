@@ -662,3 +662,33 @@ That keeps the PR body understandable without turning it into a second 476-row e
 - No Firebase/Firestore/auth/scheduler/commerce authority is introduced.
 
 **Status:** IMPLEMENTED. Exact-head CI on this head is the repository-verification vehicle. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
+### E404-S22B — Accessibility visible focus
+
+**Claim:** The live Hero public controls retain a visible keyboard focus indicator, including the keyboard-traversed world-menu disclosure items. This closes the S22 Visible focus row at the repository-verification level only.
+
+**Primary implementation**
+- `public/hero.css` — global `:focus-visible` rule for links, buttons, form controls, and tabindex surfaces.
+- `public/hero-accessibility.js` — keyboard world-menu traversal/focus owner.
+
+**Fresh exact-head proof — 2026-09-28**
+- head: `3e08cb71232e40afcb9e6035db97d2c690eb4a07`
+- Canonical Browser: run `36368733995` — **PASS**
+- Playwright: **79 passed / 4 skipped**
+- The S22 keyboard-navigation test directly verified the first two keyboard-traversed world-menu buttons expose a solid **3px** focus outline and match `:focus-visible`.
+- The baseline accessibility smoke also continues to prove keyboard focus is visible on the initial Tab target.
+- Browser artifact: `browser-verification-3e08cb71232e40afcb9e6035db97d2c690eb4a07`, artifact ID `10948766610`, SHA-256 `4bb63204a3559e4468548bad014d6ca22efbb9c7c29fbaa519aec51bea250a68`.
+
+**Supporting repository proof**
+- `tests/e2e/hero.spec.ts` — exact browser assertion for focus ring style and `:focus-visible` on keyboard menu items.
+- `tests/hero-accessibility.test.mjs` — source contract requiring the public Hero `:focus-visible` rule, 3px outline, and offset.
+
+**Trial/error note**
+- The prior exact-head Browser run on `5f6eace...` failed because the first newly added assertion still called nonexistent Playwright `toEvaluate`. This was classified as a test defect, not a product defect. The corrective head `3e08cb7...` removes the stale call and re-proves the full Browser suite green.
+
+**Boundary**
+- This row proves visibility of focus, not complete accessibility. Deterministic naming, non-color meaning, broader announcements/error semantics, reduced-motion equivalence, and accessibility smoke remain open S22 rows.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
