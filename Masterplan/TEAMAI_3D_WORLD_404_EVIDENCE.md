@@ -664,6 +664,39 @@ That keeps the PR body understandable without turning it into a second 476-row e
 **Status:** IMPLEMENTED. Exact-head CI on this head is the repository-verification vehicle. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
 
 
+
+### E404-S22D — Accessibility state announcements
+
+**Claim:** The existing Hero state display is itself a live status region, so semantic state transitions are announced without a second accessibility event bus. This closes the S22 State announcements row at repository/browser verification level.
+
+**Implementation**
+- `public/index.html` — existing `#state-label` now carries `role="status"`, `aria-live="polite"`, and `aria-atomic="true"`.
+- `public/hero-flex.js` — existing `setState()` updates that same node through `updateLabels()`; no parallel state machine or announcement channel was added.
+
+**Fresh exact-head proof — 2026-09-28**
+- behavior head: `49ac0bc2da89d69eaab9072acabb1b60cc4e2125`
+- Canonical Browser run: `36370931490` — **PASS**
+- Playwright: **81 passed / 4 skipped**
+- S22 state-announcement test: **PASS**; it verified the live-region attributes and the state transition `IDLE → FOCUS → IDLE` using the real Start/Stop turn-loop controls.
+- S22 deterministic accessible names: **PASS**
+- S22 keyboard navigation: **PASS**
+- S22 accessibility baseline: **PASS**
+- Full-System run `36370931461`: **PASS**, **1,121 passed / 0 failed**, package create/verify **PASS** with 1,059 files.
+- Security run `36370931454`: **PASS**
+- Deep Security run `36370931458`: **PASS**
+- Governance run `36370931448`: **PASS**
+
+**Trial/error record**
+1. Initial state-announcement test asserted an accessible name on the `role=status` node. Chromium correctly returned an empty accessible name because the live region's job is to expose changed text, not to possess a separate naming layer. The assertion was removed; the live-region semantics and text-transition proof stayed intact.
+2. No production markup/state behavior was weakened to obtain green CI.
+
+**Boundary**
+- This row proves state-transition announcement semantics on the Hero surface only.
+- Error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and broader accessibility smoke remain open S22 rows.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
 ### E404-S22C — Accessibility deterministic accessible names
 
 **Claim:** Interactive controls that are actually exposed on the active Hero world surface have deterministic, non-empty computed accessible names. The test also checks the main 3D canvas, the world-menu action items, and the settings controls reached through the public menu.
