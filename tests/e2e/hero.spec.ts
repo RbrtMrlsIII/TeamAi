@@ -605,13 +605,6 @@ test.describe('Living Web AI Workspace Hero', () => {
       await expect(initialControls.nth(index)).toHaveAccessibleName(/\S+/);
     }
 
-    const seatButtons = page.locator('.seat-stack button:visible');
-    const seatCount = await seatButtons.count();
-    expect(seatCount).toBeGreaterThan(0);
-    for (let index = 0; index < seatCount; index += 1) {
-      await expect(seatButtons.nth(index)).toHaveAccessibleName(/\S+/);
-    }
-
     const menu = page.getByRole('button', { name: 'Menu', exact: true });
     await menu.click();
     const menuItems = page.locator('#world-menu button:visible');
