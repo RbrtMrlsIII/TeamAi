@@ -2,6 +2,10 @@
 
 **Role:** execution policy only. Product meaning belongs to `Product_Law/PRODUCT_LAW.md`. Procedures belong to `skills/**/SKILL.md`. Current slice belongs to `Masterplan/NEXT_SLICES.md`.
 
+## 2026-09-28 029 spatial continuation
+
+PR #404 is merged historical spatial provenance. PR #424 is the active bounded 029 spatial continuation vehicle and remains Draft while its declared proof target and canonical synchronization requirements are satisfied. This continuation does not replace the global current-slice authority in `Masterplan/NEXT_SLICES.md` and does not move backend/runtime authority into the renderer.
+
 ## 2026-09-21 spatial PR migration checkpoint
 
 PR #398 is the reviewed 029 structural baseline merged into `main`. Current production-data/runtime work continues under Issue #401 / PR #402 on `backend/030-production-runtime-evidence`. It was created from exact PR #397 head `23a83ae166f0983b598910d616b1203ebf600096`; #397 is closed and historical. The active spatial renderer ownership is now `frontend/spatial/machine-world-renderer.js` → `public/machine-world-renderer.js`, while `public/hero-flex.js` remains the controller boundary.
