@@ -69,10 +69,42 @@ Exit: root inheritance is explicit, traceable, and enforceable across the entire
 - [x] Activation storyboard is treated as a visual/mechanical reference, not Product Law or a numeric capacity authority.
 - [x] Storyboard reference shows 8 inner pods, while the canonical 029 machine supports 1–10 durable Seat slots / 10 maximum presentation modules; this is a documented reference-vs-product-capacity discrepancy, not a reason to hard-code 8.
 - [x] Storyboard names four specialized outer mechanisms (telescope, fin deployment, rotating core analysis, sensor array); S7 V4 now maps all four facility destinations to authored machine grammars and first-class payload surfaces.
-- [x] Storyboard timestamps are panel labels only; no video-specific timing is inferred because no video asset is part of the current project evidence.
+- [x] The reference video asset is present in the repository at `assets/3D_Vision/hailuo.mp4`; it remains visual/mechanical reference material only, not Product Law, semantic authority, numeric capacity authority, or runtime proof.
+- [x] Storyboard/video timestamps are used only as visual sequencing cues; no implementation timing is inferred from them.
 - [x] White studio/cinematic lighting, blue/white/orange energy, metallic/glass surfaces, and holographic blueprint cues are treated as visual inputs to S22-S29, subordinate to the single Product Law theme root.
 - [x] During S7, map each specialized outer module to a real semantic/product owner and replace placeholder silhouettes without creating a second facility hierarchy.
-- [ ] During S33/human acceptance, verify that the final world can express the reference composition at the intended seat population without overriding the canonical 1–10 capacity model.
+- [ ] During S2/S3/S5/S7/S10 construction and again during S32 human acceptance, verify that the world progressively expresses the reference composition at the intended seat population without overriding the canonical 1–10 capacity model.
+
+### A4.1. Visual embodiment acceptance contract
+**Purpose:** make the real visual target a first-class acceptance layer over the existing S0-S10 machine roots. This is not a new geometry or presentation authority. It is the acceptance contract for whether the existing machine architecture has been physically embodied instead of merely represented by primitives.
+
+- [ ] **Central working core:** the center reads as a fabricated, layered machine with a recognizable outer housing, receiving/work surface, inner chamber, concentric mechanisms, ports, and physically connected subsystems.
+- [ ] **Compact pod identity:** each closed Seat pod reads as a small self-contained machine module with housing, collar, chamber, articulation, payload bay/surface, connection interfaces, and status location, not as a box/circle marker.
+- [ ] **Physical attachment:** pods are visibly grounded into their parent mechanical structure through collars, mounts, interfaces, or equivalent authored attachment geometry; no required machine component floats without a physical relationship.
+- [ ] **Mechanical layering:** shell seams, panel breaks, collars, recesses, joints, actuator/hinge cues, internal layers, and connection points are authored where the reference direction calls for mechanical depth. Detail must be geometry/material structure, not only color or glow.
+- [ ] **Nested subsystem relationship:** divisions are visually housed by or mechanically associated with their parent Pod so that entering/focusing a Pod reveals a machine within a machine rather than independent circles pushed outward from the parent.
+- [ ] **True Pod transformation:** OPENING/OPEN changes the parent Pod itself through articulated shell/collar/chamber/payload motion, while children continue to use the existing semantic expansion paths and clearance ownership.
+- [ ] **Topology embodiment:** ports and corridors terminate on believable physical attachment surfaces; semantic edges are not accepted as free-floating lines with no machine anchor.
+- [ ] **Specialized outer silhouettes:** telescope, fin/structural deployment, rotating analysis core, and sensor/communication machinery remain visually distinct before any lighting, energy, or hologram treatment.
+- [ ] **Camera intimacy:** POD_FOCUS and EXPANSION_FOLLOW frame the actual small Pod and its revealed internals at a close, subject-relative scale; a global minimum camera radius must not prevent intimate focus.
+- [ ] **Reference composition:** overview composition preserves the canonical core + compact inner-module field + four differentiated outer-machine families while allowing the product's 1–10 Seat capacity.
+- [ ] **Visual proof:** machine-identity acceptance is supported by exact-head browser captures or equivalent rendered artifacts for overview, Pod focus, Pod opening/expansion, and specialized-facility states. Source checkboxes alone cannot close this contract.
+- [ ] **No hollow green-path acceptance:** a slice fails this gate when its required visual identity is provided mainly by boxes, circles, floating markers, empty shells, coordinate offsets, or effect colors rather than authored machine structure.
+
+**Visual-first dependency rule:** G2 Physical machine completeness and the S2/S3/S5/S7/S10 visual embodiment gates must materially pass before S24 Materials/lighting, S25 Holograms/blueprints, S26 Ambient environment, or final S9 electricity/signal polish may be used to declare the world visually complete. Effects may be used only as temporary diagnostics or minimal state affordances while geometry is under construction.
+
+**Exit:** the machine is visibly constructed before it is visually decorated.
+
+### A4.2. Reference-first construction order
+1. **S2/S3 geometry:** core and compact Pods acquire complete fabricated bodies, internal layers, interfaces, and physical attachments.
+2. **S5 mechanics:** the parent Pod physically opens/reveals/extends/retracts; child divisions remain payload-driven and clearance-safe.
+3. **S7 machinery:** the four specialized outer facilities read as different machines by silhouette and mechanism.
+4. **S8 topology embodiment:** routes, ports, and corridors have physical endpoints and believable attachments.
+5. **S10 camera:** focus enters the machine at subject-relative scale and follows the actual moving assembly.
+6. **S23 responsive framing:** the same machine remains legible across the declared viewport tiers.
+7. **Only then:** S24 materials/lighting, S25 holographic payloads, S26 environment, and final S9 effect polish deepen the presentation.
+
+Any later visual slice that exposes a structural deficiency must return the deficiency to the owning S2-S10 root instead of masking it with effects.
 
 ### A4. Active geometry discrepancy
 - [x] Current full-division radial offset is approximately 2.948 for the current Pod dimension.
@@ -107,15 +139,15 @@ This is the expanded readiness ledger for S0–S24. It is not a second roadmap. 
 |---|---|---|---|---|
 | S0 | CLOSED | Product Law + Masterplan baseline freeze | Structural machine consequences visible | Historical provenance remains immutable |
 | S1 | PARTIAL | Root contracts + S9/S28/S29 partition | No separate user mode | State/effect projection ownership must close |
-| S2 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Core assembly authority | Core rendered in machine world | Formal acceptance and geometry/runtime gates |
-| S3 | IMPLEMENTED / REPOSITORY-VERIFIED | Pod assembly | 1–10-seat presentation | Integrated acceptance |
-| S4 | IMPLEMENTED / REPOSITORY-VERIFIED | Division assembly/presentation | Focused division presentation | Exact-head spatial acceptance |
-| S5 | IMPLEMENTED / REPOSITORY-VERIFIED | Expansion mechanism + authored geometry | Expansion is observable | Exact-head safety package |
+| S2 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Core assembly authority | Core rendered in machine world | Physical-machine embodiment + formal acceptance |
+| S3 | IMPLEMENTED / REPOSITORY-VERIFIED | Pod assembly | 1–10-seat presentation | Compact machine embodiment + integrated acceptance |
+| S4 | IMPLEMENTED / REPOSITORY-VERIFIED | Division assembly/presentation | Focused division presentation | Nested payload embodiment + exact-head spatial acceptance |
+| S5 | IMPLEMENTED / REPOSITORY-VERIFIED | Expansion mechanism + authored geometry | Expansion is observable | True parent-Pod transformation + exact-head safety package |
 | S6 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility assembly owners | Facilities are discoverable/presented | Cross-feature runtime acceptance |
-| S7 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility machinery owners | Specialized outer machines render | World-wide spatial validation |
-| S8 | IMPLEMENTED / REPOSITORY-VERIFIED | Machine topology | Routes/edges render | Final geometry/topology proof |
-| S9 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Signal projection over S8 | Signal/state effects render | State/effect ownership + formal exit |
-| S10 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Camera authority | World/pod/division/facility framing | Continuous travel + final camera acceptance |
+| S7 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility machinery owners | Specialized outer machines render | Mechanism/silhouette differentiation + world-wide spatial validation |
+| S8 | IMPLEMENTED / REPOSITORY-VERIFIED | Machine topology | Routes/edges render | Physical endpoint/attachment embodiment + final geometry/topology proof |
+| S9 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Signal projection over S8 | Signal/state effects render | State/effect ownership + formal exit after geometry-first gate |
+| S10 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Camera authority | World/pod/division/facility framing | Subject-relative intimacy + continuous travel + final camera acceptance |
 | S11 | BROWSER/REPOSITORY-VERIFIED | Guest machine + auth handoff | Ten-seat guest presentation, locked discovery | Real Firebase auth |
 | S12 | PARTIAL | Backend read-model seam; Firebase/Firestore external | Private context only from supplied ready read model | Live durable identity/state proof |
 | S13 | READ-MODEL VERIFIED / LIVE DATA UNPROVEN | Workspace runtime read model | Guest hides workplace/project/team context | Live backend ingress + authorization/entitlement |
@@ -198,7 +230,15 @@ Exit: every physical system has one explicit owner.
 - [ ] Receive/absorb/reflect/handoff states.
 - [ ] Core camera subject.
 - [ ] Geometry envelope verification.
-Exit: center is an authored machine assembly.
+
+### Visual embodiment gate
+- [ ] Core silhouette is visibly layered from outer shell → chamber → inner mechanism instead of one dominant primitive.
+- [ ] Receiving/work surfaces are physically integrated into the core assembly and visually readable from the overview and core-focus camera.
+- [ ] Core ports have visible attachment mouths/interfaces and terminate into real machine geometry.
+- [ ] Internal concentric mechanisms have depth, nesting, and mechanical separation that remain legible without emissive effects.
+- [ ] The core remains the visual working center when Pods are present; surrounding modules read as attached/served by the core rather than independently floating around it.
+
+Exit: center is an authored machine assembly **and** passes the visual core gate before downstream effect polish.
 
 ## E. S3 — Pod assembly reconstruction
 **Evidence:** E404-S3
@@ -214,7 +254,15 @@ Exit: center is an authored machine assembly.
 - [x] 1–10 population support.
 - [x] Maximum-density verification.
 - [x] Responsive density model.
-Exit: Pods are true assemblies and safely replicable.
+
+### Visual embodiment gate
+- [ ] Closed Pod silhouette reads as a compact manufactured module with a coherent outer housing, collar, chamber, articulation, payload area, and interfaces.
+- [ ] Pod mounting/attachment visibly joins the Pod to the canonical ring/core structure; required pieces do not hover at arbitrary offsets.
+- [ ] Internal chamber/payload layers are spatially nested and become more visible when the Pod is focused/opened.
+- [ ] Pod proportions support the intended reference feel: compact, dense, mechanical, and individually distinguishable within the larger machine.
+- [ ] A focused Pod does not visually collapse into generic primitives even before materials or energy effects are applied.
+
+Exit: Pods are true assemblies and safely replicable **with visible mechanical completeness still separately required**.
 
 ## F. S4 — Division system reconstruction
 **Evidence:** E404-S4 + E404-GEOM
@@ -232,7 +280,14 @@ Exit: Pods are true assemblies and safely replicable.
 - [x] Stable division identity.
 - [x] Geometry-aware ports.
 - [x] Geometry-aware clearance.
-Exit: divisions are subsystems, not scaled primitives.
+
+### Visual embodiment gate
+- [ ] Each division has a payload shape/attachment that communicates a real subsystem relationship with its parent Pod.
+- [ ] Division attachment geometry visibly begins from a parent interface rather than appearing as a detached object translated outward.
+- [ ] Distinct semantic divisions remain visually distinguishable through geometry/layout, not only labels or color.
+- [ ] Expansion reveals the division as a subordinate machine subsystem while preserving the parent Pod's mechanical identity.
+
+Exit: divisions are subsystems, not scaled primitives **and not detached markers**.
 
 ## G. S5 — Expansion mechanisms
 **Evidence:** E404-S5 + E404-GEOM
@@ -249,7 +304,16 @@ Exit: divisions are subsystems, not scaled primitives.
 - [x] Collision avoidance.
 - [x] Camera subject recomputation.
 - [x] Reduced-motion semantic equivalent.
-Exit: expansion is mechanically authored and spatially safe.
+
+### Visual embodiment gate
+- [ ] OPENING separates or transforms real Pod shell/collar/chamber/payload elements rather than moving only a child division outward.
+- [ ] Expansion reveals a meaningful internal machine state: seams open, nested layers separate, panels telescope/rotate, or equivalent authored mechanisms expose the payload.
+- [ ] Articulation has a visible mechanical axis/hinge/actuator relationship and remains attached to its parent.
+- [ ] Child divisions still travel along the existing payload-driven semantic path and retain the existing clearance/topology ownership.
+- [ ] CLOSING visibly restores the parent Pod assembly and does not leave orphaned or floating pieces.
+- [ ] Reduced motion preserves the same physical endpoint/state even when continuous articulation is collapsed.
+
+Exit: expansion is mechanically authored, spatially safe, and visibly transforms the parent Pod.
 
 ## H. S6 — Product facility assemblies
 **Evidence:** E404-S3/S4/S5 implementation ancestry and current facility tests
@@ -279,7 +343,16 @@ Exit: product facilities have deliberate physical destinations.
 - [x] Facility-specific camera subject.
 - [x] Facility-specific ports.
 - [x] Facility-specific clearance.
-Exit: outer world contains genuinely different machines.
+
+### Visual embodiment gate
+- [ ] Telescope facility reads as a telescoping/instrument assembly before any glow or effect is applied.
+- [ ] Fin/structural facility reads as an unfolding/deployment assembly with visible articulated panels or supports.
+- [ ] Rotational analysis facility reads as a mechanism organized around a rotating analytical core or nested instrument.
+- [ ] Sensor/communication facility reads as a directional sensing/communication machine with arm/dish/plate relationships.
+- [ ] Each specialized facility has a unique silhouette and at least one unmistakable mechanism cue that survives a neutral material pass.
+- [ ] Facility-specific machinery remains physically attached to its facility destination and does not become a collection of detached primitive markers.
+
+Exit: outer world contains genuinely different machines **that can be recognized without effects**.
 
 ## J. S8 — Topology and corridors
 **Evidence:** E404-S8
@@ -297,7 +370,15 @@ Exit: outer world contains genuinely different machines.
 - [x] Route continuity.
 - [x] Dynamic geometry rerouting.
 - [x] Independent topology verification.
-Exit: every meaningful connection is real in the semantic graph and physical route.
+
+### Physical topology embodiment gate
+- [ ] Every visually important route begins and ends on a visible port/interface or machine surface.
+- [ ] Corridor/conduit geometry has an authored thickness/profile instead of being represented only by abstract lines.
+- [ ] Core ↔ Pod, Pod ↔ Division, and Pod/Facility connections remain visibly attached during expansion and camera travel.
+- [ ] No required semantic edge is rendered as a free-floating visual path with no physical endpoint.
+- [ ] Dynamic rerouting preserves physical plausibility as well as semantic route continuity.
+
+Exit: every meaningful connection is real in the semantic graph, physical route, **and visible machine attachment**.
 
 ## K. S9 — Electricity / signal
 **Evidence:** E404-S9
@@ -314,6 +395,8 @@ Exit: every meaningful connection is real in the semantic graph and physical rou
 - [ ] Blocked/error.
 - [ ] Reduced-motion signal state.
 - [ ] Remove visual paths without semantic edges.
+**Ordering note:** final electricity/signal visual breadth is intentionally downstream of A4.1 and the S2/S3/S7/S8/S10 visual embodiment gates. Minimal state cues may remain during construction, but energy effects must not be used to compensate for missing geometry, attachment, or mechanical behavior.
+
 Exit: energy flow is a projection of the declared machine graph.
 
 ## L. S10 — Camera/navigation
@@ -332,7 +415,17 @@ Exit: energy flow is a projection of the declared machine graph.
 - [ ] Semantic subject identity.
 - [ ] Subject envelope follows expanded geometry.
 - [ ] Retired camera identifiers remain retired.
-Exit: camera movement is spatially meaningful and payload-aware.
+
+### Visual camera gate
+- [ ] WORLD_OVERVIEW establishes a readable machine composition with the core, compact inner Pods, and four specialized outer-machine families all legible as physical assemblies.
+- [ ] POD_FOCUS enters the actual Pod scale instead of remaining at a world-level distance; small Pods materially increase in screen-space presence.
+- [ ] EXPANSION_FOLLOW keeps the opening Pod and its revealed internals framed throughout the physical transformation.
+- [ ] The camera target follows the moving authored subject/envelope rather than a stale center point or arbitrary coordinate.
+- [ ] Parent/child transitions feel spatially continuous: approach → focus → open → reveal → close → return, with no visual teleporting.
+- [ ] Responsive camera adaptation preserves this intimacy at compact/phone tiers without changing semantic identity.
+- [ ] Reduced motion preserves the same subject, endpoint, and composition even when travel is compressed.
+
+Exit: camera movement is spatially meaningful, payload-aware, **and intimate enough to expose the authored machine detail**.
 
 ## M. S11-S21 — Inheritance contract for product/runtime slices
 **Every S11-S21 slice inherits S0-S10. A later feature may extend the machine but may not replace its scene grammar, assembly ownership, topology, signal model, or semantic camera contracts.**
@@ -508,13 +601,15 @@ Exit: machine is operable without mouse/color/animation dependence within the de
 - [x] Maximum-density 10-seat readability stress acceptance. Exact-head Browser proof sets 10 Seats before measurement and the final-pose projection verifies the 32 px phone Seat-center separation guard while preserving the desktop/compact guards. Evidence: E404-S23A.
 - [x] Touch interaction. Chromium exercises the canvas touch-pointer orbit path and proves navigation state changes; physical-device acceptance is still open. Evidence: E404-S23A.
 - [x] Reduced-motion interaction. Reduced-motion state retains the responsive tier and Hero semantic state; broader reduced-motion equivalence is governed by E404-S22H.
+- [ ] Visual embodiment survives every declared tier: Pods remain attached/recognizable, facility silhouettes remain distinct, and focus still reaches Pod scale rather than defaulting to a distant world view.
 
-**Current status:** IMPLEMENTED → **REPOSITORY-VERIFIED for the repository-level S23 responsive density/readability contract**. Responsive classification, camera adaptation, panel containment, measured Pod/Facility readability, maximum-density Seat spacing, touch/reduced-motion execution, and Browser coverage are green. Physical-device touch acceptance remains open. Evidence: E404-S23A.
+**Current status:** IMPLEMENTED → **REPOSITORY-VERIFIED for the repository-level S23 responsive density/readability contract**. Final visual acceptance remains open until the A4.1/S2/S3/S5/S7/S10 visual gates are demonstrated across the declared tiers. Responsive classification, camera adaptation, panel containment, measured Pod/Facility readability, maximum-density Seat spacing, touch/reduced-motion execution, and Browser coverage are green. Physical-device touch acceptance remains open. Evidence: E404-S23A.
 
 Exit: phone is a designed machine view.
 ## Z. S24 — Materials / lighting
 **Inherited roots: S0-S10. Theme authority: Product Law canonical unified theme root.**
-**Current status:** INTEGRATION IN PROGRESS on #424. Renderer-local `RING_MATERIALS` is retired; renderer material aliases now derive from the authored theme family. Formal completion remains open until fresh exact-head CI/browser proof and visual acceptance.
+**Current status:** INTEGRATION IN PROGRESS on #424, but further S24 breadth is **intentionally gated behind the visual embodiment contract**. Renderer-local `RING_MATERIALS` is retired; renderer material aliases derive from the authored theme family. The existing shader checkpoint may remain as implementation infrastructure, but it is not permitted to declare visual completion while the machine is still visually skeletal.
+- [ ] **Upstream visual gate passed.** S2/S3/S5/S7/S8/S10 visual embodiment gates are materially accepted before additional lighting breadth.
 - [ ] Light-skeomorphic environment. The current world background/atmosphere remains separately governed and is not falsely marked complete by material-role work.
 - [x] Primary structural material.
 - [x] Secondary machinery material.
@@ -536,6 +631,8 @@ Exit: materials reinforce hierarchy and state without creating a second visual o
 - [ ] Labels.
 - [ ] State/status indicators.
 - [ ] Payload-specific detail.
+**Dependency note:** holograms may clarify an already-authored payload, but they must not be used to make empty geometry appear structurally complete.
+
 Exit: machine surfaces communicate product meaning.
 
 ## AB. S26 — Ambient environment
@@ -547,7 +644,9 @@ Exit: machine surfaces communicate product meaning.
 - [ ] Ambient motion.
 - [ ] State-aware ambient intensity.
 - [ ] No ambient effect used as runtime proof.
-Exit: environment supports machine focus.
+- [ ] Ambient depth never substitutes for missing mechanical depth, attachment, or camera focus.
+
+Exit: environment supports machine focus without masking structural gaps.
 
 ## AC. S27 — Performance / resource discipline
 **Inherited roots: S0-S10. Measure the full inherited machine, not merely cosmetic effects.**
@@ -597,7 +696,10 @@ Exit: one machine grammar spans the product.
 - [ ] Turn → semantic signal.
 - [ ] Handoff → continuity.
 - [ ] Continuation → fresh turn.
-Exit: major feature classes behave consistently.
+- [ ] Visual choreography is only considered complete when the underlying mechanical transition is visible; highlight/glow/particle changes cannot stand in for missing deployment, reveal, or camera travel.
+- [ ] Focused transitions preserve the reference language of approach → opening → reveal → settle where the feature is mechanically expandable.
+
+Exit: major feature classes behave consistently over the real machine, not over effect-only stand-ins.
 
 ## AF. S30 — Exact-head repository verification
 **Evidence:** E404-CI
@@ -613,7 +715,14 @@ Exit: major feature classes behave consistently.
 - [ ] Accessibility proof.
 - [ ] Stale-reference audit.
 - [ ] No validator weakening.
-Exit: all claims are exact-head grounded.
+- [ ] Exact-head overview capture showing the whole machine composition.
+- [ ] Exact-head Pod-focus capture showing a small Pod at intimate subject scale.
+- [ ] Exact-head Pod-opening/expansion capture showing the parent Pod physically transforming and revealing internals.
+- [ ] Exact-head specialized-facility capture showing distinct machinery silhouettes before effect treatment.
+- [ ] Exact-head topology capture showing physical route endpoints/attachments.
+- [ ] Exact-head comparison notes record structural visual gaps separately from material/lighting gaps.
+
+Exit: all claims are exact-head grounded, including the visual embodiment claims.
 
 ## AG. S31 — Runtime / deployment reconciliation
 - [ ] Re-check #402 current state.
@@ -640,9 +749,17 @@ Exit: deployed presentation matches actual runtime truth.
 - [ ] Loading/recovery.
 - [ ] Accessibility.
 - [ ] Reduced motion.
-Exit: authorized human accepts the integrated machine.
+- [ ] Reference fidelity: central working core, compact inner Pods, four distinct outer machines, layered mechanical depth.
+- [ ] Pod focus feels like entering a smaller machine, not zooming toward a floating primitive.
+- [ ] Pod expansion visibly opens/reveals the parent machine before or together with child division movement.
+- [ ] Camera remains part of the interaction choreography during focus and expansion.
+- [ ] Visual review is performed before judging lighting, electricity, holograms, particles, or cinematic polish.
+
+Exit: authorized human accepts the integrated machine **as a physical visual system before decorative effects are judged**.
 
 ## AI. S33 — ProMax polish
+**Prerequisite:** G2 Physical machine completeness and the A4.1 visual embodiment contract must already be materially accepted. ProMax polish is not a rescue layer for hollow, floating, or non-transforming geometry.
+
 - [ ] Silhouette refinement.
 - [ ] Mechanical micro-motion.
 - [ ] Material refinement.
@@ -713,6 +830,10 @@ Exit: polish improves a correct machine.
 - [ ] G8 Human acceptance.
 - [ ] G9 ProMax polish.
 
+**Gate definitions for the visual-first reconstruction:**  
+**G2 Physical machine completeness** means the world has authored machine bodies, layered internals, believable attachments, mechanical articulation, and payload relationships across the core, Pods, divisions, topology, and specialized facilities. A capability test passing is not enough.  
+**G6 Visual completeness** means the machine reads correctly at overview, focus, and transformation states before decorative treatment is judged. Materials, lighting, electricity, holograms, particles, and polish can amplify a complete machine but cannot satisfy missing physical embodiment.
+
 Evidence vocabulary: IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → RUNTIME-PROVEN → HUMAN-ACCEPTED
 
 ## AL. Hard constraints
@@ -724,8 +845,12 @@ Evidence vocabulary: IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → R
 - [ ] No facility forced into Seat hierarchy merely for convenience.
 - [ ] No universal fixed branch geometry.
 - [ ] No primitive scaling presented as the final machine mechanism.
-- [ ] No electricity before semantic topology.
+- [ ] No electricity before semantic topology **and before the upstream visual embodiment gate for final effect breadth**.
 - [ ] No visual effect treated as runtime proof.
+- [ ] No lighting/electricity/hologram/ambient pass may be used to close a structural visual gap owned by S2-S10.
+- [ ] No Pod/facility visual acceptance from boxes, circles, floating markers, empty shells, or coordinate offsets alone.
+- [ ] No camera acceptance while a global minimum distance prevents intimate Pod focus.
+- [ ] No expansion acceptance while the parent Pod remains visually static and only child divisions move outward.
 - [ ] No provider credentials in renderer/browser state.
 - [ ] No Firebase/Auth authority in renderer.
 - [ ] No scheduler authority in renderer.
