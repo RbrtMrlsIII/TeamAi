@@ -3,9 +3,9 @@
 ## 2026-09-28 S22 accessibility closure on #404
 
 - canonical main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head: `d2a62a3ce85ec5edfc7de9840e89994109114e47`
+- current #404 head: `8033adc2b1d8624c375240e0f7f0a50936b4d90a`
 - #404 remains OPEN / DRAFT and the sole 029 spatial implementation vehicle
-- branch relation: 363 commits ahead / 0 behind main at this reconciliation point
+- branch relation: 365 commits ahead / 0 behind main at this reconciliation point
 - global current program frontier remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
 - #404 does not absorb #401 backend authority
 - S22 Keyboard navigation: repository/browser-verified
@@ -18,13 +18,13 @@
 - S22 Return-to-parent: repository/browser-verified
 - S22 Reduced-motion semantic equivalence: repository/browser-verified
 - S22 Browser accessibility smoke: repository/browser-verified
-- Latest exact-head Browser proof on `9515f57b...`: **86 passed / 4 skipped**
-- Latest exact-head Full-System proof on `9515f57b...`: **1,122 passed / 0 failed**, package create/verify PASS, 1,059 files
+- Latest exact-head Browser proof on `8033adc2...`: **86 passed / 4 skipped**
+- Latest exact-head Full-System proof on `8033adc2...`: **1,122 passed / 0 failed**, package create/verify PASS, 1,059 files
 - Latest exact-head Security: PASS
 - Latest exact-head Deep Security: PASS
 - Latest exact-head Governance: PASS
-- Fresh Browser artifact ID: `10951336520`
-- Fresh Browser artifact digest: `sha256:50bcbcdb2d7d603af5561bec1dab36d080390cddff8be47d9ea04d3c9761e71b`
+- Fresh Browser artifact ID: `10951086804`
+- Fresh Browser artifact digest: `sha256:f38b0d83da75cfd8dadb472d8ca560e2fcdc6fee067dde2ffacfb355c893f16b`
 - S22 exit is repository/browser proof only. It does not establish live deployment, provider execution, production runtime truth, human acceptance, or 029 release authorization.
 - Next spatial slice after formal S22 closure: S23 Responsive machine.
 - Preserve #401, #412, #392, and #400 ownership boundaries.
