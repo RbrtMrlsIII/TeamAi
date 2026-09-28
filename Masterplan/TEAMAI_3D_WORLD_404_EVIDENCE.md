@@ -27,9 +27,17 @@ A higher state does not follow automatically from a lower one.
 
 > This anchor belongs to the merged PR #404 lineage. It must not be treated as current continuation proof. The successor PR must establish a fresh exact-head evidence record before new acceptance claims.
 
-## Latest validated spatial implementation anchor
+## Historical latest validated spatial implementation anchor
 
-- **latest validated spatial implementation head:** f4132eb5e3f6c5d730d698a6cbf6d72586e514cc
+- **latest validated spatial implementation head from the pre-continuation evidence ledger:** f4132eb5e3f6c5d730d698a6cbf6d72586e514cc
+
+## Current continuation evidence state
+
+- **Active vehicle:** PR #424 `frontend/029-spatial-world-continuation`
+- The opening #424 documentation commits are continuation routing/evidence reconciliation; the material-authority commits are the first source behavior change in this continuation.
+- Historical #404 evidence remains immutable provenance and must not be relabeled as #424 proof.
+- Fresh exact-head evidence is required after the S24 source/public change, including Governance, Full-System, Security, Deep Security, and Canonical Browser validation.
+
 - **main at that validation point:** 76da305f0ec3efb3d368b22fb70748f0051f4d15
 - **at that validation point:** #404 was **290 commits ahead / 0 behind**
 - **PR state:** OPEN / DRAFT / GitHub reports mergeable
