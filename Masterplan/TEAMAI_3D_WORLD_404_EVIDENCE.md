@@ -663,6 +663,42 @@ That keeps the PR body understandable without turning it into a second 476-row e
 
 **Status:** IMPLEMENTED. Exact-head CI on this head is the repository-verification vehicle. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
 
+
+### E404-S22C — Accessibility deterministic accessible names
+
+**Claim:** Interactive controls that are actually exposed on the active Hero world surface have deterministic, non-empty computed accessible names. The test also checks the main 3D canvas, the world-menu action items, and the settings controls reached through the public menu.
+
+**Fresh exact-head Browser proof**
+- behavior head: `bc4eb576d7079eb61257e2ee3cc1f9f09f9af2df`
+- Canonical Browser run: `36370243851` — **PASS**
+- Playwright: **80 passed / 4 skipped**
+- `#hero-canvas`: accessible name `Interactive 3D Web AI workspace`
+- visible active Hero controls: every matched visible button/link/form control had a non-empty computed accessible name
+- world-menu items: every visible menu button had a non-empty computed accessible name
+- Settings panel controls: every visible button/input/select reached through the world menu had a non-empty computed accessible name
+- Full-System run `36370243859`: **PASS**, project suite **1,121 passed / 0 failed**, package create/verify **PASS** with 1,059 files
+- Security run `36370243823`: **PASS**
+- Deep Security run `36370243827`: **PASS**
+- Governance run `36370243828`: **PASS**
+
+**Supporting implementation**
+- `public/index.html` provides the stable main-canvas label and world-navigation naming.
+- `public/hero-seat-stack.js` already assigns explicit labels to the legacy Seat-stack controls when that surface is exposed.
+- `public/hero-hierarchy-runtime.js` provides semantic accessible-name generators for hierarchy/ring subjects.
+- `public/hero-flex.js` keeps the semantic status name synchronized with the active hierarchy/ring focus state.
+
+**Trial/error record**
+1. First browser attempt `274fe102...` treated hidden legacy Seat-stack buttons as active and failed because that stack is intentionally `display:none` on the machine layer. Classified as test scope error.
+2. Second attempt failed because `menuItems.getByRole('button', { name: 'Settings' })` searched for a descendant button inside a button locator, so it could not match the actual menu action. Classified as test locator error.
+3. Corrected bounded census at `bc4eb576...` passed without changing production markup.
+
+**Boundary**
+- This closes deterministic naming at the repository/browser surface only.
+- State announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and broader accessibility smoke remain open S22 rows.
+- No backend/runtime/geometry authority moved.
+
+**Status:** IMPLEMENTED → REPOSITORY-VERIFIED. This does not imply LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, or 029 release authorization.
+
 ### E404-S22B — Accessibility visible focus
 
 **Claim:** The live Hero public controls retain a visible keyboard focus indicator, including the keyboard-traversed world-menu disclosure items. This closes the S22 Visible focus row at the repository-verification level only.
