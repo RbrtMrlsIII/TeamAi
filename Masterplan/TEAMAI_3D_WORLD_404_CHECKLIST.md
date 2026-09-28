@@ -11,7 +11,7 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 This checklist is the **status ledger**. It does not duplicate proof details.
 Detailed proof references, exact-head runs, geometry-history evidence, artifact hashes, and evidence-state boundaries are maintained in [TEAMAI_3D_WORLD_404_EVIDENCE.md](./TEAMAI_3D_WORLD_404_EVIDENCE.md).
 
-Use the evidence IDs in section-level notes below rather than creating one evidence record per checkbox. The PR #404 description is the newcomer-readable entry point and links back to this checklist and the evidence registry.
+Use the evidence IDs in section-level notes below rather than creating one evidence record per checkbox. The active successor PR #424 description is the newcomer-readable continuation entry point and links back to this checklist and the evidence registry; PR #404 is historical provenance.
 
 ## A. Verified starting-state diagnosis
 
@@ -98,6 +98,42 @@ Diagnosis: the earlier 0.148-unit radial-envelope discrepancy is closed. Current
 | S10 | Camera capability is repository-proven across semantic camera modes and subjects | **CAPABILITY PROVEN / FORMAL EXIT OPEN** |
 
 This reconciliation deliberately avoids promoting capability evidence into formal release completion. The remaining formal gaps are owned by their existing construction/acceptance boundaries rather than by S12.
+
+## A6. 2026-09-28 S0–S24 acceptance and authority alignment matrix
+
+This is the expanded readiness ledger for S0–S24. It is not a second roadmap. It records repository implementation, owning authority, real-browser visibility, and the next evidence boundary. The global current slice remains Issue #401 in `Masterplan/NEXT_SLICES.md`; #424 is the bounded 029 spatial continuation vehicle.
+
+| Slice | Repository state | Owning authority / source | Browser-visible state | Remaining boundary |
+|---|---|---|---|---|
+| S0 | CLOSED | Product Law + Masterplan baseline freeze | Structural machine consequences visible | Historical provenance remains immutable |
+| S1 | PARTIAL | Root contracts + S9/S28/S29 partition | No separate user mode | State/effect projection ownership must close |
+| S2 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Core assembly authority | Core rendered in machine world | Formal acceptance and geometry/runtime gates |
+| S3 | IMPLEMENTED / REPOSITORY-VERIFIED | Pod assembly | 1–10-seat presentation | Integrated acceptance |
+| S4 | IMPLEMENTED / REPOSITORY-VERIFIED | Division assembly/presentation | Focused division presentation | Exact-head spatial acceptance |
+| S5 | IMPLEMENTED / REPOSITORY-VERIFIED | Expansion mechanism + authored geometry | Expansion is observable | Exact-head safety package |
+| S6 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility assembly owners | Facilities are discoverable/presented | Cross-feature runtime acceptance |
+| S7 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility machinery owners | Specialized outer machines render | World-wide spatial validation |
+| S8 | IMPLEMENTED / REPOSITORY-VERIFIED | Machine topology | Routes/edges render | Final geometry/topology proof |
+| S9 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Signal projection over S8 | Signal/state effects render | State/effect ownership + formal exit |
+| S10 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Camera authority | World/pod/division/facility framing | Continuous travel + final camera acceptance |
+| S11 | BROWSER/REPOSITORY-VERIFIED | Guest machine + auth handoff | Ten-seat guest presentation, locked discovery | Real Firebase auth |
+| S12 | PARTIAL | Backend read-model seam; Firebase/Firestore external | Private context only from supplied ready read model | Live durable identity/state proof |
+| S13 | READ-MODEL VERIFIED / LIVE DATA UNPROVEN | Workspace runtime read model | Guest hides workplace/project/team context | Live backend ingress + authorization/entitlement |
+| S14 | IMPLEMENTED / EVIDENCE-BOUND | Team/Agents presentation contracts | Team surfaces discoverable | Real signed-in data |
+| S15 | IMPLEMENTED / EVIDENCE-BOUND | MCP/Capability boundary | Capability vocabulary discoverable | Trusted runtime/provider proof |
+| S16 | IMPLEMENTED / EVIDENCE-BOUND | #392 budget/handoff semantics | Controls are presented | Durable usage/handoff runtime proof |
+| S17 | IMPLEMENTED / EVIDENCE-BOUND | Task/evidence read-model seam | Metadata/status presented | Live authoritative data |
+| S18 | IMPLEMENTED / EVIDENCE-BOUND | Storage/artifact seam | Inventory states honest | Real artifact runtime proof |
+| S19 | IMPLEMENTED / EVIDENCE-BOUND | External commerce authority | Entitlement/purchase intent presented | Live billing/entitlement proof |
+| S20 | PARTIAL | Settings/control boundary | Settings/feature controls/return visible | Tree/Seat settings, Back, Logout |
+| S21 | REPOSITORY/BROWSER-VERIFIED | Recovery/error contracts | Loading/unavailable/retry/cancel/no-false-success | Production runtime failure proof |
+| S22 | REPOSITORY/BROWSER-VERIFIED | Canonical DOM accessibility | Guest/menu/status/focus/reduced-motion semantics | Physical-device/human acceptance; canvas direct tab focus remains limited |
+| S23 | REPOSITORY/BROWSER-VERIFIED | Responsive camera/density contracts | 1280×800, 820×1180, 390×844 matrix proven | Physical-device touch + final visual acceptance |
+| S24 | IMPLEMENTATION IN PROGRESS | Product Law theme root → lighting adapter → authored material family → renderer | Existing public browser proves rendering only, not this unmerged head | Fresh exact-head CI/browser proof + contrast/readability recheck |
+
+**Visibility invariant:** guest presentation capacity is not entitlement. Signed-in private Workplace/Project/Team/Seat/task/evidence/result state appears only from the complete backend-owned readiness/read-model contract. The public GitHub Pages browser does not currently prove a live Firebase session or durable Firestore state.
+
+**Cross-cutting invariant:** S22–S24 modify world expression over the established machine. They must not create a parallel geometry, semantic, topology, camera, authorization, entitlement, backend, provider, or deployment authority.
 
 ## B. S0 — Forensics and baseline freeze
 **Evidence:** E404-S0
@@ -455,7 +491,9 @@ Exit: failure states remain understandable.
 - [x] Return-to-parent. Leaf → parent → world Escape path is browser-verified, including final `HERO_WIDE / IDLE` restoration. Evidence: E404-S22G.
 - [x] Reduced-motion semantic equivalence. Reduced-motion browser proof preserves hierarchy snap/state semantics and the turn lifecycle. Evidence: E404-S22H.
 - [x] Browser accessibility smoke coverage. Canonical Hero-route smoke covers names, focus-visible, menu disclosure, blocked reasons, dialog Escape restoration, hierarchy backstack, reduced-motion state, and transaction error announcement. Evidence: E404-S22I.
-Exit: machine is operable without mouse/color/animation dependence.
+- [x] Guest/private-data visibility boundary. Guest remains discoverable/locked; private Workplace/Project/Team/Seat/task/evidence/result state is exposed only through the explicit ready backend read model. The current public browser presents the auth handoff surface but does not establish a live Firebase session.
+- [x] Canvas accessibility caveat recorded. The canvas has a deterministic accessible name but is not a keyboard tab stop; semantic controls/menu provide keyboard operation. Human acceptance remains the final accessibility authority.
+Exit: machine is operable without mouse/color/animation dependence within the declared semantic control surface.
 
 ## Y. S23 — Responsive machine
 **Inherited roots: S0-S10. Responsive changes may alter framing, density, and affordances, never semantic identity.**
@@ -476,17 +514,18 @@ Exit: machine is operable without mouse/color/animation dependence.
 Exit: phone is a designed machine view.
 ## Z. S24 — Materials / lighting
 **Inherited roots: S0-S10. Theme authority: Product Law canonical unified theme root.**
-- [ ] Light-skeomorphic environment.
-- [ ] Primary structural material.
-- [ ] Secondary machinery material.
-- [ ] Glass/translucency.
-- [ ] Energy material.
-- [ ] Holographic material.
-- [ ] Semantic emissive strength.
-- [ ] Shadow/depth separation.
-- [ ] Canonical theme bridge.
+**Current status:** INTEGRATION IN PROGRESS on #424. Renderer-local `RING_MATERIALS` is retired; renderer material aliases now derive from the authored theme family. Formal completion remains open until fresh exact-head CI/browser proof and visual acceptance.
+- [ ] Light-skeomorphic environment. The current world background/atmosphere remains separately governed and is not falsely marked complete by material-role work.
+- [x] Primary structural material.
+- [x] Secondary machinery material.
+- [x] Glass/translucency.
+- [x] Energy material.
+- [ ] Holographic material. S25 owns hologram behavior and payload-specific presentation.
+- [x] Semantic emissive strength.
+- [x] Shadow/depth separation.
+- [x] Canonical theme bridge. Document-root theme/density → lighting adapter → authored material set → canonical renderer; source/public mirrors are synchronized.
 - [ ] Dark-glass mode remains future-gated.
-Exit: materials reinforce hierarchy and state.
+Exit: materials reinforce hierarchy and state without creating a second visual or semantic authority.
 
 ## AA. S25 — Holograms / blueprints
 **Inherited roots: S0-S10. Payload and geometry remain semantic sources of truth.**
@@ -623,7 +662,7 @@ Exit: polish improves a correct machine.
 ## AJ. Documentation and cleanup alignment
 
 ### AJ1. Current-state routing cleanup
-- [x] Reconcile Product_Law/WIRING.md so #398 is historical baseline and #404 is current spatial execution vehicle.
+- [x] Reconcile Product_Law/WIRING.md so #398 is historical baseline, #404 is merged historical spatial provenance, and #424 is the active spatial continuation vehicle.
 - [x] Reconcile POLICY.md spatial migration checkpoint.
 - [x] Reconcile Masterplan/MASTERPLAN.md.
 - [x] Reconcile Masterplan/NEXT_SLICES.md.
@@ -640,7 +679,7 @@ Exit: polish improves a correct machine.
 - [x] This file remains the detailed execution checklist under Masterplan/.
 - [x] Masterplan/NEXT_SLICES.md remains the single current-frontier summary.
 - [x] No second current-slice checklist is created.
-- [x] PR #404 and Issue #405 are the sole spatial execution pair.
+- [x] PR #424 and Issue #405 are the active spatial execution pair; #404 is merged historical provenance.
 - [x] #396/#278 remain product/ledger authorities, not additional implementation vehicles.
 - [x] #402/#401 remain backend/runtime counterpart only.
 
@@ -677,8 +716,8 @@ Exit: polish improves a correct machine.
 Evidence vocabulary: IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → RUNTIME-PROVEN → HUMAN-ACCEPTED
 
 ## AL. Hard constraints
-- [ ] No second implementation PR for this scope.
-- [ ] No backend rewrite in #404.
+- [ ] No parallel competing implementation PR for the same active slice.
+- [ ] No backend rewrite in the active 029 spatial vehicle.
 - [ ] No fabricated production data.
 - [ ] No duplicate geometry authority.
 - [ ] No duplicate topology authority.
