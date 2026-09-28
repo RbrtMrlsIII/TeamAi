@@ -1206,9 +1206,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       .filter((part) => part.kind === 'inner-pod' && part.dimensions)
       .map((part) => Math.max(finite(part.dimensions.x), finite(part.dimensions.z)))
       .filter((value) => value > 0);
-    const facilitySpans = scene.parts
-      .filter((part) => part.kind === 'outer-housing' && part.dimensions)
-      .map((part) => Math.max(finite(part.dimensions.x), finite(part.dimensions.z)))
+    const facilitySpans = facilityAssemblies
+      .flatMap((assembly) => assembly.components || [])
+      .map((component) => Math.max(finite(component?.dimensions?.x), finite(component?.dimensions?.z)))
       .filter((value) => value > 0);
     const responsiveReadability = deriveMachineResponsiveReadability({
       responsive,

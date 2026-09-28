@@ -23,7 +23,7 @@ export const MACHINE_RESPONSIVE_DENSITY = Object.freeze({
   desktop: Object.freeze({
     mode: 'balanced',
     minProjectedSeatSpacingPx: 56,
-    minProjectedFeaturePx: 24,
+    minProjectedFeaturePx: 14,
   }),
   compact: Object.freeze({
     mode: 'compressed',

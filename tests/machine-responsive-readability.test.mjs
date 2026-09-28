@@ -31,7 +31,7 @@ test('S23 computes conservative screen-space density/readability for the 10-seat
     seatRingRadius: 8,
     seatCount: 10,
     podSpan: 1.34,
-    facilitySpan: 3.2,
+    facilitySpan: 0.48,
   });
 
   assert.equal(result.tier, MACHINE_RESPONSIVE_TIER.PHONE);
