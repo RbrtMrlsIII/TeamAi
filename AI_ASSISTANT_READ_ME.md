@@ -1,19 +1,22 @@
 # AI_ASSISTANT_READ_ME — current session boundary
 
-## 2026-09-28 S22 deterministic accessible names on #404
+## 2026-09-28 S22 state announcements on #404
 
 - current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head before this handoff reconciliation: `3c9351bc01baed3e106b4844efcce5a77e082162`
+- current #404 head before this handoff reconciliation: `121a22a9582228f1b8b6825a487a5e6849c753ad`
+- last behavior-changing S22 head: `49ac0bc2da89d69eaab9072acabb1b60cc4e2125`
 - global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
 - #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
-- S22 Keyboard navigation: repository-verified
+- S22 Keyboard navigation: repository/browser-verified
 - S22 Visible focus: repository/browser-verified
-- S22 Deterministic accessible names: repository/browser-verified at behavior head `bc4eb576d7079eb61257e2ee3cc1f9f09f9af2df`
-- Browser proof: **80 passed / 4 skipped**
-- Full-System proof on the same behavior head: **1,121 passed / 0 failed**, package create/verify PASS
-- The accessible-name test was intentionally scoped to active controls. Two intermediate failures were classified as test-contract defects, not product defects: hidden legacy Seat-stack buttons were counted although machine mode hides them; then a nested role locator searched for a descendant Settings button inside a button locator.
-- remaining S22 rows: state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
-- next 029 row: state announcements, starting with the existing transaction/accessibility semantic seam
+- S22 Deterministic accessible names: repository/browser-verified
+- S22 State announcements: repository/browser-verified
+- Browser proof at behavior head: **81 passed / 4 skipped**
+- Full-System proof: **1,121 passed / 0 failed**, package create/verify PASS
+- State announcements use the existing `#state-label` as `role=status aria-live=polite aria-atomic=true`; no second announcement bus was introduced
+- The first state-announcement test incorrectly expected a separate accessible name on the status node; that was classified as a test defect and removed
+- remaining S22 rows: error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
+- next 029 row: error / blocked reasons
 - no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
 
 ## 2026-09-26 Gate 3 operator-hierarchy blocker
