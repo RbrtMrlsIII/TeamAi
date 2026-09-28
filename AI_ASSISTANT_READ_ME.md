@@ -3,7 +3,7 @@
 ## 2026-09-28 S22 visible focus on #404
 
 - current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head: `5f4583b5d585350a2100f1ba2c361663392b2b56`
+- current #404 head before this handoff reconciliation: `3104bbe820f685249f90e4dadb67f17bff692254`
 - global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
 - #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
 - S22 Keyboard navigation is repository-verified
