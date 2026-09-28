@@ -132,3 +132,23 @@ test('S10 overhead camera remains world-targeted with a deterministic elevated p
   assert.equal(spec.bearing, 0.1);
   assert.deepEqual(spec.target, world.center);
 });
+
+
+test('S23 desktop world-overview scaling is isolated from focused cameras', () => {
+  const world = subject(0, 0, 8);
+  const worldSpec = deriveMachineCameraSpec({
+    cameraId: MACHINE_CAMERA_ID.WORLD,
+    mode: MACHINE_CAMERA_MODE.WORLD_OVERVIEW,
+    worldSubject: world,
+    viewport: { width: 1280, height: 800 },
+  });
+  const divisionSpec = deriveMachineCameraSpec({
+    cameraId: MACHINE_CAMERA_ID.DETAIL,
+    mode: MACHINE_CAMERA_MODE.DIVISION_FOCUS,
+    worldSubject: world,
+    divisionSubject: subject(2, 3, 0.6),
+    viewport: { width: 1280, height: 800 },
+  });
+  assert.ok(worldSpec.radius < 14.96);
+  assert.equal(divisionSpec.radius, 8);
+});
