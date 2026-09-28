@@ -1,7 +1,7 @@
 # PR #404 — Evidence Registry
 
 **Historical implementation vehicle:** PR #404 (merged 2026-09-28)  
-**Active continuation vehicle:** successor PR from post-#404 main  
+**Active continuation vehicle:** PR #424 frontend/029-spatial-world-continuation  
 **Governing issue:** #405  
 **Purpose:** one canonical evidence index for the 029 spatial reconstruction program.
 
