@@ -4,6 +4,10 @@
 
 The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are reusable procedures only; they are never a source of Product Law, permission, identity, scheduler, entitlement, durable-state, or merge authority.
 
+## 2026-09-28 029 spatial continuation routing
+
+The 029 spatial implementation lineage is PR #424 after merged PR #404. Skills remain procedural only: machine-builder and verification guidance may operate on the active continuation scope, but they do not become Product Law, geometry, semantic-state, backend/runtime, entitlement, provider, or merge authorities.
+
 ## Authority path
 
 `Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → owning Issue → PR → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
