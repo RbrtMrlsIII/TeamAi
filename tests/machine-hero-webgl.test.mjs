@@ -97,6 +97,19 @@ test('canonical renderer projects the authored Pod opening profile as real shell
   assert.match(podAssembly, /chamberTravel/);
   assert.match(podAssembly, /payloadTravel/);
 });
+
+test('canonical renderer projects the authored S2 core mechanical detail layer', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const coreAssembly = await readFile(new URL('../public/machine-core-assembly.js', import.meta.url), 'utf8');
+  assert.match(renderer, /mechanicalDetails/);
+  assert.match(renderer, /CORE_BRACE/);
+  assert.match(renderer, /machineWorldCoreMechanicalDetails/);
+  assert.match(renderer, /layered-rib-guard-v1/);
+  assert.match(coreAssembly, /MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V3'/);
+  assert.match(coreAssembly, /foundation-brace/);
+  assert.match(coreAssembly, /reactor-guard/);
+  assert.match(coreAssembly, /reactor-inner-housing/);
+});
 test('canonical renderer renders the S2 authored core assembly through one central-core owner', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /machine-core-assembly\.js/);
