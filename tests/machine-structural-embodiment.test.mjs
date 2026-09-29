@@ -55,7 +55,7 @@ test('S2-S10 compose into one structurally coherent 10-seat world', () => {
     adjacentSeatRadius: 5.05,
   });
   assert.equal(core.constructionSlice, 'S2');
-  assert.equal(core.subject.sourcePartIds.length, 19);
+  assert.equal(core.subject.sourcePartIds.length, core.components.length + core.mechanicalDetails.length);
 
   const seatOne = sceneClosed.byBranch.get('BRANCH-SEAT-01');
   assert.ok(seatOne);
