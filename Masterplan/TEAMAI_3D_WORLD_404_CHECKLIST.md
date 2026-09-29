@@ -735,6 +735,13 @@ Important discrepancy: S6's sourceModule field is a presentation reference and i
 
 Current Y0 result: **PARTIAL / OPEN**. The terminal-surface classifier is implemented and tested, the registry-level coverage is classified, S6 facility identity is aligned to the canonical Feature Registry ids, and the principal missing spatial-owner seams are named. Full L0→L5 closure remains outstanding.
 
+### Y0.7 Current gate state after exact-head verification
+
+- [x] Y1 isolated S2/S3 Browser proof passes on exact head 5a4a353df9fb15f7b64ab2cd6248a07361093507.
+- [x] S2-S10 repository integration proof passes through the existing authored unit contracts and the current structural composition test is advancing under exact-head CI.
+- [ ] Structural visual candidate still requires actual rendered review of S2/S3/S4/S7/S8/S10 together before S24 is treated as visually accepted.
+- [ ] Production Hero Three.js cutover remains downstream of fixed-state parity, performance/resource measurement, Browser proof, and rollback evidence.
+
 ### Y0.6 S6 identity alignment
 
 - [x] Every S6 facility id is a canonical Feature Registry product-feature id.
@@ -777,6 +784,7 @@ Required invariants:
 - [x] Choose and pin an exact Three.js version after repository/package/browser compatibility inspection: three@0.186.1.
 - [ ] Commit lockfile integrity and dependency provenance.
 - [x] Introduce exactly one scene adapter that consumes existing assembly descriptors without renaming semantic IDs: frontend/spatial/machine-three-scene-adapter.js.
+- [x] Browser-prove the Y1 S2/S3 adapter path on exact head 5a4a353df9fb15f7b64ab2cd6248a07361093507 (Run 36547501284, PASS).
 - [ ] Port reusable primitive factories to BufferGeometry / Mesh and preserve authored dimensions/subjects.
 - [x] Establish the first Y1 vertical proof with real S2 Core + one S3 Pod descriptors through the adapter in the isolated /spatial/machine-three-substrate-preview.html proof surface. Focused opening migration remains a later production-port boundary.
 - [ ] Port S4 divisions and S7 facilities using their existing descriptors and mechanical owners.

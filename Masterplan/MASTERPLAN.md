@@ -62,7 +62,7 @@ Y0 feature/leaf coverage
 → S32 human acceptance
 → S33 ProMax polish
 
-Y0 is the pre-spatial leaf-coverage gate that prevents late discovery of missing terminal controls/payloads. Y1 is a renderer-substrate migration gate, not a product or semantic hierarchy. The first adapter proof now exists against three@0.186.1 in an isolated /spatial preview. The raw WebGL implementation remains transition architecture until production fixed-state semantic/geometry parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence exist.
+Y0 is the pre-spatial leaf-coverage gate that prevents late discovery of missing terminal controls/payloads. Y1 is a renderer-substrate migration gate, not a product or semantic hierarchy. The first adapter proof now exists against three@0.186.1 in an isolated /spatial preview, and exact head 5a4a353 is Browser-verified. The raw WebGL implementation remains transition architecture until production fixed-state semantic/geometry parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence exist.
 
 ### Cross-session persistence requirement
 
