@@ -13,6 +13,11 @@ import {
   MACHINE_POD_SHELL_PROFILE,
   getMachinePodShellOutline,
 } from './machine-pod-profile.js';
+import {
+  getMachineSeatAuthorizationShieldOutline,
+  MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  resolveMachineSeatDivisionProfileShape,
+} from './machine-seat-division-profile.js';
 
 export const MACHINE_THREE_ADAPTER_ID = 'MACHINE-THREE-SCENE-ADAPTER';
 export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V2';
@@ -44,6 +49,13 @@ const DEFAULT_SHAPE = 'BOX';
 
 export function normalizeThreeShape({ shape = '', profile = '' } = {}) {
   const rawShape = String(shape || '').trim().toUpperCase();
+  const profileShape = resolveMachineSeatDivisionProfileShape({
+    profile,
+    fallbackShape: '',
+  });
+  if (profileShape === MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE) {
+    return profileShape;
+  }
   if (rawShape === 'TORUS') return 'TORUS';
   if (rawShape === 'CYL' || rawShape === 'CYLINDER') return 'CYLINDER';
   if (rawShape === 'SPH' || rawShape === 'SPHERE') return 'SPHERE';
@@ -192,9 +204,8 @@ function makeAuthoredMaterial(THREE, role, authored) {
   return material;
 }
 
-function buildPodShellGeometry(THREE, descriptor) {
+function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   const { x, y, z } = descriptor.dimensions;
-  const outline = getMachinePodShellOutline();
   let minX = Infinity;
   let maxX = -Infinity;
   let minZ = Infinity;
@@ -218,7 +229,7 @@ function buildPodShellGeometry(THREE, descriptor) {
     yy,
     (pz - outlineCenterZ) * scaleZ,
   ];
-  const pushTri = (aa, b, cc) => vertices.push(...aa, ...b, ...cc);
+  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
   const bottomCenter = [0, -halfY, 0];
   const topCenter = [0, halfY, 0];
   for (let index = 1; index < outline.length - 1; index += 1) {
@@ -256,10 +267,25 @@ function buildPodShellGeometry(THREE, descriptor) {
   return geometry;
 }
 
+function buildPodShellGeometry(THREE, descriptor) {
+  return buildExtrudedPolygonGeometry(THREE, descriptor, getMachinePodShellOutline());
+}
+
+function buildSeatAuthorizationShieldGeometry(THREE, descriptor) {
+  return buildExtrudedPolygonGeometry(
+    THREE,
+    descriptor,
+    getMachineSeatAuthorizationShieldOutline(),
+  );
+}
+
 export function buildThreeGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
   if (descriptor.shape === 'POD_SHELL') {
     return buildPodShellGeometry(THREE, descriptor);
+  }
+  if (descriptor.shape === MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE) {
+    return buildSeatAuthorizationShieldGeometry(THREE, descriptor);
   }
   const radius = Math.max(0.01, Math.max(x, z) * 0.5);
   if (descriptor.shape === 'TORUS') {
