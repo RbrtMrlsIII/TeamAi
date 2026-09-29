@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V4';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V5';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 const MACHINE_PROFILES = Object.freeze({
@@ -159,6 +159,44 @@ function localBasis(center) {
     radial: Math.hypot(center.x, center.z),
     outward: Object.freeze({ x: Math.cos(angle), z: Math.sin(angle) }),
     tangent: Object.freeze({ x: -Math.sin(angle), z: Math.cos(angle) }),
+  });
+}
+
+function radialBoundaryDistance(dimensions, angle) {
+  const halfX = Math.max(0.01, Math.abs(Number(dimensions?.x) || 0) * 0.5);
+  const halfZ = Math.max(0.01, Math.abs(Number(dimensions?.z) || 0) * 0.5);
+  const cosine = Math.abs(Math.cos(angle));
+  const sine = Math.abs(Math.sin(angle));
+  return 1 / (cosine / halfX + sine / halfZ);
+}
+
+function distance3D(a, b) {
+  return Math.hypot(
+    finite(a?.x) - finite(b?.x),
+    finite(a?.y) - finite(b?.y),
+    finite(a?.z) - finite(b?.z),
+  );
+}
+
+function physicalInterface(id, role, center, dimensions, rotationY, materialRole, metadata = {}) {
+  return Object.freeze({
+    id,
+    role,
+    shape: 'CUBE',
+    center: Object.freeze({
+      x: finite(center.x),
+      y: finite(center.y),
+      z: finite(center.z),
+    }),
+    dimensions: Object.freeze({
+      x: Math.max(0.06, finite(dimensions.x, 0.12)),
+      y: Math.max(0.06, finite(dimensions.y, 0.10)),
+      z: Math.max(0.06, finite(dimensions.z, 0.12)),
+    }),
+    rotationY: finite(rotationY),
+    materialRole,
+    ...metadata,
+    ...rootContext(id),
   });
 }
 
@@ -349,9 +387,10 @@ function deriveFacilityClearanceProfile(machine, obstacles = [], clearance = 0.1
 
 function machinePorts(assembly) {
   const center = assembly.outerHousing.center;
-  const angle = Math.atan2(center.z, center.x);
-  const radial = Math.hypot(center.x, center.z);
-  const outward = { x: Math.cos(angle), z: Math.sin(angle) };
+  const basis = localBasis(center);
+  const boundaryDistance = radialBoundaryDistance(assembly.outerHousing.dimensions, basis.angle);
+  const innerFace = basis.radial - boundaryDistance;
+  const outerFace = basis.radial + boundaryDistance;
   return Object.freeze([
     ...assembly.ports,
     Object.freeze({
@@ -359,9 +398,9 @@ function machinePorts(assembly) {
       facilityId: null,
       role: 'machine-core-input',
       point: Object.freeze({
-        x: center.x - outward.x * 0.72,
+        x: center.x + basis.outward.x * (innerFace - 0.06),
         y: center.y + 0.28,
-        z: center.z - outward.z * 0.72,
+        z: center.z + basis.outward.z * (innerFace - 0.06),
       }),
       radius: 0.10,
       ...rootContext(assembly.branchId + ':CORE-IN'),
@@ -371,14 +410,110 @@ function machinePorts(assembly) {
       facilityId: null,
       role: 'machine-output',
       point: Object.freeze({
-        x: center.x + outward.x * Math.max(0.82, radial * 0.035),
+        x: center.x + basis.outward.x * (outerFace + 0.12),
         y: center.y + 0.32,
-        z: center.z + outward.z * Math.max(0.82, radial * 0.035),
+        z: center.z + basis.outward.z * (outerFace + 0.12),
       }),
       radius: 0.10,
       ...rootContext(assembly.branchId + ':MACHINE-OUT'),
     }),
   ]);
+}
+
+export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machinePorts(assembly)) {
+  const center = assembly.outerHousing.center;
+  const dimensions = assembly.outerHousing.dimensions;
+  const basis = localBasis(center);
+  const boundaryDistance = radialBoundaryDistance(dimensions, basis.angle);
+  const innerFace = basis.radial - boundaryDistance;
+  const outerFace = basis.radial + boundaryDistance;
+  const interfaces = [];
+
+  const coreIn = ports.find((port) => port.role === 'machine-core-input');
+  const machineOut = ports.find((port) => port.role === 'machine-output');
+
+  if (coreIn) {
+    interfaces.push(
+      physicalInterface(
+        'INTERFACE:' + assembly.branchId + ':CORE-IN',
+        'machine-core-input',
+        {
+          x: center.x + basis.outward.x * (innerFace + 0.04),
+          y: coreIn.point.y,
+          z: center.z + basis.outward.z * (innerFace + 0.04),
+        },
+        { x: 0.24, y: 0.20, z: 0.20 },
+        basis.angle,
+        'metal2',
+        {
+          portId: coreIn.id,
+          interfaceSide: 'inner',
+          interfaceBoundaryRadius: innerFace,
+        },
+      ),
+    );
+  }
+
+  if (machineOut) {
+    interfaces.push(
+      physicalInterface(
+        'INTERFACE:' + assembly.branchId + ':MACHINE-OUT',
+        'machine-output',
+        {
+          x: center.x + basis.outward.x * (outerFace + 0.08),
+          y: machineOut.point.y,
+          z: center.z + basis.outward.z * (outerFace + 0.08),
+        },
+        { x: 0.28, y: 0.18, z: 0.18 },
+        basis.angle,
+        'metal2',
+        {
+          portId: machineOut.id,
+          interfaceSide: 'outer',
+          interfaceBoundaryRadius: outerFace,
+        },
+      ),
+    );
+  }
+
+  for (const port of assembly.ports || []) {
+    const dx = finite(port.point.x) - finite(center.x);
+    const dz = finite(port.point.z) - finite(center.z);
+    if (Math.hypot(dx, dz) < 0.001) continue;
+    const angle = Math.atan2(dz, dx);
+    const direction = { x: Math.cos(angle), z: Math.sin(angle) };
+    const portBoundary = radialBoundaryDistance(dimensions, angle);
+    const target = {
+      x: center.x + direction.x * (portBoundary + 0.02),
+      y: finite(port.point.y),
+      z: center.z + direction.z * (portBoundary + 0.02),
+    };
+    const length = distance3D(port.point, target);
+    if (length < 0.04) continue;
+
+    interfaces.push(
+      physicalInterface(
+        'INTERFACE:' + assembly.branchId + ':FACILITY-ADAPTER:' + port.facilityId,
+        'facility-port-adapter',
+        {
+          x: (finite(port.point.x) + target.x) * 0.5,
+          y: (finite(port.point.y) + target.y) * 0.5,
+          z: (finite(port.point.z) + target.z) * 0.5,
+        },
+        { x: length + 0.06, y: 0.10, z: 0.10 },
+        Math.atan2(target.z - port.point.z, target.x - port.point.x),
+        'metal',
+        {
+          facilityId: port.facilityId,
+          portId: port.id,
+          adapterStart: Object.freeze({ ...port.point }),
+          adapterEnd: Object.freeze({ ...target }),
+        },
+      ),
+    );
+  }
+
+  return Object.freeze(interfaces);
 }
 
 export function deriveMachineFacilityMachinery({
@@ -461,6 +596,7 @@ export function deriveMachineFacilityMachinery({
       })),
     ]);
     const ports = machinePorts(assembly);
+    const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
     const maxPresentation = deriveMachineFacilityMechanismPresentation(
       { machineRole: assembly.machineRole, outerHousing: assembly.outerHousing, components },
       { amount: 1, reducedMotion: true },
@@ -494,6 +630,11 @@ export function deriveMachineFacilityMachinery({
           center: port.point,
           dimensions: { x: port.radius * 2, y: port.radius * 2, z: port.radius * 2 },
         })),
+        physicalInterfaces.map((entry) => ({
+          id: entry.id,
+          center: entry.center,
+          dimensions: entry.dimensions,
+        })),
       ),
       0.10,
     );
@@ -510,6 +651,7 @@ export function deriveMachineFacilityMachinery({
       outerHousing: assembly.outerHousing,
       components,
       mechanicalDetails,
+      physicalInterfaces,
       payloadSurface,
       mechanismGraph: buildGraph(components),
       ports,
@@ -524,6 +666,12 @@ export function deriveMachineFacilityMachinery({
             ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
           }),
           ...mechanicalDetails.map((entry) =>
+            Math.hypot(
+              entry.center.x - assembly.outerHousing.center.x,
+              entry.center.z - assembly.outerHousing.center.z,
+            ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5,
+          ),
+          ...physicalInterfaces.map((entry) =>
             Math.hypot(
               entry.center.x - assembly.outerHousing.center.x,
               entry.center.z - assembly.outerHousing.center.z,
@@ -574,6 +722,9 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
     if (!Array.isArray(machine?.components) || machine.components.length < 5) reasons.push(machine?.id + ':COMPONENTS_INCOMPLETE');
     if (!Array.isArray(machine?.mechanismGraph) || machine.mechanismGraph.length < 4) reasons.push(machine?.id + ':MECHANISM_GRAPH_INCOMPLETE');
     if (!Array.isArray(machine?.ports) || machine.ports.length < 4) reasons.push(machine?.id + ':PORTS_INCOMPLETE');
+    if (!Array.isArray(machine?.physicalInterfaces) || machine.physicalInterfaces.length !== machine.facilityIds.length + 2) {
+      reasons.push(machine?.id + ':PHYSICAL_INTERFACES_INCOMPLETE');
+    }
     if (!machine?.subject) reasons.push(machine?.id + ':SUBJECT_MISSING');
     if (!(Number(machine?.envelope?.radius) > 0)) reasons.push(machine?.id + ':ENVELOPE_INVALID');
     if (!(Number(machine?.envelope?.height) > 0)) reasons.push(machine?.id + ':ENVELOPE_HEIGHT_INVALID');
@@ -599,7 +750,22 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
       if (!node.valid) reasons.push(...node.reasons);
       if (entry?.constructionSlice !== 'S7') reasons.push(entry?.id + ':NOT_S7');
     }
-    for (const edge of machine?.mechanismGraph || []) {
+    const inputPorts = (machine?.ports || []).filter((port) => port.role === 'machine-core-input');
+    const outputPorts = (machine?.ports || []).filter((port) => port.role === 'machine-output');
+    if (inputPorts.length !== 1) reasons.push(machine?.id + ':CORE_INPUT_PORT_COUNT');
+    if (outputPorts.length !== 1) reasons.push(machine?.id + ':MACHINE_OUTPUT_PORT_COUNT');
+    if (Array.isArray(machine?.physicalInterfaces)) {
+      const roles = machine.physicalInterfaces.map((entry) => entry.role);
+      if (roles.filter((role) => role === 'machine-core-input').length !== 1) reasons.push(machine?.id + ':CORE_INPUT_INTERFACE_COUNT');
+      if (roles.filter((role) => role === 'machine-output').length !== 1) reasons.push(machine?.id + ':MACHINE_OUTPUT_INTERFACE_COUNT');
+      if (roles.filter((role) => role === 'facility-port-adapter').length !== machine.facilityIds.length) reasons.push(machine?.id + ':FACILITY_ADAPTER_COUNT');
+      for (const entry of machine.physicalInterfaces) {
+        const node = validateSpatialConstructionNode(entry);
+        if (!node.valid) reasons.push(...node.reasons);
+        if (entry.constructionSlice !== 'S7') reasons.push(entry.id + ':NOT_S7');
+      }
+    }
+    for (const edge of machine?.mechanismGraph || [])
       if (!edge?.from || !edge?.to || edge.from === edge.to) reasons.push(machine?.id + ':INVALID_MECHANISM_EDGE');
     }
   }

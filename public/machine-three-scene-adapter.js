@@ -9,6 +9,7 @@
 
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
+import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
   getMachinePodShellOutline,
@@ -126,6 +127,9 @@ export function collectThreeDescriptors({ core = null, pods = [], facilities = [
   for (const facility of Array.isArray(facilities) ? facilities : []) {
     for (const part of facility?.components || []) add(part, facility?.id || 'MACHINE-FACILITY-ASSEMBLY');
     for (const part of facility?.mechanicalDetails || []) add(part, facility?.id || 'MACHINE-FACILITY-ASSEMBLY');
+  }
+  for (const facility of Array.isArray(facilities) ? facilities : []) {
+    for (const part of facility?.physicalInterfaces || []) add(part, facility?.id || 'MACHINE-FACILITY-MACHINERY');
   }
   for (const division of Array.isArray(divisions) ? divisions : []) {
     for (const part of division?.components || []) add(part, division?.id || 'MACHINE-SEAT-DIVISION-ASSEMBLY');
@@ -517,10 +521,14 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   function setTopology(topology = null) {
     clearGroup(topologyRoot);
     const edges = Array.isArray(topology?.edges) ? topology.edges : [];
+    const physicalKinds = new Set(['pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
     let count = 0;
+    let lineCount = 0;
     for (const edge of edges) {
       const route = Array.isArray(edge?.route) ? edge.route : [];
       if (route.length < 2 || !edge?.semanticEdgeId) continue;
+      count += 1;
+      if (physicalKinds.has(edge.kind)) continue;
       const positions = new Float32Array(route.flatMap((point) => [
         Number(point?.x) || 0,
         Number(point?.y) || 0,
@@ -534,9 +542,32 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       line.userData.edgeKind = edge.kind || '';
       line.userData.routeContinuous = edge.routeContinuous === true;
       topologyRoot.add(line);
-      count += 1;
+      lineCount += 1;
     }
-    return Object.freeze({ edgeCount: count });
+
+    const conduitSegments = getRenderableMachineWorldConduitSegments(topology);
+    for (const segment of conduitSegments) {
+      const geometry = new THREE.BoxGeometry(
+        segment.dimensions.x,
+        segment.dimensions.y,
+        segment.dimensions.z,
+      );
+      const mesh = new THREE.Mesh(geometry, material('trace'));
+      mesh.name = segment.id;
+      mesh.userData.semanticEdgeId = segment.semanticEdgeId;
+      mesh.userData.edgeKind = segment.edgeKind;
+      mesh.userData.conduitSegment = segment.segmentIndex;
+      mesh.userData.routeContinuous = segment.routeContinuous;
+      mesh.position.set(segment.center.x, segment.center.y, segment.center.z);
+      mesh.rotation.y = segment.rotationY;
+      topologyRoot.add(mesh);
+    }
+
+    return Object.freeze({
+      edgeCount: count,
+      lineCount,
+      conduitSegmentCount: conduitSegments.length,
+    });
   }
 
   function setCameraPose({ position = { x: 0, y: 6, z: 12 }, target = { x: 0, y: 1, z: 0 }, fov = 32 } = {}) {

@@ -46,7 +46,7 @@ import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './mach
 import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machine-core-assembly.js';
 import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
-import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges } from './machine-world-topology.js';
+import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
@@ -1134,6 +1134,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}) {
     const edges = getRenderableMachineWorldEdges(topology);
+    const conduitSegments = getRenderableMachineWorldConduitSegments(topology);
+    const physicalKinds = new Set(['pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
     let rendered = 0;
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
@@ -1142,6 +1144,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const renderedSignals = [];
     for (const edge of edges) {
       const route = edge.route;
+      if (physicalKinds.has(edge.kind)) continue;
       const values = route.flatMap((point) => [point.x, point.y, point.z]);
       const signal = resolveMachineSignalState({
         edge,
@@ -1171,7 +1174,49 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       renderedSignals.push(signal?.state || 'IDLE');
       rendered += 1;
     }
+    let renderedConduits = 0;
+    for (const segment of conduitSegments) {
+      const edge = topology.edges.find((candidate) => candidate.semanticEdgeId === segment.semanticEdgeId);
+      if (!edge) continue;
+      const signal = resolveMachineSignalState({
+        edge,
+        state: signalState,
+        selectedBranchId,
+        reducedMotion,
+        now,
+      });
+      const visual = machineSignalVisualProfile(signal);
+      const selected = edge.sourceBranchId === selectedBranchId || edge.targetBranchId === selectedBranchId;
+      const material = visual.state === 'ERROR' || visual.state === 'BLOCKED'
+        ? activeHeroMaterials.metal2
+        : selected || visual.state === 'HANDOFF_READY' || visual.state === 'REFLECT'
+          ? activeHeroMaterials.energy
+          : activeHeroMaterials.trace;
+      ringDraw(
+        'CUBE',
+        multiplyMatrix(
+          translateMatrix(segment.center.x, segment.center.y, segment.center.z),
+          multiplyMatrix(
+            rotateYMatrix(segment.rotationY),
+            scaleMatrix(
+              Math.max(0.02, segment.dimensions.x * 0.5),
+              Math.max(0.02, segment.dimensions.y * 0.5),
+              Math.max(0.02, segment.dimensions.z * 0.5),
+            ),
+          ),
+        ),
+        material,
+        {
+          emit: selected ? 0.14 : 0.035 + visual.pulse * 0.05,
+          glow: selected ? 0.18 : 0.04,
+          alpha: Math.min(0.90, 0.54 + (selected ? 0.16 : 0) + visual.pulse * 0.08),
+        },
+      );
+      renderedConduits += 1;
+    }
+
     canvas.dataset.machineWorldSignalEdgeCount = String(rendered);
+    canvas.dataset.machineWorldConduitSegmentCount = String(renderedConduits);
     canvas.dataset.machineWorldSignalStates = renderedSignals.join(',');
     canvas.dataset.machineWorldSignalReducedMotion = String(Boolean(reducedMotion));
     return rendered;
@@ -1704,6 +1749,37 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
             emit: selected ? 0.18 : 0.07,
             glow: selected ? 0.26 : 0.09,
             alpha: selected ? 0.86 : 0.58,
+          },
+        );
+      }
+      for (const detail of machine.physicalInterfaces || []) {
+        const material = detail.materialRole === 'glass'
+          ? activeHeroMaterials.glass
+          : detail.materialRole === 'energy'
+            ? activeHeroMaterials.energy
+            : detail.materialRole === 'trace'
+              ? activeHeroMaterials.trace
+              : detail.materialRole === 'metal2'
+                ? activeHeroMaterials.metal2
+                : activeHeroMaterials.metal;
+        ringDraw(
+          detail.shape || 'CUBE',
+          multiplyMatrix(
+            translateMatrix(detail.center.x, detail.center.y, detail.center.z),
+            multiplyMatrix(
+              rotateYMatrix(finite(detail.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, detail.dimensions.x * 0.5),
+                Math.max(0.02, detail.dimensions.y * 0.5),
+                Math.max(0.02, detail.dimensions.z * 0.5),
+              ),
+            ),
+          ),
+          material,
+          {
+            emit: selected ? 0.07 : 0.025,
+            glow: selected ? 0.12 : 0.035,
+            alpha: selected ? 0.95 : 0.76,
           },
         );
       }

@@ -563,6 +563,67 @@ const RENDERABLE_WORLD_EDGE_KINDS = Object.freeze([
   'adjacent-seat',
 ]);
 
+export const PHYSICAL_CONDUIT_EDGE_KINDS = Object.freeze([
+  'pod-facility',
+  'facility-facility',
+  'workspace-contribution',
+  'adjacent-seat',
+]);
+
+export const MACHINE_WORLD_CONDUIT_RADIUS_FACTOR = 0.52;
+
+export function getRenderableMachineWorldConduitSegments(topology, {
+  radiusFactor = MACHINE_WORLD_CONDUIT_RADIUS_FACTOR,
+} = {}) {
+  const eligible = new Set(PHYSICAL_CONDUIT_EDGE_KINDS);
+  const segments = [];
+  for (const edge of Array.isArray(topology?.edges) ? topology.edges : []) {
+    if (!eligible.has(edge?.kind)) continue;
+    const route = Array.isArray(edge?.route) ? edge.route : [];
+    const radius = Math.max(
+      0.01,
+      finite(edge?.corridor?.radius) * Math.max(0.01, finite(radiusFactor, 0.52)),
+    );
+    const thickness = radius * 2;
+    for (let index = 1; index < route.length; index += 1) {
+      const start = route[index - 1];
+      const end = route[index];
+      const dx = finite(end?.x) - finite(start?.x);
+      const dy = finite(end?.y) - finite(start?.y);
+      const dz = finite(end?.z) - finite(start?.z);
+      const length = Math.hypot(dx, dy, dz);
+      if (length < 0.01) continue;
+      const horizontal = Math.hypot(dx, dz);
+      const vertical = Math.abs(dy) >= horizontal;
+      segments.push(Object.freeze({
+        id: 'CONDUIT:' + edge.semanticEdgeId + ':' + index,
+        semanticEdgeId: edge.semanticEdgeId,
+        edgeKind: edge.kind,
+        segmentIndex: index,
+        start: Object.freeze({ x: finite(start.x), y: finite(start.y), z: finite(start.z) }),
+        end: Object.freeze({ x: finite(end.x), y: finite(end.y), z: finite(end.z) }),
+        center: Object.freeze({
+          x: (finite(start.x) + finite(end.x)) * 0.5,
+          y: (finite(start.y) + finite(end.y)) * 0.5,
+          z: (finite(start.z) + finite(end.z)) * 0.5,
+        }),
+        dimensions: Object.freeze(
+          vertical
+            ? { x: thickness, y: length + thickness, z: thickness }
+            : { x: length + thickness, y: thickness, z: thickness },
+        ),
+        rotationY: vertical ? 0 : Math.atan2(dz, dx),
+        radius,
+        corridorRadius: Math.max(0, finite(edge?.corridor?.radius)),
+        routeContinuous: edge.routeContinuous === true,
+        ...rootContext('CONDUIT:' + edge.semanticEdgeId + ':' + index),
+        presentationOnly: true,
+      }));
+    }
+  }
+  return Object.freeze(segments);
+}
+
 export function getRenderableMachineWorldEdges(topology) {
   return Object.freeze(
     (Array.isArray(topology?.edges) ? topology.edges : [])

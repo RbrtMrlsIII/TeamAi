@@ -8,6 +8,8 @@ import {
   validateMachineWorldTopology,
   MACHINE_WORLD_TOPOLOGY_VERSION,
   getRenderableMachineWorldEdges,
+  getRenderableMachineWorldConduitSegments,
+  PHYSICAL_CONDUIT_EDGE_KINDS,
 } from '../frontend/spatial/machine-world-topology.js';
 
 function buildFixture(seatCount) {
@@ -139,4 +141,36 @@ test('S8 core routes preserve clearance across 1-10 Seats and shell expansion st
       );
     }
   }
+});
+
+
+test('S8 external semantic routes project to authored conduit segments without creating another graph', () => {
+  const { topology } = buildFixture(10);
+  const conduits = getRenderableMachineWorldConduitSegments(topology);
+  const externalEdges = topology.edges.filter((edge) => PHYSICAL_CONDUIT_EDGE_KINDS.includes(edge.kind));
+
+  assert.equal(conduits.length, externalEdges.length * 3);
+  assert.equal(new Set(conduits.map((entry) => entry.semanticEdgeId)).size, externalEdges.length);
+  assert.ok(conduits.every((entry) => entry.routeContinuous));
+  assert.ok(conduits.every((entry) => entry.radius <= entry.corridorRadius));
+  assert.ok(conduits.every((entry) => entry.dimensions.x > 0 && entry.dimensions.y > 0 && entry.dimensions.z > 0));
+});
+
+test('S8 conduit projection follows current dynamic route geometry', () => {
+  const closedScene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const openScene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
+  const build = (scene) => {
+    const facilityAssemblies = deriveMachineFacilityAssemblies({
+      outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+    });
+    const facilityMachinery = deriveMachineFacilityMachinery({ facilityAssemblies });
+    return buildMachineWorldTopology({ scene, facilityAssemblies, facilityMachinery, seatDivisionAmount: 0 });
+  };
+  const closed = build(closedScene);
+  const open = build(openScene);
+  const closedConduit = getRenderableMachineWorldConduitSegments(closed).find((entry) => entry.edgeKind === 'pod-facility');
+  const openConduit = getRenderableMachineWorldConduitSegments(open).find((entry) => entry.edgeKind === 'pod-facility');
+  assert.ok(closedConduit && openConduit);
+  assert.notDeepEqual(closedConduit.center, openConduit.center);
+  assert.notDeepEqual(closedConduit.dimensions, openConduit.dimensions);
 });
