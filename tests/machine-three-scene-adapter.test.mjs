@@ -9,6 +9,8 @@ import {
   MACHINE_THREE_ADAPTER_VERSION,
   resolveThreeMaterialPresentation,
   resolveThreePolygonSegments,
+  resolveThreePodShellOutline,
+  AUTHORED_POD_SHELL_PROFILE,
 } from '../frontend/spatial/machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
@@ -16,7 +18,7 @@ import { deriveMachinePodAssembly } from '../frontend/spatial/machine-pod-assemb
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
-  assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V1');
+  assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V2');
 });
 
 test('Y1 shape normalization preserves authored profiles without changing semantic ids', () => {
@@ -26,6 +28,10 @@ test('Y1 shape normalization preserves authored profiles without changing semant
   assert.equal(normalizeThreeShape({ shape: 'SPH' }), 'SPHERE');
   assert.equal(normalizeThreeShape({ profile: 'hex-foundation' }), 'CYLINDER');
   assert.equal(normalizeThreeShape({ profile: 'semantic-payload-deck' }), 'BOX');
+  assert.equal(
+    normalizeThreeShape({ profile: AUTHORED_POD_SHELL_PROFILE }),
+    'POD_SHELL',
+  );
 });
 
 test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
@@ -45,6 +51,47 @@ test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
   const descriptors = collectThreeDescriptors({ core, pods: [pod] });
   assert.equal(descriptors.length, core.components.length + core.mechanicalDetails.length + pod.components.length + pod.mechanicalDetails.length);
   assert.ok(descriptors.some((descriptor) => descriptor.id === 'MACHINE-POD:BRANCH-SEAT-01:OUTER-SHELL'));
+});
+
+test('Y1 preserves the authored Pod shell profile as an explicit mesh contract', () => {
+  assert.equal(AUTHORED_POD_SHELL_PROFILE, 'authored-seat-pod-shell');
+  const outline = resolveThreePodShellOutline();
+  assert.equal(outline.length, 8);
+  assert.deepEqual(outline, [
+    [-0.90, -0.25],
+    [-0.55, -0.58],
+    [0.18, -0.62],
+    [0.78, -0.30],
+    [0.90, 0.12],
+    [0.50, 0.50],
+    [-0.30, 0.58],
+    [-0.82, 0.30],
+  ]);
+  const xs = outline.map(([x]) => x);
+  const zs = outline.map(([, z]) => z);
+  assert.equal(Math.min(...xs), -0.90);
+  assert.equal(Math.max(...xs), 0.90);
+  assert.equal(Math.min(...zs), -0.62);
+  assert.equal(Math.max(...zs), 0.58);
+});
+
+test('Y1 Pod shell descriptor keeps authored dimensions as the presentation envelope', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const podPart = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const pod = deriveMachinePodAssembly({
+    part: podPart,
+    payloadDensity: 0.45,
+    adjacentCenterSpacing: 2.812,
+  });
+  const descriptor = normalizeThreeDescriptor(
+    pod.components.find((component) => component.role === 'outer-shell'),
+    pod.id,
+  );
+  assert.equal(descriptor.profile, AUTHORED_POD_SHELL_PROFILE);
+  assert.equal(descriptor.shape, 'POD_SHELL');
+  assert.deepEqual(descriptor.dimensions, pod.components[0].dimensions);
 });
 
 test('Y1 preserves authored polygon profiles for Three.js tessellation', () => {
