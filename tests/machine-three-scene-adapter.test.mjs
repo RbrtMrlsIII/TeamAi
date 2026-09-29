@@ -17,6 +17,10 @@ import {
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
 import { deriveMachinePodAssembly } from '../frontend/spatial/machine-pod-assembly.js';
+import {
+  MACHINE_POD_SHELL_PROFILE,
+  getMachinePodShellOutline,
+} from '../frontend/spatial/machine-pod-profile.js';
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
@@ -75,6 +79,20 @@ test('Y1 preserves the authored Pod shell profile as an explicit mesh contract',
   assert.equal(Math.max(...xs), 0.90);
   assert.equal(Math.min(...zs), -0.62);
   assert.equal(Math.max(...zs), 0.58);
+});
+
+test('Y1 and raw WebGL consume one authored Pod profile authority', () => {
+  assert.equal(AUTHORED_POD_SHELL_PROFILE, MACHINE_POD_SHELL_PROFILE);
+  assert.deepEqual(
+    resolveThreePodShellOutline(),
+    getMachinePodShellOutline(),
+  );
+
+  const adapterSource = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  const rendererSource = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
+  assert.match(adapterSource, /from '\.\/machine-pod-profile\.js'/);
+  assert.match(rendererSource, /from '\.\/machine-pod-profile\.js'/);
+  assert.match(rendererSource, /pod: MACHINE_POD_SHELL_OUTLINE/);
 });
 
 test('Y1 Pod shell BufferGeometry is bounded by the authored descriptor dimensions', () => {
