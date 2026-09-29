@@ -209,6 +209,12 @@ const PRIMITIVE_POLYGONS = Object.freeze({
     [-0.72, 0.48],
     [-1.00, 0.12],
   ]),
+  CORE_BRACE: Object.freeze([
+    [-1.00, -0.18],
+    [1.00, -0.18],
+    [1.00, 0.18],
+    [-1.00, 0.18],
+  ]),
 });
 
 function translateMatrix(x, y, z) {
@@ -470,6 +476,49 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       });
     }
 
+    for (const detail of assembly.mechanicalDetails || []) {
+      const shape = detail.role === 'foundation-brace'
+        ? 'CORE_BRACE'
+        : detail.role === 'reactor-guard'
+          ? 'CUBE'
+          : 'CORE_DODEC';
+      const material = detail.materialRole === 'glass'
+        ? activeHeroMaterials.glass
+        : detail.materialRole === 'metal2'
+          ? activeHeroMaterials.metal2
+          : activeHeroMaterials.metal;
+      const dimensions = detail.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+      ringDraw(
+        shape,
+        multiplyMatrix(
+          translateMatrix(
+            detail.center.x,
+            detail.center.y - dimensions.y * 0.5,
+            detail.center.z,
+          ),
+          multiplyMatrix(
+            rotateYMatrix(finite(detail.rotationY)),
+            scaleMatrix(
+              Math.max(0.02, dimensions.x * 0.5),
+              Math.max(0.02, dimensions.y),
+              Math.max(0.02, dimensions.z * 0.5),
+            ),
+          ),
+        ),
+        material,
+        {
+          emit: detail.role === 'reactor-inner-housing' ? 0.04 : 0,
+          glow: detail.role === 'reactor-inner-housing' ? 0.08 : 0.025,
+          alpha: detail.role === 'reactor-inner-housing'
+            ? 0.72
+            : 0.94,
+        },
+      );
+    }
+
+    canvas.dataset.machineWorldCoreMechanicalDetails =
+      String((assembly.mechanicalDetails || []).length);
+
     for (const mechanism of assembly.concentricMechanisms) {
       const ring = ringPoints(96, mechanism.radius, mechanism.y);
       gl.useProgram(line);
@@ -513,6 +562,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldCoreAssemblyVersion = assembly.version;
     canvas.dataset.machineWorldCoreComponents = String(assembly.components.length);
     canvas.dataset.machineWorldCorePorts = String(assembly.ports.length);
+    canvas.dataset.machineWorldCoreMechanicalProfile = (assembly.mechanicalDetails || []).length
+      ? 'layered-rib-guard-v1'
+      : 'none';
     canvas.dataset.machineWorldCoreValidation = 'pass';
     return assembly;
   }
