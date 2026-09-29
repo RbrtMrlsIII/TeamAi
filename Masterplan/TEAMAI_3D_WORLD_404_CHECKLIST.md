@@ -712,6 +712,29 @@ For every terminal path that survives the cold review, record all applicable fie
 
 Exit: the machine construction does not discover missing product windows after its physical walls have been finalized.
 
+### Y0.5 Cold-review findings — current repository
+
+The first real Y0 pass was performed against the current Feature Registry, S6 facility assembly, and exact frontend/spatial paths. This is a coverage diagnosis, not a geometry invitation.
+
+| Product feature | Existing implementation evidence | Y0 finding |
+|---|---|---|
+| workspace-hq | frontend/spatial/workspace-capability.js + workspace-capability-facility.js | spatial owner exists; leaf coverage remains to be descended |
+| projects-library | S6 dock entry only; frontend/spatial/projects-library.js is absent | APP_UI_HANDOFF remains honest until an owning product contract is identified; do not fabricate a spatial module |
+| artifacts-inventory | frontend/spatial/artifacts.js + S6 dock | read-model/UI surface exists; distinguish payload data from physical geometry |
+| storage | frontend/spatial/storage-inventory.js + storage-inventory-facility.js + S6 dock | spatial/UI owner exists; leaf contract still requires descent |
+| seats | TREE-HERO-SEAT + seven established Seat divisions | spatial hierarchy exists; L3–L5 leaves still require owning-contract verification |
+| team-agents | frontend/spatial/team-agents.js + team-agents-facility.js | spatial handoff/facility exists; assignment mutation remains backend-owned |
+| mcp-capability | frontend/spatial/mcp-capability.js + mcp-capability-facility.js | facility/handoff exists; credentials/authority remain external |
+| skills-responsibility | S6 dock + feature registry; frontend/spatial/skills-responsibility.js is absent | configuration/handoff owner remains unresolved at spatial leaf level; do not invent Seat branches |
+| orchestration | S6 dock + frontend/spatial/planning.js, but no frontend/spatial/orchestration-scheduler.js | scheduler/read-model is a normal UI/read-model boundary until an owning spatial leaf contract exists |
+| marketplace | frontend/spatial/marketplace-commerce.js + marketplace-commerce-facility.js + S6 dock | commerce facility exists; transaction/entitlement remain external authority |
+| settings | frontend/spatial/settings.js + S6 dock | configuration UI exists; system-owned facts remain external |
+| auth-gateway | feature-access.js + machine-guest-state.js + S6 dock, but no frontend/spatial/auth-gateway.js | gateway is a UI/read-model handoff, not a missing physical machine; do not create a fake spatial auth module |
+
+Important discrepancy: S6's sourceModule field is a presentation reference and intentionally not spatial authority, but its values mix real module filenames with product/owner labels. Therefore S6 dock presence and sourceModule naming are not proof of leaf implementation. Y0 must close the owning contract per feature before S24 can be treated as structurally safe.
+
+Current Y0 result: **PARTIAL / OPEN**. The terminal-surface classifier is implemented and tested, the registry-level coverage is classified, and the principal missing spatial-owner seams are named. Full L0→L5 closure remains outstanding.
+
 ## Y1. Renderer substrate evolution gate
 
 Decision: adopt Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target renderer substrate while preserving the existing semantic, geometry, topology, camera, and authority boundaries.
