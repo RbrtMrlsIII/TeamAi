@@ -623,7 +623,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       const phase = component.role === 'articulation-mechanism'
         ? finite(assembly.articulation.phase) + roleRotation
         : component.role === 'inner-chamber'
-          ? finite(mechanical?.revealGap) * progress
+          ? finite(mechanical?.revealGap)
           : 0;
       ringDraw(
         shapeForRole[component.role] || 'CUBE',
