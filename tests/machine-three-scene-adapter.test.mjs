@@ -34,6 +34,7 @@ import {
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
   getMachineSeatWorkspaceScopeFrameRecipe,
+  resolveMachineSeatWorkspaceScopeFrameRailThickness,
   resolveMachineSeatDivisionProfileShape,
 } from '../frontend/spatial/machine-seat-division-profile.js';
 
@@ -114,6 +115,10 @@ test('S4 workspace scope frame recipe preserves the existing telescoping descrip
 
   const recipe = getMachineSeatWorkspaceScopeFrameRecipe();
   assert.equal(recipe.length, 4);
+  assert.deepEqual(
+    recipe.map((rail) => rail.thickness),
+    [0.14, 0.14, 0.14, 0.14],
+  );
   const minX = Math.min(...recipe.map((rail) => rail.center.x - rail.dimensions.x * 0.5));
   const maxX = Math.max(...recipe.map((rail) => rail.center.x + rail.dimensions.x * 0.5));
   const minZ = Math.min(...recipe.map((rail) => rail.center.z - rail.dimensions.z * 0.5));
@@ -146,10 +151,18 @@ test('S4 workspace scope frame recipe preserves the existing telescoping descrip
   assert.ok(geometry.boundingBox);
   const epsilon = 1e-6;
   const expected = descriptor.dimensions;
+  const expectedRailThickness = resolveMachineSeatWorkspaceScopeFrameRailThickness({
+    dimensions: expected,
+    rail: recipe[0],
+  });
+  assert.ok(Math.abs(
+    expectedRailThickness - Math.min(expected.x, expected.z) * 0.14,
+  ) < 1e-12);
+  assert.ok(expectedRailThickness < expected.y * 0.2);
   assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
-  assert.ok(Math.abs(geometry.boundingBox.max.y - expected.y * 0.5) < epsilon);
-  assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expectedRailThickness * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expectedRailThickness * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
   assert.equal(geometry.getAttribute('position').count, 144);
@@ -414,6 +427,7 @@ test('S4 source and browser profile copies remain exact', () => {
   assert.match(rendererSource, /MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE/);
   assert.match(rendererSource, /MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
   assert.match(presentationSource, /resolveMachineSeatDivisionProfileRecipe/);
+  assert.match(presentationSource, /resolveMachineSeatWorkspaceScopeFrameRailThickness/);
   assert.match(presentationSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
   assert.match(profileSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE/);
 });
