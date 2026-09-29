@@ -50,6 +50,8 @@ Y0 feature/leaf coverage closure
 
 Y0 exists to prevent discovering missing product leaves after spatial geometry has been treated as final. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. Structural misses still return to their S2–S10 owner; effects never close missing structure.
 
+The first Y0 implementation pass also normalized S6 facility identity to the canonical Feature Registry ids. Three label-shaped aliases were found in the S6 assembly and had no broader fan-out, so they were repaired at the S6 owner and covered by a canonical-id regression test. The sourceModule field remains a descriptive presentation reference rather than authority.
+
 ### Current verification boundary
 
 The latest exact-head repository gates are Governance PASS (36539522170), Full-System PASS (36539522147), Deep Security PASS (36539522181), Security/CodeQL PASS (36539522165), and Canonical Browser FAIL (36539522142, 87 passed / 4 skipped / 1 failed). The Browser failure is the isolated legacy machine-core-preview transition assertion: selecting a branch currently starts the preview's expansion path before the test clicks Expand, so a deterministic transition boundary is required. This is not current evidence of an S4 geometry regression or production Hero failure.

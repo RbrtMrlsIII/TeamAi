@@ -733,7 +733,14 @@ The first real Y0 pass was performed against the current Feature Registry, S6 fa
 
 Important discrepancy: S6's sourceModule field is a presentation reference and intentionally not spatial authority, but its values mix real module filenames with product/owner labels. Therefore S6 dock presence and sourceModule naming are not proof of leaf implementation. Y0 must close the owning contract per feature before S24 can be treated as structurally safe.
 
-Current Y0 result: **PARTIAL / OPEN**. The terminal-surface classifier is implemented and tested, the registry-level coverage is classified, and the principal missing spatial-owner seams are named. Full L0→L5 closure remains outstanding.
+Current Y0 result: **PARTIAL / OPEN**. The terminal-surface classifier is implemented and tested, the registry-level coverage is classified, S6 facility identity is aligned to the canonical Feature Registry ids, and the principal missing spatial-owner seams are named. Full L0→L5 closure remains outstanding.
+
+### Y0.6 S6 identity alignment
+
+- [x] Every S6 facility id is a canonical Feature Registry product-feature id.
+- [x] Legacy label-shaped ids were normalized without changing the presentation-only sourceModule contract.
+- [x] A regression test requires the 11 S6 facility ids to equal the Feature Registry's non-Seat feature ids.
+- [ ] Continue resolving owner/leaf coverage for the four source references that do not have matching dedicated frontend/spatial module paths.
 
 ## Y1. Renderer substrate evolution gate
 
