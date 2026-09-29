@@ -767,7 +767,6 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
     }
     for (const edge of machine?.mechanismGraph || [])
       if (!edge?.from || !edge?.to || edge.from === edge.to) reasons.push(machine?.id + ':INVALID_MECHANISM_EDGE');
-    }
   }
 
   const expectedRoles = new Set(Object.keys(MACHINE_PROFILES));
