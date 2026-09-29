@@ -98,7 +98,12 @@ test('S3 authored Pod opening profile transforms the parent machine instead of o
   assert.ok(expanded.mechanicalPresentation.shellPanelRotation > 0);
   assert.equal(expanded.mechanicalPresentation.axis, 'radial-outward');
   const expandedSubjectIds = new Set(expanded.subject.sourcePartIds);
-  assert.ok(expanded.components.every((item) => expandedSubjectIds.has(item.id)));
+  const nonShellComponentIds = expanded.components
+    .filter((item) => item.role !== 'outer-shell')
+    .map((item) => item.id);
+  assert.ok(nonShellComponentIds.every((id) => expandedSubjectIds.has(id)));
+  assert.ok(expandedSubjectIds.has('MACHINE-POD:BRANCH-SEAT-04:OUTER-SHELL:PANEL:-1'));
+  assert.ok(expandedSubjectIds.has('MACHINE-POD:BRANCH-SEAT-04:OUTER-SHELL:PANEL:1'));
   assert.ok(expanded.mechanicalPresentation.payloadTravel > 0);
 });
 
