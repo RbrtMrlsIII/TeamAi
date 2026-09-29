@@ -1228,3 +1228,36 @@ Result: COVERAGE-CLASSIFIED / IMPLEMENTATION-PARTIAL. The current Feature Regist
 **Acceptance boundary:** This improves structural renderer fidelity but does **not** close the S2-S10 human visual acceptance gate. The screenshots are stored in the exact-head Browser artifact but the public artifact endpoint requires authentication, so no screenshot-level human verdict is inferred here. Broader S24 shadow/light breadth remains gated by the upstream structural visual-embodiment contract.
 
 **Status:** IMPLEMENTED → **REPOSITORY/BROWSER-VERIFIED STRUCTURAL FIDELITY**, with **human visual acceptance still open**.
+
+
+### 2026-09-29 exact-head successor-session evidence
+
+Active spatial vehicle: PR #424.
+Exact active head after final preview-parity cleanup: `6007a87a14175a85de0cbc40fb0a95f51d876596`.
+
+Five-gate proof on this exact head:
+- Repository Full-System Verification: `36582031552` — PASS; Project tests + canonical package and Recovery integrity PASS.
+- Repository Governance Integrity: `36582031480` — PASS; evidence-consistency, governance-drift, and agent-validation PASS; review-readiness SKIPPED because #424 remains Draft.
+- Security Static Analysis: `36582031514` — PASS; CodeQL PASS.
+- Deep Security Static Analysis: `36582031459` — PASS; SonarQube/SonarCloud, Bandit Python, gosec, Semgrep CE, MobSF, and Brakeman PASS.
+- Canonical Browser Verification: `36582031551` — PASS; exact-head checkout, Hero runtime parity, machine spatial runtime parity, Playwright, and artifact upload PASS.
+
+Browser artifact:
+- id `11041060023`
+- name `browser-verification-6007a87a14175a85de0cbc40fb0a95f51d876596`
+- digest `sha256:39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
+
+The artifact screenshots were directly inspected. They establish executable structural embodiment, not final human visual acceptance.
+
+**Durable findings at this checkpoint**
+1. The prior legacy machine-core preview temporal defect is historical; the current exact-head Browser suite is green. Do not carry the old failure forward as an active blocker without a new reproduction.
+2. Seat-view topology was previously over-broad and is now scoped to the selected Seat; keep this projection boundary.
+3. Current Three.js geometry is structurally representative but still visually skeletal relative to the intended manufactured-machine direction.
+4. Facility-view routed topology can span a large visual distance; treat final endpoint/routing credibility as an S8/S7/S24 acceptance question, not as a reason to hide wires with effects.
+5. S24 base theme/material authority is integrated, but true shadow/depth separation, semantic emissive-state breadth, and environment acceptance remain open.
+6. A redundant public structural-preview material-model assignment was removed in `6007a87a...` to restore source/public parity. This was cleanup, not a product change.
+
+**Geometry guard**
+Keep:
+`max(1.66, 0.9 + 1.3 × expansion) × parent max horizontal dimension`.
+Independent worst-case required compact factor remains approximately `1.6547804288580712`; `1.66` provides the small deterministic margin. Current collision proof is conservative sampled AABB clearance, not triangle-collision proof.
