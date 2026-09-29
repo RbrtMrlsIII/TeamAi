@@ -265,6 +265,26 @@ test('S4 capability rotary lattice recipe preserves descriptor envelope with exp
   assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < 1e-6);
   assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < 1e-6);
   assert.equal(geometry.getAttribute('position').count, 360);
+  const spoke = recipe[5];
+  const spokeAngle = spoke.rotationY;
+  const spokeCenterX = spoke.center.x * expected.x;
+  const spokeCenterZ = spoke.center.z * expected.z;
+  const halfLength = spoke.dimensions.x * expected.x * 0.5;
+  const halfWidth = spoke.dimensions.z * expected.z * 0.5;
+  const expectedVertexX = spokeCenterX + halfLength * Math.cos(spokeAngle) + halfWidth * Math.sin(spokeAngle);
+  const expectedVertexZ = spokeCenterZ - halfLength * Math.sin(spokeAngle) + halfWidth * Math.cos(spokeAngle);
+  const position = geometry.getAttribute('position').array;
+  let rotatedVertexFound = false;
+  for (let index = 0; index < position.length; index += 3) {
+    if (
+      Math.abs(position[index] - expectedVertexX) < 1e-6
+      && Math.abs(position[index + 2] - expectedVertexZ) < 1e-6
+    ) {
+      rotatedVertexFound = true;
+      break;
+    }
+  }
+  assert.equal(rotatedVertexFound, true);
   assert.equal(
     normalizeThreeShape({
       shape: 'TORUS',

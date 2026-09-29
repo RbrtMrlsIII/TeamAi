@@ -285,19 +285,26 @@ function buildSeatAuthorizationShieldGeometry(THREE, descriptor) {
   );
 }
 
-function appendBoxVertices(vertices, centerX, centerY, centerZ, dimensions) {
+function appendBoxVertices(vertices, centerX, centerY, centerZ, dimensions, rotationY = 0) {
   const hx = dimensions.x * 0.5;
   const hy = dimensions.y * 0.5;
   const hz = dimensions.z * 0.5;
+  const cosine = Math.cos(rotationY);
+  const sine = Math.sin(rotationY);
+  const point = (localX, localY, localZ) => [
+    centerX + localX * cosine + localZ * sine,
+    centerY + localY,
+    centerZ - localX * sine + localZ * cosine,
+  ];
   const corners = {
-    lbf: [centerX - hx, centerY - hy, centerZ + hz],
-    rbf: [centerX + hx, centerY - hy, centerZ + hz],
-    lbb: [centerX - hx, centerY - hy, centerZ - hz],
-    rbb: [centerX + hx, centerY - hy, centerZ - hz],
-    ltf: [centerX - hx, centerY + hy, centerZ + hz],
-    rtf: [centerX + hx, centerY + hy, centerZ + hz],
-    ltb: [centerX - hx, centerY + hy, centerZ - hz],
-    rtb: [centerX + hx, centerY + hy, centerZ - hz],
+    lbf: point(-hx, -hy, hz),
+    rbf: point(hx, -hy, hz),
+    lbb: point(-hx, -hy, -hz),
+    rbb: point(hx, -hy, -hz),
+    ltf: point(-hx, hy, hz),
+    rtf: point(hx, hy, hz),
+    ltb: point(-hx, hy, -hz),
+    rtb: point(hx, hy, -hz),
   };
   const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
   const faces = [
@@ -328,6 +335,7 @@ function buildCapabilitiesLatticeGeometry(THREE, descriptor) {
         }),
         z: element.dimensions.z * z,
       },
+      element.rotationY,
     );
   }
   const geometry = new THREE.BufferGeometry();
