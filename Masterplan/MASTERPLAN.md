@@ -32,6 +32,42 @@ PR #404 is merged into canonical `main` at `13356cae7e6ef8179f7e2e552211bb4d187f
 
 The #424 continuation remains presentation/read-model projection only. Geometry, semantic state, topology, camera, Firebase/Firestore identity and durable state, authorization/entitlement, scheduler, provider execution, payment, and production delivery remain in their owning systems.
 
+## 2026-09-29 current 029 spatial continuation reconciliation
+
+PR #424 is the sole active 029 spatial continuation vehicle after merged PR #404. The global current slice remains Issue #401 as declared in Masterplan/NEXT_SLICES.md; this section records the bounded spatial sub-frontier without creating another current-slice authority.
+
+### Exact current spatial state
+
+- main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
+- #424 head: 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089
+- relation: 89 ahead / 0 behind
+- state: OPEN / DRAFT / mergeable
+- S4 closed-state division geometry regression: repaired; Full-System PASS
+- current Browser: FAIL at run 36539522142, isolated legacy preview timing assertion only
+
+### Spatial execution order now governed
+
+Y0 feature/leaf coverage
+→ Y1 Three.js + WebGL2 renderer-substrate readiness
+→ S2–S10 structural visual embodiment
+→ S24 materials/lighting
+→ S25 holograms/payload presentation
+→ S26 ambient
+→ VC1/AB1 visual coherence baseline
+→ S27 performance
+→ S28 cross-feature choreography
+→ S29 final interaction choreography
+→ S30 exact-head verification
+→ S31 runtime/deployment reconciliation
+→ S32 human acceptance
+→ S33 ProMax polish
+
+Y0 is the pre-spatial leaf-coverage gate that prevents late discovery of missing terminal controls/payloads. Y1 is a renderer-substrate migration gate, not a product or semantic hierarchy. The raw WebGL implementation remains transition architecture until exact-head semantic/geometry parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence exist.
+
+### Cross-session persistence requirement
+
+Important spatial discussions are durable only when promoted into the owning source: the 029 evidence registry for verified findings and decisions, the detailed checklist for gate/order state, #409 for current newcomer handoff, AI_ASSISTANT_READ_ME.md for session recovery, and Product Law/WIRING for authority/routing. Historical material remains historical. This is the required mechanism for preserving implementation reasoning across sessions and across multiple engineers.
+
 ## Repository foundation
 
 - [x] Product Law moved to `Product_Law/PRODUCT_LAW.md` and remains the single product authority.

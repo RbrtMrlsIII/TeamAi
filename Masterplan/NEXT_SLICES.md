@@ -20,6 +20,20 @@ IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #4
 | Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative Browser proof | authoritative backend wiring intentionally bounded |
 | Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | repository workflow/contracts | production deployment/browser observation remains open |
 
+### 029 spatial sub-frontier (bounded, not a second current slice)
+
+PR #424 remains the active bounded 029 spatial continuation vehicle. It does not replace the single global Current Slice above.
+
+Current spatial order inside #424:
+
+Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
+
+Current exact spatial head: 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089.
+
+The current Canonical Browser evidence for that head is FAIL (run 36539522142, 87 passed / 4 skipped / 1 failed) because the isolated machine-core-preview test can observe terminal expansion before clicking its explicit Expand control. Treat this as a preview temporal-contract defect, not as evidence that the repaired S4 geometry is invalid.
+
+The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
+
 ## Objective
 
 Converge the 029 Spatial World implementation and the #392/#400 runtime/product surfaces without creating competing authority.

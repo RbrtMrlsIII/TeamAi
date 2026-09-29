@@ -10,6 +10,48 @@
 - The public GitHub Pages browser does not currently prove a live Firebase-authenticated session or durable Firestore data. Guest/private visibility is governed by the explicit readiness/read-model contract.
 - Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
 
+## 2026-09-29 CURRENT SESSION STATE
+
+This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
+
+- Canonical main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
+- Active spatial vehicle: PR #424 / frontend/029-spatial-world-continuation
+- Exact #424 head: 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089
+- #424: OPEN / DRAFT / mergeable, 89 ahead / 0 behind
+- PR #404: merged historical spatial provenance; do not reopen
+- Governing spatial Issue: #405
+- Canonical successor handoff: #409
+- Global current slice: Issue #401 in Masterplan/NEXT_SLICES.md
+
+### Exact-head verification
+
+- Governance 36539522170: PASS
+- Full-System 36539522147: PASS
+- Deep Security 36539522181: PASS
+- Security / CodeQL 36539522165: PASS
+- Browser 36539522142: FAIL, 87 passed / 4 skipped / 1 failed
+- Browser artifact: 11020105889 / fbf24923ffa7925aefe6bc90d495d2f0665f543bf857b776ab1beccf9e765836
+
+### Browser failure classification
+
+The only current failing test is the standalone machine-core-preview transition assertion. Selecting a branch currently causes the preview to set hierarchyOpen and start the 950 ms expansion path before the explicit Expand action. The test can therefore observe expanded instead of opening. This is a temporal preview contract defect. Do not weaken the assertion or add arbitrary sleep. The implementation direction is to make branch selection and expansion deterministic and separately controllable in the standalone preview.
+
+### Current spatial sequence
+
+Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer substrate → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33.
+
+Y0 is the pre-construction leaf-coverage gate. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. The raw WebGL renderer is transition architecture until exact-head parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence survive.
+
+### Durable sources to read before acting
+
+1. Issue #409 for current newcomer handoff.
+2. Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md for ordered spatial gates.
+3. Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md for verified findings and exact-head evidence.
+4. Product_Law/WIRING.md for authority/routing and cross-session decision persistence.
+5. docs/CHRONOLOGY.md for decision order and historical provenance.
+
+Rule: material reasoning from chat is only a working candidate until it is promoted into the owning durable source above.
+
 ## 2026-09-28 CURRENT SESSION STATE
 
 - canonical `main`: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`

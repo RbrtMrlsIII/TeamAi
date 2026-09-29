@@ -39,6 +39,29 @@ PR #424 is the active bounded spatial implementation vehicle after merged PR #40
 
 Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checklist execution. `Masterplan/NEXT_SLICES.md` owns one current slice. Skills own reusable procedures. Issues own bounded workstream context. PRs own implementation/review boundaries. Verification proves claims. `AI_ASSISTANT_READ_ME.md` owns current session state, handover, endorsement decisions, and validation-change records. `PRODUCT-KNOWLEDGE.md` owns durable validated concepts. `docs/archive/` and `handover/` are historical storage only.
 
+## Durable decision capture and cross-session persistence
+
+Chat is transient working context. It is never a sufficient authority surface for a material TeamAi decision.
+
+When a discussion produces a material finding or recommendation, preserve it in the authoritative surface that owns the information:
+
+| Information produced | Durable destination |
+|---|---|
+| Product invariant or authority boundary | Product_Law/PRODUCT_LAW.md or its governed companion |
+| Routing / authority interpretation | Product_Law/WIRING.md |
+| Ordered execution gate / acceptance prerequisite | Masterplan/MASTERPLAN.md or the detailed active checklist |
+| One global current execution frontier | Masterplan/NEXT_SLICES.md |
+| Verified geometry/result/evidence/finding | Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md or the relevant evidence ledger |
+| Bounded implementation scope and rationale | Owning Issue / PR body |
+| Current newcomer/session state | Issue #409 and AI_ASSISTANT_READ_ME.md |
+| Structural tree/branch change | Tree Census representations in the same governed change |
+
+Material alternatives that are rejected or deferred should retain a compact reason in the owning durable surface when their absence could later cause re-litigation or a bad implementation. Do not create a second ledger merely to store these decisions.
+
+A checkbox is only a status marker. Claims remain subject to exact-head evidence and the repository's evidence-state progression. Historical records must be date-stamped and explicitly labeled historical so they cannot be mistaken for current truth.
+
+Every materially changed spatial tree/branch/division must reconcile its census, execution checklist, and evidence/handoff surfaces in the same governed change when the change affects those contracts. No important implementation discussion should exist only in chat.
+
 ## Live delivery reference
 
 The canonical public live-site validation target is `https://RbrtMrlsIII.github.io/TeamAi/`. This is a delivery/verification reference only and does not create product authority, override Firebase Hosting delivery authority, or change the hosting architecture contract.

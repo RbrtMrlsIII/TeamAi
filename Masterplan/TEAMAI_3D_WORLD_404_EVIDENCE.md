@@ -48,6 +48,33 @@ A higher state does not follow automatically from a lower one.
 - **review-readiness:** SKIPPED because the PR remains Draft. This is lifecycle state, not approval.
 - **evidence note:** later documentation-only commits may advance the branch head without changing this implementation anchor.
 
+## Current decision and findings register — 2026-09-29
+
+This section prevents material engineering decisions from existing only in chat. It is a compact evidence/decision register, not a second roadmap.
+
+| ID | Decision / finding | Current status | Durable implication |
+|---|---|---|---|
+| D-029-01 | #424 is the sole active 029 spatial continuation after merged #404; global current slice remains #401 | ACCEPTED / CURRENT | spatial work stays bounded in #424 and does not absorb backend/runtime authority |
+| D-029-02 | S4 compact-radius regression required owner-side factor max(1.66, 0.9 + 1.3 × expansion) | REPAIRED / VERIFIED | do not restore the old formula or weaken geometry tests |
+| D-029-03 | Y0 feature/leaf descent precedes further spatial expression | GOVERNED | terminal controls/payloads must be inventoried before physical completion is treated as final |
+| D-029-04 | Y1 target renderer substrate is Three.js + WebGL2 with one scene/canvas/renderer/animation/camera authority | GOVERNED / NOT IMPLEMENTED | migrate by adapter stages; raw WebGL remains transition architecture until parity/proof |
+| D-029-05 | Post-S26 visual checkpoint is VC1/AB1, non-blocking, while S33 remains final polish | GOVERNED | qualitative coherence is observed before late polish and is not a new roadmap slice |
+| D-029-06 | Current Browser failure is a legacy machine-core-preview temporal contract, not S4 geometry proof | DIAGNOSED / OPEN | fix deterministic state/clock boundary; no arbitrary sleeps and no assertion weakening |
+| D-029-07 | Material project decisions must be promoted from chat into #409, this evidence ledger, the checklist, WIRING, or the owning Issue/PR according to ownership | GOVERNED | no chat-only decision is treated as project truth |
+
+### Current exact-head verification boundary
+
+For #424 head 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089:
+
+- Governance 36539522170: PASS
+- Full-System 36539522147: PASS
+- Deep Security 36539522181: PASS
+- Security / CodeQL 36539522165: PASS
+- Canonical Browser 36539522142: FAIL, 87 passed / 4 skipped / 1 failed
+- Current Browser artifact: 11020105889, SHA-256 fbf24923ffa7925aefe6bc90d495d2f0665f543bf857b776ab1beccf9e765836
+
+The Browser failure is isolated to tests/e2e/machine-core.spec.ts:21: branch selection currently causes the preview to enter the expansion path before the explicit Expand action is clicked. This is a deterministic-contract problem to fix in the preview/controller boundary; it does not invalidate the repaired S4 geometry or claim production Hero failure.
+
 ## Evidence index
 
 ### E404-BASE — branch and authority reconciliation

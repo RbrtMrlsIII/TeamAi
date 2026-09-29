@@ -632,33 +632,149 @@ Exit: phone is a designed machine view.
 
 ## Y0. Spatial feature descent / leaf coverage gate
 
-- [ ] Freeze the current frontend feature registry + Tree Census vocabulary.
-- [ ] Enumerate L0 machine → L1 facility/tree → L2 branch/division → L3 subassembly → L4 payload → L5 leaf action/result.
-- [ ] Classify every terminal node as SPATIAL_SURFACE, SPATIAL_PAYLOAD, APP_UI_HANDOFF, READ_MODEL_ONLY, or STATE_ONLY.
-- [ ] Record semantic owner, payload source, physical parent, topology, camera, state/loading/error, accessibility, responsive behavior, reduced-motion equivalent, and verification owner.
-- [ ] Resolve missing branches at the actual semantic/product owner; do not fabricate branch IDs or geometry merely to host controls.
-- [ ] Verify all seven Seat divisions and all current product facilities have explicit terminal paths.
-- [ ] Keep ordinary UI handoffs at the leaf where 3D would be dishonest or unnecessarily complex.
+Purpose: close the product-vocabulary gap before further physical construction or visual breadth. Y0 uses the existing Issue #400 frontend feature registry and current Tree Census. It does not invent semantic tree IDs, child branches, or geometry merely to give controls a spatial parent.
 
-Exit: no "window discovered after the wall" gap remains in the declared feature vocabulary.
+Authoritative inputs: frontend/spatial/feature-registry.js, docs/TEAMAI_3D_HERO_TREE_CENSUS.*, docs/TEAMAI_3D_HERO_TREE_AUTHORITY.xml, Issue #400, and the owning runtime/read-model contract for each feature.
 
+### Y0.1 Declared terminal-surface coverage
+
+| Existing feature-registry id | Registry surface | Declared terminal classes | Spatial rule before implementation |
+|---|---|---|---|
+| workspace-hq | spatial+normal-ui | SPATIAL_SURFACE + APP_UI_HANDOFF | use the existing Workspace spatial owner; do not invent a second facility root |
+| projects-library | normal-ui | APP_UI_HANDOFF | normal UI remains the honest terminal surface unless a governed spatial payload already exists |
+| artifacts-inventory | normal-ui+spatial-read-model | READ_MODEL_ONLY + APP_UI_HANDOFF | spatial read-model data must not be mistaken for new physical geometry |
+| storage | normal-ui+spatial-read-model | READ_MODEL_ONLY + APP_UI_HANDOFF | preserve the existing item-inventory scope; no deferred binary-upload geometry |
+| seats | spatial+normal-ui | SPATIAL_SURFACE + APP_UI_HANDOFF | inherit TREE-HERO-SEAT and the existing seven semantic divisions |
+| team-agents | normal-ui+spatial-handoff | APP_UI_HANDOFF | do not invent Seat children; use Team/Agents ownership and existing spatial handoff seams |
+| mcp-capability | normal-ui+spatial-handoff | APP_UI_HANDOFF | dedicated MCP facility remains target-owned-recursive; credentials stay outside renderer |
+| skills-responsibility | normal-ui+spatial-configuration | APP_UI_HANDOFF | responsibility/skill configuration remains product configuration, not a fabricated Seat branch |
+| orchestration | normal-ui+read-model | READ_MODEL_ONLY + APP_UI_HANDOFF | global turn policy remains TREE-ORCHESTRATION/scheduler authority |
+| marketplace | normal-ui+spatial-handoff | APP_UI_HANDOFF | commerce/entitlement is not rendered as transaction success |
+| settings | normal-ui+spatial-handoff | APP_UI_HANDOFF | Settings is cross-cutting; it is not a second semantic machine hierarchy |
+| auth-gateway | normal-ui+spatial-handoff | APP_UI_HANDOFF | authentication remains gateway/runtime authority; guest action is limited to the governed handoff |
+
+The matrix records existing vocabulary, not new semantic identities. For every row, the next implementation task is to descend through the real owning product/runtime contract and identify actual terminal actions/results before assigning spatial embodiment.
+
+### Y0.2 Known TREE-HERO-SEAT leaf descent
+
+The current Seat hierarchy remains exactly:
+
+SEAT_SHELL
+├── SEAT_CONNECTION
+├── SEAT_BEHAVIOR
+├── SEAT_TOOLKIT
+├── SEAT_CAPABILITIES
+├── SEAT_AUTHORIZATION
+├── SEAT_WORKSPACE_SCOPE
+└── SEAT_TASK_EVIDENCE
+
+Current known leaf groups from the existing census are:
+
+| Existing branch | Known terminal leaf groups to verify against owning runtime/read-model contract |
+|---|---|
+| SEAT_CONNECTION | health, configure/bind, connection test, provider/application relationship |
+| SEAT_BEHAVIOR | Seat-local Do/Don't rules, defaults/constraints, configuration |
+| SEAT_TOOLKIT | resolved common-skill bundle, equip/equipment state |
+| SEAT_CAPABILITIES | available actions, tools/MCP facets, capability visibility/equipment |
+| SEAT_AUTHORIZATION | reason-bearing authorization/approval presentation, configuration handoff |
+| SEAT_WORKSPACE_SCOPE | workplace/project/repository/path/workstation scope presentation |
+| SEAT_TASK_EVIDENCE | task state, result/event/evidence, report/handoff/trace continuity |
+
+These are coverage candidates, not a license to invent missing semantics. Any deeper descendant must have a governed semantic owner before it becomes a durable 3D branch.
+
+### Y0.3 Required terminal-leaf contract
+
+For every terminal path that survives the cold review, record all applicable fields:
+
+- [ ] L0 machine / world context.
+- [ ] L1 tree/facility or explicit normal-UI handoff classification.
+- [ ] L2 branch/division identity, only when an existing semantic identity exists.
+- [ ] L3 subassembly/mechanism owner, when spatial.
+- [ ] L4 payload/configuration source.
+- [ ] L5 leaf action/result semantics.
+- [ ] terminal class: SPATIAL_SURFACE / SPATIAL_PAYLOAD / APP_UI_HANDOFF / READ_MODEL_ONLY / STATE_ONLY.
+- [ ] physical parent, geometry/footprint, and expansion region when spatial.
+- [ ] topology/interface and camera relationship when spatial.
+- [ ] loading/error/blocked/recovery semantics.
+- [ ] accessibility name/state and keyboard path.
+- [ ] responsive behavior and reduced-motion equivalent.
+- [ ] verification owner and exact evidence boundary.
+
+### Y0.4 Closure procedure
+
+- [ ] Freeze the current Feature Registry vocabulary and current Tree Census vocabulary for this review head.
+- [ ] Enumerate all declared L0→L5 paths without introducing synthetic child IDs.
+- [ ] Mark every terminal path as spatial, UI, read-model, or state-only.
+- [ ] Record unresolved paths as explicit gaps with an owner rather than filling them with placeholder geometry.
+- [ ] Reconcile affected census representations in the same governed change when a real tree/branch/division is added, removed, renamed, materially restructured, or reimplemented.
+- [ ] Record material Y0 findings and rejected/deferred alternatives in the evidence registry so they survive session turnover.
+- [ ] Close Y0 only when the declared product vocabulary has no unexplained terminal leaves.
+
+Exit: the machine construction does not discover missing product windows after its physical walls have been finalized.
 
 ## Y1. Renderer substrate evolution gate
 
-**Decision:** adopt Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target renderer substrate while preserving the existing spatial assembly and semantic authority model.
+Decision: adopt Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target renderer substrate while preserving the existing semantic, geometry, topology, camera, and authority boundaries.
 
-- [ ] Baseline current raw WebGL behavior at fixed camera states.
-- [ ] Add exact pinned Three.js dependency and lockfile integrity.
-- [ ] Introduce one Three.js scene adapter consuming existing S2-S10 assemblies.
-- [ ] Preserve one canvas, one renderer, one scene, one animation loop, one semantic camera authority.
-- [ ] Port reusable primitive/mesh factories to BufferGeometry / Mesh.
-- [ ] Port Core, Pod, Division, Facility, topology, and camera projections without changing semantic IDs.
-- [ ] Verify source/public parity and no duplicate WebGL contexts.
-- [ ] Verify geometry, responsive, reduced-motion, accessibility, and Browser contracts.
-- [ ] Compare fixed-state renders against the raw WebGL baseline.
-- [ ] Remove raw WebGL only after exact-head parity, Browser proof, and rollback/archive evidence.
+Y1 is not a new machine hierarchy. It is a scene/rendering adapter layer between the existing S2–S10 assembly descriptors and the existing Hero canvas.
 
-Exit: the existing machine grammar is represented by a maintainable WebGL2 scene graph without creating a second authority.
+### Y1.1 Required target architecture
+
+authoritative product/read model
+→ semantic tree / branch / leaf payload
+→ authored spatial assembly + derived geometry
+→ Three.js scene adapter
+→ Object3D / Group
+→ Mesh + BufferGeometry + Material
+→ WebGLRenderer (WebGL2)
+→ existing Hero canvas
+
+Required invariants:
+
+- [ ] one Hero canvas.
+- [ ] one renderer.
+- [ ] one scene.
+- [ ] one semantic camera authority.
+- [ ] one animation loop.
+- [ ] no second spatial/semantic hierarchy.
+- [ ] S2–S10 remain geometry/mechanics/topology/camera authorities.
+- [ ] backend/auth/authorization/entitlement/scheduler/provider/payment state remains outside the renderer.
+- [ ] explicit WebGL2 capability detection and an observable unsupported/fallback state.
+
+### Y1.2 Migration staging
+
+- [ ] Freeze S2–S10 assembly contracts and current fixed-state Browser baselines before changing rendering substrate.
+- [ ] Choose and pin an exact Three.js version only after repository/package/browser compatibility inspection; do not select a version from memory.
+- [ ] Commit lockfile integrity and dependency provenance.
+- [ ] Introduce exactly one scene adapter that consumes existing assembly descriptors without renaming semantic IDs.
+- [ ] Port reusable primitive factories to BufferGeometry / Mesh and preserve authored dimensions/subjects.
+- [ ] Port S2 Core and one S3 Pod end-to-end, including the real focused opening transformation.
+- [ ] Port S4 divisions and S7 facilities using their existing descriptors and mechanical owners.
+- [ ] Port S8 topology projections and S10 camera behavior without moving their authority into Three.js.
+- [ ] Add WebGL2 capability reporting and the unsupported/fallback state before promoting the new path.
+- [ ] Re-run source/public parity, geometry, accessibility, responsive, reduced-motion, and Browser contracts.
+- [ ] Capture fixed-state before/after comparisons: HERO_WIDE, focused/open Seat, focused/open branch/facility.
+- [ ] Measure one-canvas runtime resource count, frame time, buffer/geometry reuse, disposal, and 10-seat stress.
+- [ ] Preserve a rollback/archive path until exact-head semantic/visual/performance parity is demonstrated.
+- [ ] Remove raw WebGL only after the acceptance package is exact-head and independently reviewed.
+
+### Y1.3 Asset boundary
+
+A governed glTF loader path may be introduced later when a real authored asset pipeline requires it. It must feed the same scene adapter and must not become an alternate semantic or geometry authority. The first Y1 migration must not depend on speculative asset ingestion.
+
+### Y1.4 Y1 exit evidence
+
+- [ ] exact-head semantic IDs unchanged.
+- [ ] exact-head geometry/subject outputs unchanged within declared migration tolerance.
+- [ ] source/public mirrors synchronized.
+- [ ] no second canvas/context/animation loop.
+- [ ] WebGL2 support/fallback behavior proven.
+- [ ] Browser interaction/camera/responsive/reduced-motion/a11y evidence passes.
+- [ ] fixed-state visual comparison reviewed.
+- [ ] performance/resource measurements recorded.
+- [ ] rollback/archive evidence recorded.
+
+Exit: the existing machine grammar is represented by a maintainable WebGL2 scene graph without creating a second source of truth.
 
 ## Z. S24 — Materials / lighting
 **Prerequisites:** Y0 spatial feature descent/leaf coverage and Y1 renderer substrate migration are complete enough to support the declared machine vocabulary. S24 is visual expression, not a substitute for missing branches.
@@ -887,10 +1003,20 @@ Exit: polish improves a correct machine.
 - [ ] Remove claims that imply #398 is still Draft/active.
 - [ ] Remove claims that imply current primitive renderer is final.
 - [ ] State clearly that R1/R2 are implemented-partial, not final machine completion.
-- [ ] Record the 10-seat geometry discrepancy and its resolution when closed.
+- [x] Record the 10-seat geometry discrepancy and its resolution in the evidence ledger.
 - [x] Record actual evidence runs by exact head in TEAMAI_3D_WORLD_404_EVIDENCE.md.
-- [ ] Keep screenshots/video references separate from Product Law.
-- [ ] Update session/recovery state after major slice boundaries.
+- [x] Keep screenshots/video references separate from Product Law.
+- [x] Update session/recovery state after major slice boundaries.
+
+
+### AJ5. Cross-session decision persistence
+
+- [x] #409 is the canonical newcomer handoff and contains the current exact state rather than chat-only recovery instructions.
+- [x] The evidence registry records verified findings, exact-head evidence, and material spatial decisions.
+- [x] docs/CHRONOLOGY.md records the current decision order while preserving historical chronology.
+- [x] Product_Law/WIRING.md defines the destination for material decisions so discussions cannot remain chat-only.
+- [x] The active PR body is a single current implementation description rather than a concatenation of stale PR snapshots.
+- [ ] Reconcile any remaining unrelated historical documents that still present old heads as current; do not rewrite them if they are explicitly date-stamped historical.
 
 ## AK. Acceptance gates
 - [ ] G1 Semantic completeness.
