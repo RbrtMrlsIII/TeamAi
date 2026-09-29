@@ -26,7 +26,10 @@ import {
 import {
   MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE,
+  MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
   getMachineSeatAuthorizationShieldOutline,
+  getMachineSeatBehaviorBaffleOutline,
   resolveMachineSeatDivisionProfileShape,
 } from '../frontend/spatial/machine-seat-division-profile.js';
 
@@ -70,6 +73,79 @@ test('S4 authorization shield profile overrides only presentation shape', () => 
     }),
     MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   );
+  assert.equal(
+    normalizeThreeShape({
+      shape: 'CUBE',
+      profile: MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE,
+    }),
+    MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
+  );
+});
+
+test('S4 behavior baffle profile preserves the existing articulated descriptor envelope', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const divisionParent = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
+    parent: divisionParent,
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount: 1,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: divisionParent,
+    childId: 'SEAT_BEHAVIOR',
+    childIndex: 1,
+    amount: 1,
+    geometry: geometryDescriptor,
+  });
+  const component = assembly.components.find(
+    (entry) => entry.profile === MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE,
+  );
+  assert.ok(component);
+  assert.equal(assembly.mechanism.attachment.type, 'HINGED_BAFFLE');
+  assert.equal(assembly.mechanism.attachment.primaryComponent, 'rule-baffles');
+
+  const outline = getMachineSeatBehaviorBaffleOutline();
+  assert.equal(outline.length, 8);
+  const xs = outline.map(([x]) => x);
+  const zs = outline.map(([, z]) => z);
+  assert.equal(Math.min(...xs), -0.60);
+  assert.equal(Math.max(...xs), 0.60);
+  assert.equal(Math.min(...zs), -0.60);
+  assert.equal(Math.max(...zs), 0.60);
+
+  const turns = outline.map((point, index) => {
+    const previous = outline[(index + outline.length - 1) % outline.length];
+    const next = outline[(index + 1) % outline.length];
+    return (
+      (point[0] - previous[0]) * (next[1] - point[1])
+      - (point[1] - previous[1]) * (next[0] - point[0])
+    );
+  });
+  assert.ok(turns.every((turn) => turn > 0));
+
+  const descriptor = normalizeThreeDescriptor(component, assembly.id);
+  assert.equal(descriptor.shape, MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE);
+  assert.deepEqual(descriptor.dimensions, component.dimensions);
+
+  const openRotation = component.rotationY + assembly.mechanism.attachment.travel;
+  assert.ok(openRotation > component.rotationY);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  const epsilon = 1e-6;
+  const expected = descriptor.dimensions;
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
+  assert.equal(geometry.getAttribute('position').count, 84);
+  geometry.dispose();
 });
 
 test('S4 authorization shield BufferGeometry preserves descriptor envelope', () => {
@@ -243,6 +319,21 @@ test('Y1 descriptor conversion is fail-closed for malformed input', () => {
   assert.throws(() => normalizeThreeDescriptor(null), /requires an id/);
 });
 
+
+test('S4 source and browser profile copies remain exact', () => {
+  const profileSource = readFileSync('frontend/spatial/machine-seat-division-profile.js', 'utf8');
+  const profileBrowser = readFileSync('public/machine-seat-division-profile.js', 'utf8');
+  assert.equal(profileBrowser, profileSource);
+
+  const presentationSource = readFileSync('frontend/spatial/machine-seat-division-presentation.js', 'utf8');
+  const presentationBrowser = readFileSync('public/machine-seat-division-presentation.js', 'utf8');
+  assert.equal(presentationBrowser, presentationSource);
+
+  const rendererSource = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
+  assert.match(rendererSource, /getMachineSeatBehaviorBaffleOutline/);
+  assert.match(rendererSource, /behaviorBaffle: getMachineSeatBehaviorBaffleOutline\(\)/);
+  assert.match(rendererSource, /MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE/);
+});
 
 test('Y1 adapter source and browser copy remain exact', () => {
   const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');

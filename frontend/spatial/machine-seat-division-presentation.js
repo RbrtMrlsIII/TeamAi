@@ -184,9 +184,7 @@ export function drawFocusedSeatDivision({
       profile: component.profile,
       fallbackShape: component.shape,
     });
-    const primitive = presentationShape === 'S4_AUTHORIZATION_SHIELD'
-      ? presentationShape
-      : primitives[component.shape];
+    const primitive = presentationShape || primitives[component.shape];
     if (!primitive) continue;
     const attachmentTransform = resolveSeatDivisionAttachmentTransform(assembly, component, progress);
     const localCenter = {

@@ -15,7 +15,9 @@ import {
 } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
+  getMachineSeatBehaviorBaffleOutline,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileShape,
 } from './machine-seat-division-profile.js';
 
@@ -53,9 +55,7 @@ export function normalizeThreeShape({ shape = '', profile = '' } = {}) {
     profile,
     fallbackShape: '',
   });
-  if (profileShape === MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE) {
-    return profileShape;
-  }
+  if (profileShape) return profileShape;
   if (rawShape === 'TORUS') return 'TORUS';
   if (rawShape === 'CYL' || rawShape === 'CYLINDER') return 'CYLINDER';
   if (rawShape === 'SPH' || rawShape === 'SPHERE') return 'SPHERE';
@@ -286,6 +286,13 @@ export function buildThreeGeometry(THREE, descriptor) {
   }
   if (descriptor.shape === MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE) {
     return buildSeatAuthorizationShieldGeometry(THREE, descriptor);
+  }
+  if (descriptor.shape === MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE) {
+    return buildExtrudedPolygonGeometry(
+      THREE,
+      descriptor,
+      getMachineSeatBehaviorBaffleOutline(),
+    );
   }
   const radius = Math.max(0.01, Math.max(x, z) * 0.5);
   if (descriptor.shape === 'TORUS') {
