@@ -1,10 +1,10 @@
 /**
  * TEAM-EXPERIENCE-029 / S4
- * Presentation-neutral authored profile contracts for Seat divisions.
+ * Presentation-neutral authored profile/construction contracts for Seat divisions.
  *
- * This module contains renderer-facing shape identity only. It does not own
- * semantic identity, topology, dimensions, attachment travel, authorization,
- * or durable runtime state.
+ * This module owns renderer-facing shape identity and manufactured presentation
+ * recipes only. It does not own semantic identity, topology, semantic dimensions,
+ * attachment travel, authorization, or durable runtime state.
  */
 
 export const MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE = 'authorization-shield';
@@ -54,21 +54,25 @@ const WORKSPACE_SCOPE_FRAME_RECIPE = Object.freeze([
     id: 'front-rail',
     center: Object.freeze({ x: 0, z: 0.43 }),
     dimensions: Object.freeze({ x: 1.00, z: 0.14 }),
+    thickness: 0.14,
   }),
   Object.freeze({
     id: 'rear-rail',
     center: Object.freeze({ x: 0, z: -0.43 }),
     dimensions: Object.freeze({ x: 1.00, z: 0.14 }),
+    thickness: 0.14,
   }),
   Object.freeze({
     id: 'left-rail',
     center: Object.freeze({ x: -0.43, z: 0 }),
     dimensions: Object.freeze({ x: 0.14, z: 1.00 }),
+    thickness: 0.14,
   }),
   Object.freeze({
     id: 'right-rail',
     center: Object.freeze({ x: 0.43, z: 0 }),
     dimensions: Object.freeze({ x: 0.14, z: 1.00 }),
+    thickness: 0.14,
   }),
 ]);
 
@@ -77,7 +81,17 @@ export function getMachineSeatWorkspaceScopeFrameRecipe() {
     id: entry.id,
     center: Object.freeze({ ...entry.center }),
     dimensions: Object.freeze({ ...entry.dimensions }),
+    thickness: entry.thickness,
   }));
+}
+
+export function resolveMachineSeatWorkspaceScopeFrameRailThickness({ dimensions = {}, rail = {} } = {}) {
+  const footprint = Math.min(
+    Math.abs(Number(dimensions.x) || 0),
+    Math.abs(Number(dimensions.z) || 0),
+  );
+  const normalizedThickness = Math.max(0, Number(rail.thickness) || 0);
+  return Math.max(0.001, footprint * normalizedThickness);
 }
 
 export function resolveMachineSeatDivisionProfileRecipe({ profile = '' } = {}) {
