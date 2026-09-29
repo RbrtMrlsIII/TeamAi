@@ -81,6 +81,24 @@ test('S3 expansion preserves Pod identity while changing local articulation', ()
   assert.notDeepEqual(expanded.subject, collapsed.subject);
 });
 
+test('S3 authored Pod opening profile transforms the parent machine instead of only child divisions', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const part = core.byBranch.get('BRANCH-SEAT-04');
+  const collapsed = deriveMachinePodAssembly({ part, expansionAmount: 0 });
+  const opening = deriveMachinePodAssembly({ part, expansionAmount: 0.5 });
+  const expanded = deriveMachinePodAssembly({ part, expansionAmount: 1 });
+
+  assert.equal(collapsed.mechanicalPresentation.amount, 0);
+  assert.equal(expanded.mechanicalPresentation.amount, 1);
+  assert.ok(expanded.mechanicalPresentation.shellPanelSeparation > opening.mechanicalPresentation.shellPanelSeparation);
+  assert.ok(expanded.mechanicalPresentation.shellPanelTravel > opening.mechanicalPresentation.shellPanelTravel);
+  assert.ok(expanded.mechanicalPresentation.chamberTravel > opening.mechanicalPresentation.chamberTravel);
+  assert.ok(expanded.mechanicalPresentation.payloadTravel > opening.mechanicalPresentation.payloadTravel);
+  assert.ok(expanded.mechanicalPresentation.payloadLift > 0);
+  assert.ok(expanded.mechanicalPresentation.shellPanelRotation > 0);
+  assert.equal(expanded.mechanicalPresentation.axis, 'radial-outward');
+});
+
 test('S3 fails closed when Pod root ownership is corrupted', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const part = core.byBranch.get('BRANCH-SEAT-01');
