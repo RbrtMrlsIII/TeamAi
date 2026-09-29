@@ -21,6 +21,12 @@ import {
   MACHINE_POD_SHELL_PROFILE,
   getMachinePodShellOutline,
 } from '../frontend/spatial/machine-pod-profile.js';
+import {
+  MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE,
+  MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  getMachineSeatAuthorizationShieldOutline,
+  resolveMachineSeatDivisionProfileShape,
+} from '../frontend/spatial/machine-seat-division-profile.js';
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
@@ -38,6 +44,86 @@ test('Y1 shape normalization preserves authored profiles without changing semant
     normalizeThreeShape({ profile: AUTHORED_POD_SHELL_PROFILE }),
     'POD_SHELL',
   );
+});
+
+test('S4 authorization shield profile overrides only presentation shape', () => {
+  assert.equal(
+    resolveMachineSeatDivisionProfileShape({
+      profile: MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE,
+      fallbackShape: 'CUBE',
+    }),
+    MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  );
+  assert.equal(
+    resolveMachineSeatDivisionProfileShape({
+      profile: 'unrelated-profile',
+      fallbackShape: 'CUBE',
+    }),
+    'CUBE',
+  );
+  assert.equal(
+    normalizeThreeShape({
+      shape: 'CUBE',
+      profile: MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE,
+    }),
+    MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  );
+});
+
+test('S4 authorization shield BufferGeometry preserves descriptor envelope', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const podPart = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const pod = deriveMachinePodAssembly({
+    part: podPart,
+    payloadDensity: 0.45,
+    adjacentCenterSpacing: 2.812,
+  });
+  const parent = pod;
+  const divisionParent = machine.parts.find((part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01');
+  const { deriveMachineSeatDivisionAssembly } = await import('../frontend/spatial/machine-seat-division-assembly.js');
+  const { deriveFocusedSeatDivisionGeometry } = await import('../frontend/spatial/machine-seat-division-presentation.js');
+  const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
+    parent: divisionParent,
+    childId: 'SEAT_AUTHORIZATION',
+    childIndex: 4,
+    amount: 1,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: divisionParent,
+    childId: 'SEAT_AUTHORIZATION',
+    childIndex: 4,
+    amount: 1,
+    geometry: geometryDescriptor,
+  });
+  const component = assembly.components.find((entry) => entry.profile === MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE);
+  assert.ok(component);
+  const descriptor = normalizeThreeDescriptor(component, assembly.id);
+  assert.equal(descriptor.shape, MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE);
+  const outline = getMachineSeatAuthorizationShieldOutline();
+  assert.equal(outline.length, 8);
+  const xs = outline.map(([x]) => x);
+  const zs = outline.map(([, z]) => z);
+  assert.equal(Math.min(...xs), -0.78);
+  assert.equal(Math.max(...xs), 0.78);
+  assert.equal(Math.min(...zs), -0.78);
+  assert.equal(Math.max(...zs), 0.78);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  const epsilon = 1e-6;
+  const expected = descriptor.dimensions;
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
+  assert.equal(geometry.getAttribute('position').count, 84);
+  assert.deepEqual(descriptor.dimensions, component.dimensions);
+  geometry.dispose();
 });
 
 test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
