@@ -116,7 +116,6 @@ function clearGroup(group) {
     const child = group.children[group.children.length - 1];
     group.remove(child);
     child.geometry?.dispose?.();
-    child.material?.dispose?.();
   }
 }
 
