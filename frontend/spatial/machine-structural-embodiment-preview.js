@@ -135,14 +135,20 @@ function subjectFromParts(parts) {
   });
 }
 
-function positionFromSpec(spec) {
-  const pitch = Number(spec.pitch) || 0;
+function positionFromSpec(spec, { world = false } = {}) {
   const radius = Number(spec.radius) || 12;
-  const cosPitch = Math.cos(pitch);
+  if (world) {
+    const worldRadius = Math.max(radius, Math.min(30, radius * 1.72));
+    return {
+      x: spec.target.x + Math.sin(spec.bearing) * worldRadius * 0.82,
+      y: spec.target.y + Math.max(4.4, worldRadius * 0.34),
+      z: spec.target.z + Math.cos(spec.bearing) * worldRadius,
+    };
+  }
   return {
-    x: spec.target.x + Math.sin(spec.bearing) * radius * cosPitch,
-    y: spec.target.y + Math.sin(pitch) * radius,
-    z: spec.target.z + Math.cos(spec.bearing) * radius * cosPitch,
+    x: spec.target.x + Math.sin(spec.bearing) * radius * 0.82,
+    y: spec.target.y + Number(spec.pitch || 0),
+    z: spec.target.z + Math.cos(spec.bearing) * radius,
   };
 }
 
@@ -290,7 +296,7 @@ function renderView() {
 
   adapter.resize();
   adapter.setCameraPose({
-    position: positionFromSpec(spec),
+    position: positionFromSpec(spec, { world: currentView === 'world' }),
     target: spec.target,
     fov: spec.fov,
   });
