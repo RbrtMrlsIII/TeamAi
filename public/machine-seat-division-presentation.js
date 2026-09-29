@@ -14,6 +14,7 @@ import {
 import {
   getMachineSeatWorkspaceScopeFrameRecipe,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE,
+  resolveMachineSeatWorkspaceScopeFrameRailThickness,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileRecipe,
   resolveMachineSeatDivisionProfileShape,
@@ -218,6 +219,10 @@ export function drawFocusedSeatDivision({
           y: 0,
           z: rail.center.z * component.dimensions.z,
         };
+        const railThickness = resolveMachineSeatWorkspaceScopeFrameRailThickness({
+          dimensions: component.dimensions,
+          rail,
+        });
         draw(
           MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
           mul(
@@ -228,7 +233,7 @@ export function drawFocusedSeatDivision({
                 T(railCenter.x, railCenter.y, railCenter.z),
                 S(
                   component.scale.x * rail.dimensions.x,
-                  component.scale.y,
+                  railThickness,
                   component.scale.z * rail.dimensions.z,
                 ),
               ),
