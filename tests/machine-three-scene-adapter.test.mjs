@@ -17,6 +17,8 @@ import {
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
 import { deriveMachinePodAssembly } from '../frontend/spatial/machine-pod-assembly.js';
+import { deriveMachineSeatDivisionAssembly } from '../frontend/spatial/machine-seat-division-assembly.js';
+import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
   getMachinePodShellOutline,
@@ -80,10 +82,7 @@ test('S4 authorization shield BufferGeometry preserves descriptor envelope', () 
     payloadDensity: 0.45,
     adjacentCenterSpacing: 2.812,
   });
-  const parent = pod;
   const divisionParent = machine.parts.find((part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01');
-  const { deriveMachineSeatDivisionAssembly } = await import('../frontend/spatial/machine-seat-division-assembly.js');
-  const { deriveFocusedSeatDivisionGeometry } = await import('../frontend/spatial/machine-seat-division-presentation.js');
   const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
     parent: divisionParent,
     childId: 'SEAT_AUTHORIZATION',
