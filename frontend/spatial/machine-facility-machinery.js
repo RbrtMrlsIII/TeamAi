@@ -489,7 +489,6 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
       z: center.z + direction.z * (portBoundary + 0.02),
     };
     const length = distance3D(port.point, target);
-    if (length < 0.04) continue;
 
     interfaces.push(
       physicalInterface(
