@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import {
   collectThreeDescriptors,
   normalizeThreeDescriptor,
@@ -42,4 +43,11 @@ test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
 
 test('Y1 descriptor conversion is fail-closed for malformed input', () => {
   assert.throws(() => normalizeThreeDescriptor(null), /requires an id/);
+});
+
+
+test('Y1 adapter source and browser copy remain exact', () => {
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  const browser = readFileSync('public/machine-three-scene-adapter.js', 'utf8');
+  assert.equal(browser, source);
 });
