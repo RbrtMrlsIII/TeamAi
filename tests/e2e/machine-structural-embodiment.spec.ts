@@ -9,6 +9,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(status).toContainText(' semantic edges · WebGL2 · Three r');
     await expect(canvas).toHaveCount(1);
     await expect(canvas).toHaveAttribute('data-structural-view', 'world');
+    await expect(canvas).toHaveAttribute('data-structural-material-model', 'S24-authored-theme-family');
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '10');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '4');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
