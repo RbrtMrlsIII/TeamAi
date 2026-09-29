@@ -143,7 +143,7 @@ export function resolveThreeMaterialPresentation(role, authored = authoredHeroMa
     : 'metal2';
   const glass = authoredRole === 'glass';
   return Object.freeze({
-    authoredRole,
+    authoredRole: resolvedRole,
     color: Object.freeze([...definition.color]),
     roughness: Math.max(0, Math.min(1, Number(definition.rough) || 0)),
     metalness: METALLIC_ROLE_LEVEL[metallicKey],
