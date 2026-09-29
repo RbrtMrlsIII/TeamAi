@@ -67,7 +67,7 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
   });
 }
 
-export function collectThreeDescriptors({ core = null, pods = [], facilities = [] } = {}) {
+export function collectThreeDescriptors({ core = null, pods = [], facilities = [], divisions = [], extras = [] } = {}) {
   const descriptors = [];
   const add = (part, parentId) => {
     if (!part) return;
@@ -82,7 +82,13 @@ export function collectThreeDescriptors({ core = null, pods = [], facilities = [
   }
   for (const facility of Array.isArray(facilities) ? facilities : []) {
     for (const part of facility?.components || []) add(part, facility?.id || 'MACHINE-FACILITY-ASSEMBLY');
+    for (const part of facility?.mechanicalDetails || []) add(part, facility?.id || 'MACHINE-FACILITY-ASSEMBLY');
   }
+  for (const division of Array.isArray(divisions) ? divisions : []) {
+    for (const part of division?.components || []) add(part, division?.id || 'MACHINE-SEAT-DIVISION-ASSEMBLY');
+    for (const part of division?.mechanicalDetails || []) add(part, division?.id || 'MACHINE-SEAT-DIVISION-ASSEMBLY');
+  }
+  for (const part of Array.isArray(extras) ? extras : []) add(part, 'MACHINE-STRUCTURAL-EXTRA');
 
   return Object.freeze(descriptors);
 }
@@ -157,6 +163,15 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   scene.add(key, fill);
 
   const materialCache = new Map();
+  const topologyMaterial = new THREE.LineBasicMaterial({
+    color: 0x8f9aa8,
+    transparent: true,
+    opacity: 0.52,
+  });
+  topologyMaterial.name = 'Y1_SUBSTRATE:topology';
+  const topologyRoot = new THREE.Group();
+  topologyRoot.name = 'S8_TOPOLOGY_PROJECTION';
+  scene.add(topologyRoot);
 
   function material(role) {
     const keyName = String(role || 'substrate-neutral');
@@ -191,6 +206,31 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     });
   }
 
+  function setTopology(topology = null) {
+    clearGroup(topologyRoot);
+    const edges = Array.isArray(topology?.edges) ? topology.edges : [];
+    let count = 0;
+    for (const edge of edges) {
+      const route = Array.isArray(edge?.route) ? edge.route : [];
+      if (route.length < 2 || !edge?.semanticEdgeId) continue;
+      const positions = new Float32Array(route.flatMap((point) => [
+        Number(point?.x) || 0,
+        Number(point?.y) || 0,
+        Number(point?.z) || 0,
+      ]));
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      const line = new THREE.Line(geometry, topologyMaterial);
+      line.name = 'S8_EDGE:' + edge.semanticEdgeId;
+      line.userData.semanticEdgeId = edge.semanticEdgeId;
+      line.userData.edgeKind = edge.kind || '';
+      line.userData.routeContinuous = edge.routeContinuous === true;
+      topologyRoot.add(line);
+      count += 1;
+    }
+    return Object.freeze({ edgeCount: count });
+  }
+
   function setCameraPose({ position = { x: 0, y: 6, z: 12 }, target = { x: 0, y: 1, z: 0 }, fov = 32 } = {}) {
     camera.position.set(Number(position.x) || 0, Number(position.y) || 0, Number(position.z) || 0);
     camera.fov = Number(fov) || 32;
@@ -212,6 +252,8 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
 
   function dispose() {
     clearGroup(machineRoot);
+    clearGroup(topologyRoot);
+    topologyMaterial.dispose?.();
     for (const value of materialCache.values()) value.dispose?.();
     materialCache.clear();
     renderer.dispose();
@@ -225,7 +267,9 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     scene,
     camera,
     machineRoot,
+    topologyRoot,
     setAssemblies,
+    setTopology,
     setCameraPose,
     resize,
     render,

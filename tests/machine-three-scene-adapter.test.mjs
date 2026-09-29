@@ -66,3 +66,9 @@ test('Y1 never invents semantic identity for component-only geometry', () => {
   assert.equal(descriptor.semanticId, null);
   assert.equal(descriptor.id, 'CORE_FOUNDATION_SHELL');
 });
+
+test('Y1 adapter copies are still exact after the structural projection extension', () => {
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  const browser = readFileSync('public/machine-three-scene-adapter.js', 'utf8');
+  assert.equal(browser, source);
+});
