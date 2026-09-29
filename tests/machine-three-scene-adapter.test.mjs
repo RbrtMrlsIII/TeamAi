@@ -213,14 +213,17 @@ test('S4 capability rotary lattice recipe preserves descriptor envelope with exp
     { x: 0.12, z: 1.00 },
     { x: 0.12, z: 1.00 },
   ]);
-  assert.deepEqual(recipe.slice(4).map((element) => Number(element.rotationY.toFixed(12))), [
+  const expectedSpokeAngles = [
     0,
-    Number((Math.PI / 3).toFixed(12)),
-    Number((Math.PI * 2 / 3).toFixed(12)),
+    Math.PI / 3,
+    Math.PI * 2 / 3,
     Math.PI,
-    Number((Math.PI * 4 / 3).toFixed(12)),
-    Number((Math.PI * 5 / 3).toFixed(12)),
-  ]);
+    Math.PI * 4 / 3,
+    Math.PI * 5 / 3,
+  ];
+  recipe.slice(4).forEach((element, index) => {
+    assert.ok(Math.abs(element.rotationY - expectedSpokeAngles[index]) < 1e-12);
+  });
   const minX = Math.min(...recipe.map((element) => element.center.x - (
     Math.abs(Math.cos(element.rotationY)) * element.dimensions.x
       + Math.abs(Math.sin(element.rotationY)) * element.dimensions.z
