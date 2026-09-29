@@ -131,16 +131,16 @@ function resolveStructuralThemeLighting() {
 
 export function resolveThreeMaterialPresentation(role, authored = authoredHeroMaterialSet({})) {
   const roleName = String(role || 'metal2');
-  const authoredRole = AUTHORED_ROLE_ALIASES[roleName] || roleName;
-  const definition = authored[authoredRole]
-    || authored.metal2
-    || authored.metal
-    || authoredHeroMaterialSet({}).metal2;
+  const requestedRole = AUTHORED_ROLE_ALIASES[roleName] || roleName;
+  const authoredRole = authored[requestedRole]
+    ? requestedRole
+    : authored.metal2
+      ? 'metal2'
+      : 'metal';
+  const definition = authored[authoredRole] || authoredHeroMaterialSet({}).metal2;
   const metallicKey = authoredRole in METALLIC_ROLE_LEVEL
     ? authoredRole
-    : roleName in METALLIC_ROLE_LEVEL
-      ? roleName
-      : 'metal2';
+    : 'metal2';
   const glass = authoredRole === 'glass';
   return Object.freeze({
     authoredRole,
