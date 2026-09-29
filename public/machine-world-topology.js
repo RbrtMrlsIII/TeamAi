@@ -564,6 +564,7 @@ const RENDERABLE_WORLD_EDGE_KINDS = Object.freeze([
 ]);
 
 export const PHYSICAL_CONDUIT_EDGE_KINDS = Object.freeze([
+  'pod-division',
   'pod-facility',
   'facility-facility',
   'workspace-contribution',

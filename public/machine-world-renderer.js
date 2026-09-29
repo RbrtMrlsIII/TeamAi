@@ -1135,7 +1135,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}) {
     const edges = getRenderableMachineWorldEdges(topology);
     const conduitSegments = getRenderableMachineWorldConduitSegments(topology);
-    const physicalKinds = new Set(['pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
+    const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
     let rendered = 0;
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);

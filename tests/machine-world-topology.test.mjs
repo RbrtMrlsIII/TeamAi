@@ -154,23 +154,46 @@ test('S8 external semantic routes project to authored conduit segments without c
   assert.ok(conduits.every((entry) => entry.routeContinuous));
   assert.ok(conduits.every((entry) => entry.radius <= entry.corridorRadius));
   assert.ok(conduits.every((entry) => entry.dimensions.x > 0 && entry.dimensions.y > 0 && entry.dimensions.z > 0));
+
+  const segmentsByEdge = new Map();
+  for (const segment of conduits) {
+    if (!segmentsByEdge.has(segment.semanticEdgeId)) segmentsByEdge.set(segment.semanticEdgeId, []);
+    segmentsByEdge.get(segment.semanticEdgeId).push(segment);
+  }
+  for (const edge of externalEdges) {
+    const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
+    assert.equal(segments.length, 3);
+    assert.deepEqual(segments[0].start, edge.route[0]);
+    assert.deepEqual(segments.at(-1).end, edge.route.at(-1));
+  }
 });
 
 test('S8 conduit projection follows current dynamic route geometry', () => {
-  const closedScene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
-  const openScene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
-  const build = (scene) => {
-    const facilityAssemblies = deriveMachineFacilityAssemblies({
-      outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
-    });
-    const facilityMachinery = deriveMachineFacilityMachinery({ facilityAssemblies });
-    return buildMachineWorldTopology({ scene, facilityAssemblies, facilityMachinery, seatDivisionAmount: 0 });
-  };
-  const closed = build(closedScene);
-  const open = build(openScene);
-  const closedConduit = getRenderableMachineWorldConduitSegments(closed).find((entry) => entry.edgeKind === 'pod-facility');
-  const openConduit = getRenderableMachineWorldConduitSegments(open).find((entry) => entry.edgeKind === 'pod-facility');
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const facilityAssemblies = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const facilityMachinery = deriveMachineFacilityMachinery({ facilityAssemblies });
+  const closed = buildMachineWorldTopology({
+    scene,
+    facilityAssemblies,
+    facilityMachinery,
+    seatDivisionAmount: 0,
+  });
+  const open = buildMachineWorldTopology({
+    scene,
+    facilityAssemblies,
+    facilityMachinery,
+    seatDivisionAmount: 1,
+  });
+  const closedConduit = getRenderableMachineWorldConduitSegments(closed).find((entry) =>
+    entry.edgeKind === 'pod-division'
+  );
+  const openConduit = getRenderableMachineWorldConduitSegments(open).find((entry) =>
+    entry.edgeKind === 'pod-division'
+  );
   assert.ok(closedConduit && openConduit);
-  assert.notDeepEqual(closedConduit.center, openConduit.center);
+  assert.notDeepEqual(closedConduit.start, openConduit.start);
+  assert.notDeepEqual(closedConduit.end, openConduit.end);
   assert.notDeepEqual(closedConduit.dimensions, openConduit.dimensions);
 });

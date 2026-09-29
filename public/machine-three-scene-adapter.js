@@ -521,7 +521,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   function setTopology(topology = null) {
     clearGroup(topologyRoot);
     const edges = Array.isArray(topology?.edges) ? topology.edges : [];
-    const physicalKinds = new Set(['pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
+    const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
     let count = 0;
     let lineCount = 0;
     for (const edge of edges) {
