@@ -97,6 +97,9 @@ test('S3 authored Pod opening profile transforms the parent machine instead of o
   assert.ok(expanded.mechanicalPresentation.payloadLift > 0);
   assert.ok(expanded.mechanicalPresentation.shellPanelRotation > 0);
   assert.equal(expanded.mechanicalPresentation.axis, 'radial-outward');
+  const expandedSubjectIds = new Set(expanded.subject.sourcePartIds);
+  assert.ok(expanded.components.every((item) => expandedSubjectIds.has(item.id)));
+  assert.ok(expanded.mechanicalPresentation.payloadTravel > 0);
 });
 
 test('S3 fails closed when Pod root ownership is corrupted', () => {
