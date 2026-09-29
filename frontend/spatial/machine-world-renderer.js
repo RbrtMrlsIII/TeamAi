@@ -199,6 +199,16 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   CYL: regularPolygon(16),
   TORUS: regularPolygon(12),
   SPH: regularPolygon(10),
+  POD_SHELL_PANEL: Object.freeze([
+    [-1.00, -0.48],
+    [-0.54, -0.66],
+    [0.42, -0.58],
+    [0.96, -0.24],
+    [0.86, 0.40],
+    [0.20, 0.64],
+    [-0.72, 0.48],
+    [-1.00, 0.12],
+  ]),
 });
 
 function translateMatrix(x, y, z) {
@@ -536,42 +546,118 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       return activeHeroMaterials.metal;
     };
 
+    const mechanical = assembly.mechanicalPresentation;
+    const progress = finite(mechanical?.amount, assembly.articulation?.amount || 0);
+    const radial = mechanical?.outward || { x: 0, z: 0 };
+    const tangent = mechanical?.tangent || { x: 0, z: 1 };
+    const mechanicalState = progress <= 0.02
+      ? 'CLOSED'
+      : progress >= 0.999
+        ? 'OPEN'
+        : 'OPENING';
+
     for (const component of assembly.components) {
-      const shape = shapeForRole[component.role] || 'CUBE';
       const material = materialForRole(component.role);
-      const phase = component.role === 'articulation-mechanism'
-        ? assembly.articulation.phase
-        : 0;
-      const sx = Number(component.dimensions?.x || component.radius * 2) * 0.5;
+      const baseSx = Number(component.dimensions?.x || component.radius * 2) * 0.5;
       const sy = Math.max(0.025, Number(component.dimensions?.y || component.height));
-      const sz = Number(component.dimensions?.z || component.radius * 2) * 0.5;
-      const transform = multiplyMatrix(
-        translateMatrix(
-          component.center.x,
-          component.center.y - sy * 0.5,
-          component.center.z,
-        ),
+      const baseSz = Number(component.dimensions?.z || component.radius * 2) * 0.5;
+
+      if (component.role === 'outer-shell' && mechanical && progress > 0.02) {
+        for (const side of [-1, 1]) {
+          const panelCenter = {
+            x: component.center.x
+              + tangent.x * mechanical.shellPanelSeparation * side
+              + radial.x * mechanical.shellPanelTravel,
+            y: component.center.y + mechanical.shellPanelLift,
+            z: component.center.z
+              + tangent.z * mechanical.shellPanelSeparation * side
+              + radial.z * mechanical.shellPanelTravel,
+          };
+          const panelRotation =
+            finite(mechanical.outwardAngle, 0)
+            + finite(mechanical.shellPanelRotation, 0) * side;
+          ringDraw(
+            'POD_SHELL_PANEL',
+            multiplyMatrix(
+              translateMatrix(panelCenter.x, panelCenter.y - sy * 0.5, panelCenter.z),
+              multiplyMatrix(
+                rotateYMatrix(panelRotation),
+                scaleMatrix(baseSx * 0.54, sy, baseSz * 0.88),
+              ),
+            ),
+            material,
+            {
+              emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
+              glow: selected ? 0.17 : 0.04,
+              alpha: 1,
+            },
+          );
+        }
+        continue;
+      }
+
+      const roleTravel = component.role === 'structural-collar'
+        ? finite(mechanical?.collarTravel)
+        : component.role === 'inner-chamber'
+          ? finite(mechanical?.chamberTravel)
+          : component.role === 'articulation-mechanism'
+            ? finite(mechanical?.articulationTravel)
+            : component.role === 'payload-surface'
+              ? finite(mechanical?.payloadTravel)
+              : 0;
+      const roleLift = component.role === 'structural-collar'
+        ? finite(mechanical?.collarLift)
+        : component.role === 'inner-chamber'
+          ? finite(mechanical?.chamberLift)
+          : component.role === 'payload-surface'
+            ? finite(mechanical?.payloadLift)
+            : 0;
+      const roleRotation = component.role === 'articulation-mechanism'
+        ? finite(mechanical?.articulationRotation)
+        : 0;
+      const center = {
+        x: component.center.x + radial.x * roleTravel,
+        y: component.center.y + roleLift,
+        z: component.center.z + radial.z * roleTravel,
+      };
+      const phase = component.role === 'articulation-mechanism'
+        ? finite(assembly.articulation.phase) + roleRotation
+        : component.role === 'inner-chamber'
+          ? finite(mechanical?.revealGap) * progress
+          : 0;
+      ringDraw(
+        shapeForRole[component.role] || 'CUBE',
         multiplyMatrix(
-          rotateYMatrix(phase),
-          scaleMatrix(sx, sy, sz),
+          translateMatrix(center.x, center.y - sy * 0.5, center.z),
+          multiplyMatrix(
+            rotateYMatrix(phase),
+            scaleMatrix(baseSx, sy, baseSz),
+          ),
         ),
+        material,
+        {
+          emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
+          glow: (selected ? 0.16 : 0.035) + (
+            component.role === 'connection-interface' || component.role === 'status-indicator'
+              ? 0.08
+              : 0
+          ),
+          alpha: component.role === 'payload-surface'
+            ? (reducedMotion ? 0.38 : 0.62)
+            : component.role === 'connection-interface'
+              ? (reducedMotion ? 0.34 : 0.64)
+              : component.role === 'status-indicator'
+                ? (reducedMotion ? 0.28 : 0.54)
+                : 1,
+        },
       );
-      ringDraw(shape, transform, material, {
-        emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
-        glow: (selected ? 0.16 : 0.035) + (
-          component.role === 'connection-interface' || component.role === 'status-indicator'
-            ? 0.08
-            : 0
-        ),
-        alpha: component.role === 'payload-surface'
-          ? (reducedMotion ? 0.38 : 0.62)
-          : component.role === 'connection-interface'
-            ? (reducedMotion ? 0.34 : 0.64)
-            : component.role === 'status-indicator'
-              ? (reducedMotion ? 0.28 : 0.54)
-              : 1,
-      });
     }
+
+    canvas.dataset.machineWorldPodMechanicalState = mechanicalState;
+    canvas.dataset.machineWorldPodMechanicalAmount = String(progress);
+    canvas.dataset.machineWorldPodMechanicalProfile = mechanical
+      ? 'split-shell-reveal-v1'
+      : 'none';
 
     for (const podPort of assembly.ports) {
       const scale = Number(podPort.radius) || 0.08;
