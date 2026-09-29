@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
+import * as THREE from 'three';
 import {
   collectThreeDescriptors,
   normalizeThreeDescriptor,
@@ -11,6 +12,7 @@ import {
   resolveThreePolygonSegments,
   resolveThreePodShellOutline,
   AUTHORED_POD_SHELL_PROFILE,
+  buildThreeGeometry,
 } from '../frontend/spatial/machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
@@ -73,6 +75,37 @@ test('Y1 preserves the authored Pod shell profile as an explicit mesh contract',
   assert.equal(Math.max(...xs), 0.90);
   assert.equal(Math.min(...zs), -0.62);
   assert.equal(Math.max(...zs), 0.58);
+});
+
+test('Y1 Pod shell BufferGeometry is bounded by the authored descriptor dimensions', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const podPart = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const pod = deriveMachinePodAssembly({
+    part: podPart,
+    payloadDensity: 0.45,
+    adjacentCenterSpacing: 2.812,
+  });
+  const component = pod.components.find((entry) => entry.role === 'outer-shell');
+  const descriptor = normalizeThreeDescriptor(component, pod.id);
+  assert.equal(descriptor.shape, 'POD_SHELL');
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+
+  const expected = descriptor.dimensions;
+  const epsilon = 1e-9;
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
+
+  assert.equal(geometry.getAttribute('position').count, 84);
+  geometry.dispose();
 });
 
 test('Y1 Pod shell descriptor keeps authored dimensions as the presentation envelope', () => {
