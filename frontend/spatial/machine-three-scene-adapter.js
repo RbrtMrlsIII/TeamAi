@@ -20,6 +20,10 @@ export const MACHINE_THREE_REQUIRED_WEBGL = 'WEBGL2';
 
 export const AUTHORED_POD_SHELL_PROFILE = MACHINE_POD_SHELL_PROFILE;
 
+export function resolveThreePodShellOutline() {
+  return getMachinePodShellOutline();
+}
+
 const SHAPE_BY_PROFILE = Object.freeze([
   [AUTHORED_POD_SHELL_PROFILE, 'POD_SHELL'],
   ['torus', 'TORUS'],
