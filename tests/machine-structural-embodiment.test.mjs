@@ -4,6 +4,7 @@ import test from 'node:test';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
 import { deriveMachinePodAssembly } from '../frontend/spatial/machine-pod-assembly.js';
+import { deriveMachineSeatDivisionAssembly } from '../frontend/spatial/machine-seat-division-assembly.js';
 import {
   deriveFocusedSeatDivisionGeometry,
 } from '../frontend/spatial/machine-seat-division-presentation.js';
@@ -79,9 +80,22 @@ test('S2-S10 compose into one structurally coherent 10-seat world', () => {
       childIndex,
       amount: 1,
     });
-    return { childId, geometry };
+    const assembly = deriveMachineSeatDivisionAssembly({
+      parent: seatOne,
+      childId,
+      childIndex,
+      amount: 1,
+      geometry,
+    });
+    return { childId, geometry, assembly };
   });
-  assert.equal(new Set(divisionAssemblies.map(({ geometry }) => geometry.profile)).size, 7);
+  const divisionSignatures = new Set(
+    divisionAssemblies.map(({ assembly }) =>
+      assembly.components.map(({ profile, shape }) => profile + ':' + shape).join('|'),
+    ),
+  );
+  assert.equal(divisionSignatures.size, DIVISIONS.length);
+  assert.ok(divisionAssemblies.every(({ assembly }) => assembly.components.length === 3));
 
   const facilityAssemblies = deriveMachineFacilityAssemblies({
     outerHousings: sceneClosed.parts.filter((part) => part.kind === 'outer-housing'),
