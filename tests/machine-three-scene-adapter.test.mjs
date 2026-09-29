@@ -21,6 +21,7 @@ test('Y1 shape normalization preserves authored profiles without changing semant
   assert.equal(normalizeThreeShape({ shape: 'TORUS' }), 'TORUS');
   assert.equal(normalizeThreeShape({ shape: 'CYL' }), 'CYLINDER');
   assert.equal(normalizeThreeShape({ shape: 'CUBE' }), 'BOX');
+  assert.equal(normalizeThreeShape({ shape: 'SPH' }), 'SPHERE');
   assert.equal(normalizeThreeShape({ profile: 'hex-foundation' }), 'CYLINDER');
   assert.equal(normalizeThreeShape({ profile: 'semantic-payload-deck' }), 'BOX');
 });

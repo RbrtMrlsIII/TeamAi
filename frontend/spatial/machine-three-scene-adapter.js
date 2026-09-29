@@ -32,6 +32,7 @@ export function normalizeThreeShape({ shape = '', profile = '' } = {}) {
   const rawShape = String(shape || '').trim().toUpperCase();
   if (rawShape === 'TORUS') return 'TORUS';
   if (rawShape === 'CYL' || rawShape === 'CYLINDER') return 'CYLINDER';
+  if (rawShape === 'SPH' || rawShape === 'SPHERE') return 'SPHERE';
   if (rawShape === 'CUBE' || rawShape === 'BOX') return 'BOX';
 
   const normalizedProfile = String(profile || '').trim().toLowerCase();
@@ -116,6 +117,9 @@ function buildGeometry(THREE, descriptor) {
     const segments = String(descriptor.semanticId || descriptor.id).includes('CORE') ? 8 : 10;
     return new THREE.CylinderGeometry(radius, radius, y, segments);
   }
+  if (descriptor.shape === 'SPHERE') {
+    return new THREE.SphereGeometry(1, 16, 10);
+  }
   return new THREE.BoxGeometry(x, y, z);
 }
 
@@ -190,6 +194,9 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     mesh.userData.constructionSlice = descriptor.constructionSlice;
     mesh.userData.constructionOwner = descriptor.constructionOwner;
     mesh.position.set(descriptor.center.x, descriptor.center.y, descriptor.center.z);
+    if (descriptor.shape === 'SPHERE') {
+      mesh.scale.set(descriptor.dimensions.x * 0.5, descriptor.dimensions.y * 0.5, descriptor.dimensions.z * 0.5);
+    }
     mesh.rotation.y = descriptor.rotationY;
     machineRoot.add(mesh);
     return mesh;
