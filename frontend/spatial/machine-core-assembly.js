@@ -229,7 +229,7 @@ export function deriveMachineCoreAssembly({
   const mechanicalDetails = Object.freeze([
     ...Array.from({ length: 6 }, (_, index) => {
       const angle = index * (TAU / 6) + Math.PI / 6;
-      const radius = foundationRadius * 0.72;
+      const radius = foundationRadius * 0.70;
       const point = polar(radius, angle, center.y + 0.36 + 0.02 * expansion);
       return Object.freeze({
         id: `CORE_FOUNDATION_BRACE_${index + 1}`,
@@ -237,9 +237,9 @@ export function deriveMachineCoreAssembly({
         profile: 'radial-foundation-brace',
         center: point,
         dimensions: Object.freeze({
-          x: foundationRadius * 0.56,
+          x: foundationRadius * 0.50,
           y: 0.11 + 0.02 * expansion,
-          z: 0.16,
+          z: 0.15,
         }),
         rotationY: angle,
         materialRole: 'metal',
