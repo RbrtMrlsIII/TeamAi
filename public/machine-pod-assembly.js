@@ -314,12 +314,71 @@ export function deriveMachinePodAssembly({
     ? null
     : Number(adjacentCenterSpacing) - maxHorizontalExtent;
 
-  const subjectParts = [
-    ...components.map((item) => ({
+  const mechanicalSubjectParts = [];
+  for (const item of components) {
+    const horizontalHalfExtent = Math.hypot(
+      Number(item.dimensions?.x || item.radius * 2) * 0.5,
+      Number(item.dimensions?.z || item.radius * 2) * 0.5,
+    );
+    const base = {
       id: item.id,
       center: item.center,
-      dimensions: item.dimensions,
-    })),
+      dimensions: {
+        x: horizontalHalfExtent * 2,
+        y: Number(item.dimensions?.y || item.height),
+        z: horizontalHalfExtent * 2,
+      },
+    };
+    if (item.role === 'outer-shell' && expansion > 0.02) {
+      for (const side of [-1, 1]) {
+        mechanicalSubjectParts.push({
+          ...base,
+          id: item.id + ':PANEL:' + side,
+          center: {
+            x: item.center.x
+              + tangent.x * mechanicalPresentation.shellPanelSeparation * side
+              + radial.x * mechanicalPresentation.shellPanelTravel,
+            y: item.center.y + mechanicalPresentation.shellPanelLift,
+            z: item.center.z
+              + tangent.z * mechanicalPresentation.shellPanelSeparation * side
+              + radial.z * mechanicalPresentation.shellPanelTravel,
+          },
+          dimensions: {
+            x: horizontalHalfExtent * 1.08,
+            y: Number(item.dimensions?.y || item.height),
+            z: horizontalHalfExtent * 1.08,
+          },
+        });
+      }
+      continue;
+    }
+    const roleTravel = item.role === 'structural-collar'
+      ? mechanicalPresentation.collarTravel
+      : item.role === 'inner-chamber'
+        ? mechanicalPresentation.chamberTravel
+        : item.role === 'articulation-mechanism'
+          ? mechanicalPresentation.articulationTravel
+          : item.role === 'payload-surface'
+            ? mechanicalPresentation.payloadTravel
+            : 0;
+    const roleLift = item.role === 'structural-collar'
+      ? mechanicalPresentation.collarLift
+      : item.role === 'inner-chamber'
+        ? mechanicalPresentation.chamberLift
+        : item.role === 'payload-surface'
+          ? mechanicalPresentation.payloadLift
+          : 0;
+    mechanicalSubjectParts.push({
+      ...base,
+      center: {
+        x: item.center.x + radial.x * roleTravel,
+        y: item.center.y + roleLift,
+        z: item.center.z + radial.z * roleTravel,
+      },
+    });
+  }
+  const subjectParts = [
+    ...mechanicalSubjectParts,
     ...ports.map((item) => ({
       id: `${item.id}:SUBJECT`,
       center: item.point,
