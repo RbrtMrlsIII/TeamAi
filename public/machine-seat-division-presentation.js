@@ -11,6 +11,7 @@ import {
   deriveMachineSeatDivisionAssembly,
   validateMachineSeatDivisionAssembly,
 } from './machine-seat-division-assembly.js';
+import { resolveMachineSeatDivisionProfileShape } from './machine-seat-division-profile.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const clamp01 = (value) => Math.max(0, Math.min(1, finite(value, 0)));
@@ -179,7 +180,13 @@ export function drawFocusedSeatDivision({
   }[role] || M.metal2);
 
   for (const component of assembly.components) {
-    const primitive = primitives[component.shape];
+    const presentationShape = resolveMachineSeatDivisionProfileShape({
+      profile: component.profile,
+      fallbackShape: component.shape,
+    });
+    const primitive = presentationShape === 'S4_AUTHORIZATION_SHIELD'
+      ? presentationShape
+      : primitives[component.shape];
     if (!primitive) continue;
     const attachmentTransform = resolveSeatDivisionAttachmentTransform(assembly, component, progress);
     const localCenter = {
