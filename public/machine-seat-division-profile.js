@@ -161,5 +161,8 @@ export function resolveMachineSeatDivisionProfileShape({
   if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
     return MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE;
   }
+  if (normalizedProfile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
+    return MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE;
+  }
   return fallbackShape;
 }
