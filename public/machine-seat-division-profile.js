@@ -12,6 +12,48 @@ export const MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE = 'S4_AUTHORIZATION_
 export const MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE = 'rule-baffles';
 export const MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE = 'S4_BEHAVIOR_BAFFLE';
 export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE = 'scope-frame';
+export const MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE = 'capability-lattice';
+export const MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE = 'S4_CAPABILITY_LATTICE';
+export const MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE = 'S4_CAPABILITY_LATTICE_ELEMENT';
+
+const CAPABILITIES_LATTICE_RECIPE = Object.freeze([
+  Object.freeze({ id: 'front-rail', center: Object.freeze({ x: 0, z: 0.44 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: 0, thickness: 0.14 }),
+  Object.freeze({ id: 'rear-rail', center: Object.freeze({ x: 0, z: -0.44 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: 0, thickness: 0.14 }),
+  Object.freeze({ id: 'left-rail', center: Object.freeze({ x: -0.44, z: 0 }), dimensions: Object.freeze({ x: 0.12, z: 1.00 }), rotationY: Math.PI * 0.5, thickness: 0.14 }),
+  Object.freeze({ id: 'right-rail', center: Object.freeze({ x: 0.44, z: 0 }), dimensions: Object.freeze({ x: 0.12, z: 1.00 }), rotationY: Math.PI * 0.5, thickness: 0.14 }),
+  ...Array.from({ length: 6 }, (_, index) => {
+    const rotationY = index * Math.PI / 3;
+    return Object.freeze({
+      id: 'radial-spoke-' + String(index + 1),
+      center: Object.freeze({
+        x: 0.22 * Math.cos(rotationY),
+        z: 0.22 * Math.sin(rotationY),
+      }),
+      dimensions: Object.freeze({ x: 0.44, z: 0.08 }),
+      rotationY,
+      thickness: 0.14,
+    });
+  }),
+]);
+
+export function getMachineSeatCapabilitiesLatticeRecipe() {
+  return CAPABILITIES_LATTICE_RECIPE.map((entry) => Object.freeze({
+    id: entry.id,
+    center: Object.freeze({ ...entry.center }),
+    dimensions: Object.freeze({ ...entry.dimensions }),
+    rotationY: entry.rotationY,
+    thickness: entry.thickness,
+  }));
+}
+
+export function resolveMachineSeatCapabilitiesLatticeRailThickness({ dimensions = {}, element = {} } = {}) {
+  const footprint = Math.min(
+    Math.abs(Number(dimensions.x) || 0),
+    Math.abs(Number(dimensions.z) || 0),
+  );
+  const normalizedThickness = Math.max(0, Number(element.thickness) || 0);
+  return Math.max(0.001, footprint * normalizedThickness);
+}
 export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE = 'S4_WORKSPACE_SCOPE_FRAME';
 export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE = 'S4_SCOPE_FRAME_RAIL';
 
@@ -98,6 +140,9 @@ export function resolveMachineSeatDivisionProfileRecipe({ profile = '' } = {}) {
   const normalizedProfile = String(profile || '').trim().toLowerCase();
   if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
     return getMachineSeatWorkspaceScopeFrameRecipe();
+  }
+  if (normalizedProfile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
+    return getMachineSeatCapabilitiesLatticeRecipe();
   }
   return null;
 }

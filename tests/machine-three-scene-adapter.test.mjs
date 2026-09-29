@@ -31,6 +31,11 @@ import {
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+  MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE,
+  MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE,
+  MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE,
+  getMachineSeatCapabilitiesLatticeRecipe,
+  resolveMachineSeatCapabilitiesLatticeRailThickness,
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
   getMachineSeatWorkspaceScopeFrameRecipe,
@@ -171,6 +176,102 @@ test('S4 workspace scope frame recipe preserves the existing telescoping descrip
   const midZ = expected.z * 0.36;
   assert.ok(positionArray.some((value) => Math.abs(value) > midX && Math.abs(value) <= expected.x * 0.5));
   assert.ok(positionArray.some((value) => Math.abs(value) > midZ && Math.abs(value) <= expected.z * 0.5));
+  geometry.dispose();
+});
+
+test('S4 capability rotary lattice recipe preserves descriptor envelope with explicit thickness', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const divisionParent = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
+    parent: divisionParent,
+    childId: 'SEAT_CAPABILITIES',
+    childIndex: 3,
+    amount: 1,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: divisionParent,
+    childId: 'SEAT_CAPABILITIES',
+    childIndex: 3,
+    amount: 1,
+    geometry: geometryDescriptor,
+  });
+  const component = assembly.components.find(
+    (entry) => entry.profile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE,
+  );
+  assert.ok(component);
+  assert.equal(assembly.mechanism.attachment.type, 'ROTARY_LATTICE');
+  assert.equal(assembly.mechanism.attachment.primaryComponent, 'capability-lattice');
+  assert.equal(assembly.mechanism.attachment.travel, Math.PI * 0.5);
+
+  const recipe = getMachineSeatCapabilitiesLatticeRecipe();
+  assert.equal(recipe.length, 10);
+  assert.deepEqual(recipe.slice(0, 4).map((element) => element.dimensions), [
+    { x: 1.00, z: 0.12 },
+    { x: 1.00, z: 0.12 },
+    { x: 0.12, z: 1.00 },
+    { x: 0.12, z: 1.00 },
+  ]);
+  assert.deepEqual(recipe.slice(4).map((element) => Number(element.rotationY.toFixed(12))), [
+    0,
+    Number((Math.PI / 3).toFixed(12)),
+    Number((Math.PI * 2 / 3).toFixed(12)),
+    Math.PI,
+    Number((Math.PI * 4 / 3).toFixed(12)),
+    Number((Math.PI * 5 / 3).toFixed(12)),
+  ]);
+  const minX = Math.min(...recipe.map((element) => element.center.x - (
+    Math.abs(Math.cos(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.sin(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  const maxX = Math.max(...recipe.map((element) => element.center.x + (
+    Math.abs(Math.cos(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.sin(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  const minZ = Math.min(...recipe.map((element) => element.center.z - (
+    Math.abs(Math.sin(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.cos(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  const maxZ = Math.max(...recipe.map((element) => element.center.z + (
+    Math.abs(Math.sin(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.cos(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  assert.equal(minX, -0.50);
+  assert.equal(maxX, 0.50);
+  assert.equal(minZ, -0.50);
+  assert.equal(maxZ, 0.50);
+
+  const descriptor = normalizeThreeDescriptor(component, assembly.id);
+  assert.equal(descriptor.shape, MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE);
+  assert.deepEqual(descriptor.dimensions, component.dimensions);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  const expected = descriptor.dimensions;
+  const expectedThickness = resolveMachineSeatCapabilitiesLatticeRailThickness({
+    dimensions: expected,
+    element: recipe[0],
+  });
+  assert.ok(Math.abs(
+    expectedThickness - Math.min(expected.x, expected.z) * 0.14,
+  ) < 1e-12);
+  assert.ok(expectedThickness < expected.y);
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expectedThickness * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expectedThickness * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < 1e-6);
+  assert.equal(geometry.getAttribute('position').count, 360);
+  assert.equal(
+    normalizeThreeShape({
+      shape: 'TORUS',
+      profile: MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE,
+    }),
+    MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE,
+  );
   geometry.dispose();
 });
 
