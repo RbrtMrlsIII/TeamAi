@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V1';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V2';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -117,6 +117,36 @@ export function deriveMachinePodAssembly({
   const payloadScale = 0.86 + 0.18 * density;
   const shellHeight = height * (0.72 + 0.08 * expansion);
   const articulationPhase = expansion * Math.PI * 0.12;
+  const radial = Object.freeze({
+    x: Math.cos(outwardAngle),
+    z: Math.sin(outwardAngle),
+  });
+  const tangent = Object.freeze({
+    x: -radial.z,
+    z: radial.x,
+  });
+  const minimumSpan = Math.min(width, depth);
+  const mechanicalPresentation = Object.freeze({
+    axis: 'radial-outward',
+    amount: expansion,
+    outwardAngle,
+    outward: radial,
+    tangent,
+    shellPanelSeparation: minimumSpan * (0.14 + 0.10 * expansion) * expansion,
+    shellPanelTravel: minimumSpan * 0.10 * expansion,
+    shellPanelLift: height * 0.08 * expansion,
+    shellPanelRotation: 0.18 * expansion,
+    collarTravel: minimumSpan * 0.09 * expansion,
+    collarLift: height * 0.04 * expansion,
+    chamberTravel: minimumSpan * 0.20 * expansion,
+    chamberLift: height * 0.14 * expansion,
+    articulationTravel: minimumSpan * 0.22 * expansion,
+    articulationRotation: 0.28 * expansion,
+    payloadTravel: minimumSpan * 0.27 * expansion,
+    payloadLift: height * 0.26 * expansion,
+    revealGap: minimumSpan * 0.08 * expansion,
+    presentationOnly: true,
+  });
 
   const components = Object.freeze([
     component({
@@ -311,6 +341,7 @@ export function deriveMachinePodAssembly({
     localInterfaces,
     articulation,
     statusPresentation,
+    mechanicalPresentation,
     envelope: Object.freeze({
       radius: maxHorizontalExtent * 0.5,
       height: shellHeight,
