@@ -54,6 +54,33 @@ test('S7 every machine inherits S0-S6 and has facility-specific camera subject, 
   }
 });
 
+test('S7 facility chassis details are authored and included in each machine subject', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+
+  for (const machine of machinery) {
+    assert.equal(machine.mechanicalDetails.length, 5);
+    assert.equal(
+      machine.mechanicalDetails.filter((item) => item.role === 'base-collar').length,
+      1,
+    );
+    assert.equal(
+      machine.mechanicalDetails.filter((item) => item.role === 'support-strut').length,
+      2,
+    );
+    assert.equal(
+      machine.mechanicalDetails.filter((item) => item.role === 'hinge-mount').length,
+      2,
+    );
+    const subjectIds = new Set(machine.subject.sourcePartIds);
+    assert.ok(machine.mechanicalDetails.every((item) => subjectIds.has(item.id)));
+    assert.ok(machine.mechanicalDetails.every((item) => item.constructionSlice === 'S7'));
+    assert.ok(machine.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-facility-machinery.js'));
+  }
+});
+
 test('S7 authored machinery identities remain versioned and rooted', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
