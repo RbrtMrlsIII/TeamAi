@@ -11,10 +11,28 @@ import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
 
 export const MACHINE_THREE_ADAPTER_ID = 'MACHINE-THREE-SCENE-ADAPTER';
-export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V1';
+export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V2';
 export const MACHINE_THREE_REQUIRED_WEBGL = 'WEBGL2';
 
+export const AUTHORED_POD_SHELL_PROFILE = 'authored-seat-pod-shell';
+
+const POD_SHELL_OUTLINE = Object.freeze([
+  Object.freeze([-0.90, -0.25]),
+  Object.freeze([-0.55, -0.58]),
+  Object.freeze([0.18, -0.62]),
+  Object.freeze([0.78, -0.30]),
+  Object.freeze([0.90, 0.12]),
+  Object.freeze([0.50, 0.50]),
+  Object.freeze([-0.30, 0.58]),
+  Object.freeze([-0.82, 0.30]),
+]);
+
+export function resolveThreePodShellOutline() {
+  return Object.freeze(POD_SHELL_OUTLINE.map(([x, z]) => Object.freeze([x, z])));
+}
+
 const SHAPE_BY_PROFILE = Object.freeze([
+  [AUTHORED_POD_SHELL_PROFILE, 'POD_SHELL'],
   ['torus', 'TORUS'],
   ['cylinder', 'CYLINDER'],
   ['connection-port', 'CYLINDER'],
@@ -181,8 +199,74 @@ function makeAuthoredMaterial(THREE, role, authored) {
   return material;
 }
 
+function buildPodShellGeometry(THREE, descriptor) {
+  const { x, y, z } = descriptor.dimensions;
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minZ = Infinity;
+  let maxZ = -Infinity;
+  for (const [px, pz] of POD_SHELL_OUTLINE) {
+    minX = Math.min(minX, px);
+    maxX = Math.max(maxX, px);
+    minZ = Math.min(minZ, pz);
+    maxZ = Math.max(maxZ, pz);
+  }
+  const outlineCenterX = (minX + maxX) * 0.5;
+  const outlineCenterZ = (minZ + maxZ) * 0.5;
+  const outlineWidth = Math.max(0.001, maxX - minX);
+  const outlineDepth = Math.max(0.001, maxZ - minZ);
+  const scaleX = x / outlineWidth;
+  const scaleZ = z / outlineDepth;
+  const halfY = y * 0.5;
+  const vertices = [];
+  const point = ([px, pz], yy) => [
+    (px - outlineCenterX) * scaleX,
+    yy,
+    (pz - outlineCenterZ) * scaleZ,
+  ];
+  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
+  const bottomCenter = [0, -halfY, 0];
+  const topCenter = [0, halfY, 0];
+  for (let index = 1; index < POD_SHELL_OUTLINE.length - 1; index += 1) {
+    pushTri(
+      bottomCenter,
+      point(POD_SHELL_OUTLINE[index], -halfY),
+      point(POD_SHELL_OUTLINE[index + 1], -halfY),
+    );
+    pushTri(
+      topCenter,
+      point(POD_SHELL_OUTLINE[index + 1], halfY),
+      point(POD_SHELL_OUTLINE[index], halfY),
+    );
+  }
+  for (let index = 0; index < POD_SHELL_OUTLINE.length; index += 1) {
+    const next = (index + 1) % POD_SHELL_OUTLINE.length;
+    pushTri(
+      point(POD_SHELL_OUTLINE[index], -halfY),
+      point(POD_SHELL_OUTLINE[next], -halfY),
+      point(POD_SHELL_OUTLINE[next], halfY),
+    );
+    pushTri(
+      point(POD_SHELL_OUTLINE[index], -halfY),
+      point(POD_SHELL_OUTLINE[next], halfY),
+      point(POD_SHELL_OUTLINE[index], halfY),
+    );
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(new Float32Array(vertices), 3),
+  );
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  return geometry;
+}
+
 function buildGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
+  if (descriptor.shape === 'POD_SHELL') {
+    return buildPodShellGeometry(THREE, descriptor);
+  }
   const radius = Math.max(0.01, Math.max(x, z) * 0.5);
   if (descriptor.shape === 'TORUS') {
     return new THREE.TorusGeometry(radius * 0.76, Math.max(0.015, radius * 0.12), 8, 24);
