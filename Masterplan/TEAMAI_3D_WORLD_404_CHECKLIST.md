@@ -735,6 +735,15 @@ Important discrepancy: S6's sourceModule field is a presentation reference and i
 
 Current Y0 result: **PARTIAL / OPEN**. The terminal-surface classifier is implemented and tested, the registry-level coverage is classified, S6 facility identity is aligned to the canonical Feature Registry ids, and the principal missing spatial-owner seams are named. Full L0→L5 closure remains outstanding.
 
+### Y0.8 Y0 feature/leaf coverage classification
+
+- [x] 12 Feature Registry entries classified by terminal presentation class.
+- [x] Existing Seat L3-L5 leaf families mapped to the seven canonical Seat divisions.
+- [x] Domain and Skill/Responsibility trees retained as semantic-only rather than filled with invented meshes.
+- [x] Global orchestration controls remain outside TREE-HERO-SEAT.
+- [x] Non-Seat facilities routed to handoff/read-model boundaries unless a future governed product decision creates an explicit spatial surface.
+- [x] Five Y0 gaps recorded with owners and without duplicate micro-issues.
+
 ### Y0.7 Current gate state after exact-head verification
 
 - [x] Y1 isolated S2/S3 Browser proof passes on exact head 5a4a353df9fb15f7b64ab2cd6248a07361093507.

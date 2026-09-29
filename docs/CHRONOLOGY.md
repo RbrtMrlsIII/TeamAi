@@ -170,3 +170,8 @@ The current successor-session source is Issue #409. The current evidence ledger 
 - Evidence registry: Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md
 - Master execution checklist: Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md
 - Canonical successor handoff, Issue #409: https://github.com/RbrtMrlsIII/TeamAi/issues/409
+
+
+## 2026-09-29 - Y0 feature/leaf coverage classification
+
+The Feature Registry + Tree Census descent is now durable in docs/TEAMAI_029_Y0_FEATURE_LEAF_COVERAGE_AUDIT.md. The key finding is that a feature existing in product grammar does not imply a new machine branch. Workspace HQ and Seats are the current SPATIAL_SURFACE candidates; most other features remain UI handoffs or read-model payloads. Five gaps are preserved for existing owners instead of creating a second spatial issue tree.

@@ -1202,3 +1202,8 @@ The Browser run independently confirms these conditions at runtime, including th
 - No production deployment, live provider execution, production Firestore state, human acceptance, or 029 release authorization is inferred.
 
 **Status:** IMPLEMENTED → **REPOSITORY-VERIFIED** for the repository-level S23 density/readability contract. **Physical-device acceptance remains open.**
+### D-029-13 - Y0 feature/leaf coverage classification
+
+Audit artifact: docs/TEAMAI_029_Y0_FEATURE_LEAF_COVERAGE_AUDIT.md.
+
+Result: COVERAGE-CLASSIFIED / IMPLEMENTATION-PARTIAL. The current Feature Registry has 12 product features. Workspace HQ and Seats are the only explicit SPATIAL_SURFACE candidates. Other features are normal UI, spatial read-model, or handoff boundaries. The canonical Seat hierarchy remains the only current L1-L5 spatial feature tree. Five unresolved gaps are routed to their existing owning fields without creating duplicate micro-issues.
