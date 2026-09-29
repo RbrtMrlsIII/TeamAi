@@ -48,12 +48,17 @@ import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } fr
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges } from './machine-world-topology.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
+import {
+  getMachineSeatAuthorizationShieldOutline,
+  MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+} from './machine-seat-division-profile.js';
 const TAU = Math.PI * 2;
 const READABILITY_CAMERA_QUANTUM = 0.25;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
   hex: [[-1,0],[-.5,-.86],[.5,-.86],[1,0],[.5,.86],[-.5,.86]],
   pod: MACHINE_POD_SHELL_OUTLINE,
+  authorizationShield: getMachineSeatAuthorizationShieldOutline(),
   fin: [[-1,-.55],[.05,-.7],[1,.3],[.35,.66],[-.5,.55]],
   arc: [[-.95,-.3],[-.45,-.7],[.25,-.7],[.85,-.28],[.85,.18],[.25,.68],[-.42,.62],[-.86,.25],[-.28,.08],[.35,.16],[.18,-.08],[-.38,-.03]],
   diamond: [[0,-.9],[.72,0],[0,.9],[-.72,0]],
@@ -198,6 +203,7 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   CORE_OCT: regularPolygon(8, Math.PI / 8),
   CORE_DODEC: regularPolygon(12, Math.PI / 12),
   CUBE: POLYS.pod,
+  [MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE]: POLYS.authorizationShield,
   CYL: regularPolygon(16),
   TORUS: regularPolygon(12),
   SPH: regularPolygon(10),
