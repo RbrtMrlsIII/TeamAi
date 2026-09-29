@@ -394,6 +394,72 @@ export function deriveMachineFacilityMachinery({
   const machines = assemblies.map((assembly) => {
     const profile = MACHINE_PROFILES[assembly.machineRole];
     const components = buildMachineComponents(assembly);
+    const housingCenter = assembly.outerHousing.center;
+    const housingDimensions = assembly.outerHousing.dimensions;
+    const basis = localBasis(housingCenter);
+    const frameWidth = Math.max(0.72, finite(housingDimensions.x, 1.8));
+    const frameDepth = Math.max(0.72, finite(housingDimensions.z, 1.2));
+    const frameHeight = Math.max(0.50, finite(housingDimensions.y, 0.9));
+    const mechanicalDetails = Object.freeze([
+      Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':BASE-COLLAR',
+        role: 'base-collar',
+        shape: 'TORUS',
+        center: Object.freeze({
+          x: housingCenter.x,
+          y: housingCenter.y + frameHeight * 0.16,
+          z: housingCenter.z,
+        }),
+        dimensions: Object.freeze({
+          x: frameWidth * 0.58,
+          y: Math.max(0.06, frameHeight * 0.08),
+          z: frameWidth * 0.58,
+        }),
+        rotationY: 0,
+        materialRole: 'metal2',
+        ...rootContext(assembly.branchId + ':BASE-COLLAR'),
+      }),
+      ...[-1, 1].map((side) => Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':SUPPORT:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+        role: 'support-strut',
+        shape: 'CUBE',
+        center: Object.freeze({
+          x: housingCenter.x + basis.outward.x * frameDepth * 0.08
+            + basis.tangent.x * frameWidth * 0.18 * side,
+          y: housingCenter.y + frameHeight * 0.28,
+          z: housingCenter.z + basis.outward.z * frameDepth * 0.08
+            + basis.tangent.z * frameWidth * 0.18 * side,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.06, frameWidth * 0.07),
+          y: Math.max(0.10, frameHeight * 0.18),
+          z: Math.max(0.24, frameDepth * 0.34),
+        }),
+        rotationY: basis.angle,
+        materialRole: 'metal',
+        ...rootContext(assembly.branchId + ':SUPPORT:' + side),
+      })),
+      ...[-1, 1].map((side) => Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':HINGE-MOUNT:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+        role: 'hinge-mount',
+        shape: 'CYL',
+        center: Object.freeze({
+          x: housingCenter.x + basis.outward.x * frameDepth * 0.02
+            + basis.tangent.x * frameWidth * 0.26 * side,
+          y: housingCenter.y + frameHeight * 0.30,
+          z: housingCenter.z + basis.outward.z * frameDepth * 0.02
+            + basis.tangent.z * frameWidth * 0.26 * side,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.08, frameWidth * 0.09),
+          y: Math.max(0.08, frameHeight * 0.12),
+          z: Math.max(0.08, frameWidth * 0.09),
+        }),
+        rotationY: basis.angle,
+        materialRole: 'metal2',
+        ...rootContext(assembly.branchId + ':HINGE-MOUNT:' + side),
+      })),
+    ]);
     const ports = machinePorts(assembly);
     const maxPresentation = deriveMachineFacilityMechanismPresentation(
       { machineRole: assembly.machineRole, outerHousing: assembly.outerHousing, components },
@@ -418,6 +484,11 @@ export function deriveMachineFacilityMachinery({
           },
         };
       }).concat(
+        mechanicalDetails.map((detail) => ({
+          id: detail.id,
+          center: detail.center,
+          dimensions: detail.dimensions,
+        })),
         ports.map((port) => ({
           id: port.id,
           center: port.point,
@@ -438,18 +509,27 @@ export function deriveMachineFacilityMachinery({
       facilityAssemblyId: assembly.id,
       outerHousing: assembly.outerHousing,
       components,
+      mechanicalDetails,
       payloadSurface,
       mechanismGraph: buildGraph(components),
       ports,
       subject,
       envelope: Object.freeze({
-        radius: Math.max(...components.map((entry) => {
-          const motion = maxMotionById.get(entry.id);
-          return Math.hypot(
-            entry.center.x + finite(motion?.dx) - assembly.outerHousing.center.x,
-            entry.center.z + finite(motion?.dz) - assembly.outerHousing.center.z,
-          ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
-        })),
+        radius: Math.max(
+          ...components.map((entry) => {
+            const motion = maxMotionById.get(entry.id);
+            return Math.hypot(
+              entry.center.x + finite(motion?.dx) - assembly.outerHousing.center.x,
+              entry.center.z + finite(motion?.dz) - assembly.outerHousing.center.z,
+            ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
+          }),
+          ...mechanicalDetails.map((entry) =>
+            Math.hypot(
+              entry.center.x - assembly.outerHousing.center.x,
+              entry.center.z - assembly.outerHousing.center.z,
+            ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5,
+          ),
+        ),
         height: Math.max(...components.map((entry) =>
           Math.abs(entry.center.y - assembly.outerHousing.center.y) + entry.dimensions.y * 0.5,
         )) * 2,
