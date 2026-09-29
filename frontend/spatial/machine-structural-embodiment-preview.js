@@ -247,7 +247,9 @@ function renderView() {
     ? semanticEdges.filter((edge) => WORLD_OVERVIEW_TOPOLOGY_KINDS.has(edge?.kind))
     : currentView === 'seat'
       ? semanticEdges.filter((edge) =>
-          edge?.kind === 'pod-division'
+          (edge?.kind === 'pod-division'
+            && (String(edge?.sourceBranchId || '').includes('TREE-HERO-SEAT#0')
+              || edge?.targetBranchId === 'BRANCH-SEAT-01'))
           || (edge?.kind === 'adjacent-seat'
             && (edge?.sourceBranchId === 'BRANCH-SEAT-01' || edge?.targetBranchId === 'BRANCH-SEAT-01'))
         )
