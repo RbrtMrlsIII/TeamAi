@@ -114,7 +114,7 @@ The live Firestore production index was confirmed present by sanitized readback 
 
 ### 2026-09-24 029 spatial acceptance routing
 
-PR #404 is routed as a bounded 029 Frontend & Experience implementation/evidence companion while `Masterplan/NEXT_SLICES.md` continues to own the single current slice. Its spatial construction path remains Product Law → Wiring → current slice/Issue → machine-builder and applicable spatial Skills → canonical source/runtime → Verification & CI/Browser. The current branch head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` preserves S4 authored division grammar, places the structural Seat/outer safety envelope in the shared world-profile authority, and lets S5 enforce clearance against the authored machine obstacles. These facts do not promote 029 to complete, create a second current slice, or authorize merge.
+PR #404 is merged historical spatial provenance. PR #424 is the active bounded 029 Frontend & Experience implementation/evidence vehicle while `Masterplan/NEXT_SLICES.md` continues to own the single current slice. Its spatial construction path remains Product Law → Wiring → current slice/Issue → machine-builder and applicable spatial Skills → canonical source/runtime → Verification & CI/Browser. The current branch head `ba0d7dc7d057b9e778fd58cfd67d4d1b880402b4` preserves S4 authored division grammar, places the structural Seat/outer safety envelope in the shared world-profile authority, and lets S5 enforce clearance against the authored machine obstacles. These facts do not promote 029 to complete, create a second current slice, or authorize merge.
 
 ### 030 successor routing
 

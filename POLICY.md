@@ -141,7 +141,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 ## 2026-09-24 029 spatial acceptance correction boundary
 
-PR #404 remains a Draft implementation vehicle under the 029 lineage while the canonical current slice remains controlled by `Masterplan/NEXT_SLICES.md`. The exact head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` contains a structural geometry correction rather than a validator-only workaround: the shared world profile provides explicit Seat-shell and outer-housing safety envelopes, the authored S4 division fan is preserved, and S5 evaluates its authored travel against outer housings and sibling Pods. The corresponding source-contract assertions now follow the current S5 renderer ownership.
+PR #404 is merged historical provenance; PR #424 is the active Draft implementation vehicle under the 029 lineage while the canonical current slice remains controlled by `Masterplan/NEXT_SLICES.md`. The exact current branch head `ba0d7dc7d057b9e778fd58cfd67d4d1b880402b4` contains a structural geometry correction rather than a validator-only workaround: the shared world profile provides explicit Seat-shell and outer-housing safety envelopes, the authored S4 division fan is preserved, and S5 evaluates its authored travel against outer housings and sibling Pods. The corresponding source-contract assertions now follow the current S5 renderer ownership.
 
 The correction is considered **implemented, not yet verified** until exact-head Full-System and Browser validators complete successfully. Governance synchronization is required because the PR changes governed spatial records. A green check may prove only the contract it runs; it does not close 029, establish deployment, or authorize merge.
 

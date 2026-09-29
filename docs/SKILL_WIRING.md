@@ -142,7 +142,7 @@ Skills route the current procedure selected for the slice; they do not own curre
 
 ## 2026-09-24 029 spatial acceptance routing
 
-The 029 PR #404 structural correction stays within the existing Machine Builder and applicable frontend/spatial Skill families. No new Skill or governance authority is introduced. The implementation seam is: authored S4 division geometry → shared world-profile safety envelopes → S5 clearance planner → canonical renderer/runtime → exact-head Full-System and Browser verification. The exact current branch head is `965f0fb7db1ccf85fca8e30e7790d5f48404f768`; its implementation state must not be promoted to verified/completed status until the exact-head validators provide evidence.
+The 029 PR #404 structural correction stays within the existing Machine Builder and applicable frontend/spatial Skill families. No new Skill or governance authority is introduced. The implementation seam is: authored S4 division geometry → shared world-profile safety envelopes → S5 clearance planner → canonical renderer/runtime → exact-head Full-System and Browser verification. The exact current branch head is `ba0d7dc7d057b9e778fd58cfd67d4d1b880402b4`; its implementation state must not be promoted to verified/completed status until the exact-head validators provide evidence.
 
 ## 030 successor routing
 
