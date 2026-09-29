@@ -1207,3 +1207,24 @@ The Browser run independently confirms these conditions at runtime, including th
 Audit artifact: docs/TEAMAI_029_Y0_FEATURE_LEAF_COVERAGE_AUDIT.md.
 
 Result: COVERAGE-CLASSIFIED / IMPLEMENTATION-PARTIAL. The current Feature Registry has 12 product features. Workspace HQ and Seats are the only explicit SPATIAL_SURFACE candidates. Other features are normal UI, spatial read-model, or handoff boundaries. The canonical Seat hierarchy remains the only current L1-L5 spatial feature tree. Five unresolved gaps are routed to their existing owning fields without creating duplicate micro-issues.
+
+### E404-Y1-S2 — Authored polygon-profile renderer fidelity checkpoint
+
+**Exact executable head:** `6dacae7a04339bb2ea4072ed70d4ff0128385325`
+
+**Finding:** The Three.js structural adapter previously normalized authored Core/Pod profile information into a descriptor that no longer carried the original `profile`. As a result, cylindrical authored profiles were rendered with a generic segment rule rather than their declared Hex/Oct/Dodec construction profile.
+
+**Correction:** `normalizeThreeDescriptor()` now preserves the authored `profile`, and the adapter resolves cylindrical tessellation from that preserved profile: Hex = **6** segments, Oct = **8**, Dodec = **12**, with **10** as the bounded generic fallback. Semantic IDs, constructionSlice, constructionOwner, topology, camera authority, and domain/runtime boundaries are unchanged.
+
+**Independent repository evidence:**
+- source/public adapter blobs are identical: `f20dccf43d84dfc91a041447344ca1ab11f5d73d`
+- focused adapter tests cover profile preservation and 6/8/12/default tessellation cases
+- Full-System run `36579687864`: **PASS**
+- Governance run `36580238195`: **PASS**
+- Security run `36579687680`: **PASS**
+- Deep Security run `36579687683`: **PASS**
+- Canonical Browser run `36579687701`: **PASS**
+
+**Acceptance boundary:** This improves structural renderer fidelity but does **not** close the S2-S10 human visual acceptance gate. The screenshots are stored in the exact-head Browser artifact but the public artifact endpoint requires authentication, so no screenshot-level human verdict is inferred here. Broader S24 shadow/light breadth remains gated by the upstream structural visual-embodiment contract.
+
+**Status:** IMPLEMENTED → **REPOSITORY/BROWSER-VERIFIED STRUCTURAL FIDELITY**, with **human visual acceptance still open**.
