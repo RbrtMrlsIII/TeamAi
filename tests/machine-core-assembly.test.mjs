@@ -81,6 +81,12 @@ test('S2 authored mechanical detail layer adds real internal machine structure w
   assert.equal(housing[0].profile, 'nested-reactor-housing');
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionSlice === 'S2'));
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-core-assembly.js'));
+
+  const detailExtent = Math.max(
+    ...braces.map((item) => Math.hypot(item.center.x, item.center.z)
+      + Math.hypot(item.dimensions.x * 0.5, item.dimensions.z * 0.5)),
+  );
+  assert.ok(detailExtent <= assembly.components[0].radius + 0.02);
 });
 
 test('S2 fails closed on corrupted assembly or component root ownership', () => {
