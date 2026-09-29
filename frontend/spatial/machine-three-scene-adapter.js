@@ -107,7 +107,7 @@ function buildGeometry(THREE, descriptor) {
     return new THREE.TorusGeometry(radius * 0.76, Math.max(0.015, radius * 0.12), 8, 24);
   }
   if (descriptor.shape === 'CYLINDER') {
-    const segments = descriptor.semanticId.includes('CORE') ? 8 : 10;
+    const segments = String(descriptor.semanticId || descriptor.id).includes('CORE') ? 8 : 10;
     return new THREE.CylinderGeometry(radius, radius, y, segments);
   }
   return new THREE.BoxGeometry(x, y, z);

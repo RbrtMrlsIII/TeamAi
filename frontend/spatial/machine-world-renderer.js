@@ -325,6 +325,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   let machineWorldSpatialCache = null;
   let responsiveReadabilityCache = null;
 
+  // Initialize responsive contract synchronously so consumers do not race the first RAF.
+  const initialWidth = canvas.clientWidth || 1180;
+  const initialHeight = canvas.clientHeight || 760;
+  const initialResponsive = resolveMachineResponsive({ width: initialWidth, height: initialHeight });
+  canvas.dataset.machineWorldResponsiveTier = initialResponsive.tier;
+  canvas.dataset.machineWorldResponsiveOrientation = initialResponsive.orientation;
+
   function worldProfile(seatCount) {
     const profile = deriveMachineWorldProfile(seatCount);
     return {
