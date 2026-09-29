@@ -62,6 +62,27 @@ test('S2 concentric mechanisms respond monotonically to expansion and reception'
   ));
 });
 
+test('S2 authored mechanical detail layer adds real internal machine structure without changing canonical roles', () => {
+  const assembly = deriveMachineCoreAssembly({
+    hub,
+    workspaceCore: { radius: 4.046 },
+    expansionAmount: 1,
+  });
+  assert.equal(assembly.version, 'S2-V3');
+  const braces = assembly.mechanicalDetails.filter((item) => item.role === 'foundation-brace');
+  const guards = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-guard');
+  const housing = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-inner-housing');
+
+  assert.equal(braces.length, 6);
+  assert.equal(guards.length, 6);
+  assert.equal(housing.length, 1);
+  assert.ok(braces.every((item) => item.profile === 'radial-foundation-brace'));
+  assert.ok(guards.every((item) => item.profile === 'reactor-guard-post'));
+  assert.equal(housing[0].profile, 'nested-reactor-housing');
+  assert.ok(assembly.mechanicalDetails.every((item) => item.constructionSlice === 'S2'));
+  assert.ok(assembly.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-core-assembly.js'));
+});
+
 test('S2 fails closed on corrupted assembly or component root ownership', () => {
   const assembly = deriveMachineCoreAssembly({
     hub,
