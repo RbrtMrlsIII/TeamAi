@@ -35,6 +35,14 @@ const DIVISIONS = Object.freeze([
   'SEAT_TASK_EVIDENCE',
 ]);
 
+const WORLD_OVERVIEW_TOPOLOGY_KINDS = Object.freeze(new Set([
+  'inner-spoke',
+  'outer-spine',
+  'lattice-link',
+  'workspace-contribution',
+  'facility-facility',
+]));
+
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 function setStatus(value) {
@@ -216,19 +224,52 @@ function renderView() {
 
   const divisions = currentView === 'seat' ? divisionDescriptors(model.seatOne, 1) : [];
   const facilityParts = model.facilityParts;
-  const effectivePods = model.pods.map((pod) =>
-    currentView === 'seat' && pod?.branchId === 'BRANCH-SEAT-01' ? seatOpenPod : pod,
-  );
-
-  adapter.setAssemblies({
-    core: model.core,
+  const facility = model.machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || model.machinery[0];
+  const effectiveCore = currentView === 'world' ? model.core : null;
+  const effectivePods = currentView === 'world'
+    ? model.pods
+    : currentView === 'seat'
+      ? [seatOpenPod]
+      : [];
+  const effectiveFacilities = currentView === 'world'
+    ? model.machinery
+    : currentView === 'facility' && facility
+      ? [facility]
+      : [];
+  const semanticEdges = Array.isArray(model.topology?.edges) ? model.topology.edges : [];
+  const visibleEdges = currentView === 'world'
+    ? semanticEdges.filter((edge) => WORLD_OVERVIEW_TOPOLOGY_KINDS.has(edge?.kind))
+    : currentView === 'seat'
+      ? semanticEdges.filter((edge) =>
+          edge?.sourceBranchId === 'BRANCH-SEAT-01'
+          || edge?.targetBranchId === 'BRANCH-SEAT-01'
+          || String(edge?.sourceBranchId || '').includes('TREE-HERO-SEAT#0')
+          || String(edge?.targetBranchId || '').includes('TREE-HERO-SEAT#0')
+        )
+      : facility
+        ? semanticEdges.filter((edge) =>
+            edge?.sourceBranchId === facility.branchId
+            || edge?.targetBranchId === facility.branchId
+          )
+        : [];
+  const visibleTopology = Object.freeze({
+    ...model.topology,
+    edges: Object.freeze(visibleEdges),
+  });
+  const assemblyRender = adapter.setAssemblies({
+    core: effectiveCore,
     pods: effectivePods,
-    facilities: model.machinery,
+    facilities: effectiveFacilities,
     divisions: divisions.length ? [{ id: 'S4-SEAT-01', components: divisions, mechanicalDetails: [] }] : [],
   });
-  adapter.setTopology(model.topology);
-
-  const facility = model.machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || model.machinery[0];
+  const topologyRender = adapter.setTopology(visibleTopology);
+  canvas.dataset.structuralView = currentView;
+  canvas.dataset.structuralTotalTopologyEdges = String(semanticEdges.length);
+  canvas.dataset.structuralVisibleTopologyEdges = String(topologyRender.edgeCount);
+  canvas.dataset.structuralVisiblePods = String(effectivePods.length);
+  canvas.dataset.structuralVisibleFacilities = String(effectiveFacilities.length);
+  canvas.dataset.structuralVisibleDivisions = String(divisions.length);
+  canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   const divisionSubject = subjectFromParts(divisions);
   const spec = deriveMachineCameraSpec({
     cameraId: currentView === 'world'
