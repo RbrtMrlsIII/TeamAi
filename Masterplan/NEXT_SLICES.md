@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: 208c5570a8325bda10e2b427b97a30c3f439f111.
+Current exact spatial head: 6007a87a14175a85de0cbc40fb0a95f51d876596 (post-cleanup exact-head proof).
 
 The current Canonical Browser evidence for that head is FAIL (run 36539522142, 87 passed / 4 skipped / 1 failed) because the isolated machine-core-preview test can observe terminal expansion before clicking its explicit Expand control. Treat this as a preview temporal-contract defect, not as evidence that the repaired S4 geometry is invalid.
 
@@ -176,3 +176,23 @@ Issue #415 is a governance/verification infrastructure vehicle and does **not** 
 PR #407 is infrastructure support for Issue #406. It is not a replacement current slice and does not create a second product implementation frontier. The advisory control plane validates issue metadata once before provider fan-out and treats explicit `none`/`n/a` as no owning issue.
 
 The reusable advisory-runner path and direct-push event-graph repair are infrastructure support only. They are not a replacement current slice, not 029 completion, and must not be mixed into Draft PR #404.
+
+
+### 2026-09-29 successor-session checkpoint
+
+Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`.
+Current exact head: `6007a87a14175a85de0cbc40fb0a95f51d876596`.
+Current relation to `main`: 150 ahead / 0 behind.
+
+Fresh exact-head evidence:
+- Full-System `36582031552` PASS
+- Governance `36582031480` PASS; review-readiness skipped because #424 is Draft
+- Security `36582031514` PASS
+- Deep Security `36582031459` PASS
+- Canonical Browser `36582031551` PASS
+- Browser artifact `11041060023`
+- Browser artifact digest `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
+
+The final Browser artifact was inspected. The structural candidate is executable and coherent, but S2-S10 human visual acceptance remains open because the current Three.js embodiment is still intentionally substrate-like/skeletal compared with the target manufactured-machine direction.
+
+A final hygiene correction on this exact lineage removed one duplicated `data-structural-material-model` assignment from the public structural preview and restored frontend/public parity. Do not treat this as a functional feature change.
