@@ -132,19 +132,19 @@ export function deriveMachinePodAssembly({
     outwardAngle,
     outward: radial,
     tangent,
-    shellPanelSeparation: minimumSpan * (0.14 + 0.10 * expansion) * expansion,
-    shellPanelTravel: minimumSpan * 0.10 * expansion,
-    shellPanelLift: height * 0.08 * expansion,
-    shellPanelRotation: 0.18 * expansion,
-    collarTravel: minimumSpan * 0.09 * expansion,
-    collarLift: height * 0.04 * expansion,
-    chamberTravel: minimumSpan * 0.20 * expansion,
-    chamberLift: height * 0.14 * expansion,
-    articulationTravel: minimumSpan * 0.22 * expansion,
-    articulationRotation: 0.28 * expansion,
-    payloadTravel: minimumSpan * 0.27 * expansion,
-    payloadLift: height * 0.26 * expansion,
-    revealGap: minimumSpan * 0.08 * expansion,
+    shellPanelSeparation: minimumSpan * (0.26 + 0.16 * expansion) * expansion,
+    shellPanelTravel: minimumSpan * 0.16 * expansion,
+    shellPanelLift: height * 0.12 * expansion,
+    shellPanelRotation: 0.24 * expansion,
+    collarTravel: minimumSpan * 0.16 * expansion,
+    collarLift: height * 0.06 * expansion,
+    chamberTravel: minimumSpan * 0.30 * expansion,
+    chamberLift: height * 0.18 * expansion,
+    articulationTravel: minimumSpan * 0.28 * expansion,
+    articulationRotation: 0.38 * expansion,
+    payloadTravel: minimumSpan * 0.38 * expansion,
+    payloadLift: height * 0.42 * expansion,
+    revealGap: minimumSpan * 0.12 * expansion,
     presentationOnly: true,
   });
 
@@ -480,6 +480,14 @@ export function deriveMachinePodAssembly({
     })),
   ];
 
+  const subject = deriveMachineSubject(subjectParts, 0.06);
+  const horizontalRadius = Math.max(
+    Math.abs(subject.max.x - center.x),
+    Math.abs(center.x - subject.min.x),
+    Math.abs(subject.max.z - center.z),
+    Math.abs(center.z - subject.min.z),
+  );
+
   return Object.freeze({
     id: MACHINE_POD_ASSEMBLY_ID,
     version: MACHINE_POD_ASSEMBLY_VERSION,
@@ -497,13 +505,13 @@ export function deriveMachinePodAssembly({
     statusPresentation,
     mechanicalPresentation,
     envelope: Object.freeze({
-      radius: maxHorizontalExtent * 0.5,
+      radius: Math.max(maxHorizontalExtent * 0.5, horizontalRadius),
       height: shellHeight,
       adjacentCenterSpacing: adjacentCenterSpacing == null ? null : Number(adjacentCenterSpacing),
       neighborClearance,
       requestedClearance: clearance,
     }),
-    subject: deriveMachineSubject(subjectParts, 0.06),
+    subject,
     presentationOnly: true,
   });
 }
