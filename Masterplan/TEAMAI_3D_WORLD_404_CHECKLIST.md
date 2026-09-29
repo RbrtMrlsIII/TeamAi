@@ -31,7 +31,7 @@ Use the evidence IDs in section-level notes below rather than creating one evide
 - [x] Current Seat division catalog contains 7 concrete divisions: Connection, Behavior, Toolkit, Capabilities, Authorization, Workspace Scope, Task Evidence.
 - [x] Current division fan span is 150 degrees across the seven indexed positions.
 - [x] Current Seat division port radius is 0.28 × parent scale.
-- [x] Current division radial offset is parent max horizontal dimension × (1.7 + 0.5 × expansion).
+- [x] Current division radial offset uses the S4-owned factor max(1.66, 0.9 + 1.3 × expansion) × parent max horizontal dimension; the 1.66 floor is the independently-derived compact-state separation floor for the current AABB contract.
 
 ### A3. Current numeric spatial findings
 At the current maximum 10-seat profile:
@@ -117,6 +117,29 @@ Any later visual slice that exposes a structural deficiency must return the defi
 Evidence: E404-GEOM. The current proof uses authored component subjects sampled through travel, conservative AABB clearance, and the full 1–10 Seat × 3 shell-state × 7-division matrix. Triangle-level mesh collision is not claimed.
 
 Diagnosis: the earlier 0.148-unit radial-envelope discrepancy is closed. Current proof closes the authored-path and conservative geometry-clearance contract; remaining gaps are formal acceptance, production/runtime evidence, human acceptance, and final visual/product integration.
+
+
+### A4.3. Feature-descent and leaf-coverage contract
+
+A spatial parent is not complete because its outer shell, selector, or menu exists.
+
+MACHINE → FACILITY/TREE → BRANCH/DIVISION → SUBASSEMBLY → PAYLOAD → LEAF ACTION/RESULT
+
+Each leaf is classified as SPATIAL_SURFACE, SPATIAL_PAYLOAD, APP_UI_HANDOFF, READ_MODEL_ONLY, or STATE_ONLY.
+
+For every Seat, the current leaf vocabulary is:
+- SEAT_SHELL → identity/provider/runtime/model facets + overview/status.
+- SEAT_CONNECTION → Connection / Health / Configure / bind-test-readiness.
+- SEAT_BEHAVIOR → Behavior / Do-Don't / defaults / inspect-configure.
+- SEAT_TOOLKIT → Core skill bundle / Domain skill bundle / External assign slot / configure-equip.
+- SEAT_CAPABILITIES → Capabilities / Available actions / configure-inspect.
+- SEAT_AUTHORIZATION → Authorization / Policy grant preview / reason-bearing configure-inspect.
+- SEAT_WORKSPACE_SCOPE → Workspace scope / Current workspace / configure-scope.
+- SEAT_TASK_EVIDENCE → Task evidence / Trace / report-result-evidence / inspect-configure.
+
+The facility layer follows the current feature registry branch models for Workspace, Projects, Artifacts, Storage, Seats, Team/Agents, MCP/Capability, Skills/Responsibility, Orchestration, Marketplace, Settings, and Authentication.
+
+Before S24, the reviewer must enumerate the current L0-L5 paths in the feature registry plus Tree Census, identify owners and terminal presentation class, and record unresolved branches separately. Do not invent child IDs or geometry merely to give controls a spatial parent.
 
 ## A1. 2026-09-26 formal S0–S10 ledger reconciliation
 
@@ -606,7 +629,39 @@ Exit: machine is operable without mouse/color/animation dependence within the de
 **Current status:** IMPLEMENTED → **REPOSITORY-VERIFIED for the repository-level S23 responsive density/readability contract**. Final visual acceptance remains open until the A4.1/S2/S3/S5/S7/S10 visual gates are demonstrated across the declared tiers. Responsive classification, camera adaptation, panel containment, measured Pod/Facility readability, maximum-density Seat spacing, touch/reduced-motion execution, and Browser coverage are green. Physical-device touch acceptance remains open. Evidence: E404-S23A.
 
 Exit: phone is a designed machine view.
+
+## Y0. Spatial feature descent / leaf coverage gate
+
+- [ ] Freeze the current frontend feature registry + Tree Census vocabulary.
+- [ ] Enumerate L0 machine → L1 facility/tree → L2 branch/division → L3 subassembly → L4 payload → L5 leaf action/result.
+- [ ] Classify every terminal node as SPATIAL_SURFACE, SPATIAL_PAYLOAD, APP_UI_HANDOFF, READ_MODEL_ONLY, or STATE_ONLY.
+- [ ] Record semantic owner, payload source, physical parent, topology, camera, state/loading/error, accessibility, responsive behavior, reduced-motion equivalent, and verification owner.
+- [ ] Resolve missing branches at the actual semantic/product owner; do not fabricate branch IDs or geometry merely to host controls.
+- [ ] Verify all seven Seat divisions and all current product facilities have explicit terminal paths.
+- [ ] Keep ordinary UI handoffs at the leaf where 3D would be dishonest or unnecessarily complex.
+
+Exit: no "window discovered after the wall" gap remains in the declared feature vocabulary.
+
+
+## Y1. Renderer substrate evolution gate
+
+**Decision:** adopt Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target renderer substrate while preserving the existing spatial assembly and semantic authority model.
+
+- [ ] Baseline current raw WebGL behavior at fixed camera states.
+- [ ] Add exact pinned Three.js dependency and lockfile integrity.
+- [ ] Introduce one Three.js scene adapter consuming existing S2-S10 assemblies.
+- [ ] Preserve one canvas, one renderer, one scene, one animation loop, one semantic camera authority.
+- [ ] Port reusable primitive/mesh factories to BufferGeometry / Mesh.
+- [ ] Port Core, Pod, Division, Facility, topology, and camera projections without changing semantic IDs.
+- [ ] Verify source/public parity and no duplicate WebGL contexts.
+- [ ] Verify geometry, responsive, reduced-motion, accessibility, and Browser contracts.
+- [ ] Compare fixed-state renders against the raw WebGL baseline.
+- [ ] Remove raw WebGL only after exact-head parity, Browser proof, and rollback/archive evidence.
+
+Exit: the existing machine grammar is represented by a maintainable WebGL2 scene graph without creating a second authority.
+
 ## Z. S24 — Materials / lighting
+**Prerequisites:** Y0 spatial feature descent/leaf coverage and Y1 renderer substrate migration are complete enough to support the declared machine vocabulary. S24 is visual expression, not a substitute for missing branches.
 **Inherited roots: S0-S10. Theme authority: Product Law canonical unified theme root.**
 **Current status:** INTEGRATION IN PROGRESS on #424, but further S24 breadth is **intentionally gated behind the visual embodiment contract**. Renderer-local `RING_MATERIALS` is retired; renderer material aliases derive from the authored theme family. The existing shader checkpoint may remain as implementation infrastructure, but it is not permitted to declare visual completion while the machine is still visually skeletal.
 - [ ] **Upstream visual gate passed.** S2/S3/S5/S7/S8/S10 visual embodiment gates are materially accepted before additional lighting breadth.
@@ -623,6 +678,7 @@ Exit: phone is a designed machine view.
 Exit: materials reinforce hierarchy and state without creating a second visual or semantic authority.
 
 ## AA. S25 — Holograms / blueprints
+**Prerequisite:** S24 base material/lighting language is stable enough to reveal, not invent, the underlying payload surfaces.
 **Inherited roots: S0-S10. Payload and geometry remain semantic sources of truth.**
 - [ ] Holographic core.
 - [ ] Feature blueprint surfaces.
@@ -636,6 +692,7 @@ Exit: materials reinforce hierarchy and state without creating a second visual o
 Exit: machine surfaces communicate product meaning.
 
 ## AB. S26 — Ambient environment
+**Prerequisite:** S24/S25 surfaces exist at the declared structural coverage level. Ambient is composition support only.
 **Inherited roots: S0-S10. Ambient effects remain subordinate to machine state and performance.**
 - [ ] Star field.
 - [ ] Atmospheric depth.
@@ -647,6 +704,22 @@ Exit: machine surfaces communicate product meaning.
 - [ ] Ambient depth never substitutes for missing mechanical depth, attachment, or camera focus.
 
 Exit: environment supports machine focus without masking structural gaps.
+
+
+## AB1. Visual coherence checkpoint (post-S26, non-blocking)
+
+- [ ] Capture fixed HERO_WIDE overview.
+- [ ] Capture one focused/open Seat.
+- [ ] Capture one focused/open branch or specialized facility.
+- [ ] Compare against the light-skeuomorphic direction, product rebaseline, and endorsed mechanical reference.
+- [ ] Record PASS/FAIL for silhouette, hierarchy, depth, mechanical readability, topology attachment, camera intimacy, and overall coherence.
+- [ ] Add one-line "reads unintentionally" notes for every miss.
+- [ ] Route structural misses to S2-S10 owners; route presentation misses to S24-S29.
+- [ ] Keep this checkpoint non-blocking for S27 unless a separate governing acceptance gate is explicitly failed.
+- [ ] Carry this baseline into S30/S32/S33.
+
+Exit: S33 begins from an observed composed baseline instead of being the first integrated visual review.
+
 
 ## AC. S27 — Performance / resource discipline
 **Inherited roots: S0-S10. Measure the full inherited machine, not merely cosmetic effects.**
@@ -758,7 +831,7 @@ Exit: deployed presentation matches actual runtime truth.
 Exit: authorized human accepts the integrated machine **as a physical visual system before decorative effects are judged**.
 
 ## AI. S33 — ProMax polish
-**Prerequisite:** G2 Physical machine completeness and the A4.1 visual embodiment contract must already be materially accepted. ProMax polish is not a rescue layer for hollow, floating, or non-transforming geometry.
+**Prerequisite:** G2 Physical machine completeness, Y0/Y1 structural readiness, A4.1 visual embodiment, and AB1 visual coherence baseline must already exist. ProMax remains the final refinement pass, not the first integrated visual review. ProMax polish is not a rescue layer for hollow, floating, or non-transforming geometry.
 
 - [ ] Silhouette refinement.
 - [ ] Mechanical micro-motion.
