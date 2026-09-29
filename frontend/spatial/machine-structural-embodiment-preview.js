@@ -278,7 +278,6 @@ function renderView() {
   canvas.dataset.structuralVisibleDivisions = String(currentView === 'seat' ? DIVISIONS.length : 0);
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
-  canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   const divisionSubject = subjectFromParts(divisions);
   const spec = deriveMachineCameraSpec({
     cameraId: currentView === 'world'
