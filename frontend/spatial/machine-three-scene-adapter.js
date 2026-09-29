@@ -17,6 +17,7 @@ import {
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
   getMachineSeatWorkspaceScopeFrameRecipe,
+  resolveMachineSeatWorkspaceScopeFrameRailThickness,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE,
@@ -318,7 +319,10 @@ function buildWorkspaceScopeFrameGeometry(THREE, descriptor) {
       rail.center.z * z,
       {
         x: rail.dimensions.x * x,
-        y,
+        y: resolveMachineSeatWorkspaceScopeFrameRailThickness({
+          dimensions: descriptor.dimensions,
+          rail,
+        }),
         z: rail.dimensions.z * z,
       },
     );
