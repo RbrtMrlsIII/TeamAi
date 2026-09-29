@@ -83,6 +83,20 @@ test('canonical renderer reaches focused Seat divisions through the authored S4 
   assert.match(presentation, /validateMachineSeatDivisionAssembly/);
   assert.match(presentation, /assembly\.components/);
 });
+
+test('canonical renderer projects the authored Pod opening profile as real shell/mechanical transformation', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const podAssembly = await readFile(new URL('../public/machine-pod-assembly.js', import.meta.url), 'utf8');
+  assert.match(renderer, /POD_SHELL_PANEL/);
+  assert.match(renderer, /mechanicalPresentation/);
+  assert.match(renderer, /machineWorldPodMechanicalState/);
+  assert.match(renderer, /machineWorldPodMechanicalProfile/);
+  assert.match(renderer, /split-shell-reveal-v1/);
+  assert.match(podAssembly, /MACHINE_POD_ASSEMBLY_VERSION = 'S3-V2'/);
+  assert.match(podAssembly, /shellPanelSeparation/);
+  assert.match(podAssembly, /chamberTravel/);
+  assert.match(podAssembly, /payloadTravel/);
+});
 test('canonical renderer renders the S2 authored core assembly through one central-core owner', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /machine-core-assembly\.js/);
