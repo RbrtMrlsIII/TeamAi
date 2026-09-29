@@ -2,11 +2,11 @@ import { createMachineThreeSceneAdapter } from './machine-three-scene-adapter.js
 import { createBranchConnectionCore } from './machine-core-layout.js';
 import { deriveMachineCoreAssembly } from './machine-core-assembly.js';
 import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
+import { deriveMachineSeatDivisionAssembly } from './machine-seat-division-assembly.js';
 import {
-  deriveMachineSeatDivisionAssembly,
+  deriveFocusedSeatDivisionGeometry,
   resolveSeatDivisionAttachmentTransform,
-} from './machine-seat-division-assembly.js';
-import { deriveFocusedSeatDivisionGeometry } from './machine-seat-division-presentation.js';
+} from './machine-seat-division-presentation.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import {
   deriveMachineFacilityMachinery,
