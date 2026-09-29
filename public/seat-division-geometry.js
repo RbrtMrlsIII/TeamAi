@@ -47,7 +47,7 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
   const t = clamp(amount, 0, 1);
   // Compact-state floor keeps the seven-way authored fan separated under the existing AABB/padding contract.
   // The floor is only active during the early compact state; full deployment retains the prior endpoint.
-  const deploymentFactor = Math.max(1.48, 0.9 + 1.3 * t);
+  const deploymentFactor = Math.max(1.66, 0.9 + 1.3 * t);
   return scale * deploymentFactor;
 }
 
