@@ -16,8 +16,10 @@ import {
 import {
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
+  getMachineSeatWorkspaceScopeFrameRecipe,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileShape,
 } from './machine-seat-division-profile.js';
 
@@ -279,6 +281,58 @@ function buildSeatAuthorizationShieldGeometry(THREE, descriptor) {
   );
 }
 
+function appendBoxVertices(vertices, centerX, centerY, centerZ, dimensions) {
+  const hx = dimensions.x * 0.5;
+  const hy = dimensions.y * 0.5;
+  const hz = dimensions.z * 0.5;
+  const corners = {
+    lbf: [centerX - hx, centerY - hy, centerZ + hz],
+    rbf: [centerX + hx, centerY - hy, centerZ + hz],
+    lbb: [centerX - hx, centerY - hy, centerZ - hz],
+    rbb: [centerX + hx, centerY - hy, centerZ - hz],
+    ltf: [centerX - hx, centerY + hy, centerZ + hz],
+    rtf: [centerX + hx, centerY + hy, centerZ + hz],
+    ltb: [centerX - hx, centerY + hy, centerZ - hz],
+    rtb: [centerX + hx, centerY + hy, centerZ - hz],
+  };
+  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
+  const faces = [
+    [corners.lbf, corners.rbf, corners.rtf], [corners.lbf, corners.rtf, corners.ltf],
+    [corners.rbb, corners.lbb, corners.ltb], [corners.rbb, corners.ltb, corners.rtb],
+    [corners.lbb, corners.lbf, corners.ltf], [corners.lbb, corners.ltf, corners.ltb],
+    [corners.rbf, corners.rbb, corners.rtb], [corners.rbf, corners.rtb, corners.rtf],
+    [corners.ltf, corners.rtf, corners.rtb], [corners.ltf, corners.rtb, corners.ltb],
+    [corners.lbb, corners.rbb, corners.rbf], [corners.lbb, corners.rbf, corners.lbf],
+  ];
+  for (const [a, b, cc] of faces) pushTri(a, b, cc);
+}
+
+function buildWorkspaceScopeFrameGeometry(THREE, descriptor) {
+  const { x, y, z } = descriptor.dimensions;
+  const vertices = [];
+  for (const rail of getMachineSeatWorkspaceScopeFrameRecipe()) {
+    appendBoxVertices(
+      vertices,
+      rail.center.x * x,
+      0,
+      rail.center.z * z,
+      {
+        x: rail.dimensions.x * x,
+        y,
+        z: rail.dimensions.z * z,
+      },
+    );
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(new Float32Array(vertices), 3),
+  );
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  return geometry;
+}
+
 export function buildThreeGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
   if (descriptor.shape === 'POD_SHELL') {
@@ -293,6 +347,9 @@ export function buildThreeGeometry(THREE, descriptor) {
       descriptor,
       getMachineSeatBehaviorBaffleOutline(),
     );
+  }
+  if (descriptor.shape === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE) {
+    return buildWorkspaceScopeFrameGeometry(THREE, descriptor);
   }
   const radius = Math.max(0.01, Math.max(x, z) * 0.5);
   if (descriptor.shape === 'TORUS') {

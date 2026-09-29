@@ -11,6 +11,9 @@ export const MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE = 'authorization-shield';
 export const MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE = 'S4_AUTHORIZATION_SHIELD';
 export const MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE = 'rule-baffles';
 export const MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE = 'S4_BEHAVIOR_BAFFLE';
+export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE = 'scope-frame';
+export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE = 'S4_WORKSPACE_SCOPE_FRAME';
+export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE = 'S4_SCOPE_FRAME_RAIL';
 
 const AUTHORIZATION_SHIELD_OUTLINE = Object.freeze([
   Object.freeze([-0.78, -0.54]),
@@ -46,6 +49,45 @@ export function getMachineSeatBehaviorBaffleOutline() {
   );
 }
 
+const WORKSPACE_SCOPE_FRAME_RECIPE = Object.freeze([
+  Object.freeze({
+    id: 'front-rail',
+    center: Object.freeze({ x: 0, z: 0.43 }),
+    dimensions: Object.freeze({ x: 1.00, z: 0.14 }),
+  }),
+  Object.freeze({
+    id: 'rear-rail',
+    center: Object.freeze({ x: 0, z: -0.43 }),
+    dimensions: Object.freeze({ x: 1.00, z: 0.14 }),
+  }),
+  Object.freeze({
+    id: 'left-rail',
+    center: Object.freeze({ x: -0.43, z: 0 }),
+    dimensions: Object.freeze({ x: 0.14, z: 1.00 }),
+  }),
+  Object.freeze({
+    id: 'right-rail',
+    center: Object.freeze({ x: 0.43, z: 0 }),
+    dimensions: Object.freeze({ x: 0.14, z: 1.00 }),
+  }),
+]);
+
+export function getMachineSeatWorkspaceScopeFrameRecipe() {
+  return WORKSPACE_SCOPE_FRAME_RECIPE.map((entry) => Object.freeze({
+    id: entry.id,
+    center: Object.freeze({ ...entry.center }),
+    dimensions: Object.freeze({ ...entry.dimensions }),
+  }));
+}
+
+export function resolveMachineSeatDivisionProfileRecipe({ profile = '' } = {}) {
+  const normalizedProfile = String(profile || '').trim().toLowerCase();
+  if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
+    return getMachineSeatWorkspaceScopeFrameRecipe();
+  }
+  return null;
+}
+
 export function resolveMachineSeatDivisionProfileShape({
   profile = '',
   fallbackShape = '',
@@ -56,6 +98,9 @@ export function resolveMachineSeatDivisionProfileShape({
   }
   if (normalizedProfile === MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE) {
     return MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE;
+  }
+  if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
+    return MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE;
   }
   return fallbackShape;
 }

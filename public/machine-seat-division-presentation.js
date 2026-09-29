@@ -11,7 +11,13 @@ import {
   deriveMachineSeatDivisionAssembly,
   validateMachineSeatDivisionAssembly,
 } from './machine-seat-division-assembly.js';
-import { resolveMachineSeatDivisionProfileShape } from './machine-seat-division-profile.js';
+import {
+  getMachineSeatWorkspaceScopeFrameRecipe,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+  resolveMachineSeatDivisionProfileRecipe,
+  resolveMachineSeatDivisionProfileShape,
+} from './machine-seat-division-profile.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const clamp01 = (value) => Math.max(0, Math.min(1, finite(value, 0)));
@@ -184,8 +190,9 @@ export function drawFocusedSeatDivision({
       profile: component.profile,
       fallbackShape: component.shape,
     });
+    const profileRecipe = resolveMachineSeatDivisionProfileRecipe({ profile: component.profile });
     const primitive = presentationShape || primitives[component.shape];
-    if (!primitive) continue;
+    if (!primitive && !profileRecipe) continue;
     const attachmentTransform = resolveSeatDivisionAttachmentTransform(assembly, component, progress);
     const localCenter = {
       x: assembly.center.x + component.offset.x + attachmentTransform.x,
@@ -198,26 +205,57 @@ export function drawFocusedSeatDivision({
         : 0
     );
     const height = Math.max(0.025, Number(component.scale.y) || 0.025);
-    draw(
-      primitive,
-      mul(
-        T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+    const drawOptions = {
+      rough: component.materialRole === 'glass' ? 0.24 : 0.34,
+      emit: component.materialRole === 'energy' ? 0.16 * (0.45 + 0.55 * progress) : 0.05 * (0.4 + 0.6 * progress),
+      alpha: component.materialRole === 'glass' ? 0.72 : 0.88,
+    };
+
+    if (profileRecipe && component.profile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
+      for (const rail of getMachineSeatWorkspaceScopeFrameRecipe()) {
+        const railCenter = {
+          x: rail.center.x * component.dimensions.x,
+          y: 0,
+          z: rail.center.z * component.dimensions.z,
+        };
+        draw(
+          MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation),
+              mul(
+                T(railCenter.x, railCenter.y, railCenter.z),
+                S(
+                  component.scale.x * rail.dimensions.x,
+                  component.scale.y,
+                  component.scale.z * rail.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else {
+      draw(
+        primitive,
         mul(
-          RY(rotation),
-          S(
-            component.scale.x,
-            component.scale.y,
-            component.scale.z,
+          T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+          mul(
+            RY(rotation),
+            S(
+              component.scale.x,
+              component.scale.y,
+              component.scale.z,
+            ),
           ),
         ),
-      ),
-      materialFor(component.materialRole),
-      {
-        rough: component.materialRole === 'glass' ? 0.24 : 0.34,
-        emit: component.materialRole === 'energy' ? 0.16 * (0.45 + 0.55 * progress) : 0.05 * (0.4 + 0.6 * progress),
-        alpha: component.materialRole === 'glass' ? 0.72 : 0.88,
-      },
-    );
+        materialFor(component.materialRole),
+        drawOptions,
+      );
+    }
   }
 
   return Object.freeze({

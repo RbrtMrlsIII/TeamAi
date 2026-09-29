@@ -28,8 +28,12 @@ import {
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
+  getMachineSeatWorkspaceScopeFrameRecipe,
   resolveMachineSeatDivisionProfileShape,
 } from '../frontend/spatial/machine-seat-division-profile.js';
 
@@ -80,6 +84,81 @@ test('S4 authorization shield profile overrides only presentation shape', () => 
     }),
     MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
   );
+});
+
+test('S4 workspace scope frame recipe preserves the existing telescoping descriptor envelope', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const divisionParent = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
+    parent: divisionParent,
+    childId: 'SEAT_WORKSPACE_SCOPE',
+    childIndex: 5,
+    amount: 1,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: divisionParent,
+    childId: 'SEAT_WORKSPACE_SCOPE',
+    childIndex: 5,
+    amount: 1,
+    geometry: geometryDescriptor,
+  });
+  const component = assembly.components.find(
+    (entry) => entry.profile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE,
+  );
+  assert.ok(component);
+  assert.equal(assembly.mechanism.attachment.type, 'TELESCOPING_FRAME');
+  assert.equal(assembly.mechanism.attachment.primaryComponent, 'scope-frame');
+  assert.equal(assembly.mechanism.attachment.travel, 0.28);
+
+  const recipe = getMachineSeatWorkspaceScopeFrameRecipe();
+  assert.equal(recipe.length, 4);
+  const minX = Math.min(...recipe.map((rail) => rail.center.x - rail.dimensions.x * 0.5));
+  const maxX = Math.max(...recipe.map((rail) => rail.center.x + rail.dimensions.x * 0.5));
+  const minZ = Math.min(...recipe.map((rail) => rail.center.z - rail.dimensions.z * 0.5));
+  const maxZ = Math.max(...recipe.map((rail) => rail.center.z + rail.dimensions.z * 0.5));
+  assert.equal(minX, -0.50);
+  assert.equal(maxX, 0.50);
+  assert.equal(minZ, -0.50);
+  assert.equal(maxZ, 0.50);
+
+  const apertureWidth = 1 - 0.14 * 2;
+  const apertureDepth = 1 - 0.14 * 2;
+  assert.equal(apertureWidth, 0.72);
+  assert.equal(apertureDepth, 0.72);
+  assert.deepEqual(
+    recipe.map((rail) => rail.dimensions),
+    [
+      { x: 1.00, z: 0.14 },
+      { x: 1.00, z: 0.14 },
+      { x: 0.14, z: 1.00 },
+      { x: 0.14, z: 1.00 },
+    ],
+  );
+
+  const descriptor = normalizeThreeDescriptor(component, assembly.id);
+  assert.equal(descriptor.shape, MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE);
+  assert.deepEqual(descriptor.dimensions, component.dimensions);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  const epsilon = 1e-6;
+  const expected = descriptor.dimensions;
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
+  assert.equal(geometry.getAttribute('position').count, 144);
+  const positionArray = geometry.getAttribute('position').array;
+  const midX = expected.x * 0.36;
+  const midZ = expected.z * 0.36;
+  assert.ok(positionArray.some((value) => Math.abs(value) > midX && Math.abs(value) <= expected.x * 0.5));
+  assert.ok(positionArray.some((value) => Math.abs(value) > midZ && Math.abs(value) <= expected.z * 0.5));
+  geometry.dispose();
 });
 
 test('S4 behavior baffle profile preserves the existing articulated descriptor envelope', () => {
@@ -333,6 +412,10 @@ test('S4 source and browser profile copies remain exact', () => {
   assert.match(rendererSource, /getMachineSeatBehaviorBaffleOutline/);
   assert.match(rendererSource, /behaviorBaffle: getMachineSeatBehaviorBaffleOutline\(\)/);
   assert.match(rendererSource, /MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE/);
+  assert.match(rendererSource, /MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
+  assert.match(presentationSource, /resolveMachineSeatDivisionProfileRecipe/);
+  assert.match(presentationSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
+  assert.match(profileSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE/);
 });
 
 test('Y1 adapter source and browser copy remain exact', () => {

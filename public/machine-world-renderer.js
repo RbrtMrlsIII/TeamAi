@@ -53,6 +53,7 @@ import {
   getMachineSeatBehaviorBaffleOutline,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE as MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
 } from './machine-seat-division-profile.js';
 const TAU = Math.PI * 2;
 const READABILITY_CAMERA_QUANTUM = 0.25;
@@ -226,6 +227,12 @@ const PRIMITIVE_POLYGONS = Object.freeze({
     [1.00, -0.18],
     [1.00, 0.18],
     [-1.00, 0.18],
+  ]),
+  [MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE]: Object.freeze([
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+    [-1, 1],
   ]),
 });
 
