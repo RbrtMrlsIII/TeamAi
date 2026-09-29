@@ -12,7 +12,7 @@ No 029-release claim.
 
 ### Current continuation boundary (2026-09-28)
 
-The reviewed PR #398 structural foundation and merged PR #404 spatial implementation are historical baselines. PR #424 is the active bounded continuation vehicle for S24 and later 029 world-expression layers. The sequence remains S0-S10 structural roots → S11-S21 product/runtime realization → S22-S29 world expression → S30-S33 proof, runtime reconciliation, human acceptance, and polish. This plan does not move Firebase/Firestore, authorization, entitlement, provider, scheduler, commerce, or production-delivery authority into the renderer.
+The reviewed PR #398 structural foundation and merged PR #404 spatial implementation are historical baselines. PR #424 is the active bounded continuation vehicle for Y0/Y1, structural visual embodiment, S24 and later 029 world-expression layers. The sequence remains S0-S10 structural roots → S11-S21 product/runtime realization → S22-S29 world expression → S30-S33 proof, runtime reconciliation, human acceptance, and polish. This plan does not move Firebase/Firestore, authorization, entitlement, provider, scheduler, commerce, or production-delivery authority into the renderer.
 
 ## 0. Purpose
 
@@ -92,7 +92,7 @@ Product_Law/PRODUCT_LAW.md remains the highest product authority.
 
 Issue #278 remains the active 029 product-experience ledger.
 
-Issue #396 remains the current 029 spatial workstream.
+Issue #405 governs the active 029 spatial workstream; #396 is retained as historical construction guidance.
 
 Issue #400 remains the canonical frontend/product feature grammar.
 

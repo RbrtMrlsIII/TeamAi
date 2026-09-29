@@ -63,7 +63,7 @@ The audited ownership fixes now include a neutral machine-subject geometry owner
 - `Masterplan/MASTERPLAN.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
-- Issue #396 — 029 Spatial World execution guide
+- Issue #396 — historical 029 Spatial World construction guide, superseded for active execution by #405
 - Issue #400 — Canonical Frontend Feature & Spatial UX Contract
 - #392 — Seat budget, usage, handoff, continuation, and cooperation runtime
 - Merged PR #398 — reviewed 029 structural baseline
@@ -169,7 +169,7 @@ Issue #415 is a governance/verification infrastructure vehicle and does **not** 
 - **`teamai-seat-budget-runtime` remains undeployed.** The former index prerequisite is satisfied; live promotion is now gated on Gate 3 Seat-shape evidence, not on index presence.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
+- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 is merged historical provenance and must not be reopened; PR #424 is the active spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
 
 ### Shared CI support: advisory issue preflight
 

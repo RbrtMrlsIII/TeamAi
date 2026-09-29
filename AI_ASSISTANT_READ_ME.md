@@ -169,7 +169,7 @@ Rule: material reasoning from chat is only a working candidate until it is promo
 - historical baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
 - current main: `59a871f440dd1d15405164948da9985d1537a6be`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
-- open implementation/governance vehicles: Issue #401 remains the current production-runtime frontier; Draft PR #404 remains the bounded 029 spatial implementation vehicle; Issue #415 is review-readiness guidance infrastructure and PR #416 is already merged
+- open implementation/governance vehicles: Issue #401 remains the current production-runtime frontier; PR #424 remains the bounded 029 spatial continuation vehicle; Issue #415 is review-readiness guidance infrastructure and PR #416 is already merged
 - active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance. Issue #415 remains procedural guidance only and does not replace the product frontier.
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
@@ -308,7 +308,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 ### 2026-09-21 active 029 migration
 
-PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-machine-world-convergence`. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d6168b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
+PR #398 is the merged historical structural baseline for the earlier #396 lineage. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d6168b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
 
 ## Current replacement-branch control plane
 
@@ -334,7 +334,7 @@ PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-ma
 ## Product boundary while reconstruction is active
 
 - Preserve current machine candidate and semantic topology work already on main.
-- PR #398 owns the current 029 spatial convergence implementation described by Issue #396.
+- PR #398 is historical implementation provenance for the earlier #396 spatial convergence lineage.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
 ## Validation lifecycle guide

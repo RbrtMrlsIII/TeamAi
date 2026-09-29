@@ -84,7 +84,7 @@ The original SP-06 classification predates the later #396 implementation program
 
 The older rule saying not to create an R1 module is historical guidance for the pre-Slice-D state. Current execution keeps R1 under one canonical machine-world renderer and avoids duplicate geometry authority.
 
-The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, complete R2 mechanical choreography, and final physical machine construction continue through PR #404 / Issue #405 under Issue #396 authority.
+The R1 display and thread modules are implementation steps, not a 029 completion claim. The current threads are deterministic presentation relationships only. Final service/backend topology, richer mechanical R1 articulation, complete R2 mechanical choreography, and final physical machine construction continues through PR #424 / Issue #405. Issue #396 is retained historical construction guidance and is no longer an active authority.
 
 ## 7. Current structural reconciliation
 
