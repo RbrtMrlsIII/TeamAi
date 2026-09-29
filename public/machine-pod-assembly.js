@@ -150,6 +150,26 @@ export function deriveMachinePodAssembly({
 
   const mechanicalDetails = Object.freeze([
     ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:DOCKING-STRUT:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'docking-strut',
+      shape: 'CUBE',
+      center: Object.freeze({
+        x: center.x - radial.x * connectionOffset * 0.50
+          + tangent.x * minimumSpan * 0.12 * side,
+        y: center.y + height * 0.20,
+        z: center.z - radial.z * connectionOffset * 0.50
+          + tangent.z * minimumSpan * 0.12 * side,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.075,
+        y: height * 0.12,
+        z: Math.max(minimumSpan * 0.28, connectionOffset * 0.62),
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal',
+      ...rootContext(),
+    })),
+    ...[-1, 1].map((side) => Object.freeze({
       id: `MACHINE-POD:${branchId}:PANEL-RAIL:${side > 0 ? 'RIGHT' : 'LEFT'}`,
       role: 'panel-rail',
       shape: 'CUBE',
