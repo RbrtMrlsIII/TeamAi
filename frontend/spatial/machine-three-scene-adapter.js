@@ -219,6 +219,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
 
   const themeLighting = resolveStructuralThemeLighting();
   const authoredMaterials = authoredHeroMaterialSet(themeLighting);
+  canvas.dataset.threeMaterialModel = 'S24-authored-theme-family';
 
   const scene = new THREE.Scene();
   const machineRoot = new THREE.Group();
