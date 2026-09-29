@@ -12,6 +12,7 @@
 import { resolveMachineResponsive } from './machine-responsive.js';
 import { deriveMachineResponsiveReadability } from './machine-responsive-readability.js';
 import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
+import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import {
   createMachineExpansionMechanism,
   deriveMachineSeatDivisionExpansionPlan,
@@ -850,7 +851,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ? scene.byBranch?.get(context.branchId)
       : null;
     const worldSubject = deriveMachineSubject(scene.parts, 0.2);
-    const podSubject = branch?.podAssembly?.subject
+    const podSubject = context.podSubjectOverride
+      || branch?.podAssembly?.subject
       || (branch ? deriveMachineSubject([branch], 0.12) : null);
     const mode = resolveMachineCameraMode({
       cameraId: context.cameraId || 'HERO_WIDE',
@@ -1318,6 +1320,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       return Math.max(radius, Math.hypot(part.center.x, part.center.z));
     }, 0);
     const previewShell = scene.byBranch.get(branchId);
+    const focusedPodBaseAmount = hierarchyOpen && state.focusedChildId
+      ? clamp(finite(state.focusedChildAmount, 0), 0, 1)
+      : 0;
+    const focusedPodAssembly = previewShell?.kind === 'inner-pod'
+      ? deriveMachinePodAssembly({
+          part: previewShell,
+          expansionAmount: focusedPodBaseAmount,
+        })
+      : null;
+    const focusedPodSubject = focusedPodAssembly?.subject || previewShell?.podAssembly?.subject || null;
     const focusedExpansionPlan = hierarchyOpen && previewShell && state.focusedChildId && focusedChildIndex >= 0
       ? deriveMachineSeatDivisionExpansionPlan({
           parent: previewShell,
@@ -1337,6 +1349,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const focusedSubject = focusedExpansionPlan
       ? subjectAtExpansionAmount(focusedExpansionPlan, focusedChildAmount)
       : null;
+    const focusedPodAssemblyResolved = previewShell?.kind === 'inner-pod'
+      ? deriveMachinePodAssembly({
+          part: previewShell,
+          expansionAmount: hierarchyOpen && state.focusedChildId ? focusedChildAmount : 0,
+        })
+      : null;
+    const focusedPodSubjectResolved = focusedPodAssemblyResolved?.subject || focusedPodSubject;
     const choreography = deriveMachineTransformationChoreography({
       shellAmount: finite(state.hierarchyOpenAmount, expansionSample.amount),
       divisionAmount: focusedChildAmount,
@@ -1376,7 +1395,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       divisionSubject: focusedSubject,
       coreSubject: coreAssembly?.subject || null,
       facilitySubject: state.facilitySubject || null,
-      parentSubject: previewShell?.podAssembly?.subject || null,
+      parentSubject: focusedPodSubjectResolved || null,
+      podSubjectOverride: focusedPodSubjectResolved || null,
       facilityFocused: Boolean(state.facilityFocused),
       returningToParent: Boolean(state.returningToParent),
       returningToWorld: Boolean(state.returningToWorld),
@@ -1672,8 +1692,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       let entry = null;
 
       if (part.kind === 'inner-pod' && part.podAssembly) {
+        const podAssembly = part.branchId === branchId && hierarchyOpen && state.focusedChildId
+          ? focusedPodAssemblyResolved
+          : deriveMachinePodAssembly({
+              part,
+              expansionAmount: 0,
+            });
         const projected = drawMachinePodAssembly({
-          assembly: part.podAssembly,
+          assembly: podAssembly || part.podAssembly,
           reducedMotion,
           selected,
           shellMaterial: authoredSeatShell,
