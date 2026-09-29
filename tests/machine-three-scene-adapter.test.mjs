@@ -96,7 +96,9 @@ test('Y1 Pod shell BufferGeometry is bounded by the authored descriptor dimensio
   assert.ok(geometry.boundingBox);
 
   const expected = descriptor.dimensions;
-  const epsilon = 1e-9;
+  // BufferGeometry stores positions in Float32BufferAttribute. A 1e-9 bound
+  // is below the representable precision around these world-space dimensions.
+  const epsilon = 1e-6;
   assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.max.y - expected.y * 0.5) < epsilon);
