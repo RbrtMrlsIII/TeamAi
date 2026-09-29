@@ -47,12 +47,13 @@ import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machin
 import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges } from './machine-world-topology.js';
+import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
 const TAU = Math.PI * 2;
 const READABILITY_CAMERA_QUANTUM = 0.25;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
   hex: [[-1,0],[-.5,-.86],[.5,-.86],[1,0],[.5,.86],[-.5,.86]],
-  pod: [[-.9,-.25],[-.55,-.58],[.18,-.62],[.78,-.30],[.9,.12],[.5,.5],[-.3,.58],[-.82,.3]],
+  pod: MACHINE_POD_SHELL_OUTLINE,
   fin: [[-1,-.55],[.05,-.7],[1,.3],[.35,.66],[-.5,.55]],
   arc: [[-.95,-.3],[-.45,-.7],[.25,-.7],[.85,-.28],[.85,.18],[.25,.68],[-.42,.62],[-.86,.25],[-.28,.08],[.35,.16],[.18,-.08],[-.38,-.03]],
   diamond: [[0,-.9],[.72,0],[0,.9],[-.72,0]],
