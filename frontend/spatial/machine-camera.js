@@ -161,7 +161,17 @@ export function deriveMachineCameraSpec({
     || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
     || resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
     || resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS;
-  const closeFocus = focusedMode && validSubject(subject);
+  const requestedFocusSubject = resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
+    ? podSubject
+    : resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
+      || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+      ? divisionSubject
+      : resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
+        ? coreSubject
+        : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
+          ? facilitySubject
+          : null;
+  const closeFocus = focusedMode && validSubject(requestedFocusSubject);
   const focusOffset = resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
     || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
       ? 1.55
