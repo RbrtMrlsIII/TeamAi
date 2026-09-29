@@ -62,6 +62,7 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     semanticId: part.semanticId == null ? null : String(part.semanticId),
     parentId: String(parentId),
     shape: normalizeThreeShape(part),
+    profile: String(part.profile || part.role || ''),
     center: Object.freeze(center),
     dimensions: Object.freeze(dimensions),
     rotationY: Number.isFinite(Number(part.rotationY)) ? Number(part.rotationY) : 0,
@@ -69,6 +70,15 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     constructionSlice: String(part.constructionSlice || ''),
     constructionOwner: String(part.constructionOwner || ''),
   });
+}
+
+export function resolveThreePolygonSegments({ profile = '', semanticId = '', shape = '' } = {}) {
+  if (String(shape || '').toUpperCase() !== 'CYLINDER') return 10;
+  const identity = String(profile || semanticId || '').toLowerCase();
+  if (identity.includes('dodec')) return 12;
+  if (identity.includes('oct')) return 8;
+  if (identity.includes('hex')) return 6;
+  return 10;
 }
 
 export function collectThreeDescriptors({ core = null, pods = [], facilities = [], divisions = [], extras = [] } = {}) {
@@ -178,7 +188,7 @@ function buildGeometry(THREE, descriptor) {
     return new THREE.TorusGeometry(radius * 0.76, Math.max(0.015, radius * 0.12), 8, 24);
   }
   if (descriptor.shape === 'CYLINDER') {
-    const segments = String(descriptor.semanticId || descriptor.id).includes('CORE') ? 8 : 10;
+    const segments = resolveThreePolygonSegments(descriptor);
     return new THREE.CylinderGeometry(radius, radius, y, segments);
   }
   if (descriptor.shape === 'SPHERE') {

@@ -8,6 +8,7 @@ import {
   MACHINE_THREE_ADAPTER_ID,
   MACHINE_THREE_ADAPTER_VERSION,
   resolveThreeMaterialPresentation,
+  resolveThreePolygonSegments,
 } from '../frontend/spatial/machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
@@ -38,11 +39,19 @@ test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
   assert.equal(sample.semanticId, null);
   assert.equal(sample.constructionSlice, 'S2');
   assert.equal(sample.constructionOwner, 'frontend/spatial/machine-core-assembly.js');
+  assert.equal(sample.profile, core.components[0].profile);
   assert.equal(sample.parentId, core.id);
   assert.deepEqual(sample.dimensions, core.components[0].dimensions);
   const descriptors = collectThreeDescriptors({ core, pods: [pod] });
   assert.equal(descriptors.length, core.components.length + core.mechanicalDetails.length + pod.components.length + pod.mechanicalDetails.length);
   assert.ok(descriptors.some((descriptor) => descriptor.id === 'MACHINE-POD:BRANCH-SEAT-01:OUTER-SHELL'));
+});
+
+test('Y1 preserves authored polygon profiles for Three.js tessellation', () => {
+  assert.equal(resolveThreePolygonSegments({ shape: 'CYLINDER', profile: 'hex-foundation' }), 6);
+  assert.equal(resolveThreePolygonSegments({ shape: 'CYLINDER', profile: 'oct-reactor' }), 8);
+  assert.equal(resolveThreePolygonSegments({ shape: 'CYLINDER', profile: 'dodec-receiving-deck' }), 12);
+  assert.equal(resolveThreePolygonSegments({ shape: 'CYLINDER', profile: 'generic-cylinder' }), 10);
 });
 
 test('Y1 descriptor conversion is fail-closed for malformed input', () => {
