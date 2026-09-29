@@ -1675,7 +1675,42 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           },
         );
       }
+      for (const detail of machine.mechanicalDetails || []) {
+        const material = detail.materialRole === 'glass'
+          ? activeHeroMaterials.glass
+          : detail.materialRole === 'metal2'
+            ? activeHeroMaterials.metal2
+            : activeHeroMaterials.metal;
+        const dimensions = detail.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+        ringDraw(
+          detail.shape || 'CUBE',
+          multiplyMatrix(
+            translateMatrix(
+              detail.center.x,
+              detail.center.y - dimensions.y * 0.5,
+              detail.center.z,
+            ),
+            multiplyMatrix(
+              rotateYMatrix(finite(detail.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, dimensions.x * 0.5),
+                Math.max(0.02, dimensions.y),
+                Math.max(0.02, dimensions.z * 0.5),
+              ),
+            ),
+          ),
+          material,
+          {
+            emit: 0.0,
+            glow: selected ? 0.045 : 0.02,
+            alpha: 0.90,
+          },
+        );
+      }
       facilityMachineryCount += 1;
+      canvas.dataset.machineWorldFacilityMechanicalDetails = String(
+        (machine.mechanicalDetails || []).length,
+      );
       facilityMachineryComponentCount += machine.components.length;
       facilityMachineryPortCount += machine.ports.length;
     }
