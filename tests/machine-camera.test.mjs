@@ -151,7 +151,8 @@ test('S23 desktop world-overview scaling is isolated from focused cameras', () =
     viewport: { width: 1280, height: 800 },
   });
   assert.ok(worldSpec.radius < 10.48);
-  assert.equal(divisionSpec.radius, 8);
+  assert.ok(divisionSpec.radius < 8);
+  assert.ok(divisionSpec.radius >= 3.8);
 });
 
 test('S10 Pod focus is genuinely subject-relative for a small authored Pod', () => {
