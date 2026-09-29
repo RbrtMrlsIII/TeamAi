@@ -98,6 +98,15 @@ test('canonical renderer projects the authored Pod opening profile as real shell
   assert.match(podAssembly, /payloadTravel/);
 });
 
+test('canonical renderer scopes Pod opening to the focused branch while keeping sibling Pods closed', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /const focusedPodBaseAmount = hierarchyOpen && state\.focusedChildId/);
+  assert.match(renderer, /const focusedPodAssemblyResolved = previewShell\?\.kind === 'inner-pod'/);
+  assert.match(renderer, /part\.branchId === branchId && hierarchyOpen && state\.focusedChildId/);
+  assert.match(renderer, /expansionAmount: 0,/);
+  assert.match(renderer, /podSubjectOverride: focusedPodSubjectResolved/);
+});
+
 test('canonical renderer projects the authored S2 core mechanical detail layer', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const coreAssembly = await readFile(new URL('../public/machine-core-assembly.js', import.meta.url), 'utf8');
