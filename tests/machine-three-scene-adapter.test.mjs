@@ -7,6 +7,7 @@ import {
   normalizeThreeShape,
   MACHINE_THREE_ADAPTER_ID,
   MACHINE_THREE_ADAPTER_VERSION,
+  resolveThreeMaterialPresentation,
 } from '../frontend/spatial/machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
@@ -72,4 +73,39 @@ test('Y1 adapter copies are still exact after the structural projection extensio
   const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   const browser = readFileSync('public/machine-three-scene-adapter.js', 'utf8');
   assert.equal(browser, source);
+});
+
+
+test('S24 Three bridge consumes the canonical authored material family', () => {
+  const authored = {
+    metal: { color: [0.7, 0.71, 0.68], rough: 0.22, emit: 0.01 },
+    metal2: { color: [0.42, 0.44, 0.43], rough: 0.40, emit: 0.02 },
+    glass: { color: [0.72, 0.80, 0.84], rough: 0.19, emit: 0.04 },
+    energy: { color: [0.16, 0.55, 0.88], rough: 0.24, emit: 0.12 },
+    trace: { color: [0.28, 0.56, 0.72], rough: 0.34, emit: 0.02 },
+    seatShell: { color: [0.89, 0.88, 0.84], rough: 0.50, emit: 0.01 },
+    seatShellInset: { color: [0.13, 0.15, 0.14], rough: 0.64, emit: 0 },
+    workspaceRing: { color: [0.74, 0.75, 0.71], rough: 0.22, emit: 0.01 },
+  };
+  const shell = resolveThreeMaterialPresentation('seat-shell', authored);
+  assert.equal(shell.authoredRole, 'seatShell');
+  assert.deepEqual(shell.color, authored.seatShell.color);
+  assert.equal(shell.transparent, false);
+
+  const glass = resolveThreeMaterialPresentation('glass', authored);
+  assert.equal(glass.authoredRole, 'glass');
+  assert.equal(glass.transparent, true);
+  assert.equal(glass.metalness, 0.04);
+
+  const energy = resolveThreeMaterialPresentation('energy', authored);
+  assert.deepEqual(energy.emissive, authored.energy.color);
+  assert.equal(energy.emissiveIntensity, authored.energy.emit);
+});
+
+test('S24 unknown material roles fail to a canonical authored structural family', () => {
+  const resolved = resolveThreeMaterialPresentation('unknown-role', {
+    metal: { color: [0.7, 0.7, 0.7], rough: 0.3, emit: 0 },
+    metal2: { color: [0.4, 0.4, 0.4], rough: 0.4, emit: 0 },
+  });
+  assert.equal(resolved.authoredRole, 'metal2');
 });
