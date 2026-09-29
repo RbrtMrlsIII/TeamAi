@@ -262,7 +262,7 @@ function buildPodShellGeometry(THREE, descriptor) {
   return geometry;
 }
 
-function buildGeometry(THREE, descriptor) {
+export function buildThreeGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
   if (descriptor.shape === 'POD_SHELL') {
     return buildPodShellGeometry(THREE, descriptor);
@@ -356,7 +356,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   }
 
   function addDescriptor(descriptor) {
-    const geometry = buildGeometry(THREE, descriptor);
+    const geometry = buildThreeGeometry(THREE, descriptor);
     const mesh = new THREE.Mesh(geometry, material(descriptor.materialRole));
     mesh.name = descriptor.id;
     if (descriptor.semanticId) mesh.userData.semanticId = descriptor.semanticId;
