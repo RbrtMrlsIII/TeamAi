@@ -44,7 +44,7 @@ test('S6 source modules remain references, not spatial authority', () => {
       'team-agents-facility.js',
       'skills-responsibility',
       'mcp-capability-facility.js',
-      'orchestration',
+      'orchestration-scheduler',
       'settings.js',
       'marketplace-commerce-facility.js',
       'auth-gateway',
