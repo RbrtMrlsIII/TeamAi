@@ -268,7 +268,7 @@ function renderView() {
   canvas.dataset.structuralVisibleTopologyEdges = String(topologyRender.edgeCount);
   canvas.dataset.structuralVisiblePods = String(effectivePods.length);
   canvas.dataset.structuralVisibleFacilities = String(effectiveFacilities.length);
-  canvas.dataset.structuralVisibleDivisions = String(divisions.length);
+  canvas.dataset.structuralVisibleDivisions = String(currentView === 'seat' ? DIVISIONS.length : 0);
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   const divisionSubject = subjectFromParts(divisions);
   const spec = deriveMachineCameraSpec({
