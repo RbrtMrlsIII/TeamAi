@@ -706,6 +706,41 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
     }
 
+    for (const detail of assembly.mechanicalDetails || []) {
+      const material = detail.materialRole === 'glass'
+        ? activeHeroMaterials.glass
+        : detail.materialRole === 'metal2'
+          ? activeHeroMaterials.metal2
+          : activeHeroMaterials.metal;
+      const dimensions = detail.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+      ringDraw(
+        detail.shape || 'CUBE',
+        multiplyMatrix(
+          translateMatrix(
+            detail.center.x,
+            detail.center.y - dimensions.y * 0.5,
+            detail.center.z,
+          ),
+          multiplyMatrix(
+            rotateYMatrix(finite(detail.rotationY)),
+            scaleMatrix(
+              Math.max(0.02, dimensions.x * 0.5),
+              Math.max(0.02, dimensions.y),
+              Math.max(0.02, dimensions.z * 0.5),
+            ),
+          ),
+        ),
+        material,
+        {
+          emit: detail.role === 'payload-collar' ? 0.035 : 0,
+          glow: selected ? 0.045 : 0.02,
+          alpha: detail.role === 'payload-collar' ? 0.78 : 0.90,
+        },
+      );
+    }
+
+    canvas.dataset.machineWorldPodMechanicalDetails =
+      String((assembly.mechanicalDetails || []).length);
     canvas.dataset.machineWorldPodMechanicalState = mechanicalState;
     canvas.dataset.machineWorldPodMechanicalAmount = String(progress);
     canvas.dataset.machineWorldPodMechanicalProfile = mechanical
