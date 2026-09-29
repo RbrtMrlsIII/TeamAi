@@ -460,3 +460,50 @@ Historical Issues are evidence, not active routing.
 ### 2026-09-23 shared advisory control-plane support
 
 PR #407 is a narrow CI/infrastructure support vehicle for Issue #406. It does not replace the current product/spatial frontier. The advisory pipeline now preflights its PR Issue declaration once before automatic fan-out and accepts explicit `none`/`n/a` no-issue states; provider/model output remains advisory evidence only.
+
+
+## 2026-09-29 canonical successor-session handoff checkpoint
+
+The active 029 spatial continuation is PR #424 on `frontend/029-spatial-world-continuation`.
+
+**Exact active head:** `6007a87a14175a85de0cbc40fb0a95f51d876596`
+**Main:** `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+**Relation:** 150 ahead / 0 behind
+**Governing spatial Issue:** #405
+**Canonical handoff:** #409
+**Global current slice:** #401 via `Masterplan/NEXT_SLICES.md`
+
+Fresh exact-head gates at this checkpoint are green:
+Full-System `36582031552`, Governance `36582031480`, Security `36582031514`, Deep Security `36582031459`, Browser `36582031551`.
+Browser artifact: `11041060023`, SHA-256 `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`.
+
+### What is actually finished
+- Y0 feature/leaf taxonomy is durably classified.
+- Y1 Three.js/WebGL2 substrate proof exists.
+- S2-S10 structural candidate exists and browser exercises the real descriptors/topology/camera.
+- S24 base authored material/theme bridge is integrated.
+- Source/public parity is currently restored for the structural preview and core S24 surfaces.
+- Repository, governance, security and browser gates are green on the exact head.
+
+### What is not finished
+- Y0 implementation closure
+- production Three.js Hero cutover
+- full S2-S10 human visual acceptance
+- full S24 lighting/depth/environment acceptance
+- S25 hologram runtime
+- S26 ambient integration
+- VC1/AB1
+- S27 performance
+- S28/S29 choreography
+- S30 final proof package
+- S31 production/runtime reconciliation
+- S32 human acceptance
+- S33 final ProMax polish
+- physical-device acceptance for S23
+- live Firebase/Firestore/provider/runtime proof owned by #401
+
+### Full-stack behavior rule
+A developer who changes one layer must trace its owner across the whole chain:
+product meaning → read model/domain → semantic node → spatial descriptor → geometry subject/envelope → topology/corridor → camera → renderer → interaction/state → verification → deployment/runtime evidence.
+
+Do not stop at the first file that makes the visible symptom disappear.
