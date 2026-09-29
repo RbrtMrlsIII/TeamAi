@@ -241,15 +241,14 @@ function renderView() {
     ? semanticEdges.filter((edge) => WORLD_OVERVIEW_TOPOLOGY_KINDS.has(edge?.kind))
     : currentView === 'seat'
       ? semanticEdges.filter((edge) =>
-          edge?.sourceBranchId === 'BRANCH-SEAT-01'
-          || edge?.targetBranchId === 'BRANCH-SEAT-01'
-          || String(edge?.sourceBranchId || '').includes('TREE-HERO-SEAT#0')
-          || String(edge?.targetBranchId || '').includes('TREE-HERO-SEAT#0')
+          edge?.kind === 'pod-division'
+          || (edge?.kind === 'adjacent-seat'
+            && (edge?.sourceBranchId === 'BRANCH-SEAT-01' || edge?.targetBranchId === 'BRANCH-SEAT-01'))
         )
       : facility
         ? semanticEdges.filter((edge) =>
-            edge?.sourceBranchId === facility.branchId
-            || edge?.targetBranchId === facility.branchId
+            (edge?.kind === 'pod-facility' || edge?.kind === 'facility-facility')
+            && (edge?.sourceBranchId === facility.branchId || edge?.targetBranchId === facility.branchId)
           )
         : [];
   const visibleTopology = Object.freeze({
