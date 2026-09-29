@@ -7,6 +7,9 @@
  * geometry ownership, camera subject, authorization, or runtime truth.
  */
 
+import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
+import { authoredHeroMaterialSet } from './hero-authored-materials.js';
+
 export const MACHINE_THREE_ADAPTER_ID = 'MACHINE-THREE-SCENE-ADAPTER';
 export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V1';
 export const MACHINE_THREE_REQUIRED_WEBGL = 'WEBGL2';
@@ -94,16 +97,77 @@ export function collectThreeDescriptors({ core = null, pods = [], facilities = [
   return Object.freeze(descriptors);
 }
 
-function makeSubstrateMaterial(THREE, role) {
-  const roleName = String(role || 'substrate-neutral');
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xc8cdd4,
-    metalness: roleName.includes('metal') ? 0.68 : 0.34,
-    roughness: roleName.includes('glass') ? 0.28 : 0.52,
-    transparent: roleName.includes('glass'),
-    opacity: roleName.includes('glass') ? 0.56 : 1,
+const AUTHORED_ROLE_ALIASES = Object.freeze({
+  'seat-shell': 'seatShell',
+  'seat-inset': 'seatShellInset',
+  'workspace-ring': 'workspaceRing',
+});
+
+const METALLIC_ROLE_LEVEL = Object.freeze({
+  metal: 0.82,
+  metal2: 0.70,
+  glass: 0.04,
+  energy: 0.18,
+  trace: 0.36,
+  seatShell: 0.12,
+  seatShellInset: 0.24,
+  workspaceRing: 0.86,
+});
+
+function resolveStructuralThemeLighting() {
+  const root = globalThis.document?.documentElement;
+  return mapHeroThemeLighting({
+    themeMode: root?.getAttribute?.('data-theme-mode') || 'light',
+    themeSource: root?.getAttribute?.('data-theme-source') || 'default',
+    density: root?.getAttribute?.('data-density') || 'default',
+    atmosphere: 0.52,
+    surface: 0.62,
+    focus: 0.24,
+    signal: 0,
+    status: 0,
+    reducedMotion: true,
   });
-  material.name = 'Y1_SUBSTRATE:' + roleName;
+}
+
+export function resolveThreeMaterialPresentation(role, authored = authoredHeroMaterialSet({})) {
+  const roleName = String(role || 'metal2');
+  const authoredRole = AUTHORED_ROLE_ALIASES[roleName] || roleName;
+  const definition = authored[authoredRole]
+    || authored.metal2
+    || authored.metal
+    || authoredHeroMaterialSet({}).metal2;
+  const metallicKey = authoredRole in METALLIC_ROLE_LEVEL
+    ? authoredRole
+    : roleName in METALLIC_ROLE_LEVEL
+      ? roleName
+      : 'metal2';
+  const glass = authoredRole === 'glass';
+  return Object.freeze({
+    authoredRole,
+    color: Object.freeze([...definition.color]),
+    roughness: Math.max(0, Math.min(1, Number(definition.rough) || 0)),
+    metalness: METALLIC_ROLE_LEVEL[metallicKey],
+    transparent: glass,
+    opacity: glass ? 0.68 : 1,
+    emissive: Object.freeze([...definition.color]),
+    emissiveIntensity: Math.max(0, Math.min(1, Number(definition.emit) || 0)),
+    name: 'S24_AUTHORED:' + authoredRole,
+  });
+}
+
+function makeAuthoredMaterial(THREE, role, authored) {
+  const presentation = resolveThreeMaterialPresentation(role, authored);
+  const material = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(...presentation.color),
+    metalness: presentation.metalness,
+    roughness: presentation.roughness,
+    transparent: presentation.transparent,
+    opacity: presentation.opacity,
+    emissive: new THREE.Color(...presentation.emissive),
+    emissiveIntensity: presentation.emissiveIntensity,
+  });
+  material.name = presentation.name;
+  if (presentation.transparent) material.depthWrite = false;
   return material;
 }
 
@@ -151,6 +215,10 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   });
   renderer.setPixelRatio(Math.min(2, globalThis.devicePixelRatio || 1));
   renderer.setClearColor(0x000000, 0);
+  if ('outputColorSpace' in renderer && THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const themeLighting = resolveStructuralThemeLighting();
+  const authoredMaterials = authoredHeroMaterialSet(themeLighting);
 
   const scene = new THREE.Scene();
   const machineRoot = new THREE.Group();
@@ -161,18 +229,25 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   camera.name = 'Y1_RENDER_CAMERA_BRIDGE';
   camera.position.set(0, 6, 12);
 
-  const key = new THREE.HemisphereLight(0xffffff, 0x20242b, 1.15);
-  const fill = new THREE.DirectionalLight(0xffffff, 1.25);
-  fill.position.set(5, 8, 7);
-  scene.add(key, fill);
+  const fill = new THREE.HemisphereLight(0xffffff, 0x242a31, themeLighting.environmentalFillIntensity);
+  const key = new THREE.DirectionalLight(0xffffff, themeLighting.keyLight.intensity);
+  key.position.set(
+    themeLighting.keyLight.direction[0] * 10,
+    themeLighting.keyLight.direction[1] * 10,
+    themeLighting.keyLight.direction[2] * 10,
+  );
+  const rim = new THREE.DirectionalLight(0xffffff, themeLighting.grazingRimStrength * 0.42);
+  rim.position.set(-4, 6, -7);
+  scene.add(fill, key, rim);
 
   const materialCache = new Map();
+  const topologyColor = authoredMaterials.trace?.color || [0.28, 0.56, 0.72];
   const topologyMaterial = new THREE.LineBasicMaterial({
-    color: 0x8f9aa8,
+    color: new THREE.Color(...topologyColor),
     transparent: true,
-    opacity: 0.52,
+    opacity: 0.36,
   });
-  topologyMaterial.name = 'Y1_SUBSTRATE:topology';
+  topologyMaterial.name = 'S24_AUTHORED:topology-trace';
   const topologyRoot = new THREE.Group();
   topologyRoot.name = 'S8_TOPOLOGY_PROJECTION';
   scene.add(topologyRoot);
@@ -180,7 +255,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   function material(role) {
     const keyName = String(role || 'substrate-neutral');
     if (!materialCache.has(keyName)) {
-      materialCache.set(keyName, makeSubstrateMaterial(THREE, keyName));
+      materialCache.set(keyName, makeAuthoredMaterial(THREE, keyName, authoredMaterials));
     }
     return materialCache.get(keyName);
   }
