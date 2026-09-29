@@ -291,11 +291,18 @@ export function deriveMachineCoreAssembly({
     requestedClearance: clearance,
   });
 
-  const subjectParts = components.map((component) => ({
-    id: component.id,
-    center: component.center,
-    dimensions: component.dimensions,
-  }));
+  const subjectParts = [
+    ...components.map((component) => ({
+      id: component.id,
+      center: component.center,
+      dimensions: component.dimensions,
+    })),
+    ...mechanicalDetails.map((detail) => ({
+      id: detail.id,
+      center: detail.center,
+      dimensions: detail.dimensions,
+    })),
+  ];
   const portSubjectParts = ports.map((port) => ({
     id: `${port.id}:SUBJECT`,
     center: port.point,
