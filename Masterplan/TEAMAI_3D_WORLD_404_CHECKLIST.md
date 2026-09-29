@@ -1105,3 +1105,31 @@ Evidence vocabulary: IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → R
 - [ ] No old prototype timing treated as architecture.
 - [ ] No validator weakening to make CI green.
 - [ ] No 029-release claim before G1-G8.
+
+### 2026-09-29 successor-session exact-head checkpoint
+
+**Exact active spatial head:** `6007a87a14175a85de0cbc40fb0a95f51d876596`
+
+Fresh exact-head gates:
+- Full-System `36582031552` — PASS
+- Governance `36582031480` — PASS; review-readiness skipped because PR #424 remains Draft
+- Security `36582031514` — PASS
+- Deep Security `36582031459` — PASS
+- Canonical Browser `36582031551` — PASS
+
+Browser artifact: `11041060023`
+SHA-256: `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
+
+**Current acceptance position:**
+- Y0: COVERAGE-CLASSIFIED / IMPLEMENTATION-PARTIAL
+- Y1: IMPLEMENTED SUBSTRATE PROOF
+- S2-S10: SOURCE-INTEGRATED / BROWSER-EXERCISED / HUMAN VISUAL ACCEPTANCE OPEN
+- S24: BASE AUTHORED MATERIAL/THEME BRIDGE INTEGRATED / FULL LIGHTING-DEPTH ACCEPTANCE OPEN
+- S25: NOT PROMOTED
+- S26: NOT PROMOTED
+- VC1/AB1: downstream of S26
+- S27-S33: downstream gates
+
+**Current visual finding:** the exact-head structural candidate is still a substrate proof rather than a final ProMax machine. The World view reads as a structural diagram, Seat focus is now correctly scoped to the selected Seat, and Facility focus is functional but still exposes long routed topology spans. These are acceptance observations, not evidence that the semantic/geometry authorities are wrong.
+
+**Cleanup finding:** the public structural embodiment preview had one duplicated material-model dataset assignment; the redundant assignment was removed at head `6007a87a14175a85de0cbc40fb0a95f51d876596`. Source/public preview parity is restored.
