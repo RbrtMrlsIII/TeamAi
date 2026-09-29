@@ -55,13 +55,15 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
   };
   return Object.freeze({
     id: String(part.id),
-    semanticId: String(part.semanticId || part.id),
+    semanticId: part.semanticId == null ? null : String(part.semanticId),
     parentId: String(parentId),
     shape: normalizeThreeShape(part),
     center: Object.freeze(center),
     dimensions: Object.freeze(dimensions),
     rotationY: Number.isFinite(Number(part.rotationY)) ? Number(part.rotationY) : 0,
     materialRole: String(part.materialRole || 'substrate-neutral'),
+    constructionSlice: String(part.constructionSlice || ''),
+    constructionOwner: String(part.constructionOwner || ''),
   });
 }
 
@@ -168,8 +170,10 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     const geometry = buildGeometry(THREE, descriptor);
     const mesh = new THREE.Mesh(geometry, material(descriptor.materialRole));
     mesh.name = descriptor.id;
-    mesh.userData.semanticId = descriptor.semanticId;
+    if (descriptor.semanticId) mesh.userData.semanticId = descriptor.semanticId;
     mesh.userData.parentId = descriptor.parentId;
+    mesh.userData.constructionSlice = descriptor.constructionSlice;
+    mesh.userData.constructionOwner = descriptor.constructionOwner;
     mesh.position.set(descriptor.center.x, descriptor.center.y, descriptor.center.z);
     mesh.rotation.y = descriptor.rotationY;
     machineRoot.add(mesh);

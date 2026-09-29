@@ -33,7 +33,9 @@ test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
   const pod = deriveMachinePodAssembly({ part: podPart, payloadDensity: 0.45, adjacentCenterSpacing: 2.812 });
   const sample = normalizeThreeDescriptor(core.components[0], core.id);
   assert.equal(sample.id, core.components[0].id);
-  assert.equal(sample.semanticId, core.components[0].id);
+  assert.equal(sample.semanticId, null);
+  assert.equal(sample.constructionSlice, 'S2');
+  assert.equal(sample.constructionOwner, 'frontend/spatial/machine-core-assembly.js');
   assert.equal(sample.parentId, core.id);
   assert.deepEqual(sample.dimensions, core.components[0].dimensions);
   const descriptors = collectThreeDescriptors({ core, pods: [pod] });
@@ -50,4 +52,17 @@ test('Y1 adapter source and browser copy remain exact', () => {
   const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   const browser = readFileSync('public/machine-three-scene-adapter.js', 'utf8');
   assert.equal(browser, source);
+});
+
+
+test('Y1 never invents semantic identity for component-only geometry', () => {
+  const descriptor = normalizeThreeDescriptor({
+    id: 'CORE_FOUNDATION_SHELL',
+    center: { x: 1, y: 2, z: 3 },
+    dimensions: { x: 4, y: 1, z: 4 },
+    constructionSlice: 'S2',
+    constructionOwner: 'frontend/spatial/machine-core-assembly.js',
+  }, 'MACHINE-CORE-ASSEMBLY');
+  assert.equal(descriptor.semanticId, null);
+  assert.equal(descriptor.id, 'CORE_FOUNDATION_SHELL');
 });
