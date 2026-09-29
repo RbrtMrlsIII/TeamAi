@@ -102,6 +102,33 @@ test('S3 authored Pod opening profile transforms the parent machine instead of o
   assert.ok(expanded.mechanicalPresentation.payloadTravel > 0);
 });
 
+test('S3 Pod mechanical details are authored, bounded, and included in the subject', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const part = core.byBranch.get('BRANCH-SEAT-04');
+  const assembly = deriveMachinePodAssembly({ part, expansionAmount: 1 });
+  assert.equal(assembly.mechanicalDetails.length, 9);
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'panel-rail').length,
+    2,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'hinge-joint').length,
+    2,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'chamber-rib').length,
+    4,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'payload-collar').length,
+    1,
+  );
+  const subjectIds = new Set(assembly.subject.sourcePartIds);
+  assert.ok(assembly.mechanicalDetails.every((item) => subjectIds.has(item.id)));
+  assert.ok(assembly.mechanicalDetails.every((item) => item.constructionSlice === 'S3'));
+  assert.ok(assembly.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-pod-assembly.js'));
+});
+
 test('S3 fails closed when Pod root ownership is corrupted', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const part = core.byBranch.get('BRANCH-SEAT-01');
