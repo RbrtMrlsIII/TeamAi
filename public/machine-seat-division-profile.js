@@ -19,8 +19,8 @@ export const MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE = 'S4_CAPABI
 const CAPABILITIES_LATTICE_RECIPE = Object.freeze([
   Object.freeze({ id: 'front-rail', center: Object.freeze({ x: 0, z: 0.44 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: 0, thickness: 0.14 }),
   Object.freeze({ id: 'rear-rail', center: Object.freeze({ x: 0, z: -0.44 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: 0, thickness: 0.14 }),
-  Object.freeze({ id: 'left-rail', center: Object.freeze({ x: -0.44, z: 0 }), dimensions: Object.freeze({ x: 0.12, z: 1.00 }), rotationY: Math.PI * 0.5, thickness: 0.14 }),
-  Object.freeze({ id: 'right-rail', center: Object.freeze({ x: 0.44, z: 0 }), dimensions: Object.freeze({ x: 0.12, z: 1.00 }), rotationY: Math.PI * 0.5, thickness: 0.14 }),
+  Object.freeze({ id: 'left-rail', center: Object.freeze({ x: -0.44, z: 0 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: Math.PI * 0.5, thickness: 0.14 }),
+  Object.freeze({ id: 'right-rail', center: Object.freeze({ x: 0.44, z: 0 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: Math.PI * 0.5, thickness: 0.14 }),
   ...Array.from({ length: 6 }, (_, index) => {
     const rotationY = index * Math.PI / 3;
     return Object.freeze({

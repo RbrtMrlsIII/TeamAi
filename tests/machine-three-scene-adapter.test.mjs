@@ -210,8 +210,8 @@ test('S4 capability rotary lattice recipe preserves descriptor envelope with exp
   assert.deepEqual(recipe.slice(0, 4).map((element) => element.dimensions), [
     { x: 1.00, z: 0.12 },
     { x: 1.00, z: 0.12 },
-    { x: 0.12, z: 1.00 },
-    { x: 0.12, z: 1.00 },
+    { x: 1.00, z: 0.12 },
+    { x: 1.00, z: 0.12 },
   ]);
   const expectedSpokeAngles = [
     0,
