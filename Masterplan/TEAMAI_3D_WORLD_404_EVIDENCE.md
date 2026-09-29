@@ -61,20 +61,20 @@ This section prevents material engineering decisions from existing only in chat.
 | D-029-05 | Post-S26 visual checkpoint is VC1/AB1, non-blocking, while S33 remains final polish | GOVERNED | qualitative coherence is observed before late polish and is not a new roadmap slice |
 | D-029-06 | Current Browser failure is a legacy machine-core-preview temporal contract, not S4 geometry proof | DIAGNOSED / OPEN | fix deterministic state/clock boundary; no arbitrary sleeps and no assertion weakening |
 | D-029-07 | Material project decisions must be promoted from chat into #409, this evidence ledger, the checklist, WIRING, or the owning Issue/PR according to ownership | GOVERNED | no chat-only decision is treated as project truth |
+| D-029-08 | S6 physically allocates 11 non-Seat product facilities, but four S6 source references do not resolve to matching frontend/spatial modules (projects-library, skills-responsibility, orchestration-scheduler, auth-gateway) | Y0 GAP / EXPLICIT | physical dock presence is not leaf coverage; resolve real owning UI/read-model contracts before inventing spatial subassemblies |
 
-### Current exact-head verification boundary
+### Application-head verification recorded before documentation sync
 
-For #424 head 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089:
+Application head 208c5570a8325bda10e2b427b97a30c3f439f111 recorded:
+- Governance rerun 36542676832: PASS
+- Full-System / canonical package 36542509326: PASS
+- Security-family checks: PASS
+- Evidence consistency: PASS
+- Playwright Browser workflow 36542509289: in progress at last observation
 
-- Governance 36539522170: PASS
-- Full-System 36539522147: PASS
-- Deep Security 36539522181: PASS
-- Security / CodeQL 36539522165: PASS
-- Canonical Browser 36539522142: FAIL, 87 passed / 4 skipped / 1 failed
-- Current Browser artifact: 11020105889, SHA-256 fbf24923ffa7925aefe6bc90d495d2f0665f543bf857b776ab1beccf9e765836
+The earlier Browser failure on 2258a910 was isolated to tests/e2e/machine-core.spec.ts:21. Branch selection started the standalone preview's expansion path before the explicit Expand action. The owning preview/controller repair is contained in commit b485342f3cf71718c2c154d1224fdbd28ad834f8, with the Y0 registry classifier following in 208c5570a8325bda10e2b427b97a30c3f439f111.
 
-The Browser failure is isolated to tests/e2e/machine-core.spec.ts:21: branch selection currently causes the preview to enter the expansion path before the explicit Expand action is clicked. This is a deterministic-contract problem to fix in the preview/controller boundary; it does not invalidate the repaired S4 geometry or claim production Hero failure.
-
+This final documentation synchronization is documentation-only relative to application head 208c5570. Exact-head CI must still be refreshed for the resulting documentation head before the repository is described as fully green.
 ## Evidence index
 
 ### E404-BASE — branch and authority reconciliation

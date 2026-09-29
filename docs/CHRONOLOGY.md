@@ -26,8 +26,8 @@ This is the current decision-order overlay for the 029 spatial continuation. Ear
 
 - Canonical main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
 - Active 029 spatial vehicle: PR #424 / frontend/029-spatial-world-continuation
-- Exact #424 head: 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089
-- #424 relation to main: 89 ahead / 0 behind
+- Exact #424 head: 208c5570a8325bda10e2b427b97a30c3f439f111
+- #424 relation to main: 92 ahead / 0 behind
 - #424 state: OPEN / DRAFT / mergeable
 - Global current slice remains Issue #401 in Masterplan/NEXT_SLICES.md; #424 is a bounded spatial sub-frontier and not a second global current slice.
 

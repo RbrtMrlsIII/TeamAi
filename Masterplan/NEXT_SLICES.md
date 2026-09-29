@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089.
+Current exact spatial head: 208c5570a8325bda10e2b427b97a30c3f439f111.
 
 The current Canonical Browser evidence for that head is FAIL (run 36539522142, 87 passed / 4 skipped / 1 failed) because the isolated machine-core-preview test can observe terminal expansion before clicking its explicit Expand control. Treat this as a preview temporal-contract defect, not as evidence that the repaired S4 geometry is invalid.
 

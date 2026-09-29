@@ -16,21 +16,23 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
 - Active spatial vehicle: PR #424 / frontend/029-spatial-world-continuation
-- Exact #424 head: 2258a910fabc4b55fd4b5d29d721a3b5b3ef7089
-- #424: OPEN / DRAFT / mergeable, 89 ahead / 0 behind
+- Exact #424 head: 208c5570a8325bda10e2b427b97a30c3f439f111
+- #424: OPEN / DRAFT / mergeable, 92 ahead / 0 behind
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in Masterplan/NEXT_SLICES.md
 
-### Exact-head verification
+### Latest application-head verification before this documentation sync
 
-- Governance 36539522170: PASS
-- Full-System 36539522147: PASS
-- Deep Security 36539522181: PASS
-- Security / CodeQL 36539522165: PASS
-- Browser 36539522142: FAIL, 87 passed / 4 skipped / 1 failed
-- Browser artifact: 11020105889 / fbf24923ffa7925aefe6bc90d495d2f0665f543bf857b776ab1beccf9e765836
+- Governance rerun on application head 208c5570: PASS (workflow run 36542676832)
+- Full project tests + canonical package on 208c5570: PASS (workflow run 36542509326)
+- Security-family checks on 208c5570: PASS
+- Evidence consistency on 208c5570: PASS
+- Playwright Browser workflow 36542509289 was still in progress at the last observation.
+- The earlier Browser failure on 2258a910 was the machine-core preview temporal defect that this branch subsequently repaired.
+
+This commit is documentation-only relative to application head 208c5570. Because governance and Browser evidence are exact-head scoped, the final documentation head should still receive its own verification refresh before being called fully green.
 
 ### Browser failure classification
 
