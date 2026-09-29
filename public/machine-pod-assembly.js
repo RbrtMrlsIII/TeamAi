@@ -148,6 +148,95 @@ export function deriveMachinePodAssembly({
     presentationOnly: true,
   });
 
+  const mechanicalDetails = Object.freeze([
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:PANEL-RAIL:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'panel-rail',
+      shape: 'CUBE',
+      center: Object.freeze({
+        x: center.x
+          + tangent.x * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.17 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + tangent.z * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.10,
+        y: height * 0.075,
+        z: minimumSpan * 0.44,
+      }),
+      rotationY: outwardAngle + Math.PI / 2,
+      materialRole: 'metal',
+      ...rootContext(),
+    })),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:HINGE:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'hinge-joint',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: center.x
+          + tangent.x * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.10 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + tangent.z * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: height * 0.12,
+        y: height * 0.12,
+        z: height * 0.12,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    })),
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = outwardAngle + index * (TAU / 4);
+      const ribRadius = chamberRadius * 0.98;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:CHAMBER-RIB:${index + 1}`,
+        role: 'chamber-rib',
+        shape: 'CUBE',
+        center: Object.freeze({
+          x: center.x + radial.x * mechanicalPresentation.chamberTravel
+            + Math.cos(angle) * ribRadius,
+          y: center.y + height * 0.34 + mechanicalPresentation.chamberLift,
+          z: center.z + radial.z * mechanicalPresentation.chamberTravel
+            + Math.sin(angle) * ribRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.055,
+          y: height * 0.19,
+          z: minimumSpan * 0.14,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    Object.freeze({
+      id: `MACHINE-POD:${branchId}:PAYLOAD-COLLAR`,
+      role: 'payload-collar',
+      shape: 'TORUS',
+      center: Object.freeze({
+        x: center.x + radial.x * mechanicalPresentation.payloadTravel,
+        y: center.y + height * 0.72 + mechanicalPresentation.payloadLift,
+        z: center.z + radial.z * mechanicalPresentation.payloadTravel,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.56,
+        y: height * 0.055,
+        z: minimumSpan * 0.56,
+      }),
+      rotationY: 0,
+      materialRole: 'glass',
+      ...rootContext(),
+    }),
+  ]);
+
   const components = Object.freeze([
     component({
       id: `MACHINE-POD:${branchId}:OUTER-SHELL`,
@@ -379,6 +468,11 @@ export function deriveMachinePodAssembly({
   }
   const subjectParts = [
     ...mechanicalSubjectParts,
+    ...mechanicalDetails.map((item) => ({
+      id: item.id,
+      center: item.center,
+      dimensions: item.dimensions,
+    })),
     ...ports.map((item) => ({
       id: `${item.id}:SUBJECT`,
       center: item.point,
@@ -394,6 +488,7 @@ export function deriveMachinePodAssembly({
     seatIndex: Number.isInteger(Number(part.seatIndex)) ? Number(part.seatIndex) : null,
     center,
     components,
+    mechanicalDetails,
     ports,
     divisionAttachmentZone,
     payloadSurface,
