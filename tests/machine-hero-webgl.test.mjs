@@ -107,6 +107,16 @@ test('canonical renderer scopes Pod opening to the focused branch while keeping 
   assert.match(renderer, /podSubjectOverride: focusedPodSubjectResolved/);
 });
 
+test('canonical renderer projects the authored S7 facility chassis/support detail layer', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const machinery = await readFile(new URL('../public/machine-facility-machinery.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine\.mechanicalDetails/);
+  assert.match(renderer, /machineWorldFacilityMechanicalDetails/);
+  assert.match(machinery, /role: 'base-collar'/);
+  assert.match(machinery, /role: 'support-strut'/);
+  assert.match(machinery, /role: 'hinge-mount'/);
+});
+
 test('canonical renderer projects the authored S2 core mechanical detail layer', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const coreAssembly = await readFile(new URL('../public/machine-core-assembly.js', import.meta.url), 'utf8');
