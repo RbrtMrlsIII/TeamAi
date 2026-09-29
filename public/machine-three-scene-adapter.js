@@ -9,27 +9,16 @@
 
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
+import {
+  MACHINE_POD_SHELL_PROFILE,
+  getMachinePodShellOutline,
+} from './machine-pod-profile.js';
 
 export const MACHINE_THREE_ADAPTER_ID = 'MACHINE-THREE-SCENE-ADAPTER';
 export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V2';
 export const MACHINE_THREE_REQUIRED_WEBGL = 'WEBGL2';
 
-export const AUTHORED_POD_SHELL_PROFILE = 'authored-seat-pod-shell';
-
-const POD_SHELL_OUTLINE = Object.freeze([
-  Object.freeze([-0.90, -0.25]),
-  Object.freeze([-0.55, -0.58]),
-  Object.freeze([0.18, -0.62]),
-  Object.freeze([0.78, -0.30]),
-  Object.freeze([0.90, 0.12]),
-  Object.freeze([0.50, 0.50]),
-  Object.freeze([-0.30, 0.58]),
-  Object.freeze([-0.82, 0.30]),
-]);
-
-export function resolveThreePodShellOutline() {
-  return Object.freeze(POD_SHELL_OUTLINE.map(([x, z]) => Object.freeze([x, z])));
-}
+export const AUTHORED_POD_SHELL_PROFILE = MACHINE_POD_SHELL_PROFILE;
 
 const SHAPE_BY_PROFILE = Object.freeze([
   [AUTHORED_POD_SHELL_PROFILE, 'POD_SHELL'],
@@ -201,11 +190,12 @@ function makeAuthoredMaterial(THREE, role, authored) {
 
 function buildPodShellGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
+  const outline = getMachinePodShellOutline();
   let minX = Infinity;
   let maxX = -Infinity;
   let minZ = Infinity;
   let maxZ = -Infinity;
-  for (const [px, pz] of POD_SHELL_OUTLINE) {
+  for (const [px, pz] of outline) {
     minX = Math.min(minX, px);
     maxX = Math.max(maxX, px);
     minZ = Math.min(minZ, pz);
@@ -224,32 +214,32 @@ function buildPodShellGeometry(THREE, descriptor) {
     yy,
     (pz - outlineCenterZ) * scaleZ,
   ];
-  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
+  const pushTri = (aa, b, cc) => vertices.push(...aa, ...b, ...cc);
   const bottomCenter = [0, -halfY, 0];
   const topCenter = [0, halfY, 0];
-  for (let index = 1; index < POD_SHELL_OUTLINE.length - 1; index += 1) {
+  for (let index = 1; index < outline.length - 1; index += 1) {
     pushTri(
       bottomCenter,
-      point(POD_SHELL_OUTLINE[index], -halfY),
-      point(POD_SHELL_OUTLINE[index + 1], -halfY),
+      point(outline[index], -halfY),
+      point(outline[index + 1], -halfY),
     );
     pushTri(
       topCenter,
-      point(POD_SHELL_OUTLINE[index + 1], halfY),
-      point(POD_SHELL_OUTLINE[index], halfY),
+      point(outline[index + 1], halfY),
+      point(outline[index], halfY),
     );
   }
-  for (let index = 0; index < POD_SHELL_OUTLINE.length; index += 1) {
-    const next = (index + 1) % POD_SHELL_OUTLINE.length;
+  for (let index = 0; index < outline.length; index += 1) {
+    const next = (index + 1) % outline.length;
     pushTri(
-      point(POD_SHELL_OUTLINE[index], -halfY),
-      point(POD_SHELL_OUTLINE[next], -halfY),
-      point(POD_SHELL_OUTLINE[next], halfY),
+      point(outline[index], -halfY),
+      point(outline[next], -halfY),
+      point(outline[next], halfY),
     );
     pushTri(
-      point(POD_SHELL_OUTLINE[index], -halfY),
-      point(POD_SHELL_OUTLINE[next], halfY),
-      point(POD_SHELL_OUTLINE[index], halfY),
+      point(outline[index], -halfY),
+      point(outline[next], halfY),
+      point(outline[index], halfY),
     );
   }
   const geometry = new THREE.BufferGeometry();
