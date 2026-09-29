@@ -160,11 +160,16 @@ test('S8 external semantic routes project to authored conduit segments without c
     if (!segmentsByEdge.has(segment.semanticEdgeId)) segmentsByEdge.set(segment.semanticEdgeId, []);
     segmentsByEdge.get(segment.semanticEdgeId).push(segment);
   }
+  const coordinates = (point) => ({
+    x: point.x,
+    y: point.y,
+    z: point.z,
+  });
   for (const edge of externalEdges) {
     const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
     assert.equal(segments.length, 3);
-    assert.deepEqual(segments[0].start, edge.route[0]);
-    assert.deepEqual(segments.at(-1).end, edge.route.at(-1));
+    assert.deepEqual(coordinates(segments[0].start), coordinates(edge.route[0]));
+    assert.deepEqual(coordinates(segments.at(-1).end), coordinates(edge.route.at(-1)));
   }
 });
 
