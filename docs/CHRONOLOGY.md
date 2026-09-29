@@ -48,7 +48,7 @@ Y0 feature/leaf coverage closure
 → S32 human acceptance
 → S33 final ProMax polish
 
-Y0 exists to prevent discovering missing product leaves after spatial geometry has been treated as final. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. Structural misses still return to their S2–S10 owner; effects never close missing structure.
+Y0 exists to prevent discovering missing product leaves after spatial geometry has been treated as final. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. The first implementation slice pins three@0.186.1 and proves an adapter path against real S2/S3 assembly descriptors without migrating the production Hero renderer yet. Structural misses still return to their S2–S10 owner; effects never close missing structure.
 
 The first Y0 implementation pass also normalized S6 facility identity to the canonical Feature Registry ids. Three label-shaped aliases were found in the S6 assembly and had no broader fan-out, so they were repaired at the S6 owner and covered by a canonical-id regression test. The sourceModule field remains a descriptive presentation reference rather than authority.
 

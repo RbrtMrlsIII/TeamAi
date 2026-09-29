@@ -744,7 +744,7 @@ Current Y0 result: **PARTIAL / OPEN**. The terminal-surface classifier is implem
 
 ## Y1. Renderer substrate evolution gate
 
-Decision: adopt Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target renderer substrate while preserving the existing semantic, geometry, topology, camera, and authority boundaries.
+Decision: adopt Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target renderer substrate while preserving the existing semantic, geometry, topology, camera, and authority boundaries. The exact current package candidate is three@0.186.1, confirmed by the npm registry metadata on 2026-09-29; the repository's visible latest tag metadata was stale, so the registry endpoint is the authoritative package-version check for this decision.
 
 Y1 is not a new machine hierarchy. It is a scene/rendering adapter layer between the existing S2–S10 assembly descriptors and the existing Hero canvas.
 
@@ -774,11 +774,11 @@ Required invariants:
 ### Y1.2 Migration staging
 
 - [ ] Freeze S2–S10 assembly contracts and current fixed-state Browser baselines before changing rendering substrate.
-- [ ] Choose and pin an exact Three.js version only after repository/package/browser compatibility inspection; do not select a version from memory.
+- [x] Choose and pin an exact Three.js version after repository/package/browser compatibility inspection: three@0.186.1.
 - [ ] Commit lockfile integrity and dependency provenance.
-- [ ] Introduce exactly one scene adapter that consumes existing assembly descriptors without renaming semantic IDs.
+- [x] Introduce exactly one scene adapter that consumes existing assembly descriptors without renaming semantic IDs: frontend/spatial/machine-three-scene-adapter.js.
 - [ ] Port reusable primitive factories to BufferGeometry / Mesh and preserve authored dimensions/subjects.
-- [ ] Port S2 Core and one S3 Pod end-to-end, including the real focused opening transformation.
+- [x] Establish the first Y1 vertical proof with real S2 Core + one S3 Pod descriptors through the adapter in the isolated /spatial/machine-three-substrate-preview.html proof surface. Focused opening migration remains a later production-port boundary.
 - [ ] Port S4 divisions and S7 facilities using their existing descriptors and mechanical owners.
 - [ ] Port S8 topology projections and S10 camera behavior without moving their authority into Three.js.
 - [ ] Add WebGL2 capability reporting and the unsupported/fallback state before promoting the new path.

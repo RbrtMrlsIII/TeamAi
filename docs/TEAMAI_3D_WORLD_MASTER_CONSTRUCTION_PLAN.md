@@ -564,7 +564,7 @@ Never show a false-success animation merely because a request completed at the t
 
 ## 12A. Renderer substrate evolution (cross-cutting architecture gate)
 
-The project is adopting **Three.js + WebGL2 + JavaScript mesh/scene abstractions as the target rendering substrate** for the spatial machine. This is a renderer implementation decision, not a new semantic, geometry, topology, camera, backend, or authority layer.
+The project is adopting **Three.js + WebGL2 + JavaScript mesh/scene abstractions (current package candidate: three@0.186.1) as the target rendering substrate** for the spatial machine. This is a renderer implementation decision, not a new semantic, geometry, topology, camera, backend, or authority layer.
 
 ### Evidence for the decision
 
