@@ -7,6 +7,9 @@
  * attachment travel, authorization, or durable runtime state.
  */
 
+export const MACHINE_SEAT_CONNECTION_COUPLER_PROFILE = 'coupler-ring';
+export const MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE = 'S4_CONNECTION_COUPLER';
+export const MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE = 'S4_CONNECTION_COUPLER_ELEMENT';
 export const MACHINE_SEAT_AUTHORIZATION_SHIELD_PROFILE = 'authorization-shield';
 export const MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE = 'S4_AUTHORIZATION_SHIELD';
 export const MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE = 'rule-baffles';
@@ -47,6 +50,54 @@ export function getMachineSeatCapabilitiesLatticeRecipe() {
 }
 
 export function resolveMachineSeatCapabilitiesLatticeRailThickness({ dimensions = {}, element = {} } = {}) {
+  const footprint = Math.min(
+    Math.abs(Number(dimensions.x) || 0),
+    Math.abs(Number(dimensions.z) || 0),
+  );
+  const normalizedThickness = Math.max(0, Number(element.thickness) || 0);
+  return Math.max(0.001, footprint * normalizedThickness);
+}
+
+const CONNECTION_COUPLER_RECIPE = Object.freeze([
+  ...Array.from({ length: 8 }, (_, index) => {
+    const angle = index * Math.PI / 4;
+    return Object.freeze({
+      id: 'coupler-segment-' + String(index + 1),
+      center: Object.freeze({
+        x: 0.44 * Math.cos(angle),
+        z: 0.44 * Math.sin(angle),
+      }),
+      dimensions: Object.freeze({ x: 0.34, z: 0.12 }),
+      rotationY: angle + Math.PI * 0.5,
+      thickness: 0.14,
+    });
+  }),
+  ...Array.from({ length: 4 }, (_, index) => {
+    const rotationY = index * Math.PI / 2;
+    return Object.freeze({
+      id: 'locking-lug-' + String(index + 1),
+      center: Object.freeze({
+        x: 0.40 * Math.cos(rotationY),
+        z: 0.40 * Math.sin(rotationY),
+      }),
+      dimensions: Object.freeze({ x: 0.20, z: 0.16 }),
+      rotationY,
+      thickness: 0.14,
+    });
+  }),
+]);
+
+export function getMachineSeatConnectionCouplerRecipe() {
+  return CONNECTION_COUPLER_RECIPE.map((entry) => Object.freeze({
+    id: entry.id,
+    center: Object.freeze({ ...entry.center }),
+    dimensions: Object.freeze({ ...entry.dimensions }),
+    rotationY: entry.rotationY,
+    thickness: entry.thickness,
+  }));
+}
+
+export function resolveMachineSeatConnectionCouplerRailThickness({ dimensions = {}, element = {} } = {}) {
   const footprint = Math.min(
     Math.abs(Number(dimensions.x) || 0),
     Math.abs(Number(dimensions.z) || 0),
@@ -141,6 +192,9 @@ export function resolveMachineSeatDivisionProfileRecipe({ profile = '' } = {}) {
   if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
     return getMachineSeatWorkspaceScopeFrameRecipe();
   }
+  if (normalizedProfile === MACHINE_SEAT_CONNECTION_COUPLER_PROFILE) {
+    return getMachineSeatConnectionCouplerRecipe();
+  }
   if (normalizedProfile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
     return getMachineSeatCapabilitiesLatticeRecipe();
   }
@@ -157,6 +211,9 @@ export function resolveMachineSeatDivisionProfileShape({
   }
   if (normalizedProfile === MACHINE_SEAT_BEHAVIOR_BAFFLE_PROFILE) {
     return MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE;
+  }
+  if (normalizedProfile === MACHINE_SEAT_CONNECTION_COUPLER_PROFILE) {
+    return MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE;
   }
   if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
     return MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE;

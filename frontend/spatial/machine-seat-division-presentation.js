@@ -20,6 +20,10 @@ import {
   MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE,
   resolveMachineSeatCapabilitiesLatticeRailThickness,
   MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE,
+  getMachineSeatConnectionCouplerRecipe,
+  MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
+  resolveMachineSeatConnectionCouplerRailThickness,
+  MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileRecipe,
   resolveMachineSeatDivisionProfileShape,
 } from './machine-seat-division-profile.js';
@@ -216,7 +220,38 @@ export function drawFocusedSeatDivision({
       alpha: component.materialRole === 'glass' ? 0.72 : 0.88,
     };
 
-    if (profileRecipe && component.profile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
+    if (profileRecipe && component.profile === MACHINE_SEAT_CONNECTION_COUPLER_PROFILE) {
+      for (const element of getMachineSeatConnectionCouplerRecipe()) {
+        const elementCenter = {
+          x: element.center.x * component.dimensions.x,
+          y: 0,
+          z: element.center.z * component.dimensions.z,
+        };
+        const railThickness = resolveMachineSeatConnectionCouplerRailThickness({
+          dimensions: component.dimensions,
+          element,
+        });
+        draw(
+          MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation + element.rotationY),
+              mul(
+                T(elementCenter.x, elementCenter.y, elementCenter.z),
+                S(
+                  component.scale.x * element.dimensions.x,
+                  railThickness,
+                  component.scale.z * element.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else if (profileRecipe && component.profile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
       for (const element of getMachineSeatCapabilitiesLatticeRecipe()) {
         const elementCenter = {
           x: element.center.x * component.dimensions.x,

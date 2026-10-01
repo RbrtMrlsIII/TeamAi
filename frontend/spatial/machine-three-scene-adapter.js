@@ -21,8 +21,11 @@ import {
   resolveMachineSeatWorkspaceScopeFrameRailThickness,
   getMachineSeatCapabilitiesLatticeRecipe,
   resolveMachineSeatCapabilitiesLatticeRailThickness,
+  getMachineSeatConnectionCouplerRecipe,
+  resolveMachineSeatConnectionCouplerRailThickness,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE,
+  MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileShape,
@@ -322,6 +325,36 @@ function appendBoxVertices(vertices, centerX, centerY, centerZ, dimensions, rota
   for (const [a, b, cc] of faces) pushTri(a, b, cc);
 }
 
+function buildConnectionCouplerGeometry(THREE, descriptor) {
+  const { x, y, z } = descriptor.dimensions;
+  const vertices = [];
+  for (const element of getMachineSeatConnectionCouplerRecipe()) {
+    appendBoxVertices(
+      vertices,
+      element.center.x * x,
+      0,
+      element.center.z * z,
+      {
+        x: element.dimensions.x * x,
+        y: resolveMachineSeatConnectionCouplerRailThickness({
+          dimensions: descriptor.dimensions,
+          element,
+        }),
+        z: element.dimensions.z * z,
+      },
+      element.rotationY,
+    );
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(new Float32Array(vertices), 3),
+  );
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  return geometry;
+}
+
 function buildCapabilitiesLatticeGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
   const vertices = [];
@@ -398,6 +431,9 @@ export function buildThreeGeometry(THREE, descriptor) {
   }
   if (descriptor.shape === MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE) {
     return buildCapabilitiesLatticeGeometry(THREE, descriptor);
+  }
+  if (descriptor.shape === MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE) {
+    return buildConnectionCouplerGeometry(THREE, descriptor);
   }
   if (descriptor.shape === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE) {
     return buildWorkspaceScopeFrameGeometry(THREE, descriptor);

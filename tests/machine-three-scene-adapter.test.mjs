@@ -34,8 +34,12 @@ import {
   MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE,
   MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE,
   MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE,
+  MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
+  MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE,
   getMachineSeatCapabilitiesLatticeRecipe,
   resolveMachineSeatCapabilitiesLatticeRailThickness,
+  getMachineSeatConnectionCouplerRecipe,
+  resolveMachineSeatConnectionCouplerRailThickness,
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
   getMachineSeatWorkspaceScopeFrameRecipe,
@@ -298,6 +302,123 @@ test('S4 capability rotary lattice recipe preserves descriptor envelope with exp
   geometry.dispose();
 });
 
+test('S4 connection radial coupler recipe preserves descriptor envelope with explicit thickness', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const divisionParent = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
+    parent: divisionParent,
+    childId: 'SEAT_CONNECTION',
+    childIndex: 0,
+    amount: 1,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: divisionParent,
+    childId: 'SEAT_CONNECTION',
+    childIndex: 0,
+    amount: 1,
+    geometry: geometryDescriptor,
+  });
+  const component = assembly.components.find(
+    (entry) => entry.profile === MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
+  );
+  assert.ok(component);
+  assert.equal(assembly.mechanism.attachment.type, 'RADIAL_COUPLER');
+  assert.equal(assembly.mechanism.attachment.primaryComponent, 'coupler-ring');
+  assert.equal(assembly.mechanism.attachment.travel, 0.24);
+
+  const recipe = getMachineSeatConnectionCouplerRecipe();
+  assert.equal(recipe.length, 12);
+  assert.deepEqual(recipe.slice(0, 8).map((element) => element.dimensions), Array.from(
+    { length: 8 },
+    () => ({ x: 0.34, z: 0.12 }),
+  ));
+  recipe.slice(0, 8).forEach((element, index) => {
+    const angle = index * Math.PI / 4;
+    assert.ok(Math.abs(element.rotationY - (angle + Math.PI * 0.5)) < 1e-12);
+    assert.ok(Math.abs(element.center.x - 0.44 * Math.cos(angle)) < 1e-12);
+    assert.ok(Math.abs(element.center.z - 0.44 * Math.sin(angle)) < 1e-12);
+  });
+  recipe.slice(8).forEach((element, index) => {
+    const angle = index * Math.PI / 2;
+    assert.ok(Math.abs(element.rotationY - angle) < 1e-12);
+    assert.deepEqual(element.dimensions, { x: 0.20, z: 0.16 });
+  });
+  const minX = Math.min(...recipe.map((element) => element.center.x - (
+    Math.abs(Math.cos(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.sin(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  const maxX = Math.max(...recipe.map((element) => element.center.x + (
+    Math.abs(Math.cos(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.sin(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  const minZ = Math.min(...recipe.map((element) => element.center.z - (
+    Math.abs(Math.sin(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.cos(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  const maxZ = Math.max(...recipe.map((element) => element.center.z + (
+    Math.abs(Math.sin(element.rotationY)) * element.dimensions.x
+      + Math.abs(Math.cos(element.rotationY)) * element.dimensions.z
+  ) * 0.5));
+  assert.ok(Math.abs(minX + 0.50) < 1e-12);
+  assert.ok(Math.abs(maxX - 0.50) < 1e-12);
+  assert.ok(Math.abs(minZ + 0.50) < 1e-12);
+  assert.ok(Math.abs(maxZ - 0.50) < 1e-12);
+
+  const descriptor = normalizeThreeDescriptor(component, assembly.id);
+  assert.equal(descriptor.shape, MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE);
+  assert.deepEqual(descriptor.dimensions, component.dimensions);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  const expected = descriptor.dimensions;
+  const expectedThickness = resolveMachineSeatConnectionCouplerRailThickness({
+    dimensions: expected,
+    element: recipe[0],
+  });
+  assert.ok(Math.abs(
+    expectedThickness - Math.min(expected.x, expected.z) * 0.14,
+  ) < 1e-12);
+  assert.ok(expectedThickness < expected.y);
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expectedThickness * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expectedThickness * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < 1e-6);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < 1e-6);
+  assert.equal(geometry.getAttribute('position').count, 432);
+  const lug = recipe[8];
+  const lugAngle = lug.rotationY;
+  const lugCenterX = lug.center.x * expected.x;
+  const lugCenterZ = lug.center.z * expected.z;
+  const halfLength = lug.dimensions.x * expected.x * 0.5;
+  const halfWidth = lug.dimensions.z * expected.z * 0.5;
+  const expectedVertexX = lugCenterX + halfLength * Math.cos(lugAngle) + halfWidth * Math.sin(lugAngle);
+  const expectedVertexZ = lugCenterZ - halfLength * Math.sin(lugAngle) + halfWidth * Math.cos(lugAngle);
+  const position = geometry.getAttribute('position').array;
+  let rotatedVertexFound = false;
+  for (let index = 0; index < position.length; index += 3) {
+    if (
+      Math.abs(position[index] - expectedVertexX) < 1e-6
+      && Math.abs(position[index + 2] - expectedVertexZ) < 1e-6
+    ) {
+      rotatedVertexFound = true;
+      break;
+    }
+  }
+  assert.equal(rotatedVertexFound, true);
+  assert.equal(
+    normalizeThreeShape({
+      shape: 'TORUS',
+      profile: MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
+    }),
+    MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE,
+  );
+  geometry.dispose();
+});
+
 test('S4 behavior baffle profile preserves the existing articulated descriptor envelope', () => {
   const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const divisionParent = machine.parts.find(
@@ -550,10 +671,13 @@ test('S4 source and browser profile copies remain exact', () => {
   assert.match(rendererSource, /behaviorBaffle: getMachineSeatBehaviorBaffleOutline\(\)/);
   assert.match(rendererSource, /MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE/);
   assert.match(rendererSource, /MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
+  assert.match(rendererSource, /MACHINE_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE/);
   assert.match(presentationSource, /resolveMachineSeatDivisionProfileRecipe/);
   assert.match(presentationSource, /resolveMachineSeatWorkspaceScopeFrameRailThickness/);
   assert.match(presentationSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
+  assert.match(presentationSource, /MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE/);
   assert.match(profileSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE/);
+  assert.match(profileSource, /MACHINE_SEAT_CONNECTION_COUPLER_PROFILE/);
 });
 
 test('Y1 adapter source and browser copy remain exact', () => {
