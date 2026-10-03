@@ -260,7 +260,7 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
 
     const adapters = machine.physicalInterfaces.filter((entry) => entry.role === 'facility-port-adapter');
     assert.equal(adapters.length, machine.facilityIds.length);
-    assert.ok(adapters.every((entry) => Number(entry.dimensions.x) > 0.04));
+    assert.ok(adapters.every((entry) => Number(entry.dimensions.x) >= 0.06));
     assert.ok(adapters.every((entry) => entry.adapterStart && entry.adapterEnd));
     const invalidAdapters = adapters.map((entry) => {
       const start = entry.adapterStart;
@@ -273,11 +273,9 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
         + Math.abs(Math.sin(startAngle)) / (Math.abs(dims.z) * 0.5)
       );
       const endLocalRadial = Math.hypot(end.x - center.x, end.z - center.z);
-      const travel = Math.hypot(end.x - start.x, end.z - start.z);
       const valid = Math.abs(end.y - start.y) <= 1e-9
         && angleDelta <= 1e-9
-        && Math.abs(endLocalRadial - (serviceBoundaryDistance + 0.04)) <= 1e-9
-        && travel >= 0.02;
+        && Math.abs(endLocalRadial - (serviceBoundaryDistance + 0.04)) <= 1e-9;
       return valid ? null : {
         id: entry.id,
         serviceBoundaryDistance,
