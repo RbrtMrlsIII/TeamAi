@@ -256,8 +256,17 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
     assert.ok(adapters.every((entry) => Number(entry.dimensions.x) > 0.04));
     assert.ok(adapters.every((entry) => entry.adapterStart && entry.adapterEnd));
     assert.ok(adapters.every((entry) => {
+      const start = entry.adapterStart;
       const end = entry.adapterEnd;
-      return Math.hypot(end.x - input.point.x, end.z - input.point.z) <= 0.08;
+      const startAngle = Math.atan2(start.z - center.z, start.x - center.x);
+      const endAngle = Math.atan2(end.z - center.z, end.x - center.x);
+      const angleDelta = Math.abs(((endAngle - startAngle + Math.PI) % (Math.PI * 2)) - Math.PI);
+      const endRadial = Math.hypot(end.x, end.z);
+      const startRadial = Math.hypot(start.x, start.z);
+      return Math.abs(end.y - start.y) <= 1e-9
+        && angleDelta <= 1e-9
+        && endRadial >= radial + boundaryDistance + 0.03
+        && endRadial > startRadial;
     }));
   }
 });
