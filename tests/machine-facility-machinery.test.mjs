@@ -247,13 +247,18 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
     const inputRadial = Math.hypot(input.point.x, input.point.z);
     const outputRadial = Math.hypot(output.point.x, output.point.z);
 
-    assert.ok(inputRadial <= radial - boundaryDistance - 0.05);
+    assert.ok(inputRadial >= radial + boundaryDistance + 0.03);
     assert.ok(outputRadial >= radial + boundaryDistance + 0.10);
+    assert.ok(Math.abs(output.point.y - input.point.y) >= 0.20);
 
     const adapters = machine.physicalInterfaces.filter((entry) => entry.role === 'facility-port-adapter');
     assert.equal(adapters.length, machine.facilityIds.length);
     assert.ok(adapters.every((entry) => Number(entry.dimensions.x) > 0.04));
     assert.ok(adapters.every((entry) => entry.adapterStart && entry.adapterEnd));
+    assert.ok(adapters.every((entry) => {
+      const end = entry.adapterEnd;
+      return Math.hypot(end.x - input.point.x, end.z - input.point.z) <= 0.08;
+    }));
   }
 });
 

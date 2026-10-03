@@ -398,9 +398,9 @@ function machinePorts(assembly) {
       facilityId: null,
       role: 'machine-core-input',
       point: Object.freeze({
-        x: center.x + basis.outward.x * (innerFace - 0.06),
-        y: center.y + 0.28,
-        z: center.z + basis.outward.z * (innerFace - 0.06),
+        x: center.x + basis.outward.x * (outerFace + 0.04),
+        y: center.y + 0.16,
+        z: center.z + basis.outward.z * (outerFace + 0.04),
       }),
       radius: 0.10,
       ...rootContext(assembly.branchId + ':CORE-IN'),
@@ -411,7 +411,7 @@ function machinePorts(assembly) {
       role: 'machine-output',
       point: Object.freeze({
         x: center.x + basis.outward.x * (outerFace + 0.12),
-        y: center.y + 0.32,
+        y: center.y + 0.40,
         z: center.z + basis.outward.z * (outerFace + 0.12),
       }),
       radius: 0.10,
@@ -447,8 +447,8 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
         'metal2',
         {
           portId: coreIn.id,
-          interfaceSide: 'inner',
-          interfaceBoundaryRadius: innerFace,
+          interfaceSide: 'outer',
+          interfaceBoundaryRadius: outerFace,
         },
       ),
     );
