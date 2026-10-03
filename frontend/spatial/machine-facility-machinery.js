@@ -484,9 +484,9 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
     const direction = { x: Math.cos(angle), z: Math.sin(angle) };
     const portBoundary = radialBoundaryDistance(dimensions, angle);
     const target = {
-      x: center.x + direction.x * (portBoundary + 0.02),
+      x: center.x + direction.x * (portBoundary + 0.04),
       y: finite(port.point.y),
-      z: center.z + direction.z * (portBoundary + 0.02),
+      z: center.z + direction.z * (portBoundary + 0.04),
     };
     const length = distance3D(port.point, target);
 
