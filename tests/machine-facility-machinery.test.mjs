@@ -67,6 +67,13 @@ test('S7 facility chassis details are authored and included in each machine subj
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'facility-port-adapter').length, machine.facilityIds.length);
+    const coreInterface = machine.physicalInterfaces.find((entry) => entry.role === 'machine-core-input');
+    const outputInterface = machine.physicalInterfaces.find((entry) => entry.role === 'machine-output');
+    assert.ok(coreInterface && outputInterface);
+    const corePort = machine.ports.find((port) => port.role === 'machine-core-input');
+    const outputPort = machine.ports.find((port) => port.role === 'machine-output');
+    assert.ok(Math.hypot(coreInterface.center.x - corePort.point.x, coreInterface.center.z - corePort.point.z) <= 0.01);
+    assert.ok(Math.hypot(outputInterface.center.x - outputPort.point.x, outputInterface.center.z - outputPort.point.z) <= 0.06);
     assert.equal(
       machine.mechanicalDetails.filter((item) => item.role === 'base-collar').length,
       1,
