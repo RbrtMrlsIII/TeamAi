@@ -389,7 +389,6 @@ function machinePorts(assembly) {
   const center = assembly.outerHousing.center;
   const basis = localBasis(center);
   const boundaryDistance = radialBoundaryDistance(assembly.outerHousing.dimensions, basis.angle);
-  const innerFace = -boundaryDistance;
   const outerFace = boundaryDistance;
   return Object.freeze([
     ...assembly.ports,
@@ -425,7 +424,6 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
   const dimensions = assembly.outerHousing.dimensions;
   const basis = localBasis(center);
   const boundaryDistance = radialBoundaryDistance(dimensions, basis.angle);
-  const innerFace = -boundaryDistance;
   const outerFace = boundaryDistance;
   const interfaces = [];
 
