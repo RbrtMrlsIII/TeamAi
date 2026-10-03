@@ -261,12 +261,12 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
       const startAngle = Math.atan2(start.z - center.z, start.x - center.x);
       const endAngle = Math.atan2(end.z - center.z, end.x - center.x);
       const angleDelta = Math.abs(((endAngle - startAngle + Math.PI) % (Math.PI * 2)) - Math.PI);
-      const endRadial = Math.hypot(end.x, end.z);
-      const startRadial = Math.hypot(start.x, start.z);
+      const endLocalRadial = Math.hypot(end.x - center.x, end.z - center.z);
+      const startLocalRadial = Math.hypot(start.x - center.x, start.z - center.z);
       return Math.abs(end.y - start.y) <= 1e-9
         && angleDelta <= 1e-9
-        && endRadial >= radial + boundaryDistance + 0.03
-        && endRadial > startRadial;
+        && endLocalRadial >= boundaryDistance + 0.03
+        && endLocalRadial > startLocalRadial;
     }));
   }
 });
