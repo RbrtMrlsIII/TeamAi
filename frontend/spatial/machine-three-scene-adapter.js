@@ -23,11 +23,14 @@ import {
   resolveMachineSeatCapabilitiesLatticeRailThickness,
   getMachineSeatConnectionCouplerRecipe,
   resolveMachineSeatConnectionCouplerRailThickness,
+  getMachineSeatToolkitRackRecipe,
+  resolveMachineSeatToolkitRackRailThickness,
   MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
   MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE,
   MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE,
   MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
   MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE,
+  MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileShape,
 } from './machine-seat-division-profile.js';
 
@@ -414,6 +417,35 @@ function buildWorkspaceScopeFrameGeometry(THREE, descriptor) {
   return geometry;
 }
 
+function buildToolkitRackGeometry(THREE, descriptor) {
+  const { x, y, z } = descriptor.dimensions;
+  const vertices = [];
+  for (const rail of getMachineSeatToolkitRackRecipe()) {
+    appendBoxVertices(
+      vertices,
+      rail.center.x * x,
+      0,
+      rail.center.z * z,
+      {
+        x: rail.dimensions.x * x,
+        y: resolveMachineSeatToolkitRackRailThickness({
+          dimensions: descriptor.dimensions,
+          rail,
+        }),
+        z: rail.dimensions.z * z,
+      },
+    );
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(new Float32Array(vertices), 3),
+  );
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  return geometry;
+}
+
 export function buildThreeGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
   if (descriptor.shape === 'POD_SHELL') {
@@ -437,6 +469,9 @@ export function buildThreeGeometry(THREE, descriptor) {
   }
   if (descriptor.shape === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE) {
     return buildWorkspaceScopeFrameGeometry(THREE, descriptor);
+  }
+  if (descriptor.shape === MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE) {
+    return buildToolkitRackGeometry(THREE, descriptor);
   }
   const radius = Math.max(0.01, Math.max(x, z) * 0.5);
   if (descriptor.shape === 'TORUS') {

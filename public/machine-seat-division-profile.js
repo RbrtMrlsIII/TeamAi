@@ -18,6 +18,9 @@ export const MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE = 'scope-frame';
 export const MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE = 'capability-lattice';
 export const MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE = 'S4_CAPABILITY_LATTICE';
 export const MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE = 'S4_CAPABILITY_LATTICE_ELEMENT';
+export const MACHINE_SEAT_TOOLKIT_RACK_PROFILE = 'equipment-rack';
+export const MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE = 'S4_TOOLKIT_RACK';
+export const MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE = 'S4_TOOLKIT_RACK_ELEMENT';
 
 const CAPABILITIES_LATTICE_RECIPE = Object.freeze([
   Object.freeze({ id: 'front-rail', center: Object.freeze({ x: 0, z: 0.44 }), dimensions: Object.freeze({ x: 1.00, z: 0.12 }), rotationY: 0, thickness: 0.14 }),
@@ -187,10 +190,70 @@ export function resolveMachineSeatWorkspaceScopeFrameRailThickness({ dimensions 
   return Math.max(0.001, footprint * normalizedThickness);
 }
 
+const TOOLKIT_RACK_RECIPE = Object.freeze([
+  Object.freeze({
+    id: 'front-rail',
+    center: Object.freeze({ x: 0, z: 0.43 }),
+    dimensions: Object.freeze({ x: 1.00, z: 0.14 }),
+    thickness: 0.14,
+  }),
+  Object.freeze({
+    id: 'rear-rail',
+    center: Object.freeze({ x: 0, z: -0.43 }),
+    dimensions: Object.freeze({ x: 1.00, z: 0.14 }),
+    thickness: 0.14,
+  }),
+  Object.freeze({
+    id: 'left-rail',
+    center: Object.freeze({ x: -0.43, z: 0 }),
+    dimensions: Object.freeze({ x: 0.14, z: 1.00 }),
+    thickness: 0.14,
+  }),
+  Object.freeze({
+    id: 'right-rail',
+    center: Object.freeze({ x: 0.43, z: 0 }),
+    dimensions: Object.freeze({ x: 0.14, z: 1.00 }),
+    thickness: 0.14,
+  }),
+  Object.freeze({
+    id: 'mid-shelf-front',
+    center: Object.freeze({ x: 0, z: 0.145 }),
+    dimensions: Object.freeze({ x: 1.00, z: 0.10 }),
+    thickness: 0.14,
+  }),
+  Object.freeze({
+    id: 'mid-shelf-rear',
+    center: Object.freeze({ x: 0, z: -0.145 }),
+    dimensions: Object.freeze({ x: 1.00, z: 0.10 }),
+    thickness: 0.14,
+  }),
+]);
+
+export function getMachineSeatToolkitRackRecipe() {
+  return TOOLKIT_RACK_RECIPE.map((entry) => Object.freeze({
+    id: entry.id,
+    center: Object.freeze({ ...entry.center }),
+    dimensions: Object.freeze({ ...entry.dimensions }),
+    thickness: entry.thickness,
+  }));
+}
+
+export function resolveMachineSeatToolkitRackRailThickness({ dimensions = {}, rail = {} } = {}) {
+  const footprint = Math.min(
+    Math.abs(Number(dimensions.x) || 0),
+    Math.abs(Number(dimensions.z) || 0),
+  );
+  const normalizedThickness = Math.max(0, Number(rail.thickness) || 0);
+  return Math.max(0.001, footprint * normalizedThickness);
+}
+
 export function resolveMachineSeatDivisionProfileRecipe({ profile = '' } = {}) {
   const normalizedProfile = String(profile || '').trim().toLowerCase();
   if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
     return getMachineSeatWorkspaceScopeFrameRecipe();
+  }
+  if (normalizedProfile === MACHINE_SEAT_TOOLKIT_RACK_PROFILE) {
+    return getMachineSeatToolkitRackRecipe();
   }
   if (normalizedProfile === MACHINE_SEAT_CONNECTION_COUPLER_PROFILE) {
     return getMachineSeatConnectionCouplerRecipe();
@@ -217,6 +280,9 @@ export function resolveMachineSeatDivisionProfileShape({
   }
   if (normalizedProfile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
     return MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RENDER_SHAPE;
+  }
+  if (normalizedProfile === MACHINE_SEAT_TOOLKIT_RACK_PROFILE) {
+    return MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE;
   }
   if (normalizedProfile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
     return MACHINE_SEAT_CAPABILITIES_LATTICE_RENDER_SHAPE;

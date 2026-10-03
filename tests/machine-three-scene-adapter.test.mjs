@@ -36,10 +36,14 @@ import {
   MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE,
   MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
   MACHINE_SEAT_CONNECTION_COUPLER_RENDER_SHAPE,
+  MACHINE_SEAT_TOOLKIT_RACK_PROFILE,
+  MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE,
   getMachineSeatCapabilitiesLatticeRecipe,
   resolveMachineSeatCapabilitiesLatticeRailThickness,
   getMachineSeatConnectionCouplerRecipe,
   resolveMachineSeatConnectionCouplerRailThickness,
+  getMachineSeatToolkitRackRecipe,
+  resolveMachineSeatToolkitRackRailThickness,
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
   getMachineSeatWorkspaceScopeFrameRecipe,
@@ -419,6 +423,108 @@ test('S4 connection radial coupler recipe preserves descriptor envelope with exp
   geometry.dispose();
 });
 
+test('S4 toolkit telescoping rack recipe preserves the existing descriptor envelope', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const divisionParent = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const geometryDescriptor = deriveFocusedSeatDivisionGeometry({
+    parent: divisionParent,
+    childId: 'SEAT_TOOLKIT',
+    childIndex: 2,
+    amount: 1,
+  });
+  const assembly = deriveMachineSeatDivisionAssembly({
+    parent: divisionParent,
+    childId: 'SEAT_TOOLKIT',
+    childIndex: 2,
+    amount: 1,
+    geometry: geometryDescriptor,
+  });
+  const component = assembly.components.find(
+    (entry) => entry.profile === MACHINE_SEAT_TOOLKIT_RACK_PROFILE,
+  );
+  assert.ok(component);
+  assert.equal(assembly.mechanism.attachment.type, 'TELESCOPING_RACK');
+  assert.equal(assembly.mechanism.attachment.primaryComponent, 'equipment-rack');
+  assert.equal(assembly.mechanism.attachment.travel, 0.32);
+
+  const recipe = getMachineSeatToolkitRackRecipe();
+  assert.equal(recipe.length, 6);
+  assert.deepEqual(
+    recipe.map((rail) => rail.thickness),
+    [0.14, 0.14, 0.14, 0.14, 0.14, 0.14],
+  );
+  assert.deepEqual(
+    recipe.map((rail) => rail.dimensions),
+    [
+      { x: 1.00, z: 0.14 },
+      { x: 1.00, z: 0.14 },
+      { x: 0.14, z: 1.00 },
+      { x: 0.14, z: 1.00 },
+      { x: 1.00, z: 0.10 },
+      { x: 1.00, z: 0.10 },
+    ],
+  );
+  const minX = Math.min(...recipe.map((rail) => rail.center.x - rail.dimensions.x * 0.5));
+  const maxX = Math.max(...recipe.map((rail) => rail.center.x + rail.dimensions.x * 0.5));
+  const minZ = Math.min(...recipe.map((rail) => rail.center.z - rail.dimensions.z * 0.5));
+  const maxZ = Math.max(...recipe.map((rail) => rail.center.z + rail.dimensions.z * 0.5));
+  assert.equal(minX, -0.50);
+  assert.equal(maxX, 0.50);
+  assert.equal(minZ, -0.50);
+  assert.equal(maxZ, 0.50);
+
+  const descriptor = normalizeThreeDescriptor(component, assembly.id);
+  assert.equal(descriptor.shape, MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE);
+  assert.deepEqual(descriptor.dimensions, component.dimensions);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  const epsilon = 1e-6;
+  const expected = descriptor.dimensions;
+  const expectedRailThickness = resolveMachineSeatToolkitRackRailThickness({
+    dimensions: expected,
+    rail: recipe[0],
+  });
+  assert.ok(Math.abs(
+    expectedRailThickness - Math.min(expected.x, expected.z) * 0.14,
+  ) < 1e-12);
+  assert.ok(expectedRailThickness < expected.y);
+  assert.ok(Math.abs(geometry.boundingBox.max.x - expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.x + expected.x * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.y - expectedRailThickness * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.y + expectedRailThickness * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
+  assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
+  assert.equal(geometry.getAttribute('position').count, 216);
+  const positionArray = geometry.getAttribute('position').array;
+  const midX = expected.x * 0.36;
+  const midZ = expected.z * 0.36;
+  assert.ok(positionArray.some((value) => Math.abs(value) > midX && Math.abs(value) <= expected.x * 0.5 + epsilon));
+  assert.ok(positionArray.some((value) => Math.abs(value) > midZ && Math.abs(value) <= expected.z * 0.5 + epsilon));
+  const shelf = recipe[4];
+  const shelfCenterZ = shelf.center.z * expected.z;
+  const shelfHalfZ = shelf.dimensions.z * expected.z * 0.5;
+  let shelfVertexFound = false;
+  for (let index = 0; index < positionArray.length; index += 3) {
+    if (Math.abs(positionArray[index + 2] - (shelfCenterZ + shelfHalfZ)) < epsilon) {
+      shelfVertexFound = true;
+      break;
+    }
+  }
+  assert.equal(shelfVertexFound, true);
+  assert.equal(
+    normalizeThreeShape({
+      shape: 'CUBE',
+      profile: MACHINE_SEAT_TOOLKIT_RACK_PROFILE,
+    }),
+    MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE,
+  );
+  geometry.dispose();
+});
+
 test('S4 behavior baffle profile preserves the existing articulated descriptor envelope', () => {
   const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const divisionParent = machine.parts.find(
@@ -672,12 +778,15 @@ test('S4 source and browser profile copies remain exact', () => {
   assert.match(rendererSource, /MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE/);
   assert.match(rendererSource, /MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
   assert.match(rendererSource, /MACHINE_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE/);
+  assert.match(rendererSource, /MACHINE_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE/);
   assert.match(presentationSource, /resolveMachineSeatDivisionProfileRecipe/);
   assert.match(presentationSource, /resolveMachineSeatWorkspaceScopeFrameRailThickness/);
   assert.match(presentationSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE/);
   assert.match(presentationSource, /MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE/);
+  assert.match(presentationSource, /MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE/);
   assert.match(profileSource, /MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE/);
   assert.match(profileSource, /MACHINE_SEAT_CONNECTION_COUPLER_PROFILE/);
+  assert.match(profileSource, /MACHINE_SEAT_TOOLKIT_RACK_PROFILE/);
 });
 
 test('Y1 adapter source and browser copy remain exact', () => {

@@ -24,6 +24,10 @@ import {
   MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
   resolveMachineSeatConnectionCouplerRailThickness,
   MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE,
+  getMachineSeatToolkitRackRecipe,
+  MACHINE_SEAT_TOOLKIT_RACK_PROFILE,
+  resolveMachineSeatToolkitRackRailThickness,
+  MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE,
   resolveMachineSeatDivisionProfileRecipe,
   resolveMachineSeatDivisionProfileShape,
 } from './machine-seat-division-profile.js';
@@ -295,6 +299,37 @@ export function drawFocusedSeatDivision({
         });
         draw(
           MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation),
+              mul(
+                T(railCenter.x, railCenter.y, railCenter.z),
+                S(
+                  component.scale.x * rail.dimensions.x,
+                  railThickness,
+                  component.scale.z * rail.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else if (profileRecipe && component.profile === MACHINE_SEAT_TOOLKIT_RACK_PROFILE) {
+      for (const rail of getMachineSeatToolkitRackRecipe()) {
+        const railCenter = {
+          x: rail.center.x * component.dimensions.x,
+          y: 0,
+          z: rail.center.z * component.dimensions.z,
+        };
+        const railThickness = resolveMachineSeatToolkitRackRailThickness({
+          dimensions: component.dimensions,
+          rail,
+        });
+        draw(
+          MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE,
           mul(
             T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
             mul(
