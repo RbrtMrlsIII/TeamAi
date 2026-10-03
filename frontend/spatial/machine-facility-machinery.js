@@ -438,9 +438,9 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
         'INTERFACE:' + assembly.branchId + ':CORE-IN',
         'machine-core-input',
         {
-          x: center.x + basis.outward.x * (innerFace + 0.04),
+          x: center.x + basis.outward.x * (outerFace + 0.04),
           y: coreIn.point.y,
-          z: center.z + basis.outward.z * (innerFace + 0.04),
+          z: center.z + basis.outward.z * (outerFace + 0.04),
         },
         { x: 0.24, y: 0.20, z: 0.20 },
         basis.angle,
