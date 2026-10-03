@@ -262,7 +262,7 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
     assert.equal(adapters.length, machine.facilityIds.length);
     assert.ok(adapters.every((entry) => Number(entry.dimensions.x) > 0.04));
     assert.ok(adapters.every((entry) => entry.adapterStart && entry.adapterEnd));
-    assert.ok(adapters.every((entry) => {
+    const invalidAdapters = adapters.map((entry) => {
       const start = entry.adapterStart;
       const end = entry.adapterEnd;
       const startAngle = Math.atan2(start.z - center.z, start.x - center.x);
@@ -273,11 +273,22 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
         + Math.abs(Math.sin(startAngle)) / (Math.abs(dims.z) * 0.5)
       );
       const endLocalRadial = Math.hypot(end.x - center.x, end.z - center.z);
-      return Math.abs(end.y - start.y) <= 1e-9
+      const travel = Math.hypot(end.x - start.x, end.z - start.z);
+      const valid = Math.abs(end.y - start.y) <= 1e-9
         && angleDelta <= 1e-9
         && Math.abs(endLocalRadial - (serviceBoundaryDistance + 0.04)) <= 1e-9
-        && Math.hypot(end.x - start.x, end.z - start.z) >= 0.02;
-    }));
+        && travel >= 0.02;
+      return valid ? null : {
+        id: entry.id,
+        serviceBoundaryDistance,
+        endLocalRadial,
+        radialError: endLocalRadial - (serviceBoundaryDistance + 0.04),
+        angleDelta,
+        verticalDelta: end.y - start.y,
+        travel,
+      };
+    }).filter(Boolean);
+    assert.deepEqual(invalidAdapters, []);
   }
 });
 
