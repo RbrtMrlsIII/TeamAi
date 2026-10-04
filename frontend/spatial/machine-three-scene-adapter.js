@@ -104,7 +104,8 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     rotationY: Number.isFinite(Number(part.rotationY)) ? Number(part.rotationY) : 0,
     materialRole: part.role === 'status-indicator'
       ? 'accent'
-      : String(part.materialRole || 'substrate-neutral'),
+      : DIVISION_AUTHORED_ROLE_BY_SEMANTIC_ID[String(part.semanticId || '')]
+        || String(part.materialRole || 'substrate-neutral'),
     constructionSlice: String(part.constructionSlice || ''),
     constructionOwner: String(part.constructionOwner || ''),
   });
@@ -152,6 +153,16 @@ const AUTHORED_ROLE_ALIASES = Object.freeze({
   'seat-shell': 'seatShell',
   'seat-inset': 'seatShellInset',
   'workspace-ring': 'workspaceRing',
+});
+
+const DIVISION_AUTHORED_ROLE_BY_SEMANTIC_ID = Object.freeze({
+  SEAT_CONNECTION: 'divisionConnection',
+  SEAT_BEHAVIOR: 'divisionBehavior',
+  SEAT_TOOLKIT: 'divisionToolkit',
+  SEAT_CAPABILITIES: 'divisionCapabilities',
+  SEAT_AUTHORIZATION: 'divisionAuthorization',
+  SEAT_WORKSPACE_SCOPE: 'divisionScope',
+  SEAT_TASK_EVIDENCE: 'divisionEvidence',
 });
 
 const METALLIC_ROLE_LEVEL = Object.freeze({
