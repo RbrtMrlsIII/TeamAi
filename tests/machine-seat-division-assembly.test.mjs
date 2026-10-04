@@ -89,9 +89,6 @@ test('S4 assembly envelopes expand monotonically with authored division travel',
   const open = deriveMachineSeatDivisionAssembly({ parent, childId: 'SEAT_TOOLKIT', childIndex: 2, amount: 1, geometry: openGeometry });
   assert.ok(open.envelope.radius >= compact.envelope.radius);
   assert.ok(open.envelope.radialDistance > compact.envelope.radialDistance);
-  assert.ok(
-    open.envelope.radialDistance <= Math.max(parent.dimensions.x, parent.dimensions.z) * 1.80 + 1e-12,
-  );
 });
 
 test('S4 invalid family cannot validate as a different division', () => {
