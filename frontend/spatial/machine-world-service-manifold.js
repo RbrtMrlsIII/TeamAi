@@ -147,6 +147,14 @@ export function deriveMachineWorldServiceManifold({
       }),
   );
 
+  const facilityAnchors = Object.freeze(
+    Array.from(anchorByBranch.values()).map((anchor) => Object.freeze({
+      branchId: anchor.branchId,
+      angle: anchor.angle,
+      point: anchor.point ? Object.freeze({ ...anchor.point }) : null,
+    })),
+  );
+
   const segments = [];
   if (radius != null) {
     for (const edge of edges) {
@@ -220,6 +228,7 @@ export function deriveMachineWorldServiceManifold({
     manifoldY,
     arcSegmentCount: segments.filter((segment) => segment.segmentRole === 'manifold-arc').length,
     facilitySpurCount: segments.filter((segment) => segment.segmentRole !== 'manifold-arc').length,
+    facilityAnchors,
     segments: Object.freeze(segments),
     presentationOnly: true,
   });
