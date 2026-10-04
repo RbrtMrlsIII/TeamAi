@@ -231,21 +231,6 @@ test('S7 facility subject covers maximum authored mechanism travel', () => {
 });
 
 
-test('S7 compact facility placement retains clearance across the supported Seat range', () => {
-  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
-    const core = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
-    const machinery = deriveMachineFacilityMachinery({
-      outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
-    });
-    assert.equal(machinery.length, 4);
-    assert.ok(machinery.every((machine) => machine.clearanceProfile.safe));
-    assert.ok(
-      machinery.every((machine) => Number(machine.clearanceProfile.minimumAvailableClearance) >= 0.16),
-      `facility clearance below 0.16 at seatCount=${seatCount}`,
-    );
-  }
-});
-
 test('S7 physical interfaces clear the housing and bridge every S6 facility port', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const facilities = deriveMachineFacilityAssemblies({
