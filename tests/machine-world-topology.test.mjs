@@ -307,15 +307,16 @@ test('S8 Facility focus projects local manifold spurs without peer manifold arcs
     focusedManifold.filter((segment) => segment.segmentRole === 'manifold-arc').length,
     0,
   );
-  assert.equal(
-    focusedManifold.length,
-    topology.edges.filter((edge) =>
-      edge.kind === 'facility-facility'
-      && (edge.sourceBranchId === facilityScope.branchId || edge.targetBranchId === facilityScope.branchId)
-    ).length * 2,
+  const touchingFacilityEdges = topology.edges.filter((edge) =>
+    edge.kind === 'facility-facility'
+    && (edge.sourceBranchId === facilityScope.branchId || edge.targetBranchId === facilityScope.branchId)
   );
+  assert.equal(focusedManifold.length, touchingFacilityEdges.length);
   assert.ok(
-    focusedManifold.every((segment) => segment.segmentRole !== 'manifold-arc'),
+    focusedManifold.every((segment) =>
+      segment.segmentRole !== 'manifold-arc'
+      && segment.branchId === facilityScope.branchId
+    ),
   );
   const selectedAnchor = topology.serviceManifold.facilityAnchors.find(
     (anchor) => anchor.branchId === facilityScope.branchId,

@@ -209,6 +209,11 @@ export function deriveMachineWorldServiceManifold({
           edgeKind: 'facility-facility',
           segmentRole: route.role,
           segmentIndex,
+          branchId: route.role === 'facility-output-spur'
+            ? edge.sourceBranchId
+            : route.role === 'facility-input-spur'
+              ? edge.targetBranchId
+              : null,
           start: Object.freeze({ ...start }),
           end: Object.freeze({ ...end }),
           ...segmentGeometry(start, end, halfConduit),

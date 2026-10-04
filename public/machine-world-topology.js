@@ -753,7 +753,13 @@ export function getRenderableMachineWorldConduitSegments(topology, {
     if (scopedEdgeIds && !scopedEdgeIds.has(manifoldSegment?.semanticEdgeId)) continue;
     if (
       mode === 'FACILITY_FOCUS'
-      && manifoldSegment?.segmentRole === 'manifold-arc'
+      && (
+        manifoldSegment?.segmentRole === 'manifold-arc'
+        || (
+          branchId
+          && manifoldSegment?.branchId !== branchId
+        )
+      )
     ) continue;
     segments.push(Object.freeze({
       id: manifoldSegment.id,
@@ -761,6 +767,7 @@ export function getRenderableMachineWorldConduitSegments(topology, {
       edgeKind: 'facility-facility',
       segmentIndex: manifoldSegment.segmentIndex,
       segmentRole: manifoldSegment.segmentRole,
+      branchId: manifoldSegment.branchId || null,
       start: manifoldSegment.start,
       end: manifoldSegment.end,
       center: manifoldSegment.center,
