@@ -797,6 +797,48 @@ test('S24 Three bridge embodies measured expanded Pod shell panels from S3 prese
   }
 });
 
+test('S24 maps measured Pod mechanical rings to ring geometry instead of box fallback', () => {
+  assert.equal(
+    normalizeThreeShape({ profile: 'concentric-articulation' }),
+    'TORUS',
+  );
+  assert.equal(
+    normalizeThreeShape({ profile: 'status-band' }),
+    'TORUS',
+  );
+
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const podPart = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const pod = deriveMachinePodAssembly({
+    part: podPart,
+    expansionAmount: 1,
+    payloadDensity: 0.45,
+    adjacentCenterSpacing: 2.812,
+  });
+  const descriptors = collectThreeDescriptors({ pods: [pod] });
+  const articulation = descriptors.find((descriptor) => (
+    descriptor.id.endsWith(':ARTICULATION')
+  ));
+  const status = descriptors.find((descriptor) => (
+    descriptor.id.endsWith(':STATUS-INDICATOR')
+  ));
+  assert.ok(articulation);
+  assert.ok(status);
+  assert.equal(articulation.shape, 'TORUS');
+  assert.equal(status.shape, 'TORUS');
+
+  const articulationGeometry = buildThreeGeometry(THREE, articulation);
+  const statusGeometry = buildThreeGeometry(THREE, status);
+  assert.ok(articulationGeometry.getAttribute('position').count > 0);
+  assert.ok(statusGeometry.getAttribute('position').count > 0);
+  assert.notEqual(articulationGeometry.getAttribute('position').count, 36);
+  assert.notEqual(statusGeometry.getAttribute('position').count, 36);
+  articulationGeometry.dispose();
+  statusGeometry.dispose();
+});
+
 test('Y1 preserves the authored Pod shell profile as an explicit mesh contract', () => {
   assert.equal(AUTHORED_POD_SHELL_PROFILE, 'authored-seat-pod-shell');
   const outline = resolveThreePodShellOutline();
