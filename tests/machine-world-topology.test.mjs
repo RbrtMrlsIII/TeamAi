@@ -196,28 +196,63 @@ test('S8 external semantic routes project to authored conduit segments without c
   const { topology } = buildFixture(10);
   const conduits = getRenderableMachineWorldConduitSegments(topology);
   const externalEdges = topology.edges.filter((edge) => PHYSICAL_CONDUIT_EDGE_KINDS.includes(edge.kind));
+  const nonFacilityEdges = externalEdges.filter((edge) => edge.kind !== 'facility-facility');
+  const facilityEdges = externalEdges.filter((edge) => edge.kind === 'facility-facility');
 
-  assert.equal(conduits.length, externalEdges.length * 3);
+  assert.equal(
+    conduits.length,
+    nonFacilityEdges.length * 3 + topology.serviceManifold.segments.length,
+  );
   assert.equal(new Set(conduits.map((entry) => entry.semanticEdgeId)).size, externalEdges.length);
   assert.ok(conduits.every((entry) => entry.routeContinuous));
   assert.ok(conduits.every((entry) => entry.radius <= entry.corridorRadius));
   assert.ok(conduits.every((entry) => entry.dimensions.x > 0 && entry.dimensions.y > 0 && entry.dimensions.z > 0));
+  assert.equal(topology.serviceManifold.valid, true);
+  assert.equal(topology.serviceManifoldValidation.valid, true);
+  assert.ok(topology.serviceManifold.radius > topology.serviceManifold.innerBoundary);
+  assert.ok(topology.serviceManifold.radius < topology.serviceManifold.outerBoundary);
+  assert.equal(topology.serviceManifold.facilitySpurCount, facilityEdges.length * 2);
+  assert.ok(topology.serviceManifold.arcSegmentCount >= facilityEdges.length);
 
   const segmentsByEdge = new Map();
   for (const segment of conduits) {
     if (!segmentsByEdge.has(segment.semanticEdgeId)) segmentsByEdge.set(segment.semanticEdgeId, []);
     segmentsByEdge.get(segment.semanticEdgeId).push(segment);
   }
-  const coordinates = (point) => ({
-    x: point.x,
-    y: point.y,
-    z: point.z,
-  });
-  for (const edge of externalEdges) {
+  const assertPointClose = (actual, expected, tolerance = 1e-9) => {
+    assert.ok(Math.abs(actual.x - expected.x) <= tolerance, 'x delta');
+    assert.ok(Math.abs(actual.y - expected.y) <= tolerance, 'y delta');
+    assert.ok(Math.abs(actual.z - expected.z) <= tolerance, 'z delta');
+  };
+  for (const edge of nonFacilityEdges) {
     const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
     assert.equal(segments.length, 3);
-    assert.deepEqual(coordinates(segments[0].start), coordinates(edge.route[0]));
-    assert.deepEqual(coordinates(segments.at(-1).end), coordinates(edge.route.at(-1)));
+    assertPointClose(segments[0].start, edge.route[0]);
+    assertPointClose(segments.at(-1).end, edge.route.at(-1));
+  }
+  for (const edge of facilityEdges) {
+    const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
+    assert.ok(segments.length >= 4);
+    assertPointClose(segments[0].start, edge.route[0]);
+    assertPointClose(segments.at(-1).end, edge.route.at(-1));
+    for (let index = 1; index < segments.length; index += 1) {
+      assertPointClose(segments[index - 1].end, segments[index].start);
+    }
+  }
+});
+
+test('S8 service manifold remains inside the measured S4/S7 radial safety band across Seats', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    const { topology } = buildFixture(seatCount);
+    const manifold = topology.serviceManifold;
+    assert.equal(manifold.valid, true, `invalid manifold at seats=${seatCount}: ${manifold.reasons.join(', ')}`);
+    assert.equal(topology.serviceManifoldValidation.valid, true);
+    assert.ok(manifold.radius > manifold.innerBoundary);
+    assert.ok(manifold.radius < manifold.outerBoundary);
+    assert.ok(
+      manifold.segments.every((segment) => segment.routeContinuous && segment.obstacleAvoidance),
+      `manifold obstacle failure at seats=${seatCount}`,
+    );
   }
 });
 
