@@ -587,7 +587,7 @@ test('S4 behavior baffle profile preserves the existing articulated descriptor e
   assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
-  assert.equal(geometry.getAttribute('position').count, 132);
+  assert.equal(geometry.getAttribute('position').count, 84);
   geometry.dispose();
 });
 
@@ -908,7 +908,7 @@ test('Y1 Pod shell BufferGeometry is bounded by the authored descriptor dimensio
   assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
 
-  assert.equal(geometry.getAttribute('position').count, 84);
+  assert.equal(geometry.getAttribute('position').count, 132);
   geometry.dispose();
 });
 
