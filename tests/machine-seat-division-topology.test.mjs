@@ -144,6 +144,41 @@ test('fan placement keeps all seven division volumes separated across supported 
   }
 });
 
+test('fan deployment stays inside the compact radial envelope while preserving separation', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const parent = core.byBranch.get('BRANCH-SEAT-01');
+  const compact = children.map((childId, childIndex) =>
+    deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId,
+      childIndex,
+      amount: 0,
+    }),
+  );
+  const open = children.map((childId, childIndex) =>
+    deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId,
+      childIndex,
+      amount: 1,
+    }),
+  );
+  const scale = Math.max(parent.dimensions.x, parent.dimensions.z);
+  assert.ok(compact.every((entry) => entry.radialDistance >= scale * 1.50 - 1e-12));
+  assert.ok(open.every((entry) => entry.radialDistance <= scale * 1.65 + 1e-12));
+  assert.ok(open.every((entry, index) => entry.radialDistance > compact[index].radialDistance));
+  const boxes = open.map((division) => boundsForDivision(division));
+  for (let boxIndex = 0; boxIndex < boxes.length; boxIndex += 1) {
+    for (let otherIndex = boxIndex + 1; otherIndex < boxes.length; otherIndex += 1) {
+      assert.equal(
+        overlaps(boxes[boxIndex], boxes[otherIndex]),
+        false,
+        'full-deployment division volumes overlap',
+      );
+    }
+  }
+});
+
 test('fan target ports stay inside the canonical Seat shell bounds', () => {
   for (let childIndex = 0; childIndex < children.length; childIndex += 1) {
     const edge = buildSeatDivisionEdge({
