@@ -71,6 +71,7 @@ export function deriveMachineWorldServiceManifold({
   scene = null,
   machinery = [],
   clearance = 0.16,
+  serviceEndpointPoints = [],
   conduitRadius = 0.035,
 } = {}) {
   const edges = Array.isArray(topology?.edges)
@@ -127,6 +128,7 @@ export function deriveMachineWorldServiceManifold({
       finite(edge?.sourcePort?.point?.y),
       finite(edge?.targetPort?.point?.y),
     ]),
+    ...serviceEndpointPoints.map((point) => finite(point?.y)),
     maxPodTop,
     0,
   );
