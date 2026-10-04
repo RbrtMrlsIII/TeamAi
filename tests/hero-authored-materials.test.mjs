@@ -35,6 +35,8 @@ test('Issue #88 material roles are explicit and pure', () => {
   }
   assert.ok(ring.rough < shell.rough);
   assert.ok(inset.color[0] < shell.color[0]);
+  assert.ok(shell.color[2] > shell.color[0]);
+  assert.ok(shell.color.reduce((sum, value) => sum + value, 0) < 2.4);
 });
 
 
