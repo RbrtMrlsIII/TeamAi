@@ -16,7 +16,7 @@ export function authoredRingMaterial(L = {}) {
   const refl = clamp(0.88 + (L.reflectance ?? 0.72) * 0.1);
   const mode = L.themeMode === 'dark' ? 'dark' : 'light';
   const color =
-    mode === 'dark' ? [0.10, 0.23, 0.33] : [0.70, 0.80, 0.90];
+    mode === 'dark' ? [0.07, 0.19, 0.29] : [0.42, 0.62, 0.76];
   const spec =
     mode === 'dark'
       ? [0.55, 0.58, 0.56]
@@ -39,7 +39,7 @@ export function authoredSeatShellMaterial(L = {}) {
   const refl = clamp(0.7 + (L.reflectance ?? 0.72) * 0.18);
   const mode = L.themeMode === 'dark' ? 'dark' : 'light';
   const color =
-    mode === 'dark' ? [0.17, 0.38, 0.56] : [0.86, 0.93, 0.98];
+    mode === 'dark' ? [0.08, 0.25, 0.39] : [0.34, 0.56, 0.70];
   const spec =
     mode === 'dark'
       ? [0.4, 0.42, 0.4]
@@ -62,8 +62,8 @@ export function authoredSeatInsetMaterial(L = {}) {
   const mode = L.themeMode === 'dark' ? 'dark' : 'light';
   const color =
     mode === 'dark'
-      ? [0.02, 0.05, 0.08]
-      : [0.05, 0.09, 0.14];
+      ? [0.015, 0.035, 0.06]
+      : [0.035, 0.07, 0.11];
   return Object.freeze({
     role: 'seatShellInset',
     color: Object.freeze(color.map((c) => clamp(c))),
