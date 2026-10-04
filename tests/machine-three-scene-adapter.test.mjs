@@ -707,6 +707,65 @@ test('S24 semantic division families resolve to authored presentation colors', (
   }
 });
 
+test('S24 Three bridge embodies measured expanded Pod shell panels from S3 presentation data', () => {
+  const machine = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const podPart = machine.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const closed = deriveMachinePodAssembly({
+    part: podPart,
+    expansionAmount: 0,
+    payloadDensity: 0.45,
+    adjacentCenterSpacing: 2.812,
+  });
+  const open = deriveMachinePodAssembly({
+    part: podPart,
+    expansionAmount: 1,
+    payloadDensity: 0.45,
+    adjacentCenterSpacing: 2.812,
+  });
+  const closedShells = collectThreeDescriptors({ pods: [closed] })
+    .filter((descriptor) => descriptor.profile === AUTHORED_POD_SHELL_PROFILE);
+  const openShells = collectThreeDescriptors({ pods: [open] })
+    .filter((descriptor) => descriptor.profile === AUTHORED_POD_SHELL_PROFILE);
+
+  assert.equal(closedShells.length, 1);
+  assert.equal(openShells.length, 2);
+  const base = open.components.find((entry) => entry.role === 'outer-shell');
+  const mechanical = open.mechanicalPresentation;
+  const expectedX = Math.abs(base.dimensions.x) * 0.54;
+  const expectedZ = Math.abs(base.dimensions.z) * 0.88;
+  for (const [index, side] of [-1, 1].entries()) {
+    const panel = openShells[index];
+    assert.equal(panel.materialRole, 'seatShell');
+    assert.deepEqual(panel.dimensions, {
+      x: expectedX,
+      y: base.dimensions.y,
+      z: expectedZ,
+    });
+    assert.ok(Math.abs(
+      panel.center.x - (
+        base.center.x
+        + mechanical.tangent.x * mechanical.shellPanelSeparation * side
+        + mechanical.outward.x * mechanical.shellPanelTravel
+      ),
+    ) < 1e-12);
+    assert.ok(Math.abs(
+      panel.center.z - (
+        base.center.z
+        + mechanical.tangent.z * mechanical.shellPanelSeparation * side
+        + mechanical.outward.z * mechanical.shellPanelTravel
+      ),
+    ) < 1e-12);
+    assert.ok(Math.abs(
+      panel.rotationY - (
+        mechanical.outwardAngle
+        + mechanical.shellPanelRotation * side
+      ),
+    ) < 1e-12);
+  }
+});
+
 test('Y1 preserves the authored Pod shell profile as an explicit mesh contract', () => {
   assert.equal(AUTHORED_POD_SHELL_PROFILE, 'authored-seat-pod-shell');
   const outline = resolveThreePodShellOutline();
