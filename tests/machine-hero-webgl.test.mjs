@@ -83,6 +83,52 @@ test('canonical renderer reaches focused Seat divisions through the authored S4 
   assert.match(presentation, /validateMachineSeatDivisionAssembly/);
   assert.match(presentation, /assembly\.components/);
 });
+
+test('canonical renderer projects the authored Pod opening profile as real shell/mechanical transformation', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const podAssembly = await readFile(new URL('../public/machine-pod-assembly.js', import.meta.url), 'utf8');
+  assert.match(renderer, /POD_SHELL_PANEL/);
+  assert.match(renderer, /mechanicalPresentation/);
+  assert.match(renderer, /machineWorldPodMechanicalState/);
+  assert.match(renderer, /machineWorldPodMechanicalProfile/);
+  assert.match(renderer, /split-shell-reveal-v1/);
+  assert.match(podAssembly, /MACHINE_POD_ASSEMBLY_VERSION = 'S3-V2'/);
+  assert.match(podAssembly, /shellPanelSeparation/);
+  assert.match(podAssembly, /chamberTravel/);
+  assert.match(podAssembly, /payloadTravel/);
+});
+
+test('canonical renderer scopes Pod opening to the focused branch while keeping sibling Pods closed', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(renderer, /const focusedPodBaseAmount = hierarchyOpen && state\.focusedChildId/);
+  assert.match(renderer, /const focusedPodAssemblyResolved = previewShell\?\.kind === 'inner-pod'/);
+  assert.match(renderer, /part\.branchId === branchId && hierarchyOpen && state\.focusedChildId/);
+  assert.match(renderer, /expansionAmount: 0,/);
+  assert.match(renderer, /podSubjectOverride: focusedPodSubjectResolved/);
+});
+
+test('canonical renderer projects the authored S7 facility chassis/support detail layer', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const machinery = await readFile(new URL('../public/machine-facility-machinery.js', import.meta.url), 'utf8');
+  assert.match(renderer, /machine\.mechanicalDetails/);
+  assert.match(renderer, /machineWorldFacilityMechanicalDetails/);
+  assert.match(machinery, /role: 'base-collar'/);
+  assert.match(machinery, /role: 'support-strut'/);
+  assert.match(machinery, /role: 'hinge-mount'/);
+});
+
+test('canonical renderer projects the authored S2 core mechanical detail layer', async () => {
+  const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const coreAssembly = await readFile(new URL('../public/machine-core-assembly.js', import.meta.url), 'utf8');
+  assert.match(renderer, /mechanicalDetails/);
+  assert.match(renderer, /CORE_BRACE/);
+  assert.match(renderer, /machineWorldCoreMechanicalDetails/);
+  assert.match(renderer, /layered-rib-guard-v1/);
+  assert.match(coreAssembly, /MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V3'/);
+  assert.match(coreAssembly, /foundation-brace/);
+  assert.match(coreAssembly, /reactor-guard/);
+  assert.match(coreAssembly, /reactor-inner-housing/);
+});
 test('canonical renderer renders the S2 authored core assembly through one central-core owner', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   assert.match(renderer, /machine-core-assembly\.js/);

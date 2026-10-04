@@ -8,10 +8,13 @@ import {
   validateMachineWorldTopology,
   MACHINE_WORLD_TOPOLOGY_VERSION,
   getRenderableMachineWorldEdges,
+  getRenderableMachineWorldEdgesForScope,
+  getRenderableMachineWorldConduitSegments,
+  PHYSICAL_CONDUIT_EDGE_KINDS,
 } from '../frontend/spatial/machine-world-topology.js';
 
-function buildFixture(seatCount) {
-  const scene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
+function buildFixture(seatCount, expansionAmount = 0) {
+  const scene = createBranchConnectionCore({ seatCount, expansionAmount });
   const facilityAssemblies = deriveMachineFacilityAssemblies({
     outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
   });
@@ -85,6 +88,56 @@ test('S8 renderable world corridors are a projection of semantic edges, never a 
   )));
 });
 
+test('S8 scoped physical routes stay local to Seat and Facility focus modes', () => {
+  const { topology } = buildFixture(10);
+  const seatEdges = getRenderableMachineWorldEdgesForScope(topology, {
+    mode: 'POD_FOCUS',
+    branchId: 'BRANCH-SEAT-01',
+  });
+  const facilityEdges = getRenderableMachineWorldEdgesForScope(topology, {
+    mode: 'FACILITY_FOCUS',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  });
+
+  assert.ok(seatEdges.length > 0);
+  assert.ok(facilityEdges.length > 0);
+  assert.ok(seatEdges.every((edge) =>
+    (edge.kind === 'pod-division' && edge.targetBranchId === 'BRANCH-SEAT-01')
+    || (edge.kind === 'pod-facility' && edge.sourceBranchId === 'BRANCH-SEAT-01')
+    || (edge.kind === 'adjacent-seat' && (
+      edge.sourceBranchId === 'BRANCH-SEAT-01'
+      || edge.targetBranchId === 'BRANCH-SEAT-01'
+    )),
+  ));
+  assert.ok(facilityEdges.every((edge) =>
+    (edge.kind === 'pod-facility' && edge.targetBranchId === 'BRANCH-OUTER-ALPHA')
+    || (edge.kind === 'facility-facility' && (
+      edge.sourceBranchId === 'BRANCH-OUTER-ALPHA'
+      || edge.targetBranchId === 'BRANCH-OUTER-ALPHA'
+    ))
+    || (edge.kind === 'workspace-contribution' && edge.targetBranchId === 'BRANCH-OUTER-ALPHA'),
+  ));
+  assert.ok(getRenderableMachineWorldEdgesForScope(topology, {
+    mode: 'WORLD_OVERVIEW',
+    branchId: 'BRANCH-SEAT-01',
+  }).length > seatEdges.length);
+});
+
+test('S8 service planes are derived from interface elevation rather than a global world deck', () => {
+  const { topology } = buildFixture(10);
+  const external = topology.edges.filter((edge) => PHYSICAL_CONDUIT_EDGE_KINDS.includes(edge.kind));
+
+  assert.ok(external.length > 0);
+  external.forEach((edge) => {
+    const endpointY = Math.max(edge.route[0].y, edge.route.at(-1).y);
+    assert.ok(
+      edge.route[1].y >= endpointY + 0.34 - 1e-9,
+      edge.semanticEdgeId + ': serviceY=' + edge.route[1].y.toFixed(6) + ' endpointY=' + endpointY.toFixed(6),
+    );
+  });
+  assert.ok(external.some((edge) => edge.route[1].y < 1.90));
+});
+
 test('S8 topology recomputes division routes and corridor bounds from current expansion geometry', () => {
   const closedScene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const openScene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 1 });
@@ -139,4 +192,182 @@ test('S8 core routes preserve clearance across 1-10 Seats and shell expansion st
       );
     }
   }
+});
+
+
+test('S8 external semantic routes project to authored conduit segments without creating another graph', () => {
+  const { topology } = buildFixture(10);
+  const conduits = getRenderableMachineWorldConduitSegments(topology);
+  const externalEdges = topology.edges.filter((edge) => PHYSICAL_CONDUIT_EDGE_KINDS.includes(edge.kind));
+  const nonFacilityEdges = externalEdges.filter((edge) => edge.kind !== 'facility-facility');
+  const facilityEdges = externalEdges.filter((edge) => edge.kind === 'facility-facility');
+
+  const expectedNonFacilitySegments = nonFacilityEdges.reduce(
+    (total, edge) => total + Math.max(0, edge.route.length - 1),
+    0,
+  );
+  assert.equal(
+    conduits.length,
+    expectedNonFacilitySegments + topology.serviceManifold.segments.length,
+  );
+  assert.equal(new Set(conduits.map((entry) => entry.semanticEdgeId)).size, externalEdges.length);
+  assert.ok(conduits.every((entry) => entry.routeContinuous));
+  assert.ok(conduits.every((entry) => entry.radius <= entry.corridorRadius));
+  assert.ok(conduits.every((entry) => entry.dimensions.x > 0 && entry.dimensions.y > 0 && entry.dimensions.z > 0));
+  assert.equal(topology.serviceManifold.valid, true);
+  assert.equal(topology.serviceManifoldValidation.valid, true);
+  assert.ok(topology.serviceManifold.radius > topology.serviceManifold.innerBoundary);
+  assert.ok(topology.serviceManifold.radius < topology.serviceManifold.outerBoundary);
+  assert.equal(topology.serviceManifold.facilitySpurCount, facilityEdges.length * 2);
+  assert.ok(topology.serviceManifold.arcSegmentCount >= facilityEdges.length);
+
+  const segmentsByEdge = new Map();
+  for (const segment of conduits) {
+    if (!segmentsByEdge.has(segment.semanticEdgeId)) segmentsByEdge.set(segment.semanticEdgeId, []);
+    segmentsByEdge.get(segment.semanticEdgeId).push(segment);
+  }
+  const assertPointClose = (actual, expected, tolerance = 1e-9) => {
+    assert.ok(Math.abs(actual.x - expected.x) <= tolerance, 'x delta');
+    assert.ok(Math.abs(actual.y - expected.y) <= tolerance, 'y delta');
+    assert.ok(Math.abs(actual.z - expected.z) <= tolerance, 'z delta');
+  };
+  for (const edge of nonFacilityEdges) {
+    const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
+    assert.equal(segments.length, Math.max(0, edge.route.length - 1));
+    assertPointClose(segments[0].start, edge.route[0]);
+    assertPointClose(segments.at(-1).end, edge.route.at(-1));
+    for (let index = 1; index < segments.length; index += 1) {
+      assertPointClose(segments[index - 1].end, segments[index].start);
+    }
+  }
+  for (const edge of facilityEdges) {
+    const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
+    assert.ok(segments.length >= 4);
+    assertPointClose(segments[0].start, edge.route[0]);
+    assertPointClose(segments.at(-1).end, edge.route.at(-1));
+    for (let index = 1; index < segments.length; index += 1) {
+      assertPointClose(segments[index - 1].end, segments[index].start);
+    }
+  }
+});
+
+test('S8 pod-facility and workspace-contribution routes use facility service-manifold anchors', () => {
+  const { topology } = buildFixture(10);
+  const anchors = new Map(
+    (topology.serviceManifold.facilityAnchors || []).map((anchor) => [anchor.branchId, anchor]),
+  );
+  assert.equal(anchors.size, 4);
+  const assertPointClose = (actual, expected, tolerance = 1e-9) => {
+    assert.ok(Math.abs(actual.x - expected.x) <= tolerance, 'x delta');
+    assert.ok(Math.abs(actual.y - expected.y) <= tolerance, 'y delta');
+    assert.ok(Math.abs(actual.z - expected.z) <= tolerance, 'z delta');
+  };
+
+  for (const edge of topology.edges.filter((candidate) =>
+    candidate.kind === 'pod-facility' || candidate.kind === 'workspace-contribution'
+  )) {
+    const anchor = anchors.get(edge.targetBranchId);
+    assert.ok(anchor?.point, 'missing service anchor for ' + edge.semanticEdgeId);
+    assert.equal(edge.route.length, 5);
+    assertPointClose(edge.route[2], anchor.point);
+    assert.equal(edge.route[1].y, topology.serviceManifold.manifoldY);
+    assert.equal(edge.route[2].y, topology.serviceManifold.manifoldY);
+    assert.equal(edge.route[3].y, topology.serviceManifold.manifoldY);
+    assert.equal(edge.routeContinuous, true);
+    assert.equal(edge.obstacleAvoidance, true);
+  }
+});
+
+test('S8 Facility focus projects local manifold spurs without peer manifold arcs', () => {
+  const { topology } = buildFixture(10);
+  const facilityScope = {
+    mode: 'FACILITY_FOCUS',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  };
+  const focused = getRenderableMachineWorldConduitSegments(topology, facilityScope);
+  const world = getRenderableMachineWorldConduitSegments(topology, {
+    mode: 'WORLD_OVERVIEW',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  });
+
+  const focusedManifold = focused.filter((segment) =>
+    segment.edgeKind === 'facility-facility'
+  );
+  const worldManifold = world.filter((segment) =>
+    segment.edgeKind === 'facility-facility'
+  );
+
+  assert.equal(
+    focusedManifold.filter((segment) => segment.segmentRole === 'manifold-arc').length,
+    0,
+  );
+  assert.equal(
+    focusedManifold.length,
+    topology.edges.filter((edge) =>
+      edge.kind === 'facility-facility'
+      && (edge.sourceBranchId === facilityScope.branchId || edge.targetBranchId === facilityScope.branchId)
+    ).length * 2,
+  );
+  assert.ok(
+    focusedManifold.every((segment) =>
+      Array.isArray(segment.obstacleBranchIds)
+      && segment.obstacleBranchIds.includes(facilityScope.branchId)
+      && segment.segmentRole !== 'manifold-arc'
+    ),
+  );
+  assert.ok(
+    worldManifold.some((segment) => segment.segmentRole === 'manifold-arc'),
+  );
+  assert.ok(worldManifold.length > focusedManifold.length);
+});
+
+test('S8 service manifold stays outside the measured S7 machinery envelope across Seats and expansion', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 1]) {
+      const { topology } = buildFixture(seatCount, expansionAmount);
+      const manifold = topology.serviceManifold;
+      assert.equal(manifold.valid, true, `invalid manifold at seats=${seatCount}, expansion=${expansionAmount}: ${manifold.reasons.join(', ')}`);
+      assert.equal(topology.serviceManifoldValidation.valid, true);
+      assert.ok(
+        manifold.innerBoundary > manifold.machineEnvelopeBoundary,
+        `radial boundary mismatch seats=${seatCount}, expansion=${expansionAmount}, inner=${manifold.innerBoundary}, machine=${manifold.machineEnvelopeBoundary}, division=${manifold.divisionBoundary}`,
+      );
+      assert.ok(manifold.radius > manifold.innerBoundary);
+      assert.ok(manifold.radius < manifold.outerBoundary);
+      assert.ok(
+        manifold.segments.every((segment) => segment.routeContinuous && segment.obstacleAvoidance),
+        `manifold obstacle failure at seats=${seatCount}, expansion=${expansionAmount}`,
+      );
+    }
+  }
+});
+
+test('S8 conduit projection follows current dynamic route geometry', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const facilityAssemblies = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const facilityMachinery = deriveMachineFacilityMachinery({ facilityAssemblies });
+  const closed = buildMachineWorldTopology({
+    scene,
+    facilityAssemblies,
+    facilityMachinery,
+    seatDivisionAmount: 0,
+  });
+  const open = buildMachineWorldTopology({
+    scene,
+    facilityAssemblies,
+    facilityMachinery,
+    seatDivisionAmount: 1,
+  });
+  const closedConduit = getRenderableMachineWorldConduitSegments(closed).find((entry) =>
+    entry.edgeKind === 'pod-division'
+  );
+  const openConduit = getRenderableMachineWorldConduitSegments(open).find((entry) =>
+    entry.edgeKind === 'pod-division'
+  );
+  assert.ok(closedConduit && openConduit);
+  assert.notDeepEqual(closedConduit.start, openConduit.start);
+  assert.notDeepEqual(closedConduit.end, openConduit.end);
+  assert.notDeepEqual(closedConduit.dimensions, openConduit.dimensions);
 });

@@ -63,7 +63,7 @@ function freezeComponent({
 }
 
 export const MACHINE_CORE_ASSEMBLY_ID = 'MACHINE-CORE-ASSEMBLY';
-export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V2';
+export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V3';
 
 export const CORE_COMPONENT_ROLES = Object.freeze([
   'foundation-shell',
@@ -226,17 +226,83 @@ export function deriveMachineCoreAssembly({
       });
     }),
   );
+  const mechanicalDetails = Object.freeze([
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6) + Math.PI / 6;
+      const radius = foundationRadius * 0.70;
+      const point = polar(radius, angle, center.y + 0.36 + 0.02 * expansion);
+      return Object.freeze({
+        id: `CORE_FOUNDATION_BRACE_${index + 1}`,
+        role: 'foundation-brace',
+        profile: 'radial-foundation-brace',
+        center: point,
+        dimensions: Object.freeze({
+          x: foundationRadius * 0.50,
+          y: 0.11 + 0.02 * expansion,
+          z: 0.15,
+        }),
+        rotationY: angle,
+        materialRole: 'metal',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6);
+      const radius = collarRadius * 1.18;
+      const point = polar(radius, angle, center.y + 0.86 + 0.03 * expansion);
+      return Object.freeze({
+        id: `CORE_REACTOR_GUARD_${index + 1}`,
+        role: 'reactor-guard',
+        profile: 'reactor-guard-post',
+        center: point,
+        dimensions: Object.freeze({
+          x: 0.11,
+          y: 0.34 + 0.04 * expansion,
+          z: 0.11,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    Object.freeze({
+      id: 'CORE_REACTOR_INNER_HOUSING',
+      role: 'reactor-inner-housing',
+      profile: 'nested-reactor-housing',
+      center: Object.freeze({
+        x: center.x,
+        y: center.y + 0.94 + 0.04 * expansion,
+        z: center.z,
+      }),
+      dimensions: Object.freeze({
+        x: reactorRadius * 1.46,
+        y: 0.22 + 0.03 * expansion,
+        z: reactorRadius * 1.46,
+      }),
+      rotationY: Math.PI / 8,
+      materialRole: 'glass',
+      ...rootContext(),
+    }),
+  ]);
+
   const ports = deriveMachineCorePorts({
     hub,
     expansionAmount: expansion,
     requestedClearance: clearance,
   });
 
-  const subjectParts = components.map((component) => ({
-    id: component.id,
-    center: component.center,
-    dimensions: component.dimensions,
-  }));
+  const subjectParts = [
+    ...components.map((component) => ({
+      id: component.id,
+      center: component.center,
+      dimensions: component.dimensions,
+    })),
+    ...mechanicalDetails.map((detail) => ({
+      id: detail.id,
+      center: detail.center,
+      dimensions: detail.dimensions,
+    })),
+  ];
   const portSubjectParts = ports.map((port) => ({
     id: `${port.id}:SUBJECT`,
     center: port.point,
@@ -259,6 +325,7 @@ export function deriveMachineCoreAssembly({
     center,
     components,
     concentricMechanisms,
+    mechanicalDetails,
     ports,
     portByRole: Object.freeze(Object.fromEntries(ports.map((port) => [port.role, port]))),
     expansionAmount: expansion,

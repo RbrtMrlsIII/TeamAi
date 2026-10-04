@@ -11,6 +11,26 @@ import {
   deriveMachineSeatDivisionAssembly,
   validateMachineSeatDivisionAssembly,
 } from './machine-seat-division-assembly.js';
+import {
+  getMachineSeatWorkspaceScopeFrameRecipe,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE,
+  resolveMachineSeatWorkspaceScopeFrameRailThickness,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+  getMachineSeatCapabilitiesLatticeRecipe,
+  MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE,
+  resolveMachineSeatCapabilitiesLatticeRailThickness,
+  MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE,
+  getMachineSeatConnectionCouplerRecipe,
+  MACHINE_SEAT_CONNECTION_COUPLER_PROFILE,
+  resolveMachineSeatConnectionCouplerRailThickness,
+  MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE,
+  getMachineSeatToolkitRackRecipe,
+  MACHINE_SEAT_TOOLKIT_RACK_PROFILE,
+  resolveMachineSeatToolkitRackRailThickness,
+  MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE,
+  resolveMachineSeatDivisionProfileRecipe,
+  resolveMachineSeatDivisionProfileShape,
+} from './machine-seat-division-profile.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const clamp01 = (value) => Math.max(0, Math.min(1, finite(value, 0)));
@@ -179,8 +199,13 @@ export function drawFocusedSeatDivision({
   }[role] || M.metal2);
 
   for (const component of assembly.components) {
-    const primitive = primitives[component.shape];
-    if (!primitive) continue;
+    const presentationShape = resolveMachineSeatDivisionProfileShape({
+      profile: component.profile,
+      fallbackShape: component.shape,
+    });
+    const profileRecipe = resolveMachineSeatDivisionProfileRecipe({ profile: component.profile });
+    const primitive = presentationShape || primitives[component.shape];
+    if (!primitive && !profileRecipe) continue;
     const attachmentTransform = resolveSeatDivisionAttachmentTransform(assembly, component, progress);
     const localCenter = {
       x: assembly.center.x + component.offset.x + attachmentTransform.x,
@@ -193,26 +218,154 @@ export function drawFocusedSeatDivision({
         : 0
     );
     const height = Math.max(0.025, Number(component.scale.y) || 0.025);
-    draw(
-      primitive,
-      mul(
-        T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+    const drawOptions = {
+      rough: component.materialRole === 'glass' ? 0.24 : 0.34,
+      emit: component.materialRole === 'energy' ? 0.16 * (0.45 + 0.55 * progress) : 0.05 * (0.4 + 0.6 * progress),
+      alpha: component.materialRole === 'glass' ? 0.72 : 0.88,
+    };
+
+    if (profileRecipe && component.profile === MACHINE_SEAT_CONNECTION_COUPLER_PROFILE) {
+      for (const element of getMachineSeatConnectionCouplerRecipe()) {
+        const elementCenter = {
+          x: element.center.x * component.dimensions.x,
+          y: 0,
+          z: element.center.z * component.dimensions.z,
+        };
+        const railThickness = resolveMachineSeatConnectionCouplerRailThickness({
+          dimensions: component.dimensions,
+          element,
+        });
+        draw(
+          MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation + element.rotationY),
+              mul(
+                T(elementCenter.x, elementCenter.y, elementCenter.z),
+                S(
+                  component.scale.x * element.dimensions.x,
+                  railThickness,
+                  component.scale.z * element.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else if (profileRecipe && component.profile === MACHINE_SEAT_CAPABILITIES_LATTICE_PROFILE) {
+      for (const element of getMachineSeatCapabilitiesLatticeRecipe()) {
+        const elementCenter = {
+          x: element.center.x * component.dimensions.x,
+          y: 0,
+          z: element.center.z * component.dimensions.z,
+        };
+        const railThickness = resolveMachineSeatCapabilitiesLatticeRailThickness({
+          dimensions: component.dimensions,
+          element,
+        });
+        draw(
+          MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation + element.rotationY),
+              mul(
+                T(elementCenter.x, elementCenter.y, elementCenter.z),
+                S(
+                  component.scale.x * element.dimensions.x,
+                  railThickness,
+                  component.scale.z * element.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else if (profileRecipe && component.profile === MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_PROFILE) {
+      for (const rail of getMachineSeatWorkspaceScopeFrameRecipe()) {
+        const railCenter = {
+          x: rail.center.x * component.dimensions.x,
+          y: 0,
+          z: rail.center.z * component.dimensions.z,
+        };
+        const railThickness = resolveMachineSeatWorkspaceScopeFrameRailThickness({
+          dimensions: component.dimensions,
+          rail,
+        });
+        draw(
+          MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation),
+              mul(
+                T(railCenter.x, railCenter.y, railCenter.z),
+                S(
+                  component.scale.x * rail.dimensions.x,
+                  railThickness,
+                  component.scale.z * rail.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else if (profileRecipe && component.profile === MACHINE_SEAT_TOOLKIT_RACK_PROFILE) {
+      for (const rail of getMachineSeatToolkitRackRecipe()) {
+        const railCenter = {
+          x: rail.center.x * component.dimensions.x,
+          y: 0,
+          z: rail.center.z * component.dimensions.z,
+        };
+        const railThickness = resolveMachineSeatToolkitRackRailThickness({
+          dimensions: component.dimensions,
+          rail,
+        });
+        draw(
+          MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE,
+          mul(
+            T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+            mul(
+              RY(rotation),
+              mul(
+                T(railCenter.x, railCenter.y, railCenter.z),
+                S(
+                  component.scale.x * rail.dimensions.x,
+                  railThickness,
+                  component.scale.z * rail.dimensions.z,
+                ),
+              ),
+            ),
+          ),
+          materialFor(component.materialRole),
+          drawOptions,
+        );
+      }
+    } else {
+      draw(
+        primitive,
         mul(
-          RY(rotation),
-          S(
-            component.scale.x,
-            component.scale.y,
-            component.scale.z,
+          T(localCenter.x, localCenter.y - height * 0.5, localCenter.z),
+          mul(
+            RY(rotation),
+            S(
+              component.scale.x,
+              component.scale.y,
+              component.scale.z,
+            ),
           ),
         ),
-      ),
-      materialFor(component.materialRole),
-      {
-        rough: component.materialRole === 'glass' ? 0.24 : 0.34,
-        emit: component.materialRole === 'energy' ? 0.16 * (0.45 + 0.55 * progress) : 0.05 * (0.4 + 0.6 * progress),
-        alpha: component.materialRole === 'glass' ? 0.72 : 0.88,
-      },
-    );
+        materialFor(component.materialRole),
+        drawOptions,
+      );
+    }
   }
 
   return Object.freeze({

@@ -26,6 +26,48 @@
 - [ ] Gate 3 canonical Seat shape remains unverified: fresh run 36141179411 returned 404 for documented gate3-test-team / gate3-test-seat and listed zero team documents.
 
 
+## 2026-09-28 029 spatial continuation boundary
+
+PR #404 is merged into canonical `main` at `13356cae7e6ef8179f7e2e552211bb4d187f37fb`. PR #424 (`frontend/029-spatial-world-continuation`) is the active bounded 029 spatial implementation vehicle. This does not replace the single global current slice in `Masterplan/NEXT_SLICES.md`; Issue #401 remains the production/runtime frontier and authority.
+
+The #424 continuation remains presentation/read-model projection only. Geometry, semantic state, topology, camera, Firebase/Firestore identity and durable state, authorization/entitlement, scheduler, provider execution, payment, and production delivery remain in their owning systems.
+
+## 2026-09-29 current 029 spatial continuation reconciliation
+
+PR #424 is the sole active 029 spatial continuation vehicle after merged PR #404. The global current slice remains Issue #401 as declared in Masterplan/NEXT_SLICES.md; this section records the bounded spatial sub-frontier without creating another current-slice authority.
+
+### Exact current spatial state
+
+- main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
+- #424 head: 208c5570a8325bda10e2b427b97a30c3f439f111
+- relation: 92 ahead / 0 behind
+- state: OPEN / DRAFT / mergeable
+- S4 closed-state division geometry regression: repaired; Full-System PASS
+- current Browser: FAIL at run 36539522142, isolated legacy preview timing assertion only
+
+### Spatial execution order now governed
+
+Y0 feature/leaf coverage
+→ Y1 Three.js + WebGL2 renderer-substrate readiness
+→ S2–S10 structural visual embodiment
+→ S24 materials/lighting
+→ S25 holograms/payload presentation
+→ S26 ambient
+→ VC1/AB1 visual coherence baseline
+→ S27 performance
+→ S28 cross-feature choreography
+→ S29 final interaction choreography
+→ S30 exact-head verification
+→ S31 runtime/deployment reconciliation
+→ S32 human acceptance
+→ S33 ProMax polish
+
+Y0 is the pre-spatial leaf-coverage gate that prevents late discovery of missing terminal controls/payloads. Y1 is a renderer-substrate migration gate, not a product or semantic hierarchy. The first adapter proof now exists against three@0.186.1 in an isolated /spatial preview, and exact head 5a4a353 is Browser-verified. The raw WebGL implementation remains transition architecture until production fixed-state semantic/geometry parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence exist.
+
+### Cross-session persistence requirement
+
+Important spatial discussions are durable only when promoted into the owning source: the 029 evidence registry for verified findings and decisions, the detailed checklist for gate/order state, #409 for current newcomer handoff, AI_ASSISTANT_READ_ME.md for session recovery, and Product Law/WIRING for authority/routing. Historical material remains historical. This is the required mechanism for preserving implementation reasoning across sessions and across multiple engineers.
+
 ## Repository foundation
 
 - [x] Product Law moved to `Product_Law/PRODUCT_LAW.md` and remains the single product authority.
@@ -213,7 +255,7 @@ The repository governance audit accepts the canonical `Draft proof target` secti
 
 ## 2026-09-24 029 exact-head spatial acceptance hardening
 
-PR #404 remains the Draft reconstruction vehicle for the remaining 029 spatial acceptance work. Its latest validated spatial implementation head is `8944ececfd6dfee15a39833107dd3bac932411bd`; subsequent branch movement is documentation-only reconciliation. The canonical evidence registry is `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md`. The implementation history now includes explicit authored S4 articulated subjects, intermediate travel sampling, structural safety envelopes, dense Seat/Pod/facility clearance proof, and S8/S9/S10 exact-head verification. Current 10-seat effective runtime envelopes are Seat-shell 5.05 closed / 5.55 fully expanded and outer housing 9.85 closed / 10.55 fully expanded. The current S5 proof covers Seat counts 1–10, shell states 0/0.5/1, all seven divisions, outer housings, and sibling Pods under the same conservative AABB clearance model used by the planner.
+PR #404 is merged historical reconstruction provenance; PR #424 is the active reconstruction/continuation vehicle for the remaining 029 spatial acceptance work. Its latest validated spatial implementation head is `8944ececfd6dfee15a39833107dd3bac932411bd`; subsequent branch movement is documentation-only reconciliation. The canonical evidence registry is `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md`. The implementation history now includes explicit authored S4 articulated subjects, intermediate travel sampling, structural safety envelopes, dense Seat/Pod/facility clearance proof, and S8/S9/S10 exact-head verification. Current 10-seat effective runtime envelopes are Seat-shell 5.05 closed / 5.55 fully expanded and outer housing 9.85 closed / 10.55 fully expanded. The current S5 proof covers Seat counts 1–10, shell states 0/0.5/1, all seven divisions, outer housings, and sibling Pods under the same conservative AABB clearance model used by the planner.
 
 This checkpoint records the current implementation/evidence state. Exact-head CI on `8944ece` passed the geometry/test/browser contracts; subsequent branch movement is documentation-only reconciliation. Remaining gates concern formal slice closure, production/runtime observation, human acceptance, and final 029 integration. See `TEAMAI_3D_WORLD_404_EVIDENCE.md` for the evidence trail.
 

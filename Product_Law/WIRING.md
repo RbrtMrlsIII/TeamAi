@@ -8,7 +8,11 @@
 
 ## Current execution routing
 
-Reviewed PR #398 is the landed 029 structural baseline. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority. Production-data/runtime routing now continues through Issue #401 / successor PR #402, without changing the Product Law authority chain.
+PR #398 is the historical 029 structural baseline. PR #404 is the merged historical spatial implementation vehicle; PR #424 on `frontend/029-spatial-world-continuation` is the active 029 spatial continuation vehicle. Frontend & Experience routing for the machine world resolves to the Hero controller plus the canonical machine-world renderer source/runtime pair; legacy mutation scripts are historical or compatibility-only and must not become active renderer authority. Production-data/runtime routing remains with Issue #401 / merged PR #402, without changing the Product Law authority chain.
+
+## 2026-09-28 029 spatial continuation routing
+
+PR #424 is the active bounded spatial implementation vehicle after merged PR #404. It may advance S24 and later world-expression slices without changing the one-current-slice rule in `Masterplan/NEXT_SLICES.md` or absorbing Issue #401 backend/runtime authority.
 
 ## Development fields
 
@@ -34,6 +38,29 @@ Reviewed PR #398 is the landed 029 structural baseline. Frontend & Experience ro
 ## Authority boundaries
 
 Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checklist execution. `Masterplan/NEXT_SLICES.md` owns one current slice. Skills own reusable procedures. Issues own bounded workstream context. PRs own implementation/review boundaries. Verification proves claims. `AI_ASSISTANT_READ_ME.md` owns current session state, handover, endorsement decisions, and validation-change records. `PRODUCT-KNOWLEDGE.md` owns durable validated concepts. `docs/archive/` and `handover/` are historical storage only.
+
+## Durable decision capture and cross-session persistence
+
+Chat is transient working context. It is never a sufficient authority surface for a material TeamAi decision.
+
+When a discussion produces a material finding or recommendation, preserve it in the authoritative surface that owns the information:
+
+| Information produced | Durable destination |
+|---|---|
+| Product invariant or authority boundary | Product_Law/PRODUCT_LAW.md or its governed companion |
+| Routing / authority interpretation | Product_Law/WIRING.md |
+| Ordered execution gate / acceptance prerequisite | Masterplan/MASTERPLAN.md or the detailed active checklist |
+| One global current execution frontier | Masterplan/NEXT_SLICES.md |
+| Verified geometry/result/evidence/finding | Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md or the relevant evidence ledger |
+| Bounded implementation scope and rationale | Owning Issue / PR body |
+| Current newcomer/session state | Issue #409 and AI_ASSISTANT_READ_ME.md |
+| Structural tree/branch change | Tree Census representations in the same governed change |
+
+Material alternatives that are rejected or deferred should retain a compact reason in the owning durable surface when their absence could later cause re-litigation or a bad implementation. Do not create a second ledger merely to store these decisions.
+
+A checkbox is only a status marker. Claims remain subject to exact-head evidence and the repository's evidence-state progression. Historical records must be date-stamped and explicitly labeled historical so they cannot be mistaken for current truth.
+
+Every materially changed spatial tree/branch/division must reconcile its census, execution checklist, and evidence/handoff surfaces in the same governed change when the change affects those contracts. No important implementation discussion should exist only in chat.
 
 ## Live delivery reference
 
@@ -87,7 +114,7 @@ The live Firestore production index was confirmed present by sanitized readback 
 
 ### 2026-09-24 029 spatial acceptance routing
 
-PR #404 is routed as a bounded 029 Frontend & Experience implementation/evidence companion while `Masterplan/NEXT_SLICES.md` continues to own the single current slice. Its spatial construction path remains Product Law → Wiring → current slice/Issue → machine-builder and applicable spatial Skills → canonical source/runtime → Verification & CI/Browser. The current branch head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` preserves S4 authored division grammar, places the structural Seat/outer safety envelope in the shared world-profile authority, and lets S5 enforce clearance against the authored machine obstacles. These facts do not promote 029 to complete, create a second current slice, or authorize merge.
+PR #404 is merged historical spatial provenance. PR #424 is the active bounded 029 Frontend & Experience implementation/evidence vehicle while `Masterplan/NEXT_SLICES.md` continues to own the single current slice. Its spatial construction path remains Product Law → Wiring → current slice/Issue → machine-builder and applicable spatial Skills → canonical source/runtime → Verification & CI/Browser. The current branch head `ba0d7dc7d057b9e778fd58cfd67d4d1b880402b4` preserves S4 authored division grammar, places the structural Seat/outer safety envelope in the shared world-profile authority, and lets S5 enforce clearance against the authored machine obstacles. These facts do not promote 029 to complete, create a second current slice, or authorize merge.
 
 ### 030 successor routing
 

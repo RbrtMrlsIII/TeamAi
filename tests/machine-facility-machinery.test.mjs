@@ -9,6 +9,7 @@ import {
   MACHINE_FACILITY_MACHINERY_VERSION,
   MACHINE_FACILITY_MECHANISM_PHASE,
   deriveMachineFacilityMechanismPresentation,
+  deriveMachineFacilityPhysicalInterfaces,
 } from '../frontend/spatial/machine-facility-machinery.js';
 import { requiredStructuralRootsForSlice } from '../frontend/spatial/machine-spatial-root-contract.js';
 
@@ -51,6 +52,44 @@ test('S7 every machine inherits S0-S6 and has facility-specific camera subject, 
     assert.ok(machine.mechanismGraph.length >= 4);
     assert.ok(machine.envelope.radius > 0);
     assert.ok(machine.profileLabel.length > 0);
+  }
+});
+
+test('S7 facility chassis details are authored and included in each machine subject', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+
+  for (const machine of machinery) {
+    assert.equal(machine.mechanicalDetails.length, 5);
+    assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
+    assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
+    assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);
+    assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'facility-port-adapter').length, machine.facilityIds.length);
+    const coreInterface = machine.physicalInterfaces.find((entry) => entry.role === 'machine-core-input');
+    const outputInterface = machine.physicalInterfaces.find((entry) => entry.role === 'machine-output');
+    assert.ok(coreInterface && outputInterface);
+    const corePort = machine.ports.find((port) => port.role === 'machine-core-input');
+    const outputPort = machine.ports.find((port) => port.role === 'machine-output');
+    assert.ok(Math.hypot(coreInterface.center.x - corePort.point.x, coreInterface.center.z - corePort.point.z) <= 0.01);
+    assert.ok(Math.hypot(outputInterface.center.x - outputPort.point.x, outputInterface.center.z - outputPort.point.z) <= 0.06);
+    assert.equal(
+      machine.mechanicalDetails.filter((item) => item.role === 'base-collar').length,
+      1,
+    );
+    assert.equal(
+      machine.mechanicalDetails.filter((item) => item.role === 'support-strut').length,
+      2,
+    );
+    assert.equal(
+      machine.mechanicalDetails.filter((item) => item.role === 'hinge-mount').length,
+      2,
+    );
+    const subjectIds = new Set(machine.subject.sourcePartIds);
+    assert.ok(machine.mechanicalDetails.every((item) => subjectIds.has(item.id)));
+    assert.ok(machine.mechanicalDetails.every((item) => item.constructionSlice === 'S7'));
+    assert.ok(machine.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-facility-machinery.js'));
   }
 });
 
@@ -188,5 +227,92 @@ test('S7 facility subject covers maximum authored mechanism travel', () => {
       assert.ok(x >= machine.subject.min.x - 0.01 && x <= machine.subject.max.x + 0.01);
       assert.ok(z >= machine.subject.min.z - 0.01 && z <= machine.subject.max.z + 0.01);
     }
+  }
+});
+
+
+test('S7 physical interfaces clear the housing and bridge every S6 facility port', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const facilities = deriveMachineFacilityAssemblies({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const machinery = deriveMachineFacilityMachinery({ facilityAssemblies: facilities });
+
+  for (const machine of machinery) {
+    const input = machine.ports.find((port) => port.role === 'machine-core-input');
+    const output = machine.ports.find((port) => port.role === 'machine-output');
+    assert.ok(input && output);
+
+    const center = machine.outerHousing.center;
+    const dims = machine.outerHousing.dimensions;
+    const angle = Math.atan2(center.z, center.x);
+    const boundaryDistance = 1 / (
+      Math.abs(Math.cos(angle)) / (Math.abs(dims.x) * 0.5)
+      + Math.abs(Math.sin(angle)) / (Math.abs(dims.z) * 0.5)
+    );
+    const radial = Math.hypot(center.x, center.z);
+    const inputRadial = Math.hypot(input.point.x, input.point.z);
+    const outputRadial = Math.hypot(output.point.x, output.point.z);
+
+    const maxPresentedMachineryBoundary = Math.max(
+      ...deriveMachineFacilityMechanismPresentation(machine, { amount: 1, reducedMotion: true }).components.map((motion) => {
+        const component = machine.components.find((entry) => entry.id === motion.id);
+        return Math.hypot(
+          component.center.x + motion.dx - center.x,
+          component.center.z + motion.dz - center.z,
+        ) + Math.hypot(component.dimensions.x, component.dimensions.z) * 0.5;
+      }),
+      boundaryDistance,
+    );
+    assert.ok(inputRadial >= radial + maxPresentedMachineryBoundary + 0.03);
+    assert.ok(outputRadial >= radial + maxPresentedMachineryBoundary + 0.10);
+    assert.ok((input.serviceBoundaryDistance || 0) >= maxPresentedMachineryBoundary);
+    assert.ok(Math.abs(output.point.y - input.point.y) >= 0.20);
+
+    const adapters = machine.physicalInterfaces.filter((entry) => entry.role === 'facility-port-adapter');
+    assert.equal(adapters.length, machine.facilityIds.length);
+    assert.ok(adapters.every((entry) => Number(entry.dimensions.x) >= 0.06));
+    assert.ok(adapters.every((entry) => entry.adapterStart && entry.adapterEnd));
+    const invalidAdapters = adapters.map((entry) => {
+      const start = entry.adapterStart;
+      const end = entry.adapterEnd;
+      const startAngle = Math.atan2(start.z - center.z, start.x - center.x);
+      const endAngle = Math.atan2(end.z - center.z, end.x - center.x);
+      const angleDelta = Math.abs(((endAngle - startAngle + Math.PI) % (Math.PI * 2)) - Math.PI);
+      const serviceBoundaryDistance = 1 / (
+        Math.abs(Math.cos(startAngle)) / (Math.abs(dims.x) * 0.5)
+        + Math.abs(Math.sin(startAngle)) / (Math.abs(dims.z) * 0.5)
+      );
+      const endLocalRadial = Math.hypot(end.x - center.x, end.z - center.z);
+      const valid = Math.abs(end.y - start.y) <= 1e-9
+        && angleDelta <= 1e-9
+        && Math.abs(endLocalRadial - (serviceBoundaryDistance + 0.04)) <= 1e-9;
+      return valid ? null : {
+        id: entry.id,
+        serviceBoundaryDistance,
+        endLocalRadial,
+        radialError: endLocalRadial - (serviceBoundaryDistance + 0.04),
+        angleDelta,
+        verticalDelta: end.y - start.y,
+        travel,
+      };
+    }).filter(Boolean);
+    assert.deepEqual(invalidAdapters, []);
+  }
+});
+
+test('S7 physical interface projection is reproducible from the S6-owned assembly', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const facilities = deriveMachineFacilityAssemblies({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const machinery = deriveMachineFacilityMachinery({ facilityAssemblies: facilities });
+  for (const machine of machinery) {
+    const assembly = facilities.find((entry) => entry.id === machine.facilityAssemblyId);
+    assert.ok(assembly);
+    assert.deepEqual(
+      deriveMachineFacilityPhysicalInterfaces(assembly, machine.ports),
+      machine.physicalInterfaces,
+    );
   }
 });

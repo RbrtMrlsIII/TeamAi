@@ -1,6 +1,7 @@
 # PR #404 — Evidence Registry
 
-**Owner vehicle:** PR #404  
+**Historical implementation vehicle:** PR #404 (merged 2026-09-28)  
+**Active continuation vehicle:** PR #424 `frontend/029-spatial-world-continuation`  
 **Governing issue:** #405  
 **Purpose:** one canonical evidence index for the 029 spatial reconstruction program.
 
@@ -10,7 +11,7 @@ This file is the **evidence ledger**, not a second roadmap. The detailed constru
 
 Use three layers, in this order:
 
-1. **PR #404** = newcomer-readable navigation and current-state summary.
+1. **Successor PR** = newcomer-readable navigation and current-state summary for the post-#404 continuation; PR #404 remains historical provenance.
 2. **Masterplan/** = durable execution status plus evidence references.
 3. **Source / tests / CI artifacts** = primary proof.
 
@@ -22,9 +23,22 @@ IMPLEMENTED → REPOSITORY-VERIFIED → LIVE-DEPLOYED → RUNTIME-PROVEN → HUM
 
 A higher state does not follow automatically from a lower one.
 
-## Latest validated spatial implementation anchor
+## Historical latest validated spatial implementation anchor
 
-- **latest validated spatial implementation head:** f4132eb5e3f6c5d730d698a6cbf6d72586e514cc
+> This anchor belongs to the merged PR #404 lineage. It is preserved as immutable provenance and must not be treated as current #424 proof.
+
+- **latest validated spatial implementation head from the pre-continuation evidence ledger:** f4132eb5e3f6c5d730d698a6cbf6d72586e514cc
+- **main at that historical validation point:** 76da305f0ec3efb3d368b22fb70748f0051f4d15
+- **historical interpretation:** the evidence below is retained from the #404 vehicle and is not current continuation acceptance.
+
+## Current continuation evidence state
+
+- **Active vehicle:** PR #424 `frontend/029-spatial-world-continuation`
+- PR #404 is merged into `main` as `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
+- The first post-#404 source behavior slice on #424 routes renderer material aliases through `authoredHeroMaterialSet`; source/public material and renderer mirrors are byte-identical.
+- Historical #404 evidence remains immutable provenance and must not be relabeled as #424 proof.
+- Fresh exact-head Governance, Full-System, Security, Deep Security, and Canonical Browser evidence is required for the S24 continuation.
+
 - **main at that validation point:** 76da305f0ec3efb3d368b22fb70748f0051f4d15
 - **at that validation point:** #404 was **290 commits ahead / 0 behind**
 - **PR state:** OPEN / DRAFT / GitHub reports mergeable
@@ -34,6 +48,37 @@ A higher state does not follow automatically from a lower one.
 - **review-readiness:** SKIPPED because the PR remains Draft. This is lifecycle state, not approval.
 - **evidence note:** later documentation-only commits may advance the branch head without changing this implementation anchor.
 
+## Current decision and findings register — 2026-09-29
+
+This section prevents material engineering decisions from existing only in chat. It is a compact evidence/decision register, not a second roadmap.
+
+| ID | Decision / finding | Current status | Durable implication |
+|---|---|---|---|
+| D-029-01 | #424 is the sole active 029 spatial continuation after merged #404; global current slice remains #401 | ACCEPTED / CURRENT | spatial work stays bounded in #424 and does not absorb backend/runtime authority |
+| D-029-02 | S4 compact-radius regression required owner-side factor max(1.66, 0.9 + 1.3 × expansion) | REPAIRED / VERIFIED | do not restore the old formula or weaken geometry tests |
+| D-029-03 | Y0 feature/leaf descent precedes further spatial expression | GOVERNED | terminal controls/payloads must be inventoried before physical completion is treated as final |
+| D-029-04 | Y1 target renderer substrate is Three.js + WebGL2 with one scene/canvas/renderer/animation/camera authority | GOVERNED / NOT IMPLEMENTED | migrate by adapter stages; raw WebGL remains transition architecture until parity/proof |
+| D-029-05 | Post-S26 visual checkpoint is VC1/AB1, non-blocking, while S33 remains final polish | GOVERNED | qualitative coherence is observed before late polish and is not a new roadmap slice |
+| D-029-06 | Current Browser failure is a legacy machine-core-preview temporal contract, not S4 geometry proof | DIAGNOSED / OPEN | fix deterministic state/clock boundary; no arbitrary sleeps and no assertion weakening |
+| D-029-07 | Material project decisions must be promoted from chat into #409, this evidence ledger, the checklist, WIRING, or the owning Issue/PR according to ownership | GOVERNED | no chat-only decision is treated as project truth |
+| D-029-08 | S6 physically allocates 11 non-Seat product facilities, but four S6 source references do not resolve to matching frontend/spatial modules (projects-library, skills-responsibility, orchestration-scheduler, auth-gateway) | Y0 GAP / EXPLICIT | physical dock presence is not leaf coverage; resolve real owning UI/read-model contracts before inventing spatial subassemblies |
+| D-029-09 | Three S6 facility IDs used labels (orchestration-scheduler, settings-control, authentication-gateway) instead of canonical Feature Registry IDs | REPAIRED / VERIFIED | S6 facility identity now uses canonical ids (orchestration, settings, auth-gateway); sourceModule remains descriptive/non-authoritative |
+| D-029-10 | Y1 target renderer package candidate was resolved to three@0.186.1 from the npm registry; the package exports a WebGL renderer and the upstream WebGL capability surface targets WebGL2 | ACCEPTED / IMPLEMENTED SUBSTRATE | pin the exact package version, generate browser runtime modules during build, and keep the adapter outside semantic/geometry authority |
+| D-029-11 | Y1 adapter converts actual S2 Core + S3 Seat 1 descriptors into one Three.js scene in an isolated proof surface before production Hero migration | IMPLEMENTED / BROWSER-VERIFIED | production Hero renderer remains unchanged until fixed-state parity/performance/rollback evidence exists |
+| D-029-12 | Exact application head 5a4a353 passed Project Tests + canonical package and the complete security/governance suite; Browser run 36547501284 also passed after the Y1 null-safety and S23 synchronous-tier fixes | VERIFIED / CURRENT | Y1 substrate proof is no longer blocked by the earlier Browser defects; structural candidate can advance without promoting production raw-WebGL replacement |
+
+### Application-head verification recorded before documentation sync
+
+Application head 208c5570a8325bda10e2b427b97a30c3f439f111 recorded:
+- Governance rerun 36542676832: PASS
+- Full-System / canonical package 36542509326: PASS
+- Security-family checks: PASS
+- Evidence consistency: PASS
+- Playwright Browser workflow 36542509289: in progress at last observation
+
+The earlier Browser failure on 2258a910 was isolated to tests/e2e/machine-core.spec.ts:21. Branch selection started the standalone preview's expansion path before the explicit Expand action. The owning preview/controller repair is contained in commit b485342f3cf71718c2c154d1224fdbd28ad834f8, with the Y0 registry classifier following in 208c5570a8325bda10e2b427b97a30c3f439f111.
+
+This final documentation synchronization is documentation-only relative to application head 208c5570. Exact-head CI must still be refreshed for the resulting documentation head before the repository is described as fully green.
 ## Evidence index
 
 ### E404-BASE — branch and authority reconciliation
@@ -1157,3 +1202,62 @@ The Browser run independently confirms these conditions at runtime, including th
 - No production deployment, live provider execution, production Firestore state, human acceptance, or 029 release authorization is inferred.
 
 **Status:** IMPLEMENTED → **REPOSITORY-VERIFIED** for the repository-level S23 density/readability contract. **Physical-device acceptance remains open.**
+### D-029-13 - Y0 feature/leaf coverage classification
+
+Audit artifact: docs/TEAMAI_029_Y0_FEATURE_LEAF_COVERAGE_AUDIT.md.
+
+Result: COVERAGE-CLASSIFIED / IMPLEMENTATION-PARTIAL. The current Feature Registry has 12 product features. Workspace HQ and Seats are the only explicit SPATIAL_SURFACE candidates. Other features are normal UI, spatial read-model, or handoff boundaries. The canonical Seat hierarchy remains the only current L1-L5 spatial feature tree. Five unresolved gaps are routed to their existing owning fields without creating duplicate micro-issues.
+
+### E404-Y1-S2 — Authored polygon-profile renderer fidelity checkpoint
+
+**Exact executable head:** `6dacae7a04339bb2ea4072ed70d4ff0128385325`
+
+**Finding:** The Three.js structural adapter previously normalized authored Core/Pod profile information into a descriptor that no longer carried the original `profile`. As a result, cylindrical authored profiles were rendered with a generic segment rule rather than their declared Hex/Oct/Dodec construction profile.
+
+**Correction:** `normalizeThreeDescriptor()` now preserves the authored `profile`, and the adapter resolves cylindrical tessellation from that preserved profile: Hex = **6** segments, Oct = **8**, Dodec = **12**, with **10** as the bounded generic fallback. Semantic IDs, constructionSlice, constructionOwner, topology, camera authority, and domain/runtime boundaries are unchanged.
+
+**Independent repository evidence:**
+- source/public adapter blobs are identical: `f20dccf43d84dfc91a041447344ca1ab11f5d73d`
+- focused adapter tests cover profile preservation and 6/8/12/default tessellation cases
+- Full-System run `36579687864`: **PASS**
+- Governance run `36580238195`: **PASS**
+- Security run `36579687680`: **PASS**
+- Deep Security run `36579687683`: **PASS**
+- Canonical Browser run `36579687701`: **PASS**
+
+**Acceptance boundary:** This improves structural renderer fidelity but does **not** close the S2-S10 human visual acceptance gate. The screenshots are stored in the exact-head Browser artifact but the public artifact endpoint requires authentication, so no screenshot-level human verdict is inferred here. Broader S24 shadow/light breadth remains gated by the upstream structural visual-embodiment contract.
+
+**Status:** IMPLEMENTED → **REPOSITORY/BROWSER-VERIFIED STRUCTURAL FIDELITY**, with **human visual acceptance still open**.
+
+
+### 2026-09-29 exact-head successor-session evidence
+
+Active spatial vehicle: PR #424.
+Exact active head after final preview-parity cleanup: `6007a87a14175a85de0cbc40fb0a95f51d876596`.
+
+Five-gate proof on this exact head:
+- Repository Full-System Verification: `36582031552` — PASS; Project tests + canonical package and Recovery integrity PASS.
+- Repository Governance Integrity: `36582031480` — PASS; evidence-consistency, governance-drift, and agent-validation PASS; review-readiness SKIPPED because #424 remains Draft.
+- Security Static Analysis: `36582031514` — PASS; CodeQL PASS.
+- Deep Security Static Analysis: `36582031459` — PASS; SonarQube/SonarCloud, Bandit Python, gosec, Semgrep CE, MobSF, and Brakeman PASS.
+- Canonical Browser Verification: `36582031551` — PASS; exact-head checkout, Hero runtime parity, machine spatial runtime parity, Playwright, and artifact upload PASS.
+
+Browser artifact:
+- id `11041060023`
+- name `browser-verification-6007a87a14175a85de0cbc40fb0a95f51d876596`
+- digest `sha256:39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
+
+The artifact screenshots were directly inspected. They establish executable structural embodiment, not final human visual acceptance.
+
+**Durable findings at this checkpoint**
+1. The prior legacy machine-core preview temporal defect is historical; the current exact-head Browser suite is green. Do not carry the old failure forward as an active blocker without a new reproduction.
+2. Seat-view topology was previously over-broad and is now scoped to the selected Seat; keep this projection boundary.
+3. Current Three.js geometry is structurally representative but still visually skeletal relative to the intended manufactured-machine direction.
+4. Facility-view routed topology can span a large visual distance; treat final endpoint/routing credibility as an S8/S7/S24 acceptance question, not as a reason to hide wires with effects.
+5. S24 base theme/material authority is integrated, but true shadow/depth separation, semantic emissive-state breadth, and environment acceptance remain open.
+6. A redundant public structural-preview material-model assignment was removed in `6007a87a...` to restore source/public parity. This was cleanup, not a product change.
+
+**Geometry guard**
+Keep:
+`max(1.66, 0.9 + 1.3 × expansion) × parent max horizontal dimension`.
+Independent worst-case required compact factor remains approximately `1.6547804288580712`; `1.66` provides the small deterministic margin. Current collision proof is conservative sampled AABB clearance, not triangle-collision proof.

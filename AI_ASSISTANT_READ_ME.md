@@ -2,31 +2,70 @@
 
 ## Canonical recovery routing
 
-- Issue #409 is the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
-- PR #404 remains **OPEN / DRAFT** and the sole 029 spatial implementation vehicle.
-- S22 Accessibility is **repository/browser-verified and formally closed**.
-- S23 Responsive machine is **repository/browser-verified at the executable behavior/proof head `35423b86ba563181055c70103364662bed574c5e`**; current PR #404 descendants are documentation-only reconciliation unless a later source change is explicitly identified. Physical-device acceptance remains open.
-- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`. The spatial checklist's next numbered layer is S24, but it is **not automatically the current global slice**.
-- #401 remains the production Firestore/security/runtime authority. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics. #400 remains the frontend/product feature grammar.
-- No repository Browser result is production evidence; no green CI result is human acceptance.
+- Issue #409 remains the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
+- PR #404 is the **merged historical spatial vehicle**; PR #424 is the **active 029 spatial continuation vehicle**.
+- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`; #424 is a bounded 029 spatial companion and does not absorb backend/runtime authority.
+- S22/S23 evidence captured on #404 remains historical provenance after the merge; physical-device touch acceptance remains open.
+- S24 is the active continuation implementation slice in #424. It must preserve the S0-S10 roots, read-model boundaries, and single Product Law theme root.
+- The public GitHub Pages browser does not currently prove a live Firebase-authenticated session or durable Firestore data. Guest/private visibility is governed by the explicit readiness/read-model contract.
 - Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
+
+## 2026-09-29 CURRENT SESSION STATE
+
+This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
+
+- Canonical main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
+- Active spatial vehicle: PR #424 / frontend/029-spatial-world-continuation
+- Exact #424 head: 208c5570a8325bda10e2b427b97a30c3f439f111
+- #424: OPEN / DRAFT / mergeable, 92 ahead / 0 behind
+- PR #404: merged historical spatial provenance; do not reopen
+- Governing spatial Issue: #405
+- Canonical successor handoff: #409
+- Global current slice: Issue #401 in Masterplan/NEXT_SLICES.md
+
+### Latest application-head verification before this documentation sync
+
+- Governance rerun on application head 208c5570: PASS (workflow run 36542676832)
+- Full project tests + canonical package on 208c5570: PASS (workflow run 36542509326)
+- Security-family checks on 208c5570: PASS
+- Evidence consistency on 208c5570: PASS
+- Playwright Browser workflow 36542509289 was still in progress at the last observation.
+- The earlier Browser failure on 2258a910 was the machine-core preview temporal defect that this branch subsequently repaired.
+
+This commit is documentation-only relative to application head 208c5570. Because governance and Browser evidence are exact-head scoped, the final documentation head should still receive its own verification refresh before being called fully green.
+
+### Browser failure classification
+
+The only current failing test is the standalone machine-core-preview transition assertion. Selecting a branch currently causes the preview to set hierarchyOpen and start the 950 ms expansion path before the explicit Expand action. The test can therefore observe expanded instead of opening. This is a temporal preview contract defect. Do not weaken the assertion or add arbitrary sleep. The implementation direction is to make branch selection and expansion deterministic and separately controllable in the standalone preview.
+
+### Current spatial sequence
+
+Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer substrate → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33.
+
+Y0 is the pre-construction leaf-coverage gate. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. The raw WebGL renderer is transition architecture until exact-head parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence survive.
+
+### Durable sources to read before acting
+
+1. Issue #409 for current newcomer handoff.
+2. Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md for ordered spatial gates.
+3. Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md for verified findings and exact-head evidence.
+4. Product_Law/WIRING.md for authority/routing and cross-session decision persistence.
+5. docs/CHRONOLOGY.md for decision order and historical provenance.
+
+Rule: material reasoning from chat is only a working candidate until it is promoted into the owning durable source above.
 
 ## 2026-09-28 CURRENT SESSION STATE
 
-This block is the current session-routing summary. The live branch head is intentionally resolved from PR #404 / Issue #409 rather than self-stamped here, which avoids recursive drift when governance-only commits update this file.
+- canonical `main`: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- active PR #424 branch: `frontend/029-spatial-world-continuation`
+- current PR head before this session's source changes: `3549517235d0a963d4216828c2f703aa88e72bee`
+- #404 merged into main as `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- Governance initially failed on #424 because the Draft PR body lacked its required `Draft proof target` section; that contract has now been added.
+- S24 gap diagnosed: renderer-local `RING_MATERIALS` bypassed the authored theme material family. The continuation implementation now routes material aliases through `authoredHeroMaterialSet` and keeps source/public mirrors synchronized.
+- The guest browser presents ten-seat discoverable/locked vocabulary and a presentation-only auth handoff. Private signed-in data remains unproven until an authoritative backend read model is supplied by the real runtime.
+- The canvas has a deterministic accessible name but is not itself a keyboard tab stop. Keyboard operation is provided through semantic controls/menu; final human acceptance remains open.
+- After the source/public change, the required next evidence is fresh exact-head Governance, Full-System, Security, Deep Security, and Canonical Browser verification, followed by the material-driven S23 readability/contrast recheck.
 
-- canonical `main`: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- PR #404 branch: `frontend/029-spatial-world-reconstruction`
-- live #404 head: **see PR #404 / Issue #409 current metadata**
-- current spatial proof anchor: `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c` with Browser `36393207424` **PASS, 88 passed / 4 skipped**
-- current #404 live head: `50c5fb215dc392533ba9ac5cdef9f9fb8fe56962`, a later documentation-reconciliation descendant
-- #404 remains the sole 029 spatial implementation vehicle and remains OPEN / DRAFT
-- S23 Responsive machine is repository/browser-verified; projected proof: desktop `57.67 / 57.93 / 20.21 px`, compact `54.99 / 54.72 / 20.28 px`, phone `33.88 / 33.71 / 14.12 px` for Seat / Pod / Facility
-- S23 strict projected guards: desktop `56 / 20`, compact `48 / 18`, phone `32 / 14`; phone Facility presentation scale `1.13x`
-- S23 remains bounded to presentation/read-model projection. Physical-device acceptance, production deployment/runtime, live provider execution, human acceptance, and 029 release authorization remain unproven.
-- E404-S15 / E404-S16 / E404-S17 remain bounded evidence records; E404-S23A is the active S23 density/readability proof record.
-- global program frontier remains **Issue #401** in `Masterplan/NEXT_SLICES.md`
-- do not start S24 merely because S23 is closed; resolve the current-slice authority first
 ## 2026-09-28 S22 accessibility closure on #404
 
 - canonical main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
@@ -130,7 +169,7 @@ This block is the current session-routing summary. The live branch head is inten
 - historical baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
 - current main: `59a871f440dd1d15405164948da9985d1537a6be`
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
-- open implementation/governance vehicles: Issue #401 remains the current production-runtime frontier; Draft PR #404 remains the bounded 029 spatial implementation vehicle; Issue #415 is review-readiness guidance infrastructure and PR #416 is already merged
+- open implementation/governance vehicles: Issue #401 remains the current production-runtime frontier; PR #424 remains the bounded 029 spatial continuation vehicle; Issue #415 is review-readiness guidance infrastructure and PR #416 is already merged
 - active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance. Issue #415 remains procedural guidance only and does not replace the product frontier.
 - closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
 - completed reconstruction: #391 / #389
@@ -269,7 +308,7 @@ Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.m
 
 ### 2026-09-21 active 029 migration
 
-PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-machine-world-convergence`. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d6168b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
+PR #398 is the merged historical structural baseline for the earlier #396 lineage. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d6168b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
 
 ## Current replacement-branch control plane
 
@@ -295,7 +334,7 @@ PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-ma
 ## Product boundary while reconstruction is active
 
 - Preserve current machine candidate and semantic topology work already on main.
-- PR #398 owns the current 029 spatial convergence implementation described by Issue #396.
+- PR #398 is historical implementation provenance for the earlier #396 spatial convergence lineage.
 - No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
 
 ## Validation lifecycle guide
@@ -421,3 +460,50 @@ Historical Issues are evidence, not active routing.
 ### 2026-09-23 shared advisory control-plane support
 
 PR #407 is a narrow CI/infrastructure support vehicle for Issue #406. It does not replace the current product/spatial frontier. The advisory pipeline now preflights its PR Issue declaration once before automatic fan-out and accepts explicit `none`/`n/a` no-issue states; provider/model output remains advisory evidence only.
+
+
+## 2026-09-29 canonical successor-session handoff checkpoint
+
+The active 029 spatial continuation is PR #424 on `frontend/029-spatial-world-continuation`.
+
+**Exact active head:** `6007a87a14175a85de0cbc40fb0a95f51d876596`
+**Main:** `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+**Relation:** 150 ahead / 0 behind
+**Governing spatial Issue:** #405
+**Canonical handoff:** #409
+**Global current slice:** #401 via `Masterplan/NEXT_SLICES.md`
+
+Fresh exact-head gates at this checkpoint are green:
+Full-System `36582031552`, Governance `36582031480`, Security `36582031514`, Deep Security `36582031459`, Browser `36582031551`.
+Browser artifact: `11041060023`, SHA-256 `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`.
+
+### What is actually finished
+- Y0 feature/leaf taxonomy is durably classified.
+- Y1 Three.js/WebGL2 substrate proof exists.
+- S2-S10 structural candidate exists and browser exercises the real descriptors/topology/camera.
+- S24 base authored material/theme bridge is integrated.
+- Source/public parity is currently restored for the structural preview and core S24 surfaces.
+- Repository, governance, security and browser gates are green on the exact head.
+
+### What is not finished
+- Y0 implementation closure
+- production Three.js Hero cutover
+- full S2-S10 human visual acceptance
+- full S24 lighting/depth/environment acceptance
+- S25 hologram runtime
+- S26 ambient integration
+- VC1/AB1
+- S27 performance
+- S28/S29 choreography
+- S30 final proof package
+- S31 production/runtime reconciliation
+- S32 human acceptance
+- S33 final ProMax polish
+- physical-device acceptance for S23
+- live Firebase/Firestore/provider/runtime proof owned by #401
+
+### Full-stack behavior rule
+A developer who changes one layer must trace its owner across the whole chain:
+product meaning → read model/domain → semantic node → spatial descriptor → geometry subject/envelope → topology/corridor → camera → renderer → interaction/state → verification → deployment/runtime evidence.
+
+Do not stop at the first file that makes the visible symptom disappear.

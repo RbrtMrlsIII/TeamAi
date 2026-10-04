@@ -8,7 +8,7 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `76da305f0ec3efb3d368b22fb70748f0051f4d15`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `13356cae7e6ef8179f7e2e552211bb4d187f37fb`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
@@ -19,6 +19,20 @@ IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #4
 | Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E + deployed request boundary | live provider continuation remains open |
 | Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative Browser proof | authoritative backend wiring intentionally bounded |
 | Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | repository workflow/contracts | production deployment/browser observation remains open |
+
+### 029 spatial sub-frontier (bounded, not a second current slice)
+
+PR #424 remains the active bounded 029 spatial continuation vehicle. It does not replace the single global Current Slice above.
+
+Current spatial order inside #424:
+
+Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
+
+Current exact spatial head: 6007a87a14175a85de0cbc40fb0a95f51d876596 (post-cleanup exact-head proof).
+
+The current Canonical Browser evidence for that head is FAIL (run 36539522142, 87 passed / 4 skipped / 1 failed) because the isolated machine-core-preview test can observe terminal expansion before clicking its explicit Expand control. Treat this as a preview temporal-contract defect, not as evidence that the repaired S4 geometry is invalid.
+
+The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
 ## Objective
 
@@ -49,7 +63,7 @@ The audited ownership fixes now include a neutral machine-subject geometry owner
 - `Masterplan/MASTERPLAN.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
-- Issue #396 — 029 Spatial World execution guide
+- Issue #396 — historical 029 Spatial World construction guide, superseded for active execution by #405
 - Issue #400 — Canonical Frontend Feature & Spatial UX Contract
 - #392 — Seat budget, usage, handoff, continuation, and cooperation runtime
 - Merged PR #398 — reviewed 029 structural baseline
@@ -119,9 +133,13 @@ TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 con
 
 ## 2026-09-28 029 spatial acceptance companion
 
-PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
+PR #404 is the merged historical 029 reconstruction vehicle. PR #424 `frontend/029-spatial-world-continuation` is the active bounded spatial continuation vehicle; it does not replace the single global current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
 
 S22 now has repository/browser proof for keyboard navigation, visible focus, deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and Browser accessibility smoke. These are repository implementation/evidence facts, not 029 completion claims. No production deployment, human acceptance, provider execution, or merge authorization is inferred from these results.
+
+### S24 continuation boundary
+
+S23 remains repository/browser-verified with physical-device touch acceptance open. PR #424 may advance S24 material/lighting integration as an explicitly bounded 029 companion while Issue #401 remains the global current-slice authority. S24 completion requires fresh exact-head proof and a post-material S23 readability/contrast recheck because materials can change perceived visibility without changing screen-space geometry.
 
 ## 030 successor frontier
 
@@ -151,10 +169,30 @@ Issue #415 is a governance/verification infrastructure vehicle and does **not** 
 - **`teamai-seat-budget-runtime` remains undeployed.** The former index prerequisite is satisfied; live promotion is now gated on Gate 3 Seat-shape evidence, not on index presence.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
+- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 is merged historical provenance and must not be reopened; PR #424 is the active spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
 
 ### Shared CI support: advisory issue preflight
 
 PR #407 is infrastructure support for Issue #406. It is not a replacement current slice and does not create a second product implementation frontier. The advisory control plane validates issue metadata once before provider fan-out and treats explicit `none`/`n/a` as no owning issue.
 
 The reusable advisory-runner path and direct-push event-graph repair are infrastructure support only. They are not a replacement current slice, not 029 completion, and must not be mixed into Draft PR #404.
+
+
+### 2026-09-29 successor-session checkpoint
+
+Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`.
+Current exact head: `6007a87a14175a85de0cbc40fb0a95f51d876596`.
+Current relation to `main`: 150 ahead / 0 behind.
+
+Fresh exact-head evidence:
+- Full-System `36582031552` PASS
+- Governance `36582031480` PASS; review-readiness skipped because #424 is Draft
+- Security `36582031514` PASS
+- Deep Security `36582031459` PASS
+- Canonical Browser `36582031551` PASS
+- Browser artifact `11041060023`
+- Browser artifact digest `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
+
+The final Browser artifact was inspected. The structural candidate is executable and coherent, but S2-S10 human visual acceptance remains open because the current Three.js embodiment is still intentionally substrate-like/skeletal compared with the target manufactured-machine direction.
+
+A final hygiene correction on this exact lineage removed one duplicated `data-structural-material-model` assignment from the public structural preview and restored frontend/public parity. Do not treat this as a functional feature change.
