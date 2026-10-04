@@ -680,6 +680,25 @@ test('S24 measured Pod status role resolves to authored accent without changing 
   assert.deepEqual(descriptor.center, { x: 2, y: 1, z: -3 });
 });
 
+test('S24 physical conduit presentation is subordinate and bounded', () => {
+  const authored = {
+    metal: { color: [0.7, 0.7, 0.7], rough: 0.3, emit: 0 },
+    metal2: { color: [0.4, 0.4, 0.4], rough: 0.4, emit: 0 },
+    glass: { color: [0.2, 0.6, 0.8], rough: 0.22, emit: 0.05 },
+    energy: { color: [0.08, 0.64, 1.0], rough: 0.24, emit: 0.18 },
+    trace: { color: [0.16, 0.54, 0.76], rough: 0.30, emit: 0.04 },
+    conduit: { color: [0.18, 0.30, 0.38], rough: 0.46, emit: 0.01 },
+    seatShell: { color: [0.34, 0.56, 0.70], rough: 0.5, emit: 0.01 },
+    seatShellInset: { color: [0.035, 0.07, 0.11], rough: 0.64, emit: 0 },
+    workspaceRing: { color: [0.42, 0.62, 0.76], rough: 0.22, emit: 0.01 },
+  };
+  const conduit = resolveThreeMaterialPresentation('conduit', authored);
+  assert.equal(conduit.authoredRole, 'conduit');
+  assert.equal(conduit.transparent, true);
+  assert.equal(conduit.opacity, 0.50);
+  assert.equal(conduit.metalness, 0.46);
+});
+
 test('S24 semantic division families resolve to authored presentation colors', () => {
   const expected = new Map([
     ['SEAT_CONNECTION', 'divisionConnection'],
