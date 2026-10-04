@@ -639,7 +639,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       if (role === 'outer-shell') return shellMaterial;
       if (role === 'payload-surface') return insetMaterial;
       if (role === 'connection-interface') return activeHeroMaterials.energy;
-      if (role === 'status-indicator') return activeHeroMaterials.trace;
+      if (role === 'status-indicator') return activeHeroMaterials.accent;
       if (role === 'articulation-mechanism') return activeHeroMaterials.glass;
       if (role === 'inner-chamber') return activeHeroMaterials.metal2;
       return activeHeroMaterials.metal;
