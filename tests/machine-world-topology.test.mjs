@@ -8,6 +8,7 @@ import {
   validateMachineWorldTopology,
   MACHINE_WORLD_TOPOLOGY_VERSION,
   getRenderableMachineWorldEdges,
+  getRenderableMachineWorldEdgesForScope,
   getRenderableMachineWorldConduitSegments,
   PHYSICAL_CONDUIT_EDGE_KINDS,
 } from '../frontend/spatial/machine-world-topology.js';
@@ -85,6 +86,53 @@ test('S8 renderable world corridors are a projection of semantic edges, never a 
   assert.ok(renderable.every((edge) => topology.edges.some((source) =>
     source.semanticEdgeId === edge.semanticEdgeId
   )));
+});
+
+test('S8 scoped physical routes stay local to Seat and Facility focus modes', () => {
+  const { topology } = buildFixture(10);
+  const seatEdges = getRenderableMachineWorldEdgesForScope(topology, {
+    mode: 'POD_FOCUS',
+    branchId: 'BRANCH-SEAT-01',
+  });
+  const facilityEdges = getRenderableMachineWorldEdgesForScope(topology, {
+    mode: 'FACILITY_FOCUS',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  });
+
+  assert.ok(seatEdges.length > 0);
+  assert.ok(facilityEdges.length > 0);
+  assert.ok(seatEdges.every((edge) =>
+    (edge.kind === 'pod-division' && edge.targetBranchId === 'BRANCH-SEAT-01')
+    || (edge.kind === 'pod-facility' && edge.sourceBranchId === 'BRANCH-SEAT-01')
+    || (edge.kind === 'adjacent-seat' && (
+      edge.sourceBranchId === 'BRANCH-SEAT-01'
+      || edge.targetBranchId === 'BRANCH-SEAT-01'
+    )),
+  ));
+  assert.ok(facilityEdges.every((edge) =>
+    (edge.kind === 'pod-facility' && edge.targetBranchId === 'BRANCH-OUTER-ALPHA')
+    || (edge.kind === 'facility-facility' && (
+      edge.sourceBranchId === 'BRANCH-OUTER-ALPHA'
+      || edge.targetBranchId === 'BRANCH-OUTER-ALPHA'
+    ))
+    || (edge.kind === 'workspace-contribution' && edge.targetBranchId === 'BRANCH-OUTER-ALPHA'),
+  ));
+  assert.ok(getRenderableMachineWorldEdgesForScope(topology, {
+    mode: 'WORLD_OVERVIEW',
+    branchId: 'BRANCH-SEAT-01',
+  }).length > seatEdges.length);
+});
+
+test('S8 service planes are derived from interface elevation rather than a global world deck', () => {
+  const { topology } = buildFixture(10);
+  const external = topology.edges.filter((edge) => PHYSICAL_CONDUIT_EDGE_KINDS.includes(edge.kind));
+
+  assert.ok(external.length > 0);
+  assert.ok(external.every((edge) => {
+    const endpointY = Math.max(edge.route[0].y, edge.route.at(-1).y);
+    return edge.route[1].y >= endpointY + 0.34 - 1e-9;
+  }));
+  assert.ok(external.some((edge) => edge.route[1].y < 1.90));
 });
 
 test('S8 topology recomputes division routes and corridor bounds from current expansion geometry', () => {
