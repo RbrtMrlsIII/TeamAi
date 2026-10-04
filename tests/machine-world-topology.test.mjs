@@ -199,9 +199,13 @@ test('S8 external semantic routes project to authored conduit segments without c
   const nonFacilityEdges = externalEdges.filter((edge) => edge.kind !== 'facility-facility');
   const facilityEdges = externalEdges.filter((edge) => edge.kind === 'facility-facility');
 
+  const expectedNonFacilitySegments = nonFacilityEdges.reduce(
+    (total, edge) => total + Math.max(0, edge.route.length - 1),
+    0,
+  );
   assert.equal(
     conduits.length,
-    nonFacilityEdges.length * 3 + topology.serviceManifold.segments.length,
+    expectedNonFacilitySegments + topology.serviceManifold.segments.length,
   );
   assert.equal(new Set(conduits.map((entry) => entry.semanticEdgeId)).size, externalEdges.length);
   assert.ok(conduits.every((entry) => entry.routeContinuous));
@@ -226,9 +230,12 @@ test('S8 external semantic routes project to authored conduit segments without c
   };
   for (const edge of nonFacilityEdges) {
     const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
-    assert.equal(segments.length, 3);
+    assert.equal(segments.length, Math.max(0, edge.route.length - 1));
     assertPointClose(segments[0].start, edge.route[0]);
     assertPointClose(segments.at(-1).end, edge.route.at(-1));
+    for (let index = 1; index < segments.length; index += 1) {
+      assertPointClose(segments[index - 1].end, segments[index].start);
+    }
   }
   for (const edge of facilityEdges) {
     const segments = segmentsByEdge.get(edge.semanticEdgeId) || [];
@@ -238,6 +245,33 @@ test('S8 external semantic routes project to authored conduit segments without c
     for (let index = 1; index < segments.length; index += 1) {
       assertPointClose(segments[index - 1].end, segments[index].start);
     }
+  }
+});
+
+test('S8 pod-facility and workspace-contribution routes use facility service-manifold anchors', () => {
+  const { topology } = buildFixture(10);
+  const anchors = new Map(
+    (topology.serviceManifold.facilityAnchors || []).map((anchor) => [anchor.branchId, anchor]),
+  );
+  assert.equal(anchors.size, 4);
+  const assertPointClose = (actual, expected, tolerance = 1e-9) => {
+    assert.ok(Math.abs(actual.x - expected.x) <= tolerance, 'x delta');
+    assert.ok(Math.abs(actual.y - expected.y) <= tolerance, 'y delta');
+    assert.ok(Math.abs(actual.z - expected.z) <= tolerance, 'z delta');
+  };
+
+  for (const edge of topology.edges.filter((candidate) =>
+    candidate.kind === 'pod-facility' || candidate.kind === 'workspace-contribution'
+  )) {
+    const anchor = anchors.get(edge.targetBranchId);
+    assert.ok(anchor?.point, 'missing service anchor for ' + edge.semanticEdgeId);
+    assert.equal(edge.route.length, 5);
+    assertPointClose(edge.route[2], anchor.point);
+    assert.equal(edge.route[1].y, topology.serviceManifold.manifoldY);
+    assert.equal(edge.route[2].y, topology.serviceManifold.manifoldY);
+    assert.equal(edge.route[3].y, topology.serviceManifold.manifoldY);
+    assert.equal(edge.routeContinuous, true);
+    assert.equal(edge.obstacleAvoidance, true);
   }
 });
 
