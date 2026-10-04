@@ -587,7 +587,7 @@ test('S4 behavior baffle profile preserves the existing articulated descriptor e
   assert.ok(Math.abs(geometry.boundingBox.min.y + expected.y * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
-  assert.equal(geometry.getAttribute('position').count, 84);
+  assert.equal(geometry.getAttribute('position').count, 132);
   geometry.dispose();
 });
 
@@ -842,16 +842,20 @@ test('S24 maps measured Pod mechanical rings to ring geometry instead of box fal
 test('Y1 preserves the authored Pod shell profile as an explicit mesh contract', () => {
   assert.equal(AUTHORED_POD_SHELL_PROFILE, 'authored-seat-pod-shell');
   const outline = resolveThreePodShellOutline();
-  assert.equal(outline.length, 8);
+  assert.equal(outline.length, 12);
   assert.deepEqual(outline, [
-    [-0.90, -0.25],
-    [-0.55, -0.58],
-    [0.18, -0.62],
-    [0.78, -0.30],
-    [0.90, 0.12],
-    [0.50, 0.50],
-    [-0.30, 0.58],
-    [-0.82, 0.30],
+    [-0.90, 0.00],
+    [-0.78, -0.35],
+    [-0.45, -0.55],
+    [0.00, -0.60],
+    [0.45, -0.55],
+    [0.78, -0.35],
+    [0.90, 0.00],
+    [0.78, 0.35],
+    [0.45, 0.55],
+    [0.00, 0.60],
+    [-0.45, 0.55],
+    [-0.78, 0.35],
   ]);
   const xs = outline.map(([x]) => x);
   const zs = outline.map(([, z]) => z);
