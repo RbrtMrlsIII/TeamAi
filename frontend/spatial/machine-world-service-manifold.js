@@ -122,7 +122,15 @@ export function deriveMachineWorldServiceManifold({
     ),
     0,
   );
-  const manifoldY = maxPodTop + clearanceBudget + 0.10;
+  const serviceEndpointY = Math.max(
+    ...edges.flatMap((edge) => [
+      finite(edge?.sourcePort?.point?.y),
+      finite(edge?.targetPort?.point?.y),
+    ]),
+    maxPodTop,
+    0,
+  );
+  const manifoldY = serviceEndpointY + clearanceBudget + 0.18;
 
   const reasons = [];
   if (edges.length !== 4) reasons.push('FACILITY_EDGE_COUNT_MISMATCH');
