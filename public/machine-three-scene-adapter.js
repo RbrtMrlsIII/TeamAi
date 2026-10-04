@@ -102,7 +102,9 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     center: Object.freeze(center),
     dimensions: Object.freeze(dimensions),
     rotationY: Number.isFinite(Number(part.rotationY)) ? Number(part.rotationY) : 0,
-    materialRole: String(part.materialRole || 'substrate-neutral'),
+    materialRole: part.role === 'status-indicator'
+      ? 'accent'
+      : String(part.materialRole || 'substrate-neutral'),
     constructionSlice: String(part.constructionSlice || ''),
     constructionOwner: String(part.constructionOwner || ''),
   });
