@@ -13,8 +13,8 @@ import {
   PHYSICAL_CONDUIT_EDGE_KINDS,
 } from '../frontend/spatial/machine-world-topology.js';
 
-function buildFixture(seatCount) {
-  const scene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
+function buildFixture(seatCount, expansionAmount = 0) {
+  const scene = createBranchConnectionCore({ seatCount, expansionAmount });
   const facilityAssemblies = deriveMachineFacilityAssemblies({
     outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
   });
@@ -278,18 +278,21 @@ test('S8 pod-facility and workspace-contribution routes use facility service-man
   }
 });
 
-test('S8 service manifold remains inside the measured S4/S7 radial safety band across Seats', () => {
+test('S8 service manifold stays outside the measured S7 machinery envelope across Seats and expansion', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
-    const { topology } = buildFixture(seatCount);
-    const manifold = topology.serviceManifold;
-    assert.equal(manifold.valid, true, `invalid manifold at seats=${seatCount}: ${manifold.reasons.join(', ')}`);
-    assert.equal(topology.serviceManifoldValidation.valid, true);
-    assert.ok(manifold.radius > manifold.innerBoundary);
-    assert.ok(manifold.radius < manifold.outerBoundary);
-    assert.ok(
-      manifold.segments.every((segment) => segment.routeContinuous && segment.obstacleAvoidance),
-      `manifold obstacle failure at seats=${seatCount}`,
-    );
+    for (const expansionAmount of [0, 1]) {
+      const { topology } = buildFixture(seatCount, expansionAmount);
+      const manifold = topology.serviceManifold;
+      assert.equal(manifold.valid, true, `invalid manifold at seats=${seatCount}, expansion=${expansionAmount}: ${manifold.reasons.join(', ')}`);
+      assert.equal(topology.serviceManifoldValidation.valid, true);
+      assert.ok(manifold.innerBoundary > manifold.machineEnvelopeBoundary);
+      assert.ok(manifold.radius > manifold.innerBoundary);
+      assert.ok(manifold.radius < manifold.outerBoundary);
+      assert.ok(
+        manifold.segments.every((segment) => segment.routeContinuous && segment.obstacleAvoidance),
+        `manifold obstacle failure at seats=${seatCount}, expansion=${expansionAmount}`,
+      );
+    }
   }
 });
 
