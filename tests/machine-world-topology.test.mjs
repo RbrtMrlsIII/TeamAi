@@ -309,11 +309,19 @@ test('S8 Facility focus projects local manifold spurs without peer manifold arcs
     ).length * 2,
   );
   assert.ok(
-    focusedManifold.every((segment) =>
-      Array.isArray(segment.obstacleBranchIds)
-      && segment.obstacleBranchIds.includes(facilityScope.branchId)
-      && segment.segmentRole !== 'manifold-arc'
-    ),
+    focusedManifold.every((segment) => segment.segmentRole !== 'manifold-arc'),
+  );
+  const selectedAnchor = topology.serviceManifold.facilityAnchors.find(
+    (anchor) => anchor.branchId === facilityScope.branchId,
+  );
+  assert.ok(selectedAnchor?.point);
+  assert.equal(
+    focusedManifold.filter((segment) =>
+      segment.start === selectedAnchor.point || segment.end === selectedAnchor.point
+      || Math.hypot(segment.start.x - selectedAnchor.point.x, segment.start.z - selectedAnchor.point.z) < 1e-9
+      || Math.hypot(segment.end.x - selectedAnchor.point.x, segment.end.z - selectedAnchor.point.z) < 1e-9
+    ).length,
+    2,
   );
   assert.ok(
     worldManifold.some((segment) => segment.segmentRole === 'manifold-arc'),
