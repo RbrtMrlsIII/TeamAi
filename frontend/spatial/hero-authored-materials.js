@@ -167,7 +167,7 @@ export function authoredHeroMaterialSet(L = {}) {
     ),
     divisionToolkit: authoredPresentationMaterial(
       'divisionToolkit',
-      mixColor(accentColorPlaceholder, ring.color, 0.28),
+      mixColor(accentColor, ring.color, 0.28),
       0.34,
       mixColor([1.00, 0.66, 0.24], ring.spec, 0.32),
       Math.max(signalFloor * 0.34, 0.04),
