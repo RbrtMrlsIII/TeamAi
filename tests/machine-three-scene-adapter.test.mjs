@@ -663,6 +663,23 @@ test('Y1 descriptors preserve S2/S3 semantic identity and dimensions', () => {
   assert.ok(descriptors.some((descriptor) => descriptor.id === 'MACHINE-POD:BRANCH-SEAT-01:OUTER-SHELL'));
 });
 
+test('S24 measured Pod status role resolves to authored accent without changing geometry', () => {
+  const descriptor = normalizeThreeDescriptor({
+    id: 'MACHINE-POD:BRANCH-SEAT-01:STATUS-INDICATOR',
+    role: 'status-indicator',
+    shape: 'TORUS',
+    materialRole: 'trace',
+    center: { x: 2, y: 1, z: -3 },
+    dimensions: { x: 0.6, y: 0.08, z: 0.6 },
+    constructionSlice: 'S3',
+    constructionOwner: 'frontend/spatial/machine-pod-assembly.js',
+  }, 'MACHINE-POD-ASSEMBLY');
+  assert.equal(descriptor.materialRole, 'accent');
+  assert.equal(descriptor.role, undefined);
+  assert.deepEqual(descriptor.dimensions, { x: 0.6, y: 0.08, z: 0.6 });
+  assert.deepEqual(descriptor.center, { x: 2, y: 1, z: -3 });
+});
+
 test('Y1 preserves the authored Pod shell profile as an explicit mesh contract', () => {
   assert.equal(AUTHORED_POD_SHELL_PROFILE, 'authored-seat-pod-shell');
   const outline = resolveThreePodShellOutline();
