@@ -129,21 +129,56 @@ function routeAvoidsObstacles(route, obstacles = [], clearance = 0.16) {
   return true;
 }
 
-function deriveServiceDeckY(parts = [], clearance = 0.16, minimum = 1.9) {
+function deriveServiceDeckY(source, target, {
+  clearance = 0.16,
+  lift = 0.24,
+  minimum = 0.72,
+} = {}) {
   const physicalClearance = Math.max(0, finite(clearance));
-  const deckMargin = Math.max(0.08, physicalClearance * 0.5);
-  const required = Math.max(
-    0.25,
-    ...(
-      Array.isArray(parts) ? parts : []
-    ).map((part) =>
-      finite(part?.center?.y)
-      + Math.abs(finite(part?.dimensions?.y)) * 0.5
-      + physicalClearance
-      + deckMargin,
-    ),
+  const serviceLift = Math.max(0.10, finite(lift, 0.24));
+  const endpointY = Math.max(
+    finite(source?.y),
+    finite(target?.y),
   );
-  return Math.max(finite(minimum, 1.9), required);
+  return Math.max(
+    finite(minimum, 0.72),
+    endpointY + physicalClearance + serviceLift,
+  );
+}
+
+export function getRenderableMachineWorldEdgesForScope(
+  topology,
+  {
+    mode = 'WORLD_OVERVIEW',
+    branchId = null,
+  } = {},
+) {
+  const edges = getRenderableMachineWorldEdges(topology);
+  if (!branchId || mode === 'WORLD_OVERVIEW') return Object.freeze(edges);
+
+  const matchesBranch = (edge) =>
+    edge.sourceBranchId === branchId || edge.targetBranchId === branchId;
+
+  const scoped = edges.filter((edge) => {
+    switch (mode) {
+      case 'POD_FOCUS':
+      case 'DIVISION_FOCUS':
+        return (
+          (edge.kind === 'pod-division' && edge.targetBranchId === branchId)
+          || (edge.kind === 'pod-facility' && edge.sourceBranchId === branchId)
+          || (edge.kind === 'adjacent-seat' && matchesBranch(edge))
+        );
+      case 'FACILITY_FOCUS':
+        return (
+          (edge.kind === 'pod-facility' && edge.targetBranchId === branchId)
+          || (edge.kind === 'facility-facility' && matchesBranch(edge))
+          || (edge.kind === 'workspace-contribution' && edge.targetBranchId === branchId)
+        );
+      default:
+        return true;
+    }
+  });
+  return Object.freeze(scoped);
 }
 
 function raisedRoute(source, target, deckY) {
@@ -398,7 +433,7 @@ export function buildMachineWorldTopology({
       branchId: pod.branchId,
     });
     const target = safeMachinePart(machine, targetPort);
-    const deckY = deriveServiceDeckY(scene.parts, clearance, 1.90);
+    const deckY = deriveServiceDeckY(source.port, target.port, { clearance });
 
     edges.push(makeEdge({
       semanticEdgeId: 'EDGE:POD-FACILITY:' + pod.branchId + '=>' + machine.branchId,
@@ -424,7 +459,7 @@ export function buildMachineWorldTopology({
 
     const source = safeMachinePart(sourceMachine, sourcePort);
     const target = safeMachinePart(targetMachine, targetPort);
-    const deckY = deriveServiceDeckY(scene.parts, clearance, 2.25);
+    const deckY = deriveServiceDeckY(source.port, target.port, { clearance, lift: 0.22, minimum: 0.90 });
 
     edges.push(makeEdge({
       semanticEdgeId:
@@ -467,7 +502,7 @@ export function buildMachineWorldTopology({
       if (!hubPort) continue;
       const source = safeCorePart(scene.hub, hubPort.point, corePorts);
       const target = safeMachinePart(machine, targetPort);
-      const deckY = deriveServiceDeckY(scene.parts, clearance, 2.55);
+      const deckY = deriveServiceDeckY(source.port, target.port, { clearance, lift: 0.24, minimum: 0.82 });
       edges.push(makeEdge({
         semanticEdgeId: 'EDGE:WORKSPACE-CONTRIBUTION:HUB-CORE=>' + machine.branchId,
         kind: 'workspace-contribution',
@@ -496,7 +531,7 @@ export function buildMachineWorldTopology({
       semanticId: targetPod.semanticKey || targetPod.branchId,
       branchId: targetPod.branchId,
     });
-    const deckY = deriveServiceDeckY(scene.parts, clearance, 1.90);
+    const deckY = deriveServiceDeckY(source.port, target.port, { clearance, lift: 0.18, minimum: 0.72 });
     edges.push(makeEdge({
       semanticEdgeId:
         'EDGE:ADJACENT-SEAT:' +
