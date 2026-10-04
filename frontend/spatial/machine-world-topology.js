@@ -17,6 +17,7 @@ import { deriveFocusedSeatDivisionGeometry } from './machine-seat-division-prese
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery } from './machine-facility-machinery.js';
+import { deriveMachineWorldServiceManifold, validateMachineWorldServiceManifold } from './machine-world-service-manifold.js';
 
 export const MACHINE_WORLD_TOPOLOGY_ID = 'MACHINE-WORLD-TOPOLOGY';
 export const MACHINE_WORLD_TOPOLOGY_VERSION = 'S8-V1';
@@ -549,6 +550,41 @@ export function buildMachineWorldTopology({
     }));
   }
 
+  const rawServiceManifold = deriveMachineWorldServiceManifold({
+    topology: { edges },
+    scene,
+    machinery,
+    clearance,
+    conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
+  });
+  const serviceManifoldSegments = Object.freeze(
+    (rawServiceManifold.segments || []).map((segment) => {
+      const excludedBranches = new Set(segment.obstacleBranchIds || []);
+      const obstacles = scene.parts.filter(
+        (part) => !excludedBranches.has(part?.branchId),
+      );
+      const obstacleAvoidance = routeAvoidsObstacles(
+        [segment.start, segment.end],
+        obstacles,
+        clearance,
+      );
+      return Object.freeze({
+        ...segment,
+        obstacleAvoidance,
+        routeContinuous: segment.routeContinuous === true && obstacleAvoidance,
+      });
+    }),
+  );
+  const serviceManifold = Object.freeze({
+    ...rawServiceManifold,
+    valid: rawServiceManifold.valid && serviceManifoldSegments.every((segment) => segment.routeContinuous),
+    segments: serviceManifoldSegments,
+  });
+  const serviceManifoldValidation = validateMachineWorldServiceManifold(
+    serviceManifold,
+    { edges },
+  );
+
   const corridors = Object.freeze(
     edges.map((edge) => Object.freeze({
       id: edge.corridor?.id || 'CORRIDOR:' + edge.semanticEdgeId,
@@ -586,6 +622,8 @@ export function buildMachineWorldTopology({
     facilityFacilityEdgeCount: edges.filter((edge) => edge.kind === 'facility-facility').length,
     workspaceContributionEdgeCount: edges.filter((edge) => edge.kind === 'workspace-contribution').length,
     adjacentSeatEdgeCount: edges.filter((edge) => edge.kind === 'adjacent-seat').length,
+    serviceManifold,
+    serviceManifoldValidation,
     presentationOnly: true,
   });
 }
@@ -615,6 +653,7 @@ export function getRenderableMachineWorldConduitSegments(topology, {
   const segments = [];
   for (const edge of Array.isArray(topology?.edges) ? topology.edges : []) {
     if (!eligible.has(edge?.kind)) continue;
+    if (edge.kind === 'facility-facility') continue;
     const route = Array.isArray(edge?.route) ? edge.route : [];
     const radius = Math.max(
       0.01,
@@ -690,6 +729,13 @@ export function validateMachineWorldTopology(
   if (!root.valid) reasons.push(...root.reasons);
   if (topology?.constructionSlice !== 'S8') reasons.push('WORLD_TOPOLOGY_NOT_S8');
   if (topology?.constructionOwner !== ROOT_OWNER) reasons.push('WORLD_TOPOLOGY_OWNER_MISMATCH');
+  if (topology?.serviceManifold) {
+    const manifoldValidation = topology.serviceManifoldValidation
+      || validateMachineWorldServiceManifold(topology.serviceManifold, topology);
+    if (!manifoldValidation.valid) {
+      reasons.push(...manifoldValidation.reasons.map((reason) => 'SERVICE_MANIFOLD:' + reason));
+    }
+  }
   if (expectedSeatCount != null && topology?.seatCount !== expectedSeatCount) {
     reasons.push('WORLD_TOPOLOGY_SEAT_COUNT_MISMATCH');
   }
