@@ -46,6 +46,8 @@ export function resolveThreePodShellOutline() {
 
 const SHAPE_BY_PROFILE = Object.freeze([
   [AUTHORED_POD_SHELL_PROFILE, 'POD_SHELL'],
+  ['concentric-articulation', 'TORUS'],
+  ['status-band', 'TORUS'],
   ['torus', 'TORUS'],
   ['cylinder', 'CYLINDER'],
   ['connection-port', 'CYLINDER'],
