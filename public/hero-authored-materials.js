@@ -105,6 +105,8 @@ export function authoredHeroMaterialSet(L = {}) {
     ? [0.08, 0.48, 0.68]
     : [0.16, 0.54, 0.76];
 
+  const accentColor = mode === 'dark' ? [1.00, 0.34, 0.06] : [1.00, 0.48, 0.10];
+
   const glassColor = mixColor(
     shell.color,
     energyColor,
@@ -149,6 +151,57 @@ export function authoredHeroMaterialSet(L = {}) {
       mode === 'dark' ? [1.00, 0.52, 0.18] : [1.00, 0.66, 0.24],
       Math.max(signalFloor * 0.58, 0.12),
     ),
+    divisionConnection: authoredPresentationMaterial(
+      'divisionConnection',
+      energyColor,
+      0.24,
+      mode === 'dark' ? [0.92, 0.98, 1.00] : [0.78, 0.90, 1.00],
+      Math.max(signalFloor * 0.92, 0.14),
+    ),
+    divisionBehavior: authoredPresentationMaterial(
+      'divisionBehavior',
+      mixColor(energyColor, traceColor, 0.42),
+      0.32,
+      mixColor([0.70, 0.84, 1.00], [0.48, 0.74, 0.90], 0.42),
+      Math.max(signalFloor * 0.48, 0.06),
+    ),
+    divisionToolkit: authoredPresentationMaterial(
+      'divisionToolkit',
+      mixColor(accentColor, ring.color, 0.28),
+      0.34,
+      mixColor([1.00, 0.66, 0.24], ring.spec, 0.32),
+      Math.max(signalFloor * 0.34, 0.04),
+    ),
+    divisionCapabilities: authoredPresentationMaterial(
+      'divisionCapabilities',
+      mixColor(energyColor, glassColor, 0.36),
+      0.26,
+      mixColor([0.78, 0.90, 1.00], shell.spec, 0.40),
+      Math.max(signalFloor * 0.60, 0.08),
+    ),
+    divisionAuthorization: authoredPresentationMaterial(
+      'divisionAuthorization',
+      mode === 'dark'
+        ? [0.78, 0.34, 0.22]
+        : [0.92, 0.42, 0.18],
+      0.38,
+      mode === 'dark' ? [1.00, 0.56, 0.34] : [1.00, 0.64, 0.36],
+      Math.max(signalFloor * 0.34, 0.04),
+    ),
+    divisionScope: authoredPresentationMaterial(
+      'divisionScope',
+      mixColor(energyColor, ring.color, 0.48),
+      0.30,
+      mixColor([0.78, 0.90, 1.00], ring.spec, 0.48),
+      Math.max(signalFloor * 0.50, 0.06),
+    ),
+    divisionEvidence: authoredPresentationMaterial(
+      'divisionEvidence',
+      mixColor(traceColor, mode === 'dark' ? [0.18, 0.72, 0.48] : [0.18, 0.62, 0.42], 0.34),
+      0.30,
+      mode === 'dark' ? [0.44, 0.88, 0.66] : [0.46, 0.78, 0.62],
+      Math.max(signalFloor * 0.34, 0.04),
+    ),
     workspaceRing: ring,
     seatShell: shell,
     seatShellInset: inset,
@@ -168,4 +221,11 @@ export const HERO_PRESENTATION_MATERIAL_ROLES = Object.freeze([
   'energy',
   'trace',
   'accent',
+  'divisionConnection',
+  'divisionBehavior',
+  'divisionToolkit',
+  'divisionCapabilities',
+  'divisionAuthorization',
+  'divisionScope',
+  'divisionEvidence',
 ]);
