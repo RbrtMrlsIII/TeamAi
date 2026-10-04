@@ -680,6 +680,33 @@ test('S24 measured Pod status role resolves to authored accent without changing 
   assert.deepEqual(descriptor.center, { x: 2, y: 1, z: -3 });
 });
 
+test('S24 semantic division families resolve to authored presentation colors', () => {
+  const expected = new Map([
+    ['SEAT_CONNECTION', 'divisionConnection'],
+    ['SEAT_BEHAVIOR', 'divisionBehavior'],
+    ['SEAT_TOOLKIT', 'divisionToolkit'],
+    ['SEAT_CAPABILITIES', 'divisionCapabilities'],
+    ['SEAT_AUTHORIZATION', 'divisionAuthorization'],
+    ['SEAT_WORKSPACE_SCOPE', 'divisionScope'],
+    ['SEAT_TASK_EVIDENCE', 'divisionEvidence'],
+  ]);
+  for (const [semanticId, materialRole] of expected) {
+    const descriptor = normalizeThreeDescriptor({
+      id: 'DIVISION:' + semanticId,
+      semanticId,
+      role: 'division-component',
+      materialRole: 'metal2',
+      center: { x: 0, y: 1, z: 0 },
+      dimensions: { x: 0.8, y: 0.1, z: 0.6 },
+      constructionSlice: 'S4',
+      constructionOwner: 'frontend/spatial/machine-seat-division-assembly.js',
+    }, 'MACHINE-SEAT-DIVISION-ASSEMBLY');
+    assert.equal(descriptor.materialRole, materialRole);
+    assert.deepEqual(descriptor.center, { x: 0, y: 1, z: 0 });
+    assert.deepEqual(descriptor.dimensions, { x: 0.8, y: 0.1, z: 0.6 });
+  }
+});
+
 test('Y1 preserves the authored Pod shell profile as an explicit mesh contract', () => {
   assert.equal(AUTHORED_POD_SHELL_PROFILE, 'authored-seat-pod-shell');
   const outline = resolveThreePodShellOutline();
