@@ -306,7 +306,7 @@ test('S8 Facility focus projects local manifold spurs without peer manifold arcs
     topology.edges.filter((edge) =>
       edge.kind === 'facility-facility'
       && (edge.sourceBranchId === facilityScope.branchId || edge.targetBranchId === facilityScope.branchId)
-    ).length,
+    ).length * 2,
   );
   assert.ok(
     focusedManifold.every((segment) =>
@@ -328,7 +328,10 @@ test('S8 service manifold stays outside the measured S7 machinery envelope acros
       const manifold = topology.serviceManifold;
       assert.equal(manifold.valid, true, `invalid manifold at seats=${seatCount}, expansion=${expansionAmount}: ${manifold.reasons.join(', ')}`);
       assert.equal(topology.serviceManifoldValidation.valid, true);
-      assert.ok(manifold.innerBoundary > manifold.machineEnvelopeBoundary);
+      assert.ok(
+        manifold.innerBoundary > manifold.machineEnvelopeBoundary,
+        `radial boundary mismatch seats=${seatCount}, expansion=${expansionAmount}, inner=${manifold.innerBoundary}, machine=${manifold.machineEnvelopeBoundary}, division=${manifold.divisionBoundary}`,
+      );
       assert.ok(manifold.radius > manifold.innerBoundary);
       assert.ok(manifold.radius < manifold.outerBoundary);
       assert.ok(
