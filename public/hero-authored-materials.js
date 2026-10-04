@@ -202,6 +202,13 @@ export function authoredHeroMaterialSet(L = {}) {
       mode === 'dark' ? [0.44, 0.88, 0.66] : [0.46, 0.78, 0.62],
       Math.max(signalFloor * 0.34, 0.04),
     ),
+    conduit: authoredPresentationMaterial(
+      'conduit',
+      mixColor(traceColor, inset.color, 0.52),
+      0.46,
+      mixColor([0.48, 0.74, 0.90], inset.spec, 0.36),
+      Math.max(signalFloor * 0.08, 0.01),
+    ),
     workspaceRing: ring,
     seatShell: shell,
     seatShellInset: inset,
@@ -228,4 +235,5 @@ export const HERO_PRESENTATION_MATERIAL_ROLES = Object.freeze([
   'divisionAuthorization',
   'divisionScope',
   'divisionEvidence',
+  'conduit',
 ]);
