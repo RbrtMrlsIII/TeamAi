@@ -460,6 +460,10 @@ export function buildMachineWorldTopology({
     scene,
     machinery,
     clearance,
+    serviceEndpointPoints: [
+      ...innerPods.map((pod) => pod?.port).filter(Boolean),
+      ...corePorts.map((port) => port?.point).filter(Boolean),
+    ],
     conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
   });
   const facilityAnchorByBranch = new Map(
@@ -582,6 +586,10 @@ export function buildMachineWorldTopology({
     scene,
     machinery,
     clearance,
+    serviceEndpointPoints: [
+      ...innerPods.map((pod) => pod?.port).filter(Boolean),
+      ...corePorts.map((port) => port?.point).filter(Boolean),
+    ],
     conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
   });
   const serviceManifoldSegments = Object.freeze(
