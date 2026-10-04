@@ -254,8 +254,19 @@ test('S7 physical interfaces clear the housing and bridge every S6 facility port
     const inputRadial = Math.hypot(input.point.x, input.point.z);
     const outputRadial = Math.hypot(output.point.x, output.point.z);
 
-    assert.ok(inputRadial >= radial + boundaryDistance + 0.03);
-    assert.ok(outputRadial >= radial + boundaryDistance + 0.10);
+    const maxPresentedMachineryBoundary = Math.max(
+      ...deriveMachineFacilityMechanismPresentation(machine, { amount: 1, reducedMotion: true }).components.map((motion) => {
+        const component = machine.components.find((entry) => entry.id === motion.id);
+        return Math.hypot(
+          component.center.x + motion.dx - center.x,
+          component.center.z + motion.dz - center.z,
+        ) + Math.hypot(component.dimensions.x, component.dimensions.z) * 0.5;
+      }),
+      boundaryDistance,
+    );
+    assert.ok(inputRadial >= radial + maxPresentedMachineryBoundary + 0.03);
+    assert.ok(outputRadial >= radial + maxPresentedMachineryBoundary + 0.10);
+    assert.ok((input.serviceBoundaryDistance || 0) >= maxPresentedMachineryBoundary);
     assert.ok(Math.abs(output.point.y - input.point.y) >= 0.20);
 
     const adapters = machine.physicalInterfaces.filter((entry) => entry.role === 'facility-port-adapter');
