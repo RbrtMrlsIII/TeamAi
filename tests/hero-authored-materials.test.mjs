@@ -45,7 +45,7 @@ test('full renderer material set is derived from authored theme roles', () => {
   const darkSet = authoredHeroMaterialSet(dark);
 
   assert.deepEqual(Object.keys(lightSet), [
-    'metal', 'metal2', 'glass', 'energy', 'trace',
+    'metal', 'metal2', 'glass', 'energy', 'trace', 'accent',
     'workspaceRing', 'seatShell', 'seatShellInset',
   ]);
   assert.equal(lightSet.metal.role, 'workspaceRing');
@@ -55,7 +55,12 @@ test('full renderer material set is derived from authored theme roles', () => {
   assert.equal(lightSet.glass.role, 'glassSurface');
   assert.equal(lightSet.energy.role, 'energySignal');
   assert.equal(lightSet.trace.role, 'signalTrace');
+  assert.equal(lightSet.accent.role, 'statusAccent');
   assert.notDeepEqual(lightSet, darkSet);
+  assert.ok(lightSet.energy.color[2] > lightSet.energy.color[0]);
+  assert.ok(darkSet.energy.color[2] > darkSet.energy.color[0]);
+  assert.ok(lightSet.accent.color[0] > lightSet.accent.color[2]);
+  assert.ok(darkSet.accent.color[0] > darkSet.accent.color[2]);
 
   for (const material of Object.values(lightSet)) {
     assert.ok(material.rough >= 0 && material.rough <= 1);
@@ -82,6 +87,7 @@ test('canonical machine renderer owns authored-material consumption', async () =
   assert.match(renderer, /authoredRingMaterial/);
   assert.match(renderer, /authoredHeroMaterialSet/);
   assert.match(renderer, /activeHeroMaterials/);
+  assert.match(renderer, /activeHeroMaterials\.accent/);
   assert.match(renderer, /activeHeroLighting/);
   assert.match(renderer, /solidRoughness/);
   assert.match(renderer, /solidSpecular/);
