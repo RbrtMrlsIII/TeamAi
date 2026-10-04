@@ -589,7 +589,10 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     });
   }
 
-  function setTopology(topology = null) {
+  function setTopology(topology = null, {
+    mode = 'WORLD_OVERVIEW',
+    branchId = null,
+  } = {}) {
     clearGroup(topologyRoot);
     const edges = Array.isArray(topology?.edges) ? topology.edges : [];
     const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
@@ -616,7 +619,10 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       lineCount += 1;
     }
 
-    const conduitSegments = getRenderableMachineWorldConduitSegments(topology);
+    const conduitSegments = getRenderableMachineWorldConduitSegments(topology, {
+      mode,
+      branchId,
+    });
     for (const segment of conduitSegments) {
       const geometry = new THREE.BoxGeometry(
         segment.dimensions.x,
@@ -638,6 +644,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       edgeCount: count,
       lineCount,
       conduitSegmentCount: conduitSegments.length,
+      conduitEdgeKinds: Object.freeze([...new Set(conduitSegments.map((segment) => segment.edgeKind))]),
     });
   }
 

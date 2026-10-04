@@ -269,7 +269,20 @@ function renderView() {
     facilities: effectiveFacilities,
     divisions: divisions.length ? [{ id: 'S4-SEAT-01', components: divisions, mechanicalDetails: [] }] : [],
   });
-  const topologyRender = adapter.setTopology(visibleTopology);
+  const topologyMode = currentView === 'world'
+    ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
+    : currentView === 'seat'
+      ? MACHINE_CAMERA_MODE.DIVISION_FOCUS
+      : MACHINE_CAMERA_MODE.FACILITY_FOCUS;
+  const topologyBranchId = currentView === 'world'
+    ? null
+    : currentView === 'seat'
+      ? 'BRANCH-SEAT-01'
+      : facility?.branchId || null;
+  const topologyRender = adapter.setTopology(visibleTopology, {
+    mode: topologyMode,
+    branchId: topologyBranchId,
+  });
   canvas.dataset.structuralView = currentView;
   canvas.dataset.structuralTotalTopologyEdges = String(semanticEdges.length);
   canvas.dataset.structuralVisibleTopologyEdges = String(topologyRender.edgeCount);
@@ -277,6 +290,7 @@ function renderView() {
   canvas.dataset.structuralVisibleFacilities = String(effectiveFacilities.length);
   canvas.dataset.structuralVisibleDivisions = String(currentView === 'seat' ? DIVISIONS.length : 0);
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
+  canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   const divisionSubject = subjectFromParts(divisions);
   const spec = deriveMachineCameraSpec({
@@ -285,11 +299,7 @@ function renderView() {
       : currentView === 'seat'
         ? MACHINE_CAMERA_ID.DIVISION
         : MACHINE_CAMERA_ID.FACILITY,
-    mode: currentView === 'world'
-      ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
-      : currentView === 'seat'
-        ? MACHINE_CAMERA_MODE.DIVISION_FOCUS
-        : MACHINE_CAMERA_MODE.FACILITY_FOCUS,
+    mode: topologyMode,
     worldSubject: model.worldSubject,
     podSubject: seatOpenPod?.subject,
     divisionSubject,

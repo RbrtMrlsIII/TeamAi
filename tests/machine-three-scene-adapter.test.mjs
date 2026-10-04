@@ -808,6 +808,19 @@ test('Y1 never invents semantic identity for component-only geometry', () => {
   assert.equal(descriptor.id, 'CORE_FOUNDATION_SHELL');
 });
 
+test('Y1 topology projection forwards scope to physical conduit rendering', () => {
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.match(
+    source,
+    /function setTopology\(topology = null, \{[\s\S]*?mode = 'WORLD_OVERVIEW',[\s\S]*?branchId = null/,
+  );
+  assert.match(
+    source,
+    /getRenderableMachineWorldConduitSegments\(topology, \{[\s\S]*?mode,[\s\S]*?branchId,/,
+  );
+  assert.match(source, /conduitEdgeKinds: Object\.freeze/);
+});
+
 test('Y1 adapter copies are still exact after the structural projection extension', () => {
   const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   const browser = readFileSync('public/machine-three-scene-adapter.js', 'utf8');

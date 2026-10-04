@@ -35,6 +35,9 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '0');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '1');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
+    const facilityConduitKinds = await canvas.getAttribute('data-structural-conduit-edge-kinds');
+    expect(facilityConduitKinds).toContain('facility-facility');
+    expect(facilityConduitKinds).not.toContain('pod-facility');
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges'))).toBeGreaterThan(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges')))
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
