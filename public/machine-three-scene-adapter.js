@@ -334,8 +334,67 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   return geometry;
 }
 
+const POD_SHELL_BEVEL_INSET = 0.82;
+const POD_SHELL_BEVEL_HEIGHT_RATIO = 0.58;
+
+function buildBeveledPodShellGeometry(THREE, descriptor, outline) {
+  const { x, y, z } = descriptor.dimensions;
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minZ = Infinity;
+  let maxZ = -Infinity;
+  for (const [px, pz] of outline) {
+    minX = Math.min(minX, px);
+    maxX = Math.max(maxX, px);
+    minZ = Math.min(minZ, pz);
+    maxZ = Math.max(maxZ, pz);
+  }
+  const outlineCenterX = (minX + maxX) * 0.5;
+  const outlineCenterZ = (minZ + maxZ) * 0.5;
+  const outlineWidth = Math.max(0.001, maxX - minX);
+  const outlineDepth = Math.max(0.001, maxZ - minZ);
+  const scaleX = x / outlineWidth;
+  const scaleZ = z / outlineDepth;
+  const halfY = y * 0.5;
+  const bevelY = halfY * POD_SHELL_BEVEL_HEIGHT_RATIO;
+  const vertices = [];
+  const point = ([px, pz], yy, scale = 1) => [
+    (px - outlineCenterX) * scaleX * scale,
+    yy,
+    (pz - outlineCenterZ) * scaleZ * scale,
+  ];
+  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
+  const topInner = outline.map((value) => point(value, halfY, POD_SHELL_BEVEL_INSET));
+  const topOuter = outline.map((value) => point(value, bevelY));
+  const bottomOuter = outline.map((value) => point(value, -bevelY));
+  const bottomInner = outline.map((value) => point(value, -halfY, POD_SHELL_BEVEL_INSET));
+  const topCenter = [0, halfY, 0];
+  const bottomCenter = [0, -halfY, 0];
+  for (let index = 1; index < outline.length - 1; index += 1) {
+    pushTri(topCenter, topInner[index + 1], topInner[index]);
+    pushTri(bottomCenter, bottomInner[index], bottomInner[index + 1]);
+  }
+  for (let index = 0; index < outline.length; index += 1) {
+    const next = (index + 1) % outline.length;
+    pushTri(topInner[index], topOuter[index], topOuter[next]);
+    pushTri(topInner[index], topOuter[next], topInner[next]);
+    pushTri(topOuter[index], bottomOuter[index], bottomOuter[next]);
+    pushTri(topOuter[index], bottomOuter[next], topOuter[next]);
+    pushTri(bottomOuter[index], bottomInner[index], bottomInner[next]);
+    pushTri(bottomOuter[index], bottomInner[next], bottomOuter[next]);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(new Float32Array(vertices), 3),
+  );
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  return geometry;
+}
+
 function buildPodShellGeometry(THREE, descriptor) {
-  return buildExtrudedPolygonGeometry(THREE, descriptor, getMachinePodShellOutline());
+  return buildBeveledPodShellGeometry(THREE, descriptor, getMachinePodShellOutline());
 }
 
 function buildSeatAuthorizationShieldGeometry(THREE, descriptor) {
