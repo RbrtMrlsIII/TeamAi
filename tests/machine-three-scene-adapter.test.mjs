@@ -737,7 +737,7 @@ test('S24 Three bridge embodies measured expanded Pod shell panels from S3 prese
   const expectedZ = Math.abs(base.dimensions.z) * 0.88;
   for (const [index, side] of [-1, 1].entries()) {
     const panel = openShells[index];
-    assert.equal(panel.materialRole, 'seatShell');
+    assert.equal(panel.materialRole, 'seat-shell');
     assert.deepEqual(panel.dimensions, {
       x: expectedX,
       y: base.dimensions.y,
