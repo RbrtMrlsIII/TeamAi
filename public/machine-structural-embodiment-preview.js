@@ -292,14 +292,22 @@ function renderView() {
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
+  canvas.dataset.structuralTopologyMode = topologyMode;
   const divisionSubject = subjectFromParts(divisions);
+  const cameraMode = currentView === 'world'
+    ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
+    : currentView === 'seat'
+      ? MACHINE_CAMERA_MODE.POD_FOCUS
+      : MACHINE_CAMERA_MODE.FACILITY_FOCUS;
+  const cameraId = currentView === 'world'
+    ? MACHINE_CAMERA_ID.WORLD
+    : currentView === 'seat'
+      ? MACHINE_CAMERA_ID.SEAT
+      : MACHINE_CAMERA_ID.FACILITY;
+  canvas.dataset.structuralCameraMode = cameraMode;
   const spec = deriveMachineCameraSpec({
-    cameraId: currentView === 'world'
-      ? MACHINE_CAMERA_ID.WORLD
-      : currentView === 'seat'
-        ? MACHINE_CAMERA_ID.DIVISION
-        : MACHINE_CAMERA_ID.FACILITY,
-    mode: topologyMode,
+    cameraId,
+    mode: cameraMode,
     worldSubject: model.worldSubject,
     podSubject: seatOpenPod?.subject,
     divisionSubject,
