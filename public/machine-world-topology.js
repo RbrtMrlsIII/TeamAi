@@ -463,6 +463,11 @@ export function buildMachineWorldTopology({
     serviceEndpointPoints: [
       ...innerPods.map((pod) => pod?.port).filter(Boolean),
       ...corePorts.map((port) => port?.point).filter(Boolean),
+      ...machinery.flatMap((machine) =>
+        (Array.isArray(machine?.ports) ? machine.ports : [])
+          .map((port) => port?.point)
+          .filter(Boolean)
+      ),
     ],
     conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
   });
