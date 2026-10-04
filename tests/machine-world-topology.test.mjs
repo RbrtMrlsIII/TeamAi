@@ -103,24 +103,30 @@ test('S8 scoped physical routes stay local to Seat and Facility focus modes', ()
   assert.ok(facilityEdges.length > 0);
   assert.ok(seatEdges.every((edge) =>
     (edge.kind === 'pod-division' && edge.targetBranchId === 'BRANCH-SEAT-01')
-    || (edge.kind === 'pod-facility' && edge.sourceBranchId === 'BRANCH-SEAT-01')
     || (edge.kind === 'adjacent-seat' && (
       edge.sourceBranchId === 'BRANCH-SEAT-01'
       || edge.targetBranchId === 'BRANCH-SEAT-01'
     )),
   ));
   assert.ok(facilityEdges.every((edge) =>
-    (edge.kind === 'pod-facility' && edge.targetBranchId === 'BRANCH-OUTER-ALPHA')
-    || (edge.kind === 'facility-facility' && (
+    edge.kind === 'facility-facility'
+    && (
       edge.sourceBranchId === 'BRANCH-OUTER-ALPHA'
       || edge.targetBranchId === 'BRANCH-OUTER-ALPHA'
-    ))
-    || (edge.kind === 'workspace-contribution' && edge.targetBranchId === 'BRANCH-OUTER-ALPHA'),
+    ),
   ));
-  assert.ok(getRenderableMachineWorldEdgesForScope(topology, {
+  const worldEdges = getRenderableMachineWorldEdgesForScope(topology, {
     mode: 'WORLD_OVERVIEW',
     branchId: 'BRANCH-SEAT-01',
-  }).length > seatEdges.length);
+  });
+  assert.ok(worldEdges.length > seatEdges.length);
+  assert.ok(worldEdges.some((edge) =>
+    edge.kind === 'pod-facility' && edge.sourceBranchId === 'BRANCH-SEAT-01'
+  ));
+  assert.ok(worldEdges.some((edge) =>
+    edge.kind === 'workspace-contribution'
+    && edge.targetBranchId === 'BRANCH-OUTER-ALPHA'
+  ));
 });
 
 test('S8 service planes are derived from interface elevation rather than a global world deck', () => {

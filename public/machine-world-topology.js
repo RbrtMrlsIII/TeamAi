@@ -166,14 +166,12 @@ export function getRenderableMachineWorldEdgesForScope(
       case 'DIVISION_FOCUS':
         return (
           (edge.kind === 'pod-division' && edge.targetBranchId === branchId)
-          || (edge.kind === 'pod-facility' && edge.sourceBranchId === branchId)
           || (edge.kind === 'adjacent-seat' && matchesBranch(edge))
         );
       case 'FACILITY_FOCUS':
         return (
-          (edge.kind === 'pod-facility' && edge.targetBranchId === branchId)
-          || (edge.kind === 'facility-facility' && matchesBranch(edge))
-          || (edge.kind === 'workspace-contribution' && edge.targetBranchId === branchId)
+          edge.kind === 'facility-facility'
+          && matchesBranch(edge)
         );
       default:
         return true;
