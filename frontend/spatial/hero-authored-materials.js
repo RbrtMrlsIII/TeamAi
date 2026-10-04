@@ -16,7 +16,7 @@ export function authoredRingMaterial(L = {}) {
   const refl = clamp(0.88 + (L.reflectance ?? 0.72) * 0.1);
   const mode = L.themeMode === 'dark' ? 'dark' : 'light';
   const color =
-    mode === 'dark' ? [0.42, 0.46, 0.48] : [0.74, 0.75, 0.71];
+    mode === 'dark' ? [0.19, 0.30, 0.38] : [0.68, 0.78, 0.86];
   const spec =
     mode === 'dark'
       ? [0.55, 0.58, 0.56]
@@ -39,7 +39,7 @@ export function authoredSeatShellMaterial(L = {}) {
   const refl = clamp(0.7 + (L.reflectance ?? 0.72) * 0.18);
   const mode = L.themeMode === 'dark' ? 'dark' : 'light';
   const color =
-    mode === 'dark' ? [0.22, 0.24, 0.23] : [0.89, 0.88, 0.84];
+    mode === 'dark' ? [0.18, 0.30, 0.38] : [0.82, 0.88, 0.94];
   const spec =
     mode === 'dark'
       ? [0.4, 0.42, 0.4]
@@ -62,8 +62,8 @@ export function authoredSeatInsetMaterial(L = {}) {
   const mode = L.themeMode === 'dark' ? 'dark' : 'light';
   const color =
     mode === 'dark'
-      ? [0.08, 0.09, 0.09]
-      : [0.13 - shadow * 0.02, 0.15 - shadow * 0.02, 0.14 - shadow * 0.02];
+      ? [0.04, 0.07, 0.10]
+      : [0.06, 0.10, 0.15];
   return Object.freeze({
     role: 'seatShellInset',
     color: Object.freeze(color.map((c) => clamp(c))),
@@ -99,18 +99,18 @@ export function authoredHeroMaterialSet(L = {}) {
   const shadow = clamp(L.shadowSeparationStrength ?? 0.56);
 
   const energyColor = mode === 'dark'
-    ? [0.25, 0.72, 1.00]
-    : [0.16, 0.55, 0.88];
+    ? [0.06, 0.74, 1.00]
+    : [0.10, 0.62, 0.96];
   const traceColor = mode === 'dark'
-    ? [0.30, 0.52, 0.66]
-    : [0.28, 0.56, 0.72];
+    ? [0.14, 0.50, 0.68]
+    : [0.18, 0.52, 0.70];
 
   const glassColor = mixColor(
     shell.color,
     energyColor,
     mode === 'dark' ? 0.22 : 0.14,
   );
-  const secondaryColor = mixColor(ring.color, inset.color, 0.42);
+  const secondaryColor = mixColor(ring.color, inset.color, 0.34);
 
   return Object.freeze({
     metal: ring,
@@ -139,8 +139,15 @@ export function authoredHeroMaterialSet(L = {}) {
       'signalTrace',
       traceColor,
       0.28 + shadow * 0.08,
-      mode === 'dark' ? [0.58, 0.72, 0.82] : [0.52, 0.68, 0.78],
+      mode === 'dark' ? [0.48, 0.70, 0.82] : [0.50, 0.72, 0.86],
       signalFloor * 0.42,
+    ),
+    accent: authoredPresentationMaterial(
+      'statusAccent',
+      mode === 'dark' ? [0.98, 0.42, 0.10] : [1.00, 0.50, 0.14],
+      0.30 + shadow * 0.06,
+      mode === 'dark' ? [1.00, 0.62, 0.28] : [1.00, 0.70, 0.34],
+      signalFloor * 0.58,
     ),
     workspaceRing: ring,
     seatShell: shell,
@@ -160,4 +167,5 @@ export const HERO_PRESENTATION_MATERIAL_ROLES = Object.freeze([
   'glass',
   'energy',
   'trace',
+  'accent',
 ]);
