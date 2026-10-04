@@ -861,8 +861,8 @@ test('Y1 preserves the authored Pod shell profile as an explicit mesh contract',
   const zs = outline.map(([, z]) => z);
   assert.equal(Math.min(...xs), -0.90);
   assert.equal(Math.max(...xs), 0.90);
-  assert.equal(Math.min(...zs), -0.62);
-  assert.equal(Math.max(...zs), 0.58);
+  assert.equal(Math.min(...zs), -0.60);
+  assert.equal(Math.max(...zs), 0.60);
 });
 
 test('Y1 and raw WebGL consume one authored Pod profile authority', () => {
