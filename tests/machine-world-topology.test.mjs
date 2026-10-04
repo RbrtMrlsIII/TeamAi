@@ -128,10 +128,13 @@ test('S8 service planes are derived from interface elevation rather than a globa
   const external = topology.edges.filter((edge) => PHYSICAL_CONDUIT_EDGE_KINDS.includes(edge.kind));
 
   assert.ok(external.length > 0);
-  assert.ok(external.every((edge) => {
+  external.forEach((edge) => {
     const endpointY = Math.max(edge.route[0].y, edge.route.at(-1).y);
-    return edge.route[1].y >= endpointY + 0.34 - 1e-9;
-  }));
+    assert.ok(
+      edge.route[1].y >= endpointY + 0.34 - 1e-9,
+      edge.semanticEdgeId + ': serviceY=' + edge.route[1].y.toFixed(6) + ' endpointY=' + endpointY.toFixed(6),
+    );
+  });
   assert.ok(external.some((edge) => edge.route[1].y < 1.90));
 });
 
