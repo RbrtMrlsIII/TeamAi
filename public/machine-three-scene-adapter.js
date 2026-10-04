@@ -575,6 +575,87 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   machineRoot.name = 'TEAMAI_MACHINE_ROOT';
   scene.add(machineRoot);
 
+  const localLightingRoot = new THREE.Group();
+  localLightingRoot.name = 'TEAMAI_LOCAL_PRACTICAL_LIGHTS';
+  scene.add(localLightingRoot);
+
+  function addLocalPointLight({ point, color, intensity, distance, name }) {
+    if (!point) return null;
+    const light = new THREE.PointLight(
+      new THREE.Color(...color),
+      Math.max(0, Number(intensity) || 0),
+      Math.max(0.5, Number(distance) || 2.5),
+      2,
+    );
+    light.name = name;
+    light.position.set(
+      Number(point.x) || 0,
+      Number(point.y) || 0,
+      Number(point.z) || 0,
+    );
+    localLightingRoot.add(light);
+    return light;
+  }
+
+  function buildLocalPracticalLighting({ core = null, pods = [], facilities = [] } = {}) {
+    let count = 0;
+    const energyColor = authoredMaterials.energy?.color || [0.08, 0.64, 1.00];
+    const accentColor = authoredMaterials.accent?.color || [1.00, 0.48, 0.10];
+    if (core?.components?.length) {
+      const reactor = core.components.find((part) => part.role === 'reactor-chamber');
+      if (reactor?.center) {
+        addLocalPointLight({
+          point: reactor.center,
+          color: energyColor,
+          intensity: 0.24,
+          distance: Math.max(2.6, Number(core.radius || 0) * 1.8),
+          name: 'CORE_REACTOR_PRACTICAL',
+        });
+        count += 1;
+      }
+    }
+
+    const podIntensity = pods.length === 1 ? 0.34 : 0.11;
+    for (const pod of Array.isArray(pods) ? pods : []) {
+      const signal = pod?.ports?.find((port) => port.role === 'signal');
+      const status = pod?.components?.find((part) => part.role === 'status-indicator');
+      addLocalPointLight({
+        point: signal?.point || status?.center || pod?.center,
+        color: energyColor,
+        intensity: podIntensity,
+        distance: Math.max(2.2, Number(pod?.envelope?.radius || 0.8) * 2.4),
+        name: 'POD_SIGNAL_PRACTICAL:' + String(pod.branchId || count),
+      });
+      count += 1;
+      if (status?.center) {
+        addLocalPointLight({
+          point: status.center,
+          color: accentColor,
+          intensity: pods.length === 1 ? 0.12 : 0.035,
+          distance: Math.max(1.6, Number(pod?.envelope?.radius || 0.8) * 1.6),
+          name: 'POD_STATUS_PRACTICAL:' + String(pod.branchId || count),
+        });
+        count += 1;
+      }
+    }
+
+    for (const facility of Array.isArray(facilities) ? facilities : []) {
+      const signal = facility?.ports?.find((port) => port.role === 'machine-output')
+        || facility?.ports?.find((port) => port.role === 'machine-core-input')
+        || facility?.ports?.[0];
+      if (!signal?.point) continue;
+      addLocalPointLight({
+        point: signal.point,
+        color: energyColor,
+        intensity: 0.12,
+        distance: Math.max(2.4, Number(facility?.envelope?.radius || 1) * 1.7),
+        name: 'FACILITY_SIGNAL_PRACTICAL:' + String(facility.branchId || count),
+      });
+      count += 1;
+    }
+    return count;
+  }
+
   const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 200);
   camera.name = 'Y1_RENDER_CAMERA_BRIDGE';
   camera.position.set(0, 6, 12);
@@ -629,12 +710,15 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
 
   function setAssemblies(input = {}) {
     clearGroup(machineRoot);
+    clearGroup(localLightingRoot);
     const descriptors = collectThreeDescriptors(input);
     for (const descriptor of descriptors) addDescriptor(descriptor);
+    const localLightCount = buildLocalPracticalLighting(input);
     return Object.freeze({
       descriptorCount: descriptors.length,
       objectCount: machineRoot.children.length,
       descriptorIds: descriptors.map((descriptor) => descriptor.id),
+      localLightCount,
     });
   }
 
