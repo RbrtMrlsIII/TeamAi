@@ -191,6 +191,18 @@ function raisedRoute(source, target, deckY) {
   ]);
 }
 
+function anchoredServiceRoute(source, target, anchorPoint) {
+  if (!source || !target || !anchorPoint) return Object.freeze([]);
+  const serviceY = finite(anchorPoint.y, Math.max(finite(source.y), finite(target.y)));
+  return Object.freeze([
+    Object.freeze({ x: finite(source.x), y: finite(source.y), z: finite(source.z) }),
+    Object.freeze({ x: finite(source.x), y: serviceY, z: finite(source.z) }),
+    Object.freeze({ x: finite(anchorPoint.x), y: serviceY, z: finite(anchorPoint.z) }),
+    Object.freeze({ x: finite(target.x), y: serviceY, z: finite(target.z) }),
+    Object.freeze({ x: finite(target.x), y: finite(target.y), z: finite(target.z) }),
+  ]);
+}
+
 function makeEdge({
   semanticEdgeId,
   kind,
@@ -409,46 +421,6 @@ export function buildMachineWorldTopology({
     facilities.map((assembly) => [assembly.branchId, assembly]),
   );
 
-  for (const pod of innerPods) {
-    const candidates = [...machineByBranch.values()];
-    const podAngle = Math.atan2(pod.center.z, pod.center.x);
-    const wrap = (angle) =>
-      Math.abs(((angle + Math.PI) % (Math.PI * 2)) - Math.PI);
-    const machine = candidates.reduce((best, candidate) => {
-      if (!best) return candidate;
-      const bestHousing = facilityByBranch.get(best.branchId)?.outerHousing;
-      const candidateHousing = facilityByBranch.get(candidate.branchId)?.outerHousing;
-      const bestAngle = Math.atan2(bestHousing?.center?.z || 0, bestHousing?.center?.x || 0);
-      const candidateAngle = Math.atan2(candidateHousing?.center?.z || 0, candidateHousing?.center?.x || 0);
-      return wrap(candidateAngle - podAngle) < wrap(bestAngle - podAngle)
-        ? candidate
-        : best;
-    }, null);
-    const machineFacility = machine ? facilityByBranch.get(machine.branchId) : null;
-    const targetPort = machinePort(machine, 'machine-core-input');
-    if (!pod.port || !machine || !machineFacility || !targetPort) continue;
-
-    const source = Object.freeze({
-      ...safePodPart(pod, pod.port),
-      semanticId: pod.semanticKey || pod.branchId,
-      branchId: pod.branchId,
-    });
-    const target = safeMachinePart(machine, targetPort);
-    const deckY = deriveServiceDeckY(source.port, target.port, { clearance });
-
-    edges.push(makeEdge({
-      semanticEdgeId: 'EDGE:POD-FACILITY:' + pod.branchId + '=>' + machine.branchId,
-      kind: 'pod-facility',
-      source,
-      target,
-      route: raisedRoute(source.port, target.port, deckY),
-      clearance,
-      obstacles: scene.parts.filter(
-        (part) => part.branchId !== pod.branchId && part.branchId !== machine.branchId,
-      ),
-    }));
-  }
-
   for (let index = 0; index < machinery.length; index += 1) {
     const sourceMachine = machinery[index];
     const targetMachine = machinery[(index + 1) % machinery.length];
@@ -481,6 +453,60 @@ export function buildMachineWorldTopology({
     }));
   }
 
+
+
+  const facilityServiceGeometry = deriveMachineWorldServiceManifold({
+    topology: { edges },
+    scene,
+    machinery,
+    clearance,
+    conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
+  });
+  const facilityAnchorByBranch = new Map(
+    (facilityServiceGeometry.facilityAnchors || []).map((anchor) => [anchor.branchId, anchor]),
+  );
+
+  for (const pod of innerPods) {
+    const candidates = [...machineByBranch.values()];
+    const podAngle = Math.atan2(pod.center.z, pod.center.x);
+    const wrap = (angle) =>
+      Math.abs(((angle + Math.PI) % (Math.PI * 2)) - Math.PI);
+    const machine = candidates.reduce((best, candidate) => {
+      if (!best) return candidate;
+      const bestHousing = facilityByBranch.get(best.branchId)?.outerHousing;
+      const candidateHousing = facilityByBranch.get(candidate.branchId)?.outerHousing;
+      const bestAngle = Math.atan2(bestHousing?.center?.z || 0, bestHousing?.center?.x || 0);
+      const candidateAngle = Math.atan2(candidateHousing?.center?.z || 0, candidateHousing?.center?.x || 0);
+      return wrap(candidateAngle - podAngle) < wrap(bestAngle - podAngle)
+        ? candidate
+        : best;
+    }, null);
+    const machineFacility = machine ? facilityByBranch.get(machine.branchId) : null;
+    const targetPort = machinePort(machine, 'machine-core-input');
+    if (!pod.port || !machine || !machineFacility || !targetPort) continue;
+
+    const source = Object.freeze({
+      ...safePodPart(pod, pod.port),
+      semanticId: pod.semanticKey || pod.branchId,
+      branchId: pod.branchId,
+    });
+    const target = safeMachinePart(machine, targetPort);
+    const facilityAnchor = facilityAnchorByBranch.get(machine.branchId);
+    if (!facilityAnchor?.point) continue;
+
+    edges.push(makeEdge({
+      semanticEdgeId: 'EDGE:POD-FACILITY:' + pod.branchId + '=>' + machine.branchId,
+      kind: 'pod-facility',
+      source,
+      target,
+      route: anchoredServiceRoute(source.port, target.port, facilityAnchor.point),
+      clearance,
+      obstacles: scene.parts.filter(
+        (part) => part.branchId !== pod.branchId && part.branchId !== machine.branchId,
+      ),
+    }));
+  }
+
   if (corePorts.length) {
     for (const machine of machinery) {
       const targetPort = machinePort(machine, 'machine-core-input');
@@ -503,13 +529,14 @@ export function buildMachineWorldTopology({
       if (!hubPort) continue;
       const source = safeCorePart(scene.hub, hubPort.point, corePorts);
       const target = safeMachinePart(machine, targetPort);
-      const deckY = deriveServiceDeckY(source.port, target.port, { clearance, lift: 0.24, minimum: 0.82 });
+      const facilityAnchor = facilityAnchorByBranch.get(machine.branchId);
+      if (!facilityAnchor?.point) continue;
       edges.push(makeEdge({
         semanticEdgeId: 'EDGE:WORKSPACE-CONTRIBUTION:HUB-CORE=>' + machine.branchId,
         kind: 'workspace-contribution',
         source,
         target,
-        route: raisedRoute(source.port, target.port, deckY),
+        route: anchoredServiceRoute(source.port, target.port, facilityAnchor.point),
         clearance,
         obstacles: scene.parts.filter(
           (part) => part.branchId !== machine.branchId && part.branchId !== scene.hub.branchId,
