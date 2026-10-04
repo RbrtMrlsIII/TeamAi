@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V6';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V5';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 const MACHINE_PROFILES = Object.freeze({
@@ -385,31 +385,11 @@ function deriveFacilityClearanceProfile(machine, obstacles = [], clearance = 0.1
   });
 }
 
-function deriveMachineServiceBoundaryDistance(assembly, components = buildMachineComponents(assembly)) {
+function machinePorts(assembly) {
   const center = assembly.outerHousing.center;
   const basis = localBasis(center);
-  const housingBoundary = radialBoundaryDistance(assembly.outerHousing.dimensions, basis.angle);
-  const motion = deriveMachineFacilityMechanismPresentation(
-    { machineRole: assembly.machineRole, outerHousing: assembly.outerHousing, components },
-    { amount: 1, reducedMotion: true },
-  );
-  const maxComponentReach = Math.max(
-    ...components.map((entry) => {
-      const delta = motion.components.find((candidate) => candidate.id === entry.id);
-      return Math.hypot(
-        entry.center.x + finite(delta?.dx) - center.x,
-        entry.center.z + finite(delta?.dz) - center.z,
-      ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
-    }),
-    housingBoundary,
-  );
-  return Math.max(housingBoundary, maxComponentReach);
-}
-
-function machinePorts(assembly, components = buildMachineComponents(assembly)) {
-  const center = assembly.outerHousing.center;
-  const basis = localBasis(center);
-  const serviceBoundary = deriveMachineServiceBoundaryDistance(assembly, components);
+  const boundaryDistance = radialBoundaryDistance(assembly.outerHousing.dimensions, basis.angle);
+  const outerFace = boundaryDistance;
   return Object.freeze([
     ...assembly.ports,
     Object.freeze({
@@ -417,12 +397,11 @@ function machinePorts(assembly, components = buildMachineComponents(assembly)) {
       facilityId: null,
       role: 'machine-core-input',
       point: Object.freeze({
-        x: center.x + basis.outward.x * (serviceBoundary + 0.04),
+        x: center.x + basis.outward.x * (outerFace + 0.04),
         y: center.y + 0.16,
-        z: center.z + basis.outward.z * (serviceBoundary + 0.04),
+        z: center.z + basis.outward.z * (outerFace + 0.04),
       }),
       radius: 0.10,
-      serviceBoundaryDistance: serviceBoundary,
       ...rootContext(assembly.branchId + ':CORE-IN'),
     }),
     Object.freeze({
@@ -430,12 +409,11 @@ function machinePorts(assembly, components = buildMachineComponents(assembly)) {
       facilityId: null,
       role: 'machine-output',
       point: Object.freeze({
-        x: center.x + basis.outward.x * (serviceBoundary + 0.12),
+        x: center.x + basis.outward.x * (outerFace + 0.12),
         y: center.y + 0.40,
-        z: center.z + basis.outward.z * (serviceBoundary + 0.12),
+        z: center.z + basis.outward.z * (outerFace + 0.12),
       }),
       radius: 0.10,
-      serviceBoundaryDistance: serviceBoundary,
       ...rootContext(assembly.branchId + ':MACHINE-OUT'),
     }),
   ]);
@@ -447,7 +425,6 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
   const basis = localBasis(center);
   const boundaryDistance = radialBoundaryDistance(dimensions, basis.angle);
   const outerFace = boundaryDistance;
-  const serviceBoundary = Math.max(outerFace, deriveMachineServiceBoundaryDistance(assembly));
   const interfaces = [];
 
   const coreIn = ports.find((port) => port.role === 'machine-core-input');
@@ -459,9 +436,9 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
         'INTERFACE:' + assembly.branchId + ':CORE-IN',
         'machine-core-input',
         {
-          x: center.x + basis.outward.x * (serviceBoundary + 0.04),
+          x: center.x + basis.outward.x * (outerFace + 0.04),
           y: coreIn.point.y,
-          z: center.z + basis.outward.z * (serviceBoundary + 0.04),
+          z: center.z + basis.outward.z * (outerFace + 0.04),
         },
         { x: 0.24, y: 0.20, z: 0.20 },
         basis.angle,
@@ -469,7 +446,7 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
         {
           portId: coreIn.id,
           interfaceSide: 'outer',
-          interfaceBoundaryRadius: serviceBoundary,
+          interfaceBoundaryRadius: outerFace,
         },
       ),
     );
@@ -481,9 +458,9 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
         'INTERFACE:' + assembly.branchId + ':MACHINE-OUT',
         'machine-output',
         {
-          x: center.x + basis.outward.x * (serviceBoundary + 0.08),
+          x: center.x + basis.outward.x * (outerFace + 0.08),
           y: machineOut.point.y,
-          z: center.z + basis.outward.z * (serviceBoundary + 0.08),
+          z: center.z + basis.outward.z * (outerFace + 0.08),
         },
         { x: 0.28, y: 0.18, z: 0.18 },
         basis.angle,
@@ -491,7 +468,7 @@ export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machin
         {
           portId: machineOut.id,
           interfaceSide: 'outer',
-          interfaceBoundaryRadius: serviceBoundary,
+          interfaceBoundaryRadius: outerFace,
         },
       ),
     );
@@ -615,7 +592,7 @@ export function deriveMachineFacilityMachinery({
         ...rootContext(assembly.branchId + ':HINGE-MOUNT:' + side),
       })),
     ]);
-    const ports = machinePorts(assembly, components);
+    const ports = machinePorts(assembly);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
     const maxPresentation = deriveMachineFacilityMechanismPresentation(
       { machineRole: assembly.machineRole, outerHousing: assembly.outerHousing, components },

@@ -278,6 +278,49 @@ test('S8 pod-facility and workspace-contribution routes use facility service-man
   }
 });
 
+test('S8 Facility focus projects local manifold spurs without peer manifold arcs', () => {
+  const { topology } = buildFixture(10);
+  const facilityScope = {
+    mode: 'FACILITY_FOCUS',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  };
+  const focused = getRenderableMachineWorldConduitSegments(topology, facilityScope);
+  const world = getRenderableMachineWorldConduitSegments(topology, {
+    mode: 'WORLD_OVERVIEW',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  });
+
+  const focusedManifold = focused.filter((segment) =>
+    segment.edgeKind === 'facility-facility'
+  );
+  const worldManifold = world.filter((segment) =>
+    segment.edgeKind === 'facility-facility'
+  );
+
+  assert.equal(
+    focusedManifold.filter((segment) => segment.segmentRole === 'manifold-arc').length,
+    0,
+  );
+  assert.equal(
+    focusedManifold.length,
+    topology.edges.filter((edge) =>
+      edge.kind === 'facility-facility'
+      && (edge.sourceBranchId === facilityScope.branchId || edge.targetBranchId === facilityScope.branchId)
+    ).length,
+  );
+  assert.ok(
+    focusedManifold.every((segment) =>
+      Array.isArray(segment.obstacleBranchIds)
+      && segment.obstacleBranchIds.includes(facilityScope.branchId)
+      && segment.segmentRole !== 'manifold-arc'
+    ),
+  );
+  assert.ok(
+    worldManifold.some((segment) => segment.segmentRole === 'manifold-arc'),
+  );
+  assert.ok(worldManifold.length > focusedManifold.length);
+});
+
 test('S8 service manifold stays outside the measured S7 machinery envelope across Seats and expansion', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     for (const expansionAmount of [0, 1]) {

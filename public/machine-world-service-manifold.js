@@ -8,7 +8,7 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_SERVICE_MANIFOLD_ID = 'MACHINE-WORLD-SERVICE-MANIFOLD';
-export const MACHINE_WORLD_SERVICE_MANIFOLD_VERSION = 'S8-MANIFOLD-V2';
+export const MACHINE_WORLD_SERVICE_MANIFOLD_VERSION = 'S8-MANIFOLD-V1';
 const ROOT_OWNER = 'frontend/spatial/machine-world-service-manifold.js';
 
 const finite = (value, fallback = 0) =>
@@ -91,27 +91,31 @@ export function deriveMachineWorldServiceManifold({
   const divisionReach = divisionEdges.flatMap((edge) =>
     (Array.isArray(edge?.route) ? edge.route : []).map(radial)
   );
-  const divisionBoundary = (
-    divisionReach.length
+  const innerBoundary = (
+    (divisionReach.length
       ? Math.max(...divisionReach)
       : Math.max(...pods.map((pod) =>
         radial(pod.center) + Math.hypot(
           finite(pod.dimensions?.x) * 0.5,
           finite(pod.dimensions?.z) * 0.5,
         ),
-      ), 0)
+      ), 0))
+    + clearanceBudget
+    + halfConduit
   );
-  const machineEnvelopeBoundary = Math.max(
+
+  const outerBoundary = Math.min(
     ...machines.map((machine) =>
-      radial(machine?.outerHousing?.center) + finite(machine?.envelope?.radius)
+      radial(machine?.outerHousing?.center)
+      - finite(machine?.envelope?.radius)
+      - clearanceBudget
+      - halfConduit
     ),
-    0,
+    Infinity,
   );
-  const serviceRingBoundary = Math.max(divisionBoundary, machineEnvelopeBoundary);
-  const serviceRingMargin = Math.max(0.08, finite(clearanceBudget * 0.75, 0.12));
-  const innerBoundary = serviceRingBoundary + clearanceBudget + halfConduit;
-  const outerBoundary = innerBoundary + serviceRingMargin * 2;
-  const radius = (innerBoundary + outerBoundary) * 0.5;
+  const radius = Number.isFinite(outerBoundary) && outerBoundary > innerBoundary
+    ? (innerBoundary + outerBoundary) * 0.5
+    : null;
 
   const maxPodTop = Math.max(
     ...pods.map((pod) =>
@@ -132,7 +136,6 @@ export function deriveMachineWorldServiceManifold({
 
   const reasons = [];
   if (edges.length !== 4) reasons.push('FACILITY_EDGE_COUNT_MISMATCH');
-  if (machines.length !== 4) reasons.push('MACHINE_COUNT_MISMATCH');
   if (!radius) reasons.push('NO_SAFE_RADIAL_BAND');
   if (radius && outerBoundary - innerBoundary < Math.max(0.08, halfConduit * 2)) {
     reasons.push('RADIAL_BAND_TOO_TIGHT');
@@ -232,9 +235,6 @@ export function deriveMachineWorldServiceManifold({
     radius,
     innerBoundary,
     outerBoundary,
-    divisionBoundary,
-    machineEnvelopeBoundary,
-    serviceRingMargin,
     manifoldY,
     arcSegmentCount: segments.filter((segment) => segment.segmentRole === 'manifold-arc').length,
     facilitySpurCount: segments.filter((segment) => segment.segmentRole !== 'manifold-arc').length,
@@ -265,9 +265,6 @@ export function validateMachineWorldServiceManifold(
   if (!(Number(manifold?.radius) > Number(manifold?.innerBoundary))
     || !(Number(manifold?.radius) < Number(manifold?.outerBoundary))) {
     reasons.push('MANIFOLD_RADIUS_OUTSIDE_SAFE_BAND');
-  }
-  if (!(Number(manifold?.innerBoundary) > Number(manifold?.machineEnvelopeBoundary))) {
-    reasons.push('MANIFOLD_NOT_OUTSIDE_MACHINE_ENVELOPE');
   }
   if (!Array.isArray(manifold?.segments) || manifold.segments.length < expectedFacilityEdges) {
     reasons.push('MANIFOLD_SEGMENTS_INCOMPLETE');

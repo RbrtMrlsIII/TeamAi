@@ -693,11 +693,20 @@ export const MACHINE_WORLD_CONDUIT_RADIUS_FACTOR = 0.52;
 
 export function getRenderableMachineWorldConduitSegments(topology, {
   radiusFactor = MACHINE_WORLD_CONDUIT_RADIUS_FACTOR,
+  mode = 'WORLD_OVERVIEW',
+  branchId = null,
 } = {}) {
   const eligible = new Set(PHYSICAL_CONDUIT_EDGE_KINDS);
+  const scopedEdgeIds = branchId && mode !== 'WORLD_OVERVIEW'
+    ? new Set(
+        getRenderableMachineWorldEdgesForScope(topology, { mode, branchId })
+          .map((edge) => edge.semanticEdgeId),
+      )
+    : null;
   const segments = [];
   for (const edge of Array.isArray(topology?.edges) ? topology.edges : []) {
     if (!eligible.has(edge?.kind)) continue;
+    if (scopedEdgeIds && !scopedEdgeIds.has(edge?.semanticEdgeId)) continue;
     if (edge.kind === 'facility-facility') continue;
     const route = Array.isArray(edge?.route) ? edge.route : [];
     const radius = Math.max(
@@ -743,6 +752,11 @@ export function getRenderableMachineWorldConduitSegments(topology, {
   }
   for (const manifoldSegment of topology?.serviceManifold?.segments || []) {
     if (manifoldSegment?.routeContinuous !== true) continue;
+    if (scopedEdgeIds && !scopedEdgeIds.has(manifoldSegment?.semanticEdgeId)) continue;
+    if (
+      mode === 'FACILITY_FOCUS'
+      && manifoldSegment?.segmentRole === 'manifold-arc'
+    ) continue;
     segments.push(Object.freeze({
       id: manifoldSegment.id,
       semanticEdgeId: manifoldSegment.semanticEdgeId,
