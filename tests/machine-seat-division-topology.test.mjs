@@ -164,8 +164,8 @@ test('fan deployment stays inside the compact radial envelope while preserving s
     }),
   );
   const scale = Math.max(parent.dimensions.x, parent.dimensions.z);
-  assert.ok(compact.every((entry) => entry.radialDistance >= scale * 1.50 - 1e-12));
-  assert.ok(open.every((entry) => entry.radialDistance <= scale * 1.65 + 1e-12));
+  assert.ok(compact.every((entry) => entry.radialDistance >= scale * 1.66 - 1e-12));
+  assert.ok(open.every((entry) => entry.radialDistance <= scale * 1.80 + 1e-12));
   assert.ok(open.every((entry, index) => entry.radialDistance > compact[index].radialDistance));
   const boxes = open.map((division) => boundsForDivision(division));
   for (let boxIndex = 0; boxIndex < boxes.length; boxIndex += 1) {

@@ -90,7 +90,7 @@ test('S4 assembly envelopes expand monotonically with authored division travel',
   assert.ok(open.envelope.radius >= compact.envelope.radius);
   assert.ok(open.envelope.radialDistance > compact.envelope.radialDistance);
   assert.ok(
-    open.envelope.radialDistance <= Math.max(parent.dimensions.x, parent.dimensions.z) * 1.65 + 1e-12,
+    open.envelope.radialDistance <= Math.max(parent.dimensions.x, parent.dimensions.z) * 1.80 + 1e-12,
   );
 });
 
