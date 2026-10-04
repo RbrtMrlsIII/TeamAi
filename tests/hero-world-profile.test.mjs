@@ -36,8 +36,8 @@ test('world profile is deterministic across the supported Seat range', () => {
 });
 
 test('outer housing safety envelope remains compact enough for route-scale composition', () => {
-  assert.equal(MACHINE_OUTER_HOUSING_SAFETY_BUFFER, 0.5);
-  assert.equal(deriveMachineWorldProfile(10).outerHousingRadius, 7.65);
+  assert.equal(MACHINE_OUTER_HOUSING_SAFETY_BUFFER, 2.4);
+  assert.equal(deriveMachineWorldProfile(10).outerHousingRadius, 9.55);
 });
 
 test('expanded machine-core radii remain monotonic without changing semantic population', () => {
