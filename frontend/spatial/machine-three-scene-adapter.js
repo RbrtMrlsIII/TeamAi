@@ -205,6 +205,7 @@ const METALLIC_ROLE_LEVEL = Object.freeze({
   glass: 0.04,
   energy: 0.18,
   trace: 0.36,
+  conduit: 0.46,
   seatShell: 0.12,
   seatShellInset: 0.24,
   workspaceRing: 0.86,
@@ -238,13 +239,14 @@ export function resolveThreeMaterialPresentation(role, authored = authoredHeroMa
     ? authoredRole
     : 'metal2';
   const glass = authoredRole === 'glass';
+  const conduit = authoredRole === 'conduit';
   return Object.freeze({
     authoredRole,
     color: Object.freeze([...definition.color]),
     roughness: Math.max(0, Math.min(1, Number(definition.rough) || 0)),
     metalness: METALLIC_ROLE_LEVEL[metallicKey],
-    transparent: glass,
-    opacity: glass ? 0.68 : 1,
+    transparent: glass || conduit,
+    opacity: glass ? 0.68 : conduit ? 0.50 : 1,
     emissive: Object.freeze([...definition.color]),
     emissiveIntensity: Math.max(0, Math.min(1, Number(definition.emit) || 0)),
     name: 'S24_AUTHORED:' + authoredRole,
@@ -676,7 +678,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
         segment.dimensions.y,
         segment.dimensions.z,
       );
-      const mesh = new THREE.Mesh(geometry, material('trace'));
+      const mesh = new THREE.Mesh(geometry, material('conduit'));
       mesh.name = segment.id;
       mesh.userData.semanticEdgeId = segment.semanticEdgeId;
       mesh.userData.edgeKind = segment.edgeKind;
