@@ -50,7 +50,7 @@ test('full renderer material set is derived from authored theme roles', () => {
     'metal', 'metal2', 'glass', 'energy', 'trace', 'accent',
     'divisionConnection', 'divisionBehavior', 'divisionToolkit',
     'divisionCapabilities', 'divisionAuthorization', 'divisionScope',
-    'divisionEvidence',
+    'divisionEvidence', 'conduit',
     'workspaceRing', 'seatShell', 'seatShellInset',
   ]);
   assert.equal(lightSet.metal.role, 'workspaceRing');
@@ -64,6 +64,8 @@ test('full renderer material set is derived from authored theme roles', () => {
   assert.notDeepEqual(lightSet, darkSet);
   assert.ok(lightSet.divisionToolkit.color[0] > lightSet.divisionToolkit.color[2]);
   assert.ok(lightSet.divisionEvidence.color[1] > lightSet.divisionEvidence.color[0]);
+  assert.ok(lightSet.conduit.color[2] > lightSet.conduit.color[0]);
+  assert.ok(lightSet.conduit.rough > lightSet.trace.rough);
   assert.ok(lightSet.energy.color[2] > lightSet.energy.color[0]);
   assert.ok(darkSet.energy.color[2] > darkSet.energy.color[0]);
   assert.ok(lightSet.accent.color[0] > lightSet.accent.color[2]);
