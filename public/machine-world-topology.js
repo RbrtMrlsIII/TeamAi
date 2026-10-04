@@ -696,6 +696,26 @@ export function getRenderableMachineWorldConduitSegments(topology, {
       }));
     }
   }
+  for (const manifoldSegment of topology?.serviceManifold?.segments || []) {
+    if (manifoldSegment?.routeContinuous !== true) continue;
+    segments.push(Object.freeze({
+      id: manifoldSegment.id,
+      semanticEdgeId: manifoldSegment.semanticEdgeId,
+      edgeKind: 'facility-facility',
+      segmentIndex: manifoldSegment.segmentIndex,
+      segmentRole: manifoldSegment.segmentRole,
+      start: manifoldSegment.start,
+      end: manifoldSegment.end,
+      center: manifoldSegment.center,
+      dimensions: manifoldSegment.dimensions,
+      rotationY: manifoldSegment.rotationY,
+      radius: Math.max(0.01, finite(manifoldSegment.radius)),
+      corridorRadius: Math.max(0, finite(manifoldSegment.corridorRadius)),
+      routeContinuous: true,
+      ...rootContext(manifoldSegment.id),
+      presentationOnly: true,
+    }));
+  }
   return Object.freeze(segments);
 }
 
