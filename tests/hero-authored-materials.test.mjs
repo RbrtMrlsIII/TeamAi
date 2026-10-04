@@ -46,6 +46,9 @@ test('full renderer material set is derived from authored theme roles', () => {
 
   assert.deepEqual(Object.keys(lightSet), [
     'metal', 'metal2', 'glass', 'energy', 'trace', 'accent',
+    'divisionConnection', 'divisionBehavior', 'divisionToolkit',
+    'divisionCapabilities', 'divisionAuthorization', 'divisionScope',
+    'divisionEvidence',
     'workspaceRing', 'seatShell', 'seatShellInset',
   ]);
   assert.equal(lightSet.metal.role, 'workspaceRing');
@@ -57,6 +60,8 @@ test('full renderer material set is derived from authored theme roles', () => {
   assert.equal(lightSet.trace.role, 'signalTrace');
   assert.equal(lightSet.accent.role, 'statusAccent');
   assert.notDeepEqual(lightSet, darkSet);
+  assert.ok(lightSet.divisionToolkit.color[0] > lightSet.divisionToolkit.color[2]);
+  assert.ok(lightSet.divisionEvidence.color[1] > lightSet.divisionEvidence.color[0]);
   assert.ok(lightSet.energy.color[2] > lightSet.energy.color[0]);
   assert.ok(darkSet.energy.color[2] > darkSet.energy.color[0]);
   assert.ok(lightSet.accent.color[0] > lightSet.accent.color[2]);
@@ -95,6 +100,7 @@ test('canonical machine renderer owns authored-material consumption', async () =
   assert.match(renderer, /solidKeyDirection/);
   assert.match(renderer, /bounded-lit-v1/);
   assert.doesNotMatch(renderer, /const RING_MATERIALS/);
+  assert.doesNotMatch(authoredSource, /accentColorPlaceholder/);
   const rendererSource = await fs.promises.readFile(path.join(process.cwd(), 'frontend/spatial/machine-world-renderer.js'), 'utf8');
   assert.equal(rendererSource, renderer);
   assert.equal(authoredSource, authoredPublic);
