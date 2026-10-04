@@ -130,7 +130,41 @@ export function collectThreeDescriptors({ core = null, pods = [], facilities = [
   for (const part of core?.components || []) add(part, core?.id || 'MACHINE-CORE-ASSEMBLY');
   for (const part of core?.mechanicalDetails || []) add(part, core?.id || 'MACHINE-CORE-ASSEMBLY');
   for (const pod of Array.isArray(pods) ? pods : []) {
-    for (const part of pod?.components || []) add(part, pod?.id || 'MACHINE-POD-ASSEMBLY');
+    const mechanical = pod?.mechanicalPresentation;
+    for (const part of pod?.components || []) {
+      if (
+        part?.role === 'outer-shell'
+        && mechanical
+        && Number(mechanical.amount) > 0.02
+      ) {
+        for (const side of [-1, 1]) {
+          add({
+            ...part,
+            id: part.id + ':PANEL:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+            center: {
+              x: part.center.x
+                + Number(mechanical.tangent?.x || 0) * Number(mechanical.shellPanelSeparation || 0) * side
+                + Number(mechanical.outward?.x || 0) * Number(mechanical.shellPanelTravel || 0),
+              y: part.center.y + Number(mechanical.shellPanelLift || 0),
+              z: part.center.z
+                + Number(mechanical.tangent?.z || 0) * Number(mechanical.shellPanelSeparation || 0) * side
+                + Number(mechanical.outward?.z || 0) * Number(mechanical.shellPanelTravel || 0),
+            },
+            dimensions: {
+              x: Math.abs(Number(part.dimensions?.x) || 0) * 0.54,
+              y: Number(part.dimensions?.y) || 0,
+              z: Math.abs(Number(part.dimensions?.z) || 0) * 0.88,
+            },
+            rotationY: Number(part.rotationY || 0)
+              + Number(mechanical.outwardAngle || 0)
+              - Number(part.rotationY || 0)
+              + Number(mechanical.shellPanelRotation || 0) * side,
+          }, pod?.id || 'MACHINE-POD-ASSEMBLY');
+        }
+        continue;
+      }
+      add(part, pod?.id || 'MACHINE-POD-ASSEMBLY');
+    }
     for (const part of pod?.mechanicalDetails || []) add(part, pod?.id || 'MACHINE-POD-ASSEMBLY');
   }
   for (const facility of Array.isArray(facilities) ? facilities : []) {
