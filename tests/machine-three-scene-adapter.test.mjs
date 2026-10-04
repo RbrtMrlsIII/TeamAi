@@ -680,6 +680,18 @@ test('S24 measured Pod status role resolves to authored accent without changing 
   assert.deepEqual(descriptor.center, { x: 2, y: 1, z: -3 });
 });
 
+test('S24 Three bridge derives restrained local practical lights from existing machine points', () => {
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.match(source, /TEAMAI_LOCAL_PRACTICAL_LIGHTS/);
+  assert.match(source, /new THREE\.PointLight/);
+  assert.match(source, /port\.role === 'signal'/);
+  assert.match(source, /part\.role === 'status-indicator'/);
+  assert.match(source, /port\.role === 'machine-output'/);
+  assert.match(source, /intensity: pods\.length === 1 \? 0\.34 : 0\.11/);
+  assert.match(source, /intensity: pods\.length === 1 \? 0\.12 : 0\.035/);
+  assert.match(source, /intensity: 0\.12/);
+});
+ 
 test('S24 physical conduit presentation is subordinate and bounded', () => {
   const authored = {
     metal: { color: [0.7, 0.7, 0.7], rough: 0.3, emit: 0 },
