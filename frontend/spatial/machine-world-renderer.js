@@ -1149,8 +1149,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}, scope = {}) {
     const edges = getRenderableMachineWorldEdgesForScope(topology, scope);
     const scopedEdgeIds = new Set(edges.map((edge) => edge.semanticEdgeId));
-    const conduitSegments = getRenderableMachineWorldConduitSegments(topology)
-      .filter((segment) => scopedEdgeIds.has(segment.semanticEdgeId));
+    const conduitSegments = getRenderableMachineWorldConduitSegments(topology, {
+      mode: scope.mode,
+      branchId: scope.branchId,
+    }).filter((segment) => scopedEdgeIds.has(segment.semanticEdgeId));
     const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
     let rendered = 0;
     gl.useProgram(line);
