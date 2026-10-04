@@ -46,7 +46,7 @@ import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './mach
 import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machine-core-assembly.js';
 import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
-import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
+import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
@@ -1146,9 +1146,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   }
 
-  function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}) {
-    const edges = getRenderableMachineWorldEdges(topology);
-    const conduitSegments = getRenderableMachineWorldConduitSegments(topology);
+  function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}, scope = {}) {
+    const edges = getRenderableMachineWorldEdgesForScope(topology, scope);
+    const scopedEdgeIds = new Set(edges.map((edge) => edge.semanticEdgeId));
+    const conduitSegments = getRenderableMachineWorldConduitSegments(topology)
+      .filter((segment) => scopedEdgeIds.has(segment.semanticEdgeId));
     const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
     let rendered = 0;
     gl.useProgram(line);
@@ -1973,6 +1975,29 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       {
         ...state,
         workspaceReceptionAmount: choreography.workspaceReception,
+      },
+      {
+        mode: state.facilityFocused
+          ? 'FACILITY_FOCUS'
+          : hierarchyOpen
+            ? (state.focusedChildId ? 'DIVISION_FOCUS' : 'POD_FOCUS')
+            : 'WORLD_OVERVIEW',
+        branchId: state.facilityFocused
+          ? (
+              state.facilitySubject?.center
+                ? facilityMachinery
+                    .map((machine) => ({
+                      branchId: machine.branchId,
+                      distance: Math.hypot(
+                        finite(machine.outerHousing?.center?.x) - finite(state.facilitySubject.center.x),
+                        finite(machine.outerHousing?.center?.z) - finite(state.facilitySubject.center.z),
+                      ),
+                    }))
+                    .sort((a, b) => a.distance - b.distance)[0]?.branchId
+                  || null
+                : null
+            )
+          : branchId,
       },
     );
     canvas.dataset.machineWorldTopology = machineWorldTopology.id;
