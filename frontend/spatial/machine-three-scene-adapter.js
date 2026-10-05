@@ -14,6 +14,7 @@ import {
   derivePodDivisionDockingCollars,
   derivePodDivisionDockingSockets,
   derivePodDivisionMountingFixtures,
+  derivePodDivisionStructuralChassis,
 } from './machine-world-pod-docking-embodiment.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
@@ -895,6 +896,32 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
 
 
     const dockingMounts = derivePodDivisionMountingFixtures(conduitSegments, divisions);
+    const dockingChassis = derivePodDivisionStructuralChassis(conduitSegments, divisions);
+    for (const piece of dockingChassis) {
+      const geometry = new THREE.CylinderGeometry(
+        piece.radius,
+        piece.radius,
+        piece.length,
+        8,
+      );
+      const mesh = new THREE.Mesh(geometry, material('metal2'));
+      mesh.name = piece.id;
+      mesh.userData.semanticEdgeId = piece.semanticEdgeId;
+      mesh.userData.semanticId = piece.semanticId;
+      mesh.userData.edgeKind = piece.edgeKind;
+      mesh.userData.dockingRole = piece.role;
+      mesh.userData.dockingSegment = piece.segmentIndex;
+      mesh.userData.routeContinuous = piece.routeContinuous;
+      mesh.userData.presentationOnly = piece.presentationOnly;
+      mesh.userData.dockingChassis = true;
+      mesh.position.set(piece.center.x, piece.center.y, piece.center.z);
+      mesh.quaternion.setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(piece.direction.x, piece.direction.y, piece.direction.z),
+      );
+      topologyRoot.add(mesh);
+    }
+
     for (const mount of dockingMounts) {
       const geometry = new THREE.CylinderGeometry(
         mount.radius,
@@ -945,6 +972,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       dockingCollarCount: dockingCollars.length,
       dockingSocketCount: dockingSockets.length,
       dockingMountCount: dockingMounts.length,
+      dockingChassisCount: dockingChassis.length,
     });
   }
 
