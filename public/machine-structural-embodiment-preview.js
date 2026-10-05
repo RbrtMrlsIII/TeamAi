@@ -1,6 +1,9 @@
 import { createMachineThreeSceneAdapter } from './machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from './machine-core-layout.js';
 import { deriveMachineCoreAssembly } from './machine-core-assembly.js';
+import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
+import { deriveMachineWorldProfile } from './hero-world-profile.js';
+import { deriveStructuralPreviewChoreography } from './machine-structural-choreography-sequence.js';
 import { deriveThreeCanonicalRingDescriptors } from './machine-three-scene-adapter.js';
 import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import { deriveMachineSeatDivisionAssembly } from './machine-seat-division-assembly.js';
@@ -25,6 +28,7 @@ const status = document.querySelector('[data-structural-status]');
 let adapter = null;
 let model = null;
 let currentView = 'world';
+let choreographyStage = 0;
 
 const DIVISIONS = Object.freeze([
   'SEAT_CONNECTION',
@@ -50,7 +54,7 @@ function setStatus(value) {
   if (status) status.textContent = value;
 }
 
-function divisionDescriptors(seat, amount = 1) {
+function divisionDescriptors(seat, amount = 1, focusedChildId = null) {
   return DIVISIONS.flatMap((childId, childIndex) => {
     const geometry = deriveFocusedSeatDivisionGeometry({
       parent: seat,
@@ -58,11 +62,12 @@ function divisionDescriptors(seat, amount = 1) {
       childIndex,
       amount,
     });
+    const childAmount = focusedChildId && childId !== focusedChildId ? 0 : amount;
     const assembly = deriveMachineSeatDivisionAssembly({
       parent: seat,
       childId,
       childIndex,
-      amount,
+      amount: childAmount,
       geometry,
     });
     if (!assembly) return [];
@@ -89,10 +94,10 @@ function divisionDescriptors(seat, amount = 1) {
   });
 }
 
-function facilityDescriptors(machines) {
+function facilityDescriptors(machines, amount = 1) {
   return machines.flatMap((machine) => {
     const presentation = deriveMachineFacilityMechanismPresentation(machine, {
-      amount: 1,
+      amount,
       reducedMotion: true,
     });
     const motionById = new Map(presentation.components.map((item) => [item.id, item]));
@@ -222,41 +227,105 @@ async function boot() {
 
 function renderView() {
   if (!adapter || !model) return;
-  const seatOpenPod = deriveMachinePodAssembly({
-    part: model.seatOne,
-    expansionAmount: 1,
-    payloadDensity: 0.45,
-    adjacentCenterSpacing: 2.812,
+
+  const choreographyState = deriveStructuralPreviewChoreography(choreographyStage);
+  const choreography = choreographyState.choreography;
+  currentView = choreographyState.view === 'world' && currentView !== 'facility'
+    ? choreographyState.view
+    : currentView === 'facility'
+      ? 'facility'
+      : currentView;
+
+  const activeScene = createBranchConnectionCore({
+    seatCount: model.seatCount,
+    expansionAmount: choreography.shell,
+  });
+  const activeSeat = activeScene.parts.find(
+    (part) => part.kind === 'inner-pod' && part.branchId === 'BRANCH-SEAT-01',
+  );
+  const activePods = activeScene.parts
+    .filter((part) => part.kind === 'inner-pod')
+    .map((part) => deriveMachinePodAssembly({
+      part,
+      expansionAmount: choreography.shell,
+      payloadDensity: 0.45,
+      adjacentCenterSpacing: activeScene.parts
+        .filter((entry) => entry.kind === 'inner-pod')
+        .length > 1
+        ? 2 * Math.hypot(activeSeat?.center.x || 0, activeSeat?.center.z || 0) * Math.sin(Math.PI / model.seatCount)
+        : null,
+    }));
+
+  const profile = deriveMachineWorldProfile(model.seatCount);
+  const workspaceCore = deriveWorkspaceCoreGeometry({
+    workspaceRadius: profile.workspaceFootprint,
+    expansionAmount: choreography.transformation,
+  });
+  const activeCore = deriveMachineCoreAssembly({
+    hub: activeScene.hub,
+    workspaceCore,
+    expansionAmount: choreography.transformation,
+    receptionAmount: choreography.workspaceReception,
+    adjacentSeatRadius: Math.max(
+      ...activePods.map((pod) => Math.hypot(pod.center.x, pod.center.z)),
+      1,
+    ),
+  });
+  const facilityAssemblies = deriveMachineFacilityAssemblies({
+    outerHousings: activeScene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const machinery = deriveMachineFacilityMachinery({
+    facilityAssemblies,
+    outerHousings: activeScene.parts.filter((part) => part.kind === 'outer-housing'),
+    clearanceObstacles: activeScene.parts.filter((part) => part.kind === 'inner-pod'),
+    requestedClearance: 0.16,
+  });
+  const facilityParts = facilityDescriptors(machinery, choreography.transformation);
+  const activeTopology = buildMachineWorldTopology({
+    scene: activeScene,
+    facilityAssemblies,
+    facilityMachinery: machinery,
+    seatDivisionAmount: choreographyState.choreography.hierarchyOpen
+      ? choreography.division
+      : choreography.transformation,
+    clearance: 0.16,
   });
 
-  const divisions = currentView === 'seat' ? divisionDescriptors(model.seatOne, 1) : [];
-  const seatRingRadius = model.scene.parts
+  const seatDivisions = currentView === 'seat'
+    ? divisionDescriptors(activeSeat, choreography.division, choreographyState.choreography.focusedChildId)
+    : [];
+  const seatRingRadius = activeScene.parts
     .filter((part) => part.kind === 'inner-pod')
     .reduce((maxRadius, part) => Math.max(maxRadius, Math.hypot(part.center.x, part.center.z)), 0);
   const canonicalRingDescriptors = currentView === 'world'
     ? deriveThreeCanonicalRingDescriptors({
-        seatCount: model.scene.seatCount,
+        seatCount: model.seatCount,
         seatRingRadius,
-        articulationAmount: 0,
-        signalAmount: 0,
+        articulationAmount: choreography.transformation,
+        signalAmount: choreography.electrical,
         reducedMotion: true,
       })
     : [];
 
-  const facilityParts = model.facilityParts;
-  const facility = model.machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || model.machinery[0];
-  const effectiveCore = currentView === 'world' ? model.core : null;
+  const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
+  const effectiveCore = currentView === 'world' ? activeCore : null;
   const effectivePods = currentView === 'world'
-    ? model.pods
+    ? activePods
     : currentView === 'seat'
-      ? [seatOpenPod]
+      ? activeSeat?.podAssembly ? [activeSeat.podAssembly] : [deriveMachinePodAssembly({
+          part: activeSeat,
+          expansionAmount: choreography.shell,
+          payloadDensity: 0.45,
+          adjacentCenterSpacing: 2.812,
+        })]
       : [];
   const effectiveFacilities = currentView === 'world'
-    ? model.machinery
+    ? machinery
     : currentView === 'facility' && facility
       ? [facility]
       : [];
-  const semanticEdges = Array.isArray(model.topology?.edges) ? model.topology.edges : [];
+
+  const semanticEdges = Array.isArray(activeTopology?.edges) ? activeTopology.edges : [];
   const visibleEdges = currentView === 'world'
     ? semanticEdges.filter((edge) => WORLD_OVERVIEW_TOPOLOGY_KINDS.has(edge?.kind))
     : currentView === 'seat'
@@ -274,20 +343,25 @@ function renderView() {
           )
         : [];
   const visibleTopology = Object.freeze({
-    ...model.topology,
+    ...activeTopology,
     edges: Object.freeze(visibleEdges),
   });
+
   const assemblyRender = adapter.setAssemblies({
     core: effectiveCore,
     pods: effectivePods,
     facilities: effectiveFacilities,
-    divisions: divisions.length ? [{ id: 'S4-SEAT-01', components: divisions, mechanicalDetails: [] }] : [],
+    divisions: seatDivisions.length
+      ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
+      : [],
     extras: canonicalRingDescriptors,
   });
   const topologyMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
     : currentView === 'seat'
-      ? MACHINE_CAMERA_MODE.DIVISION_FOCUS
+      ? (choreographyState.choreography.division > 0 && choreographyState.choreography.division < 0.98
+          ? MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+          : MACHINE_CAMERA_MODE.POD_FOCUS)
       : MACHINE_CAMERA_MODE.FACILITY_FOCUS;
   const topologyBranchId = currentView === 'world'
     ? null
@@ -297,10 +371,25 @@ function renderView() {
   const topologyRender = adapter.setTopology(visibleTopology, {
     mode: topologyMode,
     branchId: topologyBranchId,
-    divisions,
+    divisions: seatDivisions,
   });
+
+  const structuralWorldSubject = subjectFromParts([
+    ...activeCore.components,
+    ...activeCore.mechanicalDetails,
+    ...effectivePods.flatMap((pod) => [...pod.components, ...pod.mechanicalDetails]),
+    ...facilityParts,
+    ...canonicalRingDescriptors,
+  ]);
+
   canvas.dataset.structuralView = currentView;
-  canvas.dataset.structuralTotalTopologyEdges = String(semanticEdges.length);
+  canvas.dataset.structuralChoreographyStage = String(choreographyState.stageIndex);
+  canvas.dataset.structuralChoreographyPhase = choreography.phase;
+  canvas.dataset.structuralChoreographyTransformation = String(choreography.transformation);
+  canvas.dataset.structuralChoreographyDivision = String(choreography.division);
+  canvas.dataset.structuralChoreographyElectrical = String(choreography.electrical);
+  canvas.dataset.structuralFocusedDivision = choreographyState.choreography.focusedChildId || '';
+  canvas.dataset.structuralTotalTopologyEdges = String(activeTopology.edges.length);
   canvas.dataset.structuralVisibleTopologyEdges = String(topologyRender.edgeCount);
   canvas.dataset.structuralVisiblePods = String(effectivePods.length);
   canvas.dataset.structuralVisibleFacilities = String(effectiveFacilities.length);
@@ -311,11 +400,13 @@ function renderView() {
   canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   canvas.dataset.structuralTopologyMode = topologyMode;
-  const divisionSubject = subjectFromParts(divisions);
+  const divisionSubject = subjectFromParts(seatDivisions);
   const cameraMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
     : currentView === 'seat'
-      ? MACHINE_CAMERA_MODE.POD_FOCUS
+      ? topologyMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+        ? MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+        : MACHINE_CAMERA_MODE.POD_FOCUS
       : MACHINE_CAMERA_MODE.FACILITY_FOCUS;
   const cameraId = currentView === 'world'
     ? MACHINE_CAMERA_ID.WORLD
@@ -326,10 +417,12 @@ function renderView() {
   const spec = deriveMachineCameraSpec({
     cameraId,
     mode: cameraMode,
-    worldSubject: model.worldSubject,
-    podSubject: seatOpenPod?.subject,
+    worldSubject: structuralWorldSubject,
+    podSubject: effectivePods[0]?.subject,
     divisionSubject,
+    coreSubject: activeCore?.subject,
     facilitySubject: facility?.subject,
+    parentSubject: effectivePods[0]?.subject,
     viewport: { width: canvas.clientWidth || 1280, height: canvas.clientHeight || 820 },
   });
 
@@ -341,19 +434,31 @@ function renderView() {
   });
   adapter.render();
 
-  setStatus('READY · ' + currentView.toUpperCase() + ' · 10 seats · 4 facilities · 7 divisions · ' + model.topology.edges.length + ' semantic edges · WebGL2 · Three r' + (model.THREE.REVISION || '186'));
+  setStatus(
+    'READY · ' + currentView.toUpperCase()
+    + ' · ' + choreography.phase
+    + ' · 10 seats · 4 facilities · 7 divisions · '
+    + activeTopology.edges.length
+    + ' semantic edges · WebGL2 · Three r' + (activeScene.THREE?.REVISION || model.THREE.REVISION || '186'),
+  );
 }
-
 document.querySelector('[data-view="world"]')?.addEventListener('click', () => {
+  choreographyStage = 0;
   currentView = 'world';
   renderView();
 });
 document.querySelector('[data-view="seat"]')?.addEventListener('click', () => {
   currentView = 'seat';
+  choreographyStage = Math.max(choreographyStage, 2);
   renderView();
 });
 document.querySelector('[data-view="facility"]')?.addEventListener('click', () => {
   currentView = 'facility';
+  renderView();
+});
+document.querySelector('[data-action="transform"]')?.addEventListener('click', () => {
+  choreographyStage = (choreographyStage + 1) % 6;
+  currentView = deriveStructuralPreviewChoreography(choreographyStage).view;
   renderView();
 });
 window.addEventListener('resize', renderView);
