@@ -6,6 +6,7 @@ import {
   collectThreeDescriptors,
   normalizeThreeDescriptor,
   normalizeThreeShape,
+  resolveThreeConduitRenderShape,
   MACHINE_THREE_ADAPTER_ID,
   MACHINE_THREE_ADAPTER_VERSION,
   resolveThreeMaterialPresentation,
@@ -750,6 +751,20 @@ test('S24 pod-division docking collars derive only from bounded vertical conduit
   assert.ok(collars.every((collar) => collar.length <= 0.18));
   assert.ok(collars.every((collar) => collar.presentationOnly === true));
   assert.ok(collars.every((collar) => collar.routeContinuous === true));
+});
+
+test('S24 pod-division conduit carriers use a subordinate tubular presentation', () => {
+  assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-division' }), 'TUBE');
+  assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-facility' }), 'BOX');
+  assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'facility-facility' }), 'BOX');
+
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.match(source, /resolveThreeConduitRenderShape\(segment\)/);
+  assert.match(source, /new THREE\.CylinderGeometry\(/);
+  assert.match(source, /segment\.radius \* 0\.85/);
+  assert.match(source, /mesh\.userData\.conduitShape = conduitShape/);
+  assert.match(source, /setFromUnitVectors\(/);
+  assert.match(source, /new THREE\.Vector3\(0, 1, 0\)/);
 });
 
 test('S24 pod-division docking sockets derive horizontal direction from the route bend', () => {

@@ -65,6 +65,10 @@ const SHAPE_BY_PROFILE = Object.freeze([
 
 const DEFAULT_SHAPE = 'BOX';
 
+export function resolveThreeConduitRenderShape(segment = {}) {
+  return segment?.edgeKind === 'pod-division' ? 'TUBE' : 'BOX';
+}
+
 export function normalizeThreeShape({ shape = '', profile = '' } = {}) {
   const rawShape = String(shape || '').trim().toUpperCase();
   const profileShape = resolveMachineSeatDivisionProfileShape({
@@ -819,11 +823,22 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       branchId,
     });
     for (const segment of conduitSegments) {
-      const geometry = new THREE.BoxGeometry(
-        segment.dimensions.x,
-        segment.dimensions.y,
-        segment.dimensions.z,
-      );
+      const conduitShape = resolveThreeConduitRenderShape(segment);
+      const geometry = conduitShape === 'TUBE'
+        ? new THREE.CylinderGeometry(
+            Math.max(0.01, segment.radius * 0.85),
+            Math.max(0.01, segment.radius * 0.85),
+            Math.max(0.01, (
+              Math.max(segment.dimensions.x, segment.dimensions.y, segment.dimensions.z)
+              - segment.radius * 0.30
+            )),
+            8,
+          )
+        : new THREE.BoxGeometry(
+            segment.dimensions.x,
+            segment.dimensions.y,
+            segment.dimensions.z,
+          );
       const mesh = new THREE.Mesh(geometry, material('conduit'));
       mesh.name = segment.id;
       mesh.userData.semanticEdgeId = segment.semanticEdgeId;
@@ -831,7 +846,20 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       mesh.userData.conduitSegment = segment.segmentIndex;
       mesh.userData.routeContinuous = segment.routeContinuous;
       mesh.position.set(segment.center.x, segment.center.y, segment.center.z);
-      mesh.rotation.y = segment.rotationY;
+      if (conduitShape === 'TUBE') {
+        const direction = new THREE.Vector3(
+          segment.end.x - segment.start.x,
+          segment.end.y - segment.start.y,
+          segment.end.z - segment.start.z,
+        ).normalize();
+        mesh.quaternion.setFromUnitVectors(
+          new THREE.Vector3(0, 1, 0),
+          direction,
+        );
+      } else {
+        mesh.rotation.y = segment.rotationY;
+      }
+      mesh.userData.conduitShape = conduitShape;
       topologyRoot.add(mesh);
     }
 
