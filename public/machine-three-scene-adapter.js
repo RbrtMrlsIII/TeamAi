@@ -91,7 +91,7 @@ export function deriveThreeCanonicalRingDescriptors({
 } = {}) {
   const profile = deriveMachineWorldProfile(seatCount);
   const workspaceCore = deriveWorkspaceCoreGeometry({
-    workspaceRadius: profile.workspace,
+    workspaceRadius: profile.workspaceFootprint,
     expansionAmount: articulationAmount,
   });
   const resolvedSeatRingRadius = Number.isFinite(Number(seatRingRadius))
@@ -106,7 +106,7 @@ export function deriveThreeCanonicalRingDescriptors({
   const descriptors = [];
 
   const r1Placements = deriveBackendDisplayPlacements({
-    workspaceRadius: profile.workspace,
+    workspaceRadius: profile.workspaceFootprint,
     ringScale: RING_R1_SCALE,
     ringRadius: envelope.r1Radius,
     catalog: BACKEND_DISPLAY_V1,
@@ -196,7 +196,7 @@ export function deriveThreeCanonicalRingDescriptors({
   }
 
   const r2Placements = deriveSetupConfigPlacements({
-    workspaceRadius: profile.workspace,
+    workspaceRadius: profile.workspaceFootprint,
     ringScale: RING_R2_SCALE,
     ringRadius: envelope.r2Radius,
     items: SETUP_CONFIG_V1,
