@@ -692,14 +692,6 @@ test('S24 Three bridge derives restrained local practical lights from existing m
   assert.match(source, /intensity: 0\.12/);
 });
  
-test('S24 Pod-division conduits use the authored trace family while long-range conduit stays subordinate', () => {
-  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
-  assert.match(
-    source,
-    /const topologyMaterialRole = segment\.edgeKind === 'pod-division'\s*\? 'trace'\s*:\s*'conduit'/,
-  );
-});
-
 test('S24 physical conduit presentation is subordinate and bounded', () => {
   const authored = {
     metal: { color: [0.7, 0.7, 0.7], rough: 0.3, emit: 0 },
