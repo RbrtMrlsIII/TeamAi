@@ -1,14 +1,14 @@
 /**
  * TEAM-EXPERIENCE-029 / S8
- * Presentation-only endpoint docking and structural chassis embodiment.
+ * Presentation-only endpoint docking embodiment.
  *
- * Derives physical hardware and a bounded support frame from already-projected
- * pod-division conduit endpoints. It does not create topology, alter routes,
- * or own semantic identity.
+ * Derives small physical collars from the already-projected pod-division
+ * conduit endpoints. It does not create topology, alter routes, or own
+ * semantic identity.
  */
 
 export const MACHINE_WORLD_POD_DOCKING_EMBODIMENT_ID = 'MACHINE-WORLD-POD-DOCKING-EMBODIMENT';
-export const MACHINE_WORLD_POD_DOCKING_EMBODIMENT_VERSION = 'S8-DOCKING-V4';
+export const MACHINE_WORLD_POD_DOCKING_EMBODIMENT_VERSION = 'S8-DOCKING-V3';
 
 const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -294,194 +294,6 @@ export function derivePodDivisionMountingFixtures(
   }
 
   return Object.freeze(fixtures);
-}
-
-
-export function derivePodDivisionStructuralChassis(
-  conduitSegments = [],
-  divisionDescriptors = [],
-  {
-    railRadiusFactor = 1.0,
-    railSpacingFactor = 4.5,
-    crossbarRadiusFactor = 0.9,
-    minimumRailRadius = 0.035,
-    maximumRailRadius = 0.075,
-    minimumRailSpacing = 0.16,
-    maximumRailSpacing = 0.26,
-    minimumCrossbarRadius = 0.03,
-    maximumCrossbarRadius = 0.06,
-    railSpanFactor = 0.44,
-    minimumRailLength = 0.90,
-    maximumRailLength = 2.40,
-  } = {},
-) {
-  const divisionIds = new Set(
-    Array.isArray(divisionDescriptors)
-      ? divisionDescriptors
-        .map((entry) => String(entry?.semanticId || ''))
-        .filter(Boolean)
-      : [],
-  );
-  if (!divisionIds.size) return Object.freeze([]);
-
-  const groups = new Map();
-  for (const segment of Array.isArray(conduitSegments) ? conduitSegments : []) {
-    if (
-      segment?.edgeKind !== 'pod-division'
-      || segment?.routeContinuous !== true
-      || !segment?.semanticEdgeId
-    ) continue;
-    const match = String(segment.semanticEdgeId).match(/(?:TREE-HERO-SEAT#[0-9]+:)?(SEAT_[A-Z_]+)/);
-    const semanticId = match?.[1] || null;
-    if (!semanticId || !divisionIds.has(semanticId)) continue;
-    const list = groups.get(segment.semanticEdgeId) || [];
-    list.push(segment);
-    groups.set(segment.semanticEdgeId, list);
-  }
-
-  const chassis = [];
-  for (const [semanticEdgeId, segments] of groups) {
-    segments.sort((a, b) => Number(a.segmentIndex) - Number(b.segmentIndex));
-    const horizontal = segments.find((segment) => {
-      const dx = finite(segment.end?.x) - finite(segment.start?.x);
-      const dy = finite(segment.end?.y) - finite(segment.start?.y);
-      const dz = finite(segment.end?.z) - finite(segment.start?.z);
-      const length = Math.hypot(dx, dy, dz);
-      return length >= 0.000001 && Math.hypot(dx, dz) > Math.abs(dy) + 0.000001;
-    });
-    if (!horizontal) continue;
-
-    const dx = finite(horizontal.end?.x) - finite(horizontal.start?.x);
-    const dy = finite(horizontal.end?.y) - finite(horizontal.start?.y);
-    const dz = finite(horizontal.end?.z) - finite(horizontal.start?.z);
-    const length = Math.hypot(dx, dy, dz);
-    const horizontalLength = Math.hypot(dx, dz);
-    if (length < 0.000001 || horizontalLength < 0.000001) continue;
-
-    const direction = Object.freeze({
-      x: dx / horizontalLength,
-      y: 0,
-      z: dz / horizontalLength,
-    });
-    const perpendicular = Object.freeze({
-      x: -direction.z,
-      y: 0,
-      z: direction.x,
-    });
-    const conduitRadius = Math.max(0.01, finite(horizontal.radius, 0.035));
-    const railRadius = Math.min(
-      Math.max(0.01, finite(maximumRailRadius, 0.075)),
-      Math.max(
-        Math.max(0.01, finite(minimumRailRadius, 0.035)),
-        conduitRadius * Math.max(0.1, finite(railRadiusFactor, 1.0)),
-      ),
-    );
-    const crossbarRadius = Math.min(
-      Math.max(0.01, finite(maximumCrossbarRadius, 0.06)),
-      Math.max(
-        Math.max(0.01, finite(minimumCrossbarRadius, 0.03)),
-        conduitRadius * Math.max(0.1, finite(crossbarRadiusFactor, 0.9)),
-      ),
-    );
-    const spacing = Math.min(
-      Math.max(0.02, finite(maximumRailSpacing, 0.26)),
-      Math.max(
-        Math.max(0.02, finite(minimumRailSpacing, 0.16)),
-        conduitRadius * Math.max(0.1, finite(railSpacingFactor, 4.5)),
-      ),
-    );
-    const railLength = Math.min(
-      Math.max(
-        Math.max(0.02, finite(minimumRailLength, 0.90)),
-        horizontalLength * Math.max(0.20, Math.min(0.70, finite(railSpanFactor, 0.44))),
-      ),
-      Math.max(
-        Math.max(0.02, finite(minimumRailLength, 0.90)),
-        Math.min(
-          horizontalLength - crossbarRadius * 2,
-          Math.max(0.03, finite(maximumRailLength, 2.40)),
-        ),
-      ),
-    );
-    const center = Object.freeze({
-      x: finite(horizontal.end?.x) - direction.x * railLength * 0.5,
-      y: finite(horizontal.end?.y),
-      z: finite(horizontal.end?.z) - direction.z * railLength * 0.5,
-    });
-    const crossbarLength = spacing + railRadius * 2;
-    const endPoint = Object.freeze({
-      x: finite(horizontal.end?.x),
-      y: finite(horizontal.end?.y),
-      z: finite(horizontal.end?.z),
-    });
-    const semanticId = String(semanticEdgeId).match(/(?:TREE-HERO-SEAT#[0-9]+:)?(SEAT_[A-Z_]+)/)?.[1] || null;
-    const pieces = [
-      {
-        suffix: 'RAIL:LEFT',
-        role: 'division-chassis-rail',
-        point: Object.freeze({
-          x: center.x + perpendicular.x * spacing * 0.5,
-          y: center.y,
-          z: center.z + perpendicular.z * spacing * 0.5,
-        }),
-        direction,
-        radius: railRadius,
-        length: railLength,
-      },
-      {
-        suffix: 'RAIL:RIGHT',
-        role: 'division-chassis-rail',
-        point: Object.freeze({
-          x: center.x - perpendicular.x * spacing * 0.5,
-          y: center.y,
-          z: center.z - perpendicular.z * spacing * 0.5,
-        }),
-        direction,
-        radius: railRadius,
-        length: railLength,
-      },
-      {
-        suffix: 'CROSSBAR:DIVISION',
-        role: 'division-chassis-crossbar',
-        point: Object.freeze({
-          x: center.x - direction.x * railLength * 0.5,
-          y: center.y,
-          z: center.z - direction.z * railLength * 0.5,
-        }),
-        direction: perpendicular,
-        radius: crossbarRadius,
-        length: crossbarLength,
-      },
-      {
-        suffix: 'CROSSBAR:POD',
-        role: 'division-chassis-crossbar',
-        point: endPoint,
-        direction: perpendicular,
-        radius: crossbarRadius,
-        length: crossbarLength,
-      },
-    ];
-
-    for (const piece of pieces) {
-      chassis.push(Object.freeze({
-        id: 'CHASSIS:' + semanticEdgeId + ':' + piece.suffix,
-        semanticEdgeId,
-        semanticId,
-        edgeKind: 'pod-division',
-        role: piece.role,
-        segmentIndex: horizontal.segmentIndex,
-        point: piece.point,
-        center: piece.point,
-        direction: piece.direction,
-        radius: piece.radius,
-        length: piece.length,
-        routeContinuous: true,
-        presentationOnly: true,
-      }));
-    }
-  }
-
-  return Object.freeze(chassis);
 }
 
 export function derivePodDivisionDockingCollars(
