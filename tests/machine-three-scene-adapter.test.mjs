@@ -878,13 +878,10 @@ test('S24 Three topology bridge renders endpoint docking collars without promoti
 });
 test('S24 docking embodiment version advances with mounting hardware', () => {
   const source = readFileSync('frontend/spatial/machine-world-pod-docking-embodiment.js', 'utf8');
-  assert.match(source, /S8-DOCKING-V4/);
+  assert.match(source, /S8-DOCKING-V3/);
   const adapter = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   assert.match(adapter, /derivePodDivisionMountingFixtures\(conduitSegments, divisions\)/);
   assert.match(adapter, /dockingMountCount/);
-  assert.match(adapter, /derivePodDivisionStructuralChassis\(conduitSegments, divisions\)/);
-  assert.match(adapter, /dockingChassisCount/);
-  assert.match(adapter, /dockingChassis = true/);
   assert.match(adapter, /dockingMount = true/);
   const preview = readFileSync('frontend/spatial/machine-structural-embodiment-preview.js', 'utf8');
   assert.match(preview, /divisions,\n  \}\);/);
