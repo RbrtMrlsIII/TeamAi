@@ -1205,7 +1205,21 @@ test('R0-R2 canonical ring projection reuses the existing concentric-envelope an
   assert.ok(Math.abs(r1.ringRadius - 4.69) < 1e-9);
   assert.ok(Math.abs(r2.ringRadius - 4.87) < 1e-9);
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
-  assert.ok(descriptors.every((entry) => entry.constructionOwner.includes('/hero-r')));
+  assert.ok(descriptors.every((entry) => entry.presentationOnly === true), 'all ring descriptors are presentation-only');
+  assert.equal(
+    descriptors.filter((entry) => entry.ringId === 'R1').every(
+      (entry) => entry.constructionOwner === 'frontend/spatial/hero-r1-backend-display.js',
+    ),
+    true,
+    'R1 descriptors keep canonical R1 ownership',
+  );
+  assert.equal(
+    descriptors.filter((entry) => entry.ringId === 'R2').every(
+      (entry) => entry.constructionOwner === 'frontend/spatial/hero-r2-setup-ring.js',
+    ),
+    true,
+    'R2 descriptors keep canonical R2 ownership',
+  );
 });
 
 test('Y1 topology projection forwards scope to physical conduit rendering', () => {
