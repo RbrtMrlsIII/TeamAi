@@ -403,22 +403,12 @@ export function derivePodDivisionStructuralChassis(
         ),
       ),
     );
-    const midpoint = {
-      x: (finite(horizontal.start?.x) + finite(horizontal.end?.x)) * 0.5,
-      y: (finite(horizontal.start?.y) + finite(horizontal.end?.y)) * 0.5,
-      z: (finite(horizontal.start?.z) + finite(horizontal.end?.z)) * 0.5,
-    };
     const center = Object.freeze({
       x: finite(horizontal.end?.x) - direction.x * railLength * 0.5,
       y: finite(horizontal.end?.y),
       z: finite(horizontal.end?.z) - direction.z * railLength * 0.5,
     });
     const crossbarLength = spacing + railRadius * 2;
-    const startPoint = Object.freeze({
-      x: finite(horizontal.start?.x),
-      y: finite(horizontal.start?.y),
-      z: finite(horizontal.start?.z),
-    });
     const endPoint = Object.freeze({
       x: finite(horizontal.end?.x),
       y: finite(horizontal.end?.y),
