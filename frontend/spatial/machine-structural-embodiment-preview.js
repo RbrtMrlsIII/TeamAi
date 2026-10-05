@@ -387,7 +387,7 @@ function renderView() {
   const assemblyRender = adapter.setAssemblies({
     core: effectiveCore,
     pods: effectivePods,
-    facilities: effectiveFacilities,
+    facilities: renderFacilityAssemblies(effectiveFacilitiesSource, choreography.transformation),
     divisions: seatDivisions.length
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
