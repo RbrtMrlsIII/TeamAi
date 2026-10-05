@@ -1,6 +1,7 @@
 import { createMachineThreeSceneAdapter } from './machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from './machine-core-layout.js';
 import { deriveMachineCoreAssembly } from './machine-core-assembly.js';
+import { deriveThreeCanonicalRingDescriptors } from './machine-three-scene-adapter.js';
 import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import { deriveMachineSeatDivisionAssembly } from './machine-seat-division-assembly.js';
 import {
@@ -229,6 +230,19 @@ function renderView() {
   });
 
   const divisions = currentView === 'seat' ? divisionDescriptors(model.seatOne, 1) : [];
+  const seatRingRadius = model.scene.parts
+    .filter((part) => part.kind === 'inner-pod')
+    .reduce((maxRadius, part) => Math.max(maxRadius, Math.hypot(part.center.x, part.center.z)), 0);
+  const canonicalRingDescriptors = currentView === 'world'
+    ? deriveThreeCanonicalRingDescriptors({
+        seatCount: model.scene.seatCount,
+        seatRingRadius,
+        articulationAmount: 0,
+        signalAmount: 0,
+        reducedMotion: true,
+      })
+    : [];
+
   const facilityParts = model.facilityParts;
   const facility = model.machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || model.machinery[0];
   const effectiveCore = currentView === 'world' ? model.core : null;
@@ -268,6 +282,7 @@ function renderView() {
     pods: effectivePods,
     facilities: effectiveFacilities,
     divisions: divisions.length ? [{ id: 'S4-SEAT-01', components: divisions, mechanicalDetails: [] }] : [],
+    extras: canonicalRingDescriptors,
   });
   const topologyMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
@@ -291,6 +306,7 @@ function renderView() {
   canvas.dataset.structuralVisibleFacilities = String(effectiveFacilities.length);
   canvas.dataset.structuralVisibleDivisions = String(currentView === 'seat' ? DIVISIONS.length : 0);
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
+  canvas.dataset.structuralCanonicalRingDescriptorCount = String(canonicalRingDescriptors.length);
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   canvas.dataset.structuralTopologyMode = topologyMode;
