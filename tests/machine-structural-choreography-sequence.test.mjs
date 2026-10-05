@@ -24,6 +24,8 @@ test('structural preview follows the canonical transformation choreography phase
     assert.equal(state.stageIndex, index);
     assert.equal(state.choreography.phase, expectedStructuralPreviewChoreographyPhases()[index]);
     assert.equal(state.choreography.presentationOnly, true);
+    assert.equal(state.hierarchyOpen, index >= 2 && index <= 5);
+    assert.equal(state.focusedChildId, index >= 2 && index <= 5 ? 'SEAT_CONNECTION' : null);
   }
 });
 
