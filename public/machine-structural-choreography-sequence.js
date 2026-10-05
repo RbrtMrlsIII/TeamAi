@@ -89,6 +89,8 @@ export function deriveStructuralPreviewChoreography(stageIndex = 0) {
     stageIndex: index,
     label: stage.label,
     view: stage.view,
+    hierarchyOpen: Boolean(stage.inputs.hierarchyOpen),
+    focusedChildId: stage.inputs.focusedChildId || null,
     choreography,
   });
 }
