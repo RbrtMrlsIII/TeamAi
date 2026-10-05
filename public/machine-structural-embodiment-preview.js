@@ -1,7 +1,6 @@
 import { createMachineThreeSceneAdapter } from './machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from './machine-core-layout.js';
 import { deriveMachineCoreAssembly } from './machine-core-assembly.js';
-import { validateMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import { deriveThreeCanonicalRingDescriptors } from './machine-three-scene-adapter.js';
 import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import { deriveMachineSeatDivisionAssembly } from './machine-seat-division-assembly.js';
