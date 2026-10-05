@@ -882,7 +882,7 @@ test('S24 docking embodiment version advances with mounting hardware', () => {
   const adapter = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   assert.match(adapter, /derivePodDivisionMountingFixtures\(conduitSegments, divisions\)/);
   assert.match(adapter, /dockingMountCount/);
-  assert.match(adapter, /derivePodDivisionArticulatedMounts\(conduitSegments,\s+divisions\)/);
+  assert.match(adapter, /derivePodDivisionArticulatedMounts\(\s*conduitSegments,\s*divisions\s*\)/);
   assert.match(adapter, /dockingMount = true/);
   const preview = readFileSync('frontend/spatial/machine-structural-embodiment-preview.js', 'utf8');
   assert.match(preview, /divisions,\n  \}\);/);
