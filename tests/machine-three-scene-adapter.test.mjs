@@ -54,6 +54,7 @@ import {
 import {
   derivePodDivisionDockingCollars,
   derivePodDivisionDockingSockets,
+  derivePodDivisionMountingFixtures,
 } from '../frontend/spatial/machine-world-pod-docking-embodiment.js';
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
@@ -753,6 +754,54 @@ test('S24 pod-division docking collars derive only from bounded vertical conduit
   assert.ok(collars.every((collar) => collar.routeContinuous === true));
 });
 
+
+test('S24 pod-division mounting fixtures derive bounded hardware from S4 envelope plus S8 endpoint', () => {
+  const segments = [
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:TREE-HERO-SEAT#0:SEAT_CONNECTION=>BRANCH-SEAT-01',
+      edgeKind: 'pod-division',
+      segmentIndex: 1,
+      start: { x: 2, y: 4, z: 6 },
+      end: { x: 2, y: 5, z: 6 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:TREE-HERO-SEAT#0:SEAT_CONNECTION=>BRANCH-SEAT-01',
+      edgeKind: 'pod-division',
+      segmentIndex: 2,
+      start: { x: 2, y: 5, z: 6 },
+      end: { x: 4, y: 5, z: 8 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+  ];
+  const divisions = [
+    {
+      semanticId: 'SEAT_CONNECTION',
+      dimensions: { x: 0.52, y: 0.10, z: 0.38 },
+    },
+  ];
+  const mounts = derivePodDivisionMountingFixtures(segments, divisions);
+  assert.equal(mounts.length, 2);
+  assert.deepEqual(mounts.map((mount) => mount.role), [
+    'division-mount-flange',
+    'division-mount-neck',
+  ]);
+  assert.deepEqual(mounts.map((mount) => mount.point), [
+    { x: 2, y: 4, z: 6 },
+    { x: 2, y: 4, z: 6 },
+  ]);
+  assert.ok(mounts[0].radius >= 0.09 && mounts[0].radius <= 0.18);
+  assert.ok(mounts[1].radius >= 0.06 && mounts[1].radius <= 0.12);
+  assert.ok(mounts[0].length >= 0.06 && mounts[0].length <= 0.10);
+  assert.ok(mounts[1].length >= 0.08 && mounts[1].length <= 0.14);
+  assert.ok(mounts.every((mount) => mount.presentationOnly === true));
+  assert.ok(mounts.every((mount) => mount.routeContinuous === true));
+  assert.equal(mounts[0].semanticId, 'SEAT_CONNECTION');
+  assert.equal(mounts[1].semanticId, 'SEAT_CONNECTION');
+});
+
 test('S24 pod-division conduit carriers use a subordinate tubular presentation', () => {
   assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-division' }), 'TUBE');
   assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-facility' }), 'BOX');
@@ -827,6 +876,17 @@ test('S24 Three topology bridge renders endpoint docking collars without promoti
   assert.match(source, /mesh\.userData\.dockingRole/);
   assert.match(source, /dockingCollarCount/);
 });
+test('S24 docking embodiment version advances with mounting hardware', () => {
+  const source = readFileSync('frontend/spatial/machine-world-pod-docking-embodiment.js', 'utf8');
+  assert.match(source, /S8-DOCKING-V3/);
+  const adapter = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.match(adapter, /derivePodDivisionMountingFixtures\(conduitSegments, divisions\)/);
+  assert.match(adapter, /dockingMountCount/);
+  assert.match(adapter, /dockingMount = true/);
+  const preview = readFileSync('frontend/spatial/machine-structural-embodiment-preview.js', 'utf8');
+  assert.match(preview, /divisions,\n  \}\);/);
+});
+
 
 test('S24 source and browser docking embodiment copies remain exact', () => {
   const source = readFileSync('frontend/spatial/machine-world-pod-docking-embodiment.js', 'utf8');

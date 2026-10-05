@@ -282,6 +282,7 @@ function renderView() {
   const topologyRender = adapter.setTopology(visibleTopology, {
     mode: topologyMode,
     branchId: topologyBranchId,
+    divisions,
   });
   canvas.dataset.structuralView = currentView;
   canvas.dataset.structuralTotalTopologyEdges = String(semanticEdges.length);

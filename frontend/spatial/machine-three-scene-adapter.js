@@ -10,7 +10,11 @@
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
-import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
+import {
+  derivePodDivisionDockingCollars,
+  derivePodDivisionDockingSockets,
+  derivePodDivisionMountingFixtures,
+} from './machine-world-pod-docking-embodiment.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
   getMachinePodShellOutline,
@@ -791,6 +795,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   function setTopology(topology = null, {
     mode = 'WORLD_OVERVIEW',
     branchId = null,
+    divisions = [],
   } = {}) {
     clearGroup(topologyRoot);
     const edges = Array.isArray(topology?.edges) ? topology.edges : [];
@@ -889,6 +894,29 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     }
 
 
+    const dockingMounts = derivePodDivisionMountingFixtures(conduitSegments, divisions);
+    for (const mount of dockingMounts) {
+      const geometry = new THREE.CylinderGeometry(
+        mount.radius,
+        mount.radius,
+        mount.length,
+        8,
+      );
+      const mesh = new THREE.Mesh(geometry, material('metal2'));
+      mesh.name = mount.id;
+      mesh.userData.semanticEdgeId = mount.semanticEdgeId;
+      mesh.userData.semanticId = mount.semanticId;
+      mesh.userData.edgeKind = mount.edgeKind;
+      mesh.userData.dockingRole = mount.role;
+      mesh.userData.dockingSegment = mount.segmentIndex;
+      mesh.userData.routeContinuous = mount.routeContinuous;
+      mesh.userData.presentationOnly = mount.presentationOnly;
+      mesh.userData.dockingMount = true;
+      mesh.position.set(mount.center.x, mount.center.y, mount.center.z);
+      topologyRoot.add(mesh);
+    }
+
+
     const dockingCollars = derivePodDivisionDockingCollars(conduitSegments);
     for (const collar of dockingCollars) {
       const geometry = new THREE.CylinderGeometry(
@@ -916,6 +944,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       conduitEdgeKinds: Object.freeze([...new Set(conduitSegments.map((segment) => segment.edgeKind))]),
       dockingCollarCount: dockingCollars.length,
       dockingSocketCount: dockingSockets.length,
+      dockingMountCount: dockingMounts.length,
     });
   }
 
