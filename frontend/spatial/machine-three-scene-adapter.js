@@ -8,6 +8,13 @@
  */
 
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
+import { deriveBackendDisplayPlacements, BACKEND_DISPLAY_V1 } from './hero-r1-backend-display.js';
+import { deriveSetupConfigPlacements, SETUP_CONFIG_V1 } from './hero-r2-setup-ring.js';
+import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
+import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
+import { deriveMachineWorldProfile } from './hero-world-profile.js';
+import { RING_R1_SCALE, RING_R2_SCALE } from './hero-world-contract.js';
+
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import {
@@ -71,6 +78,191 @@ const DEFAULT_SHAPE = 'BOX';
 
 export function resolveThreeConduitRenderShape(segment = {}) {
   return segment?.edgeKind === 'pod-division' ? 'TUBE' : 'BOX';
+}
+
+
+export function deriveThreeCanonicalRingDescriptors({
+  seatCount = 10,
+  seatRingRadius = null,
+  articulationAmount = 0,
+  signalAmount = 0,
+  ringFocus = null,
+  reducedMotion = true,
+} = {}) {
+  const profile = deriveMachineWorldProfile(seatCount);
+  const workspaceCore = deriveWorkspaceCoreGeometry({
+    workspaceRadius: profile.workspace,
+    expansionAmount: articulationAmount,
+  });
+  const resolvedSeatRingRadius = Number.isFinite(Number(seatRingRadius))
+    ? Number(seatRingRadius)
+    : profile.seatShellRadius;
+  const envelope = deriveConcentricRingEnvelope({
+    r0Radius: workspaceCore.radius,
+    r3Radius: resolvedSeatRingRadius,
+    ringR1Scale: RING_R1_SCALE,
+    ringR2Scale: RING_R2_SCALE,
+  });
+  const descriptors = [];
+
+  const r1Placements = deriveBackendDisplayPlacements({
+    workspaceRadius: profile.workspace,
+    ringScale: RING_R1_SCALE,
+    ringRadius: envelope.r1Radius,
+    catalog: BACKEND_DISPLAY_V1,
+  });
+  const r1Articulation = Math.max(0, Math.min(1, Number(articulationAmount) || 0));
+  const r1Deploy = 0.68 + 0.32 * r1Articulation;
+  for (const placement of r1Placements) {
+    const focused = ringFocus?.ring === 'r1' && ringFocus.index === placement.index;
+    descriptors.push(
+      {
+        id: placement.id + ':MOUNT',
+        semanticId: placement.id,
+        parentId: 'R1-BACKEND-DISPLAY-RING',
+        shape: 'CYLINDER',
+        profile: 'r1-backend-display-mount',
+        center: { x: placement.x, y: placement.y - 0.08, z: placement.z },
+        dimensions: {
+          x: 0.56 * r1Deploy,
+          y: 0.12 * r1Deploy,
+          z: 0.56 * r1Deploy,
+        },
+        rotationY: placement.angle,
+        materialRole: 'metal',
+        constructionSlice: 'R1',
+        constructionOwner: 'frontend/spatial/hero-r1-backend-display.js',
+        presentationOnly: true,
+        ringId: 'R1',
+        ringRadius: envelope.r1Radius,
+      },
+      {
+        id: placement.id + ':BODY',
+        semanticId: placement.id,
+        parentId: 'R1-BACKEND-DISPLAY-RING',
+        shape: 'CUBE',
+        profile: 'r1-backend-display-body',
+        center: { x: placement.x, y: placement.y - 0.01, z: placement.z },
+        dimensions: {
+          x: 1.44 * r1Deploy,
+          y: 0.16 * r1Deploy,
+          z: 0.52 * r1Deploy,
+        },
+        rotationY: placement.angle,
+        materialRole: 'metal2',
+        constructionSlice: 'R1',
+        constructionOwner: 'frontend/spatial/hero-r1-backend-display.js',
+        presentationOnly: true,
+        ringId: 'R1',
+        ringRadius: envelope.r1Radius,
+      },
+      {
+        id: placement.id + ':FACE',
+        semanticId: placement.id,
+        parentId: 'R1-BACKEND-DISPLAY-RING',
+        shape: 'CUBE',
+        profile: 'r1-backend-display-face',
+        center: { x: placement.x, y: placement.y + 0.13 * r1Articulation, z: placement.z },
+        dimensions: {
+          x: 1.10 * r1Deploy * (focused ? 1.08 : 1),
+          y: 0.12 * r1Deploy,
+          z: 0.76 * r1Deploy * (focused ? 1.08 : 1),
+        },
+        rotationY: placement.angle + Math.PI / 2,
+        materialRole: 'glass',
+        constructionSlice: 'R1',
+        constructionOwner: 'frontend/spatial/hero-r1-backend-display.js',
+        presentationOnly: true,
+        ringId: 'R1',
+        ringRadius: envelope.r1Radius,
+      },
+      {
+        id: placement.id + ':RING',
+        semanticId: placement.id,
+        parentId: 'R1-BACKEND-DISPLAY-RING',
+        shape: 'TORUS',
+        profile: 'r1-backend-display-ring',
+        center: { x: placement.x, y: placement.y + 0.08, z: placement.z },
+        dimensions: { x: 0.44, y: 0.12, z: 0.44 },
+        rotationY: 0,
+        materialRole: focused ? 'energy' : 'trace',
+        constructionSlice: 'R1',
+        constructionOwner: 'frontend/spatial/hero-r1-backend-display.js',
+        presentationOnly: true,
+        ringId: 'R1',
+        ringRadius: envelope.r1Radius,
+      },
+    );
+  }
+
+  const r2Placements = deriveSetupConfigPlacements({
+    workspaceRadius: profile.workspace,
+    ringScale: RING_R2_SCALE,
+    ringRadius: envelope.r2Radius,
+    items: SETUP_CONFIG_V1,
+  });
+  const r2Articulation = Math.max(0, Math.min(1, Number(articulationAmount) || 0));
+  const r2Fill = Math.max(0, Math.min(1, Number(signalAmount) || 0));
+  const r2Scale = 0.84 + 0.16 * r2Articulation;
+  for (const placement of r2Placements) {
+    const itemScale = (placement.kind === 'engine' || placement.kind === 'auth' ? 0.42 : 0.36) * r2Scale * (1 + 0.14 * r2Fill);
+    descriptors.push(
+      {
+        id: placement.id + ':BASE',
+        semanticId: placement.id,
+        parentId: 'R2-SETUP-CONFIG-RING',
+        shape: 'CYLINDER',
+        profile: 'r2-setup-config-base',
+        center: { x: placement.x, y: placement.y, z: placement.z },
+        dimensions: { x: itemScale * 2.2, y: 0.14, z: itemScale * 2.2 },
+        rotationY: placement.angle,
+        materialRole: 'metal',
+        constructionSlice: 'R2',
+        constructionOwner: 'frontend/spatial/hero-r2-setup-ring.js',
+        presentationOnly: true,
+        ringId: 'R2',
+        ringRadius: envelope.r2Radius,
+      },
+      {
+        id: placement.id + ':RING',
+        semanticId: placement.id,
+        parentId: 'R2-SETUP-CONFIG-RING',
+        shape: 'TORUS',
+        profile: 'r2-setup-config-ring',
+        center: { x: placement.x, y: placement.y + 0.09, z: placement.z },
+        dimensions: { x: itemScale * 2, y: 0.12, z: itemScale * 2 },
+        rotationY: 0,
+        materialRole: placement.kind === 'auth' ? 'energy' : 'metal2',
+        constructionSlice: 'R2',
+        constructionOwner: 'frontend/spatial/hero-r2-setup-ring.js',
+        presentationOnly: true,
+        ringId: 'R2',
+        ringRadius: envelope.r2Radius,
+      },
+      {
+        id: placement.id + ':FACE',
+        semanticId: placement.id,
+        parentId: 'R2-SETUP-CONFIG-RING',
+        shape: 'CUBE',
+        profile: 'r2-setup-config-face',
+        center: { x: placement.x, y: placement.y + 0.16, z: placement.z },
+        dimensions: { x: 0.22, y: 0.06, z: 0.14 },
+        rotationY: placement.angle,
+        materialRole: 'glass',
+        constructionSlice: 'R2',
+        constructionOwner: 'frontend/spatial/hero-r2-setup-ring.js',
+        presentationOnly: true,
+        ringId: 'R2',
+        ringRadius: envelope.r2Radius,
+      },
+    );
+  }
+
+  return Object.freeze(descriptors.map((entry) => Object.freeze({
+    ...entry,
+    dimensions: Object.freeze({ ...entry.dimensions }),
+    center: Object.freeze({ ...entry.center }),
+  })));
 }
 
 export function normalizeThreeShape({ shape = '', profile = '' } = {}) {
