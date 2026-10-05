@@ -7,6 +7,7 @@ import {
   normalizeThreeDescriptor,
   normalizeThreeShape,
   resolveThreeConduitRenderShape,
+  deriveThreeCanonicalRingDescriptors,
   MACHINE_THREE_ADAPTER_ID,
   MACHINE_THREE_ADAPTER_VERSION,
   resolveThreeMaterialPresentation,
@@ -1188,6 +1189,23 @@ test('Y1 never invents semantic identity for component-only geometry', () => {
   }, 'MACHINE-CORE-ASSEMBLY');
   assert.equal(descriptor.semanticId, null);
   assert.equal(descriptor.id, 'CORE_FOUNDATION_SHELL');
+});
+
+test('R0-R2 canonical ring projection reuses the existing concentric-envelope and ring placement owners', () => {
+  const descriptors = deriveThreeCanonicalRingDescriptors({
+    seatCount: 10,
+    seatRingRadius: 5.05,
+  });
+  assert.equal(descriptors.length, 21);
+  assert.equal(new Set(descriptors.map((entry) => entry.id)).size, 21);
+  assert.equal(new Set(descriptors.filter((entry) => entry.ringId === 'R1').map((entry) => entry.semanticId)).size, 3);
+  assert.equal(new Set(descriptors.filter((entry) => entry.ringId === 'R2').map((entry) => entry.semanticId)).size, 4);
+  const r1 = descriptors.find((entry) => entry.ringId === 'R1');
+  const r2 = descriptors.find((entry) => entry.ringId === 'R2');
+  assert.ok(Math.abs(r1.ringRadius - 4.69) < 1e-9);
+  assert.ok(Math.abs(r2.ringRadius - 4.87) < 1e-9);
+  assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
+  assert.ok(descriptors.every((entry) => entry.constructionOwner.includes('/hero-r')));
 });
 
 test('Y1 topology projection forwards scope to physical conduit rendering', () => {
