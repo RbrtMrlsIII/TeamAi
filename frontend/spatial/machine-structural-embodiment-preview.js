@@ -294,6 +294,7 @@ function renderView() {
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   canvas.dataset.structuralTopologyMode = topologyMode;
+  canvas.dataset.structuralDockingChassisCount = String(topologyRender.dockingChassisCount);
   const divisionSubject = subjectFromParts(divisions);
   const cameraMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
