@@ -50,7 +50,10 @@ import {
   resolveMachineSeatWorkspaceScopeFrameRailThickness,
   resolveMachineSeatDivisionProfileShape,
 } from '../frontend/spatial/machine-seat-division-profile.js';
-import { derivePodDivisionDockingCollars } from '../frontend/spatial/machine-world-pod-docking-embodiment.js';
+import {
+  derivePodDivisionDockingCollars,
+  derivePodDivisionDockingSockets,
+} from '../frontend/spatial/machine-world-pod-docking-embodiment.js';
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
@@ -748,6 +751,58 @@ test('S24 pod-division docking collars derive only from bounded vertical conduit
   assert.ok(collars.every((collar) => collar.presentationOnly === true));
   assert.ok(collars.every((collar) => collar.routeContinuous === true));
 });
+
+test('S24 pod-division docking sockets derive horizontal direction from the route bend', () => {
+  const segments = [
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:SEAT_CONNECTION',
+      edgeKind: 'pod-division',
+      segmentIndex: 1,
+      start: { x: 1, y: 2, z: 3 },
+      end: { x: 1, y: 3, z: 3 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:SEAT_CONNECTION',
+      edgeKind: 'pod-division',
+      segmentIndex: 2,
+      start: { x: 1, y: 3, z: 3 },
+      end: { x: 4, y: 3, z: 6 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:SEAT_CONNECTION',
+      edgeKind: 'pod-division',
+      segmentIndex: 3,
+      start: { x: 4, y: 3, z: 6 },
+      end: { x: 4, y: 2, z: 6 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+  ];
+  const sockets = derivePodDivisionDockingSockets(segments);
+  assert.equal(sockets.length, 2);
+  assert.deepEqual(sockets.map((socket) => socket.role), ['division-socket', 'pod-socket']);
+  assert.deepEqual(sockets.map((socket) => socket.segmentIndex), [1, 3]);
+  assert.deepEqual(sockets[0].point, { x: 1, y: 2, z: 3 });
+  assert.deepEqual(sockets[1].point, { x: 4, y: 2, z: 6 });
+
+  const diagonal = Math.SQRT1_2;
+  assert.ok(Math.abs(sockets[0].direction.x - diagonal) < 1e-12);
+  assert.equal(sockets[0].direction.y, 0);
+  assert.ok(Math.abs(sockets[0].direction.z - diagonal) < 1e-12);
+  assert.ok(Math.abs(sockets[1].direction.x + diagonal) < 1e-12);
+  assert.equal(sockets[1].direction.y, 0);
+  assert.ok(Math.abs(sockets[1].direction.z + diagonal) < 1e-12);
+
+  assert.ok(sockets.every((socket) => socket.radius >= 0.035 && socket.radius <= 0.065));
+  assert.ok(sockets.every((socket) => socket.length >= 0.08 && socket.length <= 0.16));
+  assert.ok(sockets.every((socket) => socket.presentationOnly === true));
+  assert.ok(sockets.every((socket) => socket.routeContinuous === true));
+});
+
 
 test('S24 Three topology bridge renders endpoint docking collars without promoting conduit material', () => {
   const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
