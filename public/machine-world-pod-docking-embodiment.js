@@ -8,7 +8,7 @@
  */
 
 export const MACHINE_WORLD_POD_DOCKING_EMBODIMENT_ID = 'MACHINE-WORLD-POD-DOCKING-EMBODIMENT';
-export const MACHINE_WORLD_POD_DOCKING_EMBODIMENT_VERSION = 'S8-DOCKING-V3';
+export const MACHINE_WORLD_POD_DOCKING_EMBODIMENT_VERSION = 'S8-DOCKING-V4';
 
 const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
