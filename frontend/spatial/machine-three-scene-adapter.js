@@ -74,6 +74,25 @@ export function resolveThreeConduitRenderShape(segment = {}) {
   return segment?.edgeKind === 'pod-division' ? 'TUBE' : 'BOX';
 }
 
+
+export function resolveThreeConduitRenderRadius(segment = {}) {
+  const baseRadius = Math.max(0.01, Number(segment?.radius) * 0.85);
+  if (segment?.edgeKind !== 'pod-division') return baseRadius;
+  const dx = Number(segment?.end?.x) - Number(segment?.start?.x);
+  const dy = Number(segment?.end?.y) - Number(segment?.start?.y);
+  const dz = Number(segment?.end?.z) - Number(segment?.start?.z);
+  const length = Math.hypot(dx, dy, dz);
+  const horizontal = Math.hypot(dx, dz);
+  if (
+    length > 1.0
+    && horizontal > 0.001
+    && horizontal > Math.abs(dy)
+  ) {
+    return Math.max(0.01, Number(segment?.radius) * 0.62);
+  }
+  return baseRadius;
+}
+
 export function normalizeThreeShape({ shape = '', profile = '' } = {}) {
   const rawShape = String(shape || '').trim().toUpperCase();
   const profileShape = resolveMachineSeatDivisionProfileShape({
@@ -832,7 +851,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       const conduitShape = resolveThreeConduitRenderShape(segment);
       const geometry = conduitShape === 'TUBE'
         ? new THREE.CylinderGeometry(
-            Math.max(0.01, segment.radius * 0.85),
+            resolveThreeConduitRenderRadius(segment),
             Math.max(0.01, segment.radius * 0.85),
             Math.max(0.01, (
               Math.max(segment.dimensions.x, segment.dimensions.y, segment.dimensions.z)
