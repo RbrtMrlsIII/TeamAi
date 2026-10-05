@@ -82,6 +82,9 @@ test('S8 structural chassis derives four bounded presentation pieces from one re
   assert.ok(chassis.every((piece) => piece.routeContinuous === true));
   assert.ok(chassis.every((piece) => piece.radius >= 0.03 && piece.radius <= 0.075));
   assert.ok(chassis.every((piece) => piece.length > 0));
+  assert.ok(chassis[0].length < 5 * 0.5);
+  assert.ok(chassis[0].length <= 2.40);
+  assert.ok(chassis[2].length <= 0.23 + 1e-12);
 });
 
 test('S8 chassis stays disabled without focused division descriptors', () => {
