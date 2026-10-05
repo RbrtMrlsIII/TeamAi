@@ -885,7 +885,7 @@ test('S24 docking embodiment version advances with mounting hardware', () => {
   assert.match(adapter, /dockingMountCount/);
   assert.match(adapter, /dockingMount = true/);
   const preview = readFileSync('frontend/spatial/machine-structural-embodiment-preview.js', 'utf8');
-  assert.match(preview, /divisions,\n  \}\);/);
+  assert.match(preview, /divisions:\s*seatDivisions,/);
 });
 
 
