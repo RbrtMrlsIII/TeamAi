@@ -310,7 +310,9 @@ export function derivePodDivisionStructuralChassis(
     maximumRailSpacing = 0.26,
     minimumCrossbarRadius = 0.03,
     maximumCrossbarRadius = 0.06,
-    minimumRailLength = 0.08,
+    railSpanFactor = 0.44,
+    minimumRailLength = 0.90,
+    maximumRailLength = 2.40,
   } = {},
 ) {
   const divisionIds = new Set(
@@ -388,16 +390,29 @@ export function derivePodDivisionStructuralChassis(
         conduitRadius * Math.max(0.1, finite(railSpacingFactor, 4.5)),
       ),
     );
-    const railLength = Math.max(
-      Math.max(0.02, finite(minimumRailLength, 0.08)),
-      horizontalLength - crossbarRadius * 2,
+    const railLength = Math.min(
+      Math.max(
+        Math.max(0.02, finite(minimumRailLength, 0.90)),
+        horizontalLength * Math.max(0.20, Math.min(0.70, finite(railSpanFactor, 0.44))),
+      ),
+      Math.max(
+        Math.max(0.02, finite(minimumRailLength, 0.90)),
+        Math.min(
+          horizontalLength - crossbarRadius * 2,
+          Math.max(0.03, finite(maximumRailLength, 2.40)),
+        ),
+      ),
     );
     const midpoint = {
       x: (finite(horizontal.start?.x) + finite(horizontal.end?.x)) * 0.5,
       y: (finite(horizontal.start?.y) + finite(horizontal.end?.y)) * 0.5,
       z: (finite(horizontal.start?.z) + finite(horizontal.end?.z)) * 0.5,
     };
-    const center = Object.freeze(midpoint);
+    const center = Object.freeze({
+      x: finite(horizontal.end?.x) - direction.x * railLength * 0.5,
+      y: finite(horizontal.end?.y),
+      z: finite(horizontal.end?.z) - direction.z * railLength * 0.5,
+    });
     const crossbarLength = spacing + railRadius * 2;
     const startPoint = Object.freeze({
       x: finite(horizontal.start?.x),
@@ -438,7 +453,11 @@ export function derivePodDivisionStructuralChassis(
       {
         suffix: 'CROSSBAR:DIVISION',
         role: 'division-chassis-crossbar',
-        point: startPoint,
+        point: Object.freeze({
+          x: center.x - direction.x * railLength * 0.5,
+          y: center.y,
+          z: center.z - direction.z * railLength * 0.5,
+        }),
         direction: perpendicular,
         radius: crossbarRadius,
         length: crossbarLength,
