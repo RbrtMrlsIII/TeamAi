@@ -50,6 +50,7 @@ import {
   resolveMachineSeatWorkspaceScopeFrameRailThickness,
   resolveMachineSeatDivisionProfileShape,
 } from '../frontend/spatial/machine-seat-division-profile.js';
+import { derivePodDivisionDockingCollars } from '../frontend/spatial/machine-world-pod-docking-embodiment.js';
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
@@ -692,6 +693,77 @@ test('S24 Three bridge derives restrained local practical lights from existing m
   assert.match(source, /intensity: 0\.12/);
 });
  
+test('S24 pod-division docking collars derive only from bounded vertical conduit endpoints', () => {
+  const segments = [
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:SEAT_CONNECTION',
+      edgeKind: 'pod-division',
+      segmentIndex: 1,
+      start: { x: 1, y: 2, z: 3 },
+      end: { x: 1, y: 3, z: 3 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:SEAT_CONNECTION',
+      edgeKind: 'pod-division',
+      segmentIndex: 2,
+      start: { x: 1, y: 3, z: 3 },
+      end: { x: 4, y: 3, z: 6 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+    {
+      semanticEdgeId: 'EDGE:SEAT-DIVISION:SEAT_CONNECTION',
+      edgeKind: 'pod-division',
+      segmentIndex: 3,
+      start: { x: 4, y: 3, z: 6 },
+      end: { x: 4, y: 2, z: 6 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+    {
+      semanticEdgeId: 'EDGE:FACILITY-FACILITY:1',
+      edgeKind: 'facility-facility',
+      segmentIndex: 1,
+      start: { x: 0, y: 0, z: 0 },
+      end: { x: 1, y: 0, z: 0 },
+      radius: 0.035,
+      routeContinuous: true,
+    },
+  ];
+  const collars = derivePodDivisionDockingCollars(segments);
+  assert.equal(collars.length, 2);
+  assert.deepEqual(collars.map((collar) => collar.role), ['division-dock', 'pod-dock']);
+  assert.equal(collars[0].segmentIndex, 1);
+  assert.equal(collars[1].segmentIndex, 3);
+  assert.deepEqual(collars[0].point, { x: 1, y: 2, z: 3 });
+  assert.deepEqual(collars[1].point, { x: 4, y: 2, z: 6 });
+  assert.equal(collars[0].center.x, 1);
+  assert.equal(collars[1].center.x, 4);
+  assert.ok(collars[0].center.y > 2);
+  assert.ok(collars[1].center.y > 2);
+  assert.ok(collars.every((collar) => collar.radius <= 0.09));
+  assert.ok(collars.every((collar) => collar.length <= 0.18));
+  assert.ok(collars.every((collar) => collar.presentationOnly === true));
+  assert.ok(collars.every((collar) => collar.routeContinuous === true));
+});
+
+test('S24 Three topology bridge renders endpoint docking collars without promoting conduit material', () => {
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.match(source, /derivePodDivisionDockingCollars\(conduitSegments\)/);
+  assert.match(source, /new THREE\.CylinderGeometry\(/);
+  assert.match(source, /material\('metal2'\)/);
+  assert.match(source, /mesh\.userData\.dockingRole/);
+  assert.match(source, /dockingCollarCount/);
+});
+
+test('S24 source and browser docking embodiment copies remain exact', () => {
+  const source = readFileSync('frontend/spatial/machine-world-pod-docking-embodiment.js', 'utf8');
+  const browser = readFileSync('public/machine-world-pod-docking-embodiment.js', 'utf8');
+  assert.equal(browser, source);
+});
+
 test('S24 physical conduit presentation is subordinate and bounded', () => {
   const authored = {
     metal: { color: [0.7, 0.7, 0.7], rough: 0.3, emit: 0 },

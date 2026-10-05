@@ -10,6 +10,7 @@
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
+import { derivePodDivisionDockingCollars } from './machine-world-pod-docking-embodiment.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
   getMachinePodShellOutline,
@@ -834,11 +835,32 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       topologyRoot.add(mesh);
     }
 
+    const dockingCollars = derivePodDivisionDockingCollars(conduitSegments);
+    for (const collar of dockingCollars) {
+      const geometry = new THREE.CylinderGeometry(
+        collar.radius,
+        collar.radius,
+        collar.length,
+        8,
+      );
+      const mesh = new THREE.Mesh(geometry, material('metal2'));
+      mesh.name = collar.id;
+      mesh.userData.semanticEdgeId = collar.semanticEdgeId;
+      mesh.userData.edgeKind = collar.edgeKind;
+      mesh.userData.dockingRole = collar.role;
+      mesh.userData.dockingSegment = collar.segmentIndex;
+      mesh.userData.routeContinuous = collar.routeContinuous;
+      mesh.userData.presentationOnly = collar.presentationOnly;
+      mesh.position.set(collar.center.x, collar.center.y, collar.center.z);
+      topologyRoot.add(mesh);
+    }
+
     return Object.freeze({
       edgeCount: count,
       lineCount,
       conduitSegmentCount: conduitSegments.length,
       conduitEdgeKinds: Object.freeze([...new Set(conduitSegments.map((segment) => segment.edgeKind))]),
+      dockingCollarCount: dockingCollars.length,
     });
   }
 
