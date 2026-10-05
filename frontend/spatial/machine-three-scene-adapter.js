@@ -14,6 +14,7 @@ import {
   derivePodDivisionDockingCollars,
   derivePodDivisionDockingSockets,
   derivePodDivisionMountingFixtures,
+  derivePodDivisionArticulatedMounts,
 } from './machine-world-pod-docking-embodiment.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
@@ -917,6 +918,37 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     }
 
 
+
+    const dockingArticulatedMounts = derivePodDivisionArticulatedMounts(
+      conduitSegments,
+      divisions,
+    );
+    for (const mount of dockingArticulatedMounts) {
+      const geometry = new THREE.CylinderGeometry(
+        mount.radius,
+        mount.radius,
+        mount.length,
+        8,
+      );
+      const mesh = new THREE.Mesh(geometry, material('metal2'));
+      mesh.name = mount.id;
+      mesh.userData.semanticEdgeId = mount.semanticEdgeId;
+      mesh.userData.semanticId = mount.semanticId;
+      mesh.userData.edgeKind = mount.edgeKind;
+      mesh.userData.dockingRole = mount.role;
+      mesh.userData.dockingSegment = mount.segmentIndex;
+      mesh.userData.routeContinuous = mount.routeContinuous;
+      mesh.userData.presentationOnly = mount.presentationOnly;
+      mesh.userData.mountMode = mount.mountMode;
+      mesh.userData.dockingArticulatedMount = true;
+      mesh.position.set(mount.center.x, mount.center.y, mount.center.z);
+      mesh.quaternion.setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(mount.direction.x, mount.direction.y, mount.direction.z),
+      );
+      topologyRoot.add(mesh);
+    }
+
     const dockingCollars = derivePodDivisionDockingCollars(conduitSegments);
     for (const collar of dockingCollars) {
       const geometry = new THREE.CylinderGeometry(
@@ -945,6 +977,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       dockingCollarCount: dockingCollars.length,
       dockingSocketCount: dockingSockets.length,
       dockingMountCount: dockingMounts.length,
+      dockingArticulatedMountCount: dockingArticulatedMounts.length,
     });
   }
 
