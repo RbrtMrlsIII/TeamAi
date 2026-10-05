@@ -28,6 +28,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '1');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '0');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '7');
+    await expect.poll(async () => Number(await canvas.getAttribute('data-structural-docking-articulated-mount-count'))).toBe(14);
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges'))).toBeGreaterThan(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges')))
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
