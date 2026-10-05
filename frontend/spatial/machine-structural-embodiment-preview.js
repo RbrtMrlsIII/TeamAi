@@ -94,6 +94,37 @@ function divisionDescriptors(seat, amount = 1, focusedChildId = null) {
   });
 }
 
+function renderFacilityAssemblies(machines, amount = 0) {
+  return (Array.isArray(machines) ? machines : []).map((machine) => {
+    const presentation = deriveMachineFacilityMechanismPresentation(machine, {
+      amount,
+      reducedMotion: true,
+    });
+    const motionById = new Map(
+      presentation.components.map((entry) => [entry.id, entry]),
+    );
+    const move = (component) => {
+      const motion = motionById.get(component.id);
+      return {
+        ...component,
+        center: {
+          x: component.center.x + finite(motion?.dx),
+          y: component.center.y + finite(motion?.dy),
+          z: component.center.z + finite(motion?.dz),
+        },
+        rotationY: Number.isFinite(Number(motion?.rotationY))
+          ? Number(motion.rotationY)
+          : finite(component.rotationY),
+      };
+    };
+    return {
+      ...machine,
+      components: (machine.components || []).map(move),
+      mechanicalDetails: (machine.mechanicalDetails || []).map(move),
+    };
+  });
+}
+
 function facilityDescriptors(machines, amount = 1) {
   return machines.flatMap((machine) => {
     const presentation = deriveMachineFacilityMechanismPresentation(machine, {
@@ -309,6 +340,11 @@ function renderView() {
     : [];
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
+  const effectiveFacilitiesSource = currentView === 'world'
+    ? machinery
+    : currentView === 'facility' && facility
+      ? [facility]
+      : [];
   const effectiveCore = currentView === 'world' ? activeCore : null;
   const effectivePods = currentView === 'world'
     ? activePods
@@ -437,7 +473,6 @@ function renderView() {
 
   setStatus(
     'READY · ' + currentView.toUpperCase()
-    + ' · ' + choreography.phase
     + ' · 10 seats · 4 facilities · 7 divisions · '
     + activeTopology.edges.length
     + ' semantic edges · WebGL2 · Three r' + (model.THREE.REVISION || '186'),
