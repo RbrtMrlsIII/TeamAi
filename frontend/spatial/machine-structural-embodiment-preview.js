@@ -202,6 +202,7 @@ async function boot() {
 
     model = Object.freeze({
       THREE,
+      seatCount: scene.seatCount,
       scene,
       core,
       pods,
@@ -285,14 +286,14 @@ function renderView() {
     scene: activeScene,
     facilityAssemblies,
     facilityMachinery: machinery,
-    seatDivisionAmount: choreographyState.choreography.hierarchyOpen
+    seatDivisionAmount: choreographyState.hierarchyOpen
       ? choreography.division
       : choreography.transformation,
     clearance: 0.16,
   });
 
   const seatDivisions = currentView === 'seat'
-    ? divisionDescriptors(activeSeat, choreography.division, choreographyState.choreography.focusedChildId)
+    ? divisionDescriptors(activeSeat, choreography.division, choreographyState.focusedChildId)
     : [];
   const seatRingRadius = activeScene.parts
     .filter((part) => part.kind === 'inner-pod')
@@ -439,7 +440,7 @@ function renderView() {
     + ' · ' + choreography.phase
     + ' · 10 seats · 4 facilities · 7 divisions · '
     + activeTopology.edges.length
-    + ' semantic edges · WebGL2 · Three r' + (activeScene.THREE?.REVISION || model.THREE.REVISION || '186'),
+    + ' semantic edges · WebGL2 · Three r' + (model.THREE.REVISION || '186'),
   );
 }
 document.querySelector('[data-view="world"]')?.addEventListener('click', () => {
