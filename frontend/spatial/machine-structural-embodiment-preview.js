@@ -292,6 +292,7 @@ function renderView() {
   canvas.dataset.structuralVisibleDivisions = String(currentView === 'seat' ? DIVISIONS.length : 0);
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
+  canvas.dataset.structuralDockingArticulatedMountCount = String(topologyRender.dockingArticulatedMountCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   canvas.dataset.structuralTopologyMode = topologyMode;
   const divisionSubject = subjectFromParts(divisions);
