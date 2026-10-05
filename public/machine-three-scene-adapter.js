@@ -17,6 +17,7 @@ import { RING_R1_SCALE, RING_R2_SCALE } from './hero-world-contract.js';
 
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
+import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import {
   derivePodDivisionDockingCollars,
   derivePodDivisionDockingSockets,
@@ -77,7 +78,7 @@ const SHAPE_BY_PROFILE = Object.freeze([
 const DEFAULT_SHAPE = 'BOX';
 
 export function resolveThreeConduitRenderShape(segment = {}) {
-  return segment?.edgeKind === 'pod-division' ? 'TUBE' : 'BOX';
+  return segment?.structuralConduit === true || segment?.edgeKind === 'pod-division' ? 'TUBE' : 'BOX';
 }
 
 
@@ -991,7 +992,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   } = {}) {
     clearGroup(topologyRoot);
     const edges = Array.isArray(topology?.edges) ? topology.edges : [];
-    const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
+    const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat', 'inner-spoke', 'outer-spine', 'lattice-link']);
     let count = 0;
     let lineCount = 0;
     for (const edge of edges) {
@@ -1013,6 +1014,38 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       line.userData.routeContinuous = edge.routeContinuous === true;
       topologyRoot.add(line);
       lineCount += 1;
+    }
+
+
+    const structuralConduitSegments = getRenderableMachineWorldStructuralConduitSegments(topology, {
+      mode,
+      branchId,
+    });
+    for (const segment of structuralConduitSegments) {
+      const geometry = new THREE.CylinderGeometry(
+        segment.radius,
+        segment.radius,
+        segment.length,
+        8,
+      );
+      const mesh = new THREE.Mesh(geometry, material('metal2'));
+      mesh.name = segment.id;
+      mesh.userData.semanticEdgeId = segment.semanticEdgeId;
+      mesh.userData.edgeKind = segment.edgeKind;
+      mesh.userData.structuralConduit = true;
+      mesh.userData.routeContinuous = segment.routeContinuous;
+      mesh.userData.presentationOnly = segment.presentationOnly;
+      mesh.position.set(segment.center.x, segment.center.y, segment.center.z);
+      const direction = new THREE.Vector3(
+        segment.end.x - segment.start.x,
+        segment.end.y - segment.start.y,
+        segment.end.z - segment.start.z,
+      ).normalize();
+      mesh.quaternion.setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        direction,
+      );
+      topologyRoot.add(mesh);
     }
 
     const conduitSegments = getRenderableMachineWorldConduitSegments(topology, {
@@ -1132,6 +1165,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     return Object.freeze({
       edgeCount: count,
       lineCount,
+      structuralConduitSegmentCount: structuralConduitSegments.length,
       conduitSegmentCount: conduitSegments.length,
       conduitEdgeKinds: Object.freeze([...new Set(conduitSegments.map((segment) => segment.edgeKind))]),
       dockingCollarCount: dockingCollars.length,
