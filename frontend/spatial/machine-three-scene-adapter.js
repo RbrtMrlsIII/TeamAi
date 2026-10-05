@@ -823,7 +823,10 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
         segment.dimensions.y,
         segment.dimensions.z,
       );
-      const mesh = new THREE.Mesh(geometry, material('conduit'));
+      const topologyMaterialRole = segment.edgeKind === 'pod-division'
+        ? 'trace'
+        : 'conduit';
+      const mesh = new THREE.Mesh(geometry, material(topologyMaterialRole));
       mesh.name = segment.id;
       mesh.userData.semanticEdgeId = segment.semanticEdgeId;
       mesh.userData.edgeKind = segment.edgeKind;
