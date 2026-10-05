@@ -11,6 +11,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-view', 'world');
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
     await expect(canvas).toHaveAttribute('data-three-material-model', 'S24-authored-theme-family');
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '10');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '4');
@@ -20,11 +21,22 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
     await page.screenshot({ path: 'test-results/s2-s10-world.png', fullPage: true });
 
+    await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
+    await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'DIVISION_DEPLOYING');
+    await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'TOPOLOGY_LINKING');
+    await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'ELECTRICAL_TRANSFER');
+    await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SETTLED');
     await page.getByRole('button', { name: 'Seat 1 / Divisions', exact: true }).click();
     await expect(status).toContainText('READY · SEAT · 10 seats · 4 facilities · 7 divisions · ');
     await expect(canvas).toHaveAttribute('data-structural-view', 'seat');
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'DIVISION_FOCUS');
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'POD_FOCUS');
+    await expect(canvas).toHaveAttribute('data-structural-focused-division', 'SEAT_CONNECTION');
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '1');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '0');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '7');
