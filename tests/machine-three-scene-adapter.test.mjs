@@ -1196,8 +1196,8 @@ test('R0-R2 canonical ring projection reuses the existing concentric-envelope an
     seatCount: 10,
     seatRingRadius: 5.05,
   });
-  assert.equal(descriptors.length, 21);
-  assert.equal(new Set(descriptors.map((entry) => entry.id)).size, 21);
+  assert.equal(descriptors.length, 24);
+  assert.equal(new Set(descriptors.map((entry) => entry.id)).size, 24);
   assert.equal(new Set(descriptors.filter((entry) => entry.ringId === 'R1').map((entry) => entry.semanticId)).size, 3);
   assert.equal(new Set(descriptors.filter((entry) => entry.ringId === 'R2').map((entry) => entry.semanticId)).size, 4);
   const r1 = descriptors.find((entry) => entry.ringId === 'R1');
