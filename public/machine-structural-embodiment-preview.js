@@ -1,6 +1,7 @@
 import { createMachineThreeSceneAdapter } from './machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from './machine-core-layout.js';
 import { deriveMachineCoreAssembly } from './machine-core-assembly.js';
+import { validateMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import { deriveThreeCanonicalRingDescriptors } from './machine-three-scene-adapter.js';
 import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import { deriveMachineSeatDivisionAssembly } from './machine-seat-division-assembly.js';
@@ -308,6 +309,7 @@ function renderView() {
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   canvas.dataset.structuralCanonicalRingDescriptorCount = String(canonicalRingDescriptors.length);
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
+  canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
   canvas.dataset.structuralTopologyMode = topologyMode;
   const divisionSubject = subjectFromParts(divisions);
