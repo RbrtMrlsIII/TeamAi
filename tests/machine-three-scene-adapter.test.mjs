@@ -7,6 +7,7 @@ import {
   normalizeThreeDescriptor,
   normalizeThreeShape,
   resolveThreeConduitRenderShape,
+  resolveThreeConduitRenderRadius,
   MACHINE_THREE_ADAPTER_ID,
   MACHINE_THREE_ADAPTER_VERSION,
   resolveThreeMaterialPresentation,
@@ -802,6 +803,36 @@ test('S24 pod-division mounting fixtures derive bounded hardware from S4 envelop
   assert.equal(mounts[1].semanticId, 'SEAT_CONNECTION');
 });
 
+test('S24 long pod-division deck conduits use a thinner presentation without changing other runs', () => {
+  assert.equal(
+    resolveThreeConduitRenderRadius({
+      edgeKind: 'pod-division',
+      radius: 0.08,
+      start: { x: 0, y: 1, z: 0 },
+      end: { x: 4, y: 1, z: 0 },
+    }),
+    0.0496,
+  );
+  assert.equal(
+    resolveThreeConduitRenderRadius({
+      edgeKind: 'pod-division',
+      radius: 0.08,
+      start: { x: 0, y: 1, z: 0 },
+      end: { x: 0, y: 2, z: 0 },
+    }),
+    0.068,
+  );
+  assert.equal(
+    resolveThreeConduitRenderRadius({
+      edgeKind: 'pod-facility',
+      radius: 0.08,
+      start: { x: 0, y: 1, z: 0 },
+      end: { x: 4, y: 1, z: 0 },
+    }),
+    0.068,
+  );
+});
+
 test('S24 pod-division conduit carriers use a subordinate tubular presentation', () => {
   assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-division' }), 'TUBE');
   assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-facility' }), 'BOX');
@@ -810,7 +841,7 @@ test('S24 pod-division conduit carriers use a subordinate tubular presentation',
   const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   assert.match(source, /resolveThreeConduitRenderShape\(segment\)/);
   assert.match(source, /new THREE\.CylinderGeometry\(/);
-  assert.match(source, /segment\.radius \* 0\.85/);
+  assert.match(source, /resolveThreeConduitRenderRadius\(segment\)/);
   assert.match(source, /mesh\.userData\.conduitShape = conduitShape/);
   assert.match(source, /setFromUnitVectors\(/);
   assert.match(source, /new THREE\.Vector3\(0, 1, 0\)/);
