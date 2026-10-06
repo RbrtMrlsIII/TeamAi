@@ -39,6 +39,18 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     });
 
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect.poll(
+      async () => Number(await canvas.getAttribute('data-structural-choreography-progress')),
+      { timeout: 5000 },
+    ).toBeGreaterThan(0.25);
+    expect(Number(await canvas.getAttribute('data-structural-choreography-progress'))).toBeLessThan(0.95);
+    await expect(canvas).toHaveAttribute('data-structural-choreography-from-stage', '0');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-to-stage', '1');
+    await expect.poll(
+      async () => Number(await canvas.getAttribute('data-structural-choreography-transformation')),
+      { timeout: 5000 },
+    ).toBeGreaterThan(0);
+    await page.screenshot({ path: 'test-results/s2-s10-transform-mid.png', fullPage: true });
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'DIVISION_DEPLOYING');
@@ -53,6 +65,21 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SETTLED');
 
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect.poll(
+      async () => String(await canvas.getAttribute('data-structural-choreography-returning-to-world')),
+      { timeout: 5000 },
+    ).toBe('true');
+    await expect(canvas).toHaveAttribute('data-structural-view', 'world');
+    await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'RETURN_TO_WORLD');
+    await expect.poll(
+      async () => Number(await canvas.getAttribute('data-structural-choreography-progress')),
+      { timeout: 5000 },
+    ).toBeGreaterThan(0.55);
+    expect(Number(await canvas.getAttribute('data-structural-choreography-progress'))).toBeLessThan(0.95);
+    expect(Number(await canvas.getAttribute('data-structural-choreography-transformation'))).toBeLessThan(1);
+    await page.screenshot({ path: 'test-results/s2-s10-return-mid.png', fullPage: true });
+
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
     await expect(canvas).toHaveAttribute('data-structural-view', 'world');
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
