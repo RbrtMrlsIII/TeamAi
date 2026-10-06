@@ -13,6 +13,15 @@ function buildTopology(seatCount) {
   return buildMachineWorldTopology({ scene, clearance: 0.16 });
 }
 
+test('S8 primary inner-spoke carrier stays within presentation volume budget', () => {
+  const topology = topologyFor(10);
+  const segments = getRenderableMachineWorldStructuralConduitSegments(topology);
+  const inner = segments.filter((segment) => segment.edgeKind === 'inner-spoke');
+  assert.equal(inner.length, 20);
+  assert.ok(inner.every((segment) => segment.radius === 0.1));
+  assert.ok(inner.every((segment) => segment.radius <= 0.12));
+});
+
 test('S8 structural conduit projection keeps the existing Core structural routes', () => {
   const topology = buildTopology(10);
   const segments = getRenderableMachineWorldStructuralConduitSegments(topology);
