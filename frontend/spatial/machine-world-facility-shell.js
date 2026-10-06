@@ -53,7 +53,7 @@ function rootContext(semanticId = null) {
 
 function deriveShell(entry) {
   const housing = entry?.outerHousing;
-  if (!housing?.center || !housing?.dimensions || !entry?.branchId) return null;
+  if (!housing?.center || !housing?.dimensions || !entry?.branchId) return [];
 
   const angle = Math.atan2(
     finite(housing.center.z),
@@ -106,12 +106,13 @@ function deriveShell(entry) {
     },
   }[silhouette] || null;
 
-  if (!profiles) return null;
+  if (!profiles) return [];
 
-  return Object.freeze({
-    id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId,
+  const body = {
+    id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':MAIN',
     semanticId: entry.branchId,
-    shape: profiles.shape,
+    role: 'facility-body-shell',
+    shape: 'FACILITY_FACETED_BODY',
     profile: 'facility-body-' + silhouette,
     center: Object.freeze({ ...housing.center }),
     dimensions: Object.freeze(profiles.dimensions),
@@ -122,9 +123,157 @@ function deriveShell(entry) {
     constructionOwner: 'frontend/spatial/machine-world-facility-shell.js',
     branchId: entry.branchId,
     silhouette,
+    layer: 'main-shell',
     presentationOnly: true,
-    ...rootContext('FACILITY-BODY:' + entry.branchId),
-  });
+    ...rootContext('FACILITY-BODY:' + entry.branchId + ':MAIN'),
+  };
+
+  const bodyWidth = Number(body.dimensions.x);
+  const bodyDepth = Number(body.dimensions.z);
+  const bodyHeight = Number(body.dimensions.y);
+  const bodyMin = Math.min(bodyWidth, bodyDepth);
+
+  const layered = [
+    body,
+    Object.freeze({
+      ...body,
+      id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':BASE',
+      profile: 'facility-body-' + silhouette + '-base',
+      center: Object.freeze({
+        x: housing.center.x,
+        y: housing.center.y - bodyHeight * 0.39,
+        z: housing.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: bodyWidth * 0.78,
+        y: Math.max(0.08, bodyHeight * 0.12),
+        z: bodyDepth * 0.78,
+      }),
+      layer: 'base-collar',
+      materialRole: 'metal',
+      outline: FACILITY_BODY_OUTLINES[silhouette],
+      ...rootContext('FACILITY-BODY:' + entry.branchId + ':BASE'),
+    }),
+    Object.freeze({
+      ...body,
+      id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':SHOULDER',
+      profile: 'facility-body-' + silhouette + '-shoulder',
+      center: Object.freeze({
+        x: housing.center.x,
+        y: housing.center.y + bodyHeight * 0.29,
+        z: housing.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: bodyWidth * 0.84,
+        y: Math.max(0.08, bodyHeight * 0.13),
+        z: bodyDepth * 0.84,
+      }),
+      layer: 'shoulder-plate',
+      materialRole: 'metal2',
+      outline: FACILITY_BODY_OUTLINES[silhouette],
+      ...rootContext('FACILITY-BODY:' + entry.branchId + ':SHOULDER'),
+    }),
+    Object.freeze({
+      ...body,
+      id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CAP',
+      profile: 'facility-body-' + silhouette + '-cap',
+      center: Object.freeze({
+        x: housing.center.x,
+        y: housing.center.y + bodyHeight * 0.41,
+        z: housing.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: bodyWidth * 0.58,
+        y: Math.max(0.08, bodyHeight * 0.08),
+        z: bodyDepth * 0.58,
+      }),
+      rotationY: 0,
+      layer: 'upper-cap',
+      materialRole: 'glass',
+      outline: FACILITY_BODY_OUTLINES[silhouette],
+      ...rootContext('FACILITY-BODY:' + entry.branchId + ':CAP'),
+    }),
+  ];
+
+  const coreProfiles = {
+    analysis: {
+      center: Object.freeze({
+        x: housing.center.x + Math.cos(angle) * bodyMin * 0.12,
+        y: housing.center.y + bodyHeight * 0.06,
+        z: housing.center.z + Math.sin(angle) * bodyMin * 0.12,
+      }),
+      dimensions: Object.freeze({
+        x: bodyMin * 0.34,
+        y: Math.max(0.10, bodyHeight * 0.34),
+        z: bodyMin * 0.34,
+      }),
+      shape: 'CYLINDER',
+      materialRole: 'glass',
+      rotationY: angle,
+    },
+    operations: {
+      center: Object.freeze({
+        x: housing.center.x,
+        y: housing.center.y + bodyHeight * 0.08,
+        z: housing.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: bodyMin * 0.32,
+        y: Math.max(0.10, bodyHeight * 0.42),
+        z: bodyMin * 0.20,
+      }),
+      shape: 'BOX',
+      materialRole: 'metal2',
+      rotationY: angle,
+    },
+    control: {
+      center: Object.freeze({
+        x: housing.center.x,
+        y: housing.center.y + bodyHeight * 0.06,
+        z: housing.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: bodyMin * 0.40,
+        y: Math.max(0.10, bodyHeight * 0.30),
+        z: bodyMin * 0.40,
+      }),
+      shape: 'CYLINDER',
+      materialRole: 'energy',
+      rotationY: 0,
+    },
+    'access-commerce': {
+      center: Object.freeze({
+        x: housing.center.x + Math.cos(angle) * bodyMin * 0.08,
+        y: housing.center.y + bodyHeight * 0.17,
+        z: housing.center.z + Math.sin(angle) * bodyMin * 0.08,
+      }),
+      dimensions: Object.freeze({
+        x: bodyMin * 0.20,
+        y: Math.max(0.10, bodyHeight * 0.52),
+        z: bodyMin * 0.20,
+      }),
+      shape: 'CYLINDER',
+      materialRole: 'glass',
+      rotationY: 0,
+    },
+  };
+
+  const core = coreProfiles[entry.machineRole] || coreProfiles.control;
+  layered.push(Object.freeze({
+    ...body,
+    id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CORE',
+    profile: 'facility-body-core-' + entry.machineRole,
+    shape: core.shape,
+    center: core.center,
+    dimensions: core.dimensions,
+    rotationY: finite(core.rotationY),
+    materialRole: core.materialRole,
+    outline: null,
+    layer: 'mechanism-housing',
+    ...rootContext('FACILITY-BODY:' + entry.branchId + ':CORE'),
+  }));
+
+  return layered;
 }
 
 export function deriveMachineWorldFacilityShellDescriptors(
@@ -134,8 +283,7 @@ export function deriveMachineWorldFacilityShellDescriptors(
   if (mode !== 'WORLD_OVERVIEW') return Object.freeze([]);
   return Object.freeze(
     (Array.isArray(facilities) ? facilities : [])
-      .map(deriveShell)
-      .filter(Boolean),
+      .flatMap(deriveShell),
   );
 }
 
