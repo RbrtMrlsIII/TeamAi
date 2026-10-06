@@ -448,6 +448,9 @@ function renderView() {
   canvas.dataset.structuralChoreographyTransformation = String(choreography.transformation);
   canvas.dataset.structuralChoreographyDivision = String(choreography.division);
   canvas.dataset.structuralChoreographyElectrical = String(choreography.electrical);
+  canvas.dataset.structuralChoreographyConnection = String(choreography.connection);
+  canvas.dataset.structuralChoreographyFocusedChild = choreographyState.focusedChildId || '';
+  canvas.dataset.structuralChoreographyPhaseSource = choreography.phase;
   canvas.dataset.structuralFocusedDivision = choreographyState.focusedChildId || '';
   canvas.dataset.structuralTotalTopologyEdges = String(activeTopology.edges.length);
   canvas.dataset.structuralVisibleTopologyEdges = String(topologyRender.edgeCount);
