@@ -1230,7 +1230,7 @@ test('Y1 topology projection forwards scope to physical conduit rendering', () =
   );
   assert.match(
     source,
-    /getRenderableMachineWorldConduitSegments\(topology, \{[\s\S]*?mode,[\s\S]*?branchId,/,
+    /getRenderableMachineWorldConduitSegments\(topology, \{[\s\S]*?mode,[\s\S]*?branchId,[\s\S]*?includeManifoldArcs: mode !== 'WORLD_OVERVIEW'/,
   );
   assert.match(source, /conduitEdgeKinds: Object\.freeze/);
 });
