@@ -3,7 +3,11 @@ import { createBranchConnectionCore } from './machine-core-layout.js';
 import { deriveMachineCoreAssembly } from './machine-core-assembly.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
-import { deriveStructuralPreviewChoreography } from './machine-structural-choreography-sequence.js';
+import {
+  deriveStructuralPreviewChoreography,
+  deriveStructuralPreviewChoreographySample,
+  STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT,
+} from './machine-structural-choreography-sequence.js';
 import { deriveThreeCanonicalRingDescriptors } from './machine-three-scene-adapter.js';
 import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import { deriveMachineSeatDivisionAssembly } from './machine-seat-division-assembly.js';
@@ -30,6 +34,11 @@ let adapter = null;
 let model = null;
 let currentView = 'world';
 let choreographyStage = 0;
+let choreographyFromStage = 0;
+let choreographyProgress = 1;
+let choreographyFrame = 0;
+let choreographyStartedAt = 0;
+const CHOREOGRAPHY_DURATION_MS = 900;
 
 const DIVISIONS = Object.freeze([
   'SEAT_CONNECTION',
@@ -261,13 +270,15 @@ async function boot() {
 function renderView() {
   if (!adapter || !model) return;
 
-  const choreographyState = deriveStructuralPreviewChoreography(choreographyStage);
+  const choreographyState = deriveStructuralPreviewChoreographySample(
+    choreographyFromStage,
+    choreographyStage,
+    choreographyProgress,
+  );
   const choreography = choreographyState.choreography;
-  currentView = choreographyState.view === 'world' && currentView !== 'facility'
-    ? choreographyState.view
-    : currentView === 'facility'
-      ? 'facility'
-      : currentView;
+  currentView = currentView === 'facility'
+    ? 'facility'
+    : choreographyState.view;
 
   const activeScene = createBranchConnectionCore({
     seatCount: model.seatCount,
@@ -424,10 +435,15 @@ function renderView() {
     ...effectivePods.flatMap((pod) => [...pod.components, ...pod.mechanicalDetails]),
     ...facilityParts,
     ...canonicalRingDescriptors,
+    ...facilityCarrierDescriptors,
   ]);
 
   canvas.dataset.structuralView = currentView;
   canvas.dataset.structuralChoreographyStage = String(choreographyState.stageIndex);
+  canvas.dataset.structuralChoreographyFromStage = String(choreographyState.fromStageIndex);
+  canvas.dataset.structuralChoreographyToStage = String(choreographyState.toStageIndex);
+  canvas.dataset.structuralChoreographyProgress = String(choreographyState.progress);
+  canvas.dataset.structuralChoreographyReturningToWorld = String(choreographyState.returningToWorld);
   canvas.dataset.structuralChoreographyPhase = choreography.phase;
   canvas.dataset.structuralChoreographyTransformation = String(choreography.transformation);
   canvas.dataset.structuralChoreographyDivision = String(choreography.division);
@@ -447,7 +463,9 @@ function renderView() {
   canvas.dataset.structuralTopologyMode = topologyMode;
   const divisionSubject = subjectFromParts(seatDivisions);
   const cameraMode = currentView === 'world'
-    ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
+    ? (choreographyState.returningToWorld
+        ? MACHINE_CAMERA_MODE.RETURN_TO_WORLD
+        : MACHINE_CAMERA_MODE.WORLD_OVERVIEW)
     : currentView === 'seat'
       ? topologyMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
         ? MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
@@ -486,24 +504,61 @@ function renderView() {
     + ' semantic edges · WebGL2 · Three r' + (model.THREE.REVISION || '186'),
   );
 }
+function cancelChoreographyAnimation() {
+  if (choreographyFrame) cancelAnimationFrame(choreographyFrame);
+  choreographyFrame = 0;
+  choreographyStartedAt = 0;
+}
+
+function startChoreographyTransition(targetStage) {
+  if (choreographyFrame) return;
+  choreographyFromStage = choreographyStage;
+  choreographyStage = ((Math.trunc(Number(targetStage) || 0) % STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT)
+    + STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT) % STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT;
+  choreographyProgress = 0;
+  choreographyStartedAt = performance.now();
+  const tick = (timestamp) => {
+    const elapsed = Math.max(0, timestamp - choreographyStartedAt);
+    choreographyProgress = Math.min(1, elapsed / CHOREOGRAPHY_DURATION_MS);
+    renderView();
+    if (choreographyProgress < 1) {
+      choreographyFrame = requestAnimationFrame(tick);
+      return;
+    }
+    choreographyFrame = 0;
+    choreographyStartedAt = 0;
+    choreographyFromStage = choreographyStage;
+    choreographyProgress = 1;
+    renderView();
+  };
+  choreographyFrame = requestAnimationFrame(tick);
+}
+
 document.querySelector('[data-view="world"]')?.addEventListener('click', () => {
+  cancelChoreographyAnimation();
+  choreographyFromStage = 0;
   choreographyStage = 0;
+  choreographyProgress = 1;
   currentView = 'world';
   renderView();
 });
 document.querySelector('[data-view="seat"]')?.addEventListener('click', () => {
-  currentView = 'seat';
+  cancelChoreographyAnimation();
+  choreographyFromStage = Math.max(choreographyStage, 2);
   choreographyStage = Math.max(choreographyStage, 2);
+  choreographyProgress = 1;
+  currentView = 'seat';
   renderView();
 });
 document.querySelector('[data-view="facility"]')?.addEventListener('click', () => {
+  cancelChoreographyAnimation();
   currentView = 'facility';
   renderView();
 });
 document.querySelector('[data-action="transform"]')?.addEventListener('click', () => {
-  choreographyStage = (choreographyStage + 1) % 6;
-  currentView = deriveStructuralPreviewChoreography(choreographyStage).view;
-  renderView();
+  if (choreographyFrame) return;
+  const targetStage = (choreographyStage + 1) % STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT;
+  startChoreographyTransition(targetStage);
 });
 window.addEventListener('resize', renderView);
 boot();
