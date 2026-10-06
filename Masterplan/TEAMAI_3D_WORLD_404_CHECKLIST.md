@@ -6,6 +6,16 @@ Dedicated Issue: #405
 Scope: all remaining 029 spatial construction, feature integration, cleanup, documentation alignment, verification, acceptance, and ProMax polish.
 Rule: remaining 029 work proceeds through the active successor PR from post-#404 main. Do not create parallel competing spatial authorities.
 
+## 2026-10-07 continuation discipline
+
+The active spatial vehicle is **PR #424 only**. The current verified application head for this checkpoint is `de97b2c6e77bee7d3200679012f9e044d4f8ce61`.
+
+The acceptance target is not a reference recreation in isolation. Every spatial change must preserve the TeamAi product: Product Law meaning, canonical frontend feature grammar, existing semantic hierarchy, read-model/interaction contracts, and S0-S10 structural ownership. The endorsed Hailuo MP4 plus preserved PNG/reference-board are visual-direction inputs for manufactured form, composition, mechanical density, transformation feel, and camera participation.
+
+For any exact-head change, **Canonical Browser completion is mandatory before browser evidence is closed**. “CI running” is an in-progress state, not evidence of success. After the Browser workflow reaches a terminal result, inspect the produced exact-head artifact/report and classify it explicitly as PASS evidence, reproducible defect, stale/invalid run, or unproven. Do not accept a screenshot detached from its producing SHA.
+
+While CI/Browser is running, the same #424 vehicle should continue non-conflicting audit work: historical reconciliation, debris/stale-reference search, Product Law/feature alignment, authority review, independent geometry measurements, reference comparison, and next-commit preparation. Historical artifacts and failed runs remain provenance and must not silently become current state.
+
 ## Evidence navigation contract
 
 This checklist is the **status ledger**. It does not duplicate proof details.
