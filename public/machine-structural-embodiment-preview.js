@@ -12,6 +12,7 @@ import {
   resolveSeatDivisionAttachmentTransform,
 } from './machine-seat-division-presentation.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
+import { deriveMachineWorldFacilityCarrierDescriptors } from './machine-world-facility-carrier.js';
 import {
   deriveMachineFacilityMachinery,
   deriveMachineFacilityMechanismPresentation,
@@ -338,6 +339,9 @@ function renderView() {
         reducedMotion: true,
       })
     : [];
+  const facilityCarrierDescriptors = currentView === 'world'
+    ? deriveMachineWorldFacilityCarrierDescriptors(activeTopology)
+    : [];
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
   const effectiveFacilitiesSource = currentView === 'world'
@@ -391,7 +395,7 @@ function renderView() {
     divisions: seatDivisions.length
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
-    extras: canonicalRingDescriptors,
+    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors],
   });
   const topologyMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
@@ -436,6 +440,7 @@ function renderView() {
   canvas.dataset.structuralVisibleDivisions = String(currentView === 'seat' ? DIVISIONS.length : 0);
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   canvas.dataset.structuralCanonicalRingDescriptorCount = String(canonicalRingDescriptors.length);
+  canvas.dataset.structuralFacilityCarrierDescriptorCount = String(facilityCarrierDescriptors.length);
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
