@@ -1261,3 +1261,32 @@ The artifact screenshots were directly inspected. They establish executable stru
 Keep:
 `max(1.66, 0.9 + 1.3 × expansion) × parent max horizontal dimension`.
 Independent worst-case required compact factor remains approximately `1.6547804288580712`; `1.66` provides the small deterministic margin. Current collision proof is conservative sampled AABB clearance, not triangle-collision proof.
+
+
+### E424-2026-10-07 — Exact-head Browser and product-integrated acceptance discipline
+
+**Evidence-bearing head:** `de97b2c6e77bee7d3200679012f9e044d4f8ce61`
+
+- Full-System Verification `2806`: **PASS**
+- Security Static Analysis `3225`: **PASS**
+- Deep Security Static Analysis `1066`: **PASS**
+- Governance Integrity `3810`: **PASS**
+- Canonical Browser Verification `4347`: **PASS**
+- Browser artifact ID: `11431321105`
+- Browser artifact SHA-256: `sha256:6439a548709c2df6935e669be5bb3daccba7e7710e249793198f0771fa2a9527`
+
+The Browser artifact was retrieved and its digest independently matched the GitHub-recorded digest. This exact-head artifact is the current browser evidence boundary for the checkpoint. It is not itself a claim of human visual acceptance, production deployment, live Firebase/Firestore state, real provider execution, or 029 release authorization.
+
+**Acceptance interpretation**
+
+The spatial continuation is judged against the combined target: Product Law meaning and invariants; Issue #400 frontend/feature grammar; the governed 029 execution/feature ledger; S0-S10 semantic, geometry, topology, and camera authorities; applicable S22-S33 interaction/visual gates; and the endorsed Hailuo MP4 plus the project Library AI Rocket Factory Activation Storyboard PNG as visual-direction inputs.
+
+The MP4/PNG references guide manufactured form, mechanical density, articulated transformation, camera participation, composition, material/depth language, and visual hierarchy. They do not replace product-feature contracts or define geometry constants/semantic identity. Conversely, repository-green checks do not constitute visual acceptance until the exact-head Browser run reaches a terminal state and its artifact/report is inspected.
+
+**Operational discipline**
+
+While an exact-head CI/Browser run is still running, non-conflicting audit work may proceed in PR #424: historical reconciliation, stale/debris search, source/public parity review, Product Law/feature coverage review, authority-graph inspection, independent geometry calculations, visual-reference comparison, and preparation of the next bounded commit. A running workflow is not an evidence result, and a failed/cancelled/stale/missing Browser result must be diagnosed rather than reclassified as success.
+
+**Current structural finding**
+
+The machine remains semantically and geometrically more mature than the visual artifact suggests, but the Three.js embodiment still uses a substantial primitive vocabulary for generic machine bodies. The next structural visual work should therefore strengthen authored S7 machine embodiment rather than inventing another semantic hierarchy, topology, or backend authority. Effects/materials must not be used to conceal structural or product-feature gaps.
