@@ -396,9 +396,12 @@ function renderView() {
   const topologyMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
     : currentView === 'seat'
-      ? (choreographyState.choreography.division > 0 && choreographyState.choreography.division < 0.98
-          ? MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
-          : MACHINE_CAMERA_MODE.POD_FOCUS)
+      ? (choreographyState.hierarchyOpen && choreographyState.focusedChildId
+          ? MACHINE_CAMERA_MODE.DIVISION_FOCUS
+          : choreographyState.choreography.division > 0
+            && choreographyState.choreography.division < 0.98
+            ? MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+            : MACHINE_CAMERA_MODE.POD_FOCUS)
       : MACHINE_CAMERA_MODE.FACILITY_FOCUS;
   const topologyBranchId = currentView === 'world'
     ? null
