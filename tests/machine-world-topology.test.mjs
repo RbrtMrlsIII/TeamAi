@@ -336,6 +336,25 @@ test('S8 Facility focus projects local manifold spurs without peer manifold arcs
   assert.ok(worldManifold.length > focusedManifold.length);
 });
 
+test('S8 World overview can suppress facility manifold presentation without changing topology', () => {
+  const { topology } = buildFixture(10);
+  const hidden = getRenderableMachineWorldConduitSegments(topology, {
+    mode: 'WORLD_OVERVIEW',
+    includeManifoldFacilitySegments: false,
+  });
+  assert.equal(hidden.some((entry) => entry.edgeKind === 'facility-facility'), false);
+
+  const facility = getRenderableMachineWorldConduitSegments(topology, {
+    mode: 'FACILITY_FOCUS',
+    branchId: 'BRANCH-OUTER-ALPHA',
+  });
+  assert.ok(
+    facility
+      .filter((entry) => entry.edgeKind === 'facility-facility')
+      .every((entry) => entry.branchId === 'BRANCH-OUTER-ALPHA')
+  );
+});
+
 test('S8 service manifold stays outside the measured S7 machinery envelope across Seats and expansion', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     for (const expansionAmount of [0, 1]) {
