@@ -34,7 +34,13 @@ function deriveShell(entry) {
     finite(housing.center.z),
     finite(housing.center.x),
   );
-  const silhouette = String(entry.silhouette || housing.silhouette || 'arc');
+  const silhouetteByMachineRole = {
+    analysis: 'fin',
+    operations: 'arc',
+    control: 'diamond',
+    'access-commerce': 'blade',
+  };
+  const silhouette = String(entry.silhouette || housing.silhouette || silhouetteByMachineRole[entry.machineRole] || 'arc');
 
   const profiles = {
     fin: {
