@@ -694,6 +694,7 @@ export function getRenderableMachineWorldConduitSegments(topology, {
   mode = 'WORLD_OVERVIEW',
   branchId = null,
   includeManifoldArcs = true,
+  includeManifoldFacilitySegments = true,
 } = {}) {
   const eligible = new Set(PHYSICAL_CONDUIT_EDGE_KINDS);
   const scopedEdgeIds = branchId && mode !== 'WORLD_OVERVIEW'
@@ -751,6 +752,7 @@ export function getRenderableMachineWorldConduitSegments(topology, {
   }
   for (const manifoldSegment of topology?.serviceManifold?.segments || []) {
     if (manifoldSegment?.routeContinuous !== true) continue;
+    if (mode === 'WORLD_OVERVIEW' && includeManifoldFacilitySegments !== true) continue;
     if (mode === 'WORLD_OVERVIEW' && includeManifoldArcs !== true && manifoldSegment?.segmentRole === 'manifold-arc') continue;
     if (scopedEdgeIds && !scopedEdgeIds.has(manifoldSegment?.semanticEdgeId)) continue;
     if (
