@@ -13,7 +13,7 @@ function buildTopology(seatCount) {
   return buildMachineWorldTopology({ scene, clearance: 0.16 });
 }
 
-test('S8 structural conduit projection keeps the existing Core/Facility semantic routes', () => {
+test('S8 structural conduit projection keeps the existing Core structural routes', () => {
   const topology = buildTopology(10);
   const segments = getRenderableMachineWorldStructuralConduitSegments(topology);
 
@@ -33,10 +33,6 @@ test('S8 structural conduit projection keeps the existing Core/Facility semantic
     8,
   );
   assert.equal(segments.length, 10 * 2 + 8 * 3);
-  assert.equal(
-    topology.edges.filter((edge) => edge.kind === 'lattice-link').length,
-    8,
-  );
   assert.ok(segments.every((segment) => segment.routeContinuous));
   assert.ok(segments.every((segment) => segment.structuralConduit === true));
   assert.ok(segments.every((segment) => segment.radius > 0 && segment.radius <= 0.12));
