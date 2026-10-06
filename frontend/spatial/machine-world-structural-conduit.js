@@ -10,7 +10,6 @@ import { createSpatialConstructionContext } from './machine-spatial-root-contrac
 const ROOT_OWNER = 'frontend/spatial/machine-world-structural-conduit.js';
 const STRUCTURAL_EDGE_KINDS = Object.freeze([
   'inner-spoke',
-  'outer-spine',
   'lattice-link',
 ]);
 
