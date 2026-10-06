@@ -175,10 +175,10 @@ function subjectFromParts(parts) {
 function positionFromSpec(spec, { world = false } = {}) {
   const radius = Number(spec.radius) || 12;
   if (world) {
-    const worldRadius = Math.max(radius, Math.min(30, radius * 1.72));
+    const worldRadius = Math.max(radius, Math.min(24, radius));
     return {
       x: spec.target.x + Math.sin(spec.bearing) * worldRadius * 0.82,
-      y: spec.target.y + Math.max(4.4, worldRadius * 0.34),
+      y: spec.target.y + Math.max(3.5, worldRadius * 0.26),
       z: spec.target.z + Math.cos(spec.bearing) * worldRadius,
     };
   }
