@@ -448,7 +448,7 @@ function renderView() {
   canvas.dataset.structuralChoreographyTransformation = String(choreography.transformation);
   canvas.dataset.structuralChoreographyDivision = String(choreography.division);
   canvas.dataset.structuralChoreographyElectrical = String(choreography.electrical);
-  canvas.dataset.structuralChoreographyConnection = String(choreography.connection);
+  canvas.dataset.structuralChoreographyConnection = String(choreographyState.connectionAmount);
   canvas.dataset.structuralChoreographyFocusedChild = choreographyState.focusedChildId || '';
   canvas.dataset.structuralChoreographyPhaseSource = choreography.phase;
   canvas.dataset.structuralFocusedDivision = choreographyState.focusedChildId || '';
