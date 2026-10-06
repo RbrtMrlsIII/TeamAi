@@ -16,6 +16,29 @@ const finite = (value, fallback = 0) =>
 
 const BODY_SCALE = 1.22;
 
+// Authored faceted silhouettes keep the existing S7 housing envelope while
+// replacing the legacy box-like presentation with manufactured machine bodies.
+// The normalized outlines are intentionally asymmetric/chamfered and are
+// consumed by the Three.js adapter as presentation geometry only.
+const FACILITY_BODY_OUTLINES = Object.freeze({
+  fin: Object.freeze([
+    [-0.82, -0.52], [-0.42, -0.90], [0.34, -0.82], [0.90, -0.34],
+    [0.76, 0.36], [0.30, 0.88], [-0.40, 0.72], [-0.86, 0.18],
+  ]),
+  arc: Object.freeze([
+    [-0.84, -0.36], [-0.56, -0.76], [0.08, -0.94], [0.72, -0.62],
+    [0.90, -0.02], [0.66, 0.66], [0.10, 0.90], [-0.66, 0.64],
+  ]),
+  diamond: Object.freeze([
+    [-0.06, -1.00], [0.62, -0.68], [1.00, -0.05], [0.66, 0.60],
+    [0.10, 1.00], [-0.62, 0.66], [-1.00, 0.02], [-0.66, -0.64],
+  ]),
+  blade: Object.freeze([
+    [-0.82, -0.70], [-0.18, -0.92], [0.50, -0.76], [0.92, -0.28],
+    [0.72, 0.22], [0.30, 0.92], [-0.48, 0.74], [-0.90, 0.12],
+  ]),
+});
+
 const scale = (value, factor, minimum = 0.06) =>
   Math.max(minimum, finite(value, minimum) * factor);
 
@@ -94,6 +117,7 @@ function deriveShell(entry) {
     dimensions: Object.freeze(profiles.dimensions),
     rotationY: finite(profiles.rotationY),
     materialRole: 'metal2',
+    outline: FACILITY_BODY_OUTLINES[silhouette],
     constructionSlice: 'S7',
     constructionOwner: 'frontend/spatial/machine-world-facility-shell.js',
     branchId: entry.branchId,
