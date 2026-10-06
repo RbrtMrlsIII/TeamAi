@@ -26,14 +26,14 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       const sample = module.deriveStructuralPreviewChoreographySample(3, 4, 1);
       return {
         phase: sample.choreography.phase,
-        connection: sample.choreography.connection,
+        connectionAmount: sample.connectionAmount,
         electrical: sample.choreography.electrical,
         focusedChildId: sample.focusedChildId,
       };
     });
     expect(browserChoreography).toEqual({
       phase: 'ELECTRICAL_TRANSFER',
-      connection: 0.82,
+      connectionAmount: 0.82,
       electrical: 0.82,
       focusedChildId: 'SEAT_CONNECTION',
     });
