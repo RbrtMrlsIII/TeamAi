@@ -14,6 +14,8 @@ export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V1';
 const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
 
+const BODY_SCALE = 1.22;
+
 const scale = (value, factor, minimum = 0.06) =>
   Math.max(minimum, finite(value, minimum) * factor);
 
@@ -46,36 +48,36 @@ function deriveShell(entry) {
     fin: {
       shape: 'BOX',
       dimensions: {
-        x: scale(housing.dimensions.x, 1.08),
-        y: scale(housing.dimensions.y, 1.12),
-        z: scale(housing.dimensions.z, 1.14),
+        x: scale(housing.dimensions.x, 1.08 * BODY_SCALE),
+        y: scale(housing.dimensions.y, 1.12 * BODY_SCALE),
+        z: scale(housing.dimensions.z, 1.14 * BODY_SCALE),
       },
       rotationY: angle,
     },
     arc: {
       shape: 'CYLINDER',
       dimensions: {
-        x: scale(housing.dimensions.x, 1.06),
-        y: scale(housing.dimensions.y, 1.10),
-        z: scale(housing.dimensions.x, 1.06),
+        x: scale(housing.dimensions.x, 1.06 * BODY_SCALE),
+        y: scale(housing.dimensions.y, 1.10 * BODY_SCALE),
+        z: scale(housing.dimensions.x, 1.06 * BODY_SCALE),
       },
       rotationY: 0,
     },
     diamond: {
       shape: 'BOX',
       dimensions: {
-        x: scale(housing.dimensions.x, 1.04),
-        y: scale(housing.dimensions.y, 1.10),
-        z: scale(housing.dimensions.z, 1.04),
+        x: scale(housing.dimensions.x, 1.04 * BODY_SCALE),
+        y: scale(housing.dimensions.y, 1.10 * BODY_SCALE),
+        z: scale(housing.dimensions.z, 1.04 * BODY_SCALE),
       },
       rotationY: angle + Math.PI * 0.25,
     },
     blade: {
       shape: 'BOX',
       dimensions: {
-        x: scale(housing.dimensions.x, 1.10),
-        y: scale(housing.dimensions.y, 1.14),
-        z: scale(housing.dimensions.z, 1.06),
+        x: scale(housing.dimensions.x, 1.10 * BODY_SCALE),
+        y: scale(housing.dimensions.y, 1.14 * BODY_SCALE),
+        z: scale(housing.dimensions.z, 1.06 * BODY_SCALE),
       },
       rotationY: angle,
     },
