@@ -11,7 +11,7 @@ export const MACHINE_WORLD_FACILITY_CARRIER_ID = 'MACHINE-WORLD-FACILITY-CARRIER
 export const MACHINE_WORLD_FACILITY_CARRIER_VERSION = 'S8-FACILITY-CARRIER-V1';
 
 const EDGE_KIND = 'outer-spine';
-const STAGE_FRACTIONS = Object.freeze([0, 0.38, 0.72, 1]);
+const STAGE_FRACTIONS = Object.freeze([0.08, 0.38, 0.72, 1]);
 const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
 
