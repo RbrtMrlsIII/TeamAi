@@ -31,6 +31,16 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'ELECTRICAL_TRANSFER');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SETTLED');
+
+    await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
+    await expect(canvas).toHaveAttribute('data-structural-view', 'world');
+    await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-returning-to-world', 'false');
+    await page.screenshot({ path: 'test-results/s2-s10-return.png', fullPage: true });
+
     await page.getByRole('button', { name: 'Seat 1 / Divisions', exact: true }).click();
     await expect(status).toContainText('READY · SEAT · 10 seats · 4 facilities · 7 divisions · ');
     await expect(canvas).toHaveAttribute('data-structural-view', 'seat');
