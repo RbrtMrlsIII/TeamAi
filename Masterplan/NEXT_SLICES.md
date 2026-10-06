@@ -28,11 +28,21 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: 6007a87a14175a85de0cbc40fb0a95f51d876596 (post-cleanup exact-head proof).
+Current exact spatial head: `de97b2c6e77bee7d3200679012f9e044d4f8ce61` (exact-head proof: Full-System 2806, Security 3225, Deep Security 1066, Governance 3810, Canonical Browser 4347; Browser artifact `11431321105`, SHA-256 `6439a548709c2df6935e669be5bb3daccba7e7710e249793198f0771fa2a9527`).
 
-The current Canonical Browser evidence for that head is FAIL (run 36539522142, 87 passed / 4 skipped / 1 failed) because the isolated machine-core-preview test can observe terminal expansion before clicking its explicit Expand control. Treat this as a preview temporal-contract defect, not as evidence that the repaired S4 geometry is invalid.
+That earlier Browser failure is historical. The current exact-head Canonical Browser run `4347` is PASS on `de97b2c6…`. Historical failed/cancelled runs remain diagnostic provenance only and must not override the current exact-head result.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
+
+## Exact-head Browser completion discipline
+
+For the 029 spatial companion, **CI running is not a terminal evidence state**. A change remains unaccepted until the Canonical Browser workflow has finished on the exact current head and produced its terminal report/artifact. A failed, cancelled, stale, or missing Browser result must be diagnosed, not treated as completion.
+
+While the required CI/Browser validators are running, non-conflicting work may continue in the same #424 vehicle: repository history/debris/stale-reference search, Product Law and feature-coverage reconciliation, authority-graph review, independent geometry calculations, visual-reference comparison against the preserved Hailuo MP4/PNG inputs, and preparation of the next bounded commit. Do not mutate the tested proof target blindly while a current exact-head validation is still running.
+
+## 029 acceptance objective
+
+The spatial continuation is accepted only as a **product-integrated semantic machine**. Visual fidelity to the Hailuo MP4 and endorsed PNG/reference-board is necessary design guidance, but it is not sufficient. Product Law, the canonical frontend feature grammar (#400), the 029 product ledger (#278/#405), interaction/read-model contracts, S0-S10 geometry/mechanics/topology/camera, and applicable S22-S33 acceptance gates must all remain coherent. No visual effect, material pass, or screenshot resemblance may substitute for a missing product or structural contract.
 
 ## Objective
 
