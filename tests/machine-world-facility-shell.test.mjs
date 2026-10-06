@@ -59,3 +59,44 @@ test('S7 authored facility bodies use bounded faceted outlines rather than coars
     assert.ok(Math.max(...radii) <= 1.30, entry.branchId + ': outline radial factor exceeded body bound');
   }
 });
+
+
+test('S7 layered facility bodies remain contained by their authored main-body envelope', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const assemblies = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const facilities = deriveMachineFacilityMachinery({ facilityAssemblies: assemblies });
+  const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
+
+  for (const branchId of new Set(descriptors.map((entry) => entry.branchId))) {
+    const main = descriptors.find((entry) => entry.branchId === branchId && entry.layer === 'main-shell');
+    assert.ok(main);
+    for (const entry of descriptors.filter((candidate) => candidate.branchId === branchId)) {
+      assert.ok(
+        entry.center.x - entry.dimensions.x / 2 >= main.center.x - main.dimensions.x / 2 - 1e-9,
+        entry.id + ': lower X bound escaped',
+      );
+      assert.ok(
+        entry.center.x + entry.dimensions.x / 2 <= main.center.x + main.dimensions.x / 2 + 1e-9,
+        entry.id + ': upper X bound escaped',
+      );
+      assert.ok(
+        entry.center.z - entry.dimensions.z / 2 >= main.center.z - main.dimensions.z / 2 - 1e-9,
+        entry.id + ': lower Z bound escaped',
+      );
+      assert.ok(
+        entry.center.z + entry.dimensions.z / 2 <= main.center.z + main.dimensions.z / 2 + 1e-9,
+        entry.id + ': upper Z bound escaped',
+      );
+      assert.ok(
+        entry.center.y - entry.dimensions.y / 2 >= main.center.y - main.dimensions.y / 2 - 1e-9,
+        entry.id + ': lower Y bound escaped',
+      );
+      assert.ok(
+        entry.center.y + entry.dimensions.y / 2 <= main.center.y + main.dimensions.y / 2 + 1e-9,
+        entry.id + ': upper Y bound escaped',
+      );
+    }
+  }
+});
