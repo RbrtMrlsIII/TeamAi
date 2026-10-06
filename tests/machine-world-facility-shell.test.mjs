@@ -9,14 +9,18 @@ import {
   validateMachineWorldFacilityShellDescriptors,
 } from '../frontend/spatial/machine-world-facility-shell.js';
 
-test('S7 outer facility shells derive one coherent body for each authored module', () => {
+test('S7 layered outer facility shells derive a coherent body stack for each authored module', () => {
   const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
   const facilities = deriveMachineFacilityMachinery({ facilityAssemblies: assemblies });
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
-  assert.equal(descriptors.length, 4);
+  assert.equal(descriptors.length, 20);
   assert.equal(new Set(descriptors.map((entry) => entry.branchId)).size, 4);
-  assert.deepEqual(descriptors.map((entry) => entry.silhouette).sort(), ['arc', 'blade', 'diamond', 'fin']);
+  assert.equal(descriptors.filter((entry) => entry.layer === 'main-shell').length, 4);
+  assert.deepEqual(
+    descriptors.filter((entry) => entry.layer === 'main-shell').map((entry) => entry.silhouette).sort(),
+    ['arc', 'blade', 'diamond', 'fin'],
+  );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
 });
