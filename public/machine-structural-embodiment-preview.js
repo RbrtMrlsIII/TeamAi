@@ -18,6 +18,7 @@ import {
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineWorldFacilityCarrierDescriptors } from './machine-world-facility-carrier.js';
 import { deriveMachineWorldFacilityShellDescriptors } from './machine-world-facility-shell.js';
+import { deriveMachineWorldPresentationProjection } from './machine-world-presentation-projection.js';
 import {
   deriveMachineFacilityMachinery,
   deriveMachineFacilityMechanismPresentation,
@@ -325,7 +326,6 @@ function renderView() {
     clearanceObstacles: activeScene.parts.filter((part) => part.kind === 'inner-pod'),
     requestedClearance: 0.16,
   });
-  const facilityParts = facilityDescriptors(machinery, choreography.transformation);
   const activeTopology = buildMachineWorldTopology({
     scene: activeScene,
     facilityAssemblies,
@@ -335,6 +335,18 @@ function renderView() {
       : choreography.transformation,
     clearance: 0.16,
   });
+
+  const worldPresentation = currentView === 'world'
+    ? deriveMachineWorldPresentationProjection({
+        facilities: machinery,
+        topology: activeTopology,
+        seatCount: model.seatCount,
+      })
+    : {
+        facilities: effectiveFacilitiesSource,
+        topology: activeTopology,
+        scale: 1,
+      };
 
   const seatDivisions = currentView === 'seat'
     ? divisionDescriptors(activeSeat, choreography.division, choreographyState.focusedChildId)
@@ -352,7 +364,7 @@ function renderView() {
       })
     : [];
   const facilityCarrierDescriptors = currentView === 'world'
-    ? deriveMachineWorldFacilityCarrierDescriptors(activeTopology)
+    ? deriveMachineWorldFacilityCarrierDescriptors(renderTopology)
     : [];
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
@@ -378,11 +390,18 @@ function renderView() {
       ? [facility]
       : [];
 
+  const renderFacilitiesSource = currentView === 'world'
+    ? worldPresentation.facilities
+    : effectiveFacilitiesSource;
+  const renderTopology = currentView === 'world'
+    ? worldPresentation.topology
+    : activeTopology;
+  const facilityParts = facilityDescriptors(renderFacilitiesSource, choreography.transformation);
   const facilityShellDescriptors = currentView === 'world'
-    ? deriveMachineWorldFacilityShellDescriptors(effectiveFacilitiesSource)
+    ? deriveMachineWorldFacilityShellDescriptors(renderFacilitiesSource)
     : [];
 
-  const semanticEdges = Array.isArray(activeTopology?.edges) ? activeTopology.edges : [];
+  const semanticEdges = Array.isArray(renderTopology?.edges) ? renderTopology.edges : [];
   const visibleEdges = currentView === 'world'
     ? semanticEdges.filter((edge) => WORLD_OVERVIEW_TOPOLOGY_KINDS.has(edge?.kind))
     : currentView === 'seat'
@@ -400,14 +419,14 @@ function renderView() {
           )
         : [];
   const visibleTopology = Object.freeze({
-    ...activeTopology,
+    ...renderTopology,
     edges: Object.freeze(visibleEdges),
   });
 
   const assemblyRender = adapter.setAssemblies({
     core: effectiveCore,
     pods: effectivePods,
-    facilities: renderFacilityAssemblies(effectiveFacilitiesSource, choreography.transformation),
+    facilities: renderFacilityAssemblies(renderFacilitiesSource, choreography.transformation),
     divisions: seatDivisions.length
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
