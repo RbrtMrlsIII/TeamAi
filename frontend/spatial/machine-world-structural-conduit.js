@@ -14,7 +14,7 @@ const STRUCTURAL_EDGE_KINDS = Object.freeze([
 ]);
 
 const RADIUS_BY_EDGE_KIND = Object.freeze({
-  'inner-spoke': 0.080,
+  'inner-spoke': 0.100,
   'outer-spine': 0.100,
   'lattice-link': 0.070,
 });
