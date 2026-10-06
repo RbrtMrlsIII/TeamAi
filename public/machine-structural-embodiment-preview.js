@@ -54,8 +54,6 @@ const DIVISIONS = Object.freeze([
 
 const WORLD_OVERVIEW_TOPOLOGY_KINDS = Object.freeze(new Set([
   'inner-spoke',
-  'lattice-link',
-  'workspace-contribution',
 ]));
 
 const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
