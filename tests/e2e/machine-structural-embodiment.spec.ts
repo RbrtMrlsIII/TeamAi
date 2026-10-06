@@ -10,6 +10,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveCount(1);
     await expect(canvas).toHaveAttribute('data-structural-view', 'world');
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-structural-visible-topology-edges', '10');
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
     await expect(canvas).toHaveAttribute('data-three-material-model', 'S24-authored-theme-family');
