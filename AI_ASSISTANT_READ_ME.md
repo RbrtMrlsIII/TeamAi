@@ -19,16 +19,19 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 head at this checkpoint: `de97b2c6e77bee7d3200679012f9e044d4f8ce61`
+- Exact #424 head at this checkpoint: `ab34d901d21a2750c104bc27479f7c0a77d89ca3`
 - #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
-- Current #424 spatial intent: preserve Product Law + feature semantics while advancing the machine from structurally verified substrate toward the endorsed manufactured-machine direction shown by the project MP4/PNG references.
-- Current accepted verification on this exact head: Full-System 2806 PASS; Security 3225 PASS; Deep Security 1066 PASS; Governance 3810 PASS; Canonical Browser 4347 PASS.
-- Current Browser artifact: `11431321105`; digest `sha256:6439a548709c2df6935e669be5bb3daccba7e7710e249793198f0771fa2a9527`.
-- Browser proof is a gate, not a decorative status flag. The artifact tied to the exact head is the evidence object that must be inspected before visual acceptance is advanced.
+- Spatial objective: preserve Product Law + canonical feature grammar while advancing the single semantic spatial machine toward the endorsed manufactured-machine direction represented by the Hailuo MP4 and project PNG/storyboard references.
+- Exact-head proof: Full-System 2820 PASS; Security 3239 PASS; Deep Security 1080 PASS; Governance 3824 PASS; Canonical Browser 4361 PASS.
+- Browser artifact: `11433440525`; SHA-256 `68ca756db3822db3abae8b6adf3724fa606255b2921de89b799b7fbcf7ac82c8`.
+- The Browser artifact was independently downloaded, hashed, and inspected. World, return-mid, and transform-mid captures changed as intended; Facility and Seat captures remained pixel-identical to the pre-change baseline.
+- The S7 facade attempt first exposed a real projection bug: authored `outline` metadata was being dropped by Three.js descriptor normalization. The follow-up correction preserved the outline through normalization and added a regression.
+- Browser evidence is terminal only after the exact-head Browser workflow finishes and its artifact/report is inspected.
+- While validation runs, continue non-conflicting audit/preparation in #424: history/debris/stale-reference search, Product Law/feature alignment, authority-graph review, independent geometry measurements, reference comparison, and next-commit preparation. Never mutate the proof target blindly while using this wait period.
 
 ### Latest application-head verification before this documentation sync
 

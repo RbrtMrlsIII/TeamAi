@@ -1290,3 +1290,26 @@ While an exact-head CI/Browser run is still running, non-conflicting audit work 
 **Current structural finding**
 
 The machine remains semantically and geometrically more mature than the visual artifact suggests, but the Three.js embodiment still uses a substantial primitive vocabulary for generic machine bodies. The next structural visual work should therefore strengthen authored S7 machine embodiment rather than inventing another semantic hierarchy, topology, or backend authority. Effects/materials must not be used to conceal structural or product-feature gaps.
+
+
+### E424-2026-10-07C — Exact-head S7 outline projection proof
+
+**Evidence-bearing head:** `ab34d901d21a2750c104bc27479f7c0a77d89ca3`
+
+- Full-System 2820: **PASS**
+- Security 3239: **PASS**
+- Deep Security 1080: **PASS**
+- Governance 3824: **PASS**
+- Canonical Browser 4361: **PASS**
+- Browser artifact: `11433440525`
+- Browser digest: `sha256:68ca756db3822db3abae8b6adf3724fa606255b2921de89b799b7fbcf7ac82c8`
+
+The exact Browser artifact was downloaded and independently hashed to the recorded digest. Compared with the pre-change `de97b2c6` Browser artifact, `s2-s10-world.png` changed by **63,185 pixels** (**61,229** above the 5/255 threshold), `s2-s10-return-mid.png` changed by **63,185 pixels** (**61,229** above threshold), and `s2-s10-transform-mid.png` changed by **60,744 pixels** (**58,634** above threshold). Focused Facility and Seat captures were **pixel-identical** to the pre-change baseline.
+
+This verifies that the authored S7 faceted facade now reaches the World/Return/Transform presentation path while focused S7/Seat views remain untouched by the facade-only change.
+
+The first c555 artifact was pixel-identical to de97 despite the authored outline code, exposing a real projection defect: `normalizeThreeDescriptor()` discarded `outline`. The subsequent `ab34d901` correction preserves the field, and the new adapter regression guards the boundary.
+
+The product target remains combined rather than visual-only: Product Law, #400 feature grammar, #278/#405 spatial execution, S0-S10 machine contracts, applicable later acceptance gates, and the endorsed Hailuo MP4 + project PNG/storyboard visual direction must remain coherent. Visual similarity cannot close a missing semantic/product contract, and green repository checks cannot close human visual acceptance.
+
+**Current assessment:** the facade has improved from obvious rectangular housings to faceted bodies, but the outer machines still need richer compound mechanical construction, stronger family-specific silhouettes, and closer visual correspondence to the telescope / fin-deploy / rotating-core / sensor-array language in the reference. The next step should build on existing S7 machinery rather than adding another semantic or topology authority.
