@@ -1051,6 +1051,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     const conduitSegments = getRenderableMachineWorldConduitSegments(topology, {
       mode,
       branchId,
+      includeManifoldArcs: mode !== 'WORLD_OVERVIEW',
     });
     for (const segment of conduitSegments) {
       const conduitShape = resolveThreeConduitRenderShape(segment);
