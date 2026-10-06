@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: `ab34d901d21a2750c104bc27479f7c0a77d89ca3` (exact-head five-gate proof; Canonical Browser 4361 PASS; Browser artifact `11433440525`, SHA-256 `68ca756db3822db3abae8b6adf3724fa606255b2921de89b799b7fbcf7ac82c8`).
+Current exact spatial head: `7937b3d1356ca292ddf31845b714c8f4a0fb181c` (exact-head five-gate proof; Browser 4367 PASS; artifact `11437120734`, SHA-256 `caae90327091d43d1cafee220d1897283e2403e6ac7de7d1061b984f3920451d`).
 
 That earlier Browser failure is historical. The current exact-head Canonical Browser run `4347` is PASS on `de97b2c6…`. Historical failed/cancelled runs remain diagnostic provenance only and must not override the current exact-head result.
 

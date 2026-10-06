@@ -1313,3 +1313,24 @@ The first c555 artifact was pixel-identical to de97 despite the authored outline
 The product target remains combined rather than visual-only: Product Law, #400 feature grammar, #278/#405 spatial execution, S0-S10 machine contracts, applicable later acceptance gates, and the endorsed Hailuo MP4 + project PNG/storyboard visual direction must remain coherent. Visual similarity cannot close a missing semantic/product contract, and green repository checks cannot close human visual acceptance.
 
 **Current assessment:** the facade has improved from obvious rectangular housings to faceted bodies, but the outer machines still need richer compound mechanical construction, stronger family-specific silhouettes, and closer visual correspondence to the telescope / fin-deploy / rotating-core / sensor-array language in the reference. The next step should build on existing S7 machinery rather than adding another semantic or topology authority.
+
+
+### E424-2026-10-07D — Product Law visual-reference translation checkpoint
+
+**Evidence-bearing head:** `7937b3d1356ca292ddf31845b714c8f4a0fb181c`
+
+- Full-System 2826: **PASS**
+- Security 3245: **PASS**
+- Deep Security 1086: **PASS**
+- Governance 3831: **PASS**
+- Canonical Browser 4367: **PASS**
+- Browser artifact ID: `11437120734`
+- Browser artifact SHA-256: `sha256:caae90327091d43d1cafee220d1897283e2403e6ac7de7d1061b984f3920451d`
+
+The Browser artifact was downloaded and independently hashed to the recorded digest. Its six S2-S10 image captures were pixel-identical to the preceding `e4adaaf4` application artifact, confirming that the Product Law translation rule changed product/governance semantics without perturbing the rendered implementation.
+
+**Reference-to-product reconciliation**
+
+The actual project PNG storyboard contains an 8-Pod cinematic composition and four recognizable outer-machine families: telescope, fin deploy, rotating core, and sensor array. Product Law now explicitly treats that 8-Pod composition as a visual sample rather than capacity authority; TeamAi remains governed at 1–10 Seats with 10 guest presentation slots. The four outer families map to existing S7 roles rather than creating additional semantic features.
+
+This resolves the principal reference discrepancy without weakening the product contract. The next spatial work should therefore increase authored mechanical embodiment and reference correspondence inside the existing S7 role graph, not change Seat cardinality or create a new hierarchy.

@@ -19,17 +19,17 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 head at this checkpoint: `ab34d901d21a2750c104bc27479f7c0a77d89ca3`
+- Exact #424 head at this checkpoint: `7937b3d1356ca292ddf31845b714c8f4a0fb181c`
 - #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
 - Spatial objective: preserve Product Law + canonical feature grammar while advancing the single semantic spatial machine toward the endorsed manufactured-machine direction represented by the Hailuo MP4 and project PNG/storyboard references.
-- Exact-head proof: Full-System 2820 PASS; Security 3239 PASS; Deep Security 1080 PASS; Governance 3824 PASS; Canonical Browser 4361 PASS.
-- Browser artifact: `11433440525`; SHA-256 `68ca756db3822db3abae8b6adf3724fa606255b2921de89b799b7fbcf7ac82c8`.
-- The Browser artifact was independently downloaded, hashed, and inspected. World, return-mid, and transform-mid captures changed as intended; Facility and Seat captures remained pixel-identical to the pre-change baseline.
-- The S7 facade attempt first exposed a real projection bug: authored `outline` metadata was being dropped by Three.js descriptor normalization. The follow-up correction preserved the outline through normalization and added a regression.
+- Exact-head proof: Full-System 2826 PASS; Security 3245 PASS; Deep Security 1086 PASS; Governance 3831 PASS; Canonical Browser 4367 PASS.
+- Browser artifact: `11437120734`; SHA-256 `caae90327091d43d1cafee220d1897283e2403e6ac7de7d1061b984f3920451d`.
+- The Browser artifact was independently downloaded, hashed, and inspected. Its S2-S10 World/Return/Transform and focused Facility/Seat captures were pixel-identical to the preceding `e4adaaf4` verified application artifact, as expected for a Product Law-only change.
+- Product Law now records that storyboard cardinality is cinematic composition, not capacity authority: reference frames may show 8 Pods while TeamAi remains governed at 1–10 Seats and 10 guest presentation slots. The four visual outer-module families map to the existing S7 roles analysis/telescope, operations/fin-deploy, control/core-rotate, and access-commerce/sensor-array.
 - Browser evidence is terminal only after the exact-head Browser workflow finishes and its artifact/report is inspected.
 - While validation runs, continue non-conflicting audit/preparation in #424: history/debris/stale-reference search, Product Law/feature alignment, authority-graph review, independent geometry measurements, reference comparison, and next-commit preparation. Never mutate the proof target blindly while using this wait period.
 
