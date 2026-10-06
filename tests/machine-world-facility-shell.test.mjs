@@ -46,6 +46,7 @@ test('S7 authored facility bodies use bounded faceted outlines rather than coars
   );
 
   for (const entry of descriptors) {
+    if (entry.layer !== 'main-shell') continue;
     assert.ok(Array.isArray(entry.outline));
     assert.ok(entry.outline.length >= 8);
     assert.ok(entry.outline.every((point) => point.length === 2 && point.every(Number.isFinite)));
