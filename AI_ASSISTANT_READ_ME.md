@@ -2,26 +2,33 @@
 
 ## Canonical recovery routing
 
-- Issue #409 remains the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
-- PR #404 is the **merged historical spatial vehicle**; PR #424 is the **active 029 spatial continuation vehicle**.
-- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`; #424 is a bounded 029 spatial companion and does not absorb backend/runtime authority.
-- S22/S23 evidence captured on #404 remains historical provenance after the merge; physical-device touch acceptance remains open.
-- S24 is the active continuation implementation slice in #424. It must preserve the S0-S10 roots, read-model boundaries, and single Product Law theme root.
-- The public GitHub Pages browser does not currently prove a live Firebase-authenticated session or durable Firestore data. Guest/private visibility is governed by the explicit readiness/read-model contract.
-- Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
+- Issue #409 remains the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and next-slice routing.
+- PR #404 is the **merged historical spatial vehicle**; PR #424 is the **only active 029 spatial implementation/review vehicle**. Do not create another spatial PR or parallel spatial authority.
+- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`; #424 is a bounded 029 spatial companion and must not absorb backend/runtime authority.
+- Product Law, the canonical frontend/product feature grammar (#400), the 029 ledger (#278/#405), and the Hailuo/PNG visual references all matter. The target is **the actual TeamAi product expressed as a semantic spatial machine**, not a visual imitation detached from product meaning.
+- The Hailuo MP4 and endorsed PNG/reference-board material are visual-direction inputs. They do not define semantic identity, geometry constants, backend truth, authorization, entitlement, scheduler/provider/payment authority, or acceptance by resemblance alone.
+- Preserve the evidence chain: **inspect → reason → independently validate → change → test → exact-head CI → Browser artifact/report → artifact/screenshot inspection → audit/align → accept or diagnose**.
+- **Do not stop at “CI green.”** A spatial change is not considered visually evidenced until the Canonical Browser workflow has completed for the exact head and its artifact/report has been inspected. A failed, cancelled, stale, or missing Browser result is not acceptance.
+- While exact-head CI/Browser is running, continue repository work that does not mutate the proof target: history/debris search, stale-reference detection, authority-graph reconciliation, product-feature coverage review, independent geometry calculations, visual-reference comparison, and preparation of the next bounded commit.
+- Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
+- S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
 
-## 2026-09-29 CURRENT SESSION STATE
+## 2026-10-07 CURRENT SESSION STATE
 
 This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
 
-- Canonical main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
-- Active spatial vehicle: PR #424 / frontend/029-spatial-world-continuation
-- Exact #424 head: 208c5570a8325bda10e2b427b97a30c3f439f111
-- #424: OPEN / DRAFT / mergeable, 92 ahead / 0 behind
+- Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
+- Exact #424 head at this checkpoint: `de97b2c6e77bee7d3200679012f9e044d4f8ce61`
+- #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
-- Global current slice: Issue #401 in Masterplan/NEXT_SLICES.md
+- Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
+- Current #424 spatial intent: preserve Product Law + feature semantics while advancing the machine from structurally verified substrate toward the endorsed manufactured-machine direction shown by the project MP4/PNG references.
+- Current accepted verification on this exact head: Full-System 2806 PASS; Security 3225 PASS; Deep Security 1066 PASS; Governance 3810 PASS; Canonical Browser 4347 PASS.
+- Current Browser artifact: `11431321105`; digest `sha256:6439a548709c2df6935e669be5bb3daccba7e7710e249793198f0771fa2a9527`.
+- Browser proof is a gate, not a decorative status flag. The artifact tied to the exact head is the evidence object that must be inspected before visual acceptance is advanced.
 
 ### Latest application-head verification before this documentation sync
 
@@ -46,13 +53,16 @@ Y0 is the pre-construction leaf-coverage gate. Y1 is a rendering-substrate migra
 
 ### Durable sources to read before acting
 
-1. Issue #409 for current newcomer handoff.
-2. Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md for ordered spatial gates.
-3. Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md for verified findings and exact-head evidence.
-4. Product_Law/WIRING.md for authority/routing and cross-session decision persistence.
-5. docs/CHRONOLOGY.md for decision order and historical provenance.
+1. Issue #409 for current newcomer handoff and exact live routing.
+2. `Masterplan/NEXT_SLICES.md` for the one global current execution frontier.
+3. `Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md` for ordered 029 spatial construction/acceptance gates.
+4. `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md` for exact-head proof and historical evidence boundaries.
+5. `Product_Law/PRODUCT_LAW.md` and `Product_Law/WIRING.md` for product meaning, invariants, and routing.
+6. `docs/TEAMAI_3D_HERO_VISION_REFERENCE_HAILUO.md` for the endorsed MP4 visual-direction boundary.
+7. `docs/TEAMAI_3D_HERO_*_CONSTRUCTION*.md`, feature/audit surfaces, and `docs/CHRONOLOGY.md` when a geometry or feature decision crosses historical boundaries.
+8. The active PR #424 diff and exact-head CI/Browser artifact for what is actually implemented and observable now.
 
-Rule: material reasoning from chat is only a working candidate until it is promoted into the owning durable source above.
+Rule: material reasoning from chat is a working candidate until it is promoted into the owning durable source above. A stale document, old PR head, historical artifact, or screenshot detached from its producing SHA cannot silently override the exact current tree.
 
 ## 2026-09-28 CURRENT SESSION STATE
 
