@@ -354,9 +354,6 @@ function renderView() {
   const facilityCarrierDescriptors = currentView === 'world'
     ? deriveMachineWorldFacilityCarrierDescriptors(activeTopology)
     : [];
-  const facilityShellDescriptors = currentView === 'world'
-    ? deriveMachineWorldFacilityShellDescriptors(effectiveFacilitiesSource)
-    : [];
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
   const effectiveFacilitiesSource = currentView === 'world'
@@ -380,6 +377,10 @@ function renderView() {
     : currentView === 'facility' && facility
       ? [facility]
       : [];
+
+  const facilityShellDescriptors = currentView === 'world'
+    ? deriveMachineWorldFacilityShellDescriptors(effectiveFacilitiesSource)
+    : [];
 
   const semanticEdges = Array.isArray(activeTopology?.edges) ? activeTopology.edges : [];
   const visibleEdges = currentView === 'world'
