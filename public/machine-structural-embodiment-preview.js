@@ -424,7 +424,7 @@ function renderView() {
     divisions: seatDivisions.length
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
-    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors],
+    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors, ...facilityShellDescriptors],
   });
   const topologyMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
