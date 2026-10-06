@@ -49,6 +49,7 @@ test('structural preview preserves hierarchy during return until the final frame
   assert.equal(middle.hierarchyOpen, true);
   assert.equal(middle.focusedChildId, 'SEAT_CONNECTION');
   assert.ok(middle.choreography.transformation > 0 && middle.choreography.transformation < 1);
+  assert.ok(middle.connectionAmount > 0 && middle.connectionAmount < 1);
   assert.equal(end.hierarchyOpen, false);
   assert.equal(end.focusedChildId, null);
   assert.equal(end.choreography.phase, 'STOWED');
