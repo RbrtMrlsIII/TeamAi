@@ -39,17 +39,25 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     });
 
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
-    await expect.poll(
-      async () => Number(await canvas.getAttribute('data-structural-choreography-progress')),
-      { timeout: 5000 },
-    ).toBeGreaterThan(0.25);
-    expect(Number(await canvas.getAttribute('data-structural-choreography-progress'))).toBeLessThan(0.95);
-    await expect(canvas).toHaveAttribute('data-structural-choreography-from-stage', '0');
-    await expect(canvas).toHaveAttribute('data-structural-choreography-to-stage', '1');
-    await expect.poll(
-      async () => Number(await canvas.getAttribute('data-structural-choreography-transformation')),
-      { timeout: 5000 },
-    ).toBeGreaterThan(0);
+    const transformMid = await page.waitForFunction(
+      () => {
+        const progress = Number(document.querySelector('canvas')?.getAttribute('data-structural-choreography-progress'));
+        if (!(progress > 0.25 && progress < 0.95)) return false;
+        const canvas = document.querySelector('canvas');
+        return {
+          progress,
+          fromStage: canvas?.getAttribute('data-structural-choreography-from-stage'),
+          toStage: canvas?.getAttribute('data-structural-choreography-to-stage'),
+          transformation: Number(canvas?.getAttribute('data-structural-choreography-transformation')),
+        };
+      },
+      { timeout: 5000, polling: 'raf' },
+    ).then((handle) => handle.jsonValue());
+    expect(transformMid.fromStage).toBe('0');
+    expect(transformMid.toStage).toBe('1');
+    expect(transformMid.progress).toBeGreaterThan(0.25);
+    expect(transformMid.progress).toBeLessThan(0.95);
+    expect(transformMid.transformation).toBeGreaterThan(0);
     await page.screenshot({ path: 'test-results/s2-s10-transform-mid.png', fullPage: true });
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
@@ -65,19 +73,29 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SETTLED');
 
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
-    await expect.poll(
-      async () => String(await canvas.getAttribute('data-structural-choreography-returning-to-world')),
-      { timeout: 5000 },
-    ).toBe('true');
-    await expect(canvas).toHaveAttribute('data-structural-view', 'world');
-    await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
-    await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'RETURN_TO_WORLD');
-    await expect.poll(
-      async () => Number(await canvas.getAttribute('data-structural-choreography-progress')),
-      { timeout: 5000 },
-    ).toBeGreaterThan(0.55);
-    expect(Number(await canvas.getAttribute('data-structural-choreography-progress'))).toBeLessThan(0.95);
-    expect(Number(await canvas.getAttribute('data-structural-choreography-transformation'))).toBeLessThan(1);
+    const returnMid = await page.waitForFunction(
+      () => {
+        const canvas = document.querySelector('canvas');
+        const progress = Number(canvas?.getAttribute('data-structural-choreography-progress'));
+        if (!(canvas?.getAttribute('data-structural-choreography-returning-to-world') === 'true')) return false;
+        if (!(progress > 0.55 && progress < 0.95)) return false;
+        return {
+          progress,
+          view: canvas?.getAttribute('data-structural-view'),
+          topologyMode: canvas?.getAttribute('data-structural-topology-mode'),
+          cameraMode: canvas?.getAttribute('data-structural-camera-mode'),
+          transformation: Number(canvas?.getAttribute('data-structural-choreography-transformation')),
+        };
+      },
+      { timeout: 5000, polling: 'raf' },
+    ).then((handle) => handle.jsonValue());
+    expect(returnMid.view).toBe('world');
+    expect(returnMid.topologyMode).toBe('WORLD_OVERVIEW');
+    expect(returnMid.cameraMode).toBe('RETURN_TO_WORLD');
+    expect(returnMid.progress).toBeGreaterThan(0.55);
+    expect(returnMid.progress).toBeLessThan(0.95);
+    expect(returnMid.transformation).toBeGreaterThan(0);
+    expect(returnMid.transformation).toBeLessThan(1);
     await page.screenshot({ path: 'test-results/s2-s10-return-mid.png', fullPage: true });
 
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
