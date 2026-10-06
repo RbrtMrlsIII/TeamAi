@@ -39,6 +39,12 @@ PR #424 is the active bounded spatial implementation vehicle after merged PR #40
 
 Product Law owns meaning. Policy owns ORUCAVEAM. Masterplan owns ordered checklist execution. `Masterplan/NEXT_SLICES.md` owns one current slice. Skills own reusable procedures. Issues own bounded workstream context. PRs own implementation/review boundaries. Verification proves claims. `AI_ASSISTANT_READ_ME.md` owns current session state, handover, endorsement decisions, and validation-change records. `PRODUCT-KNOWLEDGE.md` owns durable validated concepts. `docs/archive/` and `handover/` are historical storage only.
 
+### 2026-10-07 spatial acceptance wiring
+
+For the active 029 continuation, the spatial machine is a product-expression surface, not an independent visual project. Product Law determines product meaning and invariants; Issue #400 determines the canonical frontend feature vocabulary and surface class; #278/#405 govern the 029 spatial execution boundary; S0-S10 own semantic/physical structure; S22-S33 provide cross-cutting expression and final acceptance; the Hailuo MP4 and endorsed PNG storyboard/reference-board provide visual-direction guidance only.
+
+Exact-head Browser evidence is mandatory for browser-visible spatial claims. A CI run that is still executing is an in-progress condition, not a successful proof. After Canonical Browser reaches a terminal state, its exact-head artifact/report must be inspected and the outcome classified. While validation runs, non-conflicting audit work may proceed inside the same #424 vehicle, including repository history/debris/stale-reference analysis, Product Law/feature coverage reconciliation, geometry measurement, and visual-reference comparison. No such audit work may silently alter the proof target or create a competing implementation authority.
+
 ## Durable decision capture and cross-session persistence
 
 Chat is transient working context. It is never a sufficient authority surface for a material TeamAi decision.
