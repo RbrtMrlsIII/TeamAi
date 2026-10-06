@@ -14,7 +14,7 @@ function buildTopology(seatCount) {
 }
 
 test('S8 primary inner-spoke carrier stays within presentation volume budget', () => {
-  const topology = topologyFor(10);
+  const topology = buildTopology(10);
   const segments = getRenderableMachineWorldStructuralConduitSegments(topology);
   const inner = segments.filter((segment) => segment.edgeKind === 'inner-spoke');
   assert.equal(inner.length, 20);
