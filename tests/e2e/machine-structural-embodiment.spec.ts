@@ -21,6 +21,23 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
     await page.screenshot({ path: 'test-results/s2-s10-world.png', fullPage: true });
 
+    const browserChoreography = await page.evaluate(async () => {
+      const module = await import('/machine-structural-choreography-sequence.js');
+      const sample = module.deriveStructuralPreviewChoreographySample(3, 4, 1);
+      return {
+        phase: sample.choreography.phase,
+        connection: sample.choreography.connection,
+        electrical: sample.choreography.electrical,
+        focusedChildId: sample.focusedChildId,
+      };
+    });
+    expect(browserChoreography).toEqual({
+      phase: 'ELECTRICAL_TRANSFER',
+      connection: 0.82,
+      electrical: 0.82,
+      focusedChildId: 'SEAT_CONNECTION',
+    });
+
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
@@ -28,6 +45,9 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'TOPOLOGY_LINKING');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-structural-choreography-connection', '0.82');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-electrical', '0.82');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-focused-child', 'SEAT_CONNECTION');
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'ELECTRICAL_TRANSFER');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SETTLED');
