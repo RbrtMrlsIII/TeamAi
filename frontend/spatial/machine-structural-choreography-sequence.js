@@ -9,6 +9,9 @@ import {
   MACHINE_CHOREOGRAPHY_PHASE,
 } from './machine-choreography.js';
 
+const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
+const lerp = (a, b, t) => Number(a) + (Number(b) - Number(a)) * t;
+
 const STAGES = Object.freeze([
   Object.freeze({
     label: 'STOWED',
@@ -78,8 +81,12 @@ const STAGES = Object.freeze([
 
 export const STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT = STAGES.length;
 
+function normalizeStageIndex(stageIndex = 0) {
+  return ((Math.trunc(Number(stageIndex) || 0) % STAGES.length) + STAGES.length) % STAGES.length;
+}
+
 export function deriveStructuralPreviewChoreography(stageIndex = 0) {
-  const index = ((Math.trunc(Number(stageIndex) || 0) % STAGES.length) + STAGES.length) % STAGES.length;
+  const index = normalizeStageIndex(stageIndex);
   const stage = STAGES[index];
   const choreography = deriveMachineTransformationChoreography({
     ...stage.inputs,
@@ -91,6 +98,44 @@ export function deriveStructuralPreviewChoreography(stageIndex = 0) {
     view: stage.view,
     hierarchyOpen: Boolean(stage.inputs.hierarchyOpen),
     focusedChildId: stage.inputs.focusedChildId || null,
+    choreography,
+  });
+}
+
+export function deriveStructuralPreviewChoreographySample(
+  fromStageIndex = 0,
+  toStageIndex = fromStageIndex,
+  progress = 1,
+) {
+  const from = deriveStructuralPreviewChoreography(fromStageIndex);
+  const to = deriveStructuralPreviewChoreography(toStageIndex);
+  const t = clamp01(progress);
+  const eased = t * t * (3 - 2 * t);
+  const targetHierarchyOpen = to.hierarchyOpen;
+  const hierarchyOpen = targetHierarchyOpen
+    ? (from.hierarchyOpen || eased >= 0.5)
+    : (from.hierarchyOpen && eased < 0.999);
+  const focusedChildId = hierarchyOpen
+    ? (to.focusedChildId || from.focusedChildId || null)
+    : null;
+  const choreography = deriveMachineTransformationChoreography({
+    shellAmount: lerp(from.choreography.shell, to.choreography.shell, eased),
+    divisionAmount: lerp(from.choreography.division, to.choreography.division, eased),
+    connectionAmount: lerp(from.choreography.connection, to.choreography.connection, eased),
+    hierarchyOpen,
+    focusedChildId,
+    reducedMotion: true,
+  });
+  return Object.freeze({
+    stageIndex: to.stageIndex,
+    fromStageIndex: from.stageIndex,
+    toStageIndex: to.stageIndex,
+    progress: t,
+    label: t >= 0.999 ? to.label : from.label,
+    view: t < 0.5 ? from.view : to.view,
+    hierarchyOpen,
+    focusedChildId,
+    returningToWorld: from.stageIndex === 5 && to.stageIndex === 0 && t > 0,
     choreography,
   });
 }
