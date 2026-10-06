@@ -23,6 +23,38 @@ test('World presentation contracts runtime outer facility placement to authored 
   assert.equal(validateMachineWorldPresentationProjection(projected).valid, true);
 });
 
+test('World presentation contracts facility-side lattice and workspace route spans', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const facilities = deriveMachineFacilityMachinery({
+    facilityAssemblies: deriveMachineFacilityAssemblies({
+      outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+    }),
+  });
+  const topology = buildMachineWorldTopology({
+    scene,
+    facilityMachinery: facilities,
+    clearance: 0.16,
+  });
+  const projected = deriveMachineWorldPresentationProjection({
+    facilities,
+    topology,
+    seatCount: 10,
+  });
+
+  const sourceById = new Map(topology.edges.map((edge) => [edge.semanticEdgeId, edge]));
+  const projectedLattice = projected.topology.edges.find((edge) => edge.kind === 'lattice-link');
+  const sourceLattice = sourceById.get(projectedLattice.semanticEdgeId);
+  assert.ok(Math.hypot(projectedLattice.route[0].x, projectedLattice.route[0].z)
+    < Math.hypot(sourceLattice.route[0].x, sourceLattice.route[0].z));
+  assert.deepEqual(projectedLattice.route.at(-1), sourceLattice.route.at(-1));
+
+  const projectedWorkspace = projected.topology.edges.find((edge) => edge.kind === 'workspace-contribution');
+  const sourceWorkspace = sourceById.get(projectedWorkspace.semanticEdgeId);
+  assert.deepEqual(projectedWorkspace.route[0], sourceWorkspace.route[0]);
+  assert.ok(Math.hypot(projectedWorkspace.route.at(-1).x, projectedWorkspace.route.at(-1).z)
+    < Math.hypot(sourceWorkspace.route.at(-1).x, sourceWorkspace.route.at(-1).z));
+});
+
 test('World presentation preserves semantic edge identity and route continuity', () => {
   const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
