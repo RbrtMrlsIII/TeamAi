@@ -98,6 +98,7 @@ export function deriveStructuralPreviewChoreography(stageIndex = 0) {
     view: stage.view,
     hierarchyOpen: Boolean(stage.inputs.hierarchyOpen),
     focusedChildId: stage.inputs.focusedChildId || null,
+    connectionAmount: clamp01(stage.inputs.connectionAmount),
     choreography,
   });
 }
@@ -121,7 +122,7 @@ export function deriveStructuralPreviewChoreographySample(
   const choreography = deriveMachineTransformationChoreography({
     shellAmount: lerp(from.choreography.shell, to.choreography.shell, eased),
     divisionAmount: lerp(from.choreography.division, to.choreography.division, eased),
-    connectionAmount: lerp(from.choreography.connection, to.choreography.connection, eased),
+    connectionAmount: lerp(from.connectionAmount, to.connectionAmount, eased),
     hierarchyOpen,
     focusedChildId,
     reducedMotion: true,
@@ -135,6 +136,7 @@ export function deriveStructuralPreviewChoreographySample(
     view: t < 0.5 ? from.view : to.view,
     hierarchyOpen,
     focusedChildId,
+    connectionAmount,
     returningToWorld: from.stageIndex === 5 && to.stageIndex === 0 && t > 0,
     choreography,
   });
