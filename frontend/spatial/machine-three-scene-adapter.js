@@ -1052,6 +1052,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       mode,
       branchId,
       includeManifoldArcs: mode !== 'WORLD_OVERVIEW',
+      includeManifoldFacilitySegments: mode !== 'WORLD_OVERVIEW',
     });
     for (const segment of conduitSegments) {
       const conduitShape = resolveThreeConduitRenderShape(segment);
