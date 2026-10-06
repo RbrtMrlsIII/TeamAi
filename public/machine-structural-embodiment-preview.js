@@ -343,7 +343,7 @@ function renderView() {
         seatCount: model.seatCount,
       })
     : {
-        facilities: effectiveFacilitiesSource,
+        facilities: machinery,
         topology: activeTopology,
         scale: 1,
       };
