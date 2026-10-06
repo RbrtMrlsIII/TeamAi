@@ -112,6 +112,7 @@ export function deriveStructuralPreviewChoreographySample(
   const to = deriveStructuralPreviewChoreography(toStageIndex);
   const t = clamp01(progress);
   const eased = t * t * (3 - 2 * t);
+  const connectionAmount = lerp(from.connectionAmount, to.connectionAmount, eased);
   const targetHierarchyOpen = to.hierarchyOpen;
   const hierarchyOpen = targetHierarchyOpen
     ? (from.hierarchyOpen || eased >= 0.5)
