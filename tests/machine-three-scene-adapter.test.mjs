@@ -63,6 +63,30 @@ test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V2');
 });
 
+test('Y1 descriptor normalization preserves authored outlines for faceted facility bodies', () => {
+  const source = {
+    id: 'FACILITY-BODY:TEST',
+    profile: 'facility-body-fin',
+    shape: 'BOX',
+    center: { x: 0, y: 0, z: 0 },
+    dimensions: { x: 2, y: 1, z: 1.5 },
+    outline: [
+      [-1, -0.5], [0, -1], [1, -0.5], [0.8, 0.7],
+      [0, 1], [-0.8, 0.7], [-1, 0.1], [-0.6, -0.4],
+    ],
+  };
+  const descriptor = normalizeThreeDescriptor(source);
+  assert.deepEqual(descriptor.outline, source.outline);
+  assert.equal(descriptor.outline.length, 8);
+
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  assert.ok(geometry.attributes.position.count > 0);
+  geometry.computeBoundingBox();
+  assert.ok(geometry.boundingBox);
+  assert.ok(geometry.boundingBox.max.x - geometry.boundingBox.min.x <= descriptor.dimensions.x + 1e-6);
+  assert.ok(geometry.boundingBox.max.z - geometry.boundingBox.min.z <= descriptor.dimensions.z + 1e-6);
+});
+
 test('Y1 shape normalization preserves authored profiles without changing semantic ids', () => {
   assert.equal(normalizeThreeShape({ shape: 'TORUS' }), 'TORUS');
   assert.equal(normalizeThreeShape({ shape: 'CYL' }), 'CYLINDER');
