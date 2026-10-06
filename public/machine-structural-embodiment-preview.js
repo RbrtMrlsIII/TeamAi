@@ -189,7 +189,7 @@ function positionFromSpec(spec, { world = false } = {}) {
     const worldRadius = Math.max(radius, Math.min(24, radius));
     return {
       x: spec.target.x + Math.sin(spec.bearing) * worldRadius * 0.82,
-      y: spec.target.y + Math.max(3.5, worldRadius * 0.26),
+      y: spec.target.y + Math.max(4.6, worldRadius * 0.58),
       z: spec.target.z + Math.cos(spec.bearing) * worldRadius,
     };
   }
