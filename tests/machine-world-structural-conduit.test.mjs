@@ -21,7 +21,7 @@ test('S8 structural conduit projection keeps the existing Core/Facility semantic
   assert.equal(
     new Set(segments.map((segment) => segment.semanticEdgeId)).size,
     topology.edges.filter((edge) =>
-      ['inner-spoke', 'outer-spine', 'lattice-link'].includes(edge.kind)
+      ['inner-spoke', 'lattice-link'].includes(edge.kind)
     ).length,
   );
   assert.equal(
@@ -29,9 +29,10 @@ test('S8 structural conduit projection keeps the existing Core/Facility semantic
     10,
   );
   assert.equal(
-    topology.edges.filter((edge) => edge.kind === 'outer-spine').length,
-    4,
+    topology.edges.filter((edge) => edge.kind === 'lattice-link').length,
+    8,
   );
+  assert.equal(segments.length, 10 * 2 + 8 * 3);
   assert.equal(
     topology.edges.filter((edge) => edge.kind === 'lattice-link').length,
     8,
