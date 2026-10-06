@@ -33,3 +33,29 @@ test('S7 outer facility shell source and browser copies remain exact', () => {
   const browser = readFileSync('public/machine-world-facility-shell.js', 'utf8');
   assert.equal(browser, source);
 });
+
+test('S7 authored facility bodies use bounded faceted outlines rather than coarse box-only shells', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
+  const facilities = deriveMachineFacilityMachinery({ facilityAssemblies: assemblies });
+  const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
+
+  const signedTurn = (a, b, c) => (
+    (b[0] - a[0]) * (c[1] - b[1])
+    - (b[1] - a[1]) * (c[0] - b[0])
+  );
+
+  for (const entry of descriptors) {
+    assert.ok(Array.isArray(entry.outline));
+    assert.ok(entry.outline.length >= 8);
+    assert.ok(entry.outline.every((point) => point.length === 2 && point.every(Number.isFinite)));
+    const turns = entry.outline.map((point, index) => {
+      const prev = entry.outline[(index - 1 + entry.outline.length) % entry.outline.length];
+      const next = entry.outline[(index + 1) % entry.outline.length];
+      return signedTurn(prev, point, next);
+    });
+    assert.ok(turns.every((turn) => turn > 0), entry.branchId + ': outline must remain convex and ordered');
+    const radii = entry.outline.map(([x, z]) => Math.hypot(x, z));
+    assert.ok(Math.max(...radii) <= 1.30, entry.branchId + ': outline radial factor exceeded body bound');
+  }
+});
