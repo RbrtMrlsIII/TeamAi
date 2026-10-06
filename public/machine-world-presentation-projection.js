@@ -60,10 +60,21 @@ function transformFacility(facility, scale) {
 function transformRoute(edge, scale) {
   const route = Array.isArray(edge?.route) ? edge.route : [];
   if (route.length < 2) return route;
-  const transformAll = edge.kind === 'facility-facility' || edge.kind === 'outer-spine';
-  const startIndex = edge.kind === 'pod-facility' || edge.kind === 'workspace-contribution' ? 2 : transformAll ? 0 : route.length;
+
+  const indicesToTransform = new Set();
+  if (edge.kind === 'facility-facility' || edge.kind === 'outer-spine') {
+    route.forEach((_, index) => indicesToTransform.add(index));
+  } else if (edge.kind === 'lattice-link') {
+    indicesToTransform.add(0);
+    indicesToTransform.add(1);
+  } else if (edge.kind === 'workspace-contribution') {
+    route.forEach((_, index) => {
+      if (index >= 2) indicesToTransform.add(index);
+    });
+  }
+
   return Object.freeze(route.map((point, index) =>
-    index >= startIndex ? scaleXZ(point, scale) : Object.freeze({ ...point }),
+    indicesToTransform.has(index) ? scaleXZ(point, scale) : Object.freeze({ ...point }),
   ));
 }
 
