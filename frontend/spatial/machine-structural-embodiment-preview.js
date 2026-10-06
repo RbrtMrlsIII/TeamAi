@@ -364,7 +364,7 @@ function renderView() {
       })
     : [];
   const facilityCarrierDescriptors = currentView === 'world'
-    ? deriveMachineWorldFacilityCarrierDescriptors(renderTopology)
+    ? deriveMachineWorldFacilityCarrierDescriptors(worldPresentation.topology)
     : [];
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
