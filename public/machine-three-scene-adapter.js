@@ -760,6 +760,9 @@ function buildToolkitRackGeometry(THREE, descriptor) {
 
 export function buildThreeGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
+  if (Array.isArray(descriptor.outline) && descriptor.outline.length >= 3) {
+    return buildExtrudedPolygonGeometry(THREE, descriptor, descriptor.outline);
+  }
   if (descriptor.shape === 'POD_SHELL') {
     return buildPodShellGeometry(THREE, descriptor);
   }
