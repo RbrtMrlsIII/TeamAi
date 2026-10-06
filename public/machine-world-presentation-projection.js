@@ -103,7 +103,7 @@ export function deriveMachineWorldPresentationProjection({
     ? Object.freeze({
       ...topology.serviceManifold,
       segments: Object.freeze((topology.serviceManifold.segments || [])
-        .map((segment) => transformManifoldSegment(segment, facilityBranchIds, scale)),
+        .map((segment) => transformManifoldSegment(segment, facilityBranchIds, scale))),
     })
     : topology.serviceManifold;
   const projectedTopology = Object.freeze({
