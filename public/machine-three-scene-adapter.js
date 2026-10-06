@@ -297,6 +297,12 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     y: Math.max(0.001, Number(part.dimensions?.y) || Number(part.height) || 0.5),
     z: Math.max(0.001, Number(part.dimensions?.z) || (Number(part.radius) || 0.5) * 2),
   };
+  const outline = Array.isArray(part.outline)
+    ? Object.freeze(part.outline.map((point) => Object.freeze([
+        Number(point?.[0]) || 0,
+        Number(point?.[1]) || 0,
+      ])))
+    : null;
   return Object.freeze({
     id: String(part.id),
     semanticId: part.semanticId == null ? null : String(part.semanticId),
@@ -304,6 +310,7 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     shape: normalizeThreeShape(part),
     profile: String(part.profile || part.role || ''),
     center: Object.freeze(center),
+    outline,
     dimensions: Object.freeze(dimensions),
     rotationY: Number.isFinite(Number(part.rotationY)) ? Number(part.rotationY) : 0,
     materialRole: part.role === 'status-indicator'
