@@ -19,26 +19,25 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 implementation head: `087045e5cec4532eaca9abd78c835eca635b99c4`
+- Exact #424 implementation head: `266a06042d267d40e0c0678e98479e0ca792d714`
 - #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
-- Spatial objective: preserve Product Law + canonical feature grammar while advancing the single semantic spatial machine toward the endorsed manufactured-machine direction represented by the Hailuo MP4 and project PNG/storyboard references.
-- Exact-head five-gate proof: Full-System `37570949645` PASS; Governance `37570949710` PASS; Evidence Consistency `37570949710` PASS; Canonical Browser `37570949741` PASS; CodeQL `112629558948` PASS; Semgrep OSS `112629419343` PASS.
+- Product Law and the canonical feature grammar remain authoritative. The target is the actual TeamAi product expressed as one semantic spatial machine, not a reference-only rocket recreation.
+- Product Law resolution: the storyboard's cinematic 8-Pod composition is not capacity authority. TeamAi remains a 1–10 Seat product with 10 guest presentation slots. The storyboard's final rocket-hologram presentation is not a required product target.
+- Exact-head proof: Full-System `37575266019` PASS; Governance `37575265886` PASS; Security/Deep Security terminal-success; Canonical Browser `37575265973` PASS; CodeQL and deep static security scans passed.
 - Full-System project suite: **1,220 passed / 0 failed**.
-- Canonical Browser: **92 passed / 4 skipped** Playwright tests; exact-head checkout, Hero runtime parity, and machine spatial runtime parity passed before Playwright.
-- Browser artifact: `11460424639`; ZIP SHA-256 `690a5d473623f3d9af5be1bfa93516faeb497a85718987ffce2b8648c72a9cf4`.
-- The Browser artifact was independently downloaded and hashed; the local SHA-256 matched GitHub's recorded digest exactly. The exact-head artifact also contains a genuine `/hero/` Playwright recording: 12.36 s, 800×500, 25 fps VP8/WebM, SHA-256 `a0a3d0c82dd276399faad17850637188a953240960e8ef715d3dd87b643dffe0`. A convenience H.264/MP4 derivative has SHA-256 `15ec64ba545b8a8f7b8236e253865088a60266e4350c5c7b23882a09d04c26bb`.
-- The exact-head Browser run includes the existing S2-S10 image suite plus the new real-product video test. Human visual acceptance remains open because the actual `/hero/` scene is still materially darker and more skeletal than the bright manufactured-machine direction.
-- The verified implementation slice is bounded to existing S3 Pod embodiment: 17 authored Pod mechanical details, including the new plinth/frame/actuator/lock layer, and raw-renderer consumption of the existing authored Pod shell profile. Independent 10-seat full-expansion clearance is approximately 0.6472 against a requested floor of 0.16.
-- The implementation path exposed and corrected two scope defects and one stale generic test expectation. After correction, the exact-head Full-System suite passed 1,220/1,220.
-- Product Law remains authoritative over the 8-Pod reference composition. TeamAi remains governed at 1-10 Seats and 10 guest presentation slots. The storyboard's final rocket hologram is not a required product presentation.
-- Browser evidence is terminal only after the exact-head Browser workflow finishes and its artifact/report is inspected.
-- While future validation runs, continue only non-conflicting audit/preparation. Never mutate a proof target blindly.
-- Remaining visual gaps are real and now confirmed by actual `/hero/` video: Core/Pod fabricated massing, bright metallic/glass studio presentation, physically attached conduit density, closer mechanism camera framing, and denser family-specific S7 articulation.
-
+- Canonical Browser: **92 passed / 4 skipped**.
+- Browser artifact: `11462456452`; ZIP SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`.
+- Exact-head `/hero/` recording: VP8/WebM, 800×500, 25 fps, 12.68 s, SHA-256 `05676d6e7208690c83e175d77ce63b6b25469bef969c49986c33245c3f8e8378`.
+- Verified structural state: S3 Pod embodiment plus S2 Core embodiment. S3 uses the authored 12-sided Pod shell and 17 authored mechanical details. S2 uses six layered Core components and 32 authored mechanical details, with the Core radial envelope derived from foundation, mechanical-detail, and port reach.
+- Independent 10-seat full-expansion Pod clearance remains approximately 0.6472 against the requested 0.16 floor. The S2 Core mechanical-detail radial envelope is approximately 1.88 units at full expansion.
+- Relative to the preceding verified S3/video head `087045e5`, the S2 change altered `s2-s10-world.png` by 1,234 pixels (1,105 at >=5/255) and `s2-s10-transform-mid.png` by 1,286 pixels (1,163 at >=5/255). Focused Facility and Seat captures were pixel-identical, localizing the change to the Core.
+- The browser video test traverses actual Seat selection, division focus, return to entrance, and turn-loop states and asserts the governed 10-seat product state at completion.
+- Current visual acceptance remains open. The real product video confirms the remaining gaps are physical/visual: compound Core/Pod massing, differentiated S7 mechanisms, physically attached conduit/manifold construction, closer mechanism framing, and later world-expression layers.
+- Any new structural change remains constrained to PR #424 only and must be independently measured, exact-head verified, and artifact-inspected before acceptance.
 ### Historical pre-029-session verification note
 
 The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
