@@ -19,7 +19,8 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 implementation head: `266a06042d267d40e0c0678e98479e0ca792d714`
+- Exact #424 current head: `71459b9c8d8076a589419dd7b947dbb2fe46ccf5`
+- Producing implementation head for the verified S2/S3 embodiment: `266a06042d267d40e0c0678e98479e0ca792d714`
 - #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
@@ -27,11 +28,11 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
 - Product Law and the canonical feature grammar remain authoritative. The target is the actual TeamAi product expressed as one semantic spatial machine, not a reference-only rocket recreation.
 - Product Law resolution: the storyboard's cinematic 8-Pod composition is not capacity authority. TeamAi remains a 1–10 Seat product with 10 guest presentation slots. The storyboard's final rocket-hologram presentation is not a required product target.
-- Exact-head proof: Full-System `37575266019` PASS; Governance `37575265886` PASS; Security/Deep Security terminal-success; Canonical Browser `37575265973` PASS; CodeQL and deep static security scans passed.
+- Exact-head proof for the producing implementation head: Full-System `37575266019` PASS; Governance `37575265886` PASS; Security/Deep Security terminal-success; Canonical Browser `37575265973` PASS; CodeQL and deep static security scans passed.
 - Full-System project suite: **1,220 passed / 0 failed**.
 - Canonical Browser: **92 passed / 4 skipped**.
-- Browser artifact: `11462456452`; ZIP SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`.
-- Exact-head `/hero/` recording: VP8/WebM, 800×500, 25 fps, 12.68 s, SHA-256 `05676d6e7208690c83e175d77ce63b6b25469bef969c49986c33245c3f8e8378`.
+- Fresh documentation-head Browser artifact: `11462888681`; ZIP SHA-256 `20233bc8ddd6fe7714d9273caaaeb0d61f2db34b37006761a745c3be6b4ede1d`.
+- Fresh documentation-head `/hero/` recording: VP8/WebM, 800×500, 25 fps, 12.56 s, SHA-256 `bd76405a24146b2316f74ac370c692589a0efc70ddade2822960cd123ed91b0d`.
 - Verified structural state: S3 Pod embodiment plus S2 Core embodiment. S3 uses the authored 12-sided Pod shell and 17 authored mechanical details. S2 uses six layered Core components and 32 authored mechanical details, with the Core radial envelope derived from foundation, mechanical-detail, and port reach.
 - Independent 10-seat full-expansion Pod clearance remains approximately 0.6472 against the requested 0.16 floor. The S2 Core mechanical-detail radial envelope is approximately 1.88 units at full expansion.
 - Relative to the preceding verified S3/video head `087045e5`, the S2 change altered `s2-s10-world.png` by 1,234 pixels (1,105 at >=5/255) and `s2-s10-transform-mid.png` by 1,286 pixels (1,163 at >=5/255). Focused Facility and Seat captures were pixel-identical, localizing the change to the Core.
