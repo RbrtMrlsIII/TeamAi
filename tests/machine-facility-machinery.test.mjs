@@ -227,7 +227,7 @@ test('S7 raw Hero and Three adapter expose the authored operations fin profile',
   assert.equal(publicRenderer, renderer);
 });
 
-test('S7 operations machine exposes paired fin actuators with bounded authored motion', () => {
+test('S7 operations machine exposes paired fin actuator housings inside the fin assembly', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
@@ -236,32 +236,43 @@ test('S7 operations machine exposes paired fin actuators with bounded authored m
   assert.ok(operations);
 
   const expected = {
-    'fin-actuator-primary': 'operations-fin-actuator-primary',
-    'fin-actuator-secondary': 'operations-fin-actuator-secondary',
+    'fin-actuator-primary': 'deployment-fin',
+    'fin-actuator-secondary': 'deployment-fin-secondary',
   };
-  for (const [role, profile] of Object.entries(expected)) {
-    const actuator = operations.components.find((entry) => entry.role === role);
+
+  const center = operations.outerHousing.center;
+  const dimensions = operations.outerHousing.dimensions;
+  const angle = Math.atan2(center.z, center.x);
+  const housingBoundary = 1 / (
+    Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
+    + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
+  );
+
+  for (const [role, parentRole] of Object.entries(expected)) {
+    const actuator = operations.mechanicalDetails.find((entry) => entry.role === role);
     assert.ok(actuator);
-    assert.equal(actuator.profile, profile);
+    assert.equal(actuator.profile, 'operations-' + role);
     assert.equal(actuator.shape, 'BOX');
-    assert.match(actuator.parentRole, /^deployment-fin(?:-secondary)?$/);
+    assert.equal(actuator.parentRole, parentRole);
+    assert.equal(actuator.constructionSlice, 'S7');
+    assert.equal(actuator.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
     assert.ok(operations.subject.sourcePartIds.includes(actuator.id));
 
-    const motion = deriveMachineFacilityMechanismPresentation(
-      operations,
-      { amount: 1, reducedMotion: false },
-    ).components.find((entry) => entry.id === actuator.id);
-    assert.ok(motion);
-    assert.ok(Math.abs(motion.rotationY - actuator.rotationY) > 0.01);
-    assert.ok(Math.hypot(motion.dx, motion.dz) > 0.01);
+    const localX = actuator.center.x - center.x;
+    const localZ = actuator.center.z - center.z;
+    const radialReach = Math.hypot(actuator.dimensions.x, actuator.dimensions.z) * 0.5;
+    assert.ok(
+      Math.hypot(localX, localZ) + radialReach <= housingBoundary - 0.03 + 1e-9,
+      role + ':housing-bound',
+    );
   }
 
   assert.equal(
-    operations.components.filter((entry) => entry.role.startsWith('fin-actuator-')).length,
+    operations.mechanicalDetails.filter((entry) => entry.role.startsWith('fin-actuator-')).length,
     2,
   );
 });
- 
+
 test('S7 operations machine exposes layered fin caps and actuator rails inside fin envelopes', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
