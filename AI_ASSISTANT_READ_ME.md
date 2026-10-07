@@ -19,30 +19,28 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 head at this checkpoint: `7937b3d1356ca292ddf31845b714c8f4a0fb181c`
+- Exact #424 head at this checkpoint: `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67`
 - #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
 - Spatial objective: preserve Product Law + canonical feature grammar while advancing the single semantic spatial machine toward the endorsed manufactured-machine direction represented by the Hailuo MP4 and project PNG/storyboard references.
-- Exact-head proof: Full-System 2826 PASS; Security 3245 PASS; Deep Security 1086 PASS; Governance 3831 PASS; Canonical Browser 4367 PASS.
-- Browser artifact: `11437120734`; SHA-256 `caae90327091d43d1cafee220d1897283e2403e6ac7de7d1061b984f3920451d`.
-- The Browser artifact was independently downloaded, hashed, and inspected. Its S2-S10 World/Return/Transform and focused Facility/Seat captures were pixel-identical to the preceding `e4adaaf4` verified application artifact, as expected for a Product Law-only change.
-- Product Law now records that storyboard cardinality is cinematic composition, not capacity authority: reference frames may show 8 Pods while TeamAi remains governed at 1–10 Seats and 10 guest presentation slots. The four visual outer-module families map to the existing S7 roles analysis/telescope, operations/fin-deploy, control/core-rotate, and access-commerce/sensor-array.
+- Exact-head proof at this checkpoint: Full-System `37564475055` PASS; Security `37564475051` PASS; Deep Security `37564475130` PASS; Governance `37564474995` PASS; Canonical Browser `37564475043` PASS.
+- Full-System project suite: **1,219 passed / 0 failed**.
+- Canonical Browser: **91 passed / 4 skipped** Playwright tests; exact-head checkout, Hero runtime parity, and machine spatial runtime parity all passed before Playwright.
+- Browser artifact: `11458442898`; SHA-256 `38a8b0ea91a540756f7bb5ea36b9423d1dde6c283fd96175f9c2cdbfa17b4b09`.
+- The Browser artifact was independently downloaded and hashed; the local SHA-256 matched the GitHub-recorded digest exactly. Its 19-file artifact bundle was inspected.
+- Compared with the preceding `e4adaaf4` Browser application baseline, `s2-s10-world.png` changed by 567 pixels (450 above the RGB threshold), `s2-s10-return-mid.png` by 567 (450 above threshold), and `s2-s10-transform-mid.png` by 705 (579 above threshold). Focused Facility and Seat captures were pixel-identical. The changed world region is the right-side Alpha facility, which camera-basis inspection resolves to the existing **analysis/telescope** role.
+- The implementation slice is bounded to S7 analysis machinery: authored 12/10/8-sided nested barrel footprints, retained S7 role identity, aligned barrel rotation to the radial frame, and added two presentation-only barrel collars. Product capacity, S8 topology, S10 camera specification, Seat hierarchy, and backend authority were not changed.
+- A first exact-head Full-System run on the implementation commit exposed one stale test expecting five mechanical details on every facility; the implementation correctly produced seven for analysis. The test was corrected without weakening validation, and the replacement exact-head suite passed 1,219/1,219.
+- Product Law remains authoritative over the 8-Pod reference composition: the reference is visual-direction input, not capacity authority. TeamAi remains governed at 1–10 Seats and 10 guest presentation slots. The four outer reference families remain mapped to existing S7 roles only.
 - Browser evidence is terminal only after the exact-head Browser workflow finishes and its artifact/report is inspected.
-- While validation runs, continue non-conflicting audit/preparation in #424: history/debris/stale-reference search, Product Law/feature alignment, authority-graph review, independent geometry measurements, reference comparison, and next-commit preparation. Never mutate the proof target blindly while using this wait period.
+- While validation runs, continue non-conflicting audit/preparation in #424, but never mutate the exact proof target blindly. For the next bounded implementation slice, target the existing **operations / fin-deploy** S7 mechanism family after documentation/current-head reconciliation is itself verified.
 
-### Latest application-head verification before this documentation sync
+### Historical pre-029-session verification note
 
-- Governance rerun on application head 208c5570: PASS (workflow run 36542676832)
-- Full project tests + canonical package on 208c5570: PASS (workflow run 36542509326)
-- Security-family checks on 208c5570: PASS
-- Evidence consistency on 208c5570: PASS
-- Playwright Browser workflow 36542509289 was still in progress at the last observation.
-- The earlier Browser failure on 2258a910 was the machine-core preview temporal defect that this branch subsequently repaired.
-
-This commit is documentation-only relative to application head 208c5570. Because governance and Browser evidence are exact-head scoped, the final documentation head should still receive its own verification refresh before being called fully green.
+The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
 
 ### Browser failure classification
 

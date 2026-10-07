@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: `7937b3d1356ca292ddf31845b714c8f4a0fb181c` (exact-head five-gate proof; Browser 4367 PASS; artifact `11437120734`, SHA-256 `caae90327091d43d1cafee220d1897283e2403e6ac7de7d1061b984f3920451d`).
+Current exact spatial head: `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67` (exact-head five-gate proof; Full-System `37564475055` PASS; Security `37564475051` PASS; Deep Security `37564475130` PASS; Governance `37564474995` PASS; Browser `37564475043` PASS).
 
-That earlier Browser failure is historical. The current exact-head Canonical Browser run `4347` is PASS on `de97b2c6…`. Historical failed/cancelled runs remain diagnostic provenance only and must not override the current exact-head result.
+The current exact-head implementation slice is S7 analysis/telescope mechanical embodiment. Its Browser artifact `11458442898` has SHA-256 `38a8b0ea91a540756f7bb5ea36b9423d1dde6c283fd96175f9c2cdbfa17b4b09`. Historical Browser runs remain diagnostic provenance only and must not override the current exact-head result.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 

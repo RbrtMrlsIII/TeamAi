@@ -1334,3 +1334,47 @@ The Browser artifact was downloaded and independently hashed to the recorded dig
 The actual project PNG storyboard contains an 8-Pod cinematic composition and four recognizable outer-machine families: telescope, fin deploy, rotating core, and sensor array. Product Law now explicitly treats that 8-Pod composition as a visual sample rather than capacity authority; TeamAi remains governed at 1–10 Seats with 10 guest presentation slots. The four outer families map to existing S7 roles rather than creating additional semantic features.
 
 This resolves the principal reference discrepancy without weakening the product contract. The next spatial work should therefore increase authored mechanical embodiment and reference correspondence inside the existing S7 role graph, not change Seat cardinality or create a new hierarchy.
+
+
+### E424-2026-10-07E — S7 analysis/telescope embodiment exact-head checkpoint
+
+**Evidence-bearing head:** `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67`
+
+- Full-System Verification `37564475055`: **PASS**; 1,219 project tests passed / 0 failed.
+- Security Static Analysis `37564475051`: **PASS**.
+- Deep Security Static Analysis `37564475130`: **PASS**.
+- Repository Governance Integrity `37564474995`: **PASS**; review-readiness skipped because PR #424 remains Draft.
+- Canonical Browser Verification `37564475043`: **PASS**; 91 Playwright tests passed / 4 skipped.
+- Browser artifact ID: `11458442898`.
+- Browser artifact SHA-256: `sha256:38a8b0ea91a540756f7bb5ea36b9423d1dde6c283fd96175f9c2cdbfa17b4b09`.
+
+**Implementation and discrepancy diagnosis**
+
+This checkpoint adds only existing S7 analysis/telescope embodiment:
+1. Three authored nested barrel footprints with 12, 10, and 8 convex sides.
+2. Radial-frame alignment of the nested barrel stages.
+3. Two presentation-only barrel collars that deepen the existing mechanical stack.
+
+No product feature, Seat capacity, Seat hierarchy, S8 topology, S10 camera specification, backend authority, or provider/runtime authority was changed.
+
+The first exact-head Full-System run on implementation commit `5aee6ba6` failed one stale test because an older generic assertion still required five mechanical details on every facility. The implementation correctly produced seven details for analysis after the two telescope collars were added. The assertion was narrowed by machine role, not weakened, and the replacement exact-head suite passed 1,219/1,219.
+
+**Independent geometry proof**
+
+The three footprints were independently checked for positive winding, strict convexity, and unit-bounded normalized radius. The stage side counts are 12 / 10 / 8. The new collars remain presentation-only and are incorporated into the existing machine subject/envelope rather than introducing a new geometry authority.
+
+**Browser artifact inspection**
+
+The exact-head artifact was downloaded and independently hashed. The local digest matched GitHub's recorded digest exactly. Relative to the prior `e4adaaf4` application artifact:
+- `s2-s10-world.png`: 567 changed pixels; 450 above the RGB threshold.
+- `s2-s10-return-mid.png`: 567 changed pixels; 450 above threshold.
+- `s2-s10-transform-mid.png`: 705 changed pixels; 579 above threshold.
+- `s2-s10-facility.png`: pixel-identical.
+- `s2-s10-seat.png`: pixel-identical.
+
+Camera-basis inspection confirms the changed world region is the existing Alpha branch, whose governed S7 role is **analysis/telescope**. This is a presentation attribution check, not a hierarchy change.
+
+**Current acceptance position**
+
+The S7 analysis family is repository-verified and Browser-verified at this exact head, but the broader 029 physical-machine and visual acceptance remains open. The overall world still needs denser compound embodiment across the four existing S7 families before S24 effects/polish can be treated as final. The next bounded structural target is the existing **operations/fin-deploy** mechanism family. Keep the same discipline: independently calculate footprint/clearance, preserve source/public parity, run exact-head five-gate CI, and inspect the terminal Browser artifact before proceeding.
+

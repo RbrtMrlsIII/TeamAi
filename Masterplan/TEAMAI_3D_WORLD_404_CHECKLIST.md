@@ -8,7 +8,26 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 
 ## 2026-10-07 continuation discipline
 
-The active spatial vehicle is **PR #424 only**. The current verified application head for this checkpoint is `de97b2c6e77bee7d3200679012f9e044d4f8ce61`.
+The active spatial vehicle is **PR #424 only**. The current verified application head for this checkpoint is `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67`.
+
+## 2026-10-07 exact-head continuation checkpoint
+
+**Evidence-bearing application head:** `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67`
+
+Fresh exact-head proof for the bounded S7 analysis/telescope embodiment slice:
+- Full-System `37564475055`: **PASS**, 1,219 project tests passed / 0 failed.
+- Security `37564475051`: **PASS**.
+- Deep Security `37564475130`: **PASS**.
+- Governance `37564474995`: **PASS**; review-readiness remains skipped because #424 is Draft.
+- Canonical Browser `37564475043`: **PASS**, 91 Playwright tests passed / 4 skipped.
+- Browser artifact: `11458442898`.
+- Browser artifact SHA-256: `38a8b0ea91a540756f7bb5ea36b9423d1dde6c283fd96175f9c2cdbfa17b4b09`.
+
+The slice changes only existing S7 analysis machinery: authored 12/10/8-sided nested barrel footprints, radial-frame rotation, and two presentation-only barrel collars. A first exact-head Full-System run exposed and then corrected one stale mechanical-detail-count assertion. Validation was not weakened.
+
+Visual evidence was inspected from the terminal artifact. World/Return/Transform changed only in the existing Alpha analysis/telescope region; focused Facility and Seat captures remained pixel-identical to the preceding application baseline. The machine remains structurally improved but still below final manufactured-machine visual acceptance. The next bounded implementation target is the existing S7 operations/fin-deploy family, after the documentation head receives its own exact-head proof.
+
+
 
 The acceptance target is not a reference recreation in isolation. Every spatial change must preserve the TeamAi product: Product Law meaning, canonical frontend feature grammar, existing semantic hierarchy, read-model/interaction contracts, and S0-S10 structural ownership. The endorsed Hailuo MP4 plus preserved PNG/reference-board are visual-direction inputs for manufactured form, composition, mechanical density, transformation feel, and camera participation.
 
