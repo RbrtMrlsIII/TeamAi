@@ -403,7 +403,20 @@ export function deriveMachineCoreAssembly({
     ),
     foundationRadius,
   );
-  const assemblyRadius = Math.max(foundationRadius, mechanicalDetailRadialExtent);
+  const portRadialExtent = Math.max(
+    ...ports.map((port) =>
+      Math.hypot(
+        Number(port.point.x) - center.x,
+        Number(port.point.z) - center.z,
+      ) + Number(port.radius || 0)
+    ),
+    0,
+  );
+  const assemblyRadius = Math.max(
+    foundationRadius,
+    mechanicalDetailRadialExtent,
+    portRadialExtent,
+  );
   const root = rootContext();
   const radialCenterlineGap = adjacentSeatRadius == null
     ? null
@@ -422,7 +435,7 @@ export function deriveMachineCoreAssembly({
     expansionAmount: expansion,
     receptionAmount: reception,
     envelope: Object.freeze({
-      radius: foundationRadius,
+      radius: assemblyRadius,
       height: components.reduce(
         (max, component) => Math.max(max, component.center.y + component.height / 2),
         center.y,
