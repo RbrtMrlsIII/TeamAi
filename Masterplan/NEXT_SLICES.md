@@ -28,11 +28,25 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial implementation head: `55e272e6d57a9617dc73acc53e18bb951c004050` (S7-V14 Facility Body Production Parity; exact-head five-gate proof complete).
+Current verified application head: `8dc922528ff850add4a2e9537d2999cda6a86184` (S8 endpoint/junction embodiment; exact-head five-gate proof complete). The live branch may advance with documentation-only reconciliation.
 
 Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances **S7-V13 → S7-V14** by promoting the existing authored S7 facility-body construction into the canonical production Hero raw-WebGL path. The slice publishes `machine-world-facility-shell.js`, renders 20 presentation-only body descriptors across four family-specific silhouettes and five physical layers, and preserves the existing S6/S7 semantics, S8 topology, S10 camera authority, Seat cardinality, and backend/runtime boundaries.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
+
+### 2026-10-08 S8 endpoint/junction embodiment
+
+Producing application head: `8dc922528ff850add4a2e9537d2999cda6a86184`.
+
+- 8 machine endpoint collars + 11 facility-port flanges = 19 presentation-only descriptors.
+- Independent inter-machine clearance regression passes across Seats 1–10 and expansion states 0/1 at the governed 0.16 floor.
+- Canonical Browser `37667902387`: **PASS**, 92 passed / 4 skipped.
+- Artifact `11502884380`; SHA-256 `sha256:d12f3c53d1909e52a8001d7f7ab644f30847fa53d6b7bc8911d8ddec0403db4c`.
+- Artifact inspection found zero pixel changes in the comparable S2–S10 world/facility/Seat/return/transform captures versus the preceding S7-V15 application artifact.
+- Diagnosis: the endpoint primitives are centered on existing larger interface bodies and are depth-occluded; authored endpoint direction/rotation is not consumed by the renderer draw.
+- Result: **browser-executed and structurally verified, but visually ineffective**.
+- Next correction: move the endpoint/flange embodiment outward along the authored direction, orient it as a real radial connector, and re-run independent clearance plus exact-head Browser proof.
+- Manifest hygiene follow-up: direct renderer imports `machine-world-structural-conduit.js` and `machine-world-pod-docking-embodiment.js` are omitted from the spatial publication manifest. Add coverage before treating the runtime sync mechanism as complete.
 
 
 ### 2026-10-07 real-product visual finding
