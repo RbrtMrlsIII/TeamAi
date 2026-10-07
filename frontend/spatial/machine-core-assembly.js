@@ -63,7 +63,7 @@ function freezeComponent({
 }
 
 export const MACHINE_CORE_ASSEMBLY_ID = 'MACHINE-CORE-ASSEMBLY';
-export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V4';
+export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V5';
 
 export const CORE_COMPONENT_ROLES = Object.freeze([
   'foundation-shell',
@@ -80,6 +80,16 @@ export const CORE_PORT_ROLES = Object.freeze([
   'south',
   'west',
 ]);
+\nconst CORE_REACTOR_CAGE_FIN_OUTLINE = Object.freeze([
+  [-1.00, -0.70],
+  [-0.38, -1.00],
+  [0.48, -0.92],
+  [1.00, -0.12],
+  [0.62, 0.74],
+  [-0.22, 1.00],
+  [-1.00, 0.26],
+]);
+
 
 export function deriveMachineCorePorts({
   hub,
@@ -343,7 +353,7 @@ export function deriveMachineCoreAssembly({
         ...rootContext(),
       });
     }),
-    Object.freeze({
+        Object.freeze({
       id: 'CORE_REACTOR_INNER_HOUSING',
       role: 'reactor-inner-housing',
       profile: 'nested-reactor-housing',
@@ -360,6 +370,26 @@ export function deriveMachineCoreAssembly({
       rotationY: Math.PI / 8,
       materialRole: 'glass',
       ...rootContext(),
+    }),,
+    ...Array.from({ length: 8 }, (_, index) => {
+      const angle = index * (TAU / 8) + Math.PI / 8;
+      const radius = reactorRadius * 1.18;
+      const point = polar(radius, angle, center.y + 1.12 + 0.03 * expansion);
+      return Object.freeze({
+        id: `CORE_REACTOR_CAGE_FIN_${index + 1}`,
+        role: 'reactor-cage-fin',
+        profile: 'radial-reactor-cage-fin',
+        center: point,
+        dimensions: Object.freeze({
+          x: Math.min(0.24, reactorRadius * 0.42),
+          y: 0.72 + 0.06 * expansion,
+          z: Math.min(0.30, reactorRadius * 0.52),
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        outline: CORE_REACTOR_CAGE_FIN_OUTLINE,
+        ...rootContext(),
+      });
     }),
   ]);
 
