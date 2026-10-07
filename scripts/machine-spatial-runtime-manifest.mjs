@@ -4,6 +4,7 @@ export const MACHINE_SPATIAL_RUNTIME_FILES = Object.freeze([
   'seat-connection-edge.js',
   'seat-adjacent-division-wiring.js',
   'machine-core-seat-connection.js',
+  'machine-core-layout.js',
   'machine-core-assembly.js',
   'machine-hero-scene.js',
   'machine-subject.js',
