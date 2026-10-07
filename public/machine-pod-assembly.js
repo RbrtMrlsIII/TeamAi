@@ -355,9 +355,9 @@ export function deriveMachinePodAssembly({
         shape: 'POD_RIB',
         profile: 'pod-shell-rib',
         center: Object.freeze({
-          x: center.x + radial.x * 0.02 + Math.cos(angle) * ribRadius,
+          x: center.x + Math.cos(angle) * ribRadius,
           y: center.y + height * 0.18,
-          z: center.z + radial.z * 0.02 + Math.sin(angle) * ribRadius,
+          z: center.z + Math.sin(angle) * ribRadius,
         }),
         dimensions: Object.freeze({
           x: minimumSpan * 0.085,
