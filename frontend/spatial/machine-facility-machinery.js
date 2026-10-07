@@ -105,8 +105,6 @@ function componentMotion(machineRole, componentRole) {
     operations: {
       'deployment-fin': Object.freeze({ outward: 0, tangent: 0.20, rotation: Math.PI * 0.26 }),
       'deployment-fin-secondary': Object.freeze({ outward: 0, tangent: 0.20, rotation: -Math.PI * 0.22 }),
-      'fin-actuator-primary': Object.freeze({ outward: 0.03, tangent: 0.12, rotation: Math.PI * 0.20 }),
-      'fin-actuator-secondary': Object.freeze({ outward: 0.03, tangent: -0.12, rotation: -Math.PI * 0.18 }),
       'structural-spine': Object.freeze({ outward: 0.08, tangent: 0, rotation: Math.PI * 0.12 }),
     },
     control: {
