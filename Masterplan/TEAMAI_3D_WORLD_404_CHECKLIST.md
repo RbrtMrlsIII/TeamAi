@@ -8,7 +8,7 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 
 ## 2026-10-07 continuation discipline
 
-The active spatial vehicle is **PR #424 only**. The current exact implementation head for this checkpoint is `2307ee6a87a129ba340b9a0ce1f49ec0f4ee21be`.
+The active spatial vehicle is **PR #424 only**. The current exact implementation head for this checkpoint is `0aead796107a46ec00b5650c7e3dd132ec95d3ff`.
 
 ## 2026-10-07 exact-head continuation checkpoint
 
@@ -36,15 +36,15 @@ The exact `/hero/` video now supplies runtime-behavior evidence. Human visual ac
 
 ## 2026-10-07 exact-head S2/S3 embodiment checkpoint
 
-**Documentation-bearing head:** `2307ee6a87a129ba340b9a0ce1f49ec0f4ee21be`
+**Documentation-bearing head:** `0aead796107a46ec00b5650c7e3dd132ec95d3ff`
 **Producing implementation head:** `266a06042d267d40e0c0678e98479e0ca792d714`
 
-- Full-System at producing implementation head `37575266019`: **PASS**, 1,220 project tests passed / 0 failed.
-- Governance at producing implementation head `37575265886`: **PASS**.
-- Security / Deep Security at producing implementation head: terminal success.
-- Fresh documentation-head Browser `37576291685`: **PASS**, 92 passed / 4 skipped.
-- Fresh documentation-head Browser artifact `11462888681`; SHA-256 `20233bc8ddd6fe7714d9273caaaeb0d61f2db34b37006761a745c3be6b4ede1d`.
-- Fresh documentation-head real-product video: VP8/WebM, 800×500, 25 fps, 12.56 s, SHA-256 `bd76405a24146b2316f74ac370c692589a0efc70ddade2822960cd123ed91b0d`.
+- Producing-head Full-System `37575266019`: **PASS**, 1,220 project tests passed / 0 failed.
+- Producing-head Governance `37575265886`: **PASS**.
+- Producing-head Security / Deep Security: terminal success.
+- Documentation-head Browser `37576921357`: **PASS**, 92 passed / 4 skipped.
+- Documentation-head Browser artifact `11462413569`: SHA-256 `08f4b60233815f85eb41dd843673e8f5ed546465a034e4be21aca3290007abbb`.
+- The documentation-head artifact contains the real `/hero/` product recording from `tests/e2e/029-real-product-video-evidence.spec.ts`; the binary artifact is the source of truth for recording metadata.
 
 The bounded structural implementation strengthens only the existing S2 Core and S3 Pod authorities. S3 uses the authored 12-sided Pod shell and 17 mechanical details. S2 uses six layered Core components and 32 mechanical details, with the published Core envelope including foundation, mechanical-detail, and port radial reach.
 
