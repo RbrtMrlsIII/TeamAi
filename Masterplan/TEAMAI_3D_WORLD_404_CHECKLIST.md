@@ -1211,6 +1211,11 @@ The current slice does not change Seat cardinality, semantic topology, facility 
 - [x] `S7-V13` machinery version recorded.
 - [x] Frontend/public machinery sources are exact-parity.
 - [x] Independent 1–10 Seat geometry matrix passes with minimum conservative housing margin `0.08767`.
-- [ ] Exact-head Full-System / Governance / Security / Deep Security / Browser proof for the resulting documentation-bearing head.
+- [x] Exact-head Full-System / Governance / Security / Deep Security / Browser proof completed for the resulting documentation-bearing head.
 
 The slice adds mechanical load-path structure only. It does not change Seat capacity, semantic topology, ports, camera authority, or backend/runtime authority.
+
+
+### 2026-10-07 S7 Control verification closure
+
+The `S7-V13` Control rotor-drive-link slice is now exact-head verified. Browser run `37649478815` passed `92` tests with `4` historical skips and produced artifact `11496462178` with SHA-256 `f86ef0cf6528585f9a11017bb31f31083b2738bd92c7d8c4fc054266f5ed8b0a`. Full-System `37649479000`, Governance `37649478928`, Security `37649478908`, and Deep Security `37649479006` also passed. Human visual acceptance and production/runtime acceptance remain open.

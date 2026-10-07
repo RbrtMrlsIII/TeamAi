@@ -1527,3 +1527,17 @@ This checkpoint supersedes the earlier pending implementation-head note with the
 **Verification**
 - Full exact-head verification for the resulting documentation-bearing head is pending until CI terminates.
 - Earlier S7 Operations and previous Control implementation checkpoints remain historical evidence for their own heads.
+
+
+### E424-2026-10-07L — S7 Control exact-head Browser closure
+
+**Exact head:** `4d67ac6237e614d9fb6e74c1c46389cc9691c7e5`
+
+- Browser run: `37649478815` PASS, `92 passed / 4 skipped`
+- Artifact: `11496462178`
+- Artifact digest: `sha256:f86ef0cf6528585f9a11017bb31f31083b2738bd92c7d8c4fc054266f5ed8b0a`
+- Real-product video: VP8/WebM, 800×500, 25 fps, 13.0 s; SHA-256 `339c240dcd8390dc954642e33b0a3c83c0088ca4b7307ffcc265cfa6496e8ac2`
+- World/Transform/Seat/Return captures remain compositionally stable. Facility diff from the prior verified Operations artifact is localized to a 210×44 px region with `1,065` changed pixels, consistent with a small facility-state presentation difference rather than world-wide layout drift.
+- The current facility screenshot is Beta/Operations, not Gamma/Control. The rotor-drive links are therefore not claimed as pixel-isolated from that screenshot; their acceptance is based on source ownership, focused regression, full 1–10 density geometry, and the exact-head Browser execution.
+
+**Evidence boundary:** repository/browser verification is closed for the slice. Human visual acceptance, production deployment/runtime proof, release authorization, and merge authorization remain open.

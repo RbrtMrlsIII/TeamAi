@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial implementation head: `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f` (S7 Control rotor-drive-link slice; exact-head proof pending for the resulting documentation-bearing head).
+Current exact spatial implementation head: `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f` (S7 Control rotor-drive-link slice; exact-head proof complete for the resulting documentation-bearing head).
 
 Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
 
@@ -240,4 +240,19 @@ The bounded structural frontier deepens the Gamma / Control facility with two pr
 - Frontend/public `machine-facility-machinery.js` remains byte-identical.
 - No semantic hierarchy, topology state, Seat cardinality, port authority, camera authority, or backend/runtime authority changed.
 
-Final exact-head proof for this implementation-plus-documentation state is left to CI.
+Final exact-head proof for this implementation-plus-documentation state is complete.
+
+
+### 2026-10-07 S7 Control exact-head proof result
+
+- Exact head: `4d67ac6237e614d9fb6e74c1c46389cc9691c7e5`
+- Full-System: `37649479000` PASS
+- Governance: `37649478928` PASS
+- Security: `37649478908` PASS
+- Deep Security: `37649479006` PASS
+- Browser: `37649478815` PASS, `92 passed / 4 skipped`
+- Browser artifact: `11496462178`
+- Browser artifact SHA-256: `sha256:f86ef0cf6528585f9a11017bb31f31083b2738bd92c7d8c4fc054266f5ed8b0a`
+- Real-product recording: VP8/WebM, 800×500, 25 fps, 13.0 s; video SHA-256 `339c240dcd8390dc954642e33b0a3c83c0088ca4b7307ffcc265cfa6496e8ac2`
+- Current Gamma geometry minimum conservative housing margin across 1–10 Seats: `0.08767` units against the `0.03` regression floor.
+- Browser captures show stable world/transform/Seat/return composition. The current facility capture is Beta/Operations, so it does not visually isolate the Gamma links; Gamma acceptance rests on authored source, focused regression, independent geometry matrix, and the overall exact-head browser pass.
