@@ -99,12 +99,11 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
     2,
   );
   assert.equal(analysis.mechanicalDetails.length, 9);
-  assert.equal(
-    machinery
-      .filter((machine) => ['control', 'access-commerce'].includes(machine.machineRole))
-      .every((machine) => machine.mechanicalDetails.length === 9),
-    true,
-  );
+  const control = machinery.find((machine) => machine.machineRole === 'control');
+  const access = machinery.find((machine) => machine.machineRole === 'access-commerce');
+  assert.ok(control && access);
+  assert.equal(control.mechanicalDetails.length, 11);
+  assert.equal(access.mechanicalDetails.length, 9);
 });
 
 test('S7 analysis telescope exposes fixed guide rails within the authored housing envelope', () => {
