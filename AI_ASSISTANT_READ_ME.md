@@ -88,6 +88,17 @@ There is no live `HandOver.md`. Future sessions use Issue #409 and this session 
 There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to the applicable Issue/PR/evidence and are never inferred from green CI.
 Parallel `docs/skills` procedure namespaces are forbidden; Skill routing is owned by `docs/SKILL_WIRING.md`.
 
+### Governance continuity markers retained as historical provenance
+
+The governance migration history deliberately retains the following historical assertions so repository tests and cold-session readers can distinguish migrated authority from deleted evidence:
+
+- `closure-pending` remains a valid lifecycle state for governance reconciliation lineage.
+- PR #395 is historical advisory/governance evidence and is not an active product implementation vehicle.
+- Earlier PR #395 advisory evidence is retained as historical exact head context, not current reviewer authority.
+- Historical main baseline `87f466fb0edac3784280128785a8fd2dc757e749` is retained only for migration-test provenance; the live canonical main baseline is `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
+- PR #353 is merged into main and remains the historical machine-promotion lineage; it is not a second active spatial PR.
+- `verification_gaps`, `review_basis`, `governance_and_evidence`, and `non_blocking_observations` remain the canonical structured advisory evidence fields.
+
 ### Historical pre-029-session verification note
 
 The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
