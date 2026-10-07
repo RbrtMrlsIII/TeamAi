@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V11';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V12';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -105,6 +105,8 @@ function componentMotion(machineRole, componentRole) {
     operations: {
       'deployment-fin': Object.freeze({ outward: 0, tangent: 0.20, rotation: Math.PI * 0.26 }),
       'deployment-fin-secondary': Object.freeze({ outward: 0, tangent: 0.20, rotation: -Math.PI * 0.22 }),
+      'fin-actuator-primary': Object.freeze({ outward: 0.03, tangent: 0.12, rotation: Math.PI * 0.20 }),
+      'fin-actuator-secondary': Object.freeze({ outward: 0.03, tangent: -0.12, rotation: -Math.PI * 0.18 }),
       'structural-spine': Object.freeze({ outward: 0.08, tangent: 0, rotation: Math.PI * 0.12 }),
     },
     control: {
@@ -799,7 +801,50 @@ export function deriveMachineFacilityMachinery({
               materialRole: 'trace',
               parentRole: 'deployment-fin-secondary',
               ...rootContext(assembly.branchId + ':FIN-SECONDARY-RAIL'),
+            }),\n            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-ACTUATOR-PRIMARY',
+              role: 'fin-actuator-primary',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.10
+                  + basis.tangent.x * 0.28,
+                y: housingCenter.y + frameHeight * 0.28,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.10
+                  + basis.tangent.z * 0.28,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.06),
+                y: Math.max(0.06, frameHeight * 0.10),
+                z: Math.max(0.24, frameDepth * 0.30),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin',
+              profile: 'operations-fin-actuator-primary',
+              ...rootContext(assembly.branchId + ':FIN-ACTUATOR-PRIMARY'),
             }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-ACTUATOR-SECONDARY',
+              role: 'fin-actuator-secondary',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.10
+                  - basis.tangent.x * 0.28,
+                y: housingCenter.y + frameHeight * 0.31,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.10
+                  - basis.tangent.z * 0.28,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.055),
+                y: Math.max(0.06, frameHeight * 0.10),
+                z: Math.max(0.24, frameDepth * 0.28),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin-secondary',
+              profile: 'operations-fin-actuator-secondary',
+              ...rootContext(assembly.branchId + ':FIN-ACTUATOR-SECONDARY'),
+            })
           ]
         : []),
       ...(assembly.machineRole === 'control'
