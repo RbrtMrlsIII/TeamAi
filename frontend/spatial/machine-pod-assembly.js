@@ -348,7 +348,7 @@ export function deriveMachinePodAssembly({
     }),
     ...Array.from({ length: 6 }, (_, index) => {
       const angle = index * (TAU / 6);
-      const ribRadius = shellRadius * 0.88;
+      const ribRadius = shellRadius * 0.80;
       return Object.freeze({
         id: `MACHINE-POD:${branchId}:SHELL-RIB:${index + 1}`,
         role: 'shell-rib',
