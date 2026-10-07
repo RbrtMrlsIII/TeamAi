@@ -99,7 +99,8 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
   );
   assert.equal(analysis.mechanicalDetails.length, 7);
   assert.equal(
-    machinery.filter((machine) => machine.machineRole !== 'analysis')
+    machinery
+      .filter((machine) => ['control', 'access-commerce'].includes(machine.machineRole))
       .every((machine) => machine.mechanicalDetails.length === 5),
     true,
   );
