@@ -1541,3 +1541,46 @@ This checkpoint supersedes the earlier pending implementation-head note with the
 - The current facility screenshot is Beta/Operations, not Gamma/Control. The rotor-drive links are therefore not claimed as pixel-isolated from that screenshot; their acceptance is based on source ownership, focused regression, full 1–10 density geometry, and the exact-head Browser execution.
 
 **Evidence boundary:** repository/browser verification is closed for the slice. Human visual acceptance, production deployment/runtime proof, release authorization, and merge authorization remain open.
+### E424-2026-10-08M — S7-V14 facility body production parity
+
+**Verified implementation head:** `55e272e6d57a9617dc73acc53e18bb951c004050`  
+**Current documentation reconciliation head:** `cf55dd2deb35b9903736bc0eb3ad5913f994f08b`
+
+**Scope**
+
+The existing authored S7 facility-body construction is promoted into the canonical raw-WebGL production Hero path. Four S7 facilities retain their existing semantic identities and family roles. Each receives five presentation-only physical layers, yielding 20 body descriptors total.
+
+**Reference interpretation**
+
+The endorsed Hailuo MP4 remains the visual-direction input for layered mechanical construction, articulated module identity, connected-machine depth, and camera-participating transformation. The endorsed PNG/storyboard guides the central-core + compact-inner-field + four-differentiated-outer-machine composition. Neither reference defines Product Law, Seat capacity, semantic IDs, topology authority, geometry constants, backend/runtime truth, or acceptance by resemblance.
+
+**Independent geometry**
+
+A conservative shell-versus-Pod XZ clearance matrix was sampled at Seat counts 1, 5, and 10 for closed, half, and expanded states. The minimum measured margin was approximately **2.7371 units**, above the requested **0.16** clearance. This is a conservative envelope/AABB-style check, not triangle-level collision proof.
+
+**Repository / delivery result**
+
+- `frontend/spatial/machine-world-facility-shell.js` is the authored S7 shell owner.
+- `scripts/machine-spatial-runtime-manifest.mjs` now publishes the shell module.
+- `public/machine-world-facility-shell.js` and `public/machine-world-renderer.js` are synchronized with their canonical source counterparts.
+- The production renderer exposes `data-machine-world-facility-body-shell-count=20` and `data-machine-world-facility-body-main-shell-count=4`.
+
+**Exact implementation-head verification**
+
+- Full-System `37659080295`: **PASS**
+- Governance `37659080256`: **PASS**
+- Security `37659080264`: **PASS**
+- Deep Security `37659080241`: **PASS**
+- Canonical Browser `37659080436`: **PASS**, 92 passed / 4 skipped
+- Browser artifact `11498924852`
+- Independently matched artifact ZIP SHA-256: `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`
+- Real-product recording: VP8/WebM, 800×500, 25 fps, approximately 13.48 s
+
+**Artifact inspection**
+
+The actual `/hero/` artifact now renders the four outer facility body masses on the product surface. Relative to the prior exact-head `aa2f71c...` hero-wide capture, 39,693 pixels exceeded a 5/255 RGB threshold (4.31% of the 1280×720 frame), with the visual delta confined to the machine region while the surrounding controls remained unchanged. This is a bounded visual-delta measurement, not final visual acceptance.
+
+**Acceptance position**
+
+S7-V14 is **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED** at the verified implementation head. The subsequent documentation-only reconciliation head remains subject to its own exact-head evidence cycle. Human visual acceptance, live deployment/runtime proof, release authorization, merge authorization, and final 029 completion remain open.
+
