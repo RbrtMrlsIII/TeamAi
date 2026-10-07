@@ -71,7 +71,7 @@ test('S2-S10 compose into one structurally coherent 10-seat world', () => {
   });
   assert.equal(pod.constructionSlice, 'S3');
   assert.equal(pod.components.length, 7);
-  assert.equal(pod.mechanicalDetails.length, 11);
+  assert.equal(pod.mechanicalDetails.length, 17);
 
   const divisionAssemblies = DIVISIONS.map((childId, childIndex) => {
     const geometry = deriveFocusedSeatDivisionGeometry({
