@@ -161,7 +161,7 @@ export function deriveMachineCoreAssembly({
       role: 'foundation-shell',
       profile: 'hex-foundation',
       center: { ...center, y: center.y },
-      radius: assemblyRadius,
+      radius: foundationRadius,
       height: 0.34 + 0.04 * expansion,
       materialRole: 'metal2',
     }),
