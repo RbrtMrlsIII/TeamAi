@@ -23,6 +23,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - replacement branch: `frontend/029-spatial-world-continuation`
 - current branch head at reconciliation start: `8dc922528ff850add4a2e9537d2999cda6a86184`
+- live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as evidence-integrity continuity)
 - global current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
 - open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
 - governing spatial Issue: #405
