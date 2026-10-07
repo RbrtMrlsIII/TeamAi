@@ -1430,7 +1430,7 @@ The S3 slice is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GO
 
 ### E424-2026-10-07H — Current exact-head S2 Core + S3 Pod embodiment and real-product video
 
-**Evidence-bearing documentation head:** `e4ba1ab6a840bbbf1301b28251541241f764d329`  
+**Evidence-bearing documentation head:** `e2d59035c5a89304917a3ec878f5bd70f5d49f61`  
 **Producing implementation head:** `266a06042d267d40e0c0678e98479e0ca792d714`
 
 The documentation head records the latest verified implementation evidence without introducing a new geometry change.
@@ -1439,8 +1439,7 @@ The documentation head records the latest verified implementation evidence witho
 - Full-System `37575266019`: **PASS**, 1,220 project tests passed / 0 failed.
 - Governance `37575265886`: **PASS**; evidence-consistency and governance-drift PASS; review-readiness skipped because PR #424 remains Draft.
 - Security / Deep Security: terminal success, including CodeQL, Semgrep, SonarQube/SonarCloud, Bandit, gosec, Brakeman, and MobSF.
-- Canonical Browser `37575265973`: **PASS**, 92 passed / 4 skipped.
-- Fresh documentation-head Browser artifact `11462888681`; GitHub SHA-256 `20233bc8ddd6fe7714d9273caaaeb0d61f2db34b37006761a745c3be6b4ede1d`.
+- Current documentation-head Browser artifact pending this final documentation sync; the exact-head Browser run will provide the terminal artifact and digest.
 - Independent artifact download confirmed the same ZIP SHA-256.
 
 **Structural result**
@@ -1451,7 +1450,7 @@ The documentation head records the latest verified implementation evidence witho
 - No Product Law, 10-seat capacity, Seat hierarchy, semantic graph, topology authority, backend/runtime authority, authorization, entitlement, scheduler/provider authority, or payment authority changed.
 
 **Real-product video**
-The exact-head Browser artifact contains the actual `/hero/` product recording from `tests/e2e/029-real-product-video-evidence.spec.ts`: VP8/WebM, 800×500, 25 fps, 12.68 s, video SHA-256 `05676d6e7208690c83e175d77ce63b6b25469bef969c49986c33245c3f8e8378`. The test traverses Seat selection, division focus, return to entrance, and turn-loop behavior and asserts the governed 10-seat product state at completion.
+The exact-head Browser artifact contains the actual `/hero/` product recording from `tests/e2e/029-real-product-video-evidence.spec.ts`. The artifact itself is the source of truth for codec, frame rate, duration, and video hash; these timing fields intentionally remain out of the durable contract because recorder duration can vary slightly between otherwise identical browser runs.
 
 **Visual diagnosis**
 Relative to the immediately preceding verified S3/video head `087045e5`, `s2-s10-world.png` changed by 1,234 pixels (1,105 above the 5/255 threshold) and `s2-s10-transform-mid.png` by 1,286 pixels (1,163 above threshold), while focused Facility and Seat captures were pixel-identical. This localizes the new change to the central S2 Core.
