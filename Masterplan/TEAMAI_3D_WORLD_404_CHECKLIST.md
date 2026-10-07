@@ -8,7 +8,7 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 
 ## 2026-10-07 continuation discipline
 
-The active spatial vehicle is **PR #424 only**. The current exact implementation head for this checkpoint is `266a06042d267d40e0c0678e98479e0ca792d714`.
+The active spatial vehicle is **PR #424 only**. The current exact implementation head for this checkpoint is `2307ee6a87a129ba340b9a0ce1f49ec0f4ee21be`.
 
 ## 2026-10-07 exact-head continuation checkpoint
 
@@ -36,22 +36,23 @@ The exact `/hero/` video now supplies runtime-behavior evidence. Human visual ac
 
 ## 2026-10-07 exact-head S2/S3 embodiment checkpoint
 
-**Evidence-bearing application head:** `266a06042d267d40e0c0678e98479e0ca792d714`
+**Documentation-bearing head:** `2307ee6a87a129ba340b9a0ce1f49ec0f4ee21be`
+**Producing implementation head:** `266a06042d267d40e0c0678e98479e0ca792d714`
 
-- Full-System `37575266019`: **PASS**, 1,220 project tests passed / 0 failed.
-- Governance `37575265886`: **PASS**; evidence-consistency and governance-drift PASS; review-readiness skipped because #424 remains Draft.
-- Security / Deep Security: terminal success, including CodeQL, Semgrep, SonarQube/SonarCloud, Bandit, gosec, Brakeman, and MobSF.
-- Canonical Browser `37575265973`: **PASS**, 92 passed / 4 skipped.
-- Browser artifact `11462456452`; SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`.
-- Real-product video: VP8/WebM, 800×500, 25 fps, 12.68 s, SHA-256 `05676d6e7208690c83e175d77ce63b6b25469bef969c49986c33245c3f8e8378`.
+- Full-System at producing implementation head `37575266019`: **PASS**, 1,220 project tests passed / 0 failed.
+- Governance at producing implementation head `37575265886`: **PASS**.
+- Security / Deep Security at producing implementation head: terminal success.
+- Fresh documentation-head Browser `37576291685`: **PASS**, 92 passed / 4 skipped.
+- Fresh documentation-head Browser artifact `11462888681`; SHA-256 `20233bc8ddd6fe7714d9273caaaeb0d61f2db34b37006761a745c3be6b4ede1d`.
+- Fresh documentation-head real-product video: VP8/WebM, 800×500, 25 fps, 12.56 s, SHA-256 `bd76405a24146b2316f74ac370c692589a0efc70ddade2822960cd123ed91b0d`.
 
-The bounded structural implementation strengthens only the existing S3 Pod and S2 Core authorities. S3 uses the authored 12-sided Pod shell and 17 mechanical details. S2 uses six layered Core components and 32 mechanical details, with the published Core envelope derived from the maximum of foundation, mechanical-detail, and port radial reach.
+The bounded structural implementation strengthens only the existing S2 Core and S3 Pod authorities. S3 uses the authored 12-sided Pod shell and 17 mechanical details. S2 uses six layered Core components and 32 mechanical details, with the published Core envelope including foundation, mechanical-detail, and port radial reach.
 
 Relative to the preceding verified S3/video head `087045e5`, the S2 change altered `s2-s10-world.png` by 1,234 pixels (1,105 at >=5/255) and `s2-s10-transform-mid.png` by 1,286 pixels (1,163 at >=5/255); focused Facility and Seat captures were pixel-identical, localizing the change to the Core.
 
 **Acceptance:** IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED for the bounded S2/S3 embodiment. LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, and final 029 release gates remain separately open.
 
-The storyboard's final rocket-hologram presentation is **not** a required product target. Product Law remains authoritative over the cinematic 8-Pod reference composition, while TeamAi remains a 1–10 Seat product with 10 guest presentation slots.
+The storyboard's final rocket-hologram presentation is **not** a required product target. Product Law remains authoritative over the cinematic 8-Pod composition, while TeamAi remains a 1–10 Seat product with 10 guest presentation slots.
 
 
 ## Evidence navigation contract
