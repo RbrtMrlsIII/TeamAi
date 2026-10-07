@@ -1460,3 +1460,37 @@ The storyboard's 8-Pod cinematic composition remains visual direction only. Prod
 
 **Acceptance**
 The S2/S3 embodiment is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED. LIVE-DEPLOYED, RUNTIME-PROVEN for production infrastructure, HUMAN-ACCEPTED, and final 029 release gates remain separate.
+
+### E424-2026-10-07I — S7 Operations fin-deploy actuator-housing implementation
+
+**Producing implementation head:** `2f791d565443422debed414e54d544b5b5fd4305`
+
+This checkpoint is implementation-state evidence pending final exact-head verification. It records the bounded structural change without upgrading its evidence state in advance of CI.
+
+**Implementation**
+- `S7-V12` machinery.
+- Two presentation-only mechanical details: `fin-actuator-primary` and `fin-actuator-secondary`.
+- Parent roles: `deployment-fin` and `deployment-fin-secondary`.
+- Profiles: `operations-fin-actuator-primary` and `operations-fin-actuator-secondary`.
+- Both details participate in the existing S7 machine subject/envelope.
+- No semantic hierarchy, topology authority, Seat capacity, port authority, camera authority, or backend/runtime authority changed.
+
+**Independent geometry**
+- Representative 10-seat Operations / Beta housing dimensions: `2.05 × 0.92 × 1.46`.
+- Housing radial boundary at the governed Beta angle: `0.73`.
+- Primary actuator conservative radial reach: approximately `0.54325`, margin approximately `0.18675`.
+- Secondary actuator conservative radial reach: approximately `0.52781`, margin approximately `0.20219`.
+- The regression requires a `0.03` minimum local housing-bound margin; both representatives exceed that requirement.
+
+**Repository hygiene**
+- Frontend/public `machine-facility-machinery.js` blobs are byte-identical at this implementation head.
+- Earlier diagnostic head `c4c75bf...` failed Full-System syntax checking because a malformed literal newline sequence was introduced during insertion. The defect was diagnosed from CI and repaired without weakening validators.
+
+**Verification state**
+- Full-System: pending for the final documentation head.
+- Governance: pending for the final documentation head.
+- Security: pending for the final documentation head.
+- Deep Security: pending for the final documentation head.
+- Browser: pending for the final documentation head.
+
+No acceptance or release claim is made from this implementation checkpoint alone.
