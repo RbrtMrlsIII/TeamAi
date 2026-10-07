@@ -1430,7 +1430,7 @@ The S3 slice is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GO
 
 ### E424-2026-10-07H — Current exact-head S2 Core + S3 Pod embodiment and real-product video
 
-**Evidence-bearing documentation head:** `24884e0979c661ce2a87156ff0c6da9b64251c98`  
+**Evidence-bearing documentation head:** `e4ba1ab6a840bbbf1301b28251541241f764d329`  
 **Producing implementation head:** `266a06042d267d40e0c0678e98479e0ca792d714`
 
 The documentation head records the latest verified implementation evidence without introducing a new geometry change.
@@ -1440,7 +1440,7 @@ The documentation head records the latest verified implementation evidence witho
 - Governance `37575265886`: **PASS**; evidence-consistency and governance-drift PASS; review-readiness skipped because PR #424 remains Draft.
 - Security / Deep Security: terminal success, including CodeQL, Semgrep, SonarQube/SonarCloud, Bandit, gosec, Brakeman, and MobSF.
 - Canonical Browser `37575265973`: **PASS**, 92 passed / 4 skipped.
-- Browser artifact `11462456452`; GitHub SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`.
+- Fresh documentation-head Browser artifact `11462888681`; GitHub SHA-256 `20233bc8ddd6fe7714d9273caaaeb0d61f2db34b37006761a745c3be6b4ede1d`.
 - Independent artifact download confirmed the same ZIP SHA-256.
 
 **Structural result**
