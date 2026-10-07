@@ -107,6 +107,20 @@ test('canonical renderer scopes Pod opening to the focused branch while keeping 
   assert.match(renderer, /podSubjectOverride: focusedPodSubjectResolved/);
 });
 
+test('canonical renderer elevates authored studio lighting when a facility is focused', async () => {
+  const source = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.match(source, /const facilityFocused = Boolean\(state\?\.facilityFocused\);/);
+  assert.match(
+    source,
+    /surface: facilityFocused[\s\S]{0,220}0\.92[\s\S]{0,180}0\.82[\s\S]{0,120}0\.62/,
+  );
+  assert.match(
+    source,
+    /focus: facilityFocused[\s\S]{0,220}0\.90[\s\S]{0,180}0\.86[\s\S]{0,120}0\.24/,
+  );
+  assert.match(source, /machineWorldFacilityFocusLighting/);
+});
+
 test('canonical renderer projects the authored S7 facility chassis/support detail layer', async () => {
   const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
   const machinery = await readFile(new URL('../public/machine-facility-machinery.js', import.meta.url), 'utf8');

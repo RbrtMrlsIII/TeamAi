@@ -101,13 +101,22 @@ const finite = (v,f=0) => Number.isFinite(Number(v)) ? Number(v) : f;
 function resolveHeroMaterialContext(state, reducedMotion) {
   const root = globalThis.document?.documentElement;
   const heroState = String(state?.heroState || 'IDLE');
+  const facilityFocused = Boolean(state?.facilityFocused);
   return mapHeroThemeLighting({
     themeMode: root?.getAttribute?.('data-theme-mode') || 'light',
     themeSource: root?.getAttribute?.('data-theme-source') || 'default',
     density: root?.getAttribute?.('data-density') || 'default',
     atmosphere: 0.52,
-    surface: heroState === 'ACTIVE' || heroState === 'CONTRIBUTE' ? 0.82 : 0.62,
-    focus: heroState === 'FOCUS' || heroState === 'ACTIVE' ? 0.86 : 0.24,
+    surface: facilityFocused
+      ? 0.92
+      : heroState === 'ACTIVE' || heroState === 'CONTRIBUTE'
+        ? 0.82
+        : 0.62,
+    focus: facilityFocused
+      ? 0.90
+      : heroState === 'FOCUS' || heroState === 'ACTIVE'
+        ? 0.86
+        : 0.24,
     signal: heroState === 'CONTRIBUTE' ? 1 : heroState === 'ABSORB' || heroState === 'REFLECT' ? 0.78 : 0,
     status: heroState === 'BLOCKED' ? 0.8 : heroState === 'UNAUTHORIZED' ? 0.55 : 0,
     reducedMotion: Boolean(reducedMotion),
@@ -1621,6 +1630,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const materialLighting = resolveHeroMaterialContext(state, reducedMotion);
     activeHeroLighting = materialLighting;
     activeHeroMaterials = authoredHeroMaterialSet(materialLighting);
+    canvas.dataset.machineWorldFacilityFocusLighting =
+      Boolean(state.facilityFocused) ? 'enhanced' : 'base';
     const authoredRing = authoredRingMaterial(materialLighting);
     const authoredSeatShell = authoredSeatShellMaterial(materialLighting);
     const authoredSeatInset = authoredSeatInsetMaterial(materialLighting);
