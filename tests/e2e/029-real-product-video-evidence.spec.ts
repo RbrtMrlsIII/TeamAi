@@ -13,33 +13,33 @@ test.describe('029 real-product video evidence', () => {
 
     await page.waitForTimeout(1200);
 
-    await page.evaluate(() => window.TeamAiHero.selectSeatShell(0));
+    await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await page.waitForTimeout(1100);
 
-    await page.evaluate(() => window.TeamAiHero.focusChild('SEAT_CONNECTION'));
+    await page.evaluate(() => (window as any).TeamAiHero.focusChild('SEAT_CONNECTION'));
     await page.waitForTimeout(900);
 
-    await page.evaluate(() => window.TeamAiHero.focusChild('SEAT_BEHAVIOR'));
+    await page.evaluate(() => (window as any).TeamAiHero.focusChild('SEAT_BEHAVIOR'));
     await page.waitForTimeout(900);
 
-    await page.evaluate(() => window.TeamAiHero.focusChild('SEAT_TASK_EVIDENCE'));
+    await page.evaluate(() => (window as any).TeamAiHero.focusChild('SEAT_TASK_EVIDENCE'));
     await page.waitForTimeout(900);
 
-    await page.evaluate(() => window.TeamAiHero.closeHierarchyParent());
+    await page.evaluate(() => (window as any).TeamAiHero.closeHierarchyParent());
     await page.waitForTimeout(1100);
 
-    await page.evaluate(() => window.TeamAiHero.startLoop());
+    await page.evaluate(() => (window as any).TeamAiHero.startLoop());
     await page.waitForTimeout(3000);
-    await page.evaluate(() => window.TeamAiHero.stopLoop());
+    await page.evaluate(() => (window as any).TeamAiHero.stopLoop());
     await page.waitForTimeout(500);
 
     const snapshot = await page.evaluate(() => ({
-      seatCount: window.TeamAiHero.getSeatCount(),
-      selectedSeat: window.TeamAiHero.getSelectedSeat(),
-      state: window.TeamAiHero.getState(),
-      cameraId: window.TeamAiHero.getBaseCameraId(),
-      reducedMotion: window.TeamAiHero.getReducedMotion(),
-      hierarchyOpen: window.TeamAiHero.getHierarchyState().openParentId,
+      seatCount: (window as any).TeamAiHero.getSeatCount(),
+      selectedSeat: (window as any).TeamAiHero.getSelectedSeat(),
+      state: (window as any).TeamAiHero.getState(),
+      cameraId: (window as any).TeamAiHero.getBaseCameraId(),
+      reducedMotion: (window as any).TeamAiHero.getReducedMotion(),
+      hierarchyOpen: (window as any).TeamAiHero.getHierarchyState().openParentId,
     }));
 
     expect(snapshot.seatCount).toBe(10);
