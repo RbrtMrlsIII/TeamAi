@@ -155,7 +155,7 @@ test('S2 raw Hero and Three adapter consume the authored reactor-cage fin profil
 
   assert.match(renderer, /reactor-cage-fin/);
   assert.match(renderer, /CORE_FIN/);
-  assert.match(adapter, /buildExtrudedPolygonGeometry\\(THREE, descriptor, descriptor\\.outline\\)/);
+  assert.match(adapter, /buildExtrudedPolygonGeometry\(THREE, descriptor, descriptor\.outline\)/);
 });
 
 test('S2 fails closed on corrupted assembly or component root ownership', () => {
