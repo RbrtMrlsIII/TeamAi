@@ -68,27 +68,39 @@ test('S2 authored mechanical detail layer adds real internal machine structure w
     workspaceCore: { radius: 4.046 },
     expansionAmount: 1,
   });
-  assert.equal(assembly.version, 'S2-V3');
+  assert.equal(assembly.version, 'S2-V4');
   const braces = assembly.mechanicalDetails.filter((item) => item.role === 'foundation-brace');
   const guards = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-guard');
   const housing = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-inner-housing');
 
   assert.equal(braces.length, 6);
   assert.equal(guards.length, 6);
+  const panels = assembly.mechanicalDetails.filter((item) => item.role === 'foundation-panel');
+  const portCollars = assembly.mechanicalDetails.filter((item) => item.role === 'port-collar');
+  const ribs = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-rib');
+  const bands = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-band');
   assert.equal(housing.length, 1);
+  assert.equal(panels.length, 6);
+  assert.equal(portCollars.length, 4);
+  assert.equal(ribs.length, 6);
+  assert.equal(bands.length, 3);
   assert.ok(braces.every((item) => item.profile === 'radial-foundation-brace'));
   assert.ok(guards.every((item) => item.profile === 'reactor-guard-post'));
   assert.equal(housing[0].profile, 'nested-reactor-housing');
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionSlice === 'S2'));
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-core-assembly.js'));
+  assert.equal(assembly.mechanicalDetails.length, 26);
   const subjectIds = new Set(assembly.subject.sourcePartIds);
   assert.ok(assembly.mechanicalDetails.every((item) => subjectIds.has(item.id)));
 
   const detailExtent = Math.max(
-    ...braces.map((item) => Math.hypot(item.center.x, item.center.z)
-      + Math.hypot(item.dimensions.x * 0.5, item.dimensions.z * 0.5)),
+    ...assembly.mechanicalDetails.map((item) =>
+      Math.hypot(item.center.x, item.center.z)
+      + Math.hypot(item.dimensions.x * 0.5, item.dimensions.z * 0.5)
+    ),
   );
-  assert.ok(detailExtent <= assembly.components[0].radius + 0.02);
+  assert.ok(detailExtent <= assembly.envelope.radius + 0.02);
+  assert.equal(assembly.envelope.radius >= assembly.components[0].radius, true);
 });
 
 test('S2 fails closed on corrupted assembly or component root ownership', () => {

@@ -63,7 +63,7 @@ function freezeComponent({
 }
 
 export const MACHINE_CORE_ASSEMBLY_ID = 'MACHINE-CORE-ASSEMBLY';
-export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V3';
+export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V4';
 
 export const CORE_COMPONENT_ROLES = Object.freeze([
   'foundation-shell',
@@ -161,7 +161,7 @@ export function deriveMachineCoreAssembly({
       role: 'foundation-shell',
       profile: 'hex-foundation',
       center: { ...center, y: center.y },
-      radius: foundationRadius,
+      radius: assemblyRadius,
       height: 0.34 + 0.04 * expansion,
       materialRole: 'metal2',
     }),
@@ -265,6 +265,84 @@ export function deriveMachineCoreAssembly({
         ...rootContext(),
       });
     }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6);
+      const radius = foundationRadius * 0.80;
+      const point = polar(radius, angle, center.y + 0.25 + 0.01 * expansion);
+      return Object.freeze({
+        id: `CORE_FOUNDATION_PANEL_${index + 1}`,
+        role: 'foundation-panel',
+        profile: 'beveled-foundation-panel',
+        center: point,
+        dimensions: Object.freeze({
+          x: foundationRadius * 0.26,
+          y: 0.18 + 0.02 * expansion,
+          z: foundationRadius * 0.12,
+        }),
+        rotationY: angle,
+        materialRole: 'metal',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = index * (TAU / 4);
+      const radius = hubRadius * 0.92;
+      const point = polar(radius, angle, center.y + 0.69 + 0.02 * expansion);
+      return Object.freeze({
+        id: `CORE_PORT_COLLAR_${index + 1}`,
+        role: 'port-collar',
+        profile: 'radial-port-collar',
+        center: point,
+        dimensions: Object.freeze({
+          x: hubRadius * 0.20,
+          y: 0.14 + 0.01 * expansion,
+          z: hubRadius * 0.14,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6) + Math.PI / 6;
+      const radius = reactorRadius * 0.92;
+      const point = polar(radius, angle, center.y + 1.08 + 0.03 * expansion);
+      return Object.freeze({
+        id: `CORE_REACTOR_RIB_${index + 1}`,
+        role: 'reactor-rib',
+        profile: 'reactor-rib',
+        center: point,
+        dimensions: Object.freeze({
+          x: 0.075,
+          y: 0.28 + 0.03 * expansion,
+          z: 0.11,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 3 }, (_, index) => {
+      const bandScale = [0.92, 1.02, 1.12][index];
+      return Object.freeze({
+        id: `CORE_REACTOR_BAND_${index + 1}`,
+        role: 'reactor-band',
+        profile: 'concentric-reactor-band',
+        center: Object.freeze({
+          x: center.x,
+          y: center.y + 0.96 + index * 0.19 + 0.03 * expansion,
+          z: center.z,
+        }),
+        dimensions: Object.freeze({
+          x: reactorRadius * bandScale,
+          y: 0.075 + 0.01 * expansion,
+          z: reactorRadius * bandScale,
+        }),
+        rotationY: Math.PI / 12 * index,
+        materialRole: 'glass',
+        ...rootContext(),
+      });
+    }),
     Object.freeze({
       id: 'CORE_REACTOR_INNER_HOUSING',
       role: 'reactor-inner-housing',
@@ -313,10 +391,23 @@ export function deriveMachineCoreAssembly({
     },
   }));
 
+  const mechanicalDetailRadialExtent = Math.max(
+    ...mechanicalDetails.map((detail) =>
+      Math.hypot(
+        Number(detail.center.x) - center.x,
+        Number(detail.center.z) - center.z,
+      ) + Math.hypot(
+        Number(detail.dimensions?.x || 0) * 0.5,
+        Number(detail.dimensions?.z || 0) * 0.5,
+      )
+    ),
+    foundationRadius,
+  );
+  const assemblyRadius = Math.max(foundationRadius, mechanicalDetailRadialExtent);
   const root = rootContext();
   const radialCenterlineGap = adjacentSeatRadius == null
     ? null
-    : Number(adjacentSeatRadius) - foundationRadius;
+    : Number(adjacentSeatRadius) - assemblyRadius;
 
   return Object.freeze({
     id: MACHINE_CORE_ASSEMBLY_ID,
