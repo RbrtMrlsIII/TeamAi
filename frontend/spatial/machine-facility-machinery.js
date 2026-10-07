@@ -723,16 +723,16 @@ export function deriveMachineFacilityMachinery({
               role: 'deployment-fin-primary-rail',
               shape: 'BOX',
               center: Object.freeze({
-                x: center.x + basis.outward.x * frameDepth * 0.18
+                x: center.x + basis.outward.x * frameDepth * 0.12
                   + basis.tangent.x * frameWidth * 0.34,
                 y: center.y + frameHeight * 0.43,
-                z: center.z + basis.outward.z * frameDepth * 0.18
+                z: center.z + basis.outward.z * frameDepth * 0.12
                   + basis.tangent.z * frameWidth * 0.34,
               }),
               dimensions: Object.freeze({
-                x: frameWidth * 0.09,
+                x: frameWidth * 0.07,
                 y: Math.max(0.06, frameHeight * 0.07),
-                z: frameDepth * 0.42,
+                z: frameDepth * 0.32,
               }),
               rotationY: basis.angle,
               materialRole: 'trace',
@@ -744,16 +744,16 @@ export function deriveMachineFacilityMachinery({
               role: 'deployment-fin-secondary-rail',
               shape: 'BOX',
               center: Object.freeze({
-                x: center.x + basis.outward.x * frameDepth * 0.22
+                x: center.x + basis.outward.x * frameDepth * 0.12
                   - basis.tangent.x * frameWidth * 0.34,
                 y: center.y + frameHeight * 0.47,
-                z: center.z + basis.outward.z * frameDepth * 0.22
+                z: center.z + basis.outward.z * frameDepth * 0.12
                   - basis.tangent.z * frameWidth * 0.34,
               }),
               dimensions: Object.freeze({
-                x: frameWidth * 0.08,
+                x: frameWidth * 0.06,
                 y: Math.max(0.06, frameHeight * 0.07),
-                z: frameDepth * 0.36,
+                z: frameDepth * 0.28,
               }),
               rotationY: basis.angle,
               materialRole: 'trace',
