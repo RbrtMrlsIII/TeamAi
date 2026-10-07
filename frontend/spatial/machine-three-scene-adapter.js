@@ -48,7 +48,7 @@ import {
 } from './machine-seat-division-profile.js';
 
 export const MACHINE_THREE_ADAPTER_ID = 'MACHINE-THREE-SCENE-ADAPTER';
-export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V2';
+export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V3';
 export const MACHINE_THREE_REQUIRED_WEBGL = 'WEBGL2';
 
 export const AUTHORED_POD_SHELL_PROFILE = MACHINE_POD_SHELL_PROFILE;
@@ -870,8 +870,15 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     return light;
   }
 
-  function buildLocalPracticalLighting({ core = null, pods = [], facilities = [] } = {}) {
+  function buildLocalPracticalLighting({
+    core = null,
+    pods = [],
+    facilities = [],
+    presentationLighting = {},
+  } = {}) {
     let count = 0;
+    const facilityFocused = presentationLighting?.mode === 'FACILITY_FOCUS';
+    const facilityFocusBranchId = presentationLighting?.branchId || null;
     const energyColor = authoredMaterials.energy?.color || [0.08, 0.64, 1.00];
     const accentColor = authoredMaterials.accent?.color || [1.00, 0.48, 0.10];
     if (core?.components?.length) {
@@ -917,14 +924,33 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
         || facility?.ports?.find((port) => port.role === 'machine-core-input')
         || facility?.ports?.[0];
       if (!signal?.point) continue;
+      const isFocusedFacility = facilityFocused
+        && (!facilityFocusBranchId || facilityFocusBranchId === facility?.branchId);
       addLocalPointLight({
         point: signal.point,
         color: energyColor,
-        intensity: 0.12,
+        intensity: isFocusedFacility ? 0.18 : 0.12,
         distance: Math.max(2.4, Number(facility?.envelope?.radius || 1) * 1.7),
         name: 'FACILITY_SIGNAL_PRACTICAL:' + String(facility.branchId || count),
       });
       count += 1;
+      if (isFocusedFacility && facility?.outerHousing?.center) {
+        const center = facility.outerHousing.center;
+        const angle = Math.atan2(Number(center.z) || 0, Number(center.x) || 0);
+        const focusPoint = {
+          x: (Number(center.x) || 0) - Math.cos(angle) * 0.48,
+          y: (Number(center.y) || 0) + 0.86,
+          z: (Number(center.z) || 0) - Math.sin(angle) * 0.48,
+        };
+        addLocalPointLight({
+          point: focusPoint,
+          color: [1.00, 1.00, 1.00],
+          intensity: 0.24,
+          distance: Math.max(2.8, Number(facility?.envelope?.radius || 1) * 2.2),
+          name: 'FACILITY_FOCUS_KEY:' + String(facility.branchId || count),
+        });
+        count += 1;
+      }
     }
     return count;
   }
@@ -986,12 +1012,20 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     clearGroup(localLightingRoot);
     const descriptors = collectThreeDescriptors(input);
     for (const descriptor of descriptors) addDescriptor(descriptor);
+    const presentationLighting = input?.presentationLighting || {};
+    const facilityFocused = presentationLighting?.mode === 'FACILITY_FOCUS';
+    fill.intensity = themeLighting.environmentalFillIntensity * (facilityFocused ? 1.08 : 1);
+    key.intensity = themeLighting.keyLight.intensity * (facilityFocused ? 1.12 : 1);
+    rim.intensity = themeLighting.grazingRimStrength * (facilityFocused ? 0.52 : 0.42);
     const localLightCount = buildLocalPracticalLighting(input);
+    const focusLighting = facilityFocused ? 'enhanced' : 'base';
+    canvas.dataset.threeFacilityFocusLighting = focusLighting;
     return Object.freeze({
       descriptorCount: descriptors.length,
       objectCount: machineRoot.children.length,
       descriptorIds: descriptors.map((descriptor) => descriptor.id),
       localLightCount,
+      facilityFocusLighting: focusLighting,
     });
   }
 

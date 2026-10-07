@@ -425,6 +425,10 @@ function renderView() {
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
     extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors, ...facilityShellDescriptors],
+    presentationLighting: {
+      mode: currentView === 'facility' ? MACHINE_CAMERA_MODE.FACILITY_FOCUS : 'BASE',
+      branchId: currentView === 'facility' ? facility?.branchId : null,
+    },
   });
   const topologyMode = currentView === 'world'
     ? MACHINE_CAMERA_MODE.WORLD_OVERVIEW
@@ -483,6 +487,7 @@ function renderView() {
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';
+  canvas.dataset.structuralFacilityFocusLighting = assemblyRender.facilityFocusLighting;
   canvas.dataset.structuralTopologyMode = topologyMode;
   const divisionSubject = subjectFromParts(seatDivisions);
   const cameraMode = currentView === 'world'

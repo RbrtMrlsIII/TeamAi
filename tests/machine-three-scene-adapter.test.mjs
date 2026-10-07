@@ -60,9 +60,25 @@ import {
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
-  assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V2');
+  assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V3');
 });
 
+test('Y1 adapter exposes a presentation-only facility focus lighting seam', () => {
+  const source = readFileSync(
+    'frontend/spatial/machine-three-scene-adapter.js',
+    'utf8',
+  );
+  assert.match(source, /presentationLighting/);
+  assert.match(source, /mode === 'FACILITY_FOCUS'/);
+  assert.match(source, /name: 'FACILITY_FOCUS_KEY:/);
+  assert.match(source, /intensity: isFocusedFacility \? 0\.18 : 0\.12/);
+  assert.match(source, /facilityFocusLighting/);
+  assert.match(source, /MACHINE_THREE_ADAPTER_VERSION = 'Y1-V3'/);
+  const facilityLightDistance =
+    Math.max(2.8, 1.6 * 2.2);
+  assert.ok(facilityLightDistance >= 3.52);
+});
+ 
 test('Y1 descriptor normalization preserves authored outlines for faceted facility bodies', () => {
   const source = {
     id: 'FACILITY-BODY:TEST',

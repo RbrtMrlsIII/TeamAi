@@ -14,6 +14,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
     await expect(canvas).toHaveAttribute('data-three-material-model', 'S24-authored-theme-family');
+    await expect(canvas).toHaveAttribute('data-structural-facility-focus-lighting', 'base');
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '10');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '4');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
@@ -126,6 +127,8 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-view', 'facility');
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'FACILITY_FOCUS');
+    await expect(canvas).toHaveAttribute('data-structural-facility-focus-lighting', 'enhanced');
+    await expect(canvas).toHaveAttribute('data-three-facility-focus-lighting', 'enhanced');
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '0');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '1');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
