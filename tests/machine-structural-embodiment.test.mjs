@@ -25,6 +25,10 @@ import {
   MACHINE_CAMERA_MODE,
 } from '../frontend/spatial/machine-camera.js';
 import { deriveMachineResponsiveReadability } from '../frontend/spatial/machine-responsive-readability.js';
+import {
+  deriveMachineWorldFacilityShellDescriptors,
+  validateMachineWorldFacilityShellDescriptors,
+} from '../frontend/spatial/machine-world-facility-shell.js';
 import { resolveMachineResponsive } from '../frontend/spatial/machine-responsive.js';
 
 const DIVISIONS = Object.freeze([
@@ -179,4 +183,50 @@ test('S2-S10 compose into one structurally coherent 10-seat world', () => {
   });
   assert.equal(responsive.tier, 'phone');
   assert.equal(readability.readable, true);
+});
+test('S7 facility body shells form four authored manufactured families without consuming topology authority', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const facilities = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const machinery = deriveMachineFacilityMachinery({
+    facilityAssemblies: facilities,
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+    clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+    requestedClearance: 0.16,
+  });
+
+  const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
+  const validation = validateMachineWorldFacilityShellDescriptors(shells);
+
+  assert.equal(validation.valid, true, validation.reasons.join(', '));
+  assert.equal(shells.length, 16);
+  assert.equal(new Set(shells.map((entry) => entry.branchId)).size, 4);
+  assert.equal(new Set(shells.map((entry) => entry.silhouette)).size, 4);
+  assert.equal(shells.filter((entry) => entry.layer === 'main-shell').length, 4);
+  assert.equal(shells.filter((entry) => entry.layer === 'base-collar').length, 4);
+  assert.equal(shells.filter((entry) => entry.layer === 'shoulder-plate').length, 4);
+  assert.equal(shells.filter((entry) => entry.layer === 'upper-cap').length, 4);
+  assert.equal(shells.filter((entry) => entry.layer === 'mechanism-housing').length, 4);
+  assert.ok(shells.every((entry) => entry.presentationOnly === true));
+  assert.ok(shells.every((entry) => entry.constructionSlice === 'S7'));
+  assert.ok(shells.every((entry) => entry.constructionOwner === 'frontend/spatial/machine-world-facility-shell.js'));
+
+  const pods = scene.parts.filter((part) => part.kind === 'inner-pod');
+  let minimumConservativeXZClearance = Infinity;
+  for (const shell of shells) {
+    const shellRadius = Math.hypot(shell.dimensions.x * 0.5, shell.dimensions.z * 0.5);
+    for (const pod of pods) {
+      const centerDistance = Math.hypot(
+        shell.center.x - pod.center.x,
+        shell.center.z - pod.center.z,
+      );
+      const podRadius = Math.hypot(pod.dimensions.x * 0.5, pod.dimensions.z * 0.5);
+      minimumConservativeXZClearance = Math.min(
+        minimumConservativeXZClearance,
+        centerDistance - shellRadius - podRadius,
+      );
+    }
+  }
+  assert.ok(minimumConservativeXZClearance > 0.16);
 });
