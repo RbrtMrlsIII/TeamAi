@@ -1544,7 +1544,7 @@ This checkpoint supersedes the earlier pending implementation-head note with the
 ### E424-2026-10-08M — S7-V14 facility body production parity
 
 **Verified implementation head:** `55e272e6d57a9617dc73acc53e18bb951c004050`  
-**Current documentation reconciliation head:** `cf55dd2deb35b9903736bc0eb3ad5913f994f08b`
+**Current documentation reconciliation head:** `122cde79c7f57850d28933fc70cdd81063218c2b`
 
 **Scope**
 
@@ -1583,4 +1583,3 @@ The actual `/hero/` artifact now renders the four outer facility body masses on 
 **Acceptance position**
 
 S7-V14 is **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED** at the verified implementation head. The subsequent documentation-only reconciliation head remains subject to its own exact-head evidence cycle. Human visual acceptance, live deployment/runtime proof, release authorization, merge authorization, and final 029 completion remain open.
-
