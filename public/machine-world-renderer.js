@@ -67,6 +67,7 @@ const POLYS = {
   POD_SHELL: Object.freeze(
     MACHINE_POD_SHELL_OUTLINE.map(([x, z]) => [x / 0.9, z / 0.6]),
   ),
+  CORE_PANEL: regularPolygon(8, Math.PI / 8),
   authorizationShield: getMachineSeatAuthorizationShieldOutline(),
   behaviorBaffle: getMachineSeatBehaviorBaffleOutline(),
   fin: [[-1,-.55],[.05,-.7],[1,.3],[.35,.66],[-.5,.55]],
@@ -531,7 +532,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         ? 'CORE_BRACE'
         : detail.role === 'reactor-guard'
           ? 'CUBE'
-          : 'CORE_DODEC';
+          : ['foundation-panel', 'reactor-rib'].includes(detail.role)
+            ? 'CORE_PANEL'
+            : ['port-collar', 'reactor-band'].includes(detail.role)
+              ? 'TORUS'
+              : 'CORE_DODEC';
       const material = detail.materialRole === 'glass'
         ? activeHeroMaterials.glass
         : detail.materialRole === 'metal2'
