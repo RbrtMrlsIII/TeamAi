@@ -8,7 +8,7 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 
 ## 2026-10-07 continuation discipline
 
-The active spatial vehicle is **PR #424 only**. The current implementation head for this checkpoint is `62cc4c672408527114d10744b5f9877227ba10b7`, advancing S7 Control from `S7-V12` to `S7-V13`.
+The active spatial vehicle is **PR #424 only**. The current implementation head for this checkpoint is `d8a618b7aab6c2c22c27a858b883b143066d650d`, advancing S7 Control from `S7-V12` to `S7-V13`.
 
 ## 2026-10-07 exact-head continuation checkpoint
 
@@ -1204,11 +1204,13 @@ The current bounded slice adds two presentation-only mechanical actuator housing
 The current slice does not change Seat cardinality, semantic topology, facility ownership, camera authority, or backend/runtime authority.
 ### 2026-10-07 S7 Control rotor-drive-link checkpoint
 
-**Implementation head:** `62cc4c672408527114d10744b5f9877227ba10b7`
+**Implementation head:** `d8a618b7aab6c2c22c27a858b883b143066d650d`
 
 - [x] Existing Control semantic role chain preserved.
 - [x] Two `rotor-drive-link` presentation-only details added under `rotor-hub`.
 - [x] `S7-V13` machinery version recorded.
 - [x] Frontend/public machinery sources are exact-parity.
-- [x] Independent 1–10 Seat geometry matrix passes with minimum conservative housing margin `0.09594`.
+- [x] Independent 1–10 Seat geometry matrix passes with minimum conservative housing margin `0.08767`.
 - [ ] Exact-head Full-System / Governance / Security / Deep Security / Browser proof for the resulting documentation-bearing head.
+
+The slice adds mechanical load-path structure only. It does not change Seat capacity, semantic topology, ports, camera authority, or backend/runtime authority.

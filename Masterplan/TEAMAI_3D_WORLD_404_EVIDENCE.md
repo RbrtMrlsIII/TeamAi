@@ -1507,14 +1507,23 @@ The real-product video remains browser/runtime evidence, not production deployme
 
 ### E424-2026-10-07K — S7 Control rotor-drive-link implementation checkpoint
 
-**Implementation head:** `62cc4c672408527114d10744b5f9877227ba10b7`
+**Implementation head:** `d8a618b7aab6c2c22c27a858b883b143066d650d`
 
-This checkpoint records the next bounded structural slice before exact-head verification.
+This checkpoint supersedes the earlier pending implementation-head note with the corrected density-safe geometry.
 
+**Implementation**
 - `S7-V13` machinery.
 - Two presentation-only `rotor-drive-link` details, parent `rotor-hub`, profile `control-rotor-drive-link`.
-- Independent 1–10 Seat geometry matrix: minimum conservative housing margin approximately `0.09594` against a `0.03` floor.
-- Frontend/public machinery parity is exact.
+- Both details participate in the existing S7 machine subject/envelope.
 - No semantic hierarchy, topology state, Seat capacity, port authority, camera authority, or backend/runtime authority changed.
 
-The final exact-head proof is intentionally pending until CI terminates.
+**Independent geometry**
+- Gamma / Control housing dimensions: `1.72 × 1.08 × 1.72`.
+- Outer-facility angle was evaluated across Seat counts 1–10.
+- Minimum conservative housing margin across the full matrix: approximately `0.08767` units.
+- Regression floor: `0.03`.
+- Frontend/public machinery blobs are byte-identical.
+
+**Verification**
+- Full exact-head verification for the resulting documentation-bearing head is pending until CI terminates.
+- Earlier S7 Operations and previous Control implementation checkpoints remain historical evidence for their own heads.

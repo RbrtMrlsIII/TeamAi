@@ -19,7 +19,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Current implementation head: `62cc4c672408527114d10744b5f9877227ba10b7`
+- Current implementation head: `d8a618b7aab6c2c22c27a858b883b143066d650d`
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
@@ -28,11 +28,13 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Product Law and canonical feature grammar remain authoritative. TeamAi remains a 1–10 Seat semantic spatial machine, not a reference-only rocket recreation.
 - Current bounded spatial slice: S7 Control / rotor-drive-link reinforcement, advancing `S7-V12 → S7-V13`.
 - Two presentation-only `rotor-drive-link` details are parented to `rotor-hub` and included in the S7 machine subject/envelope.
-- Independent 1–10 Seat geometry validation gives a minimum conservative Gamma housing margin of approximately `0.09594`, above the `0.03` regression floor.
+- Independent 1–10 Seat geometry validation gives a minimum conservative Gamma housing margin of approximately `0.08767`, above the `0.03` regression floor.
 - Frontend/public `machine-facility-machinery.js` is byte-identical at the implementation head.
 - Earlier actuator insertion failures and the standalone machine-core-preview timing defect are historical, not current failures.
 - Prior S7 Operations head `af4be5f...` is fully verified; the current Control implementation-plus-documentation state requires its own exact-head proof.
 - Required evidence chain: inspect → reason → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
+
+The earlier `c4c75bf...` actuator insertion failure and the standalone machine-core-preview timing defect are historical, not current failures.
 
 ### Historical pre-029-session verification note
 

@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial implementation head: `62cc4c672408527114d10744b5f9877227ba10b7` (S7 Control rotor-drive-link slice; exact-head proof pending for the resulting documentation-bearing head).
+Current exact spatial implementation head: `d8a618b7aab6c2c22c27a858b883b143066d650d` (S7 Control rotor-drive-link slice; exact-head proof pending for the resulting documentation-bearing head).
 
-Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `62cc4c672408527114d10744b5f9877227ba10b7`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
+Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `d8a618b7aab6c2c22c27a858b883b143066d650d`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
@@ -236,7 +236,7 @@ The S7 Operations fin-deploy reinforcement is exact-head verified at `af4be5fdf8
 The bounded structural frontier deepens the Gamma / Control facility with two presentation-only `rotor-drive-link` members under the existing `rotor-hub`.
 
 - S7 machinery advances `S7-V12 → S7-V13`.
-- Independent 1–10 Seat geometry validation gives a minimum conservative housing margin of approximately `0.09594` units, above the governed `0.03` floor.
+- Independent 1–10 Seat geometry validation gives a minimum conservative housing margin of approximately `0.08767` units, above the governed `0.03` floor.
 - Frontend/public `machine-facility-machinery.js` remains byte-identical.
 - No semantic hierarchy, topology state, Seat cardinality, port authority, camera authority, or backend/runtime authority changed.
 

@@ -283,3 +283,11 @@ PR #424 remains the sole active spatial continuation vehicle. Current implementa
 The Gamma / Control facility now contains two paired presentation-only `rotor-drive-link` details under the existing `rotor-hub`. Independent geometry validation across Seat counts 1–10 reports a minimum conservative housing margin of approximately `0.09594` units against the `0.03` floor. Frontend/public machinery parity remains exact.
 
 The final exact-head verification for the resulting documentation-bearing state is intentionally pending until CI terminates.
+
+## 2026-10-07 S7 Control rotor-drive-link corrected checkpoint
+
+PR #424 remains the sole active spatial continuation vehicle. Current implementation head: `d8a618b7aab6c2c22c27a858b883b143066d650d`, advancing `S7-V12 → S7-V13`.
+
+The Gamma / Control facility contains two paired presentation-only `rotor-drive-link` details under `rotor-hub`. Independent geometry validation across Seat counts 1–10 reports a minimum conservative housing margin of approximately `0.08767` units against the `0.03` floor. Frontend/public machinery parity remains exact.
+
+The corrected implementation awaits exact-head Full-System, Governance, Security, Deep Security, and Browser verification. Historical implementation checkpoints remain immutable provenance.
