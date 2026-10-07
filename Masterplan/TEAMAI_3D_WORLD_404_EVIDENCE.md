@@ -1427,3 +1427,37 @@ The storyboard's final rocket hologram is **not a required product target**. Pro
 
 The S3 slice is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED. Human visual acceptance, LIVE-DEPLOYED status, production runtime proof, merge authorization, and release completion remain open.
 
+
+### E424-2026-10-07H — Current exact-head S2 Core + S3 Pod embodiment and real-product video
+
+**Evidence-bearing documentation head:** `24884e0979c661ce2a87156ff0c6da9b64251c98`  
+**Producing implementation head:** `266a06042d267d40e0c0678e98479e0ca792d714`
+
+The documentation head records the latest verified implementation evidence without introducing a new geometry change.
+
+**Exact-head proof at the producing implementation head**
+- Full-System `37575266019`: **PASS**, 1,220 project tests passed / 0 failed.
+- Governance `37575265886`: **PASS**; evidence-consistency and governance-drift PASS; review-readiness skipped because PR #424 remains Draft.
+- Security / Deep Security: terminal success, including CodeQL, Semgrep, SonarQube/SonarCloud, Bandit, gosec, Brakeman, and MobSF.
+- Canonical Browser `37575265973`: **PASS**, 92 passed / 4 skipped.
+- Browser artifact `11462456452`; GitHub SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`.
+- Independent artifact download confirmed the same ZIP SHA-256.
+
+**Structural result**
+- S3 Pod: authored 12-sided shell profile in the renderer; 17 authored mechanical details.
+- S2 Core: six layered components; 32 authored mechanical details.
+- S2 Core envelope now publishes the maximum radial reach across foundation, mechanical details, and ports, correcting the prior under-declared envelope.
+- Independent 10-seat full-expansion Pod clearance remains approximately 0.6472 above the 0.16 requested floor.
+- No Product Law, 10-seat capacity, Seat hierarchy, semantic graph, topology authority, backend/runtime authority, authorization, entitlement, scheduler/provider authority, or payment authority changed.
+
+**Real-product video**
+The exact-head Browser artifact contains the actual `/hero/` product recording from `tests/e2e/029-real-product-video-evidence.spec.ts`: VP8/WebM, 800×500, 25 fps, 12.68 s, video SHA-256 `05676d6e7208690c83e175d77ce63b6b25469bef969c49986c33245c3f8e8378`. The test traverses Seat selection, division focus, return to entrance, and turn-loop behavior and asserts the governed 10-seat product state at completion.
+
+**Visual diagnosis**
+Relative to the immediately preceding verified S3/video head `087045e5`, `s2-s10-world.png` changed by 1,234 pixels (1,105 above the 5/255 threshold) and `s2-s10-transform-mid.png` by 1,286 pixels (1,163 above threshold), while focused Facility and Seat captures were pixel-identical. This localizes the new change to the central S2 Core.
+
+**Product Law boundary**
+The storyboard's 8-Pod cinematic composition remains visual direction only. Product Law wins; TeamAi remains a 1–10 Seat product with 10 guest presentation slots. The final rocket-hologram presentation is not a required product target.
+
+**Acceptance**
+The S2/S3 embodiment is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED. LIVE-DEPLOYED, RUNTIME-PROVEN for production infrastructure, HUMAN-ACCEPTED, and final 029 release gates remain separate.
