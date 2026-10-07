@@ -157,7 +157,7 @@ test('S23 desktop world-overview scaling is isolated from focused cameras', () =
 
 test('S10 facility focus uses a tighter subject-relative envelope without clipping the authored subject', () => {
   const world = subject(0, 0, 9);
-  const facility = subject(0, 0, 2.6);
+  const facility = subject(0, 0, 1.3);
   const spec = deriveMachineCameraSpec({
     cameraId: MACHINE_CAMERA_ID.DETAIL,
     mode: MACHINE_CAMERA_MODE.FACILITY_FOCUS,
