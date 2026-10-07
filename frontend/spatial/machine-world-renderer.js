@@ -47,6 +47,8 @@ import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machin
 import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
+import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
+import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
@@ -292,6 +294,89 @@ function multiplyMatrix(a, b) {
     }
   }
   return out;
+}
+
+function segmentTubeRotationMatrix(start, end) {
+  const dx = finite(end?.x) - finite(start?.x);
+  const dy = finite(end?.y) - finite(start?.y);
+  const dz = finite(end?.z) - finite(start?.z);
+  const length = Math.hypot(dx, dy, dz);
+  if (length < 0.000001) return null;
+
+  const yx = dx / length;
+  const yy = dy / length;
+  const yz = dz / length;
+  const reference = Math.abs(yy) < 0.92
+    ? [0, 1, 0]
+    : [1, 0, 0];
+
+  let xx = reference[1] * yz - reference[2] * yy;
+  let xy = reference[2] * yx - reference[0] * yz;
+  let xz = reference[0] * yy - reference[1] * yx;
+  const xLength = Math.hypot(xx, xy, xz) || 1;
+  xx /= xLength;
+  xy /= xLength;
+  xz /= xLength;
+
+  const zx = yy * xz - yz * xy;
+  const zy = yz * xx - yx * xz;
+  const zz = yx * xy - yy * xx;
+  return new Float32Array([
+    xx, xy, xz, 0,
+    yx, yy, yz, 0,
+    zx, zy, zz, 0,
+    0, 0, 0, 1,
+  ]);
+}
+
+function directionalTubeTransform(center, direction, length, radius) {
+  const halfLength = Math.max(0.01, finite(length, 0.1) * 0.5);
+  const dx = finite(direction?.x);
+  const dy = finite(direction?.y);
+  const dz = finite(direction?.z);
+  const magnitude = Math.hypot(dx, dy, dz);
+  if (magnitude < 0.000001) return null;
+  const unit = { x: dx / magnitude, y: dy / magnitude, z: dz / magnitude };
+  return segmentTubeTransform({
+    start: {
+      x: finite(center?.x) - unit.x * halfLength,
+      y: finite(center?.y) - unit.y * halfLength,
+      z: finite(center?.z) - unit.z * halfLength,
+    },
+    end: {
+      x: finite(center?.x) + unit.x * halfLength,
+      y: finite(center?.y) + unit.y * halfLength,
+      z: finite(center?.z) + unit.z * halfLength,
+    },
+    radius: Math.max(0.01, finite(radius, 0.035)),
+  });
+}
+
+function segmentTubeTransform(segment, radiusScale = 1) {
+  const start = segment?.start;
+  const end = segment?.end;
+  const dx = finite(end?.x) - finite(start?.x);
+  const dy = finite(end?.y) - finite(start?.y);
+  const dz = finite(end?.z) - finite(start?.z);
+  const length = Math.hypot(dx, dy, dz);
+  if (length < 0.000001) return null;
+  const rotation = segmentTubeRotationMatrix(start, end);
+  if (!rotation) return null;
+  const radius = Math.max(0.01, finite(segment?.radius, 0.035) * Math.max(0.1, Number(radiusScale) || 1));
+  return multiplyMatrix(
+    translateMatrix(
+      (finite(start?.x) + finite(end?.x)) * 0.5,
+      (finite(start?.y) + finite(end?.y)) * 0.5,
+      (finite(start?.z) + finite(end?.z)) * 0.5,
+    ),
+    multiplyMatrix(
+      rotation,
+      multiplyMatrix(
+        translateMatrix(0, -0.5, 0),
+        scaleMatrix(radius, length, radius),
+      ),
+    ),
+  );
 }
 
 export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
@@ -1161,7 +1246,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       mode: scope.mode,
       branchId: scope.branchId,
     }).filter((segment) => scopedEdgeIds.has(segment.semanticEdgeId));
-    const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat']);
+    const physicalKinds = new Set([
+      'pod-division',
+      'pod-facility',
+      'facility-facility',
+      'workspace-contribution',
+      'adjacent-seat',
+      'inner-spoke',
+      'lattice-link',
+    ]);
     let rendered = 0;
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
@@ -1218,19 +1311,29 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         : selected || visual.state === 'HANDOFF_READY' || visual.state === 'REFLECT'
           ? activeHeroMaterials.energy
           : activeHeroMaterials.trace;
-      ringDraw(
-        'CUBE',
+      const useVolumetricTube = segment.edgeKind === 'facility-facility'
+        || segment.segmentRole === 'manifold-arc'
+        || segment.structuralConduit === true;
+      const tubeTransform = useVolumetricTube
+        ? segmentTubeTransform(
+            segment,
+            segment.segmentRole === 'manifold-arc' ? 1.25 : 1,
+          )
+        : null;
+      const transform = tubeTransform || multiplyMatrix(
+        translateMatrix(segment.center.x, segment.center.y, segment.center.z),
         multiplyMatrix(
-          translateMatrix(segment.center.x, segment.center.y, segment.center.z),
-          multiplyMatrix(
-            rotateYMatrix(segment.rotationY),
-            scaleMatrix(
-              Math.max(0.02, segment.dimensions.x * 0.5),
-              Math.max(0.02, segment.dimensions.y * 0.5),
-              Math.max(0.02, segment.dimensions.z * 0.5),
-            ),
+          rotateYMatrix(segment.rotationY),
+          scaleMatrix(
+            Math.max(0.02, segment.dimensions.x * 0.5),
+            Math.max(0.02, segment.dimensions.y * 0.5),
+            Math.max(0.02, segment.dimensions.z * 0.5),
           ),
         ),
+      );
+      ringDraw(
+        tubeTransform ? 'CYL' : 'CUBE',
+        transform,
         material,
         {
           emit: selected ? 0.14 : 0.035 + visual.pulse * 0.05,
@@ -1241,8 +1344,69 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       renderedConduits += 1;
     }
 
+    const structuralConduitSegments = getRenderableMachineWorldStructuralConduitSegments(topology, {
+      mode: scope.mode,
+      branchId: scope.branchId,
+    });
+    let renderedStructuralConduits = 0;
+    for (const segment of structuralConduitSegments) {
+      const transform = segmentTubeTransform(segment, 1);
+      if (!transform) continue;
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        {
+          emit: 0.025,
+          glow: 0.045,
+          alpha: 0.92,
+        },
+      );
+      renderedStructuralConduits += 1;
+    }
+
+    const podDivisionDockingSegments = conduitSegments.filter(
+      (segment) => segment.edgeKind === 'pod-division' && segment.routeContinuous,
+    );
+    const dockingSockets = derivePodDivisionDockingSockets(podDivisionDockingSegments);
+    for (const socket of dockingSockets) {
+      const transform = directionalTubeTransform(
+        socket.center,
+        socket.direction,
+        socket.length,
+        socket.radius,
+      );
+      if (!transform) continue;
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        { emit: 0.018, glow: 0.035, alpha: 0.94 },
+      );
+    }
+
+    const dockingCollars = derivePodDivisionDockingCollars(podDivisionDockingSegments);
+    for (const collar of dockingCollars) {
+      const transform = directionalTubeTransform(
+        collar.center,
+        { x: 0, y: 1, z: 0 },
+        collar.length,
+        collar.radius,
+      );
+      if (!transform) continue;
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        { emit: 0.012, glow: 0.026, alpha: 0.92 },
+      );
+    }
+
     canvas.dataset.machineWorldSignalEdgeCount = String(rendered);
     canvas.dataset.machineWorldConduitSegmentCount = String(renderedConduits);
+    canvas.dataset.machineWorldStructuralConduitSegmentCount = String(renderedStructuralConduits);
+    canvas.dataset.machineWorldDockingSocketCount = String(dockingSockets.length);
+    canvas.dataset.machineWorldDockingCollarCount = String(dockingCollars.length);
     canvas.dataset.machineWorldSignalStates = renderedSignals.join(',');
     canvas.dataset.machineWorldSignalReducedMotion = String(Boolean(reducedMotion));
     return rendered;
