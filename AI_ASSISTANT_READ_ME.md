@@ -27,7 +27,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
 - governing spatial Issue: #405
 - canonical successor handoff: #409
-- next allowed spatial work: repair the S8 endpoint visibility defect, then continue deeper physical embodiment only after independent clearance and Browser artifact proof
+- next allowed work: repair the S8 endpoint visibility defect, then continue deeper physical embodiment only after independent clearance and Browser artifact proof
 - validation state: S8 application head `8dc922528ff850add4a2e9537d2999cda6a86184` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11502884380`
 - PR #424 remains OPEN / DRAFT / mergeable
 - PR #404 remains merged historical provenance; do not reopen it
