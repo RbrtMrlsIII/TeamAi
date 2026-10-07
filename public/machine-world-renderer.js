@@ -48,6 +48,7 @@ import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } fr
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
+import { deriveMachineWorldFacilityDockingEmbodiment } from './machine-world-facility-docking-embodiment.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
 import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES } from './machine-world-facility-shell.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
@@ -1330,6 +1331,44 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   }
 
+  function renderMachineWorldFacilityDockingEmbodiment(facilityMachinery, selectedBranchId, reducedMotion) {
+    const descriptors = deriveMachineWorldFacilityDockingEmbodiment(facilityMachinery);
+    let rendered = 0;
+    for (const entry of descriptors) {
+      const selected = entry.id.includes(String(selectedBranchId || ''));
+      const material = entry.role === 'machine-endpoint-collar'
+        ? activeHeroMaterials.metal2
+        : activeHeroMaterials.metal;
+      ringDraw(
+        'TORUS',
+        multiplyMatrix(
+          translateMatrix(entry.center.x, entry.center.y, entry.center.z),
+          scaleMatrix(
+            Math.max(0.04, entry.radius),
+            Math.max(0.035, entry.length * 0.46),
+            Math.max(0.04, entry.radius),
+          ),
+        ),
+        material,
+        {
+          emit: selected ? 0.10 : entry.role === 'machine-endpoint-collar' ? 0.035 : 0.018,
+          glow: selected ? 0.16 : 0.045,
+          alpha: reducedMotion ? 0.72 : 0.88,
+        },
+      );
+      rendered += 1;
+    }
+    canvas.dataset.machineWorldFacilityDockingEmbodiment = 'S8-ENDPOINT-V1';
+    canvas.dataset.machineWorldFacilityDockingCount = String(descriptors.length);
+    canvas.dataset.machineWorldFacilityDockingEndpointCount = String(
+      descriptors.filter((entry) => entry.role === 'machine-endpoint-collar').length,
+    );
+    canvas.dataset.machineWorldFacilityDockingFacilityCount = String(
+      descriptors.filter((entry) => entry.role === 'facility-port-flange').length,
+    );
+    return rendered;
+  }
+
   function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}, scope = {}) {
     const edges = getRenderableMachineWorldEdgesForScope(topology, scope);
     const scopedEdgeIds = new Set(edges.map((edge) => edge.semanticEdgeId));
@@ -2303,6 +2342,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : choreography.transformation >= 0.999
         ? 'ACTIVE'
         : 'DEPLOYING';
+    const renderedFacilityDocking = renderMachineWorldFacilityDockingEmbodiment(
+      facilityMachinery,
+      branchId,
+      reducedMotion,
+    );
+    canvas.dataset.machineWorldFacilityDockingRendered = String(renderedFacilityDocking);
+
     const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(
       machineWorldTopology,
       branchId,
