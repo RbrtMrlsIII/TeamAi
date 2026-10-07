@@ -320,36 +320,41 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
 });
 
 
-test('S7 control machine exposes paired rotor-drive links inside the Gamma housing envelope', () => {
-  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
-  const machinery = deriveMachineFacilityMachinery({
-    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
-  });
-  const control = machinery.find((machine) => machine.machineRole === 'control');
-  assert.ok(control);
+test('S7 control machine exposes paired rotor-drive links across the 1-10 Seat housing matrix', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    const core = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
+    const machinery = deriveMachineFacilityMachinery({
+      outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+    });
+    const control = machinery.find((machine) => machine.machineRole === 'control');
+    assert.ok(control);
 
-  const center = control.outerHousing.center;
-  const dimensions = control.outerHousing.dimensions;
-  const angle = Math.atan2(center.z, center.x);
-  const housingBoundary = 1 / (
-    Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
-    + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
-  );
+    const center = control.outerHousing.center;
+    const dimensions = control.outerHousing.dimensions;
+    const angle = Math.atan2(center.z, center.x);
+    const housingBoundary = 1 / (
+      Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
+      + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
+    );
 
-  const links = control.mechanicalDetails.filter((entry) => entry.role === 'rotor-drive-link');
-  assert.equal(links.length, 2);
+    const links = control.mechanicalDetails.filter((entry) => entry.role === 'rotor-drive-link');
+    assert.equal(links.length, 2);
 
-  for (const link of links) {
-    assert.equal(link.profile, 'control-rotor-drive-link');
-    assert.equal(link.shape, 'BOX');
-    assert.equal(link.parentRole, 'rotor-hub');
-    assert.equal(link.constructionSlice, 'S7');
-    assert.equal(link.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
-    assert.ok(control.subject.sourcePartIds.includes(link.id));
+    for (const link of links) {
+      assert.equal(link.profile, 'control-rotor-drive-link');
+      assert.equal(link.shape, 'BOX');
+      assert.equal(link.parentRole, 'rotor-hub');
+      assert.equal(link.constructionSlice, 'S7');
+      assert.equal(link.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+      assert.ok(control.subject.sourcePartIds.includes(link.id));
 
-    const radialDistance = Math.hypot(link.center.x - center.x, link.center.z - center.z);
-    const radialReach = Math.hypot(link.dimensions.x, link.dimensions.z) * 0.5;
-    assert.ok(radialDistance + radialReach <= housingBoundary - 0.03 + 1e-9);
+      const radialDistance = Math.hypot(link.center.x - center.x, link.center.z - center.z);
+      const radialReach = Math.hypot(link.dimensions.x, link.dimensions.z) * 0.5;
+      assert.ok(
+        radialDistance + radialReach <= housingBoundary - 0.03 + 1e-9,
+        seatCount + '-seat:' + link.role + ':housing-bound',
+      );
+    }
   }
 });
 
