@@ -854,10 +854,10 @@ export function deriveMachineFacilityMachinery({
               shape: 'CUBE',
               center: Object.freeze({
                 x: housingCenter.x + basis.outward.x * frameDepth * 0.08
-                  + basis.tangent.x * frameWidth * 0.12 * side,
+                  + basis.tangent.x * frameWidth * 0.18 * side,
                 y: housingCenter.y + frameHeight * 0.30,
                 z: housingCenter.z + basis.outward.z * frameDepth * 0.08
-                  + basis.tangent.z * frameWidth * 0.12 * side,
+                  + basis.tangent.z * frameWidth * 0.18 * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.06, frameWidth * 0.08),
@@ -876,11 +876,11 @@ export function deriveMachineFacilityMachinery({
               center: Object.freeze({
                 x: housingCenter.x
                   + basis.outward.x * frameDepth * 0.12
-                  + basis.tangent.x * frameWidth * 0.18 * side,
+                  + basis.tangent.x * frameWidth * 0.12 * side,
                 y: housingCenter.y + frameHeight * 0.42,
                 z: housingCenter.z
                   + basis.outward.z * frameDepth * 0.12
-                  + basis.tangent.z * frameWidth * 0.18 * side,
+                  + basis.tangent.z * frameWidth * 0.12 * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.06, frameWidth * 0.055),
