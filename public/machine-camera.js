@@ -180,7 +180,7 @@ export function deriveMachineCameraSpec({
         : resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
           ? 1.32
           : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
-            ? 1.42
+            ? 1.12
             : 1.12;
   const focusBase = resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW
     ? 6
@@ -192,7 +192,9 @@ export function deriveMachineCameraSpec({
       ? 3.8
       : resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
         ? 4.2
-        : 5.0;
+        : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
+          ? 3.8
+          : 5.0;
   let distance = clamp(
     span * focusOffset + focusBase,
     resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW ? 8 : focusMinimum,
@@ -209,7 +211,7 @@ export function deriveMachineCameraSpec({
   }
 
   let pitch = resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
-    ? Math.max(2.6, distance * 0.30)
+    ? Math.max(2.3, distance * 0.27)
     : resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
       || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
         ? Math.max(2.2, distance * 0.27)

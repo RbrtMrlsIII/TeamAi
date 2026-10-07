@@ -155,6 +155,31 @@ test('S23 desktop world-overview scaling is isolated from focused cameras', () =
   assert.ok(divisionSpec.radius >= 3.8);
 });
 
+test('S10 facility focus uses a tighter subject-relative envelope without clipping the authored subject', () => {
+  const world = subject(0, 0, 9);
+  const facility = subject(0, 0, 2.6);
+  const spec = deriveMachineCameraSpec({
+    cameraId: MACHINE_CAMERA_ID.DETAIL,
+    mode: MACHINE_CAMERA_MODE.FACILITY_FOCUS,
+    worldSubject: world,
+    facilitySubject: facility,
+    viewport: { width: 1280, height: 720 },
+  });
+
+  assert.equal(spec.mode, MACHINE_CAMERA_MODE.FACILITY_FOCUS);
+  assert.deepEqual(spec.target, facility.center);
+  assert.ok(spec.radius > 3.8 && spec.radius < 4.5);
+  assert.ok(spec.pitch >= 2.3 && spec.pitch < 2.6);
+
+  const halfFovRadians = (spec.fov * Math.PI / 180) * 0.5;
+  const conservativeNoClipRadius =
+    2.6 / (2 * Math.tan(halfFovRadians));
+  assert.ok(
+    spec.radius > conservativeNoClipRadius + 0.5,
+    'facility focus must retain a measurable framing margin beyond the conservative subject span',
+  );
+});
+
 test('S10 Pod focus is genuinely subject-relative for a small authored Pod', () => {
   const world = subject(0, 0, 8);
   const pod = subject(4, 4, 0.73);
