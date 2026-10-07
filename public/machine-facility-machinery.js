@@ -801,7 +801,8 @@ export function deriveMachineFacilityMachinery({
               materialRole: 'trace',
               parentRole: 'deployment-fin-secondary',
               ...rootContext(assembly.branchId + ':FIN-SECONDARY-RAIL'),
-            }),\n            Object.freeze({
+            }),
+            Object.freeze({
               id: 'MACHINERY:' + assembly.branchId + ':FIN-ACTUATOR-PRIMARY',
               role: 'fin-actuator-primary',
               shape: 'BOX',
@@ -825,6 +826,26 @@ export function deriveMachineFacilityMachinery({
             }),
             Object.freeze({
               id: 'MACHINERY:' + assembly.branchId + ':FIN-ACTUATOR-SECONDARY',
+              role: 'fin-actuator-secondary',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.10
+                  - basis.tangent.x * 0.28,
+                y: housingCenter.y + frameHeight * 0.31,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.10
+                  - basis.tangent.z * 0.28,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.055),
+                y: Math.max(0.06, frameHeight * 0.10),
+                z: Math.max(0.24, frameDepth * 0.28),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin-secondary',
+              profile: 'operations-fin-actuator-secondary',
+              ...rootContext(assembly.branchId + ':FIN-ACTUATOR-SECONDARY'),
+            }),
               role: 'fin-actuator-secondary',
               shape: 'BOX',
               center: Object.freeze({
