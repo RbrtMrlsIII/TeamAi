@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial implementation head: `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f` (S7 Control rotor-drive-link slice; exact-head proof complete for the resulting documentation-bearing head).
+Current exact spatial implementation head: `55e272e6d57a9617dc73acc53e18bb951c004050` (S7-V14 Facility Body Production Parity; exact-head five-gate proof complete).
 
-Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
+Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances **S7-V13 → S7-V14** by promoting the existing authored S7 facility-body construction into the canonical production Hero raw-WebGL path. The slice publishes `machine-world-facility-shell.js`, renders 20 presentation-only body descriptors across four family-specific silhouettes and five physical layers, and preserves the existing S6/S7 semantics, S8 topology, S10 camera authority, Seat cardinality, and backend/runtime boundaries.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
@@ -40,6 +40,20 @@ The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 an
 The exact-head Browser artifact now contains an actual `/hero/` video capture. It confirms the 10-seat product surface is interactive and traverses selection, division focus, return, and turn-loop states. It also confirms the remaining visual gap directly on the product surface: the scene is still darker, more skeletal, and less mechanically dense than the bright manufactured-machine reference. The final rocket-hologram storyboard frame is not a required target. Product Law remains authoritative at 10 seats.
 
 The next structural order remains inside S0-S10. Current verified embodiment now covers S2 Core and S3 Pods, plus the previously verified S7 analysis and operations families. The next family must be selected from the real remaining physical gaps, independently measured before implementation; it must not be inferred from the storyboard alone.
+
+### 2026-10-08 S7-V14 facility body production parity
+
+The bounded structural slice promotes the already-authored S7 facility body shell grammar into the canonical production Hero renderer.
+
+- Four existing S7 facilities retain their existing semantic identities and family roles.
+- Each facility receives five presentation-only layers: main shell, base collar, shoulder plate, upper cap, and mechanism housing.
+- The runtime therefore renders **20** authored body descriptors with four distinct silhouettes.
+- The authored shell module is now included in the spatial runtime publication manifest, with source/public renderer and shell copies synchronized.
+- Independent conservative XZ shell-versus-Pod clearance was sampled at Seat counts 1, 5, and 10 across closed, half, and expanded states. The minimum measured margin is approximately **2.7371 units**, above the governed **0.16** requested clearance.
+- Exact-head Browser artifact: `11498924852`; independently matched ZIP SHA-256: `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`.
+- The actual `/hero/` capture now contains the promoted outer body masses. The Hailuo MP4 and endorsed PNG remain visual-direction references only; the storyboard's eight-Pod composition does not override TeamAi's 1–10 Seat Product Law.
+
+This closes **S7-V14 repository/browser verification** only. Human visual acceptance, production deployment/runtime proof, and merge/release authorization remain open.
 
 ## Exact-head Browser completion discipline
 
