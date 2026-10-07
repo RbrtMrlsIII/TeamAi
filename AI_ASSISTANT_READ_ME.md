@@ -19,30 +19,43 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Current branch head: `38615fd9d1c48a69cb2eef49605989dc74b64f7b` (documentation-only closure after verified S7 Control implementation-plus-documentation head `4d67ac6237e614d9fb6e74c1c46389cc9691c7e5`)
+- Current branch head: `9f4c0c6b11276eb4072d301f2d1b6f4f6bef6366` (documentation-bearing S7-V14 checkpoint; implementation behavior is verified at `55e272e6d57a9617dc73acc53e18bb951c004050`)
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
 - Product Law and canonical feature grammar remain authoritative. TeamAi remains a 1–10 Seat semantic spatial machine, not a reference-only rocket recreation.
-- Current bounded spatial slice: S7 Control / rotor-drive-link reinforcement, advancing `S7-V12 → S7-V13`.
-- Two presentation-only `rotor-drive-link` details are parented to `rotor-hub` and included in the S7 machine subject/envelope.
+- Current bounded spatial slice: S7-V14 Facility Body Production Parity, promoting the existing authored outer-facility body grammar into the canonical production Hero renderer.
+- The prior S7-V13 rotor-drive-link slice remains verified historical provenance. S7-V14 now renders four existing facility families as five-layer presentation-only body stacks, 20 body descriptors total.
 - Independent 1–10 Seat geometry validation gives a minimum conservative Gamma housing margin of approximately `0.08767`, above the `0.03` regression floor.
 - Frontend/public `machine-facility-machinery.js` is byte-identical at the implementation head.
 - Earlier actuator insertion failures and the standalone machine-core-preview timing defect are historical, not current failures.
-- Prior S7 Operations head `af4be5f...` is fully verified; the S7 Control implementation-plus-documentation head `4d67ac6...` is fully verified; the present `38615fd...` branch head is documentation-only and has also completed the full five-gate proof.
+- Prior S7 Operations and S7 Control heads remain verified historical provenance. The implementation head `55e272e6d57a9617dc73acc53e18bb951c004050` passed the full five gates before the `9f4c0c6...` documentation reconciliation head.
 - Required evidence chain: inspect → reason → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
 
 The earlier `c4c75bf...` actuator insertion failure and the standalone machine-core-preview timing defect are historical, not current failures.
+
+### 2026-10-08 CURRENT S7-V14 STATE
+
+- Current documentation head: `9f4c0c6b11276eb4072d301f2d1b6f4f6bef6366`.
+- Verified implementation head: `55e272e6d57a9617dc73acc53e18bb951c004050`.
+- S7-V14 promotes the existing authored facility-body grammar into the canonical production Hero raw-WebGL renderer.
+- Four existing S7 outer facilities retain their semantic identities and four differentiated silhouettes. Five presentation-only layers per facility yield 20 body descriptors.
+- `machine-world-facility-shell.js` is now in the spatial runtime publication manifest and source/public runtime copies are synchronized.
+- Independent Seat 1/5/10 × closed/half/expanded conservative shell-versus-Pod clearance matrix: minimum approximately 2.7371 units against the 0.16 requested clearance.
+- Exact implementation-head proof: Full-System `37659080295`, Governance `37659080256`, Security `37659080264`, Deep Security `37659080241`, Browser `37659080436`, all PASS; Browser 92 passed / 4 skipped.
+- Browser artifact: `11498924852`, SHA-256 `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`.
+- Artifact inspection confirms the four outer body masses now reach the real `/hero/` surface. The reference MP4/PNG informed form, layering, composition and transformation feel only, not Product Law or geometry authority.
+- S7-V14 remains repository/browser verified, not human-accepted, production-deployed, merge-authorized, or release-complete.
 
 ### Historical pre-029-session verification note
 
 The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
 
-### Browser failure classification
+### Historical Browser failure classification
 
-The only current failing test is the standalone machine-core-preview transition assertion. Selecting a branch currently causes the preview to set hierarchyOpen and start the 950 ms expansion path before the explicit Expand action. The test can therefore observe expanded instead of opening. This is a temporal preview contract defect. Do not weaken the assertion or add arbitrary sleep. The implementation direction is to make branch selection and expansion deterministic and separately controllable in the standalone preview.
+The standalone machine-core-preview transition assertion described in older recovery notes is historical, not a current failing test. Selecting a branch currently causes the preview to set hierarchyOpen and start the 950 ms expansion path before the explicit Expand action. The test can therefore observe expanded instead of opening. This is a temporal preview contract defect. Do not weaken the assertion or add arbitrary sleep. The implementation direction is to make branch selection and expansion deterministic and separately controllable in the standalone preview.
 
 ### Current spatial sequence
 
