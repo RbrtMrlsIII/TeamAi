@@ -28,11 +28,18 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67` (exact-head five-gate proof; Full-System `37564475055` PASS; Security `37564475051` PASS; Deep Security `37564475130` PASS; Governance `37564474995` PASS; Browser `37564475043` PASS).
+Current exact spatial head: `087045e5cec4532eaca9abd78c835eca635b99c4` (exact-head five-gate proof completed; Full-System `37570949645` PASS; Governance `37570949710` PASS; Evidence Consistency `37570949710` PASS; security/static suite PASS; Browser `37570949741` PASS).
 
-The current exact-head implementation slice is S7 analysis/telescope mechanical embodiment. Its Browser artifact `11458442898` has SHA-256 `38a8b0ea91a540756f7bb5ea36b9423d1dde6c283fd96175f9c2cdbfa17b4b09`. Historical Browser runs remain diagnostic provenance only and must not override the current exact-head result.
+The current exact-head implementation slice is S3 Pod embodiment. Browser artifact `11460424639` has SHA-256 `690a5d473623f3d9af5be1bfa93516faeb497a85718987ffce2b8648c72a9cf4`. The artifact contains a genuine `/hero/` product video: 12.36 s, 800×500, 25 fps VP8/WebM. Historical Browser runs remain diagnostic provenance only.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
+
+
+### 2026-10-07 real-product visual finding
+
+The exact-head Browser artifact now contains an actual `/hero/` video capture. It confirms the 10-seat product surface is interactive and traverses selection, division focus, return, and turn-loop states. It also confirms the remaining visual gap directly on the product surface: the scene is still darker, more skeletal, and less mechanically dense than the bright manufactured-machine reference. The final rocket-hologram storyboard frame is not a required target. Product Law remains authoritative at 10 seats.
+
+The next structural order remains inside S0-S10. The immediate follow-on must be selected only after comparing this S3 result with the already-verified S2/S7 state; it should not be inferred from the storyboard alone.
 
 ## Exact-head Browser completion discipline
 

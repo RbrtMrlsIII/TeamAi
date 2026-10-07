@@ -19,24 +19,25 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 implementation head: `5ec674d3ac472bb0edc7b3f00c2ae1c047f6ab17`
+- Exact #424 implementation head: `087045e5cec4532eaca9abd78c835eca635b99c4`
 - #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
 - Spatial objective: preserve Product Law + canonical feature grammar while advancing the single semantic spatial machine toward the endorsed manufactured-machine direction represented by the Hailuo MP4 and project PNG/storyboard references.
-- Exact-head five-gate proof: Full-System `37566565712` PASS; Security `37566565801` PASS; Deep Security `37566565702` PASS; Governance `37566565817` PASS; Canonical Browser `37566565701` PASS.
+- Exact-head five-gate proof: Full-System `37570949645` PASS; Governance `37570949710` PASS; Evidence Consistency `37570949710` PASS; Canonical Browser `37570949741` PASS; CodeQL `112629558948` PASS; Semgrep OSS `112629419343` PASS.
 - Full-System project suite: **1,220 passed / 0 failed**.
-- Canonical Browser: **91 passed / 4 skipped** Playwright tests; exact-head checkout, Hero runtime parity, and machine spatial runtime parity passed before Playwright.
-- Browser artifact: `11459046993`; SHA-256 `62e6545d233e1581daaa63c588a0fbbf0d57a883ea4ab5bb07a01358d6ea2897`.
-- The Browser artifact was independently downloaded and hashed; the local SHA-256 matched GitHub's recorded digest exactly. Its five key S2-S10 captures were inspected.
-- Compared with the preceding `e4adaaf4` application baseline: World changed 809 pixels (720 at >=5/255), Return-Mid 809 (720 at >=5/255), Transform-Mid 974 (889 at >=5/255), Facility 4,009 (3,654 at >=5/255), Seat 0. Facility-local visual changes correspond to the existing operations/fin-deploy family; Seat remains pixel-identical.
-- The verified implementation slice is bounded to existing S7 operations machinery: profile-labelled primary/secondary deployment fins and four presentation-only fin cap/actuator-rail details. Independent containment checking required the new rails to remain within their parent-fin conservative horizontal envelopes; the corrected final margins are approximately +0.1790 and +0.1065.
+- Canonical Browser: **92 passed / 4 skipped** Playwright tests; exact-head checkout, Hero runtime parity, and machine spatial runtime parity passed before Playwright.
+- Browser artifact: `11460424639`; ZIP SHA-256 `690a5d473623f3d9af5be1bfa93516faeb497a85718987ffce2b8648c72a9cf4`.
+- The Browser artifact was independently downloaded and hashed; the local SHA-256 matched GitHub's recorded digest exactly. The exact-head artifact also contains a genuine `/hero/` Playwright recording: 12.36 s, 800×500, 25 fps VP8/WebM, SHA-256 `a0a3d0c82dd276399faad17850637188a953240960e8ef715d3dd87b643dffe0`. A convenience H.264/MP4 derivative has SHA-256 `15ec64ba545b8a8f7b8236e253865088a60266e4350c5c7b23882a09d04c26bb`.
+- The exact-head Browser run includes the existing S2-S10 image suite plus the new real-product video test. Human visual acceptance remains open because the actual `/hero/` scene is still materially darker and more skeletal than the bright manufactured-machine direction.
+- The verified implementation slice is bounded to existing S3 Pod embodiment: 17 authored Pod mechanical details, including the new plinth/frame/actuator/lock layer, and raw-renderer consumption of the existing authored Pod shell profile. Independent 10-seat full-expansion clearance is approximately 0.6472 against a requested floor of 0.16.
 - The implementation path exposed and corrected two scope defects and one stale generic test expectation. After correction, the exact-head Full-System suite passed 1,220/1,220.
-- Product Law remains authoritative over the 8-Pod reference composition. TeamAi remains governed at 1-10 Seats and 10 guest presentation slots.
+- Product Law remains authoritative over the 8-Pod reference composition. TeamAi remains governed at 1-10 Seats and 10 guest presentation slots. The storyboard's final rocket hologram is not a required product presentation.
 - Browser evidence is terminal only after the exact-head Browser workflow finishes and its artifact/report is inspected.
 - While future validation runs, continue only non-conflicting audit/preparation. Never mutate a proof target blindly.
+- Remaining visual gaps are real and now confirmed by actual `/hero/` video: Core/Pod fabricated massing, bright metallic/glass studio presentation, physically attached conduit density, closer mechanism camera framing, and denser family-specific S7 articulation.
 
 ### Historical pre-029-session verification note
 

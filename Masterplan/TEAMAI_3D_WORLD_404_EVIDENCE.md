@@ -1378,3 +1378,52 @@ Camera-basis inspection confirms the changed world region is the existing Alpha 
 
 The S7 analysis family is repository-verified and Browser-verified at this exact head, but the broader 029 physical-machine and visual acceptance remains open. The overall world still needs denser compound embodiment across the four existing S7 families before S24 effects/polish can be treated as final. The next bounded structural target is the existing **operations/fin-deploy** mechanism family. Keep the same discipline: independently calculate footprint/clearance, preserve source/public parity, run exact-head five-gate CI, and inspect the terminal Browser artifact before proceeding.
 
+
+
+### E424-2026-10-07G — S3 Pod embodiment + real-product video evidence
+
+**Evidence-bearing head:** `087045e5cec4532eaca9abd78c835eca635b99c4`
+
+- Full-System Verification `37570949645`: **PASS**; 1,220 project tests passed / 0 failed.
+- Governance Integrity `37570949710`: **PASS**; review-readiness skipped because PR #424 remains Draft.
+- Evidence Consistency `37570949710`: **PASS**.
+- Security/static analysis for this head: CodeQL `112629558948` **PASS**; Semgrep OSS `112629419343` **PASS**; the broader security suite completed successfully, including SonarQube, MobSF, Bandit, Brakeman, and gosec.
+- Canonical Browser Verification `37570949741`: **PASS**; 92 passed / 4 skipped.
+- Browser artifact ID: `11460424639`.
+- Browser artifact GitHub digest: `sha256:690a5d473623f3d9af5be1bfa93516faeb497a85718987ffce2b8648c72a9cf4`.
+- Independently downloaded artifact ZIP SHA-256: `690a5d473623f3d9af5be1bfa93516faeb497a85718987ffce2b8648c72a9cf4`.
+- Real-product video path inside the exact-head Browser artifact: `test-results/029-real-product-video-evi-a5ea4-return-and-turn-loop-states-chromium/video.webm`.
+- Video codec/container: VP8/WebM, 800×500, 25 fps, 12.36 s.
+- Independent video SHA-256: `a0a3d0c82dd276399faad17850637188a953240960e8ef715d3dd87b643dffe0`.
+- A convenience MP4 transcode was produced from the exact WebM capture without changing the scene content: H.264/MP4, 800×500, 25 fps, 12.36 s, SHA-256 `15ec64ba545b8a8f7b8236e253865088a60266e4350c5c7b23882a09d04c26bb`.
+
+**S3 implementation**
+
+This bounded slice strengthens the existing Pod machine inside the single canonical S3 authority:
+1. Pod mechanical details increase from 11 to 17 with a lower plinth, upper payload frame, two side actuators, and two chamber locks.
+2. The existing authored 12-sided Pod shell profile is now consumed by the raw production renderer instead of rendering the Pod outer shell as a generic cube.
+3. Source/public machine-spatial runtime parity remains exact.
+4. No Product Law, Seat cardinality, hierarchy, semantic graph, topology authority, backend authority, authorization, entitlement, scheduler/provider authority, or payment authority changed.
+
+**Independent geometry proof**
+
+At the governed 10-seat profile, adjacent Pod center spacing is approximately 2.81205465. Conservative full-expansion Pod diameter including authored mechanical-detail reach resolves to approximately 2.16490276, leaving approximately 0.64715189 neighbor clearance against the 0.16 requested floor. This remains conservative sampled radial/AABB-style clearance, not triangle-level collision proof.
+
+**Video evidence interpretation**
+
+The new capture is genuine output from the actual `/hero/` product surface. It exercises Seat selection, division focus, return-to-entrance, and turn-loop states with the runtime reporting 10 seats, selected Seat 1, HERO_WIDE return state, and hierarchy closed at capture completion. It is **RUNTIME-BEHAVIOR EVIDENCE**, not production deployment evidence.
+
+The video also sharpens the visual acceptance diagnosis. The current product is a real interactive spatial machine with visible 10-seat structure and functional focus/transform transitions, but it remains materially more skeletal and dark than the endorsed bright manufactured-machine reference. The remaining target gaps are primarily:
+- fabricated Core/POD massing and nested mechanical construction
+- brighter metallic/glass material and studio-lighting language
+- denser but physically attached conduit/energy embodiment
+- more intimate camera framing for machine mechanisms
+- stronger family-specific S7 silhouettes and articulation
+- broader compound mechanical detail across Core, Pods, and existing outer families
+
+The storyboard's final rocket hologram is **not a required product target**. Product Law continues to govern the 10-seat capacity; the storyboard's 8-Pod frame remains cinematic reference composition only.
+
+**Acceptance position**
+
+The S3 slice is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED. Human visual acceptance, LIVE-DEPLOYED status, production runtime proof, merge authorization, and release completion remain open.
+

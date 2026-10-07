@@ -8,26 +8,31 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 
 ## 2026-10-07 continuation discipline
 
-The active spatial vehicle is **PR #424 only**. The current verified application head for this checkpoint is `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67`.
+The active spatial vehicle is **PR #424 only**. The current exact implementation head for this checkpoint is `087045e5cec4532eaca9abd78c835eca635b99c4`.
 
 ## 2026-10-07 exact-head continuation checkpoint
 
-**Evidence-bearing application head:** `5ec674d3ac472bb0edc7b3f00c2ae1c047f6ab17`
+**Evidence-bearing application head:** `087045e5cec4532eaca9abd78c835eca635b99c4`
 
-Fresh exact-head proof for the bounded S7 operations/fin-deploy embodiment slice:
-- Full-System `37566565712`: **PASS**, 1,220 project tests passed / 0 failed.
-- Security `37566565801`: **PASS**.
-- Deep Security `37566565702`: **PASS**.
-- Governance `37566565817`: **PASS**.
-- Canonical Browser `37566565701`: **PASS**, 91 Playwright tests passed / 4 skipped.
-- Browser artifact: `11459046993`.
-- Browser artifact SHA-256: `62e6545d233e1581daaa63c588a0fbbf0d57a883ea4ab5bb07a01358d6ea2897`.
+Fresh exact-head proof for the bounded S3 Pod embodiment slice:
+- Full-System `37570949645`: **PASS**, 1,220 project tests passed / 0 failed.
+- Governance `37570949710`: **PASS**.
+- Evidence Consistency `37570949710`: **PASS**.
+- Security/static suite: **PASS**.
+- Canonical Browser `37570949741`: **PASS**, 92 Playwright tests passed / 4 skipped.
+- Browser artifact: `11460424639`.
+- Browser artifact SHA-256: `690a5d473623f3d9af5be1bfa93516faeb497a85718987ffce2b8648c72a9cf4`.
+- Real-product video: VP8/WebM, 800×500, 25 fps, 12.36 s, SHA-256 `a0a3d0c82dd276399faad17850637188a953240960e8ef715d3dd87b643dffe0`.
+
+The S3 slice adds six authored Pod mechanical details and routes the existing authored Pod shell profile through the raw production renderer. Independent full-expansion conservative clearance is approximately 0.6472 against the requested 0.16 floor.
 
 The slice changes only existing S7 operations machinery: profile-labelled primary/secondary deployment fins and four presentation-only fin cap/actuator-rail details. Independent containment checking required the new rails to remain inside their parent-fin conservative horizontal envelopes; final margins are approximately +0.1790 and +0.1065. No product semantics, Seat capacity, S8 topology, S10 camera, or backend authority changed.
 
 The implementation cycle exposed two localized scope defects and one stale generic test expectation. Those were corrected without weakening the validator. The replacement exact-head suite passed 1,220/1,220.
 
-Browser artifact inspection was terminal and exact-head. Relative to `e4adaaf4`, World/Return/Transform changed locally around the outer operations machinery; Facility changed locally as the focused operations view; Seat was pixel-identical. The next structural family remains a future planning item only and is not assumed implemented by this checkpoint.
+Browser artifact inspection was terminal and exact-head. Relative to `e4adaaf4`, World/Return/Transform changed locally around the outer operations machinery; Facility changed locally as the focused operations view; Seat was pixel-identical. The next structural family remains a future planning item only and is not assumed implemented by this checkpoint. The storyboard's final rocket hologram is not a required target; Product Law's 10-seat capacity remains authoritative.
+
+The exact `/hero/` video now supplies runtime-behavior evidence. Human visual acceptance remains open because the product scene is still visibly darker and more skeletal than the endorsed manufactured-machine direction.
 
 
 ## Evidence navigation contract
