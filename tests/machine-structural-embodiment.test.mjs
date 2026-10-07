@@ -200,13 +200,14 @@ test('S7 facility body shells form four authored manufactured families without c
   const validation = validateMachineWorldFacilityShellDescriptors(shells);
 
   assert.equal(validation.valid, true, validation.reasons.join(', '));
-  assert.equal(shells.length, 16);
+  assert.equal(shells.length, 20);
   assert.equal(new Set(shells.map((entry) => entry.branchId)).size, 4);
   assert.equal(new Set(shells.map((entry) => entry.silhouette)).size, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'main-shell').length, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'base-collar').length, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'shoulder-plate').length, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'upper-cap').length, 4);
+  assert.equal(shells.filter((entry) => entry.layer === 'mechanism-housing').length, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'mechanism-housing').length, 4);
   assert.ok(shells.every((entry) => entry.presentationOnly === true));
   assert.ok(shells.every((entry) => entry.constructionSlice === 'S7'));
