@@ -999,16 +999,16 @@ export function deriveMachineFacilityMachinery({
               role: 'sensor-boom',
               shape: 'BOX',
               center: Object.freeze({
-                x: housingCenter.x + basis.outward.x * frameDepth * 0.13
-                  + basis.tangent.x * frameWidth * 0.22 * side,
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.08
+                  + basis.tangent.x * frameWidth * 0.13 * side,
                 y: housingCenter.y + frameHeight * 0.40,
-                z: housingCenter.z + basis.outward.z * frameDepth * 0.13
-                  + basis.tangent.z * frameWidth * 0.22 * side,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.08
+                  + basis.tangent.z * frameWidth * 0.13 * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.06, frameWidth * 0.06),
                 y: Math.max(0.06, frameHeight * 0.08),
-                z: Math.max(0.20, frameDepth * 0.28),
+                z: Math.max(0.20, frameDepth * 0.24),
               }),
               rotationY: basis.angle,
               materialRole: 'metal2',
@@ -1021,16 +1021,16 @@ export function deriveMachineFacilityMachinery({
               role: 'sensor-panel-clamp',
               shape: 'BOX',
               center: Object.freeze({
-                x: housingCenter.x + basis.outward.x * frameDepth * 0.18
-                  + basis.tangent.x * frameWidth * 0.18 * side,
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.13
+                  + basis.tangent.x * frameWidth * 0.13 * side,
                 y: housingCenter.y + frameHeight * 0.62,
-                z: housingCenter.z + basis.outward.z * frameDepth * 0.18
-                  + basis.tangent.z * frameWidth * 0.18 * side,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.13
+                  + basis.tangent.z * frameWidth * 0.13 * side,
               }),
               dimensions: Object.freeze({
-                x: Math.max(0.06, frameWidth * 0.08),
+                x: Math.max(0.06, frameWidth * 0.07),
                 y: Math.max(0.06, frameHeight * 0.07),
-                z: Math.max(0.10, frameDepth * 0.14),
+                z: Math.max(0.10, frameDepth * 0.12),
               }),
               rotationY: basis.angle,
               materialRole: 'metal',
