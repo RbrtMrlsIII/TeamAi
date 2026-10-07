@@ -80,7 +80,8 @@ export const CORE_PORT_ROLES = Object.freeze([
   'south',
   'west',
 ]);
-\nconst CORE_REACTOR_CAGE_FIN_OUTLINE = Object.freeze([
+
+const CORE_REACTOR_CAGE_FIN_OUTLINE = Object.freeze([
   [-1.00, -0.70],
   [-0.38, -1.00],
   [0.48, -0.92],
