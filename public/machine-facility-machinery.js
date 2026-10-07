@@ -699,17 +699,17 @@ export function deriveMachineFacilityMachinery({
               shape: 'BOX',
               center: Object.freeze({
                 x: housingCenter.x
-                  + basis.outward.x * frameDepth * 0.36
-                  + basis.tangent.x * frameWidth * 0.22 * side,
+                  + basis.outward.x * frameDepth * 0.30
+                  + basis.tangent.x * frameWidth * 0.16 * side,
                 y: housingCenter.y + frameHeight * 0.36,
                 z: housingCenter.z
-                  + basis.outward.z * frameDepth * 0.36
-                  + basis.tangent.z * frameWidth * 0.22 * side,
+                  + basis.outward.z * frameDepth * 0.30
+                  + basis.tangent.z * frameWidth * 0.16 * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.08, frameWidth * 0.032),
                 y: Math.max(0.08, frameHeight * 0.12),
-                z: Math.max(0.20, frameDepth * 0.20),
+                z: Math.max(0.20, frameDepth * 0.18),
               }),
               rotationY: basis.angle,
               materialRole: 'metal2',
