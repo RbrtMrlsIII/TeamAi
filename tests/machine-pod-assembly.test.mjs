@@ -10,6 +10,34 @@ import {
   validateMachinePodAssembly,
 } from '../frontend/spatial/machine-pod-assembly.js';
 
+test('S3 shell ribs use bounded authored profiles inside the existing Pod envelope', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const part = core.byBranch.get('BRANCH-SEAT-04');
+  const assembly = deriveMachinePodAssembly({ part, expansionAmount: 1 });
+  const ribs = assembly.mechanicalDetails.filter((item) => item.role === 'shell-rib');
+
+  assert.equal(ribs.length, 6);
+  assert.ok(ribs.every((item) => item.profile === 'pod-shell-rib'));
+  assert.ok(ribs.every((item) => item.outline?.length === 7));
+  assert.ok(ribs.every((item) => item.constructionSlice === 'S3'));
+  assert.ok(ribs.every((item) => item.constructionOwner === 'frontend/spatial/machine-pod-assembly.js'));
+
+  const shellRadius = Math.max(
+    Number(assembly.components.find((item) => item.role === 'outer-shell')?.dimensions.x || 0),
+    Number(assembly.components.find((item) => item.role === 'outer-shell')?.dimensions.z || 0),
+  ) * 0.5;
+  const ribExtent = Math.max(
+    ...ribs.map((item) =>
+      Math.hypot(item.center.x - assembly.subject.center.x, item.center.z - assembly.subject.center.z)
+      + Math.hypot(item.dimensions.x * 0.5, item.dimensions.z * 0.5),
+    ),
+  );
+  assert.ok(ribExtent < shellRadius);
+
+  const subjectIds = new Set(assembly.subject.sourcePartIds);
+  assert.ok(ribs.every((item) => subjectIds.has(item.id)));
+});
+
 test('S3 produces authored Pod assemblies across the supported 1-10 population range', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     const core = createBranchConnectionCore({ seatCount });
@@ -111,7 +139,7 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
   const core = createBranchConnectionCore({ seatCount: 10 });
   const part = core.byBranch.get('BRANCH-SEAT-04');
   const assembly = deriveMachinePodAssembly({ part, expansionAmount: 1 });
-  assert.equal(assembly.mechanicalDetails.length, 17);
+  assert.equal(assembly.mechanicalDetails.length, 23);
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'docking-strut').length,
     2,
