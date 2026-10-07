@@ -2,11 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
-import { buildMachineWorldTopology } from '../frontend/spatial/machine-world-topology.js';
+import { buildMachineWorldTopology, getRenderableMachineWorldConduitSegments } from '../frontend/spatial/machine-world-topology.js';
 import {
   getRenderableMachineWorldStructuralConduitSegments,
   validateMachineWorldStructuralConduitSegments,
 } from '../frontend/spatial/machine-world-structural-conduit.js';
+import {
+  derivePodDivisionDockingCollars,
+  derivePodDivisionDockingSockets,
+} from '../frontend/spatial/machine-world-pod-docking-embodiment.js';
 
 function buildTopology(seatCount) {
   const scene = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
@@ -78,4 +82,41 @@ test('S8 structural conduit source and browser copies remain exact', () => {
     'utf8',
   );
   assert.equal(browser, source);
+});
+
+
+test('S8 pod-division endpoints carry physical docking embodiment in the same route space', () => {
+  const topology = buildTopology(10);
+  const conduitSegments = getRenderableMachineWorldConduitSegments(topology)
+    .filter((segment) => segment.edgeKind === 'pod-division');
+  const sockets = derivePodDivisionDockingSockets(conduitSegments);
+  const collars = derivePodDivisionDockingCollars(conduitSegments);
+
+  assert.equal(sockets.length, 10 * 7 * 2);
+  assert.equal(collars.length, 10 * 7 * 2);
+  assert.ok(sockets.every((socket) => socket.routeContinuous && socket.presentationOnly));
+  assert.ok(collars.every((collar) => collar.routeContinuous && collar.presentationOnly));
+  assert.ok(sockets.every((socket) => socket.radius > 0 && socket.radius <= 0.065));
+  assert.ok(collars.every((collar) => collar.radius > 0 && collar.radius <= 0.09));
+});
+
+test('S8 canonical raw Hero renderer consumes structural and docking embodiment', () => {
+  const renderer = readFileSync(
+    'frontend/spatial/machine-world-renderer.js',
+    'utf8',
+  );
+  const publicRenderer = readFileSync(
+    'public/machine-world-renderer.js',
+    'utf8',
+  );
+
+  assert.match(renderer, /machine-world-structural-conduit\.js/);
+  assert.match(renderer, /getRenderableMachineWorldStructuralConduitSegments/);
+  assert.match(renderer, /function segmentTubeRotationMatrix\(start, end\)/);
+  assert.match(renderer, /function segmentTubeTransform\(segment, radiusScale = 1\)/);
+  assert.match(renderer, /derivePodDivisionDockingSockets\(podDivisionDockingSegments\)/);
+  assert.match(renderer, /derivePodDivisionDockingCollars\(podDivisionDockingSegments\)/);
+  assert.match(renderer, /machineWorldDockingSocketCount/);
+  assert.match(renderer, /machineWorldDockingCollarCount/);
+  assert.equal(publicRenderer, renderer);
 });
