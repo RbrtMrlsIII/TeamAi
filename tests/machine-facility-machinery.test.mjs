@@ -227,6 +227,41 @@ test('S7 raw Hero and Three adapter expose the authored operations fin profile',
   assert.equal(publicRenderer, renderer);
 });
 
+test('S7 operations machine exposes paired fin actuators with bounded authored motion', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const operations = machinery.find((machine) => machine.machineRole === 'operations');
+  assert.ok(operations);
+
+  const expected = {
+    'fin-actuator-primary': 'operations-fin-actuator-primary',
+    'fin-actuator-secondary': 'operations-fin-actuator-secondary',
+  };
+  for (const [role, profile] of Object.entries(expected)) {
+    const actuator = operations.components.find((entry) => entry.role === role);
+    assert.ok(actuator);
+    assert.equal(actuator.profile, profile);
+    assert.equal(actuator.shape, 'BOX');
+    assert.match(actuator.parentRole, /^deployment-fin(?:-secondary)?$/);
+    assert.ok(operations.subject.sourcePartIds.includes(actuator.id));
+
+    const motion = deriveMachineFacilityMechanismPresentation(
+      operations,
+      { amount: 1, reducedMotion: false },
+    ).components.find((entry) => entry.id === actuator.id);
+    assert.ok(motion);
+    assert.ok(Math.abs(motion.rotationY - actuator.rotationY) > 0.01);
+    assert.ok(Math.hypot(motion.dx, motion.dz) > 0.01);
+  }
+
+  assert.equal(
+    operations.components.filter((entry) => entry.role.startsWith('fin-actuator-')).length,
+    2,
+  );
+});
+ 
 test('S7 operations machine exposes layered fin caps and actuator rails inside fin envelopes', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
@@ -279,7 +314,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V11');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V12');
 
   const expected = Object.freeze({
     control: Object.freeze({
