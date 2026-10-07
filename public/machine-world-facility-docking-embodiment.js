@@ -9,7 +9,7 @@ import { createSpatialConstructionContext } from './machine-spatial-root-contrac
 
 export const MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_ID =
   'MACHINE-WORLD-FACILITY-DOCKING-EMBODIMENT';
-export const MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_VERSION = 'S8-ENDPOINT-V1';
+export const MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_VERSION = 'S8-ENDPOINT-V2';
 
 const ROOT_OWNER = 'frontend/spatial/machine-world-facility-docking-embodiment.js';
 
@@ -49,15 +49,25 @@ const descriptor = ({
   edgeKind: role === 'facility-port-flange'
     ? 'facility-port'
     : 'machine-endpoint',
-  center: Object.freeze({
-    x: finite(point?.x),
-    y: finite(point?.y),
-    z: finite(point?.z),
-  }),
   point: Object.freeze({
     x: finite(point?.x),
     y: finite(point?.y),
     z: finite(point?.z),
+  }),
+  connectorStart: Object.freeze({
+    x: finite(point?.x),
+    y: finite(point?.y),
+    z: finite(point?.z),
+  }),
+  connectorEnd: Object.freeze({
+    x: finite(point?.x) + finite(direction?.x) * Math.max(0.025, finite(length, 0.10)),
+    y: finite(point?.y),
+    z: finite(point?.z) + finite(direction?.z) * Math.max(0.025, finite(length, 0.10)),
+  }),
+  center: Object.freeze({
+    x: finite(point?.x) + finite(direction?.x) * (Math.max(0.025, finite(length, 0.10)) * 0.5),
+    y: finite(point?.y),
+    z: finite(point?.z) + finite(direction?.z) * (Math.max(0.025, finite(length, 0.10)) * 0.5),
   }),
   direction: Object.freeze({
     x: finite(direction?.x),
@@ -168,7 +178,12 @@ export function validateMachineWorldFacilityDockingEmbodiment(
     if (entry?.semanticBoundary !== 'presentation-only') reasons.push(entry?.id + ':NOT_PRESENTATION_ONLY');
     if (!(Number(entry?.radius) > 0 && Number(entry?.radius) <= 0.16)) reasons.push(entry?.id + ':RADIUS_OUT_OF_BOUNDS');
     if (!(Number(entry?.length) > 0 && Number(entry?.length) <= 0.18)) reasons.push(entry?.id + ':LENGTH_OUT_OF_BOUNDS');
-    for (const point of [entry?.point, entry?.center]) {
+    const span = Math.hypot(
+      finite(entry?.connectorEnd?.x) - finite(entry?.connectorStart?.x),
+      finite(entry?.connectorEnd?.z) - finite(entry?.connectorStart?.z),
+    );
+    if (span < Math.max(0.025, Number(entry?.length) * 0.99)) reasons.push(entry?.id + ':CONNECTOR_SPAN_TOO_SHORT');
+    for (const point of [entry?.point, entry?.center, entry?.connectorStart, entry?.connectorEnd]) {
       if (![point?.x, point?.y, point?.z].every(Number.isFinite)) {
         reasons.push(entry?.id + ':NONFINITE_POINT');
       }

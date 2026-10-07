@@ -1339,13 +1339,31 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       const material = entry.role === 'machine-endpoint-collar'
         ? activeHeroMaterials.metal2
         : activeHeroMaterials.metal;
+      const connectorTransform = directionalTubeTransform(
+        entry.center,
+        entry.direction,
+        entry.length,
+        Math.max(0.025, entry.radius * 0.52),
+      );
+      if (connectorTransform) {
+        ringDraw(
+          'CUBE',
+          connectorTransform,
+          material,
+          {
+            emit: selected ? 0.09 : entry.role === 'machine-endpoint-collar' ? 0.028 : 0.014,
+            glow: selected ? 0.14 : 0.035,
+            alpha: reducedMotion ? 0.78 : 0.94,
+          },
+        );
+      }
       ringDraw(
         'TORUS',
         multiplyMatrix(
-          translateMatrix(entry.center.x, entry.center.y, entry.center.z),
+          translateMatrix(entry.connectorEnd.x, entry.connectorEnd.y, entry.connectorEnd.z),
           scaleMatrix(
             Math.max(0.04, entry.radius),
-            Math.max(0.035, entry.length * 0.46),
+            Math.max(0.035, entry.radius * 0.46),
             Math.max(0.04, entry.radius),
           ),
         ),
@@ -1358,8 +1376,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
       rendered += 1;
     }
-    canvas.dataset.machineWorldFacilityDockingEmbodiment = 'S8-ENDPOINT-V1';
+    canvas.dataset.machineWorldFacilityDockingEmbodiment = 'S8-ENDPOINT-V2';
     canvas.dataset.machineWorldFacilityDockingCount = String(descriptors.length);
+    canvas.dataset.machineWorldFacilityDockingConnectorSpan = 'visible';
     canvas.dataset.machineWorldFacilityDockingEndpointCount = String(
       descriptors.filter((entry) => entry.role === 'machine-endpoint-collar').length,
     );

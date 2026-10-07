@@ -209,7 +209,6 @@ test('S7 facility body shells form four authored manufactured families without c
   assert.equal(shells.filter((entry) => entry.layer === 'shoulder-plate').length, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'upper-cap').length, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'mechanism-housing').length, 4);
-  assert.equal(shells.filter((entry) => entry.layer === 'mechanism-housing').length, 4);
   assert.ok(shells.every((entry) => entry.presentationOnly === true));
   assert.ok(shells.every((entry) => entry.constructionSlice === 'S7'));
   assert.ok(shells.every((entry) => entry.constructionOwner === 'frontend/spatial/machine-world-facility-shell.js'));
