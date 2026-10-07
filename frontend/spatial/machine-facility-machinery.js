@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V12';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V13';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -868,6 +868,30 @@ export function deriveMachineFacilityMachinery({
               materialRole: 'metal2',
               parentRole: 'rotor-hub',
               ...rootContext(assembly.branchId + ':ROTOR-BEARING-BLOCK:' + side),
+            })),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ROTOR-DRIVE-LINK:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'rotor-drive-link',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x
+                  + basis.outward.x * frameDepth * 0.16
+                  + basis.tangent.x * frameWidth * 0.22 * side,
+                y: housingCenter.y + frameHeight * 0.42,
+                z: housingCenter.z
+                  + basis.outward.z * frameDepth * 0.16
+                  + basis.tangent.z * frameWidth * 0.22 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.055),
+                y: Math.max(0.10, frameHeight * 0.16),
+                z: Math.max(0.26, frameDepth * 0.30),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'rotor-hub',
+              profile: 'control-rotor-drive-link',
+              ...rootContext(assembly.branchId + ':ROTOR-DRIVE-LINK:' + side),
             })),
             Object.freeze({
               id: 'MACHINERY:' + assembly.branchId + ':CHAMBER-RETAINER',
