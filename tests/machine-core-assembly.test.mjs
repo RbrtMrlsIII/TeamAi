@@ -69,7 +69,7 @@ test('S2 authored mechanical detail layer adds real internal machine structure w
     workspaceCore: { radius: 4.046 },
     expansionAmount: 1,
   });
-  assert.equal(assembly.version, 'S2-V4');
+  assert.equal(assembly.version, 'S2-V5');
   const braces = assembly.mechanicalDetails.filter((item) => item.role === 'foundation-brace');
   const guards = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-guard');
   const housing = assembly.mechanicalDetails.filter((item) => item.role === 'reactor-inner-housing');
