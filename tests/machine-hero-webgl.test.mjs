@@ -124,7 +124,7 @@ test('canonical renderer projects the authored S2 core mechanical detail layer',
   assert.match(renderer, /CORE_BRACE/);
   assert.match(renderer, /machineWorldCoreMechanicalDetails/);
   assert.match(renderer, /layered-rib-guard-v1/);
-  assert.match(coreAssembly, /MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V3'/);
+  assert.match(coreAssembly, /MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V4'/);
   assert.match(coreAssembly, /foundation-brace/);
   assert.match(coreAssembly, /reactor-guard/);
   assert.match(coreAssembly, /reactor-inner-housing/);
