@@ -98,7 +98,7 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
     analysis.mechanicalDetails.filter((entry) => entry.role.startsWith('barrel-collar-')).length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 7);
+  assert.equal(analysis.mechanicalDetails.length, 9);
   assert.equal(
     machinery
       .filter((machine) => ['control', 'access-commerce'].includes(machine.machineRole))
@@ -130,17 +130,23 @@ test('S7 analysis telescope exposes fixed guide rails within the authored housin
     assert.equal(rail.constructionSlice, 'S7');
     assert.equal(rail.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
 
-    const dx = rail.center.x - center.x;
-    const dz = rail.center.z - center.z;
-    const localX = dx * tangent.x + dz * tangent.z;
-    const localZ = dx * outward.x + dz * outward.z;
     const halfHousingX = dims.x * 0.5;
     const halfHousingZ = dims.z * 0.5;
     const halfRailX = rail.dimensions.x * 0.5;
     const halfRailZ = rail.dimensions.z * 0.5;
+    const localCorners = [
+      [-halfRailX, -halfRailZ],
+      [-halfRailX, halfRailZ],
+      [halfRailX, -halfRailZ],
+      [halfRailX, halfRailZ],
+    ];
 
-    assert.ok(Math.abs(localX) + halfRailX <= halfHousingX - 0.03 + 1e-9);
-    assert.ok(Math.abs(localZ) + halfRailZ <= halfHousingZ - 0.03 + 1e-9);
+    for (const [localX, localZ] of localCorners) {
+      const worldX = rail.center.x + cos * localX + sin * localZ;
+      const worldZ = rail.center.z - sin * localX + cos * localZ;
+      assert.ok(Math.abs(worldX - center.x) <= halfHousingX - 0.03 + 1e-9);
+      assert.ok(Math.abs(worldZ - center.z) <= halfHousingZ - 0.03 + 1e-9);
+    }
   }
 
   assert.equal(
@@ -331,7 +337,7 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    assert.equal(machine.mechanicalDetails.length, machine.machineRole === 'analysis' ? 7 : 9);
+    assert.equal(machine.mechanicalDetails.length, 9);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);
