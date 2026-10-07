@@ -686,7 +686,7 @@ export function deriveMachineFacilityMachinery({
               shape: 'BOX',
               center: Object.freeze({
                 x: housingCenter.x + basis.tangent.x * frameWidth * 0.34,
-                y: center.y + frameHeight * 0.34 + Math.max(0.05, frameHeight * 0.06),
+                y: housingCenter.y + frameHeight * 0.34 + Math.max(0.05, frameHeight * 0.06),
                 z: housingCenter.z + basis.tangent.z * frameWidth * 0.34,
               }),
               dimensions: Object.freeze({
@@ -705,7 +705,7 @@ export function deriveMachineFacilityMachinery({
               shape: 'BOX',
               center: Object.freeze({
                 x: housingCenter.x - basis.tangent.x * frameWidth * 0.34,
-                y: center.y + frameHeight * 0.38 + Math.max(0.05, frameHeight * 0.05),
+                y: housingCenter.y + frameHeight * 0.38 + Math.max(0.05, frameHeight * 0.05),
                 z: housingCenter.z - basis.tangent.z * frameWidth * 0.34,
               }),
               dimensions: Object.freeze({
@@ -725,7 +725,7 @@ export function deriveMachineFacilityMachinery({
               center: Object.freeze({
                 x: housingCenter.x + basis.outward.x * frameDepth * 0.12
                   + basis.tangent.x * frameWidth * 0.34,
-                y: center.y + frameHeight * 0.43,
+                y: housingCenter.y + frameHeight * 0.43,
                 z: housingCenter.z + basis.outward.z * frameDepth * 0.12
                   + basis.tangent.z * frameWidth * 0.34,
               }),
@@ -744,10 +744,10 @@ export function deriveMachineFacilityMachinery({
               role: 'deployment-fin-secondary-rail',
               shape: 'BOX',
               center: Object.freeze({
-                x: center.x + basis.outward.x * frameDepth * 0.12
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.12
                   - basis.tangent.x * frameWidth * 0.34,
-                y: center.y + frameHeight * 0.47,
-                z: center.z + basis.outward.z * frameDepth * 0.12
+                y: housingCenter.y + frameHeight * 0.47,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.12
                   - basis.tangent.z * frameWidth * 0.34,
               }),
               dimensions: Object.freeze({
