@@ -28,11 +28,11 @@ test('S3 shell ribs use bounded authored profiles inside the existing Pod envelo
   ) * 0.5;
   const ribExtent = Math.max(
     ...ribs.map((item) =>
-      Math.hypot(item.center.x - assembly.subject.center.x, item.center.z - assembly.subject.center.z)
+      Math.hypot(item.center.x - assembly.center.x, item.center.z - assembly.center.z)
       + Math.hypot(item.dimensions.x * 0.5, item.dimensions.z * 0.5),
     ),
   );
-  assert.ok(ribExtent < shellRadius);
+  assert.ok(ribExtent <= shellRadius - 0.03);
 
   const subjectIds = new Set(assembly.subject.sourcePartIds);
   assert.ok(ribs.every((item) => subjectIds.has(item.id)));
