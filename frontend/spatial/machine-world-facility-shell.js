@@ -41,7 +41,7 @@ export const MACHINE_WORLD_FACILITY_BODY_OUTLINES = Object.freeze({
 
 
 export function getMachineWorldFacilityBodyOutline(silhouette) {
-  return MACHINE_WORLD_MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette || '')] || null;
+  return MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette || '')] || null;
 }
 
 const scale = (value, factor, minimum = 0.06) =>
