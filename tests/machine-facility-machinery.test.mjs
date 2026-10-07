@@ -112,7 +112,7 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    assert.equal(machine.mechanicalDetails.length, 5);
+    assert.equal(machine.mechanicalDetails.length, machine.machineRole === 'analysis' ? 7 : 5);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);
