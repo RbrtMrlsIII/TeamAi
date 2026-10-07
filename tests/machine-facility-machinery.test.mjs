@@ -55,6 +55,56 @@ test('S7 every machine inherits S0-S6 and has facility-specific camera subject, 
   }
 });
 
+test('S7 analysis machine uses authored nested telescope barrel footprints and collars', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const analysis = machinery.find((machine) => machine.machineRole === 'analysis');
+  assert.ok(analysis);
+
+  const expectedSides = Object.freeze({
+    'barrel-stage-1': 12,
+    'barrel-stage-2': 10,
+    'barrel-stage-3': 8,
+  });
+
+  for (const [role, expectedLength] of Object.entries(expectedSides)) {
+    const part = analysis.components.find((entry) => entry.role === role);
+    assert.ok(part, role);
+    assert.equal(part.profile, 'analysis-telescope-' + role.replace(/^barrel-/, ''));
+    assert.ok(Array.isArray(part.outline));
+    assert.equal(part.outline.length, expectedLength);
+
+    let area = 0;
+    const turns = [];
+    for (let index = 0; index < part.outline.length; index += 1) {
+      const a = part.outline[index];
+      const b = part.outline[(index + 1) % part.outline.length];
+      const c = part.outline[(index + 2) % part.outline.length];
+      area += a[0] * b[1] - b[0] * a[1];
+      turns.push(
+        (b[0] - a[0]) * (c[1] - b[1])
+        - (b[1] - a[1]) * (c[0] - b[0]),
+      );
+      assert.ok(Math.hypot(a[0], a[1]) <= 1.000001);
+    }
+    assert.ok(area > 0);
+    assert.ok(Math.min(...turns) > 0);
+  }
+
+  assert.equal(
+    analysis.mechanicalDetails.filter((entry) => entry.role.startsWith('barrel-collar-')).length,
+    2,
+  );
+  assert.equal(analysis.mechanicalDetails.length, 7);
+  assert.equal(
+    machinery.filter((machine) => machine.machineRole !== 'analysis')
+      .every((machine) => machine.mechanicalDetails.length === 5),
+    true,
+  );
+});
+
 test('S7 facility chassis details are authored and included in each machine subject', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({

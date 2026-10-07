@@ -14,9 +14,29 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V6';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V7';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
+
+const ANALYSIS_BARREL_OUTLINES = Object.freeze({
+  'barrel-stage-1': Object.freeze([
+    [0.965926, 0.258819], [0.707107, 0.707107], [0.258819, 0.965926],
+    [-0.258819, 0.965926], [-0.707107, 0.707107], [-0.965926, 0.258819],
+    [-0.965926, -0.258819], [-0.707107, -0.707107], [-0.258819, -0.965926],
+    [0.258819, -0.965926], [0.707107, -0.707107], [0.965926, -0.258819],
+  ]),
+  'barrel-stage-2': Object.freeze([
+    [0.951057, 0.309017], [0.587785, 0.809017], [0, 1],
+    [-0.587785, 0.809017], [-0.951057, 0.309017], [-0.951057, -0.309017],
+    [-0.587785, -0.809017], [0, -1], [0.587785, -0.809017], [0.951057, -0.309017],
+  ]),
+  'barrel-stage-3': Object.freeze([
+    [0.92388, 0.382683], [0.382683, 0.92388], [-0.382683, 0.92388],
+    [-0.92388, 0.382683], [-0.92388, -0.382683], [-0.382683, -0.92388],
+    [0.382683, -0.92388], [0.92388, -0.382683],
+  ]),
+});
+
 const MACHINE_PROFILES = Object.freeze({
   analysis: Object.freeze({
     label: 'Telescoping analysis',
@@ -131,7 +151,7 @@ export function deriveMachineFacilityMechanismPresentation(
   });
 }
 
-function component(id, role, shape, center, dimensions, materialRole, rotationY = 0) {
+function component(id, role, shape, center, dimensions, materialRole, rotationY = 0, metadata = {}) {
   return Object.freeze({
     id,
     role,
@@ -148,6 +168,7 @@ function component(id, role, shape, center, dimensions, materialRole, rotationY 
     }),
     materialRole,
     rotationY: finite(rotationY),
+    ...metadata,
     ...rootContext(id),
   });
 }
@@ -213,13 +234,16 @@ function buildMachineComponents(assembly) {
       return Object.freeze([
         component(id('BARREL_STAGE_1'), 'barrel-stage-1', 'CYL',
           { x: center.x + basis.outward.x * 0.18, y: center.y + 0.22, z: center.z + basis.outward.z * 0.18 },
-          { x: width * 0.34, y: height * 0.42, z: width * 0.34 }, 'metal'),
+          { x: width * 0.34, y: height * 0.42, z: width * 0.34 }, 'metal', basis.angle,
+          { profile: 'analysis-telescope-stage-1', outline: ANALYSIS_BARREL_OUTLINES['barrel-stage-1'] }),
         component(id('BARREL_STAGE_2'), 'barrel-stage-2', 'CYL',
           { x: center.x + basis.outward.x * 0.42, y: center.y + 0.25, z: center.z + basis.outward.z * 0.42 },
-          { x: width * 0.27, y: height * 0.35, z: width * 0.27 }, 'glass'),
+          { x: width * 0.27, y: height * 0.35, z: width * 0.27 }, 'glass', basis.angle,
+          { profile: 'analysis-telescope-stage-2', outline: ANALYSIS_BARREL_OUTLINES['barrel-stage-2'] }),
         component(id('BARREL_STAGE_3'), 'barrel-stage-3', 'CYL',
           { x: center.x + basis.outward.x * 0.68, y: center.y + 0.28, z: center.z + basis.outward.z * 0.68 },
-          { x: width * 0.19, y: height * 0.28, z: width * 0.19 }, 'energy'),
+          { x: width * 0.19, y: height * 0.28, z: width * 0.19 }, 'energy', basis.angle,
+          { profile: 'analysis-telescope-stage-3', outline: ANALYSIS_BARREL_OUTLINES['barrel-stage-3'] }),
         component(id('FOCUS_RING'), 'focus-ring', 'TORUS',
           { x: center.x + basis.outward.x * 0.36, y: center.y + 0.25, z: center.z + basis.outward.z * 0.36 },
           { x: width * 0.44, y: height * 0.10, z: width * 0.44 }, 'trace'),
@@ -614,6 +638,46 @@ export function deriveMachineFacilityMachinery({
         materialRole: 'metal2',
         ...rootContext(assembly.branchId + ':HINGE-MOUNT:' + side),
       })),
+      ...(assembly.machineRole === 'analysis'
+        ? [
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':BARREL-COLLAR-MID',
+              role: 'barrel-collar-mid',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.30,
+                y: housingCenter.y + frameHeight * 0.31,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.30,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.40,
+                y: Math.max(0.06, frameHeight * 0.09),
+                z: frameWidth * 0.40,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              ...rootContext(assembly.branchId + ':BARREL-COLLAR-MID'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':BARREL-COLLAR-FRONT',
+              role: 'barrel-collar-front',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.57,
+                y: housingCenter.y + frameHeight * 0.33,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.57,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.29,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameWidth * 0.29,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'trace',
+              ...rootContext(assembly.branchId + ':BARREL-COLLAR-FRONT'),
+            }),
+          ]
+        : []),
     ]);
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
