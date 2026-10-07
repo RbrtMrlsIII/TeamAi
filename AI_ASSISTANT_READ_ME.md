@@ -82,6 +82,12 @@ Then: `warning → authority reconciliation → implementation → replacement v
 
 Never weaken validation merely to make CI green.
 
+### Canonical session-boundary retirement records
+
+There is no live `HandOver.md`. Future sessions use Issue #409 and this session boundary instead.
+There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to the applicable Issue/PR/evidence and are never inferred from green CI.
+Parallel `docs/skills` procedure namespaces are forbidden; Skill routing is owned by `docs/SKILL_WIRING.md`.
+
 ### Historical pre-029-session verification note
 
 The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
