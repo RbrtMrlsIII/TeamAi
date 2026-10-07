@@ -1982,7 +1982,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     const facilityBodyShells = deriveMachineWorldFacilityShellDescriptors(facilityMachinery);
     if (
-      facilityBodyShells.length !== 16
+      facilityBodyShells.length !== 20
       || !facilityBodyShells.every((entry) =>
         entry.presentationOnly === true
         && entry.constructionSlice === 'S7'
