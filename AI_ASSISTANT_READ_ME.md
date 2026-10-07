@@ -19,26 +19,23 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Exact #424 current head: `eb27d1be35ca141ccd2efb96b5e79ef78ca19628`
-- Producing implementation head for the verified S2/S3 embodiment: `266a06042d267d40e0c0678e98479e0ca792d714`
-- #424: OPEN / DRAFT / mergeable
+- Latest producing implementation head: `2f791d565443422debed414e54d544b5b5fd4305`
+- PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
 - Product Law and the canonical feature grammar remain authoritative. The target is the actual TeamAi product expressed as one semantic spatial machine, not a reference-only rocket recreation.
-- Product Law resolution: the storyboard's cinematic 8-Pod composition is not capacity authority. TeamAi remains a 1–10 Seat product with 10 guest presentation slots. The storyboard's final rocket-hologram presentation is not a required product target.
-- Producing-head proof: Full-System `37575266019` PASS; Governance `37575265886` PASS; Security/Deep Security terminal-success; Canonical Browser `37575265973` PASS; CodeQL and deep static security scans passed.
-- Full-System project suite: **1,220 passed / 0 failed**.
-- Fresh documentation-head Browser proof: `37576921357` PASS; **92 passed / 4 skipped** after the documentation synchronization.
-- Fresh documentation-head Browser artifact: `11462413569`; ZIP SHA-256 `08f4b60233815f85eb41dd843673e8f5ed546465a034e4be21aca3290007abbb`.
-- The exact-head Browser artifact contains a genuine recording from the actual `/hero/` product surface. The artifact is the authoritative binary record for its codec, frame count, duration, and video hash.
-- Verified structural state: S3 Pod embodiment plus S2 Core embodiment. S3 uses the authored 12-sided Pod shell and 17 authored mechanical details. S2 uses six layered Core components and 32 authored mechanical details, with the Core radial envelope derived from foundation, mechanical-detail, and port reach.
-- Independent 10-seat full-expansion Pod clearance remains approximately 0.6472 against the requested 0.16 floor. The S2 Core mechanical-detail radial envelope is approximately 1.88 units at full expansion.
-- Relative to the preceding verified S3/video head `087045e5`, the S2 change altered `s2-s10-world.png` by 1,234 pixels (1,105 at >=5/255) and `s2-s10-transform-mid.png` by 1,286 pixels (1,163 at >=5/255). Focused Facility and Seat captures were pixel-identical, localizing the change to the Core.
-- The browser video test traverses actual Seat selection, division focus, return to entrance, and turn-loop states and asserts the governed 10-seat product state at completion.
-- Current visual acceptance remains open. The real product video confirms the remaining gaps are physical/visual: compound Core/Pod massing, differentiated S7 mechanisms, physically attached conduit/manifold construction, closer mechanism framing, and later world-expression layers.
-- Any new structural change remains constrained to PR #424 only and must be independently measured, exact-head verified, and artifact-inspected before acceptance.
+- Product Law resolution: the storyboard's cinematic 8-Pod composition is visual reference only. TeamAi remains a 1–10 Seat product with 10 guest presentation slots. The final rocket-hologram frame is not a required product target.
+- Current bounded spatial slice: S7 Operations / fin-deploy actuator-housing reinforcement, advancing `S7-V11 → S7-V12`.
+- Two presentation-only mechanical details are present: `fin-actuator-primary` and `fin-actuator-secondary`, parented to the existing deployment-fin roles and included in the S7 machine subject/envelope.
+- Independent representative Beta geometry: housing radial boundary `0.73`; primary actuator margin approximately `0.18675`; secondary actuator margin approximately `0.20219`; regression requires `0.03`.
+- Frontend/public `machine-facility-machinery.js` is byte-identical at the producing implementation head.
+- An earlier insertion head `c4c75bf...` failed Full-System syntax checking. The malformed insertion was diagnosed from CI and repaired without weakening validators.
+- Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser verification for the final documentation head is pending at this reconciliation moment.
+- Current visual acceptance remains open. The Hailuo MP4 and project PNG remain visual-direction inputs, not semantic or geometry authority.
+- Required evidence chain: inspect → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
+
 ### Historical pre-029-session verification note
 
 The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
