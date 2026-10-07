@@ -216,7 +216,7 @@ This is the expanded readiness ledger for S0–S24. It is not a second roadmap. 
 | S4 | IMPLEMENTED / REPOSITORY-VERIFIED | Division assembly/presentation | Focused division presentation | Nested payload embodiment + exact-head spatial acceptance |
 | S5 | IMPLEMENTED / REPOSITORY-VERIFIED | Expansion mechanism + authored geometry | Expansion is observable | True parent-Pod transformation + exact-head safety package |
 | S6 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility assembly owners | Facilities are discoverable/presented | Cross-feature runtime acceptance |
-| S7 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility machinery owners | Specialized outer machines render | Mechanism/silhouette differentiation + world-wide spatial validation |
+| S7 | IMPLEMENTATION ADVANCED / EXACT-HEAD PROOF PENDING | Facility machinery owners | Specialized outer machines render; Operations slice now includes paired actuator housings | Mechanism/silhouette differentiation + final exact-head Browser validation |
 | S8 | IMPLEMENTED / REPOSITORY-VERIFIED | Machine topology | Routes/edges render | Physical endpoint/attachment embodiment + final geometry/topology proof |
 | S9 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Signal projection over S8 | Signal/state effects render | State/effect ownership + formal exit after geometry-first gate |
 | S10 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Camera authority | World/pod/division/facility framing | Subject-relative intimacy + continuous travel + final camera acceptance |
@@ -1182,3 +1182,20 @@ SHA-256: `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
 **Current visual finding:** the exact-head structural candidate is still a substrate proof rather than a final ProMax machine. The World view reads as a structural diagram, Seat focus is now correctly scoped to the selected Seat, and Facility focus is functional but still exposes long routed topology spans. These are acceptance observations, not evidence that the semantic/geometry authorities are wrong.
 
 **Cleanup finding:** the public structural embodiment preview had one duplicated material-model dataset assignment; the redundant assignment was removed at head `6007a87a14175a85de0cbc40fb0a95f51d876596`. Source/public preview parity is restored.
+
+### A6.1 2026-10-07 current #424 S7 Operations checkpoint
+
+**Producing implementation head:** `2f791d565443422debed414e54d544b5b5fd4305`
+
+The current bounded slice adds two presentation-only mechanical actuator housings to the existing S7 Operations / fin-deployment family and advances the machinery version to `S7-V12`.
+
+- [x] Existing Operations semantic role graph preserved.
+- [x] `fin-actuator-primary` and `fin-actuator-secondary` are presentation-only mechanical details.
+- [x] Both actuators are owned by `frontend/spatial/machine-facility-machinery.js` and included in the machine subject/envelope.
+- [x] Frontend/public machinery sources remain exact-parity.
+- [x] Independent representative 10-seat Beta geometry leaves approximately `0.18675` and `0.20219` units of tight-edge margin on the primary and secondary actuator housings.
+- [ ] Exact-head Full-System verification completed.
+- [ ] Exact-head Governance/Security/Deep Security verification completed.
+- [ ] Exact-head Canonical Browser verification completed and artifact inspected.
+
+The current slice does not change Seat cardinality, semantic topology, facility ownership, camera authority, or backend/runtime authority.
