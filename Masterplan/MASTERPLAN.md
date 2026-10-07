@@ -299,3 +299,22 @@ PR #424 remains the sole active 029 spatial continuation vehicle. Exact implemen
 Exact-head proof: Full-System `37649479000` PASS; Governance `37649478928` PASS; Security `37649478908` PASS; Deep Security `37649479006` PASS; Browser `37649478815` PASS, 92 passed / 4 skipped. Browser artifact `11496462178`, SHA-256 `f86ef0cf6528585f9a11017bb31f31083b2738bd92c7d8c4fc054266f5ed8b0a`.
 
 The current facility screenshot is Beta/Operations, so it does not visually isolate Gamma rotor-drive links. This repository/browser closure does not equal human visual acceptance, production/runtime proof, release authorization, or merge authorization.
+## 2026-10-08 S7-V14 Facility Body Production Parity checkpoint
+
+PR #424 remains the sole active spatial continuation vehicle. Verified implementation head: `55e272e6d57a9617dc73acc53e18bb951c004050`.
+
+The existing authored S7 facility-body construction is now promoted into the canonical raw-WebGL Hero path without creating a new semantic or topology authority. Four family-specific outer facilities retain their semantic identities and render five presentation-only physical layers each, for 20 total body descriptors.
+
+Independent geometry sampled Seat counts 1/5/10 across closed, half, and expanded states. The minimum conservative XZ shell-versus-Pod clearance is approximately 2.7371 units, above the requested 0.16 clearance. Source/public synchronization remains exact.
+
+Exact implementation-head proof:
+- Full-System `37659080295`: PASS
+- Governance `37659080256`: PASS
+- Security `37659080264`: PASS
+- Deep Security `37659080241`: PASS
+- Canonical Browser `37659080436`: PASS, 92 passed / 4 skipped
+- Browser artifact `11498924852`, SHA-256 `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`
+
+Artifact inspection confirms the actual Hero surface now contains the four outer body masses. The Hailuo MP4 and endorsed PNG informed the manufactured layering, differentiated outer-machine silhouettes, central/compact composition, and transformation direction, while Product Law, S0-S10, semantic topology, and capacity remained authoritative.
+
+S7-V14 is repository/browser-verified at the implementation head. Human visual acceptance, live deployment/runtime proof, merge authorization, and final 029 completion remain open.
