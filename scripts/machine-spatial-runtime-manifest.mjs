@@ -31,6 +31,7 @@ export const MACHINE_SPATIAL_RUNTIME_FILES = Object.freeze([
   'machine-signal-state.js',
   'machine-world-topology.js',
   'machine-world-facility-shell.js',
+  'machine-world-facility-docking-embodiment.js',
   'machine-world-service-manifold.js',
   'theme-root.js',
   'hero-root-runtime.js',
