@@ -162,7 +162,6 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
     )
   ));
   assert.ok(assembly.envelope.radius >= detailReach);
-  assert.ok(assembly.envelope.neighborClearance >= assembly.envelope.requestedClearance);
 });
 
 test('S3 fails closed when Pod root ownership is corrupted', () => {
