@@ -89,7 +89,7 @@ test('S2 authored mechanical detail layer adds real internal machine structure w
   assert.equal(housing[0].profile, 'nested-reactor-housing');
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionSlice === 'S2'));
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-core-assembly.js'));
-  assert.equal(assembly.mechanicalDetails.length, 26);
+  assert.equal(assembly.mechanicalDetails.length, 32);
   const subjectIds = new Set(assembly.subject.sourcePartIds);
   assert.ok(assembly.mechanicalDetails.every((item) => subjectIds.has(item.id)));
 
