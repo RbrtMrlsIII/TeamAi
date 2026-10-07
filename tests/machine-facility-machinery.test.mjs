@@ -107,6 +107,49 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
   );
 });
 
+test('S7 analysis telescope exposes fixed guide rails within the authored housing envelope', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const analysis = machinery.find((machine) => machine.machineRole === 'analysis');
+  assert.ok(analysis);
+
+  const center = analysis.outerHousing.center;
+  const dims = analysis.outerHousing.dimensions;
+  const angle = Math.atan2(center.z, center.x);
+  const tangent = { x: -Math.sin(angle), z: Math.cos(angle) };
+  const outward = { x: Math.cos(angle), z: Math.sin(angle) };
+  const rails = analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail');
+
+  assert.equal(rails.length, 2);
+  for (const rail of rails) {
+    assert.equal(rail.shape, 'BOX');
+    assert.equal(rail.parentRole, 'barrel-stage-1');
+    assert.equal(rail.materialRole, 'metal2');
+    assert.equal(rail.constructionSlice, 'S7');
+    assert.equal(rail.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+
+    const dx = rail.center.x - center.x;
+    const dz = rail.center.z - center.z;
+    const localX = dx * tangent.x + dz * tangent.z;
+    const localZ = dx * outward.x + dz * outward.z;
+    const halfHousingX = dims.x * 0.5;
+    const halfHousingZ = dims.z * 0.5;
+    const halfRailX = rail.dimensions.x * 0.5;
+    const halfRailZ = rail.dimensions.z * 0.5;
+
+    assert.ok(Math.abs(localX) + halfRailX <= halfHousingX - 0.03 + 1e-9);
+    assert.ok(Math.abs(localZ) + halfRailZ <= halfHousingZ - 0.03 + 1e-9);
+  }
+
+  assert.equal(
+    analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail').length,
+    2,
+  );
+  assert.equal(analysis.mechanicalDetails.length, 9);
+});
+
 test('S7 operations fins use bounded authored convex silhouettes', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
@@ -230,7 +273,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V10');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V11');
 
   const expected = Object.freeze({
     control: Object.freeze({

@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V10';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V11';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -689,6 +689,33 @@ export function deriveMachineFacilityMachinery({
               materialRole: 'trace',
               ...rootContext(assembly.branchId + ':BARREL-COLLAR-FRONT'),
             }),
+          ]
+        : []),
+      ...(assembly.machineRole === 'analysis'
+        ? [
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':BARREL-GUIDE-RAIL:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'barrel-guide-rail',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x
+                  + basis.outward.x * frameDepth * 0.36
+                  + basis.tangent.x * frameWidth * 0.22 * side,
+                y: housingCenter.y + frameHeight * 0.36,
+                z: housingCenter.z
+                  + basis.outward.z * frameDepth * 0.36
+                  + basis.tangent.z * frameWidth * 0.22 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.08, frameWidth * 0.032),
+                y: Math.max(0.08, frameHeight * 0.12),
+                z: Math.max(0.20, frameDepth * 0.20),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'barrel-stage-1',
+              ...rootContext(assembly.branchId + ':BARREL-GUIDE-RAIL:' + side),
+            })),
           ]
         : []),
       ...(assembly.machineRole === 'operations'
