@@ -320,17 +320,51 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
 });
 
 
+test('S7 control machine exposes paired rotor-drive links inside the Gamma housing envelope', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const control = machinery.find((machine) => machine.machineRole === 'control');
+  assert.ok(control);
+
+  const center = control.outerHousing.center;
+  const dimensions = control.outerHousing.dimensions;
+  const angle = Math.atan2(center.z, center.x);
+  const housingBoundary = 1 / (
+    Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
+    + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
+  );
+
+  const links = control.mechanicalDetails.filter((entry) => entry.role === 'rotor-drive-link');
+  assert.equal(links.length, 2);
+
+  for (const link of links) {
+    assert.equal(link.profile, 'control-rotor-drive-link');
+    assert.equal(link.shape, 'BOX');
+    assert.equal(link.parentRole, 'rotor-hub');
+    assert.equal(link.constructionSlice, 'S7');
+    assert.equal(link.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+    assert.ok(control.subject.sourcePartIds.includes(link.id));
+
+    const radialDistance = Math.hypot(link.center.x - center.x, link.center.z - center.z);
+    const radialReach = Math.hypot(link.dimensions.x, link.dimensions.z) * 0.5;
+    assert.ok(radialDistance + radialReach <= housingBoundary - 0.03 + 1e-9);
+  }
+});
+
 test('S7 control and access families expose nested retainers with independent housing bounds', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V12');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V13');
 
   const expected = Object.freeze({
     control: Object.freeze({
       roles: Object.freeze({
         'rotor-bearing-block': 2,
+        'rotor-drive-link': 2,
         'chamber-retainer': 1,
         'chamber-clamp-ring': 1,
       }),
@@ -383,7 +417,7 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    const expectedDetailCount = machine.machineRole === 'operations' ? 11 : 9;
+    const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control' ? 11 : 9;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
