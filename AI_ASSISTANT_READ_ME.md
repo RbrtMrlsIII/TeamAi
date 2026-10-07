@@ -21,13 +21,16 @@
 This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - replacement branch: `frontend/029-spatial-world-continuation`
-- current branch head at reconciliation start: `8dc922528ff850add4a2e9537d2999cda6a86184`
+- current branch head: `080a178ab88fa9a75e40dc55801952e07ee922c2`
+- producing application head at reconciliation start: `8dc922528ff850add4a2e9537d2999cda6a86184`
 - live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as evidence-integrity continuity)
 - global current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
 - open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
 - governing spatial Issue: #405
 - canonical successor handoff: #409
+- handoff rule: Issue #409 is the canonical newcomer handoff; verify live branch/PR/CI state before consequential changes
 - next allowed work: repair the S8 endpoint visibility defect, then continue deeper physical embodiment only after independent clearance and Browser artifact proof
 - validation state: S8 application head `8dc922528ff850add4a2e9537d2999cda6a86184` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11502884380`
 - PR #424 remains OPEN / DRAFT / mergeable
