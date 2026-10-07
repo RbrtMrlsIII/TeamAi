@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: `266a06042d267d40e0c0678e98479e0ca792d714` (exact-head five-gate proof completed; Full-System `37575266019` PASS; Governance `37575265886` PASS; Evidence Consistency `37575265886` PASS; security/static suite PASS; Browser `37575265973` PASS).
+Current exact spatial head: `4dee832771116629933a5a42278a240701a561a3` (documentation-only successor to producing implementation head `266a06042d267d40e0c0678e98479e0ca792d714`; fresh browser artifact produced at this exact documentation head).
 
 The current exact-head structural slice includes S3 Pod embodiment and S2 Core embodiment. Browser artifact `11462456452` has SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`. The artifact contains a genuine `/hero/` product video: 12.68 s, 800×500, 25 fps VP8/WebM. Historical Browser runs remain diagnostic provenance only.
 
