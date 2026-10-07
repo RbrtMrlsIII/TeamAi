@@ -19,7 +19,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Current implementation head: `d8a618b7aab6c2c22c27a858b883b143066d650d`
+- Current implementation head: `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405

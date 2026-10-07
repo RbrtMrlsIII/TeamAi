@@ -8,7 +8,7 @@ Rule: remaining 029 work proceeds through the active successor PR from post-#404
 
 ## 2026-10-07 continuation discipline
 
-The active spatial vehicle is **PR #424 only**. The current implementation head for this checkpoint is `d8a618b7aab6c2c22c27a858b883b143066d650d`, advancing S7 Control from `S7-V12` to `S7-V13`.
+The active spatial vehicle is **PR #424 only**. The current implementation head for this checkpoint is `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`, advancing S7 Control from `S7-V12` to `S7-V13`.
 
 ## 2026-10-07 exact-head continuation checkpoint
 
@@ -1204,7 +1204,7 @@ The current bounded slice adds two presentation-only mechanical actuator housing
 The current slice does not change Seat cardinality, semantic topology, facility ownership, camera authority, or backend/runtime authority.
 ### 2026-10-07 S7 Control rotor-drive-link checkpoint
 
-**Implementation head:** `d8a618b7aab6c2c22c27a858b883b143066d650d`
+**Implementation head:** `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`
 
 - [x] Existing Control semantic role chain preserved.
 - [x] Two `rotor-drive-link` presentation-only details added under `rotor-hub`.

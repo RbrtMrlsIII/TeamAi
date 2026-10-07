@@ -1505,9 +1505,9 @@ The artifact contains world, facility, Seat, transformation, return, responsive/
 
 The real-product video remains browser/runtime evidence, not production deployment or human acceptance. Geometry remains conservative AABB housing-clearance evidence, not triangle-level collision proof.
 
-### E424-2026-10-07K — S7 Control rotor-drive-link implementation checkpoint
+### E424-2026-10-07K — S7 Control rotor-drive-link corrected implementation checkpoint
 
-**Implementation head:** `d8a618b7aab6c2c22c27a858b883b143066d650d`
+**Implementation head:** `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`
 
 This checkpoint supersedes the earlier pending implementation-head note with the corrected density-safe geometry.
 

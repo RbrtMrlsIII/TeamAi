@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial implementation head: `d8a618b7aab6c2c22c27a858b883b143066d650d` (S7 Control rotor-drive-link slice; exact-head proof pending for the resulting documentation-bearing head).
+Current exact spatial implementation head: `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f` (S7 Control rotor-drive-link slice; exact-head proof pending for the resulting documentation-bearing head).
 
-Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `d8a618b7aab6c2c22c27a858b883b143066d650d`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
+Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
