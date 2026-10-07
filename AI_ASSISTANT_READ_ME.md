@@ -19,7 +19,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Current implementation head: `c57a669789d6b6eec1b4fa4dd5060f0183c7ed8f`
+- Current branch head: `38615fd9d1c48a69cb2eef49605989dc74b64f7b` (documentation-only closure after verified S7 Control implementation-plus-documentation head `4d67ac6237e614d9fb6e74c1c46389cc9691c7e5`)
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
@@ -31,7 +31,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Independent 1–10 Seat geometry validation gives a minimum conservative Gamma housing margin of approximately `0.08767`, above the `0.03` regression floor.
 - Frontend/public `machine-facility-machinery.js` is byte-identical at the implementation head.
 - Earlier actuator insertion failures and the standalone machine-core-preview timing defect are historical, not current failures.
-- Prior S7 Operations head `af4be5f...` is fully verified; the current Control implementation-plus-documentation state requires its own exact-head proof.
+- Prior S7 Operations head `af4be5f...` is fully verified; the S7 Control implementation-plus-documentation head `4d67ac6...` is fully verified; the present `38615fd...` branch head is documentation-only and has also completed the full five-gate proof.
 - Required evidence chain: inspect → reason → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
 
 The earlier `c4c75bf...` actuator insertion failure and the standalone machine-core-preview timing defect are historical, not current failures.
