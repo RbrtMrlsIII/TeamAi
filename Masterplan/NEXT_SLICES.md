@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: `d9067e279ea4eeb6277199c2bbdb9b85aedbad6c` (documentation-only successor to producing implementation head `266a06042d267d40e0c0678e98479e0ca792d714`).
+Latest producing implementation head: `2f791d565443422debed414e54d544b5b5fd4305` (S7 Operations fin-deploy actuator-housing slice; exact-head verification pending at reconciliation time).
 
-The current exact-head structural slice includes S3 Pod embodiment and S2 Core embodiment. Browser artifact `11462456452` has SHA-256 `c81bec450215bcee3f677dd2388a5b2c18877b7798ab164d378265b14ae34dc2`. The artifact contains a genuine `/hero/` product video: 12.68 s, 800×500, 25 fps VP8/WebM. Historical Browser runs remain diagnostic provenance only.
+Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor is now the S7 Operations fin-deploy actuator-housing slice at `2f791d565443422debed414e54d544b5b5fd4305`; final exact-head Browser evidence is not claimed until the current CI cycle terminates.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
@@ -213,3 +213,16 @@ Fresh exact-head evidence:
 The final Browser artifact was inspected. The structural candidate is executable and coherent, but S2-S10 human visual acceptance remains open because the current Three.js embodiment is still intentionally substrate-like/skeletal compared with the target manufactured-machine direction.
 
 A final hygiene correction on this exact lineage removed one duplicated `data-structural-material-model` assignment from the public structural preview and restored frontend/public parity. Do not treat this as a functional feature change.
+
+### 2026-10-07 S7 Operations fin-deploy actuator slice
+
+The bounded structural frontier now deepens the existing Operations / fin-deployment machine without changing semantic identity, topology, Seat capacity, camera authority, or backend/runtime authority.
+
+- S7 machinery advances `S7-V11 → S7-V12`.
+- Two presentation-only mechanical actuator housings are added: `fin-actuator-primary` and `fin-actuator-secondary`.
+- Each actuator is parented to the corresponding existing deployment-fin role and included in the S7 machine subject/envelope.
+- Independent representative 10-seat Beta geometry leaves approximately `0.18675` and `0.20219` units of tight-edge margin for the primary and secondary actuator respectively, above the regression minimum of `0.03`.
+- Frontend/public `machine-facility-machinery.js` parity is exact.
+- Exact-head Full-System, Governance, Security, Deep Security, and Browser proof remains pending until the resulting head terminates through the current CI cycle.
+
+The reference MP4/PNG remain visual-direction inputs only. This slice adds mechanical support structure and does not claim final S7 visual acceptance or S24/S25/S26 completion.
