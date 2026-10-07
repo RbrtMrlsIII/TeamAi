@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V8';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V9';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -34,6 +34,19 @@ const ANALYSIS_BARREL_OUTLINES = Object.freeze({
     [0.92388, 0.382683], [0.382683, 0.92388], [-0.382683, 0.92388],
     [-0.92388, 0.382683], [-0.92388, -0.382683], [-0.382683, -0.92388],
     [0.382683, -0.92388], [0.92388, -0.382683],
+  ]),
+});
+
+const OPERATIONS_FIN_OUTLINES = Object.freeze({
+  primary: Object.freeze([
+    [-1.00, -0.95], [-0.25, -1.00], [0.55, -0.92],
+    [0.95, -0.55], [1.00, 0.15], [0.65, 0.72],
+    [0.05, 1.00], [-0.70, 0.58], [-1.00, 0.05],
+  ]),
+  secondary: Object.freeze([
+    [-1.00, -0.90], [-0.40, -1.00], [0.42, -0.96],
+    [0.95, -0.48], [1.00, 0.28], [0.55, 0.78],
+    [-0.10, 1.00], [-0.78, 0.55], [-1.00, 0.00],
   ]),
 });
 
@@ -256,14 +269,14 @@ function buildMachineComponents(assembly) {
         component(id('HINGE_CORE'), 'hinge-core', 'CYL',
           { x: center.x - basis.outward.x * 0.08, y: center.y + 0.24, z: center.z - basis.outward.z * 0.08 },
           { x: width * 0.22, y: height * 0.32, z: width * 0.22 }, 'metal2'),
-        component(id('DEPLOYMENT_FIN'), 'deployment-fin', 'CUBE',
+        component(id('DEPLOYMENT_FIN'), 'deployment-fin', 'FACILITY_FIN_PRIMARY',
           { x: center.x + basis.tangent.x * 0.34, y: center.y + 0.34, z: center.z + basis.tangent.z * 0.34 },
           { x: width * 0.18, y: height * 0.72, z: depth * 0.78 }, 'glass',
-          0.32, { profile: 'operations-fin-primary' }),
-        component(id('DEPLOYMENT_FIN_SECONDARY'), 'deployment-fin-secondary', 'CUBE',
+          0.32, { profile: 'operations-fin-primary', outline: OPERATIONS_FIN_OUTLINES.primary }),
+        component(id('DEPLOYMENT_FIN_SECONDARY'), 'deployment-fin-secondary', 'FACILITY_FIN_SECONDARY',
           { x: center.x - basis.tangent.x * 0.34, y: center.y + 0.38, z: center.z - basis.tangent.z * 0.34 },
           { x: width * 0.16, y: height * 0.65, z: depth * 0.64 }, 'metal',
-          -0.28, { profile: 'operations-fin-secondary' }),
+          -0.28, { profile: 'operations-fin-secondary', outline: OPERATIONS_FIN_OUTLINES.secondary }),
         component(id('CLAMP_RING'), 'clamp-ring', 'TORUS',
           { x: center.x, y: center.y + 0.27, z: center.z },
           { x: width * 0.48, y: height * 0.12, z: width * 0.48 }, 'energy'),
