@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V3';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V4';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -38,6 +38,17 @@ export const POD_PORT_ROLES = Object.freeze([
 
 export const POD_DIVISION_COUNT = 7;
 export const POD_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
+
+const POD_SHELL_RIB_OUTLINE = Object.freeze([
+  [-1.00, -0.52],
+  [-0.32, -0.92],
+  [0.42, -0.78],
+  [1.00, -0.18],
+  [0.82, 0.58],
+  [0.10, 1.00],
+  [-0.72, 0.64],
+]);
+
 
 function rootContext(semanticId = null) {
   return createSpatialConstructionContext({
@@ -334,6 +345,30 @@ export function deriveMachinePodAssembly({
       rotationY: 0,
       materialRole: 'glass',
       ...rootContext(),
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6);
+      const ribRadius = shellRadius * 0.88;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:SHELL-RIB:${index + 1}`,
+        role: 'shell-rib',
+        shape: 'POD_RIB',
+        profile: 'pod-shell-rib',
+        center: Object.freeze({
+          x: center.x + radial.x * 0.02 + Math.cos(angle) * ribRadius,
+          y: center.y + height * 0.18,
+          z: center.z + radial.z * 0.02 + Math.sin(angle) * ribRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.085,
+          y: height * 0.46,
+          z: minimumSpan * 0.14,
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        outline: POD_SHELL_RIB_OUTLINE,
+        ...rootContext(),
+      });
     }),
   ]);
 
