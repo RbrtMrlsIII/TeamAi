@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V13';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V15';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -309,10 +309,10 @@ function buildMachineComponents(assembly) {
         component(id('SENSOR_MAST'), 'sensor-mast', 'CYL',
           { x: center.x, y: center.y + 0.62, z: center.z },
           { x: width * 0.12, y: height * 1.05, z: width * 0.12 }, 'metal'),
-        component(id('SENSOR_DISH'), 'sensor-dish', 'CUBE',
+        component(id('SENSOR_DISH'), 'sensor-dish', 'FACILITY_SENSOR_DISH',
           { x: center.x + basis.outward.x * 0.28, y: center.y + 0.76, z: center.z + basis.outward.z * 0.28 },
           { x: width * 0.46, y: height * 0.12, z: depth * 0.42 }, 'glass',
-          basis.angle + 0.22),
+          basis.angle + 0.22, { profile: 'access-sensor-dish' }),
         component(id('SENSOR_ARRAY'), 'sensor-array', 'TORUS',
           { x: center.x + basis.outward.x * 0.34, y: center.y + 0.52, z: center.z + basis.outward.z * 0.34 },
           { x: width * 0.52, y: height * 0.08, z: width * 0.52 }, 'energy'),
@@ -993,6 +993,70 @@ export function deriveMachineFacilityMachinery({
               materialRole: 'metal2',
               parentRole: 'communication-antenna',
               ...rootContext(assembly.branchId + ':ANTENNA-BASE-PLATE'),
+            }),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':SENSOR-BOOM:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'sensor-boom',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.13
+                  + basis.tangent.x * frameWidth * 0.22 * side,
+                y: housingCenter.y + frameHeight * 0.40,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.13
+                  + basis.tangent.z * frameWidth * 0.22 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.06),
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: Math.max(0.20, frameDepth * 0.28),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'sensor-array',
+              profile: 'access-sensor-boom',
+              ...rootContext(assembly.branchId + ':SENSOR-BOOM:' + side),
+            })),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':SENSOR-PANEL-CLAMP:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'sensor-panel-clamp',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.18
+                  + basis.tangent.x * frameWidth * 0.18 * side,
+                y: housingCenter.y + frameHeight * 0.62,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.18
+                  + basis.tangent.z * frameWidth * 0.18 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.08),
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: Math.max(0.10, frameDepth * 0.14),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal',
+              parentRole: 'sensor-dish',
+              profile: 'access-sensor-panel-clamp',
+              ...rootContext(assembly.branchId + ':SENSOR-PANEL-CLAMP:' + side),
+            })),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ANTENNA-PIVOT-COLLAR',
+              role: 'antenna-pivot-collar',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x - basis.tangent.x * 0.24,
+                y: housingCenter.y + frameHeight * 0.58,
+                z: housingCenter.z - basis.tangent.z * 0.24,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.20,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameWidth * 0.20,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'communication-antenna',
+              profile: 'access-antenna-pivot-collar',
+              ...rootContext(assembly.branchId + ':ANTENNA-PIVOT-COLLAR'),
             }),
           ]
         : []),
