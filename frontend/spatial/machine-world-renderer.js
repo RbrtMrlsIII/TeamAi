@@ -221,6 +221,16 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   CYL: regularPolygon(16),
   TORUS: regularPolygon(12),
   SPH: regularPolygon(10),
+  FACILITY_FIN_PRIMARY: Object.freeze([
+    [-1.00, -0.95], [-0.25, -1.00], [0.55, -0.92],
+    [0.95, -0.55], [1.00, 0.15], [0.65, 0.72],
+    [0.05, 1.00], [-0.70, 0.58], [-1.00, 0.05],
+  ]),
+  FACILITY_FIN_SECONDARY: Object.freeze([
+    [-1.00, -0.90], [-0.40, -1.00], [0.42, -0.96],
+    [0.95, -0.48], [1.00, 0.28], [0.55, 0.78],
+    [-0.10, 1.00], [-0.78, 0.55], [-1.00, 0.00],
+  ]),
   POD_SHELL_PANEL: Object.freeze([
     [-1.00, -0.48],
     [-0.54, -0.66],
