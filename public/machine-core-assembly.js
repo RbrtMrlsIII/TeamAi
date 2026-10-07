@@ -371,7 +371,7 @@ export function deriveMachineCoreAssembly({
       rotationY: Math.PI / 8,
       materialRole: 'glass',
       ...rootContext(),
-    }),,
+    }),
     ...Array.from({ length: 8 }, (_, index) => {
       const angle = index * (TAU / 8) + Math.PI / 8;
       const radius = reactorRadius * 1.18;
