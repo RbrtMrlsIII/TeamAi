@@ -13,13 +13,25 @@
 - Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
 - S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
 
-## 2026-10-07 CURRENT SESSION STATE
+## SESSION SNAPSHOT
+
+### 2026-10-07 CURRENT SESSION STATE
 
 This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+
+- main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- replacement branch: `frontend/029-spatial-world-continuation`
+- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
+- open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
+- next allowed work: exact-head verification/reconciliation of the current #424 state, then a new bounded structural slice justified by inspected product evidence and independent geometry
+- handoff rule: Issue #409 is the canonical newcomer handoff; verify the live branch/PR/CI state before consequential changes
+- validation state: S7-V14 implementation head `55e272e6d57a9617dc73acc53e18bb951c004050` passed the five-gate proof; later documentation heads require their own exact-head proof
+- live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as the evidence-integrity source-of-truth reference)
+
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Current branch head: `289a993efe1b6578b02211fbb81e7ecd486819da` (documentation-bearing S7-V14 checkpoint; implementation behavior is verified at `55e272e6d57a9617dc73acc53e18bb951c004050`; this documentation head remains subject to its own exact-head proof)
+- Current branch head: verify the live PR #424 head before consequential work; the implementation head is `55e272e6d57a9617dc73acc53e18bb951c004050` and this session boundary itself may move with documentation reconciliation
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
@@ -38,7 +50,7 @@ The earlier `c4c75bf...` actuator insertion failure and the standalone machine-c
 
 ### 2026-10-08 CURRENT S7-V14 STATE
 
-- Current documentation head: `289a993efe1b6578b02211fbb81e7ecd486819da`.
+- Current documentation state: reconciled to the live branch through sequential governance/evidence updates; verify the exact branch head before consequential work.
 - Verified implementation head: `55e272e6d57a9617dc73acc53e18bb951c004050`.
 - S7-V14 promotes the existing authored facility-body grammar into the canonical production Hero raw-WebGL renderer.
 - Four existing S7 outer facilities retain their semantic identities and four differentiated silhouettes. Five presentation-only layers per facility yield 20 body descriptors.
