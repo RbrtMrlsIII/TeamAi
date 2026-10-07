@@ -16,16 +16,16 @@ test('machine spatial runtime manifest covers canonical renderer direct imports'
   )].map((match) => match[1]);
 
   const published = new Set(MACHINE_SPATIAL_RUNTIME_FILES);
-  const aliases = new Map(Object.entries(MACHINE_SPATIAL_RUNTIME_PUBLIC_TARGETS));
+  const aliases = new Set(Object.values(MACHINE_SPATIAL_RUNTIME_PUBLIC_TARGETS));
 
   for (const imported of directImports) {
-    if (published.has(imported)) continue;
-    const canonicalSource = [...aliases.entries()]
-      .find(([, publicTarget]) => publicTarget === imported)?.[0];
-    assert.ok(
-      canonicalSource && published.has(canonicalSource),
-      'unpublished canonical renderer import: ' + imported,
-    );
+    if (published.has(imported) || aliases.has(imported)) continue;
+    assert.fail('unpublished canonical renderer import: ' + imported);
+  }
+
+  for (const [canonicalSource, publicTarget] of Object.entries(MACHINE_SPATIAL_RUNTIME_PUBLIC_TARGETS)) {
+    assert.ok(published.has(canonicalSource), 'unpublished alias source: ' + canonicalSource);
+    assert.ok(publicTarget, 'empty public target for: ' + canonicalSource);
   }
 
   assert.ok(published.has('machine-world-structural-conduit.js'));
