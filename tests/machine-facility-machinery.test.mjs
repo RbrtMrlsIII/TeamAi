@@ -222,6 +222,8 @@ test('S7 raw Hero and Three adapter expose the authored operations fin profile',
   assert.match(operations, /operations-fin-secondary/);
   assert.match(renderer, /FACILITY_FIN_PRIMARY/);
   assert.match(renderer, /FACILITY_FIN_SECONDARY/);
+  assert.match(renderer, /FACILITY_SENSOR_DISH/);
+  assert.match(operations, /access-sensor-dish/);
   assert.match(adapter, /buildExtrudedPolygonGeometry\(THREE, descriptor, descriptor\.outline\)/);
   assert.equal(publicRenderer, renderer);
 });
