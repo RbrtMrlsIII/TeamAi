@@ -118,8 +118,8 @@ test('S7 analysis telescope exposes fixed guide rails within the authored housin
   const center = analysis.outerHousing.center;
   const dims = analysis.outerHousing.dimensions;
   const angle = Math.atan2(center.z, center.x);
-  const tangent = { x: -Math.sin(angle), z: Math.cos(angle) };
-  const outward = { x: Math.cos(angle), z: Math.sin(angle) };
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
   const rails = analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail');
 
   assert.equal(rails.length, 2);
