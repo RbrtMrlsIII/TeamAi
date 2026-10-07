@@ -106,6 +106,77 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
   );
 });
 
+test('S7 operations fins use bounded authored convex silhouettes', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const operations = machinery.find((machine) => machine.machineRole === 'operations');
+  assert.ok(operations);
+
+  const expected = {
+    'deployment-fin': 'operations-fin-primary',
+    'deployment-fin-secondary': 'operations-fin-secondary',
+  };
+
+  for (const [role, profile] of Object.entries(expected)) {
+    const fin = operations.components.find((entry) => entry.role === role);
+    assert.ok(fin);
+    assert.equal(fin.profile, profile);
+    assert.ok(Array.isArray(fin.outline));
+    assert.equal(fin.outline.length, 9);
+
+    const xs = fin.outline.map((point) => point[0]);
+    const zs = fin.outline.map((point) => point[1]);
+    assert.ok(Math.abs(Math.min(...xs) + 1) <= 1e-9);
+    assert.ok(Math.abs(Math.max(...xs) - 1) <= 1e-9);
+    assert.ok(Math.abs(Math.min(...zs) + 1) <= 1e-9);
+    assert.ok(Math.abs(Math.max(...zs) - 1) <= 1e-9);
+
+    let signedArea2 = 0;
+    const turns = [];
+    for (let index = 0; index < fin.outline.length; index += 1) {
+      const a = fin.outline[index];
+      const b = fin.outline[(index + 1) % fin.outline.length];
+      const c = fin.outline[(index + 2) % fin.outline.length];
+      signedArea2 += a[0] * b[1] - b[0] * a[1];
+      turns.push(
+        (b[0] - a[0]) * (c[1] - b[1])
+        - (b[1] - a[1]) * (c[0] - b[0]),
+      );
+      assert.ok(Math.hypot(a[0], a[1]) <= Math.SQRT2 + 1e-9);
+    }
+    assert.ok(signedArea2 > 0);
+    assert.ok(Math.min(...turns) > 0);
+  }
+});
+
+test('S7 raw Hero and Three adapter expose the authored operations fin profile', () => {
+  const renderer = readFileSync(
+    'frontend/spatial/machine-world-renderer.js',
+    'utf8',
+  );
+  const publicRenderer = readFileSync(
+    'public/machine-world-renderer.js',
+    'utf8',
+  );
+  const operations = readFileSync(
+    'frontend/spatial/machine-facility-machinery.js',
+    'utf8',
+  );
+  const adapter = readFileSync(
+    'frontend/spatial/machine-three-scene-adapter.js',
+    'utf8',
+  );
+
+  assert.match(operations, /operations-fin-primary/);
+  assert.match(operations, /operations-fin-secondary/);
+  assert.match(renderer, /FACILITY_FIN_PRIMARY/);
+  assert.match(renderer, /FACILITY_FIN_SECONDARY/);
+  assert.match(adapter, /buildExtrudedPolygonGeometry\(THREE, descriptor, descriptor\.outline\)/);
+  assert.equal(publicRenderer, renderer);
+});
+
 test('S7 operations machine exposes layered fin caps and actuator rails inside fin envelopes', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
