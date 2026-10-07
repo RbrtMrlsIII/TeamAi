@@ -90,6 +90,14 @@ Parallel `docs/skills` procedure namespaces are forbidden; Skill routing is owne
 
 ### Governance continuity markers retained as historical provenance
 
+- main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (historical governance-test provenance only; the live canonical main baseline remains `13356cae7e6ef8179f7e2e552211bb4d187f37fb`)
+- Review lifecycle is: **Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence (when eligible) → independent human review/approval → merge candidate → governed merge → post-merge/runtime/production proof**.
+- `review-readiness` is a promotion/authorization check, not the AI model gate. AI advisory output is evidence only and never authorizes merge.
+- Reviewer semantics are proof-target-first: the PR's declared proof target defines what can be a material `verification_gaps`; an open owning Issue item or downstream production gate is not automatically a PR gap.
+- `governance_and_evidence` records concrete evidence inspected; `review_basis` explains why that evidence supports the verdict; `blocking_findings` identifies material defects; `verification_gaps` contains only material unproven proof-target requirements; `non_blocking_observations` carries relevant but non-blocking context.
+
+
+
 The governance migration history deliberately retains the following historical assertions so repository tests and cold-session readers can distinguish migrated authority from deleted evidence:
 
 - `closure-pending` remains a valid lifecycle state for governance reconciliation lineage.
