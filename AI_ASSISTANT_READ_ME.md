@@ -7,6 +7,7 @@
 - The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`; #424 is a bounded 029 spatial companion and must not absorb backend/runtime authority.
 - Product Law, the canonical frontend/product feature grammar (#400), the 029 ledger (#278/#405), and the Hailuo/PNG visual references all matter. The target is **the actual TeamAi product expressed as a semantic spatial machine**, not a visual imitation detached from product meaning.
 - The Hailuo MP4 and endorsed PNG/reference-board material are visual-direction inputs. They do not define semantic identity, geometry constants, backend truth, authorization, entitlement, scheduler/provider/payment authority, or acceptance by resemblance alone.
+- Last given prompt: continue the bounded S7-V14 implementation while treating the Hailuo MP4 and endorsed PNG as crucial visual-direction references, never as product or geometry authority.
 - Preserve the evidence chain: **inspect → reason → independently validate → change → test → exact-head CI → Browser artifact/report → artifact/screenshot inspection → audit/align → accept or diagnose**.
 - **Do not stop at “CI green.”** A spatial change is not considered visually evidenced until the Canonical Browser workflow has completed for the exact head and its artifact/report has been inspected. A failed, cancelled, stale, or missing Browser result is not acceptance.
 - While exact-head CI/Browser is running, continue repository work that does not mutate the proof target: history/debris search, stale-reference detection, authority-graph reconciliation, product-feature coverage review, independent geometry calculations, visual-reference comparison, and preparation of the next bounded commit.
@@ -60,6 +61,26 @@ The earlier `c4c75bf...` actuator insertion failure and the standalone machine-c
 - Browser artifact: `11498924852`, SHA-256 `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`.
 - Artifact inspection confirms the four outer body masses now reach the real `/hero/` surface. The reference MP4/PNG informed form, layering, composition and transformation feel only, not Product Law or geometry authority.
 - S7-V14 remains repository/browser verified, not human-accepted, production-deployed, merge-authorized, or release-complete.
+
+### Validation-change guide
+
+Before modifying a test, validator, browser assertion, workflow gate, Skill, acceptance criterion, fixture, or evidence requirement because an authorized change conflicts with it, record:
+
+```
+VALIDATION CHANGE WARNING
+Protected old invariant:
+Authorized new rule:
+Why the old invariant is obsolete/retained:
+Replacement invariant:
+Implementation impact:
+Validation impact:
+Evidence/browser impact:
+Residual uncertainty:
+```
+
+Then: `warning → authority reconciliation → implementation → replacement validation → verification → evidence → durable PR/Issue record → session update`.
+
+Never weaken validation merely to make CI green.
 
 ### Historical pre-029-session verification note
 
@@ -118,45 +139,3 @@ Rule: material reasoning from chat is a working candidate until it is promoted i
 - S22 Return-to-parent: repository/browser-verified
 - S22 Reduced-motion semantic equivalence: repository/browser-verified
 - S22 Browser accessibility smoke: repository/browser-verified
-- Latest exact-head Browser proof on `4e5428fd...`: **86 passed / 4 skipped**
-- Latest exact-head Full-System proof on `4e5428fd...`: **1,122 passed / 0 failed**, package create/verify PASS, 1,059 files
-- Latest exact-head Security: PASS
-- Latest exact-head Deep Security: PASS
-- Latest exact-head Governance: PASS
-- Fresh Browser artifact ID: `10952030826`
-- Fresh Browser artifact digest: `sha256:233271129be6093fff8590ddedebdfc769784b74acac01f286db5485789b9856`
-- S22 exit is repository/browser proof only. It does not establish live deployment, provider execution, production runtime truth, human acceptance, or 029 release authorization.
-- Next spatial slice after formal S22 closure: S23 Responsive machine.
-- Preserve #401, #412, #392, and #400 ownership boundaries.
-- No production Seat documents were created or mutated by #404.
-
-## 2026-09-28 S22 error / blocked reasons on #404
-
-- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head before this handoff reconciliation: `5e03fd5e754fed33e9686b16251dc957680fb319`
-- last behavior-changing S22 head: `e3000a4a682d9e226f86f533404099cb1215ce96`
-- global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
-- #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
-- S22 Keyboard navigation: repository/browser-verified
-- S22 Visible focus: repository/browser-verified
-- S22 Deterministic accessible names: repository/browser-verified
-- S22 State announcements: repository/browser-verified
-- S22 Error / blocked reasons: repository/browser-verified on behavior head `e3000a4...`
-- Browser proof on behavior head: **82 passed / 4 skipped**
-- Full-System proof: **1,122 passed / 0 failed**, package create/verify PASS
-- Guest-locked feature controls now preserve their existing accessible names while exposing the canonical `BLOCKED_UNTIL_AUTHENTICATED` reason through `aria-describedby`
-- Transaction `errorCode` presentation and Retry/Cancel intent boundaries remain intact
-- Remaining S22 rows: non-color-only meaning, Escape/back, Return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
-- next 029 row: non-color-only meaning
-- no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
-
-## 2026-09-26 Gate 3 operator-hierarchy blocker
-
-- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head: `0e07fad0ff00503491d9b65a3938f9514b771f31`
-- current global slice: Issue #401 production Firestore authority, security, and runtime evidence
-- PR #417 merged into this mainline at `59a871f440dd1d15405164948da9985d1537a6be`; its Gate 3 classifier remains repository evidence only and did not create Seat/Connection documents
-- PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
-- index verification is RUNTIME-PROVEN and is no longer the current #401 implementation blocker
-- Gate 3 Seat run `36141179411` still reports `gate3-test-seat` absent with `teamDocumentCount=0` / `teamListError=null`
-- the missing-Seat probe now classifies that condition as `operator_hierarchy_absent`; it does not create Seat documents
