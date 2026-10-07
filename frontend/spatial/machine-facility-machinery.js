@@ -901,7 +901,7 @@ export function deriveMachineFacilityMachinery({
             }),
           ]
         : []),
-    ];
+    ]);
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
     const maxPresentation = deriveMachineFacilityMechanismPresentation(
