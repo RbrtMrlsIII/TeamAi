@@ -13,6 +13,9 @@ test.describe('029 real-product video evidence', () => {
 
     await page.waitForTimeout(1200);
 
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-count', '16');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-main-shell-count', '4');
+
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await page.waitForTimeout(1100);
 
