@@ -362,7 +362,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V13');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V15');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -414,6 +414,55 @@ test('S7 control and access families expose nested retainers with independent ho
   }
 });
 
+test('S7 access-commerce sensor array exposes nested boom, panel-clamp, and antenna pivot construction', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    const core = createBranchConnectionCore({ seatCount, expansionAmount: 0 });
+    const machinery = deriveMachineFacilityMachinery({
+      outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+    });
+    const access = machinery.find((machine) => machine.machineRole === 'access-commerce');
+    assert.ok(access);
+
+    const dish = access.components.find((entry) => entry.role === 'sensor-dish');
+    assert.ok(dish);
+    assert.equal(dish.shape, 'FACILITY_SENSOR_DISH');
+    assert.equal(dish.profile, 'access-sensor-dish');
+
+    const expected = Object.freeze({
+      'sensor-boom': 2,
+      'sensor-panel-clamp': 2,
+      'antenna-pivot-collar': 1,
+    });
+    const center = access.outerHousing.center;
+    const dimensions = access.outerHousing.dimensions;
+    const angle = Math.atan2(center.z, center.x);
+    const housingBoundary = 1 / (
+      Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
+      + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
+    );
+
+    for (const [role, expectedCount] of Object.entries(expected)) {
+      const details = access.mechanicalDetails.filter((entry) => entry.role === role);
+      assert.equal(details.length, expectedCount, seatCount + '-seat:' + role);
+
+      for (const detail of details) {
+        const radialDistance = Math.hypot(
+          detail.center.x - center.x,
+          detail.center.z - center.z,
+        );
+        const radialReach = Math.hypot(detail.dimensions.x, detail.dimensions.z) * 0.5;
+        assert.ok(
+          radialDistance + radialReach <= housingBoundary - 0.03 + 1e-9,
+          seatCount + '-seat:' + role + ':housing-bound',
+        );
+        assert.equal(detail.constructionSlice, 'S7');
+        assert.equal(detail.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+        assert.ok(access.subject.sourcePartIds.includes(detail.id));
+      }
+    }
+  }
+});
+
 test('S7 facility chassis details are authored and included in each machine subject', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
@@ -421,7 +470,7 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control' ? 11 : 9;
+    const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control' ? 11 : machine.machineRole === 'access-commerce' ? 14 : 9;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
