@@ -12,28 +12,23 @@ The active spatial vehicle is **PR #424 only**. The current verified application
 
 ## 2026-10-07 exact-head continuation checkpoint
 
-**Evidence-bearing application head:** `1877fbc7ea69bb8a812a788c19aa0dd1b8951a67`
+**Evidence-bearing application head:** `5ec674d3ac472bb0edc7b3f00c2ae1c047f6ab17`
 
-Fresh exact-head proof for the bounded S7 analysis/telescope embodiment slice:
-- Full-System `37564475055`: **PASS**, 1,219 project tests passed / 0 failed.
-- Security `37564475051`: **PASS**.
-- Deep Security `37564475130`: **PASS**.
-- Governance `37564474995`: **PASS**; review-readiness remains skipped because #424 is Draft.
-- Canonical Browser `37564475043`: **PASS**, 91 Playwright tests passed / 4 skipped.
-- Browser artifact: `11458442898`.
-- Browser artifact SHA-256: `38a8b0ea91a540756f7bb5ea36b9423d1dde6c283fd96175f9c2cdbfa17b4b09`.
+Fresh exact-head proof for the bounded S7 operations/fin-deploy embodiment slice:
+- Full-System `37566565712`: **PASS**, 1,220 project tests passed / 0 failed.
+- Security `37566565801`: **PASS**.
+- Deep Security `37566565702`: **PASS**.
+- Governance `37566565817`: **PASS**.
+- Canonical Browser `37566565701`: **PASS**, 91 Playwright tests passed / 4 skipped.
+- Browser artifact: `11459046993`.
+- Browser artifact SHA-256: `62e6545d233e1581daaa63c588a0fbbf0d57a883ea4ab5bb07a01358d6ea2897`.
 
-The slice changes only existing S7 analysis machinery: authored 12/10/8-sided nested barrel footprints, radial-frame rotation, and two presentation-only barrel collars. A first exact-head Full-System run exposed and then corrected one stale mechanical-detail-count assertion. Validation was not weakened.
+The slice changes only existing S7 operations machinery: profile-labelled primary/secondary deployment fins and four presentation-only fin cap/actuator-rail details. Independent containment checking required the new rails to remain inside their parent-fin conservative horizontal envelopes; final margins are approximately +0.1790 and +0.1065. No product semantics, Seat capacity, S8 topology, S10 camera, or backend authority changed.
 
-Visual evidence was inspected from the terminal artifact. World/Return/Transform changed only in the existing Alpha analysis/telescope region; focused Facility and Seat captures remained pixel-identical to the preceding application baseline. The machine remains structurally improved but still below final manufactured-machine visual acceptance. The next bounded implementation target is the existing S7 operations/fin-deploy family, after the documentation head receives its own exact-head proof.
+The implementation cycle exposed two localized scope defects and one stale generic test expectation. Those were corrected without weakening the validator. The replacement exact-head suite passed 1,220/1,220.
 
+Browser artifact inspection was terminal and exact-head. Relative to `e4adaaf4`, World/Return/Transform changed locally around the outer operations machinery; Facility changed locally as the focused operations view; Seat was pixel-identical. The next structural family remains a future planning item only and is not assumed implemented by this checkpoint.
 
-
-The acceptance target is not a reference recreation in isolation. Every spatial change must preserve the TeamAi product: Product Law meaning, canonical frontend feature grammar, existing semantic hierarchy, read-model/interaction contracts, and S0-S10 structural ownership. The endorsed Hailuo MP4 plus preserved PNG/reference-board are visual-direction inputs for manufactured form, composition, mechanical density, transformation feel, and camera participation.
-
-For any exact-head change, **Canonical Browser completion is mandatory before browser evidence is closed**. “CI running” is an in-progress state, not evidence of success. After the Browser workflow reaches a terminal result, inspect the produced exact-head artifact/report and classify it explicitly as PASS evidence, reproducible defect, stale/invalid run, or unproven. Do not accept a screenshot detached from its producing SHA.
-
-While CI/Browser is running, the same #424 vehicle should continue non-conflicting audit work: historical reconciliation, debris/stale-reference search, Product Law/feature alignment, authority review, independent geometry measurements, reference comparison, and next-commit preparation. Historical artifacts and failed runs remain provenance and must not silently become current state.
 
 ## Evidence navigation contract
 
