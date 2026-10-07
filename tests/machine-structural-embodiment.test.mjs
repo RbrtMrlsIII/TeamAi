@@ -28,6 +28,7 @@ import { deriveMachineResponsiveReadability } from '../frontend/spatial/machine-
 import {
   deriveMachineWorldFacilityShellDescriptors,
   validateMachineWorldFacilityShellDescriptors,
+  getMachineWorldFacilityBodyOutline,
 } from '../frontend/spatial/machine-world-facility-shell.js';
 import { resolveMachineResponsive } from '../frontend/spatial/machine-responsive.js';
 
@@ -230,4 +231,13 @@ test('S7 facility body shells form four authored manufactured families without c
     }
   }
   assert.ok(minimumConservativeXZClearance > 0.16);
+});
+
+test('S7 facility body shell helper returns authored silhouette outlines', () => {
+  for (const silhouette of ['fin', 'arc', 'diamond', 'blade']) {
+    const outline = getMachineWorldFacilityBodyOutline(silhouette);
+    assert.ok(Array.isArray(outline));
+    assert.equal(outline.length, 8);
+  }
+  assert.equal(getMachineWorldFacilityBodyOutline('unknown'), null);
 });
