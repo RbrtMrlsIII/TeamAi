@@ -105,6 +105,52 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
   );
 });
 
+test('S7 operations machine exposes layered fin caps and actuator rails inside fin envelopes', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const operations = machinery.find((machine) => machine.machineRole === 'operations');
+  assert.ok(operations);
+
+  const primary = operations.components.find((entry) => entry.role === 'deployment-fin');
+  const secondary = operations.components.find((entry) => entry.role === 'deployment-fin-secondary');
+  assert.equal(primary?.profile, 'operations-fin-primary');
+  assert.equal(secondary?.profile, 'operations-fin-secondary');
+
+  const parentByRole = Object.freeze({
+    'deployment-fin-primary-cap': primary,
+    'deployment-fin-primary-rail': primary,
+    'deployment-fin-secondary-cap': secondary,
+    'deployment-fin-secondary-rail': secondary,
+  });
+
+  const expectedRoles = Object.freeze(Object.keys(parentByRole));
+  for (const role of expectedRoles) {
+    const detail = operations.mechanicalDetails.find((entry) => entry.role === role);
+    assert.ok(detail, role);
+    const parent = parentByRole[role];
+    assert.ok(parent);
+
+    const detailReach = Math.hypot(detail.dimensions.x, detail.dimensions.z) * 0.5;
+    const parentReach = Math.hypot(parent.dimensions.x, parent.dimensions.z) * 0.5;
+    const centerDistance = Math.hypot(
+      detail.center.x - parent.center.x,
+      detail.center.z - parent.center.z,
+    );
+    assert.ok(centerDistance + detailReach <= parentReach + 1e-9);
+
+    assert.equal(detail.constructionSlice, 'S7');
+    assert.equal(detail.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+  }
+
+  assert.equal(
+    operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
+    4,
+  );
+  assert.equal(operations.mechanicalDetails.length, 9);
+});
+
 test('S7 facility chassis details are authored and included in each machine subject', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
@@ -112,7 +158,7 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    assert.equal(machine.mechanicalDetails.length, machine.machineRole === 'analysis' ? 7 : 5);
+    assert.equal(machine.mechanicalDetails.length, machine.machineRole === 'analysis' ? 7 : machine.machineRole === 'operations' ? 9 : 5);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);

@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V7';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V8';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -259,11 +259,11 @@ function buildMachineComponents(assembly) {
         component(id('DEPLOYMENT_FIN'), 'deployment-fin', 'CUBE',
           { x: center.x + basis.tangent.x * 0.34, y: center.y + 0.34, z: center.z + basis.tangent.z * 0.34 },
           { x: width * 0.18, y: height * 0.72, z: depth * 0.78 }, 'glass',
-          0.32),
+          0.32, { profile: 'operations-fin-primary' }),
         component(id('DEPLOYMENT_FIN_SECONDARY'), 'deployment-fin-secondary', 'CUBE',
           { x: center.x - basis.tangent.x * 0.34, y: center.y + 0.38, z: center.z - basis.tangent.z * 0.34 },
           { x: width * 0.16, y: height * 0.65, z: depth * 0.64 }, 'metal',
-          -0.28),
+          -0.28, { profile: 'operations-fin-secondary' }),
         component(id('CLAMP_RING'), 'clamp-ring', 'TORUS',
           { x: center.x, y: center.y + 0.27, z: center.z },
           { x: width * 0.48, y: height * 0.12, z: width * 0.48 }, 'energy'),
@@ -675,6 +675,90 @@ export function deriveMachineFacilityMachinery({
               rotationY: basis.angle,
               materialRole: 'trace',
               ...rootContext(assembly.branchId + ':BARREL-COLLAR-FRONT'),
+            }),
+          ]
+        : []),
+      ...(assembly.machineRole === 'operations'
+        ? [
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-PRIMARY-CAP',
+              role: 'deployment-fin-primary-cap',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: center.x + basis.tangent.x * frameWidth * 0.34,
+                y: center.y + frameHeight * 0.34 + Math.max(0.05, frameHeight * 0.06),
+                z: center.z + basis.tangent.z * frameWidth * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.17,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.62,
+              }),
+              rotationY: 0.32,
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin',
+              ...rootContext(assembly.branchId + ':FIN-PRIMARY-CAP'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-SECONDARY-CAP',
+              role: 'deployment-fin-secondary-cap',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: center.x - basis.tangent.x * frameWidth * 0.34,
+                y: center.y + frameHeight * 0.38 + Math.max(0.05, frameHeight * 0.05),
+                z: center.z - basis.tangent.z * frameWidth * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.15,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.52,
+              }),
+              rotationY: -0.28,
+              materialRole: 'metal',
+              parentRole: 'deployment-fin-secondary',
+              ...rootContext(assembly.branchId + ':FIN-SECONDARY-CAP'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-PRIMARY-RAIL',
+              role: 'deployment-fin-primary-rail',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: center.x + basis.outward.x * frameDepth * 0.18
+                  + basis.tangent.x * frameWidth * 0.34,
+                y: center.y + frameHeight * 0.43,
+                z: center.z + basis.outward.z * frameDepth * 0.18
+                  + basis.tangent.z * frameWidth * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.09,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameDepth * 0.42,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'trace',
+              parentRole: 'deployment-fin',
+              ...rootContext(assembly.branchId + ':FIN-PRIMARY-RAIL'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-SECONDARY-RAIL',
+              role: 'deployment-fin-secondary-rail',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: center.x + basis.outward.x * frameDepth * 0.22
+                  - basis.tangent.x * frameWidth * 0.34,
+                y: center.y + frameHeight * 0.47,
+                z: center.z + basis.outward.z * frameDepth * 0.22
+                  - basis.tangent.z * frameWidth * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.08,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameDepth * 0.36,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'trace',
+              parentRole: 'deployment-fin-secondary',
+              ...rootContext(assembly.branchId + ':FIN-SECONDARY-RAIL'),
             }),
           ]
         : []),
