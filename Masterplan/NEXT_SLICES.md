@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Latest producing implementation head: `2f791d565443422debed414e54d544b5b5fd4305` (S7 Operations fin-deploy actuator-housing slice; exact-head verification pending at reconciliation time).
+Current exact spatial head: `af4be5fdf8e0bded3612d9ecf12efd6a19155080` (S7 Operations fin-deploy actuator-housing slice; exact-head verification complete).
 
-Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor is now the S7 Operations fin-deploy actuator-housing slice at `2f791d565443422debed414e54d544b5b5fd4305`; final exact-head Browser evidence is not claimed until the current CI cycle terminates.
+Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor is the verified S7 Operations fin-deploy actuator-housing slice at `af4be5fdf8e0bded3612d9ecf12efd6a19155080`. Exact-head Browser artifact `11492332989` was produced by run `37641487397` and passed 92 tests with 4 skips.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
@@ -226,3 +226,7 @@ The bounded structural frontier now deepens the existing Operations / fin-deploy
 - Exact-head Full-System, Governance, Security, Deep Security, and Browser proof remains pending until the resulting head terminates through the current CI cycle.
 
 The reference MP4/PNG remain visual-direction inputs only. This slice adds mechanical support structure and does not claim final S7 visual acceptance or S24/S25/S26 completion.
+
+### 2026-10-07 verified S7 Operations checkpoint
+
+The S7 Operations fin-deploy reinforcement is exact-head verified at `af4be5fdf8e0bded3612d9ecf12efd6a19155080`. S7-V12 contains paired presentation-only actuator housings under the existing deployment-fin parents. Independent Beta housing margins are approximately `0.18675` and `0.20219` units. Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, and Canonical Browser `37641487397` all pass. Human visual acceptance and downstream S24+ visual completion remain open.

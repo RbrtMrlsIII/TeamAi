@@ -216,7 +216,7 @@ This is the expanded readiness ledger for S0–S24. It is not a second roadmap. 
 | S4 | IMPLEMENTED / REPOSITORY-VERIFIED | Division assembly/presentation | Focused division presentation | Nested payload embodiment + exact-head spatial acceptance |
 | S5 | IMPLEMENTED / REPOSITORY-VERIFIED | Expansion mechanism + authored geometry | Expansion is observable | True parent-Pod transformation + exact-head safety package |
 | S6 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility assembly owners | Facilities are discoverable/presented | Cross-feature runtime acceptance |
-| S7 | IMPLEMENTATION ADVANCED / EXACT-HEAD PROOF PENDING | Facility machinery owners | Specialized outer machines render; Operations slice now includes paired actuator housings | Mechanism/silhouette differentiation + final exact-head Browser validation |
+| S7 | IMPLEMENTED / REPOSITORY-VERIFIED | Facility machinery owners | Specialized outer machines render; Operations slice includes paired actuator housings | Mechanism/silhouette differentiation + final human acceptance |
 | S8 | IMPLEMENTED / REPOSITORY-VERIFIED | Machine topology | Routes/edges render | Physical endpoint/attachment embodiment + final geometry/topology proof |
 | S9 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Signal projection over S8 | Signal/state effects render | State/effect ownership + formal exit after geometry-first gate |
 | S10 | CAPABILITY PROVEN / FORMAL EXIT OPEN | Camera authority | World/pod/division/facility framing | Subject-relative intimacy + continuous travel + final camera acceptance |
@@ -1185,7 +1185,7 @@ SHA-256: `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
 
 ### A6.1 2026-10-07 current #424 S7 Operations checkpoint
 
-**Producing implementation head:** `2f791d565443422debed414e54d544b5b5fd4305`
+**Verified implementation head:** `af4be5fdf8e0bded3612d9ecf12efd6a19155080`
 
 The current bounded slice adds two presentation-only mechanical actuator housings to the existing S7 Operations / fin-deployment family and advances the machinery version to `S7-V12`.
 
@@ -1194,8 +1194,11 @@ The current bounded slice adds two presentation-only mechanical actuator housing
 - [x] Both actuators are owned by `frontend/spatial/machine-facility-machinery.js` and included in the machine subject/envelope.
 - [x] Frontend/public machinery sources remain exact-parity.
 - [x] Independent representative 10-seat Beta geometry leaves approximately `0.18675` and `0.20219` units of tight-edge margin on the primary and secondary actuator housings.
-- [ ] Exact-head Full-System verification completed.
-- [ ] Exact-head Governance/Security/Deep Security verification completed.
-- [ ] Exact-head Canonical Browser verification completed and artifact inspected.
+- [x] Exact-head Full-System verification completed: `37641487389` PASS.
+- [x] Exact-head Governance verification completed: `37641487516` PASS.
+- [x] Exact-head Security verification completed: `37641487409` PASS.
+- [x] Exact-head Deep Security verification completed: `37641487485` PASS.
+- [x] Exact-head Canonical Browser verification completed: `37641487397` PASS, 92 passed / 4 skipped.
+- [x] Browser artifact `11492332989` inspected; SHA-256 `c464ec8e0575f13c538fb628ee809995b80f3c82f8c0aa5877cc68c0eef75f45`.
 
 The current slice does not change Seat cardinality, semantic topology, facility ownership, camera authority, or backend/runtime authority.

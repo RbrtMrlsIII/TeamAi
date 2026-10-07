@@ -263,3 +263,15 @@ This checkpoint records the current implementation/evidence state. Exact-head CI
 Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
 
 Issue #406 is being addressed through PR #407 as shared CI infrastructure, not as a product implementation slice. Automatic advisory fan-out now has a single preflight for the explicit `Owning Issue:` / `Governing Issue:` declaration, while `none`/`n/a` are valid explicit no-issue states. This does not change the current 029 spatial implementation frontier or merge authority.
+
+
+## 2026-10-07 verified #424 spatial checkpoint
+
+PR #424 remains the sole active 029 spatial continuation vehicle. The verified current head is `af4be5fdf8e0bded3612d9ecf12efd6a19155080`.
+
+- S7 Operations advances `S7-V11 → S7-V12` with paired presentation-only fin actuator housings.
+- Operations now contains 11 mechanical details; the other established S7 families remain at 9.
+- Independent representative 10-seat Beta geometry leaves approximately `0.18675` and `0.20219` tight-edge AABB margin for the primary and secondary actuators.
+- Exact-head gates: Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, Canonical Browser `37641487397`, all PASS.
+- Browser: 92 passed / 4 skipped. Artifact `11492332989`, SHA-256 `c464ec8e0575f13c538fb628ee809995b80f3c82f8c0aa5877cc68c0eef75f45`.
+- Human visual acceptance, production/runtime proof, merge authorization, and final 029 completion remain open.

@@ -19,7 +19,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Latest producing implementation head: `2f791d565443422debed414e54d544b5b5fd4305`
+- Latest verified implementation head: `af4be5fdf8e0bded3612d9ecf12efd6a19155080`
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
@@ -32,7 +32,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Independent representative Beta geometry: housing radial boundary `0.73`; primary actuator margin approximately `0.18675`; secondary actuator margin approximately `0.20219`; regression requires `0.03`.
 - Frontend/public `machine-facility-machinery.js` is byte-identical at the producing implementation head.
 - An earlier insertion head `c4c75bf...` failed Full-System syntax checking. The malformed insertion was diagnosed from CI and repaired without weakening validators.
-- Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser verification for the final documentation head is pending at this reconciliation moment.
+- Exact-head gates are green on `af4be5fdf8e0bded3612d9ecf12efd6a19155080`: Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, Browser `37641487397` (92 passed / 4 skipped). Artifact `11492332989`, SHA-256 `c464ec8e0575f13c538fb628ee809995b80f3c82f8c0aa5877cc68c0eef75f45`.
 - Current visual acceptance remains open. The Hailuo MP4 and project PNG remain visual-direction inputs, not semantic or geometry authority.
 - Required evidence chain: inspect → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
 

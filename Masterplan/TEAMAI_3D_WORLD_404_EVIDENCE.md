@@ -1463,7 +1463,7 @@ The S2/S3 embodiment is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIE
 
 ### E424-2026-10-07I — S7 Operations fin-deploy actuator-housing implementation
 
-**Producing implementation head:** `2f791d565443422debed414e54d544b5b5fd4305`
+**Verified implementation head:** `af4be5fdf8e0bded3612d9ecf12efd6a19155080`
 
 This checkpoint is implementation-state evidence pending final exact-head verification. It records the bounded structural change without upgrading its evidence state in advance of CI.
 
@@ -1487,10 +1487,20 @@ This checkpoint is implementation-state evidence pending final exact-head verifi
 - Earlier diagnostic head `c4c75bf...` failed Full-System syntax checking because a malformed literal newline sequence was introduced during insertion. The defect was diagnosed from CI and repaired without weakening validators.
 
 **Verification state**
-- Full-System: pending for the final documentation head.
-- Governance: pending for the final documentation head.
-- Security: pending for the final documentation head.
-- Deep Security: pending for the final documentation head.
-- Browser: pending for the final documentation head.
+- Full-System: run `37641487389` PASS.
+- Governance: run `37641487516` PASS.
+- Security: run `37641487409` PASS.
+- Deep Security: run `37641487485` PASS.
+- Browser: run `37641487397` PASS, 92 passed / 4 skipped.
 
 No acceptance or release claim is made from this implementation checkpoint alone.
+
+### E424-2026-10-07J — exact-head Browser artifact
+
+**Verified head:** `af4be5fdf8e0bded3612d9ecf12efd6a19155080`
+
+Canonical Browser run `37641487397` checked out the exact verified head and reported 92 passed / 4 skipped. Artifact `11492332989`, size 5,856,774 bytes, SHA-256 `c464ec8e0575f13c538fb628ee809995b80f3c82f8c0aa5877cc68c0eef75f45`.
+
+The artifact contains world, facility, Seat, transformation, return, responsive/accessibility, and real-product video evidence. The inspected Operations facility capture proves focused facility rendering and existing machine structure; it does not pixel-isolate the two new actuator housings, so those remain supported by source-level S7 assembly proof plus independent geometry.
+
+The real-product video remains browser/runtime evidence, not production deployment or human acceptance. Geometry remains conservative AABB housing-clearance evidence, not triangle-level collision proof.
