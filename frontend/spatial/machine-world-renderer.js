@@ -49,6 +49,7 @@ import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriv
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
+import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES } from './machine-world-facility-shell.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
@@ -613,6 +614,76 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     return entry;
   }
 
+  function normalizeFacilityBodyOutline(outline) {
+    const points = Array.isArray(outline)
+      ? outline.filter((point) => Array.isArray(point) && point.length >= 2)
+      : [];
+    if (points.length < 3) return PRIMITIVE_POLYGONS.CUBE;
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+    for (const [x, z] of points) {
+      minX = Math.min(minX, Number(x) || 0);
+      maxX = Math.max(maxX, Number(x) || 0);
+      minZ = Math.min(minZ, Number(z) || 0);
+      maxZ = Math.max(maxZ, Number(z) || 0);
+    }
+    const centerX = (minX + maxX) * 0.5;
+    const centerZ = (minZ + maxZ) * 0.5;
+    const scaleX = 2 / Math.max(0.000001, maxX - minX);
+    const scaleZ = 2 / Math.max(0.000001, maxZ - minZ);
+    return points.map(([x, z]) => [
+      ((Number(x) || 0) - centerX) * scaleX,
+      ((Number(z) || 0) - centerZ) * scaleZ,
+    ]);
+  }
+
+  function ensureFacilityBodyBuffer(silhouette) {
+    const key = 'FACILITY_FACETED_BODY:' + String(silhouette || '');
+    let entry = primitiveBuffers.get(key);
+    if (entry) return entry;
+    const polygon = normalizeFacilityBodyOutline(
+      MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette || '')],
+    );
+    const data = shapeBuffer(gl, polygon, 1);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    entry = { buffer, count: data.length / 3 };
+    primitiveBuffers.set(key, entry);
+    return entry;
+  }
+
+  function drawBuffer(entry, transform, material, options = {}) {
+    if (!entry) return;
+    const color = material?.color || [0.5, 0.6, 0.7];
+    const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
+    const spec = Array.isArray(material?.spec) ? material.spec : [0, 0, 0];
+    const roughness = clamp(finite(options.rough, material?.rough ?? 0.5), 0, 1);
+    gl.useProgram(solid);
+    gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
+    gl.enableVertexAttribArray(solidPos);
+    gl.vertexAttribPointer(solidPos, 3, gl.FLOAT, false, 0, 0);
+    gl.uniformMatrix4fv(solidP, false, projection);
+    gl.uniformMatrix4fv(solidV, false, view);
+    gl.uniformMatrix4fv(solidM, false, transform);
+    gl.uniform4f(solidColor, color[0], color[1], color[2], finite(options.alpha, 1));
+    gl.uniform1f(solidGlow, glow);
+    gl.uniform1f(solidKeyIntensity, finite(activeHeroLighting?.keyLight?.intensity, 0.8));
+    gl.uniform1f(solidFillIntensity, finite(activeHeroLighting?.environmentalFillIntensity, 0.6));
+    gl.uniform3f(
+      solidKeyDirection,
+      finite(activeHeroLighting?.keyLight?.direction?.[0], -0.52),
+      finite(activeHeroLighting?.keyLight?.direction?.[1], 0.82),
+      finite(activeHeroLighting?.keyLight?.direction?.[2], 0.28),
+    );
+    gl.uniform1f(solidRimStrength, finite(activeHeroLighting?.grazingRimStrength, 0.5));
+    gl.uniform1f(solidRoughness, roughness);
+    gl.uniform3f(solidSpecular, spec[0], spec[1], spec[2]);
+    gl.drawArrays(gl.TRIANGLES, 0, entry.count);
+  }
+
   function drawMachineCoreAssembly({ assembly, reducedMotion }) {
     if (!assembly) return null;
 
@@ -948,30 +1019,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   }
 
   function ringDraw(shape, transform, material, options = {}) {
-    const entry = ensurePrimitiveBuffer(shape);
-    const color = material?.color || [0.5, 0.6, 0.7];
-    const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
-    const spec = Array.isArray(material?.spec) ? material.spec : [0, 0, 0];
-    const roughness = clamp(finite(options.rough, material?.rough ?? 0.5), 0, 1);
-    gl.useProgram(solid);
-    gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
-    gl.enableVertexAttribArray(solidPos);
-    gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
-    gl.uniformMatrix4fv(solidP,false,projection);
-    gl.uniformMatrix4fv(solidV,false,view);
-    gl.uniformMatrix4fv(solidM,false,transform);
-    gl.uniform4f(solidColor,color[0],color[1],color[2],finite(options.alpha, 1));
-    gl.uniform1f(solidGlow,glow);
-    gl.uniform1f(solidKeyIntensity, finite(activeHeroLighting?.keyLight?.intensity, 0.8));
-    gl.uniform1f(solidFillIntensity, finite(activeHeroLighting?.environmentalFillIntensity, 0.6));
-    gl.uniform3f(solidKeyDirection,
-      finite(activeHeroLighting?.keyLight?.direction?.[0], -0.52),
-      finite(activeHeroLighting?.keyLight?.direction?.[1], 0.82),
-      finite(activeHeroLighting?.keyLight?.direction?.[2], 0.28));
-    gl.uniform1f(solidRimStrength, finite(activeHeroLighting?.grazingRimStrength, 0.5));
-    gl.uniform1f(solidRoughness, roughness);
-    gl.uniform3f(solidSpecular, spec[0], spec[1], spec[2]);
-    gl.drawArrays(gl.TRIANGLES,0,entry.count);
+    drawBuffer(ensurePrimitiveBuffer(shape), transform, material, options);
   }
 
   function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now, seatRingRadius, articulationAmount, ringArticulation }) {
@@ -1931,6 +1979,75 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let facilityComponentCount = 0;
     let facilityPortCount = 0;
     let facilityMachineryCount = 0;
+
+    const facilityBodyShells = deriveMachineWorldFacilityShellDescriptors(facilityMachinery);
+    if (
+      facilityBodyShells.length !== 16
+      || !facilityBodyShells.every((entry) =>
+        entry.presentationOnly === true
+        && entry.constructionSlice === 'S7'
+        && entry.constructionOwner === 'frontend/spatial/machine-world-facility-shell.js'
+      )
+    ) {
+      throw new Error('invalid S7 facility body shells');
+    }
+
+    // The body skin is a presentation layer around the existing S6/S7 owners.
+    // It does not acquire depth-write authority over the real mechanisms.
+    gl.depthMask(false);
+    for (const shell of facilityBodyShells) {
+      const buffer = ensureFacilityBodyBuffer(shell.silhouette);
+      const selected = shell.branchId === branchId;
+      const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+      const material = shell.materialRole === 'glass'
+        ? activeHeroMaterials.glass
+        : shell.materialRole === 'energy'
+          ? activeHeroMaterials.energy
+          : shell.materialRole === 'metal'
+            ? activeHeroMaterials.metal
+            : activeHeroMaterials.metal2;
+      const layerAlpha = shell.layer === 'main-shell'
+        ? (selected ? 0.80 : 0.66)
+        : shell.layer === 'base-collar'
+          ? (selected ? 0.94 : 0.82)
+          : shell.layer === 'shoulder-plate'
+            ? (selected ? 0.88 : 0.76)
+            : shell.layer === 'upper-cap'
+              ? (selected ? 0.72 : 0.60)
+              : (selected ? 0.78 : 0.66);
+      drawBuffer(
+        buffer,
+        multiplyMatrix(
+          translateMatrix(
+            shell.center.x,
+            shell.center.y - dimensions.y * 0.5,
+            shell.center.z,
+          ),
+          multiplyMatrix(
+            rotateYMatrix(finite(shell.rotationY)),
+            scaleMatrix(
+              Math.max(0.02, dimensions.x * 0.5),
+              Math.max(0.02, dimensions.y),
+              Math.max(0.02, dimensions.z * 0.5),
+            ),
+          ),
+        ),
+        material,
+        {
+          emit: selected ? 0.10 : 0.035,
+          glow: selected ? 0.12 : 0.035,
+          alpha: layerAlpha,
+        },
+      );
+    }
+    gl.depthMask(true);
+    canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
+    canvas.dataset.machineWorldFacilityBodyMainShellCount = String(
+      facilityBodyShells.filter((entry) => entry.layer === 'main-shell').length,
+    );
+    canvas.dataset.machineWorldFacilityBodySilhouettes = [
+      ...new Set(facilityBodyShells.map((entry) => entry.silhouette)),
+    ].join(',');
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;
     const facilityMechanismPhases = [];
