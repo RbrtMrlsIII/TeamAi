@@ -61,6 +61,34 @@ test('S8 facility endpoint embodiment projects only existing authored ports', ()
   }
 });
 
+test('S8 facility endpoint collars preserve inter-machine clearance', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 1]) {
+      const machinery = buildMachinery(seatCount, expansionAmount);
+      const descriptors = deriveMachineWorldFacilityDockingEmbodiment(machinery);
+
+      for (const entry of descriptors) {
+        const owner = machinery.find((machine) =>
+          entry.id.startsWith('FACILITY-ENDPOINT:' + machine.branchId + ':')
+          || entry.id.startsWith('FACILITY-FLANGE:' + machine.branchId + ':')
+        );
+        assert.ok(owner, entry.id);
+        for (const other of machinery) {
+          if (other === owner) continue;
+          const centerDistance = Math.hypot(
+            entry.center.x - other.outerHousing.center.x,
+            entry.center.z - other.outerHousing.center.z,
+          );
+          assert.ok(
+            centerDistance - Number(other.envelope.radius) - Number(entry.radius) >= 0.16 - 1e-9,
+            `${entry.id}: clearance against ${other.branchId} at seats=${seatCount}, expansion=${expansionAmount}`,
+          );
+        }
+      }
+    }
+  }
+});
+
 test('S8 facility endpoint collars stay within the declared compact envelope', () => {
   const machinery = buildMachinery(10, 1);
   const descriptors = deriveMachineWorldFacilityDockingEmbodiment(machinery);
