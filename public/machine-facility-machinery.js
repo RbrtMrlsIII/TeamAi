@@ -1048,9 +1048,9 @@ export function deriveMachineFacilityMachinery({
                 z: housingCenter.z - basis.tangent.z * 0.24,
               }),
               dimensions: Object.freeze({
-                x: frameWidth * 0.20,
+                x: frameWidth * 0.16,
                 y: Math.max(0.06, frameHeight * 0.07),
-                z: frameWidth * 0.20,
+                z: frameWidth * 0.16,
               }),
               rotationY: basis.angle,
               materialRole: 'metal2',
