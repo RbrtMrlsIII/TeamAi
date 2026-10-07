@@ -316,7 +316,7 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
     operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
     4,
   );
-  assert.equal(operations.mechanicalDetails.length, 9);
+  assert.equal(operations.mechanicalDetails.length, 11);
 });
 
 
@@ -383,7 +383,8 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    assert.equal(machine.mechanicalDetails.length, 9);
+    const expectedDetailCount = machine.machineRole === 'operations' ? 11 : 9;
+    assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);
