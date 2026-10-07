@@ -1504,3 +1504,17 @@ Canonical Browser run `37641487397` checked out the exact verified head and repo
 The artifact contains world, facility, Seat, transformation, return, responsive/accessibility, and real-product video evidence. The inspected Operations facility capture proves focused facility rendering and existing machine structure; it does not pixel-isolate the two new actuator housings, so those remain supported by source-level S7 assembly proof plus independent geometry.
 
 The real-product video remains browser/runtime evidence, not production deployment or human acceptance. Geometry remains conservative AABB housing-clearance evidence, not triangle-level collision proof.
+
+### E424-2026-10-07K — S7 Control rotor-drive-link implementation checkpoint
+
+**Implementation head:** `62cc4c672408527114d10744b5f9877227ba10b7`
+
+This checkpoint records the next bounded structural slice before exact-head verification.
+
+- `S7-V13` machinery.
+- Two presentation-only `rotor-drive-link` details, parent `rotor-hub`, profile `control-rotor-drive-link`.
+- Independent 1–10 Seat geometry matrix: minimum conservative housing margin approximately `0.09594` against a `0.03` floor.
+- Frontend/public machinery parity is exact.
+- No semantic hierarchy, topology state, Seat capacity, port authority, camera authority, or backend/runtime authority changed.
+
+The final exact-head proof is intentionally pending until CI terminates.

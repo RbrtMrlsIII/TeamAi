@@ -28,9 +28,9 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current exact spatial head: `af4be5fdf8e0bded3612d9ecf12efd6a19155080` (S7 Operations fin-deploy actuator-housing slice; exact-head verification complete).
+Current exact spatial implementation head: `62cc4c672408527114d10744b5f9877227ba10b7` (S7 Control rotor-drive-link slice; exact-head proof pending for the resulting documentation-bearing head).
 
-Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor is the verified S7 Operations fin-deploy actuator-housing slice at `af4be5fdf8e0bded3612d9ecf12efd6a19155080`. Exact-head Browser artifact `11492332989` was produced by run `37641487397` and passed 92 tests with 4 skips.
+Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances the S7 Control family with the `S7-V13` rotor-drive-link slice at `62cc4c672408527114d10744b5f9877227ba10b7`. The prior S7 Operations proof remains immutable evidence; the new Control slice is not accepted until its own exact-head Browser artifact terminates.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
@@ -230,3 +230,14 @@ The reference MP4/PNG remain visual-direction inputs only. This slice adds mecha
 ### 2026-10-07 verified S7 Operations checkpoint
 
 The S7 Operations fin-deploy reinforcement is exact-head verified at `af4be5fdf8e0bded3612d9ecf12efd6a19155080`. S7-V12 contains paired presentation-only actuator housings under the existing deployment-fin parents. Independent Beta housing margins are approximately `0.18675` and `0.20219` units. Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, and Canonical Browser `37641487397` all pass. Human visual acceptance and downstream S24+ visual completion remain open.
+
+### 2026-10-07 S7 Control rotor-drive-link slice
+
+The bounded structural frontier deepens the Gamma / Control facility with two presentation-only `rotor-drive-link` members under the existing `rotor-hub`.
+
+- S7 machinery advances `S7-V12 → S7-V13`.
+- Independent 1–10 Seat geometry validation gives a minimum conservative housing margin of approximately `0.09594` units, above the governed `0.03` floor.
+- Frontend/public `machine-facility-machinery.js` remains byte-identical.
+- No semantic hierarchy, topology state, Seat cardinality, port authority, camera authority, or backend/runtime authority changed.
+
+Final exact-head proof for this implementation-plus-documentation state is left to CI.

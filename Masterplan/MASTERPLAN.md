@@ -275,3 +275,11 @@ PR #424 remains the sole active 029 spatial continuation vehicle. The verified c
 - Exact-head gates: Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, Canonical Browser `37641487397`, all PASS.
 - Browser: 92 passed / 4 skipped. Artifact `11492332989`, SHA-256 `c464ec8e0575f13c538fb628ee809995b80f3c82f8c0aa5877cc68c0eef75f45`.
 - Human visual acceptance, production/runtime proof, merge authorization, and final 029 completion remain open.
+
+## 2026-10-07 S7 Control rotor-drive-link checkpoint
+
+PR #424 remains the sole active spatial continuation vehicle. Current implementation head: `62cc4c672408527114d10744b5f9877227ba10b7`, advancing S7 machinery `S7-V12 → S7-V13`.
+
+The Gamma / Control facility now contains two paired presentation-only `rotor-drive-link` details under the existing `rotor-hub`. Independent geometry validation across Seat counts 1–10 reports a minimum conservative housing margin of approximately `0.09594` units against the `0.03` floor. Frontend/public machinery parity remains exact.
+
+The final exact-head verification for the resulting documentation-bearing state is intentionally pending until CI terminates.

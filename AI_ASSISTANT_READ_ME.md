@@ -19,22 +19,20 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`
-- Latest verified implementation head: `af4be5fdf8e0bded3612d9ecf12efd6a19155080`
+- Current implementation head: `62cc4c672408527114d10744b5f9877227ba10b7`
 - PR #424: OPEN / DRAFT / mergeable
 - PR #404: merged historical spatial provenance; do not reopen
 - Governing spatial Issue: #405
 - Canonical successor handoff: #409
 - Global current slice: Issue #401 in `Masterplan/NEXT_SLICES.md`
-- Product Law and the canonical feature grammar remain authoritative. The target is the actual TeamAi product expressed as one semantic spatial machine, not a reference-only rocket recreation.
-- Product Law resolution: the storyboard's cinematic 8-Pod composition is visual reference only. TeamAi remains a 1–10 Seat product with 10 guest presentation slots. The final rocket-hologram frame is not a required product target.
-- Current bounded spatial slice: S7 Operations / fin-deploy actuator-housing reinforcement, advancing `S7-V11 → S7-V12`.
-- Two presentation-only mechanical details are present: `fin-actuator-primary` and `fin-actuator-secondary`, parented to the existing deployment-fin roles and included in the S7 machine subject/envelope.
-- Independent representative Beta geometry: housing radial boundary `0.73`; primary actuator margin approximately `0.18675`; secondary actuator margin approximately `0.20219`; regression requires `0.03`.
-- Frontend/public `machine-facility-machinery.js` is byte-identical at the producing implementation head.
-- An earlier insertion head `c4c75bf...` failed Full-System syntax checking. The malformed insertion was diagnosed from CI and repaired without weakening validators.
-- Exact-head gates are green on `af4be5fdf8e0bded3612d9ecf12efd6a19155080`: Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, Browser `37641487397` (92 passed / 4 skipped). Artifact `11492332989`, SHA-256 `c464ec8e0575f13c538fb628ee809995b80f3c82f8c0aa5877cc68c0eef75f45`.
-- Current visual acceptance remains open. The Hailuo MP4 and project PNG remain visual-direction inputs, not semantic or geometry authority.
-- Required evidence chain: inspect → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
+- Product Law and canonical feature grammar remain authoritative. TeamAi remains a 1–10 Seat semantic spatial machine, not a reference-only rocket recreation.
+- Current bounded spatial slice: S7 Control / rotor-drive-link reinforcement, advancing `S7-V12 → S7-V13`.
+- Two presentation-only `rotor-drive-link` details are parented to `rotor-hub` and included in the S7 machine subject/envelope.
+- Independent 1–10 Seat geometry validation gives a minimum conservative Gamma housing margin of approximately `0.09594`, above the `0.03` regression floor.
+- Frontend/public `machine-facility-machinery.js` is byte-identical at the implementation head.
+- Earlier actuator insertion failures and the standalone machine-core-preview timing defect are historical, not current failures.
+- Prior S7 Operations head `af4be5f...` is fully verified; the current Control implementation-plus-documentation state requires its own exact-head proof.
+- Required evidence chain: inspect → reason → independently validate → change → focused regression → exact-head CI → Browser artifact/report → artifact inspection → durable evidence alignment.
 
 ### Historical pre-029-session verification note
 
