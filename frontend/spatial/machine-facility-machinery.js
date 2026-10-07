@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V9';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V10';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -775,7 +775,133 @@ export function deriveMachineFacilityMachinery({
             }),
           ]
         : []),
-    ]);
+      ...(assembly.machineRole === 'control'
+        ? [
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ROTOR-BEARING-BLOCK:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'rotor-bearing-block',
+              shape: 'CUBE',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.08
+                  + basis.tangent.x * frameWidth * 0.18 * side,
+                y: housingCenter.y + frameHeight * 0.30,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.08
+                  + basis.tangent.z * frameWidth * 0.18 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.08),
+                y: Math.max(0.08, frameHeight * 0.14),
+                z: Math.max(0.12, frameDepth * 0.30),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'rotor-hub',
+              ...rootContext(assembly.branchId + ':ROTOR-BEARING-BLOCK:' + side),
+            })),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':CHAMBER-RETAINER',
+              role: 'chamber-retainer',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * 0.22,
+                y: housingCenter.y + frameHeight * 0.48,
+                z: housingCenter.z + basis.outward.z * 0.22,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.24,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.14,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal',
+              parentRole: 'analysis-chamber',
+              ...rootContext(assembly.branchId + ':CHAMBER-RETAINER'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':CHAMBER-CLAMP-RING',
+              role: 'chamber-clamp-ring',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * 0.22,
+                y: housingCenter.y + frameHeight * 0.58,
+                z: housingCenter.z + basis.outward.z * 0.22,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.32,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameWidth * 0.32,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'analysis-chamber',
+              ...rootContext(assembly.branchId + ':CHAMBER-CLAMP-RING'),
+            }),
+          ]
+        : []),
+      ...(assembly.machineRole === 'access-commerce'
+        ? [
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':MAST-FOOT-COLLAR',
+              role: 'mast-foot-collar',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x,
+                y: housingCenter.y + frameHeight * 0.17,
+                z: housingCenter.z,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.32,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameWidth * 0.32,
+              }),
+              rotationY: 0,
+              materialRole: 'metal2',
+              parentRole: 'sensor-mast',
+              ...rootContext(assembly.branchId + ':MAST-FOOT-COLLAR'),
+            }),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':DISH-YOKE:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'dish-yoke',
+              shape: 'CUBE',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * 0.10
+                  + basis.tangent.x * frameWidth * 0.18 * side,
+                y: housingCenter.y + frameHeight * 0.45,
+                z: housingCenter.z + basis.outward.z * 0.10
+                  + basis.tangent.z * frameWidth * 0.18 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.06),
+                y: Math.max(0.08, frameHeight * 0.12),
+                z: Math.max(0.10, frameDepth * 0.26),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal',
+              parentRole: 'sensor-dish',
+              ...rootContext(assembly.branchId + ':DISH-YOKE:' + side),
+            })),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ANTENNA-BASE-PLATE',
+              role: 'antenna-base-plate',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x - basis.tangent.x * 0.24,
+                y: housingCenter.y + frameHeight * 0.40,
+                z: housingCenter.z - basis.tangent.z * 0.24,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.18,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.18,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'communication-antenna',
+              ...rootContext(assembly.branchId + ':ANTENNA-BASE-PLATE'),
+            }),
+          ]
+        : []),
+    ];
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
     const maxPresentation = deriveMachineFacilityMechanismPresentation(

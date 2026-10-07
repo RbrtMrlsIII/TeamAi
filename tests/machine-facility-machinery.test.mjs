@@ -102,7 +102,7 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
   assert.equal(
     machinery
       .filter((machine) => ['control', 'access-commerce'].includes(machine.machineRole))
-      .every((machine) => machine.mechanicalDetails.length === 5),
+      .every((machine) => machine.mechanicalDetails.length === 9),
     true,
   );
 });
@@ -224,6 +224,63 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
   assert.equal(operations.mechanicalDetails.length, 9);
 });
 
+
+test('S7 control and access families expose nested retainers with independent housing bounds', () => {
+  const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const machinery = deriveMachineFacilityMachinery({
+    outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V10');
+
+  const expected = Object.freeze({
+    control: Object.freeze({
+      roles: Object.freeze({
+        'rotor-bearing-block': 2,
+        'chamber-retainer': 1,
+        'chamber-clamp-ring': 1,
+      }),
+    }),
+    'access-commerce': Object.freeze({
+      roles: Object.freeze({
+        'mast-foot-collar': 1,
+        'dish-yoke': 2,
+        'antenna-base-plate': 1,
+      }),
+    }),
+  });
+
+  for (const [machineRole, contract] of Object.entries(expected)) {
+    const machine = machinery.find((entry) => entry.machineRole === machineRole);
+    assert.ok(machine, machineRole);
+    const center = machine.outerHousing.center;
+    const dimensions = machine.outerHousing.dimensions;
+    const angle = Math.atan2(center.z, center.x);
+    const housingBoundary = 1 / (
+      Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
+      + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
+    );
+
+    for (const [role, expectedCount] of Object.entries(contract.roles)) {
+      const details = machine.mechanicalDetails.filter((entry) => entry.role === role);
+      assert.equal(details.length, expectedCount, machineRole + ':' + role);
+      for (const detail of details) {
+        const radialDistance = Math.hypot(
+          detail.center.x - center.x,
+          detail.center.z - center.z,
+        );
+        const radialReach = Math.hypot(detail.dimensions.x, detail.dimensions.z) * 0.5;
+        assert.ok(
+          radialDistance + radialReach <= housingBoundary - 0.03 + 1e-9,
+          machineRole + ':' + role + ':housing-bound',
+        );
+        assert.equal(detail.constructionSlice, 'S7');
+        assert.equal(detail.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+        assert.ok(machine.subject.sourcePartIds.includes(detail.id));
+      }
+    }
+  }
+});
+
 test('S7 facility chassis details are authored and included in each machine subject', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
@@ -231,7 +288,7 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    assert.equal(machine.mechanicalDetails.length, machine.machineRole === 'analysis' ? 7 : machine.machineRole === 'operations' ? 9 : 5);
+    assert.equal(machine.mechanicalDetails.length, machine.machineRole === 'analysis' ? 7 : 9);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-output').length, 1);
