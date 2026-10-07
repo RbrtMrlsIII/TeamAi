@@ -736,7 +736,7 @@ test('S24 Three bridge derives restrained local practical lights from existing m
   assert.match(source, /port\.role === 'machine-output'/);
   assert.match(source, /const podIntensity = pods\.length === 1 \? 0\.34 : 0\.11/);
   assert.match(source, /intensity: pods\.length === 1 \? 0\.12 : 0\.035/);
-  assert.match(source, /intensity: 0\.12/);
+  assert.match(source, /intensity: isFocusedFacility \? 0\.18 : 0\.12/);
 });
  
 test('S24 pod-division docking collars derive only from bounded vertical conduit endpoints', () => {
