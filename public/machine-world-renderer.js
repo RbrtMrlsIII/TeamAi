@@ -64,6 +64,9 @@ const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
   hex: [[-1,0],[-.5,-.86],[.5,-.86],[1,0],[.5,.86],[-.5,.86]],
   pod: MACHINE_POD_SHELL_OUTLINE,
+  POD_SHELL: Object.freeze(
+    MACHINE_POD_SHELL_OUTLINE.map(([x, z]) => [x / 0.9, z / 0.6]),
+  ),
   authorizationShield: getMachineSeatAuthorizationShieldOutline(),
   behaviorBaffle: getMachineSeatBehaviorBaffleOutline(),
   fin: [[-1,-.55],[.05,-.7],[1,.3],[.35,.66],[-.5,.55]],
@@ -626,7 +629,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     if (!assembly) return null;
 
     const shapeForRole = Object.freeze({
-      'outer-shell': 'CUBE',
+      'outer-shell': 'POD_SHELL',
       'structural-collar': 'TORUS',
       'inner-chamber': 'CORE_OCT',
       'articulation-mechanism': 'TORUS',

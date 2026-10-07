@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V2';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V3';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -238,6 +238,86 @@ export function deriveMachinePodAssembly({
       });
     }),
     Object.freeze({
+      id: `MACHINE-POD:${branchId}:LOWER-PLINTH`,
+      role: 'lower-plinth',
+      shape: 'POD_SHELL_PANEL',
+      center: Object.freeze({
+        x: center.x + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.03 + mechanicalPresentation.shellPanelLift * 0.55,
+        z: center.z + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: width * 0.92,
+        y: height * 0.14,
+        z: depth * 0.72,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    }),
+    Object.freeze({
+      id: `MACHINE-POD:${branchId}:UPPER-PAYLOAD-FRAME`,
+      role: 'upper-payload-frame',
+      shape: 'TORUS',
+      center: Object.freeze({
+        x: center.x + radial.x * mechanicalPresentation.payloadTravel,
+        y: center.y + height * 0.55 + mechanicalPresentation.payloadLift * 0.75,
+        z: center.z + radial.z * mechanicalPresentation.payloadTravel,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.68,
+        y: height * 0.07,
+        z: minimumSpan * 0.68,
+      }),
+      rotationY: 0,
+      materialRole: 'metal',
+      ...rootContext(),
+    }),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:SIDE-ACTUATOR:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'side-actuator',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: center.x
+          + tangent.x * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.30 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + tangent.z * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: height * 0.095,
+        y: height * 0.26,
+        z: height * 0.095,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    })),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:CHAMBER-LOCK:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'chamber-lock',
+      shape: 'CUBE',
+      center: Object.freeze({
+        x: center.x
+          + radial.x * (mechanicalPresentation.chamberTravel + chamberRadius * 0.72)
+          + tangent.x * minimumSpan * 0.18 * side,
+        y: center.y + height * 0.36 + mechanicalPresentation.chamberLift,
+        z: center.z
+          + radial.z * (mechanicalPresentation.chamberTravel + chamberRadius * 0.72)
+          + tangent.z * minimumSpan * 0.18 * side,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.10,
+        y: height * 0.22,
+        z: minimumSpan * 0.08,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    })),
+    Object.freeze({
       id: `MACHINE-POD:${branchId}:PAYLOAD-COLLAR`,
       role: 'payload-collar',
       shape: 'TORUS',
@@ -412,12 +492,24 @@ export function deriveMachinePodAssembly({
     connectionPoint.x - center.x,
     connectionPoint.z - center.z,
   ) + Number(connectionComponent?.radius || 0);
+  const mechanicalDetailRadialExtent = mechanicalDetails.reduce((maxExtent, item) => {
+    const centerReach = Math.hypot(
+      Number(item.center.x) - center.x,
+      Number(item.center.z) - center.z,
+    );
+    const halfDiagonal = Math.hypot(
+      Number(item.dimensions?.x || 0) * 0.5,
+      Number(item.dimensions?.z || 0) * 0.5,
+    );
+    return Math.max(maxExtent, centerReach + halfDiagonal);
+  }, 0);
   const maxHorizontalExtent = Math.max(
     width,
     depth,
     collarRadius * 2,
     articulationRadius * 2,
     connectionRadialExtent * 2,
+    mechanicalDetailRadialExtent * 2,
   );
   const neighborClearance = adjacentCenterSpacing == null
     ? null

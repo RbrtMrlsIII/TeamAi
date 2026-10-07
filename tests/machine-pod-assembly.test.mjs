@@ -111,7 +111,7 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
   const core = createBranchConnectionCore({ seatCount: 10 });
   const part = core.byBranch.get('BRANCH-SEAT-04');
   const assembly = deriveMachinePodAssembly({ part, expansionAmount: 1 });
-  assert.equal(assembly.mechanicalDetails.length, 11);
+  assert.equal(assembly.mechanicalDetails.length, 17);
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'docking-strut').length,
     2,
@@ -132,10 +132,37 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
     assembly.mechanicalDetails.filter((item) => item.role === 'payload-collar').length,
     1,
   );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'lower-plinth').length,
+    1,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'upper-payload-frame').length,
+    1,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'side-actuator').length,
+    2,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'chamber-lock').length,
+    2,
+  );
   const subjectIds = new Set(assembly.subject.sourcePartIds);
   assert.ok(assembly.mechanicalDetails.every((item) => subjectIds.has(item.id)));
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionSlice === 'S3'));
   assert.ok(assembly.mechanicalDetails.every((item) => item.constructionOwner === 'frontend/spatial/machine-pod-assembly.js'));
+  const detailReach = Math.max(...assembly.mechanicalDetails.map((item) =>
+    Math.hypot(
+      item.center.x - assembly.center.x,
+      item.center.z - assembly.center.z,
+    ) + Math.hypot(
+      item.dimensions.x * 0.5,
+      item.dimensions.z * 0.5,
+    )
+  ));
+  assert.ok(assembly.envelope.radius >= detailReach);
+  assert.ok(assembly.envelope.neighborClearance >= assembly.envelope.requestedClearance);
 });
 
 test('S3 fails closed when Pod root ownership is corrupted', () => {
