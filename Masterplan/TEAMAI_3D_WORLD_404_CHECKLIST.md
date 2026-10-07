@@ -1219,3 +1219,23 @@ The slice adds mechanical load-path structure only. It does not change Seat capa
 ### 2026-10-07 S7 Control verification closure
 
 The `S7-V13` Control rotor-drive-link slice is now exact-head verified. Browser run `37649478815` passed `92` tests with `4` historical skips and produced artifact `11496462178` with SHA-256 `f86ef0cf6528585f9a11017bb31f31083b2738bd92c7d8c4fc054266f5ed8b0a`. Full-System `37649479000`, Governance `37649478928`, Security `37649478908`, and Deep Security `37649479006` also passed. Human visual acceptance and production/runtime acceptance remain open.
+### A6.2 2026-10-08 S7-V14 Facility Body Production Parity
+
+**Verified implementation head:** `55e272e6d57a9617dc73acc53e18bb951c004050`
+
+- [x] Existing four S7 facility semantic identities preserved.
+- [x] Existing authored facility-body grammar promoted into the canonical production Hero renderer.
+- [x] Four differentiated silhouettes preserved: analysis/fin, operations/arc, control/diamond, access-commerce/blade.
+- [x] Five presentation-only physical layers rendered per facility, 20 body descriptors total.
+- [x] `machine-world-facility-shell.js` added to the spatial runtime publication manifest.
+- [x] Source/public facility renderer and shell files synchronized.
+- [x] Independent Seat 1/5/10 × closed/half/expanded conservative clearance matrix passes; minimum shell-versus-Pod margin is approximately 2.7371 units against the 0.16 requested clearance.
+- [x] Exact-head Full-System `37659080295` PASS.
+- [x] Exact-head Governance `37659080256` PASS.
+- [x] Exact-head Security `37659080264` PASS.
+- [x] Exact-head Deep Security `37659080241` PASS.
+- [x] Exact-head Canonical Browser `37659080436` PASS, 92 passed / 4 skipped.
+- [x] Browser artifact `11498924852` independently downloaded and SHA-256 matched `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`.
+
+The slice is **repository/browser verified**, not human-accepted, production-deployed, or merge-authorized. The Hailuo MP4 and endorsed PNG remain visual-direction references only.
+
