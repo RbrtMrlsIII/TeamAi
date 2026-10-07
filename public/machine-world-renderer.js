@@ -221,6 +221,15 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   CYL: regularPolygon(16),
   TORUS: regularPolygon(12),
   SPH: regularPolygon(10),
+  CORE_FIN: Object.freeze([
+    [-1.00, -0.70],
+    [-0.38, -1.00],
+    [0.48, -0.92],
+    [1.00, -0.12],
+    [0.62, 0.74],
+    [-0.22, 1.00],
+    [-1.00, 0.26],
+  ]),
   FACILITY_FIN_PRIMARY: Object.freeze([
     [-1.00, -0.95], [-0.25, -1.00], [0.55, -0.92],
     [0.95, -0.55], [1.00, 0.15], [0.65, 0.72],
@@ -627,11 +636,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         ? 'CORE_BRACE'
         : detail.role === 'reactor-guard'
           ? 'CUBE'
-          : ['foundation-panel', 'reactor-rib'].includes(detail.role)
-            ? 'CORE_PANEL'
-            : ['port-collar', 'reactor-band'].includes(detail.role)
-              ? 'TORUS'
-              : 'CORE_DODEC';
+          : detail.role === 'reactor-cage-fin'
+            ? 'CORE_FIN'
+            : ['foundation-panel', 'reactor-rib'].includes(detail.role)
+              ? 'CORE_PANEL'
+              : ['port-collar', 'reactor-band'].includes(detail.role)
+                ? 'TORUS'
+                : 'CORE_DODEC';
       const material = detail.materialRole === 'glass'
         ? activeHeroMaterials.glass
         : detail.materialRole === 'metal2'
