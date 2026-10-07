@@ -20,7 +20,7 @@ const BODY_SCALE = 1.22;
 // replacing the legacy box-like presentation with manufactured machine bodies.
 // The normalized outlines are intentionally asymmetric/chamfered and are
 // consumed by the Three.js adapter as presentation geometry only.
-const FACILITY_BODY_OUTLINES = Object.freeze({
+export const MACHINE_WORLD_FACILITY_BODY_OUTLINES = Object.freeze({
   fin: Object.freeze([
     [-0.82, -0.52], [-0.42, -0.90], [0.34, -0.82], [0.90, -0.34],
     [0.76, 0.36], [0.30, 0.88], [-0.40, 0.72], [-0.86, 0.18],
@@ -38,6 +38,11 @@ const FACILITY_BODY_OUTLINES = Object.freeze({
     [0.72, 0.22], [0.30, 0.92], [-0.48, 0.74], [-0.90, 0.12],
   ]),
 });
+
+
+export function getMachineWorldFacilityBodyOutline(silhouette) {
+  return MACHINE_WORLD_MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette || '')] || null;
+}
 
 const scale = (value, factor, minimum = 0.06) =>
   Math.max(minimum, finite(value, minimum) * factor);
@@ -118,7 +123,7 @@ function deriveShell(entry) {
     dimensions: Object.freeze(profiles.dimensions),
     rotationY: finite(profiles.rotationY),
     materialRole: 'metal2',
-    outline: FACILITY_BODY_OUTLINES[silhouette],
+    outline: MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette],
     constructionSlice: 'S7',
     constructionOwner: 'frontend/spatial/machine-world-facility-shell.js',
     branchId: entry.branchId,
@@ -151,7 +156,7 @@ function deriveShell(entry) {
       }),
       layer: 'base-collar',
       materialRole: 'metal',
-      outline: FACILITY_BODY_OUTLINES[silhouette],
+      outline: MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette],
       ...rootContext('FACILITY-BODY:' + entry.branchId + ':BASE'),
     }),
     Object.freeze({
@@ -170,7 +175,7 @@ function deriveShell(entry) {
       }),
       layer: 'shoulder-plate',
       materialRole: 'metal2',
-      outline: FACILITY_BODY_OUTLINES[silhouette],
+      outline: MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette],
       ...rootContext('FACILITY-BODY:' + entry.branchId + ':SHOULDER'),
     }),
     Object.freeze({
@@ -190,7 +195,7 @@ function deriveShell(entry) {
       rotationY: 0,
       layer: 'upper-cap',
       materialRole: 'glass',
-      outline: FACILITY_BODY_OUTLINES[silhouette],
+      outline: MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette],
       ...rootContext('FACILITY-BODY:' + entry.branchId + ':CAP'),
     }),
   ];
