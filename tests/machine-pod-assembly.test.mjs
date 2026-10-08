@@ -139,7 +139,7 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
   const core = createBranchConnectionCore({ seatCount: 10 });
   const part = core.byBranch.get('BRANCH-SEAT-04');
   const assembly = deriveMachinePodAssembly({ part, expansionAmount: 1 });
-  assert.equal(assembly.mechanicalDetails.length, 23);
+  assert.equal(assembly.mechanicalDetails.length, 27);
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'docking-strut').length,
     2,
@@ -151,6 +151,10 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'hinge-joint').length,
     2,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'shell-bulkhead').length,
+    4,
   );
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'chamber-rib').length,
