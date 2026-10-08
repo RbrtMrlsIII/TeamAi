@@ -237,7 +237,49 @@ test('S7 facility body shells form four authored manufactured families without c
   assert.ok(minimumConservativeXZClearance > 0.16);
 });
 
-test('S7 facility body shell helper returns authored silhouette outlines', () => {
+test('S7 facility chassis layers form a bounded radial depth stack', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const facilities = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const machinery = deriveMachineFacilityMachinery({
+    facilityAssemblies: facilities,
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+    clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+    requestedClearance: 0.16,
+  });
+  const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
+
+  for (const machine of machinery) {
+    const layers = shells
+      .filter((entry) => entry.branchId === machine.branchId)
+      .sort((a, b) => {
+        const order = {
+          'base-collar': 0,
+          'main-shell': 1,
+          'shoulder-plate': 2,
+          'upper-cap': 3,
+          'mechanism-housing': 4,
+        };
+        return order[a.layer] - order[b.layer];
+      });
+    assert.equal(layers.length, 5, machine.branchId);
+    const angle = Math.atan2(
+      machine.outerHousing.center.z,
+      machine.outerHousing.center.x,
+    );
+    const projected = layers.map((entry) =>
+      (entry.center.x - machine.outerHousing.center.x) * Math.cos(angle)
+      + (entry.center.z - machine.outerHousing.center.z) * Math.sin(angle)
+    );
+    assert.ok(projected[0] < projected[1], machine.branchId + ': base must sit behind the main shell');
+    assert.ok(projected[1] < projected[2], machine.branchId + ': shoulder must step outward');
+    assert.ok(projected[2] < projected[3], machine.branchId + ': cap must step outward');
+    assert.ok(Math.abs(projected[3]) > 0.02, machine.branchId + ': cap radial depth must be visible');
+    assert.ok(layers.every((entry) => Number.isFinite(Number(entry.depthOffset))), machine.branchId);
+  }
+});
+\ntest('S7 facility body shell helper returns authored silhouette outlines', () => {
   for (const silhouette of ['fin', 'arc', 'diamond', 'blade']) {
     const outline = getMachineWorldFacilityBodyOutline(silhouette);
     assert.ok(Array.isArray(outline));

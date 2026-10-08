@@ -9,7 +9,7 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V1';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V2';
 
 const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -120,6 +120,7 @@ function deriveShell(entry) {
     shape: 'FACILITY_FACETED_BODY',
     profile: 'facility-body-' + silhouette,
     center: Object.freeze({ ...housing.center }),
+    depthOffset: 0,
     dimensions: Object.freeze(profiles.dimensions),
     rotationY: finite(profiles.rotationY),
     materialRole: 'metal2',
@@ -137,6 +138,8 @@ function deriveShell(entry) {
   const bodyDepth = Number(body.dimensions.z);
   const bodyHeight = Number(body.dimensions.y);
   const bodyMin = Math.min(bodyWidth, bodyDepth);
+  const radial = { x: Math.cos(angle), z: Math.sin(angle) };
+  const depthOffset = (fraction) => bodyMin * fraction;
 
   const layered = [
     body,
@@ -145,10 +148,11 @@ function deriveShell(entry) {
       id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':BASE',
       profile: 'facility-body-' + silhouette + '-base',
       center: Object.freeze({
-        x: housing.center.x,
+        x: housing.center.x - radial.x * depthOffset(0.12),
         y: housing.center.y - bodyHeight * 0.39,
-        z: housing.center.z,
+        z: housing.center.z - radial.z * depthOffset(0.12),
       }),
+      depthOffset: -depthOffset(0.12),
       dimensions: Object.freeze({
         x: bodyWidth * 0.78,
         y: Math.max(0.08, bodyHeight * 0.12),
@@ -164,10 +168,11 @@ function deriveShell(entry) {
       id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':SHOULDER',
       profile: 'facility-body-' + silhouette + '-shoulder',
       center: Object.freeze({
-        x: housing.center.x,
+        x: housing.center.x + radial.x * depthOffset(0.05),
         y: housing.center.y + bodyHeight * 0.29,
-        z: housing.center.z,
+        z: housing.center.z + radial.z * depthOffset(0.05),
       }),
+      depthOffset: depthOffset(0.05),
       dimensions: Object.freeze({
         x: bodyWidth * 0.84,
         y: Math.max(0.08, bodyHeight * 0.13),
@@ -183,10 +188,11 @@ function deriveShell(entry) {
       id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CAP',
       profile: 'facility-body-' + silhouette + '-cap',
       center: Object.freeze({
-        x: housing.center.x,
+        x: housing.center.x + radial.x * depthOffset(0.12),
         y: housing.center.y + bodyHeight * 0.41,
-        z: housing.center.z,
+        z: housing.center.z + radial.z * depthOffset(0.12),
       }),
+      depthOffset: depthOffset(0.12),
       dimensions: Object.freeze({
         x: bodyWidth * 0.58,
         y: Math.max(0.08, bodyHeight * 0.08),
@@ -270,6 +276,8 @@ function deriveShell(entry) {
     profile: 'facility-body-core-' + entry.machineRole,
     shape: core.shape,
     center: core.center,
+    depthOffset: Math.cos(angle) * (core.center.x - housing.center.x)
+      + Math.sin(angle) * (core.center.z - housing.center.z),
     dimensions: core.dimensions,
     rotationY: finite(core.rotationY),
     materialRole: core.materialRole,
