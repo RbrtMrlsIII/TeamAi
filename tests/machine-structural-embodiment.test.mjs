@@ -279,7 +279,7 @@ test('S7 facility chassis layers form a bounded radial depth stack', () => {
     assert.ok(layers.every((entry) => Number.isFinite(Number(entry.depthOffset))), machine.branchId);
   }
 });
-\ntest('S7 facility body shell helper returns authored silhouette outlines', () => {
+test('S7 facility body shell helper returns authored silhouette outlines', () => {
   for (const silhouette of ['fin', 'arc', 'diamond', 'blade']) {
     const outline = getMachineWorldFacilityBodyOutline(silhouette);
     assert.ok(Array.isArray(outline));
