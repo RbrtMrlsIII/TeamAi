@@ -148,11 +148,11 @@ function deriveShell(entry) {
       id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':BASE',
       profile: 'facility-body-' + silhouette + '-base',
       center: Object.freeze({
-        x: housing.center.x - radial.x * depthOffset(0.12),
+        x: housing.center.x - radial.x * depthOffset(0.08),
         y: housing.center.y - bodyHeight * 0.39,
-        z: housing.center.z - radial.z * depthOffset(0.12),
+        z: housing.center.z - radial.z * depthOffset(0.08),
       }),
-      depthOffset: -depthOffset(0.12),
+      depthOffset: -depthOffset(0.08),
       dimensions: Object.freeze({
         x: bodyWidth * 0.78,
         y: Math.max(0.08, bodyHeight * 0.12),
@@ -168,11 +168,11 @@ function deriveShell(entry) {
       id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':SHOULDER',
       profile: 'facility-body-' + silhouette + '-shoulder',
       center: Object.freeze({
-        x: housing.center.x + radial.x * depthOffset(0.05),
+        x: housing.center.x + radial.x * depthOffset(0.04),
         y: housing.center.y + bodyHeight * 0.29,
-        z: housing.center.z + radial.z * depthOffset(0.05),
+        z: housing.center.z + radial.z * depthOffset(0.04),
       }),
-      depthOffset: depthOffset(0.05),
+      depthOffset: depthOffset(0.04),
       dimensions: Object.freeze({
         x: bodyWidth * 0.84,
         y: Math.max(0.08, bodyHeight * 0.13),
@@ -188,11 +188,11 @@ function deriveShell(entry) {
       id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CAP',
       profile: 'facility-body-' + silhouette + '-cap',
       center: Object.freeze({
-        x: housing.center.x + radial.x * depthOffset(0.12),
+        x: housing.center.x + radial.x * depthOffset(0.09),
         y: housing.center.y + bodyHeight * 0.41,
-        z: housing.center.z + radial.z * depthOffset(0.12),
+        z: housing.center.z + radial.z * depthOffset(0.09),
       }),
-      depthOffset: depthOffset(0.12),
+      depthOffset: depthOffset(0.09),
       dimensions: Object.freeze({
         x: bodyWidth * 0.58,
         y: Math.max(0.08, bodyHeight * 0.08),
