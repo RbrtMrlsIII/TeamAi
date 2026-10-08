@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current verified application head: `4ebabffa26e017926d57cf3c7aaf183cbd3f9330` (S8 endpoint/junction embodiment V3; exact-head five-gate proof complete). The live branch may advance with documentation-only reconciliation.
+Current verified application head: `3a95a1bca311df2ffd99b98177ff523e068626f5` (S7-V16 chassis depth after S8 V3 and S3 V6; exact-head five-gate proof complete). The live branch may advance with a bounded structural slice.
 
 Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances **S7-V13 → S7-V14** by promoting the existing authored S7 facility-body construction into the canonical production Hero raw-WebGL path. The slice publishes `machine-world-facility-shell.js`, renders 20 presentation-only body descriptors across four family-specific silhouettes and five physical layers, and preserves the existing S6/S7 semantics, S8 topology, S10 camera authority, Seat cardinality, and backend/runtime boundaries.
 
@@ -45,7 +45,7 @@ Producing application head: `8dc922528ff850add4a2e9537d2999cda6a86184`.
 - Artifact inspection found zero pixel changes in the comparable S2–S10 world/facility/Seat/return/transform captures versus the preceding S7-V15 application artifact.
 - V3 correction: endpoint/flange centers now extend along the authored radial direction with longer carrier spans and cylindrical projection, then terminate in visible collars.
 - Result: **browser-executed and structurally verified on the real `/hero/` production path**. The exact Hero artifact is nonzero-delta versus the S7-V15 artifact, confirming the corrected draw path.
-- The next structural slice is manufactured Core/Pod density, while endpoint geometry remains bounded and measured.
+- The next structural slice is nested outer-machine embodiment: deepen the existing four product-family chassis/machinery relationships and integrate the existing service-manifold/conduit hierarchy. Do not enlarge endpoint geometry merely to force raster delta.
 - Manifest hygiene follow-up is closed: direct renderer import coverage is now guarded and both previously omitted modules are published.
 
 
