@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V4';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V5';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -367,6 +367,29 @@ export function deriveMachinePodAssembly({
         rotationY: angle,
         materialRole: index % 2 === 0 ? 'metal2' : 'metal',
         outline: POD_SHELL_RIB_OUTLINE,
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = Math.PI / 4 + index * (TAU / 4);
+      const bulkheadRadius = shellRadius * 0.62;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:SHELL-BULKHEAD:${index + 1}`,
+        role: 'shell-bulkhead',
+        shape: 'CUBE',
+        profile: 'nested-shell-bulkhead',
+        center: Object.freeze({
+          x: center.x + Math.cos(angle) * bulkheadRadius,
+          y: center.y + height * 0.18,
+          z: center.z + Math.sin(angle) * bulkheadRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.16,
+          y: height * 0.38,
+          z: minimumSpan * 0.10,
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
         ...rootContext(),
       });
     }),

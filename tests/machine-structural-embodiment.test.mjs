@@ -76,7 +76,11 @@ test('S2-S10 compose into one structurally coherent 10-seat world', () => {
   });
   assert.equal(pod.constructionSlice, 'S3');
   assert.equal(pod.components.length, 7);
-  assert.equal(pod.mechanicalDetails.length, 23);
+  assert.equal(pod.mechanicalDetails.length, 27);
+  assert.equal(pod.mechanicalDetails.filter((detail) => detail.role === 'shell-bulkhead').length, 4);
+  assert.ok(pod.mechanicalDetails
+    .filter((detail) => detail.role === 'shell-bulkhead')
+    .every((detail) => detail.profile === 'nested-shell-bulkhead'));
 
   const divisionAssemblies = DIVISIONS.map((childId, childIndex) => {
     const geometry = deriveFocusedSeatDivisionGeometry({
@@ -239,4 +243,27 @@ test('S7 facility body shell helper returns authored silhouette outlines', () =>
     assert.equal(outline.length, 8);
   }
   assert.equal(getMachineWorldFacilityBodyOutline('unknown'), null);
+});
+
+
+test('S3 shell bulkheads stay inside the authored Pod outer envelope', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  for (const part of scene.parts.filter((entry) => entry.kind === 'inner-pod')) {
+    const assembly = deriveMachinePodAssembly({ part, expansionAmount: 0 });
+    const outer = assembly.components.find((component) => component.role === 'outer-shell');
+    const bulkheads = assembly.mechanicalDetails.filter((detail) => detail.role === 'shell-bulkhead');
+    for (const bulkhead of bulkheads) {
+      const reach = Math.hypot(
+        bulkhead.center.x - assembly.center.x,
+        bulkhead.center.z - assembly.center.z,
+      ) + Math.hypot(
+        bulkhead.dimensions.x * 0.5,
+        bulkhead.dimensions.z * 0.5,
+      );
+      assert.ok(
+        reach < Math.max(outer.dimensions.x, outer.dimensions.z) * 0.5,
+        bulkhead.id + ': bulkhead must remain inside outer shell envelope',
+      );
+    }
+  }
 });
