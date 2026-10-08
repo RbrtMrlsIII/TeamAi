@@ -417,7 +417,6 @@ export function deriveMachinePodAssembly({
         ...rootContext(),
       });
     }),
-    }),
   ]);
 
   const components = Object.freeze([
