@@ -1583,3 +1583,40 @@ The actual `/hero/` artifact now renders the four outer facility body masses on 
 **Acceptance position**
 
 S7-V14 is **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED** at the verified implementation head. The subsequent documentation-only reconciliation head remains subject to its own exact-head evidence cycle. Human visual acceptance, live deployment/runtime proof, release authorization, merge authorization, and final 029 completion remain open.
+
+
+### E424-2026-10-08V3 — S8 endpoint/junction V3 exact-head evidence
+
+**Producing application head:** `4ebabffa26e017926d57cf3c7aaf183cbd3f9330`
+
+**Implementation**
+- Version: `S8-ENDPOINT-V3`
+- 8 machine endpoint collars + 11 facility-port flanges = 19 descriptors.
+- Connector carriers extend from authored interface points along the existing radial basis.
+- Renderer uses the existing directional tube transform with the cylindrical primitive.
+- Public/source renderer and endpoint modules remain exact-parity synchronized.
+
+**Independent geometry**
+- Connector segment clearance regression passes across Seats 1–10 and expansion states 0/1 at the governed 0.16 floor.
+- This remains conservative envelope/inter-machine evidence, not triangle-level collision proof.
+
+**Browser**
+- Canonical Browser run `37717724352`: **PASS**, 92 passed / 4 skipped.
+- Browser artifact `11524296703`.
+- Artifact digest: `sha256:b556b063974787adee86e3e50b94a0213ddc75c4b469481f61aeec13962fe1bf`.
+- Artifact ZIP hash independently matched.
+
+**Visual result**
+- The relevant production capture is the real `/hero/` path.
+- Its Hero-wide 1280×720 capture differs from the preceding S7-V15 capture by 1,752 pixels over the 5/255 RGB threshold (0.1901%).
+- This confirms nonzero visual contribution from the corrected V3-era surface, but the capture is time-dependent, so the delta is not treated as uniquely attributable pixel-for-pixel evidence for S8.
+- The structural-preview `s2-s10-world.png` remains a separate harness and is not the primary visual acceptance surface.
+
+**Repository hygiene**
+- Manifest direct-import coverage guard added and the previously omitted renderer imports are now published.
+- Duplicate mechanism-housing assertion removed.
+- Facility-carrier/presentation helper ownership remains unresolved and intentionally untouched.
+
+**Acceptance**
+- S8: implemented, structurally validated, security/governance validated, and Browser-verified on the real production path.
+- Human visual acceptance, deployment/runtime proof, merge authorization, and release authorization remain open.

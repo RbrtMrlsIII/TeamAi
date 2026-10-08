@@ -318,3 +318,28 @@ Exact implementation-head proof:
 Artifact inspection confirms the actual Hero surface now contains the four outer body masses. The Hailuo MP4 and endorsed PNG informed the manufactured layering, differentiated outer-machine silhouettes, central/compact composition, and transformation direction, while Product Law, S0-S10, semantic topology, and capacity remained authoritative.
 
 S7-V14 is repository/browser-verified at the implementation head. Human visual acceptance, live deployment/runtime proof, merge authorization, and final 029 completion remain open.
+
+
+## 2026-10-08 S8 endpoint/junction V3 exact-head checkpoint
+
+Producing application head: `4ebabffa26e017926d57cf3c7aaf183cbd3f9330`.
+
+S8 V3 extends the existing authored machine/facility interface points along their radial basis with visible cylindrical connector spans and terminal collars. It introduces no topology authority, new product identity, camera authority, or backend/runtime authority.
+
+Exact-head five-gate result:
+- Full-System `37717724435`: **PASS**
+- Governance `37717724340`: **PASS**
+- Security `37717724335`: **PASS**
+- Deep Security `37717724339`: **PASS**
+- Canonical Browser `37717724352`: **PASS**, 92 passed / 4 skipped
+- Browser artifact `11524296703`
+- Artifact SHA-256 `sha256:b556b063974787adee86e3e50b94a0213ddc75c4b469481f61aeec13962fe1bf`
+
+The real `/hero/` production capture is now the relevant visual evidence. Compared with the preceding S7-V15 artifact, the current Hero-wide capture has 1,752 pixels beyond the 5/255 RGB threshold (0.1901% of the 1280×720 frame), demonstrating a nonzero raster contribution from the V3-era integrated surface. This is not a claim that every changed pixel is uniquely attributable to S8, because the capture is time-dependent.
+
+Repository hygiene closure in the same slice:
+- The machine spatial runtime manifest now covers the canonical renderer's direct-import closure, including structural conduit and Pod docking modules.
+- The duplicate mechanism-housing assertion was removed.
+- Unused-but-parity-tested facility carrier/presentation modules remain intentionally untouched pending ownership proof.
+
+The next visual slice should be manufactured Core/Pod density and nested mechanical massing, with the S8 connector budget held bounded rather than enlarged indefinitely.

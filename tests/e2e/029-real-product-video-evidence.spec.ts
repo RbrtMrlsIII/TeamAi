@@ -15,6 +15,11 @@ test.describe('029 real-product video evidence', () => {
 
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-count', '20');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-main-shell-count', '4');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-embodiment', 'S8-ENDPOINT-V3');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-count', '19');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-connector-span', 'visible');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-endpoint-count', '8');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-facility-count', '11');
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await page.waitForTimeout(1100);

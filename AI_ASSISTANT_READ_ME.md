@@ -38,21 +38,20 @@ This block supersedes older dated snapshots for current work. Older sections rem
 
 ### 2026-10-08 CURRENT S8 ENDPOINT/JUNCTION STATE
 
-- Verified application head: `8dc922528ff850add4a2e9537d2999cda6a86184`
-- Version: `S8-ENDPOINT-V1`
+- Verified application head: `4ebabffa26e017926d57cf3c7aaf183cbd3f9330`
+- Version: `S8-ENDPOINT-V3`
 - 19 presentation-only descriptors: 8 machine endpoint collars + 11 facility-port flanges.
 - Independent inter-machine clearance regression passes for Seats 1–10 and expansion states 0 and 1 at the governed 0.16 floor.
 - Canonical Browser: run `37667902387`, **92 passed / 4 skipped**, exact-head checkout.
 - Artifact: `11502884380`; SHA-256 `sha256:d12f3c53d1909e52a8001d7f7ab644f30847fa53d6b7bc8911d8ddec0403db4c`.
 - Artifact ZIP integrity independently verified locally.
-- **Critical visual discrepancy:** comparable S2–S10 world/facility/Seat/return/transform captures show zero pixel change versus the preceding S7-V15 application artifact. The endpoint layer is therefore runtime-present but visually ineffective.
-- Root cause is localized: the new torus collars/flanges are centered on existing larger depth-tested interface bodies, and the renderer does not consume the authored endpoint direction/rotation for their final transform.
-- Next correction: move the junction embodiment outward along its authored radial direction, orient it as a real radial connector, and re-run independent clearance plus exact-head Browser artifact inspection. Do not hide this with glow or camera changes.
+- V3 diagnosis: the prior S8 V1/V2 layer had no observable effect in the structural-preview capture because it was centered/too small for that raster path. V3 now emits a longer radial connector carrier plus terminal collar from the authored interface points, and the real `/hero/` production-path artifact is nonzero-delta versus the S7-V15 artifact.
+- The remaining overview-scale limitation is legibility, not path absence: the connector layer is visible but subtle at wide framing and should not be expanded indefinitely just to force pixels. The next visual improvement belongs to manufactured Core/Pod density and stronger physical hierarchy, not more endpoint bulk.
 - Repository debris/drift findings:
-  - `machine-world-structural-conduit.js` and `machine-world-pod-docking-embodiment.js` are direct canonical renderer imports but are absent from `scripts/machine-spatial-runtime-manifest.mjs`, creating future source/public synchronization drift risk.
-  - `tests/machine-structural-embodiment.test.mjs` contains one duplicated mechanism-housing-count assertion. Harmless, cleanup-worthy.
-  - `machine-world-facility-carrier.js` and `machine-world-presentation-projection.js` are parity-tested but not current renderer imports. Their ownership/use must be proven before deletion or consolidation.
-  - PR #424 is a long-lived Draft with 704 commits and 101 changed files. Treat this as history/process debt, not a reason to rewrite the active vehicle mid-slice.
+  - `machine-world-structural-conduit.js` and `machine-world-pod-docking-embodiment.js` were direct canonical renderer imports omitted from `scripts/machine-spatial-runtime-manifest.mjs`; this risk is now covered by the manifest closure guard and both files are published.
+  - The duplicated `mechanism-housing` assertion in `tests/machine-structural-embodiment.test.mjs` has been removed.
+  - `machine-world-facility-carrier.js` and `machine-world-presentation-projection.js` remain parity-tested but are not current renderer imports. Their ownership/use is still open; do not delete or consolidate without proof.
+  - PR #424 remains a long-lived Draft. Treat that as history/process debt, not a reason to rewrite the active vehicle while the structural run is in progress.
 - Hailuo MP4 and endorsed PNG remain visual-direction inputs only; Product Law and S0–S10 structural authorities remain unchanged.
 
 ### Validation-change guide

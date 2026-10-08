@@ -1239,3 +1239,24 @@ The `S7-V13` Control rotor-drive-link slice is now exact-head verified. Browser 
 
 The slice is **repository/browser verified**, not human-accepted, production-deployed, or merge-authorized. The Hailuo MP4 and endorsed PNG remain visual-direction references only.
 
+
+
+### A6.4 2026-10-08 S8 V3 endpoint/junction closure
+
+**Producing application head:** `4ebabffa26e017926d57cf3c7aaf183cbd3f9330`
+
+- [x] S8 V3 outward cylindrical connector carriers are derived from existing authored interface points.
+- [x] Terminal collars are projected at the connector end rather than coincident with existing interface bodies.
+- [x] Exact-head independent connector clearance regression passes across Seats 1–10 and expansion states 0/1.
+- [x] Full-System, Governance, Security, and Deep Security pass.
+- [x] Canonical Browser `37717724352` PASS, 92 passed / 4 skipped.
+- [x] Real `/hero/` production-path artifact `11524296703` downloaded and SHA-256 verified.
+- [x] Real Hero capture is nonzero-delta versus the S7-V15 artifact.
+- [x] Manifest closure guard covers direct renderer imports.
+- [ ] Human visual acceptance against the MP4/PNG reference target remains open.
+- [ ] Production deployment/runtime proof remains open.
+- [ ] Merge authorization remains open.
+
+**Acceptance note**
+
+S8 is structurally and browser-execution verified. V3 establishes a real production-path raster contribution, but overview-scale connector legibility remains bounded and subtle. Further endpoint enlargement is not authorized merely to increase pixel delta. The remaining reference gap is better addressed by manufactured Core/Pod density and nested machine depth.

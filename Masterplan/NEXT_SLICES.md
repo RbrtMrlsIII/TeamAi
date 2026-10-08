@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current verified application head: `8dc922528ff850add4a2e9537d2999cda6a86184` (S8 endpoint/junction embodiment; exact-head five-gate proof complete). The live branch may advance with documentation-only reconciliation.
+Current verified application head: `4ebabffa26e017926d57cf3c7aaf183cbd3f9330` (S8 endpoint/junction embodiment V3; exact-head five-gate proof complete). The live branch may advance with documentation-only reconciliation.
 
 Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances **S7-V13 → S7-V14** by promoting the existing authored S7 facility-body construction into the canonical production Hero raw-WebGL path. The slice publishes `machine-world-facility-shell.js`, renders 20 presentation-only body descriptors across four family-specific silhouettes and five physical layers, and preserves the existing S6/S7 semantics, S8 topology, S10 camera authority, Seat cardinality, and backend/runtime boundaries.
 
@@ -43,10 +43,10 @@ Producing application head: `8dc922528ff850add4a2e9537d2999cda6a86184`.
 - Canonical Browser `37667902387`: **PASS**, 92 passed / 4 skipped.
 - Artifact `11502884380`; SHA-256 `sha256:d12f3c53d1909e52a8001d7f7ab644f30847fa53d6b7bc8911d8ddec0403db4c`.
 - Artifact inspection found zero pixel changes in the comparable S2–S10 world/facility/Seat/return/transform captures versus the preceding S7-V15 application artifact.
-- Diagnosis: the endpoint primitives are centered on existing larger interface bodies and are depth-occluded; authored endpoint direction/rotation is not consumed by the renderer draw.
-- Result: **browser-executed and structurally verified, but visually ineffective**.
-- Next correction: move the endpoint/flange embodiment outward along the authored direction, orient it as a real radial connector, and re-run independent clearance plus exact-head Browser proof.
-- Manifest hygiene follow-up: direct renderer imports `machine-world-structural-conduit.js` and `machine-world-pod-docking-embodiment.js` are omitted from the spatial publication manifest. Add coverage before treating the runtime sync mechanism as complete.
+- V3 correction: endpoint/flange centers now extend along the authored radial direction with longer carrier spans and cylindrical projection, then terminate in visible collars.
+- Result: **browser-executed and structurally verified on the real `/hero/` production path**. The exact Hero artifact is nonzero-delta versus the S7-V15 artifact, confirming the corrected draw path.
+- The next structural slice is manufactured Core/Pod density, while endpoint geometry remains bounded and measured.
+- Manifest hygiene follow-up is closed: direct renderer import coverage is now guarded and both previously omitted modules are published.
 
 
 ### 2026-10-07 real-product visual finding
