@@ -392,6 +392,7 @@ export function deriveMachinePodAssembly({
         materialRole: index % 2 === 0 ? 'metal2' : 'metal',
         ...rootContext(),
       });
+    }),
     ...Array.from({ length: 4 }, (_, index) => {
       const angle = outwardAngle + index * (TAU / 4);
       const faceRadius = shellRadius * 0.78;
