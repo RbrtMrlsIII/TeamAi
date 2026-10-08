@@ -23,22 +23,22 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - replacement branch: `frontend/029-spatial-world-continuation`
-- current branch head: `080a178ab88fa9a75e40dc55801952e07ee922c2`
-- producing application head at reconciliation start: `8dc922528ff850add4a2e9537d2999cda6a86184`
+- current branch head: `3a95a1bca311df2ffd99b98177ff523e068626f5`
+- producing application head at current structural checkpoint: `3a95a1bca311df2ffd99b98177ff523e068626f5`
 - live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as evidence-integrity continuity)
 - global current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
 - open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
 - governing spatial Issue: #405
 - canonical successor handoff: #409
 - handoff rule: Issue #409 is the canonical newcomer handoff; verify live branch/PR/CI state before consequential changes
-- next allowed work: repair the S8 endpoint visibility defect, then continue deeper physical embodiment only after independent clearance and Browser artifact proof
-- validation state: S8 application head `8dc922528ff850add4a2e9537d2999cda6a86184` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11502884380`
+- next allowed work: deepen the four outer product-family machines as nested sub-machines and integrate their existing manifold/conduit hierarchy, only after independent clearance and exact-head Browser proof
+- validation state: S7-V16/S8/S3 application head `3a95a1bca311df2ffd99b98177ff523e068626f5` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11543143062`
 - PR #424 remains OPEN / DRAFT / mergeable
 - PR #404 remains merged historical provenance; do not reopen it
 
 ### 2026-10-08 CURRENT S8 ENDPOINT/JUNCTION STATE
 
-- Verified application head: `4ebabffa26e017926d57cf3c7aaf183cbd3f9330`
+- Verified application head: `3a95a1bca311df2ffd99b98177ff523e068626f5`
 - Version: `S8-ENDPOINT-V3`
 - 19 presentation-only descriptors: 8 machine endpoint collars + 11 facility-port flanges.
 - Independent inter-machine clearance regression passes for Seats 1–10 and expansion states 0 and 1 at the governed 0.16 floor.
@@ -46,7 +46,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Artifact: `11502884380`; SHA-256 `sha256:d12f3c53d1909e52a8001d7f7ab644f30847fa53d6b7bc8911d8ddec0403db4c`.
 - Artifact ZIP integrity independently verified locally.
 - V3 diagnosis: the prior S8 V1/V2 layer had no observable effect in the structural-preview capture because it was centered/too small for that raster path. V3 now emits a longer radial connector carrier plus terminal collar from the authored interface points, and the real `/hero/` production-path artifact is nonzero-delta versus the S7-V15 artifact.
-- The remaining overview-scale limitation is legibility, not path absence: the connector layer is visible but subtle at wide framing and should not be expanded indefinitely just to force pixels. The next visual improvement belongs to manufactured Core/Pod density and stronger physical hierarchy, not more endpoint bulk.
+- The connector layer is visible and bounded. Do not enlarge it merely to force pixels. The next visual improvement belongs to nested outer-machine depth and integration with the existing manifold/conduit hierarchy.
 - Repository debris/drift findings:
   - `machine-world-structural-conduit.js` and `machine-world-pod-docking-embodiment.js` were direct canonical renderer imports omitted from `scripts/machine-spatial-runtime-manifest.mjs`; this risk is now covered by the manifest closure guard and both files are published.
   - The duplicated `mechanism-housing` assertion in `tests/machine-structural-embodiment.test.mjs` has been removed.
@@ -156,3 +156,15 @@ Rule: material reasoning from chat is a working candidate until it is promoted i
 - S22 Return-to-parent: repository/browser-verified
 - S22 Reduced-motion semantic equivalence: repository/browser-verified
 - S22 Browser accessibility smoke: repository/browser-verified
+
+### 2026-10-08 CURRENT VERIFIED FRONTIER
+
+- Producing application head: `3a95a1bca311df2ffd99b98177ff523e068626f5`.
+- S8 endpoint/junction: V3, closed and Browser-verified.
+- S3 Pod assembly: V6, 31 mechanical details including shell ribs, bulkheads, face braces, hinges, actuators, locks, plinth/frame/collar layers.
+- S7 facility body shell: V2, 20 descriptors with bounded radial chassis-depth offsets.
+- Exact-head Browser run: `37762854016`, 92 passed / 4 skipped.
+- Browser artifact: `11543143062`, SHA-256 `sha256:b26b2e285a0291a45f9190b42db9f10bf8270f8f6dbd08804cf0494ab02b7614`.
+- Artifact inspection versus `e8327c2`: world 9,045 changed pixels (0.9814%); transform-mid 8,449 (0.9168%); focused Facility and Seat unchanged.
+- Independent conservative chassis-depth calculation retained a worst outer-body/Pod margin of approximately 1.94 units in the tightest 10-seat case, above the governed 0.16 floor.
+- The next structural question is hierarchical: make each of the four outer product-family facilities read as a nested sub-machine around its existing authored machinery, while preserving S8 topology and endpoint/manifold authority.
