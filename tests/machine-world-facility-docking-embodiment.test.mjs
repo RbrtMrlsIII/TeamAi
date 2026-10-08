@@ -109,7 +109,7 @@ test('S8 facility endpoint collars stay within the declared compact envelope', (
   const machinery = buildMachinery(10, 1);
   const descriptors = deriveMachineWorldFacilityDockingEmbodiment(machinery);
   assert.ok(descriptors.every((entry) => entry.radius >= 0.08 && entry.radius <= 0.16));
-  assert.ok(descriptors.every((entry) => entry.length >= 0.07 && entry.length <= 0.18));
+  assert.ok(descriptors.every((entry) => entry.length >= 0.07 && entry.length <= 0.30));
   assert.ok(descriptors.every((entry) =>
     [entry.point.x, entry.point.y, entry.point.z, entry.center.x, entry.center.y, entry.center.z]
       .every(Number.isFinite)
@@ -142,7 +142,7 @@ test('S8 facility endpoint renderer and public manifest consume the embodiment m
     'utf8',
   );
 
-  assert.equal(MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_VERSION, 'S8-ENDPOINT-V2');
+  assert.equal(MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_VERSION, 'S8-ENDPOINT-V3');
   assert.match(renderer, /machine-world-facility-docking-embodiment.js/);
   assert.match(renderer, /renderMachineWorldFacilityDockingEmbodiment/);
   assert.match(renderer, /machineWorldFacilityDockingCount/);
@@ -188,7 +188,7 @@ test('S8 facility endpoints expose an authored outward connector span', () => {
           Math.hypot(
             entry.connectorEnd.x - owner.outerHousing.center.x,
             entry.connectorEnd.z - owner.outerHousing.center.z,
-          ) > radialLength + 0.05,
+          ) > radialLength + 0.12,
           entry.id + ': connector must protrude outward',
         );
         assert.ok(

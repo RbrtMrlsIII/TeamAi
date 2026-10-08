@@ -1343,11 +1343,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         entry.center,
         entry.direction,
         entry.length,
-        Math.max(0.025, entry.radius * 0.52),
+        Math.max(0.025, entry.radius * 0.66),
       );
       if (connectorTransform) {
         ringDraw(
-          'CUBE',
+          'CYL',
           connectorTransform,
           material,
           {
@@ -1376,7 +1376,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
       rendered += 1;
     }
-    canvas.dataset.machineWorldFacilityDockingEmbodiment = 'S8-ENDPOINT-V2';
+    canvas.dataset.machineWorldFacilityDockingEmbodiment = 'S8-ENDPOINT-V3';
     canvas.dataset.machineWorldFacilityDockingCount = String(descriptors.length);
     canvas.dataset.machineWorldFacilityDockingConnectorSpan = 'visible';
     canvas.dataset.machineWorldFacilityDockingEndpointCount = String(

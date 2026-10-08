@@ -9,7 +9,7 @@ import { createSpatialConstructionContext } from './machine-spatial-root-contrac
 
 export const MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_ID =
   'MACHINE-WORLD-FACILITY-DOCKING-EMBODIMENT';
-export const MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_VERSION = 'S8-ENDPOINT-V2';
+export const MACHINE_WORLD_FACILITY_DOCKING_EMBODIMENT_VERSION = 'S8-ENDPOINT-V3';
 
 const ROOT_OWNER = 'frontend/spatial/machine-world-facility-docking-embodiment.js';
 
@@ -89,9 +89,9 @@ export function deriveMachineWorldFacilityDockingEmbodiment(
   facilityMachinery = [],
   {
     endpointRadius = 0.13,
-    endpointLength = 0.14,
+    endpointLength = 0.28,
     facilityRadius = 0.11,
-    facilityLength = 0.10,
+    facilityLength = 0.22,
   } = {},
 ) {
   const machines = Array.isArray(facilityMachinery)
@@ -117,7 +117,7 @@ export function deriveMachineWorldFacilityDockingEmbodiment(
           point: port.point,
           direction,
           radius: Math.min(0.16, Math.max(0.09, finite(endpointRadius, 0.13))),
-          length: Math.min(0.18, Math.max(0.08, finite(endpointLength, 0.14))),
+          length: Math.min(0.30, Math.max(0.08, finite(endpointLength, 0.14))),
         }),
       );
     }
@@ -138,7 +138,7 @@ export function deriveMachineWorldFacilityDockingEmbodiment(
           point,
           direction,
           radius: Math.min(0.14, Math.max(0.08, finite(facilityRadius, 0.11))),
-          length: Math.min(0.14, Math.max(0.07, finite(facilityLength, 0.10))),
+          length: Math.min(0.24, Math.max(0.07, finite(facilityLength, 0.10))),
         }),
       );
     }
@@ -177,7 +177,7 @@ export function validateMachineWorldFacilityDockingEmbodiment(
     if (entry?.constructionOwner !== ROOT_OWNER) reasons.push(entry?.id + ':OWNER_MISMATCH');
     if (entry?.semanticBoundary !== 'presentation-only') reasons.push(entry?.id + ':NOT_PRESENTATION_ONLY');
     if (!(Number(entry?.radius) > 0 && Number(entry?.radius) <= 0.16)) reasons.push(entry?.id + ':RADIUS_OUT_OF_BOUNDS');
-    if (!(Number(entry?.length) > 0 && Number(entry?.length) <= 0.18)) reasons.push(entry?.id + ':LENGTH_OUT_OF_BOUNDS');
+    if (!(Number(entry?.length) > 0 && Number(entry?.length) <= 0.30)) reasons.push(entry?.id + ':LENGTH_OUT_OF_BOUNDS');
     const span = Math.hypot(
       finite(entry?.connectorEnd?.x) - finite(entry?.connectorStart?.x),
       finite(entry?.connectorEnd?.z) - finite(entry?.connectorStart?.z),
