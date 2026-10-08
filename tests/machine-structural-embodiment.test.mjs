@@ -76,8 +76,9 @@ test('S2-S10 compose into one structurally coherent 10-seat world', () => {
   });
   assert.equal(pod.constructionSlice, 'S3');
   assert.equal(pod.components.length, 7);
-  assert.equal(pod.mechanicalDetails.length, 27);
+  assert.equal(pod.mechanicalDetails.length, 31);
   assert.equal(pod.mechanicalDetails.filter((detail) => detail.role === 'shell-bulkhead').length, 4);
+  assert.equal(pod.mechanicalDetails.filter((detail) => detail.role === 'shell-face-brace').length, 4);
   assert.ok(pod.mechanicalDetails
     .filter((detail) => detail.role === 'shell-bulkhead')
     .every((detail) => detail.profile === 'nested-shell-bulkhead'));

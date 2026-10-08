@@ -92,7 +92,7 @@ test('canonical renderer projects the authored Pod opening profile as real shell
   assert.match(renderer, /machineWorldPodMechanicalState/);
   assert.match(renderer, /machineWorldPodMechanicalProfile/);
   assert.match(renderer, /split-shell-reveal-v1/);
-  assert.match(podAssembly, /MACHINE_POD_ASSEMBLY_VERSION = 'S3-V5'/);
+  assert.match(podAssembly, /MACHINE_POD_ASSEMBLY_VERSION = 'S3-V6'/);
   assert.match(podAssembly, /shellPanelSeparation/);
   assert.match(podAssembly, /chamberTravel/);
   assert.match(podAssembly, /payloadTravel/);

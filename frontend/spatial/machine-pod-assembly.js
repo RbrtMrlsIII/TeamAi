@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V5';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V6';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -392,6 +392,30 @@ export function deriveMachinePodAssembly({
         materialRole: index % 2 === 0 ? 'metal2' : 'metal',
         ...rootContext(),
       });
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = outwardAngle + index * (TAU / 4);
+      const faceRadius = shellRadius * 0.78;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:SHELL-FACE-BRACE:${index + 1}`,
+        role: 'shell-face-brace',
+        shape: 'POD_SHELL_PANEL',
+        profile: 'outer-shell-face-frame',
+        center: Object.freeze({
+          x: center.x + Math.cos(angle) * faceRadius,
+          y: center.y + height * 0.18,
+          z: center.z + Math.sin(angle) * faceRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.18,
+          y: height * 0.24,
+          z: minimumSpan * 0.08,
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        outline: POD_SHELL_RIB_OUTLINE,
+        ...rootContext(),
+      });
+    }),
     }),
   ]);
 

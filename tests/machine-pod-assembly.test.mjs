@@ -139,7 +139,7 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
   const core = createBranchConnectionCore({ seatCount: 10 });
   const part = core.byBranch.get('BRANCH-SEAT-04');
   const assembly = deriveMachinePodAssembly({ part, expansionAmount: 1 });
-  assert.equal(assembly.mechanicalDetails.length, 27);
+  assert.equal(assembly.mechanicalDetails.length, 31);
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'docking-strut').length,
     2,
@@ -154,6 +154,10 @@ test('S3 Pod mechanical details are authored, bounded, and included in the subje
   );
   assert.equal(
     assembly.mechanicalDetails.filter((item) => item.role === 'shell-bulkhead').length,
+    4,
+  );
+  assert.equal(
+    assembly.mechanicalDetails.filter((item) => item.role === 'shell-face-brace').length,
     4,
   );
   assert.equal(
@@ -201,4 +205,27 @@ test('S3 fails closed when Pod root ownership is corrupted', () => {
   const part = core.byBranch.get('BRANCH-SEAT-01');
   const invalid = { ...part.podAssembly, constructionOwner: 'wrong-owner' };
   assert.equal(validateMachinePodAssembly(invalid).valid, false);
+});
+
+
+test('S3 external shell-face braces stay inside the authored Pod outer envelope', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  for (const part of scene.parts.filter((entry) => entry.kind === 'inner-pod')) {
+    const assembly = deriveMachinePodAssembly({ part, expansionAmount: 0 });
+    const outer = assembly.components.find((component) => component.role === 'outer-shell');
+    const braces = assembly.mechanicalDetails.filter((detail) => detail.role === 'shell-face-brace');
+    for (const brace of braces) {
+      const reach = Math.hypot(
+        brace.center.x - assembly.center.x,
+        brace.center.z - assembly.center.z,
+      ) + Math.hypot(
+        brace.dimensions.x * 0.5,
+        brace.dimensions.z * 0.5,
+      );
+      assert.ok(
+        reach < Math.max(outer.dimensions.x, outer.dimensions.z) * 0.5,
+        brace.id + ': external brace must remain within outer shell envelope',
+      );
+    }
+  }
 });
