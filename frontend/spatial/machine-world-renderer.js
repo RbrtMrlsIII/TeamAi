@@ -345,6 +345,10 @@ function multiplyMatrix(a, b) {
   return out;
 }
 
+export function centeredPrismBaseY(centerY, height) {
+  return finite(centerY) - Math.max(0, finite(height)) * 0.5;
+}
+
 function segmentTubeRotationMatrix(start, end) {
   const dx = finite(end?.x) - finite(start?.x);
   const dy = finite(end?.y) - finite(start?.y);
@@ -1348,13 +1352,18 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     if (validation.valid) {
       for (const entry of descriptors) {
+        const renderedHeight = Math.max(0.02, finite(entry.dimensions.y));
         const transform = multiplyMatrix(
-          translateMatrix(entry.center.x, entry.center.y, entry.center.z),
+          translateMatrix(
+            entry.center.x,
+            centeredPrismBaseY(entry.center.y, renderedHeight),
+            entry.center.z,
+          ),
           multiplyMatrix(
             rotateYMatrix(finite(entry.rotationY)),
             scaleMatrix(
               Math.max(0.02, finite(entry.dimensions.x) * 0.5),
-              Math.max(0.02, finite(entry.dimensions.y) * 0.5),
+              renderedHeight,
               Math.max(0.02, finite(entry.dimensions.z) * 0.5),
             ),
           ),
@@ -1413,13 +1422,18 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           },
         );
       }
+      const collarHeight = Math.max(0.035, entry.radius * 0.46);
       ringDraw(
         'TORUS',
         multiplyMatrix(
-          translateMatrix(entry.connectorEnd.x, entry.connectorEnd.y, entry.connectorEnd.z),
+          translateMatrix(
+            entry.connectorEnd.x,
+            centeredPrismBaseY(entry.connectorEnd.y, collarHeight),
+            entry.connectorEnd.z,
+          ),
           scaleMatrix(
             Math.max(0.04, entry.radius),
-            Math.max(0.035, entry.radius * 0.46),
+            collarHeight,
             Math.max(0.04, entry.radius),
           ),
         ),
@@ -2217,12 +2231,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
       for (const component of machine.components) {
         const presentation = presentationById.get(component.id);
+        const renderedHeight = Math.max(0.04, finite(component.dimensions.y));
         ringDraw(
           component.shape,
           multiplyMatrix(
             translateMatrix(
               component.center.x + finite(presentation?.dx),
-              component.center.y + finite(presentation?.dy),
+              centeredPrismBaseY(
+                component.center.y + finite(presentation?.dy),
+                renderedHeight,
+              ),
               component.center.z + finite(presentation?.dz),
             ),
             multiplyMatrix(
@@ -2233,7 +2251,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
               ),
               scaleMatrix(
                 Math.max(0.08, component.dimensions.x * 0.5),
-                Math.max(0.04, component.dimensions.y),
+                renderedHeight,
                 Math.max(0.08, component.dimensions.z * 0.5),
               ),
             ),
@@ -2264,15 +2282,20 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
               : detail.materialRole === 'metal2'
                 ? activeHeroMaterials.metal2
                 : activeHeroMaterials.metal;
+        const renderedHeight = Math.max(0.02, finite(detail.dimensions.y));
         ringDraw(
           detail.shape || 'CUBE',
           multiplyMatrix(
-            translateMatrix(detail.center.x, detail.center.y, detail.center.z),
+            translateMatrix(
+              detail.center.x,
+              centeredPrismBaseY(detail.center.y, renderedHeight),
+              detail.center.z,
+            ),
             multiplyMatrix(
               rotateYMatrix(finite(detail.rotationY)),
               scaleMatrix(
                 Math.max(0.02, detail.dimensions.x * 0.5),
-                Math.max(0.02, detail.dimensions.y * 0.5),
+                renderedHeight,
                 Math.max(0.02, detail.dimensions.z * 0.5),
               ),
             ),
@@ -2338,14 +2361,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         const dx = component.center.x;
         const dy = component.center.y;
         const dz = component.center.z;
+        const renderedHeight = Math.max(0.045, finite(component.dimensions.y));
         const material = facilityMaterial[component.materialRole] || activeHeroMaterials.glass;
         ringDraw(
           component.shape,
           multiplyMatrix(
-            translateMatrix(dx, dy, dz),
+            translateMatrix(dx, centeredPrismBaseY(dy, renderedHeight), dz),
             scaleMatrix(
               Math.max(0.12, component.dimensions.x * 0.5 * facilityFeatureScale),
-              Math.max(0.045, component.dimensions.y),
+              renderedHeight,
               Math.max(0.12, component.dimensions.z * 0.5 * facilityFeatureScale),
             ),
           ),

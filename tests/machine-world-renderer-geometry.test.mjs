@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTubeTransform } from '../frontend/spatial/machine-world-renderer.js';
+import { segmentTubeTransform, centeredPrismBaseY } from '../frontend/spatial/machine-world-renderer.js';
+import { readFileSync } from 'node:fs';
 
 const close = (actual, expected, tolerance = 1e-6) =>
   Math.abs(actual - expected) <= tolerance;
@@ -50,4 +51,37 @@ test('raw WebGL tube transform rejects degenerate segments instead of inventing 
     end: { x: 1, y: 1, z: 1 },
     radius: 0.04,
   }), null);
+});
+
+
+test('center-based authored primitives render from their true lower Y boundary', () => {
+  const cases = [
+    { center: 0, height: 0.14 },
+    { center: 0.42, height: 0.78 },
+    { center: 1.04, height: 1.386 },
+    { center: 4.25, height: 0.06 },
+    { center: -2.4, height: 2.75 },
+  ];
+
+  for (const { center, height } of cases) {
+    const base = centeredPrismBaseY(center, height);
+    assert.ok(close(base + height * 0.5, center), 'center restored from base and height');
+    assert.ok(close(base + height, center + height * 0.5), 'top bound stays symmetric');
+  }
+});
+
+test('production S7 mechanism and carrier paths preserve the centered descriptor contract', () => {
+  const source = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
+  const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
+  assert.equal(browser, source);
+
+  for (const marker of [
+    'centeredPrismBaseY(\n                component.center.y',
+    'centeredPrismBaseY(detail.center.y, renderedHeight)',
+    'centeredPrismBaseY(dy, renderedHeight)',
+    'centeredPrismBaseY(entry.center.y, renderedHeight)',
+    'centeredPrismBaseY(entry.connectorEnd.y, collarHeight)',
+  ]) {
+    assert.ok(source.includes(marker), 'missing centered transform use: ' + marker);
+  }
 });
