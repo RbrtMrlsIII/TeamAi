@@ -98,12 +98,12 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
     analysis.mechanicalDetails.filter((entry) => entry.role.startsWith('barrel-collar-')).length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 9);
+  assert.equal(analysis.mechanicalDetails.length, 11);
   const control = machinery.find((machine) => machine.machineRole === 'control');
   const access = machinery.find((machine) => machine.machineRole === 'access-commerce');
   assert.ok(control && access);
-  assert.equal(control.mechanicalDetails.length, 11);
-  assert.equal(access.mechanicalDetails.length, 14);
+  assert.equal(control.mechanicalDetails.length, 13);
+  assert.equal(access.mechanicalDetails.length, 16);
 });
 
 test('S7 analysis telescope exposes fixed guide rails within the authored housing envelope', () => {
@@ -152,7 +152,7 @@ test('S7 analysis telescope exposes fixed guide rails within the authored housin
     analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail').length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 9);
+  assert.equal(analysis.mechanicalDetails.length, 11);
 });
 
 test('S7 operations fins use bounded authored convex silhouettes', () => {
@@ -317,7 +317,7 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
     operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
     4,
   );
-  assert.equal(operations.mechanicalDetails.length, 11);
+  assert.equal(operations.mechanicalDetails.length, 13);
 });
 
 
@@ -364,7 +364,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V15');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V17');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -472,7 +472,11 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control' ? 11 : machine.machineRole === 'access-commerce' ? 14 : 9;
+    const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control'
+      ? 13
+      : machine.machineRole === 'access-commerce'
+        ? 16
+        : 11;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
@@ -725,5 +729,77 @@ test('S7 physical interface projection is reproducible from the S6-owned assembl
       deriveMachineFacilityPhysicalInterfaces(assembly, machine.ports),
       machine.physicalInterfaces,
     );
+  }
+});
+
+test('S7 nested chassis ties connect each support strut to its authored primary mechanism', () => {
+  const primaryRoles = Object.freeze({
+    analysis: 'barrel-stage-1',
+    operations: 'hinge-core',
+    control: 'rotor-hub',
+    'access-commerce': 'sensor-mast',
+  });
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const facilities = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      const machines = deriveMachineFacilityMachinery({
+        facilityAssemblies: facilities,
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      const validation = validateMachineFacilityMachinery(machines);
+      assert.equal(validation.valid, true, validation.reasons.join(', '));
+
+      for (const machine of machines) {
+        const supports = machine.mechanicalDetails.filter((entry) => entry.role === 'support-strut');
+        const ties = machine.mechanicalDetails.filter((entry) => entry.role === 'chassis-core-tie');
+        const core = machine.components.find((entry) => entry.role === primaryRoles[machine.machineRole]);
+        assert.ok(core, machine.machineRole + ': primary chassis core');
+        assert.equal(supports.length, 2, machine.machineRole + ': supports');
+        assert.equal(ties.length, 2, machine.machineRole + ': chassis ties');
+
+        for (const tie of ties) {
+          const support = supports.find((entry) => entry.id === tie.attachmentSourceId);
+          assert.ok(support, tie.id + ': source support');
+          assert.equal(tie.attachmentTargetId, core.id);
+          assert.equal(tie.attachmentSourceRole, 'support-strut');
+          assert.equal(tie.attachmentTargetRole, core.role);
+          assert.equal(tie.parentRole, core.role);
+          assert.equal(tie.profile, 'chassis-core-tie-v1');
+          assert.equal(tie.constructionSlice, 'S7');
+          assert.equal(tie.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+          assert.ok(machine.subject.sourcePartIds.includes(tie.id));
+
+          const dx = core.center.x - support.center.x;
+          const dy = core.center.y - support.center.y;
+          const dz = core.center.z - support.center.z;
+          const horizontalLength = Math.hypot(dx, dz);
+          assert.ok(horizontalLength > 0.12, tie.id + ': non-degenerate span');
+          assert.ok(Math.abs(tie.attachmentSpan - horizontalLength) < 1e-9, tie.id + ': span metadata');
+          assert.ok(tie.dimensions.z >= horizontalLength + 0.12 - 1e-9, tie.id + ': beam overlaps both anchors');
+
+          assert.ok(Math.abs(tie.center.x - (support.center.x + core.center.x) * 0.5) < 1e-9, tie.id + ': midpoint X');
+          assert.ok(Math.abs(tie.center.y - (support.center.y + core.center.y) * 0.5) < 1e-9, tie.id + ': midpoint Y');
+          assert.ok(Math.abs(tie.center.z - (support.center.z + core.center.z) * 0.5) < 1e-9, tie.id + ': midpoint Z');
+          assert.ok(Math.abs(tie.dimensions.y - (Math.abs(dy) + 0.06)) < 1e-9, tie.id + ': vertical overlap budget');
+
+          // Renderer Y rotation sends the local Z axis to (sin(theta), cos(theta)).
+          assert.ok(Math.abs(Math.sin(tie.rotationY) - dx / horizontalLength) < 1e-9, tie.id + ': local axis X');
+          assert.ok(Math.abs(Math.cos(tie.rotationY) - dz / horizontalLength) < 1e-9, tie.id + ': local axis Z');
+
+          for (const anchor of [support, core]) {
+            assert.ok(
+              Math.abs(tie.center.y - anchor.center.y)
+                <= tie.dimensions.y * 0.5 + anchor.dimensions.y * 0.5 + 1e-9,
+              tie.id + ': vertical body overlap with ' + anchor.id,
+            );
+          }
+        }
+      }
+    }
   }
 });

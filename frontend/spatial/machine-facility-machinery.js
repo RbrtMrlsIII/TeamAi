@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V15';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V17';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -48,6 +48,13 @@ const OPERATIONS_FIN_OUTLINES = Object.freeze({
     [0.95, -0.48], [1.00, 0.28], [0.55, 0.78],
     [-0.10, 1.00], [-0.78, 0.55], [-1.00, 0.00],
   ]),
+});
+
+const MACHINE_CHASSIS_CORE_ROLE = Object.freeze({
+  analysis: 'barrel-stage-1',
+  operations: 'hinge-core',
+  control: 'rotor-hub',
+  'access-commerce': 'sensor-mast',
 });
 
 const MACHINE_PROFILES = Object.freeze({
@@ -592,7 +599,7 @@ export function deriveMachineFacilityMachinery({
     const frameWidth = Math.max(0.72, finite(housingDimensions.x, 1.8));
     const frameDepth = Math.max(0.72, finite(housingDimensions.z, 1.2));
     const frameHeight = Math.max(0.50, finite(housingDimensions.y, 0.9));
-    const mechanicalDetails = Object.freeze([
+    const authoredMechanicalDetails = Object.freeze([
       Object.freeze({
         id: 'MACHINERY:' + assembly.branchId + ':BASE-COLLAR',
         role: 'base-collar',
@@ -629,6 +636,7 @@ export function deriveMachineFacilityMachinery({
         }),
         rotationY: basis.angle,
         materialRole: 'metal',
+        parentRole: MACHINE_CHASSIS_CORE_ROLE[assembly.machineRole],
         ...rootContext(assembly.branchId + ':SUPPORT:' + side),
       })),
       ...[-1, 1].map((side) => Object.freeze({
@@ -1060,6 +1068,52 @@ export function deriveMachineFacilityMachinery({
             }),
           ]
         : []),
+    ]);
+    const primaryCoreRole = MACHINE_CHASSIS_CORE_ROLE[assembly.machineRole];
+    const primaryCore = components.find((entry) => entry.role === primaryCoreRole);
+    if (!primaryCore) {
+      throw new Error('missing authored chassis core role for ' + assembly.machineRole);
+    }
+    const chassisTransferLinks = authoredMechanicalDetails
+      .filter((entry) => entry.role === 'support-strut')
+      .map((support, index) => {
+        const dx = primaryCore.center.x - support.center.x;
+        const dy = primaryCore.center.y - support.center.y;
+        const dz = primaryCore.center.z - support.center.z;
+        const horizontalLength = Math.hypot(dx, dz);
+        if (horizontalLength < 0.12) {
+          throw new Error('degenerate chassis-core attachment for ' + assembly.branchId);
+        }
+        const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+        return Object.freeze({
+          id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-TIE:' + side,
+          role: 'chassis-core-tie',
+          shape: 'BOX',
+          center: Object.freeze({
+            x: (support.center.x + primaryCore.center.x) * 0.5,
+            y: (support.center.y + primaryCore.center.y) * 0.5,
+            z: (support.center.z + primaryCore.center.z) * 0.5,
+          }),
+          dimensions: Object.freeze({
+            x: Math.max(0.07, frameWidth * 0.035),
+            y: Math.max(0.06, Math.abs(dy) + 0.06),
+            z: Math.max(0.20, horizontalLength + 0.12),
+          }),
+          rotationY: Math.atan2(dx, dz),
+          materialRole: 'metal2',
+          parentRole: primaryCoreRole,
+          profile: 'chassis-core-tie-v1',
+          attachmentSourceId: support.id,
+          attachmentTargetId: primaryCore.id,
+          attachmentSourceRole: support.role,
+          attachmentTargetRole: primaryCore.role,
+          attachmentSpan: horizontalLength,
+          ...rootContext(assembly.branchId + ':CHASSIS-CORE-TIE:' + side),
+        });
+      });
+    const mechanicalDetails = Object.freeze([
+      ...authoredMechanicalDetails,
+      ...chassisTransferLinks,
     ]);
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
