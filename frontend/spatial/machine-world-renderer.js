@@ -401,7 +401,7 @@ function directionalTubeTransform(center, direction, length, radius) {
   });
 }
 
-function segmentTubeTransform(segment, radiusScale = 1) {
+export function segmentTubeTransform(segment, radiusScale = 1) {
   const start = segment?.start;
   const end = segment?.end;
   const dx = finite(end?.x) - finite(start?.x);
@@ -421,7 +421,7 @@ function segmentTubeTransform(segment, radiusScale = 1) {
     multiplyMatrix(
       rotation,
       multiplyMatrix(
-        translateMatrix(0, -0.5, 0),
+        translateMatrix(0, -length * 0.5, 0),
         scaleMatrix(radius, length, radius),
       ),
     ),
