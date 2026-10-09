@@ -23,7 +23,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
 - replacement branch: `frontend/029-spatial-world-continuation`
-- current branch head: `3a95a1bca311df2ffd99b98177ff523e068626f5`
+- current branch head: resolve from live PR #424 and verify `head.sha` before consequential work; documentation-only commits may advance the branch beyond the latest producing application head
 - producing application head at current structural checkpoint: `3a95a1bca311df2ffd99b98177ff523e068626f5`
 - live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as evidence-integrity continuity)
 - global current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
@@ -32,7 +32,7 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - canonical successor handoff: #409
 - handoff rule: Issue #409 is the canonical newcomer handoff; verify live branch/PR/CI state before consequential changes
 - next allowed work: deepen the four outer product-family machines as nested sub-machines and integrate their existing manifold/conduit hierarchy, only after independent clearance and exact-head Browser proof
-- validation state: S7-V16/S8/S3 application head `3a95a1bca311df2ffd99b98177ff523e068626f5` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11543143062`
+- validation state: S7-V16/S8/S3 application head `3a95a1bca311df2ffd99b98177ff523e068626f5` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11543143062`. The later documentation-only branch head `789c0fff8031acbb0e0bacb43fc9288a6b974565` also passed all five gates; Browser run `37764252683`, artifact `11543389954`, SHA-256 `sha256:a529e2ca248680f958d29ab4101deda02a3d96ce758bb93737dc60e7fb623e95`.
 - PR #424 remains OPEN / DRAFT / mergeable
 - PR #404 remains merged historical provenance; do not reopen it
 
@@ -42,8 +42,9 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - Version: `S8-ENDPOINT-V3`
 - 19 presentation-only descriptors: 8 machine endpoint collars + 11 facility-port flanges.
 - Independent inter-machine clearance regression passes for Seats 1–10 and expansion states 0 and 1 at the governed 0.16 floor.
-- Canonical Browser: run `37667902387`, **92 passed / 4 skipped**, exact-head checkout.
-- Artifact: `11502884380`; SHA-256 `sha256:d12f3c53d1909e52a8001d7f7ab644f30847fa53d6b7bc8911d8ddec0403db4c`.
+- Canonical Browser for the current producing application head: run `37762854016`, **92 passed / 4 skipped**, exact-head checkout.
+- Artifact: `11543143062`; SHA-256 `sha256:b26b2e285a0291a45f9190b42db9f10bf8270f8f6dbd08804cf0494ab02b7614`.
+- The later documentation-only head `789c0fff8031acbb0e0bacb43fc9288a6b974565` also has a terminal exact-head Browser pass (run `37764252683`, artifact `11543389954`, SHA-256 `sha256:a529e2ca248680f958d29ab4101deda02a3d96ce758bb93737dc60e7fb623e95`).
 - Artifact ZIP integrity independently verified locally.
 - V3 diagnosis: the prior S8 V1/V2 layer had no observable effect in the structural-preview capture because it was centered/too small for that raster path. V3 now emits a longer radial connector carrier plus terminal collar from the authored interface points, and the real `/hero/` production-path artifact is nonzero-delta versus the S7-V15 artifact.
 - The connector layer is visible and bounded. Do not enlarge it merely to force pixels. The next visual improvement belongs to nested outer-machine depth and integration with the existing manifold/conduit hierarchy.

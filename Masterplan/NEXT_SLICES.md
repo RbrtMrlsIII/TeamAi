@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current verified application head: `3a95a1bca311df2ffd99b98177ff523e068626f5` (S7-V16 chassis depth after S8 V3 and S3 V6; exact-head five-gate proof complete). The live branch may advance with a bounded structural slice.
+Current verified application head: `3a95a1bca311df2ffd99b98177ff523e068626f5` (S7-V16 chassis depth after S8 V3 and S3 V6; exact-head five-gate proof complete). The live branch may advance with a bounded structural slice. Resolve the current exact branch head from live PR #424 and Issue #409 rather than assuming the application head equals the branch head.
 
 Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances **S7-V13 → S7-V14** by promoting the existing authored S7 facility-body construction into the canonical production Hero raw-WebGL path. The slice publishes `machine-world-facility-shell.js`, renders 20 presentation-only body descriptors across four family-specific silhouettes and five physical layers, and preserves the existing S6/S7 semantics, S8 topology, S10 camera authority, Seat cardinality, and backend/runtime boundaries.
 
@@ -36,17 +36,18 @@ The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 an
 
 ### 2026-10-08 S8 endpoint/junction embodiment
 
-Producing application head: `8dc922528ff850add4a2e9537d2999cda6a86184`.
+Producing application head: `3a95a1bca311df2ffd99b98177ff523e068626f5` (S8 V3 + S7-V16 chassis depth + S3 V6 Pod face framing).
 
 - 8 machine endpoint collars + 11 facility-port flanges = 19 presentation-only descriptors.
-- Independent inter-machine clearance regression passes across Seats 1–10 and expansion states 0/1 at the governed 0.16 floor.
-- Canonical Browser `37667902387`: **PASS**, 92 passed / 4 skipped.
-- Artifact `11502884380`; SHA-256 `sha256:d12f3c53d1909e52a8001d7f7ab644f30847fa53d6b7bc8911d8ddec0403db4c`.
-- Artifact inspection found zero pixel changes in the comparable S2–S10 world/facility/Seat/return/transform captures versus the preceding S7-V15 application artifact.
-- V3 correction: endpoint/flange centers now extend along the authored radial direction with longer carrier spans and cylindrical projection, then terminate in visible collars.
-- Result: **browser-executed and structurally verified on the real `/hero/` production path**. The exact Hero artifact is nonzero-delta versus the S7-V15 artifact, confirming the corrected draw path.
-- The next structural slice is nested outer-machine embodiment: deepen the existing four product-family chassis/machinery relationships and integrate the existing service-manifold/conduit hierarchy. Do not enlarge endpoint geometry merely to force raster delta.
-- Manifest hygiene follow-up is closed: direct renderer import coverage is now guarded and both previously omitted modules are published.
+- Independent connector-segment clearance regression passes across Seats 1–10 and expansion states 0/1 at the governed 0.16 floor.
+- Canonical Browser `37762854016`: **PASS**, 92 passed / 4 skipped on the exact producing application head.
+- Artifact `11543143062`; SHA-256 `sha256:b26b2e285a0291a45f9190b42db9f10bf8270f8f6dbd08804cf0494ab02b7614`.
+- Artifact inspection confirms the connector/junction layer is no longer pixel-identical to its earlier V1 raster path. Across the newer documentation-head capture and the old V1 capture, comparable world views differ by 1.246% of pixels, though intervening S3/S7 changes also contribute to that delta.
+- V3 extends the existing authored machine/facility interface points along their radial basis with longer cylindrical connector spans and terminal collars. It introduces no topology authority, new product identity, camera authority, or backend/runtime authority.
+- The current exact branch head `789c0fff8031acbb0e0bacb43fc9288a6b974565` adds documentation alignment only and has its own five-gate pass: Browser run `37764252683`, 92 passed / 4 skipped, artifact `11543389954`, SHA-256 `sha256:a529e2ca248680f958d29ab4101deda02a3d96ce758bb93737dc60e7fb623e95`.
+- The production Hero surface remains darker and more skeletal than the endorsed visual direction, and the outer machine bodies still lack convincing nested mechanical attachment. Human visual acceptance is therefore open.
+- Next structural slice: deepen the four product-family chassis/machinery relationships and integrate the existing service-manifold/conduit hierarchy. Do not enlarge endpoint geometry merely to force raster delta.
+- Manifest hygiene follow-up is closed: direct renderer import coverage is guarded; the previously omitted renderer dependencies are published; the source-side owner for `hero-cam3-tree-center-zoom.js` has been restored.
 
 
 ### 2026-10-07 real-product visual finding
