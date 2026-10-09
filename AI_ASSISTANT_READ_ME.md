@@ -7,7 +7,7 @@
 - The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`; #424 is a bounded 029 spatial companion and must not absorb backend/runtime authority.
 - Product Law, the canonical frontend/product feature grammar (#400), the 029 ledger (#278/#405), and the Hailuo/PNG visual references all matter. The target is **the actual TeamAi product expressed as a semantic spatial machine**, not a visual imitation detached from product meaning.
 - The Hailuo MP4 and endorsed PNG/reference-board material are visual-direction inputs. They do not define semantic identity, geometry constants, backend truth, authorization, entitlement, scheduler/provider/payment authority, or acceptance by resemblance alone.
-- Last given prompt: after the exact S8 Browser run, align repository state, catch debris/drift, and diagnose the actual visual contribution of the endpoint/junction embodiment before the next structural slice.
+- Last given prompt: continue structural implementation after exact-head verification, preserve the physical-machine goal, and do not confuse green CI with visual acceptance.
 - Preserve the evidence chain: **inspect → reason → independently validate → change → test → exact-head CI → Browser artifact/report → artifact/screenshot inspection → audit/align → accept or diagnose**.
 - **Do not stop at “CI green.”** A spatial change is not considered visually evidenced until the Canonical Browser workflow has completed for the exact head and its artifact/report has been inspected. A failed, cancelled, stale, or missing Browser result is not acceptance.
 - While exact-head CI/Browser is running, continue repository work that does not mutate the proof target: history/debris search, stale-reference detection, authority-graph reconciliation, product-feature coverage review, independent geometry calculations, visual-reference comparison, and preparation of the next bounded commit.
@@ -32,14 +32,14 @@ This block supersedes older dated snapshots for current work. Older sections rem
 - canonical successor handoff: #409
 - handoff rule: Issue #409 is the canonical newcomer handoff; verify live branch/PR/CI state before consequential changes
 - next allowed work: deepen the four outer product-family machines as nested sub-machines and integrate their existing manifold/conduit hierarchy, only after independent clearance and exact-head Browser proof
-- validation state: S7-V16/S8/S3 application head `3a95a1bca311df2ffd99b98177ff523e068626f5` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification; Browser artifact `11543143062`. The later documentation-only branch head `789c0fff8031acbb0e0bacb43fc9288a6b974565` also passed all five gates; Browser run `37764252683`, artifact `11543389954`, SHA-256 `sha256:a529e2ca248680f958d29ab4101deda02a3d96ce758bb93737dc60e7fb623e95`.
+- validation state: producing application head `48ddce11f365683fd4cd9e7a66df5a0154e11bb1` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification. Browser run `37893061246`, 92 passed / 4 skipped, artifact `11599691063`, SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`. Resolve the live branch head separately.
 - PR #424 remains OPEN / DRAFT / mergeable
 - PR #404 remains merged historical provenance; do not reopen it
 
 ### 2026-10-08 CURRENT S8 ENDPOINT/JUNCTION STATE
 
-- Verified application head: `3a95a1bca311df2ffd99b98177ff523e068626f5`
-- Version: `S8-ENDPOINT-V3`
+- Verified application head: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+- Endpoint version: `S8-ENDPOINT-V3`; outer-spine carrier version: `S8-FACILITY-CARRIER-V2`
 - 19 presentation-only descriptors: 8 machine endpoint collars + 11 facility-port flanges.
 - Independent inter-machine clearance regression passes for Seats 1–10 and expansion states 0 and 1 at the governed 0.16 floor.
 - Canonical Browser for the current producing application head: run `37762854016`, **92 passed / 4 skipped**, exact-head checkout.
@@ -54,6 +54,26 @@ This block supersedes older dated snapshots for current work. Older sections rem
   - `machine-world-facility-carrier.js` and `machine-world-presentation-projection.js` remain parity-tested but are not current renderer imports. Their ownership/use is still open; do not delete or consolidate without proof.
   - PR #424 remains a long-lived Draft. Treat that as history/process debt, not a reason to rewrite the active vehicle while the structural run is in progress.
 - Hailuo MP4 and endorsed PNG remain visual-direction inputs only; Product Law and S0–S10 structural authorities remain unchanged.
+
+### 2026-10-09 CURRENT S8 OUTER-SPINE CARRIER STATE
+
+**Producing application head:** `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+
+- Full-System `37893061074`: **PASS**.
+- Governance `37893061114`: **PASS**.
+- Security `37893061040`: **PASS**.
+- Deep Security `37893061045`: **PASS**.
+- Canonical Browser `37893061246`: **PASS**, 92 passed / 4 skipped, exact-head checkout.
+- Browser artifact `11599691063`; SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`.
+- Artifact ZIP independently downloaded; local SHA-256 matched the workflow artifact digest.
+- Production carrier telemetry confirms 20 descriptors rendered: 12 beam stages + 8 hinge collars, world-overview scope only.
+- Independent carrier cross-section regression passes Seats 1–10 with expansion amounts 0, 0.5, and 1 against the governed 0.16 clearance budget.
+- Actual `/hero/` wide capture versus prior exact-head parent `88a5d6239caaa380231605cca418bdedf5faf70c`: 5,364 pixels changed beyond 5/255 RGB, 0.582% of pixels, bounding box x=300..1118 / y=232..534. This is a measurable but modest visual contribution, not human visual acceptance.
+- The separate `s2-s10-*.png` assets belong to the Three.js structural preview and are not used as evidence for this raw-WebGL production-renderer change.
+
+**Implementation:** `S8-FACILITY-CARRIER-V2` consumes the four existing `outer-spine` edges from canonical `machine-world-topology`; it creates no new semantic edge or topology authority. The source/public carrier and renderer are byte-identical. The manifest publishes the carrier, and direct-renderer-import closure remains guarded.
+
+**Next structural slice:** deepen the nested mechanical attachments and chassis relationships of the four existing Alpha/Analysis, Beta/Operations, Gamma/Control, and Delta/Access-Commerce machines. Keep the current carrier scale and topology fixed unless independent evidence demonstrates a geometry defect.
 
 ### Validation-change guide
 

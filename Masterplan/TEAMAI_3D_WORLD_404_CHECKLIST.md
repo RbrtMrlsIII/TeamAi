@@ -1260,3 +1260,20 @@ The slice is **repository/browser verified**, not human-accepted, production-dep
 **Acceptance note**
 
 S8 is structurally and browser-execution verified. V3 establishes a real production-path raster contribution, but overview-scale connector legibility remains bounded and subtle. Further endpoint enlargement is not authorized merely to increase pixel delta. The remaining reference gap is better addressed by manufactured Core/Pod density and nested machine depth.
+
+
+### A6.4 2026-10-09 S8 outer-spine carrier production integration
+
+- [x] Four existing canonical `outer-spine` routes provide the only source for carrier descriptors.
+- [x] Production raw-WebGL renderer consumes the existing presentation-only facility-carrier module.
+- [x] Four routes project to 12 staged beams + 8 hinge collars (20 total descriptors).
+- [x] Carrier is scoped to `WORLD_OVERVIEW`; focused Seat, division, and facility views do not receive this world layer.
+- [x] Carrier cross-section validation passes Seats 1–10 at expansion 0, 0.5, and 1 with the governed 0.16 clearance budget.
+- [x] Source/public carrier and renderer copies are byte-identical; manifest direct-import coverage remains enforced.
+- [x] Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser checks PASS.
+- [x] Browser artifact ZIP independently hash-verified.
+- [ ] Human visual acceptance remains open; the measured production Hero pixel delta is modest.
+
+Producing head: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`; Browser run `37893061246`; artifact `11599691063`; SHA-256 `8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`.
+
+Next: deepen nested mechanical attachments and chassis relationships of the four existing product-family machines. Do not add duplicate topology or enlarge carrier hardware merely to force a larger raster delta.

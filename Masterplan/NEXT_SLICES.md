@@ -28,7 +28,7 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Current verified application head: `3a95a1bca311df2ffd99b98177ff523e068626f5` (S7-V16 chassis depth after S8 V3 and S3 V6; exact-head five-gate proof complete). The live branch may advance with a bounded structural slice. Resolve the current exact branch head from live PR #424 and Issue #409 rather than assuming the application head equals the branch head.
+Current verified application head: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1` (S8 V3 + S7-V16 chassis depth + S3 V6 Pod face framing + S8 facility-carrier V2; exact-head five-gate proof complete). The live branch may advance with a bounded structural slice. Resolve the current exact branch head from live PR #424 and Issue #409 rather than assuming the application head equals the branch head.
 
 Historical exact-head Browser artifacts remain diagnostic provenance. The active #424 implementation anchor now advances **S7-V13 → S7-V14** by promoting the existing authored S7 facility-body construction into the canonical production Hero raw-WebGL path. The slice publishes `machine-world-facility-shell.js`, renders 20 presentation-only body descriptors across four family-specific silhouettes and five physical layers, and preserves the existing S6/S7 semantics, S8 topology, S10 camera authority, Seat cardinality, and backend/runtime boundaries.
 
@@ -285,3 +285,23 @@ Final exact-head proof for this implementation-plus-documentation state is compl
 - Real-product recording: VP8/WebM, 800×500, 25 fps, 13.0 s; video SHA-256 `339c240dcd8390dc954642e33b0a3c83c0088ca4b7307ffcc265cfa6496e8ac2`
 - Current Gamma geometry minimum conservative housing margin across 1–10 Seats: `0.08767` units against the `0.03` regression floor.
 - Browser captures show stable world/transform/Seat/return composition. The current facility capture is Beta/Operations, so it does not visually isolate the Gamma links; Gamma acceptance rests on authored source, focused regression, independent geometry matrix, and the overall exact-head browser pass.
+
+### 2026-10-09 S8 outer-spine carrier production integration
+
+**Producing application head:** `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+
+- Full-System `37893061074`: **PASS**.
+- Governance `37893061114`: **PASS**.
+- Security `37893061040`: **PASS**.
+- Deep Security `37893061045`: **PASS**.
+- Canonical Browser `37893061246`: **PASS**, 92 passed / 4 skipped, exact-head checkout.
+- Browser artifact `11599691063`; SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`.
+- Artifact ZIP independently downloaded; local SHA-256 matched the workflow artifact digest.
+- Production carrier telemetry confirms 20 descriptors rendered: 12 beam stages + 8 hinge collars, world-overview scope only.
+- Independent carrier cross-section regression passes Seats 1–10 with expansion amounts 0, 0.5, and 1 against the governed 0.16 clearance budget.
+- Actual `/hero/` wide capture versus prior exact-head parent `88a5d6239caaa380231605cca418bdedf5faf70c`: 5,364 pixels changed beyond 5/255 RGB, 0.582% of pixels, bounding box x=300..1118 / y=232..534. This is a measurable but modest visual contribution, not human visual acceptance.
+- The separate `s2-s10-*.png` assets belong to the Three.js structural preview and are not used as evidence for this raw-WebGL production-renderer change.
+
+**Implementation:** `S8-FACILITY-CARRIER-V2` consumes the four existing `outer-spine` edges from canonical `machine-world-topology`; it creates no new semantic edge or topology authority. The source/public carrier and renderer are byte-identical. The manifest publishes the carrier, and direct-renderer-import closure remains guarded.
+
+**Next structural slice:** deepen the nested mechanical attachments and chassis relationships of the four existing Alpha/Analysis, Beta/Operations, Gamma/Control, and Delta/Access-Commerce machines. Keep the current carrier scale and topology fixed unless independent evidence demonstrates a geometry defect.

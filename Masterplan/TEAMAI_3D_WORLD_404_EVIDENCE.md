@@ -1620,3 +1620,30 @@ S7-V14 is **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERN
 **Acceptance**
 - S8: implemented, structurally validated, security/governance validated, and Browser-verified on the real production path.
 - Human visual acceptance, deployment/runtime proof, merge authorization, and release authorization remain open.
+
+
+### E424-2026-10-09A — S8 outer-spine carrier production integration
+
+**Producing application head:** `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+
+- Full-System `37893061074`: **PASS**.
+- Governance `37893061114`: **PASS**.
+- Security `37893061040`: **PASS**.
+- Deep Security `37893061045`: **PASS**.
+- Canonical Browser `37893061246`: **PASS**, 92 passed / 4 skipped, exact-head checkout.
+- Browser artifact `11599691063`; SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`.
+- Artifact ZIP independently downloaded; local SHA-256 matched the workflow artifact digest.
+- Production carrier telemetry confirms 20 descriptors rendered: 12 beam stages + 8 hinge collars, world-overview scope only.
+- Independent carrier cross-section regression passes Seats 1–10 with expansion amounts 0, 0.5, and 1 against the governed 0.16 clearance budget.
+- Actual `/hero/` wide capture versus prior exact-head parent `88a5d6239caaa380231605cca418bdedf5faf70c`: 5,364 pixels changed beyond 5/255 RGB, 0.582% of pixels, bounding box x=300..1118 / y=232..534. This is a measurable but modest visual contribution, not human visual acceptance.
+- The separate `s2-s10-*.png` assets belong to the Three.js structural preview and are not used as evidence for this raw-WebGL production-renderer change.
+
+**Implementation:** `S8-FACILITY-CARRIER-V2` consumes the four existing `outer-spine` edges from canonical `machine-world-topology`; it creates no new semantic edge or topology authority. The source/public carrier and renderer are byte-identical. The manifest publishes the carrier, and direct-renderer-import closure remains guarded.
+
+**Next structural slice:** deepen the nested mechanical attachments and chassis relationships of the four existing Alpha/Analysis, Beta/Operations, Gamma/Control, and Delta/Access-Commerce machines. Keep the current carrier scale and topology fixed unless independent evidence demonstrates a geometry defect.
+
+**Evidence interpretation**
+
+The carrier layer is now executed on the actual `/hero/` production route. It creates a visible pixel delta localized around the outer-spine connections, but the change is modest. This establishes that the renderer consumes the carrier geometry; it is not sufficient to close human visual acceptance. The wider scene still needs nested mechanical depth and clearer physical relationships inside the four outer product-family machines.
+
+The unchanged `s2-s10-*.png` assets are separate Three.js structural-preview captures and must not be used to judge this raw-WebGL production-renderer change.
