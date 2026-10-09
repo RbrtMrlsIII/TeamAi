@@ -98,12 +98,12 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
     analysis.mechanicalDetails.filter((entry) => entry.role.startsWith('barrel-collar-')).length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 11);
+  assert.equal(analysis.mechanicalDetails.length, 14);
   const control = machinery.find((machine) => machine.machineRole === 'control');
   const access = machinery.find((machine) => machine.machineRole === 'access-commerce');
   assert.ok(control && access);
-  assert.equal(control.mechanicalDetails.length, 13);
-  assert.equal(access.mechanicalDetails.length, 16);
+  assert.equal(control.mechanicalDetails.length, 16);
+  assert.equal(access.mechanicalDetails.length, 19);
 });
 
 test('S7 analysis telescope exposes fixed guide rails within the authored housing envelope', () => {
@@ -152,7 +152,7 @@ test('S7 analysis telescope exposes fixed guide rails within the authored housin
     analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail').length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 11);
+  assert.equal(analysis.mechanicalDetails.length, 14);
 });
 
 test('S7 operations fins use bounded authored convex silhouettes', () => {
@@ -317,7 +317,7 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
     operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
     4,
   );
-  assert.equal(operations.mechanicalDetails.length, 13);
+  assert.equal(operations.mechanicalDetails.length, 16);
 });
 
 
@@ -364,7 +364,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V17');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V18');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -473,10 +473,10 @@ test('S7 facility chassis details are authored and included in each machine subj
 
   for (const machine of machinery) {
     const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control'
-      ? 13
+      ? 16
       : machine.machineRole === 'access-commerce'
-        ? 16
-        : 11;
+        ? 19
+        : 14;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
@@ -732,7 +732,7 @@ test('S7 physical interface projection is reproducible from the S6-owned assembl
   }
 });
 
-test('S7 nested chassis ties connect each support strut to its authored primary mechanism', () => {
+test('S7 V2 nested chassis trusses remain visible above the authored outer skin and bridge to primary cores', () => {
   const primaryRoles = Object.freeze({
     analysis: 'barrel-stage-1',
     operations: 'hinge-core',
@@ -754,13 +754,58 @@ test('S7 nested chassis ties connect each support strut to its authored primary 
       const validation = validateMachineFacilityMachinery(machines);
       assert.equal(validation.valid, true, validation.reasons.join(', '));
 
+      const skins = deriveMachineWorldFacilityShellDescriptors(machines);
       for (const machine of machines) {
         const supports = machine.mechanicalDetails.filter((entry) => entry.role === 'support-strut');
         const ties = machine.mechanicalDetails.filter((entry) => entry.role === 'chassis-core-tie');
+        const risers = machine.mechanicalDetails.filter((entry) => entry.role === 'chassis-tie-riser');
+        const standoffs = machine.mechanicalDetails.filter((entry) => entry.role === 'chassis-core-standoff');
         const core = machine.components.find((entry) => entry.role === primaryRoles[machine.machineRole]);
+        const skin = skins.find((entry) => entry.branchId === machine.branchId && entry.layer === 'main-shell');
+
         assert.ok(core, machine.machineRole + ': primary chassis core');
+        assert.ok(skin, machine.machineRole + ': authored shell');
         assert.equal(supports.length, 2, machine.machineRole + ': supports');
-        assert.equal(ties.length, 2, machine.machineRole + ': chassis ties');
+        assert.equal(ties.length, 2, machine.machineRole + ': elevated tie rails');
+        assert.equal(risers.length, 2, machine.machineRole + ': support risers');
+        assert.equal(standoffs.length, 1, machine.machineRole + ': core standoff');
+
+        const housingCenter = machine.outerHousing.center;
+        const frameHeight = Math.max(0.50, Number(machine.outerHousing.dimensions.y) || 0.9);
+        const railY = housingCenter.y + frameHeight * 0.78;
+        const shellTop = skin.center.y + skin.dimensions.y * 0.5;
+        assert.ok(railY > shellTop + 0.04, machine.machineRole + ': rail path must be outside the opaque chassis skin');
+
+        const standoff = standoffs[0];
+        assert.equal(standoff.attachmentSourceId, core.id);
+        assert.deepEqual(standoff.attachmentTargetIds, ties.map((entry) => entry.id));
+        assert.equal(standoff.parentRole, core.role);
+        assert.equal(standoff.profile, 'chassis-core-standoff-v1');
+        assert.ok(machine.subject.sourcePartIds.includes(standoff.id));
+        assert.ok(standoff.dimensions.y >= railY - core.center.y + 0.14 - 1e-9);
+        assert.ok(Math.abs(standoff.center.x - core.center.x) < 1e-9);
+        assert.ok(Math.abs(standoff.center.z - core.center.z) < 1e-9);
+
+        for (const riser of risers) {
+          const support = supports.find((entry) => entry.id === riser.attachmentSourceId);
+          assert.ok(support, riser.id + ': source support');
+          const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+          const tie = ties.find((entry) => entry.id.endsWith(':CHASSIS-CORE-TIE:' + side));
+          assert.ok(tie, riser.id + ': matching elevated tie');
+          assert.equal(riser.attachmentTargetId, tie.id);
+          assert.equal(riser.parentRole, support.role);
+          assert.equal(riser.constructionSlice, 'S7');
+          assert.equal(riser.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+          assert.ok(machine.subject.sourcePartIds.includes(riser.id));
+          assert.ok(Math.abs(riser.center.x - support.center.x) < 1e-9);
+          assert.ok(Math.abs(riser.center.z - support.center.z) < 1e-9);
+          assert.ok(Math.abs(riser.center.y - (support.center.y + railY) * 0.5) < 1e-9);
+          assert.ok(riser.dimensions.y >= railY - support.center.y + 0.14 - 1e-9);
+          const riserBottom = riser.center.y - riser.dimensions.y * 0.5;
+          const riserTop = riser.center.y + riser.dimensions.y * 0.5;
+          assert.ok(riserBottom < support.center.y + support.dimensions.y * 0.5, riser.id + ': overlaps support');
+          assert.ok(riserTop > railY, riser.id + ': overlaps elevated tie');
+        }
 
         for (const tie of ties) {
           const support = supports.find((entry) => entry.id === tie.attachmentSourceId);
@@ -769,35 +814,25 @@ test('S7 nested chassis ties connect each support strut to its authored primary 
           assert.equal(tie.attachmentSourceRole, 'support-strut');
           assert.equal(tie.attachmentTargetRole, core.role);
           assert.equal(tie.parentRole, core.role);
-          assert.equal(tie.profile, 'chassis-core-tie-v1');
+          assert.equal(tie.profile, 'chassis-core-tie-v2');
+          assert.equal(tie.attachmentSourceRiserId, 'MACHINERY:' + machine.branchId + ':CHASSIS-TIE-RISER:' + (String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT'));
+          assert.equal(tie.attachmentTargetStandoffId, standoff.id);
           assert.equal(tie.constructionSlice, 'S7');
           assert.equal(tie.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
           assert.ok(machine.subject.sourcePartIds.includes(tie.id));
-
           const dx = core.center.x - support.center.x;
-          const dy = core.center.y - support.center.y;
           const dz = core.center.z - support.center.z;
           const horizontalLength = Math.hypot(dx, dz);
           assert.ok(horizontalLength > 0.12, tie.id + ': non-degenerate span');
           assert.ok(Math.abs(tie.attachmentSpan - horizontalLength) < 1e-9, tie.id + ': span metadata');
-          assert.ok(tie.dimensions.z >= horizontalLength + 0.12 - 1e-9, tie.id + ': beam overlaps both anchors');
-
+          assert.ok(tie.dimensions.z >= horizontalLength + 0.14 - 1e-9, tie.id + ': beam overlaps both vertical anchors');
           assert.ok(Math.abs(tie.center.x - (support.center.x + core.center.x) * 0.5) < 1e-9, tie.id + ': midpoint X');
-          assert.ok(Math.abs(tie.center.y - (support.center.y + core.center.y) * 0.5) < 1e-9, tie.id + ': midpoint Y');
           assert.ok(Math.abs(tie.center.z - (support.center.z + core.center.z) * 0.5) < 1e-9, tie.id + ': midpoint Z');
-          assert.ok(Math.abs(tie.dimensions.y - (Math.abs(dy) + 0.06)) < 1e-9, tie.id + ': vertical overlap budget');
-
-          // Renderer Y rotation sends the local Z axis to (sin(theta), cos(theta)).
+          assert.ok(Math.abs(tie.center.y - railY) < 1e-9, tie.id + ': rail elevation');
+          assert.ok(Math.abs(tie.center.y - tie.attachmentRailY) < 1e-9, tie.id + ': recorded rail elevation');
+          assert.ok(tie.dimensions.y > 0.08, tie.id + ': nonzero upper cross-section');
           assert.ok(Math.abs(Math.sin(tie.rotationY) - dx / horizontalLength) < 1e-9, tie.id + ': local axis X');
           assert.ok(Math.abs(Math.cos(tie.rotationY) - dz / horizontalLength) < 1e-9, tie.id + ': local axis Z');
-
-          for (const anchor of [support, core]) {
-            assert.ok(
-              Math.abs(tie.center.y - anchor.center.y)
-                <= tie.dimensions.y * 0.5 + anchor.dimensions.y * 0.5 + 1e-9,
-              tie.id + ': vertical body overlap with ' + anchor.id,
-            );
-          }
         }
       }
     }

@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V17';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V18';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -1074,46 +1074,106 @@ export function deriveMachineFacilityMachinery({
     if (!primaryCore) {
       throw new Error('missing authored chassis core role for ' + assembly.machineRole);
     }
-    const chassisTransferLinks = authoredMechanicalDetails
-      .filter((entry) => entry.role === 'support-strut')
-      .map((support, index) => {
-        const dx = primaryCore.center.x - support.center.x;
-        const dy = primaryCore.center.y - support.center.y;
-        const dz = primaryCore.center.z - support.center.z;
-        const horizontalLength = Math.hypot(dx, dz);
-        if (horizontalLength < 0.12) {
-          throw new Error('degenerate chassis-core attachment for ' + assembly.branchId);
-        }
-        const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
-        return Object.freeze({
-          id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-TIE:' + side,
-          role: 'chassis-core-tie',
-          shape: 'BOX',
-          center: Object.freeze({
-            x: (support.center.x + primaryCore.center.x) * 0.5,
-            y: (support.center.y + primaryCore.center.y) * 0.5,
-            z: (support.center.z + primaryCore.center.z) * 0.5,
-          }),
-          dimensions: Object.freeze({
-            x: Math.max(0.07, frameWidth * 0.035),
-            y: Math.max(0.06, Math.abs(dy) + 0.06),
-            z: Math.max(0.20, horizontalLength + 0.12),
-          }),
-          rotationY: Math.atan2(dx, dz),
-          materialRole: 'metal2',
-          parentRole: primaryCoreRole,
-          profile: 'chassis-core-tie-v1',
-          attachmentSourceId: support.id,
-          attachmentTargetId: primaryCore.id,
-          attachmentSourceRole: support.role,
-          attachmentTargetRole: primaryCore.role,
-          attachmentSpan: horizontalLength,
-          ...rootContext(assembly.branchId + ':CHASSIS-CORE-TIE:' + side),
-        });
+    // A raised tie bridge rides above the opaque chassis skin. The two risers
+    // and central standoff preserve a continuous physical path back to the
+    // authored support struts and primary mechanism while remaining visible in
+    // the structural Three.js preview as well as the translucent Hero skin.
+    const railY = housingCenter.y + frameHeight * 0.78;
+    const chassisSupports = authoredMechanicalDetails
+      .filter((entry) => entry.role === 'support-strut');
+    const chassisTransferLinks = chassisSupports.map((support) => {
+      const dx = primaryCore.center.x - support.center.x;
+      const dz = primaryCore.center.z - support.center.z;
+      const horizontalLength = Math.hypot(dx, dz);
+      if (horizontalLength < 0.12) {
+        throw new Error('degenerate chassis-core attachment for ' + assembly.branchId);
+      }
+      const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+      const id = 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-TIE:' + side;
+      return Object.freeze({
+        id,
+        role: 'chassis-core-tie',
+        shape: 'BOX',
+        center: Object.freeze({
+          x: (support.center.x + primaryCore.center.x) * 0.5,
+          y: railY,
+          z: (support.center.z + primaryCore.center.z) * 0.5,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.07, frameWidth * 0.035),
+          y: Math.max(0.08, frameHeight * 0.07),
+          z: Math.max(0.20, horizontalLength + 0.14),
+        }),
+        rotationY: Math.atan2(dx, dz),
+        materialRole: 'metal2',
+        parentRole: primaryCoreRole,
+        profile: 'chassis-core-tie-v2',
+        attachmentSourceId: support.id,
+        attachmentTargetId: primaryCore.id,
+        attachmentSourceRole: support.role,
+        attachmentTargetRole: primaryCore.role,
+        attachmentSourceRiserId: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TIE-RISER:' + side,
+        attachmentTargetStandoffId: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-STANDOFF',
+        attachmentRailY: railY,
+        attachmentSpan: horizontalLength,
+        ...rootContext(assembly.branchId + ':CHASSIS-CORE-TIE:' + side),
       });
+    });
+    const chassisTieRisers = chassisSupports.map((support) => {
+      const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+      const height = railY - support.center.y;
+      return Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TIE-RISER:' + side,
+        role: 'chassis-tie-riser',
+        shape: 'CYL',
+        center: Object.freeze({
+          x: support.center.x,
+          y: (railY + support.center.y) * 0.5,
+          z: support.center.z,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.08, frameWidth * 0.045),
+          y: height + 0.14,
+          z: Math.max(0.08, frameWidth * 0.045),
+        }),
+        rotationY: 0,
+        materialRole: 'metal',
+        parentRole: support.role,
+        profile: 'chassis-tie-riser-v1',
+        attachmentSourceId: support.id,
+        attachmentTargetId: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-TIE:' + side,
+        attachmentRailY: railY,
+        ...rootContext(assembly.branchId + ':CHASSIS-TIE-RISER:' + side),
+      });
+    });
+    const chassisCoreStandoff = Object.freeze({
+      id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-STANDOFF',
+      role: 'chassis-core-standoff',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: primaryCore.center.x,
+        y: (railY + primaryCore.center.y) * 0.5,
+        z: primaryCore.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: Math.max(0.10, frameWidth * 0.055),
+        y: railY - primaryCore.center.y + 0.14,
+        z: Math.max(0.10, frameWidth * 0.055),
+      }),
+      rotationY: 0,
+      materialRole: 'metal2',
+      parentRole: primaryCoreRole,
+      profile: 'chassis-core-standoff-v1',
+      attachmentSourceId: primaryCore.id,
+      attachmentTargetIds: Object.freeze(chassisTransferLinks.map((entry) => entry.id)),
+      attachmentRailY: railY,
+      ...rootContext(assembly.branchId + ':CHASSIS-CORE-STANDOFF'),
+    });
     const mechanicalDetails = Object.freeze([
       ...authoredMechanicalDetails,
       ...chassisTransferLinks,
+      ...chassisTieRisers,
+      chassisCoreStandoff,
     ]);
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
