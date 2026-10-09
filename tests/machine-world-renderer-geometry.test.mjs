@@ -136,3 +136,48 @@ test('production primitive cache routes TORUS to annular mesh and keeps source/p
   assert.match(source, /key === 'TORUS'[\s\S]*?createAnnularPrismVertices\(\)/);
   assert.doesNotMatch(source, /TORUS:\s*regularPolygon/);
 });
+
+
+test('annular collar mesh winds each surface toward its physical outward normal', () => {
+  const segments = 24;
+  const vertices = createAnnularPrismVertices({ segments, innerRadius: 0.72, height: 1 });
+  const point = (index) => [
+    vertices[index * 3],
+    vertices[index * 3 + 1],
+    vertices[index * 3 + 2],
+  ];
+  const normal = (a, b, c) => {
+    const ab = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+    const ac = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+    return [
+      ab[1] * ac[2] - ab[2] * ac[1],
+      ab[2] * ac[0] - ab[0] * ac[2],
+      ab[0] * ac[1] - ab[1] * ac[0],
+    ];
+  };
+
+  for (let segment = 0; segment < segments; segment += 1) {
+    const segmentVertexOffset = segment * 24;
+    const triangle = (triangleIndex) => {
+      const start = segmentVertexOffset + triangleIndex * 3;
+      return normal(point(start), point(start + 1), point(start + 2));
+    };
+    const midAngle = ((segment + 0.5) / segments) * Math.PI * 2;
+    const radial = [Math.cos(midAngle), 0, Math.sin(midAngle)];
+
+    for (const triangleIndex of [0, 1]) {
+      assert.ok(triangle(triangleIndex)[1] > 0, 'top annulus must face +Y');
+    }
+    for (const triangleIndex of [2, 3]) {
+      assert.ok(triangle(triangleIndex)[1] < 0, 'bottom annulus must face -Y');
+    }
+    for (const triangleIndex of [4, 5]) {
+      const n = triangle(triangleIndex);
+      assert.ok(n[0] * radial[0] + n[2] * radial[2] > 0, 'outer wall must face radially outward');
+    }
+    for (const triangleIndex of [6, 7]) {
+      const n = triangle(triangleIndex);
+      assert.ok(n[0] * radial[0] + n[2] * radial[2] < 0, 'inner wall must face into the open bore');
+    }
+  }
+});

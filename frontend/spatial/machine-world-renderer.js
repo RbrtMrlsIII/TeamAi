@@ -200,16 +200,16 @@ export function createAnnularPrismVertices({
     const innerTop1 = point(inner, angle1, topY);
 
     // Upper/lower annular surfaces leave the central opening empty.
-    pushTri(outerTop0, outerTop1, innerTop1);
-    pushTri(outerTop0, innerTop1, innerTop0);
-    pushTri(outerBottom0, innerBottom1, outerBottom1);
-    pushTri(outerBottom0, innerBottom0, innerBottom1);
+    pushTri(outerTop0, innerTop1, outerTop1);
+    pushTri(outerTop0, innerTop0, innerTop1);
+    pushTri(outerBottom0, outerBottom1, innerBottom1);
+    pushTri(outerBottom0, innerBottom1, innerBottom0);
 
     // The outer and inner walls close the washer-like collar.
-    pushTri(outerBottom0, outerBottom1, outerTop1);
-    pushTri(outerBottom0, outerTop1, outerTop0);
-    pushTri(innerBottom0, innerTop1, innerBottom1);
-    pushTri(innerBottom0, innerTop0, innerTop1);
+    pushTri(outerBottom0, outerTop1, outerBottom1);
+    pushTri(outerBottom0, outerTop0, outerTop1);
+    pushTri(innerBottom0, innerBottom1, innerTop1);
+    pushTri(innerBottom0, innerTop1, innerTop0);
   }
 
   return new Float32Array(vertices);
