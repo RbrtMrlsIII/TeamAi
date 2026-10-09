@@ -20,6 +20,13 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-connector-span', 'visible');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-endpoint-count', '8');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-facility-count', '11');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-version', 'S8-FACILITY-CARRIER-V2');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-count', '20');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-stage-count', '12');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-hinge-count', '8');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-rendered', '20');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-validation', 'pass');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-scope', 'WORLD_OVERVIEW');
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await page.waitForTimeout(1100);

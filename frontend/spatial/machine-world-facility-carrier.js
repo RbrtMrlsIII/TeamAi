@@ -8,7 +8,7 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_CARRIER_ID = 'MACHINE-WORLD-FACILITY-CARRIER';
-export const MACHINE_WORLD_FACILITY_CARRIER_VERSION = 'S8-FACILITY-CARRIER-V1';
+export const MACHINE_WORLD_FACILITY_CARRIER_VERSION = 'S8-FACILITY-CARRIER-V2';
 
 const EDGE_KIND = 'outer-spine';
 const STAGE_FRACTIONS = Object.freeze([0.08, 0.38, 0.72, 1]);
@@ -86,7 +86,7 @@ function stageDescriptor(edge, index, start, end) {
     dimensions: Object.freeze({
       x: Math.max(0.08, horizontal),
       y: stageRadius(index) * 1.65,
-      z: stageRadius(index) * 2.20,
+      z: stageRadius(index) * 1.80,
     }),
     rotationY: Math.atan2(dz, dx),
     materialRole: 'metal2',
@@ -108,7 +108,7 @@ function hingeDescriptor(edge, index, point) {
     shape: 'TORUS',
     profile: 'facility-carrier-hinge',
     center: Object.freeze({ ...point }),
-    dimensions: Object.freeze({ x: 0.72, y: 0.14, z: 0.72 }),
+    dimensions: Object.freeze({ x: 0.28, y: 0.14, z: 0.28 }),
     rotationY: 0,
     materialRole: 'metal2',
     constructionSlice: 'S8',
@@ -155,7 +155,7 @@ export function deriveMachineWorldFacilityCarrierDescriptors(
 
 export function validateMachineWorldFacilityCarrierDescriptors(
   descriptors = [],
-  { topology = null } = {},
+  { topology = null, clearance = 0.16 } = {},
 ) {
   const reasons = [];
   const list = Array.isArray(descriptors) ? descriptors : [];
@@ -182,6 +182,17 @@ export function validateMachineWorldFacilityCarrierDescriptors(
     }
     if (!descriptor?.dimensions || ![descriptor.dimensions.x, descriptor.dimensions.y, descriptor.dimensions.z].every(Number.isFinite)) {
       reasons.push((descriptor?.id || 'unknown') + ':NONFINITE_DIMENSIONS');
+    } else {
+      const crossSectionRadius = descriptor.shape === 'TORUS'
+        ? Math.max(Math.abs(finite(descriptor.dimensions.x)), Math.abs(finite(descriptor.dimensions.z))) * 0.5
+        : Math.hypot(
+            Math.abs(finite(descriptor.dimensions.y)) * 0.5,
+            Math.abs(finite(descriptor.dimensions.z)) * 0.5,
+          );
+      const safeClearance = Math.max(0.01, finite(clearance, 0.16));
+      if (crossSectionRadius > safeClearance + 1e-9) {
+        reasons.push((descriptor?.id || 'unknown') + ':CROSS_SECTION_EXCEEDS_CLEARANCE_BUDGET');
+      }
     }
   }
 

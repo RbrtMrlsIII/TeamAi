@@ -49,6 +49,11 @@ import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriv
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import { deriveMachineWorldFacilityDockingEmbodiment } from './machine-world-facility-docking-embodiment.js';
+import {
+  deriveMachineWorldFacilityCarrierDescriptors,
+  validateMachineWorldFacilityCarrierDescriptors,
+  MACHINE_WORLD_FACILITY_CARRIER_VERSION,
+} from './machine-world-facility-carrier.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
 import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES } from './machine-world-facility-shell.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
@@ -1331,6 +1336,54 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   }
 
+  function renderMachineWorldFacilityCarrier(topology, mode, selectedBranchId, reducedMotion) {
+    const descriptors = deriveMachineWorldFacilityCarrierDescriptors(topology, { mode });
+    const validation = validateMachineWorldFacilityCarrierDescriptors(descriptors, { topology });
+    let rendered = 0;
+    let stageCount = 0;
+    let hingeCount = 0;
+
+    if (validation.valid) {
+      for (const entry of descriptors) {
+        const transform = multiplyMatrix(
+          translateMatrix(entry.center.x, entry.center.y, entry.center.z),
+          multiplyMatrix(
+            rotateYMatrix(finite(entry.rotationY)),
+            scaleMatrix(
+              Math.max(0.02, finite(entry.dimensions.x) * 0.5),
+              Math.max(0.02, finite(entry.dimensions.y) * 0.5),
+              Math.max(0.02, finite(entry.dimensions.z) * 0.5),
+            ),
+          ),
+        );
+        const selected = Boolean(selectedBranchId)
+          && String(entry.semanticEdgeId).includes(String(selectedBranchId));
+        ringDraw(
+          entry.shape === 'TORUS' ? 'TORUS' : 'CUBE',
+          transform,
+          activeHeroMaterials.metal2 || activeHeroMaterials.metal,
+          {
+            emit: selected ? 0.075 : 0.028,
+            glow: selected ? 0.11 : 0.035,
+            alpha: reducedMotion ? 0.76 : selected ? 0.92 : 0.82,
+          },
+        );
+        if (entry.shape === 'TORUS') hingeCount += 1;
+        else stageCount += 1;
+        rendered += 1;
+      }
+    }
+
+    canvas.dataset.machineWorldFacilityCarrierVersion = MACHINE_WORLD_FACILITY_CARRIER_VERSION;
+    canvas.dataset.machineWorldFacilityCarrierCount = String(descriptors.length);
+    canvas.dataset.machineWorldFacilityCarrierStageCount = String(stageCount);
+    canvas.dataset.machineWorldFacilityCarrierHingeCount = String(hingeCount);
+    canvas.dataset.machineWorldFacilityCarrierRendered = String(rendered);
+    canvas.dataset.machineWorldFacilityCarrierValidation = validation.valid ? 'pass' : 'fail';
+    canvas.dataset.machineWorldFacilityCarrierScope = mode;
+    return rendered;
+  }
+
   function renderMachineWorldFacilityDockingEmbodiment(facilityMachinery, selectedBranchId, reducedMotion) {
     const descriptors = deriveMachineWorldFacilityDockingEmbodiment(facilityMachinery);
     let rendered = 0;
@@ -2361,6 +2414,19 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : choreography.transformation >= 0.999
         ? 'ACTIVE'
         : 'DEPLOYING';
+    const machineWorldPresentationMode = state.facilityFocused
+      ? 'FACILITY_FOCUS'
+      : hierarchyOpen
+        ? (state.focusedChildId ? 'DIVISION_FOCUS' : 'POD_FOCUS')
+        : 'WORLD_OVERVIEW';
+    const renderedFacilityCarrier = renderMachineWorldFacilityCarrier(
+      machineWorldTopology,
+      machineWorldPresentationMode,
+      branchId,
+      reducedMotion,
+    );
+    canvas.dataset.machineWorldFacilityCarrierLastRenderCount = String(renderedFacilityCarrier);
+
     const renderedFacilityDocking = renderMachineWorldFacilityDockingEmbodiment(
       facilityMachinery,
       branchId,
@@ -2378,11 +2444,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         workspaceReceptionAmount: choreography.workspaceReception,
       },
       {
-        mode: state.facilityFocused
-          ? 'FACILITY_FOCUS'
-          : hierarchyOpen
-            ? (state.focusedChildId ? 'DIVISION_FOCUS' : 'POD_FOCUS')
-            : 'WORLD_OVERVIEW',
+        mode: machineWorldPresentationMode,
         branchId: state.facilityFocused
           ? (
               state.facilitySubject?.center
