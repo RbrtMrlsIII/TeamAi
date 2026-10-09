@@ -169,6 +169,52 @@ function shapeBuffer(gl, polygon, height) {
   return new Float32Array(vertices);
 }
 
+export function createAnnularPrismVertices({
+  segments = 24,
+  innerRadius = 0.72,
+  height = 1,
+} = {}) {
+  const segmentCount = Math.max(8, Math.min(96, Math.floor(finite(segments, 24))));
+  const inner = clamp(finite(innerRadius, 0.72), 0.50, 0.90);
+  const outer = 1;
+  const topY = Math.max(0.01, finite(height, 1));
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (radius, angle, y) => [
+    Math.cos(angle) * radius,
+    y,
+    Math.sin(angle) * radius,
+  ];
+
+  for (let index = 0; index < segmentCount; index += 1) {
+    const angle0 = (index / segmentCount) * TAU;
+    const angle1 = ((index + 1) / segmentCount) * TAU;
+
+    const outerBottom0 = point(outer, angle0, 0);
+    const outerBottom1 = point(outer, angle1, 0);
+    const innerBottom0 = point(inner, angle0, 0);
+    const innerBottom1 = point(inner, angle1, 0);
+    const outerTop0 = point(outer, angle0, topY);
+    const outerTop1 = point(outer, angle1, topY);
+    const innerTop0 = point(inner, angle0, topY);
+    const innerTop1 = point(inner, angle1, topY);
+
+    // Upper/lower annular surfaces leave the central opening empty.
+    pushTri(outerTop0, outerTop1, innerTop1);
+    pushTri(outerTop0, innerTop1, innerTop0);
+    pushTri(outerBottom0, innerBottom1, outerBottom1);
+    pushTri(outerBottom0, innerBottom0, innerBottom1);
+
+    // The outer and inner walls close the washer-like collar.
+    pushTri(outerBottom0, outerBottom1, outerTop1);
+    pushTri(outerBottom0, outerTop1, outerTop0);
+    pushTri(innerBottom0, innerTop1, innerBottom1);
+    pushTri(innerBottom0, innerTop0, innerTop1);
+  }
+
+  return new Float32Array(vertices);
+}
+
 function perspective(out, fovDeg, aspect, near, far) {
   const f = 1 / Math.tan((fovDeg * Math.PI / 180) / 2);
   out.fill(0);
@@ -236,7 +282,6 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   [MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE]: POLYS.authorizationShield,
   [MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE]: POLYS.behaviorBaffle,
   CYL: regularPolygon(16),
-  TORUS: regularPolygon(12),
   SPH: regularPolygon(10),
   POD_RIB: Object.freeze([
     [-1.00, -0.52],
@@ -620,7 +665,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let entry = primitiveBuffers.get(key);
     if (entry) return entry;
     const polygon = PRIMITIVE_POLYGONS[key] || PRIMITIVE_POLYGONS.CUBE;
-    const data = shapeBuffer(gl, polygon, 1);
+    const data = key === 'TORUS'
+      ? createAnnularPrismVertices()
+      : shapeBuffer(gl, polygon, 1);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTubeTransform, centeredPrismBaseY } from '../frontend/spatial/machine-world-renderer.js';
+import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices } from '../frontend/spatial/machine-world-renderer.js';
 import { readFileSync } from 'node:fs';
 
 const close = (actual, expected, tolerance = 1e-6) =>
@@ -84,4 +84,55 @@ test('production S7 mechanism and carrier paths preserve the centered descriptor
   ]) {
     assert.ok(source.includes(marker), 'missing centered transform use: ' + marker);
   }
+});
+
+
+test('raw WebGL TORUS is a closed annular collar with an open center', () => {
+  const vertices = createAnnularPrismVertices();
+  const positions = Array.from({ length: vertices.length / 3 }, (_, index) => [
+    vertices[index * 3],
+    vertices[index * 3 + 1],
+    vertices[index * 3 + 2],
+  ]);
+
+  assert.equal(positions.length, 24 * 24, '24-segment washer has 8 triangles per segment');
+  assert.ok(positions.every((point) => point.every(Number.isFinite)));
+
+  const radii = positions.map(([x, , z]) => Math.hypot(x, z));
+  assert.ok(Math.min(...radii) >= 0.72 - 1e-6, 'no vertex bridges across the central opening');
+  assert.ok(Math.max(...radii) <= 1 + 1e-6, 'outer profile remains normalized');
+  assert.ok(radii.some((radius) => close(radius, 0.72)), 'inner wall is represented');
+  assert.ok(radii.some((radius) => close(radius, 1)), 'outer wall is represented');
+
+  const heights = positions.map(([, y]) => y);
+  assert.ok(close(Math.min(...heights), 0));
+  assert.ok(close(Math.max(...heights), 1));
+});
+
+test('annular collar mesh honors bounded segment, inner-radius, and height inputs', () => {
+  const vertices = createAnnularPrismVertices({
+    segments: 12,
+    innerRadius: 0.68,
+    height: 0.5,
+  });
+  const positions = Array.from({ length: vertices.length / 3 }, (_, index) => [
+    vertices[index * 3],
+    vertices[index * 3 + 1],
+    vertices[index * 3 + 2],
+  ]);
+  assert.equal(positions.length, 12 * 24);
+  const radii = positions.map(([x, , z]) => Math.hypot(x, z));
+  assert.ok(Math.min(...radii) >= 0.68 - 1e-6);
+  assert.ok(Math.max(...radii) <= 1 + 1e-6);
+  const heights = positions.map(([, y]) => y);
+  assert.ok(close(Math.min(...heights), 0));
+  assert.ok(close(Math.max(...heights), 0.5));
+});
+
+test('production primitive cache routes TORUS to annular mesh and keeps source/public identical', () => {
+  const source = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
+  const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
+  assert.equal(browser, source);
+  assert.match(source, /key === 'TORUS'[\s\S]*?createAnnularPrismVertices\(\)/);
+  assert.doesNotMatch(source, /TORUS:\s*regularPolygon/);
 });
