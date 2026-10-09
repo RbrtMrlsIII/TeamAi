@@ -3,6 +3,7 @@ import test from 'node:test';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import {
   MACHINE_POD_ASSEMBLY_ID,
+  MACHINE_POD_ASSEMBLY_VERSION,
   POD_COMPONENT_ROLES,
   POD_DIVISION_COUNT,
   POD_PORT_ROLES,
@@ -226,6 +227,80 @@ test('S3 external shell-face braces stay inside the authored Pod outer envelope'
         reach < Math.max(outer.dimensions.x, outer.dimensions.z) * 0.5,
         brace.id + ': external brace must remain within outer shell envelope',
       );
+    }
+  }
+});
+
+
+test('S3 face braces stay mounted to their split shell panels across Seat counts and opening states', () => {
+  assert.equal(MACHINE_POD_ASSEMBLY_VERSION, 'S3-V7');
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const core = createBranchConnectionCore({ seatCount, expansionAmount });
+      const pods = core.parts.filter((part) => part.kind === 'inner-pod');
+
+      for (const part of pods) {
+        const assembly = part.podAssembly;
+        const mechanical = assembly.mechanicalPresentation;
+        const outer = assembly.components.find((component) => component.role === 'outer-shell');
+        const width = Number(outer.dimensions.x);
+        const depth = Number(outer.dimensions.z);
+        const shellRadius = Math.max(width, depth) * 0.5;
+        const braces = assembly.mechanicalDetails.filter((detail) => detail.role === 'shell-face-brace');
+        assert.equal(braces.length, 4);
+
+        const sideCounts = new Map([[-1, 0], [1, 0]]);
+        for (const brace of braces) {
+          const index = Number(brace.id.split(':').at(-1)) - 1;
+          assert.ok(index >= 0 && index < 4, brace.id);
+
+          const angle = mechanical.outwardAngle + Math.PI / 4 + index * (Math.PI * 2 / 4);
+          const localAngle = angle - mechanical.outwardAngle;
+          const side = Math.sin(localAngle) >= 0 ? 1 : -1;
+          sideCounts.set(side, sideCounts.get(side) + 1);
+
+          const faceRadius = shellRadius * 0.42;
+          const panelRotation = mechanical.shellPanelRotation * side;
+          const radialOnPanel = faceRadius * Math.cos(localAngle);
+          const tangentOnPanel = faceRadius * Math.sin(localAngle);
+          const expectedRadial = mechanical.shellPanelTravel
+            + radialOnPanel * Math.cos(panelRotation)
+            - tangentOnPanel * Math.sin(panelRotation);
+          const expectedTangent = side * mechanical.shellPanelSeparation
+            + radialOnPanel * Math.sin(panelRotation)
+            + tangentOnPanel * Math.cos(panelRotation);
+          const expectedX = assembly.center.x
+            + mechanical.outward.x * expectedRadial
+            + mechanical.tangent.x * expectedTangent;
+          const expectedZ = assembly.center.z
+            + mechanical.outward.z * expectedRadial
+            + mechanical.tangent.z * expectedTangent;
+          const expectedY = assembly.center.y
+            + Number(part.dimensions.y) * 0.18
+            + mechanical.shellPanelLift;
+          assert.ok(Math.abs(brace.center.x - expectedX) < 1e-9, brace.id + ': X must follow panel motion');
+          assert.ok(Math.abs(brace.center.y - expectedY) < 1e-9, brace.id + ': Y must follow panel lift');
+          assert.ok(Math.abs(brace.center.z - expectedZ) < 1e-9, brace.id + ': Z must follow panel motion');
+          assert.ok(
+            Math.abs(brace.rotationY - (angle + panelRotation)) < 1e-9,
+            brace.id + ': rotation must follow its shell half',
+          );
+          assert.equal(brace.constructionSlice, 'S3');
+          assert.equal(brace.constructionOwner, 'frontend/spatial/machine-pod-assembly.js');
+          assert.ok(assembly.subject.sourcePartIds.includes(brace.id));
+        }
+
+        assert.equal(sideCounts.get(-1), 2, part.branchId + ': two braces must mount to the negative panel');
+        assert.equal(sideCounts.get(1), 2, part.branchId + ': two braces must mount to the positive panel');
+
+        if (seatCount > 1) {
+          assert.ok(
+            assembly.envelope.neighborClearance >= assembly.envelope.requestedClearance - 1e-9,
+            part.branchId + ': Seat clearance fell below floor at expansion=' + expansionAmount,
+          );
+        }
+      }
     }
   }
 });

@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V6';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V7';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -394,24 +394,40 @@ export function deriveMachinePodAssembly({
       });
     }),
     ...Array.from({ length: 4 }, (_, index) => {
-      const angle = outwardAngle + index * (TAU / 4);
-      const faceRadius = shellRadius * 0.78;
+      // Two braces mount to each split shell half, away from the panel seam.
+      const angle = outwardAngle + Math.PI / 4 + index * (TAU / 4);
+      const localAngle = angle - outwardAngle;
+      const side = Math.sin(localAngle) >= 0 ? 1 : -1;
+      const faceRadius = shellRadius * 0.42;
+      const panelRotation = mechanicalPresentation.shellPanelRotation * side;
+      const radialOnPanel = faceRadius * Math.cos(localAngle);
+      const tangentOnPanel = faceRadius * Math.sin(localAngle);
+      const attachedRadial = mechanicalPresentation.shellPanelTravel
+        + radialOnPanel * Math.cos(panelRotation)
+        - tangentOnPanel * Math.sin(panelRotation);
+      const attachedTangent = side * mechanicalPresentation.shellPanelSeparation
+        + radialOnPanel * Math.sin(panelRotation)
+        + tangentOnPanel * Math.cos(panelRotation);
       return Object.freeze({
         id: `MACHINE-POD:${branchId}:SHELL-FACE-BRACE:${index + 1}`,
         role: 'shell-face-brace',
         shape: 'POD_SHELL_PANEL',
         profile: 'outer-shell-face-frame',
         center: Object.freeze({
-          x: center.x + Math.cos(angle) * faceRadius,
-          y: center.y + height * 0.18,
-          z: center.z + Math.sin(angle) * faceRadius,
+          x: center.x
+            + radial.x * attachedRadial
+            + tangent.x * attachedTangent,
+          y: center.y + height * 0.18 + mechanicalPresentation.shellPanelLift,
+          z: center.z
+            + radial.z * attachedRadial
+            + tangent.z * attachedTangent,
         }),
         dimensions: Object.freeze({
           x: minimumSpan * 0.18,
           y: height * 0.24,
           z: minimumSpan * 0.08,
         }),
-        rotationY: angle,
+        rotationY: angle + panelRotation,
         materialRole: index % 2 === 0 ? 'metal2' : 'metal',
         outline: POD_SHELL_RIB_OUTLINE,
         ...rootContext(),
