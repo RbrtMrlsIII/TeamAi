@@ -2097,6 +2097,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let facilityMachineryCount = 0;
 
     const facilityBodyShells = deriveMachineWorldFacilityShellDescriptors(facilityMachinery);
+    const authoredS7BodyBranchIds = new Set(
+      facilityBodyShells
+        .filter((entry) => entry.layer === 'main-shell')
+        .map((entry) => entry.branchId),
+    );
+    if (authoredS7BodyBranchIds.size !== 4) {
+      throw new Error('invalid S7 authored outer-body branch coverage');
+    }
     if (
       facilityBodyShells.length !== 20
       || !facilityBodyShells.every((entry) =>
@@ -2169,6 +2177,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
     gl.depthMask(true);
     canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
+    canvas.dataset.machineWorldLegacyOuterHousingFallbackCount = String(
+      scene.parts.filter((part) =>
+        part.kind === 'outer-housing' && !authoredS7BodyBranchIds.has(part.branchId),
+      ).length,
+    );
+    canvas.dataset.machineWorldAuthoredOuterHousingReplacementCount = String(
+      scene.parts.filter((part) =>
+        part.kind === 'outer-housing' && authoredS7BodyBranchIds.has(part.branchId),
+      ).length,
+    );
     canvas.dataset.machineWorldFacilityBodyMainShellCount = String(
       facilityBodyShells.filter((entry) => entry.layer === 'main-shell').length,
     );
@@ -2371,7 +2389,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           podAssemblyPortCount += projected.ports.length;
           if (selected) podAssemblySelectedBranch = projected.branchId;
         }
-      } else {
+      } else if (part.kind !== 'outer-housing' || !authoredS7BodyBranchIds.has(part.branchId)) {
         entry = ensureBuffer(part);
         gl.useProgram(solid);
         gl.bindBuffer(gl.ARRAY_BUFFER,entry.buffer);
@@ -2395,6 +2413,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         );
         gl.uniform1f(solidGlow, selected ? .75 : .16);
         gl.drawArrays(gl.TRIANGLES,0,entry.count);
+      } else {
+        // S7's authored layered chassis now owns the housing surface. Do not redraw
+        // the legacy opaque housing mesh over the embedded core primitives.
+        entry = null;
       }
 
       if (part.uiSurface) {

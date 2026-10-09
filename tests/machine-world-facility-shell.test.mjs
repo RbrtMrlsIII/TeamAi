@@ -136,4 +136,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   assert.match(renderer, /BOX: Object\.freeze\(\[\[-1, -1\], \[1, -1\], \[1, 1\], \[-1, 1\]\]\)/);
   assert.match(renderer, /shell\.shape === 'CYLINDER' \? 'CYL' : shell\.shape/);
   assert.match(renderer, /authoredOutline\s*\?\s*ensureFacilityBodyBuffer\(shell\.silhouette\)\s*:\s*ensurePrimitiveBuffer\(primitiveShape\)/);
+  assert.match(renderer, /part\.kind !== 'outer-housing' \|\| !authoredS7BodyBranchIds\.has\(part\.branchId\)/);
+  assert.match(renderer, /machineWorldLegacyOuterHousingFallbackCount/);
+  assert.match(renderer, /machineWorldAuthoredOuterHousingReplacementCount/);
 });
