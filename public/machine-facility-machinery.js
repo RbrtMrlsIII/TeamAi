@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V19';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V20';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -1225,6 +1225,38 @@ export function deriveMachineFacilityMachinery({
       attachmentRailY: railY,
       ...rootContext(assembly.branchId + ':CHASSIS-CORE-ANCHOR-PLATE'),
     });
+    const firstSupport = chassisSupports[0];
+    const secondSupport = chassisSupports[1];
+    const transverseDx = secondSupport.center.x - firstSupport.center.x;
+    const transverseDz = secondSupport.center.z - firstSupport.center.z;
+    const transverseSpan = Math.hypot(transverseDx, transverseDz);
+    if (transverseSpan < 0.12) {
+      throw new Error('degenerate chassis transverse tie for ' + assembly.branchId);
+    }
+    const chassisTransverseTie = Object.freeze({
+      id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TRANSVERSE-TIE',
+      role: 'chassis-transverse-tie',
+      shape: 'BOX',
+      center: Object.freeze({
+        x: (firstSupport.center.x + secondSupport.center.x) * 0.5,
+        y: railY,
+        z: (firstSupport.center.z + secondSupport.center.z) * 0.5,
+      }),
+      dimensions: Object.freeze({
+        x: Math.max(0.07, frameWidth * 0.035),
+        y: Math.max(0.12, frameHeight * 0.10),
+        z: transverseSpan + 0.14,
+      }),
+      rotationY: Math.atan2(transverseDx, transverseDz),
+      materialRole: 'metal2',
+      parentRole: 'chassis-tie-node-collar',
+      profile: 'chassis-transverse-tie-v1',
+      attachmentSourceIds: Object.freeze([firstSupport.id, secondSupport.id]),
+      attachmentTargetIds: Object.freeze(chassisTieNodeCollars.map((entry) => entry.id)),
+      attachmentRailY: railY,
+      attachmentSpan: transverseSpan,
+      ...rootContext(assembly.branchId + ':CHASSIS-TRANSVERSE-TIE'),
+    });
     const mechanicalDetails = Object.freeze([
       ...authoredMechanicalDetails,
       ...chassisTransferLinks,
@@ -1232,6 +1264,7 @@ export function deriveMachineFacilityMachinery({
       chassisCoreStandoff,
       ...chassisTieNodeCollars,
       chassisCoreAnchorPlate,
+      chassisTransverseTie,
     ]);
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);

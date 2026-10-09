@@ -99,12 +99,12 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
     analysis.mechanicalDetails.filter((entry) => entry.role.startsWith('barrel-collar-')).length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 17);
+  assert.equal(analysis.mechanicalDetails.length, 18);
   const control = machinery.find((machine) => machine.machineRole === 'control');
   const access = machinery.find((machine) => machine.machineRole === 'access-commerce');
   assert.ok(control && access);
-  assert.equal(control.mechanicalDetails.length, 19);
-  assert.equal(access.mechanicalDetails.length, 22);
+  assert.equal(control.mechanicalDetails.length, 20);
+  assert.equal(access.mechanicalDetails.length, 23);
 });
 
 test('S7 analysis telescope exposes fixed guide rails within the authored housing envelope', () => {
@@ -153,7 +153,7 @@ test('S7 analysis telescope exposes fixed guide rails within the authored housin
     analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail').length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 17);
+  assert.equal(analysis.mechanicalDetails.length, 18);
 });
 
 test('S7 operations fins use bounded authored convex silhouettes', () => {
@@ -318,7 +318,7 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
     operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
     4,
   );
-  assert.equal(operations.mechanicalDetails.length, 19);
+  assert.equal(operations.mechanicalDetails.length, 20);
 });
 
 
@@ -365,7 +365,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V19');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V20');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -474,10 +474,10 @@ test('S7 facility chassis details are authored and included in each machine subj
 
   for (const machine of machinery) {
     const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control'
-      ? 19
+      ? 20
       : machine.machineRole === 'access-commerce'
-        ? 22
-        : 17;
+        ? 23
+        : 18;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
@@ -842,7 +842,7 @@ test('S7 V2 nested chassis trusses remain visible above the authored outer skin 
 });
 
 
-test('S7 V19 chassis junction collars physically join support risers and the nested core standoff', () => {
+test('S7 V20 chassis yoke closes across the authored side-support and nested-core joints', () => {
   const primaryCoreRole = Object.freeze({
     analysis: 'barrel-stage-1',
     operations: 'hinge-core',
@@ -915,8 +915,27 @@ test('S7 V19 chassis junction collars physically join support risers and the nes
         assert.equal(anchor.profile, 'chassis-core-anchor-plate-v1');
         assert.ok(anchor.center.y > shellTop + 0.04, anchor.id + ': anchor must clear opaque chassis skin');
 
+        const transverseTies = detail('chassis-transverse-tie');
+        assert.equal(transverseTies.length, 1, machine.machineRole);
+        const transverseTie = transverseTies[0];
+        const firstSupport = supports[0];
+        const secondSupport = supports[1];
+        const dx = secondSupport.center.x - firstSupport.center.x;
+        const dz = secondSupport.center.z - firstSupport.center.z;
+        const span = Math.hypot(dx, dz);
+        assert.equal(transverseTie.profile, 'chassis-transverse-tie-v1');
+        assert.deepEqual(transverseTie.attachmentSourceIds, supports.map((entry) => entry.id));
+        assert.deepEqual(transverseTie.attachmentTargetIds, nodeCollars.map((entry) => entry.id));
+        assert.ok(Math.abs(transverseTie.attachmentSpan - span) < 1e-9);
+        assert.ok(Math.abs(transverseTie.rotationY - Math.atan2(dx, dz)) < 1e-9);
+        assert.ok(Math.abs(transverseTie.center.x - (firstSupport.center.x + secondSupport.center.x) * 0.5) < 1e-9);
+        assert.ok(Math.abs(transverseTie.center.z - (firstSupport.center.z + secondSupport.center.z) * 0.5) < 1e-9);
+        assert.equal(transverseTie.center.y, anchor.center.y);
+        assert.ok(transverseTie.dimensions.z >= span + 0.13, transverseTie.id + ': crossmember must overlap both joint collars');
+        assert.ok(transverseTie.center.y > shellTop + 0.04, transverseTie.id + ': crossmember must clear opaque chassis skin');
+
         const subjectIds = new Set(machine.subject.sourcePartIds);
-        for (const joint of [...nodeCollars, ...anchorPlates]) {
+        for (const joint of [...nodeCollars, ...anchorPlates, ...transverseTies]) {
           assert.ok(subjectIds.has(joint.id), joint.id + ': joint missing from machine subject');
           assert.equal(joint.constructionSlice, 'S7');
           assert.equal(joint.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
