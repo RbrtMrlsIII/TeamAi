@@ -55,7 +55,7 @@ import {
   MACHINE_WORLD_FACILITY_CARRIER_VERSION,
 } from './machine-world-facility-carrier.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
-import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES } from './machine-world-facility-shell.js';
+import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES, MACHINE_WORLD_FACILITY_SHELL_VERSION } from './machine-world-facility-shell.js';
 import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
@@ -231,6 +231,7 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   CORE_HEX: regularPolygon(6, Math.PI / 6),
   CORE_OCT: regularPolygon(8, Math.PI / 8),
   CORE_DODEC: regularPolygon(12, Math.PI / 12),
+  BOX: Object.freeze([[-1, -1], [1, -1], [1, 1], [-1, 1]]),
   CUBE: POLYS.pod,
   [MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE]: POLYS.authorizationShield,
   [MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE]: POLYS.behaviorBaffle,
@@ -2110,8 +2111,19 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     // The body skin is a presentation layer around the existing S6/S7 owners.
     // It does not acquire depth-write authority over the real mechanisms.
     gl.depthMask(false);
+    const mechanismHousingPrimitiveShapes = [];
     for (const shell of facilityBodyShells) {
-      const buffer = ensureFacilityBodyBuffer(shell.silhouette);
+      const authoredOutline = Array.isArray(shell.outline) && shell.outline.length >= 3;
+      const primitiveShape = shell.shape === 'CYLINDER' ? 'CYL' : shell.shape;
+      if (shell.layer === 'mechanism-housing') {
+        if (authoredOutline || !['CYL', 'BOX'].includes(primitiveShape)) {
+          throw new Error('invalid S7 mechanism-housing primitive: ' + shell.branchId);
+        }
+        mechanismHousingPrimitiveShapes.push(shell.branchId + ':' + primitiveShape);
+      }
+      const buffer = authoredOutline
+        ? ensureFacilityBodyBuffer(shell.silhouette)
+        : ensurePrimitiveBuffer(primitiveShape);
       const selected = shell.branchId === branchId;
       const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
       const material = shell.materialRole === 'glass'
@@ -2163,6 +2175,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldFacilityBodySilhouettes = [
       ...new Set(facilityBodyShells.map((entry) => entry.silhouette)),
     ].join(',');
+    if (mechanismHousingPrimitiveShapes.length !== 4) {
+      throw new Error('invalid S7 mechanism-housing primitive count');
+    }
+    canvas.dataset.machineWorldFacilityBodyShellVersion = MACHINE_WORLD_FACILITY_SHELL_VERSION;
+    canvas.dataset.machineWorldFacilityCorePrimitiveCount = String(mechanismHousingPrimitiveShapes.length);
+    canvas.dataset.machineWorldFacilityCoreShapes = mechanismHousingPrimitiveShapes.join('|');
+    canvas.dataset.machineWorldFacilityCorePrimitiveValidation = 'pass';
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;
     const facilityMechanismPhases = [];

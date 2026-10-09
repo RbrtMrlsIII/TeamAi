@@ -7,6 +7,7 @@ import { deriveMachineFacilityMachinery } from '../frontend/spatial/machine-faci
 import {
   deriveMachineWorldFacilityShellDescriptors,
   validateMachineWorldFacilityShellDescriptors,
+  MACHINE_WORLD_FACILITY_SHELL_VERSION,
 } from '../frontend/spatial/machine-world-facility-shell.js';
 
 test('S7 layered outer facility shells derive a coherent body stack for each authored module', () => {
@@ -104,4 +105,35 @@ test('S7 layered facility bodies remain contained by their authored main-body en
       );
     }
   }
+});
+
+
+test('S7 mechanism housings retain their authored family primitive inside the faceted chassis', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const assemblies = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const facilities = deriveMachineFacilityMachinery({ facilityAssemblies: assemblies });
+  const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
+  const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
+
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V3');
+  assert.equal(cores.length, 4);
+  assert.deepEqual(
+    Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),
+    {
+      'BRANCH-OUTER-ALPHA': 'CYLINDER',
+      'BRANCH-OUTER-BETA': 'BOX',
+      'BRANCH-OUTER-GAMMA': 'CYLINDER',
+      'BRANCH-OUTER-DELTA': 'CYLINDER',
+    },
+  );
+  assert.ok(cores.every((entry) => entry.outline === null));
+
+  const renderer = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
+  const publicRenderer = readFileSync('public/machine-world-renderer.js', 'utf8');
+  assert.equal(publicRenderer, renderer);
+  assert.match(renderer, /BOX: Object\.freeze\(\[\[-1, -1\], \[1, -1\], \[1, 1\], \[-1, 1\]\]\)/);
+  assert.match(renderer, /shell\.shape === 'CYLINDER' \? 'CYL' : shell\.shape/);
+  assert.match(renderer, /authoredOutline\s*\?\s*ensureFacilityBodyBuffer\(shell\.silhouette\)\s*:\s*ensurePrimitiveBuffer\(primitiveShape\)/);
 });

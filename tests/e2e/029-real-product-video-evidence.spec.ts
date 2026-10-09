@@ -15,6 +15,10 @@ test.describe('029 real-product video evidence', () => {
 
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-count', '20');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-main-shell-count', '4');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V3');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-core-primitive-count', '4');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-core-shapes', 'BRANCH-OUTER-ALPHA:CYL|BRANCH-OUTER-BETA:BOX|BRANCH-OUTER-GAMMA:CYL|BRANCH-OUTER-DELTA:CYL');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-core-primitive-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-embodiment', 'S8-ENDPOINT-V3');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-count', '19');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-connector-span', 'visible');
