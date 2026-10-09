@@ -1101,7 +1101,7 @@ export function deriveMachineFacilityMachinery({
         }),
         dimensions: Object.freeze({
           x: Math.max(0.07, frameWidth * 0.035),
-          y: Math.max(0.08, frameHeight * 0.07),
+          y: Math.max(0.12, frameHeight * 0.10),
           z: Math.max(0.20, horizontalLength + 0.14),
         }),
         rotationY: Math.atan2(dx, dz),

@@ -831,7 +831,8 @@ test('S7 V2 nested chassis trusses remain visible above the authored outer skin 
           assert.ok(Math.abs(tie.center.z - (support.center.z + core.center.z) * 0.5) < 1e-9, tie.id + ': midpoint Z');
           assert.ok(Math.abs(tie.center.y - railY) < 1e-9, tie.id + ': rail elevation');
           assert.ok(Math.abs(tie.center.y - tie.attachmentRailY) < 1e-9, tie.id + ': recorded rail elevation');
-          assert.ok(tie.dimensions.y > 0.08, tie.id + ': nonzero upper cross-section');
+          assert.ok(tie.dimensions.y >= 0.12, tie.id + ': visible upper cross-section');
+          assert.ok(railY - tie.dimensions.y * 0.5 > shellTop + 0.02, tie.id + ': full beam section clears shell top');
           assert.ok(Math.abs(Math.sin(tie.rotationY) - dx / horizontalLength) < 1e-9, tie.id + ': local axis X');
           assert.ok(Math.abs(Math.cos(tie.rotationY) - dz / horizontalLength) < 1e-9, tie.id + ': local axis Z');
         }
