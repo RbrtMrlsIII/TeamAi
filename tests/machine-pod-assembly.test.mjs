@@ -233,7 +233,7 @@ test('S3 external shell-face braces stay inside the authored Pod outer envelope'
 
 
 test('S3 face braces stay mounted to their split shell panels across Seat counts and opening states', () => {
-  assert.equal(MACHINE_POD_ASSEMBLY_VERSION, 'S3-V7');
+  assert.equal(MACHINE_POD_ASSEMBLY_VERSION, 'S3-V8');
 
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     for (const expansionAmount of [0, 0.5, 1]) {
@@ -261,30 +261,53 @@ test('S3 face braces stay mounted to their split shell panels across Seat counts
           sideCounts.set(side, sideCounts.get(side) + 1);
 
           const faceRadius = shellRadius * 0.42;
-          const panelRotation = mechanical.shellPanelRotation * side;
-          const radialOnPanel = faceRadius * Math.cos(localAngle);
-          const tangentOnPanel = faceRadius * Math.sin(localAngle);
-          const expectedRadial = mechanical.shellPanelTravel
-            + radialOnPanel * Math.cos(panelRotation)
-            - tangentOnPanel * Math.sin(panelRotation);
-          const expectedTangent = side * mechanical.shellPanelSeparation
-            + radialOnPanel * Math.sin(panelRotation)
-            + tangentOnPanel * Math.cos(panelRotation);
-          const expectedX = assembly.center.x
-            + mechanical.outward.x * expectedRadial
-            + mechanical.tangent.x * expectedTangent;
-          const expectedZ = assembly.center.z
-            + mechanical.outward.z * expectedRadial
-            + mechanical.tangent.z * expectedTangent;
-          const expectedY = assembly.center.y
-            + Number(part.dimensions.y) * 0.18
-            + mechanical.shellPanelLift;
-          assert.ok(Math.abs(brace.center.x - expectedX) < 1e-9, brace.id + ': X must follow panel motion');
+          const localX = faceRadius * Math.cos(localAngle);
+          const localZ = faceRadius * Math.sin(localAngle);
+          const panelAngle = mechanical.outwardAngle + mechanical.shellPanelRotation * side;
+          const panelCenter = {
+            x: assembly.center.x
+              + mechanical.outward.x * mechanical.shellPanelTravel
+              + mechanical.tangent.x * mechanical.shellPanelSeparation * side,
+            y: assembly.center.y
+              + Number(part.dimensions.y) * 0.06
+              + mechanical.shellPanelLift,
+            z: assembly.center.z
+              + mechanical.outward.z * mechanical.shellPanelTravel
+              + mechanical.tangent.z * mechanical.shellPanelSeparation * side,
+          };
+
+          // This is the renderer's column-major rotateYMatrix transform:
+          // x' = cos(theta) * x + sin(theta) * z
+          // z' = -sin(theta) * x + cos(theta) * z
+          const cosine = Math.cos(panelAngle);
+          const sine = Math.sin(panelAngle);
+          const expectedX = panelCenter.x + cosine * localX + sine * localZ;
+          const expectedZ = panelCenter.z - sine * localX + cosine * localZ;
+          const expectedY = panelCenter.y + Number(part.dimensions.y) * 0.12;
+          assert.ok(Math.abs(brace.center.x - expectedX) < 1e-9, brace.id + ': X must follow actual panel matrix');
           assert.ok(Math.abs(brace.center.y - expectedY) < 1e-9, brace.id + ': Y must follow panel lift');
-          assert.ok(Math.abs(brace.center.z - expectedZ) < 1e-9, brace.id + ': Z must follow panel motion');
+          assert.ok(Math.abs(brace.center.z - expectedZ) < 1e-9, brace.id + ': Z must follow actual panel matrix');
           assert.ok(
-            Math.abs(brace.rotationY - (angle + panelRotation)) < 1e-9,
-            brace.id + ': rotation must follow its shell half',
+            Math.abs(brace.rotationY - panelAngle) < 1e-9,
+            brace.id + ': brace orientation must match its panel transform',
+          );
+
+          const worldDx = brace.center.x - panelCenter.x;
+          const worldDz = brace.center.z - panelCenter.z;
+          const recoveredLocalX = cosine * worldDx - sine * worldDz;
+          const recoveredLocalZ = sine * worldDx + cosine * worldDz;
+          assert.ok(Math.abs(recoveredLocalX - localX) < 1e-9, brace.id + ': X must invert to panel-local offset');
+          assert.ok(Math.abs(recoveredLocalZ - localZ) < 1e-9, brace.id + ': Z must invert to panel-local offset');
+
+          const panelHalfWidth = width * 0.27;
+          const panelHalfDepth = depth * 0.44;
+          assert.ok(
+            Math.abs(recoveredLocalX) + Number(brace.dimensions.x) * 0.5 <= panelHalfWidth + 1e-9,
+            brace.id + ': brace width escaped split panel boundary',
+          );
+          assert.ok(
+            Math.abs(recoveredLocalZ) + Number(brace.dimensions.z) * 0.5 <= panelHalfDepth + 1e-9,
+            brace.id + ': brace depth escaped split panel boundary',
           );
           assert.equal(brace.constructionSlice, 'S3');
           assert.equal(brace.constructionOwner, 'frontend/spatial/machine-pod-assembly.js');

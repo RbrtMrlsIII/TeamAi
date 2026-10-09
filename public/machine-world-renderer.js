@@ -1002,7 +1002,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldPodMechanicalDetails =
       String((assembly.mechanicalDetails || []).length);
     canvas.dataset.machineWorldPodAssemblyVersion = String(assembly.version || 'unknown');
-    canvas.dataset.machineWorldPodFaceBraceAttachment = 'split-panel-bound';
+    canvas.dataset.machineWorldPodFaceBraceAttachment = 'panel-local-matrix-v2';
     canvas.dataset.machineWorldPodMechanicalState = mechanicalState;
     canvas.dataset.machineWorldPodMechanicalAmount = String(progress);
     canvas.dataset.machineWorldPodMechanicalProfile = mechanical

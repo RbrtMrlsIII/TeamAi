@@ -33,8 +33,8 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-rendered', '20');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-scope', 'WORLD_OVERVIEW');
-    await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-version', 'S3-V7');
-    await expect(canvas).toHaveAttribute('data-machine-world-pod-face-brace-attachment', 'split-panel-bound');
+    await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-version', 'S3-V8');
+    await expect(canvas).toHaveAttribute('data-machine-world-pod-face-brace-attachment', 'panel-local-matrix-v2');
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await page.waitForTimeout(1100);
