@@ -99,12 +99,12 @@ test('S7 analysis machine uses authored nested telescope barrel footprints and c
     analysis.mechanicalDetails.filter((entry) => entry.role.startsWith('barrel-collar-')).length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 14);
+  assert.equal(analysis.mechanicalDetails.length, 17);
   const control = machinery.find((machine) => machine.machineRole === 'control');
   const access = machinery.find((machine) => machine.machineRole === 'access-commerce');
   assert.ok(control && access);
-  assert.equal(control.mechanicalDetails.length, 16);
-  assert.equal(access.mechanicalDetails.length, 19);
+  assert.equal(control.mechanicalDetails.length, 19);
+  assert.equal(access.mechanicalDetails.length, 22);
 });
 
 test('S7 analysis telescope exposes fixed guide rails within the authored housing envelope', () => {
@@ -153,7 +153,7 @@ test('S7 analysis telescope exposes fixed guide rails within the authored housin
     analysis.mechanicalDetails.filter((entry) => entry.role === 'barrel-guide-rail').length,
     2,
   );
-  assert.equal(analysis.mechanicalDetails.length, 14);
+  assert.equal(analysis.mechanicalDetails.length, 17);
 });
 
 test('S7 operations fins use bounded authored convex silhouettes', () => {
@@ -318,7 +318,7 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
     operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
     4,
   );
-  assert.equal(operations.mechanicalDetails.length, 16);
+  assert.equal(operations.mechanicalDetails.length, 19);
 });
 
 
@@ -365,7 +365,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V18');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V19');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -474,10 +474,10 @@ test('S7 facility chassis details are authored and included in each machine subj
 
   for (const machine of machinery) {
     const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control'
-      ? 16
+      ? 19
       : machine.machineRole === 'access-commerce'
-        ? 19
-        : 14;
+        ? 22
+        : 17;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);
@@ -835,6 +835,91 @@ test('S7 V2 nested chassis trusses remain visible above the authored outer skin 
           assert.ok(railY - tie.dimensions.y * 0.5 > shellTop + 0.02, tie.id + ': full beam section clears shell top');
           assert.ok(Math.abs(Math.sin(tie.rotationY) - dx / horizontalLength) < 1e-9, tie.id + ': local axis X');
           assert.ok(Math.abs(Math.cos(tie.rotationY) - dz / horizontalLength) < 1e-9, tie.id + ': local axis Z');
+        }
+      }
+    }
+  }
+});
+
+
+test('S7 V19 chassis junction collars physically join support risers and the nested core standoff', () => {
+  const primaryCoreRole = Object.freeze({
+    analysis: 'barrel-stage-1',
+    operations: 'hinge-core',
+    control: 'rotor-hub',
+    'access-commerce': 'sensor-mast',
+  });
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const outerHousings = scene.parts.filter((part) => part.kind === 'outer-housing');
+      const facilities = deriveMachineFacilityAssemblies({ outerHousings });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: facilities,
+        outerHousings,
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      const validation = validateMachineFacilityMachinery(machinery);
+      assert.equal(validation.valid, true, validation.reasons.join(', '));
+
+      for (const machine of machinery) {
+        const detail = (role) => machine.mechanicalDetails.filter((entry) => entry.role === role);
+        const supports = detail('support-strut');
+        const ties = detail('chassis-core-tie');
+        const risers = detail('chassis-tie-riser');
+        const nodeCollars = detail('chassis-tie-node-collar');
+        const standoffs = detail('chassis-core-standoff');
+        const anchorPlates = detail('chassis-core-anchor-plate');
+        const primaryCore = machine.components.find((entry) => entry.role === primaryCoreRole[machine.machineRole]);
+
+        assert.equal(supports.length, 2, machine.machineRole);
+        assert.equal(ties.length, 2, machine.machineRole);
+        assert.equal(risers.length, 2, machine.machineRole);
+        assert.equal(nodeCollars.length, 2, machine.machineRole);
+        assert.equal(standoffs.length, 1, machine.machineRole);
+        assert.equal(anchorPlates.length, 1, machine.machineRole);
+        assert.ok(primaryCore, machine.machineRole + ': missing nested core');
+        assert.ok(machine.clearanceProfile.safe, machine.machineRole + ': unsafe at Seats=' + seatCount + ', expansion=' + expansionAmount);
+        assert.ok(
+          machine.clearanceProfile.minimumAvailableClearance >= 0.16 - 1e-9,
+          machine.machineRole + ': clearance floor at Seats=' + seatCount + ', expansion=' + expansionAmount,
+        );
+
+        const shellTop = machine.outerHousing.center.y + machine.outerHousing.dimensions.y * 0.5;
+        for (const support of supports) {
+          const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+          const tie = ties.find((entry) => entry.attachmentSourceId === support.id);
+          const riser = risers.find((entry) => entry.attachmentSourceId === support.id);
+          const collar = nodeCollars.find((entry) => entry.attachmentSourceId === support.id);
+          assert.ok(tie && riser && collar, machine.machineRole + ':' + side + ': incomplete joint');
+
+          assert.equal(collar.attachmentTargetId, tie.id);
+          assert.equal(collar.attachmentRiserId, riser.id);
+          assert.equal(collar.center.x, support.center.x);
+          assert.equal(collar.center.z, support.center.z);
+          assert.equal(collar.center.y, tie.attachmentRailY);
+          assert.equal(collar.profile, 'chassis-tie-node-collar-v1');
+          assert.ok(collar.center.y > shellTop + 0.04, collar.id + ': collar must clear opaque chassis skin');
+          assert.ok(collar.dimensions.x <= 0.24 && collar.dimensions.z <= 0.24, collar.id + ': joint shoe is oversized');
+        }
+
+        const anchor = anchorPlates[0];
+        assert.equal(anchor.attachmentSourceId, primaryCore.id);
+        assert.equal(anchor.attachmentStandoffId, standoffs[0].id);
+        assert.deepEqual(anchor.attachmentTargetIds, ties.map((entry) => entry.id));
+        assert.equal(anchor.center.x, primaryCore.center.x);
+        assert.equal(anchor.center.z, primaryCore.center.z);
+        assert.equal(anchor.center.y, ties[0].attachmentRailY);
+        assert.equal(anchor.profile, 'chassis-core-anchor-plate-v1');
+        assert.ok(anchor.center.y > shellTop + 0.04, anchor.id + ': anchor must clear opaque chassis skin');
+
+        const subjectIds = new Set(machine.subject.sourcePartIds);
+        for (const joint of [...nodeCollars, ...anchorPlates]) {
+          assert.ok(subjectIds.has(joint.id), joint.id + ': joint missing from machine subject');
+          assert.equal(joint.constructionSlice, 'S7');
+          assert.equal(joint.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
         }
       }
     }

@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V18';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V19';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -1169,11 +1169,69 @@ export function deriveMachineFacilityMachinery({
       attachmentRailY: railY,
       ...rootContext(assembly.branchId + ':CHASSIS-CORE-STANDOFF'),
     });
+    const chassisTieNodeCollars = chassisSupports.map((support) => {
+      const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+      const transferLink = chassisTransferLinks.find((entry) => entry.attachmentSourceId === support.id);
+      const riser = chassisTieRisers.find((entry) => entry.attachmentSourceId === support.id);
+      if (!transferLink || !riser) {
+        throw new Error('incomplete chassis tie junction for ' + assembly.branchId + ':' + side);
+      }
+      return Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TIE-NODE-COLLAR:' + side,
+        role: 'chassis-tie-node-collar',
+        shape: 'CYL',
+        center: Object.freeze({
+          x: support.center.x,
+          y: railY,
+          z: support.center.z,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.14, frameWidth * 0.085),
+          y: Math.max(0.06, frameHeight * 0.08),
+          z: Math.max(0.14, frameWidth * 0.085),
+        }),
+        rotationY: basis.angle,
+        materialRole: 'metal2',
+        parentRole: 'chassis-core-tie',
+        profile: 'chassis-tie-node-collar-v1',
+        attachmentSourceId: support.id,
+        attachmentTargetId: transferLink.id,
+        attachmentRiserId: riser.id,
+        attachmentRailY: railY,
+        ...rootContext(assembly.branchId + ':CHASSIS-TIE-NODE-COLLAR:' + side),
+      });
+    });
+    const chassisCoreAnchorPlate = Object.freeze({
+      id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-ANCHOR-PLATE',
+      role: 'chassis-core-anchor-plate',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: primaryCore.center.x,
+        y: railY,
+        z: primaryCore.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: Math.max(0.16, frameWidth * 0.10),
+        y: Math.max(0.07, frameHeight * 0.09),
+        z: Math.max(0.16, frameWidth * 0.10),
+      }),
+      rotationY: basis.angle,
+      materialRole: 'metal2',
+      parentRole: primaryCoreRole,
+      profile: 'chassis-core-anchor-plate-v1',
+      attachmentSourceId: primaryCore.id,
+      attachmentTargetIds: Object.freeze(chassisTransferLinks.map((entry) => entry.id)),
+      attachmentStandoffId: chassisCoreStandoff.id,
+      attachmentRailY: railY,
+      ...rootContext(assembly.branchId + ':CHASSIS-CORE-ANCHOR-PLATE'),
+    });
     const mechanicalDetails = Object.freeze([
       ...authoredMechanicalDetails,
       ...chassisTransferLinks,
       ...chassisTieRisers,
       chassisCoreStandoff,
+      ...chassisTieNodeCollars,
+      chassisCoreAnchorPlate,
     ]);
     const ports = machinePorts(assembly, components);
     const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
