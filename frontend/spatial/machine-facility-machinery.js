@@ -1078,7 +1078,7 @@ export function deriveMachineFacilityMachinery({
     // and central standoff preserve a continuous physical path back to the
     // authored support struts and primary mechanism while remaining visible in
     // the structural Three.js preview as well as the translucent Hero skin.
-    const railY = housingCenter.y + frameHeight * 0.78;
+    const railY = housingCenter.y + frameHeight * 0.84;
     const chassisSupports = authoredMechanicalDetails
       .filter((entry) => entry.role === 'support-strut');
     const chassisTransferLinks = chassisSupports.map((support) => {

@@ -773,7 +773,7 @@ test('S7 V2 nested chassis trusses remain visible above the authored outer skin 
 
         const housingCenter = machine.outerHousing.center;
         const frameHeight = Math.max(0.50, Number(machine.outerHousing.dimensions.y) || 0.9);
-        const railY = housingCenter.y + frameHeight * 0.78;
+        const railY = housingCenter.y + frameHeight * 0.84;
         const shellTop = skin.center.y + skin.dimensions.y * 0.5;
         assert.ok(railY > shellTop + 0.04, machine.machineRole + ': rail path must be outside the opaque chassis skin');
 
