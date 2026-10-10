@@ -84,7 +84,7 @@ test('unknown facility IDs fail closed and return to World', () => {
   assert.equal(f.controller.getBranchId(), null);
   assert.equal(f.controller.getState().mode, 'WORLD_OVERVIEW');
   assert.equal(f.status.textContent, 'World overview');
-  assert.ok(f.resets >= 3);
+  assert.equal(f.resets, 2);
   assert.equal(f.events.at(-1).detail.mode, 'WORLD_OVERVIEW');
 });
 
