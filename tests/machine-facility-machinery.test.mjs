@@ -365,7 +365,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V20');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V21');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -943,4 +943,87 @@ test('S7 V20 chassis yoke closes across the authored side-support and nested-cor
       }
     }
   }
+});
+
+
+test('S7 V21 longitudinal chassis and mechanism members align local Z with authored radial direction', () => {
+  const expectedCounts = Object.freeze({
+    analysis: Object.freeze({
+      'support-strut': 2,
+      'barrel-guide-rail': 2,
+    }),
+    operations: Object.freeze({
+      'support-strut': 2,
+      'structural-spine': 1,
+      'deployment-fin-primary-rail': 1,
+      'deployment-fin-secondary-rail': 1,
+      'fin-actuator-primary': 1,
+      'fin-actuator-secondary': 1,
+    }),
+    control: Object.freeze({
+      'support-strut': 2,
+      'rotor-bearing-block': 2,
+      'rotor-drive-link': 2,
+    }),
+    'access-commerce': Object.freeze({
+      'support-strut': 2,
+      'access-sensor-boom': 2,
+    }),
+  });
+  const radialRoles = new Set(
+    Object.values(expectedCounts).flatMap((roles) => Object.keys(roles)),
+  );
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const facilities = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: facilities,
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+
+      for (const machine of machinery) {
+        const heading = Math.atan2(
+          machine.outerHousing.center.z,
+          machine.outerHousing.center.x,
+        );
+        const outward = { x: Math.cos(heading), z: Math.sin(heading) };
+        const members = [...machine.components, ...machine.mechanicalDetails]
+          .filter((entry) => radialRoles.has(entry.role));
+        const expected = expectedCounts[machine.machineRole];
+
+        for (const [role, count] of Object.entries(expected)) {
+          assert.equal(
+            members.filter((entry) => entry.role === role).length,
+            count,
+            machine.machineRole + ':' + role,
+          );
+        }
+
+        for (const member of members) {
+          // In the renderer, a local +Z axis rotated by yaw becomes
+          // (sin(yaw), cos(yaw)) in world XZ.
+          const worldAxis = {
+            x: Math.sin(member.rotationY),
+            z: Math.cos(member.rotationY),
+          };
+          assert.ok(
+            Math.hypot(worldAxis.x - outward.x, worldAxis.z - outward.z) < 1e-9,
+            member.id + ': local Z must point along the authored outward basis',
+          );
+        }
+
+        assert.equal(machine.clearanceProfile.safe, true, machine.machineRole);
+        assert.ok(machine.clearanceProfile.minimumAvailableClearance >= 0.16 - 1e-9);
+      }
+    }
+  }
+
+  const source = readFileSync('frontend/spatial/machine-facility-machinery.js', 'utf8');
+  const browser = readFileSync('public/machine-facility-machinery.js', 'utf8');
+  assert.equal(browser, source, 'source and browser machinery must stay byte-identical');
 });

@@ -14,7 +14,7 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V20';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V21';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -203,6 +203,13 @@ function localBasis(center) {
   });
 }
 
+// rotateYMatrix transforms a local +Z axis to (sin(yaw), cos(yaw)).
+// Solve yaw from the authored world-space direction instead of reusing an
+// angle measured from +X, which skews radial chassis members off their joints.
+function localZAxisRotationY(direction) {
+  return Math.atan2(finite(direction?.x), finite(direction?.z));
+}
+
 function radialBoundaryDistance(dimensions, angle) {
   const halfX = Math.max(0.01, Math.abs(Number(dimensions?.x) || 0) * 0.5);
   const halfZ = Math.max(0.01, Math.abs(Number(dimensions?.z) || 0) * 0.5);
@@ -290,7 +297,7 @@ function buildMachineComponents(assembly) {
         component(id('STRUCTURAL_SPINE'), 'structural-spine', 'CUBE',
           { x: center.x + basis.outward.x * 0.28, y: center.y + 0.48, z: center.z + basis.outward.z * 0.28 },
           { x: width * 0.14, y: height * 0.68, z: depth * 0.24 }, 'trace',
-          basis.angle),
+          localZAxisRotationY(basis.outward)),
       ]);
     case 'control':
       return Object.freeze([
@@ -634,7 +641,7 @@ export function deriveMachineFacilityMachinery({
           y: Math.max(0.10, frameHeight * 0.18),
           z: Math.max(0.24, frameDepth * 0.34),
         }),
-        rotationY: basis.angle,
+        rotationY: localZAxisRotationY(basis.outward),
         materialRole: 'metal',
         parentRole: MACHINE_CHASSIS_CORE_ROLE[assembly.machineRole],
         ...rootContext(assembly.branchId + ':SUPPORT:' + side),
@@ -719,7 +726,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.08, frameHeight * 0.12),
                 z: Math.max(0.20, frameDepth * 0.18),
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'metal2',
               parentRole: 'barrel-stage-1',
               ...rootContext(assembly.branchId + ':BARREL-GUIDE-RAIL:' + side),
@@ -782,7 +789,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.06, frameHeight * 0.07),
                 z: frameDepth * 0.32,
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'trace',
               parentRole: 'deployment-fin',
               ...rootContext(assembly.branchId + ':FIN-PRIMARY-RAIL'),
@@ -803,7 +810,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.06, frameHeight * 0.07),
                 z: frameDepth * 0.28,
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'trace',
               parentRole: 'deployment-fin-secondary',
               ...rootContext(assembly.branchId + ':FIN-SECONDARY-RAIL'),
@@ -824,7 +831,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.06, frameHeight * 0.10),
                 z: Math.max(0.20, frameDepth * 0.22),
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'metal2',
               parentRole: 'deployment-fin',
               profile: 'operations-fin-actuator-primary',
@@ -846,7 +853,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.06, frameHeight * 0.10),
                 z: Math.max(0.24, frameDepth * 0.28),
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'metal2',
               parentRole: 'deployment-fin-secondary',
               profile: 'operations-fin-actuator-secondary',
@@ -872,7 +879,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.08, frameHeight * 0.14),
                 z: Math.max(0.12, frameDepth * 0.30),
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'metal2',
               parentRole: 'rotor-hub',
               ...rootContext(assembly.branchId + ':ROTOR-BEARING-BLOCK:' + side),
@@ -895,7 +902,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.10, frameHeight * 0.16),
                 z: Math.max(0.24, frameDepth * 0.26),
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'metal2',
               parentRole: 'rotor-hub',
               profile: 'control-rotor-drive-link',
@@ -1018,7 +1025,7 @@ export function deriveMachineFacilityMachinery({
                 y: Math.max(0.06, frameHeight * 0.08),
                 z: Math.max(0.20, frameDepth * 0.24),
               }),
-              rotationY: basis.angle,
+              rotationY: localZAxisRotationY(basis.outward),
               materialRole: 'metal2',
               parentRole: 'sensor-array',
               profile: 'access-sensor-boom',
