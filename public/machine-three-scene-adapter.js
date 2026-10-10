@@ -930,6 +930,9 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   scene.add(fill, key, rim);
 
   const materialCache = new Map();
+  const assemblyMeshPool = new Map();
+  const topologyMeshPool = new Map();
+  const topologyLinePool = new Map();
   const topologyColor = authoredMaterials.trace?.color || [0.28, 0.56, 0.72];
   const topologyMaterial = new THREE.LineBasicMaterial({
     color: new THREE.Color(...topologyColor),
@@ -949,28 +952,70 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     return materialCache.get(keyName);
   }
 
+  function descriptorGeometrySignature(descriptor) {
+    return JSON.stringify([
+      descriptor.shape,
+      descriptor.profile,
+      descriptor.semanticId,
+      descriptor.dimensions,
+      descriptor.outline,
+    ]);
+  }
+
   function addDescriptor(descriptor) {
-    const geometry = buildThreeGeometry(THREE, descriptor);
-    const mesh = new THREE.Mesh(geometry, material(descriptor.materialRole));
+    const geometrySignature = descriptorGeometrySignature(descriptor);
+    let mesh = assemblyMeshPool.get(descriptor.id);
+    let geometryRebuilt = false;
+    if (!mesh) {
+      mesh = new THREE.Mesh(
+        buildThreeGeometry(THREE, descriptor),
+        material(descriptor.materialRole),
+      );
+      mesh.userData.geometrySignature = geometrySignature;
+      assemblyMeshPool.set(descriptor.id, mesh);
+      geometryRebuilt = true;
+    } else if (mesh.userData.geometrySignature !== geometrySignature) {
+      const previousGeometry = mesh.geometry;
+      mesh.geometry = buildThreeGeometry(THREE, descriptor);
+      previousGeometry?.dispose?.();
+      mesh.userData.geometrySignature = geometrySignature;
+      geometryRebuilt = true;
+    }
+
+    mesh.material = material(descriptor.materialRole);
     mesh.name = descriptor.id;
     if (descriptor.semanticId) mesh.userData.semanticId = descriptor.semanticId;
+    else delete mesh.userData.semanticId;
     mesh.userData.parentId = descriptor.parentId;
     mesh.userData.constructionSlice = descriptor.constructionSlice;
     mesh.userData.constructionOwner = descriptor.constructionOwner;
     mesh.position.set(descriptor.center.x, descriptor.center.y, descriptor.center.z);
     if (descriptor.shape === 'SPHERE') {
       mesh.scale.set(descriptor.dimensions.x * 0.5, descriptor.dimensions.y * 0.5, descriptor.dimensions.z * 0.5);
+    } else {
+      mesh.scale.set(1, 1, 1);
     }
     mesh.rotation.y = descriptor.rotationY;
-    machineRoot.add(mesh);
-    return mesh;
+    if (mesh.parent !== machineRoot) machineRoot.add(mesh);
+    return { mesh, geometryRebuilt };
   }
 
   function setAssemblies(input = {}) {
-    clearGroup(machineRoot);
     clearGroup(localLightingRoot);
     const descriptors = collectThreeDescriptors(input);
-    for (const descriptor of descriptors) addDescriptor(descriptor);
+    const activeIds = new Set();
+    let reusedMeshCount = 0;
+    let geometryRebuildCount = 0;
+    for (const descriptor of descriptors) {
+      const reused = assemblyMeshPool.has(descriptor.id);
+      const result = addDescriptor(descriptor);
+      activeIds.add(descriptor.id);
+      if (reused) reusedMeshCount += 1;
+      if (result.geometryRebuilt) geometryRebuildCount += 1;
+    }
+    for (const child of [...machineRoot.children]) {
+      if (!activeIds.has(child.name)) machineRoot.remove(child);
+    }
     const presentationLighting = input?.presentationLighting || {};
     const facilityFocused = presentationLighting?.mode === 'FACILITY_FOCUS';
     fill.intensity = themeLighting.environmentalFillIntensity * (facilityFocused ? 1.08 : 1);
@@ -979,13 +1024,74 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     const localLightCount = buildLocalPracticalLighting(input);
     const focusLighting = facilityFocused ? 'enhanced' : 'base';
     canvas.dataset.threeFacilityFocusLighting = focusLighting;
+    canvas.dataset.threeAssemblyMeshReuseCount = String(reusedMeshCount);
+    canvas.dataset.threeAssemblyGeometryRebuildCount = String(geometryRebuildCount);
     return Object.freeze({
       descriptorCount: descriptors.length,
       objectCount: machineRoot.children.length,
       descriptorIds: descriptors.map((descriptor) => descriptor.id),
       localLightCount,
       facilityFocusLighting: focusLighting,
+      reusedMeshCount,
+      geometryRebuildCount,
     });
+  }
+
+  function acquireTopologyMesh(id, geometrySignature, geometryFactory, materialRole = 'metal2') {
+    let mesh = topologyMeshPool.get(id);
+    const reused = Boolean(mesh);
+    let geometryRebuilt = false;
+    if (!mesh) {
+      mesh = new THREE.Mesh(geometryFactory(), material(materialRole));
+      mesh.name = id;
+      mesh.userData.geometrySignature = geometrySignature;
+      topologyMeshPool.set(id, mesh);
+      geometryRebuilt = true;
+    } else if (mesh.userData.geometrySignature !== geometrySignature) {
+      const previousGeometry = mesh.geometry;
+      mesh.geometry = geometryFactory();
+      previousGeometry?.dispose?.();
+      mesh.userData.geometrySignature = geometrySignature;
+      geometryRebuilt = true;
+    }
+    mesh.material = material(materialRole);
+    if (mesh.parent !== topologyRoot) topologyRoot.add(mesh);
+    return { mesh, reused, geometryRebuilt };
+  }
+
+  function acquireTopologyLine(edge, route) {
+    const id = 'S8_EDGE:' + edge.semanticEdgeId;
+    const positions = new Float32Array(route.flatMap((point) => [
+      Number(point?.x) || 0,
+      Number(point?.y) || 0,
+      Number(point?.z) || 0,
+    ]));
+    let line = topologyLinePool.get(id);
+    const reused = Boolean(line);
+    let geometryRebuilt = false;
+    if (!line) {
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      line = new THREE.Line(geometry, topologyMaterial);
+      topologyLinePool.set(id, line);
+      geometryRebuilt = true;
+    } else {
+      const attribute = line.geometry.getAttribute('position');
+      if (attribute?.count === route.length) {
+        attribute.array.set(positions);
+        attribute.needsUpdate = true;
+      } else {
+        line.geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometryRebuilt = true;
+      }
+      line.geometry.computeBoundingSphere?.();
+    }
+    line.name = id;
+    line.userData.semanticEdgeId = edge.semanticEdgeId;
+    line.userData.edgeKind = edge.kind || '';
+    line.userData.routeContinuous = edge.routeContinuous === true;
+    if (line.parent !== topologyRoot) topologyRoot.add(line);
+    return { line, reused, geometryRebuilt };
   }
 
   function setTopology(topology = null, {
@@ -993,7 +1099,9 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     branchId = null,
     divisions = [],
   } = {}) {
-    clearGroup(topologyRoot);
+    const activeObjects = new Set();
+    let reusedObjectCount = 0;
+    let geometryRebuildCount = 0;
     const edges = Array.isArray(topology?.edges) ? topology.edges : [];
     const physicalKinds = new Set(['pod-division', 'pod-facility', 'facility-facility', 'workspace-contribution', 'adjacent-seat', 'inner-spoke', 'outer-spine', 'lattice-link']);
     let count = 0;
@@ -1003,19 +1111,10 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       if (route.length < 2 || !edge?.semanticEdgeId) continue;
       count += 1;
       if (physicalKinds.has(edge.kind)) continue;
-      const positions = new Float32Array(route.flatMap((point) => [
-        Number(point?.x) || 0,
-        Number(point?.y) || 0,
-        Number(point?.z) || 0,
-      ]));
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      const line = new THREE.Line(geometry, topologyMaterial);
-      line.name = 'S8_EDGE:' + edge.semanticEdgeId;
-      line.userData.semanticEdgeId = edge.semanticEdgeId;
-      line.userData.edgeKind = edge.kind || '';
-      line.userData.routeContinuous = edge.routeContinuous === true;
-      topologyRoot.add(line);
+      const lineResult = acquireTopologyLine(edge, route);
+      activeObjects.add(lineResult.line);
+      if (lineResult.reused) reusedObjectCount += 1;
+      if (lineResult.geometryRebuilt) geometryRebuildCount += 1;
       lineCount += 1;
     }
 
@@ -1025,20 +1124,24 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       branchId,
     });
     for (const segment of structuralConduitSegments) {
-      const geometry = new THREE.CylinderGeometry(
-        segment.radius,
-        segment.radius,
-        segment.length,
-        8,
+      const radius = Math.max(0.01, Number(segment.radius) || 0.01);
+      const result = acquireTopologyMesh(
+        segment.id,
+        'structural-cylinder:' + radius,
+        () => new THREE.CylinderGeometry(radius, radius, 1, 8),
+        'metal2',
       );
-      const mesh = new THREE.Mesh(geometry, material('metal2'));
-      mesh.name = segment.id;
+      const mesh = result.mesh;
+      activeObjects.add(mesh);
+      if (result.reused) reusedObjectCount += 1;
+      if (result.geometryRebuilt) geometryRebuildCount += 1;
       mesh.userData.semanticEdgeId = segment.semanticEdgeId;
       mesh.userData.edgeKind = segment.edgeKind;
       mesh.userData.structuralConduit = true;
       mesh.userData.routeContinuous = segment.routeContinuous;
       mesh.userData.presentationOnly = segment.presentationOnly;
       mesh.position.set(segment.center.x, segment.center.y, segment.center.z);
+      mesh.scale.set(1, Math.max(0.01, Number(segment.length) || 0.01), 1);
       const direction = new THREE.Vector3(
         segment.end.x - segment.start.x,
         segment.end.y - segment.start.y,
@@ -1048,7 +1151,6 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
         new THREE.Vector3(0, 1, 0),
         direction,
       );
-      topologyRoot.add(mesh);
     }
 
     const conduitSegments = getRenderableMachineWorldConduitSegments(topology, {
@@ -1059,29 +1161,30 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     });
     for (const segment of conduitSegments) {
       const conduitShape = resolveThreeConduitRenderShape(segment);
-      const geometry = conduitShape === 'TUBE'
-        ? new THREE.CylinderGeometry(
-            Math.max(0.01, segment.radius * 0.85),
-            Math.max(0.01, segment.radius * 0.85),
-            Math.max(0.01, (
-              Math.max(segment.dimensions.x, segment.dimensions.y, segment.dimensions.z)
-              - segment.radius * 0.30
-            )),
-            8,
-          )
-        : new THREE.BoxGeometry(
-            segment.dimensions.x,
-            segment.dimensions.y,
-            segment.dimensions.z,
-          );
-      const mesh = new THREE.Mesh(geometry, material('conduit'));
-      mesh.name = segment.id;
+      const tubeRadius = Math.max(0.01, segment.radius * 0.85);
+      const result = acquireTopologyMesh(
+        segment.id,
+        conduitShape === 'TUBE' ? 'conduit-cylinder:' + tubeRadius : 'conduit-box-unit-v1',
+        () => conduitShape === 'TUBE'
+          ? new THREE.CylinderGeometry(tubeRadius, tubeRadius, 1, 8)
+          : new THREE.BoxGeometry(1, 1, 1),
+        'conduit',
+      );
+      const mesh = result.mesh;
+      activeObjects.add(mesh);
+      if (result.reused) reusedObjectCount += 1;
+      if (result.geometryRebuilt) geometryRebuildCount += 1;
       mesh.userData.semanticEdgeId = segment.semanticEdgeId;
       mesh.userData.edgeKind = segment.edgeKind;
       mesh.userData.conduitSegment = segment.segmentIndex;
       mesh.userData.routeContinuous = segment.routeContinuous;
       mesh.position.set(segment.center.x, segment.center.y, segment.center.z);
       if (conduitShape === 'TUBE') {
+        const tubeLength = Math.max(0.01, (
+          Math.max(segment.dimensions.x, segment.dimensions.y, segment.dimensions.z)
+          - segment.radius * 0.30
+        ));
+        mesh.scale.set(1, tubeLength, 1);
         const direction = new THREE.Vector3(
           segment.end.x - segment.start.x,
           segment.end.y - segment.start.y,
@@ -1092,22 +1195,25 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
           direction,
         );
       } else {
+        mesh.scale.set(segment.dimensions.x, segment.dimensions.y, segment.dimensions.z);
         mesh.rotation.y = segment.rotationY;
       }
       mesh.userData.conduitShape = conduitShape;
-      topologyRoot.add(mesh);
     }
 
     const dockingSockets = derivePodDivisionDockingSockets(conduitSegments);
     for (const socket of dockingSockets) {
-      const geometry = new THREE.CylinderGeometry(
-        socket.radius,
-        socket.radius,
-        socket.length,
-        8,
+      const radius = Math.max(0.01, Number(socket.radius) || 0.01);
+      const result = acquireTopologyMesh(
+        socket.id,
+        'docking-cylinder:' + radius,
+        () => new THREE.CylinderGeometry(radius, radius, 1, 8),
+        'metal2',
       );
-      const mesh = new THREE.Mesh(geometry, material('metal2'));
-      mesh.name = socket.id;
+      const mesh = result.mesh;
+      activeObjects.add(mesh);
+      if (result.reused) reusedObjectCount += 1;
+      if (result.geometryRebuilt) geometryRebuildCount += 1;
       mesh.userData.semanticEdgeId = socket.semanticEdgeId;
       mesh.userData.edgeKind = socket.edgeKind;
       mesh.userData.dockingRole = socket.role;
@@ -1116,24 +1222,27 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       mesh.userData.presentationOnly = socket.presentationOnly;
       mesh.userData.dockingSocket = true;
       mesh.position.set(socket.center.x, socket.center.y, socket.center.z);
+      mesh.scale.set(1, Math.max(0.01, Number(socket.length) || 0.01), 1);
       mesh.quaternion.setFromUnitVectors(
         new THREE.Vector3(0, 1, 0),
         new THREE.Vector3(socket.direction.x, socket.direction.y, socket.direction.z),
       );
-      topologyRoot.add(mesh);
     }
 
 
     const dockingMounts = derivePodDivisionMountingFixtures(conduitSegments, divisions);
     for (const mount of dockingMounts) {
-      const geometry = new THREE.CylinderGeometry(
-        mount.radius,
-        mount.radius,
-        mount.length,
-        8,
+      const radius = Math.max(0.01, Number(mount.radius) || 0.01);
+      const result = acquireTopologyMesh(
+        mount.id,
+        'docking-cylinder:' + radius,
+        () => new THREE.CylinderGeometry(radius, radius, 1, 8),
+        'metal2',
       );
-      const mesh = new THREE.Mesh(geometry, material('metal2'));
-      mesh.name = mount.id;
+      const mesh = result.mesh;
+      activeObjects.add(mesh);
+      if (result.reused) reusedObjectCount += 1;
+      if (result.geometryRebuilt) geometryRebuildCount += 1;
       mesh.userData.semanticEdgeId = mount.semanticEdgeId;
       mesh.userData.semanticId = mount.semanticId;
       mesh.userData.edgeKind = mount.edgeKind;
@@ -1143,20 +1252,23 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       mesh.userData.presentationOnly = mount.presentationOnly;
       mesh.userData.dockingMount = true;
       mesh.position.set(mount.center.x, mount.center.y, mount.center.z);
-      topologyRoot.add(mesh);
+      mesh.scale.set(1, Math.max(0.01, Number(mount.length) || 0.01), 1);
     }
 
 
     const dockingCollars = derivePodDivisionDockingCollars(conduitSegments);
     for (const collar of dockingCollars) {
-      const geometry = new THREE.CylinderGeometry(
-        collar.radius,
-        collar.radius,
-        collar.length,
-        8,
+      const radius = Math.max(0.01, Number(collar.radius) || 0.01);
+      const result = acquireTopologyMesh(
+        collar.id,
+        'docking-cylinder:' + radius,
+        () => new THREE.CylinderGeometry(radius, radius, 1, 8),
+        'metal2',
       );
-      const mesh = new THREE.Mesh(geometry, material('metal2'));
-      mesh.name = collar.id;
+      const mesh = result.mesh;
+      activeObjects.add(mesh);
+      if (result.reused) reusedObjectCount += 1;
+      if (result.geometryRebuilt) geometryRebuildCount += 1;
       mesh.userData.semanticEdgeId = collar.semanticEdgeId;
       mesh.userData.edgeKind = collar.edgeKind;
       mesh.userData.dockingRole = collar.role;
@@ -1164,9 +1276,14 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       mesh.userData.routeContinuous = collar.routeContinuous;
       mesh.userData.presentationOnly = collar.presentationOnly;
       mesh.position.set(collar.center.x, collar.center.y, collar.center.z);
-      topologyRoot.add(mesh);
+      mesh.scale.set(1, Math.max(0.01, Number(collar.length) || 0.01), 1);
     }
 
+    for (const child of [...topologyRoot.children]) {
+      if (!activeObjects.has(child)) topologyRoot.remove(child);
+    }
+    canvas.dataset.threeTopologyObjectReuseCount = String(reusedObjectCount);
+    canvas.dataset.threeTopologyGeometryRebuildCount = String(geometryRebuildCount);
     return Object.freeze({
       edgeCount: count,
       lineCount,
@@ -1176,6 +1293,8 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       dockingCollarCount: dockingCollars.length,
       dockingSocketCount: dockingSockets.length,
       dockingMountCount: dockingMounts.length,
+      reusedObjectCount,
+      geometryRebuildCount,
     });
   }
 
@@ -1199,8 +1318,27 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
   }
 
   function dispose() {
-    clearGroup(machineRoot);
-    clearGroup(topologyRoot);
+    for (const mesh of assemblyMeshPool.values()) {
+      mesh.removeFromParent?.();
+      mesh.geometry?.dispose?.();
+    }
+    assemblyMeshPool.clear();
+    for (const mesh of topologyMeshPool.values()) {
+      mesh.removeFromParent?.();
+      mesh.geometry?.dispose?.();
+    }
+    topologyMeshPool.clear();
+    for (const line of topologyLinePool.values()) {
+      line.removeFromParent?.();
+      line.geometry?.dispose?.();
+    }
+    topologyLinePool.clear();
+    while (localLightingRoot.children?.length) {
+      localLightingRoot.remove(localLightingRoot.children[localLightingRoot.children.length - 1]);
+    }
+    while (topologyRoot.children?.length) {
+      topologyRoot.remove(topologyRoot.children[topologyRoot.children.length - 1]);
+    }
     topologyMaterial.dispose?.();
     for (const value of materialCache.values()) value.dispose?.();
     materialCache.clear();

@@ -71,6 +71,10 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     expect(transformMid.progress).toBeGreaterThan(0.25);
     expect(transformMid.progress).toBeLessThan(0.95);
     expect(transformMid.transformation).toBeGreaterThan(0);
+    await expect.poll(async () => Number(await canvas.getAttribute('data-three-assembly-mesh-reuse-count')))
+      .toBeGreaterThan(0);
+    await expect.poll(async () => Number(await canvas.getAttribute('data-three-topology-object-reuse-count')))
+      .toBeGreaterThan(0);
     await page.screenshot({ path: 'test-results/s2-s10-transform-mid.png', fullPage: true });
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
     await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
