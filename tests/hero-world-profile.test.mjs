@@ -66,5 +66,5 @@ test('controller no longer owns a private seat radius formula', async () => {
   const source = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
   const navigation = await readFile(new URL('../public/hero-camera-navigation.js', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /function seatRadiusForCount/);
-  assert.match(navigation, /deriveMachineWorldProfile\(getSeatCount\(\)\)\.seatShellRadius/);
+  assert.match(navigation, /deriveMachineWorldProfile\(seatCount\)\.seatShellRadius/);
 });
