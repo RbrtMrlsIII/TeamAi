@@ -118,12 +118,12 @@ export function createMachinePodShellVertices({
     pushTri(topInner[index], topOpening[index], topOpening[next]);
 
     // Two-stage upper bevel, outer wall, and lower return bevel.
-    pushTri(topInner[index], topOuter[index], topOuter[next]);
-    pushTri(topInner[index], topOuter[next], topInner[next]);
-    pushTri(topOuter[index], bottomOuter[index], bottomOuter[next]);
-    pushTri(topOuter[index], bottomOuter[next], topOuter[next]);
-    pushTri(bottomOuter[index], bottomInner[index], bottomInner[next]);
-    pushTri(bottomOuter[index], bottomInner[next], bottomOuter[next]);
+    pushTri(topInner[index], topOuter[next], topOuter[index]);
+    pushTri(topInner[index], topInner[next], topOuter[next]);
+    pushTri(topOuter[index], bottomOuter[next], bottomOuter[index]);
+    pushTri(topOuter[index], topOuter[next], bottomOuter[next]);
+    pushTri(bottomOuter[index], bottomInner[next], bottomInner[index]);
+    pushTri(bottomOuter[index], bottomOuter[next], bottomInner[next]);
 
     // Interior wall descends from the aperture to the closed shell floor.
     pushTri(topOpening[index], bottomOpening[index], bottomOpening[next]);

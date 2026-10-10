@@ -243,3 +243,66 @@ test('raw WebGL and Three.js Pods share a closed-floor open-top beveled S3 shell
   assert.match(adapter, /positions\[index \+ 1\] = \(normalized\[index \+ 1\] - 0\.5\) \* y/);
   assert.equal(MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, 'S3-OPEN-TOP-V1');
 });
+
+
+
+test('S3 open-top Pod shell has outward bevel/chassis normals and inward cavity normals', () => {
+  const vertices = createMachinePodShellVertices();
+  const positions = Array.from({ length: vertices.length / 3 }, (_, index) => [
+    vertices[index * 3],
+    vertices[index * 3 + 1],
+    vertices[index * 3 + 2],
+  ]);
+  const normal = (a, b, c) => {
+    const ab = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+    const ac = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+    return [
+      ab[1] * ac[2] - ab[2] * ac[1],
+      ab[2] * ac[0] - ab[0] * ac[2],
+      ab[0] * ac[1] - ab[1] * ac[0],
+    ];
+  };
+  const triangle = (triangleIndex) => {
+    const start = triangleIndex * 3;
+    return normal(positions[start], positions[start + 1], positions[start + 2]);
+  };
+  const centroid = (triangleIndex) => {
+    const start = triangleIndex * 3;
+    return [0, 1, 2].map((axis) =>
+      (positions[start][axis] + positions[start + 1][axis] + positions[start + 2][axis]) / 3
+    );
+  };
+
+  for (let edge = 0; edge < 12; edge += 1) {
+    const offset = edge * 10;
+    for (const index of [0, 1]) {
+      assert.ok(triangle(offset + index)[1] > 0, 'top lip faces upward');
+    }
+    for (const index of [2, 3]) {
+      const n = triangle(offset + index);
+      const c = centroid(offset + index);
+      assert.ok(n[1] > 0, 'upper bevel faces outward/up');
+      assert.ok(n[0] * c[0] + n[2] * c[2] > 0, 'upper bevel has outward radial normal');
+    }
+    for (const index of [4, 5]) {
+      const n = triangle(offset + index);
+      const c = centroid(offset + index);
+      assert.ok(n[0] * c[0] + n[2] * c[2] > 0, 'outer chassis wall faces outward');
+    }
+    for (const index of [6, 7]) {
+      const n = triangle(offset + index);
+      const c = centroid(offset + index);
+      assert.ok(n[1] < 0, 'lower return bevel faces downward');
+      assert.ok(n[0] * c[0] + n[2] * c[2] > 0, 'lower bevel has outward radial normal');
+    }
+    for (const index of [8, 9]) {
+      const n = triangle(offset + index);
+      const c = centroid(offset + index);
+      assert.ok(n[0] * c[0] + n[2] * c[2] < 0, 'aperture inner wall faces toward cavity');
+    }
+  }
+
+  for (let index = 120; index < 130; index += 1) {
+    assert.ok(triangle(index)[1] < 0, 'closed shell floor faces downward');
+  }
+});
