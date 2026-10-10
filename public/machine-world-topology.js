@@ -17,7 +17,7 @@ import { deriveFocusedSeatDivisionGeometry } from './machine-seat-division-prese
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery } from './machine-facility-machinery.js';
-import { deriveMachineWorldServiceManifold, validateMachineWorldServiceManifold } from './machine-world-service-manifold.js';
+import { deriveMachineWorldServiceManifold, deriveMachineWorldServiceManifoldJunctions, validateMachineWorldServiceManifold } from './machine-world-service-manifold.js';
 
 export const MACHINE_WORLD_TOPOLOGY_ID = 'MACHINE-WORLD-TOPOLOGY';
 export const MACHINE_WORLD_TOPOLOGY_VERSION = 'S8-V1';
@@ -618,14 +618,25 @@ export function buildMachineWorldTopology({
       });
     }),
   );
+  const serviceManifoldJunctions = deriveMachineWorldServiceManifoldJunctions({
+    facilityAnchors: rawServiceManifold.facilityAnchors,
+    segments: serviceManifoldSegments,
+    conduitRadius: serviceManifoldSegments[0]?.radius ?? 0.035,
+    serviceRingMargin: rawServiceManifold.serviceRingMargin,
+  });
   const serviceManifold = Object.freeze({
     ...rawServiceManifold,
-    valid: rawServiceManifold.valid && serviceManifoldSegments.every((segment) => segment.routeContinuous),
+    valid: rawServiceManifold.valid
+      && serviceManifoldSegments.every((segment) => segment.routeContinuous)
+      && serviceManifoldJunctions.length === facilities.length
+      && serviceManifoldJunctions.every((junction) => junction.routeContinuous),
     segments: serviceManifoldSegments,
+    junctions: serviceManifoldJunctions,
   });
   const serviceManifoldValidation = validateMachineWorldServiceManifold(
     serviceManifold,
     { edges },
+    { clearance },
   );
 
   const corridors = Object.freeze(

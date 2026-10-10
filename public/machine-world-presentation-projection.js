@@ -80,18 +80,38 @@ function transformRoute(edge, scale) {
   ));
 }
 
-function transformManifoldSegment(segment, facilityBranchIds, scale) {
+function transformManifoldSegment(segment, scale) {
   if (!segment) return segment;
-  const owner = segment.endpointOwnerBranchId;
-  const related = facilityBranchIds.has(owner)
-    || segment.segmentRole === 'facility-output-spur'
-    || segment.segmentRole === 'facility-input-spur';
-  if (!related) return segment;
+  const role = segment.segmentRole;
+  // The service ring and its anchors stay at the geometry-derived safe radius.
+  // Only the machine-side end of each spur moves with the contracted facility.
+  const start = role === 'facility-output-spur' ? scaleXZ(segment.start, scale) : segment.start;
+  const end = role === 'facility-input-spur' ? scaleXZ(segment.end, scale) : segment.end;
+  if (start === segment.start && end === segment.end) return segment;
+
+  const dx = finite(end?.x) - finite(start?.x);
+  const dy = finite(end?.y) - finite(start?.y);
+  const dz = finite(end?.z) - finite(start?.z);
+  const length = Math.hypot(dx, dy, dz);
+  const horizontal = Math.hypot(dx, dz);
+  const vertical = Math.abs(dy) >= horizontal;
+  const radius = Math.max(0.01, finite(segment.radius, 0.035));
+  const thickness = Math.max(0.02, radius * 2);
   return Object.freeze({
     ...segment,
-    start: scaleXZ(segment.start, scale),
-    end: scaleXZ(segment.end, scale),
-    center: segment.center ? scaleXZ(segment.center, scale) : segment.center,
+    start,
+    end,
+    center: Object.freeze({
+      x: (finite(start?.x) + finite(end?.x)) * 0.5,
+      y: (finite(start?.y) + finite(end?.y)) * 0.5,
+      z: (finite(start?.z) + finite(end?.z)) * 0.5,
+    }),
+    dimensions: Object.freeze(
+      vertical
+        ? { x: thickness, y: length + thickness, z: thickness }
+        : { x: length + thickness, y: thickness, z: thickness },
+    ),
+    rotationY: vertical ? 0 : Math.atan2(dz, dx),
   });
 }
 
@@ -116,7 +136,7 @@ export function deriveMachineWorldPresentationProjection({
     ? Object.freeze({
       ...topology.serviceManifold,
       segments: Object.freeze((topology.serviceManifold.segments || [])
-        .map((segment) => transformManifoldSegment(segment, facilityBranchIds, scale))),
+        .map((segment) => transformManifoldSegment(segment, scale))),
     })
     : topology.serviceManifold;
   const projectedTopology = Object.freeze({
@@ -134,6 +154,29 @@ export function validateMachineWorldPresentationProjection({ facilities = [], to
     for (const edge of topology.edges) {
       if (!Array.isArray(edge?.route) || edge.route.length < 2) reasons.push((edge?.semanticEdgeId || edge?.id || 'EDGE') + ':ROUTE_INVALID');
       if (edge?.routeContinuous === false) reasons.push((edge?.semanticEdgeId || edge?.id || 'EDGE') + ':ROUTE_NOT_CONTINUOUS');
+    }
+  }
+  const manifold = topology?.serviceManifold;
+  if (manifold) {
+    const segments = Array.isArray(manifold.segments) ? manifold.segments : [];
+    const samePoint = (a, b, tolerance = 1e-8) =>
+      Boolean(a && b)
+      && Math.hypot(
+        finite(a.x) - finite(b.x),
+        finite(a.y) - finite(b.y),
+        finite(a.z) - finite(b.z),
+      ) <= tolerance;
+    const junctions = Array.isArray(manifold.junctions) ? manifold.junctions : [];
+    if (junctions.length !== 4) reasons.push('MANIFOLD_JUNCTION_COUNT_INVALID');
+    for (const junction of junctions) {
+      const touching = segments.filter((segment) =>
+        samePoint(segment.start, junction.center) || samePoint(segment.end, junction.center));
+      if (junction.routeContinuous !== true || touching.length !== 4) {
+        reasons.push((junction.id || 'MANIFOLD_JUNCTION') + ':INCIDENCE_NOT_CONTINUOUS');
+      }
+      if (touching.some((segment) => segment.routeContinuous !== true || segment.obstacleAvoidance !== true)) {
+        reasons.push((junction.id || 'MANIFOLD_JUNCTION') + ':INCIDENT_SEGMENT_UNSAFE');
+      }
     }
   }
   if (!Array.isArray(facilities) || facilities.length !== 4) reasons.push('FACILITY_COUNT_INVALID');

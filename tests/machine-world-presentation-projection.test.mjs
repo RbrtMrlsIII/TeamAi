@@ -66,6 +66,62 @@ test('World presentation preserves semantic edge identity and route continuity',
   assert.ok(projected.topology.edges.every((edge) => edge.routeContinuous === true && edge.route.length >= 2));
 });
 
+test('World presentation moves only machine-side manifold spur endpoints and preserves all ring junctions', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const facilities = deriveMachineFacilityMachinery({
+        facilityAssemblies: deriveMachineFacilityAssemblies({
+          outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+        }),
+      });
+      const topology = buildMachineWorldTopology({ scene, facilityMachinery: facilities, clearance: 0.16 });
+      const projected = deriveMachineWorldPresentationProjection({ facilities, topology, seatCount });
+      const sourceSegments = new Map(topology.serviceManifold.segments.map((segment) => [segment.id, segment]));
+      const close = (actual, expected, tolerance = 1e-8) =>
+        Math.hypot(
+          actual.x - expected.x,
+          actual.y - expected.y,
+          actual.z - expected.z,
+        ) <= tolerance;
+      const scalePoint = (point) => ({
+        ...point,
+        x: point.x * projected.scale,
+        z: point.z * projected.scale,
+      });
+      const projectedSegments = projected.topology.serviceManifold.segments;
+      assert.equal(projected.topology.serviceManifold.junctions.length, 4);
+      assert.equal(validateMachineWorldPresentationProjection(projected).valid, true);
+
+      for (const segment of projectedSegments) {
+        const source = sourceSegments.get(segment.id);
+        assert.ok(source, segment.id);
+        if (segment.segmentRole === 'facility-output-spur') {
+          assert.ok(close(segment.start, scalePoint(source.start)), segment.id + ': only source-machine end should scale');
+          assert.ok(close(segment.end, source.end), segment.id + ': fixed ring anchor');
+        } else if (segment.segmentRole === 'facility-input-spur') {
+          assert.ok(close(segment.start, source.start), segment.id + ': fixed ring anchor');
+          assert.ok(close(segment.end, scalePoint(source.end)), segment.id + ': only target-machine end should scale');
+        } else {
+          assert.ok(close(segment.start, source.start), segment.id + ': arc start remains fixed');
+          assert.ok(close(segment.end, source.end), segment.id + ': arc end remains fixed');
+        }
+        assert.ok(close(segment.center, {
+          x: (segment.start.x + segment.end.x) * 0.5,
+          y: (segment.start.y + segment.end.y) * 0.5,
+          z: (segment.start.z + segment.end.z) * 0.5,
+        }), segment.id + ': segment center follows its transformed endpoints');
+      }
+
+      for (const junction of projected.topology.serviceManifold.junctions) {
+        const touching = projectedSegments.filter((segment) =>
+          close(segment.start, junction.center) || close(segment.end, junction.center));
+        assert.equal(touching.length, 4, junction.id);
+      }
+    }
+  }
+});
+
 test('World presentation source and browser copies remain exact', () => {
   assert.equal(readFileSync('frontend/spatial/machine-world-presentation-projection.js', 'utf8'), readFileSync('public/machine-world-presentation-projection.js', 'utf8'));
 });

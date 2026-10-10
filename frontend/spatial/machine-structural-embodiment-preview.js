@@ -205,6 +205,20 @@ function facilityDockingRenderParts(descriptors = []) {
   });
 }
 
+function serviceManifoldJunctionRenderParts(junctions = []) {
+  return (Array.isArray(junctions) ? junctions : []).map((junction) => ({
+    id: junction.id,
+    role: junction.role,
+    shape: junction.shape || 'CYL',
+    center: { ...junction.center },
+    dimensions: { ...junction.dimensions },
+    rotationY: 0,
+    materialRole: 'metal2',
+    constructionSlice: 'S8',
+    constructionOwner: junction.constructionOwner,
+  }));
+}
+
 function subjectFromParts(parts) {
   if (!parts.length) return null;
   const min = {
@@ -453,6 +467,24 @@ function renderView() {
   const facilityDockingRenderDescriptors = facilityDockingRenderParts(
     facilityDockingDescriptors,
   );
+  const manifoldJunctionTopology = currentView === 'world'
+    ? worldPresentation.topology
+    : activeTopology;
+  const allManifoldJunctions = Array.isArray(manifoldJunctionTopology?.serviceManifold?.junctions)
+    ? manifoldJunctionTopology.serviceManifold.junctions
+    : [];
+  const serviceManifoldJunctionDescriptors = currentView === 'world'
+    ? allManifoldJunctions
+    : [];
+  const serviceManifoldJunctionRenderDescriptors = serviceManifoldJunctionRenderParts(
+    serviceManifoldJunctionDescriptors,
+  );
+  const serviceManifoldJunctionValidation = currentView === 'seat'
+    ? 'scoped-out'
+    : manifoldJunctionTopology?.serviceManifoldValidation?.valid === true
+      && serviceManifoldJunctionDescriptors.every((junction) => junction.routeContinuous)
+      ? 'pass'
+      : 'fail';
   const effectiveFacilitiesSource = currentView === 'world'
     ? machinery
     : currentView === 'facility' && facility
@@ -515,7 +547,7 @@ function renderView() {
     divisions: seatDivisions.length
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
-    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors, ...facilityShellDescriptors, ...facilityDockingRenderDescriptors],
+    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors, ...facilityShellDescriptors, ...facilityDockingRenderDescriptors, ...serviceManifoldJunctionRenderDescriptors],
     presentationLighting: {
       mode: currentView === 'facility' ? MACHINE_CAMERA_MODE.FACILITY_FOCUS : 'BASE',
       branchId: currentView === 'facility' ? facility?.branchId : null,
@@ -551,6 +583,7 @@ function renderView() {
     ...facilityCarrierDescriptors,
     ...facilityShellDescriptors,
     ...facilityDockingRenderDescriptors,
+    ...serviceManifoldJunctionRenderDescriptors,
   ]);
 
   canvas.dataset.structuralView = currentView;
@@ -586,6 +619,10 @@ function renderView() {
     ? 'scoped-out'
     : facilityDockingValidation.valid ? 'pass' : 'fail';
   canvas.dataset.structuralFacilityDockingScope = facilityDockingScope;
+  canvas.dataset.structuralServiceManifoldJunctionCount = String(serviceManifoldJunctionDescriptors.length);
+  canvas.dataset.structuralServiceManifoldJunctionSourceCount = String(allManifoldJunctions.length);
+  canvas.dataset.structuralServiceManifoldJunctionValidation = serviceManifoldJunctionValidation;
+  canvas.dataset.structuralServiceManifoldJunctionScope = facilityCarrierMode;
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';

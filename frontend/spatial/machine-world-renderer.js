@@ -1631,6 +1631,42 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       renderedStructuralConduits += 1;
     }
 
+    const allServiceManifoldJunctions = Array.isArray(topology?.serviceManifold?.junctions)
+      ? topology.serviceManifold.junctions
+      : [];
+    const visibleServiceManifoldJunctions = scope.mode === 'WORLD_OVERVIEW'
+      ? allServiceManifoldJunctions
+      : [];
+    let renderedServiceManifoldJunctions = 0;
+    for (const junction of visibleServiceManifoldJunctions) {
+      if (junction.routeContinuous !== true) continue;
+      const dimensions = junction.dimensions || {};
+      const height = Math.max(0.07, finite(dimensions.y, 0.08));
+      const transform = multiplyMatrix(
+        translateMatrix(
+          finite(junction.center?.x),
+          finite(junction.center?.y) - height * 0.5,
+          finite(junction.center?.z),
+        ),
+        scaleMatrix(
+          Math.max(0.025, finite(dimensions.x, 0.14) * 0.5),
+          height,
+          Math.max(0.025, finite(dimensions.z, 0.14) * 0.5),
+        ),
+      );
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        { emit: 0.025, glow: 0.035, alpha: 0.96 },
+      );
+      renderedServiceManifoldJunctions += 1;
+    }
+    canvas.dataset.machineWorldServiceManifoldJunctionCount = String(allServiceManifoldJunctions.length);
+    canvas.dataset.machineWorldServiceManifoldJunctionRenderedCount = String(renderedServiceManifoldJunctions);
+    canvas.dataset.machineWorldServiceManifoldJunctionValidation =
+      topology?.serviceManifoldValidation?.valid === true ? 'pass' : 'fail';
+
     const podDivisionDockingSegments = conduitSegments.filter(
       (segment) => segment.edgeKind === 'pod-division' && segment.routeContinuous,
     );

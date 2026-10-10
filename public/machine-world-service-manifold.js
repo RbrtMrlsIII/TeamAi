@@ -249,10 +249,84 @@ export function deriveMachineWorldServiceManifold({
   });
 }
 
+
+const samePoint = (a, b, tolerance = 1e-8) =>
+  Boolean(a && b)
+  && Math.hypot(
+    finite(a.x) - finite(b.x),
+    finite(a.y) - finite(b.y),
+    finite(a.z) - finite(b.z),
+  ) <= tolerance;
+
+/**
+ * Presentation-only physical housings at the four existing service-manifold anchors.
+ * These project existing route incidence; they never create semantic edges.
+ */
+export function deriveMachineWorldServiceManifoldJunctions({
+  facilityAnchors = [],
+  segments = [],
+  conduitRadius = 0.035,
+  serviceRingMargin = 0.08,
+} = {}) {
+  const anchors = Array.isArray(facilityAnchors) ? facilityAnchors.filter(Boolean) : [];
+  const routeSegments = Array.isArray(segments) ? segments.filter(Boolean) : [];
+  const radius = Math.min(
+    0.075,
+    Math.max(0.045, finite(conduitRadius, 0.035) * 2.1),
+    Math.max(0.045, finite(serviceRingMargin, 0.08) * 0.90),
+  );
+  const height = Math.max(0.07, Math.min(0.10, radius * 1.2));
+
+  return Object.freeze(anchors.map((anchor) => {
+    const branchId = String(anchor.branchId || 'UNKNOWN');
+    const point = anchor.point || null;
+    const incident = point
+      ? routeSegments.filter((segment) =>
+          samePoint(segment.start, point) || samePoint(segment.end, point))
+      : [];
+    const incidentSegmentIds = [...new Set(incident.map((segment) => segment.id).filter(Boolean))].sort();
+    const incidentSemanticEdgeIds = [...new Set(
+      incident.map((segment) => segment.semanticEdgeId).filter(Boolean),
+    )].sort();
+    const finiteCenter = [point?.x, point?.y, point?.z].every(Number.isFinite);
+    const routeContinuous = finiteCenter
+      && incident.length === 4
+      && incidentSegmentIds.length === 4
+      && incidentSemanticEdgeIds.length === 2
+      && incident.every((segment) =>
+        segment.routeContinuous === true && segment.obstacleAvoidance === true);
+
+    return Object.freeze({
+      id: 'MANIFOLD-JUNCTION:' + branchId,
+      role: 'service-manifold-junction',
+      shape: 'CYL',
+      branchId,
+      point: Object.freeze({
+        x: finite(point?.x),
+        y: finite(point?.y),
+        z: finite(point?.z),
+      }),
+      center: Object.freeze({
+        x: finite(point?.x),
+        y: finite(point?.y),
+        z: finite(point?.z),
+      }),
+      radius,
+      dimensions: Object.freeze({ x: radius * 2, y: height, z: radius * 2 }),
+      incidentSegmentIds: Object.freeze(incidentSegmentIds),
+      incidentSegmentCount: incidentSegmentIds.length,
+      incidentSemanticEdgeIds: Object.freeze(incidentSemanticEdgeIds),
+      routeContinuous,
+      ...rootContext('MANIFOLD-JUNCTION:' + branchId),
+      presentationOnly: true,
+    });
+  }));
+}
+
 export function validateMachineWorldServiceManifold(
   manifold,
   topology,
-  { expectedFacilityEdges = 4 } = {},
+  { expectedFacilityEdges = 4, clearance = 0.16 } = {},
 ) {
   const reasons = [];
   if (manifold?.constructionSlice !== 'S8') reasons.push('MANIFOLD_NOT_S8');
@@ -276,6 +350,77 @@ export function validateMachineWorldServiceManifold(
   }
   if (!Array.isArray(manifold?.segments) || manifold.segments.length < expectedFacilityEdges) {
     reasons.push('MANIFOLD_SEGMENTS_INCOMPLETE');
+  }
+
+  const junctions = Array.isArray(manifold?.junctions) ? manifold.junctions : [];
+  const segments = Array.isArray(manifold?.segments) ? manifold.segments : [];
+  const anchorsByBranch = new Map(
+    (Array.isArray(manifold?.facilityAnchors) ? manifold.facilityAnchors : [])
+      .map((anchor) => [anchor.branchId, anchor]),
+  );
+  if (junctions.length !== expectedFacilityEdges) reasons.push('MANIFOLD_JUNCTION_COUNT_MISMATCH');
+  const junctionIds = new Set();
+  for (const junction of junctions) {
+    const id = junction?.id || 'UNKNOWN_JUNCTION';
+    if (junctionIds.has(id)) reasons.push(id + ':DUPLICATE_JUNCTION_ID');
+    junctionIds.add(id);
+    if (junction?.role !== 'service-manifold-junction') reasons.push(id + ':JUNCTION_ROLE_MISMATCH');
+    if (junction?.constructionSlice !== 'S8') reasons.push(id + ':JUNCTION_NOT_S8');
+    if (junction?.constructionOwner !== ROOT_OWNER) reasons.push(id + ':JUNCTION_OWNER_MISMATCH');
+    if (junction?.semanticBoundary !== 'presentation-only' || junction?.presentationOnly !== true) {
+      reasons.push(id + ':JUNCTION_NOT_PRESENTATION_ONLY');
+    }
+    if (junction?.routeContinuous !== true) reasons.push(id + ':JUNCTION_ROUTE_NOT_CONTINUOUS');
+
+    const anchor = anchorsByBranch.get(junction?.branchId);
+    if (!anchor?.point || !samePoint(anchor.point, junction?.center)) reasons.push(id + ':JUNCTION_ANCHOR_MISMATCH');
+    if (![junction?.center?.x, junction?.center?.y, junction?.center?.z].every(Number.isFinite)) {
+      reasons.push(id + ':JUNCTION_CENTER_NONFINITE');
+    }
+    if (!(Number(junction?.radius) > 0
+      && Number(junction?.radius) <= Number(manifold?.serviceRingMargin) + 1e-9)) {
+      reasons.push(id + ':JUNCTION_RADIUS_OUTSIDE_RING_MARGIN');
+    }
+    if (!junction?.dimensions
+      || ![junction.dimensions.x, junction.dimensions.y, junction.dimensions.z].every(Number.isFinite)
+      || Math.abs(Number(junction.dimensions.x) - Number(junction.radius) * 2) > 1e-9
+      || Math.abs(Number(junction.dimensions.z) - Number(junction.radius) * 2) > 1e-9
+      || !(Number(junction.dimensions.y) > 0)) {
+      reasons.push(id + ':JUNCTION_DIMENSIONS_INVALID');
+    }
+    if (junction?.center && Number.isFinite(Number(manifold?.machineEnvelopeBoundary))) {
+      const radialClearance = Math.hypot(junction.center.x, junction.center.z)
+        - Number(junction.radius)
+        - Number(manifold.machineEnvelopeBoundary);
+      if (radialClearance < finite(clearance, 0.16) - 1e-9) {
+        reasons.push(id + ':JUNCTION_MACHINE_CLEARANCE_UNSAFE');
+      }
+    }
+
+    const incidentIds = Array.isArray(junction?.incidentSegmentIds) ? junction.incidentSegmentIds : [];
+    if (incidentIds.length !== 4 || new Set(incidentIds).size !== 4
+      || Number(junction?.incidentSegmentCount) !== 4) {
+      reasons.push(id + ':JUNCTION_INCIDENCE_COUNT_MISMATCH');
+    }
+    const touching = segments.filter((segment) =>
+      samePoint(segment.start, junction?.center) || samePoint(segment.end, junction?.center));
+    const touchingIds = new Set(touching.map((segment) => segment.id));
+    if (touching.length !== 4
+      || incidentIds.some((segmentId) => !touchingIds.has(segmentId))
+      || [...touchingIds].some((segmentId) => !incidentIds.includes(segmentId))) {
+      reasons.push(id + ':JUNCTION_SEGMENT_INCIDENCE_MISMATCH');
+    }
+    if (touching.some((segment) =>
+      segment.routeContinuous !== true || segment.obstacleAvoidance !== true)) {
+      reasons.push(id + ':JUNCTION_ROUTE_CLEARANCE_UNSAFE');
+    }
+    const semanticIds = new Set(touching.map((segment) => segment.semanticEdgeId).filter(Boolean));
+    if (semanticIds.size !== 2
+      || !Array.isArray(junction?.incidentSemanticEdgeIds)
+      || junction.incidentSemanticEdgeIds.length !== 2
+      || junction.incidentSemanticEdgeIds.some((edgeId) => !semanticIds.has(edgeId))) {
+      reasons.push(id + ':JUNCTION_SEMANTIC_EDGE_INCIDENCE_MISMATCH');
+    }
   }
   return Object.freeze({
     valid: reasons.length === 0 && manifold?.valid === true,

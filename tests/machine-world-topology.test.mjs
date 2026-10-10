@@ -355,6 +355,51 @@ test('S8 World overview can suppress facility manifold presentation without chan
   );
 });
 
+test('S8 service-manifold junction housings bind four existing route segments without adding semantic edges', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const { topology } = buildFixture(seatCount, expansionAmount);
+      const manifold = topology.serviceManifold;
+      const segmentsById = new Map(manifold.segments.map((segment) => [segment.id, segment]));
+      assert.equal(manifold.junctions.length, 4);
+      assert.equal(topology.edges.length, topology.edgeCount);
+      assert.equal(topology.edges.some((edge) => edge.kind === 'service-manifold-junction'), false);
+      assert.equal(topology.serviceManifoldValidation.valid, true);
+
+      for (const junction of manifold.junctions) {
+        assert.equal(junction.constructionSlice, 'S8');
+        assert.equal(junction.semanticBoundary, 'presentation-only');
+        assert.equal(junction.presentationOnly, true);
+        assert.equal(junction.routeContinuous, true);
+        assert.equal(junction.incidentSegmentCount, 4);
+        assert.equal(new Set(junction.incidentSemanticEdgeIds).size, 2);
+        assert.ok(junction.radius > 0 && junction.radius <= manifold.serviceRingMargin + 1e-9);
+        assert.ok(
+          manifold.radius - manifold.machineEnvelopeBoundary - junction.radius >= 0.16 - 1e-9,
+          junction.id + ': physical joint must preserve the clearance floor',
+        );
+
+        const incident = junction.incidentSegmentIds.map((id) => segmentsById.get(id));
+        assert.equal(incident.length, 4);
+        assert.ok(incident.every(Boolean), junction.id);
+        assert.equal(incident.filter((segment) => segment.segmentRole === 'facility-output-spur').length, 1);
+        assert.equal(incident.filter((segment) => segment.segmentRole === 'facility-input-spur').length, 1);
+        assert.equal(incident.filter((segment) => segment.segmentRole === 'manifold-arc').length, 2);
+
+        const close = (point) => Math.hypot(
+          point.x - junction.center.x,
+          point.y - junction.center.y,
+          point.z - junction.center.z,
+        ) < 1e-8;
+        assert.ok(incident.every((segment) =>
+          (close(segment.start) || close(segment.end))
+          && segment.routeContinuous === true
+          && segment.obstacleAvoidance === true), junction.id + ': all existing routes must meet the physical node');
+      }
+    }
+  }
+});
+
 test('S8 service manifold stays outside the measured S7 machinery envelope across Seats and expansion', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     for (const expansionAmount of [0, 1]) {
