@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices } from '../frontend/spatial/machine-world-renderer.js';
+import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createExtrudedPolygonVertices } from '../frontend/spatial/machine-world-renderer.js';
 import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_TOP_OPENING_SCALE, MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, MACHINE_POD_SHELL_OUTLINE_BOUNDS, createMachinePodShellVertices } from '../frontend/spatial/machine-pod-profile.js';
 import { readFileSync } from 'node:fs';
 
@@ -87,6 +87,66 @@ test('production S7 mechanism and carrier paths preserve the centered descriptor
   }
 });
 
+
+test('raw WebGL extrusion winds facility body side walls outward', () => {
+  const outline = [
+    [-0.82, -0.52], [-0.42, -0.90], [0.34, -0.82], [0.90, -0.34],
+    [0.76, 0.36], [0.30, 0.88], [-0.40, 0.72], [-0.86, 0.18],
+  ];
+  const height = 1;
+  const vertices = createExtrudedPolygonVertices(outline, height);
+  const count = outline.length;
+  const capVertexCount = (count - 2) * 6;
+  assert.equal(vertices.length / 3, capVertexCount + count * 6);
+
+  const normal = (a, b, c) => {
+    const u = b.map((value, i) => value - a[i]);
+    const v = c.map((value, i) => value - a[i]);
+    return [
+      u[1] * v[2] - u[2] * v[1],
+      u[2] * v[0] - u[0] * v[2],
+      u[0] * v[1] - u[1] * v[0],
+    ];
+  };
+  const triangle = (start) => [
+    [vertices[start * 3], vertices[start * 3 + 1], vertices[start * 3 + 2]],
+    [vertices[(start + 1) * 3], vertices[(start + 1) * 3 + 1], vertices[(start + 1) * 3 + 2]],
+    [vertices[(start + 2) * 3], vertices[(start + 2) * 3 + 1], vertices[(start + 2) * 3 + 2]],
+  ];
+  let twiceArea = 0;
+  let centroidNumeratorX = 0;
+  let centroidNumeratorZ = 0;
+  for (let index = 0; index < count; index += 1) {
+    const a = outline[index];
+    const b = outline[(index + 1) % count];
+    const cross = a[0] * b[1] - b[0] * a[1];
+    twiceArea += cross;
+    centroidNumeratorX += (a[0] + b[0]) * cross;
+    centroidNumeratorZ += (a[1] + b[1]) * cross;
+  }
+  assert.ok(twiceArea > 0, 'fixture must use the authored counter-clockwise XZ convention');
+  const centroidX = centroidNumeratorX / (3 * twiceArea);
+  const centroidZ = centroidNumeratorZ / (3 * twiceArea);
+
+  for (let start = 0; start < capVertexCount; start += 3) {
+    const points = triangle(start);
+    assert.equal(points[0][1], points[1][1]);
+    assert.equal(points[1][1], points[2][1]);
+    const n = normal(...points);
+    assert.ok(points[0][1] === 0 ? n[1] < 0 : n[1] > 0, 'cap normal must face away from the solid body');
+  }
+  for (let start = capVertexCount; start < vertices.length / 3; start += 3) {
+    const points = triangle(start);
+    const n = normal(...points);
+    assert.ok(Math.abs(n[1]) < 1e-6, 'side normal must be horizontal');
+    const x = points.reduce((sum, point) => sum + point[0] / 3, 0);
+    const z = points.reduce((sum, point) => sum + point[2] / 3, 0);
+    assert.ok(
+      n[0] * (x - centroidX) + n[2] * (z - centroidZ) > 0,
+      'facility side wall must face outward',
+    );
+  }
+});
 
 test('raw WebGL TORUS is a closed annular collar with an open center', () => {
   const vertices = createAnnularPrismVertices();

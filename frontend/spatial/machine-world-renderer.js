@@ -155,7 +155,7 @@ function program(gl, vs, fs) {
   return value;
 }
 
-function shapeBuffer(gl, polygon, height) {
+export function createExtrudedPolygonVertices(polygon, height) {
   const vertices = [];
   const count = polygon.length;
   const pushTri = (a,b,c) => vertices.push(...a,...b,...c);
@@ -167,10 +167,16 @@ function shapeBuffer(gl, polygon, height) {
     const j = (i + 1) % count;
     const [ax,az] = polygon[i];
     const [bx,bz] = polygon[j];
-    pushTri([ax,0,az],[bx,0,bz],[bx,height,bz]);
-    pushTri([ax,0,az],[bx,height,bz],[ax,height,az]);
+    // Authored polygons are counter-clockwise in XZ. Reverse side triangles
+    // so generated vertical faces point outward from the solid body.
+    pushTri([ax,0,az],[bx,height,bz],[bx,0,bz]);
+    pushTri([ax,0,az],[ax,height,az],[bx,height,bz]);
   }
   return new Float32Array(vertices);
+}
+
+function shapeBuffer(gl, polygon, height) {
+  return createExtrudedPolygonVertices(polygon, height);
 }
 
 export function createAnnularPrismVertices({

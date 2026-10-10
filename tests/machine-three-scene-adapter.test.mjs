@@ -20,6 +20,7 @@ import {
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
 import { deriveMachinePodAssembly } from '../frontend/spatial/machine-pod-assembly.js';
+import { MACHINE_WORLD_FACILITY_BODY_OUTLINES } from '../frontend/spatial/machine-world-facility-shell.js';
 import { deriveMachineSeatDivisionAssembly } from '../frontend/spatial/machine-seat-division-assembly.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
 import {
@@ -61,7 +62,7 @@ import {
 
 test('Y1 adapter exposes one stable rendering bridge identity', () => {
   assert.equal(MACHINE_THREE_ADAPTER_ID, 'MACHINE-THREE-SCENE-ADAPTER');
-  assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V3');
+  assert.equal(MACHINE_THREE_ADAPTER_VERSION, 'Y1-V4');
 });
 
 test('Y1 adapter exposes a presentation-only facility focus lighting seam', () => {
@@ -74,7 +75,7 @@ test('Y1 adapter exposes a presentation-only facility focus lighting seam', () =
   assert.match(source, /name: 'FACILITY_FOCUS_KEY:/);
   assert.match(source, /intensity: isFocusedFacility \? 0\.18 : 0\.12/);
   assert.match(source, /facilityFocusLighting/);
-  assert.match(source, /MACHINE_THREE_ADAPTER_VERSION = 'Y1-V3'/);
+  assert.match(source, /MACHINE_THREE_ADAPTER_VERSION = 'Y1-V4'/);
   const facilityLightDistance =
     Math.max(2.8, 1.6 * 2.2);
   assert.ok(facilityLightDistance >= 3.52);
@@ -909,6 +910,83 @@ test('S24 pod-division docking sockets derive horizontal direction from the rout
   assert.ok(sockets.every((socket) => socket.routeContinuous === true));
 });
 
+
+test('Y1 extruded facility body has outward-facing walls and correctly wound end caps', () => {
+  const outline = MACHINE_WORLD_FACILITY_BODY_OUTLINES.fin;
+  const descriptor = {
+    id: 'TEST:FACILITY:FIN',
+    semanticId: 'TEST:FACILITY:FIN',
+    shape: 'FACILITY_FACETED_BODY',
+    profile: 'facility-body-fin',
+    center: { x: 0, y: 0, z: 0 },
+    dimensions: { x: 2, y: 1, z: 2 },
+    rotationY: 0,
+    materialRole: 'metal2',
+    outline,
+  };
+  const geometry = buildThreeGeometry(THREE, descriptor);
+  const positions = geometry.getAttribute('position');
+  const count = outline.length;
+  const capVertexCount = (count - 2) * 6;
+  assert.equal(positions.count, capVertexCount + count * 6);
+
+  const normal = (a, b, c) => {
+    const u = b.map((value, i) => value - a[i]);
+    const v = c.map((value, i) => value - a[i]);
+    return [
+      u[1] * v[2] - u[2] * v[1],
+      u[2] * v[0] - u[0] * v[2],
+      u[0] * v[1] - u[1] * v[0],
+    ];
+  };
+  const triangle = (start) => [
+    [positions.getX(start), positions.getY(start), positions.getZ(start)],
+    [positions.getX(start + 1), positions.getY(start + 1), positions.getZ(start + 1)],
+    [positions.getX(start + 2), positions.getY(start + 2), positions.getZ(start + 2)],
+  ];
+
+  for (let start = 0; start < capVertexCount; start += 3) {
+    const points = triangle(start);
+    assert.equal(points[0][1], points[1][1]);
+    assert.equal(points[1][1], points[2][1]);
+    const n = normal(...points);
+    assert.ok(points[0][1] < 0 ? n[1] < 0 : n[1] > 0, 'cap normal must face away from the solid body');
+  }
+
+  const minX = Math.min(...outline.map(([x]) => x));
+  const maxX = Math.max(...outline.map(([x]) => x));
+  const minZ = Math.min(...outline.map(([, z]) => z));
+  const maxZ = Math.max(...outline.map(([, z]) => z));
+  const outlineCenterX = (minX + maxX) * 0.5;
+  const outlineCenterZ = (minZ + maxZ) * 0.5;
+  const scaleX = descriptor.dimensions.x / (maxX - minX);
+  const scaleZ = descriptor.dimensions.z / (maxZ - minZ);
+  let twiceArea = 0;
+  let centroidNumeratorX = 0;
+  let centroidNumeratorZ = 0;
+  for (let index = 0; index < count; index += 1) {
+    const a = outline[index];
+    const b = outline[(index + 1) % count];
+    const cross = a[0] * b[1] - b[0] * a[1];
+    twiceArea += cross;
+    centroidNumeratorX += (a[0] + b[0]) * cross;
+    centroidNumeratorZ += (a[1] + b[1]) * cross;
+  }
+  const centroidX = (centroidNumeratorX / (3 * twiceArea) - outlineCenterX) * scaleX;
+  const centroidZ = (centroidNumeratorZ / (3 * twiceArea) - outlineCenterZ) * scaleZ;
+  for (let start = capVertexCount; start < positions.count; start += 3) {
+    const points = triangle(start);
+    const n = normal(...points);
+    assert.ok(Math.abs(n[1]) < 1e-6, 'vertical side face normal must be horizontal');
+    const x = points.reduce((sum, point) => sum + point[0] / 3, 0);
+    const z = points.reduce((sum, point) => sum + point[2] / 3, 0);
+    assert.ok(
+      n[0] * (x - centroidX) + n[2] * (z - centroidZ) > 0,
+      'facility side wall must face outward',
+    );
+  }
+  geometry.dispose();
+});
 
 test('S24 Three topology bridge preserves authored docking and conduit material roles through pooled updates', () => {
   class TestWebGLRenderer {

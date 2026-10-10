@@ -49,7 +49,7 @@ import {
 } from './machine-seat-division-profile.js';
 
 export const MACHINE_THREE_ADAPTER_ID = 'MACHINE-THREE-SCENE-ADAPTER';
-export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V3';
+export const MACHINE_THREE_ADAPTER_VERSION = 'Y1-V4';
 export const MACHINE_THREE_REQUIRED_WEBGL = 'WEBGL2';
 
 export const AUTHORED_POD_SHELL_PROFILE = MACHINE_POD_SHELL_PROFILE;
@@ -523,15 +523,17 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   }
   for (let index = 0; index < outline.length; index += 1) {
     const next = (index + 1) % outline.length;
+    // Outlines are counter-clockwise in XZ. Reverse the wall triangles so
+    // their normals face away from the chassis rather than into its cavity.
     pushTri(
       point(outline[index], -halfY),
-      point(outline[next], -halfY),
       point(outline[next], halfY),
+      point(outline[next], -halfY),
     );
     pushTri(
       point(outline[index], -halfY),
-      point(outline[next], halfY),
       point(outline[index], halfY),
+      point(outline[next], halfY),
     );
   }
   const geometry = new THREE.BufferGeometry();
