@@ -69,3 +69,42 @@ test('World presentation preserves semantic edge identity and route continuity',
 test('World presentation source and browser copies remain exact', () => {
   assert.equal(readFileSync('frontend/spatial/machine-world-presentation-projection.js', 'utf8'), readFileSync('public/machine-world-presentation-projection.js', 'utf8'));
 });
+
+test('World presentation projects authored facility adapter start/end points with the housing', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const outerHousings = scene.parts.filter((part) => part.kind === 'outer-housing');
+      const assemblies = deriveMachineFacilityAssemblies({ outerHousings });
+      const facilities = deriveMachineFacilityMachinery({ facilityAssemblies: assemblies });
+      const scale = deriveMachineWorldFacilityStagingScale(seatCount);
+      const projected = deriveMachineWorldPresentationProjection({
+        facilities,
+        seatCount,
+      });
+
+      for (const projectedMachine of projected.facilities) {
+        const authoredMachine = facilities.find((machine) => machine.branchId === projectedMachine.branchId);
+        const authoredAdapters = new Map(
+          authoredMachine.physicalInterfaces
+            .filter((entry) => entry.role === 'facility-port-adapter')
+            .map((entry) => [entry.id, entry]),
+        );
+        const projectedPorts = new Map(projectedMachine.ports.map((port) => [port.id, port]));
+
+        for (const projectedAdapter of projectedMachine.physicalInterfaces.filter(
+          (entry) => entry.role === 'facility-port-adapter',
+        )) {
+          const authoredAdapter = authoredAdapters.get(projectedAdapter.id);
+          const projectedPort = projectedPorts.get(projectedAdapter.portId);
+          assert.ok(authoredAdapter, projectedAdapter.id);
+          assert.ok(projectedPort, projectedAdapter.id + ': source port missing');
+          assert.deepEqual(projectedAdapter.adapterStart, projectedPort.point);
+          assert.ok(Math.abs(projectedAdapter.adapterEnd.x - authoredAdapter.adapterEnd.x * scale) < 1e-9);
+          assert.ok(Math.abs(projectedAdapter.adapterEnd.z - authoredAdapter.adapterEnd.z * scale) < 1e-9);
+          assert.equal(projectedAdapter.adapterEnd.y, authoredAdapter.adapterEnd.y);
+        }
+      }
+    }
+  }
+});

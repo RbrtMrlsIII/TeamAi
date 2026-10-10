@@ -21,6 +21,10 @@ import {
   validateMachineWorldFacilityCarrierDescriptors,
 } from './machine-world-facility-carrier.js';
 import { deriveMachineWorldFacilityShellDescriptors } from './machine-world-facility-shell.js';
+import {
+  deriveMachineWorldFacilityDockingEmbodiment,
+  validateMachineWorldFacilityDockingEmbodiment,
+} from './machine-world-facility-docking-embodiment.js';
 import { deriveMachineWorldPresentationProjection } from './machine-world-presentation-projection.js';
 import {
   deriveMachineFacilityMachinery,
@@ -157,6 +161,47 @@ function facilityDescriptors(machines, amount = 1) {
           : finite(component.rotationY),
       };
     });
+  });
+}
+
+function facilityDockingRenderParts(descriptors = []) {
+  return (Array.isArray(descriptors) ? descriptors : []).flatMap((entry) => {
+    const materialRole = entry.role === 'machine-endpoint-collar' ? 'metal2' : 'metal';
+    const constructionOwner = entry.constructionOwner
+      || 'frontend/spatial/machine-world-facility-docking-embodiment.js';
+    const connectorThickness = Math.max(0.035, finite(entry.radius) * 0.60);
+    return [
+      {
+        id: entry.id + ':CONNECTOR',
+        role: 'facility-docking-connector',
+        shape: 'BOX',
+        center: entry.center,
+        dimensions: {
+          x: Math.max(0.04, finite(entry.length, 0.10)),
+          y: connectorThickness,
+          z: connectorThickness,
+        },
+        rotationY: finite(entry.rotationY),
+        materialRole,
+        constructionSlice: 'S8',
+        constructionOwner,
+      },
+      {
+        id: entry.id + ':TERMINAL-COLLAR',
+        role: 'facility-docking-collar',
+        shape: 'TORUS',
+        center: entry.connectorEnd,
+        dimensions: {
+          x: Math.max(0.16, finite(entry.radius, 0.10) * 2.0),
+          y: Math.max(0.025, finite(entry.radius, 0.10) * 0.34),
+          z: Math.max(0.16, finite(entry.radius, 0.10) * 2.0),
+        },
+        rotationY: finite(entry.rotationY),
+        materialRole,
+        constructionSlice: 'S8',
+        constructionOwner,
+      },
+    ];
   });
 }
 
@@ -380,6 +425,34 @@ function renderView() {
   );
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
+  const facilityDockingScope = currentView === 'world'
+    ? 'WORLD_OVERVIEW'
+    : currentView === 'facility'
+      ? 'FACILITY_FOCUS'
+      : 'DIVISION_FOCUS';
+  const facilityDockingMachinery = currentView === 'world'
+    ? worldPresentation.facilities
+    : currentView === 'facility' && facility
+      ? [facility]
+      : [];
+  const facilityDockingDescriptors = deriveMachineWorldFacilityDockingEmbodiment(
+    facilityDockingMachinery,
+  );
+  const expectedDockingFacilityPortCount = facilityDockingMachinery.reduce(
+    (total, machine) => total + (Array.isArray(machine.facilityIds) ? machine.facilityIds.length : 0),
+    0,
+  );
+  const facilityDockingValidation = validateMachineWorldFacilityDockingEmbodiment(
+    facilityDockingDescriptors,
+    facilityDockingMachinery,
+    {
+      expectedMachineCount: facilityDockingMachinery.length,
+      expectedFacilityPortCount: expectedDockingFacilityPortCount,
+    },
+  );
+  const facilityDockingRenderDescriptors = facilityDockingRenderParts(
+    facilityDockingDescriptors,
+  );
   const effectiveFacilitiesSource = currentView === 'world'
     ? machinery
     : currentView === 'facility' && facility
@@ -442,7 +515,7 @@ function renderView() {
     divisions: seatDivisions.length
       ? [{ id: 'S4-SEAT-01', components: seatDivisions, mechanicalDetails: [] }]
       : [],
-    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors, ...facilityShellDescriptors],
+    extras: [...canonicalRingDescriptors, ...facilityCarrierDescriptors, ...facilityShellDescriptors, ...facilityDockingRenderDescriptors],
     presentationLighting: {
       mode: currentView === 'facility' ? MACHINE_CAMERA_MODE.FACILITY_FOCUS : 'BASE',
       branchId: currentView === 'facility' ? facility?.branchId : null,
@@ -477,6 +550,7 @@ function renderView() {
     ...canonicalRingDescriptors,
     ...facilityCarrierDescriptors,
     ...facilityShellDescriptors,
+    ...facilityDockingRenderDescriptors,
   ]);
 
   canvas.dataset.structuralView = currentView;
@@ -506,6 +580,12 @@ function renderView() {
     : 'scoped-out';
   canvas.dataset.structuralFacilityCarrierScope = facilityCarrierMode;
   canvas.dataset.structuralFacilityShellDescriptorCount = String(facilityShellDescriptors.length);
+  canvas.dataset.structuralFacilityDockingDescriptorCount = String(facilityDockingDescriptors.length);
+  canvas.dataset.structuralFacilityDockingRenderPartCount = String(facilityDockingRenderDescriptors.length);
+  canvas.dataset.structuralFacilityDockingValidation = currentView === 'seat'
+    ? 'scoped-out'
+    : facilityDockingValidation.valid ? 'pass' : 'fail';
+  canvas.dataset.structuralFacilityDockingScope = facilityDockingScope;
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
   canvas.dataset.structuralMaterialModel = 'S24-authored-theme-family';

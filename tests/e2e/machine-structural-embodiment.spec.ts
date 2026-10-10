@@ -21,6 +21,10 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '20');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-descriptor-count', '19');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-render-part-count', '38');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-validation', 'pass');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-scope', 'WORLD_OVERVIEW');
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges'))).toBeGreaterThan(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges')))
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
@@ -129,6 +133,10 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '7');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'DIVISION_FOCUS');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-descriptor-count', '0');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-render-part-count', '0');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-validation', 'scoped-out');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-scope', 'DIVISION_FOCUS');
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges'))).toBeGreaterThan(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges')))
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
@@ -146,6 +154,10 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'FACILITY_FOCUS');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-descriptor-count', '5');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-render-part-count', '10');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-validation', 'pass');
+    await expect(canvas).toHaveAttribute('data-structural-facility-docking-scope', 'FACILITY_FOCUS');
     const facilityConduitKinds = await canvas.getAttribute('data-structural-conduit-edge-kinds');
     expect(facilityConduitKinds).toContain('facility-facility');
     expect(facilityConduitKinds).not.toContain('pod-facility');

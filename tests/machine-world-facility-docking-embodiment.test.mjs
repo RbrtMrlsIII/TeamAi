@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineFacilityAssemblies } from '../frontend/spatial/machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery } from '../frontend/spatial/machine-facility-machinery.js';
+import { deriveMachineWorldPresentationProjection } from '../frontend/spatial/machine-world-presentation-projection.js';
 import {
   deriveMachineWorldFacilityDockingEmbodiment,
   validateMachineWorldFacilityDockingEmbodiment,
@@ -196,6 +197,62 @@ test('S8 facility endpoints expose an authored outward connector span', () => {
           && Math.abs(entry.center.z - (entry.connectorStart.z + entry.connectorEnd.z) * 0.5) < 1e-9,
           entry.id + ': center must bisect connector span',
         );
+      }
+    }
+  }
+});
+
+
+test('S8 endpoint connectors retain clearance after the world staging projection', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const authoredMachinery = buildMachinery(seatCount, expansionAmount);
+      const projectedMachinery = deriveMachineWorldPresentationProjection({
+        facilities: authoredMachinery,
+        seatCount,
+      }).facilities;
+      const descriptors = deriveMachineWorldFacilityDockingEmbodiment(projectedMachinery);
+      const validation = validateMachineWorldFacilityDockingEmbodiment(
+        descriptors,
+        projectedMachinery,
+      );
+      assert.equal(validation.valid, true, validation.reasons.join(', '));
+
+      for (const entry of descriptors) {
+        const owner = projectedMachinery.find((machine) =>
+          entry.id.startsWith('FACILITY-ENDPOINT:' + machine.branchId + ':')
+          || entry.id.startsWith('FACILITY-FLANGE:' + machine.branchId + ':'),
+        );
+        assert.ok(owner, entry.id);
+        for (const other of projectedMachinery) {
+          if (other === owner) continue;
+          const ax = entry.connectorStart.x;
+          const az = entry.connectorStart.z;
+          const bx = entry.connectorEnd.x;
+          const bz = entry.connectorEnd.z;
+          const px = other.outerHousing.center.x;
+          const pz = other.outerHousing.center.z;
+          const abx = bx - ax;
+          const abz = bz - az;
+          const ab2 = abx * abx + abz * abz;
+          const t = Math.max(
+            0,
+            Math.min(
+              1,
+              ((px - ax) * abx + (pz - az) * abz) / Math.max(0.000001, ab2),
+            ),
+          );
+          const closestX = ax + abx * t;
+          const closestZ = az + abz * t;
+          const clearance = Math.hypot(closestX - px, closestZ - pz)
+            - Number(other.envelope.radius)
+            - Number(entry.radius);
+          assert.ok(
+            clearance >= 0.16 - 1e-9,
+            entry.id + ': staged connector clearance against ' + other.branchId
+              + ' at seats=' + seatCount + ', expansion=' + expansionAmount,
+          );
+        }
       }
     }
   }

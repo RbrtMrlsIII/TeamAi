@@ -49,6 +49,8 @@ function transformFacility(facility, scale) {
       ...port,
       point: transformCenter(port.point),
       center: port.center ? transformCenter(port.center) : port.center,
+      adapterStart: port.adapterStart ? transformCenter(port.adapterStart) : port.adapterStart,
+      adapterEnd: port.adapterEnd ? transformCenter(port.adapterEnd) : port.adapterEnd,
     }))),
     ports: Object.freeze((facility.ports || []).map((port) => Object.freeze({
       ...port,
