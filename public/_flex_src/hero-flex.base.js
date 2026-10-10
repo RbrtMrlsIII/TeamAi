@@ -103,17 +103,15 @@ import {
   requestSeatDivisionConfigure,
 } from './hero-hierarchy-runtime.js';
 import { cycleSeatShellBranchFocus } from './hero-seat-branch-walk.js';
-import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
-import { MACHINE_FACILITY_BRANCH_IDS } from './machine-facility-assembly.js';
+import { createHeroCameraNavigationController } from './hero-camera-navigation.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { resolveMachineGuestPresentation } from './machine-guest-state.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
 const stateLabel = document.querySelector('#state-label');
-const facilityFocusStatus = document.querySelector('#facility-focus-status');
 const seatLabel = document.querySelector('#seat-label');
 const demoButton = document.querySelector('#demo-toggle');
 const motionButton = document.querySelector('#motion-toggle');
@@ -138,7 +136,7 @@ const profile = (count) => {
 };
 
 let cameraId = 'HERO_WIDE';
-let facilityFocusBranchId = null;
+let cameraNavigation = null;
 let seatCount = GUEST_SEAT_COUNT;
 let selectedSeat = 0;
 let state = 'IDLE';
@@ -215,128 +213,16 @@ function setState(next, reason = 'transition') {
   }));
 }
 
-function seatCameraProfile() {
-  return {
-    seatRadius: deriveMachineWorldProfile(seatCount).seatShellRadius,
-  };
-}
-
-const FACILITY_FOCUS_LABELS = Object.freeze({
-  'BRANCH-OUTER-ALPHA': 'Analysis · Telescope',
-  'BRANCH-OUTER-BETA': 'Operations · Fin deployment',
-  'BRANCH-OUTER-GAMMA': 'Control · Rotating core',
-  'BRANCH-OUTER-DELTA': 'Access · Sensor array',
-});
-
-function updateFacilityFocusControls() {
-  for (const button of document.querySelectorAll('[data-facility-focus]')) {
-    const selected = button.dataset.facilityFocus === facilityFocusBranchId;
-    button.setAttribute('aria-pressed', String(selected));
-  }
-  if (facilityFocusStatus) {
-    facilityFocusStatus.textContent = facilityFocusBranchId
-      ? 'Inspecting: ' + FACILITY_FOCUS_LABELS[facilityFocusBranchId]
-      : 'World overview';
-  }
-}
-
 function setCamera(id) {
-  const allowed = new Set([
-    'HERO_WIDE',
-    'TEAM_ORBIT',
-    'SEAT_CLOSE',
-    'WORKSPACE_CLOSE',
-    'OVERHEAD_MAP',
-    'DETAIL_ANCHOR',
-  ]);
-  facilityFocusBranchId = null;
-  cameraId = allowed.has(id) ? id : 'HERO_WIDE';
-  lastNavBaseCameraId = cameraId;
-  hierarchyRuntime.cameraId = cameraId;
-  updateFacilityFocusControls();
-  return cameraId;
-}
-
-function focusFacility(branchId) {
-  const requestedBranchId = typeof branchId === 'string' ? branchId : '';
-  if (demo) stopLoop();
-  if (!MACHINE_FACILITY_BRANCH_IDS.includes(requestedBranchId)) {
-    // Invalid requests must not leave a previously focused machine active.
-    returnToWorld();
-    return Object.freeze({
-      ok: false,
-      reason: 'UNKNOWN_FACILITY_BRANCH',
-      branchId: requestedBranchId || null,
-      presentationOnly: true,
-    });
-  }
-  // Reuse the existing hierarchy-close / world-reset path before changing the
-  // target. Facility focus is not a Seat, does not change the selected Seat,
-  // and does not create semantic or topology state.
-  returnFromSeatShell();
-  facilityFocusBranchId = requestedBranchId;
-  updateFacilityFocusControls();
-  window.dispatchEvent(new CustomEvent('teamai:facility-focus-change', {
-    detail: { branchId: requestedBranchId, mode: 'FACILITY_FOCUS', presentationOnly: true },
-  }));
-  return Object.freeze({
-    ok: true,
-    branchId: requestedBranchId,
-    mode: 'FACILITY_FOCUS',
-    cameraId,
-    presentationOnly: true,
-  });
-}
-
-function returnToWorld() {
-  if (demo) stopLoop();
-  returnFromSeatShell();
-  facilityFocusBranchId = null;
-  updateFacilityFocusControls();
-  window.dispatchEvent(new CustomEvent('teamai:facility-focus-change', {
-    detail: { branchId: null, mode: 'WORLD_OVERVIEW', presentationOnly: true },
-  }));
-  return Object.freeze({
-    ok: true,
-    branchId: null,
-    mode: 'WORLD_OVERVIEW',
-    cameraId,
-    presentationOnly: true,
-  });
-}
-
-function getFacilityFocusState() {
-  return Object.freeze({
-    active: Boolean(facilityFocusBranchId),
-    branchId: facilityFocusBranchId,
-    mode: facilityFocusBranchId ? 'FACILITY_FOCUS' : 'WORLD_OVERVIEW',
-    cameraId,
-    presentationOnly: true,
-  });
+  return cameraNavigation.setCamera(id);
 }
 
 function getSubjectLockSnapshot() {
-  const shellOpen = Boolean(hierarchyRuntime.openParentId);
-  const active = shellOpen || cameraId === 'SEAT_CLOSE' || cameraId === 'DETAIL_ANCHOR';
-  const dock = resolveSelectedSeatDock(
-    cameraId,
-    selectedSeat,
-    seatCount,
-    seatCameraProfile(),
-    shellOpen ? { force: true } : {},
-  );
-  return {
-    active,
-    cameraId,
-    selectedSeat,
-    seatCount,
-    shellOpen,
-    target: dock?.t ?? null,
-  };
+  return cameraNavigation.getSubjectLockSnapshot();
 }
 
 function retargetSubjectLock() {
-  return getSubjectLockSnapshot();
+  return cameraNavigation.getSubjectLockSnapshot();
 }
 
 function setSelectedSeat(index) {
@@ -783,7 +669,7 @@ function frame(now) {
     hierarchyOpen: Boolean(hierarchyRuntime.openParentId),
     expanded: Boolean(hierarchyRuntime.openParentId || ['FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB'].includes(state)),
     branchId: `BRANCH-SEAT-${String(selectedSeat + 1).padStart(2, '0')}`,
-    facilityFocusBranchId,
+    facilityFocusBranchId: cameraNavigation.getBranchId(),
     cameraId,
     reducedMotion,
     navOrbitYaw,
@@ -828,21 +714,25 @@ motionButton?.addEventListener('click', () => {
   updateLabels();
 });
 
-document.querySelectorAll('[data-world-camera-request]').forEach((button) => {
-  button.addEventListener('click', () => setCamera(button.dataset.worldCameraRequest));
+cameraNavigation = createHeroCameraNavigationController({
+  documentRef: document,
+  windowRef: window,
+  getCameraId: () => cameraId,
+  setBaseCamera: (id) => {
+    cameraId = id;
+    lastNavBaseCameraId = cameraId;
+    hierarchyRuntime.cameraId = cameraId;
+    return cameraId;
+  },
+  resetToWorld: () => returnFromSeatShell(),
+  stopLoop: () => {
+    if (demo) stopLoop();
+  },
+  getHierarchyOpen: () => Boolean(hierarchyRuntime.openParentId),
+  getSelectedSeat: () => selectedSeat,
+  getSeatCount: () => seatCount,
 });
-
-document.querySelectorAll('[data-facility-focus]').forEach((button) => {
-  button.addEventListener('click', () => {
-    focusFacility(button.dataset.facilityFocus);
-  });
-});
-
-document.querySelectorAll('[data-facility-focus-return]').forEach((button) => {
-  button.addEventListener('click', () => returnToWorld());
-});
-
-updateFacilityFocusControls();
+cameraNavigation.bindNavigation();
 
 window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('teamai:web-ai-seat-unlocked', (event) => {
@@ -894,9 +784,9 @@ window.TeamAiHero = {
   getSeatCount: () => seatCount,
   setTeamSize: setSeatCount,
   setCamera,
-  focusFacility,
-  returnToWorld,
-  getFacilityFocusState,
+  focusFacility: cameraNavigation.focusFacility,
+  returnToWorld: cameraNavigation.returnToWorld,
+  getFacilityFocusState: cameraNavigation.getState,
   startLoop,
   stopLoop,
   getState: () => state,

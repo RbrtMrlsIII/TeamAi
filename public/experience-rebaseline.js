@@ -66,6 +66,7 @@ const MENU_CHILD_PANEL_OPENERS = [
   '[data-seat-budget-open]',
   '[data-marketplace-open]',
   '[data-settings-open]',
+  '[data-facility-focus]',
 ].join(', ');
 
 function openSettings() {
