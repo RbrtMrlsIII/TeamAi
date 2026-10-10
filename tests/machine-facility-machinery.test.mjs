@@ -967,7 +967,7 @@ test('S7 V21 longitudinal chassis and mechanism members align local Z with autho
     }),
     'access-commerce': Object.freeze({
       'support-strut': 2,
-      'access-sensor-boom': 2,
+      'sensor-boom': 2,
     }),
   });
   const radialRoles = new Set(
