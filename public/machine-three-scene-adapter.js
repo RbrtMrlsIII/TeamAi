@@ -565,10 +565,6 @@ function buildPodShellGeometry(THREE, descriptor) {
   return geometry;
 }
 
-function buildPodShellGeometry(THREE, descriptor) {
-  return buildBeveledPodShellGeometry(THREE, descriptor, getMachinePodShellOutline());
-}
-
 function buildSeatAuthorizationShieldGeometry(THREE, descriptor) {
   return buildExtrudedPolygonGeometry(
     THREE,
