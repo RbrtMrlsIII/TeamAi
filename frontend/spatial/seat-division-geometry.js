@@ -45,7 +45,10 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
     0.2,
   );
   const t = clamp(amount, 0, 1);
-  return scale * (1.7 + 0.5 * t);
+  // Keep the seven-way fan compact while preserving monotonic radial deployment.
+  // The authored envelope is intentionally bounded below the historical 2.20× full-deployment radius while preserving the required 1.66× compact-state floor.
+  const deploymentFactor = 1.66 + 0.14 * t;
+  return scale * deploymentFactor;
 }
 
 export function resolveSeatDivisionSemanticId(id) {

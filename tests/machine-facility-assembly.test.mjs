@@ -76,3 +76,12 @@ test('S6 each product facility has a stable physical port and subject', () => {
     assert.ok(assembly.envelope.radius > 0);
   }
 });
+
+
+test('S6 facility ids stay aligned to canonical Feature Registry ids', async () => {
+  const { TEAMAI_FRONTEND_FEATURES } = await import('../frontend/spatial/feature-registry.js');
+  const nonSeatFeatureIds = TEAMAI_FRONTEND_FEATURES
+    .map((feature) => feature.id)
+    .filter((id) => id !== 'seats');
+  assert.deepEqual([...MACHINE_PRODUCT_FACILITY_IDS].sort(), [...nonSeatFeatureIds].sort());
+});

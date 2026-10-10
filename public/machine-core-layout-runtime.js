@@ -1,5 +1,5 @@
 import { clampSeatCount, MACHINE_DEFAULT_SEAT_COUNT } from './seat-capacity.js';
-import { deriveExpandedMachineCoreRadii } from './hero-world-profile.js';
+import { deriveExpandedMachineCoreRadii, deriveMachineWorldProfile } from './hero-world-profile.js';
 import { createSpatialConstructionContext, validateSpatialRootedCore } from './machine-spatial-root-contract.js';
 import { buildMachineCoreConnections } from './machine-core-topology.js';
 import { deriveMachinePodAssembly, validateMachinePodAssembly } from './machine-pod-assembly.js';
@@ -85,6 +85,14 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
   const count = clampSeatCount(seatCount, MACHINE_DEFAULT_SEAT_COUNT);
   const amount = expansionAmount == null ? (expanded ? 1 : 0) : clamp01(expansionAmount);
   const coreRadii = deriveExpandedMachineCoreRadii(count, amount);
+  const presentationProfile = deriveMachineWorldProfile(count);
+  const seatScale = Math.max(0.6, Math.min(1, Number(presentationProfile.seatScale) || 1));
+  const podDimensions = Object.freeze({
+    x: silhouetteDimensions.pod.x * seatScale,
+    y: silhouetteDimensions.pod.y * seatScale,
+    z: silhouetteDimensions.pod.z * seatScale,
+    seam: silhouetteDimensions.pod.seam * seatScale,
+  });
   const innerRadius = coreRadii.seatShellRadius;
   const adjacentCenterSpacing = count > 1
     ? 2 * innerRadius * Math.sin(Math.PI / count)
@@ -93,7 +101,7 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
   let hub = { id: 'machine-hub-core', branchId: 'HUB-CORE', kind: 'hub', level: 0.42, center: { x: 0, y: 0.42, z: 0 }, dimensions: { x: 2.6, y: 0.78, z: 2.6 }, silhouette: 'hex', seam: 0.26, port: { x: 0, y: 0.42, z: 1.45 }, uiStyle: 'command-core', expanded: true, semanticId: null, semanticKey: null, semanticBoundary: 'presentation-only', ...createSpatialConstructionContext({ slice: 'S2', owner: ROOT_OWNER.hub, semanticBoundary: 'presentation-only' }) };
   hub.uiSurface = makeUiSurface(hub, hub.uiStyle, 0.72); hub.camera = cameraForPart(hub, Math.PI / 2);
   const inner = Array.from({ length: count }, (_, seatIndex) => {
-    const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(innerRadius, angle, level), dims = silhouetteDimensions.pod, branchId = seatShellBranchId(seatIndex);
+    const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(innerRadius, angle, level), dims = podDimensions, branchId = seatShellBranchId(seatIndex);
     const semantic = bindSeatShellProjection({ seatIndex, branchId });
     const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: null, ...semantic, ...createSpatialConstructionContext({ slice: 'S3', owner: ROOT_OWNER.pod, semanticId: semantic.semanticId, semanticBoundary: semantic.semanticBoundary }) };
     const podAssembly = deriveMachinePodAssembly({

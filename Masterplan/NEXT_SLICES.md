@@ -8,7 +8,7 @@ TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence 
 
 ## Status
 
-IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `76da305f0ec3efb3d368b22fb70748f0051f4d15`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
+IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #417, PR #419, PR #421, and PR #422 are merged baselines. Current canonical `main` is `13356cae7e6ef8179f7e2e552211bb4d187f37fb`. PR #413 is merged and Firestore index deploy/readback is RUNTIME-PROVEN by default-branch run `36146692843`. Issue #401 remains the sole implementation frontier, but there is currently no open #401 implementation PR. Gate 3 remains blocked because the configured diagnostic scope has zero team documents. The existing default-branch `firestore-production-evidence.yml` already accepts explicit `team_id` and `seat_id`, so a separate selector implementation is unnecessary. The live branch head is the source of truth for current verification.
 
 | Authority area | Implemented / source state | Repository proof | Live / human proof |
 |---|---|---|---|
@@ -19,6 +19,66 @@ IMPLEMENTATION ACTIVE / BLOCKED ON AUTHORIZED LIVE DATA. PR #398, PR #416, PR #4
 | Continuation | Durable checkpoint, explicit request, waiting state, fresh-turn semantics | repository E2E + deployed request boundary | live provider continuation remains open |
 | Frontend/product | #400 representative MCP, Workspace, Team/Agents, Marketplace, Storage, and #392 presentation contracts | representative Browser proof | authoritative backend wiring intentionally bounded |
 | Delivery | Firebase Hosting is production authority; GitHub Pages is validation-only | repository workflow/contracts | production deployment/browser observation remains open |
+
+### 029 spatial sub-frontier (bounded, not a second current slice)
+
+PR #424 remains the active bounded 029 spatial continuation vehicle. It does not replace the single global Current Slice above.
+
+Current spatial order inside #424:
+
+Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
+
+Prior verified structural baseline: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1` (S8 V3 + S7-V16 chassis depth + S3 V6 Pod face framing + S8 facility-carrier V2). Latest code-bearing spatial baseline is `c0542d7c6d9a8836329c64e4235e6c0fdc40137b`, which carries S7-OUTER-BODY-V4 plus the Analysis telescope service-bay shell and observable runtime descriptors. The exact-head E2E repair is `db54ae8ac0a4203dcabc7a097ed1cff12986ad36` (test-only: expects V4 and asserts two service-bay descriptors). Its five exact-head gates are terminal PASS: Full-System `38067263018`, Governance `38067263026`, Security `38067263012`, Deep Security `38067263005`, Browser `38067263003` (92 passed / 4 skipped). Browser artifact `11676005427`, SHA-256 `cf7610dfc24683ac8a14e4e14c76347fbc31d00c7d3cf936125e920f8f62065c`; full-project artifact `11674254847`, SHA-256 `a3487a6986661f9b48572262180ab70db2495b76525737ba0ff85d5051f16026`. See `E424-2026-10-11C`. The live PR head remains authoritative.
+
+Historical exact-head Browser artifacts remain diagnostic provenance. Current S7-V21 machinery detail counts are Analysis 18, Operations 20, Control 20 and Access-Commerce 23. S7-OUTER-BODY-V4 publishes 20 presentation-only body descriptors across four families; the Analysis open service bay is represented by two descriptors. Source/public machine-world-renderer.js copies are byte-identical. Direct inspection of the original Hailuo MP4 and endorsed PNG now confirms a large contrast/surface-detail gap on the real production /hero/ wide view. The MP4's 3–5 s mechanical frames are portrait close/oblique states and cannot be scored by raw pixel parity against a landscape world overview. Crucially, production camera wiring currently never sets facilityFocused or facilitySubject; its setCamera() allowlist excludes FACILITY_FOCUS, while the low-level camera resolver and renderer support exist. Make production focus→return observable before changing geometry/materials. See E424-2026-10-11C for binary identity, screen-content descriptors, exact-head Browser artifact and next-slice contract.
+
+The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
+
+### 2026-10-08 S8 endpoint/junction embodiment
+
+Producing application head: `3a95a1bca311df2ffd99b98177ff523e068626f5` (S8 V3 + S7-V16 chassis depth + S3 V6 Pod face framing).
+
+- 8 machine endpoint collars + 11 facility-port flanges = 19 presentation-only descriptors.
+- Independent connector-segment clearance regression passes across Seats 1–10 and expansion states 0/1 at the governed 0.16 floor.
+- Canonical Browser `37762854016`: **PASS**, 92 passed / 4 skipped on the exact producing application head.
+- Artifact `11543143062`; SHA-256 `sha256:b26b2e285a0291a45f9190b42db9f10bf8270f8f6dbd08804cf0494ab02b7614`.
+- Artifact inspection confirms the connector/junction layer is no longer pixel-identical to its earlier V1 raster path. Across the newer documentation-head capture and the old V1 capture, comparable world views differ by 1.246% of pixels, though intervening S3/S7 changes also contribute to that delta.
+- V3 extends the existing authored machine/facility interface points along their radial basis with longer cylindrical connector spans and terminal collars. It introduces no topology authority, new product identity, camera authority, or backend/runtime authority.
+- The current exact branch head `789c0fff8031acbb0e0bacb43fc9288a6b974565` adds documentation alignment only and has its own five-gate pass: Browser run `37764252683`, 92 passed / 4 skipped, artifact `11543389954`, SHA-256 `sha256:a529e2ca248680f958d29ab4101deda02a3d96ce758bb93737dc60e7fb623e95`.
+- The production Hero surface remains darker and more skeletal than the endorsed visual direction, and the outer machine bodies still lack convincing nested mechanical attachment. Human visual acceptance is therefore open.
+- Next prerequisite inside the #424 sub-frontier: restore a real production FACILITY_FOCUS → return-to-world path for one of the four existing S7 branch identities. This is an observability/integration slice, not permission to rewrite camera authority globally. After that capture isolates occlusion, silhouette, normal/shading and surface materials, return to the existing bounded S7 chassis-to-mechanism attachment backlog. Do not enlarge endpoint geometry or switch all shells opaque just to force raster delta.
+- Manifest hygiene follow-up is closed: direct renderer import coverage is guarded; the previously omitted renderer dependencies are published; the source-side owner for `hero-cam3-tree-center-zoom.js` has been restored.
+
+
+### 2026-10-07 real-product visual finding
+
+The exact-head Browser artifact now contains an actual `/hero/` video capture. It confirms the 10-seat product surface is interactive and traverses selection, division focus, return, and turn-loop states. It also confirms the remaining visual gap directly on the product surface: the scene is still darker, more skeletal, and less mechanically dense than the bright manufactured-machine reference. The final rocket-hologram storyboard frame is not a required target. Product Law remains authoritative at 10 seats.
+
+The next structural order remains inside S0-S10. Current verified embodiment now covers S2 Core and S3 Pods, plus the previously verified S7 analysis and operations families. The next family must be selected from the real remaining physical gaps, independently measured before implementation; it must not be inferred from the storyboard alone.
+
+### 2026-10-08 S7-V14 facility body production parity
+
+The bounded structural slice promotes the already-authored S7 facility body shell grammar into the canonical production Hero renderer.
+
+- Four existing S7 facilities retain their existing semantic identities and family roles.
+- Each facility receives five presentation-only layers: main shell, base collar, shoulder plate, upper cap, and mechanism housing.
+- The runtime therefore renders **20** authored body descriptors with four distinct silhouettes.
+- The authored shell module is now included in the spatial runtime publication manifest, with source/public renderer and shell copies synchronized.
+- Independent conservative XZ shell-versus-Pod clearance was sampled at Seat counts 1, 5, and 10 across closed, half, and expanded states. The minimum measured margin is approximately **2.7371 units**, above the governed **0.16** requested clearance.
+- Exact-head Browser artifact: `11498924852`; independently matched ZIP SHA-256: `sha256:acf913a735414db54a761737d5834047b0b5ce5edd2e45070cb1e6061d80f7e3`.
+- The actual `/hero/` capture now contains the promoted outer body masses. The Hailuo MP4 and endorsed PNG remain visual-direction references only; the storyboard's eight-Pod composition does not override TeamAi's 1–10 Seat Product Law.
+
+This closes **S7-V14 repository/browser verification** only. Human visual acceptance, production deployment/runtime proof, and merge/release authorization remain open.
+
+## Exact-head Browser completion discipline
+
+For the 029 spatial companion, **CI running is not a terminal evidence state**. A change remains unaccepted until the Canonical Browser workflow has finished on the exact current head and produced its terminal report/artifact. A failed, cancelled, stale, or missing Browser result must be diagnosed, not treated as completion.
+
+While the required CI/Browser validators are running, non-conflicting work may continue in the same #424 vehicle: repository history/debris/stale-reference search, Product Law and feature-coverage reconciliation, authority-graph review, independent geometry calculations, visual-reference comparison against the preserved Hailuo MP4/PNG inputs, and preparation of the next bounded commit. Do not mutate the tested proof target blindly while a current exact-head validation is still running.
+
+## 029 acceptance objective
+
+The spatial continuation is accepted only as a **product-integrated semantic machine**. Visual fidelity to the Hailuo MP4 and endorsed PNG/reference-board is necessary design guidance, but it is not sufficient. Product Law, the canonical frontend feature grammar (#400), the 029 product ledger (#278/#405), interaction/read-model contracts, S0-S10 geometry/mechanics/topology/camera, and applicable S22-S33 acceptance gates must all remain coherent. No visual effect, material pass, or screenshot resemblance may substitute for a missing product or structural contract.
 
 ## Objective
 
@@ -49,7 +109,7 @@ The audited ownership fixes now include a neutral machine-subject geometry owner
 - `Masterplan/MASTERPLAN.md`
 - `POLICY.md`
 - `docs/SKILL_WIRING.md`
-- Issue #396 — 029 Spatial World execution guide
+- Issue #396 — historical 029 Spatial World construction guide, superseded for active execution by #405
 - Issue #400 — Canonical Frontend Feature & Spatial UX Contract
 - #392 — Seat budget, usage, handoff, continuation, and cooperation runtime
 - Merged PR #398 — reviewed 029 structural baseline
@@ -119,9 +179,13 @@ TEAM-EXPERIENCE-029 remains the governing 029 product lineage. The post-#346 con
 
 ## 2026-09-28 029 spatial acceptance companion
 
-PR #404 remains the Draft 029 reconstruction vehicle; it does not replace the single current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
+PR #404 is the merged historical 029 reconstruction vehicle. PR #424 `frontend/029-spatial-world-continuation` is the active bounded spatial continuation vehicle; it does not replace the single global current slice above. S22 Accessibility is now repository/browser-verified through the canonical Browser smoke contract. Fresh exact-head evidence was captured on `9515f57b63fc043600812c445cb267dcbe6dd954`: Browser run `36376500367` passed **86 tests / 4 skipped**, Full-System run `36376500301` passed **1,122 / 1,122**, and Security, Deep Security, and Governance all passed. The detailed spatial evidence remains in `TEAMAI_3D_WORLD_404_EVIDENCE.md`, with `TEAMAI_3D_WORLD_404_CHECKLIST.md` as the status ledger.
 
 S22 now has repository/browser proof for keyboard navigation, visible focus, deterministic accessible names, state announcements, error/blocked reasons, non-color-only meaning, Escape/back, return-to-parent, reduced-motion semantic equivalence, and Browser accessibility smoke. These are repository implementation/evidence facts, not 029 completion claims. No production deployment, human acceptance, provider execution, or merge authorization is inferred from these results.
+
+### S24 continuation boundary
+
+S23 remains repository/browser-verified with physical-device touch acceptance open. PR #424 may advance S24 material/lighting integration as an explicitly bounded 029 companion while Issue #401 remains the global current-slice authority. S24 completion requires fresh exact-head proof and a post-material S23 readability/contrast recheck because materials can change perceived visibility without changing screen-space geometry.
 
 ## 030 successor frontier
 
@@ -151,10 +215,98 @@ Issue #415 is a governance/verification infrastructure vehicle and does **not** 
 - **`teamai-seat-budget-runtime` remains undeployed.** The former index prerequisite is satisfied; live promotion is now gated on Gate 3 Seat-shape evidence, not on index presence.
 - **Firestore field-level Rules hardening is not yet final.** The real Seat field inventory must be reconciled before narrowing authenticated owner writes.
 - **Final spatial acceptance remains open.** The 10-seat envelope, R0 receiving choreography, R1/R2 articulation, responsive behavior, reduced motion, and accessibility interaction matrix need final evidence.
-- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 remains the Draft 029 spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
+- **Merge authority remains separate.** #398, #402, and #413 are merged baselines. PR #404 is merged historical provenance and must not be reopened; PR #424 is the active spatial implementation vehicle and must not absorb #401 backend authority. PR #416 is governance/review-readiness infrastructure only.
 
 ### Shared CI support: advisory issue preflight
 
 PR #407 is infrastructure support for Issue #406. It is not a replacement current slice and does not create a second product implementation frontier. The advisory control plane validates issue metadata once before provider fan-out and treats explicit `none`/`n/a` as no owning issue.
 
 The reusable advisory-runner path and direct-push event-graph repair are infrastructure support only. They are not a replacement current slice, not 029 completion, and must not be mixed into Draft PR #404.
+
+
+### 2026-09-29 successor-session checkpoint
+
+Active spatial vehicle: PR #424 / `frontend/029-spatial-world-continuation`.
+Current exact head: `6007a87a14175a85de0cbc40fb0a95f51d876596`.
+Current relation to `main`: 150 ahead / 0 behind.
+
+Fresh exact-head evidence:
+- Full-System `36582031552` PASS
+- Governance `36582031480` PASS; review-readiness skipped because #424 is Draft
+- Security `36582031514` PASS
+- Deep Security `36582031459` PASS
+- Canonical Browser `36582031551` PASS
+- Browser artifact `11041060023`
+- Browser artifact digest `39261cb7b7858465f38cdde49e02c041ce15b38f83d814fd187bf147d123b6ae`
+
+The final Browser artifact was inspected. The structural candidate is executable and coherent, but S2-S10 human visual acceptance remains open because the current Three.js embodiment is still intentionally substrate-like/skeletal compared with the target manufactured-machine direction.
+
+A final hygiene correction on this exact lineage removed one duplicated `data-structural-material-model` assignment from the public structural preview and restored frontend/public parity. Do not treat this as a functional feature change.
+
+### 2026-10-07 S7 Operations fin-deploy actuator slice
+
+The bounded structural frontier now deepens the existing Operations / fin-deployment machine without changing semantic identity, topology, Seat capacity, camera authority, or backend/runtime authority.
+
+- S7 machinery advances `S7-V11 → S7-V12`.
+- Two presentation-only mechanical actuator housings are added: `fin-actuator-primary` and `fin-actuator-secondary`.
+- Each actuator is parented to the corresponding existing deployment-fin role and included in the S7 machine subject/envelope.
+- Independent representative 10-seat Beta geometry leaves approximately `0.18675` and `0.20219` units of tight-edge margin for the primary and secondary actuator respectively, above the regression minimum of `0.03`.
+- Frontend/public `machine-facility-machinery.js` parity is exact.
+- Exact-head Full-System, Governance, Security, Deep Security, and Browser proof remains pending until the resulting head terminates through the current CI cycle.
+
+The reference MP4/PNG remain visual-direction inputs only. This slice adds mechanical support structure and does not claim final S7 visual acceptance or S24/S25/S26 completion.
+
+### 2026-10-07 verified S7 Operations checkpoint
+
+The S7 Operations fin-deploy reinforcement is exact-head verified at `af4be5fdf8e0bded3612d9ecf12efd6a19155080`. S7-V12 contains paired presentation-only actuator housings under the existing deployment-fin parents. Independent Beta housing margins are approximately `0.18675` and `0.20219` units. Full-System `37641487389`, Governance `37641487516`, Security `37641487409`, Deep Security `37641487485`, and Canonical Browser `37641487397` all pass. Human visual acceptance and downstream S24+ visual completion remain open.
+
+### 2026-10-07 S7 Control rotor-drive-link slice
+
+The bounded structural frontier deepens the Gamma / Control facility with two presentation-only `rotor-drive-link` members under the existing `rotor-hub`.
+
+- S7 machinery advances `S7-V12 → S7-V13`.
+- Independent 1–10 Seat geometry validation gives a minimum conservative housing margin of approximately `0.08767` units, above the governed `0.03` floor.
+- Frontend/public `machine-facility-machinery.js` remains byte-identical.
+- No semantic hierarchy, topology state, Seat cardinality, port authority, camera authority, or backend/runtime authority changed.
+
+Final exact-head proof for this implementation-plus-documentation state is complete.
+
+
+### 2026-10-07 S7 Control exact-head proof result
+
+- Exact head: `4d67ac6237e614d9fb6e74c1c46389cc9691c7e5`
+- Full-System: `37649479000` PASS
+- Governance: `37649478928` PASS
+- Security: `37649478908` PASS
+- Deep Security: `37649479006` PASS
+- Browser: `37649478815` PASS, `92 passed / 4 skipped`
+- Browser artifact: `11496462178`
+- Browser artifact SHA-256: `sha256:f86ef0cf6528585f9a11017bb31f31083b2738bd92c7d8c4fc054266f5ed8b0a`
+- Real-product recording: VP8/WebM, 800×500, 25 fps, 13.0 s; video SHA-256 `339c240dcd8390dc954642e33b0a3c83c0088ca4b7307ffcc265cfa6496e8ac2`
+- Current Gamma geometry minimum conservative housing margin across 1–10 Seats: `0.08767` units against the `0.03` regression floor.
+- Browser captures show stable world/transform/Seat/return composition. The current facility capture is Beta/Operations, so it does not visually isolate the Gamma links; Gamma acceptance rests on authored source, focused regression, independent geometry matrix, and the overall exact-head browser pass.
+
+### 2026-10-09 S8 outer-spine carrier production integration
+
+**Producing application head:** `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+
+- Full-System `37893061074`: **PASS**.
+- Governance `37893061114`: **PASS**.
+- Security `37893061040`: **PASS**.
+- Deep Security `37893061045`: **PASS**.
+- Canonical Browser `37893061246`: **PASS**, 92 passed / 4 skipped, exact-head checkout.
+- Browser artifact `11599691063`; SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`.
+- Artifact ZIP independently downloaded; local SHA-256 matched the workflow artifact digest.
+- Production carrier telemetry confirms 20 descriptors rendered: 12 beam stages + 8 hinge collars, world-overview scope only.
+- Independent carrier cross-section regression passes Seats 1–10 with expansion amounts 0, 0.5, and 1 against the governed 0.16 clearance budget.
+- Actual `/hero/` wide capture versus prior exact-head parent `88a5d6239caaa380231605cca418bdedf5faf70c`: 5,364 pixels changed beyond 5/255 RGB, 0.582% of pixels, bounding box x=300..1118 / y=232..534. This is a measurable but modest visual contribution, not human visual acceptance.
+- The separate `s2-s10-*.png` assets belong to the Three.js structural preview and are not used as evidence for this raw-WebGL production-renderer change.
+
+**Implementation:** `S8-FACILITY-CARRIER-V2` consumes the four existing `outer-spine` edges from canonical `machine-world-topology`; it creates no new semantic edge or topology authority. The source/public carrier and renderer are byte-identical. The manifest publishes the carrier, and direct-renderer-import closure remains guarded.
+
+**Next spatial slice inside the existing #424 vehicle:** first reconnect the already-supported S10 FACILITY_FOCUS camera to an observable production Hero action, with derived subject bounds, branch identity telemetry, fail-closed unknown IDs and return-to-world. This prerequisite enables equivalent focus-state comparison with actual Hailuo mechanical frames. After fresh production focus/return captures, select one remaining S7 chassis-to-mechanism attachment only if that artifact shows a concrete structural gap. Keep the current carrier scale/topology, Product Law 1–10 Seat invariant, authored port positions and 0.16 requested route-clearance floor fixed unless independent evidence proves otherwise.
+
+
+### 2026-10-11 exact-head override — read before using historical checkpoints
+
+Latest completed code/test proof is `db54ae8ac0a4203dcabc7a097ed1cff12986ad36`: all five gates PASS, with Browser artifact `11676005427` / SHA-256 `cf7610dfc24683ac8a14e4e14c76347fbc31d00c7d3cf936125e920f8f62065c`. The prior `45c896e…` and `23da77a…` records below are historical checkpoints only. See E424-2026-10-11C for the actual Hailuo MP4 hash, inspected frame states, exact production screenshot, descriptive luma comparison and the newly confirmed production Facility Focus connectivity gap. The structural Three.js Facility screenshot remains QA evidence, not production-path evidence.

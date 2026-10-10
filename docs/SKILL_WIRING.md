@@ -4,6 +4,10 @@
 
 The repository has **one single skills tree**: `skills/**/SKILL.md`. Skills are reusable procedures only; they are never a source of Product Law, permission, identity, scheduler, entitlement, durable-state, or merge authority.
 
+## 2026-09-28 029 spatial continuation routing
+
+The 029 spatial implementation lineage is PR #424 after merged PR #404. Skills remain procedural only: machine-builder and verification guidance may operate on the active continuation scope, but they do not become Product Law, geometry, semantic-state, backend/runtime, entitlement, provider, or merge authorities.
+
 ## Authority path
 
 `Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → this map → applicable Skill(s) → owning Issue → PR → implementation → verification/evidence → AI_ASSISTANT_READ_ME.md`
@@ -138,7 +142,7 @@ Skills route the current procedure selected for the slice; they do not own curre
 
 ## 2026-09-24 029 spatial acceptance routing
 
-The 029 PR #404 structural correction stays within the existing Machine Builder and applicable frontend/spatial Skill families. No new Skill or governance authority is introduced. The implementation seam is: authored S4 division geometry → shared world-profile safety envelopes → S5 clearance planner → canonical renderer/runtime → exact-head Full-System and Browser verification. The exact current branch head is `965f0fb7db1ccf85fca8e30e7790d5f48404f768`; its implementation state must not be promoted to verified/completed status until the exact-head validators provide evidence.
+The 029 PR #404 structural correction stays within the existing Machine Builder and applicable frontend/spatial Skill families. No new Skill or governance authority is introduced. The implementation seam is: authored S4 division geometry → shared world-profile safety envelopes → S5 clearance planner → canonical renderer/runtime → exact-head Full-System and Browser verification. The exact current branch head is `ba0d7dc7d057b9e778fd58cfd67d4d1b880402b4`; its implementation state must not be promoted to verified/completed status until the exact-head validators provide evidence.
 
 ## 030 successor routing
 

@@ -5,6 +5,7 @@ import {
   authoredRingMaterial,
   authoredSeatShellMaterial,
   authoredSeatInsetMaterial,
+  authoredHeroMaterialSet,
   HERO_AUTHORED_MATERIAL_ROLES,
 } from '../frontend/spatial/hero-authored-materials.js';
 import fs from 'node:fs';
@@ -34,6 +35,48 @@ test('Issue #88 material roles are explicit and pure', () => {
   }
   assert.ok(ring.rough < shell.rough);
   assert.ok(inset.color[0] < shell.color[0]);
+  assert.ok(shell.color[2] > shell.color[0]);
+  assert.ok(shell.color.reduce((sum, value) => sum + value, 0) < 2.4);
+});
+
+
+test('full renderer material set is derived from authored theme roles', () => {
+  const light = mapHeroThemeLighting({ themeMode: 'light', density: 'default', signal: 0.8 });
+  const dark = mapHeroThemeLighting({ themeMode: 'dark', density: 'default', signal: 0.8 });
+  const lightSet = authoredHeroMaterialSet(light);
+  const darkSet = authoredHeroMaterialSet(dark);
+
+  assert.deepEqual(Object.keys(lightSet), [
+    'metal', 'metal2', 'glass', 'energy', 'trace', 'accent',
+    'divisionConnection', 'divisionBehavior', 'divisionToolkit',
+    'divisionCapabilities', 'divisionAuthorization', 'divisionScope',
+    'divisionEvidence', 'conduit',
+    'workspaceRing', 'seatShell', 'seatShellInset',
+  ]);
+  assert.equal(lightSet.metal.role, 'workspaceRing');
+  assert.equal(lightSet.seatShell.role, 'seatShell');
+  assert.equal(lightSet.seatShellInset.role, 'seatShellInset');
+  assert.equal(lightSet.metal2.role, 'secondaryStructure');
+  assert.equal(lightSet.glass.role, 'glassSurface');
+  assert.equal(lightSet.energy.role, 'energySignal');
+  assert.equal(lightSet.trace.role, 'signalTrace');
+  assert.equal(lightSet.accent.role, 'statusAccent');
+  assert.notDeepEqual(lightSet, darkSet);
+  assert.ok(lightSet.divisionToolkit.color[0] > lightSet.divisionToolkit.color[2]);
+  assert.ok(lightSet.divisionEvidence.color[1] > lightSet.divisionEvidence.color[0]);
+  assert.ok(lightSet.conduit.color[2] > lightSet.conduit.color[0]);
+  assert.ok(lightSet.conduit.rough > lightSet.trace.rough);
+  assert.ok(lightSet.energy.color[2] > lightSet.energy.color[0]);
+  assert.ok(darkSet.energy.color[2] > darkSet.energy.color[0]);
+  assert.ok(lightSet.accent.color[0] > lightSet.accent.color[2]);
+  assert.ok(darkSet.accent.color[0] > darkSet.accent.color[2]);
+
+  for (const material of Object.values(lightSet)) {
+    assert.ok(material.rough >= 0 && material.rough <= 1);
+    assert.equal(material.color.length, 3);
+    assert.equal(material.spec.length, 3);
+    assert.ok(material.emit >= 0 && material.emit <= 1);
+  }
 });
 
 test('Light and Dark material families remain distinguishable', () => {
@@ -51,6 +94,19 @@ test('canonical machine renderer owns authored-material consumption', async () =
   assert.match(renderer, /authoredSeatShellMaterial/);
   assert.match(renderer, /authoredSeatInsetMaterial/);
   assert.match(renderer, /authoredRingMaterial/);
+  assert.match(renderer, /authoredHeroMaterialSet/);
+  assert.match(renderer, /activeHeroMaterials/);
+  assert.match(renderer, /activeHeroMaterials\.accent/);
+  assert.match(renderer, /activeHeroLighting/);
+  assert.match(renderer, /solidRoughness/);
+  assert.match(renderer, /solidSpecular/);
+  assert.match(renderer, /finite\(options\.rough, material\?\.rough/);
+  assert.match(renderer, /solidKeyDirection/);
+  assert.match(renderer, /bounded-lit-v1/);
+  assert.doesNotMatch(renderer, /const RING_MATERIALS/);
+  assert.doesNotMatch(authoredSource, /accentColorPlaceholder/);
+  const rendererSource = await fs.promises.readFile(path.join(process.cwd(), 'frontend/spatial/machine-world-renderer.js'), 'utf8');
+  assert.equal(rendererSource, renderer);
   assert.equal(authoredSource, authoredPublic);
   assert.match(renderer, /gl.drawArrays/);
   assert.doesNotMatch(heroFlex, /gl\.createShader|gl\.createProgram|gl\.drawArrays/);

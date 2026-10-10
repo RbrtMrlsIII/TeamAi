@@ -2,31 +2,163 @@
 
 ## Canonical recovery routing
 
-- Issue #409 is the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and the next slice.
-- PR #404 remains **OPEN / DRAFT** and the sole 029 spatial implementation vehicle.
-- S22 Accessibility is **repository/browser-verified and formally closed**.
-- S23 Responsive machine is **repository/browser-verified at the executable behavior/proof head `35423b86ba563181055c70103364662bed574c5e`**; current PR #404 descendants are documentation-only reconciliation unless a later source change is explicitly identified. Physical-device acceptance remains open.
-- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`. The spatial checklist's next numbered layer is S24, but it is **not automatically the current global slice**.
-- #401 remains the production Firestore/security/runtime authority. #412 owns the governed MCP/Capability backend+frontend contract. #392 remains authoritative for Seat budget/usage/handoff/continuation/cooperation semantics. #400 remains the frontend/product feature grammar.
-- No repository Browser result is production evidence; no green CI result is human acceptance.
-- Preserve the engineering chain: inspect -> reason -> independently validate -> change -> test -> review -> merge -> deploy -> browser-validate -> observe.
+- Issue #409 remains the **single canonical successor-session source of truth** for live refs, current workflow state, exact evidence, boundaries, and next-slice routing.
+- PR #404 is the **merged historical spatial vehicle**; PR #424 is the **only active 029 spatial implementation/review vehicle**. Do not create another spatial PR or parallel spatial authority.
+- The global execution frontier remains **Issue #401** through `Masterplan/NEXT_SLICES.md`; #424 is a bounded 029 spatial companion and must not absorb backend/runtime authority.
+- Product Law, the canonical frontend/product feature grammar (#400), the 029 ledger (#278/#405), and the Hailuo/PNG visual references all matter. The target is **the actual TeamAi product expressed as a semantic spatial machine**, not a visual imitation detached from product meaning.
+- The Hailuo MP4 and endorsed PNG/reference-board material are visual-direction inputs. They do not define semantic identity, geometry constants, backend truth, authorization, entitlement, scheduler/provider/payment authority, or acceptance by resemblance alone.
+- Last given prompt: continue structural implementation after exact-head verification, preserve the physical-machine goal, and do not confuse green CI with visual acceptance.
+- Preserve the evidence chain: **inspect → reason → independently validate → change → test → exact-head CI → Browser artifact/report → artifact/screenshot inspection → audit/align → accept or diagnose**.
+- **Do not stop at “CI green.”** A spatial change is not considered visually evidenced until the Canonical Browser workflow has completed for the exact head and its artifact/report has been inspected. A failed, cancelled, stale, or missing Browser result is not acceptance.
+- While exact-head CI/Browser is running, continue repository work that does not mutate the proof target: history/debris search, stale-reference detection, authority-graph reconciliation, product-feature coverage review, independent geometry calculations, visual-reference comparison, and preparation of the next bounded commit.
+- Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
+- S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
+
+## SESSION SNAPSHOT
+
+### 2026-10-08 CURRENT SESSION STATE
+
+This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
+
+- Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- replacement branch: `frontend/029-spatial-world-continuation`
+- current branch head: resolve from live PR #424 and verify `head.sha` before consequential work; documentation-only commits may advance the branch beyond the latest producing application head
+- producing application head at current structural checkpoint: `3a95a1bca311df2ffd99b98177ff523e068626f5`
+- live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as evidence-integrity continuity)
+- global current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
+- open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
+- governing spatial Issue: #405
+- canonical successor handoff: #409
+- handoff rule: Issue #409 is the canonical newcomer handoff; verify live branch/PR/CI state before consequential changes
+- next allowed work: deepen the four outer product-family machines as nested sub-machines and integrate their existing manifold/conduit hierarchy, only after independent clearance and exact-head Browser proof
+- validation state: producing application head `48ddce11f365683fd4cd9e7a66df5a0154e11bb1` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification. Browser run `37893061246`, 92 passed / 4 skipped, artifact `11599691063`, SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`. Resolve the live branch head separately.
+- PR #424 remains OPEN / DRAFT / mergeable
+- PR #404 remains merged historical provenance; do not reopen it
+
+### 2026-10-08 CURRENT S8 ENDPOINT/JUNCTION STATE
+
+- Verified application head: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+- Endpoint version: `S8-ENDPOINT-V3`; outer-spine carrier version: `S8-FACILITY-CARRIER-V2`
+- 19 presentation-only descriptors: 8 machine endpoint collars + 11 facility-port flanges.
+- Independent inter-machine clearance regression passes for Seats 1–10 and expansion states 0 and 1 at the governed 0.16 floor.
+- Canonical Browser for the current producing application head: run `37762854016`, **92 passed / 4 skipped**, exact-head checkout.
+- Artifact: `11543143062`; SHA-256 `sha256:b26b2e285a0291a45f9190b42db9f10bf8270f8f6dbd08804cf0494ab02b7614`.
+- The later documentation-only head `789c0fff8031acbb0e0bacb43fc9288a6b974565` also has a terminal exact-head Browser pass (run `37764252683`, artifact `11543389954`, SHA-256 `sha256:a529e2ca248680f958d29ab4101deda02a3d96ce758bb93737dc60e7fb623e95`).
+- Artifact ZIP integrity independently verified locally.
+- V3 diagnosis: the prior S8 V1/V2 layer had no observable effect in the structural-preview capture because it was centered/too small for that raster path. V3 now emits a longer radial connector carrier plus terminal collar from the authored interface points, and the real `/hero/` production-path artifact is nonzero-delta versus the S7-V15 artifact.
+- The connector layer is visible and bounded. Do not enlarge it merely to force pixels. The next visual improvement belongs to nested outer-machine depth and integration with the existing manifold/conduit hierarchy.
+- Repository debris/drift findings:
+  - `machine-world-structural-conduit.js` and `machine-world-pod-docking-embodiment.js` were direct canonical renderer imports omitted from `scripts/machine-spatial-runtime-manifest.mjs`; this risk is now covered by the manifest closure guard and both files are published.
+  - The duplicated `mechanism-housing` assertion in `tests/machine-structural-embodiment.test.mjs` has been removed.
+  - `machine-world-facility-carrier.js` and `machine-world-presentation-projection.js` remain parity-tested but are not current renderer imports. Their ownership/use is still open; do not delete or consolidate without proof.
+  - PR #424 remains a long-lived Draft. Treat that as history/process debt, not a reason to rewrite the active vehicle while the structural run is in progress.
+- Hailuo MP4 and endorsed PNG remain visual-direction inputs only; Product Law and S0–S10 structural authorities remain unchanged.
+
+### 2026-10-09 CURRENT S8 OUTER-SPINE CARRIER STATE
+
+**Producing application head:** `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
+
+- Full-System `37893061074`: **PASS**.
+- Governance `37893061114`: **PASS**.
+- Security `37893061040`: **PASS**.
+- Deep Security `37893061045`: **PASS**.
+- Canonical Browser `37893061246`: **PASS**, 92 passed / 4 skipped, exact-head checkout.
+- Browser artifact `11599691063`; SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`.
+- Artifact ZIP independently downloaded; local SHA-256 matched the workflow artifact digest.
+- Production carrier telemetry confirms 20 descriptors rendered: 12 beam stages + 8 hinge collars, world-overview scope only.
+- Independent carrier cross-section regression passes Seats 1–10 with expansion amounts 0, 0.5, and 1 against the governed 0.16 clearance budget.
+- Actual `/hero/` wide capture versus prior exact-head parent `88a5d6239caaa380231605cca418bdedf5faf70c`: 5,364 pixels changed beyond 5/255 RGB, 0.582% of pixels, bounding box x=300..1118 / y=232..534. This is a measurable but modest visual contribution, not human visual acceptance.
+- The separate `s2-s10-*.png` assets belong to the Three.js structural preview and are not used as evidence for this raw-WebGL production-renderer change.
+
+**Implementation:** `S8-FACILITY-CARRIER-V2` consumes the four existing `outer-spine` edges from canonical `machine-world-topology`; it creates no new semantic edge or topology authority. The source/public carrier and renderer are byte-identical. The manifest publishes the carrier, and direct-renderer-import closure remains guarded.
+
+**Next structural slice:** deepen the nested mechanical attachments and chassis relationships of the four existing Alpha/Analysis, Beta/Operations, Gamma/Control, and Delta/Access-Commerce machines. Keep the current carrier scale and topology fixed unless independent evidence demonstrates a geometry defect.
+
+### Validation-change guide
+
+Before modifying a test, validator, browser assertion, workflow gate, Skill, acceptance criterion, fixture, or evidence requirement because an authorized change conflicts with it, record:
+
+```
+VALIDATION CHANGE WARNING
+Protected old invariant:
+Authorized new rule:
+Why the old invariant is obsolete/retained:
+Replacement invariant:
+Implementation impact:
+Validation impact:
+Evidence/browser impact:
+Residual uncertainty:
+```
+
+Then: `warning → authority reconciliation → implementation → replacement validation → verification → evidence → durable PR/Issue record → session update`.
+
+Never weaken validation merely to make CI green.
+
+### Canonical session-boundary retirement records
+
+There is no live `HandOver.md`. Future sessions use Issue #409 and this session boundary instead.
+There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to the applicable Issue/PR/evidence and are never inferred from green CI.
+Parallel `docs/skills` procedure namespaces are forbidden; Skill routing is owned by `docs/SKILL_WIRING.md`.
+
+### Governance continuity markers retained as historical provenance
+
+- main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (historical governance-test provenance only; the live canonical main baseline remains `13356cae7e6ef8179f7e2e552211bb4d187f37fb`)
+- Review lifecycle is: **Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence (when eligible) → independent human review/approval → merge candidate → governed merge → post-merge/runtime/production proof**.
+- `review-readiness` is a promotion/authorization check, not the AI model gate. AI advisory output is evidence only and never authorizes merge.
+- Reviewer semantics are proof-target-first: the PR's declared proof target defines what can be a material `verification_gaps`; an open owning Issue item or downstream production gate is not automatically a PR gap.
+- `governance_and_evidence` records concrete evidence inspected; `review_basis` explains why that evidence supports the verdict; `blocking_findings` identifies material defects; `verification_gaps` contains only material unproven proof-target requirements; `non_blocking_observations` carries relevant but non-blocking context.
+
+
+
+The governance migration history deliberately retains the following historical assertions so repository tests and cold-session readers can distinguish migrated authority from deleted evidence:
+
+- `closure-pending` remains a valid lifecycle state for governance reconciliation lineage.
+- PR #395 is historical advisory/governance evidence and is not an active product implementation vehicle.
+- Earlier PR #395 advisory evidence is retained as historical exact head context, not current reviewer authority.
+- Historical main baseline `87f466fb0edac3784280128785a8fd2dc757e749` is retained only for migration-test provenance; the live canonical main baseline is `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
+- PR #353 is merged into main and remains the historical machine-promotion lineage; it is not a second active spatial PR.
+- `verification_gaps`, `review_basis`, `governance_and_evidence`, and `non_blocking_observations` remain the canonical structured advisory evidence fields.
+
+### Historical pre-029-session verification note
+
+The older `208c5570` application-head snapshot and `2258a910` Browser investigation are retained as historical provenance. They do not represent the current #424 proof boundary. Current claims are anchored to the exact #424 head recorded in the session-state block above and to fresh exact-head evidence in the evidence ledger.
+
+### Historical Browser failure classification
+
+The standalone machine-core-preview transition assertion described in older recovery notes is historical, not a current failing test. Selecting a branch currently causes the preview to set hierarchyOpen and start the 950 ms expansion path before the explicit Expand action. The test can therefore observe expanded instead of opening. This is a temporal preview contract defect. Do not weaken the assertion or add arbitrary sleep. The implementation direction is to make branch selection and expansion deterministic and separately controllable in the standalone preview.
+
+### Current spatial sequence
+
+Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer substrate → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33.
+
+Y0 is the pre-construction leaf-coverage gate. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. The raw WebGL renderer is transition architecture until exact-head parity, Browser proof, measured performance, fixed-state visual comparison, and rollback/archive evidence survive.
+
+### Durable sources to read before acting
+
+1. Issue #409 for current newcomer handoff and exact live routing.
+2. `Masterplan/NEXT_SLICES.md` for the one global current execution frontier.
+3. `Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md` for ordered 029 spatial construction/acceptance gates.
+4. `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md` for exact-head proof and historical evidence boundaries.
+5. `Product_Law/PRODUCT_LAW.md` and `Product_Law/WIRING.md` for product meaning, invariants, and routing.
+6. `docs/TEAMAI_3D_HERO_VISION_REFERENCE_HAILUO.md` for the endorsed MP4 visual-direction boundary.
+7. `docs/TEAMAI_3D_HERO_*_CONSTRUCTION*.md`, feature/audit surfaces, and `docs/CHRONOLOGY.md` when a geometry or feature decision crosses historical boundaries.
+8. The active PR #424 diff and exact-head CI/Browser artifact for what is actually implemented and observable now.
+
+Rule: material reasoning from chat is a working candidate until it is promoted into the owning durable source above. A stale document, old PR head, historical artifact, or screenshot detached from its producing SHA cannot silently override the exact current tree.
 
 ## 2026-09-28 CURRENT SESSION STATE
 
-This block is the current session-routing summary. The live branch head is intentionally resolved from PR #404 / Issue #409 rather than self-stamped here, which avoids recursive drift when governance-only commits update this file.
+- canonical `main`: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- active PR #424 branch: `frontend/029-spatial-world-continuation`
+- current PR head before this session's source changes: `3549517235d0a963d4216828c2f703aa88e72bee`
+- #404 merged into main as `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
+- Governance initially failed on #424 because the Draft PR body lacked its required `Draft proof target` section; that contract has now been added.
+- S24 gap diagnosed: renderer-local `RING_MATERIALS` bypassed the authored theme material family. The continuation implementation now routes material aliases through `authoredHeroMaterialSet` and keeps source/public mirrors synchronized.
+- The guest browser presents ten-seat discoverable/locked vocabulary and a presentation-only auth handoff. Private signed-in data remains unproven until an authoritative backend read model is supplied by the real runtime.
+- The canvas has a deterministic accessible name but is not itself a keyboard tab stop. Keyboard operation is provided through semantic controls/menu; final human acceptance remains open.
+- After the source/public change, the required next evidence is fresh exact-head Governance, Full-System, Security, Deep Security, and Canonical Browser verification, followed by the material-driven S23 readability/contrast recheck.
 
-- canonical `main`: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- PR #404 branch: `frontend/029-spatial-world-reconstruction`
-- live #404 head: **see PR #404 / Issue #409 current metadata**
-- current spatial proof anchor: `415bfdf609c9bd9e55c830cd64bab8c4d1608a9c` with Browser `36393207424` **PASS, 88 passed / 4 skipped**
-- current #404 live head: `50c5fb215dc392533ba9ac5cdef9f9fb8fe56962`, a later documentation-reconciliation descendant
-- #404 remains the sole 029 spatial implementation vehicle and remains OPEN / DRAFT
-- S23 Responsive machine is repository/browser-verified; projected proof: desktop `57.67 / 57.93 / 20.21 px`, compact `54.99 / 54.72 / 20.28 px`, phone `33.88 / 33.71 / 14.12 px` for Seat / Pod / Facility
-- S23 strict projected guards: desktop `56 / 20`, compact `48 / 18`, phone `32 / 14`; phone Facility presentation scale `1.13x`
-- S23 remains bounded to presentation/read-model projection. Physical-device acceptance, production deployment/runtime, live provider execution, human acceptance, and 029 release authorization remain unproven.
-- E404-S15 / E404-S16 / E404-S17 remain bounded evidence records; E404-S23A is the active S23 density/readability proof record.
-- global program frontier remains **Issue #401** in `Masterplan/NEXT_SLICES.md`
-- do not start S24 merely because S23 is closed; resolve the current-slice authority first
 ## 2026-09-28 S22 accessibility closure on #404
 
 - canonical main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
@@ -45,379 +177,15 @@ This block is the current session-routing summary. The live branch head is inten
 - S22 Return-to-parent: repository/browser-verified
 - S22 Reduced-motion semantic equivalence: repository/browser-verified
 - S22 Browser accessibility smoke: repository/browser-verified
-- Latest exact-head Browser proof on `4e5428fd...`: **86 passed / 4 skipped**
-- Latest exact-head Full-System proof on `4e5428fd...`: **1,122 passed / 0 failed**, package create/verify PASS, 1,059 files
-- Latest exact-head Security: PASS
-- Latest exact-head Deep Security: PASS
-- Latest exact-head Governance: PASS
-- Fresh Browser artifact ID: `10952030826`
-- Fresh Browser artifact digest: `sha256:233271129be6093fff8590ddedebdfc769784b74acac01f286db5485789b9856`
-- S22 exit is repository/browser proof only. It does not establish live deployment, provider execution, production runtime truth, human acceptance, or 029 release authorization.
-- Next spatial slice after formal S22 closure: S23 Responsive machine.
-- Preserve #401, #412, #392, and #400 ownership boundaries.
-- No production Seat documents were created or mutated by #404.
 
-## 2026-09-28 S22 error / blocked reasons on #404
-
-- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head before this handoff reconciliation: `5e03fd5e754fed33e9686b16251dc957680fb319`
-- last behavior-changing S22 head: `e3000a4a682d9e226f86f533404099cb1215ce96`
-- global current slice remains Issue #401; Gate 3 remains blocked by `operator_hierarchy_absent`
-- #404 remains the sole 029 spatial implementation vehicle and does not absorb #401 backend authority
-- S22 Keyboard navigation: repository/browser-verified
-- S22 Visible focus: repository/browser-verified
-- S22 Deterministic accessible names: repository/browser-verified
-- S22 State announcements: repository/browser-verified
-- S22 Error / blocked reasons: repository/browser-verified on behavior head `e3000a4...`
-- Browser proof on behavior head: **82 passed / 4 skipped**
-- Full-System proof: **1,122 passed / 0 failed**, package create/verify PASS
-- Guest-locked feature controls now preserve their existing accessible names while exposing the canonical `BLOCKED_UNTIL_AUTHENTICATED` reason through `aria-describedby`
-- Transaction `errorCode` presentation and Retry/Cancel intent boundaries remain intact
-- Remaining S22 rows: non-color-only meaning, Escape/back, Return-to-parent, reduced-motion semantic equivalence, browser accessibility smoke
-- next 029 row: non-color-only meaning
-- no 029-released claim; no TEAM-BACKEND-001 completion; no production Seat documents were created or mutated by #404
-
-## 2026-09-26 Gate 3 operator-hierarchy blocker
-
-- current main: `76da305f0ec3efb3d368b22fb70748f0051f4d15`
-- current #404 head: `0e07fad0ff00503491d9b65a3938f9514b771f31`
-- current global slice: Issue #401 production Firestore authority, security, and runtime evidence
-- PR #417 merged into this mainline at `59a871f440dd1d15405164948da9985d1537a6be`; its Gate 3 classifier remains repository evidence only and did not create Seat/Connection documents
-- PR #413 merged; post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843` (`requiredCount=1`, `deployedCount=2`, `missing=[]`)
-- index verification is RUNTIME-PROVEN and is no longer the current #401 implementation blocker
-- Gate 3 Seat run `36141179411` still reports `gate3-test-seat` absent with `teamDocumentCount=0` / `teamListError=null`
-- the missing-Seat probe now classifies that condition as `operator_hierarchy_absent`; it does not create Seat documents
-- the archived 2026-09-03 Gate 3 PASS used the same named hierarchy under a verified UID, but the UID is redacted from repository evidence; current diagnostic scope is the protected `TEAMAI_FIREBASE_TEST_UID`, so do not infer deletion/reset causality
-- next allowed work: supply an operator-authorized Team/Seat pair through the existing default-branch `firestore-production-evidence.yml` dispatch vehicle, then Seat field inventory / Rules, then `teamai-seat-budget-runtime` promotion. No new selector implementation is required.
-- #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
-- PR #421 is now merged as `1b89879b52defea894795e2b72d6176f8c89ce09`; PR #422 subsequently reconciled canonical `main` to `76da305f0ec3efb3d368b22fb70748f0051f4d15`. Both were documentation-only governance changes.
-- PR #416 is merged governance/review-readiness infrastructure; Issue #415 remains procedural guidance only
-
-
-
-## 2026-09-25 production frontier reconciliation
-
-- current main: ce1656b7190fa8657253385fd884837ff7d12653
-- 2026-09-25 PR #404 evidence reconciliation: `8944ececfd6dfee15a39833107dd3bac932411bd` is the reconciled spatial head. The canonical `Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md` records the authored S4 articulated geometry, intermediate S5 travel sampling, dense 1–10 Seat clearance matrix, S8 topology, S9 signal, S10 camera, and exact-head CI/browser evidence. This remains implementation/repository evidence, not 029 release or human acceptance.
-- current global slice: Issue #401 production Firestore authority, security, and runtime evidence
-- PR #402 is merged; PR #413 is merged and its verifier defect is closed
-- fresh index run 36140968869 proved deployment succeeds; readback failed because the live export includes Firestore's implicit trailing __name__ field
-- diagnostic run 36141481871 exposed the exact live index shape; the required execution-results index is present
-- fresh Gate 3 Seat run 36141179411 still reports gate3-test-seat absent and teamDocumentCount=0
-- never treat the pre-normalization index verifier failure as proof that the required live index is absent
-- #404 remains the 029 spatial implementation vehicle and must not absorb #401 backend authority
-
-
-## 2026-09-25 review-readiness guidance reconciliation
-
-- current main after PR #413 merge: `ce1656b7190fa8657253385fd884837ff7d12653`
-- #413 is merged; the post-merge Firestore index deploy/readback/verifier proof passed in run `36146692843`.
-- Issue #414 records the advisory runtime symptom observed on #413 exact head `76a31a67de08345a5752d87af4808b8a54c86770`: three HTTP-200 reviewer responses failed the existing structured review contract.
-- Issue #415 is the active bounded guidance reconciliation for that symptom. No validator weakening or provider-routing change is authorized by this work.
-- Review lifecycle is: **Draft → exact-head substantive validation → Ready for review → review-readiness → AI advisory evidence (when eligible) → independent human review/approval → merge candidate → governed merge → post-merge/runtime/production proof**.
-- `review-readiness` is a promotion/authorization check, not the AI model gate. AI advisory output is evidence only and never authorizes merge.
-- Reviewer semantics are proof-target-first: the PR's declared proof target defines what can be a material `verification_gaps`; an open owning Issue item or downstream production gate is not automatically a PR gap.
-- `governance_and_evidence` records concrete evidence inspected; `review_basis` explains why that evidence supports the verdict; `blocking_findings` identifies material defects; `verification_gaps` contains only material unproven proof-target requirements; `non_blocking_observations` carries relevant but non-blocking context.
-- `APPROVE` requires defensible exact-head evidence and no material proof-target verification gaps. `CHANGES_REQUESTED` requires a finding/gap. `ADVISORY_ONLY` is used when material context or evidence is insufficient or ambiguous.
-- The PR template and `skills/governance/ai-advisory-review/SKILL.md` are the active operator-facing guidance for this semantic contract. The runner's structured validator remains fail-closed.
-
-## SESSION SNAPSHOT
-
-- Last given prompt: reconcile the review-readiness guidance exposed by the #413 advisory review without mixing it into #404.
-- #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
-- #353 machine Hero candidate is merged on main as the non-production implementation baseline.
-
-- historical baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `59a871f440dd1d15405164948da9985d1537a6be`
-- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
-- open implementation/governance vehicles: Issue #401 remains the current production-runtime frontier; Draft PR #404 remains the bounded 029 spatial implementation vehicle; Issue #415 is review-readiness guidance infrastructure and PR #416 is already merged
-- active implementation slices: #401 production Firestore evidence and the remaining bounded 029 spatial acceptance. Issue #415 remains procedural guidance only and does not replace the product frontier.
-- closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
-- completed reconstruction: #391 / #389
-- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398, #413
-- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, the retired current-state map, treating reusable-runner zero-job push failures as product proof, or creating live Gate 3 Seat documents
-- next allowed work: Gate 3 remains `operator_hierarchy_absent` until an authorized Seat hierarchy exists or a different operator-authorized path is supplied; then reconcile Rules/runtime gates from observed production state. Do not re-open the proven index verifier lane.
-- handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
-- live PR head: the GitHub PR head is the source of truth for the current verification commit; never infer current verification truth from an older recorded SHA.
-- snapshot rule: recorded main baseline must match the post-#398 `main` merge SHA before mutation; live GitHub branch/head state remains authoritative for current commit truth.
-- source-of-truth rule: the live PR head is the source of truth for the current verification commit; historical PR #346 head references do not define current state.
-
-
-### 2026-09-23 default-branch exact-path evidence vehicle
-
-VALIDATION CHANGE WARNING
-Protected old invariant: `firestore-seat-shape-diagnostic.yml` dispatched `scripts/diagnose-production-firestore-seat.mjs`, which discovers the Seat through a collection-group `seats` query.
-Authorized new rule: the same default-branch workflow filename now dispatches `scripts/run-production-firestore-evidence.mjs` with exact team-nested Seat document read and additive `runtime-diagnostics/{runId}` write.
-Why the old invariant is obsolete/retained: live run `35726408785` failed with Firestore REST HTTP 400 before the Seat document was reached. The parked collection-group script remains in the repository as historical source. The dedicated `firestore-production-evidence.yml` file still cannot be dispatched until it exists on `main`.
-Replacement invariant: GitHub can run the existing diagnostic workflow against `backend/030-production-runtime-evidence`, executing the PR-branch workflow file and the exact-path probe. Team ID is the documented Gate 3 selector `gate3-test-team`. Seat ID remains the required dispatch input.
-Implementation impact: default-branch dispatch unblocks the first 030 evidence run without merging #402 and without a production-secret pull-request trigger.
-Validation impact: diagnostic workflow tests now lock the exact-path script mapping; parked-script tests remain for the historical collection-group source.
-Evidence/browser impact: no live Seat proof, Rules closure, index deployment, provider execution, or 029-released claim is made until the dispatched run succeeds.
-Residual uncertainty: live secrets, Seat document presence, and the connections subcollection query may still fail at runtime.
-
-- First exact-path dispatch succeeded as a GitHub Actions execution: run `35762786313` on `6ee82e0ca92c5bd8e7485fff3d6345eb8a955538`.
-- Probe result: `canonical Seat document not found` (HTTP 404) for team `gate3-test-team` / seat `gate3-test-seat`.
-- Token/secrets were present; this is not the old collection-group HTTP 400.
-- Corrected run `35763013851` on `a7baf21bc752c3ecbdbfc2589f2c4e2a58c70f23` wrote additive evidence `run-2026-09-22T17-48-26-734Z-edb51fd8-897` with `teamDocumentCount: 0` and `teamListError: null`, then exited 2.
-- MASTERPLAN 030 "Fresh production Seat evidence run executed" is checked only as a run that produced durable negative evidence. It is not Seat-shape verification.
-- This does not complete TEAM-EXPERIENCE-029 or TEAM-BACKEND-001.
-
-- #346 governance foundation lineage remains the historical baseline for the current control-plane authority chain.
-- #353 machine Hero candidate is merged on main as the non-production implementation baseline.
-
-- main baseline: `87f466fb0edac3784280128785a8fd2dc757e749` (reviewed #398 merge)
-- current main: `87a1bf63d5a0a4743275abcb9b295d670864dbde`
-- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401 / Draft successor PR)
-- replacement branch: backend/401-gate3-operator-hierarchy-blocker
-- open implementation vehicles: Issue #401 / Draft successor for Gate 3 operator-hierarchy classification; Draft PR #404 remains the 029 reconstruction vehicle; PR #416 is governance infrastructure only
-- active implementation slices: #401 production Firestore evidence, #392 runtime, #400 frontend follow-up, remaining 029 spatial acceptance
-- closure-pending governance lineage: #394 / #393, implemented in PR #395 and retained as historical control-plane evidence
-- completed reconstruction: #391 / #389
-- historical/superseded: #347, #368, #369, #379, #385, #386, #387, #388, #397, #398
-- do not execute: retired model-specific reviewer paths, 1→2→2 choreography, shared-key semantics, comment-driven advisory orchestration, or the retired current-state map
-- next allowed work: continue Issue #401 on PR #402 using fresh run-scoped Firestore evidence, then reconcile Rules/index/runtime gates from observed production state.
-- handoff rule: chat is transient; start from this snapshot plus live GitHub branch/PR/Issue state, not PR archaeology
-- validation state: #398 exact-head Governance, Full-System, Security, and Browser validators were green on `08115e507b4999966b753e3e4c8e035e9db163`, followed by human approval from `Tenaj36`.
-- live PR head: the GitHub PR head is the source of truth for current verification; never infer current verification truth from an older recorded SHA.
-- snapshot rule: recorded main baseline must match the post-#398 `main` merge SHA before mutation; live GitHub branch/head state remains authoritative for current commit truth.
-- source-of-truth rule: the live PR head is the source of truth for the current verification commit; historical PR #346 head references do not define current state.
-
-
-### 2026-09-21 exact-head MCP proof
-
-- Verified live branch/PR head: `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842`.
-- Commit `2d75a8b2eabcbbcca533c008ef2ccb795c6fe842` corrected the MCP E2E direct-`/hero/` route assumption and closes the MCP facility before auth handoff.
-- Exact-head gates: Governance `35571627232` PASS; Full-System `35571627248` PASS; Security `35571627166` PASS; Browser `35571627174` PASS.
-- Browser proof covers guest discovery, four-capability inventory, dynamic target-owned branch preview, auth handoff, MCP facility close, and auth-panel visibility.
-- This is representative frontend/browser proof only. MCP provider credentials, authoritative lifecycle, entitlement, authorization, health, durable equip state, and execution remain external/backend-owned.
-- Next representative contract: Workspace capability surface under Issue #400.
-
-
-### 2026-09-21 exact-head Workspace proof
-- Workspace HQ representative contract is implemented in workspace-capability.js with a WORKSPACE_CENTER semantic target, dynamic Workspace-owned branch identity, and presentation-only capability intent/readiness semantics.
-- Live Hero Workspace facility is delivered through synchronized source/public modules and is reachable from the world menu without reviving /spatial/.
-- Exact-head Browser verification on 026a0fcfd8ac41a43ffd8988dad5b160cf972edb passed the Workspace flow: guest discovery, capability inventory, dynamic project-scoped branch preview, workspace-center camera focus, guest action lock, and authentication handoff.
-- Workspace proof remains representative frontend/browser evidence only. Firestore Workspace state, authorization, entitlement, scheduler eligibility, and execution remain authoritative outside the facility.
-- Next representative #400 contract: Team / Agents role assignment and Seat assignment presentation.
-
-
-### 2026-09-21 exact-head Team / Agents proof
-- Team / Agents representative contract is implemented as a responsibility presentation boundary with Agent identity, role vocabulary, Seat assignment preview, dynamic branch identity, readiness dimensions, and presentation-only assignment intent.
-- Exact-head Browser verification on `cd4a06a8a6706cf433e2f6a2c01c5456924af406` passed the Team / Agents flow. The preceding `0b182c4c...` failure was solely a regex-literal `+` matcher defect in the E2E test; production UI text was already correct.
-- Team / Agents proof remains representative frontend/browser evidence only. Durable Agent state, assignment persistence, authorization, entitlement, scheduler eligibility, and execution remain backend/runtime-owned.
-- Next representative #400 contract: Marketplace / Commerce entitlement-gated feature.
-
-### 2026-09-22 R1/R2 browser regression repair
-
-- The exact-head Browser artifact for `82a267306a81bc5c8072e553d7399e6defa47488` was inspected rather than inferred from timeout symptoms.
-- The first renderer/runtime exception was `ReferenceError: articulation is not defined` in `hero-r1-backend-threads.js` during the canonical `drawBackendDisplayThreads()` path. That exception aborted the renderer frame before downstream browser-visible dataset writes, explaining the clustered contribution, material, Seat-1, and machine-preview failures.
-- Commit `b2957c4430ac66d970ab0db695bc04b3f90eed4c` restores the missing local articulation value in the draw pass, synchronizes the canonical source/public pair, and adds an execution-level regression test that invokes the draw function rather than only checking source structure.
-- Exact-head validation on `b2957c4430ac66d970ab0db695bc04b3f90eed4c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS. Browser also passed the committed machine-spatial parity check before Playwright execution.
-- This closes the observed R1/R2 render-loop regression. It does not close final visual acceptance, production Firebase deployment, production Firestore evidence, real-provider execution/continuation, human acceptance, or merge authorization.
-
-### 2026-09-22 production Seat diagnostic gate hardening
-
-- The live production Seat diagnostic remains workflow-dispatch-only and is not auto-triggered. The current negative evidence applies to the configured diagnostic UID/workplace/project scope; historical same-name hierarchy evidence does not prove identity continuity.
-- Added `tests/firestore-seat-shape-diagnostic.test.mjs` to lock the workflow/script environment mapping, canonical Seat filtering, one-active-connection fail-closed rule, and metadata-only reporting posture.
-- The first version of this guard failed because its test assertion contained malformed JavaScript quoting. That was corrected in `48c688f1ed033803002d5f6e594c51d3a255fc0c` without changing the production diagnostic or workflow.
-- Exact-head validation on `48c688f1ed033803002d5f6e594c51d3a255fc0c`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS.
-- Live Supabase remains unchanged: `teamai-task-execute` is v12 stub runtime, `teamai-task-continuation-request` is v2, `teamai-seat-budget-settings` is v1, and `teamai-seat-budget-runtime` is not deployed. The next authoritative gate is the real Firestore Seat diagnostic itself.
-
-### 2026-09-22 normal task-execution connection authority closure
-
-- Deep review of the repository-to-runtime contract found one authority split: the repository real-provider executor's normal path still read `task.connection` while continuation execution already resolved the active connection from canonical Firestore Seat scope.
-- Commit `f3e1b9453cacb41bceaaf8084e6a21ef2e4e7546` removes that normal-path dependency. Task execution now resolves `firestoreFindSeatConnection({ uid, workplaceId, projectId, seatId })`, requires an active Seat-owned connection, requires provider agreement with the authorized Seat, and requires the `execute` capability before loading the Seat provider credential.
-- `tests/edge-runtime-contract.test.mjs` now guards this authority boundary and explicitly rejects `task.connection` as the normal execution authority.
-- This is repository-side hardening only. Live Supabase remains on `teamai-task-execute` v12 stub runtime until the controlled promotion gate is reached.
-
-- The same review identified a second authority split and failure-state gap. Normal execution now resolves the canonical active Seat-owned connection, matching continuation execution. A provider result that omits normalized `termination` is now durably recorded as `PROVIDER_TERMINATION_INVALID`, the task is failed, and continuation requests are failed rather than left running.
-- Firestore index review initially proposed a manual `connections(seatId,status)` index, but current Firebase documentation confirms compound equality queries can use index merging. That redundant index was removed. Only the `execution-results` `seatId ASC, recordedAt DESC` manual index remains required for the current ordered read model.
-- The manual Firestore index workflow now performs deployment followed by `firebase firestore:indexes` readback and verifies required repository indexes without deleting unrelated historical/live indexes.
-
-### 2026-09-22 R1/R2 runtime acceptance contract
-
-- Added `tests/e2e/hero-r1-r2-articulation.spec.ts` to exercise the canonical `/hero/` renderer rather than only the pure articulation model.
-- The browser contract verifies closed-state `STOWED` articulation, the fully opened 10-Seat `LINKED` state, R1/R2 articulation values, R1/R2 catalog counts, and strict R0 < R1 < R2 < R3 radial ordering.
-- Reduced-motion opening is included so the semantic articulation contract is proven under the non-animated accessibility path as well.
-- Exact-head validation on `e309f8e7ea61c60f241d1127c8ca606720fc2d3f`: Governance PASS, Full-System PASS, Security PASS, Canonical Browser PASS.
-- This establishes runtime/browser evidence for the R1/R2 articulation interface. It does not constitute final visual acceptance or production delivery evidence.
-
-### 2026-09-22 cross-stack convergence reconstruction
-
-- Reconstructed #398 as the sole cross-stack execution vehicle for Issue #396, incorporating spatial renderer ownership, Firestore Seat identity/budget, trusted Edge execution, continuation, #400 frontend contracts, delivery, evidence, and promotion boundaries.
-- Current structural fixes on this branch include a neutral `machine-subject.js` geometry owner, Node/Edge canonical Seat-discovery convergence, a maximum-density ring-separation regression contract, and explicit test coverage for the new ownership seam.
-- `backend/BACKEND_LIVE_SERVICE_STATUS.md` is now reconciled to the post-2026-09-12 active Edge inventory instead of claiming eight active functions while listing continuation-request v2.
-- The current blockers are production evidence and final acceptance boundaries, not permission to invent live state. Real Firestore/Edge/provider work remains gated on the protected diagnostic and governed deployment sequence.
-
-## Canonical authority path
-
-Product_Law/PRODUCT_LAW.md → Product_Law/WIRING.md → Masterplan/MASTERPLAN.md → Masterplan/NEXT_SLICES.md → POLICY.md / ORUCAVEAM → docs/SKILL_WIRING.md → applicable Skill(s) → owning Issue → PR → implementation → verification/evidence
-
-## Current truth
-
-- Product_Law/PRODUCT_LAW.md is the single Product Law.
-- Product_Law/WIRING.md owns development-field routing only.
-- Masterplan/MASTERPLAN.md is the ordered checklist.
-- Masterplan/NEXT_SLICES.md contains exactly one Current Slice.
-- POLICY.md owns ORUCAVEAM and execution discipline.
-- docs/SKILL_WIRING.md owns Skill routing.
-- AI_ASSISTANT_READ_ME.md owns volatile session/recovery state.
-- PRODUCT-KNOWLEDGE.md owns durable validated concepts.
-- docs/archive/ is historical only.
-- Active HandOver.md, active Endorsement.md, OBSOLETE_FILES.md, and docs/skills/ are forbidden.
-
-### 2026-09-21 active 029 migration
-
-PR #398 is the active Draft implementation PR for Issue #396 on `frontend/029-machine-world-convergence`. It is the exact-head lineage of retired PR #397, starting from head `23a83ae166f0983b598910d6168b1203ebf600096`. The spatial architecture now separates the Hero controller from `frontend/spatial/machine-world-renderer.js`, which owns production WebGL scene construction; `public/machine-world-renderer.js` is the synchronized browser copy. PR #397 is closed and must not become a parallel execution vehicle.
-
-## Current replacement-branch control plane
-
-- Issue #389 is completed; its reconstruction is merged into main.
-- #394/#393 remain closure-pending governance lineage and historical control-plane evidence; they do not own the 029 product implementation.
-- Automatic advisory review is five credential-isolated openrouter/free slots with a nominal 2-second launch stagger and an 8-second maximum spread.
-- Advisory slot/credential identity is defined by `.github/teamai/authority-manifest.yml`; this session record does not duplicate secret aliases.
-- Credential aliases identify only which secret a slot receives. They do not identify a reviewer, model, or provider.
-- Actual model/provider is runtime evidence from OpenRouter.
-- Earlier PR #395 advisory evidence (historical exact head c2a6f11a5a2bc31fa7212ab74e66454c0a4e3a06): retained as immutable historical evidence only.
-- Structured terminal slot artifacts are orchestration state. PR comments are evidence/publication only. A terminal provider failure remains visible in the slot artifact and is not converted into a false provider-success claim.
-- The automatic sequence is bound to the exact PR head. A later corrected head may establish a new sequence; the same exact head may not consume another provider sequence.
-- Execution completion is not advisory approval, human acceptance, merge authorization, or release.
-
-## Authority and delivery boundaries
-
-- GitHub is engineering/source truth.
-- Firebase Auth owns identity; Firestore (default) owns durable TeamAi application state; Supabase Edge is the trusted server execution/webhook boundary; PayPal is external payment-provider event authority.
-- Firebase Hosting is current product delivery authority.
-- GitHub Pages is the canonical public validation surface at https://RbrtMrlsIII.github.io/TeamAi/.
-- Vercel remains non-authoritative and paused.
-
-## Product boundary while reconstruction is active
-
-- Preserve current machine candidate and semantic topology work already on main.
-- PR #398 owns the current 029 spatial convergence implementation described by Issue #396.
-- No Product Law, entitlement, authorization, scheduler, durable-state, acceptance, or merge authority is created by the advisory workflow or renderer.
-
-## Validation lifecycle guide
-
-| PR state | Active validation | Promotion/review gate |
-|---|---|---|
-| Draft | Governance Integrity, evidence consistency, agent validation, Full-System, Security, and applicable Browser/Runtime checks continue against the exact PR head. | review-readiness may be skipped by lifecycle design. A skipped job is not a pass. |
-| Ready for review | Substantive exact-head validation remains current. | review-readiness evaluates review and authorization conditions and remains pending while independent approval is absent. |
-| Merge candidate | Required checks and evidence remain current on the exact head. | Normal governed GitHub review/merge path only; no auto-merge. |
-
-A downstream skipped job is never evidence that the underlying requirement passed. Recovery must inspect the controlling upstream job and the exact current head.
-
-## Validation-change guide
-
-Before modifying a test, validator, browser assertion, workflow gate, Skill, acceptance criterion, fixture, or evidence requirement because an authorized change conflicts with it, record:
-
-```
-VALIDATION CHANGE WARNING
-Protected old invariant:
-Authorized new rule:
-Why the old invariant is obsolete/retained:
-Replacement invariant:
-Implementation impact:
-Validation impact:
-Evidence/browser impact:
-Residual uncertainty:
-```
-
-Then:
-
-`warning → authority reconciliation → implementation → replacement validation → verification → evidence → durable PR/Issue record → session update`
-
-Never weaken validation merely to make CI green.
-
-## Current validation-change record
-
-PR #398 is replacing the retired monolithic Hero renderer with a canonical machine-world renderer while keeping the Hero controller as the semantic/input boundary. The migration preserves exact-head evidence rules and adapts validation toward owner-level behavioral contracts rather than stale source-shape assertions. The first exact-head Browser failure on the migrated renderer was a duplicate `branchAmounts` declaration in the canonical renderer. Follow-on exact-head evidence exposed invalid WebGL `uniform3f` calls against a `vec4` uniform and a line-render pass that continued using the solid program after a material draw. Those were repaired at the canonical renderer boundary. Controller trace persistence/zoom-baseline semantics and standalone machine-core Seat focus injection were also repaired without creating a second renderer. A source-owned feature registry and shared frontend state grammar are now part of the #400 foundation.
-
-## Evidence rules
-
-specified ≠ implemented ≠ verified ≠ runtime-proven ≠ completed ≠ accepted
-
-A passing test proves only the contract it exercises. Never weaken a validator to obtain green CI. Historical execution records remain immutable evidence for their original heads.
-
-## Handover
-
-There is no live `HandOver.md`. Future sessions start from this Session Snapshot, then verify live GitHub branch/PR/Issue state.
-
-## Endorsement
-
-There is no active `Endorsement.md`. Acceptance decisions remain scope-bound to the applicable Issue/PR/evidence and are never inferred from a green workflow.
-
-## Machine boundary
-
-The merged machine candidate remains non-production. Semantic identity, payload meaning, topology ownership, adaptive geometry, transition state, camera relationship, and rendering remain distinct concerns. Renderer output cannot become backend, identity, entitlement, scheduler, acceptance, or merge authority.
-
-## CURRENT ISSUE OWNERSHIP
-
-- #396 = active 029 spatial machine convergence execution guide
-- #278 = 029 canonical product-experience execution ledger
-- #360 = 029 machine-candidate/runtime/browser/provenance slice
-- #392 = AI Seat budget, usage, handoff, shared context, and cooperation product feature
-- #83 = frontend spatial visual/material track
-- #284 = backend durable/runtime ledger
-- #204 = Conn-3 GitHub OAuth/bind integration
-- #133 = enduring validation/promotion governance contract
-- #394/#393 = governance baseline/advisory normalization lineage, closure-pending in PR #395
-
-Historical Issues are evidence, not active routing.
-
-
-### 2026-09-21 #392 budget foundation
-
-- src/backend/seat-turn-budget.ts is now the canonical server-side accounting engine for the #392 foundation. It keeps total turn budget, output allocation, reasoning allocation, context/input policy, protected handoff reserve, warning threshold, configured/effective values, usage, remaining capacity, and completion/handoff display state distinct.
-- TaskExecutionService now accepts an optional backend-owned Seat budget, constrains the provider request maxOutputTokens, and returns server-computed budget accounting alongside the existing execution result.
-- Runtime tests cover request capping, actual usage accounting, handoff prediction, and continuation-aware exhaustion display.
-- This is foundation only, not #392 completion. The live teamai-task-execute Edge Function remains stub-edge-runtime; durable Seat budget config/usage authority, provider termination/completion evidence, durable handoff checkpoints, and live continuation enforcement remain open.
-- Do not replace these gaps with client counters or a second Edge-specific budget authority.
-### 2026-09-21 exact-head Storage item-inventory proof
-
-- Storage is implemented as a presentation/read-model-only facility with explicit readiness dimensions for authentication, inventory knowledge, authorization, entitlement, and health.
-- The facility reveals no inventory metadata until the read-model reaches `READY`, preventing guest or blocked contexts from rendering supplied item data.
-- Storage item metadata is normalized without content/body payloads. Item branches are dynamic and item-owned: `BRANCH-STORAGE::item/<item>/workspace/<workspace>/project/<project>/inventory`.
-- The browser surface contains no file input, upload endpoint, binary-transfer operation, or content-write method. It exposes only an inspection intent, which is presentation-only.
-- Exact-head verification on `d25177ea3f7300b08245d6e1e3fe1cec749f3c23`: Node test suite reported 59 passing tests; Canonical Browser reported 58 passing Playwright tests with 4 historical skips. Governance, Full-System, Security, and Browser runs all passed.
-- Independent live backend check: the connected Supabase project's `storage.buckets` query returned no buckets. No live content inventory was therefore fabricated or inferred from Firestore task/event/evidence data.
-- The absence of a live Storage content bucket/read endpoint is an explicit backend seam for a future governed slice, not a defect to be hidden inside frontend presentation.
-
-
-### 2026-09-21 exact-head Marketplace / Commerce proof
-
-- Marketplace is implemented as a presentation/read-model facility exposing exactly two commercial modules: Team Quality (five paid tiers above the baseline) and Team Population (nine paid tiers mapping persistent Seat 2 through Seat 10).
-- Team Population lower tiers remain locked during an active higher tier; higher-tier selection is permitted with an inline replacement warning that the lower tier effect disappears when the higher tier takes effect.
-- TeamAi entitlement and provider entitlement remain separate read-model facts. Commerce success is backend-defined as completed aggregate plus active entitlement sourced from the verified commerce event.
-- TeamAi does not collect or store card credentials. The facility exposes only an authorized external hosted billing link and keeps the card-entry boundary outside the browser.
-- Exact-head verification on `7b61c3c725b242288749324ad73d2eb752ded3b1`: Governance, Full-System, Security, and Canonical Browser all passed. Browser ran 60 tests, with 3 Marketplace scenarios passing and 4 historical tests skipped by existing lifecycle rules.
-- The earlier Marketplace browser failures were test-contract defects: stale world-entry setup, card-level text assertion targeting the button rather than its tier card, and dynamic billing-state assertion omitting the no-card-storage guarantee. Each was corrected without weakening product validation.
-- The live Supabase commerce intent/webhook functions remain external runtime authorities. Product-tier binding into the live edge intent is intentionally deferred until a shared authoritative catalog seam can be introduced without duplicating product authority.
-
-
-### 2026-09-22 audit hardening
-- The last audited implementation head is `a887afb68b5449b13e6dbe54f51bffa7f3b4bcb5`. The live branch head is authoritative and must be re-read before relying on this snapshot. That audited head includes the hardened production Firestore Seat diagnostic, which fails closed on missing/inactive/unauthorized/unentitled/unbound Seats, invalid budget shape, ambiguous or incompatible active Seat connections, and missing execute capability.
-- The diagnostic script is now syntax-checked by Full-System verification; the CodeQL-reported test URL matcher was tightened to exact hostname/path matching.
-
-### 2026-09-22 #392 Seat runtime + durable continuation convergence
-- Canonical team-nested Firestore Seat resolution remains the sole active Seat authority across task execution, durable Seat budget persistence, scheduler Seat enumeration, provider binding, provider credential lookup, and Seat connection-test persistence. Legacy project-level `/seats` records are ignored; ambiguous canonical Seat IDs fail closed.
-- Provider binding and connection persistence do not create missing Seat documents implicitly. Provider-key clearing remains possible with `clear:true` without an API key.
-- The repository now carries the next bounded continuation chain: incomplete provider result → durable handoff checkpoint → explicit continuation request → atomic task transition to `waiting_for_continuation` plus `CONTINUE_WAIT` durable event → trusted user-authenticated Edge continuation-request boundary.
-- Continuation requests preserve task/project/checkpoint/request identity, are idempotent on exact retry, and conflict on relation/instruction changes. The continuation boundary does not invoke a provider and does not treat a request as implicit execution approval.
-- The real Edge task-execute source now persists the handoff checkpoint before its durable `handoff_required` result and references that checkpoint in task/result evidence.
-- Live Supabase currently reports `teamai-task-execute` v12, `teamai-seat-provider-bind` v8, `teamai-task-continuation-request` v2, and `teamai-seat-budget-settings` v1. At this 2026-09-22 checkpoint, the new `teamai-seat-budget-runtime` Edge source was repository-complete but held from deployment pending the Firestore collection-group index; that prerequisite was subsequently satisfied by run `36146692843`.
-- Live production Firestore Seat document shape remains unverified from the real dataset. Do not deploy the new runtime path until the real authorized Coder Seat shape and connection relationship are directly inspected.
-- Remaining #392 execution gap: continuation request → authorized fresh-budgeted continuation turn → provider execution → truthful final completion. Gate 4 Firebase emulator proof remains parked/unproven.
-
-### 2026-09-22 #392 Seat Budget capability expansion
-- Seat Budget Settings is now an actual configurable product path: browser editor → authenticated runtime client → trusted `teamai-seat-budget-settings` Edge boundary → canonical Seat transaction → readback.
-- The live `teamai-seat-budget-settings` function is v1 and was source-matched after deployment. An unauthenticated browser-origin smoke returns HTTP 401 with `missing_firebase_id_token`.
-- Seat Budget durable runtime read model is repository-complete. `teamai-seat-budget-runtime` resolves the active/authorized canonical Seat, reads the latest Seat-owned durable `execution-results` record, and exposes usage/accounting provenance without returning provider output.
-- Legacy v12 stub execution is handled truthfully: raw usage may be shown as durable evidence, while remaining/usable generation capacity stays unknown until server-side budget accounting exists.
-- Firestore `execution-results` collection-group index `seatId ASC, recordedAt DESC` is now checked in and has an indexes-only manual deployment workflow. At this 2026-09-22 checkpoint, live runtime-read-model promotion was blocked pending that index; the prerequisite was subsequently satisfied by run `36146692843`.
-- R0 workspace receiving choreography is implemented and independently verified as a renderer-owned presentation capability from the Seat connection route into WORKSPACE_CENTER.
-
-### 2026-09-23 shared advisory control-plane support
-
-PR #407 is a narrow CI/infrastructure support vehicle for Issue #406. It does not replace the current product/spatial frontier. The advisory pipeline now preflights its PR Issue declaration once before automatic fan-out and accepts explicit `none`/`n/a` no-issue states; provider/model output remains advisory evidence only.
+### 2026-10-08 CURRENT VERIFIED FRONTIER
+
+- Producing application head: `3a95a1bca311df2ffd99b98177ff523e068626f5`.
+- S8 endpoint/junction: V3, closed and Browser-verified.
+- S3 Pod assembly: V6, 31 mechanical details including shell ribs, bulkheads, face braces, hinges, actuators, locks, plinth/frame/collar layers.
+- S7 facility body shell: V2, 20 descriptors with bounded radial chassis-depth offsets.
+- Exact-head Browser run: `37762854016`, 92 passed / 4 skipped.
+- Browser artifact: `11543143062`, SHA-256 `sha256:b26b2e285a0291a45f9190b42db9f10bf8270f8f6dbd08804cf0494ab02b7614`.
+- Artifact inspection versus `e8327c2`: world 9,045 changed pixels (0.9814%); transform-mid 8,449 (0.9168%); focused Facility and Seat unchanged.
+- Independent conservative chassis-depth calculation retained a worst outer-body/Pod margin of approximately 1.94 units in the tightest 10-seat case, above the governed 0.16 floor.
+- The next structural question is hierarchical: make each of the four outer product-family facilities read as a nested sub-machine around its existing authored machinery, while preserving S8 topology and endpoint/manifold authority.

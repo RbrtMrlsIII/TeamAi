@@ -17,6 +17,7 @@ import { deriveFocusedSeatDivisionGeometry } from './machine-seat-division-prese
 import { buildSeatDivisionEdge } from './machine-seat-division-topology.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery } from './machine-facility-machinery.js';
+import { deriveMachineWorldServiceManifold, deriveMachineWorldServiceManifoldJunctions, validateMachineWorldServiceManifold } from './machine-world-service-manifold.js';
 
 export const MACHINE_WORLD_TOPOLOGY_ID = 'MACHINE-WORLD-TOPOLOGY';
 export const MACHINE_WORLD_TOPOLOGY_VERSION = 'S8-V1';
@@ -129,21 +130,54 @@ function routeAvoidsObstacles(route, obstacles = [], clearance = 0.16) {
   return true;
 }
 
-function deriveServiceDeckY(parts = [], clearance = 0.16, minimum = 1.9) {
+function deriveServiceDeckY(source, target, {
+  clearance = 0.16,
+  lift = 0.24,
+  minimum = 0.72,
+} = {}) {
   const physicalClearance = Math.max(0, finite(clearance));
-  const deckMargin = Math.max(0.08, physicalClearance * 0.5);
-  const required = Math.max(
-    0.25,
-    ...(
-      Array.isArray(parts) ? parts : []
-    ).map((part) =>
-      finite(part?.center?.y)
-      + Math.abs(finite(part?.dimensions?.y)) * 0.5
-      + physicalClearance
-      + deckMargin,
-    ),
+  const serviceLift = Math.max(0.10, finite(lift, 0.24));
+  const endpointY = Math.max(
+    finite(source?.y),
+    finite(target?.y),
   );
-  return Math.max(finite(minimum, 1.9), required);
+  return Math.max(
+    finite(minimum, 0.72),
+    endpointY + physicalClearance + serviceLift,
+  );
+}
+
+export function getRenderableMachineWorldEdgesForScope(
+  topology,
+  {
+    mode = 'WORLD_OVERVIEW',
+    branchId = null,
+  } = {},
+) {
+  const edges = getRenderableMachineWorldEdges(topology);
+  if (!branchId || mode === 'WORLD_OVERVIEW') return Object.freeze(edges);
+
+  const matchesBranch = (edge) =>
+    edge.sourceBranchId === branchId || edge.targetBranchId === branchId;
+
+  const scoped = edges.filter((edge) => {
+    switch (mode) {
+      case 'POD_FOCUS':
+      case 'DIVISION_FOCUS':
+        return (
+          (edge.kind === 'pod-division' && edge.targetBranchId === branchId)
+          || (edge.kind === 'adjacent-seat' && matchesBranch(edge))
+        );
+      case 'FACILITY_FOCUS':
+        return (
+          edge.kind === 'facility-facility'
+          && matchesBranch(edge)
+        );
+      default:
+        return true;
+    }
+  });
+  return Object.freeze(scoped);
 }
 
 function raisedRoute(source, target, deckY) {
@@ -151,6 +185,18 @@ function raisedRoute(source, target, deckY) {
     Object.freeze({ x: finite(source.x), y: finite(source.y), z: finite(source.z) }),
     Object.freeze({ x: finite(source.x), y: deckY, z: finite(source.z) }),
     Object.freeze({ x: finite(target.x), y: deckY, z: finite(target.z) }),
+    Object.freeze({ x: finite(target.x), y: finite(target.y), z: finite(target.z) }),
+  ]);
+}
+
+function anchoredServiceRoute(source, target, anchorPoint) {
+  if (!source || !target || !anchorPoint) return Object.freeze([]);
+  const serviceY = finite(anchorPoint.y, Math.max(finite(source.y), finite(target.y)));
+  return Object.freeze([
+    Object.freeze({ x: finite(source.x), y: finite(source.y), z: finite(source.z) }),
+    Object.freeze({ x: finite(source.x), y: serviceY, z: finite(source.z) }),
+    Object.freeze({ x: finite(anchorPoint.x), y: serviceY, z: finite(anchorPoint.z) }),
+    Object.freeze({ x: finite(target.x), y: serviceY, z: finite(target.z) }),
     Object.freeze({ x: finite(target.x), y: finite(target.y), z: finite(target.z) }),
   ]);
 }
@@ -373,6 +419,60 @@ export function buildMachineWorldTopology({
     facilities.map((assembly) => [assembly.branchId, assembly]),
   );
 
+  for (let index = 0; index < machinery.length; index += 1) {
+    const sourceMachine = machinery[index];
+    const targetMachine = machinery[(index + 1) % machinery.length];
+    const sourceFacility = facilityByBranch.get(sourceMachine?.branchId);
+    const targetFacility = facilityByBranch.get(targetMachine?.branchId);
+    const sourcePort = machinePort(sourceMachine, 'machine-output');
+    const targetPort = machinePort(targetMachine, 'machine-core-input');
+    if (!sourcePort || !targetPort || !sourceFacility || !targetFacility) continue;
+
+    const source = safeMachinePart(sourceMachine, sourcePort);
+    const target = safeMachinePart(targetMachine, targetPort);
+    const deckY = deriveServiceDeckY(source.port, target.port, { clearance, lift: 0.22, minimum: 0.90 });
+
+    edges.push(makeEdge({
+      semanticEdgeId:
+        'EDGE:FACILITY-FACILITY:' +
+        sourceMachine.branchId +
+        '=>' +
+        targetMachine.branchId,
+      kind: 'facility-facility',
+      source,
+      target,
+      route: raisedRoute(source.port, target.port, deckY),
+      clearance,
+      obstacles: scene.parts.filter(
+        (part) =>
+          part.branchId !== sourceMachine.branchId &&
+          part.branchId !== targetMachine.branchId,
+      ),
+    }));
+  }
+
+
+
+  const facilityServiceGeometry = deriveMachineWorldServiceManifold({
+    topology: { edges },
+    scene,
+    machinery,
+    clearance,
+    serviceEndpointPoints: [
+      ...innerPods.map((pod) => pod?.port).filter(Boolean),
+      ...corePorts.map((port) => port?.point).filter(Boolean),
+      ...machinery.flatMap((machine) =>
+        (Array.isArray(machine?.ports) ? machine.ports : [])
+          .map((port) => port?.point)
+          .filter(Boolean)
+      ),
+    ],
+    conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
+  });
+  const facilityAnchorByBranch = new Map(
+    (facilityServiceGeometry.facilityAnchors || []).map((anchor) => [anchor.branchId, anchor]),
+  );
+
   for (const pod of innerPods) {
     const candidates = [...machineByBranch.values()];
     const podAngle = Math.atan2(pod.center.z, pod.center.x);
@@ -398,49 +498,18 @@ export function buildMachineWorldTopology({
       branchId: pod.branchId,
     });
     const target = safeMachinePart(machine, targetPort);
-    const deckY = deriveServiceDeckY(scene.parts, clearance, 1.90);
+    const facilityAnchor = facilityAnchorByBranch.get(machine.branchId);
+    if (!facilityAnchor?.point) continue;
 
     edges.push(makeEdge({
       semanticEdgeId: 'EDGE:POD-FACILITY:' + pod.branchId + '=>' + machine.branchId,
       kind: 'pod-facility',
       source,
       target,
-      route: raisedRoute(source.port, target.port, deckY),
+      route: anchoredServiceRoute(source.port, target.port, facilityAnchor.point),
       clearance,
       obstacles: scene.parts.filter(
         (part) => part.branchId !== pod.branchId && part.branchId !== machine.branchId,
-      ),
-    }));
-  }
-
-  for (let index = 0; index < machinery.length; index += 1) {
-    const sourceMachine = machinery[index];
-    const targetMachine = machinery[(index + 1) % machinery.length];
-    const sourceFacility = facilityByBranch.get(sourceMachine?.branchId);
-    const targetFacility = facilityByBranch.get(targetMachine?.branchId);
-    const sourcePort = machinePort(sourceMachine, 'machine-output');
-    const targetPort = machinePort(targetMachine, 'machine-core-input');
-    if (!sourcePort || !targetPort || !sourceFacility || !targetFacility) continue;
-
-    const source = safeMachinePart(sourceMachine, sourcePort);
-    const target = safeMachinePart(targetMachine, targetPort);
-    const deckY = deriveServiceDeckY(scene.parts, clearance, 2.25);
-
-    edges.push(makeEdge({
-      semanticEdgeId:
-        'EDGE:FACILITY-FACILITY:' +
-        sourceMachine.branchId +
-        '=>' +
-        targetMachine.branchId,
-      kind: 'facility-facility',
-      source,
-      target,
-      route: raisedRoute(source.port, target.port, deckY),
-      clearance,
-      obstacles: scene.parts.filter(
-        (part) =>
-          part.branchId !== sourceMachine.branchId &&
-          part.branchId !== targetMachine.branchId,
       ),
     }));
   }
@@ -467,13 +536,14 @@ export function buildMachineWorldTopology({
       if (!hubPort) continue;
       const source = safeCorePart(scene.hub, hubPort.point, corePorts);
       const target = safeMachinePart(machine, targetPort);
-      const deckY = deriveServiceDeckY(scene.parts, clearance, 2.55);
+      const facilityAnchor = facilityAnchorByBranch.get(machine.branchId);
+      if (!facilityAnchor?.point) continue;
       edges.push(makeEdge({
         semanticEdgeId: 'EDGE:WORKSPACE-CONTRIBUTION:HUB-CORE=>' + machine.branchId,
         kind: 'workspace-contribution',
         source,
         target,
-        route: raisedRoute(source.port, target.port, deckY),
+        route: anchoredServiceRoute(source.port, target.port, facilityAnchor.point),
         clearance,
         obstacles: scene.parts.filter(
           (part) => part.branchId !== machine.branchId && part.branchId !== scene.hub.branchId,
@@ -496,7 +566,7 @@ export function buildMachineWorldTopology({
       semanticId: targetPod.semanticKey || targetPod.branchId,
       branchId: targetPod.branchId,
     });
-    const deckY = deriveServiceDeckY(scene.parts, clearance, 1.90);
+    const deckY = deriveServiceDeckY(source.port, target.port, { clearance, lift: 0.18, minimum: 0.72 });
     edges.push(makeEdge({
       semanticEdgeId:
         'EDGE:ADJACENT-SEAT:' +
@@ -513,6 +583,61 @@ export function buildMachineWorldTopology({
       ),
     }));
   }
+
+  const rawServiceManifold = deriveMachineWorldServiceManifold({
+    topology: { edges },
+    scene,
+    machinery,
+    clearance,
+    serviceEndpointPoints: [
+      ...innerPods.map((pod) => pod?.port).filter(Boolean),
+      ...corePorts.map((port) => port?.point).filter(Boolean),
+      ...machinery.flatMap((machine) =>
+        (Array.isArray(machine?.ports) ? machine.ports : [])
+          .map((port) => port?.point)
+          .filter(Boolean)
+      ),
+    ],
+    conduitRadius: Math.max(0.01, finite(clearance) * 0.42 * 0.52),
+  });
+  const serviceManifoldSegments = Object.freeze(
+    (rawServiceManifold.segments || []).map((segment) => {
+      const excludedBranches = new Set(segment.obstacleBranchIds || []);
+      const obstacles = scene.parts.filter(
+        (part) => !excludedBranches.has(part?.branchId),
+      );
+      const obstacleAvoidance = routeAvoidsObstacles(
+        [segment.start, segment.end],
+        obstacles,
+        clearance,
+      );
+      return Object.freeze({
+        ...segment,
+        obstacleAvoidance,
+        routeContinuous: segment.routeContinuous === true && obstacleAvoidance,
+      });
+    }),
+  );
+  const serviceManifoldJunctions = deriveMachineWorldServiceManifoldJunctions({
+    facilityAnchors: rawServiceManifold.facilityAnchors,
+    segments: serviceManifoldSegments,
+    conduitRadius: serviceManifoldSegments[0]?.radius ?? 0.035,
+    serviceRingMargin: rawServiceManifold.serviceRingMargin,
+  });
+  const serviceManifold = Object.freeze({
+    ...rawServiceManifold,
+    valid: rawServiceManifold.valid
+      && serviceManifoldSegments.every((segment) => segment.routeContinuous)
+      && serviceManifoldJunctions.length === facilities.length
+      && serviceManifoldJunctions.every((junction) => junction.routeContinuous),
+    segments: serviceManifoldSegments,
+    junctions: serviceManifoldJunctions,
+  });
+  const serviceManifoldValidation = validateMachineWorldServiceManifold(
+    serviceManifold,
+    { edges },
+    { clearance },
+  );
 
   const corridors = Object.freeze(
     edges.map((edge) => Object.freeze({
@@ -551,6 +676,8 @@ export function buildMachineWorldTopology({
     facilityFacilityEdgeCount: edges.filter((edge) => edge.kind === 'facility-facility').length,
     workspaceContributionEdgeCount: edges.filter((edge) => edge.kind === 'workspace-contribution').length,
     adjacentSeatEdgeCount: edges.filter((edge) => edge.kind === 'adjacent-seat').length,
+    serviceManifold,
+    serviceManifoldValidation,
     presentationOnly: true,
   });
 }
@@ -562,6 +689,114 @@ const RENDERABLE_WORLD_EDGE_KINDS = Object.freeze([
   'workspace-contribution',
   'adjacent-seat',
 ]);
+
+export const PHYSICAL_CONDUIT_EDGE_KINDS = Object.freeze([
+  'pod-division',
+  'pod-facility',
+  'facility-facility',
+  'workspace-contribution',
+  'adjacent-seat',
+]);
+
+export const MACHINE_WORLD_CONDUIT_RADIUS_FACTOR = 0.52;
+
+export function getRenderableMachineWorldConduitSegments(topology, {
+  radiusFactor = MACHINE_WORLD_CONDUIT_RADIUS_FACTOR,
+  mode = 'WORLD_OVERVIEW',
+  branchId = null,
+  includeManifoldArcs = true,
+  includeManifoldFacilitySegments = true,
+} = {}) {
+  const eligible = new Set(PHYSICAL_CONDUIT_EDGE_KINDS);
+  const scopedEdgeIds = branchId && mode !== 'WORLD_OVERVIEW'
+    ? new Set(
+        getRenderableMachineWorldEdgesForScope(topology, { mode, branchId })
+          .map((edge) => edge.semanticEdgeId),
+      )
+    : null;
+  const segments = [];
+  for (const edge of Array.isArray(topology?.edges) ? topology.edges : []) {
+    if (!eligible.has(edge?.kind)) continue;
+    if (scopedEdgeIds && !scopedEdgeIds.has(edge?.semanticEdgeId)) continue;
+    if (edge.kind === 'facility-facility') continue;
+    const route = Array.isArray(edge?.route) ? edge.route : [];
+    const radius = Math.max(
+      0.01,
+      finite(edge?.corridor?.radius) * Math.max(0.01, finite(radiusFactor, 0.52)),
+    );
+    const thickness = radius * 2;
+    for (let index = 1; index < route.length; index += 1) {
+      const start = route[index - 1];
+      const end = route[index];
+      const dx = finite(end?.x) - finite(start?.x);
+      const dy = finite(end?.y) - finite(start?.y);
+      const dz = finite(end?.z) - finite(start?.z);
+      const length = Math.hypot(dx, dy, dz);
+      if (length < 0.01) continue;
+      const horizontal = Math.hypot(dx, dz);
+      const vertical = Math.abs(dy) >= horizontal;
+      segments.push(Object.freeze({
+        id: 'CONDUIT:' + edge.semanticEdgeId + ':' + index,
+        semanticEdgeId: edge.semanticEdgeId,
+        edgeKind: edge.kind,
+        segmentIndex: index,
+        start: Object.freeze({ x: finite(start.x), y: finite(start.y), z: finite(start.z) }),
+        end: Object.freeze({ x: finite(end.x), y: finite(end.y), z: finite(end.z) }),
+        center: Object.freeze({
+          x: (finite(start.x) + finite(end.x)) * 0.5,
+          y: (finite(start.y) + finite(end.y)) * 0.5,
+          z: (finite(start.z) + finite(end.z)) * 0.5,
+        }),
+        dimensions: Object.freeze(
+          vertical
+            ? { x: thickness, y: length + thickness, z: thickness }
+            : { x: length + thickness, y: thickness, z: thickness },
+        ),
+        rotationY: vertical ? 0 : Math.atan2(dz, dx),
+        radius,
+        corridorRadius: Math.max(0, finite(edge?.corridor?.radius)),
+        routeContinuous: edge.routeContinuous === true,
+        ...rootContext('CONDUIT:' + edge.semanticEdgeId + ':' + index),
+        presentationOnly: true,
+      }));
+    }
+  }
+  for (const manifoldSegment of topology?.serviceManifold?.segments || []) {
+    if (manifoldSegment?.routeContinuous !== true) continue;
+    if (mode === 'WORLD_OVERVIEW' && includeManifoldFacilitySegments !== true) continue;
+    if (mode === 'WORLD_OVERVIEW' && includeManifoldArcs !== true && manifoldSegment?.segmentRole === 'manifold-arc') continue;
+    if (scopedEdgeIds && !scopedEdgeIds.has(manifoldSegment?.semanticEdgeId)) continue;
+    if (
+      mode === 'FACILITY_FOCUS'
+      && (
+        manifoldSegment?.segmentRole === 'manifold-arc'
+        || (
+          branchId
+          && manifoldSegment?.branchId !== branchId
+        )
+      )
+    ) continue;
+    segments.push(Object.freeze({
+      id: manifoldSegment.id,
+      semanticEdgeId: manifoldSegment.semanticEdgeId,
+      edgeKind: 'facility-facility',
+      segmentIndex: manifoldSegment.segmentIndex,
+      segmentRole: manifoldSegment.segmentRole,
+      branchId: manifoldSegment.branchId || null,
+      start: manifoldSegment.start,
+      end: manifoldSegment.end,
+      center: manifoldSegment.center,
+      dimensions: manifoldSegment.dimensions,
+      rotationY: manifoldSegment.rotationY,
+      radius: Math.max(0.01, finite(manifoldSegment.radius)),
+      corridorRadius: Math.max(0, finite(manifoldSegment.corridorRadius)),
+      routeContinuous: true,
+      ...rootContext(manifoldSegment.id),
+      presentationOnly: true,
+    }));
+  }
+  return Object.freeze(segments);
+}
 
 export function getRenderableMachineWorldEdges(topology) {
   return Object.freeze(
@@ -593,6 +828,13 @@ export function validateMachineWorldTopology(
   if (!root.valid) reasons.push(...root.reasons);
   if (topology?.constructionSlice !== 'S8') reasons.push('WORLD_TOPOLOGY_NOT_S8');
   if (topology?.constructionOwner !== ROOT_OWNER) reasons.push('WORLD_TOPOLOGY_OWNER_MISMATCH');
+  if (topology?.serviceManifold) {
+    const manifoldValidation = topology.serviceManifoldValidation
+      || validateMachineWorldServiceManifold(topology.serviceManifold, topology);
+    if (!manifoldValidation.valid) {
+      reasons.push(...manifoldValidation.reasons.map((reason) => 'SERVICE_MANIFOLD:' + reason));
+    }
+  }
   if (expectedSeatCount != null && topology?.seatCount !== expectedSeatCount) {
     reasons.push('WORLD_TOPOLOGY_SEAT_COUNT_MISMATCH');
   }

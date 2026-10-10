@@ -14,9 +14,49 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V4';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V21';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
+
+const ANALYSIS_BARREL_OUTLINES = Object.freeze({
+  'barrel-stage-1': Object.freeze([
+    [0.965926, 0.258819], [0.707107, 0.707107], [0.258819, 0.965926],
+    [-0.258819, 0.965926], [-0.707107, 0.707107], [-0.965926, 0.258819],
+    [-0.965926, -0.258819], [-0.707107, -0.707107], [-0.258819, -0.965926],
+    [0.258819, -0.965926], [0.707107, -0.707107], [0.965926, -0.258819],
+  ]),
+  'barrel-stage-2': Object.freeze([
+    [0.951057, 0.309017], [0.587785, 0.809017], [0, 1],
+    [-0.587785, 0.809017], [-0.951057, 0.309017], [-0.951057, -0.309017],
+    [-0.587785, -0.809017], [0, -1], [0.587785, -0.809017], [0.951057, -0.309017],
+  ]),
+  'barrel-stage-3': Object.freeze([
+    [0.92388, 0.382683], [0.382683, 0.92388], [-0.382683, 0.92388],
+    [-0.92388, 0.382683], [-0.92388, -0.382683], [-0.382683, -0.92388],
+    [0.382683, -0.92388], [0.92388, -0.382683],
+  ]),
+});
+
+const OPERATIONS_FIN_OUTLINES = Object.freeze({
+  primary: Object.freeze([
+    [-1.00, -0.95], [-0.25, -1.00], [0.55, -0.92],
+    [0.95, -0.55], [1.00, 0.15], [0.65, 0.72],
+    [0.05, 1.00], [-0.70, 0.58], [-1.00, 0.05],
+  ]),
+  secondary: Object.freeze([
+    [-1.00, -0.90], [-0.40, -1.00], [0.42, -0.96],
+    [0.95, -0.48], [1.00, 0.28], [0.55, 0.78],
+    [-0.10, 1.00], [-0.78, 0.55], [-1.00, 0.00],
+  ]),
+});
+
+const MACHINE_CHASSIS_CORE_ROLE = Object.freeze({
+  analysis: 'barrel-stage-1',
+  operations: 'hinge-core',
+  control: 'rotor-hub',
+  'access-commerce': 'sensor-mast',
+});
+
 const MACHINE_PROFILES = Object.freeze({
   analysis: Object.freeze({
     label: 'Telescoping analysis',
@@ -131,7 +171,7 @@ export function deriveMachineFacilityMechanismPresentation(
   });
 }
 
-function component(id, role, shape, center, dimensions, materialRole, rotationY = 0) {
+function component(id, role, shape, center, dimensions, materialRole, rotationY = 0, metadata = {}) {
   return Object.freeze({
     id,
     role,
@@ -148,6 +188,7 @@ function component(id, role, shape, center, dimensions, materialRole, rotationY 
     }),
     materialRole,
     rotationY: finite(rotationY),
+    ...metadata,
     ...rootContext(id),
   });
 }
@@ -159,6 +200,51 @@ function localBasis(center) {
     radial: Math.hypot(center.x, center.z),
     outward: Object.freeze({ x: Math.cos(angle), z: Math.sin(angle) }),
     tangent: Object.freeze({ x: -Math.sin(angle), z: Math.cos(angle) }),
+  });
+}
+
+// rotateYMatrix transforms a local +Z axis to (sin(yaw), cos(yaw)).
+// Solve yaw from the authored world-space direction instead of reusing an
+// angle measured from +X, which skews radial chassis members off their joints.
+function localZAxisRotationY(direction) {
+  return Math.atan2(finite(direction?.x), finite(direction?.z));
+}
+
+function radialBoundaryDistance(dimensions, angle) {
+  const halfX = Math.max(0.01, Math.abs(Number(dimensions?.x) || 0) * 0.5);
+  const halfZ = Math.max(0.01, Math.abs(Number(dimensions?.z) || 0) * 0.5);
+  const cosine = Math.abs(Math.cos(angle));
+  const sine = Math.abs(Math.sin(angle));
+  return 1 / (cosine / halfX + sine / halfZ);
+}
+
+function distance3D(a, b) {
+  return Math.hypot(
+    finite(a?.x) - finite(b?.x),
+    finite(a?.y) - finite(b?.y),
+    finite(a?.z) - finite(b?.z),
+  );
+}
+
+function physicalInterface(id, role, center, dimensions, rotationY, materialRole, metadata = {}) {
+  return Object.freeze({
+    id,
+    role,
+    shape: 'CUBE',
+    center: Object.freeze({
+      x: finite(center.x),
+      y: finite(center.y),
+      z: finite(center.z),
+    }),
+    dimensions: Object.freeze({
+      x: Math.max(0.06, finite(dimensions.x, 0.12)),
+      y: Math.max(0.06, finite(dimensions.y, 0.10)),
+      z: Math.max(0.06, finite(dimensions.z, 0.12)),
+    }),
+    rotationY: finite(rotationY),
+    materialRole,
+    ...metadata,
+    ...rootContext(id),
   });
 }
 
@@ -175,13 +261,16 @@ function buildMachineComponents(assembly) {
       return Object.freeze([
         component(id('BARREL_STAGE_1'), 'barrel-stage-1', 'CYL',
           { x: center.x + basis.outward.x * 0.18, y: center.y + 0.22, z: center.z + basis.outward.z * 0.18 },
-          { x: width * 0.34, y: height * 0.42, z: width * 0.34 }, 'metal'),
+          { x: width * 0.34, y: height * 0.42, z: width * 0.34 }, 'metal', basis.angle,
+          { profile: 'analysis-telescope-stage-1', outline: ANALYSIS_BARREL_OUTLINES['barrel-stage-1'] }),
         component(id('BARREL_STAGE_2'), 'barrel-stage-2', 'CYL',
           { x: center.x + basis.outward.x * 0.42, y: center.y + 0.25, z: center.z + basis.outward.z * 0.42 },
-          { x: width * 0.27, y: height * 0.35, z: width * 0.27 }, 'glass'),
+          { x: width * 0.27, y: height * 0.35, z: width * 0.27 }, 'glass', basis.angle,
+          { profile: 'analysis-telescope-stage-2', outline: ANALYSIS_BARREL_OUTLINES['barrel-stage-2'] }),
         component(id('BARREL_STAGE_3'), 'barrel-stage-3', 'CYL',
           { x: center.x + basis.outward.x * 0.68, y: center.y + 0.28, z: center.z + basis.outward.z * 0.68 },
-          { x: width * 0.19, y: height * 0.28, z: width * 0.19 }, 'energy'),
+          { x: width * 0.19, y: height * 0.28, z: width * 0.19 }, 'energy', basis.angle,
+          { profile: 'analysis-telescope-stage-3', outline: ANALYSIS_BARREL_OUTLINES['barrel-stage-3'] }),
         component(id('FOCUS_RING'), 'focus-ring', 'TORUS',
           { x: center.x + basis.outward.x * 0.36, y: center.y + 0.25, z: center.z + basis.outward.z * 0.36 },
           { x: width * 0.44, y: height * 0.10, z: width * 0.44 }, 'trace'),
@@ -194,21 +283,21 @@ function buildMachineComponents(assembly) {
         component(id('HINGE_CORE'), 'hinge-core', 'CYL',
           { x: center.x - basis.outward.x * 0.08, y: center.y + 0.24, z: center.z - basis.outward.z * 0.08 },
           { x: width * 0.22, y: height * 0.32, z: width * 0.22 }, 'metal2'),
-        component(id('DEPLOYMENT_FIN'), 'deployment-fin', 'CUBE',
+        component(id('DEPLOYMENT_FIN'), 'deployment-fin', 'FACILITY_FIN_PRIMARY',
           { x: center.x + basis.tangent.x * 0.34, y: center.y + 0.34, z: center.z + basis.tangent.z * 0.34 },
           { x: width * 0.18, y: height * 0.72, z: depth * 0.78 }, 'glass',
-          0.32),
-        component(id('DEPLOYMENT_FIN_SECONDARY'), 'deployment-fin-secondary', 'CUBE',
+          0.32, { profile: 'operations-fin-primary', outline: OPERATIONS_FIN_OUTLINES.primary }),
+        component(id('DEPLOYMENT_FIN_SECONDARY'), 'deployment-fin-secondary', 'FACILITY_FIN_SECONDARY',
           { x: center.x - basis.tangent.x * 0.34, y: center.y + 0.38, z: center.z - basis.tangent.z * 0.34 },
           { x: width * 0.16, y: height * 0.65, z: depth * 0.64 }, 'metal',
-          -0.28),
+          -0.28, { profile: 'operations-fin-secondary', outline: OPERATIONS_FIN_OUTLINES.secondary }),
         component(id('CLAMP_RING'), 'clamp-ring', 'TORUS',
           { x: center.x, y: center.y + 0.27, z: center.z },
           { x: width * 0.48, y: height * 0.12, z: width * 0.48 }, 'energy'),
         component(id('STRUCTURAL_SPINE'), 'structural-spine', 'CUBE',
           { x: center.x + basis.outward.x * 0.28, y: center.y + 0.48, z: center.z + basis.outward.z * 0.28 },
           { x: width * 0.14, y: height * 0.68, z: depth * 0.24 }, 'trace',
-          basis.angle),
+          localZAxisRotationY(basis.outward)),
       ]);
     case 'control':
       return Object.freeze([
@@ -234,10 +323,10 @@ function buildMachineComponents(assembly) {
         component(id('SENSOR_MAST'), 'sensor-mast', 'CYL',
           { x: center.x, y: center.y + 0.62, z: center.z },
           { x: width * 0.12, y: height * 1.05, z: width * 0.12 }, 'metal'),
-        component(id('SENSOR_DISH'), 'sensor-dish', 'CUBE',
+        component(id('SENSOR_DISH'), 'sensor-dish', 'FACILITY_SENSOR_DISH',
           { x: center.x + basis.outward.x * 0.28, y: center.y + 0.76, z: center.z + basis.outward.z * 0.28 },
           { x: width * 0.46, y: height * 0.12, z: depth * 0.42 }, 'glass',
-          basis.angle + 0.22),
+          basis.angle + 0.22, { profile: 'access-sensor-dish' }),
         component(id('SENSOR_ARRAY'), 'sensor-array', 'TORUS',
           { x: center.x + basis.outward.x * 0.34, y: center.y + 0.52, z: center.z + basis.outward.z * 0.34 },
           { x: width * 0.52, y: height * 0.08, z: width * 0.52 }, 'energy'),
@@ -347,11 +436,31 @@ function deriveFacilityClearanceProfile(machine, obstacles = [], clearance = 0.1
   });
 }
 
-function machinePorts(assembly) {
+function deriveMachineServiceBoundaryDistance(assembly, components = buildMachineComponents(assembly)) {
   const center = assembly.outerHousing.center;
-  const angle = Math.atan2(center.z, center.x);
-  const radial = Math.hypot(center.x, center.z);
-  const outward = { x: Math.cos(angle), z: Math.sin(angle) };
+  const basis = localBasis(center);
+  const housingBoundary = radialBoundaryDistance(assembly.outerHousing.dimensions, basis.angle);
+  const motion = deriveMachineFacilityMechanismPresentation(
+    { machineRole: assembly.machineRole, outerHousing: assembly.outerHousing, components },
+    { amount: 1, reducedMotion: true },
+  );
+  const maxComponentReach = Math.max(
+    ...components.map((entry) => {
+      const delta = motion.components.find((candidate) => candidate.id === entry.id);
+      return Math.hypot(
+        entry.center.x + finite(delta?.dx) - center.x,
+        entry.center.z + finite(delta?.dz) - center.z,
+      ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
+    }),
+    housingBoundary,
+  );
+  return Math.max(housingBoundary, maxComponentReach);
+}
+
+function machinePorts(assembly, components = buildMachineComponents(assembly)) {
+  const center = assembly.outerHousing.center;
+  const basis = localBasis(center);
+  const serviceBoundary = deriveMachineServiceBoundaryDistance(assembly, components);
   return Object.freeze([
     ...assembly.ports,
     Object.freeze({
@@ -359,11 +468,12 @@ function machinePorts(assembly) {
       facilityId: null,
       role: 'machine-core-input',
       point: Object.freeze({
-        x: center.x - outward.x * 0.72,
-        y: center.y + 0.28,
-        z: center.z - outward.z * 0.72,
+        x: center.x + basis.outward.x * (serviceBoundary + 0.04),
+        y: center.y + 0.16,
+        z: center.z + basis.outward.z * (serviceBoundary + 0.04),
       }),
       radius: 0.10,
+      serviceBoundaryDistance: serviceBoundary,
       ...rootContext(assembly.branchId + ':CORE-IN'),
     }),
     Object.freeze({
@@ -371,14 +481,110 @@ function machinePorts(assembly) {
       facilityId: null,
       role: 'machine-output',
       point: Object.freeze({
-        x: center.x + outward.x * Math.max(0.82, radial * 0.035),
-        y: center.y + 0.32,
-        z: center.z + outward.z * Math.max(0.82, radial * 0.035),
+        x: center.x + basis.outward.x * (serviceBoundary + 0.12),
+        y: center.y + 0.40,
+        z: center.z + basis.outward.z * (serviceBoundary + 0.12),
       }),
       radius: 0.10,
+      serviceBoundaryDistance: serviceBoundary,
       ...rootContext(assembly.branchId + ':MACHINE-OUT'),
     }),
   ]);
+}
+
+export function deriveMachineFacilityPhysicalInterfaces(assembly, ports = machinePorts(assembly)) {
+  const center = assembly.outerHousing.center;
+  const dimensions = assembly.outerHousing.dimensions;
+  const basis = localBasis(center);
+  const boundaryDistance = radialBoundaryDistance(dimensions, basis.angle);
+  const outerFace = boundaryDistance;
+  const serviceBoundary = Math.max(outerFace, deriveMachineServiceBoundaryDistance(assembly));
+  const interfaces = [];
+
+  const coreIn = ports.find((port) => port.role === 'machine-core-input');
+  const machineOut = ports.find((port) => port.role === 'machine-output');
+
+  if (coreIn) {
+    interfaces.push(
+      physicalInterface(
+        'INTERFACE:' + assembly.branchId + ':CORE-IN',
+        'machine-core-input',
+        {
+          x: center.x + basis.outward.x * (serviceBoundary + 0.04),
+          y: coreIn.point.y,
+          z: center.z + basis.outward.z * (serviceBoundary + 0.04),
+        },
+        { x: 0.24, y: 0.20, z: 0.20 },
+        basis.angle,
+        'metal2',
+        {
+          portId: coreIn.id,
+          interfaceSide: 'outer',
+          interfaceBoundaryRadius: serviceBoundary,
+        },
+      ),
+    );
+  }
+
+  if (machineOut) {
+    interfaces.push(
+      physicalInterface(
+        'INTERFACE:' + assembly.branchId + ':MACHINE-OUT',
+        'machine-output',
+        {
+          x: center.x + basis.outward.x * (serviceBoundary + 0.08),
+          y: machineOut.point.y,
+          z: center.z + basis.outward.z * (serviceBoundary + 0.08),
+        },
+        { x: 0.28, y: 0.18, z: 0.18 },
+        basis.angle,
+        'metal2',
+        {
+          portId: machineOut.id,
+          interfaceSide: 'outer',
+          interfaceBoundaryRadius: serviceBoundary,
+        },
+      ),
+    );
+  }
+
+  for (const port of assembly.ports || []) {
+    const dx = finite(port.point.x) - finite(center.x);
+    const dz = finite(port.point.z) - finite(center.z);
+    if (Math.hypot(dx, dz) < 0.001) continue;
+    const angle = Math.atan2(dz, dx);
+    const direction = { x: Math.cos(angle), z: Math.sin(angle) };
+    const portBoundary = radialBoundaryDistance(dimensions, angle);
+    const target = {
+      x: center.x + direction.x * (portBoundary + 0.04),
+      y: finite(port.point.y),
+      z: center.z + direction.z * (portBoundary + 0.04),
+    };
+    const length = distance3D(port.point, target);
+
+    interfaces.push(
+      physicalInterface(
+        'INTERFACE:' + assembly.branchId + ':FACILITY-ADAPTER:' + port.facilityId,
+        'facility-port-adapter',
+        {
+          x: (finite(port.point.x) + target.x) * 0.5,
+          y: (finite(port.point.y) + target.y) * 0.5,
+          z: (finite(port.point.z) + target.z) * 0.5,
+        },
+        { x: length + 0.06, y: 0.10, z: 0.10 },
+        Math.atan2(target.z - port.point.z, target.x - port.point.x),
+        'metal',
+        {
+          facilityId: port.facilityId,
+          portId: port.id,
+          adapterStart: Object.freeze({ ...port.point }),
+          adapterEnd: Object.freeze({ ...target }),
+        },
+      ),
+    );
+  }
+
+  return Object.freeze(interfaces);
 }
 
 export function deriveMachineFacilityMachinery({
@@ -394,7 +600,681 @@ export function deriveMachineFacilityMachinery({
   const machines = assemblies.map((assembly) => {
     const profile = MACHINE_PROFILES[assembly.machineRole];
     const components = buildMachineComponents(assembly);
-    const ports = machinePorts(assembly);
+    const housingCenter = assembly.outerHousing.center;
+    const housingDimensions = assembly.outerHousing.dimensions;
+    const basis = localBasis(housingCenter);
+    const frameWidth = Math.max(0.72, finite(housingDimensions.x, 1.8));
+    const frameDepth = Math.max(0.72, finite(housingDimensions.z, 1.2));
+    const frameHeight = Math.max(0.50, finite(housingDimensions.y, 0.9));
+    const authoredMechanicalDetails = Object.freeze([
+      Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':BASE-COLLAR',
+        role: 'base-collar',
+        shape: 'TORUS',
+        center: Object.freeze({
+          x: housingCenter.x,
+          y: housingCenter.y + frameHeight * 0.16,
+          z: housingCenter.z,
+        }),
+        dimensions: Object.freeze({
+          x: frameWidth * 0.58,
+          y: Math.max(0.06, frameHeight * 0.08),
+          z: frameWidth * 0.58,
+        }),
+        rotationY: 0,
+        materialRole: 'metal2',
+        ...rootContext(assembly.branchId + ':BASE-COLLAR'),
+      }),
+      ...[-1, 1].map((side) => Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':SUPPORT:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+        role: 'support-strut',
+        shape: 'CUBE',
+        center: Object.freeze({
+          x: housingCenter.x + basis.outward.x * frameDepth * 0.08
+            + basis.tangent.x * frameWidth * 0.14 * side,
+          y: housingCenter.y + frameHeight * 0.28,
+          z: housingCenter.z + basis.outward.z * frameDepth * 0.08
+            + basis.tangent.z * frameWidth * 0.14 * side,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.06, frameWidth * 0.07),
+          y: Math.max(0.10, frameHeight * 0.18),
+          z: Math.max(0.24, frameDepth * 0.34),
+        }),
+        rotationY: localZAxisRotationY(basis.outward),
+        materialRole: 'metal',
+        parentRole: MACHINE_CHASSIS_CORE_ROLE[assembly.machineRole],
+        ...rootContext(assembly.branchId + ':SUPPORT:' + side),
+      })),
+      ...[-1, 1].map((side) => Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':HINGE-MOUNT:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+        role: 'hinge-mount',
+        shape: 'CYL',
+        center: Object.freeze({
+          x: housingCenter.x + basis.outward.x * frameDepth * 0.02
+            + basis.tangent.x * frameWidth * 0.26 * side,
+          y: housingCenter.y + frameHeight * 0.30,
+          z: housingCenter.z + basis.outward.z * frameDepth * 0.02
+            + basis.tangent.z * frameWidth * 0.26 * side,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.08, frameWidth * 0.09),
+          y: Math.max(0.08, frameHeight * 0.12),
+          z: Math.max(0.08, frameWidth * 0.09),
+        }),
+        rotationY: basis.angle,
+        materialRole: 'metal2',
+        ...rootContext(assembly.branchId + ':HINGE-MOUNT:' + side),
+      })),
+      ...(assembly.machineRole === 'analysis'
+        ? [
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':BARREL-COLLAR-MID',
+              role: 'barrel-collar-mid',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.30,
+                y: housingCenter.y + frameHeight * 0.31,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.30,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.40,
+                y: Math.max(0.06, frameHeight * 0.09),
+                z: frameWidth * 0.40,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              ...rootContext(assembly.branchId + ':BARREL-COLLAR-MID'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':BARREL-COLLAR-FRONT',
+              role: 'barrel-collar-front',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.57,
+                y: housingCenter.y + frameHeight * 0.33,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.57,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.29,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameWidth * 0.29,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'trace',
+              ...rootContext(assembly.branchId + ':BARREL-COLLAR-FRONT'),
+            }),
+          ]
+        : []),
+      ...(assembly.machineRole === 'analysis'
+        ? [
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':BARREL-GUIDE-RAIL:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'barrel-guide-rail',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x
+                  + basis.outward.x * frameDepth * 0.30
+                  + basis.tangent.x * frameWidth * 0.16 * side,
+                y: housingCenter.y + frameHeight * 0.36,
+                z: housingCenter.z
+                  + basis.outward.z * frameDepth * 0.30
+                  + basis.tangent.z * frameWidth * 0.16 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.08, frameWidth * 0.032),
+                y: Math.max(0.08, frameHeight * 0.12),
+                z: Math.max(0.20, frameDepth * 0.18),
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'metal2',
+              parentRole: 'barrel-stage-1',
+              ...rootContext(assembly.branchId + ':BARREL-GUIDE-RAIL:' + side),
+            })),
+          ]
+        : []),
+      ...(assembly.machineRole === 'operations'
+        ? [
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-PRIMARY-CAP',
+              role: 'deployment-fin-primary-cap',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.tangent.x * 0.34,
+                y: housingCenter.y + frameHeight * 0.34 + Math.max(0.05, frameHeight * 0.06),
+                z: housingCenter.z + basis.tangent.z * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.17,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.62,
+              }),
+              rotationY: 0.32,
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin',
+              ...rootContext(assembly.branchId + ':FIN-PRIMARY-CAP'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-SECONDARY-CAP',
+              role: 'deployment-fin-secondary-cap',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x - basis.tangent.x * 0.34,
+                y: housingCenter.y + frameHeight * 0.38 + Math.max(0.05, frameHeight * 0.05),
+                z: housingCenter.z - basis.tangent.z * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.15,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.52,
+              }),
+              rotationY: -0.28,
+              materialRole: 'metal',
+              parentRole: 'deployment-fin-secondary',
+              ...rootContext(assembly.branchId + ':FIN-SECONDARY-CAP'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-PRIMARY-RAIL',
+              role: 'deployment-fin-primary-rail',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.12
+                  + basis.tangent.x * 0.34,
+                y: housingCenter.y + frameHeight * 0.43,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.12
+                  + basis.tangent.z * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.07,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameDepth * 0.32,
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'trace',
+              parentRole: 'deployment-fin',
+              ...rootContext(assembly.branchId + ':FIN-PRIMARY-RAIL'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-SECONDARY-RAIL',
+              role: 'deployment-fin-secondary-rail',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.12
+                  - basis.tangent.x * 0.34,
+                y: housingCenter.y + frameHeight * 0.47,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.12
+                  - basis.tangent.z * 0.34,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.06,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameDepth * 0.28,
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'trace',
+              parentRole: 'deployment-fin-secondary',
+              ...rootContext(assembly.branchId + ':FIN-SECONDARY-RAIL'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-ACTUATOR-PRIMARY',
+              role: 'fin-actuator-primary',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.10
+                  + basis.tangent.x * 0.28,
+                y: housingCenter.y + frameHeight * 0.28,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.10
+                  + basis.tangent.z * 0.28,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.06),
+                y: Math.max(0.06, frameHeight * 0.10),
+                z: Math.max(0.20, frameDepth * 0.22),
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin',
+              profile: 'operations-fin-actuator-primary',
+              ...rootContext(assembly.branchId + ':FIN-ACTUATOR-PRIMARY'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':FIN-ACTUATOR-SECONDARY',
+              role: 'fin-actuator-secondary',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.10
+                  - basis.tangent.x * 0.28,
+                y: housingCenter.y + frameHeight * 0.31,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.10
+                  - basis.tangent.z * 0.28,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.055),
+                y: Math.max(0.06, frameHeight * 0.10),
+                z: Math.max(0.24, frameDepth * 0.28),
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'metal2',
+              parentRole: 'deployment-fin-secondary',
+              profile: 'operations-fin-actuator-secondary',
+              ...rootContext(assembly.branchId + ':FIN-ACTUATOR-SECONDARY'),
+            }),
+          ]
+        : []),
+      ...(assembly.machineRole === 'control'
+        ? [
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ROTOR-BEARING-BLOCK:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'rotor-bearing-block',
+              shape: 'CUBE',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.08
+                  + basis.tangent.x * frameWidth * 0.18 * side,
+                y: housingCenter.y + frameHeight * 0.30,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.08
+                  + basis.tangent.z * frameWidth * 0.18 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.08),
+                y: Math.max(0.08, frameHeight * 0.14),
+                z: Math.max(0.12, frameDepth * 0.30),
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'metal2',
+              parentRole: 'rotor-hub',
+              ...rootContext(assembly.branchId + ':ROTOR-BEARING-BLOCK:' + side),
+            })),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ROTOR-DRIVE-LINK:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'rotor-drive-link',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x
+                  + basis.outward.x * frameDepth * 0.12
+                  + basis.tangent.x * frameWidth * 0.12 * side,
+                y: housingCenter.y + frameHeight * 0.42,
+                z: housingCenter.z
+                  + basis.outward.z * frameDepth * 0.12
+                  + basis.tangent.z * frameWidth * 0.12 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.055),
+                y: Math.max(0.10, frameHeight * 0.16),
+                z: Math.max(0.24, frameDepth * 0.26),
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'metal2',
+              parentRole: 'rotor-hub',
+              profile: 'control-rotor-drive-link',
+              ...rootContext(assembly.branchId + ':ROTOR-DRIVE-LINK:' + side),
+            })),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':CHAMBER-RETAINER',
+              role: 'chamber-retainer',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * 0.22,
+                y: housingCenter.y + frameHeight * 0.48,
+                z: housingCenter.z + basis.outward.z * 0.22,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.24,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.14,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal',
+              parentRole: 'analysis-chamber',
+              ...rootContext(assembly.branchId + ':CHAMBER-RETAINER'),
+            }),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':CHAMBER-CLAMP-RING',
+              role: 'chamber-clamp-ring',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * 0.22,
+                y: housingCenter.y + frameHeight * 0.58,
+                z: housingCenter.z + basis.outward.z * 0.22,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.32,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameWidth * 0.32,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'analysis-chamber',
+              ...rootContext(assembly.branchId + ':CHAMBER-CLAMP-RING'),
+            }),
+          ]
+        : []),
+      ...(assembly.machineRole === 'access-commerce'
+        ? [
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':MAST-FOOT-COLLAR',
+              role: 'mast-foot-collar',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x,
+                y: housingCenter.y + frameHeight * 0.17,
+                z: housingCenter.z,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.32,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameWidth * 0.32,
+              }),
+              rotationY: 0,
+              materialRole: 'metal2',
+              parentRole: 'sensor-mast',
+              ...rootContext(assembly.branchId + ':MAST-FOOT-COLLAR'),
+            }),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':DISH-YOKE:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'dish-yoke',
+              shape: 'CUBE',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * 0.10
+                  + basis.tangent.x * frameWidth * 0.18 * side,
+                y: housingCenter.y + frameHeight * 0.45,
+                z: housingCenter.z + basis.outward.z * 0.10
+                  + basis.tangent.z * frameWidth * 0.18 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.06),
+                y: Math.max(0.08, frameHeight * 0.12),
+                z: Math.max(0.10, frameDepth * 0.26),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal',
+              parentRole: 'sensor-dish',
+              ...rootContext(assembly.branchId + ':DISH-YOKE:' + side),
+            })),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ANTENNA-BASE-PLATE',
+              role: 'antenna-base-plate',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x - basis.tangent.x * 0.24,
+                y: housingCenter.y + frameHeight * 0.40,
+                z: housingCenter.z - basis.tangent.z * 0.24,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.18,
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: frameDepth * 0.18,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'communication-antenna',
+              ...rootContext(assembly.branchId + ':ANTENNA-BASE-PLATE'),
+            }),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':SENSOR-BOOM:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'sensor-boom',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.08
+                  + basis.tangent.x * frameWidth * 0.13 * side,
+                y: housingCenter.y + frameHeight * 0.40,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.08
+                  + basis.tangent.z * frameWidth * 0.13 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.06),
+                y: Math.max(0.06, frameHeight * 0.08),
+                z: Math.max(0.20, frameDepth * 0.24),
+              }),
+              rotationY: localZAxisRotationY(basis.outward),
+              materialRole: 'metal2',
+              parentRole: 'sensor-array',
+              profile: 'access-sensor-boom',
+              ...rootContext(assembly.branchId + ':SENSOR-BOOM:' + side),
+            })),
+            ...[-1, 1].map((side) => Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':SENSOR-PANEL-CLAMP:' + (side > 0 ? 'RIGHT' : 'LEFT'),
+              role: 'sensor-panel-clamp',
+              shape: 'BOX',
+              center: Object.freeze({
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.13
+                  + basis.tangent.x * frameWidth * 0.13 * side,
+                y: housingCenter.y + frameHeight * 0.62,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.13
+                  + basis.tangent.z * frameWidth * 0.13 * side,
+              }),
+              dimensions: Object.freeze({
+                x: Math.max(0.06, frameWidth * 0.07),
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: Math.max(0.10, frameDepth * 0.12),
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal',
+              parentRole: 'sensor-dish',
+              profile: 'access-sensor-panel-clamp',
+              ...rootContext(assembly.branchId + ':SENSOR-PANEL-CLAMP:' + side),
+            })),
+            Object.freeze({
+              id: 'MACHINERY:' + assembly.branchId + ':ANTENNA-PIVOT-COLLAR',
+              role: 'antenna-pivot-collar',
+              shape: 'TORUS',
+              center: Object.freeze({
+                x: housingCenter.x - basis.tangent.x * 0.24,
+                y: housingCenter.y + frameHeight * 0.58,
+                z: housingCenter.z - basis.tangent.z * 0.24,
+              }),
+              dimensions: Object.freeze({
+                x: frameWidth * 0.16,
+                y: Math.max(0.06, frameHeight * 0.07),
+                z: frameWidth * 0.16,
+              }),
+              rotationY: basis.angle,
+              materialRole: 'metal2',
+              parentRole: 'communication-antenna',
+              profile: 'access-antenna-pivot-collar',
+              ...rootContext(assembly.branchId + ':ANTENNA-PIVOT-COLLAR'),
+            }),
+          ]
+        : []),
+    ]);
+    const primaryCoreRole = MACHINE_CHASSIS_CORE_ROLE[assembly.machineRole];
+    const primaryCore = components.find((entry) => entry.role === primaryCoreRole);
+    if (!primaryCore) {
+      throw new Error('missing authored chassis core role for ' + assembly.machineRole);
+    }
+    // A raised tie bridge rides above the opaque chassis skin. The two risers
+    // and central standoff preserve a continuous physical path back to the
+    // authored support struts and primary mechanism while remaining visible in
+    // the structural Three.js preview as well as the translucent Hero skin.
+    const railY = housingCenter.y + frameHeight * 0.84;
+    const chassisSupports = authoredMechanicalDetails
+      .filter((entry) => entry.role === 'support-strut');
+    const chassisTransferLinks = chassisSupports.map((support) => {
+      const dx = primaryCore.center.x - support.center.x;
+      const dz = primaryCore.center.z - support.center.z;
+      const horizontalLength = Math.hypot(dx, dz);
+      if (horizontalLength < 0.12) {
+        throw new Error('degenerate chassis-core attachment for ' + assembly.branchId);
+      }
+      const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+      const id = 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-TIE:' + side;
+      return Object.freeze({
+        id,
+        role: 'chassis-core-tie',
+        shape: 'BOX',
+        center: Object.freeze({
+          x: (support.center.x + primaryCore.center.x) * 0.5,
+          y: railY,
+          z: (support.center.z + primaryCore.center.z) * 0.5,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.07, frameWidth * 0.035),
+          y: Math.max(0.12, frameHeight * 0.10),
+          z: Math.max(0.20, horizontalLength + 0.14),
+        }),
+        rotationY: Math.atan2(dx, dz),
+        materialRole: 'metal2',
+        parentRole: primaryCoreRole,
+        profile: 'chassis-core-tie-v2',
+        attachmentSourceId: support.id,
+        attachmentTargetId: primaryCore.id,
+        attachmentSourceRole: support.role,
+        attachmentTargetRole: primaryCore.role,
+        attachmentSourceRiserId: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TIE-RISER:' + side,
+        attachmentTargetStandoffId: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-STANDOFF',
+        attachmentRailY: railY,
+        attachmentSpan: horizontalLength,
+        ...rootContext(assembly.branchId + ':CHASSIS-CORE-TIE:' + side),
+      });
+    });
+    const chassisTieRisers = chassisSupports.map((support) => {
+      const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+      const height = railY - support.center.y;
+      return Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TIE-RISER:' + side,
+        role: 'chassis-tie-riser',
+        shape: 'CYL',
+        center: Object.freeze({
+          x: support.center.x,
+          y: (railY + support.center.y) * 0.5,
+          z: support.center.z,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.08, frameWidth * 0.045),
+          y: height + 0.14,
+          z: Math.max(0.08, frameWidth * 0.045),
+        }),
+        rotationY: 0,
+        materialRole: 'metal',
+        parentRole: support.role,
+        profile: 'chassis-tie-riser-v1',
+        attachmentSourceId: support.id,
+        attachmentTargetId: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-TIE:' + side,
+        attachmentRailY: railY,
+        ...rootContext(assembly.branchId + ':CHASSIS-TIE-RISER:' + side),
+      });
+    });
+    const chassisCoreStandoff = Object.freeze({
+      id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-STANDOFF',
+      role: 'chassis-core-standoff',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: primaryCore.center.x,
+        y: (railY + primaryCore.center.y) * 0.5,
+        z: primaryCore.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: Math.max(0.10, frameWidth * 0.055),
+        y: railY - primaryCore.center.y + 0.14,
+        z: Math.max(0.10, frameWidth * 0.055),
+      }),
+      rotationY: 0,
+      materialRole: 'metal2',
+      parentRole: primaryCoreRole,
+      profile: 'chassis-core-standoff-v1',
+      attachmentSourceId: primaryCore.id,
+      attachmentTargetIds: Object.freeze(chassisTransferLinks.map((entry) => entry.id)),
+      attachmentRailY: railY,
+      ...rootContext(assembly.branchId + ':CHASSIS-CORE-STANDOFF'),
+    });
+    const chassisTieNodeCollars = chassisSupports.map((support) => {
+      const side = String(support.id).endsWith(':RIGHT') ? 'RIGHT' : 'LEFT';
+      const transferLink = chassisTransferLinks.find((entry) => entry.attachmentSourceId === support.id);
+      const riser = chassisTieRisers.find((entry) => entry.attachmentSourceId === support.id);
+      if (!transferLink || !riser) {
+        throw new Error('incomplete chassis tie junction for ' + assembly.branchId + ':' + side);
+      }
+      return Object.freeze({
+        id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TIE-NODE-COLLAR:' + side,
+        role: 'chassis-tie-node-collar',
+        shape: 'CYL',
+        center: Object.freeze({
+          x: support.center.x,
+          y: railY,
+          z: support.center.z,
+        }),
+        dimensions: Object.freeze({
+          x: Math.max(0.14, frameWidth * 0.085),
+          y: Math.max(0.06, frameHeight * 0.08),
+          z: Math.max(0.14, frameWidth * 0.085),
+        }),
+        rotationY: basis.angle,
+        materialRole: 'metal2',
+        parentRole: 'chassis-core-tie',
+        profile: 'chassis-tie-node-collar-v1',
+        attachmentSourceId: support.id,
+        attachmentTargetId: transferLink.id,
+        attachmentRiserId: riser.id,
+        attachmentRailY: railY,
+        ...rootContext(assembly.branchId + ':CHASSIS-TIE-NODE-COLLAR:' + side),
+      });
+    });
+    const chassisCoreAnchorPlate = Object.freeze({
+      id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-CORE-ANCHOR-PLATE',
+      role: 'chassis-core-anchor-plate',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: primaryCore.center.x,
+        y: railY,
+        z: primaryCore.center.z,
+      }),
+      dimensions: Object.freeze({
+        x: Math.max(0.16, frameWidth * 0.10),
+        y: Math.max(0.07, frameHeight * 0.09),
+        z: Math.max(0.16, frameWidth * 0.10),
+      }),
+      rotationY: basis.angle,
+      materialRole: 'metal2',
+      parentRole: primaryCoreRole,
+      profile: 'chassis-core-anchor-plate-v1',
+      attachmentSourceId: primaryCore.id,
+      attachmentTargetIds: Object.freeze(chassisTransferLinks.map((entry) => entry.id)),
+      attachmentStandoffId: chassisCoreStandoff.id,
+      attachmentRailY: railY,
+      ...rootContext(assembly.branchId + ':CHASSIS-CORE-ANCHOR-PLATE'),
+    });
+    const firstSupport = chassisSupports[0];
+    const secondSupport = chassisSupports[1];
+    const transverseDx = secondSupport.center.x - firstSupport.center.x;
+    const transverseDz = secondSupport.center.z - firstSupport.center.z;
+    const transverseSpan = Math.hypot(transverseDx, transverseDz);
+    if (transverseSpan < 0.12) {
+      throw new Error('degenerate chassis transverse tie for ' + assembly.branchId);
+    }
+    const chassisTransverseTie = Object.freeze({
+      id: 'MACHINERY:' + assembly.branchId + ':CHASSIS-TRANSVERSE-TIE',
+      role: 'chassis-transverse-tie',
+      shape: 'BOX',
+      center: Object.freeze({
+        x: (firstSupport.center.x + secondSupport.center.x) * 0.5,
+        y: railY,
+        z: (firstSupport.center.z + secondSupport.center.z) * 0.5,
+      }),
+      dimensions: Object.freeze({
+        x: Math.max(0.07, frameWidth * 0.035),
+        y: Math.max(0.12, frameHeight * 0.10),
+        z: transverseSpan + 0.14,
+      }),
+      rotationY: Math.atan2(transverseDx, transverseDz),
+      materialRole: 'metal2',
+      parentRole: 'chassis-tie-node-collar',
+      profile: 'chassis-transverse-tie-v1',
+      attachmentSourceIds: Object.freeze([firstSupport.id, secondSupport.id]),
+      attachmentTargetIds: Object.freeze(chassisTieNodeCollars.map((entry) => entry.id)),
+      attachmentRailY: railY,
+      attachmentSpan: transverseSpan,
+      ...rootContext(assembly.branchId + ':CHASSIS-TRANSVERSE-TIE'),
+    });
+    const mechanicalDetails = Object.freeze([
+      ...authoredMechanicalDetails,
+      ...chassisTransferLinks,
+      ...chassisTieRisers,
+      chassisCoreStandoff,
+      ...chassisTieNodeCollars,
+      chassisCoreAnchorPlate,
+      chassisTransverseTie,
+    ]);
+    const ports = machinePorts(assembly, components);
+    const physicalInterfaces = deriveMachineFacilityPhysicalInterfaces(assembly, ports);
     const maxPresentation = deriveMachineFacilityMechanismPresentation(
       { machineRole: assembly.machineRole, outerHousing: assembly.outerHousing, components },
       { amount: 1, reducedMotion: true },
@@ -418,10 +1298,20 @@ export function deriveMachineFacilityMachinery({
           },
         };
       }).concat(
+        mechanicalDetails.map((detail) => ({
+          id: detail.id,
+          center: detail.center,
+          dimensions: detail.dimensions,
+        })),
         ports.map((port) => ({
           id: port.id,
           center: port.point,
           dimensions: { x: port.radius * 2, y: port.radius * 2, z: port.radius * 2 },
+        })),
+        physicalInterfaces.map((entry) => ({
+          id: entry.id,
+          center: entry.center,
+          dimensions: entry.dimensions,
         })),
       ),
       0.10,
@@ -438,18 +1328,34 @@ export function deriveMachineFacilityMachinery({
       facilityAssemblyId: assembly.id,
       outerHousing: assembly.outerHousing,
       components,
+      mechanicalDetails,
+      physicalInterfaces,
       payloadSurface,
       mechanismGraph: buildGraph(components),
       ports,
       subject,
       envelope: Object.freeze({
-        radius: Math.max(...components.map((entry) => {
-          const motion = maxMotionById.get(entry.id);
-          return Math.hypot(
-            entry.center.x + finite(motion?.dx) - assembly.outerHousing.center.x,
-            entry.center.z + finite(motion?.dz) - assembly.outerHousing.center.z,
-          ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
-        })),
+        radius: Math.max(
+          ...components.map((entry) => {
+            const motion = maxMotionById.get(entry.id);
+            return Math.hypot(
+              entry.center.x + finite(motion?.dx) - assembly.outerHousing.center.x,
+              entry.center.z + finite(motion?.dz) - assembly.outerHousing.center.z,
+            ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5;
+          }),
+          ...mechanicalDetails.map((entry) =>
+            Math.hypot(
+              entry.center.x - assembly.outerHousing.center.x,
+              entry.center.z - assembly.outerHousing.center.z,
+            ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5,
+          ),
+          ...physicalInterfaces.map((entry) =>
+            Math.hypot(
+              entry.center.x - assembly.outerHousing.center.x,
+              entry.center.z - assembly.outerHousing.center.z,
+            ) + Math.hypot(entry.dimensions.x, entry.dimensions.z) * 0.5,
+          ),
+        ),
         height: Math.max(...components.map((entry) =>
           Math.abs(entry.center.y - assembly.outerHousing.center.y) + entry.dimensions.y * 0.5,
         )) * 2,
@@ -494,6 +1400,9 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
     if (!Array.isArray(machine?.components) || machine.components.length < 5) reasons.push(machine?.id + ':COMPONENTS_INCOMPLETE');
     if (!Array.isArray(machine?.mechanismGraph) || machine.mechanismGraph.length < 4) reasons.push(machine?.id + ':MECHANISM_GRAPH_INCOMPLETE');
     if (!Array.isArray(machine?.ports) || machine.ports.length < 4) reasons.push(machine?.id + ':PORTS_INCOMPLETE');
+    if (!Array.isArray(machine?.physicalInterfaces) || machine.physicalInterfaces.length !== machine.facilityIds.length + 2) {
+      reasons.push(machine?.id + ':PHYSICAL_INTERFACES_INCOMPLETE');
+    }
     if (!machine?.subject) reasons.push(machine?.id + ':SUBJECT_MISSING');
     if (!(Number(machine?.envelope?.radius) > 0)) reasons.push(machine?.id + ':ENVELOPE_INVALID');
     if (!(Number(machine?.envelope?.height) > 0)) reasons.push(machine?.id + ':ENVELOPE_HEIGHT_INVALID');
@@ -519,9 +1428,23 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
       if (!node.valid) reasons.push(...node.reasons);
       if (entry?.constructionSlice !== 'S7') reasons.push(entry?.id + ':NOT_S7');
     }
-    for (const edge of machine?.mechanismGraph || []) {
-      if (!edge?.from || !edge?.to || edge.from === edge.to) reasons.push(machine?.id + ':INVALID_MECHANISM_EDGE');
+    const inputPorts = (machine?.ports || []).filter((port) => port.role === 'machine-core-input');
+    const outputPorts = (machine?.ports || []).filter((port) => port.role === 'machine-output');
+    if (inputPorts.length !== 1) reasons.push(machine?.id + ':CORE_INPUT_PORT_COUNT');
+    if (outputPorts.length !== 1) reasons.push(machine?.id + ':MACHINE_OUTPUT_PORT_COUNT');
+    if (Array.isArray(machine?.physicalInterfaces)) {
+      const roles = machine.physicalInterfaces.map((entry) => entry.role);
+      if (roles.filter((role) => role === 'machine-core-input').length !== 1) reasons.push(machine?.id + ':CORE_INPUT_INTERFACE_COUNT');
+      if (roles.filter((role) => role === 'machine-output').length !== 1) reasons.push(machine?.id + ':MACHINE_OUTPUT_INTERFACE_COUNT');
+      if (roles.filter((role) => role === 'facility-port-adapter').length !== machine.facilityIds.length) reasons.push(machine?.id + ':FACILITY_ADAPTER_COUNT');
+      for (const entry of machine.physicalInterfaces) {
+        const node = validateSpatialConstructionNode(entry);
+        if (!node.valid) reasons.push(...node.reasons);
+        if (entry.constructionSlice !== 'S7') reasons.push(entry.id + ':NOT_S7');
+      }
     }
+    for (const edge of machine?.mechanismGraph || [])
+      if (!edge?.from || !edge?.to || edge.from === edge.to) reasons.push(machine?.id + ':INVALID_MECHANISM_EDGE');
   }
 
   const expectedRoles = new Set(Object.keys(MACHINE_PROFILES));
