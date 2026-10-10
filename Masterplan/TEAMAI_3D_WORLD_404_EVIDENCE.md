@@ -1698,3 +1698,55 @@ The Facility-focus delta at threshold ≥12 is localized to `x=530..722, y=289..
 - Preserve current routes, endpoints, carrier scale, 10-seat Product Law, and camera authority. Any later raw-WebGL normal/shading substrate work should be a separate measured Y1 slice after structural attachment proof.
 - Evidence state: **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED**. Human visual acceptance, production deployment/runtime proof, merge/release authorization, and final 029 completion remain open.
 
+
+### E424-2026-10-11C — direct MP4/PNG conformance audit and production focus continuity finding
+
+**Audit date:** 2026-10-11 (Asia/Manila)  
+**Active vehicle:** PR #424, OPEN / DRAFT / mergeable.  
+**Code-bearing parent:** `c0542d7c6d9a8836329c64e4235e6c0fdc40137b`.  
+**Verified test head:** `db54ae8ac0a4203dcabc7a097ed1cff12986ad36` (test-only E2E version/telemetry repair).  
+**No geometry, topology, camera, material or renderer source changed in the test-only commit.**
+
+#### Reference binary and direct inspection
+
+- Source path: `assets/3D_Vision/hailuo.mp4`.
+- Size: 4,049,339 bytes; Git blob SHA-1 `38c462e0afe88ee3ad0a230b405dbb26ebad19ea`; recovered-binary SHA-256 `1d2a96dcacdadc1010355a4e49c707b9c7e3a5aa5d3f46a9a06e92ffe03ee31b`.
+- Metadata: H.264, 720×1280, 24 fps, 193 frames, 8.041667 s video duration (8.057007 s container duration).
+- Direct decoded image samples at 1, 2, 3, 4 and 5 seconds. The product-machine sequence spans overhead/oblique and close macro views; seconds 6–8 move to a person/rocket brand outro, not a TeamAi geometry requirement.
+- Endorsed Project Library PNG: `AI Rocket Factory Activation Storyboard.png`, 941×1672, SHA-256 `238c406d85bacc6a347abfd7ca47ae66c46db5691972bb9f620926a23784e169`.
+- Product Law and S0–S10 remain product/geometry authority. The PNG's eight-Pod cinematic composition remains visual vocabulary only; the TeamAi Seat law remains 1–10.
+
+#### Exact-head CI and artifact
+
+For test head `db54ae8ac0a4203dcabc7a097ed1cff12986ad36`:
+- Full-System 38067263018: PASS; 1,111-file canonical archive built and verified; full-project artifact 11674254847, ZIP SHA-256 `a3487a6986661f9b48572262180ab70db2495b76525737ba0ff85d5051f16026`.
+- Governance 38067263026: PASS.
+- Security 38067263012: PASS.
+- Deep Security 38067263005: PASS.
+- Canonical Browser 38067263003: PASS, 92 passed / 4 skipped / 0 failed; real-product Hero E2E and both source/public parity steps passed.
+- Browser artifact 11676005427, name `browser-verification-db54ae8ac0a4203dcabc7a097ed1cff12986ad36`, 6,930,091 bytes, SHA-256 `cf7610dfc24683ac8a14e4e14c76347fbc31d00c7d3cf936125e920f8f62065c`.
+- The production E2E now checks runtime `S7-OUTER-BODY-V4` and `data-machine-world-facility-service-bay-count=2`; both passed. The preceding c0542d7 Browser failure was only the stale expected value V3 against the correctly published runtime V4.
+
+#### Exact production capture and reproducible descriptors
+
+- Exact-head `/hero/` Hero-wide PNG: 1280×720, SHA-256 `130ed6e46ec1b8144b32fd697d5be94afea250d6d6acd57aa033df460877ef78`.
+- Source/public `machine-world-renderer.js` copies were byte-identical at code-bearing head c0542d7 (Git blob SHA-1 `09d225cc4c9646073ad5c957e2b2c357e3b5f7b2`).
+- Production body census: 20 S7 presentation descriptors, four main shells, zero legacy outer-housing fallback; the Analysis service bay has two bay-bearing shell descriptors.
+- The exact Browser artifact's `s2-s10-facility.png` is a separate Three.js QA-preview capture (SHA-256 `1f83de50281d6175b2882fda4d60fe5aed1b0185eb904ede83e7fb365d5e36d4`), not a production Hero frame.
+- Descriptive luma/highlight metrics (not parity scores): MP4 at 3 s mean luma 68.14 / P90 170.47 / pixels above luma 128 = 20.485%; at 4 s 95.60 / 199.65 / 30.403%; at 5 s 117.09 / 220.81 / 42.552%. Production Hero content crop `y=70..690`: mean luma 23.21 / P90 72.68 / pixels above luma 128 = 6.765%.
+- These crops use different orientation and camera state (portrait macro source vs landscape world overview); metrics support a contrast/legibility diagnosis only and cannot be interpreted as geometric or pixel-match score. For the test-only db54 head vs c054 parent, production raster delta remains consistent with time-dependent render variation and is not a visual-improvement claim.
+
+#### Owning-code diagnosis
+
+- S7 V4 geometry and two service-bay descriptor checks now pass; adding more body descriptors without a visible acceptance gap is not justified by current data.
+- Lower-level `machine-camera.js` supports `FACILITY_FOCUS`, takes `facilitySubject` and computes facility focus framing. `machine-world-renderer.js` already consumes `facilityFocused`/`facilitySubject` and emits focus telemetry.
+- But production `public/_flex_src/hero-flex.base.js` `setCamera()` allows only `HERO_WIDE`, `TEAM_ORBIT`, `SEAT_CLOSE`, `WORKSPACE_CLOSE`, `OVERHEAD_MAP`, `DETAIL_ANCHOR`; it excludes `FACILITY_FOCUS`. The production frame state does not pass `facilityFocused` or `facilitySubject`. No production path is demonstrated that supplies those fields. The structural QA preview offers Facility Focus separately, so its screenshot is not proof that `/hero/` can enter that state.
+- The production shell path maps most layers to the existing `metal2` material and draws shells without claiming depth-write authority. Renderer face normals are currently approximated from position rather than per-face surface normals. This is a plausible muted-metal contributor, not an isolated causal conclusion. Do not simply make shells opaque or change depth writes because that risks occluding the existing mechanisms/service opening.
+
+#### Next bounded slice and acceptance
+
+First reconnect a genuine presentation-only production Facility Focus → return-to-world path using one of the four canonical existing S7 branch IDs. Derive camera subject/bounds from existing machinery, fail closed for unknown IDs, expose the focus mode and selected branch on the actual Hero canvas, and retain an explicit truthful return-to-world action. Keep semantic IDs, topology, ports, Seat law (1–10) and the 0.16 requested clearance floor unchanged.
+
+Browser must capture actual production `/hero/` focus and return, validate selected branch and camera mode, test unknown-ID rejection and return continuity, and be inspected from a fresh exact-head artifact. Only then separate whether the remaining discrepancy belongs to geometry/attachment, alpha/material mapping, shading normals, alpha/depth ordering, or scale. Keep each subsequent change to one owning layer.
+
+**Acceptance boundary:** IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED is complete for the current test-only head. Human visual acceptance, production deployment/runtime proof, merge/release authorization and final 029 completion remain open. This record does not authorize merge, deploy or release.
