@@ -59,6 +59,10 @@ const OUTER_DESTINATIONS = Object.freeze([
   }),
 ]);
 
+export const MACHINE_FACILITY_BRANCH_IDS = Object.freeze(
+  OUTER_DESTINATIONS.map(({ branchId }) => branchId),
+);
+
 export const MACHINE_PRODUCT_FACILITY_IDS = Object.freeze(
   OUTER_DESTINATIONS.flatMap(({ facilities }) => facilities.map(({ id }) => id)),
 );

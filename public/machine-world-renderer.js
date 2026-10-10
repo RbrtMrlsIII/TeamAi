@@ -44,7 +44,7 @@ import { resolveMachineSignalState, machineSignalVisualProfile } from './machine
 import { deriveMachineRingArticulation } from './machine-ring-articulation.js';
 import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './machine-r0-receiving.js';
 import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machine-core-assembly.js';
-import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
+import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies, MACHINE_FACILITY_BRANCH_IDS } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
 import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
@@ -1887,11 +1887,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     const reducedMotion = Boolean(state.reducedMotion);
     const hierarchyOpen = Boolean(state.hierarchyOpen);
-    const materialLighting = resolveHeroMaterialContext(state, reducedMotion);
+    const requestedFacilityFocusBranchId = typeof state.facilityFocusBranchId === 'string'
+      ? state.facilityFocusBranchId
+      : '';
+    const requestedFacilityFocus = MACHINE_FACILITY_BRANCH_IDS.includes(requestedFacilityFocusBranchId);
+    const materialLighting = resolveHeroMaterialContext({ ...state, facilityFocused: requestedFacilityFocus }, reducedMotion);
     activeHeroLighting = materialLighting;
     activeHeroMaterials = authoredHeroMaterialSet(materialLighting);
     canvas.dataset.machineWorldFacilityFocusLighting =
-      Boolean(state.facilityFocused) ? 'enhanced' : 'base';
+      requestedFacilityFocus ? 'enhanced' : 'base';
     const authoredRing = authoredRingMaterial(materialLighting);
     const authoredSeatShell = authoredSeatShellMaterial(materialLighting);
     const authoredSeatInset = authoredSeatInsetMaterial(materialLighting);
@@ -1985,6 +1989,132 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       throw new Error(`invalid S2 core assembly: ${coreAssemblyValidation.reasons.join(', ')}`);
     }
 
+    const spatialGeometryKey = [
+      seatCount,
+      Math.round(sample.amount * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
+      Math.round((hierarchyOpen ? focusedChildAmount : 1) * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
+    ].join(':');
+    let facilityAssemblies;
+    let facilityAssemblyValidation;
+    let facilityMachinery;
+    let facilityMachineryValidation;
+    let machineWorldTopology;
+    let machineWorldTopologyValidation;
+
+    if (machineWorldSpatialCache?.key === spatialGeometryKey) {
+      ({
+        facilityAssemblies,
+        facilityAssemblyValidation,
+        facilityMachinery,
+        facilityMachineryValidation,
+        machineWorldTopology,
+        machineWorldTopologyValidation,
+      } = machineWorldSpatialCache);
+    } else {
+      facilityAssemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      facilityAssemblyValidation = validateMachineFacilityAssemblies(facilityAssemblies);
+      if (!facilityAssemblyValidation.valid) {
+        throw new Error(`invalid S6 facility assembly: ${facilityAssemblyValidation.reasons.join(', ')}`);
+      }
+
+      facilityMachinery = deriveMachineFacilityMachinery({
+        facilityAssemblies,
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      facilityMachineryValidation = validateMachineFacilityMachinery(facilityMachinery);
+      if (!facilityMachineryValidation.valid) {
+        throw new Error(`invalid S7 facility machinery: ${facilityMachineryValidation.reasons.join(', ')}`);
+      }
+
+      machineWorldTopology = buildMachineWorldTopology({
+        scene,
+        facilityAssemblies,
+        facilityMachinery,
+        seatDivisionAmount: hierarchyOpen ? Math.max(0, finite(focusedChildAmount, 1)) : 1,
+        clearance: 0.16,
+      });
+      machineWorldTopologyValidation = validateMachineWorldTopology(
+        machineWorldTopology,
+        { expectedSeatCount: scene.seatCount },
+      );
+      if (!machineWorldTopologyValidation.valid) {
+        throw new Error(`invalid S8 world topology: ${machineWorldTopologyValidation.reasons.join(', ')}`);
+      }
+
+      machineWorldSpatialCache = Object.freeze({
+        key: spatialGeometryKey,
+        facilityAssemblies,
+        facilityAssemblyValidation,
+        facilityMachinery,
+        facilityMachineryValidation,
+        machineWorldTopology,
+        machineWorldTopologyValidation,
+      });
+    }
+
+
+    const facilityBodyShells = deriveMachineWorldFacilityShellDescriptors(facilityMachinery);
+    const facilityFocusMachine = facilityMachinery.find(
+      (machine) => machine.branchId === requestedFacilityFocusBranchId,
+    ) || null;
+    const facilityFocusParts = [];
+    if (facilityFocusMachine?.subject) {
+      const subject = facilityFocusMachine.subject;
+      const subjectDimensions = {
+        x: finite(subject.max?.x) - finite(subject.min?.x),
+        y: finite(subject.max?.y) - finite(subject.min?.y),
+        z: finite(subject.max?.z) - finite(subject.min?.z),
+      };
+      if (Object.values(subjectDimensions).every((value) => Number.isFinite(value) && value > 0)) {
+        facilityFocusParts.push({
+          id: 'S10:FOCUS:' + facilityFocusMachine.branchId + ':MACHINERY',
+          center: subject.center,
+          dimensions: subjectDimensions,
+        });
+      }
+      for (const shell of facilityBodyShells.filter(
+        (entry) => entry.branchId === requestedFacilityFocusBranchId,
+      )) {
+        const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+        // A radial square bounding the rotated XZ shell gives a conservative
+        // camera subject without modifying any authored mesh dimensions.
+        const radialSpan = Math.max(0.1, Math.hypot(
+          finite(dimensions.x),
+          finite(dimensions.z),
+        ));
+        facilityFocusParts.push({
+          id: 'S10:FOCUS:' + facilityFocusMachine.branchId + ':' + shell.id,
+          center: shell.center,
+          dimensions: {
+            x: radialSpan,
+            y: Math.max(0.1, finite(dimensions.y)),
+            z: radialSpan,
+          },
+        });
+      }
+    }
+    const derivedFacilityFocusSubject = facilityFocusParts.length
+      ? deriveMachineSubject(facilityFocusParts, 0.20)
+      : null;
+    const facilityFocusSubjectValid = Boolean(
+      derivedFacilityFocusSubject
+      && ['x', 'y', 'z'].every((axis) =>
+        Number.isFinite(derivedFacilityFocusSubject.center?.[axis])
+        && Number.isFinite(derivedFacilityFocusSubject.min?.[axis])
+        && Number.isFinite(derivedFacilityFocusSubject.max?.[axis])
+        && derivedFacilityFocusSubject.max[axis] > derivedFacilityFocusSubject.min[axis]
+      ),
+    );
+    const facilityFocused = Boolean(facilityFocusMachine && facilityFocusSubjectValid);
+    canvas.dataset.machineWorldFacilityFocusLighting = facilityFocused ? 'enhanced' : 'base';
+    const facilityFocusBranchId = facilityFocused ? requestedFacilityFocusBranchId : '';
+    const facilitySubject = facilityFocused ? derivedFacilityFocusSubject : null;
+    const activePresentationBranchId = facilityFocused ? facilityFocusBranchId : branchId;
+
     const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
     const navigationCameraId = String(
       state.cameraId || (hierarchyOpen ? 'SEAT_CLOSE' : 'HERO_WIDE'),
@@ -1997,15 +2127,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       focusedChildAmount,
       divisionSubject: focusedSubject,
       coreSubject: coreAssembly?.subject || null,
-      facilitySubject: state.facilitySubject || null,
+      facilitySubject,
       parentSubject: focusedPodSubjectResolved || null,
       podSubjectOverride: focusedPodSubjectResolved || null,
-      facilityFocused: Boolean(state.facilityFocused),
+      facilityFocused,
       returningToParent: Boolean(state.returningToParent),
       returningToWorld: Boolean(state.returningToWorld),
       reducedMotion,
     });
-    const focusedCameraSubject = focusedSubject || null;
+    const focusedCameraSubject = facilityFocused ? facilitySubject : (focusedSubject || null);
     const cameraTarget = cameraSpec.target;
     const cameraRadius = Math.max(
       cameraSpec.radius,
@@ -2108,73 +2238,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       reducedMotion,
     });
 
-    const spatialGeometryKey = [
-      seatCount,
-      Math.round(sample.amount * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
-      Math.round((hierarchyOpen ? focusedChildAmount : 1) * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
-    ].join(':');
-    let facilityAssemblies;
-    let facilityAssemblyValidation;
-    let facilityMachinery;
-    let facilityMachineryValidation;
-    let machineWorldTopology;
-    let machineWorldTopologyValidation;
-
-    if (machineWorldSpatialCache?.key === spatialGeometryKey) {
-      ({
-        facilityAssemblies,
-        facilityAssemblyValidation,
-        facilityMachinery,
-        facilityMachineryValidation,
-        machineWorldTopology,
-        machineWorldTopologyValidation,
-      } = machineWorldSpatialCache);
-    } else {
-      facilityAssemblies = deriveMachineFacilityAssemblies({
-        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
-      });
-      facilityAssemblyValidation = validateMachineFacilityAssemblies(facilityAssemblies);
-      if (!facilityAssemblyValidation.valid) {
-        throw new Error(`invalid S6 facility assembly: ${facilityAssemblyValidation.reasons.join(', ')}`);
-      }
-
-      facilityMachinery = deriveMachineFacilityMachinery({
-        facilityAssemblies,
-        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
-        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
-        requestedClearance: 0.16,
-      });
-      facilityMachineryValidation = validateMachineFacilityMachinery(facilityMachinery);
-      if (!facilityMachineryValidation.valid) {
-        throw new Error(`invalid S7 facility machinery: ${facilityMachineryValidation.reasons.join(', ')}`);
-      }
-
-      machineWorldTopology = buildMachineWorldTopology({
-        scene,
-        facilityAssemblies,
-        facilityMachinery,
-        seatDivisionAmount: hierarchyOpen ? Math.max(0, finite(focusedChildAmount, 1)) : 1,
-        clearance: 0.16,
-      });
-      machineWorldTopologyValidation = validateMachineWorldTopology(
-        machineWorldTopology,
-        { expectedSeatCount: scene.seatCount },
-      );
-      if (!machineWorldTopologyValidation.valid) {
-        throw new Error(`invalid S8 world topology: ${machineWorldTopologyValidation.reasons.join(', ')}`);
-      }
-
-      machineWorldSpatialCache = Object.freeze({
-        key: spatialGeometryKey,
-        facilityAssemblies,
-        facilityAssemblyValidation,
-        facilityMachinery,
-        facilityMachineryValidation,
-        machineWorldTopology,
-        machineWorldTopologyValidation,
-      });
-    }
-
     updateResponsiveReadability({
       responsive,
       width,
@@ -2192,7 +2255,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let facilityPortCount = 0;
     let facilityMachineryCount = 0;
 
-    const facilityBodyShells = deriveMachineWorldFacilityShellDescriptors(facilityMachinery);
+
     const authoredS7BodyBranchIds = new Set(
       facilityBodyShells
         .filter((entry) => entry.layer === 'main-shell')
@@ -2228,7 +2291,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       const buffer = authoredOutline
         ? ensureFacilityBodyBuffer(shell.silhouette,shell.outline,shell.envelopeOutline)
         : ensurePrimitiveBuffer(primitiveShape);
-      const selected = shell.branchId === branchId;
+      const selected = shell.branchId === activePresentationBranchId;
       const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
       const material = shell.materialRole === 'glass'
         ? activeHeroMaterials.glass
@@ -2303,7 +2366,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let facilityMachineryPortCount = 0;
     const facilityMechanismPhases = [];
     for (const machine of facilityMachinery) {
-      const selected = machine.branchId === branchId;
+      const selected = machine.branchId === activePresentationBranchId;
       const facilityPresentation = deriveMachineFacilityMechanismPresentation(machine, {
         amount: choreography.transformation,
         reducedMotion,
@@ -2439,7 +2502,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : 1;
     canvas.dataset.machineWorldResponsiveFacilityFeatureScale = String(facilityFeatureScale);
     for (const assembly of facilityAssemblies) {
-      const selected = assembly.branchId === branchId;
+      const selected = assembly.branchId === activePresentationBranchId;
       for (const component of assembly.components) {
         const dx = component.center.x;
         const dy = component.center.y;
@@ -2475,7 +2538,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let podAssemblySelectedBranch = '';
     for (const part of scene.parts) {
       if (part.kind === 'hub') continue;
-      const selected = part.branchId === branchId;
+      const selected = part.branchId === activePresentationBranchId;
       let entry = null;
 
       if (part.kind === 'inner-pod' && part.podAssembly) {
@@ -2564,7 +2627,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : choreography.transformation >= 0.999
         ? 'ACTIVE'
         : 'DEPLOYING';
-    const machineWorldPresentationMode = state.facilityFocused
+    const machineWorldPresentationMode = facilityFocused
       ? 'FACILITY_FOCUS'
       : hierarchyOpen
         ? (state.focusedChildId ? 'DIVISION_FOCUS' : 'POD_FOCUS')
@@ -2572,14 +2635,29 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const renderedFacilityCarrier = renderMachineWorldFacilityCarrier(
       machineWorldTopology,
       machineWorldPresentationMode,
-      branchId,
+      activePresentationBranchId,
       reducedMotion,
     );
+    canvas.dataset.machineWorldPresentationMode = machineWorldPresentationMode;
+    canvas.dataset.machineWorldFacilityFocusBranch = facilityFocusBranchId;
+    canvas.dataset.machineWorldFacilityFocusValidation = requestedFacilityFocusBranchId && !facilityFocused
+      ? 'fail'
+      : 'pass';
+    canvas.dataset.machineWorldFacilityFocusSubjectCenter = facilitySubject
+      ? [facilitySubject.center.x, facilitySubject.center.y, facilitySubject.center.z].join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityFocusSubjectSpan = facilitySubject
+      ? [
+          facilitySubject.max.x - facilitySubject.min.x,
+          facilitySubject.max.y - facilitySubject.min.y,
+          facilitySubject.max.z - facilitySubject.min.z,
+        ].map((value) => Number(value).toFixed(4)).join(',')
+      : '';
     canvas.dataset.machineWorldFacilityCarrierLastRenderCount = String(renderedFacilityCarrier);
 
     const renderedFacilityDocking = renderMachineWorldFacilityDockingEmbodiment(
       facilityMachinery,
-      branchId,
+      activePresentationBranchId,
       reducedMotion,
     );
     canvas.dataset.machineWorldFacilityDockingRendered = String(renderedFacilityDocking);
@@ -2591,26 +2669,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       now,
       {
         ...state,
+        facilityFocused,
+        facilityFocusBranchId,
+        facilitySubject,
         workspaceReceptionAmount: choreography.workspaceReception,
       },
       {
         mode: machineWorldPresentationMode,
-        branchId: state.facilityFocused
-          ? (
-              state.facilitySubject?.center
-                ? facilityMachinery
-                    .map((machine) => ({
-                      branchId: machine.branchId,
-                      distance: Math.hypot(
-                        finite(machine.outerHousing?.center?.x) - finite(state.facilitySubject.center.x),
-                        finite(machine.outerHousing?.center?.z) - finite(state.facilitySubject.center.z),
-                      ),
-                    }))
-                    .sort((a, b) => a.distance - b.distance)[0]?.branchId
-                  || null
-                : null
-            )
-          : branchId,
+        branchId: activePresentationBranchId,
       },
     );
     canvas.dataset.machineWorldTopology = machineWorldTopology.id;
@@ -2747,7 +2813,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(route),gl.DYNAMIC_DRAW);
       gl.enableVertexAttribArray(linePos);
       gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
-      const selected = connection.targetBranchId === branchId || connection.sourceBranchId === branchId;
+      const selected = !facilityFocused && (connection.targetBranchId === branchId || connection.sourceBranchId === branchId);
       const pulse = reducedMotion ? .34 : .32 + .24 * (.5 + .5*Math.sin(now*.004 + connection.id.length));
       gl.uniform4f(lineColor,
         selected ? .36 : .14,

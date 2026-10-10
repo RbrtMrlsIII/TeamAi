@@ -6,7 +6,7 @@ test.use({
 });
 
 test.describe('029 real-product video evidence', () => {
-  test('captures the actual Hero machine through focus, division, return, and turn-loop states', async ({ page }) => {
+  test('captures the actual Hero machine through focus, division, return, and turn-loop states', async ({ page }, testInfo) => {
     await page.goto('/hero/');
     const canvas = page.locator('#hero-canvas');
     await expect(canvas).toBeVisible();
@@ -37,8 +37,81 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-rendered', '20');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-scope', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-version', 'S3-V8');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-face-brace-attachment', 'panel-local-matrix-v2');
+    
+    // A facility focus must interrupt the demo turn loop instead of being overwritten by it.
+    await page.evaluate(() => (window as any).TeamAiHero.startLoop());
+    // Exercise facility focus through the real production navigation, not the QA preview.
+    await page.locator('[data-world-menu-toggle]').click();
+    await expect(page.locator('#world-menu')).toHaveClass(/is-open/);
+    await page.locator('[data-facility-focus="BRANCH-OUTER-ALPHA"]').click();
+    await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
+    await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'FACILITY_FOCUS');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-ALPHA');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
+    await expect(page.locator('[data-facility-focus="BRANCH-OUTER-ALPHA"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#facility-focus-status')).toContainText('Analysis · Telescope');
+    const focusedSubject = await page.evaluate(() => ({
+      center: document.querySelector('#hero-canvas')?.getAttribute('data-machine-world-facility-focus-subject-center'),
+      span: document.querySelector('#hero-canvas')?.getAttribute('data-machine-world-facility-focus-subject-span'),
+      focusState: (window as any).TeamAiHero.getFacilityFocusState(),
+      seats: (window as any).TeamAiHero.getSeatCount(),
+      selectedSeat: (window as any).TeamAiHero.getSelectedSeat(),
+    }));
+    expect(focusedSubject.center?.split(',')).toHaveLength(3);
+    expect(focusedSubject.span?.split(',').map(Number).every((value) => Number.isFinite(value) && value > 0)).toBe(true);
+    expect(focusedSubject.focusState).toMatchObject({
+      active: true,
+      branchId: 'BRANCH-OUTER-ALPHA',
+      mode: 'FACILITY_FOCUS',
+      presentationOnly: true,
+    });
+    expect(focusedSubject.focusState.cameraId).toBe('HERO_WIDE');
+    expect(await page.evaluate(() => (window as any).TeamAiHero.getState())).toBe('IDLE');
+    await page.screenshot({ path: testInfo.outputPath('facility-focus-analysis.png') });
+
+    for (const branchId of [
+      'BRANCH-OUTER-BETA',
+      'BRANCH-OUTER-GAMMA',
+      'BRANCH-OUTER-DELTA',
+    ]) {
+      await page.locator(`[data-facility-focus="${branchId}"]`).click();
+      await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
+      await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'FACILITY_FOCUS');
+      await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', branchId);
+      await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
+      const span = await canvas.getAttribute('data-machine-world-facility-focus-subject-span');
+      expect(span?.split(',').map(Number).every((value) => Number.isFinite(value) && value > 0)).toBe(true);
+      if (branchId === 'BRANCH-OUTER-BETA') {
+        await page.screenshot({ path: testInfo.outputPath('facility-focus-operations.png') });
+      }
+    }
+
+    expect(focusedSubject.seats).toBe(10);
+    expect(focusedSubject.selectedSeat).toBe(0);
+
+    const rejected = await page.evaluate(() => (window as any).TeamAiHero.focusFacility('BRANCH-OUTER-UNKNOWN'));
+    expect(rejected).toMatchObject({ ok: false, reason: 'UNKNOWN_FACILITY_BRANCH', presentationOnly: true });
+    await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
+
+    // The return affordance must also work as an ordinary browser interaction.
+    await page.locator('[data-facility-focus="BRANCH-OUTER-BETA"]').click();
+    await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-BETA');
+    await page.locator('[data-facility-focus-return]').click();
+    await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', '');
+    await expect(page.locator('#facility-focus-status')).toHaveText('World overview');
+    await expect(canvas).toHaveAttribute('data-machine-world-topology-validation', 'pass');
+    await page.locator('[data-world-menu-toggle]').click();
+
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
     await page.waitForTimeout(1100);
