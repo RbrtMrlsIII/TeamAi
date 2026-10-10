@@ -479,9 +479,10 @@ function renderView() {
   const serviceManifoldJunctionRenderDescriptors = serviceManifoldJunctionRenderParts(
     serviceManifoldJunctionDescriptors,
   );
-  const serviceManifoldJunctionValidation = currentView === 'seat'
+  const serviceManifoldJunctionValidation = currentView !== 'world'
     ? 'scoped-out'
     : manifoldJunctionTopology?.serviceManifoldValidation?.valid === true
+      && serviceManifoldJunctionDescriptors.length === 4
       && serviceManifoldJunctionDescriptors.every((junction) => junction.routeContinuous)
       ? 'pass'
       : 'fail';
