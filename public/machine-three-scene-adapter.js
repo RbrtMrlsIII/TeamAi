@@ -25,9 +25,8 @@ import {
 } from './machine-world-pod-docking-embodiment.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
-  MACHINE_POD_SHELL_BEVEL_INSET,
-  MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO,
   getMachinePodShellOutline,
+  createMachinePodShellVertices,
 } from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
@@ -545,56 +544,21 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   return geometry;
 }
 
-function buildBeveledPodShellGeometry(THREE, descriptor, outline) {
+function buildPodShellGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
-  let minX = Infinity;
-  let maxX = -Infinity;
-  let minZ = Infinity;
-  let maxZ = -Infinity;
-  for (const [px, pz] of outline) {
-    minX = Math.min(minX, px);
-    maxX = Math.max(maxX, px);
-    minZ = Math.min(minZ, pz);
-    maxZ = Math.max(maxZ, pz);
+  const normalized = createMachinePodShellVertices();
+  const positions = new Float32Array(normalized.length);
+
+  for (let index = 0; index < normalized.length; index += 3) {
+    positions[index] = normalized[index] * x * 0.5;
+    positions[index + 1] = (normalized[index + 1] - 0.5) * y;
+    positions[index + 2] = normalized[index + 2] * z * 0.5;
   }
-  const outlineCenterX = (minX + maxX) * 0.5;
-  const outlineCenterZ = (minZ + maxZ) * 0.5;
-  const outlineWidth = Math.max(0.001, maxX - minX);
-  const outlineDepth = Math.max(0.001, maxZ - minZ);
-  const scaleX = x / outlineWidth;
-  const scaleZ = z / outlineDepth;
-  const halfY = y * 0.5;
-  const bevelY = halfY * MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO;
-  const vertices = [];
-  const point = ([px, pz], yy, scale = 1) => [
-    (px - outlineCenterX) * scaleX * scale,
-    yy,
-    (pz - outlineCenterZ) * scaleZ * scale,
-  ];
-  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
-  const topInner = outline.map((value) => point(value, halfY, MACHINE_POD_SHELL_BEVEL_INSET));
-  const topOuter = outline.map((value) => point(value, bevelY));
-  const bottomOuter = outline.map((value) => point(value, -bevelY));
-  const bottomInner = outline.map((value) => point(value, -halfY, MACHINE_POD_SHELL_BEVEL_INSET));
-  const topCenter = [0, halfY, 0];
-  const bottomCenter = [0, -halfY, 0];
-  for (let index = 1; index < outline.length - 1; index += 1) {
-    pushTri(topCenter, topInner[index + 1], topInner[index]);
-    pushTri(bottomCenter, bottomInner[index], bottomInner[index + 1]);
-  }
-  for (let index = 0; index < outline.length; index += 1) {
-    const next = (index + 1) % outline.length;
-    pushTri(topInner[index], topOuter[index], topOuter[next]);
-    pushTri(topInner[index], topOuter[next], topInner[next]);
-    pushTri(topOuter[index], bottomOuter[index], bottomOuter[next]);
-    pushTri(topOuter[index], bottomOuter[next], topOuter[next]);
-    pushTri(bottomOuter[index], bottomInner[index], bottomInner[next]);
-    pushTri(bottomOuter[index], bottomInner[next], bottomOuter[next]);
-  }
+
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute(
     'position',
-    new THREE.Float32BufferAttribute(new Float32Array(vertices), 3),
+    new THREE.Float32BufferAttribute(positions, 3),
   );
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();

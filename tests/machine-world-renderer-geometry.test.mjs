@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createBeveledPodShellVertices } from '../frontend/spatial/machine-world-renderer.js';
-import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_OUTLINE_BOUNDS } from '../frontend/spatial/machine-pod-profile.js';
+import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices } from '../frontend/spatial/machine-world-renderer.js';
+import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_TOP_OPENING_SCALE, MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, MACHINE_POD_SHELL_OUTLINE_BOUNDS, createMachinePodShellVertices } from '../frontend/spatial/machine-pod-profile.js';
 import { readFileSync } from 'node:fs';
 
 const close = (actual, expected, tolerance = 1e-6) =>
@@ -184,15 +184,15 @@ test('annular collar mesh winds each surface toward its physical outward normal'
 });
 
 
-test('raw WebGL Pod shell uses the authored 3D envelope and shared bevel profile', () => {
-  const vertices = createBeveledPodShellVertices();
+test('raw WebGL and Three.js Pods share a closed-floor open-top beveled S3 shell', () => {
+  const vertices = createMachinePodShellVertices();
   const positions = Array.from({ length: vertices.length / 3 }, (_, index) => [
     vertices[index * 3],
     vertices[index * 3 + 1],
     vertices[index * 3 + 2],
   ]);
 
-  assert.equal(positions.length, 92 * 3, '12-point shell has 92 beveled-prism triangles');
+  assert.equal(positions.length, 130 * 3, '12-point open-top shell has 130 beveled-frame triangles');
   assert.ok(positions.every((point) => point.every(Number.isFinite)));
 
   const xs = positions.map(([x]) => x);
@@ -210,7 +210,20 @@ test('raw WebGL Pod shell uses the authored 3D envelope and shared bevel profile
   assert.ok(
     Math.max(...topFace.map(([x, , z]) => Math.max(Math.abs(x), Math.abs(z))))
       <= MACHINE_POD_SHELL_BEVEL_INSET + 1e-6,
-    'top face must be inset by the shared bevel contract',
+    'top lip must remain inside the shared bevel profile',
+  );
+  assert.ok(
+    topFace.every(([x, , z]) =>
+      Math.max(Math.abs(x), Math.abs(z)) >= MACHINE_POD_SHELL_TOP_OPENING_SCALE * 0.5
+    ),
+    'top surface must be an annular lip, not a solid cap across the aperture',
+  );
+  assert.ok(
+    !positions.some(([x, y, z]) =>
+      close(y, 1) && Math.abs(x) < MACHINE_POD_SHELL_TOP_OPENING_SCALE * 0.4
+      && Math.abs(z) < MACHINE_POD_SHELL_TOP_OPENING_SCALE * 0.4
+    ),
+    'no top-cap vertex may bridge the nested chamber opening',
   );
 
   const bevelLevels = new Set(ys.map((value) => Math.round(value * 1000) / 1000));
@@ -224,9 +237,9 @@ test('raw WebGL Pod shell uses the authored 3D envelope and shared bevel profile
   const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
   const adapter = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
   assert.equal(browser, source);
-  assert.match(source, /key === 'POD_SHELL'[\s\S]*?createBeveledPodShellVertices\(\)/);
-  assert.match(source, /machineWorldPodShellGeometry = 'beveled-authored-envelope-v1'/);
-  assert.match(adapter, /MACHINE_POD_SHELL_BEVEL_INSET/);
-  assert.match(adapter, /MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO/);
-  assert.doesNotMatch(adapter, /const POD_SHELL_BEVEL_(?:INSET|HEIGHT_RATIO) =/);
+  assert.match(source, /key === 'POD_SHELL'[\s\S]*?createMachinePodShellVertices\(\)/);
+  assert.match(source, /machineWorldPodShellGeometry = MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION/);
+  assert.match(adapter, /createMachinePodShellVertices/);
+  assert.match(adapter, /positions\[index \+ 1\] = \(normalized\[index \+ 1\] - 0\.5\) \* y/);
+  assert.equal(MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, 'S3-OPEN-TOP-V1');
 });
