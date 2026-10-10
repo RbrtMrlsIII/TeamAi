@@ -1647,3 +1647,54 @@ S7-V14 is **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERN
 The carrier layer is now executed on the actual `/hero/` production route. It creates a visible pixel delta localized around the outer-spine connections, but the change is modest. This establishes that the renderer consumes the carrier geometry; it is not sufficient to close human visual acceptance. The wider scene still needs nested mechanical depth and clearer physical relationships inside the four outer product-family machines.
 
 The unchanged `s2-s10-*.png` assets are separate Three.js structural-preview captures and must not be used to judge this raw-WebGL production-renderer change.
+
+### E424-2026-10-10B — Y1-V4 extruded facility-shell side-wall winding
+
+**Verified code-bearing head:** `23da77a20df5a508b3db9a6e507e8f80ffb5f10a`  
+**Parent head:** `01ed04b94ba42cb23d08c5bbf09a95a678e9707b`  
+**Active vehicle:** PR #424, branch `frontend/029-spatial-world-continuation`, OPEN / DRAFT / mergeable.
+
+**Scope / owning contracts**
+- Corrected side-wall triangle order for authored counter-clockwise XZ polygon extrusion in `frontend/spatial/machine-three-scene-adapter.js` and `frontend/spatial/machine-world-renderer.js`.
+- Published public mirrors remain byte-identical to their sources.
+- Three.js adapter version advances `Y1-V3 → Y1-V4`.
+- No semantic IDs, authored dimensions, Seat capacity, route/topology edges, ports, camera authority, or backend/runtime ownership changed.
+- Added explicit triangle-normal regressions for both actual geometry paths. The tests assert outward-facing end caps and outward-facing vertical side walls; they exercise the production facility fin outline rather than source regexes.
+
+**Independent geometry check**
+- The normalized authored fin outline has signed area **2.3228** (counter-clockwise in XZ).
+- For a representative side triangle, the former winding gives an outward-radial normal dot product of **−0.49733**; the corrected triangle gives **+0.49733**.
+- Recalculation over the eight authored fin edges yields positive outward-radial normal dot products for all eight side walls (normalized pre-scale range approximately **0.49733–0.61436**).
+- This verifies triangle orientation, not triangle-level clearance, lighting fidelity, or final human visual acceptance.
+
+**Exact-head CI**
+- Repository Full-System Verification `38055916919`: **PASS**; 1,269 project tests passed, 0 failed. The new geometry tests passed in the focused and full runs; the canonical project ZIP also built/verified/uploaded successfully.
+- Repository Governance Integrity `38055916876`: **PASS**.
+- Security Static Analysis `38055916973`: **PASS**.
+- Deep Security Static Analysis `38055916899`: **PASS**.
+- Canonical Browser Verification `38055917126`: **PASS**, 92 passed / 4 skipped, exact-head checkout of `23da77a20df5a508b3db9a6e507e8f80ffb5f10a`.
+- Browser artifact `11670814373`, `browser-verification-23da77a20df5a508b3db9a6e507e8f80ffb5f10a.zip`.
+- Independently computed artifact ZIP SHA-256: `sha256:27dba19decd574312a32a2482c1c7183df6a7b72bf9ddd64eac6517e6edeeddf`.
+- Artifact includes a real `/hero/` product video (VP8/WebM, 800×500, 25 fps, 16.6 s) and structural-preview captures for World, Seat, Facility, Transform, and Return states.
+
+**Exact artifact comparison against parent `01ed04b...`**
+Metrics use 1280×720 pairs from the parent and current Browser ZIP. “Changed pixels” means at least one RGB channel changes by the stated threshold; these raster counts are diagnostic and are not an acceptance score.
+
+| Capture | Mean absolute RGB delta | Pixels with channel delta ≥5 | Pixels with channel delta ≥12 |
+|---|---:|---:|---:|
+| Production `/hero/` wide | 0.0259 | 0.2405% | 0.1163% |
+| Three.js structural World | 1.5977 | 5.5775% | 5.0445% |
+| Three.js structural Facility focus | 0.4133 | 1.1109% | 0.9472% |
+| Three.js structural Transform midpoint | 1.4527 | 5.1404% | 4.5731% |
+| Three.js structural Seat focus | 0.1475 | 0.4291% | 0.3689% |
+
+The Facility-focus delta at threshold ≥12 is localized to `x=530..722, y=289..468`. The World and Transform deltas concentrate in the rendered machine region. The production Hero delta is very small and includes time-dependent rendering variance; **do not attribute this small delta to the winding correction**.
+
+**Interpretation and next slice**
+- The Three.js structural preview now renders the authored side walls with consistent outward normals. That is verified and retained.
+- The production raw-WebGL renderer does not enable face culling and currently uses position-derived approximate fragment shading normals, not geometry-normal attributes. Therefore correcting winding produces little observable change on the production Hero itself. The actual production Hero remains darker and more skeletal than the endorsed Hailuo MP4 / PNG visual direction.
+- Do not close visual acceptance on this geometry fix, and do not enlarge the S8 carrier, alter camera framing, or infer product semantics from the reference storyboard.
+- Next bounded structural target remains the existing four S7 family machines (Alpha/Analysis, Beta/Operations, Gamma/Control, Delta/Access-Commerce): deepen demonstrably missing chassis-to-mechanism attachments using the existing S7-V21 owner and existing semantic identities. The current regression-guarded detail counts are Analysis 18, Operations 20, Control 20, Access-Commerce 23; do not increment counts without a physically attached, independently checked feature.
+- Preserve current routes, endpoints, carrier scale, 10-seat Product Law, and camera authority. Any later raw-WebGL normal/shading substrate work should be a separate measured Y1 slice after structural attachment proof.
+- Evidence state: **IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED**. Human visual acceptance, production deployment/runtime proof, merge/release authorization, and final 029 completion remain open.
+
