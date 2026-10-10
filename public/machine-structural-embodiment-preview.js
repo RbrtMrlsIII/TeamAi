@@ -20,7 +20,7 @@ import {
   deriveMachineWorldFacilityCarrierDescriptors,
   validateMachineWorldFacilityCarrierDescriptors,
 } from './machine-world-facility-carrier.js';
-import { deriveMachineWorldFacilityShellDescriptors } from './machine-world-facility-shell.js';
+import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE, MACHINE_WORLD_FACILITY_SHELL_VERSION } from './machine-world-facility-shell.js';
 import {
   deriveMachineWorldFacilityDockingEmbodiment,
   validateMachineWorldFacilityDockingEmbodiment,
@@ -614,6 +614,10 @@ function renderView() {
     : 'scoped-out';
   canvas.dataset.structuralFacilityCarrierScope = facilityCarrierMode;
   canvas.dataset.structuralFacilityShellDescriptorCount = String(facilityShellDescriptors.length);
+  canvas.dataset.structuralFacilityShellVersion = MACHINE_WORLD_FACILITY_SHELL_VERSION;
+  canvas.dataset.structuralFacilityServiceBayDescriptorCount = String(
+    facilityShellDescriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
+  );
   canvas.dataset.structuralFacilityDockingDescriptorCount = String(facilityDockingDescriptors.length);
   canvas.dataset.structuralFacilityDockingRenderPartCount = String(facilityDockingRenderDescriptors.length);
   canvas.dataset.structuralFacilityDockingValidation = currentView === 'seat'
