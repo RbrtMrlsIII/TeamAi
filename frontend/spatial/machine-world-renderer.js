@@ -56,7 +56,11 @@ import {
 } from './machine-world-facility-carrier.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
 import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES, MACHINE_WORLD_FACILITY_SHELL_VERSION } from './machine-world-facility-shell.js';
-import { MACHINE_POD_SHELL_OUTLINE } from './machine-pod-profile.js';
+import {
+  MACHINE_POD_SHELL_OUTLINE,
+  MACHINE_POD_SHELL_BEVEL_INSET,
+  MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO,
+} from './machine-pod-profile.js';
 import {
   getMachineSeatAuthorizationShieldOutline,
   getMachineSeatBehaviorBaffleOutline,
@@ -210,6 +214,78 @@ export function createAnnularPrismVertices({
     pushTri(outerBottom0, outerTop0, outerTop1);
     pushTri(innerBottom0, innerBottom1, innerTop1);
     pushTri(innerBottom0, innerTop1, innerTop0);
+  }
+
+  return new Float32Array(vertices);
+}
+
+export function createBeveledPodShellVertices({
+  outline = MACHINE_POD_SHELL_OUTLINE,
+  bevelInset = MACHINE_POD_SHELL_BEVEL_INSET,
+  bevelHeightRatio = MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO,
+} = {}) {
+  const points = Array.isArray(outline)
+    ? outline.filter((point) =>
+      Array.isArray(point)
+      && point.length >= 2
+      && Number.isFinite(Number(point[0]))
+      && Number.isFinite(Number(point[1]))
+    ).map((point) => [Number(point[0]), Number(point[1])])
+    : [];
+  if (points.length < 3) {
+    throw new Error('beveled Pod shell requires at least three finite outline points');
+  }
+
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minZ = Infinity;
+  let maxZ = -Infinity;
+  for (const [x, z] of points) {
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x);
+    minZ = Math.min(minZ, z);
+    maxZ = Math.max(maxZ, z);
+  }
+  const centerX = (minX + maxX) * 0.5;
+  const centerZ = (minZ + maxZ) * 0.5;
+  const width = Math.max(0.001, maxX - minX);
+  const depth = Math.max(0.001, maxZ - minZ);
+  const inset = clamp(finite(bevelInset, MACHINE_POD_SHELL_BEVEL_INSET), 0.50, 0.95);
+  const bevelRatio = clamp(
+    finite(bevelHeightRatio, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO),
+    0.20,
+    0.90,
+  );
+  const halfY = 0.5;
+  const bevelY = halfY * bevelRatio;
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = ([x, z], y, scale = 1) => [
+    ((x - centerX) * 2 / width) * scale,
+    y,
+    ((z - centerZ) * 2 / depth) * scale,
+  ];
+
+  const topInner = points.map((value) => point(value, 1, inset));
+  const topOuter = points.map((value) => point(value, halfY + bevelY));
+  const bottomOuter = points.map((value) => point(value, halfY - bevelY));
+  const bottomInner = points.map((value) => point(value, 0, inset));
+  const topCenter = [0, 1, 0];
+  const bottomCenter = [0, 0, 0];
+
+  for (let index = 1; index < points.length - 1; index += 1) {
+    pushTri(topCenter, topInner[index + 1], topInner[index]);
+    pushTri(bottomCenter, bottomInner[index], bottomInner[index + 1]);
+  }
+
+  for (let index = 0; index < points.length; index += 1) {
+    const next = (index + 1) % points.length;
+    pushTri(topInner[index], topOuter[index], topOuter[next]);
+    pushTri(topInner[index], topOuter[next], topInner[next]);
+    pushTri(topOuter[index], bottomOuter[index], bottomOuter[next]);
+    pushTri(topOuter[index], bottomOuter[next], topOuter[next]);
+    pushTri(bottomOuter[index], bottomInner[index], bottomInner[next]);
+    pushTri(bottomOuter[index], bottomInner[next], bottomOuter[next]);
   }
 
   return new Float32Array(vertices);
@@ -667,7 +743,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const polygon = PRIMITIVE_POLYGONS[key] || PRIMITIVE_POLYGONS.CUBE;
     const data = key === 'TORUS'
       ? createAnnularPrismVertices()
-      : shapeBuffer(gl, polygon, 1);
+      : key === 'POD_SHELL'
+        ? createBeveledPodShellVertices()
+        : shapeBuffer(gl, polygon, 1);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
@@ -1053,6 +1131,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldPodMechanicalDetails =
       String((assembly.mechanicalDetails || []).length);
     canvas.dataset.machineWorldPodAssemblyVersion = String(assembly.version || 'unknown');
+    canvas.dataset.machineWorldPodShellGeometry = 'beveled-authored-envelope-v1';
     canvas.dataset.machineWorldPodFaceBraceAttachment = 'panel-local-matrix-v2';
     canvas.dataset.machineWorldPodMechanicalState = mechanicalState;
     canvas.dataset.machineWorldPodMechanicalAmount = String(progress);

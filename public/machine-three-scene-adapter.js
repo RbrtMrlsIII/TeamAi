@@ -25,6 +25,8 @@ import {
 } from './machine-world-pod-docking-embodiment.js';
 import {
   MACHINE_POD_SHELL_PROFILE,
+  MACHINE_POD_SHELL_BEVEL_INSET,
+  MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO,
   getMachinePodShellOutline,
 } from './machine-pod-profile.js';
 import {
@@ -543,9 +545,6 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   return geometry;
 }
 
-const POD_SHELL_BEVEL_INSET = 0.82;
-const POD_SHELL_BEVEL_HEIGHT_RATIO = 0.58;
-
 function buildBeveledPodShellGeometry(THREE, descriptor, outline) {
   const { x, y, z } = descriptor.dimensions;
   let minX = Infinity;
@@ -565,7 +564,7 @@ function buildBeveledPodShellGeometry(THREE, descriptor, outline) {
   const scaleX = x / outlineWidth;
   const scaleZ = z / outlineDepth;
   const halfY = y * 0.5;
-  const bevelY = halfY * POD_SHELL_BEVEL_HEIGHT_RATIO;
+  const bevelY = halfY * MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO;
   const vertices = [];
   const point = ([px, pz], yy, scale = 1) => [
     (px - outlineCenterX) * scaleX * scale,
@@ -573,10 +572,10 @@ function buildBeveledPodShellGeometry(THREE, descriptor, outline) {
     (pz - outlineCenterZ) * scaleZ * scale,
   ];
   const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
-  const topInner = outline.map((value) => point(value, halfY, POD_SHELL_BEVEL_INSET));
+  const topInner = outline.map((value) => point(value, halfY, MACHINE_POD_SHELL_BEVEL_INSET));
   const topOuter = outline.map((value) => point(value, bevelY));
   const bottomOuter = outline.map((value) => point(value, -bevelY));
-  const bottomInner = outline.map((value) => point(value, -halfY, POD_SHELL_BEVEL_INSET));
+  const bottomInner = outline.map((value) => point(value, -halfY, MACHINE_POD_SHELL_BEVEL_INSET));
   const topCenter = [0, halfY, 0];
   const bottomCenter = [0, -halfY, 0];
   for (let index = 1; index < outline.length - 1; index += 1) {

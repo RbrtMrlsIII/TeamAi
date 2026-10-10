@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices } from '../frontend/spatial/machine-world-renderer.js';
+import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createBeveledPodShellVertices } from '../frontend/spatial/machine-world-renderer.js';
+import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_OUTLINE_BOUNDS } from '../frontend/spatial/machine-pod-profile.js';
 import { readFileSync } from 'node:fs';
 
 const close = (actual, expected, tolerance = 1e-6) =>
@@ -180,4 +181,52 @@ test('annular collar mesh winds each surface toward its physical outward normal'
       assert.ok(n[0] * radial[0] + n[2] * radial[2] < 0, 'inner wall must face into the open bore');
     }
   }
+});
+
+
+test('raw WebGL Pod shell uses the authored 3D envelope and shared bevel profile', () => {
+  const vertices = createBeveledPodShellVertices();
+  const positions = Array.from({ length: vertices.length / 3 }, (_, index) => [
+    vertices[index * 3],
+    vertices[index * 3 + 1],
+    vertices[index * 3 + 2],
+  ]);
+
+  assert.equal(positions.length, 92 * 3, '12-point shell has 92 beveled-prism triangles');
+  assert.ok(positions.every((point) => point.every(Number.isFinite)));
+
+  const xs = positions.map(([x]) => x);
+  const ys = positions.map(([, y]) => y);
+  const zs = positions.map(([, , z]) => z);
+  assert.ok(close(Math.min(...xs), -1));
+  assert.ok(close(Math.max(...xs), 1));
+  assert.ok(close(Math.min(...zs), -1));
+  assert.ok(close(Math.max(...zs), 1));
+  assert.ok(close(Math.min(...ys), 0));
+  assert.ok(close(Math.max(...ys), 1));
+
+  const topFace = positions.filter(([, y]) => close(y, 1));
+  assert.ok(topFace.length > 0);
+  assert.ok(
+    Math.max(...topFace.map(([x, , z]) => Math.max(Math.abs(x), Math.abs(z))))
+      <= MACHINE_POD_SHELL_BEVEL_INSET + 1e-6,
+    'top face must be inset by the shared bevel contract',
+  );
+
+  const bevelLevels = new Set(ys.map((value) => Math.round(value * 1000) / 1000));
+  assert.ok(bevelLevels.has(Math.round(((1 - MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO) / 2) * 1000) / 1000));
+  assert.ok(bevelLevels.has(Math.round(((1 + MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO) / 2) * 1000) / 1000));
+
+  const expectedRatio = MACHINE_POD_SHELL_OUTLINE_BOUNDS.width / MACHINE_POD_SHELL_OUTLINE_BOUNDS.depth;
+  assert.ok(close(expectedRatio, 1.5), 'authored outline keeps its 1.80 × 1.20 profile ratio');
+
+  const source = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
+  const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
+  const adapter = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.equal(browser, source);
+  assert.match(source, /key === 'POD_SHELL'[\s\S]*?createBeveledPodShellVertices\(\)/);
+  assert.match(source, /machineWorldPodShellGeometry = 'beveled-authored-envelope-v1'/);
+  assert.match(adapter, /MACHINE_POD_SHELL_BEVEL_INSET/);
+  assert.match(adapter, /MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO/);
+  assert.doesNotMatch(adapter, /const POD_SHELL_BEVEL_(?:INSET|HEIGHT_RATIO) =/);
 });

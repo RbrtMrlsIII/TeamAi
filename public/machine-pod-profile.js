@@ -8,6 +8,9 @@
  */
 export const MACHINE_POD_SHELL_PROFILE = 'authored-seat-pod-shell';
 
+export const MACHINE_POD_SHELL_BEVEL_INSET = 0.82;
+export const MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO = 0.58;
+
 export const MACHINE_POD_SHELL_OUTLINE = Object.freeze([
   Object.freeze([-0.90, 0.00]),
   Object.freeze([-0.78, -0.35]),
