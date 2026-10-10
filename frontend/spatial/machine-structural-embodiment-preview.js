@@ -16,7 +16,10 @@ import {
   resolveSeatDivisionAttachmentTransform,
 } from './machine-seat-division-presentation.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
-import { deriveMachineWorldFacilityCarrierDescriptors } from './machine-world-facility-carrier.js';
+import {
+  deriveMachineWorldFacilityCarrierDescriptors,
+  validateMachineWorldFacilityCarrierDescriptors,
+} from './machine-world-facility-carrier.js';
 import { deriveMachineWorldFacilityShellDescriptors } from './machine-world-facility-shell.js';
 import { deriveMachineWorldPresentationProjection } from './machine-world-presentation-projection.js';
 import {
@@ -359,7 +362,22 @@ function renderView() {
         reducedMotion: true,
       })
     : [];
-  const facilityCarrierDescriptors = [];
+  const facilityCarrierMode = currentView === 'world'
+    ? 'WORLD_OVERVIEW'
+    : currentView === 'seat'
+      ? 'DIVISION_FOCUS'
+      : 'FACILITY_FOCUS';
+  const facilityCarrierTopology = currentView === 'world'
+    ? worldPresentation.topology
+    : activeTopology;
+  const facilityCarrierDescriptors = deriveMachineWorldFacilityCarrierDescriptors(
+    facilityCarrierTopology,
+    { mode: facilityCarrierMode },
+  );
+  const facilityCarrierValidation = validateMachineWorldFacilityCarrierDescriptors(
+    facilityCarrierDescriptors,
+    { topology: facilityCarrierTopology, clearance: 0.16 },
+  );
 
   const facility = machinery.find((machine) => machine.branchId === 'BRANCH-OUTER-BETA') || machinery[0];
   const effectiveFacilitiesSource = currentView === 'world'
@@ -483,6 +501,10 @@ function renderView() {
   canvas.dataset.structuralDescriptorCount = String(assemblyRender.descriptorCount);
   canvas.dataset.structuralCanonicalRingDescriptorCount = String(canonicalRingDescriptors.length);
   canvas.dataset.structuralFacilityCarrierDescriptorCount = String(facilityCarrierDescriptors.length);
+  canvas.dataset.structuralFacilityCarrierValidation = currentView === 'world'
+    ? facilityCarrierValidation.valid ? 'pass' : 'fail'
+    : 'scoped-out';
+  canvas.dataset.structuralFacilityCarrierScope = facilityCarrierMode;
   canvas.dataset.structuralFacilityShellDescriptorCount = String(facilityShellDescriptors.length);
   canvas.dataset.structuralConduitEdgeKinds = topologyRender.conduitEdgeKinds.join('|');
   canvas.dataset.structuralStructuralConduitSegmentCount = String(topologyRender.structuralConduitSegmentCount);
