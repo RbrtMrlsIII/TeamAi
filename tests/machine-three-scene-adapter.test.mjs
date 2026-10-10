@@ -1151,7 +1151,11 @@ test('Y1 Pod shell BufferGeometry is bounded by the authored descriptor dimensio
   assert.ok(Math.abs(geometry.boundingBox.max.z - expected.z * 0.5) < epsilon);
   assert.ok(Math.abs(geometry.boundingBox.min.z + expected.z * 0.5) < epsilon);
 
-  assert.equal(geometry.getAttribute('position').count, 276);
+  assert.equal(
+    geometry.getAttribute('position').count,
+    390,
+    'open-top 12-point shell includes the rim, cavity wall, outer wall, bevels, and closed floor',
+  );
   geometry.dispose();
 });
 
