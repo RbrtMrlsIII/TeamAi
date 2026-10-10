@@ -86,3 +86,19 @@ test('S8 outer-spine carrier cross-sections stay inside the governed clearance b
     }
   }
 });
+
+
+test('structural preview consumes the canonical carrier projection and keeps source/public parity', () => {
+  const sourcePreview = readFileSync(
+    'frontend/spatial/machine-structural-embodiment-preview.js',
+    'utf8',
+  );
+  const publicPreview = readFileSync(
+    'public/machine-structural-embodiment-preview.js',
+    'utf8',
+  );
+  assert.equal(publicPreview, sourcePreview);
+  assert.match(sourcePreview, /deriveMachineWorldFacilityCarrierDescriptors\(/);
+  assert.match(sourcePreview, /validateMachineWorldFacilityCarrierDescriptors\(/);
+  assert.doesNotMatch(sourcePreview, /const facilityCarrierDescriptors\s*=\s*\[\s*\]/);
+});

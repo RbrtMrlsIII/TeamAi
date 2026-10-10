@@ -56,6 +56,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
           transformation: Number(canvas?.getAttribute('data-structural-choreography-transformation')),
         };
       },
+      undefined,
       { timeout: 5000, polling: 'raf' },
     ).then((handle) => handle.jsonValue());
     expect(transformMid.fromStage).toBe('0');
@@ -65,17 +66,22 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     expect(transformMid.transformation).toBeGreaterThan(0);
     await page.screenshot({ path: 'test-results/s2-s10-transform-mid.png', fullPage: true });
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'DIVISION_DEPLOYING');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'TOPOLOGY_LINKING');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-connection', '0.82');
     await expect(canvas).toHaveAttribute('data-structural-choreography-electrical', '0.82');
     await expect(canvas).toHaveAttribute('data-structural-choreography-focused-child', 'SEAT_CONNECTION');
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'ELECTRICAL_TRANSFER');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SETTLED');
+    await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
 
     await page.getByRole('button', { name: 'Transform', exact: true }).click();
     const returnMid = await page.waitForFunction(
@@ -92,6 +98,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
           transformation: Number(canvas?.getAttribute('data-structural-choreography-transformation')),
         };
       },
+      undefined,
       { timeout: 5000, polling: 'raf' },
     ).then((handle) => handle.jsonValue());
     expect(returnMid.view).toBe('world');
