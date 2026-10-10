@@ -15,6 +15,7 @@ import {
   resolveThreePodShellOutline,
   AUTHORED_POD_SHELL_PROFILE,
   buildThreeGeometry,
+  createMachineThreeSceneAdapter,
 } from '../frontend/spatial/machine-three-scene-adapter.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineCoreAssembly } from '../frontend/spatial/machine-core-assembly.js';
@@ -909,14 +910,91 @@ test('S24 pod-division docking sockets derive horizontal direction from the rout
 });
 
 
-test('S24 Three topology bridge renders endpoint docking collars without promoting conduit material', () => {
-  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
-  assert.match(source, /derivePodDivisionDockingCollars\(conduitSegments\)/);
-  assert.match(source, /new THREE\.CylinderGeometry\(/);
-  assert.match(source, /material\('metal2'\)/);
-  assert.match(source, /mesh\.userData\.dockingRole/);
-  assert.match(source, /dockingCollarCount/);
-});
+test('S24 Three topology bridge preserves authored docking and conduit material roles through pooled updates', () => {
+  class TestWebGLRenderer {
+    constructor({ canvas }) {
+      this.domElement = canvas;
+    }
+    setPixelRatio() {}
+    setClearColor() {}
+    setSize() {}
+    render() {}
+    dispose() {}
+  }
+
+  const canvas = {
+    dataset: {},
+    width: 640,
+    height: 480,
+    clientWidth: 640,
+    clientHeight: 480,
+    getContext: () => ({}),
+  };
+  const adapter = createMachineThreeSceneAdapter({
+    THREE: { ...THREE, WebGLRenderer: TestWebGLRenderer },
+    canvas,
+  });
+  const topologyAt = (corridorRadius) => ({
+    edges: [{
+      semanticEdgeId: 'TREE-HERO-SEAT#1:SEAT_CONNECTION',
+      kind: 'pod-division',
+      sourceBranchId: 'BRANCH-SEAT-01',
+      targetBranchId: 'TREE-HERO-SEAT#1:SEAT_CONNECTION',
+      route: [
+        { x: 0, y: 0, z: 0 },
+        { x: 0, y: 0.4, z: 0 },
+        { x: 0.5, y: 0.4, z: 0 },
+        { x: 0.5, y: 0.8, z: 0 },
+      ],
+      routeContinuous: true,
+      corridor: { radius: corridorRadius },
+    }],
+    serviceManifold: { segments: [], junctions: [] },
+  });
+
+  try {
+    const first = adapter.setTopology(topologyAt(0.08));
+    assert.equal(first.dockingCollarCount, 2, 'both vertical route endpoints need docking collars');
+    assert.equal(first.dockingSocketCount, 2, 'the route endpoints need two socket interfaces');
+
+    const endpointCollars = adapter.topologyRoot.children.filter((mesh) =>
+      mesh.userData.dockingRole === 'division-dock'
+      || mesh.userData.dockingRole === 'pod-dock');
+    assert.equal(endpointCollars.length, 2);
+    assert.ok(endpointCollars.every((mesh) => mesh.material.name === 'S24_AUTHORED:metal2'));
+
+    const conduitMeshes = adapter.topologyRoot.children.filter((mesh) =>
+      mesh.userData.conduitSegment !== undefined && mesh.userData.conduitShape);
+    assert.equal(conduitMeshes.length, 3);
+    assert.ok(conduitMeshes.every((mesh) => mesh.material.name === 'S24_AUTHORED:conduit'));
+
+    const pooledMeshes = new Map(adapter.topologyRoot.children.map((mesh) => [mesh.name, mesh]));
+    const unchanged = adapter.setTopology(topologyAt(0.08));
+    assert.ok(unchanged.reusedObjectCount > 0, 'a repeated choreography frame should reuse topology objects');
+    assert.equal(unchanged.geometryRebuildCount, 0, 'unchanged dimensions should not rebuild pooled geometry');
+    for (const [name, mesh] of pooledMeshes) {
+      assert.strictEqual(
+        adapter.topologyRoot.children.find((candidate) => candidate.name === name),
+        mesh,
+        name + ': object identity should survive an unchanged update',
+      );
+    }
+
+    const changed = adapter.setTopology(topologyAt(0.10));
+    assert.ok(changed.geometryRebuildCount > 0, 'a changed corridor radius must rebuild radius-dependent pooled geometry');
+    const changedCollars = adapter.topologyRoot.children.filter((mesh) =>
+      mesh.userData.dockingRole === 'division-dock'
+      || mesh.userData.dockingRole === 'pod-dock');
+    assert.equal(changedCollars.length, 2);
+    assert.ok(changedCollars.every((mesh) => mesh.material.name === 'S24_AUTHORED:metal2'));
+    const changedConduits = adapter.topologyRoot.children.filter((mesh) =>
+      mesh.userData.conduitSegment !== undefined && mesh.userData.conduitShape);
+    assert.equal(changedConduits.length, 3);
+    assert.ok(changedConduits.every((mesh) => mesh.material.name === 'S24_AUTHORED:conduit'));
+  } finally {
+    adapter.dispose();
+  }
+});;
 test('S24 docking embodiment version advances with mounting hardware', () => {
   const source = readFileSync('frontend/spatial/machine-world-pod-docking-embodiment.js', 'utf8');
   assert.match(source, /S8-DOCKING-V3/);
