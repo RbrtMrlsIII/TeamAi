@@ -16,6 +16,7 @@ import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { RING_R1_SCALE, RING_R2_SCALE } from './hero-world-contract.js';
 
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
+import { triangulateMachineWorldFacilityBodyOutline } from './machine-world-facility-shell.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import {
@@ -298,12 +299,10 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     y: Math.max(0.001, Number(part.dimensions?.y) || Number(part.height) || 0.5),
     z: Math.max(0.001, Number(part.dimensions?.z) || (Number(part.radius) || 0.5) * 2),
   };
-  const outline = Array.isArray(part.outline)
-    ? Object.freeze(part.outline.map((point) => Object.freeze([
-        Number(point?.[0]) || 0,
-        Number(point?.[1]) || 0,
-      ])))
+  const normalizeOutline=value=>Array.isArray(value)
+    ? Object.freeze(value.map(point=>Object.freeze([Number(point?.[0])||0,Number(point?.[1])||0])))
     : null;
+  const outline=normalizeOutline(part.outline),envelopeOutline=normalizeOutline(part.envelopeOutline);
   return Object.freeze({
     id: String(part.id),
     semanticId: part.semanticId == null ? null : String(part.semanticId),
@@ -312,6 +311,9 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     profile: String(part.profile || part.role || ''),
     center: Object.freeze(center),
     outline,
+    envelopeOutline,
+    serviceBayProfile: String(part.serviceBayProfile || ''),
+    serviceBayWidth: Number.isFinite(Number(part.serviceBayWidth)) ? Number(part.serviceBayWidth) : null,
     dimensions: Object.freeze(dimensions),
     rotationY: Number.isFinite(Number(part.rotationY)) ? Number(part.rotationY) : 0,
     materialRole: part.role === 'status-indicator'
@@ -483,11 +485,12 @@ function makeAuthoredMaterial(THREE, role, authored) {
 
 function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   const { x, y, z } = descriptor.dimensions;
+  const envelope=Array.isArray(descriptor.envelopeOutline)&&descriptor.envelopeOutline.length>=3?descriptor.envelopeOutline:outline;
   let minX = Infinity;
   let maxX = -Infinity;
   let minZ = Infinity;
   let maxZ = -Infinity;
-  for (const [px, pz] of outline) {
+  for (const [px, pz] of envelope) {
     minX = Math.min(minX, px);
     maxX = Math.max(maxX, px);
     minZ = Math.min(minZ, pz);
@@ -506,35 +509,22 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
     yy,
     (pz - outlineCenterZ) * scaleZ,
   ];
-  const pushTri = (a, b, cc) => vertices.push(...a, ...b, ...cc);
-  const bottomCenter = [0, -halfY, 0];
-  const topCenter = [0, halfY, 0];
-  for (let index = 1; index < outline.length - 1; index += 1) {
-    pushTri(
-      bottomCenter,
-      point(outline[index], -halfY),
-      point(outline[index + 1], -halfY),
-    );
-    pushTri(
-      topCenter,
-      point(outline[index + 1], halfY),
-      point(outline[index], halfY),
-    );
+  const pushTri=(a,b,cc)=>vertices.push(...a,...b,...cc);
+  const ccw=outline.reduce((area,a,index)=>{const b=outline[(index+1)%outline.length];return area+a[0]*b[1]-b[0]*a[1];},0)>0;
+  for(const [ai,bi,ci] of triangulateMachineWorldFacilityBodyOutline(outline)){
+    const a=outline[ai],b=outline[bi],c=outline[ci];
+    const ba=point(a,-halfY),bb=point(b,-halfY),bc=point(c,-halfY),ta=point(a,halfY),tb=point(b,halfY),tc=point(c,halfY);
+    if(ccw){pushTri(ba,bb,bc);pushTri(ta,tc,tb);}else{pushTri(ba,bc,bb);pushTri(ta,tb,tc);}
   }
   for (let index = 0; index < outline.length; index += 1) {
     const next = (index + 1) % outline.length;
-    // Outlines are counter-clockwise in XZ. Reverse the wall triangles so
-    // their normals face away from the chassis rather than into its cavity.
-    pushTri(
-      point(outline[index], -halfY),
-      point(outline[next], halfY),
-      point(outline[next], -halfY),
-    );
-    pushTri(
-      point(outline[index], -halfY),
-      point(outline[index], halfY),
-      point(outline[next], halfY),
-    );
+    if(ccw){
+      pushTri(point(outline[index],-halfY),point(outline[next],halfY),point(outline[next],-halfY));
+      pushTri(point(outline[index],-halfY),point(outline[index],halfY),point(outline[next],halfY));
+    }else{
+      pushTri(point(outline[index],-halfY),point(outline[next],-halfY),point(outline[next],halfY));
+      pushTri(point(outline[index],-halfY),point(outline[next],halfY),point(outline[index],halfY));
+    }
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute(
@@ -961,6 +951,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
       descriptor.semanticId,
       descriptor.dimensions,
       descriptor.outline,
+      descriptor.envelopeOutline,
     ]);
   }
 
@@ -991,6 +982,8 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     mesh.userData.parentId = descriptor.parentId;
     mesh.userData.constructionSlice = descriptor.constructionSlice;
     mesh.userData.constructionOwner = descriptor.constructionOwner;
+    mesh.userData.serviceBayProfile = descriptor.serviceBayProfile || '';
+    mesh.userData.serviceBayWidth = descriptor.serviceBayWidth;
     mesh.position.set(descriptor.center.x, descriptor.center.y, descriptor.center.z);
     if (descriptor.shape === 'SPHERE') {
       mesh.scale.set(descriptor.dimensions.x * 0.5, descriptor.dimensions.y * 0.5, descriptor.dimensions.z * 0.5);

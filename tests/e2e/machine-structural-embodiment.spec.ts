@@ -18,6 +18,9 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '10');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '4');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
+    await expect(canvas).toHaveAttribute('data-structural-facility-shell-version', 'S7-OUTER-BODY-V4');
+    await expect(canvas).toHaveAttribute('data-structural-facility-shell-descriptor-count', '20');
+    await expect(canvas).toHaveAttribute('data-structural-facility-service-bay-descriptor-count', '2');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '20');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'WORLD_OVERVIEW');
@@ -138,6 +141,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '1');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '0');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '7');
+    await expect(canvas).toHaveAttribute('data-structural-facility-service-bay-descriptor-count', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'DIVISION_FOCUS');
     await expect(canvas).toHaveAttribute('data-structural-facility-docking-descriptor-count', '0');
@@ -161,6 +165,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '0');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '1');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
+    await expect(canvas).toHaveAttribute('data-structural-facility-service-bay-descriptor-count', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '0');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-structural-facility-docking-descriptor-count', '5');

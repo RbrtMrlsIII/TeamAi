@@ -3,6 +3,7 @@ import test from 'node:test';
 import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createExtrudedPolygonVertices } from '../frontend/spatial/machine-world-renderer.js';
 import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_TOP_OPENING_SCALE, MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, MACHINE_POD_SHELL_OUTLINE_BOUNDS, createMachinePodShellVertices } from '../frontend/spatial/machine-pod-profile.js';
 import { readFileSync } from 'node:fs';
+import { MACHINE_WORLD_FACILITY_BODY_OUTLINES, deriveMachineWorldFacilityServiceBayOutline, triangulateMachineWorldFacilityBodyOutline } from '../frontend/spatial/machine-world-facility-shell.js';
 
 const close = (actual, expected, tolerance = 1e-6) =>
   Math.abs(actual - expected) <= tolerance;
@@ -146,6 +147,17 @@ test('raw WebGL extrusion winds facility body side walls outward', () => {
       'facility side wall must face outward',
     );
   }
+});
+
+test('raw WebGL extrusion ear-clips the concave Alpha bay with correctly wound recess walls',()=>{
+  const outline=deriveMachineWorldFacilityServiceBayOutline({outline:MACHINE_WORLD_FACILITY_BODY_OUTLINES.fin,dimensions:{x:2.43756,z:1.696776},housingAngle:Math.PI/10,rotationY:Math.PI/10,layerOffset:0});
+  const vertices=createExtrudedPolygonVertices(outline,1),cap=(outline.length-2)*6;
+  assert.equal(vertices.length/3,cap+outline.length*6);
+  assert.equal(triangulateMachineWorldFacilityBodyOutline(outline).length,outline.length-2);
+  const norm=(a,b,c)=>{const u=b.map((v,i)=>v-a[i]),v=c.map((v,i)=>v-a[i]);return [u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];};
+  const tri=i=>[[vertices[i*3],vertices[i*3+1],vertices[i*3+2]],[vertices[(i+1)*3],vertices[(i+1)*3+1],vertices[(i+1)*3+2]],[vertices[(i+2)*3],vertices[(i+2)*3+1],vertices[(i+2)*3+2]]];
+  for(let i=0;i<cap;i+=3){const p=tri(i),n=norm(...p);assert.equal(p[0][1],p[1][1]);assert.equal(p[1][1],p[2][1]);assert.ok(p[0][1]===0?n[1]<0:n[1]>0);}
+  for(let i=cap;i<vertices.length/3;i+=3){const edge=Math.floor((i-cap)/6),a=outline[edge],b=outline[(edge+1)%outline.length],n=norm(...tri(i));assert.ok(Math.abs(n[1])<1e-6);assert.ok(n[0]*(b[1]-a[1])-n[2]*(b[0]-a[0])>0);}
 });
 
 test('raw WebGL TORUS is a closed annular collar with an open center', () => {

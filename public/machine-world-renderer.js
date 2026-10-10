@@ -55,7 +55,13 @@ import {
   MACHINE_WORLD_FACILITY_CARRIER_VERSION,
 } from './machine-world-facility-carrier.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
-import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_BODY_OUTLINES, MACHINE_WORLD_FACILITY_SHELL_VERSION } from './machine-world-facility-shell.js';
+import {
+  deriveMachineWorldFacilityShellDescriptors,
+  MACHINE_WORLD_FACILITY_BODY_OUTLINES,
+  MACHINE_WORLD_FACILITY_SHELL_VERSION,
+  MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
+  triangulateMachineWorldFacilityBodyOutline,
+} from './machine-world-facility-shell.js';
 import {
   MACHINE_POD_SHELL_OUTLINE,
   MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION,
@@ -155,22 +161,21 @@ function program(gl, vs, fs) {
   return value;
 }
 
-export function createExtrudedPolygonVertices(polygon, height) {
-  const vertices = [];
-  const count = polygon.length;
-  const pushTri = (a,b,c) => vertices.push(...a,...b,...c);
-  for (let i = 1; i < count - 1; i += 1) {
-    pushTri([0,0,0],[polygon[i][0],0,polygon[i][1]],[polygon[i+1][0],0,polygon[i+1][1]]);
-    pushTri([0,height,0],[polygon[i+1][0],height,polygon[i+1][1]],[polygon[i][0],height,polygon[i][1]]);
+export function createExtrudedPolygonVertices(polygon,height) {
+  const vertices=[],count=polygon.length;
+  if(!Number.isFinite(Number(height))||!(Number(height)>0))throw new Error('FACILITY_BODY_EXTRUSION_HEIGHT_INVALID');
+  const pushTri=(a,b,c)=>vertices.push(...a,...b,...c);
+  const area=polygon.reduce((sum,p,i)=>{const q=polygon[(i+1)%count];return sum+p[0]*q[1]-q[0]*p[1];},0),ccw=area>0;
+  for(const [ai,bi,ci] of triangulateMachineWorldFacilityBodyOutline(polygon)){
+    const a=polygon[ai],b=polygon[bi],c=polygon[ci];
+    const ba=[a[0],0,a[1]],bb=[b[0],0,b[1]],bc=[c[0],0,c[1]];
+    const ta=[a[0],height,a[1]],tb=[b[0],height,b[1]],tc=[c[0],height,c[1]];
+    if(ccw){pushTri(ba,bb,bc);pushTri(ta,tc,tb);}else{pushTri(ba,bc,bb);pushTri(ta,tb,tc);}
   }
-  for (let i = 0; i < count; i += 1) {
-    const j = (i + 1) % count;
-    const [ax,az] = polygon[i];
-    const [bx,bz] = polygon[j];
-    // Authored polygons are counter-clockwise in XZ. Reverse side triangles
-    // so generated vertical faces point outward from the solid body.
-    pushTri([ax,0,az],[bx,height,bz],[bx,0,bz]);
-    pushTri([ax,0,az],[ax,height,az],[bx,height,bz]);
+  for(let i=0;i<count;i+=1){
+    const j=(i+1)%count,[ax,az]=polygon[i],[bx,bz]=polygon[j];
+    if(ccw){pushTri([ax,0,az],[bx,height,bz],[bx,0,bz]);pushTri([ax,0,az],[ax,height,az],[bx,height,bz]);}
+    else{pushTri([ax,0,az],[bx,0,bz],[bx,height,bz]);pushTri([ax,0,az],[bx,height,bz],[ax,height,az]);}
   }
   return new Float32Array(vertices);
 }
@@ -688,45 +693,24 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     return entry;
   }
 
-  function normalizeFacilityBodyOutline(outline) {
-    const points = Array.isArray(outline)
-      ? outline.filter((point) => Array.isArray(point) && point.length >= 2)
-      : [];
-    if (points.length < 3) return PRIMITIVE_POLYGONS.CUBE;
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minZ = Infinity;
-    let maxZ = -Infinity;
-    for (const [x, z] of points) {
-      minX = Math.min(minX, Number(x) || 0);
-      maxX = Math.max(maxX, Number(x) || 0);
-      minZ = Math.min(minZ, Number(z) || 0);
-      maxZ = Math.max(maxZ, Number(z) || 0);
-    }
-    const centerX = (minX + maxX) * 0.5;
-    const centerZ = (minZ + maxZ) * 0.5;
-    const scaleX = 2 / Math.max(0.000001, maxX - minX);
-    const scaleZ = 2 / Math.max(0.000001, maxZ - minZ);
-    return points.map(([x, z]) => [
-      ((Number(x) || 0) - centerX) * scaleX,
-      ((Number(z) || 0) - centerZ) * scaleZ,
-    ]);
+  function normalizeFacilityBodyOutline(outline,envelopeOutline=outline){
+    const points=Array.isArray(outline)?outline.filter(p=>Array.isArray(p)&&p.length>=2):[];
+    const envelope=Array.isArray(envelopeOutline)?envelopeOutline.filter(p=>Array.isArray(p)&&p.length>=2):[];
+    if(points.length<3||envelope.length<3)return PRIMITIVE_POLYGONS.CUBE;
+    let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+    for(const [x,z] of envelope){minX=Math.min(minX,Number(x)||0);maxX=Math.max(maxX,Number(x)||0);minZ=Math.min(minZ,Number(z)||0);maxZ=Math.max(maxZ,Number(z)||0);}
+    const cx=(minX+maxX)*0.5,cz=(minZ+maxZ)*0.5,sx=2/Math.max(1e-6,maxX-minX),sz=2/Math.max(1e-6,maxZ-minZ);
+    return points.map(([x,z])=>[((Number(x)||0)-cx)*sx,((Number(z)||0)-cz)*sz]);
   }
-
-  function ensureFacilityBodyBuffer(silhouette) {
-    const key = 'FACILITY_FACETED_BODY:' + String(silhouette || '');
-    let entry = primitiveBuffers.get(key);
-    if (entry) return entry;
-    const polygon = normalizeFacilityBodyOutline(
-      MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette || '')],
-    );
-    const data = shapeBuffer(gl, polygon, 1);
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    entry = { buffer, count: data.length / 3 };
-    primitiveBuffers.set(key, entry);
-    return entry;
+  function ensureFacilityBodyBuffer(silhouette,outline=null,envelopeOutline=null){
+    const fallback=MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette||'')]||PRIMITIVE_POLYGONS.CUBE;
+    const chosen=Array.isArray(outline)&&outline.length>=3?outline:fallback;
+    const envelope=Array.isArray(envelopeOutline)&&envelopeOutline.length>=3?envelopeOutline:fallback;
+    const key='FACILITY_FACETED_BODY:'+String(silhouette||'')+':'+JSON.stringify(chosen)+':'+JSON.stringify(envelope);
+    let entry=primitiveBuffers.get(key);if(entry)return entry;
+    const polygon=normalizeFacilityBodyOutline(chosen,envelope),data=shapeBuffer(gl,polygon,1),buffer=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
+    entry={buffer,count:data.length/3};primitiveBuffers.set(key,entry);return entry;
   }
 
   function drawBuffer(entry, transform, material, options = {}) {
@@ -2242,7 +2226,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         mechanismHousingPrimitiveShapes.push(shell.branchId + ':' + primitiveShape);
       }
       const buffer = authoredOutline
-        ? ensureFacilityBodyBuffer(shell.silhouette)
+        ? ensureFacilityBodyBuffer(shell.silhouette,shell.outline,shell.envelopeOutline)
         : ensurePrimitiveBuffer(primitiveShape);
       const selected = shell.branchId === branchId;
       const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
@@ -2289,6 +2273,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     }
     gl.depthMask(true);
     canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
+    canvas.dataset.machineWorldFacilityServiceBayCount = String(
+      facilityBodyShells.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
+    );
     canvas.dataset.machineWorldLegacyOuterHousingFallbackCount = String(
       scene.parts.filter((part) =>
         part.kind === 'outer-housing' && !authoredS7BodyBranchIds.has(part.branchId),
