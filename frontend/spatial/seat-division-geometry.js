@@ -10,14 +10,26 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
 export const SEAT_DIVISION_FAN_SPAN = Math.PI;
+export const SEAT_DIVISION_FAN_DENSE_SPAN = (11 * Math.PI) / 12;
 export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
 export const SEAT_DIVISION_PORT_RADIUS = 0.28;
 
 export const SEAT_DIVISION_SERVICE_DECK_LIFT = 0.56;
 
-export function seatDivisionFanAngle(childIndex = 0) {
+export function seatDivisionFanSpan(seatCount = null) {
+  const count = Number(seatCount);
+  // Ten-seat density is the one proven limiting world envelope: narrower fan
+  // endpoints avoid the adjacent Pod while lower densities retain 30° steps
+  // between divisions to preserve authored-subassembly clearance.
+  return Number.isInteger(count) && count >= 10
+    ? SEAT_DIVISION_FAN_DENSE_SPAN
+    : SEAT_DIVISION_FAN_SPAN;
+}
+
+export function seatDivisionFanAngle(childIndex = 0, seatCount = null) {
   const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));
-  return -SEAT_DIVISION_FAN_SPAN / 2 + (SEAT_DIVISION_FAN_SPAN * index) / SEAT_DIVISION_FAN_MAX_INDEX;
+  const span = seatDivisionFanSpan(seatCount);
+  return -span / 2 + (span * index) / SEAT_DIVISION_FAN_MAX_INDEX;
 }
 
 export function seatDivisionFanDirection(parent = {}, childIndex = 0) {
@@ -25,7 +37,7 @@ export function seatDivisionFanDirection(parent = {}, childIndex = 0) {
     Number(parent?.center?.z) || 0,
     Number(parent?.center?.x) || 0,
   );
-  const fanAngle = seatDivisionFanAngle(childIndex);
+  const fanAngle = seatDivisionFanAngle(childIndex, parent?.seatCount);
   const radialX = Math.cos(radialAngle);
   const radialZ = Math.sin(radialAngle);
   const tangentX = -radialZ;
@@ -45,9 +57,9 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
     0.2,
   );
   const t = clamp(amount, 0, 1);
-  // The 165° seven-division fan increases angular separation between neighboring
-  // authored S4 assemblies. Keep the radial profile compact; the S5 subject-AABB
-  // sweep matrix verifies that the angular change preserves 0.16 world clearance.
+  // S4 fan direction is density-aware: 180° through nine Seats, 165° at ten
+  // Seats to protect adjacent Pods. Keep the radial profile compact; S5 checks
+  // the resulting authored-subject sweep against divisions and world obstacles.
   const deploymentFactor = 2.16 + 0.02 * t;
   return scale * deploymentFactor;
 }

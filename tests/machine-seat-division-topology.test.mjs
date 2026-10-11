@@ -3,7 +3,7 @@ import test from 'node:test';
 import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
-import { seatDivisionFanDirection, SEAT_DIVISION_FAN_SPAN, seatDivisionFanAngle, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
+import { seatDivisionFanDirection, SEAT_DIVISION_FAN_SPAN, SEAT_DIVISION_FAN_DENSE_SPAN, seatDivisionFanAngle, seatDivisionFanSpan, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
 import { buildAdjacentDivisionWiring } from '../frontend/spatial/seat-adjacent-division-wiring.js';
 
 const children = [
@@ -26,14 +26,21 @@ const parent = {
   seam: 0.18,
 };
 
-test('seven-division fan uses the clearance-reviewed 180-degree angular span', () => {
+test('seven-division fan adapts span to Seat density and preserves equal angular steps', () => {
   assert.equal(SEAT_DIVISION_FAN_SPAN, Math.PI);
-  const angles = children.map((_, index) => seatDivisionFanAngle(index));
-  assert.ok(Math.abs(angles[0] + SEAT_DIVISION_FAN_SPAN / 2) < 1e-12);
-  assert.ok(Math.abs(angles[angles.length - 1] - SEAT_DIVISION_FAN_SPAN / 2) < 1e-12);
-  const expectedStep = SEAT_DIVISION_FAN_SPAN / (children.length - 1);
-  for (let index = 1; index < angles.length; index += 1) {
-    assert.ok(Math.abs((angles[index] - angles[index - 1]) - expectedStep) < 1e-12);
+  assert.equal(SEAT_DIVISION_FAN_DENSE_SPAN, (11 * Math.PI) / 12);
+  assert.equal(seatDivisionFanSpan(9), SEAT_DIVISION_FAN_SPAN);
+  assert.equal(seatDivisionFanSpan(10), SEAT_DIVISION_FAN_DENSE_SPAN);
+
+  for (const seatCount of [1, 5, 9, 10]) {
+    const span = seatDivisionFanSpan(seatCount);
+    const angles = children.map((_, index) => seatDivisionFanAngle(index, seatCount));
+    assert.ok(Math.abs(angles[0] + span / 2) < 1e-12);
+    assert.ok(Math.abs(angles[angles.length - 1] - span / 2) < 1e-12);
+    const expectedStep = span / (children.length - 1);
+    for (let index = 1; index < angles.length; index += 1) {
+      assert.ok(Math.abs((angles[index] - angles[index - 1]) - expectedStep) < 1e-12);
+    }
   }
 });
 
@@ -109,6 +116,7 @@ test('fan placement keeps all seven division volumes separated across supported 
       const angle = (Math.PI * 2 * seatIndex) / Math.max(1, seatCount);
       const parentAtSeat = {
         ...parent,
+        seatCount,
         seatIndex,
         level: 0.60 + ((seatIndex * 0.17) % 0.31),
         center: {

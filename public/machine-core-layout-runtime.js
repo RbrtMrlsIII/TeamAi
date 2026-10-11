@@ -103,7 +103,7 @@ export function createBranchConnectionCore({ seatCount = DEFAULT_SEAT_COUNT, exp
   const inner = Array.from({ length: count }, (_, seatIndex) => {
     const angle = TAU * seatIndex / count, level = seatLevel(seatIndex), center = polar(innerRadius, angle, level), dims = podDimensions, branchId = seatShellBranchId(seatIndex);
     const semantic = bindSeatShellProjection({ seatIndex, branchId });
-    const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: null, ...semantic, ...createSpatialConstructionContext({ slice: 'S3', owner: ROOT_OWNER.pod, semanticId: semantic.semanticId, semanticBoundary: semantic.semanticBoundary }) };
+    const part = { id: `branch-seat-${String(seatIndex + 1).padStart(2, '0')}`, branchId, seatIndex, seatCount: count, kind: 'inner-pod', level, center, dimensions: { ...dims }, silhouette: 'pod', seam: dims.seam, uiStyle: 'seat-configuration', port: null, ...semantic, ...createSpatialConstructionContext({ slice: 'S3', owner: ROOT_OWNER.pod, semanticId: semantic.semanticId, semanticBoundary: semantic.semanticBoundary }) };
     const podAssembly = deriveMachinePodAssembly({
       part,
       expansionAmount: amount,
