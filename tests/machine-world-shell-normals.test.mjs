@@ -4,6 +4,7 @@ import {
   createExtrudedPolygonVertices,
   createFlatTriangleNormals,
   createMachineWorldNormalMatrix,
+  MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE,
 } from '../public/machine-world-renderer.js';
 
 const near = (actual, expected, epsilon = 1e-6) => {
@@ -113,4 +114,15 @@ test('normal transform remains perpendicular to transformed tangents under rotat
   near(dot(worldNormal, tangentA), 0, 1e-5);
   near(dot(worldNormal, tangentB), 0, 1e-5);
   assert.ok(Math.hypot(...cross(tangentA, tangentB)) > 0);
+});
+
+
+test('focused S7 surface response raises specular and grazing-rim gain without changing geometry', () => {
+  assert.deepEqual(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE, {
+    profile: 's7-face-normal-v2',
+    specularGain: 0.48,
+    grazingRimGain: 0.24,
+  });
+  assert.ok(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain > 0.18);
+  assert.ok(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain > 0.10);
 });

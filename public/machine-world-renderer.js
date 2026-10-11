@@ -78,6 +78,12 @@ import {
   MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE as MACHINE_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE,
 } from './machine-seat-division-profile.js';
 const TAU = Math.PI * 2;
+
+export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
+  profile: 's7-face-normal-v2',
+  specularGain: 0.48,
+  grazingRimGain: 0.24,
+});
 const READABILITY_CAMERA_QUANTUM = 0.25;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
@@ -560,7 +566,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   );
   const shellSurface = program(gl,
     'attribute vec3 p; attribute vec3 aNormal; uniform mat4 P; uniform mat4 V; uniform mat4 M; uniform mat3 NM; varying vec3 Nw; void main(){vec4 wp=M*vec4(p,1.0);Nw=normalize(NM*aNormal);gl_Position=P*V*wp;}',
-    'precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 Nw; void main(){vec3 n=normalize(Nw);vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*.18+c.rgb*(rimStrength*.10*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}'
+    `precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 Nw; void main(){vec3 n=normalize(Nw);vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain.toFixed(2)}+c.rgb*(rimStrength*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain.toFixed(2)}*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}`
   );
   const line = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; void main(){gl_Position=P*V*M*vec4(p,1.0);}',
@@ -2453,8 +2459,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       );
     }
     gl.depthMask(true);
-    canvas.dataset.machineWorldFacilityFocusNormalProfile = facilityFocused ? 's7-face-normal-v1' : 'position-approx';
+    canvas.dataset.machineWorldFacilityFocusNormalProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.profile
+      : 'position-approx';
     canvas.dataset.machineWorldFacilityFocusNormalShellCount = String(facilityFocusNormalShellCount);
+    canvas.dataset.machineWorldFacilityFocusNormalSpecularGain = facilityFocused
+      ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain)
+      : '';
+    canvas.dataset.machineWorldFacilityFocusNormalRimGain = facilityFocused
+      ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain)
+      : '';
     canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
     canvas.dataset.machineWorldFacilityServiceBayCount = String(
       facilityBodyShells.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
