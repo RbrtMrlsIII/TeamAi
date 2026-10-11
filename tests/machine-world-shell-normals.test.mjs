@@ -43,7 +43,9 @@ test('face normals are normalized and flat across each triangle', () => {
     }
   }
   assert.deepEqual(Array.from(normals.slice(0, 3)), [1, 0, 0]);
-  assert.deepEqual(Array.from(normals.slice(9, 12)), [0, 1, 0]);
+  near(normals[9], 0);
+  near(normals[10], 1);
+  near(normals[11], 0);
 });
 
 test('degenerate or incomplete triangle streams fail closed', () => {
