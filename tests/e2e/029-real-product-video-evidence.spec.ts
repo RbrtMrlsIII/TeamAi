@@ -42,6 +42,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-scope', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-alpha-profile', 'base');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-alpha', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-alpha', '');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-version', 'S3-V8');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-face-brace-attachment', 'panel-local-matrix-v2');
     
@@ -58,6 +61,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-ALPHA');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-alpha-profile', 'selected-core-reveal-v1');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-alpha', '0.32');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-alpha', '0.42');
     await expect(page.locator('[data-facility-focus="BRANCH-OUTER-ALPHA"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#facility-focus-status')).toContainText('Analysis · Telescope');
     const focusedSubject = await page.evaluate(() => ({
@@ -94,6 +100,9 @@ test.describe('029 real-product video evidence', () => {
       await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'FACILITY_FOCUS');
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', branchId);
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
+      await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-alpha-profile', 'selected-core-reveal-v1');
+      await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-alpha', '0.32');
+      await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-alpha', '0.42');
       const span = await canvas.getAttribute('data-machine-world-facility-focus-subject-span');
       expect(span?.split(',').map(Number).every((value) => Number.isFinite(value) && value > 0)).toBe(true);
       if (branchId === 'BRANCH-OUTER-BETA') {
@@ -126,6 +135,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-alpha-profile', 'base');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-alpha', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-alpha', '');
     await expect(page.locator('#facility-focus-status')).toHaveText('World overview');
     await expect(canvas).toHaveAttribute('data-machine-world-topology-validation', 'pass');
     await expect(worldMenu).toBeHidden();

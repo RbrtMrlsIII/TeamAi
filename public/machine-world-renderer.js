@@ -2111,6 +2111,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     );
     const facilityFocused = Boolean(facilityFocusMachine && facilityFocusSubjectValid);
     canvas.dataset.machineWorldFacilityFocusLighting = facilityFocused ? 'enhanced' : 'base';
+    canvas.dataset.machineWorldFacilityFocusShellAlphaProfile =
+      facilityFocused ? 'selected-core-reveal-v1' : 'base';
+    canvas.dataset.machineWorldFacilityFocusMainShellAlpha = facilityFocused ? '0.32' : '';
+    canvas.dataset.machineWorldFacilityFocusShoulderPlateAlpha = facilityFocused ? '0.42' : '';
     const facilityFocusBranchId = facilityFocused ? requestedFacilityFocusBranchId : '';
     const facilitySubject = facilityFocused ? derivedFacilityFocusSubject : null;
     const activePresentationBranchId = facilityFocused ? facilityFocusBranchId : branchId;
@@ -2301,11 +2305,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
             ? activeHeroMaterials.metal
             : activeHeroMaterials.metal2;
       const layerAlpha = shell.layer === 'main-shell'
-        ? (selected ? 0.80 : 0.66)
+        ? (selected ? (facilityFocused ? 0.32 : 0.80) : 0.66)
         : shell.layer === 'base-collar'
           ? (selected ? 0.94 : 0.82)
           : shell.layer === 'shoulder-plate'
-            ? (selected ? 0.88 : 0.76)
+            ? (selected ? (facilityFocused ? 0.42 : 0.88) : 0.76)
             : shell.layer === 'upper-cap'
               ? (selected ? 0.72 : 0.60)
               : (selected ? 0.78 : 0.66);

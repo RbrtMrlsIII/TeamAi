@@ -1754,33 +1754,71 @@ Browser must capture actual production `/hero/` focus and return, validate selec
 
 ### E424-2026-10-11D — Production S10 facility focus and return verified on exact Browser head
 
-**Verification commit:** \`5ae33dbc393f45c0ef76bc96e19864b57e165d96\`.  
-**Purpose:** Restore production reachability of the lower-level S10 \`FACILITY_FOCUS\` capability without changing geometry/topology ownership.  
+**Verification commit:** `5ae33dbc393f45c0ef76bc96e19864b57e165d96`.  
+**Purpose:** Restore production reachability of the lower-level S10 `FACILITY_FOCUS` capability without changing geometry/topology ownership.  
 **Status:** All five exact-head gates PASS. PR #424 remains OPEN / DRAFT / mergeable; no merge, deployment, or release authorization.
 
 #### Implementation and ownership
-- \`public/hero-camera-navigation.js\` now owns camera navigation semantics and facility-focus state; \`public/_flex_src/hero-flex.base.js\` and generated \`public/hero-flex.js\` remain identical and 29,893 characters (the existing controller contract limit is <30,000).
-- The production World menu exposes Analysis/Telescope, Operations/Fins, Control/Rotating Core and Access/Sensors, mapped to the existing canonical branch IDs \`BRANCH-OUTER-ALPHA/BETA/GAMMA/DELTA\`; it also exposes Return to World.
+- `public/hero-camera-navigation.js` now owns camera navigation semantics and facility-focus state; `public/_flex_src/hero-flex.base.js` and generated `public/hero-flex.js` remain identical and 29,893 characters (the existing controller contract limit is <30,000).
+- The production World menu exposes Analysis/Telescope, Operations/Fins, Control/Rotating Core and Access/Sensors, mapped to the existing canonical branch IDs `BRANCH-OUTER-ALPHA/BETA/GAMMA/DELTA`; it also exposes Return to World.
 - The renderer accepts only a canonical branch ID, derives a camera subject from existing S7 machinery subject bounds plus the selected family's existing S7 shell envelopes, verifies finite positive bounds, and publishes focus branch/mode/center/span telemetry. Existing facility shell, machinery, assembly and docking scopes use the selected facility ID. Unknown IDs fail closed back to World.
 - The focus operation interrupts the demo turn loop and reuses the existing hierarchy-close path. Seat selection/count remain a separate authority; no Seat semantic ID, S0–S10 geometry ownership, topology, route, port, clearance or backend state changed in this slice.
 
 #### Exact-head five-gate proof
-- Full-System run \`38111253427\`: PASS; 1,276 passed / 0 failed. Canonical Full Project ZIP artifact \`11677177050\`, 1,113 files, SHA-256 \`0666557b4a7612c4bdc3fcf2c26129f9d909e6c76fb56b2cd6d516f8c1c0970f\`.
-- Governance run \`38111253448\`: PASS.
-- Security run \`38111253403\`: PASS.
-- Deep Security run \`38111253405\`: PASS.
-- Canonical Browser run \`38111253477\`: PASS; 92 passed / 4 skipped / 0 failed. The real \`/hero/\` E2E switched through all four family IDs, verified valid positive focus bounds and the focus-mode/selected-branch markers, rejected an unknown branch back to World, checked explicit Return to World and topology validity, and confirmed the Seat count remained 10 and selected Seat remained index 0.
-- Browser artifact \`11691349283\`, \`browser-verification-5ae33dbc393f45c0ef76bc96e19864b57e165d96.zip\`, 9,589,265 bytes, SHA-256 \`072e66d2cd8d969d2da70560a2c4e2a0a1e42038b18eaba939a6fdc7df488f02\`.
-- Exact Browser captures: production wide \`hero-wide.png\` SHA-256 \`da98397d4af15ded44c0067223b649fe95790d95cdbbdbb5875f64bb5bc7c825\`; Analysis focus \`facility-focus-analysis.png\` SHA-256 \`664942ba14452b6d5e407ca81656c4f9e4bda5135b94006200e7ea0903f29adc\`; Operations focus \`facility-focus-operations.png\` SHA-256 \`1602b7c5b3d89d952f85a235f32e20a0f1a4de1bc059f34ac14ea3e199571d2a\`. The separate \`s2-s10-facility.png\` is still Three.js QA preview, SHA-256 \`1f83de50281d6175b2882fda4d60fe5aed1b0185eb904ede83e7fb365d5e36d4\`, not proof of production rendering.
+- Full-System run `38111253427`: PASS; 1,276 passed / 0 failed. Canonical Full Project ZIP artifact `11677177050`, 1,113 files, SHA-256 `0666557b4a7612c4bdc3fcf2c26129f9d909e6c76fb56b2cd6d516f8c1c0970f`.
+- Governance run `38111253448`: PASS.
+- Security run `38111253403`: PASS.
+- Deep Security run `38111253405`: PASS.
+- Canonical Browser run `38111253477`: PASS; 92 passed / 4 skipped / 0 failed. The real `/hero/` E2E switched through all four family IDs, verified valid positive focus bounds and the focus-mode/selected-branch markers, rejected an unknown branch back to World, checked explicit Return to World and topology validity, and confirmed the Seat count remained 10 and selected Seat remained index 0.
+- Browser artifact `11691349283`, `browser-verification-5ae33dbc393f45c0ef76bc96e19864b57e165d96.zip`, 9,589,265 bytes, SHA-256 `072e66d2cd8d969d2da70560a2c4e2a0a1e42038b18eaba939a6fdc7df488f02`.
+- Exact Browser captures: production wide `hero-wide.png` SHA-256 `da98397d4af15ded44c0067223b649fe95790d95cdbbdbb5875f64bb5bc7c825`; Analysis focus `facility-focus-analysis.png` SHA-256 `664942ba14452b6d5e407ca81656c4f9e4bda5135b94006200e7ea0903f29adc`; Operations focus `facility-focus-operations.png` SHA-256 `1602b7c5b3d89d952f85a235f32e20a0f1a4de1bc059f34ac14ea3e199571d2a`. The separate `s2-s10-facility.png` is still Three.js QA preview, SHA-256 `1f83de50281d6175b2882fda4d60fe5aed1b0185eb904ede83e7fb365d5e36d4`, not proof of production rendering.
 
 #### Actual-reference comparison and remaining gap
-- The Hailuo MP4 is still verified as 4,049,339 bytes, Git blob \`38c462e0afe88ee3ad0a230b405dbb26ebad19ea\`, SHA-256 \`1d2a96dcacdadc1010355a4e49c707b9c7e3a5aa5d3f46a9a06e92ffe03ee31b\`, H.264 720×1280, 24 fps, 193 frames, 8.041667 s. The endorsed PNG storyboard remains the visual vocabulary, not authority to override the 1–10 Seat law.
+- The Hailuo MP4 is still verified as 4,049,339 bytes, Git blob `38c462e0afe88ee3ad0a230b405dbb26ebad19ea`, SHA-256 `1d2a96dcacdadc1010355a4e49c707b9c7e3a5aa5d3f46a9a06e92ffe03ee31b`, H.264 720×1280, 24 fps, 193 frames, 8.041667 s. The endorsed PNG storyboard remains the visual vocabulary, not authority to override the 1–10 Seat law.
 - Successful captures show that Analysis and Operations focus mode actually work in the production Hero, while Browser assertions cover all four families and return continuity. The currently open navigation menu stays on top of the render and partially obscures the selected machinery. The selected machine is enlarged, but other Pods/facilities remain visible; broad, low-contrast translucent shell facets continue to compete with the inner mechanism. This confirms camera focus reachability; it does not establish final visual conformance.
 - The prior 30-second Browser timeout is closed: the current 60-second test-budget run passed all 92 Browser tests. The timeout-only test commit did not modify application source.
 
 #### Next bounded slice
-1. Remove \`[data-facility-focus]\` from \`MENU_CHILD_PANEL_OPENERS\` so choosing a family closes the menu; the user can reopen it to choose another family. Keep Return to World available through the same menu.
+1. Remove `[data-facility-focus]` from `MENU_CHILD_PANEL_OPENERS` so choosing a family closes the menu; the user can reopen it to choose another family. Keep Return to World available through the same menu.
 2. Update the production Hero E2E to reopen the menu for every subsequent family selection, assert the overlay closes after selection, and capture unobstructed Analysis/Operations views. Retain all current telemetry, invalid-ID, Seat-count/selection, topology and return assertions.
 3. Inspect the clean captures versus the MP4 3–5 s mechanical frames. Then choose one separate owner-level change for shell alpha/visibility, material response or shading normals. Do not combine those layers or add geometry to produce a raster delta.
 
-**Acceptance boundary:** production focus/return is REPOSITORY-VERIFIED, SECURITY-VERIFIED, GOVERNANCE-VERIFIED and BROWSER-VERIFIED on \`5ae33dbc393f45c0ef76bc96e19864b57e165d96\`. Human visual acceptance remains open; deployment/runtime proof, merge/release authorization and final 029 completion remain open.
+**Acceptance boundary:** production focus/return is REPOSITORY-VERIFIED, SECURITY-VERIFIED, GOVERNANCE-VERIFIED and BROWSER-VERIFIED on `5ae33dbc393f45c0ef76bc96e19864b57e165d96`. Human visual acceptance remains open; deployment/runtime proof, merge/release authorization and final 029 completion remain open.
+
+### E424-2026-10-11E — exact-head clean-focus baseline and selected shell-alpha experiment
+
+**Fully verified parent head:** `e15480e25684efa5587336c3e86e825c0516965b`.  
+**Implementation candidate:** this record is committed together with the shell-alpha experiment; check PR #424 for its exact-head SHA and terminal gate results before acceptance.  
+**Governance:** PR #424 remains the sole spatial work vehicle, OPEN / DRAFT / mergeable; no merge/deploy/release authorization.
+
+#### Parent-head verification
+- Full-System `38117728770`: PASS, 1,276 passed / 0 failed; full-project artifact `11694396722`, 1,113 files, SHA-256 `9e0014b1d67be45e20c8749cf73b5a57fbfa09e46dfd81a1fc6688c14a8332f6`.
+- Governance `38117728795`: PASS.
+- Security `38117728783`: PASS.
+- Deep Security `38117728814`: PASS.
+- Browser `38117728815`: PASS, 92 passed / 4 skipped; artifact `11693602957`, SHA-256 `cfc05fed93769a16ec7d9b9b7ba32875a55de387741d6f6657f88c33004e7c8c`.
+- Exact production captures: Hero-wide SHA-256 `62ddd34f1940e40e4dc39bbb622246c31ff0594a0cc92cf198d9cfbe5395e40a`; Analysis focus `9614f4ca2c57913c30514f9a2357cd97da261554e05d2c582bd25a506ca077f7`; Operations focus `153d5856a99000988fb01da23123775db8e11997c6876664b6182a3b3e1f0e5c`.
+- Production menu closure is verified. E2E reopens it before switching families and before Return to World, checks its closed/ARIA state after selection, validates all four branches, unknown-ID fail-closed behavior, positive finite subjects, unchanged Seat count/selection and topology.
+- Clean-focus comparison sheet: `teamai-clean-focus-conformance.png`, SHA-256 `4a5920e528d1ca27a30d6d796da41356e3650acfea15109ddf006df4768134df`. It compares the actual project storyboard PNG, decoded Hailuo MP4 frames, and production Hero captures; it is qualitative, not a pixel-parity score.
+
+#### Measured same-frame ROI baselines (1440×900 production screenshots)
+These fixed screen-space regions quantify the current selected machinery’s luma/highlight distribution and form the before metric for the controlled experiment.
+
+| State | ROI (x1,y1,x2,y2) | Mean luma | P90 luma | Pixels luma >64 | Pixels luma >128 | Pixels blue-minus-red >30 |
+|---|---|---:|---:|---:|---:|---:|
+| Analysis | `(600,330,835,610)`, 235×280 | 53.212 | 107.838 | 34.581% | 0.777% | 68.325% |
+| Operations | `(580,330,850,585)`, 270×255 | 51.527 | 88.848 | 28.167% | 0.057% | 75.059% |
+
+#### Current diagnosis and isolated experiment
+- Facility focus and menu closure are established. The unresolved visual issue is broad selected main-shell and shoulder-plate facets masking nested mechanisms, not missing actions/camera state or dropdown occlusion.
+- Parent values: selected main-shell alpha 0.80; selected shoulder-plate alpha 0.88; unselected main 0.66; unselected shoulder 0.76. Renderer shading uses position-derived approximate normals, and the S7 body skin is deliberately under `gl.depthMask(false)`. Those authorities remain fixed during this experiment.
+- Change only the two selected-family alpha values while a valid production `FACILITY_FOCUS` is active: main-shell 0.80 → 0.32; shoulder-plate 0.88 → 0.42. World Overview, other family shells, base collar, upper cap, fallback/mechanism housing, material colors/roughness/specular, shader normals, depth-write policy, mesh geometry and topology remain unchanged.
+- Runtime markers publish `selected-core-reveal-v1` and the two selected alpha values only during focus. E2E checks this profile for all four canonical families and confirms it resets to `base` on return to World.
+
+#### Acceptance for this experiment
+1. Run all five gates on this exact candidate head and inspect the fresh Browser artifact; telemetry alone is not the acceptance criterion.
+2. Compare the same Analysis and Operations ROIs above, plus inspect both whole screenshots against the real reference sheet.
+3. A useful result makes inner machinery more legible while the selected silhouette remains readable. Record numeric before/after deltas; if the core becomes obscured differently or silhouette becomes unreadable, reject/revise the alpha values instead of combining a normal/material change.
+4. Confirm World Overview baseline, unselected family alpha, topology, ports, Seat-count law and 0.16 clearance remain unchanged.
+
+**Acceptance boundary:** the parent menu/focus slice is fully repository/security/governance/browser verified. The selected shell-alpha experiment is implemented in this candidate but NOT VERIFIED until its own exact-head five-gate run completes and its production Browser artifact is visually and numerically inspected. Human visual acceptance, deployment proof, merge/release authorization and 029 completion remain open.
