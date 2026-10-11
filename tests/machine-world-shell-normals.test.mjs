@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   createExtrudedPolygonVertices,
@@ -119,10 +120,26 @@ test('normal transform remains perpendicular to transformed tangents under rotat
 
 test('focused S7 surface response raises specular and grazing-rim gain without changing geometry', () => {
   assert.deepEqual(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE, {
-    profile: 's7-face-normal-v2',
+    profile: 's7-face-normal-v3',
+    viewVectorProfile: 'camera-position-v1',
     specularGain: 0.48,
     grazingRimGain: 0.24,
   });
   assert.ok(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain > 0.18);
   assert.ok(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain > 0.10);
+});
+
+test('focused shell specular view vector uses the active camera and world fragment position', async () => {
+  const source = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  const shaderStart = source.indexOf('const shellSurface = program');
+  const shaderEnd = source.indexOf('const line = program', shaderStart);
+  assert.ok(shaderStart >= 0 && shaderEnd > shaderStart, 'shell shader owner must exist');
+  const shader = source.slice(shaderStart, shaderEnd);
+  assert.match(shader, /uniform vec3 cameraPosition/);
+  assert.match(shader, /varying vec3 Pw/);
+  assert.match(shader, /Pw=wp\\.xyz/);
+  assert.match(shader, /vec3 v=normalize\\(cameraPosition-Pw\\)/);
+  assert.doesNotMatch(shader, /vec3 v=normalize\\(vec3\\(\\.15,\\.85,\\.50\\)\\)/);
+  assert.match(source, /gl\\.uniform3f\\(shellSurfaceCameraPosition, Number\\(eye\\[0\\]\\), Number\\(eye\\[1\\]\\), Number\\(eye\\[2\\]\\)\\)/);
+  assert.match(source, /cameraPosition: useSurfaceNormals \\? cameraPose\\.p : null/);
 });

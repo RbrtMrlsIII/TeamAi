@@ -80,7 +80,8 @@ import {
 const TAU = Math.PI * 2;
 
 export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
-  profile: 's7-face-normal-v2',
+  profile: 's7-face-normal-v3',
+  viewVectorProfile: 'camera-position-v1',
   specularGain: 0.48,
   grazingRimGain: 0.24,
 });
@@ -565,8 +566,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     'precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*.18+c.rgb*(rimStrength*.10*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}'
   );
   const shellSurface = program(gl,
-    'attribute vec3 p; attribute vec3 aNormal; uniform mat4 P; uniform mat4 V; uniform mat4 M; uniform mat3 NM; varying vec3 Nw; void main(){vec4 wp=M*vec4(p,1.0);Nw=normalize(NM*aNormal);gl_Position=P*V*wp;}',
-    `precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 Nw; void main(){vec3 n=normalize(Nw);vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain.toFixed(2)}+c.rgb*(rimStrength*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain.toFixed(2)}*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}`
+    'attribute vec3 p; attribute vec3 aNormal; uniform mat4 P; uniform mat4 V; uniform mat4 M; uniform mat3 NM; varying vec3 Nw; varying vec3 Pw; void main(){vec4 wp=M*vec4(p,1.0);Nw=normalize(NM*aNormal);Pw=wp.xyz;gl_Position=P*V*wp;}',
+    `precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; uniform vec3 cameraPosition; varying vec3 Nw; varying vec3 Pw; void main(){vec3 n=normalize(Nw);vec3 l=normalize(keyDirection);vec3 v=normalize(cameraPosition-Pw);vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain.toFixed(2)}+c.rgb*(rimStrength*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain.toFixed(2)}*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}`
   );
   const line = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; void main(){gl_Position=P*V*M*vec4(p,1.0);}',
@@ -595,6 +596,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const shellSurfaceV = gl.getUniformLocation(shellSurface, 'V');
   const shellSurfaceM = gl.getUniformLocation(shellSurface, 'M');
   const shellSurfaceNormalMatrix = gl.getUniformLocation(shellSurface, 'NM');
+  const shellSurfaceCameraPosition = gl.getUniformLocation(shellSurface, 'cameraPosition');
   const shellSurfaceColor = gl.getUniformLocation(shellSurface, 'c');
   const shellSurfaceGlow = gl.getUniformLocation(shellSurface, 'glow');
   const shellSurfaceKeyIntensity = gl.getUniformLocation(shellSurface, 'keyIntensity');
@@ -845,6 +847,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     gl.uniform1f(roughnessUniform, roughness);
     gl.uniform3f(specularUniform, spec[0], spec[1], spec[2]);
     if (useSurfaceNormals) {
+      const eye = options.cameraPosition;
+      if (!eye || eye.length !== 3 || Array.from(eye).some((value) => !Number.isFinite(Number(value)))) {
+        throw new Error('MACHINE_WORLD_FOCUS_CAMERA_POSITION_INVALID');
+      }
+      gl.uniform3f(shellSurfaceCameraPosition, Number(eye[0]), Number(eye[1]), Number(eye[2]));
       gl.bindBuffer(gl.ARRAY_BUFFER, entry.surfaceNormalBuffer);
       gl.enableVertexAttribArray(shellSurfaceNormal);
       gl.vertexAttribPointer(shellSurfaceNormal, 3, gl.FLOAT, false, 0, 0);
@@ -2455,6 +2462,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           glow: selected ? 0.12 : 0.035,
           alpha: layerAlpha,
           surfaceNormals: useSurfaceNormals,
+          cameraPosition: useSurfaceNormals ? cameraPose.p : null,
         },
       );
     }
@@ -2463,6 +2471,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.profile
       : 'position-approx';
     canvas.dataset.machineWorldFacilityFocusNormalShellCount = String(facilityFocusNormalShellCount);
+    canvas.dataset.machineWorldFacilityFocusViewVectorProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.viewVectorProfile
+      : '';
     canvas.dataset.machineWorldFacilityFocusNormalSpecularGain = facilityFocused
       ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain)
       : '';
