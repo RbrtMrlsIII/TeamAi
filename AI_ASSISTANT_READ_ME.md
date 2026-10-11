@@ -14,6 +14,15 @@
 - Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
 - S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
 
+## 2026-10-12 Control nested rotor cradle
+
+- Global frontier remains Issue #401. Gate 3 is still `operator_hierarchy_absent`. This session did not create Seat documents or touch backend authority.
+- Active spatial vehicle remains Draft PR #424 only. No second spatial PR.
+- Slice executed: S7 Control nested outer-machine massing (`control-rotor-cradle-v1`, `S7-OUTER-BODY-V5`) around the existing energy core. Analysis keeps its service bay. Operations and Access-Commerce shells are unchanged. Selected focus alpha stays at the prior experiment values.
+- Local repository proof: facility-shell, structural-embodiment, and facility-carrier tests passed, including the 1–10 Seat × 0/0.5/1 cradle clearance matrix above 0.16. This is not exact-head CI and not Browser artifact inspection.
+- Do not claim TEAM-EXPERIENCE-029 released or TEAM-BACKEND-001 complete. Do not merge #424 because a local test passed.
+- Next session: push is on `frontend/029-spatial-world-continuation` if this commit landed; wait for the five exact-head gates, inspect the Browser artifact, then choose Operations nested massing only if this cradle proof holds. If the commit did not land, finish the push before designing the next family.
+
 ## SESSION SNAPSHOT
 
 ### 2026-10-08 CURRENT SESSION STATE

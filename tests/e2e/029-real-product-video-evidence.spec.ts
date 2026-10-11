@@ -16,11 +16,12 @@ test.describe('029 real-product video evidence', () => {
 
     await page.waitForTimeout(1200);
 
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-count', '20');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-count', '24');
     await expect(canvas).toHaveAttribute('data-machine-world-legacy-outer-housing-fallback-count', '0');
     await expect(canvas).toHaveAttribute('data-machine-world-authored-outer-housing-replacement-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-main-shell-count', '4');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V4');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V5');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-nested-cradle-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-service-bay-count', '2');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-core-primitive-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-core-shapes', 'BRANCH-OUTER-ALPHA:CYL|BRANCH-OUTER-BETA:BOX|BRANCH-OUTER-GAMMA:CYL|BRANCH-OUTER-DELTA:CYL');

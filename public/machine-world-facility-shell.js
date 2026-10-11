@@ -9,10 +9,16 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V4';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V5';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
+export const MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE = 'control-rotor-cradle-v1';
+export const MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH = 'BRANCH-OUTER-GAMMA';
+export const MACHINE_WORLD_FACILITY_SHELL_BASE_DESCRIPTOR_COUNT = 20;
+export const MACHINE_WORLD_FACILITY_NESTED_CRADLE_COUNT = 4;
+export const MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT =
+  MACHINE_WORLD_FACILITY_SHELL_BASE_DESCRIPTOR_COUNT + MACHINE_WORLD_FACILITY_NESTED_CRADLE_COUNT;
 
 const finite = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -434,6 +440,66 @@ function deriveShell(entry) {
     ...rootContext('FACILITY-BODY:' + entry.branchId + ':CORE'),
   }));
 
+  if (entry.machineRole === 'control') {
+    // Nested rotor cradle frames the existing energy core. It stays inside the
+    // authored main-shell AABB and does not move ports, topology, or Seat law.
+    const tangent = { x: -radial.z, z: radial.x };
+    const ringSpan = bodyMin * 0.64;
+    const ringHeight = Math.max(0.06, bodyHeight * 0.055);
+    const ringOffsetY = Number(core.dimensions.y) * 0.43;
+    for (const ring of [
+      { key: 'LOWER', y: core.center.y - ringOffsetY },
+      { key: 'UPPER', y: core.center.y + ringOffsetY },
+    ]) {
+      layered.push(Object.freeze({
+        ...body,
+        id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CRADLE-' + ring.key,
+        profile: 'facility-body-control-rotor-cradle-' + ring.key.toLowerCase(),
+        shape: 'TORUS',
+        center: Object.freeze({ x: core.center.x, y: ring.y, z: core.center.z }),
+        depthOffset: 0,
+        dimensions: Object.freeze({ x: ringSpan, y: ringHeight, z: ringSpan }),
+        rotationY: 0,
+        materialRole: 'metal',
+        outline: null,
+        layer: 'nested-cradle',
+        nestedMassingProfile: MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE,
+        nestedMassingRole: 'rotor-ring',
+        ...rootContext('FACILITY-BODY:' + entry.branchId + ':CRADLE-' + ring.key),
+      }));
+    }
+    const stanchionReach = bodyMin * 0.30;
+    const stanchionSpan = Math.max(0.06, bodyMin * 0.07);
+    for (const side of [-1, 1]) {
+      const key = side > 0 ? 'RIGHT' : 'LEFT';
+      layered.push(Object.freeze({
+        ...body,
+        id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CRADLE-STANCHION-' + key,
+        profile: 'facility-body-control-rotor-stanchion-' + key.toLowerCase(),
+        shape: 'BOX',
+        center: Object.freeze({
+          x: core.center.x + tangent.x * stanchionReach * side,
+          y: core.center.y,
+          z: core.center.z + tangent.z * stanchionReach * side,
+        }),
+        depthOffset: tangent.x * stanchionReach * side * Math.cos(angle)
+          + tangent.z * stanchionReach * side * Math.sin(angle),
+        dimensions: Object.freeze({
+          x: stanchionSpan,
+          y: Math.max(0.10, Number(core.dimensions.y) * 0.92),
+          z: stanchionSpan,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        outline: null,
+        layer: 'nested-cradle',
+        nestedMassingProfile: MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE,
+        nestedMassingRole: 'rotor-stanchion',
+        ...rootContext('FACILITY-BODY:' + entry.branchId + ':CRADLE-STANCHION-' + key),
+      }));
+    }
+  }
+
   return Object.freeze(layered.map((descriptor) => {
     if(entry.machineRole!=='analysis'||!['main-shell','shoulder-plate'].includes(descriptor.layer))return descriptor;
     const envelopeOutline=MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette];
@@ -488,6 +554,13 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
         triangulateMachineWorldFacilityBodyOutline(descriptor.outline);
         if(Array.isArray(descriptor.envelopeOutline)&&signedTwiceArea(descriptor.outline)>=signedTwiceArea(descriptor.envelopeOutline)-1e-7)reasons.push(id+':SERVICE_BAY_DOES_NOT_REMOVE_ENVELOPE_AREA');
       }catch{reasons.push(id+':SERVICE_BAY_OUTLINE_INVALID');}
+    }
+    if(descriptor?.nestedMassingProfile){
+      if(descriptor.nestedMassingProfile!==MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE)reasons.push(id+':NESTED_MASSING_PROFILE_MISMATCH');
+      if(descriptor.branchId!==MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH||descriptor.layer!=='nested-cradle')reasons.push(id+':NESTED_MASSING_SCOPE_INVALID');
+      if(descriptor.outline!=null)reasons.push(id+':NESTED_MASSING_MUST_NOT_REPLACE_OUTLINE');
+      if(!['TORUS','BOX'].includes(descriptor.shape))reasons.push(id+':NESTED_MASSING_SHAPE_INVALID');
+      if(!['rotor-ring','rotor-stanchion'].includes(descriptor.nestedMassingRole))reasons.push(id+':NESTED_MASSING_ROLE_INVALID');
     }
   }
 

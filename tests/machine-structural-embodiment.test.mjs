@@ -206,7 +206,7 @@ test('S7 facility body shells form four authored manufactured families without c
   const validation = validateMachineWorldFacilityShellDescriptors(shells);
 
   assert.equal(validation.valid, true, validation.reasons.join(', '));
-  assert.equal(shells.length, 20);
+  assert.equal(shells.length, 24);
   assert.equal(new Set(shells.map((entry) => entry.branchId)).size, 4);
   assert.equal(new Set(shells.map((entry) => entry.silhouette)).size, 4);
   assert.equal(shells.filter((entry) => entry.layer === 'main-shell').length, 4);
@@ -251,18 +251,16 @@ test('S7 facility chassis layers form a bounded radial depth stack', () => {
   const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
 
   for (const machine of machinery) {
+    const chassisOrder = {
+      'base-collar': 0,
+      'main-shell': 1,
+      'shoulder-plate': 2,
+      'upper-cap': 3,
+      'mechanism-housing': 4,
+    };
     const layers = shells
-      .filter((entry) => entry.branchId === machine.branchId)
-      .sort((a, b) => {
-        const order = {
-          'base-collar': 0,
-          'main-shell': 1,
-          'shoulder-plate': 2,
-          'upper-cap': 3,
-          'mechanism-housing': 4,
-        };
-        return order[a.layer] - order[b.layer];
-      });
+      .filter((entry) => entry.branchId === machine.branchId && chassisOrder[entry.layer] !== undefined)
+      .sort((a, b) => chassisOrder[a.layer] - chassisOrder[b.layer]);
     assert.equal(layers.length, 5, machine.branchId);
     const angle = Math.atan2(
       machine.outerHousing.center.z,

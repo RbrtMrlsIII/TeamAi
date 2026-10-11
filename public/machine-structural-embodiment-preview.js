@@ -20,7 +20,7 @@ import {
   deriveMachineWorldFacilityCarrierDescriptors,
   validateMachineWorldFacilityCarrierDescriptors,
 } from './machine-world-facility-carrier.js';
-import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE, MACHINE_WORLD_FACILITY_SHELL_VERSION } from './machine-world-facility-shell.js';
+import { deriveMachineWorldFacilityShellDescriptors, MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE, MACHINE_WORLD_FACILITY_SHELL_VERSION, MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE } from './machine-world-facility-shell.js';
 import {
   deriveMachineWorldFacilityDockingEmbodiment,
   validateMachineWorldFacilityDockingEmbodiment,
@@ -622,6 +622,9 @@ function renderView() {
   canvas.dataset.structuralFacilityCarrierScope = facilityCarrierMode;
   canvas.dataset.structuralFacilityShellDescriptorCount = String(facilityShellDescriptors.length);
   canvas.dataset.structuralFacilityShellVersion = MACHINE_WORLD_FACILITY_SHELL_VERSION;
+  canvas.dataset.structuralFacilityNestedCradleCount = String(
+    facilityShellDescriptors.filter((entry) => entry.nestedMassingProfile === MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE).length,
+  );
   canvas.dataset.structuralFacilityServiceBayDescriptorCount = String(
     facilityShellDescriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
   );

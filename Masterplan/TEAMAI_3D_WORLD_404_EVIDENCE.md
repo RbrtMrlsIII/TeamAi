@@ -1913,3 +1913,17 @@ Browser runs on `562f14fe…`, `d0434b4f…`, `f90a8212…`, `9ecc7560…`, and 
 The return-frame capture defect is now closed with exact-head Browser evidence. The wider machine is still darker/sparser than the endorsed MP4/PNG direction; the alpha experiment's midtone improvements remain measurements, not human visual acceptance. Continue physical-first: choose one existing S7 family after a cold comparison against the repository reference MP4/PNG and its current machinery/topology, design its nested outer-machine massing, prove its envelope/clearance, and collect production-route Browser evidence before returning to materials, specular response, or polish.
 
 **Acceptance boundary:** the five required gates pass on `23e103e…`. Production deployment/runtime proof, human visual acceptance, formal S30/S0–S33 exit, merge/release authorization, and final 029 completion remain open.
+
+### E424-2026-10-12A — Control nested rotor cradle (repository proof only)
+
+**Vehicle:** PR #424, `frontend/029-spatial-world-continuation`, remains OPEN / DRAFT. Issue #401 remains the sole global Current Slice.
+
+**Family choice:** Product Law maps rotating core → S7 Control (`BRANCH-OUTER-GAMMA`, diamond silhouette). Analysis already has the telescope service bay. Operations and Access-Commerce were left unchanged so this remains one nested-massing slice.
+
+**Change:** shell `S7-OUTER-BODY-V4` → `S7-OUTER-BODY-V5`. Four presentation-only `control-rotor-cradle-v1` descriptors (two `TORUS` rotor rings and two `BOX` stanchions) frame the existing Control energy-core housing. They do not replace the mechanism-housing primitive, cut a new service bay, move ports, or change topology or Seat cardinality. Descriptor count 20 → 24. Selected main-shell/shoulder alpha stays at the prior focus experiment.
+
+**Local proof:** `tests/machine-world-facility-shell.test.mjs`, `tests/machine-structural-embodiment.test.mjs`, and `tests/machine-world-facility-carrier.test.mjs` passed. The cradle matrix covers Seats 1–10 and expansion 0/0.5/1, requires containment in the authored main-shell AABB, a positive gap outside the energy core, and conservative XZ pod clearance above 0.16. Source/public shell, renderer, and structural-preview copies are byte-identical.
+
+**Not claimed:** exact-head Full-System, Governance, Security, Deep Security, or Canonical Browser. No Browser artifact inspection. No production deployment, human visual acceptance, merge, or 029 release.
+
+**Next:** after this head's five gates and artifact inspection, the next single family is Operations, and only if this cradle proof holds.

@@ -59,6 +59,8 @@ import {
   deriveMachineWorldFacilityShellDescriptors,
   MACHINE_WORLD_FACILITY_BODY_OUTLINES,
   MACHINE_WORLD_FACILITY_SHELL_VERSION,
+  MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT,
+  MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE,
   MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
   triangulateMachineWorldFacilityBodyOutline,
 } from './machine-world-facility-shell.js';
@@ -2389,7 +2391,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       throw new Error('invalid S7 authored outer-body branch coverage');
     }
     if (
-      facilityBodyShells.length !== 20
+      facilityBodyShells.length !== MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT
       || !facilityBodyShells.every((entry) =>
         entry.presentationOnly === true
         && entry.constructionSlice === 'S7'
@@ -2440,7 +2442,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
             ? (selected ? (facilityFocused ? 0.42 : 0.88) : 0.76)
             : shell.layer === 'upper-cap'
               ? (selected ? 0.72 : 0.60)
-              : (selected ? 0.78 : 0.66);
+              : shell.layer === 'nested-cradle'
+                ? (selected ? 0.94 : 0.84)
+                : (selected ? 0.78 : 0.66);
       drawBuffer(
         buffer,
         multiplyMatrix(
@@ -2494,6 +2498,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldFacilityFocusMainShellRoughness = activeFocusedPlateRoughness;
     canvas.dataset.machineWorldFacilityFocusShoulderPlateRoughness = activeFocusedPlateRoughness;
     canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
+    canvas.dataset.machineWorldFacilityNestedCradleCount = String(
+      facilityBodyShells.filter((entry) => entry.nestedMassingProfile === MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE).length,
+    );
     canvas.dataset.machineWorldFacilityServiceBayCount = String(
       facilityBodyShells.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
     );

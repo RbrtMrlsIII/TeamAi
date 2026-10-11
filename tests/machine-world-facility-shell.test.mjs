@@ -10,6 +10,9 @@ import {
   deriveMachineWorldFacilityShellDescriptors,
   validateMachineWorldFacilityShellDescriptors,
   MACHINE_WORLD_FACILITY_SHELL_VERSION,
+  MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT,
+  MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE,
+  MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH,
   MACHINE_WORLD_FACILITY_BODY_OUTLINES,
   MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
   MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,
@@ -23,7 +26,7 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
   const facilities = deriveMachineFacilityMachinery({ facilityAssemblies: assemblies });
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
-  assert.equal(descriptors.length, 20);
+  assert.equal(descriptors.length, MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT);
   assert.equal(new Set(descriptors.map((entry) => entry.branchId)).size, 4);
   assert.equal(descriptors.filter((entry) => entry.layer === 'main-shell').length, 4);
   assert.deepEqual(
@@ -32,7 +35,7 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V4');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V5');
   const bays=descriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE);
   assert.equal(bays.length,2);
   assert.deepEqual(bays.map(entry=>entry.layer).sort(),['main-shell','shoulder-plate']);
@@ -171,7 +174,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
   const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
 
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V4');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V5');
   assert.equal(cores.length, 4);
   assert.deepEqual(
     Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),
@@ -211,5 +214,53 @@ test('S7 Analysis bay clears its first telescope stage across Seat/expansion mat
     assert.ok(MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH/2-Math.abs(across)-diameter/2>=0.02,'stage lateral margin at '+seatCount+'/'+expansionAmount);
     assert.ok(along-diameter/2-MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS>=0.05,'bay rear margin at '+seatCount+'/'+expansionAmount);
     for(const bay of bays){assert.ok(validateMachineWorldFacilityShellDescriptors([bay]).valid);assert.equal(triangulateMachineWorldFacilityBodyOutline(bay.outline).length,bay.outline.length-2);}
+  }
+});
+
+test('S7 Control nested rotor cradle frames the energy core without leaving the main envelope', () => {
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const assemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: assemblies,
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
+      const cradles = shells.filter((entry) => entry.nestedMassingProfile === MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE);
+      assert.equal(cradles.length, 4, seatCount + '/' + expansionAmount);
+      assert.ok(cradles.every((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH));
+      assert.deepEqual(
+        cradles.map((entry) => entry.nestedMassingRole).sort(),
+        ['rotor-ring', 'rotor-ring', 'rotor-stanchion', 'rotor-stanchion'],
+      );
+      assert.equal(shells.filter((entry) => entry.branchId !== MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'nested-cradle').length, 0);
+      const main = shells.find((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'main-shell');
+      const core = shells.find((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'mechanism-housing');
+      assert.ok(main && core);
+      const rings = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-ring');
+      assert.ok(rings.every((ring) => ring.shape === 'TORUS' && ring.dimensions.x > core.dimensions.x));
+      const coreRadius = Math.max(core.dimensions.x, core.dimensions.z) * 0.5;
+      for (const post of cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion')) {
+        const reach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
+        const postRadius = Math.hypot(post.dimensions.x, post.dimensions.z) * 0.5;
+        assert.ok(reach - postRadius > coreRadius, 'stanchion must frame rather than occupy the energy core');
+      }
+      const pods = scene.parts.filter((part) => part.kind === 'inner-pod');
+      let minimumClearance = Infinity;
+      for (const cradle of cradles) {
+        const cradleRadius = Math.hypot(cradle.dimensions.x * 0.5, cradle.dimensions.z * 0.5);
+        for (const pod of pods) {
+          const distance = Math.hypot(cradle.center.x - pod.center.x, cradle.center.z - pod.center.z);
+          const podRadius = Math.hypot(pod.dimensions.x * 0.5, pod.dimensions.z * 0.5);
+          minimumClearance = Math.min(minimumClearance, distance - cradleRadius - podRadius);
+        }
+      }
+      assert.ok(minimumClearance > 0.16, seatCount + '/' + expansionAmount + ' clearance ' + minimumClearance);
+      assert.equal(validateMachineWorldFacilityShellDescriptors(cradles).valid, true);
+    }
   }
 });
