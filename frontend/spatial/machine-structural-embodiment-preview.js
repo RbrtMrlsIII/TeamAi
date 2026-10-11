@@ -47,7 +47,10 @@ let choreographyFromStage = 0;
 let choreographyProgress = 1;
 let choreographyFrame = 0;
 let choreographyStartedAt = 0;
+let choreographyLastFrameAt = 0;
 const CHOREOGRAPHY_DURATION_MS = 900;
+// A slow whole-world render must not skip every observable intermediate state.
+const CHOREOGRAPHY_MAX_FRAME_DELTA_MS = 180;
 
 const DIVISIONS = Object.freeze([
   'SEAT_CONNECTION',
@@ -680,6 +683,7 @@ function cancelChoreographyAnimation() {
   if (choreographyFrame) cancelAnimationFrame(choreographyFrame);
   choreographyFrame = 0;
   choreographyStartedAt = 0;
+  choreographyLastFrameAt = 0;
 }
 
 function startChoreographyTransition(targetStage) {
@@ -689,9 +693,21 @@ function startChoreographyTransition(targetStage) {
     + STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT) % STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT;
   choreographyProgress = 0;
   choreographyStartedAt = performance.now();
+  choreographyLastFrameAt = 0;
   const tick = (timestamp) => {
     const elapsed = Math.max(0, timestamp - choreographyStartedAt);
-    choreographyProgress = Math.min(1, elapsed / CHOREOGRAPHY_DURATION_MS);
+    const frameElapsed = choreographyLastFrameAt > 0
+      ? Math.max(0, timestamp - choreographyLastFrameAt)
+      : elapsed;
+    choreographyLastFrameAt = timestamp;
+    // Accumulate bounded frame deltas instead of deriving progress directly
+    // from wall time. If renderView stalls, the transition stretches rather
+    // than jumping from an early frame straight to completion.
+    choreographyProgress = Math.min(
+      1,
+      choreographyProgress
+        + Math.min(CHOREOGRAPHY_MAX_FRAME_DELTA_MS, frameElapsed) / CHOREOGRAPHY_DURATION_MS,
+    );
     renderView();
     if (choreographyProgress < 1) {
       choreographyFrame = requestAnimationFrame(tick);
@@ -699,6 +715,7 @@ function startChoreographyTransition(targetStage) {
     }
     choreographyFrame = 0;
     choreographyStartedAt = 0;
+    choreographyLastFrameAt = 0;
     choreographyFromStage = choreographyStage;
     choreographyProgress = 1;
     renderView();

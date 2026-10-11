@@ -67,7 +67,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
         };
       },
       undefined,
-      { timeout: 5000, polling: 'raf' },
+      { timeout: 10000, polling: 'raf' },
     ).then((handle) => handle.jsonValue());
     expect(transformMid.fromStage).toBe('0');
     expect(transformMid.toStage).toBe('1');
@@ -113,7 +113,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
         };
       },
       undefined,
-      { timeout: 5000, polling: 'raf' },
+      { timeout: 10000, polling: 'raf' },
     ).then((handle) => handle.jsonValue());
     expect(returnMid.view).toBe('world');
     expect(returnMid.topologyMode).toBe('WORLD_OVERVIEW');
