@@ -45,9 +45,12 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
     0.2,
   );
   const t = clamp(amount, 0, 1);
-  // Keep the seven-way fan compact while preserving monotonic radial deployment.
-  // The authored envelope is intentionally bounded below the historical 2.20× full-deployment radius while preserving the required 1.66× compact-state floor.
-  const deploymentFactor = 1.66 + 0.14 * t;
+  // Size the fan against authored S4 assembly subjects, not only simplified
+  // division rectangles. The 1.66× profile left only 0.076 units between the
+  // closed Connection/Behavior subjects, below the governed 0.16 clearance.
+  // A 1.92× compact floor restores measured AABB margin while the 2.06×
+  // expanded factor stays below the historical 2.20× outer-envelope profile.
+  const deploymentFactor = 1.92 + 0.14 * t;
   return scale * deploymentFactor;
 }
 
