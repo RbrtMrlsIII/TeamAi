@@ -9,7 +9,7 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
-export const SEAT_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
+export const SEAT_DIVISION_FAN_SPAN = (11 * Math.PI) / 12;
 export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
 export const SEAT_DIVISION_PORT_RADIUS = 0.28;
 
@@ -45,12 +45,10 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
     0.2,
   );
   const t = clamp(amount, 0, 1);
-  // Size the fan against authored assembly AABBs across the 1–10 Seat matrix.
-  // A 2.16× compact factor still allowed the rotating Capabilities lattice's
-  // subject AABB to approach closed Authorization below 0.16 at 3 Seats.
-  // The geometry-derived clearance floor therefore supersedes the historical
-  // 2.20× presentation bound; S5 verifies this larger envelope against world obstacles.
-  const deploymentFactor = 2.24 + 0.01 * t;
+  // The 165° seven-division fan increases angular separation between neighboring
+  // authored S4 assemblies. Keep the radial profile compact; the S5 subject-AABB
+  // sweep matrix verifies that the angular change preserves 0.16 world clearance.
+  const deploymentFactor = 2.16 + 0.02 * t;
   return scale * deploymentFactor;
 }
 

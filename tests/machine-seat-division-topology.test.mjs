@@ -3,7 +3,7 @@ import test from 'node:test';
 import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
-import { seatDivisionFanDirection, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
+import { seatDivisionFanDirection, SEAT_DIVISION_FAN_SPAN, seatDivisionFanAngle, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
 import { buildAdjacentDivisionWiring } from '../frontend/spatial/seat-adjacent-division-wiring.js';
 
 const children = [
@@ -25,6 +25,17 @@ const parent = {
   dimensions: { x: 1.34, y: 0.62, z: 1.08 },
   seam: 0.18,
 };
+
+test('seven-division fan uses the clearance-reviewed 165-degree angular span', () => {
+  assert.equal(SEAT_DIVISION_FAN_SPAN, (11 * Math.PI) / 12);
+  const angles = children.map((_, index) => seatDivisionFanAngle(index));
+  assert.ok(Math.abs(angles[0] + SEAT_DIVISION_FAN_SPAN / 2) < 1e-12);
+  assert.ok(Math.abs(angles[angles.length - 1] - SEAT_DIVISION_FAN_SPAN / 2) < 1e-12);
+  const expectedStep = SEAT_DIVISION_FAN_SPAN / (children.length - 1);
+  for (let index = 1; index < angles.length; index += 1) {
+    assert.ok(Math.abs((angles[index] - angles[index - 1]) - expectedStep) < 1e-12);
+  }
+});
 
 test('all seat divisions have stable child-to-shell semantic edges', () => {
   const edges = children.map((childId, childIndex) => {
@@ -165,8 +176,8 @@ test('fan deployment stays inside the compact radial envelope while preserving s
     }),
   );
   const scale = Math.max(parent.dimensions.x, parent.dimensions.z);
-  assert.ok(compact.every((entry) => entry.radialDistance >= scale * 2.24 - 1e-12));
-  assert.ok(open.every((entry) => entry.radialDistance <= scale * 2.25 + 1e-12));
+  assert.ok(compact.every((entry) => entry.radialDistance >= scale * 2.16 - 1e-12));
+  assert.ok(open.every((entry) => entry.radialDistance <= scale * 2.18 + 1e-12));
   assert.ok(open.every((entry, index) => entry.radialDistance > compact[index].radialDistance));
   const boxes = open.map((division) => boundsForDivision(division));
   for (let boxIndex = 0; boxIndex < boxes.length; boxIndex += 1) {
