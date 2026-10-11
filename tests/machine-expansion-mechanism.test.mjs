@@ -373,6 +373,42 @@ test('S5 expansion stays clear of six closed sibling divisions across the full S
             && left.max.z >= right.min.z - padding;
           const axisGap = (leftMin, leftMax, rightMin, rightMax) =>
             Math.max(0, rightMin - leftMax, leftMin - rightMax);
+          const obstacleBounds = (obstacle) => {
+            if (obstacle?.min && obstacle?.max) return obstacle;
+            if (!obstacle?.center || !obstacle?.dimensions) return null;
+            const half = {
+              x: Math.abs(Number(obstacle.dimensions.x) || 0) * 0.5,
+              y: Math.abs(Number(obstacle.dimensions.y) || 0) * 0.5,
+              z: Math.abs(Number(obstacle.dimensions.z) || 0) * 0.5,
+            };
+            return {
+              min: {
+                x: Number(obstacle.center.x) - half.x,
+                y: Number(obstacle.center.y) - half.y,
+                z: Number(obstacle.center.z) - half.z,
+              },
+              max: {
+                x: Number(obstacle.center.x) + half.x,
+                y: Number(obstacle.center.y) + half.y,
+                z: Number(obstacle.center.z) + half.z,
+              },
+            };
+          };
+          const blockingWorld = worldObstacles
+            .map((obstacle) => ({
+              id: obstacle.branchId || obstacle.id || obstacle.kind || 'world-obstacle',
+              bounds: obstacleBounds(obstacle),
+            }))
+            .filter((entry) => entry.bounds && clearanceOverlap(targetClosed, entry.bounds, 0.16))
+            .map((entry) => ({
+              id: entry.id,
+              gaps: {
+                x: axisGap(targetClosed.min.x, targetClosed.max.x, entry.bounds.min.x, entry.bounds.max.x),
+                y: axisGap(targetClosed.min.y, targetClosed.max.y, entry.bounds.min.y, entry.bounds.max.y),
+                z: axisGap(targetClosed.min.z, targetClosed.max.z, entry.bounds.min.z, entry.bounds.max.z),
+              },
+              bounds: entry.bounds,
+            }));
           const blockingSiblings = closedSiblingSubjects
             .filter((entry) => entry.childId !== childId && clearanceOverlap(targetClosed, entry.subject, 0.16))
             .map((entry) => ({
@@ -395,33 +431,12 @@ test('S5 expansion stays clear of six closed sibling divisions across the full S
 
           assert.ok(
             plan?.clearancePlan?.clearanceSatisfiedAtClosed,
-            `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, blockingSiblingDivisions=${JSON.stringify(blockingSiblings)}`,
+            `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, blockingWorld=${JSON.stringify(blockingWorld)}, blockingSiblingDivisions=${JSON.stringify(blockingSiblings)}`,
           );
           const collisionAmount = Number(plan?.clearancePlan?.firstCollisionAmount);
           const collisionSubject = Number.isFinite(collisionAmount)
             ? subjectAtExpansionAmount(plan, collisionAmount)
             : null;
-          const obstacleBounds = (obstacle) => {
-            if (obstacle?.min && obstacle?.max) return obstacle;
-            if (!obstacle?.center || !obstacle?.dimensions) return null;
-            const half = {
-              x: Math.abs(Number(obstacle.dimensions.x) || 0) * 0.5,
-              y: Math.abs(Number(obstacle.dimensions.y) || 0) * 0.5,
-              z: Math.abs(Number(obstacle.dimensions.z) || 0) * 0.5,
-            };
-            return {
-              min: {
-                x: Number(obstacle.center.x) - half.x,
-                y: Number(obstacle.center.y) - half.y,
-                z: Number(obstacle.center.z) - half.z,
-              },
-              max: {
-                x: Number(obstacle.center.x) + half.x,
-                y: Number(obstacle.center.y) + half.y,
-                z: Number(obstacle.center.z) + half.z,
-              },
-            };
-          };
           const pathBlockers = collisionSubject
             ? [
                 ...worldObstacles.map((obstacle) => ({
