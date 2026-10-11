@@ -157,7 +157,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
         const canvas = document.querySelector('canvas');
         const progress = Number(canvas?.getAttribute('data-structural-choreography-progress'));
         if (!(canvas?.getAttribute('data-structural-choreography-returning-to-world') === 'true')) return false;
-        if (!(progress > 0.55 && progress < 0.95)) return false;
+        if (!(progress > 0.50 && progress < 0.70)) return false;
         return {
           progress,
           view: canvas?.getAttribute('data-structural-view'),
@@ -172,11 +172,12 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     expect(returnMid.view).toBe('world');
     expect(returnMid.topologyMode).toBe('WORLD_OVERVIEW');
     expect(returnMid.cameraMode).toBe('RETURN_TO_WORLD');
-    expect(returnMid.progress).toBeGreaterThan(0.55);
-    expect(returnMid.progress).toBeLessThan(0.95);
+    expect(returnMid.progress).toBeGreaterThan(0.50);
+    expect(returnMid.progress).toBeLessThan(0.70);
     expect(returnMid.transformation).toBeGreaterThan(0);
     expect(returnMid.transformation).toBeLessThan(1);
-    await page.screenshot({ path: 'test-results/s2-s10-return-mid.png', fullPage: true });
+    // Capture the WebGL canvas immediately. A full-page screenshot can stall
+    // long enough for a slow RAF transition to settle before the pixel sample.
     const returnMidCanvasPng = await canvas.screenshot();
     const returnMidPixelDelta = await canvasPixelDelta(page, worldCanvasPng, returnMidCanvasPng);
     console.log(
@@ -208,6 +209,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       midVsSettledPixelDelta.changedPixelRatio,
       'return midpoint must visibly differ from the settled return canvas',
     ).toBeGreaterThan(0.005);
+    await page.screenshot({ path: 'test-results/s2-s10-return-mid.png', fullPage: true });
 
     await page.getByRole('button', { name: 'Seat 1 / Divisions', exact: true }).click();
     await expect(status).toContainText('READY · SEAT · 10 seats · 4 facilities · 7 divisions · ');
