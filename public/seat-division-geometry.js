@@ -18,16 +18,28 @@ export const SEAT_DIVISION_SERVICE_DECK_LIFT = 0.56;
 
 export function seatDivisionFanSpan(seatCount = null) {
   const count = Number(seatCount);
-  // Ten-seat density is the one proven limiting world envelope: narrower fan
-  // endpoints avoid the adjacent Pod while lower densities retain 30° steps
-  // between divisions to preserve authored-subassembly clearance.
+  // Ten-seat density is the limiting world envelope: narrower fan endpoints
+  // avoid the adjacent Pod; the dense angle profile then reallocates angular
+  // spacing toward the crowded central assemblies.
   return Number.isInteger(count) && count >= 10
     ? SEAT_DIVISION_FAN_DENSE_SPAN
     : SEAT_DIVISION_FAN_SPAN;
 }
 
+const SEAT_DIVISION_DENSE_FAN_ANGLES = Object.freeze([
+  -SEAT_DIVISION_FAN_DENSE_SPAN / 2,
+  -(5 * Math.PI) / 16,
+  -Math.PI / 6,
+  0,
+  Math.PI / 6,
+  (5 * Math.PI) / 16,
+  SEAT_DIVISION_FAN_DENSE_SPAN / 2,
+]);
+
 export function seatDivisionFanAngle(childIndex = 0, seatCount = null) {
   const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));
+  const count = Number(seatCount);
+  if (Number.isInteger(count) && count >= 10) return SEAT_DIVISION_DENSE_FAN_ANGLES[index];
   const span = seatDivisionFanSpan(seatCount);
   return -span / 2 + (span * index) / SEAT_DIVISION_FAN_MAX_INDEX;
 }

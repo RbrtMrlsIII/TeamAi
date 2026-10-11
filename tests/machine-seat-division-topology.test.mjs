@@ -26,13 +26,13 @@ const parent = {
   seam: 0.18,
 };
 
-test('seven-division fan adapts span to Seat density and preserves equal angular steps', () => {
+test('seven-division fan adapts span and center spacing to Seat density', () => {
   assert.equal(SEAT_DIVISION_FAN_SPAN, Math.PI);
   assert.equal(SEAT_DIVISION_FAN_DENSE_SPAN, (11 * Math.PI) / 12);
   assert.equal(seatDivisionFanSpan(9), SEAT_DIVISION_FAN_SPAN);
   assert.equal(seatDivisionFanSpan(10), SEAT_DIVISION_FAN_DENSE_SPAN);
 
-  for (const seatCount of [1, 5, 9, 10]) {
+  for (const seatCount of [1, 5, 9]) {
     const span = seatDivisionFanSpan(seatCount);
     const angles = children.map((_, index) => seatDivisionFanAngle(index, seatCount));
     assert.ok(Math.abs(angles[0] + span / 2) < 1e-12);
@@ -42,6 +42,24 @@ test('seven-division fan adapts span to Seat density and preserves equal angular
       assert.ok(Math.abs((angles[index] - angles[index - 1]) - expectedStep) < 1e-12);
     }
   }
+
+  const denseAngles = children.map((_, index) => seatDivisionFanAngle(index, 10));
+  const denseExpected = [
+    -(11 * Math.PI) / 24,
+    -(5 * Math.PI) / 16,
+    -Math.PI / 6,
+    0,
+    Math.PI / 6,
+    (5 * Math.PI) / 16,
+    (11 * Math.PI) / 24,
+  ];
+  denseAngles.forEach((angle, index) => assert.ok(Math.abs(angle - denseExpected[index]) < 1e-12));
+  const denseSteps = denseAngles.slice(1).map((angle, index) => angle - denseAngles[index]);
+  assert.deepEqual(
+    denseSteps.map((step) => Math.round(step * 1e9) / 1e9),
+    [Math.PI / 16, Math.PI / 16, Math.PI / 6, Math.PI / 6, Math.PI / 16, Math.PI / 16]
+      .map((step) => Math.round(step * 1e9) / 1e9),
+  );
 });
 
 test('all seat divisions have stable child-to-shell semantic edges', () => {
