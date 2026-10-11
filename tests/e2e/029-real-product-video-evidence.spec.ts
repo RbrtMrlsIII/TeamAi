@@ -10,6 +10,8 @@ test.describe('029 real-product video evidence', () => {
     test.setTimeout(60_000);
     await page.goto('/hero/');
     const canvas = page.locator('#hero-canvas');
+    const worldMenu = page.locator('#world-menu');
+    const worldMenuToggle = page.locator('[data-world-menu-toggle]');
     await expect(canvas).toBeVisible();
 
     await page.waitForTimeout(1200);
@@ -46,9 +48,12 @@ test.describe('029 real-product video evidence', () => {
     // A facility focus must interrupt the demo turn loop instead of being overwritten by it.
     await page.evaluate(() => (window as any).TeamAiHero.startLoop());
     // Exercise facility focus through the real production navigation, not the QA preview.
-    await page.locator('[data-world-menu-toggle]').click();
-    await expect(page.locator('#world-menu')).toHaveClass(/is-open/);
+    await worldMenuToggle.click();
+    await expect(worldMenu).toHaveClass(/is-open/);
     await page.locator('[data-facility-focus="BRANCH-OUTER-ALPHA"]').click();
+    await expect(worldMenu).not.toHaveClass(/is-open/);
+    await expect(worldMenu).toBeHidden();
+    await expect(worldMenuToggle).toHaveAttribute('aria-expanded', 'false');
     await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-ALPHA');
@@ -79,7 +84,12 @@ test.describe('029 real-product video evidence', () => {
       'BRANCH-OUTER-GAMMA',
       'BRANCH-OUTER-DELTA',
     ]) {
+      await worldMenuToggle.click();
+      await expect(worldMenu).toHaveClass(/is-open/);
       await page.locator(`[data-facility-focus="${branchId}"]`).click();
+      await expect(worldMenu).not.toHaveClass(/is-open/);
+      await expect(worldMenu).toBeHidden();
+      await expect(worldMenuToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
       await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'FACILITY_FOCUS');
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', branchId);
@@ -102,7 +112,10 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
 
     // The return affordance must also work as an ordinary browser interaction.
+    await worldMenuToggle.click();
+    await expect(worldMenu).toHaveClass(/is-open/);
     await page.locator('[data-facility-focus="BRANCH-OUTER-BETA"]').click();
+    await expect(worldMenu).toBeHidden();
     await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-BETA');
     await page.locator('[data-facility-focus-return]').click();
@@ -111,7 +124,8 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', '');
     await expect(page.locator('#facility-focus-status')).toHaveText('World overview');
     await expect(canvas).toHaveAttribute('data-machine-world-topology-validation', 'pass');
-    await page.locator('[data-world-menu-toggle]').click();
+    await expect(worldMenu).toBeHidden();
+    await expect(worldMenuToggle).toHaveAttribute('aria-expanded', 'false');
 
 
     await page.evaluate(() => (window as any).TeamAiHero.selectSeatShell(0));
