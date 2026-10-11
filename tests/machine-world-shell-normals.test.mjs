@@ -135,11 +135,11 @@ test('focused shell specular view vector uses the active camera and world fragme
   const shaderEnd = source.indexOf('const line = program', shaderStart);
   assert.ok(shaderStart >= 0 && shaderEnd > shaderStart, 'shell shader owner must exist');
   const shader = source.slice(shaderStart, shaderEnd);
-  assert.match(shader, /uniform vec3 cameraPosition/);
-  assert.match(shader, /varying vec3 Pw/);
-  assert.match(shader, /Pw=wp\\.xyz/);
-  assert.match(shader, /vec3 v=normalize\\(cameraPosition-Pw\\)/);
-  assert.doesNotMatch(shader, /vec3 v=normalize\\(vec3\\(\\.15,\\.85,\\.50\\)\\)/);
-  assert.match(source, /gl\\.uniform3f\\(shellSurfaceCameraPosition, Number\\(eye\\[0\\]\\), Number\\(eye\\[1\\]\\), Number\\(eye\\[2\\]\\)\\)/);
-  assert.match(source, /cameraPosition: useSurfaceNormals \\? cameraPose\\.p : null/);
+  assert.ok(shader.includes('uniform vec3 cameraPosition'));
+  assert.ok(shader.includes('varying vec3 Pw'));
+  assert.ok(shader.includes('Pw=wp.xyz'));
+  assert.ok(shader.includes('vec3 v=normalize(cameraPosition-Pw)'));
+  assert.ok(!shader.includes('vec3 v=normalize(vec3(.15,.85,.50))'));
+  assert.ok(source.includes('gl.uniform3f(shellSurfaceCameraPosition, Number(eye[0]), Number(eye[1]), Number(eye[2]))'));
+  assert.ok(source.includes('cameraPosition: useSurfaceNormals ? cameraPose.p : null'));
 });
