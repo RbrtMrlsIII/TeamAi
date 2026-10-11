@@ -228,15 +228,16 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       returnMidPixelDelta.changedPixelRatio,
       'return midpoint must visibly differ from the settled World canvas, not just its DOM telemetry',
     ).toBeGreaterThan(0.005);
+    // Resume immediately after preserving and comparing the paused midpoint.
+    await page.evaluate(() => {
+      (window as any).__TEAMAI_STRUCTURAL_PREVIEW_TEST_HOOKS__.resumeChoreography();
+    });
 
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'STOWED');
     await expect(canvas).toHaveAttribute('data-structural-view', 'world');
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
-    await page.evaluate(() => {
-      (window as any).__TEAMAI_STRUCTURAL_PREVIEW_TEST_HOOKS__.resumeChoreography();
-    });
     await expect(canvas).toHaveAttribute('data-structural-choreography-returning-to-world', 'false');
     const settledReturnCanvasPng = await screenshotCanvasImmediately(
       page,
