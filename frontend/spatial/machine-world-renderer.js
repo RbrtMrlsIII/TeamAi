@@ -180,6 +180,62 @@ export function createExtrudedPolygonVertices(polygon,height) {
   return new Float32Array(vertices);
 }
 
+/** Flat, geometric triangle normals for an unindexed TRIANGLES vertex stream. */
+export function createFlatTriangleNormals(vertices) {
+  if (!vertices || vertices.length === 0 || vertices.length % 9 !== 0) {
+    throw new Error('MACHINE_WORLD_SURFACE_VERTEX_STREAM_INVALID');
+  }
+  const normals = new Float32Array(vertices.length);
+  for (let offset = 0; offset < vertices.length; offset += 9) {
+    const abx = vertices[offset + 3] - vertices[offset];
+    const aby = vertices[offset + 4] - vertices[offset + 1];
+    const abz = vertices[offset + 5] - vertices[offset + 2];
+    const acx = vertices[offset + 6] - vertices[offset];
+    const acy = vertices[offset + 7] - vertices[offset + 1];
+    const acz = vertices[offset + 8] - vertices[offset + 2];
+    const nx = aby * acz - abz * acy;
+    const ny = abz * acx - abx * acz;
+    const nz = abx * acy - aby * acx;
+    const length = Math.hypot(nx, ny, nz);
+    if (!Number.isFinite(length) || length < 1e-8) {
+      throw new Error('MACHINE_WORLD_SURFACE_TRIANGLE_DEGENERATE');
+    }
+    const normal = [nx / length, ny / length, nz / length];
+    for (let vertex = 0; vertex < 3; vertex += 1) {
+      normals.set(normal, offset + vertex * 3);
+    }
+  }
+  return normals;
+}
+
+/** Inverse-transpose of the upper 3×3 model transform, column-major for WebGL. */
+export function createMachineWorldNormalMatrix(modelMatrix) {
+  if (!modelMatrix || modelMatrix.length !== 16) {
+    throw new Error('MACHINE_WORLD_NORMAL_MATRIX_MODEL_INVALID');
+  }
+  const c0 = [modelMatrix[0], modelMatrix[1], modelMatrix[2]];
+  const c1 = [modelMatrix[4], modelMatrix[5], modelMatrix[6]];
+  const c2 = [modelMatrix[8], modelMatrix[9], modelMatrix[10]];
+  const cross = (a, b) => [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0],
+  ];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cofactor0 = cross(c1, c2);
+  const determinant = dot(c0, cofactor0);
+  if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-10) {
+    throw new Error('MACHINE_WORLD_NORMAL_MATRIX_SINGULAR');
+  }
+  const cofactor1 = cross(c2, c0);
+  const cofactor2 = cross(c0, c1);
+  return new Float32Array([
+    cofactor0[0] / determinant, cofactor0[1] / determinant, cofactor0[2] / determinant,
+    cofactor1[0] / determinant, cofactor1[1] / determinant, cofactor1[2] / determinant,
+    cofactor2[0] / determinant, cofactor2[1] / determinant, cofactor2[2] / determinant,
+  ]);
+}
+
 function shapeBuffer(gl, polygon, height) {
   return createExtrudedPolygonVertices(polygon, height);
 }
@@ -502,6 +558,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; varying vec3 W; void main(){vec4 wp=M*vec4(p,1.0);W=wp.xyz;gl_Position=P*V*wp;}',
     'precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*.18+c.rgb*(rimStrength*.10*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}'
   );
+  const shellSurface = program(gl,
+    'attribute vec3 p; attribute vec3 aNormal; uniform mat4 P; uniform mat4 V; uniform mat4 M; uniform mat3 NM; varying vec3 Nw; void main(){vec4 wp=M*vec4(p,1.0);Nw=normalize(NM*aNormal);gl_Position=P*V*wp;}',
+    'precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 Nw; void main(){vec3 n=normalize(Nw);vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*.18+c.rgb*(rimStrength*.10*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}'
+  );
   const line = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; void main(){gl_Position=P*V*M*vec4(p,1.0);}',
     'precision mediump float; uniform vec4 c; void main(){gl_FragColor=c;}'
@@ -523,6 +583,20 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const solidRimStrength = gl.getUniformLocation(solid,'rimStrength');
   const solidRoughness = gl.getUniformLocation(solid,'roughness');
   const solidSpecular = gl.getUniformLocation(solid,'spec');
+  const shellSurfacePos = gl.getAttribLocation(shellSurface, 'p');
+  const shellSurfaceNormal = gl.getAttribLocation(shellSurface, 'aNormal');
+  const shellSurfaceP = gl.getUniformLocation(shellSurface, 'P');
+  const shellSurfaceV = gl.getUniformLocation(shellSurface, 'V');
+  const shellSurfaceM = gl.getUniformLocation(shellSurface, 'M');
+  const shellSurfaceNormalMatrix = gl.getUniformLocation(shellSurface, 'NM');
+  const shellSurfaceColor = gl.getUniformLocation(shellSurface, 'c');
+  const shellSurfaceGlow = gl.getUniformLocation(shellSurface, 'glow');
+  const shellSurfaceKeyIntensity = gl.getUniformLocation(shellSurface, 'keyIntensity');
+  const shellSurfaceFillIntensity = gl.getUniformLocation(shellSurface, 'fillIntensity');
+  const shellSurfaceKeyDirection = gl.getUniformLocation(shellSurface, 'keyDirection');
+  const shellSurfaceRimStrength = gl.getUniformLocation(shellSurface, 'rimStrength');
+  const shellSurfaceRoughness = gl.getUniformLocation(shellSurface, 'roughness');
+  const shellSurfaceSpecular = gl.getUniformLocation(shellSurface, 'spec');
   const linePos = gl.getAttribLocation(line,'p');
   const lineP = gl.getUniformLocation(line,'P');
   const lineV = gl.getUniformLocation(line,'V');
@@ -688,7 +762,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    entry = { buffer, count: data.length / 3 };
+    entry = { buffer, count: data.length / 3, vertices: data };
     primitiveBuffers.set(key, entry);
     return entry;
   }
@@ -710,7 +784,18 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let entry=primitiveBuffers.get(key);if(entry)return entry;
     const polygon=normalizeFacilityBodyOutline(chosen,envelope),data=shapeBuffer(gl,polygon,1),buffer=gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
-    entry={buffer,count:data.length/3};primitiveBuffers.set(key,entry);return entry;
+    entry={buffer,count:data.length/3,vertices:data};primitiveBuffers.set(key,entry);return entry;
+  }
+
+  function ensureSurfaceNormalBuffer(entry) {
+    if (!entry || !entry.vertices || entry.vertices.length !== entry.count * 3) return null;
+    if (entry.surfaceNormalBuffer) return entry.surfaceNormalBuffer;
+    const normals = createFlatTriangleNormals(entry.vertices);
+    const normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+    entry.surfaceNormalBuffer = normalBuffer;
+    return normalBuffer;
   }
 
   function drawBuffer(entry, transform, material, options = {}) {
@@ -719,26 +804,46 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
     const spec = Array.isArray(material?.spec) ? material.spec : [0, 0, 0];
     const roughness = clamp(finite(options.rough, material?.rough ?? 0.5), 0, 1);
-    gl.useProgram(solid);
+    const useSurfaceNormals = options.surfaceNormals === true && Boolean(entry.surfaceNormalBuffer);
+    const activeProgram = useSurfaceNormals ? shellSurface : solid;
+    const positionAttribute = useSurfaceNormals ? shellSurfacePos : solidPos;
+    const projectionUniform = useSurfaceNormals ? shellSurfaceP : solidP;
+    const viewUniform = useSurfaceNormals ? shellSurfaceV : solidV;
+    const modelUniform = useSurfaceNormals ? shellSurfaceM : solidM;
+    const colorUniform = useSurfaceNormals ? shellSurfaceColor : solidColor;
+    const glowUniform = useSurfaceNormals ? shellSurfaceGlow : solidGlow;
+    const keyIntensityUniform = useSurfaceNormals ? shellSurfaceKeyIntensity : solidKeyIntensity;
+    const fillIntensityUniform = useSurfaceNormals ? shellSurfaceFillIntensity : solidFillIntensity;
+    const keyDirectionUniform = useSurfaceNormals ? shellSurfaceKeyDirection : solidKeyDirection;
+    const rimStrengthUniform = useSurfaceNormals ? shellSurfaceRimStrength : solidRimStrength;
+    const roughnessUniform = useSurfaceNormals ? shellSurfaceRoughness : solidRoughness;
+    const specularUniform = useSurfaceNormals ? shellSurfaceSpecular : solidSpecular;
+    gl.useProgram(activeProgram);
     gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
-    gl.enableVertexAttribArray(solidPos);
-    gl.vertexAttribPointer(solidPos, 3, gl.FLOAT, false, 0, 0);
-    gl.uniformMatrix4fv(solidP, false, projection);
-    gl.uniformMatrix4fv(solidV, false, view);
-    gl.uniformMatrix4fv(solidM, false, transform);
-    gl.uniform4f(solidColor, color[0], color[1], color[2], finite(options.alpha, 1));
-    gl.uniform1f(solidGlow, glow);
-    gl.uniform1f(solidKeyIntensity, finite(activeHeroLighting?.keyLight?.intensity, 0.8));
-    gl.uniform1f(solidFillIntensity, finite(activeHeroLighting?.environmentalFillIntensity, 0.6));
+    gl.enableVertexAttribArray(positionAttribute);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.uniformMatrix4fv(projectionUniform, false, projection);
+    gl.uniformMatrix4fv(viewUniform, false, view);
+    gl.uniformMatrix4fv(modelUniform, false, transform);
+    gl.uniform4f(colorUniform, color[0], color[1], color[2], finite(options.alpha, 1));
+    gl.uniform1f(glowUniform, glow);
+    gl.uniform1f(keyIntensityUniform, finite(activeHeroLighting?.keyLight?.intensity, 0.8));
+    gl.uniform1f(fillIntensityUniform, finite(activeHeroLighting?.environmentalFillIntensity, 0.6));
     gl.uniform3f(
-      solidKeyDirection,
+      keyDirectionUniform,
       finite(activeHeroLighting?.keyLight?.direction?.[0], -0.52),
       finite(activeHeroLighting?.keyLight?.direction?.[1], 0.82),
       finite(activeHeroLighting?.keyLight?.direction?.[2], 0.28),
     );
-    gl.uniform1f(solidRimStrength, finite(activeHeroLighting?.grazingRimStrength, 0.5));
-    gl.uniform1f(solidRoughness, roughness);
-    gl.uniform3f(solidSpecular, spec[0], spec[1], spec[2]);
+    gl.uniform1f(rimStrengthUniform, finite(activeHeroLighting?.grazingRimStrength, 0.5));
+    gl.uniform1f(roughnessUniform, roughness);
+    gl.uniform3f(specularUniform, spec[0], spec[1], spec[2]);
+    if (useSurfaceNormals) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, entry.surfaceNormalBuffer);
+      gl.enableVertexAttribArray(shellSurfaceNormal);
+      gl.vertexAttribPointer(shellSurfaceNormal, 3, gl.FLOAT, false, 0, 0);
+      gl.uniformMatrix3fv(shellSurfaceNormalMatrix, false, createMachineWorldNormalMatrix(transform));
+    }
     gl.drawArrays(gl.TRIANGLES, 0, entry.count);
   }
 
@@ -2282,6 +2387,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     // The body skin is a presentation layer around the existing S6/S7 owners.
     // It does not acquire depth-write authority over the real mechanisms.
     gl.depthMask(false);
+    let facilityFocusNormalShellCount = 0;
     const mechanismHousingPrimitiveShapes = [];
     for (const shell of facilityBodyShells) {
       const authoredOutline = Array.isArray(shell.outline) && shell.outline.length >= 3;
@@ -2296,6 +2402,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         ? ensureFacilityBodyBuffer(shell.silhouette,shell.outline,shell.envelopeOutline)
         : ensurePrimitiveBuffer(primitiveShape);
       const selected = shell.branchId === activePresentationBranchId;
+      const useSurfaceNormals = facilityFocused && selected;
+      if (useSurfaceNormals) {
+        if (!ensureSurfaceNormalBuffer(buffer)) {
+          throw new Error('S7_FOCUS_SURFACE_NORMALS_UNAVAILABLE:' + shell.branchId + ':' + shell.layer);
+        }
+        facilityFocusNormalShellCount += 1;
+      }
       const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
       const material = shell.materialRole === 'glass'
         ? activeHeroMaterials.glass
@@ -2335,10 +2448,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           emit: selected ? 0.10 : 0.035,
           glow: selected ? 0.12 : 0.035,
           alpha: layerAlpha,
+          surfaceNormals: useSurfaceNormals,
         },
       );
     }
     gl.depthMask(true);
+    canvas.dataset.machineWorldFacilityFocusNormalProfile = facilityFocused ? 's7-face-normal-v1' : 'position-approx';
+    canvas.dataset.machineWorldFacilityFocusNormalShellCount = String(facilityFocusNormalShellCount);
     canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
     canvas.dataset.machineWorldFacilityServiceBayCount = String(
       facilityBodyShells.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
