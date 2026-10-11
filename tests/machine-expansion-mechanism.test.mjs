@@ -312,3 +312,81 @@ test('S5 real Seat-01 envelope plans are bounded against the existing outer faci
     if (plan.clearancePlan.collision) assert.ok(plan.clearancePlan.maxSafeAmount < 1);
   }
 });
+
+
+test('S5 expansion stays clear of six closed sibling divisions across the full Seat and shell-state matrix', () => {
+  const divisionIds = [
+    'SEAT_CONNECTION',
+    'SEAT_BEHAVIOR',
+    'SEAT_TOOLKIT',
+    'SEAT_CAPABILITIES',
+    'SEAT_AUTHORIZATION',
+    'SEAT_WORKSPACE_SCOPE',
+    'SEAT_TASK_EVIDENCE',
+  ];
+  const shellAmounts = [0, 0.5, 1];
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const shellAmount of shellAmounts) {
+      const core = createBranchConnectionCore({
+        seatCount,
+        expansionAmount: shellAmount,
+      });
+      const seats = core.parts.filter((part) => part.kind === 'inner-pod');
+      const outerHousings = core.parts.filter((part) => part.kind === 'outer-housing');
+
+      for (const seat of seats) {
+        const closedSiblingSubjects = divisionIds.map((childId, childIndex) => {
+          const geometry = deriveFocusedSeatDivisionGeometry({
+            parent: seat,
+            childId,
+            childIndex,
+            amount: 0,
+          });
+          const assembly = deriveMachineSeatDivisionAssembly({
+            parent: seat,
+            childId,
+            childIndex,
+            amount: 0,
+            geometry,
+          });
+          assert.ok(assembly?.subject, `missing closed sibling subject: ${seat.branchId}/${childId}`);
+          return { childId, subject: assembly.subject };
+        });
+
+        const worldObstacles = [
+          ...outerHousings,
+          ...seats.filter((otherSeat) => otherSeat.branchId !== seat.branchId),
+        ];
+
+        for (const [childIndex, childId] of divisionIds.entries()) {
+          const siblingObstacles = closedSiblingSubjects
+            .filter((entry) => entry.childId !== childId)
+            .map((entry) => entry.subject);
+          const plan = deriveMachineSeatDivisionExpansionPlan({
+            parent: seat,
+            childId,
+            childIndex,
+            obstacles: [...worldObstacles, ...siblingObstacles],
+            clearance: 0.16,
+          });
+
+          assert.ok(
+            plan?.clearancePlan?.clearanceSatisfiedAtClosed,
+            `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}`,
+          );
+          assert.equal(
+            plan?.clearancePlan?.collision,
+            false,
+            `division travel collides with a world or closed-sibling obstacle: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}`,
+          );
+          assert.equal(
+            plan?.clearancePlan?.maxSafeAmount,
+            1,
+            `division travel was unexpectedly limited: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}`,
+          );
+        }
+      }
+    }
+  }
+});
