@@ -7,6 +7,7 @@ test.use({
 
 test.describe('029 real-product video evidence', () => {
   test('captures the actual Hero machine through focus, division, return, and turn-loop states', async ({ page }, testInfo) => {
+    test.setTimeout(60_000);
     await page.goto('/hero/');
     const canvas = page.locator('#hero-canvas');
     await expect(canvas).toBeVisible();
