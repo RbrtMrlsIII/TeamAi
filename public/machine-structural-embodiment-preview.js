@@ -46,6 +46,8 @@ let choreographyStage = 0;
 let choreographyFromStage = 0;
 let choreographyProgress = 1;
 let choreographyFrame = 0;
+let choreographyTick = null;
+let choreographyPaused = false;
 let choreographyStartedAt = 0;
 let choreographyLastFrameAt = 0;
 const CHOREOGRAPHY_DURATION_MS = 900;
@@ -684,12 +686,15 @@ function renderView() {
 function cancelChoreographyAnimation() {
   if (choreographyFrame) cancelAnimationFrame(choreographyFrame);
   choreographyFrame = 0;
+  choreographyTick = null;
+  choreographyPaused = false;
   choreographyStartedAt = 0;
   choreographyLastFrameAt = 0;
 }
 
 function startChoreographyTransition(targetStage) {
   if (choreographyFrame) return;
+  choreographyPaused = false;
   choreographyFromStage = choreographyStage;
   choreographyStage = ((Math.trunc(Number(targetStage) || 0) % STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT)
     + STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT) % STRUCTURAL_PREVIEW_CHOREOGRAPHY_STAGE_COUNT;
@@ -697,6 +702,10 @@ function startChoreographyTransition(targetStage) {
   choreographyStartedAt = performance.now();
   choreographyLastFrameAt = 0;
   const tick = (timestamp) => {
+    if (choreographyPaused) {
+      choreographyFrame = 0;
+      return;
+    }
     const elapsed = Math.max(0, timestamp - choreographyStartedAt);
     const frameElapsed = choreographyLastFrameAt > 0
       ? Math.max(0, timestamp - choreographyLastFrameAt)
@@ -720,12 +729,15 @@ function startChoreographyTransition(targetStage) {
       return;
     }
     choreographyFrame = 0;
+    choreographyTick = null;
+    choreographyPaused = false;
     choreographyStartedAt = 0;
     choreographyLastFrameAt = 0;
     choreographyFromStage = choreographyStage;
     choreographyProgress = 1;
     renderView();
   };
+  choreographyTick = tick;
   choreographyFrame = requestAnimationFrame(tick);
 }
 
@@ -756,4 +768,33 @@ document.querySelector('[data-action="transform"]')?.addEventListener('click', (
   startChoreographyTransition(targetStage);
 });
 window.addEventListener('resize', renderView);
+
+// Install a screenshot pause/resume seam only for the isolated QA preview test.
+if (new URLSearchParams(window.location.search).get('testMode') === '1') {
+  Object.defineProperty(window, '__TEAMAI_STRUCTURAL_PREVIEW_TEST_HOOKS__', {
+    configurable: false,
+    enumerable: false,
+    value: Object.freeze({
+      pauseChoreography() {
+        choreographyPaused = true;
+        if (choreographyFrame) cancelAnimationFrame(choreographyFrame);
+        choreographyFrame = 0;
+        return Object.freeze({
+          paused: choreographyPaused,
+          progress: choreographyProgress,
+          fromStage: choreographyFromStage,
+          toStage: choreographyStage,
+          returningToWorld: choreographyStage === 0 && choreographyFromStage > 0,
+        });
+      },
+      resumeChoreography() {
+        if (!choreographyPaused) return;
+        choreographyPaused = false;
+        if (choreographyTick && choreographyProgress < 1 && !choreographyFrame) {
+          choreographyFrame = requestAnimationFrame(choreographyTick);
+        }
+      },
+    }),
+  });
+}
 boot();

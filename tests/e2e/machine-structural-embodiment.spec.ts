@@ -1,13 +1,13 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
 
-async function screenshotCanvasImmediately(page: Page, canvas: Locator) {
+async function screenshotCanvasImmediately(page: Page, canvas: Locator, path?: string) {
   const bounds = await canvas.boundingBox();
   if (!bounds) throw new Error('Structural preview canvas has no visible bounding box');
   // Page screenshot with a clip captures the composited canvas immediately.
   // Locator.screenshot() waits for element stability, which can outlast a
   // choreography midpoint when whole-world rendering is expensive.
-  return page.screenshot({ clip: bounds });
+  return page.screenshot({ clip: bounds, path });
 }
 
 async function canvasPixelDelta(page: Page, baselinePng: Buffer, candidatePng: Buffer) {
@@ -64,7 +64,7 @@ async function canvasPixelDelta(page: Page, baselinePng: Buffer, candidatePng: B
 
 test.describe('S2-S10 structural embodiment candidate', () => {
   test('composes the structural machine in one Three.js canvas', async ({ page }) => {
-    await page.goto('/spatial/machine-structural-embodiment-preview.html');
+    await page.goto('/spatial/machine-structural-embodiment-preview.html?testMode=1');
     const status = page.locator('[data-structural-status]');
     const canvas = page.locator('canvas[aria-label="S2-S10 structural embodiment candidate"]');
     await expect(status).toContainText('READY · WORLD · 10 seats · 4 facilities · 7 divisions · ');
@@ -97,7 +97,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges')))
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
     await page.screenshot({ path: 'test-results/s2-s10-world.png', fullPage: true });
-    const worldCanvasPng = await screenshotCanvasImmediately(page, canvas);
+    const worldCanvasPng = await screenshotCanvasImmediately(page, canvas, 'test-results/s2-s10-world-canvas.png');
 
     const browserChoreography = await page.evaluate(async () => {
       const module = await import('/machine-structural-choreography-sequence.js');
@@ -141,6 +141,20 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       .toBeGreaterThan(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-three-topology-object-reuse-count')))
       .toBeGreaterThan(0);
+    const transformMidCanvasPng = await screenshotCanvasImmediately(
+      page,
+      canvas,
+      'test-results/s2-s10-transform-mid-canvas.png',
+    );
+    const transformMidPixelDelta = await canvasPixelDelta(page, worldCanvasPng, transformMidCanvasPng);
+    console.log(
+      '[structural-transform-mid] progress=' + transformMid.progress.toFixed(3)
+      + ' transformation=' + transformMid.transformation.toFixed(3)
+      + ' changedCanvasPixels=' + Math.round(transformMidPixelDelta.changedPixelRatio * 10000) / 100
+      + '% (' + transformMidPixelDelta.changedPixels + '/' + (transformMidPixelDelta.width * transformMidPixelDelta.height) + ')',
+    );
+    expect(transformMidPixelDelta.changedPixelRatio, 'transform midpoint must visibly differ from settled World')
+      .toBeGreaterThan(0.005);
     await page.screenshot({ path: 'test-results/s2-s10-transform-mid.png', fullPage: true });
     await expect(canvas).toHaveAttribute('data-structural-choreography-phase', 'SHELL_DEPLOYING');
     await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
@@ -167,12 +181,20 @@ test.describe('S2-S10 structural embodiment candidate', () => {
         const progress = Number(canvas?.getAttribute('data-structural-choreography-progress'));
         if (!(canvas?.getAttribute('data-structural-choreography-returning-to-world') === 'true')) return false;
         if (!(progress > 0.50 && progress < 0.70)) return false;
+        const hooks = (window as any).__TEAMAI_STRUCTURAL_PREVIEW_TEST_HOOKS__;
+        if (!hooks) throw new Error('Structural preview test hooks were not installed');
+        const pause = hooks.pauseChoreography();
+        if (pause?.paused !== true) return false;
         return {
           progress,
           view: canvas?.getAttribute('data-structural-view'),
           topologyMode: canvas?.getAttribute('data-structural-topology-mode'),
           cameraMode: canvas?.getAttribute('data-structural-camera-mode'),
           transformation: Number(canvas?.getAttribute('data-structural-choreography-transformation')),
+          paused: pause.paused,
+          pausedProgress: pause.progress,
+          pauseFromStage: pause.fromStage,
+          pauseToStage: pause.toStage,
         };
       },
       undefined,
@@ -185,9 +207,16 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     expect(returnMid.progress).toBeLessThan(0.70);
     expect(returnMid.transformation).toBeGreaterThan(0);
     expect(returnMid.transformation).toBeLessThan(1);
-    // Capture the WebGL canvas immediately. A full-page screenshot can stall
-    // long enough for a slow RAF transition to settle before the pixel sample.
-    const returnMidCanvasPng = await screenshotCanvasImmediately(page, canvas);
+    expect(returnMid.paused).toBe(true);
+    expect(returnMid.pauseFromStage).toBe(5);
+    expect(returnMid.pauseToStage).toBe(0);
+    expect(returnMid.pausedProgress).toBe(returnMid.progress);
+    // Freeze the real RAF-driven midpoint during capture, then resume below.
+    const returnMidCanvasPng = await screenshotCanvasImmediately(
+      page,
+      canvas,
+      'test-results/s2-s10-return-mid-canvas.png',
+    );
     const returnMidPixelDelta = await canvasPixelDelta(page, worldCanvasPng, returnMidCanvasPng);
     console.log(
       '[structural-return-mid] progress=' + returnMid.progress.toFixed(3)
@@ -205,9 +234,16 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-topology-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-camera-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
+    await page.evaluate(() => {
+      (window as any).__TEAMAI_STRUCTURAL_PREVIEW_TEST_HOOKS__.resumeChoreography();
+    });
     await expect(canvas).toHaveAttribute('data-structural-choreography-returning-to-world', 'false');
+    const settledReturnCanvasPng = await screenshotCanvasImmediately(
+      page,
+      canvas,
+      'test-results/s2-s10-return-settled-canvas.png',
+    );
     await page.screenshot({ path: 'test-results/s2-s10-return.png', fullPage: true });
-    const settledReturnCanvasPng = await screenshotCanvasImmediately(page, canvas);
     const midVsSettledPixelDelta = await canvasPixelDelta(page, returnMidCanvasPng, settledReturnCanvasPng);
     console.log(
       '[structural-return-settled] changedCanvasPixels='
@@ -218,7 +254,6 @@ test.describe('S2-S10 structural embodiment candidate', () => {
       midVsSettledPixelDelta.changedPixelRatio,
       'return midpoint must visibly differ from the settled return canvas',
     ).toBeGreaterThan(0.005);
-    await page.screenshot({ path: 'test-results/s2-s10-return-mid.png', fullPage: true });
 
     await page.getByRole('button', { name: 'Seat 1 / Divisions', exact: true }).click();
     await expect(status).toContainText('READY · SEAT · 10 seats · 4 facilities · 7 divisions · ');
