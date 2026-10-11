@@ -67,6 +67,7 @@ This section prevents material engineering decisions from existing only in chat.
 | D-029-11 | Y1 adapter converts actual S2 Core + S3 Seat 1 descriptors into one Three.js scene in an isolated proof surface before production Hero migration | IMPLEMENTED / BROWSER-VERIFIED | production Hero renderer remains unchanged until fixed-state parity/performance/rollback evidence exists |
 | D-029-12 | Exact application head 5a4a353 passed Project Tests + canonical package and the complete security/governance suite; Browser run 36547501284 also passed after the Y1 null-safety and S23 synchronous-tier fixes | VERIFIED / CURRENT | Y1 substrate proof is no longer blocked by the earlier Browser defects; structural candidate can advance without promoting production raw-WebGL replacement |
 | D-029-14 | S4/S5 movement must be checked against authored component subjects, all supported Seat densities, shell states, sibling divisions, Pods, and outer housings | REPOSITORY-VERIFIED / EXACT-HEAD PASS | preserve the 0.16 floor, density-aware fan, 0.18 Connection travel, and explicit AABB limitation; do not regress to simplified division rectangles |
+| D-029-15 | Structural-preview return-state evidence must sample the actual RAF-rendered canvas while the genuine midpoint is held stable; DOM telemetry and post-settled full-page captures are insufficient | REPOSITORY-VERIFIED / EXACT-HEAD PASS | in QA preview `?testMode=1`, pause only at the observed return midpoint, save the canvas PNG, verify pixel delta against both settled endpoints, then resume; keep test hooks unavailable on ordinary preview routes |
 
 ### Application-head verification recorded before documentation sync
 
@@ -1861,7 +1862,7 @@ Browser run `38132947543` on earlier head `d96a135325af54d351b485592fa08bf05872e
 - Security Static Analysis `38135606853`: PASS.
 - Deep Security Static Analysis `38135606840`: PASS.
 - Canonical Browser Verification `38135606823`: PASS; **92 passed / 4 skipped / 0 failed**. Browser artifact `11701120572`, 12,366,558 bytes; SHA-256 `d2527a61aac4fdae48f6b8a21e705ed992b4b77bf547558f51d3a8dc282a266b`. The artifact download hash matched the CI digest; ZIP integrity passed; no failure-context, failed screenshot, or trace files were present.
-- Artifact screenshots `s2-s10-transform-mid.png`, `s2-s10-return-mid.png`, and `s2-s10-return.png` show distinct intermediate transform, intermediate return, and settled world states.
+- **Erratum, added 2026-10-11:** the initially archived full-page `s2-s10-return-mid.png`, `s2-s10-return.png`, and `s2-s10-world.png` were later found pixel-identical. The old `return-mid` full-page capture occurred after settling and is withdrawn as evidence of an intermediate visual state. E424-2026-10-11G contains a correct, separately saved canvas-only midpoint capture and pixel proof.
 - Four mirrored module pairs were independently byte-compared inside the downloaded Full Project ZIP: division geometry (5,962 bytes each), core layout (9,700 each), division assembly (23,168 each), structural-preview runtime (29,689 each). The inner project ZIP contains 1,114 entries.
 
 #### Existing facility-focus visual experiment — measured result, not final acceptance
@@ -1872,3 +1873,43 @@ The current Browser artifact also contains production-route Analysis and Operati
 - The experiment improves midtone/legibility while the selected silhouette remains recognizable, but highlight occupancy barely moves and the broader product remains darker/sparser than the endorsed PNG/MP4 direction. Retain this alpha profile for now; keep human visual acceptance open. The next bounded slice should change only focused S7 surface response (for example a measured specular-gain experiment), holding alpha, roughness, camera subject, geometry, topology, ports, Seat law, and 0.16 clearance fixed.
 
 **Acceptance boundary:** all five required gates PASS on this exact code-bearing head. Production deployment/runtime proof, formal S30/S0–S33 exit, human visual acceptance, merge/release authorization, and final 029 completion remain open.
+
+### E424-2026-10-11G — Deterministic rendered return-midpoint proof
+
+**Code-bearing proof head:** `23e103e251f8cc0cbe297c4d7ba43702a9a5f50f`  
+**Vehicle:** PR #424, `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Issue #401 remains the sole global Current Slice.  
+**Acceptance boundary:** all five repository/security/governance/browser gates pass on this exact code-bearing head. This closes the *preview return-frame capture* gap only; it does not imply production deployment, human visual acceptance, triangle-level mesh collision proof, merge/release authorization, or overall 029 completion.
+
+#### Why the earlier proof claim was withdrawn
+
+Browser runs on `562f14fe…`, `d0434b4f…`, `f90a8212…`, `9ecc7560…`, and `f2835c42…` tested pixel differences. The first strict run exposed a real evidence gap: the DOM could report progress around 0.5 while the saved/captured canvas sample contained **0 changed pixels**. Reducing the general frame cap to 50 ms made forward choreography miss its five-second stage assertion; reverting to 180 ms and then using a page screenshot still did not produce a stable midpoint. Trace timing showed a Playwright locator screenshot could block for about 2.7 seconds while the expensive whole-world preview continued advancing. A full-page file named `return-mid` was also recorded only after the settle assertions. These artifacts did not prove a distinct return midpoint.
+
+#### Final capture method
+
+- The runtime keeps a 180 ms cap for general/forward slow frames and a return-only 40 ms cap when transitioning from the settled Seat stage to World. At normal RAF cadence neither cap alters the nominal cadence.
+- A pause/resume seam is exposed only when the standalone preview is opened with `?testMode=1`; no ordinary route or production Hero receives this API.
+- Playwright waits for the real RAF-driven transition to reach progress between 0.50 and 0.70, reads the actual DOM state, pauses the pending frame, records the canvas PNG, compares pixels, and resumes before asserting the settled endpoint.
+- The E2E now saves `s2-s10-world-canvas.png`, `s2-s10-transform-mid-canvas.png`, `s2-s10-return-mid-canvas.png`, and `s2-s10-return-settled-canvas.png`. It asserts >0.5% changed pixels at maximum per-pixel RGB-channel delta >8 from World to Transform-mid, World to Return-mid, and Return-mid to settled Return.
+
+#### Exact-head pixel evidence
+
+- Return sample: progress **0.504**, transformation **0.494**, source stage 5 → target stage 0; view `world`, camera `RETURN_TO_WORLD`, pause confirmed.
+- World canvas: 1280×661, SHA-256 `99468bdee473c5e4dde69d4aa4a5ccdb34ba86af8ea639fcec5c4176b201b66b`.
+- Transform-mid canvas: SHA-256 `d203a401857567b692f12af8a55669dbd6df682b9e5f2cec89e9dbfc55a0117c`; changed pixels vs World **69,607 / 846,080 = 8.23%**.
+- Return-mid canvas: SHA-256 `6209b8ec3514103167452b1ca0767d69aa7975b5ea365d1447213519bfadce17`; changed pixels vs World **65,267 / 846,080 = 7.71%**.
+- Settled Return canvas is byte-identical to the initial World canvas (SHA-256 `99468bdee473c5e4dde69d4aa4a5ccdb34ba86af8ea639fcec5c4176b201b66b`). Return-mid differs from settled Return by **65,267 / 846,080 = 7.71%**.
+
+#### Exact-head five-gate evidence
+
+- Full-System `38151012015`: **PASS, 1,287 / 1,287 tests**. Full Project ZIP artifact `11706629159`, SHA-256 `83e9b21df1d1f634e142d8dad379c360ba5919fc7d6e5ee35b996bf8f8d8dc37`.
+- Governance Integrity `38151012000`: **PASS**.
+- Security Static Analysis `38151012037`: **PASS**.
+- Deep Security Static Analysis `38151012038`: **PASS**.
+- Canonical Browser Verification `38151012021`: **PASS, 92 passed / 4 skipped / 0 failed**. Browser artifact `11705524834`, 11,896,878 bytes; SHA-256 `f2b7649c35285da032f29ac6b1ea5522ef968b01f1ddb09374bb4685387ee049`.
+- Both downloaded artifacts were locally hashed against their CI SHA-256 digests; ZIP integrity passed. The Browser artifact includes the saved midpoint PNGs. Source/public `machine-structural-embodiment-preview.js` is byte-identical (31,488 bytes, SHA-256 `d09ca83cded93513d3fb114654bf9f4563f1569dfcff45e093bcad37acd21443`); the choreography sequence pair also matches (4,734 bytes, SHA-256 `d4b16e408e69e82829df8dac7aedd281b0865bfcc9edf2fdbb3ded79b02ce034`).
+
+#### Next boundary
+
+The return-frame capture defect is now closed with exact-head Browser evidence. The wider machine is still darker/sparser than the endorsed MP4/PNG direction; the alpha experiment's midtone improvements remain measurements, not human visual acceptance. Continue physical-first: choose one existing S7 family after a cold comparison against the repository reference MP4/PNG and its current machinery/topology, design its nested outer-machine massing, prove its envelope/clearance, and collect production-route Browser evidence before returning to materials, specular response, or polish.
+
+**Acceptance boundary:** the five required gates pass on `23e103e…`. Production deployment/runtime proof, human visual acceptance, formal S30/S0–S33 exit, merge/release authorization, and final 029 completion remain open.

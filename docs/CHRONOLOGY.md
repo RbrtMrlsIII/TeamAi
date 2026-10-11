@@ -18,17 +18,31 @@ later work must not contradict it without explicit reconciliation
 
 When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidence → merge.**
 
-## CURRENT OVERLAY — 2026-10-11 S4/S5 authored-subject clearance and preview timing
+## CURRENT OVERLAY — 2026-10-11 S4/S5 clearance and rendered return midpoint
 
-This overlay supersedes older uses of “current” below for exact head, geometry constants, Browser result, and visual next slice. Historical entries remain valid for their exact checkpoints only.
 
-- Active spatial vehicle remains PR #424 / `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Global Current Slice remains Issue #401 in `Masterplan/NEXT_SLICES.md`.
-- Current code-bearing head `afab9850fabbf199233a2a80d4b464e95c7f9a96`: Full-System `38135606833` PASS (1,287 / 1,287); Governance `38135606838` PASS; Security `38135606853` PASS; Deep Security `38135606840` PASS; Canonical Browser `38135606823` PASS (92 passed / 4 skipped / 0 failed). Browser artifact `11701120572`, SHA-256 `d2527a61aac4fdae48f6b8a21e705ed992b4b77bf547558f51d3a8dc282a266b`. Full Project artifact `11701017421`, SHA-256 `da1709f69f145b9267b5dc60e03db8d3b01fbe3c442945035e053fb59c570b45`.
-- Current S4 fan: 180° uniform through nine Seats, 165° density-specific and symmetric for Seat 10; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18.
-- S5 tests actual authored division subjects across Seats 1–10 × three shell states × seven divisions against world obstacles and six closed sibling subjects. Both matrices pass the 0.16 conservative AABB clearance contract. This is not triangle-level mesh collision proof.
-- The earlier Browser failure on `d96a135…` came from progress derived directly from wall-clock elapsed time; an expensive whole-world render could skip the transition midpoint. The owning preview runtime now accumulates bounded per-frame progress; new Browser captures show transform-mid, return-mid, and settled return states.
-- Same-artifact fixed-ROI analysis of facility focus reports Analysis mean luma 53.212 → 57.634 (+8.3%) and Operations 51.527 → 54.581 (+5.9%), while high-highlight occupancy barely moves. Keep the alpha profile fixed for a single-variable selected-focus specular-response experiment.
-- Human visual acceptance, deployment/runtime proof, merge/release authorization, and formal S30/S0–S33 exit remain open. Details and hashes are in E424-2026-10-11F and Issue #409.
+
+This overlay supersedes older uses of “current” for exact head, Browser status, capture claims and next work. Older entries remain evidence for their own commits only.
+
+
+
+- Active vehicle: PR #424 / `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Global Current Slice remains Issue #401 in `Masterplan/NEXT_SLICES.md`.
+
+- Current code-bearing head `23e103e251f8cc0cbe297c4d7ba43702a9a5f50f`: Full-System `38151012015` PASS (1,287/1,287); Governance `38151012000` PASS; Security `38151012037` PASS; Deep Security `38151012038` PASS; Browser `38151012021` PASS (92 passed / 4 skipped / 0 failed).
+
+- Full Project artifact `11706629159`, SHA-256 `83e9b21df1d1f634e142d8dad379c360ba5919fc7d6e5ee35b996bf8f8d8dc37`. Browser artifact `11705524834`, SHA-256 `f2b7649c35285da032f29ac6b1ea5522ef968b01f1ddb09374bb4685387ee049`. Both downloads matched CI digests and passed ZIP integrity.
+
+- Current S4 fan: uniform 180° for Seats 1–9; symmetric 165° for Seat 10 at angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18. S5 proof remains conservative authored-subject sampled AABB with 0.16 clearance, not triangle-mesh collision.
+
+- Return-frame proof: QA-only `?testMode=1` freezes the actual RAF at progress 0.504 / transformation 0.494, saves the current canvas, checks pixel delta from World and settled Return, and resumes. Transform-mid 8.23% (69,607/846,080); return-mid 7.71% (65,267/846,080) against both endpoints. World and settled-return canvas PNGs are exact byte matches; saved return-mid PNG is distinct. See E424-G.
+
+- The older `afab9850…` Browser artifact's full-page return-mid screenshot was incorrectly described as a distinct intermediate state; hash inspection proved the saved full-page return-mid, settled return and World captures were identical. That claim is withdrawn; E424-G is the valid rendered evidence.
+
+- The selected-shell-alpha experiment improved mean ROI luma by 8.3% Analysis and 5.9% Operations, but highlight occupancy barely changed. It is a completed diagnostic, not the next slice; do not polish materials before structural massing.
+
+- Next bounded #424 slice: compare the real repository MP4/PNG reference to one existing S7 family, diagnose missing nested outer-machine structure around current machinery/manifold/conduit topology, derive its envelope and prove 1–10 Seat / 0.16 clearance before Browser proof.
+
+- Human visual acceptance, production deployment/runtime proof, triangle-level collision proof, formal S30/S0–S33 exit, merge/release authorization and 029 completion remain open. Issue #401 stays the single global frontier.
 
 ## Historical 2026-09-29 continuation order (superseded by the 2026-10-11 overlay)
 

@@ -105,11 +105,11 @@ Evidence: E404-NUMERIC in TEAMAI_3D_WORLD_404_EVIDENCE.md.
 - [x] Connection coupler travel is bounded at 0.18 units; the owning S4 assembly, public mirror, and tests agree.
 - [x] Full authored S4 component-subject sweep passes Seats 1–10 × shell states 0 / 0.5 / 1 × seven divisions against other Pods and outer housings.
 - [x] The same matrix passes with the six other closed division assembly subjects added as obstacles; clearance is 0.16 and maxSafeAmount is 1 for every supported case.
-- [x] Structural-preview choreography preserves observable intermediate states under slow rendering; source/public modules remain byte-identical.
-- [x] Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser checks pass on code-bearing head `afab9850fabbf199233a2a80d4b464e95c7f9a96`.
+- [x] Structural-preview transform and return frames are captured from the actual WebGL canvas; return-mid differs from World and settled Return by 7.71% of 846,080 pixels at per-channel threshold >8.
+- [x] Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser checks pass on code-bearing head `23e103e251f8cc0cbe297c4d7ba43702a9a5f50f` (Full-System 1,287/1,287; Browser 92 passed / 4 skipped).
 - [ ] Triangle-level mesh collision proof and human visual acceptance remain open; current clearance evidence is conservative sampled AABB subject clearance.
 
-Evidence: E424-2026-10-11F in TEAMAI_3D_WORLD_404_EVIDENCE.md.
+Evidence: E424-2026-10-11F (geometry/timing ancestry) and E424-2026-10-11G (rendered return-frame proof) in TEAMAI_3D_WORLD_404_EVIDENCE.md.
 
 ### A5. Root inheritance and world-expression contract
 - [x] S0-S10 are explicitly declared as the canonical structural roots of the 029 spatial machine, not merely sequential implementation phases.

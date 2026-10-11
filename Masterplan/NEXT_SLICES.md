@@ -34,21 +34,23 @@ Historical exact-head Browser artifacts remain diagnostic provenance. S7-V21 mac
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
-#### 2026-10-11 exact-head S4/S5 and structural-preview verification
+#### 2026-10-11 exact-head S4/S5 and rendered return-midpoint verification
 
-The current **code-bearing** head is `afab9850fabbf199233a2a80d4b464e95c7f9a96` on the same active PR #424 branch. Exact-head five-gate proof:
-- Full-System `38135606833`: PASS, 1,287 / 1,287 tests; package artifact `11701017421`, SHA-256 `da1709f69f145b9267b5dc60e03db8d3b01fbe3c442945035e053fb59c570b45`.
-- Governance `38135606838`: PASS.
-- Security `38135606853`: PASS.
-- Deep Security `38135606840`: PASS.
-- Canonical Browser `38135606823`: PASS, 92 passed / 4 skipped / 0 failed; artifact `11701120572`, SHA-256 `d2527a61aac4fdae48f6b8a21e705ed992b4b77bf547558f51d3a8dc282a266b`.
-- Both S5 authored-component AABB matrices pass across Seats 1–10, shell states 0 / 0.5 / 1, seven divisions, world obstacles and six closed sibling divisions at the 0.16 floor. Four important source/public module pairs were independently byte-compared from the verified Full Project ZIP.
+The current code-bearing head is `23e103e251f8cc0cbe297c4d7ba43702a9a5f50f` on the existing PR #424 branch. Exact-head five-gate proof:
+- Full-System `38151012015`: **PASS, 1,287 / 1,287 tests**; Full Project artifact `11706629159`, SHA-256 `83e9b21df1d1f634e142d8dad379c360ba5919fc7d6e5ee35b996bf8f8d8dc37`.
+- Governance `38151012000`: PASS.
+- Security `38151012037`: PASS.
+- Deep Security `38151012038`: PASS.
+- Canonical Browser `38151012021`: **PASS, 92 passed / 4 skipped / 0 failed**; Browser artifact `11705524834`, SHA-256 `f2b7649c35285da032f29ac6b1ea5522ef968b01f1ddb09374bb4685387ee049`.
+- Both downloaded artifacts match their CI SHA-256 digests and pass ZIP integrity.
 
-Current S4 fan: uniform 180° for Seats 1–9; a symmetric 165° dense fan for Seat 10 at angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18. The old 1.66 compact-factor model is a historical simplified-division checkpoint, not the current authored-assembly contract.
+Current S4 fan: uniform 180° for Seats 1–9; symmetric 165° for Seat 10 at angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18. The previous 1.66 compact factor remains historical. S5 authored-subject matrices pass both Seats 1–10 × shell states 0 / 0.5 / 1 × seven divisions against world obstacles, then with six sibling divisions, at the 0.16 conservative AABB floor. Triangle-mesh collision proof is still separate.
 
-The structural-preview Browser timeout is fixed at its runtime owner by bounded per-frame progress, so slow whole-world renders cannot skip observable intermediate states. Fresh Browser artifact inspection confirms transform-mid, return-mid, and settled return captures. This closes repository/runtime-browser verification of the authored AABB clearance and preview transition contract, not triangle-mesh collision proof or final visual acceptance. See `E424-2026-10-11F`.
+Rendered preview return proof is now real rather than telemetry-only. The QA-only `?testMode=1` pause seam freezes the actual RAF at return progress 0.504 / transformation 0.494 and saves the visible canvas before resuming. At per-pixel max RGB delta >8: transform-mid changes 69,607 / 846,080 pixels (8.23%); return-mid changes 65,267 / 846,080 (7.71%) from both World and settled Return. The initial World and settled Return canvas PNGs are exact byte matches; the return-mid PNG has its own verified hash. See `E424-2026-10-11G`.
 
-The existing facility-focus alpha profile improved same-ROI mean luma (Analysis +8.3%; Operations +5.9%) while keeping the selected silhouette recognizable, but high-highlight occupancy barely changed. Keep alpha fixed at 0.32 / 0.42 for the next single-variable experiment. **Next bounded visual slice:** increase only selected-facility focus specular response (starting from gain 0.48) and measure the same Analysis / Operations ROIs; do not bundle shell alpha, roughness, camera, normals, or geometry changes. Human visual acceptance, deployment/runtime proof, merge/release authorization, and overall 029 completion remain open.
+**Next bounded spatial slice:** pick one existing S7 facility family through a cold comparison of the actual repository MP4/PNG reference against its current production machinery and semantic topology. Design the missing nested outer-machine massing around the existing machinery, docking/manifold/conduit endpoints; calculate a bounded envelope, verify density and 0.16 clearance, then run exact-head Browser and inspect the saved production artifact. Do not add nested massing to all four families at once, reroute semantic topology, alter Seat cardinality, or use material/specular polish to hide structural omissions.
+
+The completed selected-shell-alpha experiment remains a historical presentation diagnostic: mean ROI luma improved by 8.3% (Analysis) and 5.9% (Operations), but highlights barely changed. Keep that alpha result fixed until the next structural slice is proven. Human visual acceptance, deployment/runtime proof, formal S30 exit, merge/release authorization, and 029 completion remain open. See `E424-2026-10-11F` and `E424-2026-10-11G`.
 
 ### 2026-10-08 S8 endpoint/junction embodiment
 
@@ -320,14 +322,14 @@ Final exact-head proof for this implementation-plus-documentation state is compl
 
 **Implementation:** `S8-FACILITY-CARRIER-V2` consumes the four existing `outer-spine` edges from canonical `machine-world-topology`; it creates no new semantic edge or topology authority. The source/public carrier and renderer are byte-identical. The manifest publishes the carrier, and direct-renderer-import closure remains guarded.
 
-**Next spatial slice inside the existing #424 vehicle:** compare a single selected-shell opacity experiment against the clean exact-head `e15480e…` production screenshots. During valid `FACILITY_FOCUS` only, reduce selected main-shell alpha to 0.32 (from 0.80) and shoulder-plate alpha to 0.42 (from 0.88), and instrument that active profile. Leave unselected family layers, World Overview, base collar/upper cap, material colors/roughness/specular, shader normals, depth-write ordering, geometry/carrier scale, semantic topology, Product Law 1–10 Seat invariant, authored ports and 0.16 route-clearance floor fixed. Inspect the real Browser artifact and compare the same Analysis ROI `(600,330,835,610)` and Operations ROI `(580,330,850,585)` before deciding whether the next slice should be normals, glass/material response or a revised alpha value.
+Historical selected-shell-alpha experiment proposal (completed; not the current next slice): during valid `FACILITY_FOCUS`, main-shell alpha was set to 0.32 and shoulder-plate alpha to 0.42 and compared against fixed Analysis/Operations ROIs. The measured result is recorded in E424-F: mean luma improved, but high-highlight occupancy barely moved. Do not re-run this experiment as the next slice. The current bounded next slice is structural S7 nested-machine embodiment as stated in the current overlay above.
 
 
-### 2026-10-11 exact-head override — read before using historical checkpoints
+### Historical exact-head override — 2026-10-11 checkpoint (superseded by current spatial proof above)
 
 Latest completed code/test proof is `db54ae8ac0a4203dcabc7a097ed1cff12986ad36`: all five gates PASS, with Browser artifact `11676005427` / SHA-256 `cf7610dfc24683ac8a14e4e14c76347fbc31d00c7d3cf936125e920f8f62065c`. The prior `45c896e…` and `23da77a…` records below are historical checkpoints only. See E424-2026-10-11C for the actual Hailuo MP4 hash, inspected frame states, exact production screenshot, descriptive luma comparison and the newly confirmed production Facility Focus connectivity gap. The structural Three.js Facility screenshot remains QA evidence, not production-path evidence.
 
 
-### 2026-10-11 current-head override — selected shell alpha experiment
+### Historical current-head override — selected-shell alpha experiment (completed; superseded by E424-2026-10-11G)
 
-The last fully Browser-verified parent is `e15480e25684efa5587336c3e86e825c0516965b` (all five gates PASS, Browser 92/4). Its production captures are menu-closed. The next source delta is limited to selected `main-shell` / `shoulder-plate` alpha values during valid `FACILITY_FOCUS` and matching focus-profile telemetry/tests. Its exact-head CI state must be read live from PR #424 after the next commit; do not claim current-head acceptance based on the parent proof. See `E424-2026-10-11E`.
+This is historical provenance for the selected-shell-alpha experiment before it ran. The experiment is complete and its measured results are recorded in E424-F. The live exact-head verification, rendered return capture proof, and current structural next slice are in the 2026-10-11 current overlay and E424-G above.
