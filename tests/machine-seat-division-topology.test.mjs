@@ -44,21 +44,13 @@ test('seven-division fan adapts span and center spacing to Seat density', () => 
   }
 
   const denseAngles = children.map((_, index) => seatDivisionFanAngle(index, 10));
-  const denseExpected = [
-    -(11 * Math.PI) / 24,
-    -(5 * Math.PI) / 16,
-    -Math.PI / 6,
-    0,
-    Math.PI / 6,
-    (5 * Math.PI) / 16,
-    (11 * Math.PI) / 24,
-  ];
+  const denseExpected = [-82.5, -56.35, -30.2, 0, 30.2, 56.35, 82.5]
+    .map((degrees) => (degrees * Math.PI) / 180);
   denseAngles.forEach((angle, index) => assert.ok(Math.abs(angle - denseExpected[index]) < 1e-12));
   const denseSteps = denseAngles.slice(1).map((angle, index) => angle - denseAngles[index]);
   assert.deepEqual(
-    denseSteps.map((step) => Math.round(step * 1e9) / 1e9),
-    [(7 * Math.PI) / 48, (7 * Math.PI) / 48, Math.PI / 6, Math.PI / 6, (7 * Math.PI) / 48, (7 * Math.PI) / 48]
-      .map((step) => Math.round(step * 1e9) / 1e9),
+    denseSteps.map((step) => Math.round((step * 180 / Math.PI) * 1000) / 1000),
+    [26.15, 26.15, 30.2, 30.2, 26.15, 26.15],
   );
 });
 

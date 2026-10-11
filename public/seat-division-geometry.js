@@ -26,15 +26,10 @@ export function seatDivisionFanSpan(seatCount = null) {
     : SEAT_DIVISION_FAN_SPAN;
 }
 
-const SEAT_DIVISION_DENSE_FAN_ANGLES = Object.freeze([
-  -SEAT_DIVISION_FAN_DENSE_SPAN / 2,
-  -(5 * Math.PI) / 16,
-  -Math.PI / 6,
-  0,
-  Math.PI / 6,
-  (5 * Math.PI) / 16,
-  SEAT_DIVISION_FAN_DENSE_SPAN / 2,
-]);
+const SEAT_DIVISION_DENSE_FAN_ANGLES = Object.freeze(
+  [-82.5, -56.35, -30.2, 0, 30.2, 56.35, 82.5]
+    .map((degrees) => (degrees * Math.PI) / 180),
+);
 
 export function seatDivisionFanAngle(childIndex = 0, seatCount = null) {
   const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));
