@@ -118,7 +118,11 @@ test.describe('029 real-product video evidence', () => {
     await expect(worldMenu).toBeHidden();
     await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-BETA');
+    await worldMenuToggle.click();
+    await expect(worldMenu).toHaveClass(/is-open/);
     await page.locator('[data-facility-focus-return]').click();
+    await expect(worldMenu).toBeHidden();
+    await expect(worldMenuToggle).toHaveAttribute('aria-expanded', 'false');
     await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', '');
