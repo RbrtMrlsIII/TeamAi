@@ -26,8 +26,8 @@ const parent = {
   seam: 0.18,
 };
 
-test('seven-division fan uses the clearance-reviewed 165-degree angular span', () => {
-  assert.equal(SEAT_DIVISION_FAN_SPAN, (11 * Math.PI) / 12);
+test('seven-division fan uses the clearance-reviewed 180-degree angular span', () => {
+  assert.equal(SEAT_DIVISION_FAN_SPAN, Math.PI);
   const angles = children.map((_, index) => seatDivisionFanAngle(index));
   assert.ok(Math.abs(angles[0] + SEAT_DIVISION_FAN_SPAN / 2) < 1e-12);
   assert.ok(Math.abs(angles[angles.length - 1] - SEAT_DIVISION_FAN_SPAN / 2) < 1e-12);

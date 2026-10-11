@@ -9,7 +9,7 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
-export const SEAT_DIVISION_FAN_SPAN = (11 * Math.PI) / 12;
+export const SEAT_DIVISION_FAN_SPAN = Math.PI;
 export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
 export const SEAT_DIVISION_PORT_RADIUS = 0.28;
 
