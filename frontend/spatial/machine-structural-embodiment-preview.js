@@ -49,10 +49,8 @@ let choreographyFrame = 0;
 let choreographyStartedAt = 0;
 let choreographyLastFrameAt = 0;
 const CHOREOGRAPHY_DURATION_MS = 900;
-// Slow whole-world renders must not skip samples; 50 ms is the maximum
-// contribution from one rendered frame. At normal RAF cadence this preserves
-// the nominal duration, while slow frames stretch instead of jumping to settle.
-const CHOREOGRAPHY_MAX_FRAME_DELTA_MS = 50;
+// A slow whole-world render must not skip every observable intermediate state.
+const CHOREOGRAPHY_MAX_FRAME_DELTA_MS = 180;
 
 const DIVISIONS = Object.freeze([
   'SEAT_CONNECTION',
