@@ -51,6 +51,8 @@ let choreographyLastFrameAt = 0;
 const CHOREOGRAPHY_DURATION_MS = 900;
 // A slow whole-world render must not skip every observable intermediate state.
 const CHOREOGRAPHY_MAX_FRAME_DELTA_MS = 180;
+// Preserve a visually sampleable return window when slow rendering would otherwise settle it in two RAF callbacks.
+const CHOREOGRAPHY_RETURN_MAX_FRAME_DELTA_MS = 40;
 
 const DIVISIONS = Object.freeze([
   'SEAT_CONNECTION',
@@ -700,13 +702,17 @@ function startChoreographyTransition(targetStage) {
       ? Math.max(0, timestamp - choreographyLastFrameAt)
       : elapsed;
     choreographyLastFrameAt = timestamp;
-    // Accumulate bounded frame deltas instead of deriving progress directly
-    // from wall time. If renderView stalls, the transition stretches rather
-    // than jumping from an early frame straight to completion.
+    // Keep normal/forward choreography bounded at 180 ms per slow frame.
+    // The final stage-to-world transition needs a longer visible return window
+    // because Playwright and the browser compositor may require multiple frames
+    // to capture its canvas pixels before the next render can settle the scene.
+    const maxFrameDeltaMs = choreographyStage === 0 && choreographyFromStage > 0
+      ? CHOREOGRAPHY_RETURN_MAX_FRAME_DELTA_MS
+      : CHOREOGRAPHY_MAX_FRAME_DELTA_MS;
     choreographyProgress = Math.min(
       1,
       choreographyProgress
-        + Math.min(CHOREOGRAPHY_MAX_FRAME_DELTA_MS, frameElapsed) / CHOREOGRAPHY_DURATION_MS,
+        + Math.min(maxFrameDeltaMs, frameElapsed) / CHOREOGRAPHY_DURATION_MS,
     );
     renderView();
     if (choreographyProgress < 1) {
