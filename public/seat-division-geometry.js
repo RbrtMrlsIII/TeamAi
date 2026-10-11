@@ -48,9 +48,12 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
   // Size the fan against authored S4 assembly subjects, not only simplified
   // division rectangles. The 1.66× profile left only 0.076 units between the
   // closed Connection/Behavior subjects, below the governed 0.16 clearance.
-  // A 1.92× compact floor restores measured AABB margin while the 2.06×
-  // expanded factor stays below the historical 2.20× outer-envelope profile.
-  const deploymentFactor = 1.92 + 0.14 * t;
+  // Reserve enough compact-state margin for the full authored S4 travel path.
+  // The measured Connection coupler translation adds 0.24 units along its
+  // radial axis; retaining the old 0.14× fan travel left only 0.16 units of
+  // sibling AABB clearance at t≈0.45. The 2.08×→2.14× profile leaves margin
+  // through the same path while staying below the historical 2.20× envelope.
+  const deploymentFactor = 2.08 + 0.06 * t;
   return scale * deploymentFactor;
 }
 
