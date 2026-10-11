@@ -1,5 +1,14 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
+
+async function screenshotCanvasImmediately(page: Page, canvas: Locator) {
+  const bounds = await canvas.boundingBox();
+  if (!bounds) throw new Error('Structural preview canvas has no visible bounding box');
+  // Page screenshot with a clip captures the composited canvas immediately.
+  // Locator.screenshot() waits for element stability, which can outlast a
+  // choreography midpoint when whole-world rendering is expensive.
+  return page.screenshot({ clip: bounds });
+}
 
 async function canvasPixelDelta(page: Page, baselinePng: Buffer, candidatePng: Buffer) {
   return page.evaluate(async ({ baseline, candidate }) => {
@@ -88,7 +97,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect.poll(async () => Number(await canvas.getAttribute('data-structural-visible-topology-edges')))
       .toBeLessThan(Number(await canvas.getAttribute('data-structural-total-topology-edges')));
     await page.screenshot({ path: 'test-results/s2-s10-world.png', fullPage: true });
-    const worldCanvasPng = await canvas.screenshot();
+    const worldCanvasPng = await screenshotCanvasImmediately(page, canvas);
 
     const browserChoreography = await page.evaluate(async () => {
       const module = await import('/machine-structural-choreography-sequence.js');
@@ -178,7 +187,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     expect(returnMid.transformation).toBeLessThan(1);
     // Capture the WebGL canvas immediately. A full-page screenshot can stall
     // long enough for a slow RAF transition to settle before the pixel sample.
-    const returnMidCanvasPng = await canvas.screenshot();
+    const returnMidCanvasPng = await screenshotCanvasImmediately(page, canvas);
     const returnMidPixelDelta = await canvasPixelDelta(page, worldCanvasPng, returnMidCanvasPng);
     console.log(
       '[structural-return-mid] progress=' + returnMid.progress.toFixed(3)
@@ -198,7 +207,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-choreography-progress', '1');
     await expect(canvas).toHaveAttribute('data-structural-choreography-returning-to-world', 'false');
     await page.screenshot({ path: 'test-results/s2-s10-return.png', fullPage: true });
-    const settledReturnCanvasPng = await canvas.screenshot();
+    const settledReturnCanvasPng = await screenshotCanvasImmediately(page, canvas);
     const midVsSettledPixelDelta = await canvasPixelDelta(page, returnMidCanvasPng, settledReturnCanvasPng);
     console.log(
       '[structural-return-settled] changedCanvasPixels='
