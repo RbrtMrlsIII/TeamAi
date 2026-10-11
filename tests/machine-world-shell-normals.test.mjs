@@ -122,6 +122,8 @@ test('focused S7 surface response raises specular and grazing-rim gain without c
   assert.deepEqual(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE, {
     profile: 's7-face-normal-v3',
     viewVectorProfile: 'camera-position-v1',
+    surfaceRoughnessProfile: 'focused-broad-highlight-v1',
+    selectedPlateRoughness: 0.64,
     specularGain: 0.48,
     grazingRimGain: 0.24,
   });
@@ -142,4 +144,20 @@ test('focused shell specular view vector uses the active camera and world fragme
   assert.ok(!shader.includes('vec3 v=normalize(vec3(.15,.85,.50))'));
   assert.ok(source.includes('gl.uniform3f(shellSurfaceCameraPosition, Number(eye[0]), Number(eye[1]), Number(eye[2]))'));
   assert.ok(source.includes('cameraPosition: useSurfaceNormals ? cameraPose.p : null'));
+});
+
+test('focused roughness broadens only the selected main and shoulder shell specular lobe', async () => {
+  const source = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.ok(source.includes("surfaceRoughnessProfile: 'focused-broad-highlight-v1'"));
+  assert.ok(source.includes('selectedPlateRoughness: 0.64'));
+  assert.ok(source.includes("rough: facilityFocused && selected && ['main-shell', 'shoulder-plate'].includes(shell.layer)"));
+  assert.ok(source.includes('MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.selectedPlateRoughness'));
+  assert.ok(source.includes('canvas.dataset.machineWorldFacilityFocusMainShellRoughness = activeFocusedPlateRoughness'));
+  assert.ok(source.includes('canvas.dataset.machineWorldFacilityFocusShoulderPlateRoughness = activeFocusedPlateRoughness'));
+  const defaultMetal2Roughness = 0.384352;
+  const oldSpecularPower = 8 + 56 * (1 - defaultMetal2Roughness);
+  const focusedSpecularPower = 8 + 56 * (1 - 0.64);
+  assert.ok(oldSpecularPower > 42 && oldSpecularPower < 43);
+  assert.ok(Math.abs(focusedSpecularPower - 28.16) < 1e-9);
+  assert.ok(focusedSpecularPower < oldSpecularPower, 'focused highlight exponent should be broader');
 });

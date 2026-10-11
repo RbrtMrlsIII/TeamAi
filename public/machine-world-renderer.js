@@ -82,6 +82,8 @@ const TAU = Math.PI * 2;
 export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
   profile: 's7-face-normal-v3',
   viewVectorProfile: 'camera-position-v1',
+  surfaceRoughnessProfile: 'focused-broad-highlight-v1',
+  selectedPlateRoughness: 0.64,
   specularGain: 0.48,
   grazingRimGain: 0.24,
 });
@@ -2462,6 +2464,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           glow: selected ? 0.12 : 0.035,
           alpha: layerAlpha,
           surfaceNormals: useSurfaceNormals,
+          rough: facilityFocused && selected && ['main-shell', 'shoulder-plate'].includes(shell.layer)
+            ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.selectedPlateRoughness
+            : undefined,
           cameraPosition: useSurfaceNormals ? cameraPose.p : null,
         },
       );
@@ -2480,6 +2485,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldFacilityFocusNormalRimGain = facilityFocused
       ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain)
       : '';
+    const activeFocusedPlateRoughness = facilityFocused
+      ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.selectedPlateRoughness)
+      : '';
+    canvas.dataset.machineWorldFacilityFocusSurfaceRoughnessProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.surfaceRoughnessProfile
+      : '';
+    canvas.dataset.machineWorldFacilityFocusMainShellRoughness = activeFocusedPlateRoughness;
+    canvas.dataset.machineWorldFacilityFocusShoulderPlateRoughness = activeFocusedPlateRoughness;
     canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
     canvas.dataset.machineWorldFacilityServiceBayCount = String(
       facilityBodyShells.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
