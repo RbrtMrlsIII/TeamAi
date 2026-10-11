@@ -80,6 +80,26 @@ test('S4 assembly identity remains stable across expansion and geometry mutation
   assert.notDeepEqual(compact.subject, open.subject);
 });
 
+test('S4 connection coupler travel stays within the authored dense-clearance budget', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const parent = core.byBranch.get('BRANCH-SEAT-09');
+  const childId = 'SEAT_CONNECTION';
+  const childIndex = 0;
+  const geometry = deriveFocusedSeatDivisionGeometry({ parent, childId, childIndex, amount: 0 });
+  const compact = deriveMachineSeatDivisionAssembly({ parent, childId, childIndex, amount: 0, geometry });
+  const active = deriveMachineSeatDivisionAssembly({ parent, childId, childIndex, amount: 1, geometry });
+  const compactCoupler = compact.components.find((entry) => entry.profile === 'coupler-ring');
+  const activeCoupler = active.components.find((entry) => entry.profile === 'coupler-ring');
+
+  assert.equal(MACHINE_SEAT_DIVISION_ATTACHMENT_PROFILES.SEAT_CONNECTION.travel, 0.18);
+  assert.ok(compactCoupler && activeCoupler);
+  const displacement = Math.hypot(
+    activeCoupler.center.x - compactCoupler.center.x,
+    activeCoupler.center.z - compactCoupler.center.z,
+  );
+  assert.ok(Math.abs(displacement - 0.18) < 1e-9, 'coupler travel should match the clearance-reviewed profile');
+});
+
 test('S4 assembly envelopes expand monotonically with authored division travel', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const parent = core.byBranch.get('BRANCH-SEAT-04');
