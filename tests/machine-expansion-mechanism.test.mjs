@@ -397,10 +397,58 @@ test('S5 expansion stays clear of six closed sibling divisions across the full S
             plan?.clearancePlan?.clearanceSatisfiedAtClosed,
             `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, blockingSiblingDivisions=${JSON.stringify(blockingSiblings)}`,
           );
+          const collisionAmount = Number(plan?.clearancePlan?.firstCollisionAmount);
+          const collisionSubject = Number.isFinite(collisionAmount)
+            ? subjectAtExpansionAmount(plan, collisionAmount)
+            : null;
+          const obstacleBounds = (obstacle) => {
+            if (obstacle?.min && obstacle?.max) return obstacle;
+            if (!obstacle?.center || !obstacle?.dimensions) return null;
+            const half = {
+              x: Math.abs(Number(obstacle.dimensions.x) || 0) * 0.5,
+              y: Math.abs(Number(obstacle.dimensions.y) || 0) * 0.5,
+              z: Math.abs(Number(obstacle.dimensions.z) || 0) * 0.5,
+            };
+            return {
+              min: {
+                x: Number(obstacle.center.x) - half.x,
+                y: Number(obstacle.center.y) - half.y,
+                z: Number(obstacle.center.z) - half.z,
+              },
+              max: {
+                x: Number(obstacle.center.x) + half.x,
+                y: Number(obstacle.center.y) + half.y,
+                z: Number(obstacle.center.z) + half.z,
+              },
+            };
+          };
+          const pathBlockers = collisionSubject
+            ? [
+                ...worldObstacles.map((obstacle) => ({
+                  id: obstacle.branchId || obstacle.id || obstacle.kind || 'world-obstacle',
+                  source: 'world',
+                  bounds: obstacleBounds(obstacle),
+                })),
+                ...closedSiblingSubjects
+                  .filter((entry) => entry.childId !== childId)
+                  .map((entry) => ({ id: entry.childId, source: 'closed-sibling', bounds: entry.subject })),
+              ]
+                .filter((entry) => entry.bounds && clearanceOverlap(collisionSubject, entry.bounds, 0.16))
+                .map((entry) => ({
+                  id: entry.id,
+                  source: entry.source,
+                  gaps: {
+                    x: axisGap(collisionSubject.min.x, collisionSubject.max.x, entry.bounds.min.x, entry.bounds.max.x),
+                    y: axisGap(collisionSubject.min.y, collisionSubject.max.y, entry.bounds.min.y, entry.bounds.max.y),
+                    z: axisGap(collisionSubject.min.z, collisionSubject.max.z, entry.bounds.min.z, entry.bounds.max.z),
+                  },
+                  bounds: entry.bounds,
+                }))
+            : [];
           assert.equal(
             plan?.clearancePlan?.collision,
             false,
-            `division travel collides with a world or closed-sibling obstacle: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}`,
+            `division travel collides: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, firstCollision=${Number.isFinite(collisionAmount) ? collisionAmount.toFixed(6) : 'none'}, maxSafe=${plan?.clearancePlan?.maxSafeAmount}, blockers=${JSON.stringify(pathBlockers)}`,
           );
           assert.equal(
             plan?.clearancePlan?.maxSafeAmount,
