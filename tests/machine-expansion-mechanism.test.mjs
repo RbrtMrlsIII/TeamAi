@@ -371,9 +371,20 @@ test('S5 expansion stays clear of six closed sibling divisions across the full S
             && left.max.y >= right.min.y - padding
             && left.min.z <= right.max.z + padding
             && left.max.z >= right.min.z - padding;
+          const axisGap = (leftMin, leftMax, rightMin, rightMax) =>
+            Math.max(0, rightMin - leftMax, leftMin - rightMax);
           const blockingSiblings = closedSiblingSubjects
             .filter((entry) => entry.childId !== childId && clearanceOverlap(targetClosed, entry.subject, 0.16))
-            .map((entry) => entry.childId);
+            .map((entry) => ({
+              childId: entry.childId,
+              gaps: {
+                x: axisGap(targetClosed.min.x, targetClosed.max.x, entry.subject.min.x, entry.subject.max.x),
+                y: axisGap(targetClosed.min.y, targetClosed.max.y, entry.subject.min.y, entry.subject.max.y),
+                z: axisGap(targetClosed.min.z, targetClosed.max.z, entry.subject.min.z, entry.subject.max.z),
+              },
+              targetBounds: targetClosed,
+              siblingBounds: entry.subject,
+            }));
           const plan = deriveMachineSeatDivisionExpansionPlan({
             parent: seat,
             childId,
@@ -384,7 +395,7 @@ test('S5 expansion stays clear of six closed sibling divisions across the full S
 
           assert.ok(
             plan?.clearancePlan?.clearanceSatisfiedAtClosed,
-            `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, blockingSiblingDivisions=${blockingSiblings.join(',') || 'none'}`,
+            `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, blockingSiblingDivisions=${JSON.stringify(blockingSiblings)}`,
           );
           assert.equal(
             plan?.clearancePlan?.collision,
