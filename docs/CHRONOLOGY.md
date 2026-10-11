@@ -18,9 +18,21 @@ later work must not contradict it without explicit reconciliation
 
 When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidence → merge.**
 
-## 2026-09-29 current continuation order
+## CURRENT OVERLAY — 2026-10-11 S4/S5 authored-subject clearance and preview timing
 
-This is the current decision-order overlay for the 029 spatial continuation. Earlier sections are historical decision lineage and remain useful provenance, but they do not override this current sequence.
+This overlay supersedes older uses of “current” below for exact head, geometry constants, Browser result, and visual next slice. Historical entries remain valid for their exact checkpoints only.
+
+- Active spatial vehicle remains PR #424 / `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Global Current Slice remains Issue #401 in `Masterplan/NEXT_SLICES.md`.
+- Current code-bearing head `afab9850fabbf199233a2a80d4b464e95c7f9a96`: Full-System `38135606833` PASS (1,287 / 1,287); Governance `38135606838` PASS; Security `38135606853` PASS; Deep Security `38135606840` PASS; Canonical Browser `38135606823` PASS (92 passed / 4 skipped / 0 failed). Browser artifact `11701120572`, SHA-256 `d2527a61aac4fdae48f6b8a21e705ed992b4b77bf547558f51d3a8dc282a266b`. Full Project artifact `11701017421`, SHA-256 `da1709f69f145b9267b5dc60e03db8d3b01fbe3c442945035e053fb59c570b45`.
+- Current S4 fan: 180° uniform through nine Seats, 165° density-specific and symmetric for Seat 10; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18.
+- S5 tests actual authored division subjects across Seats 1–10 × three shell states × seven divisions against world obstacles and six closed sibling subjects. Both matrices pass the 0.16 conservative AABB clearance contract. This is not triangle-level mesh collision proof.
+- The earlier Browser failure on `d96a135…` came from progress derived directly from wall-clock elapsed time; an expensive whole-world render could skip the transition midpoint. The owning preview runtime now accumulates bounded per-frame progress; new Browser captures show transform-mid, return-mid, and settled return states.
+- Same-artifact fixed-ROI analysis of facility focus reports Analysis mean luma 53.212 → 57.634 (+8.3%) and Operations 51.527 → 54.581 (+5.9%), while high-highlight occupancy barely moves. Keep the alpha profile fixed for a single-variable selected-focus specular-response experiment.
+- Human visual acceptance, deployment/runtime proof, merge/release authorization, and formal S30/S0–S33 exit remain open. Details and hashes are in E424-2026-10-11F and Issue #409.
+
+## Historical 2026-09-29 continuation order (superseded by the 2026-10-11 overlay)
+
+This was the current decision-order overlay at that checkpoint. Earlier sections are historical decision lineage and remain useful provenance, but they do not override the 2026-10-11 overlay.
 
 ### Current repository truth
 
@@ -54,7 +66,7 @@ The first Y0 implementation pass also normalized S6 facility identity to the can
 
 ### Current verification boundary
 
-The latest exact-head repository gates are Governance PASS (36539522170), Full-System PASS (36539522147), Deep Security PASS (36539522181), Security/CodeQL PASS (36539522165), and Canonical Browser FAIL (36539522142, 87 passed / 4 skipped / 1 failed). The Browser failure is the isolated legacy machine-core-preview transition assertion: selecting a branch currently starts the preview's expansion path before the test clicks Expand, so a deterministic transition boundary is required. This is not current evidence of an S4 geometry regression or production Hero failure.
+Historical verification state at that checkpoint: Governance PASS (36539522170), Full-System PASS (36539522147), Deep Security PASS (36539522181), Security/CodeQL PASS (36539522165), and Canonical Browser FAIL (36539522142, 87 passed / 4 skipped / 1 failed). That legacy failure belongs to its exact historical head; the 2026-10-11 code-bearing head has a new terminal Browser PASS. Do not carry the old failure forward as current evidence.
 
 ### Durable decision rule
 

@@ -55,17 +55,18 @@ This section prevents material engineering decisions from existing only in chat.
 | ID | Decision / finding | Current status | Durable implication |
 |---|---|---|---|
 | D-029-01 | #424 is the sole active 029 spatial continuation after merged #404; global current slice remains #401 | ACCEPTED / CURRENT | spatial work stays bounded in #424 and does not absorb backend/runtime authority |
-| D-029-02 | S4 compact-radius regression required owner-side factor max(1.66, 0.9 + 1.3 × expansion) | REPAIRED / VERIFIED | do not restore the old formula or weaken geometry tests |
+| D-029-02 | The prior simplified-division compact-radius regression used max(1.66, 0.9 + 1.3 × expansion) | SUPERSEDED HISTORICAL CHECKPOINT | the 1.66 factor is not the current authored-assembly fan contract; use E424-2026-10-11F and its exact-head S4/S5 matrix |
 | D-029-03 | Y0 feature/leaf descent precedes further spatial expression | GOVERNED | terminal controls/payloads must be inventoried before physical completion is treated as final |
 | D-029-04 | Y1 target renderer substrate is Three.js + WebGL2 with one scene/canvas/renderer/animation/camera authority | GOVERNED / NOT IMPLEMENTED | migrate by adapter stages; raw WebGL remains transition architecture until parity/proof |
 | D-029-05 | Post-S26 visual checkpoint is VC1/AB1, non-blocking, while S33 remains final polish | GOVERNED | qualitative coherence is observed before late polish and is not a new roadmap slice |
-| D-029-06 | Current Browser failure is a legacy machine-core-preview temporal contract, not S4 geometry proof | DIAGNOSED / OPEN | fix deterministic state/clock boundary; no arbitrary sleeps and no assertion weakening |
+| D-029-06 | A legacy machine-core-preview temporal failure was recorded at an earlier head | HISTORICAL DIAGNOSTIC | do not carry the old failure forward as current without a fresh reproduction; the 2026-10-11 exact-head Canonical Browser run is PASS |
 | D-029-07 | Material project decisions must be promoted from chat into #409, this evidence ledger, the checklist, WIRING, or the owning Issue/PR according to ownership | GOVERNED | no chat-only decision is treated as project truth |
 | D-029-08 | S6 physically allocates 11 non-Seat product facilities, but four S6 source references do not resolve to matching frontend/spatial modules (projects-library, skills-responsibility, orchestration-scheduler, auth-gateway) | Y0 GAP / EXPLICIT | physical dock presence is not leaf coverage; resolve real owning UI/read-model contracts before inventing spatial subassemblies |
 | D-029-09 | Three S6 facility IDs used labels (orchestration-scheduler, settings-control, authentication-gateway) instead of canonical Feature Registry IDs | REPAIRED / VERIFIED | S6 facility identity now uses canonical ids (orchestration, settings, auth-gateway); sourceModule remains descriptive/non-authoritative |
 | D-029-10 | Y1 target renderer package candidate was resolved to three@0.186.1 from the npm registry; the package exports a WebGL renderer and the upstream WebGL capability surface targets WebGL2 | ACCEPTED / IMPLEMENTED SUBSTRATE | pin the exact package version, generate browser runtime modules during build, and keep the adapter outside semantic/geometry authority |
 | D-029-11 | Y1 adapter converts actual S2 Core + S3 Seat 1 descriptors into one Three.js scene in an isolated proof surface before production Hero migration | IMPLEMENTED / BROWSER-VERIFIED | production Hero renderer remains unchanged until fixed-state parity/performance/rollback evidence exists |
 | D-029-12 | Exact application head 5a4a353 passed Project Tests + canonical package and the complete security/governance suite; Browser run 36547501284 also passed after the Y1 null-safety and S23 synchronous-tier fixes | VERIFIED / CURRENT | Y1 substrate proof is no longer blocked by the earlier Browser defects; structural candidate can advance without promoting production raw-WebGL replacement |
+| D-029-14 | S4/S5 movement must be checked against authored component subjects, all supported Seat densities, shell states, sibling divisions, Pods, and outer housings | REPOSITORY-VERIFIED / EXACT-HEAD PASS | preserve the 0.16 floor, density-aware fan, 0.18 Connection travel, and explicit AABB limitation; do not regress to simplified division rectangles |
 
 ### Application-head verification recorded before documentation sync
 
@@ -1257,10 +1258,10 @@ The artifact screenshots were directly inspected. They establish executable stru
 5. S24 base theme/material authority is integrated, but true shadow/depth separation, semantic emissive-state breadth, and environment acceptance remain open.
 6. A redundant public structural-preview material-model assignment was removed in `6007a87a...` to restore source/public parity. This was cleanup, not a product change.
 
-**Geometry guard**
-Keep:
+**Historical geometry guard — superseded by E424-2026-10-11F**
+At the 2026-09-29 checkpoint, the then-current simplified-division model used:
 `max(1.66, 0.9 + 1.3 × expansion) × parent max horizontal dimension`.
-Independent worst-case required compact factor remains approximately `1.6547804288580712`; `1.66` provides the small deterministic margin. Current collision proof is conservative sampled AABB clearance, not triangle-collision proof.
+This calculation remains historical evidence for that contract only. Current S4 fan placement uses a density-aware 180° / 165° angular policy and radial factor `2.16 + 0.02 × expansionAmount`. Current path-clearance evidence uses authored component subjects and conservative sampled AABBs, not triangle-level mesh collision.
 
 
 ### E424-2026-10-07 — Exact-head Browser and product-integrated acceptance discipline
@@ -1822,3 +1823,52 @@ These fixed screen-space regions quantify the current selected machinery’s lum
 4. Confirm World Overview baseline, unselected family alpha, topology, ports, Seat-count law and 0.16 clearance remain unchanged.
 
 **Acceptance boundary:** the parent menu/focus slice is fully repository/security/governance/browser verified. The selected shell-alpha experiment is implemented in this candidate but NOT VERIFIED until its own exact-head five-gate run completes and its production Browser artifact is visually and numerically inspected. Human visual acceptance, deployment proof, merge/release authorization and 029 completion remain open.
+
+### E424-2026-10-11F — S4/S5 authored-subject clearance and structural-preview timing
+
+**Code-bearing proof head:** `afab9850fabbf199233a2a80d4b464e95c7f9a96`  
+**Vehicle:** PR #424, `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Issue #401 remains the sole global Current Slice.  
+**Acceptance boundary:** repository/security/governance/browser verification is complete for this exact head. No merge, deployment, release authorization, human visual acceptance, or triangle-level collision claim follows from this evidence.
+
+#### Geometry changes and measured failed alternatives
+
+The added S5 regression checks actual authored S4 assembly subjects rather than simplified division rectangles. Diagnostics found and corrected these measured shortfalls:
+- Original compact factor 1.66 left only 0.0760 units of X separation between closed Connection and Behavior assembly subjects on Seat 1, below the 0.16 floor.
+- A larger radial factor alone exposed density/orientation-dependent Capability-to-Toolkit sweep bottlenecks and threatened Pod separation at ten Seats.
+- Uniform 180° fan spacing at ten Seats brought Seat 01 Connection too close to BRANCH-SEAT-10 (0.1391 X gap).
+- A 165° dense fan with uniform spacing left a 0.15589 Z gap on a later Capability-to-Toolkit sweep.
+- The final symmetric dense distribution uses 30.2° central gaps, 26.15° outer gaps, and a 165° total span; it closes the measured sibling gap without moving endpoints outward into adjacent Pods.
+- Connection radial coupler travel was reduced from 0.24 to 0.18 units to resolve the late-path Connection-to-Behavior shortfall. The 0.18 value is reflected in the owning S4 assembly, public mirror, and owning tests.
+
+#### Current S4/S5 contract
+
+- Seats 1–9: seven division directions distributed uniformly across a 180° fan.
+- Seat 10: symmetric angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°.
+- Radial placement factor: `2.16 + 0.02 × expansionAmount`, bounded from 2.16 to 2.18.
+- Port radius remains 0.28 × parent scale.
+- Connection radial coupler travel: 0.18 units.
+- Full Seat-density matrix: Seats 1–10 × shell states 0 / 0.5 / 1 × seven divisions against other Pods and outer housings (1,155 planning cases). A second test executes the same 1,155 cases with all six closed sibling division assembly subjects included. Both require closed clearance, no path collision, maxSafeAmount = 1, and the 0.16 floor.
+- The geometry proof is conservative sampled AABB clearance over authored component subjects and planner samples. It does **not** claim triangle-level mesh collision proof.
+
+#### Structural-preview timing correction
+
+Browser run `38132947543` on earlier head `d96a135325af54d351b485592fa08bf05872ec4c` isolated a failed E2E midpoint sample in `tests/e2e/machine-structural-embodiment.spec.ts`. A slow full-world `renderView()` could advance wall-clock time past the 900 ms transition and skip an observable midpoint. The current owning runtime accumulates bounded per-frame progress (maximum 180 ms contribution per rendered frame), resets timing state on cancellation/completion, and extends only the two intermediate-state assertions to 10 seconds. Source/public structural-preview modules are byte-identical.
+
+#### Exact-head five-gate evidence
+
+- Full-System Verification `38135606833`: PASS; full repo suite **1,287 passed / 0 failed**. Targeted spatial suite passed **199 / 199**, including both S5 matrices and the Connection coupler regression. Full-project ZIP artifact `11701017421`; SHA-256 `da1709f69f145b9267b5dc60e03db8d3b01fbe3c442945035e053fb59c570b45`. The downloaded archive SHA matched the CI digest and ZIP integrity passed.
+- Governance Integrity `38135606838`: PASS.
+- Security Static Analysis `38135606853`: PASS.
+- Deep Security Static Analysis `38135606840`: PASS.
+- Canonical Browser Verification `38135606823`: PASS; **92 passed / 4 skipped / 0 failed**. Browser artifact `11701120572`, 12,366,558 bytes; SHA-256 `d2527a61aac4fdae48f6b8a21e705ed992b4b77bf547558f51d3a8dc282a266b`. The artifact download hash matched the CI digest; ZIP integrity passed; no failure-context, failed screenshot, or trace files were present.
+- Artifact screenshots `s2-s10-transform-mid.png`, `s2-s10-return-mid.png`, and `s2-s10-return.png` show distinct intermediate transform, intermediate return, and settled world states.
+- Four mirrored module pairs were independently byte-compared inside the downloaded Full Project ZIP: division geometry (5,962 bytes each), core layout (9,700 each), division assembly (23,168 each), structural-preview runtime (29,689 each). The inner project ZIP contains 1,114 entries.
+
+#### Existing facility-focus visual experiment — measured result, not final acceptance
+
+The current Browser artifact also contains production-route Analysis and Operations captures with `selected-core-reveal-v1` active (main-shell alpha 0.32, shoulder-plate alpha 0.42). On 1440×900 images using the same fixed screen-space ROIs and Rec.709 luma:
+- Analysis ROI `(600,330,835,610)`: mean luma 53.212 → **57.634** (+8.3%); P90 107.838 → **107.838**; pixels above luma 64: 34.581% → **39.333%**; above 128: 0.777% → **0.786%**.
+- Operations ROI `(580,330,850,585)`: mean luma 51.527 → **54.581** (+5.9%); P90 88.848 → **89.600**; pixels above luma 64: 28.167% → **32.912%**; above 128: 0.057% → **0.084%**.
+- The experiment improves midtone/legibility while the selected silhouette remains recognizable, but highlight occupancy barely moves and the broader product remains darker/sparser than the endorsed PNG/MP4 direction. Retain this alpha profile for now; keep human visual acceptance open. The next bounded slice should change only focused S7 surface response (for example a measured specular-gain experiment), holding alpha, roughness, camera subject, geometry, topology, ports, Seat law, and 0.16 clearance fixed.
+
+**Acceptance boundary:** all five required gates PASS on this exact code-bearing head. Production deployment/runtime proof, formal S30/S0–S33 exit, human visual acceptance, merge/release authorization, and final 029 completion remain open.

@@ -78,9 +78,9 @@ Use the evidence IDs in section-level notes below rather than creating one evide
 - [x] Current R1 catalog contains 3 presentation display items: docs, rules, connect.
 - [x] Current R2 catalog contains 4 presentation items: setup engine, login, register, config branch.
 - [x] Current Seat division catalog contains 7 concrete divisions: Connection, Behavior, Toolkit, Capabilities, Authorization, Workspace Scope, Task Evidence.
-- [x] Current division fan span is 150 degrees across the seven indexed positions.
+- [x] Current division fan is density-aware: uniform 180° for Seats 1–9; symmetric 165° for Seat 10 at angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°.
 - [x] Current Seat division port radius is 0.28 × parent scale.
-- [x] Current division radial offset uses the S4-owned factor max(1.66, 0.9 + 1.3 × expansion) × parent max horizontal dimension; the 1.66 floor is the independently-derived compact-state separation floor for the current AABB contract.
+- [x] Current division radial offset uses the S4-owned factor (2.16 + 0.02 × expansionAmount) × parent max horizontal dimension; maximum factor is 2.18. The older 1.66 compact-factor rule is historical and superseded for current S4 placement by authored-assembly clearance evidence.
 
 ### A3. Current numeric spatial findings
 At the current maximum 10-seat profile:
@@ -99,6 +99,17 @@ At the current maximum 10-seat profile:
 - [x] full-expansion Seat + division radial-center reach = approximately 8.498, with approximately 2.052 radial-envelope margin before component extents
 
 Evidence: E404-NUMERIC in TEAMAI_3D_WORLD_404_EVIDENCE.md.
+
+### A4. Current exact-head S4/S5 path-clearance proof — 2026-10-11
+- [x] S4 fan placement adapts to Seat density while preserving the ten-Seat Pod envelope.
+- [x] Connection coupler travel is bounded at 0.18 units; the owning S4 assembly, public mirror, and tests agree.
+- [x] Full authored S4 component-subject sweep passes Seats 1–10 × shell states 0 / 0.5 / 1 × seven divisions against other Pods and outer housings.
+- [x] The same matrix passes with the six other closed division assembly subjects added as obstacles; clearance is 0.16 and maxSafeAmount is 1 for every supported case.
+- [x] Structural-preview choreography preserves observable intermediate states under slow rendering; source/public modules remain byte-identical.
+- [x] Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser checks pass on code-bearing head `afab9850fabbf199233a2a80d4b464e95c7f9a96`.
+- [ ] Triangle-level mesh collision proof and human visual acceptance remain open; current clearance evidence is conservative sampled AABB subject clearance.
+
+Evidence: E424-2026-10-11F in TEAMAI_3D_WORLD_404_EVIDENCE.md.
 
 ### A5. Root inheritance and world-expression contract
 - [x] S0-S10 are explicitly declared as the canonical structural roots of the 029 spatial machine, not merely sequential implementation phases.
@@ -338,7 +349,7 @@ Exit: Pods are true assemblies and safely replicable **with visible mechanical c
 
 ## F. S4 — Division system reconstruction
 **Evidence:** E404-S4 + E404-GEOM
-**Implementation status:** checked rows below mean the division construction capability is implemented. Final articulated-path collision/clearance evidence remains governed by A4 and S30 proof gates.
+**Implementation status:** checked rows below mean division construction capability is implemented. The authored-subject S4/S5 conservative AABB path-clearance matrix is repository-verified at A4 / E424-2026-10-11F; triangle-level collision proof, formal S30 exit, and visual acceptance remain separate.
 - [x] Payload-driven division envelope.
 - [x] Connection division.
 - [x] Behavior division.
@@ -363,7 +374,7 @@ Exit: divisions are subsystems, not scaled primitives **and not detached markers
 
 ## G. S5 — Expansion mechanisms
 **Evidence:** E404-S5 + E404-GEOM
-**Implementation status:** checked rows below mean the expansion lifecycle/mechanism capability is implemented. They do not establish exhaustive exact-path safety across every articulated child/facility combination.
+**Implementation status:** checked rows below mean the expansion lifecycle/mechanism capability is implemented. The S5 authored-subject matrix now covers Seats 1–10 and all three shell states against world obstacles plus six closed sibling divisions. This is conservative sampled AABB proof, not triangle-level collision proof or final visual acceptance.
 - [x] CLOSED.
 - [x] PREPARING.
 - [x] OPENING.

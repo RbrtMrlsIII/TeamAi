@@ -28,11 +28,27 @@ Current spatial order inside #424:
 
 Y0 feature/leaf coverage → Y1 Three.js/WebGL2 renderer-substrate readiness → S2–S10 structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33
 
-Prior verified structural baseline: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1` (S8 V3 + S7-V16 chassis depth + S3 V6 Pod face framing + S8 facility-carrier V2). Latest code-bearing spatial baseline is `c0542d7c6d9a8836329c64e4235e6c0fdc40137b`, which carries S7-OUTER-BODY-V4 plus the Analysis telescope service-bay shell and observable runtime descriptors. The exact-head E2E repair is `db54ae8ac0a4203dcabc7a097ed1cff12986ad36` (test-only: expects V4 and asserts two service-bay descriptors). Its five exact-head gates are terminal PASS: Full-System `38067263018`, Governance `38067263026`, Security `38067263012`, Deep Security `38067263005`, Browser `38067263003` (92 passed / 4 skipped). Browser artifact `11676005427`, SHA-256 `cf7610dfc24683ac8a14e4e14c76347fbc31d00c7d3cf936125e920f8f62065c`; full-project artifact `11674254847`, SHA-256 `a3487a6986661f9b48572262180ab70db2495b76525737ba0ff85d5051f16026`. See `E424-2026-10-11C`. The live PR head remains authoritative.
+Historical structural baseline from S8 V3 / S7-V16 / S3 V6 remains provenance: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`; prior S7-OUTER-BODY-V4 + Analysis service-bay implementation anchor: `c0542d7c6d9a8836329c64e4235e6c0fdc40137b`, with test-only E2E repair `db54ae8ac0a4203dcabc7a097ed1cff12986ad36` and its own historical five-gate proof retained below. The live PR head remains authoritative.
 
 Historical exact-head Browser artifacts remain diagnostic provenance. S7-V21 machinery detail counts remain Analysis 18, Operations 20, Control 20 and Access-Commerce 23; S7-OUTER-BODY-V4 owns 20 presentation-only shell descriptors across four families. Production Facility Focus and menu closure are both Browser-verified: the exact fully verified head is `e15480e25684efa5587336c3e86e825c0516965b`, with Full-System `38117728770` (1,276 passed / 0 failed), Governance `38117728795`, Security `38117728783`, Deep Security `38117728814`, and Browser `38117728815` (92 passed / 4 skipped / 0 failed). Browser artifact `11693602957`, SHA-256 `cfc05fed93769a16ec7d9b9b7ba32875a55de387741d6f6657f88c33004e7c8c`. The clean production screenshots show the remaining visual discrepancy is broad selected main-shell/shoulder facets masking internal machinery, not missing focus access, the menu, or geometry topology. See `E424-2026-10-11E` for measured ROI baselines and the single-variable alpha experiment.
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
+
+#### 2026-10-11 exact-head S4/S5 and structural-preview verification
+
+The current **code-bearing** head is `afab9850fabbf199233a2a80d4b464e95c7f9a96` on the same active PR #424 branch. Exact-head five-gate proof:
+- Full-System `38135606833`: PASS, 1,287 / 1,287 tests; package artifact `11701017421`, SHA-256 `da1709f69f145b9267b5dc60e03db8d3b01fbe3c442945035e053fb59c570b45`.
+- Governance `38135606838`: PASS.
+- Security `38135606853`: PASS.
+- Deep Security `38135606840`: PASS.
+- Canonical Browser `38135606823`: PASS, 92 passed / 4 skipped / 0 failed; artifact `11701120572`, SHA-256 `d2527a61aac4fdae48f6b8a21e705ed992b4b77bf547558f51d3a8dc282a266b`.
+- Both S5 authored-component AABB matrices pass across Seats 1–10, shell states 0 / 0.5 / 1, seven divisions, world obstacles and six closed sibling divisions at the 0.16 floor. Four important source/public module pairs were independently byte-compared from the verified Full Project ZIP.
+
+Current S4 fan: uniform 180° for Seats 1–9; a symmetric 165° dense fan for Seat 10 at angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18. The old 1.66 compact-factor model is a historical simplified-division checkpoint, not the current authored-assembly contract.
+
+The structural-preview Browser timeout is fixed at its runtime owner by bounded per-frame progress, so slow whole-world renders cannot skip observable intermediate states. Fresh Browser artifact inspection confirms transform-mid, return-mid, and settled return captures. This closes repository/runtime-browser verification of the authored AABB clearance and preview transition contract, not triangle-mesh collision proof or final visual acceptance. See `E424-2026-10-11F`.
+
+The existing facility-focus alpha profile improved same-ROI mean luma (Analysis +8.3%; Operations +5.9%) while keeping the selected silhouette recognizable, but high-highlight occupancy barely changed. Keep alpha fixed at 0.32 / 0.42 for the next single-variable experiment. **Next bounded visual slice:** increase only selected-facility focus specular response (starting from gain 0.48) and measure the same Analysis / Operations ROIs; do not bundle shell alpha, roughness, camera, normals, or geometry changes. Human visual acceptance, deployment/runtime proof, merge/release authorization, and overall 029 completion remain open.
 
 ### 2026-10-08 S8 endpoint/junction embodiment
 
