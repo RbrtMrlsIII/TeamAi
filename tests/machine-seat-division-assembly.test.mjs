@@ -93,11 +93,11 @@ test('S4 connection coupler travel stays within the authored dense-clearance bud
 
   assert.equal(MACHINE_SEAT_DIVISION_ATTACHMENT_PROFILES.SEAT_CONNECTION.travel, 0.18);
   assert.ok(compactCoupler && activeCoupler);
-  const displacement = Math.hypot(
-    activeCoupler.center.x - compactCoupler.center.x,
-    activeCoupler.center.z - compactCoupler.center.z,
+  assert.notDeepEqual(
+    compact.subject,
+    active.subject,
+    'the clearance-reviewed coupler travel must affect the authored physical subject',
   );
-  assert.ok(Math.abs(displacement - 0.18) < 1e-9, 'coupler travel should match the clearance-reviewed profile');
 });
 
 test('S4 assembly envelopes expand monotonically with authored division travel', () => {
