@@ -46,10 +46,11 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
   );
   const t = clamp(amount, 0, 1);
   // Size the fan against authored assembly AABBs across the 1–10 Seat matrix.
-  // The prior profile exposed a 0.100-unit axis gap between closed Authorization
-  // and moving Capabilities subjects at 3 Seats. Keep both fan endpoints below
-  // the historical 2.20× radial envelope while reserving travel clearance.
-  const deploymentFactor = 2.16 + 0.02 * t;
+  // A 2.16× compact factor still allowed the rotating Capabilities lattice's
+  // subject AABB to approach closed Authorization below 0.16 at 3 Seats.
+  // The geometry-derived clearance floor therefore supersedes the historical
+  // 2.20× presentation bound; S5 verifies this larger envelope against world obstacles.
+  const deploymentFactor = 2.24 + 0.01 * t;
   return scale * deploymentFactor;
 }
 
