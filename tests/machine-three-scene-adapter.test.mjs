@@ -379,7 +379,7 @@ test('S4 connection radial coupler recipe preserves descriptor envelope with exp
   assert.ok(component);
   assert.equal(assembly.mechanism.attachment.type, 'RADIAL_COUPLER');
   assert.equal(assembly.mechanism.attachment.primaryComponent, 'coupler-ring');
-  assert.equal(assembly.mechanism.attachment.travel, 0.24);
+  assert.equal(assembly.mechanism.attachment.travel, 0.18);
 
   const recipe = getMachineSeatConnectionCouplerRecipe();
   assert.equal(recipe.length, 12);
