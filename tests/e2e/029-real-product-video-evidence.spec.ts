@@ -138,6 +138,8 @@ test.describe('029 real-product video evidence', () => {
       expect(span?.split(',').map(Number).every((value) => Number.isFinite(value) && value > 0)).toBe(true);
       if (branchId === 'BRANCH-OUTER-BETA') {
         await page.screenshot({ path: testInfo.outputPath('facility-focus-operations.png') });
+      } else if (branchId === 'BRANCH-OUTER-GAMMA') {
+        await page.screenshot({ path: testInfo.outputPath('facility-focus-control.png') });
       }
     }
 
