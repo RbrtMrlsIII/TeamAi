@@ -20,6 +20,8 @@ import {
   MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE,
   MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO,
   MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO,
+  MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE,
+  MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
   MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
@@ -47,7 +49,7 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V7');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V8');
   const bays=descriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE);
   assert.equal(bays.length,2);
   assert.deepEqual(bays.map(entry=>entry.layer).sort(),['main-shell','shoulder-plate']);
@@ -157,6 +159,101 @@ test('S7 Control core reveal triangulates real Three.js geometry within its auth
   }
 });
 
+
+test('S7 Control shoulder-plate reveal stays narrower, bounded, triangulatable, and aligned across Seat/expansion matrix', () => {
+  const signedArea = (outline) => outline.reduce((sum, point, index) => {
+    const next = outline[(index + 1) % outline.length];
+    return sum + point[0] * next[1] - next[0] * point[1];
+  }, 0);
+  const pointInsideOrOn = (point, outline) => {
+    let inside = false;
+    for (let i = 0, j = outline.length - 1; i < outline.length; j = i, i += 1) {
+      const a = outline[j], b = outline[i];
+      const cross = (b[0] - a[0]) * (point[1] - a[1]) - (b[1] - a[1]) * (point[0] - a[0]);
+      if (Math.abs(cross) <= 1e-7
+        && point[0] >= Math.min(a[0], b[0]) - 1e-7 && point[0] <= Math.max(a[0], b[0]) + 1e-7
+        && point[1] >= Math.min(a[1], b[1]) - 1e-7 && point[1] <= Math.max(a[1], b[1]) + 1e-7) return true;
+      if ((a[1] > point[1]) !== (b[1] > point[1])) {
+        const x = ((b[0] - a[0]) * (point[1] - a[1])) / (b[1] - a[1]) + a[0];
+        if (point[0] < x) inside = !inside;
+      }
+    }
+    return inside;
+  };
+  const worldInnerMidpoint = (descriptor) => {
+    // The reveal helper emits [outer-left, inner-left, inner-right, outer-right, ...].
+    const a = descriptor.outline[1], b = descriptor.outline[2];
+    const localX = ((a[0] + b[0]) / 2) * descriptor.dimensions.x / 2;
+    const localZ = ((a[1] + b[1]) / 2) * descriptor.dimensions.z / 2;
+    const cosine = Math.cos(descriptor.rotationY), sine = Math.sin(descriptor.rotationY);
+    return {
+      x: descriptor.center.x + cosine * localX + sine * localZ,
+      z: descriptor.center.z - sine * localX + cosine * localZ,
+    };
+  };
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const assemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: assemblies,
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      const descriptors = deriveMachineWorldFacilityShellDescriptors(machinery);
+      const main = descriptors.find((part) =>
+        part.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && part.layer === 'main-shell'
+      );
+      const shoulder = descriptors.find((part) => part.shoulderRevealProfile === MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE);
+      assert.ok(main && shoulder, seatCount + '/' + expansionAmount + ': Control main and shoulder shells exist');
+      assert.equal(shoulder.branchId, MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH);
+      assert.equal(shoulder.layer, 'shoulder-plate');
+      assert.deepEqual(shoulder.envelopeOutline, MACHINE_WORLD_FACILITY_BODY_OUTLINES.diamond);
+
+      const mainMin = Math.min(main.dimensions.x, main.dimensions.z);
+      const shoulderMin = Math.min(shoulder.dimensions.x, shoulder.dimensions.z);
+      assert.ok(Math.abs(shoulder.shoulderRevealWidth / shoulderMin - MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO) < 1e-9);
+      assert.ok(Math.abs(shoulder.shoulderRevealStartRadius - main.coreRevealStartRadius) < 1e-9);
+      assert.ok(Math.abs(shoulder.shoulderRevealStartRadius / mainMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) < 1e-9);
+      assert.ok(shoulder.shoulderRevealWidth < main.coreRevealWidth * 0.65, 'shoulder aperture remains materially narrower than the main opening');
+      assert.ok(signedArea(shoulder.outline) > 0);
+      assert.ok(signedArea(shoulder.outline) < signedArea(shoulder.envelopeOutline));
+      assert.equal(triangulateMachineWorldFacilityBodyOutline(shoulder.outline).length, shoulder.outline.length - 2);
+      assert.ok(shoulder.outline.every((point) => pointInsideOrOn(point, shoulder.envelopeOutline)),
+        seatCount + '/' + expansionAmount + ': shoulder outline stays inside its authored outline');
+      const innerMidMain = worldInnerMidpoint(main);
+      const innerMidShoulder = worldInnerMidpoint(shoulder);
+      assert.ok(Math.hypot(innerMidMain.x - innerMidShoulder.x, innerMidMain.z - innerMidShoulder.z) < 1e-6,
+        seatCount + '/' + expansionAmount + ': main/shoulder reveal rear edge remains aligned in world space');
+      assert.equal(validateMachineWorldFacilityShellDescriptors([main, shoulder]).valid, true,
+        seatCount + '/' + expansionAmount + ': shoulder reveal is valid with its required main-shell reference');
+      assert.equal(validateMachineWorldFacilityShellDescriptors([shoulder]).valid, false,
+        seatCount + '/' + expansionAmount + ': shoulder reveal must not validate without the main-shell alignment reference');
+    }
+  }
+
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const assemblies = deriveMachineFacilityAssemblies({
+    outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const descriptors = deriveMachineWorldFacilityShellDescriptors(deriveMachineFacilityMachinery({ facilityAssemblies: assemblies }));
+  const shoulder = descriptors.find((part) => part.shoulderRevealProfile === MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE);
+  const geometry = buildThreeGeometry(THREE, shoulder);
+  try {
+    const positions = geometry.getAttribute('position');
+    assert.equal(positions.count, (shoulder.outline.length - 2) * 6 + shoulder.outline.length * 6);
+    geometry.computeBoundingBox();
+    const bounds = geometry.boundingBox;
+    assert.ok(bounds.min.x >= -shoulder.dimensions.x / 2 - 1e-6 && bounds.max.x <= shoulder.dimensions.x / 2 + 1e-6);
+    assert.ok(bounds.min.z >= -shoulder.dimensions.z / 2 - 1e-6 && bounds.max.z <= shoulder.dimensions.z / 2 + 1e-6);
+    assert.ok(bounds.min.y >= -shoulder.dimensions.y / 2 - 1e-6 && bounds.max.y <= shoulder.dimensions.y / 2 + 1e-6);
+  } finally {
+    geometry.dispose();
+  }
+});
 
 test('S7 Control axial core and annular rotor rings triangulate real Three.js geometry within descriptors', () => {
   const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
@@ -303,7 +400,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
   const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
 
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V7');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V8');
   assert.equal(cores.length, 4);
   assert.deepEqual(
     Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),

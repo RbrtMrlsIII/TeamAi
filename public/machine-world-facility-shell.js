@@ -9,13 +9,15 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V7';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V8';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE = 'control-rotor-core-reveal-v1';
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO = 0.70;
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO = -0.25;
+export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE = 'control-rotor-shoulder-reveal-v1';
+export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO = 0.52;
 export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE = 'control-rotor-axial-core-v1';
 export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE = 'control-rotor-axial-ring-v1';
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE = 'radial-axial-v1';
@@ -568,6 +570,32 @@ function deriveShell(entry) {
         coreRevealStartRadius,
       });
     }
+    if (entry.machineRole === 'control' && descriptor.layer === 'shoulder-plate') {
+      // Keep the shoulder aperture narrower than the main-shell reveal. Width
+      // is relative to this smaller plate, while the rear endpoint is shared
+      // with the main reveal after compensating for the plate's radial offset.
+      const envelopeOutline = MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette];
+      const shoulderMin = Math.min(Number(descriptor.dimensions.x), Number(descriptor.dimensions.z));
+      const shoulderRevealWidth = shoulderMin * MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO;
+      const shoulderRevealStartRadius = bodyMin * MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO;
+      const outline = deriveMachineWorldFacilityRadialRevealOutline({
+        outline: envelopeOutline,
+        dimensions: descriptor.dimensions,
+        housingAngle: angle,
+        rotationY: descriptor.rotationY,
+        layerOffset: descriptor.depthOffset,
+        width: shoulderRevealWidth,
+        startRadius: shoulderRevealStartRadius,
+      });
+      return Object.freeze({
+        ...descriptor,
+        outline,
+        envelopeOutline,
+        shoulderRevealProfile: MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE,
+        shoulderRevealWidth,
+        shoulderRevealStartRadius,
+      });
+    }
     if(entry.machineRole!=='analysis'||!['main-shell','shoulder-plate'].includes(descriptor.layer))return descriptor;
     const envelopeOutline=MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette];
     const outline=deriveMachineWorldFacilityServiceBayOutline({
@@ -664,6 +692,70 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
         }
       } catch {
         reasons.push(id + ':CORE_REVEAL_OUTLINE_INVALID');
+      }
+    }
+    if (descriptor?.shoulderRevealProfile) {
+      if (descriptor.shoulderRevealProfile !== MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE) {
+        reasons.push(id + ':SHOULDER_REVEAL_PROFILE_MISMATCH');
+      }
+      if (
+        descriptor.branchId !== MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH
+        || descriptor.layer !== 'shoulder-plate'
+      ) {
+        reasons.push(id + ':SHOULDER_REVEAL_SCOPE_INVALID');
+      }
+      const shoulderMin = Math.min(Number(descriptor.dimensions?.x), Number(descriptor.dimensions?.z));
+      if (!(shoulderMin > 0) || !Number.isFinite(shoulderMin)) {
+        reasons.push(id + ':SHOULDER_REVEAL_ENVELOPE_DIMENSIONS_INVALID');
+      } else if (
+        Math.abs(Number(descriptor.shoulderRevealWidth) / shoulderMin - MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO) > 1e-7
+      ) {
+        reasons.push(id + ':SHOULDER_REVEAL_WIDTH_RATIO_MISMATCH');
+      }
+      const mainEnvelope = list.find((entry) =>
+        entry.branchId === descriptor.branchId && entry.layer === 'main-shell'
+      );
+      if (!mainEnvelope) {
+        reasons.push(id + ':SHOULDER_REVEAL_MAIN_ENVELOPE_MISSING');
+      } else {
+        const mainMin = Math.min(Number(mainEnvelope.dimensions?.x), Number(mainEnvelope.dimensions?.z));
+        if (!(mainMin > 0) || !Number.isFinite(mainMin)) {
+          reasons.push(id + ':SHOULDER_REVEAL_MAIN_DIMENSIONS_INVALID');
+        } else if (
+          Math.abs(Number(descriptor.shoulderRevealStartRadius) / mainMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) > 1e-7
+        ) {
+          reasons.push(id + ':SHOULDER_REVEAL_START_RADIUS_MISMATCH');
+        }
+        if (
+          !Number.isFinite(Number(mainEnvelope.coreRevealStartRadius))
+          || Math.abs(Number(descriptor.shoulderRevealStartRadius) - Number(mainEnvelope.coreRevealStartRadius)) > 1e-7
+        ) {
+          reasons.push(id + ':SHOULDER_REVEAL_REAR_EDGE_MISALIGNED');
+        }
+      }
+      if (!Array.isArray(descriptor.envelopeOutline) || descriptor.envelopeOutline.length < 3) {
+        reasons.push(id + ':SHOULDER_REVEAL_ENVELOPE_MISSING');
+      }
+      if (!(Number(descriptor.shoulderRevealWidth) > 0) || !Number.isFinite(Number(descriptor.shoulderRevealStartRadius))) {
+        reasons.push(id + ':SHOULDER_REVEAL_PARAMETERS_INVALID');
+      }
+      try {
+        if (!Array.isArray(descriptor.outline) || descriptor.outline.length < 4) throw new Error();
+        triangulateMachineWorldFacilityBodyOutline(descriptor.outline);
+        if (
+          Array.isArray(descriptor.envelopeOutline)
+          && signedTwiceArea(descriptor.outline) >= signedTwiceArea(descriptor.envelopeOutline) - 1e-7
+        ) {
+          reasons.push(id + ':SHOULDER_REVEAL_DOES_NOT_REMOVE_ENVELOPE_AREA');
+        }
+        if (
+          Array.isArray(descriptor.envelopeOutline)
+          && !descriptor.outline.every((point) => pointInsideOrOnPolygon(point, descriptor.envelopeOutline))
+        ) {
+          reasons.push(id + ':SHOULDER_REVEAL_ESCAPES_ENVELOPE');
+        }
+      } catch {
+        reasons.push(id + ':SHOULDER_REVEAL_OUTLINE_INVALID');
       }
     }
     if (descriptor?.geometryProfile) {

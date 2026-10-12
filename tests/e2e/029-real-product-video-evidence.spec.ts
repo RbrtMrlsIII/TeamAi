@@ -20,7 +20,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-legacy-outer-housing-fallback-count', '0');
     await expect(canvas).toHaveAttribute('data-machine-world-authored-outer-housing-replacement-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-main-shell-count', '4');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V7');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V8');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-nested-cradle-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-service-bay-count', '2');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-core-primitive-count', '4');
