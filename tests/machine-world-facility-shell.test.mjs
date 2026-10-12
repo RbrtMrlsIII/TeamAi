@@ -446,7 +446,7 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
       }
       assert.ok(minimumClearance > 0.16, seatCount + '/' + expansionAmount + ': Pod clearance ' + minimumClearance);
       assert.equal(validateMachineWorldFacilityShellDescriptors(shells).valid, true, seatCount + '/' + expansionAmount + ': full descriptors valid');
-      assert.equal(validateMachineWorldFacilityShellDescriptors(cradles).valid, true, seatCount + '/' + expansionAmount + ': cradle descriptors valid');
+      assert.equal(validateMachineWorldFacilityShellDescriptors([main, ...cradles]).valid, true, seatCount + '/' + expansionAmount + ': cradle descriptors valid with their required main-shell envelope');
     }
   }
 });
