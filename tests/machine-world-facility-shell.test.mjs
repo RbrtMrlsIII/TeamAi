@@ -17,6 +17,10 @@ import {
   MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
   MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,
   MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS,
+  MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE,
+  MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO,
+  MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO,
+  deriveMachineWorldFacilityRadialRevealOutline,
   deriveMachineWorldFacilityServiceBayOutline,
   triangulateMachineWorldFacilityBodyOutline,
 } from '../frontend/spatial/machine-world-facility-shell.js';
@@ -35,13 +39,27 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V5');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V6');
   const bays=descriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE);
   assert.equal(bays.length,2);
   assert.deepEqual(bays.map(entry=>entry.layer).sort(),['main-shell','shoulder-plate']);
   assert.ok(bays.every(entry=>entry.branchId==='BRANCH-OUTER-ALPHA'&&entry.serviceBayWidth===MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH));
   assert.ok(bays.every(entry=>entry.serviceBayStartRadius===MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS));
   const area=outline=>outline.reduce((sum,p,i)=>{const q=outline[(i+1)%outline.length];return sum+p[0]*q[1]-q[0]*p[1];},0);
+  const reveals=descriptors.filter(entry=>entry.coreRevealProfile===MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE);
+  assert.equal(reveals.length,1);
+  assert.equal(reveals[0].branchId,MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH);
+  assert.equal(reveals[0].layer,'main-shell');
+  assert.ok(Array.isArray(reveals[0].envelopeOutline)&&reveals[0].envelopeOutline.length===8);
+  assert.ok(area(reveals[0].outline)>0&&area(reveals[0].outline)<area(reveals[0].envelopeOutline));
+  assert.equal(triangulateMachineWorldFacilityBodyOutline(reveals[0].outline).length,reveals[0].outline.length-2);
+  assert.ok(reveals[0].outline.some((p,i)=>{
+    const a=reveals[0].outline[(i-1+reveals[0].outline.length)%reveals[0].outline.length],b=reveals[0].outline[(i+1)%reveals[0].outline.length];
+    return (p[0]-a[0])*(b[1]-p[1])-(p[1]-a[1])*(b[0]-p[0]) < -1e-8;
+  }),'Control core reveal outline must be concave');
+  const revealBodyMin=Math.min(reveals[0].dimensions.x,reveals[0].dimensions.z);
+  assert.ok(Math.abs(reveals[0].coreRevealWidth/revealBodyMin-MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO)<1e-9);
+  assert.ok(Math.abs(reveals[0].coreRevealStartRadius/revealBodyMin-MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO)<1e-9);
   for(const bay of bays){
     assert.ok(Array.isArray(bay.envelopeOutline)&&bay.envelopeOutline.length===8);
     assert.ok(area(bay.outline)>0&&area(bay.outline)<area(bay.envelopeOutline));
@@ -80,6 +98,33 @@ test('S7 Analysis service bay triangulates real Three.js geometry within its aut
   }finally{geometry.dispose();}
 });
 
+test('S7 Control core reveal triangulates real Three.js geometry while preserving its authored bounds',()=>{
+  const scene=createBranchConnectionCore({seatCount:10,expansionAmount:0});
+  const assemblies=deriveMachineFacilityAssemblies({outerHousings:scene.parts.filter(p=>p.kind==='outer-housing')});
+  const machinery=deriveMachineFacilityMachinery({
+    facilityAssemblies:assemblies,
+    clearanceObstacles:scene.parts.filter(p=>p.kind==='inner-pod'),
+    requestedClearance:0.16,
+  });
+  const shells=deriveMachineWorldFacilityShellDescriptors(machinery);
+  const reveal=shells.find(p=>p.coreRevealProfile===MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE);
+  assert.ok(reveal);
+  assert.equal(reveal.branchId,MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH);
+  const geometry=buildThreeGeometry(THREE,reveal);
+  try{
+    const positions=geometry.getAttribute('position');
+    const capVertexCount=(reveal.outline.length-2)*6;
+    assert.equal(positions.count,capVertexCount+reveal.outline.length*6);
+    geometry.computeBoundingBox();
+    assert.ok(Math.abs(geometry.boundingBox.min.x+reveal.dimensions.x/2)<1e-6);
+    assert.ok(Math.abs(geometry.boundingBox.max.x-reveal.dimensions.x/2)<1e-6);
+    assert.ok(Math.abs(geometry.boundingBox.min.z+reveal.dimensions.z/2)<1e-6);
+    assert.ok(Math.abs(geometry.boundingBox.max.z-reveal.dimensions.z/2)<1e-6);
+  }finally{
+    geometry.dispose();
+  }
+});
+
 test('S7 outer facility shells are World-only', () => {
   const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
@@ -114,8 +159,8 @@ test('S7 authored facility bodies use bounded faceted outlines rather than coars
       const next = entry.outline[(index + 1) % entry.outline.length];
       return signedTurn(prev, point, next);
     });
-    if(entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE){
-      assert.ok(turns.some(turn=>turn < -1e-8),entry.branchId+': service bay is concave');
+    if(entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE||entry.coreRevealProfile===MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE){
+      assert.ok(turns.some(turn=>turn < -1e-8),entry.branchId+': radial reveal is concave');
       assert.ok(triangulateMachineWorldFacilityBodyOutline(entry.outline).length>=entry.outline.length-2);
     }else assert.ok(turns.every(turn=>turn>0),entry.branchId+': untouched profile remains convex');
     const radii=(entry.envelopeOutline||entry.outline).map(([x,z])=>Math.hypot(x,z));
@@ -174,7 +219,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
   const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
 
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V5');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V6');
   assert.equal(cores.length, 4);
   assert.deepEqual(
     Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),
@@ -230,6 +275,11 @@ test('S7 Control nested rotor cradle frames the energy core without leaving the 
         requestedClearance: 0.16,
       });
       const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
+      const reveals = shells.filter((entry) => entry.coreRevealProfile === MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE);
+      assert.equal(reveals.length, 1, seatCount + '/' + expansionAmount + ': one Control main-shell reveal');
+      const reveal = reveals[0];
+      assert.equal(reveal.branchId, MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH);
+      assert.equal(reveal.layer, 'main-shell');
       const cradles = shells.filter((entry) => entry.nestedMassingProfile === MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE);
       assert.equal(cradles.length, 4, seatCount + '/' + expansionAmount);
       assert.ok(cradles.every((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH));
@@ -244,6 +294,14 @@ test('S7 Control nested rotor cradle frames the energy core without leaving the 
       const rings = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-ring');
       assert.ok(rings.every((ring) => ring.shape === 'TORUS' && ring.dimensions.x > core.dimensions.x));
       const coreRadius = Math.max(core.dimensions.x, core.dimensions.z) * 0.5;
+      const bodyMin = Math.min(main.dimensions.x, main.dimensions.z);
+      const largestRingSpan = Math.max(...rings.map((ring) => Math.max(ring.dimensions.x, ring.dimensions.z)));
+      assert.ok(Math.abs(reveal.coreRevealWidth / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO) < 1e-9);
+      assert.ok(Math.abs(reveal.coreRevealStartRadius / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) < 1e-9);
+      assert.ok(reveal.coreRevealWidth - largestRingSpan > bodyMin * 0.05, 'reveal must retain margin outside both rotor rings');
+      assert.ok(-reveal.coreRevealStartRadius - coreRadius > bodyMin * 0.04, 'reveal must extend behind the full energy-core radius');
+      assert.equal(triangulateMachineWorldFacilityBodyOutline(reveal.outline).length, reveal.outline.length - 2);
+      assert.equal(validateMachineWorldFacilityShellDescriptors(shells).valid, true, seatCount + '/' + expansionAmount + ': every shell descriptor remains valid');
       for (const post of cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion')) {
         const reach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
         const postRadius = Math.hypot(post.dimensions.x, post.dimensions.z) * 0.5;

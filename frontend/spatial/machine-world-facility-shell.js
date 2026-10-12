@@ -9,10 +9,13 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V5';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V6';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
+export const MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE = 'control-rotor-core-reveal-v1';
+export const MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO = 0.70;
+export const MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO = -0.25;
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE = 'control-rotor-cradle-v1';
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH = 'BRANCH-OUTER-GAMMA';
 export const MACHINE_WORLD_FACILITY_SHELL_BASE_DESCRIPTOR_COUNT = 20;
@@ -134,18 +137,18 @@ export function triangulateMachineWorldFacilityBodyOutline(outline=[]){
 }
 
 /** Cuts a radial service bay while retaining the authored hull as a separate envelope. */
-export function deriveMachineWorldFacilityServiceBayOutline({
+export function deriveMachineWorldFacilityRadialRevealOutline({
   outline,dimensions,housingAngle=0,rotationY=0,layerOffset=0,
-  bayWidth=MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,bayStartRadius=MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS,
+  width,startRadius,
 }={}){
   const source=Array.isArray(outline)?outline.map(p=>[Number(p?.[0]),Number(p?.[1])]):[];
-  if(source.length<3||source.some(p=>!p.every(Number.isFinite)))throw new Error('FACILITY_SERVICE_BAY_SOURCE_INVALID');
+  if(source.length<3||source.some(p=>!p.every(Number.isFinite)))throw new Error('FACILITY_RADIAL_REVEAL_SOURCE_INVALID');
   const area=signedTwiceArea(source);
-  if(area<=GEOMETRY_EPSILON||!isSimplePolygon2D(source))throw new Error('FACILITY_SERVICE_BAY_REQUIRES_CCW_SIMPLE_ENVELOPE');
-  const width=Number(bayWidth),start=Number(bayStartRadius),dimX=Number(dimensions?.x),dimZ=Number(dimensions?.z);
-  if(!(width>0)||!Number.isFinite(start)||!(dimX>0)||!(dimZ>0)
+  if(area<=GEOMETRY_EPSILON||!isSimplePolygon2D(source))throw new Error('FACILITY_RADIAL_REVEAL_REQUIRES_CCW_SIMPLE_ENVELOPE');
+  const revealWidth=Number(width),start=Number(startRadius),dimX=Number(dimensions?.x),dimZ=Number(dimensions?.z);
+  if(!(revealWidth>0)||!Number.isFinite(start)||!(dimX>0)||!(dimZ>0)
     ||![dimX,dimZ,housingAngle,rotationY,layerOffset].every(v=>Number.isFinite(Number(v)))){
-    throw new Error('FACILITY_SERVICE_BAY_INVALID_PARAMETERS');
+    throw new Error('FACILITY_RADIAL_REVEAL_INVALID_PARAMETERS');
   }
   const minX=Math.min(...source.map(p=>p[0])),maxX=Math.max(...source.map(p=>p[0]));
   const minZ=Math.min(...source.map(p=>p[1])),maxZ=Math.max(...source.map(p=>p[1]));
@@ -175,16 +178,16 @@ export function deriveMachineWorldFacilityServiceBayOutline({
     }
     return found;
   };
-  const minus=intersections(target-width*0.5),plus=intersections(target+width*0.5);
-  if(!minus.length||!plus.length)throw new Error('FACILITY_SERVICE_BAY_DOES_NOT_CROSS_ENVELOPE');
+  const minus=intersections(target-revealWidth*0.5),plus=intersections(target+revealWidth*0.5);
+  if(!minus.length||!plus.length)throw new Error('FACILITY_RADIAL_REVEAL_DOES_NOT_CROSS_ENVELOPE');
   const outward=items=>items.reduce((best,item)=>item.point[0]*u[0]+item.point[1]*u[1]>best.point[0]*u[0]+best.point[1]*u[1]?item:best);
   let a=outward(minus),b=outward(plus),interval=modulo(b.parameter-a.parameter,physical.length);
-  if(Math.abs(interval-physical.length*0.5)<=1e-7)throw new Error('FACILITY_SERVICE_BAY_MOUTH_AMBIGUOUS');
+  if(Math.abs(interval-physical.length*0.5)<=1e-7)throw new Error('FACILITY_RADIAL_REVEAL_MOUTH_AMBIGUOUS');
   if(interval>physical.length*0.5)[a,b]=[b,a];
   const longArc=modulo(a.parameter-b.parameter,physical.length);
   const inner=mouth=>{const side=mouth.point[0]*v[0]+mouth.point[1]*v[1]-target;return [origin[0]+v[0]*side,origin[1]+v[1]*side];};
   const innerA=inner(a),innerB=inner(b);
-  if(!pointInsideOrOnPolygon(innerA,physical)||!pointInsideOrOnPolygon(innerB,physical))throw new Error('FACILITY_SERVICE_BAY_BACK_EDGE_ESCAPES_ENVELOPE');
+  if(!pointInsideOrOnPolygon(innerA,physical)||!pointInsideOrOnPolygon(innerB,physical))throw new Error('FACILITY_RADIAL_REVEAL_BACK_EDGE_ESCAPES_ENVELOPE');
   const arc=[];
   for(let i=0;i<physical.length;i+=1){
     const d=modulo(i-b.parameter,physical.length);
@@ -193,10 +196,32 @@ export function deriveMachineWorldFacilityServiceBayOutline({
   arc.sort((x,y)=>x.d-y.d);
   const result=[a.point,innerA,innerB,b.point,...arc.map(v=>v.point)].map(([x,z])=>[x/sx+cx,z/sz+cz]);
   const resultArea=signedTwiceArea(result);
-  if(resultArea<=GEOMETRY_EPSILON||resultArea>=area-1e-7||!isSimplePolygon2D(result))throw new Error('FACILITY_SERVICE_BAY_RESULT_INVALID');
+  if(resultArea<=GEOMETRY_EPSILON||resultArea>=area-1e-7||!isSimplePolygon2D(result))throw new Error('FACILITY_RADIAL_REVEAL_RESULT_INVALID');
   triangulateMachineWorldFacilityBodyOutline(result);
   return Object.freeze(result.map(p=>Object.freeze(p)));
 }
+
+export function deriveMachineWorldFacilityServiceBayOutline(options = {}) {
+  const {
+    bayWidth = MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,
+    bayStartRadius = MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS,
+    ...revealOptions
+  } = options || {};
+
+  try {
+    return deriveMachineWorldFacilityRadialRevealOutline({
+      ...revealOptions,
+      width: bayWidth,
+      startRadius: bayStartRadius,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith('FACILITY_RADIAL_REVEAL_')) {
+      throw new Error(error.message.replace('FACILITY_RADIAL_REVEAL_', 'FACILITY_SERVICE_BAY_'));
+    }
+    throw error;
+  }
+}
+
 
 const scale = (value, factor, minimum = 0.06) =>
   Math.max(minimum, finite(value, minimum) * factor);
@@ -501,6 +526,28 @@ function deriveShell(entry) {
   }
 
   return Object.freeze(layered.map((descriptor) => {
+    if (entry.machineRole === 'control' && descriptor.layer === 'main-shell') {
+      const envelopeOutline = MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette];
+      const coreRevealWidth = bodyMin * MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO;
+      const coreRevealStartRadius = bodyMin * MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO;
+      const outline = deriveMachineWorldFacilityRadialRevealOutline({
+        outline: envelopeOutline,
+        dimensions: descriptor.dimensions,
+        housingAngle: angle,
+        rotationY: descriptor.rotationY,
+        layerOffset: descriptor.depthOffset,
+        width: coreRevealWidth,
+        startRadius: coreRevealStartRadius,
+      });
+      return Object.freeze({
+        ...descriptor,
+        outline,
+        envelopeOutline,
+        coreRevealProfile: MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE,
+        coreRevealWidth,
+        coreRevealStartRadius,
+      });
+    }
     if(entry.machineRole!=='analysis'||!['main-shell','shoulder-plate'].includes(descriptor.layer))return descriptor;
     const envelopeOutline=MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette];
     const outline=deriveMachineWorldFacilityServiceBayOutline({
@@ -554,6 +601,50 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
         triangulateMachineWorldFacilityBodyOutline(descriptor.outline);
         if(Array.isArray(descriptor.envelopeOutline)&&signedTwiceArea(descriptor.outline)>=signedTwiceArea(descriptor.envelopeOutline)-1e-7)reasons.push(id+':SERVICE_BAY_DOES_NOT_REMOVE_ENVELOPE_AREA');
       }catch{reasons.push(id+':SERVICE_BAY_OUTLINE_INVALID');}
+    }
+    if (descriptor?.coreRevealProfile) {
+      if (descriptor.coreRevealProfile !== MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE) {
+        reasons.push(id + ':CORE_REVEAL_PROFILE_MISMATCH');
+      }
+      if (
+        descriptor.branchId !== MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH
+        || descriptor.layer !== 'main-shell'
+      ) {
+        reasons.push(id + ':CORE_REVEAL_SCOPE_INVALID');
+      }
+      const bodyMin = Math.min(Number(descriptor.dimensions?.x), Number(descriptor.dimensions?.z));
+      if (!(bodyMin > 0) || !Number.isFinite(bodyMin)) {
+        reasons.push(id + ':CORE_REVEAL_ENVELOPE_DIMENSIONS_INVALID');
+      } else {
+        if (
+          Math.abs(Number(descriptor.coreRevealWidth) / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO) > 1e-7
+        ) {
+          reasons.push(id + ':CORE_REVEAL_WIDTH_RATIO_MISMATCH');
+        }
+        if (
+          Math.abs(Number(descriptor.coreRevealStartRadius) / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) > 1e-7
+        ) {
+          reasons.push(id + ':CORE_REVEAL_START_RADIUS_RATIO_MISMATCH');
+        }
+      }
+      if (!Array.isArray(descriptor.envelopeOutline) || descriptor.envelopeOutline.length < 3) {
+        reasons.push(id + ':CORE_REVEAL_ENVELOPE_MISSING');
+      }
+      if (!(Number(descriptor.coreRevealWidth) > 0) || !Number.isFinite(Number(descriptor.coreRevealStartRadius))) {
+        reasons.push(id + ':CORE_REVEAL_PARAMETERS_INVALID');
+      }
+      try {
+        if (!Array.isArray(descriptor.outline) || descriptor.outline.length < 4) throw new Error();
+        triangulateMachineWorldFacilityBodyOutline(descriptor.outline);
+        if (
+          Array.isArray(descriptor.envelopeOutline)
+          && signedTwiceArea(descriptor.outline) >= signedTwiceArea(descriptor.envelopeOutline) - 1e-7
+        ) {
+          reasons.push(id + ':CORE_REVEAL_DOES_NOT_REMOVE_ENVELOPE_AREA');
+        }
+      } catch {
+        reasons.push(id + ':CORE_REVEAL_OUTLINE_INVALID');
+      }
     }
     if(descriptor?.nestedMassingProfile){
       if(descriptor.nestedMassingProfile!==MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE)reasons.push(id+':NESTED_MASSING_PROFILE_MISMATCH');
