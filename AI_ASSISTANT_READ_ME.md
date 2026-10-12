@@ -32,17 +32,20 @@
 
 ### 2026-10-12 CURRENT SESSION STATE
 
-This is the live recovery snapshot; dated material below it remains historical provenance and must not override the exact branch/head/gate state above.
+This is the live recovery snapshot. Later repository state is resolved from the live PR head; dated sections below are historical provenance only.
 
-- Canonical main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
-- Active PR: #424, branch `frontend/029-spatial-world-continuation`, OPEN / DRAFT / mergeable.
-- Current code-bearing head: `0bfc1b7cb3e54b81aee701e14389948b22116db1`, with all five gates PASS as listed in the 2026-10-12 Control section above.
-- Current S4/S5 baseline remains governed by `E424-2026-10-11G`: density-aware 180° / 165° fan, radial factor `2.16 + 0.02 × expansionAmount`, Connection coupler travel 0.18, authored-component sampled AABB proof at the 0.16 floor. This is not triangle-level mesh collision proof.
-- Current S7 addition is Control `S7-OUTER-BODY-V5` / `control-rotor-cradle-v1`, four nested presentation-only descriptors around the existing core. Exact-head test and Browser evidence are in `E424-2026-10-12B`.
-- Latest successful production Browser artifact confirms the capture route works; visuals still need direct comparison to `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board. Human acceptance and production deployment proof remain open.
-- current slice: bounded 029 Control cradle verification and MP4/PNG visual acceptance under PR #424; the global execution frontier remains Issue #401 (`TEAM-BACKEND-030`, live Firestore authority/security/runtime evidence).
-- Global Current Slice is still Issue #401 (`TEAM-BACKEND-030`, live Firestore authority/security/runtime evidence). PR #424 is only the bounded 029 spatial companion. Issue #405 remains spatial governance; Issue #409 is the canonical successor handoff.
-- Do not create another spatial PR, change Seat cardinality, transfer semantic topology to presentation parts, or use materials/lighting to conceal structural omissions. Do not promote repository proof into deployment, backend completion, release, or human acceptance.
+- main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb` (canonical main at this checkpoint).
+- replacement branch: `frontend/029-spatial-world-continuation`.
+- current branch head: resolve from live PR #424 and verify `head.sha` before consequential work; documentation-only commits may advance the branch beyond the latest producing application head.
+- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401); PR #424 remains a subordinate 029 spatial sub-frontier and does not replace the global frontier.
+- open implementation vehicles: Issue #401 production Firestore authority/security/runtime evidence; PR #424 bounded 029 spatial continuation (OPEN / DRAFT). No second spatial PR is authorized.
+- next allowed work: compare the successful Control cradle Hero capture against `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board; decide whether nested massing is legible and physically coherent before authorizing Operations. Do not start the next family before that visual decision.
+- handoff rule: Issue #409 is the canonical newcomer handoff; read current code-bearing proof and live PR head separately, and do not borrow a parent commit’s gate result for a newer head.
+- live PR #346 head: historical governance lineage only; the live PR #424 `head.sha` is the source of truth for the current verification commit.
+- validation state: code-bearing head `0bfc1b7cb3e54b81aee701e14389948b22116db1` passes Full-System (1,287/1,287), Governance, Security, Deep Security, and Browser (92 passed / 4 skipped). Its Full Project artifact is `11724783433` (SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`); Browser artifact `11725270062` (SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`). Documentation commits after that code head require their own exact-head gates.
+- validation-change guide: any change to this handoff or its evidence creates a new verification head; rerun the five required gates and inspect the matching Browser artifact before claiming the changed head verified.
+- Governing spatial Issue: #405; canonical successor handoff: #409. Global execution remains Issue #401. No Seat documents or backend authority were created or modified in this spatial session.
+- Do not claim TEAM-EXPERIENCE-029 released or TEAM-BACKEND-001 complete. Do not merge #424 because CI is green. Human visual acceptance, production deployment proof, triangle-level mesh collision proof, formal S30/S0–S33 exit, merge/release authorization, and final 029 completion remain open.
 ### 2026-10-08 CURRENT S8 ENDPOINT/JUNCTION STATE
 
 - Verified application head: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`
