@@ -20,10 +20,12 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-legacy-outer-housing-fallback-count', '0');
     await expect(canvas).toHaveAttribute('data-machine-world-authored-outer-housing-replacement-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-body-main-shell-count', '4');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V6');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-body-shell-version', 'S7-OUTER-BODY-V7');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-nested-cradle-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-service-bay-count', '2');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-core-primitive-count', '4');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-rotor-axis-profile', 'radial-axial-v1');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-rotor-ring-axis-profile', 'radial-axial-v1');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-core-shapes', 'BRANCH-OUTER-ALPHA:CYL|BRANCH-OUTER-BETA:BOX|BRANCH-OUTER-GAMMA:CYL|BRANCH-OUTER-DELTA:CYL');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-core-primitive-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-docking-embodiment', 'S8-ENDPOINT-V3');

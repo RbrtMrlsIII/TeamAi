@@ -62,6 +62,9 @@ import {
   MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT,
   MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE,
   MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE,
   triangulateMachineWorldFacilityBodyOutline,
 } from './machine-world-facility-shell.js';
 import {
@@ -294,6 +297,46 @@ export function createAnnularPrismVertices({
     pushTri(innerBottom0, innerTop1, innerTop0);
   }
 
+  return new Float32Array(vertices);
+}
+
+
+export function createAxialCylinderVertices({ segments = 16 } = {}) {
+  const count = Math.max(8, Math.min(64, Math.floor(finite(segments, 16))));
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (angle, z) => [Math.cos(angle), Math.sin(angle), z];
+  for (let i = 0; i < count; i += 1) {
+    const a0 = (i / count) * TAU;
+    const a1 = ((i + 1) / count) * TAU;
+    const b0 = point(a0, -1), b1 = point(a1, -1);
+    const f0 = point(a0, 1), f1 = point(a1, 1);
+    pushTri([0, 0, 1], f0, f1);
+    pushTri([0, 0, -1], b1, b0);
+    pushTri(b0, b1, f1);
+    pushTri(b0, f1, f0);
+  }
+  return new Float32Array(vertices);
+}
+
+export function createAxialAnnularPrismVertices({ segments = 24, innerRadius = 0.72 } = {}) {
+  const count = Math.max(8, Math.min(96, Math.floor(finite(segments, 24))));
+  const inner = clamp(finite(innerRadius, 0.72), 0.50, 0.90);
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (radius, angle, z) => [Math.cos(angle) * radius, Math.sin(angle) * radius, z];
+  for (let i = 0; i < count; i += 1) {
+    const a0 = (i / count) * TAU;
+    const a1 = ((i + 1) / count) * TAU;
+    const ob0 = point(1, a0, -1), ob1 = point(1, a1, -1);
+    const of0 = point(1, a0, 1), of1 = point(1, a1, 1);
+    const ib0 = point(inner, a0, -1), ib1 = point(inner, a1, -1);
+    const if0 = point(inner, a0, 1), if1 = point(inner, a1, 1);
+    pushTri(of0, of1, if1); pushTri(of0, if1, if0);
+    pushTri(ob0, ib1, ob1); pushTri(ob0, ib0, ib1);
+    pushTri(ob0, ob1, of1); pushTri(ob0, of1, of0);
+    pushTri(ib0, if1, ib1); pushTri(ib0, if0, if1);
+  }
   return new Float32Array(vertices);
 }
 
@@ -766,11 +809,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let entry = primitiveBuffers.get(key);
     if (entry) return entry;
     const polygon = PRIMITIVE_POLYGONS[key] || PRIMITIVE_POLYGONS.CUBE;
-    const data = key === 'TORUS'
-      ? createAnnularPrismVertices()
-      : key === 'POD_SHELL'
-        ? createMachinePodShellVertices()
-        : shapeBuffer(gl, polygon, 1);
+    const data = key === 'TORUS_AXIAL'
+      ? createAxialAnnularPrismVertices()
+      : key === 'CYLINDER_AXIAL'
+        ? createAxialCylinderVertices()
+        : key === 'TORUS'
+          ? createAnnularPrismVertices()
+          : key === 'POD_SHELL'
+            ? createMachinePodShellVertices()
+            : shapeBuffer(gl, polygon, 1);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
@@ -2409,13 +2456,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const mechanismHousingPrimitiveShapes = [];
     for (const shell of facilityBodyShells) {
       const authoredOutline = Array.isArray(shell.outline) && shell.outline.length >= 3;
-      const primitiveShape = shell.shape === 'CYLINDER' ? 'CYL' : shell.shape;
+      const authoredPrimitiveShape = shell.shape === 'CYLINDER' ? 'CYL' : shell.shape;
+      const axialCore = shell.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE;
+      const axialRing = shell.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE;
       if (shell.layer === 'mechanism-housing') {
-        if (authoredOutline || !['CYL', 'BOX'].includes(primitiveShape)) {
+        if (authoredOutline || !['CYL', 'BOX'].includes(authoredPrimitiveShape)) {
           throw new Error('invalid S7 mechanism-housing primitive: ' + shell.branchId);
         }
-        mechanismHousingPrimitiveShapes.push(shell.branchId + ':' + primitiveShape);
+        mechanismHousingPrimitiveShapes.push(shell.branchId + ':' + authoredPrimitiveShape);
       }
+      const primitiveShape = axialCore ? 'CYLINDER_AXIAL' : axialRing ? 'TORUS_AXIAL' : authoredPrimitiveShape;
       const buffer = authoredOutline
         ? ensureFacilityBodyBuffer(shell.silhouette,shell.outline,shell.envelopeOutline)
         : ensurePrimitiveBuffer(primitiveShape);
@@ -2450,23 +2500,32 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
               : shell.layer === 'nested-cradle'
                 ? (selected ? 0.94 : 0.84)
                 : (selected ? 0.78 : 0.66);
+      const shellTransform = axialCore || axialRing
+        ? multiplyMatrix(
+            translateMatrix(shell.center.x, shell.center.y, shell.center.z),
+            multiplyMatrix(
+              rotateYMatrix(finite(shell.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, dimensions.x * 0.5),
+                Math.max(0.02, dimensions.y * 0.5),
+                Math.max(0.02, dimensions.z * 0.5),
+              ),
+            ),
+          )
+        : multiplyMatrix(
+            translateMatrix(shell.center.x, shell.center.y - dimensions.y * 0.5, shell.center.z),
+            multiplyMatrix(
+              rotateYMatrix(finite(shell.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, dimensions.x * 0.5),
+                Math.max(0.02, dimensions.y),
+                Math.max(0.02, dimensions.z * 0.5),
+              ),
+            ),
+          );
       drawBuffer(
         buffer,
-        multiplyMatrix(
-          translateMatrix(
-            shell.center.x,
-            shell.center.y - dimensions.y * 0.5,
-            shell.center.z,
-          ),
-          multiplyMatrix(
-            rotateYMatrix(finite(shell.rotationY)),
-            scaleMatrix(
-              Math.max(0.02, dimensions.x * 0.5),
-              Math.max(0.02, dimensions.y),
-              Math.max(0.02, dimensions.z * 0.5),
-            ),
-          ),
-        ),
+        shellTransform,
         material,
         {
           emit: selected ? 0.10 : 0.035,
@@ -2534,6 +2593,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldFacilityBodyShellVersion = MACHINE_WORLD_FACILITY_SHELL_VERSION;
     canvas.dataset.machineWorldFacilityCorePrimitiveCount = String(mechanismHousingPrimitiveShapes.length);
     canvas.dataset.machineWorldFacilityCoreShapes = mechanismHousingPrimitiveShapes.join('|');
+    const axialCoreCount = facilityBodyShells.filter((entry) => entry.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE).length;
+    const axialRingCount = facilityBodyShells.filter((entry) => entry.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE).length;
+    canvas.dataset.machineWorldFacilityControlRotorAxisProfile = axialCoreCount === 1
+      ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
+      : 'none';
+    canvas.dataset.machineWorldFacilityControlRotorRingAxisProfile = axialRingCount === 2 && axialCoreCount === 1
+      ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
+      : 'invalid';
     canvas.dataset.machineWorldFacilityCorePrimitiveValidation = 'pass';
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;

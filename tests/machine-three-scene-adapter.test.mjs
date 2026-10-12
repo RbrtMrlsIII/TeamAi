@@ -1341,6 +1341,55 @@ test('Y1 preserves authored polygon profiles for Three.js tessellation', () => {
   assert.equal(resolveThreePolygonSegments({ shape: 'CYLINDER', profile: 'generic-cylinder' }), 10);
 });
 
+test('Y1 preserves S7 radial Control rotor geometry profiles in Three.js descriptors', () => {
+  const core = normalizeThreeDescriptor({
+    id: 'control-axial-core', shape: 'CYLINDER', profile: 'facility-body-core-control',
+    geometryProfile: 'control-rotor-axial-core-v1',
+    dimensions: { x: 0.76, y: 0.76, z: 0.92 }, center: { x: 0, y: 0, z: 0 }, rotationY: 0.4,
+  });
+  assert.equal(core.geometryProfile, 'control-rotor-axial-core-v1');
+  const coreGeometry = buildThreeGeometry(THREE, core);
+  try {
+    coreGeometry.computeBoundingBox();
+    const box = coreGeometry.boundingBox;
+    assert.ok(Math.abs(box.min.x + core.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(box.max.x - core.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(box.min.y + core.dimensions.z / 2) < 1e-6);
+    assert.ok(Math.abs(box.max.y - core.dimensions.z / 2) < 1e-6);
+    assert.ok(Math.abs(box.min.z + core.dimensions.y / 2) < 1e-6);
+    assert.ok(Math.abs(box.max.z - core.dimensions.y / 2) < 1e-6);
+    assert.equal(coreGeometry.parameters.radialSegments, 16);
+  } finally {
+    coreGeometry.dispose();
+  }
+
+  const ring = normalizeThreeDescriptor({
+    id: 'control-axial-ring', shape: 'TORUS', profile: 'facility-body-control-rotor-cradle-front',
+    geometryProfile: 'control-rotor-axial-ring-v1',
+    dimensions: { x: 1.28, y: 1.28, z: 0.06 }, center: { x: 0, y: 0, z: 0 }, rotationY: 0.4,
+  });
+  assert.equal(ring.geometryProfile, 'control-rotor-axial-ring-v1');
+  const ringGeometry = buildThreeGeometry(THREE, ring);
+  try {
+    const positions = ringGeometry.getAttribute('position');
+    assert.equal(positions.count, 24 * 24);
+    ringGeometry.computeBoundingBox();
+    assert.ok(Math.abs(ringGeometry.boundingBox.min.x + ring.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(ringGeometry.boundingBox.max.x - ring.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(ringGeometry.boundingBox.min.y + ring.dimensions.y / 2) < 1e-6);
+    assert.ok(Math.abs(ringGeometry.boundingBox.max.y - ring.dimensions.y / 2) < 1e-6);
+    assert.ok(Math.abs(ringGeometry.boundingBox.min.z + ring.dimensions.z / 2) < 1e-6);
+    assert.ok(Math.abs(ringGeometry.boundingBox.max.z - ring.dimensions.z / 2) < 1e-6);
+  } finally {
+    ringGeometry.dispose();
+  }
+
+  const yaw = 0.4;
+  const axis = new THREE.Vector3(0, 1, 0).applyEuler(new THREE.Euler(Math.PI * 0.5, yaw, 0, 'YXZ'));
+  assert.ok(Math.abs(axis.x - Math.sin(yaw)) < 1e-6);
+  assert.ok(Math.abs(axis.z - Math.cos(yaw)) < 1e-6);
+});
+
 test('Y1 descriptor conversion is fail-closed for malformed input', () => {
   assert.throws(() => normalizeThreeDescriptor(null), /requires an id/);
 });

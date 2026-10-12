@@ -9,13 +9,21 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V6';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V7';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE = 'control-rotor-core-reveal-v1';
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO = 0.70;
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO = -0.25;
+export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE = 'control-rotor-axial-core-v1';
+export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE = 'control-rotor-axial-ring-v1';
+export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE = 'radial-axial-v1';
+export const MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO = 0.38;
+export const MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO = 0.46;
+export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO = 0.64;
+export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO = 0.34;
+export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO = 0.86;
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE = 'control-rotor-cradle-v1';
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH = 'BRANCH-OUTER-GAMMA';
 export const MACHINE_WORLD_FACILITY_SHELL_BASE_DESCRIPTOR_COUNT = 20;
@@ -424,13 +432,14 @@ function deriveShell(entry) {
         z: housing.center.z,
       }),
       dimensions: Object.freeze({
-        x: bodyMin * 0.40,
-        y: Math.max(0.10, bodyHeight * 0.30),
-        z: bodyMin * 0.40,
+        x: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
+        y: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
+        z: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO,
       }),
       shape: 'CYLINDER',
+      geometryProfile: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
       materialRole: 'energy',
-      rotationY: 0,
+      rotationY: Math.PI * 0.5 - angle,
     },
     'access-commerce': {
       center: Object.freeze({
@@ -460,6 +469,7 @@ function deriveShell(entry) {
       + Math.sin(angle) * (core.center.z - housing.center.z),
     dimensions: core.dimensions,
     rotationY: finite(core.rotationY),
+    geometryProfile: core.geometryProfile || '',
     materialRole: core.materialRole,
     outline: null,
     layer: 'mechanism-housing',
@@ -470,22 +480,27 @@ function deriveShell(entry) {
     // Nested rotor cradle frames the existing energy core. It stays inside the
     // authored main-shell AABB and does not move ports, topology, or Seat law.
     const tangent = { x: -radial.z, z: radial.x };
-    const ringSpan = bodyMin * 0.64;
-    const ringHeight = Math.max(0.06, bodyHeight * 0.055);
-    const ringOffsetY = Number(core.dimensions.y) * 0.43;
+    const ringSpan = bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO;
+    const ringThickness = Math.max(0.06, bodyHeight * 0.055);
+    const ringOffset = Number(core.dimensions.z) * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
     for (const ring of [
-      { key: 'LOWER', y: core.center.y - ringOffsetY },
-      { key: 'UPPER', y: core.center.y + ringOffsetY },
+      { key: 'REAR', offset: -ringOffset },
+      { key: 'FRONT', offset: ringOffset },
     ]) {
       layered.push(Object.freeze({
         ...body,
         id: MACHINE_WORLD_FACILITY_SHELL_ID + ':' + entry.branchId + ':CRADLE-' + ring.key,
         profile: 'facility-body-control-rotor-cradle-' + ring.key.toLowerCase(),
         shape: 'TORUS',
-        center: Object.freeze({ x: core.center.x, y: ring.y, z: core.center.z }),
-        depthOffset: 0,
-        dimensions: Object.freeze({ x: ringSpan, y: ringHeight, z: ringSpan }),
-        rotationY: 0,
+        geometryProfile: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+        center: Object.freeze({
+          x: core.center.x + radial.x * ring.offset,
+          y: core.center.y,
+          z: core.center.z + radial.z * ring.offset,
+        }),
+        depthOffset: ring.offset,
+        dimensions: Object.freeze({ x: ringSpan, y: ringSpan, z: ringThickness }),
+        rotationY: finite(core.rotationY),
         materialRole: 'metal',
         outline: null,
         layer: 'nested-cradle',
@@ -512,7 +527,7 @@ function deriveShell(entry) {
           + tangent.z * stanchionReach * side * Math.sin(angle),
         dimensions: Object.freeze({
           x: stanchionSpan,
-          y: Math.max(0.10, Number(core.dimensions.y) * 0.92),
+          y: Math.max(0.10, ringSpan * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO),
           z: stanchionSpan,
         }),
         rotationY: angle,
@@ -645,6 +660,38 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
         }
       } catch {
         reasons.push(id + ':CORE_REVEAL_OUTLINE_INVALID');
+      }
+    }
+    if (descriptor?.geometryProfile) {
+      const knownProfiles = [
+        MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
+        MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+      ];
+      if (!knownProfiles.includes(descriptor.geometryProfile)) {
+        reasons.push(id + ':GEOMETRY_PROFILE_UNKNOWN');
+      } else if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE) {
+        if (descriptor.branchId !== MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH
+          || descriptor.layer !== 'mechanism-housing' || descriptor.shape !== 'CYLINDER') {
+          reasons.push(id + ':AXIAL_CORE_SCOPE_INVALID');
+        }
+        const dimensions = descriptor.dimensions || {};
+        const diameter = Number(dimensions.x);
+        if (!(diameter > 0) || !Number.isFinite(diameter)) reasons.push(id + ':AXIAL_CORE_DIAMETER_INVALID');
+        if (Math.abs(Number(dimensions.y) - diameter) > 1e-7) reasons.push(id + ':AXIAL_CORE_CROSS_SECTION_INVALID');
+        if (!(Number(dimensions.z) > diameter) || !Number.isFinite(Number(dimensions.z))) reasons.push(id + ':AXIAL_CORE_LENGTH_INVALID');
+        if (!Number.isFinite(Number(descriptor.rotationY))) reasons.push(id + ':AXIAL_CORE_ROTATION_INVALID');
+      } else if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE) {
+        if (descriptor.branchId !== MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH
+          || descriptor.layer !== 'nested-cradle' || descriptor.nestedMassingRole !== 'rotor-ring'
+          || descriptor.shape !== 'TORUS') {
+          reasons.push(id + ':AXIAL_RING_SCOPE_INVALID');
+        }
+        const dimensions = descriptor.dimensions || {};
+        if (!(Number(dimensions.x) > 0) || Math.abs(Number(dimensions.y) - Number(dimensions.x)) > 1e-7) {
+          reasons.push(id + ':AXIAL_RING_SPAN_INVALID');
+        }
+        if (!(Number(dimensions.z) > 0) || !Number.isFinite(Number(dimensions.z))) reasons.push(id + ':AXIAL_RING_THICKNESS_INVALID');
+        if (!Number.isFinite(Number(descriptor.rotationY))) reasons.push(id + ':AXIAL_RING_ROTATION_INVALID');
       }
     }
     if(descriptor?.nestedMassingProfile){

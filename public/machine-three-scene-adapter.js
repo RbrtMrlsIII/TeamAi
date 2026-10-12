@@ -16,7 +16,11 @@ import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { RING_R1_SCALE, RING_R2_SCALE } from './hero-world-contract.js';
 
 import { authoredHeroMaterialSet } from './hero-authored-materials.js';
-import { triangulateMachineWorldFacilityBodyOutline } from './machine-world-facility-shell.js';
+import {
+  triangulateMachineWorldFacilityBodyOutline,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+} from './machine-world-facility-shell.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
 import {
@@ -309,6 +313,7 @@ export function normalizeThreeDescriptor(part, parentId = 'MACHINE') {
     parentId: String(parentId),
     shape: normalizeThreeShape(part),
     profile: String(part.profile || part.role || ''),
+    geometryProfile: String(part.geometryProfile || ''),
     center: Object.freeze(center),
     outline,
     envelopeOutline,
@@ -536,6 +541,37 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
   return geometry;
 }
 
+
+function buildAxialAnnularPrismGeometry(THREE, descriptor, { segments = 24, innerRadius = 0.72 } = {}) {
+  const { x, y, z } = descriptor.dimensions;
+  const count = Math.max(8, Math.min(96, Math.floor(Number(segments) || 24)));
+  const inner = Math.max(0.50, Math.min(0.90, Number(innerRadius) || 0.72));
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (radius, angle, depth) => [
+    Math.cos(angle) * radius * x * 0.5,
+    Math.sin(angle) * radius * y * 0.5,
+    depth * z * 0.5,
+  ];
+  for (let i = 0; i < count; i += 1) {
+    const a0 = (i / count) * Math.PI * 2;
+    const a1 = ((i + 1) / count) * Math.PI * 2;
+    const ob0 = point(1, a0, -1), ob1 = point(1, a1, -1);
+    const of0 = point(1, a0, 1), of1 = point(1, a1, 1);
+    const ib0 = point(inner, a0, -1), ib1 = point(inner, a1, -1);
+    const if0 = point(inner, a0, 1), if1 = point(inner, a1, 1);
+    pushTri(of0, of1, if1); pushTri(of0, if1, if0);
+    pushTri(ob0, ib1, ob1); pushTri(ob0, ib0, ib1);
+    pushTri(ob0, ob1, of1); pushTri(ob0, of1, of0);
+    pushTri(ib0, if1, ib1); pushTri(ib0, if0, if1);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(vertices), 3));
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  return geometry;
+}
+
 function buildPodShellGeometry(THREE, descriptor) {
   const { x, y, z } = descriptor.dimensions;
   const normalized = createMachinePodShellVertices();
@@ -746,6 +782,13 @@ export function buildThreeGeometry(THREE, descriptor) {
   if (descriptor.shape === MACHINE_SEAT_TOOLKIT_RACK_RENDER_SHAPE) {
     return buildToolkitRackGeometry(THREE, descriptor);
   }
+  if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE && descriptor.shape === 'TORUS') {
+    return buildAxialAnnularPrismGeometry(THREE, descriptor, { segments: 24, innerRadius: 0.72 });
+  }
+  if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE && descriptor.shape === 'CYLINDER') {
+    const axialRadius = Math.max(0.01, Math.max(x, y) * 0.5);
+    return new THREE.CylinderGeometry(axialRadius, axialRadius, Math.max(0.001, z), 16);
+  }
   const radius = Math.max(0.01, Math.max(x, z) * 0.5);
   if (descriptor.shape === 'TORUS') {
     return new THREE.TorusGeometry(radius * 0.76, Math.max(0.015, radius * 0.12), 8, 24);
@@ -948,6 +991,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     return JSON.stringify([
       descriptor.shape,
       descriptor.profile,
+      descriptor.geometryProfile,
       descriptor.semanticId,
       descriptor.dimensions,
       descriptor.outline,
@@ -983,6 +1027,7 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     mesh.userData.constructionSlice = descriptor.constructionSlice;
     mesh.userData.constructionOwner = descriptor.constructionOwner;
     mesh.userData.serviceBayProfile = descriptor.serviceBayProfile || '';
+    mesh.userData.geometryProfile = descriptor.geometryProfile || '';
     mesh.userData.serviceBayWidth = descriptor.serviceBayWidth;
     mesh.position.set(descriptor.center.x, descriptor.center.y, descriptor.center.z);
     if (descriptor.shape === 'SPHERE') {
@@ -990,7 +1035,11 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
     } else {
       mesh.scale.set(1, 1, 1);
     }
-    mesh.rotation.y = descriptor.rotationY;
+    if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE && descriptor.shape === 'CYLINDER') {
+      mesh.rotation.set(Math.PI * 0.5, descriptor.rotationY, 0, 'YXZ');
+    } else {
+      mesh.rotation.set(0, descriptor.rotationY, 0, 'XYZ');
+    }
     if (mesh.parent !== machineRoot) machineRoot.add(mesh);
     return { mesh, geometryRebuilt };
   }

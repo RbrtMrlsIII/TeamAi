@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createExtrudedPolygonVertices } from '../frontend/spatial/machine-world-renderer.js';
+import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createAxialCylinderVertices, createAxialAnnularPrismVertices, createExtrudedPolygonVertices } from '../frontend/spatial/machine-world-renderer.js';
 import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_TOP_OPENING_SCALE, MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, MACHINE_POD_SHELL_OUTLINE_BOUNDS, createMachinePodShellVertices } from '../frontend/spatial/machine-pod-profile.js';
 import { readFileSync } from 'node:fs';
 import { MACHINE_WORLD_FACILITY_BODY_OUTLINES, deriveMachineWorldFacilityServiceBayOutline, triangulateMachineWorldFacilityBodyOutline } from '../frontend/spatial/machine-world-facility-shell.js';
@@ -160,6 +160,57 @@ test('raw WebGL extrusion ear-clips the concave Alpha bay with correctly wound r
   for(let i=cap;i<vertices.length/3;i+=3){const edge=Math.floor((i-cap)/6),a=outline[edge],b=outline[(edge+1)%outline.length],n=norm(...tri(i));assert.ok(Math.abs(n[1])<1e-6);assert.ok(n[0]*(b[1]-a[1])-n[2]*(b[0]-a[0])>0);}
 });
 
+test('raw WebGL axial cylinder is centered on local Z with outward face normals', () => {
+  const vertices = createAxialCylinderVertices({ segments: 16 });
+  assert.equal(vertices.length / 3, 16 * 12);
+  const point = (i) => [vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]];
+  const normal = (a, b, c) => {
+    const u = b.map((v, i) => v - a[i]), v = c.map((n, i) => n - a[i]);
+    return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+  };
+  for (let segment = 0; segment < 16; segment += 1) {
+    const tri = segment * 4;
+    assert.ok(normal(point(tri * 3), point(tri * 3 + 1), point(tri * 3 + 2))[2] > 0, 'front cap points +Z');
+    assert.ok(normal(point((tri + 1) * 3), point((tri + 1) * 3 + 1), point((tri + 1) * 3 + 2))[2] < 0, 'rear cap points -Z');
+    for (const wallTri of [tri + 2, tri + 3]) {
+      const pts = [point(wallTri * 3), point(wallTri * 3 + 1), point(wallTri * 3 + 2)];
+      const n = normal(...pts), center = pts.reduce((sum, p) => [sum[0] + p[0] / 3, sum[1] + p[1] / 3], [0, 0]);
+      assert.ok(n[0] * center[0] + n[1] * center[1] > 0, 'cylinder wall points outward');
+    }
+  }
+});
+
+test('raw WebGL axial annular prism keeps an open bore and correctly wound end/wall surfaces', () => {
+  const vertices = createAxialAnnularPrismVertices({ segments: 24, innerRadius: 0.72 });
+  assert.equal(vertices.length / 3, 24 * 24);
+  const point = (i) => [vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]];
+  const normal = (a, b, c) => {
+    const u = b.map((v, i) => v - a[i]), v = c.map((n, i) => n - a[i]);
+    return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+  };
+  for (let segment = 0; segment < 24; segment += 1) {
+    const base = segment * 8;
+    for (const tri of [base, base + 1]) {
+      const pts = [point(tri * 3), point(tri * 3 + 1), point(tri * 3 + 2)];
+      assert.ok(normal(...pts)[2] > 0, 'front annulus faces +Z');
+    }
+    for (const tri of [base + 2, base + 3]) {
+      const pts = [point(tri * 3), point(tri * 3 + 1), point(tri * 3 + 2)];
+      assert.ok(normal(...pts)[2] < 0, 'rear annulus faces -Z');
+    }
+    for (const tri of [base + 4, base + 5]) {
+      const pts = [point(tri * 3), point(tri * 3 + 1), point(tri * 3 + 2)];
+      const n = normal(...pts), center = pts.reduce((sum, p) => [sum[0] + p[0] / 3, sum[1] + p[1] / 3], [0, 0]);
+      assert.ok(n[0] * center[0] + n[1] * center[1] > 0, 'outer wall faces outward');
+    }
+    for (const tri of [base + 6, base + 7]) {
+      const pts = [point(tri * 3), point(tri * 3 + 1), point(tri * 3 + 2)];
+      const n = normal(...pts), center = pts.reduce((sum, p) => [sum[0] + p[0] / 3, sum[1] + p[1] / 3], [0, 0]);
+      assert.ok(n[0] * center[0] + n[1] * center[1] < 0, 'bore wall faces inward');
+    }
+  }
+});
+
 test('raw WebGL TORUS is a closed annular collar with an open center', () => {
   const vertices = createAnnularPrismVertices();
   const positions = Array.from({ length: vertices.length / 3 }, (_, index) => [
@@ -207,6 +258,8 @@ test('production primitive cache routes TORUS to annular mesh and keeps source/p
   const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
   assert.equal(browser, source);
   assert.match(source, /key === 'TORUS'[\s\S]*?createAnnularPrismVertices\(\)/);
+  assert.match(source, /key === 'TORUS_AXIAL'[\s\S]*?createAxialAnnularPrismVertices\(\)/);
+  assert.match(source, /key === 'CYLINDER_AXIAL'[\s\S]*?createAxialCylinderVertices\(\)/);
   assert.doesNotMatch(source, /TORUS:\s*regularPolygon/);
 });
 

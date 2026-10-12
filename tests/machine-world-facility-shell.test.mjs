@@ -20,6 +20,13 @@ import {
   MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE,
   MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO,
   MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO,
   deriveMachineWorldFacilityRadialRevealOutline,
   deriveMachineWorldFacilityServiceBayOutline,
   triangulateMachineWorldFacilityBodyOutline,
@@ -39,7 +46,7 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V6');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V7');
   const bays=descriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE);
   assert.equal(bays.length,2);
   assert.deepEqual(bays.map(entry=>entry.layer).sort(),['main-shell','shoulder-plate']);
@@ -149,6 +156,58 @@ test('S7 Control core reveal triangulates real Three.js geometry within its auth
   }
 });
 
+
+test('S7 Control axial core and annular rotor rings triangulate real Three.js geometry within descriptors', () => {
+  const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
+  const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
+  const machinery = deriveMachineFacilityMachinery({
+    facilityAssemblies: assemblies,
+    clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+    requestedClearance: 0.16,
+  });
+  const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
+  const core = shells.find((part) => part.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE);
+  const rings = shells.filter((part) => part.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE);
+  assert.ok(core);
+  assert.equal(rings.length, 2);
+  const coreGeometry = buildThreeGeometry(THREE, core);
+  try {
+    coreGeometry.computeBoundingBox();
+    const box = coreGeometry.boundingBox;
+    assert.ok(Math.abs(box.min.x + core.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(box.max.x - core.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(box.min.y + core.dimensions.z / 2) < 1e-6);
+    assert.ok(Math.abs(box.max.y - core.dimensions.z / 2) < 1e-6);
+    assert.ok(Math.abs(box.min.z + core.dimensions.y / 2) < 1e-6);
+    assert.ok(Math.abs(box.max.z - core.dimensions.y / 2) < 1e-6);
+    assert.equal(coreGeometry.parameters.radialSegments, 16);
+  } finally {
+    coreGeometry.dispose();
+  }
+  for (const ring of rings) {
+    const geometry = buildThreeGeometry(THREE, ring);
+    try {
+      const positions = geometry.getAttribute('position');
+      assert.equal(positions.count, 24 * 24);
+      geometry.computeBoundingBox();
+      assert.ok(Math.abs(geometry.boundingBox.min.x + ring.dimensions.x / 2) < 1e-6);
+      assert.ok(Math.abs(geometry.boundingBox.max.x - ring.dimensions.x / 2) < 1e-6);
+      assert.ok(Math.abs(geometry.boundingBox.min.y + ring.dimensions.y / 2) < 1e-6);
+      assert.ok(Math.abs(geometry.boundingBox.max.y - ring.dimensions.y / 2) < 1e-6);
+      assert.ok(Math.abs(geometry.boundingBox.min.z + ring.dimensions.z / 2) < 1e-6);
+      assert.ok(Math.abs(geometry.boundingBox.max.z - ring.dimensions.z / 2) < 1e-6);
+      const radii = Array.from({ length: positions.count }, (_, i) => Math.hypot(
+        positions.getX(i) / (ring.dimensions.x / 2),
+        positions.getY(i) / (ring.dimensions.y / 2),
+      ));
+      assert.ok(Math.min(...radii) >= 0.72 - 1e-6);
+      assert.ok(Math.max(...radii) <= 1 + 1e-6);
+    } finally {
+      geometry.dispose();
+    }
+  }
+});
+
 test('S7 outer facility shells are World-only', () => {
   const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
@@ -243,7 +302,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
   const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
 
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V6');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V7');
   assert.equal(cores.length, 4);
   assert.deepEqual(
     Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),
@@ -286,13 +345,11 @@ test('S7 Analysis bay clears its first telescope stage across Seat/expansion mat
   }
 });
 
-test('S7 Control nested rotor cradle frames the energy core without leaving the main envelope', () => {
+test('S7 Control radial rotor core and annular rings stay coherent across Seat/expansion matrix', () => {
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     for (const expansionAmount of [0, 0.5, 1]) {
       const scene = createBranchConnectionCore({ seatCount, expansionAmount });
-      const assemblies = deriveMachineFacilityAssemblies({
-        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
-      });
+      const assemblies = deriveMachineFacilityAssemblies({ outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing') });
       const machinery = deriveMachineFacilityMachinery({
         facilityAssemblies: assemblies,
         clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
@@ -300,36 +357,80 @@ test('S7 Control nested rotor cradle frames the energy core without leaving the 
       });
       const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
       const reveals = shells.filter((entry) => entry.coreRevealProfile === MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE);
-      assert.equal(reveals.length, 1, seatCount + '/' + expansionAmount + ': one Control main-shell reveal');
+      assert.equal(reveals.length, 1, seatCount + '/' + expansionAmount + ': one Control reveal');
       const reveal = reveals[0];
       assert.equal(reveal.branchId, MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH);
       assert.equal(reveal.layer, 'main-shell');
       const cradles = shells.filter((entry) => entry.nestedMassingProfile === MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE);
-      assert.equal(cradles.length, 4, seatCount + '/' + expansionAmount);
+      assert.equal(cradles.length, 4);
+      assert.deepEqual(cradles.map((entry) => entry.nestedMassingRole).sort(),
+        ['rotor-ring', 'rotor-ring', 'rotor-stanchion', 'rotor-stanchion']);
       assert.ok(cradles.every((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH));
-      assert.deepEqual(
-        cradles.map((entry) => entry.nestedMassingRole).sort(),
-        ['rotor-ring', 'rotor-ring', 'rotor-stanchion', 'rotor-stanchion'],
-      );
-      assert.equal(shells.filter((entry) => entry.branchId !== MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'nested-cradle').length, 0);
+
       const main = shells.find((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'main-shell');
       const core = shells.find((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'mechanism-housing');
       assert.ok(main && core);
-      const rings = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-ring');
-      assert.ok(rings.every((ring) => ring.shape === 'TORUS' && ring.dimensions.x > core.dimensions.x));
-      const coreRadius = Math.max(core.dimensions.x, core.dimensions.z) * 0.5;
       const bodyMin = Math.min(main.dimensions.x, main.dimensions.z);
-      const largestRingSpan = Math.max(...rings.map((ring) => Math.max(ring.dimensions.x, ring.dimensions.z)));
+      assert.equal(core.geometryProfile, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE);
+      assert.equal(core.shape, 'CYLINDER');
+      assert.ok(Math.abs(core.dimensions.x / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO) < 1e-9);
+      assert.ok(Math.abs(core.dimensions.y / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO) < 1e-9);
+      assert.ok(Math.abs(core.dimensions.z / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO) < 1e-9);
+      assert.ok(core.dimensions.z > core.dimensions.x);
+      const radialAngle = Math.atan2(core.center.z, core.center.x);
+      assert.ok(Math.abs(core.rotationY - (Math.PI * 0.5 - radialAngle)) < 1e-7);
+
+      const rings = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-ring');
+      assert.equal(rings.length, 2);
+      assert.ok(rings.every((ring) => ring.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE));
+      assert.ok(rings.every((ring) => ring.shape === 'TORUS'));
+      assert.ok(rings.every((ring) => Math.abs(ring.dimensions.x / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO) < 1e-9));
+      assert.ok(rings.every((ring) => Math.abs(ring.dimensions.y - ring.dimensions.x) < 1e-9));
+      assert.ok(rings.every((ring) => Math.abs(ring.rotationY - core.rotationY) < 1e-9));
+      const radial = { x: Math.cos(radialAngle), z: Math.sin(radialAngle) };
+      const ringOffsets = rings.map((ring) =>
+        (ring.center.x - core.center.x) * radial.x + (ring.center.z - core.center.z) * radial.z
+      ).sort((a, b) => a - b);
+      const offsetRatio = MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
+      assert.ok(Math.abs(ringOffsets[0] / bodyMin + offsetRatio) < 1e-7);
+      assert.ok(Math.abs(ringOffsets[1] / bodyMin - offsetRatio) < 1e-7);
       assert.ok(Math.abs(reveal.coreRevealWidth / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO) < 1e-9);
       assert.ok(Math.abs(reveal.coreRevealStartRadius / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) < 1e-9);
-      assert.ok(reveal.coreRevealWidth - largestRingSpan > bodyMin * 0.05, 'reveal must retain margin outside both rotor rings');
-      assert.ok(-reveal.coreRevealStartRadius - coreRadius > bodyMin * 0.04, 'reveal must extend behind the full energy-core radius');
       assert.equal(triangulateMachineWorldFacilityBodyOutline(reveal.outline).length, reveal.outline.length - 2);
-      assert.equal(validateMachineWorldFacilityShellDescriptors(shells).valid, true, seatCount + '/' + expansionAmount + ': every shell descriptor remains valid');
-      for (const post of cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion')) {
+
+      const hull = reveal.envelopeOutline;
+      assert.ok(Array.isArray(hull) && hull.length >= 4);
+      const c = Math.cos(main.rotationY), s = Math.sin(main.rotationY);
+      const hullWorld = hull.map(([u, v]) => ({
+        x: main.center.x + c * u * main.dimensions.x * 0.5 + s * v * main.dimensions.z * 0.5,
+        z: main.center.z - s * u * main.dimensions.x * 0.5 + c * v * main.dimensions.z * 0.5,
+      }));
+      const bounds = {
+        minX: Math.min(...hullWorld.map((p) => p.x)), maxX: Math.max(...hullWorld.map((p) => p.x)),
+        minZ: Math.min(...hullWorld.map((p) => p.z)), maxZ: Math.max(...hullWorld.map((p) => p.z)),
+      };
+      for (const part of [core, ...rings]) {
+        const pc = Math.cos(part.rotationY), ps = Math.sin(part.rotationY);
+        const halfX = Math.abs(pc) * part.dimensions.x * 0.5 + Math.abs(ps) * part.dimensions.z * 0.5;
+        const halfZ = Math.abs(ps) * part.dimensions.x * 0.5 + Math.abs(pc) * part.dimensions.z * 0.5;
+        assert.ok(part.center.x - halfX >= bounds.minX - 1e-7, part.id + ': X min outside hull');
+        assert.ok(part.center.x + halfX <= bounds.maxX + 1e-7, part.id + ': X max outside hull');
+        assert.ok(part.center.z - halfZ >= bounds.minZ - 1e-7, part.id + ': Z min outside hull');
+        assert.ok(part.center.z + halfZ <= bounds.maxZ + 1e-7, part.id + ': Z max outside hull');
+      }
+      const farRingRear = ringOffsets[0] - Math.max(...rings.map((ring) => ring.dimensions.z * 0.5));
+      assert.ok(farRingRear - reveal.coreRevealStartRadius > bodyMin * 0.03, 'rear ring must clear shell return');
+      const coreRearMargin = -reveal.coreRevealStartRadius - core.dimensions.z * 0.5;
+      assert.ok(coreRearMargin / bodyMin > 0.015, 'rotor rear cap must clear shell return');
+
+      const posts = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion');
+      assert.equal(posts.length, 2);
+      assert.ok(posts.every((post) => Math.abs(post.dimensions.y / (bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO) - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO) < 1e-7));
+      const coreRadius = Math.max(core.dimensions.x, core.dimensions.y) * 0.5;
+      for (const post of posts) {
         const reach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
         const postRadius = Math.hypot(post.dimensions.x, post.dimensions.z) * 0.5;
-        assert.ok(reach - postRadius > coreRadius, 'stanchion must frame rather than occupy the energy core');
+        assert.ok(reach - postRadius > coreRadius, 'stanchion must frame the rotor');
       }
       const pods = scene.parts.filter((part) => part.kind === 'inner-pod');
       let minimumClearance = Infinity;
@@ -341,8 +442,9 @@ test('S7 Control nested rotor cradle frames the energy core without leaving the 
           minimumClearance = Math.min(minimumClearance, distance - cradleRadius - podRadius);
         }
       }
-      assert.ok(minimumClearance > 0.16, seatCount + '/' + expansionAmount + ' clearance ' + minimumClearance);
-      assert.equal(validateMachineWorldFacilityShellDescriptors(cradles).valid, true);
+      assert.ok(minimumClearance > 0.16, seatCount + '/' + expansionAmount + ': Pod clearance ' + minimumClearance);
+      assert.equal(validateMachineWorldFacilityShellDescriptors(shells).valid, true, seatCount + '/' + expansionAmount + ': full descriptors valid');
+      assert.equal(validateMachineWorldFacilityShellDescriptors(cradles).valid, true, seatCount + '/' + expansionAmount + ': cradle descriptors valid');
     }
   }
 });
