@@ -34,6 +34,15 @@ Historical exact-head Browser artifacts remain diagnostic provenance. S7-V21 mac
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
+#### Live #424 spatial checkpoint: 2026-10-12, S7 Control V7
+
+- **Verified code head:** `3d84bfdcc8c327cfcbc3147eeff22b6429c1fa73` on `frontend/029-spatial-world-continuation`. PR #424 remains OPEN / DRAFT / mergeable. Issue #401 remains the sole global Current Slice.
+- **Implemented geometry:** `S7-OUTER-BODY-V7` adds the authored radial-axis Control rotor profile (`radial-axial-v1`) with a lengthwise cylindrical energy core, two closed annular collars with open bores, and the existing two stanchions. Total S7 shell/cradle descriptors remain 24 (20 base + 4 cradle); source/public shell, WebGL renderer, and Three.js adapter pairs are byte-identical.
+- **Independent geometry:** focused S7 tests cover Seat counts 1–10 and expansion amounts 0 / 0.5 / 1. Real Three.js core/ring bounds, custom WebGL cap/wall winding, open collar bores, descriptor normalization, authored-envelope containment, and the governed `0.16` conservative Pod-clearance floor pass.
+- **Exact-head proof:** Full-System `38253448663` PASS (1,294 / 1,294); Governance `38253448327` PASS; Security `38253448362` PASS; Deep Security `38253448438` PASS; Canonical Browser `38253448413` PASS (92 passed / 4 skipped / 0 failed). Full Project artifact `11749098398`, SHA-256 `9022a1602de3badb1a218f8802b420deb116ed1d13ebed6b63d94239cf17431c`; Browser artifact `11749249090`, SHA-256 `770f1de57e46d1ae985239e4e1af0336b78f23d0ca690c5d48c8ae02b856f539`. ZIPs downloaded and integrity-checked.
+- **Visual disposition:** improved, not accepted. The new rotor axis and paired collars are visible in the production Hero focus capture; compared with V6, about 7.84% of full-frame pixels and 13.04% of the mechanism ROI changed above the comparison threshold. The selected outer housing still dominates the machine, and the reference reads the internal rotor more clearly. Human visual acceptance remains open.
+- **Next bounded slice:** stay on Control/Gamma. Design and independently sweep a narrower shoulder-plate reveal before modifying that layer; a copied wide reveal previously failed authored-envelope checks in 6–9 of 30 configurations. Require a simple/triangulatable outline, no occupied geometry outside the canonical envelope, topology/ports/Seat law unchanged, and the `0.16` clearance gate preserved. Keep camera, materials, alpha, and other facility families frozen while comparing a new exact-head Hero capture against `assets/3D_Vision/hailuo.mp4` and the endorsed storyboard PNG. Do not start Operations before this visual decision.
+
 #### 2026-10-11 exact-head S4/S5 and rendered return-midpoint verification
 
 The current code-bearing head is `23e103e251f8cc0cbe297c4d7ba43702a9a5f50f` on the existing PR #424 branch. Exact-head five-gate proof:

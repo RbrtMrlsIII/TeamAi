@@ -1951,3 +1951,30 @@ Head `0bfc1b7c…` preserves shader behavior and separates the telemetry: normal
 The downloaded Browser artifact contains a 45.4-second Hero video plus Analysis and Operations focus screenshots. The video visibly enters the Control focus with the four-part rotor cradle around the existing energy core and returns to World. The body shell still visually dominates portions of the cradle; no human-visual-acceptance claim is made. The immediate next task is a cold comparison with `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board before proceeding to Operations.
 
 **Acceptance boundary:** exact-head repository, governance, security, and Browser checks pass. This does not imply production deployment, live runtime proof beyond the tested Browser journey, triangle-level collision proof, human visual acceptance, merge/release authorization, or overall TEAM-EXPERIENCE-029 completion. Gate 3 `operator_hierarchy_absent` remains a separate backend frontier under Issue #401.
+
+
+### E424-2026-10-12C — Control radial rotor V7, exact-head verified
+
+**Vehicle:** PR #424 (`frontend/029-spatial-world-continuation`), OPEN / DRAFT. Issue #401 remains the global execution frontier; this is the bounded 029 spatial sub-frontier.
+
+**Code-bearing head:** `3d84bfdcc8c327cfcbc3147eeff22b6429c1fa73`. The active branch advanced from the V6 reveal through:
+- `04d6833113e21cc12b4dc03ccf947f0d2385afd3` — orient the Control rotor along the radial axis.
+- `fb93cea43d706826b86418b2b4024c1df383b1ff` — bound ring span by shell height.
+- `5fddb9f026752419e86db3e8ab1eac306583cc1a` — derive stanchion height from bounded ring span.
+- `3d84bfdcc8c327cfcbc3147eeff22b6429c1fa73` — correct a test-only validation-set error by validating rings with their required main-shell envelope. No geometry validation was weakened.
+
+**Geometry contract:** `S7-OUTER-BODY-V7` retains 24 descriptors. Control/Gamma's energy core is lengthwise along the housing's radial axis; the two annular collars share that axis and retain open bores; the two existing stanchions remain. Raw WebGL and Three.js use profile-specific geometry for the same axis/orientation. Ring span is bounded by body width and shell height. The Control core/ring profile is presentation-only: S7 continues to own the housing envelope, and S8 owns topology and interfaces.
+
+**Exact-head five gates:**
+- Full-System `38253448663`: PASS, 1,294 / 1,294; Full Project artifact `11749098398` (6,809,637 bytes), SHA-256 `9022a1602de3badb1a218f8802b420deb116ed1d13ebed6b63d94239cf17431c`.
+- Governance Integrity `38253448327`: PASS.
+- Security Static Analysis `38253448362`: PASS.
+- Deep Security Static Analysis `38253448438`: PASS.
+- Canonical Browser Verification `38253448413`: PASS, 92 passed / 4 skipped / 0 failed. The real Hero journey completes focus, division, return, and turn-loop states. Browser artifact `11749249090` (12,090,686 bytes), SHA-256 `770f1de57e46d1ae985239e4e1af0336b78f23d0ca690c5d48c8ae02b856f539`. Both artifact ZIPs were downloaded and passed local ZIP-integrity checks.
+- The corrected regression calls `validateMachineWorldFacilityShellDescriptors([main, ...cradles])`; validating cradle descriptors alone would violate the validator's requirement that each annular ring's main-shell envelope be present in the same set. The full 24-descriptor validation remains independently required.
+
+**Browser artifact review:** The successful exact-head Control PNG and 45.3-second Hero video show the radial core/collar geometry on the actual `/hero/` route. Pixel comparison against V6: approximately 7.8394% of full-frame pixels changed above the comparison threshold; in the mechanism ROI, approximately 13.0359% changed. This proves a rendered change, not visual acceptance.
+
+**Visual disposition:** improved but NOT accepted. The core axis is coherent with the reference's lengthwise rotor concept, yet the selected outer hull still visually dominates and the reference has clearer layered rotor details. Do not proceed to Operations. Next is a Control-only shoulder-plate reveal study, starting with an independently swept narrower aperture because the earlier wide profile failed envelope containment in a subset of the 30-state matrix. Keep camera/material/alpha and topology frozen; rerun geometry, source/public parity, all five gates, and inspect a new exact-head Browser capture.
+
+**Acceptance boundary:** no merge, deployment, production mutation, or release claim. Product Law/S0–S10 remains authoritative; the MP4/storyboard are visual direction only. Formal S30/S0–S33 exit, human visual acceptance, triangle-level collision proof, production runtime proof, and final TEAM-EXPERIENCE-029 completion remain open. Gate 3 `operator_hierarchy_absent` remains under Issue #401.
