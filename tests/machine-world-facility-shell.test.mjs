@@ -427,7 +427,7 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
 
       const posts = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion');
       assert.equal(posts.length, 2);
-      assert.ok(posts.every((post) => Math.abs(post.dimensions.y / (bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO) - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO) < 1e-7));
+      assert.ok(posts.every((post) => Math.abs(post.dimensions.y / expectedRingSpan - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO) < 1e-7));
       const coreRadius = Math.max(core.dimensions.x, core.dimensions.y) * 0.5;
       for (const post of posts) {
         const reach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
