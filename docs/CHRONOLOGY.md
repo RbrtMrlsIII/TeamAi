@@ -18,31 +18,29 @@ later work must not contradict it without explicit reconciliation
 
 When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidence → merge.**
 
-## CURRENT OVERLAY — 2026-10-11 S4/S5 clearance and rendered return midpoint
+## CURRENT OVERLAY — 2026-10-12 Control nested-massing exact-head verification
 
 
 
-This overlay supersedes older uses of “current” for exact head, Browser status, capture claims and next work. Older entries remain evidence for their own commits only.
+This overlay supersedes older uses of “current” for branch head, CI, S7 family embodiment, capture claims, and next work. Historical entries remain valid for their own checkpoints.
 
 
 
-- Active vehicle: PR #424 / `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Global Current Slice remains Issue #401 in `Masterplan/NEXT_SLICES.md`.
+- Active vehicle remains PR #424 / `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Issue #401 remains the only global Current Slice.
 
-- Current code-bearing head `23e103e251f8cc0cbe297c4d7ba43702a9a5f50f`: Full-System `38151012015` PASS (1,287/1,287); Governance `38151012000` PASS; Security `38151012037` PASS; Deep Security `38151012038` PASS; Browser `38151012021` PASS (92 passed / 4 skipped / 0 failed).
+- Current code-bearing head `0bfc1b7cb3e54b81aee701e14389948b22116db1`: Full-System `38199544335` PASS (1,287/1,287); Governance `38199544313` PASS; Security `38199544336` PASS; Deep Security `38199544324` PASS; Canonical Browser `38199544300` PASS (92 passed / 4 skipped / 0 failed).
 
-- Full Project artifact `11706629159`, SHA-256 `83e9b21df1d1f634e142d8dad379c360ba5919fc7d6e5ee35b996bf8f8d8dc37`. Browser artifact `11705524834`, SHA-256 `f2b7649c35285da032f29ac6b1ea5522ef968b01f1ddb09374bb4685387ee049`. Both downloads matched CI digests and passed ZIP integrity.
+- Full Project artifact `11724783433`, SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`; Browser artifact `11725270062`, SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`. Local hashes match CI and both ZIP integrity checks pass.
 
-- Current S4 fan: uniform 180° for Seats 1–9; symmetric 165° for Seat 10 at angles −82.5°, −56.35°, −30.2°, 0°, 30.2°, 56.35°, 82.5°; radial factor `2.16 + 0.02 × expansionAmount`; Connection coupler travel 0.18. S5 proof remains conservative authored-subject sampled AABB with 0.16 clearance, not triangle-mesh collision.
+- S4/S5 remains the density-aware 180° / 165° fan contract, radial factor `2.16 + 0.02 × expansionAmount`, Connection coupler travel 0.18, and conservative authored-component sampled AABB proof at 0.16 clearance. Triangle-level mesh collision proof remains separate.
 
-- Return-frame proof: QA-only `?testMode=1` freezes the actual RAF at progress 0.504 / transformation 0.494, saves the current canvas, checks pixel delta from World and settled Return, and resumes. Transform-mid 8.23% (69,607/846,080); return-mid 7.71% (65,267/846,080) against both endpoints. World and settled-return canvas PNGs are exact byte matches; saved return-mid PNG is distinct. See E424-G.
+- S7 Control now carries `S7-OUTER-BODY-V5` / `control-rotor-cradle-v1`: two rotor rings + two stanchions around the existing core, four presentation-only descriptors, no topology/port/Seat/backend authority changes. The 1–10 Seat × 0/0.5/1 envelope/core-gap/pod-clearance matrix and all five exact-head gates pass.
 
-- The older `afab9850…` Browser artifact's full-page return-mid screenshot was incorrectly described as a distinct intermediate state; hash inspection proved the saved full-page return-mid, settled return and World captures were identical. That claim is withdrawn; E424-G is the valid rendered evidence.
+- Browser parent failure on `f0db5a1e…` was a telemetry-category mismatch (normal shell count received 9 instead of 5 with Control selected). Current head separates shell count (5) from nested massing normal count (4 on Control, 0 on others) without changing shader behavior.
 
-- The selected-shell-alpha experiment improved mean ROI luma by 8.3% Analysis and 5.9% Operations, but highlight occupancy barely changed. It is a completed diagnostic, not the next slice; do not polish materials before structural massing.
+- The exact current Browser artifact contains the successful 45.4-second real-Hero journey. Control cradle is visible, but the broad shell masks portions of it. Next step is visual reference acceptance against `assets/3D_Vision/hailuo.mp4` and endorsed PNG/reference board. Do not start Operations nested massing until this comparison decides whether the Control result is accepted or needs a bounded revision.
 
-- Next bounded #424 slice: compare the real repository MP4/PNG reference to one existing S7 family, diagnose missing nested outer-machine structure around current machinery/manifold/conduit topology, derive its envelope and prove 1–10 Seat / 0.16 clearance before Browser proof.
-
-- Human visual acceptance, production deployment/runtime proof, triangle-level collision proof, formal S30/S0–S33 exit, merge/release authorization and 029 completion remain open. Issue #401 stays the single global frontier.
+- Human visual acceptance, production deployment/runtime proof, formal S30/S0–S33 exit, merge/release authorization, triangle-level collision proof, and final 029 completion remain open. See E424-2026-10-12B and the prior S4/S5 return-frame proof E424-2026-10-11G.
 
 ## Historical 2026-09-29 continuation order (superseded by the 2026-10-11 overlay)
 

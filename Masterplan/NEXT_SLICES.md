@@ -48,11 +48,23 @@ Current S4 fan: uniform 180° for Seats 1–9; symmetric 165° for Seat 10 at an
 
 Rendered preview return proof is now real rather than telemetry-only. The QA-only `?testMode=1` pause seam freezes the actual RAF at return progress 0.504 / transformation 0.494 and saves the visible canvas before resuming. At per-pixel max RGB delta >8: transform-mid changes 69,607 / 846,080 pixels (8.23%); return-mid changes 65,267 / 846,080 (7.71%) from both World and settled Return. The initial World and settled Return canvas PNGs are exact byte matches; the return-mid PNG has its own verified hash. See `E424-2026-10-11G`.
 
-**Current bounded spatial slice (in progress, not exact-head verified):** Control / rotating-core nested outer-machine massing, profile `control-rotor-cradle-v1`, shell version `S7-OUTER-BODY-V5`. Cold comparison: Product Law maps rotating core → existing S7 Control (`BRANCH-OUTER-GAMMA`); Analysis already owns the telescope service bay, so this slice does not add a second family. The cradle is four presentation-only descriptors (two annular rotor rings + two tangent stanchions) around the existing energy-core housing. Repository proof: Seats 1–10 × expansion 0/0.5/1 keep the cradle inside the authored main-shell AABB, leave a positive gap around the energy core, and stay above the 0.16 pod-clearance floor. Selected-shell alpha from the prior experiment is unchanged. Operations, Access-Commerce, topology, ports, and Seat cardinality are unchanged.
+**Current verified spatial slice: Control nested rotor cradle (`S7-OUTER-BODY-V5`, `control-rotor-cradle-v1`).** Code-bearing head `0bfc1b7cb3e54b81aee701e14389948b22116db1`; Full-System `38199544335` PASS (1,287/1,287), Governance `38199544313` PASS, Security `38199544336` PASS, Deep Security `38199544324` PASS, Browser `38199544300` PASS (92 passed / 4 skipped / 0 failed). Full Project artifact `11724783433` SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`; Browser artifact `11725270062` SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`. Both downloads matched CI and passed ZIP integrity.
 
-**Next bounded spatial slice after this head's five gates and artifact inspection:** do not start another family until `S7-OUTER-BODY-V5` has exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser proof, and the saved production/structural captures have been inspected. If that proof holds, the next single family is Operations (fin deploy), using the same nested-massing rule. Do not add nested massing to all four families at once, reroute semantic topology, alter Seat cardinality, or use material/specular polish to hide structural omissions.
 
-The completed selected-shell-alpha experiment remains a historical presentation diagnostic: mean ROI luma improved by 8.3% (Analysis) and 5.9% (Operations), but highlights barely changed. Keep that alpha result fixed until the next structural slice is proven. Human visual acceptance, deployment/runtime proof, formal S30 exit, merge/release authorization, and 029 completion remain open. See `E424-2026-10-11F` and `E424-2026-10-11G`.
+
+Control is `BRANCH-OUTER-GAMMA`: four presentation-only descriptors (two annular `TORUS` rotor rings and two tangent `BOX` stanchions) frame the existing energy-core housing. Descriptor count increases 20 → 24. Existing Analysis service bay remains; Operations and Access-Commerce are unchanged. Geometry tests cover Seats 1–10 × expansion 0 / 0.5 / 1, require containment in the authored main-shell AABB, positive core gap, and conservative XZ pod clearance above 0.16. Topology, ports, Seat cardinality, base materials, and backend authority do not change.
+
+
+
+The telemetry correction keeps `data-machine-world-facility-focus-normal-shell-count = 5` for five authored shell surfaces and reports the four selected cradle parts separately via `data-machine-world-facility-focus-normal-nested-massing-count = 4` on Control / Gamma (0 for the other focused families). It does not alter surface-normal shading.
+
+
+
+**Next action is visual/reference acceptance, not another implementation family yet.** Compare the successful current production-route Hero capture against `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board. Assess whether the cradle reads as a physically coherent frame around the core or remains overly masked by the broad outer shell. Keep alpha and materials fixed. If the nested massing is accepted after that cold comparison, the next bounded family is Operations (fin deploy), with the same 1–10 Seat and 0.16 clearance discipline.
+
+
+
+Human visual acceptance, production deployment/runtime proof, formal S30 exit, merge/release authorization, and 029 completion remain open. The MP4/PNG are visual direction, not frontend or semantic authority; the final rocket frame is not a required product target. See `E424-2026-10-12B` and `E424-2026-10-11G`.
 
 ### 2026-10-08 S8 endpoint/junction embodiment
 

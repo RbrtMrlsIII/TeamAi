@@ -14,37 +14,32 @@
 - Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
 - S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
 
-## 2026-10-12 Control nested rotor cradle
+## 2026-10-12 Control nested rotor cradle — exact-head verified
 
-- Global frontier remains Issue #401. Gate 3 is still `operator_hierarchy_absent`. This session did not create Seat documents or touch backend authority.
-- Active spatial vehicle remains Draft PR #424 only. No second spatial PR.
-- Slice executed: S7 Control nested outer-machine massing (`control-rotor-cradle-v1`, `S7-OUTER-BODY-V5`) around the existing energy core. Analysis keeps its service bay. Operations and Access-Commerce shells are unchanged. Selected focus alpha stays at the prior experiment values.
-- Local repository proof: facility-shell, structural-embodiment, and facility-carrier tests passed, including the 1–10 Seat × 0/0.5/1 cradle clearance matrix above 0.16. This is not exact-head CI and not Browser artifact inspection.
-- Do not claim TEAM-EXPERIENCE-029 released or TEAM-BACKEND-001 complete. Do not merge #424 because a local test passed.
-- Next session: push is on `frontend/029-spatial-world-continuation` if this commit landed; wait for the five exact-head gates, inspect the Browser artifact, then choose Operations nested massing only if this cradle proof holds. If the commit did not land, finish the push before designing the next family.
-
+- Global execution frontier remains Issue #401; Gate 3 remains `operator_hierarchy_absent`. No Seat documents or backend authority were created or modified.
+- Active spatial vehicle remains PR #424 only, branch `frontend/029-spatial-world-continuation`, OPEN / DRAFT. No merge, deployment, release authorization, or second spatial PR.
+- Code-bearing head: `0bfc1b7cb3e54b81aee701e14389948b22116db1`. Exact-head gates are all PASS: Full-System `38199544335` (1,287/1,287), Governance `38199544313`, Security `38199544336`, Deep Security `38199544324`, Canonical Browser `38199544300` (92 passed / 4 skipped / 0 failed).
+- Full Project artifact `11724783433`, SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`. Browser artifact `11725270062`, SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`. Both were downloaded, local hashes match CI, and ZIP integrity passed.
+- Implemented slice: Control / rotating-core nested outer-machine massing (`control-rotor-cradle-v1`, `S7-OUTER-BODY-V5`) around existing `BRANCH-OUTER-GAMMA` energy-core housing. Four presentation-only descriptors (two `TORUS` rings + two `BOX` stanchions); shell count 20 → 24. Analysis service bay is preserved; Operations and Access-Commerce, topology, ports, Seat cardinality, focus alpha, and backend authority are unchanged.
+- Clearance regression covers Seats 1–10 × expansion 0 / 0.5 / 1, requiring containment inside the authored main-shell AABB, positive gap around the energy core, and conservative XZ pod clearance above 0.16. Full-System and Browser both pass on the exact head.
+- Browser discovered a stale metric contract on parent `f0db5a1e…`: the old `normal-shell-count` reported 9 when Control was selected, while E2E expected the five actual shell surfaces. The fix preserves shell count at 5 and reports the four nested cradle parts via separate `data-machine-world-facility-focus-normal-nested-massing-count`; shading behavior is unchanged.
+- Artifact inspection: the real Hero video is 45.4 seconds and includes the Control focus, division, return, and turn-loop journey. The cradle appears around the core, but the broad outer shell still visually dominates parts of it. This is a visual-readability concern, not a CI or clearance failure. Human visual acceptance remains OPEN.
+- Next: compare the exact captured Control focus against `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board. Decide whether the cradle is physically and visually legible through the shell before selecting another family. Only after that acceptance decision should Operations nested massing be authorized as the next bounded family slice.
+- Do not claim TEAM-EXPERIENCE-029 released or TEAM-BACKEND-001 complete. Do not merge #424 because CI is green.
 ## SESSION SNAPSHOT
 
-### 2026-10-08 CURRENT SESSION STATE
+### 2026-10-12 CURRENT SESSION STATE
 
-This block supersedes older dated snapshots for current work. Older sections remain historical recovery/provenance and must not be read as today's repository truth.
+This is the live recovery snapshot; dated material below it remains historical provenance and must not override the exact branch/head/gate state above.
 
-- Canonical main: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
-- main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`
-- replacement branch: `frontend/029-spatial-world-continuation`
-- current branch head: resolve from live PR #424 and verify `head.sha` before consequential work; documentation-only commits may advance the branch beyond the latest producing application head
-- producing application head at current structural checkpoint: `3a95a1bca311df2ffd99b98177ff523e068626f5`
-- live PR #346 head: `aa7afd1701a9bdbd7e709d3a89a2dd2adbff5422` (historical merged governance lineage; retained as evidence-integrity continuity)
-- global current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401)
-- open implementation vehicles: PR #424 (029 spatial continuation, Draft) and Issue #401 production-runtime frontier; no second spatial PR is authorized
-- governing spatial Issue: #405
-- canonical successor handoff: #409
-- handoff rule: Issue #409 is the canonical newcomer handoff; verify live branch/PR/CI state before consequential changes
-- next allowed work: deepen the four outer product-family machines as nested sub-machines and integrate their existing manifold/conduit hierarchy, only after independent clearance and exact-head Browser proof
-- validation state: producing application head `48ddce11f365683fd4cd9e7a66df5a0154e11bb1` passed Full-System, Governance, Security, Deep Security, and Canonical Browser verification. Browser run `37893061246`, 92 passed / 4 skipped, artifact `11599691063`, SHA-256 `sha256:8eb129a0dc1e44af34b86670e8828a05328f15a60d2623cadbdf95c4801c5142`. Resolve the live branch head separately.
-- PR #424 remains OPEN / DRAFT / mergeable
-- PR #404 remains merged historical provenance; do not reopen it
-
+- Canonical main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
+- Active PR: #424, branch `frontend/029-spatial-world-continuation`, OPEN / DRAFT / mergeable.
+- Current code-bearing head: `0bfc1b7cb3e54b81aee701e14389948b22116db1`, with all five gates PASS as listed in the 2026-10-12 Control section above.
+- Current S4/S5 baseline remains governed by `E424-2026-10-11G`: density-aware 180° / 165° fan, radial factor `2.16 + 0.02 × expansionAmount`, Connection coupler travel 0.18, authored-component sampled AABB proof at the 0.16 floor. This is not triangle-level mesh collision proof.
+- Current S7 addition is Control `S7-OUTER-BODY-V5` / `control-rotor-cradle-v1`, four nested presentation-only descriptors around the existing core. Exact-head test and Browser evidence are in `E424-2026-10-12B`.
+- Latest successful production Browser artifact confirms the capture route works; visuals still need direct comparison to `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board. Human acceptance and production deployment proof remain open.
+- Global Current Slice is still Issue #401 (`TEAM-BACKEND-030`, live Firestore authority/security/runtime evidence). PR #424 is only the bounded 029 spatial companion. Issue #405 remains spatial governance; Issue #409 is the canonical successor handoff.
+- Do not create another spatial PR, change Seat cardinality, transfer semantic topology to presentation parts, or use materials/lighting to conceal structural omissions. Do not promote repository proof into deployment, backend completion, release, or human acceptance.
 ### 2026-10-08 CURRENT S8 ENDPOINT/JUNCTION STATE
 
 - Verified application head: `48ddce11f365683fd4cd9e7a66df5a0154e11bb1`

@@ -1914,16 +1914,40 @@ The return-frame capture defect is now closed with exact-head Browser evidence. 
 
 **Acceptance boundary:** the five required gates pass on `23e103e…`. Production deployment/runtime proof, human visual acceptance, formal S30/S0–S33 exit, merge/release authorization, and final 029 completion remain open.
 
-### E424-2026-10-12A — Control nested rotor cradle (repository proof only)
+### E424-2026-10-12A — Control nested rotor cradle (implementation provenance)
 
-**Vehicle:** PR #424, `frontend/029-spatial-world-continuation`, remains OPEN / DRAFT. Issue #401 remains the sole global Current Slice.
+**Vehicle:** PR #424, `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Issue #401 remains the sole global Current Slice.
 
 **Family choice:** Product Law maps rotating core → S7 Control (`BRANCH-OUTER-GAMMA`, diamond silhouette). Analysis already has the telescope service bay. Operations and Access-Commerce were left unchanged so this remains one nested-massing slice.
 
-**Change:** shell `S7-OUTER-BODY-V4` → `S7-OUTER-BODY-V5`. Four presentation-only `control-rotor-cradle-v1` descriptors (two `TORUS` rotor rings and two `BOX` stanchions) frame the existing Control energy-core housing. They do not replace the mechanism-housing primitive, cut a new service bay, move ports, or change topology or Seat cardinality. Descriptor count 20 → 24. Selected main-shell/shoulder alpha stays at the prior focus experiment.
+**Change:** `S7-OUTER-BODY-V4` → `S7-OUTER-BODY-V5`. Four presentation-only `control-rotor-cradle-v1` descriptors (two `TORUS` rotor rings and two `BOX` stanchions) frame the existing Control energy-core housing. They do not replace the mechanism-housing primitive, cut a new service bay, move ports, or change topology or Seat cardinality. Descriptor count 20 → 24. Selected main-shell/shoulder alpha stays fixed at the completed prior focus experiment.
 
-**Local proof:** `tests/machine-world-facility-shell.test.mjs`, `tests/machine-structural-embodiment.test.mjs`, and `tests/machine-world-facility-carrier.test.mjs` passed. The cradle matrix covers Seats 1–10 and expansion 0/0.5/1, requires containment in the authored main-shell AABB, a positive gap outside the energy core, and conservative XZ pod clearance above 0.16. Source/public shell, renderer, and structural-preview copies are byte-identical.
+**Independent geometry checks:** the shell test matrix covers Seats 1–10 and expansion 0 / 0.5 / 1, requires containment in the authored main-shell AABB, a positive gap outside the energy core, and conservative XZ pod clearance above 0.16. Source/public shell, renderer, and structural-preview copies are byte-identical.
 
-**Not claimed:** exact-head Full-System, Governance, Security, Deep Security, or Canonical Browser. No Browser artifact inspection. No production deployment, human visual acceptance, merge, or 029 release.
+**Visual caveat:** the current Browser video renders the cradle on the real Hero route, but the broad outer shell still dominates part of it. Human visual acceptance remains open pending cold comparison against the repository MP4 and endorsed PNG/reference direction.
 
-**Next:** after this head's five gates and artifact inspection, the next single family is Operations, and only if this cradle proof holds.
+### E424-2026-10-12B — Control cradle exact-head gate and Browser evidence
+
+**Code-bearing head:** `0bfc1b7cb3e54b81aee701e14389948b22116db1` on PR #424.
+
+#### Exact-head five gates
+
+- Full-System `38199544335`: **PASS, 1,287 / 1,287 tests**. Full Project artifact `11724783433`, 6,799,936 bytes; SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`.
+- Governance Integrity `38199544313`: **PASS**.
+- Security Static Analysis `38199544336`: **PASS**.
+- Deep Security Static Analysis `38199544324`: **PASS**.
+- Canonical Browser Verification `38199544300`: **PASS, 92 passed / 4 skipped / 0 failed**. The `029 real-product video evidence` scenario passes through focus, division, return, and turn-loop states. Browser artifact `11725270062`, 12,003,519 bytes; SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`.
+- Both artifact ZIPs were downloaded locally; SHA-256 matched CI and ZIP integrity tests passed. The nested full-project ZIP has 1,114 entries.
+- Independently verified renderer source/public parity: `machine-world-renderer.js` 131,356 bytes each; `machine-world-facility-shell.js` 24,981 bytes each; `machine-structural-embodiment-preview.js` 31,736 bytes each. All three source/public pairs are byte-identical.
+
+#### Browser failure diagnosis and correction
+
+Parent `f0db5a1ee5905a9d4c8f0e9e131f916b12abc0ef` passed Full-System, Governance, Security and Deep Security but failed Browser because the real-product video test expected `data-machine-world-facility-focus-normal-shell-count = 5` and received `9` while selecting Control. The four new nested-cradle descriptors were being counted in a metric whose existing contract is the authored shell-surface count.
+
+Head `0bfc1b7c…` preserves shader behavior and separates the telemetry: normal shell count excludes the `nested-cradle` layer, while `data-machine-world-facility-focus-normal-nested-massing-count` separately reports selected nested-cradle descriptors. E2E checks 5 shell surfaces and four nested massing surfaces only on Control/Gamma; other selected families report zero nested parts. This is an observability-contract correction, not a visual or geometry relaxation.
+
+#### Real artifact review
+
+The downloaded Browser artifact contains a 45.4-second Hero video plus Analysis and Operations focus screenshots. The video visibly enters the Control focus with the four-part rotor cradle around the existing energy core and returns to World. The body shell still visually dominates portions of the cradle; no human-visual-acceptance claim is made. The immediate next task is a cold comparison with `assets/3D_Vision/hailuo.mp4` and the endorsed PNG/reference board before proceeding to Operations.
+
+**Acceptance boundary:** exact-head repository, governance, security, and Browser checks pass. This does not imply production deployment, live runtime proof beyond the tested Browser journey, triangle-level collision proof, human visual acceptance, merge/release authorization, or overall TEAM-EXPERIENCE-029 completion. Gate 3 `operator_hierarchy_absent` remains a separate backend frontier under Issue #401.
