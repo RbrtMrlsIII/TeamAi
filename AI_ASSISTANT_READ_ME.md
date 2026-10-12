@@ -18,6 +18,8 @@
 
 - Global execution frontier remains Issue #401; Gate 3 remains `operator_hierarchy_absent`. No Seat documents or backend authority were created or modified.
 - Active spatial vehicle remains PR #424 only, branch `frontend/029-spatial-world-continuation`, OPEN / DRAFT. No merge, deployment, release authorization, or second spatial PR.
+- replacement branch: `frontend/029-spatial-world-continuation`.
+- current branch head: resolve from live PR #424 and verify `head.sha` before consequential work; documentation-only commits may advance the live branch beyond the latest producing application head.
 - Code-bearing head: `0bfc1b7cb3e54b81aee701e14389948b22116db1`. Exact-head gates are all PASS: Full-System `38199544335` (1,287/1,287), Governance `38199544313`, Security `38199544336`, Deep Security `38199544324`, Canonical Browser `38199544300` (92 passed / 4 skipped / 0 failed).
 - Full Project artifact `11724783433`, SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`. Browser artifact `11725270062`, SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`. Both were downloaded, local hashes match CI, and ZIP integrity passed.
 - Implemented slice: Control / rotating-core nested outer-machine massing (`control-rotor-cradle-v1`, `S7-OUTER-BODY-V5`) around existing `BRANCH-OUTER-GAMMA` energy-core housing. Four presentation-only descriptors (two `TORUS` rings + two `BOX` stanchions); shell count 20 → 24. Analysis service bay is preserved; Operations and Access-Commerce, topology, ports, Seat cardinality, focus alpha, and backend authority are unchanged.
