@@ -22,6 +22,7 @@ export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE = 'radial-axial-v
 export const MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO = 0.38;
 export const MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO = 0.46;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO = 0.64;
+export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO = 0.82;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO = 0.34;
 export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO = 0.86;
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE = 'control-rotor-cradle-v1';
@@ -480,7 +481,10 @@ function deriveShell(entry) {
     // Nested rotor cradle frames the existing energy core. It stays inside the
     // authored main-shell AABB and does not move ports, topology, or Seat law.
     const tangent = { x: -radial.z, z: radial.x };
-    const ringSpan = bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO;
+    const ringSpan = Math.min(
+      bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO,
+      bodyHeight * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO,
+    );
     const ringThickness = Math.max(0.06, bodyHeight * 0.055);
     const ringOffset = Number(core.dimensions.z) * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
     for (const ring of [
@@ -691,6 +695,12 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
           reasons.push(id + ':AXIAL_RING_SPAN_INVALID');
         }
         if (!(Number(dimensions.z) > 0) || !Number.isFinite(Number(dimensions.z))) reasons.push(id + ':AXIAL_RING_THICKNESS_INVALID');
+        const mainEnvelope = list.find((entry) => entry.branchId === descriptor.branchId && entry.layer === 'main-shell');
+        if (!mainEnvelope) {
+          reasons.push(id + ':AXIAL_RING_MAIN_ENVELOPE_MISSING');
+        } else if (Number(dimensions.y) > Number(mainEnvelope.dimensions?.y) * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO + 1e-7) {
+          reasons.push(id + ':AXIAL_RING_EXCEEDS_VERTICAL_ENVELOPE');
+        }
         if (!Number.isFinite(Number(descriptor.rotationY))) reasons.push(id + ':AXIAL_RING_ROTATION_INVALID');
       }
     }

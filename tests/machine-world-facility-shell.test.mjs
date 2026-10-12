@@ -25,6 +25,7 @@ import {
   MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO,
   deriveMachineWorldFacilityRadialRevealOutline,
@@ -384,7 +385,8 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
       assert.equal(rings.length, 2);
       assert.ok(rings.every((ring) => ring.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE));
       assert.ok(rings.every((ring) => ring.shape === 'TORUS'));
-      assert.ok(rings.every((ring) => Math.abs(ring.dimensions.x / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO) < 1e-9));
+      const expectedRingSpan = Math.min(bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO, main.dimensions.y * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO);
+      assert.ok(rings.every((ring) => Math.abs(ring.dimensions.x - expectedRingSpan) < 1e-7));
       assert.ok(rings.every((ring) => Math.abs(ring.dimensions.y - ring.dimensions.x) < 1e-9));
       assert.ok(rings.every((ring) => Math.abs(ring.rotationY - core.rotationY) < 1e-9));
       const radial = { x: Math.cos(radialAngle), z: Math.sin(radialAngle) };
