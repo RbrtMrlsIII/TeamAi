@@ -2405,6 +2405,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     // It does not acquire depth-write authority over the real mechanisms.
     gl.depthMask(false);
     let facilityFocusNormalShellCount = 0;
+    let facilityFocusNormalNestedMassingCount = 0;
     const mechanismHousingPrimitiveShapes = [];
     for (const shell of facilityBodyShells) {
       const authoredOutline = Array.isArray(shell.outline) && shell.outline.length >= 3;
@@ -2424,7 +2425,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         if (!ensureSurfaceNormalBuffer(buffer)) {
           throw new Error('S7_FOCUS_SURFACE_NORMALS_UNAVAILABLE:' + shell.branchId + ':' + shell.layer);
         }
-        facilityFocusNormalShellCount += 1;
+        if (shell.layer === 'nested-cradle') {
+          facilityFocusNormalNestedMassingCount += 1;
+        } else {
+          facilityFocusNormalShellCount += 1;
+        }
       }
       const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
       const material = shell.materialRole === 'glass'
@@ -2480,6 +2485,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.profile
       : 'position-approx';
     canvas.dataset.machineWorldFacilityFocusNormalShellCount = String(facilityFocusNormalShellCount);
+    canvas.dataset.machineWorldFacilityFocusNormalNestedMassingCount = facilityFocused
+      ? String(facilityFocusNormalNestedMassingCount)
+      : '';
     canvas.dataset.machineWorldFacilityFocusViewVectorProfile = facilityFocused
       ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.viewVectorProfile
       : '';

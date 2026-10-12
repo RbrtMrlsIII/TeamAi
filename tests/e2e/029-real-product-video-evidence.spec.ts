@@ -45,6 +45,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-profile', 'position-approx');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-shell-count', '0');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-nested-massing-count', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-specular-gain', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-rim-gain', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-view-vector-profile', '');
@@ -72,6 +73,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-profile', 's7-face-normal-v3');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-shell-count', '5');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-nested-massing-count', '0');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-specular-gain', '0.48');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-rim-gain', '0.24');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-view-vector-profile', 'camera-position-v1');
@@ -119,6 +121,10 @@ test.describe('029 real-product video evidence', () => {
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-validation', 'pass');
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-profile', 's7-face-normal-v3');
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-shell-count', '5');
+      await expect(canvas).toHaveAttribute(
+        'data-machine-world-facility-focus-normal-nested-massing-count',
+        branchId === 'BRANCH-OUTER-GAMMA' ? '4' : '0',
+      );
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-specular-gain', '0.48');
       await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-rim-gain', '0.24');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-view-vector-profile', 'camera-position-v1');
@@ -162,6 +168,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-profile', 'position-approx');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-shell-count', '0');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-nested-massing-count', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-specular-gain', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-normal-rim-gain', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-view-vector-profile', '');
