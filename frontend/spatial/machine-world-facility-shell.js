@@ -136,7 +136,7 @@ export function triangulateMachineWorldFacilityBodyOutline(outline=[]){
   return Object.freeze(triangles);
 }
 
-/** Cuts a radial service bay while retaining the authored hull as a separate envelope. */
+/** Cuts a concave radial reveal while keeping the authored hull envelope separate. */
 export function deriveMachineWorldFacilityRadialRevealOutline({
   outline,dimensions,housingAngle=0,rotationY=0,layerOffset=0,
   width,startRadius,
@@ -201,6 +201,7 @@ export function deriveMachineWorldFacilityRadialRevealOutline({
   return Object.freeze(result.map(p=>Object.freeze(p)));
 }
 
+/** Preserves the original Analysis service-bay API on the shared radial-reveal geometry. */
 export function deriveMachineWorldFacilityServiceBayOutline(options = {}) {
   const {
     bayWidth = MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,

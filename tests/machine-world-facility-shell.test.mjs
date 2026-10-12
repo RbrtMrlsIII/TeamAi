@@ -71,6 +71,27 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   }
 });
 
+test('S7 generic radial reveal preserves the established Analysis service-bay API',()=>{
+  const common={
+    outline:MACHINE_WORLD_FACILITY_BODY_OUTLINES.fin,
+    dimensions:{x:2.43756,y:1.12,z:1.696776},
+    housingAngle:Math.PI/10,
+    rotationY:Math.PI/10,
+    layerOffset:0,
+  };
+  const generic=deriveMachineWorldFacilityRadialRevealOutline({
+    ...common,
+    width:MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,
+    startRadius:MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS,
+  });
+  const legacy=deriveMachineWorldFacilityServiceBayOutline({
+    ...common,
+    bayWidth:MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH,
+    bayStartRadius:MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS,
+  });
+  assert.deepEqual(legacy,generic);
+});
+
 test('S7 Analysis service bay triangulates real Three.js geometry within its authored envelope',()=>{
   const envelope=MACHINE_WORLD_FACILITY_BODY_OUTLINES.fin,dimensions={x:2.43756,y:1.12,z:1.696776};
   const outline=deriveMachineWorldFacilityServiceBayOutline({outline:envelope,dimensions,housingAngle:Math.PI/10,rotationY:Math.PI/10,layerOffset:0});
@@ -98,7 +119,7 @@ test('S7 Analysis service bay triangulates real Three.js geometry within its aut
   }finally{geometry.dispose();}
 });
 
-test('S7 Control core reveal triangulates real Three.js geometry while preserving its authored bounds',()=>{
+test('S7 Control core reveal triangulates real Three.js geometry within its authored envelope',()=>{
   const scene=createBranchConnectionCore({seatCount:10,expansionAmount:0});
   const assemblies=deriveMachineFacilityAssemblies({outerHousings:scene.parts.filter(p=>p.kind==='outer-housing')});
   const machinery=deriveMachineFacilityMachinery({
@@ -116,10 +137,13 @@ test('S7 Control core reveal triangulates real Three.js geometry while preservin
     const capVertexCount=(reveal.outline.length-2)*6;
     assert.equal(positions.count,capVertexCount+reveal.outline.length*6);
     geometry.computeBoundingBox();
-    assert.ok(Math.abs(geometry.boundingBox.min.x+reveal.dimensions.x/2)<1e-6);
-    assert.ok(Math.abs(geometry.boundingBox.max.x-reveal.dimensions.x/2)<1e-6);
-    assert.ok(Math.abs(geometry.boundingBox.min.z+reveal.dimensions.z/2)<1e-6);
-    assert.ok(Math.abs(geometry.boundingBox.max.z-reveal.dimensions.z/2)<1e-6);
+    const bounds = geometry.boundingBox;
+    const halfX = reveal.dimensions.x / 2;
+    const halfZ = reveal.dimensions.z / 2;
+    assert.deepEqual(reveal.envelopeOutline, MACHINE_WORLD_FACILITY_BODY_OUTLINES.diamond);
+    assert.ok(bounds.min.x >= -halfX - 1e-6 && bounds.max.x <= halfX + 1e-6, 'revealed geometry remains within authored X bounds');
+    assert.ok(bounds.min.z >= -halfZ - 1e-6 && bounds.max.z <= halfZ + 1e-6, 'revealed geometry remains within authored Z bounds');
+    assert.ok(bounds.max.z < halfZ - 1e-3, 'open radial reveal must remove occupied geometry from the mouth, not expand or refill it');
   }finally{
     geometry.dispose();
   }
