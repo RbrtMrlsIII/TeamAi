@@ -230,6 +230,15 @@ test('S7 Control shoulder-plate reveal stays narrower, bounded, triangulatable, 
         seatCount + '/' + expansionAmount + ': main/shoulder reveal rear edge remains aligned in world space');
       assert.equal(validateMachineWorldFacilityShellDescriptors([main, shoulder]).valid, true,
         seatCount + '/' + expansionAmount + ': shoulder reveal is valid with its required main-shell reference');
+      const shoulderWithoutProfile = { ...shoulder };
+      delete shoulderWithoutProfile.shoulderRevealProfile;
+      const missingProfileValidation = validateMachineWorldFacilityShellDescriptors(
+        descriptors.map((entry) => entry.id === shoulder.id ? shoulderWithoutProfile : entry),
+      );
+      assert.equal(missingProfileValidation.valid, false,
+        seatCount + '/' + expansionAmount + ': missing shoulder profile must fail closed');
+      assert.ok(missingProfileValidation.reasons.includes(shoulder.id + ':SHOULDER_REVEAL_PROFILE_MISMATCH'),
+        seatCount + '/' + expansionAmount + ': missing shoulder profile returns a precise validation reason');
       assert.equal(validateMachineWorldFacilityShellDescriptors([shoulder]).valid, false,
         seatCount + '/' + expansionAmount + ': shoulder reveal must not validate without the main-shell alignment reference');
     }

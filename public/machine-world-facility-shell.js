@@ -694,7 +694,13 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
         reasons.push(id + ':CORE_REVEAL_OUTLINE_INVALID');
       }
     }
-    if (descriptor?.shoulderRevealProfile) {
+    if (
+      descriptor?.shoulderRevealProfile
+      || (
+        descriptor?.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH
+        && descriptor?.layer === 'shoulder-plate'
+      )
+    ) {
       if (descriptor.shoulderRevealProfile !== MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE) {
         reasons.push(id + ':SHOULDER_REVEAL_PROFILE_MISMATCH');
       }
