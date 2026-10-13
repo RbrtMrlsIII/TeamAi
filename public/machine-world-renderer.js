@@ -85,11 +85,11 @@ import {
 const TAU = Math.PI * 2;
 
 export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
-  profile: 's7-face-normal-v3',
+  profile: 's7-face-normal-v4',
   viewVectorProfile: 'camera-position-v1',
   surfaceRoughnessProfile: 'focused-broad-highlight-v1',
   selectedPlateRoughness: 0.64,
-  specularGain: 0.48,
+  specularGain: 0.72,
   grazingRimGain: 0.24,
 });
 const READABILITY_CAMERA_QUANTUM = 0.25;
