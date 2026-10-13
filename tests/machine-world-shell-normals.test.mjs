@@ -6,6 +6,7 @@ import {
   createFlatTriangleNormals,
   createMachineWorldNormalMatrix,
   MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE,
+  MACHINE_WORLD_S7_FOCUS_SHELL_COLOR,
 } from '../public/machine-world-renderer.js';
 
 const near = (actual, expected, epsilon = 1e-6) => {
@@ -161,4 +162,22 @@ test('focused roughness broadens only the selected main and shoulder shell specu
   assert.ok(oldSpecularPower > 42 && oldSpecularPower < 43);
   assert.ok(Math.abs(focusedSpecularPower - 28.16) < 1e-9);
   assert.ok(focusedSpecularPower < oldSpecularPower, 'focused highlight exponent should be broader');
+});
+
+test('focused S7 shell albedo uses a neutral metal only on the selected main and shoulder plates', async () => {
+  assert.deepEqual(MACHINE_WORLD_S7_FOCUS_SHELL_COLOR, {
+    profile: 's7-focus-shell-albedo-v1',
+    selectedLayers: ['main-shell', 'shoulder-plate'],
+    color: [0.64, 0.68, 0.70],
+  });
+  const source = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.ok(source.includes('const focusShellColorActive = facilityFocused'));
+  assert.ok(source.includes('MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.selectedLayers.includes(shell.layer)'));
+  assert.ok(source.includes('const drawMaterial = focusShellColorActive'));
+  assert.ok(source.includes('{ ...material, color: MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.color }'));
+  assert.ok(source.includes("canvas.dataset.machineWorldFacilityFocusShellColorProfile = facilityFocused"));
+  assert.ok(source.includes("canvas.dataset.machineWorldFacilityFocusMainShellColor = selectedShellColorTelemetry"));
+  assert.ok(source.includes("canvas.dataset.machineWorldFacilityFocusShoulderPlateColor = selectedShellColorTelemetry"));
+  assert.ok(source.includes('const material = shell.materialRole ==='));
+  assert.ok(source.includes(': activeHeroMaterials.metal2;'));
 });

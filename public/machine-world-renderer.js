@@ -84,6 +84,12 @@ import {
 } from './machine-seat-division-profile.js';
 const TAU = Math.PI * 2;
 
+export const MACHINE_WORLD_S7_FOCUS_SHELL_COLOR = Object.freeze({
+  profile: 's7-focus-shell-albedo-v1',
+  selectedLayers: Object.freeze(['main-shell', 'shoulder-plate']),
+  color: Object.freeze([0.64, 0.68, 0.70]),
+});
+
 export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
   profile: 's7-face-normal-v4',
   viewVectorProfile: 'camera-position-v1',
@@ -2284,6 +2290,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       facilityFocused ? 'selected-core-reveal-v1' : 'base';
     canvas.dataset.machineWorldFacilityFocusMainShellAlpha = facilityFocused ? '0.32' : '';
     canvas.dataset.machineWorldFacilityFocusShoulderPlateAlpha = facilityFocused ? '0.42' : '';
+    canvas.dataset.machineWorldFacilityFocusShellColorProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.profile
+      : 'base';
+    const selectedShellColorTelemetry = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.color.map((value) => value.toFixed(2)).join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityFocusMainShellColor = selectedShellColorTelemetry;
+    canvas.dataset.machineWorldFacilityFocusShoulderPlateColor = selectedShellColorTelemetry;
     const facilityFocusBranchId = facilityFocused ? requestedFacilityFocusBranchId : '';
     const facilitySubject = facilityFocused ? derivedFacilityFocusSubject : null;
     const activePresentationBranchId = facilityFocused ? facilityFocusBranchId : branchId;
@@ -2489,6 +2503,12 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           : shell.materialRole === 'metal'
             ? activeHeroMaterials.metal
             : activeHeroMaterials.metal2;
+      const focusShellColorActive = facilityFocused
+        && selected
+        && MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.selectedLayers.includes(shell.layer);
+      const drawMaterial = focusShellColorActive
+        ? { ...material, color: MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.color }
+        : material;
       const layerAlpha = shell.layer === 'main-shell'
         ? (selected ? (facilityFocused ? 0.32 : 0.80) : 0.66)
         : shell.layer === 'base-collar'
@@ -2526,7 +2546,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       drawBuffer(
         buffer,
         shellTransform,
-        material,
+        drawMaterial,
         {
           emit: selected ? 0.10 : 0.035,
           glow: selected ? 0.12 : 0.035,
