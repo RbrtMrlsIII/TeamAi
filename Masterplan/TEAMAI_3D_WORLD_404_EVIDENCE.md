@@ -1994,3 +1994,30 @@ The downloaded Browser artifact contains a 45.4-second Hero video plus Analysis 
 **Visual disposition:** still OPEN / NOT YET ASSESSED for V8. Keep camera, material, alpha, and other facility families unchanged. Compare the next successful exact-head Control/Gamma Hero PNG/video with the retained V7 baseline and with the MP4/endorsed PNG as visual direction, not authority. Do not start Operations before visual review.
 
 **Acceptance boundary:** no merge, production deployment, runtime promotion, or release claim. This slice does not establish triangle-level mesh collision proof, human visual acceptance, formal S30/S0–S33 exit, or overall TEAM-EXPERIENCE-029 completion.
+
+
+### E424-2026-10-13A — Control/Gamma flared shoulder reveal V9, exact code-head proof
+
+**Vehicle:** PR #424 (`frontend/029-spatial-world-continuation`), OPEN / DRAFT / mergeable. Issue #401 remains the singular global execution frontier; #424 is its bounded 029 spatial companion.
+
+**Code-bearing implementation head:** `eeaa542fb2f66b55dcac87b759ecafc3d291d86c`.
+
+**Observed V8 → V9 geometry contract:** V9 retains the existing main-shell radial reveal and adds a stepped flare to the Control/Gamma shoulder-plate aperture. The mouth width is `0.62 × main-shell min(X,Z)`, rear throat is `0.42 × main-shell min(X,Z)`, flare start is `-0.16 × main-shell min(X,Z)`, and rear edge remains aligned to the main reveal at `-0.25`. The helper's existing constant-width behavior remains the default for other callers. The branch validates finite inputs, positive widths and width ordering, in-envelope transition points, positive removed area, simple polygon topology, triangulation and descriptor-profile scope. The validator requires the matching main-shell reference and fails closed if the shoulder profile is missing. Descriptor count remains 24; the axial core, two annular collars, two stanchions, other family shells, camera/material/alpha settings, ports, topology, Seat law and backend authority are unchanged.
+
+**Independent geometry regression:** Seats 1–10 × expansion amounts `0 / 0.5 / 1` (30 states) pass checks for profile ratios, taper position around the rear rotor collar, 5% collar-mouth clearance margin, authored polygon containment, containment inside the transformed main-shell hull in world space, exact world-space rear-boundary alignment, simple polygon triangulation, full descriptor validation, fail-closed missing-profile validation, and the existing conservative `0.16` inner-Pod clearance floor. These are conservative authored geometry/AABB checks, not triangle-level mesh collision proof.
+
+**Parity:** Source/public shell copies are byte-identical (`dadfee84e95b8eedc9bf80a170bea7494ea9b053`). Renderer copies are byte-identical (`970a7d28741eafd07d20b2e5e29967405fc25fc3`); Three.js adapter copies are byte-identical (`9353fb22ceeb9f48e3818ad6b654d8150342d339`). Exact-head Browser runtime-parity steps passed.
+
+**Exact code-head five gates:**
+- Full-System `38339029250`: PASS, `1,295 / 1,295`; Full Project artifact `11785917325`, 6,817,219 bytes, SHA-256 `cf614638e01136c34e4cbd8ed87545db167c3954130684b2dbeb29840eea9d70`.
+- Governance Integrity `38339029201`: PASS.
+- Security Static Analysis `38339029297`: PASS.
+- Deep Security Static Analysis `38339029235`: PASS.
+- Canonical Browser `38339029161`: PASS, `92 passed / 4 skipped / 0 failed`. Browser artifact `11786657383`, 12,283,407 bytes, SHA-256 `b0859fe95870952eff0afd905e76d16e1b1c47aec36e72fdf4821bb2c20bb89a`.
+- Both artifacts were downloaded locally. Their SHA-256 checksums match the workflow-reported digests, and `unzip -t` passes for both.
+
+**Browser artifact / visual diagnosis:** The artifact contains the real `/hero/` Control focus capture (`test-results/029-real-product-video-evi-a5ea4-return-and-turn-loop-states-chromium/facility-focus-control.png`) and the selection → division focus → return → turn-loop video. The inspected Control capture shows the flared shoulder opening and a more exposed axial core/collar stack. Against the Hailuo contact sheet/endorsed PNG direction, the machine still reads too dark and bulky around its rotor. This is visual engineering feedback only; it is not human visual acceptance. Extracted capture SHA-256: `4f3ee401fff2d2899d21462f7ff427c3ad66ee006c9d828e19678b93f9736883`.
+
+**Disposition / next:** V9 is IMPLEMENTED → REPOSITORY-VERIFIED → SECURITY-VERIFIED → GOVERNANCE-VERIFIED → BROWSER-VERIFIED. It is **not HUMAN-ACCEPTED**. Pause subsequent Control changes and do not start Operations until a human explicitly accepts/rejects the captured presentation. If rejected, preserve this capture as a baseline and change one measured visibility/structure variable only. Do not use a green gate to imply acceptance, production deployment/runtime proof, merge/release authorization, formal S30/S0–S33 exit, or final 029 completion. Issue #401's `operator_hierarchy_absent` remains separate.
+
+**Documentation-head rule:** this evidence update creates a new HEAD whose proof must be run separately. The gate IDs above apply to code-bearing parent `eeaa542f…`, not to the eventual documentation commit. Require a fresh exact-head five-gate set and inspect its matching Browser artifact before treating the docs head as current verified state.
