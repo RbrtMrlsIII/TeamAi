@@ -9,7 +9,7 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V8';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V9';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
@@ -17,7 +17,9 @@ export const MACHINE_WORLD_FACILITY_CORE_REVEAL_PROFILE = 'control-rotor-core-re
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO = 0.70;
 export const MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO = -0.25;
 export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE = 'control-rotor-shoulder-reveal-v1';
-export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO = 0.52;
+export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO = 0.62;
+export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_BACK_WIDTH_RATIO = 0.42;
+export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_FLARE_START_RADIUS_RATIO = -0.16;
 export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE = 'control-rotor-axial-core-v1';
 export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE = 'control-rotor-axial-ring-v1';
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE = 'radial-axial-v1';
@@ -147,17 +149,25 @@ export function triangulateMachineWorldFacilityBodyOutline(outline=[]){
   return Object.freeze(triangles);
 }
 
-/** Cuts a concave radial reveal while keeping the authored hull envelope separate. */
+/**
+ * Cuts a concave radial reveal while keeping the authored hull envelope separate.
+ * Optional backWidth/flareStartRadius add a short narrow throat behind a wider
+ * rotor-facing chamber; existing callers keep the original constant-width profile.
+ */
 export function deriveMachineWorldFacilityRadialRevealOutline({
   outline,dimensions,housingAngle=0,rotationY=0,layerOffset=0,
-  width,startRadius,
+  width,startRadius,backWidth=null,flareStartRadius=null,
 }={}){
   const source=Array.isArray(outline)?outline.map(p=>[Number(p?.[0]),Number(p?.[1])]):[];
   if(source.length<3||source.some(p=>!p.every(Number.isFinite)))throw new Error('FACILITY_RADIAL_REVEAL_SOURCE_INVALID');
   const area=signedTwiceArea(source);
   if(area<=GEOMETRY_EPSILON||!isSimplePolygon2D(source))throw new Error('FACILITY_RADIAL_REVEAL_REQUIRES_CCW_SIMPLE_ENVELOPE');
   const revealWidth=Number(width),start=Number(startRadius),dimX=Number(dimensions?.x),dimZ=Number(dimensions?.z);
-  if(!(revealWidth>0)||!Number.isFinite(start)||!(dimX>0)||!(dimZ>0)
+  const revealBackWidth=backWidth==null?revealWidth:Number(backWidth);
+  const flareStart=flareStartRadius==null?start:Number(flareStartRadius);
+  if(!(revealWidth>0)||!(revealBackWidth>0)||revealBackWidth>revealWidth+GEOMETRY_EPSILON
+    ||!Number.isFinite(start)||!Number.isFinite(flareStart)||flareStart<start-GEOMETRY_EPSILON
+    ||!(dimX>0)||!(dimZ>0)
     ||![dimX,dimZ,housingAngle,rotationY,layerOffset].every(v=>Number.isFinite(Number(v)))){
     throw new Error('FACILITY_RADIAL_REVEAL_INVALID_PARAMETERS');
   }
@@ -196,16 +206,22 @@ export function deriveMachineWorldFacilityRadialRevealOutline({
   if(Math.abs(interval-physical.length*0.5)<=1e-7)throw new Error('FACILITY_RADIAL_REVEAL_MOUTH_AMBIGUOUS');
   if(interval>physical.length*0.5)[a,b]=[b,a];
   const longArc=modulo(a.parameter-b.parameter,physical.length);
-  const inner=mouth=>{const side=mouth.point[0]*v[0]+mouth.point[1]*v[1]-target;return [origin[0]+v[0]*side,origin[1]+v[1]*side];};
-  const innerA=inner(a),innerB=inner(b);
-  if(!pointInsideOrOnPolygon(innerA,physical)||!pointInsideOrOnPolygon(innerB,physical))throw new Error('FACILITY_RADIAL_REVEAL_BACK_EDGE_ESCAPES_ENVELOPE');
+  const inner=side=>[origin[0]+v[0]*side,origin[1]+v[1]*side];
+  const innerA=inner(target-revealBackWidth*0.5),innerB=inner(target+revealBackWidth*0.5);
+  const flareOrigin=[u[0]*(flareStart-Number(layerOffset)),u[1]*(flareStart-Number(layerOffset))];
+  const flareA=[flareOrigin[0]-v[0]*revealWidth*0.5,flareOrigin[1]-v[1]*revealWidth*0.5];
+  const flareB=[flareOrigin[0]+v[0]*revealWidth*0.5,flareOrigin[1]+v[1]*revealWidth*0.5];
+  const stepped=flareStart>start+GEOMETRY_EPSILON||revealBackWidth<revealWidth-GEOMETRY_EPSILON;
+  const checkPoints=stepped?[innerA,innerB,flareA,flareB]:[innerA,innerB];
+  if(checkPoints.some(point=>!pointInsideOrOnPolygon(point,physical)))throw new Error('FACILITY_RADIAL_REVEAL_BACK_EDGE_ESCAPES_ENVELOPE');
   const arc=[];
   for(let i=0;i<physical.length;i+=1){
     const d=modulo(i-b.parameter,physical.length);
     if(d>1e-7&&d<longArc-1e-7)arc.push({d,point:physical[i]});
   }
   arc.sort((x,y)=>x.d-y.d);
-  const result=[a.point,innerA,innerB,b.point,...arc.map(v=>v.point)].map(([x,z])=>[x/sx+cx,z/sz+cz]);
+  const physicalOutline=stepped?[a.point,flareA,innerA,innerB,flareB,b.point,...arc.map(v=>v.point)]:[a.point,innerA,innerB,b.point,...arc.map(v=>v.point)];
+  const result=physicalOutline.map(([x,z])=>[x/sx+cx,z/sz+cz]);
   const resultArea=signedTwiceArea(result);
   if(resultArea<=GEOMETRY_EPSILON||resultArea>=area-1e-7||!isSimplePolygon2D(result))throw new Error('FACILITY_RADIAL_REVEAL_RESULT_INVALID');
   triangulateMachineWorldFacilityBodyOutline(result);
@@ -571,13 +587,13 @@ function deriveShell(entry) {
       });
     }
     if (entry.machineRole === 'control' && descriptor.layer === 'shoulder-plate') {
-      // Keep the shoulder aperture narrower than the main-shell reveal. Width
-      // is relative to this smaller plate, while the rear endpoint is shared
-      // with the main reveal after compensating for the plate's radial offset.
+      // Keep the rear throat inside the hull, then flare the opening ahead of
+      // the rotor collar. The back edge remains aligned with the main reveal.
       const envelopeOutline = MACHINE_WORLD_FACILITY_BODY_OUTLINES[silhouette];
-      const shoulderMin = Math.min(Number(descriptor.dimensions.x), Number(descriptor.dimensions.z));
-      const shoulderRevealWidth = shoulderMin * MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO;
+      const shoulderRevealWidth = bodyMin * MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO;
+      const shoulderRevealBackWidth = bodyMin * MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_BACK_WIDTH_RATIO;
       const shoulderRevealStartRadius = bodyMin * MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO;
+      const shoulderRevealFlareStartRadius = bodyMin * MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_FLARE_START_RADIUS_RATIO;
       const outline = deriveMachineWorldFacilityRadialRevealOutline({
         outline: envelopeOutline,
         dimensions: descriptor.dimensions,
@@ -586,6 +602,8 @@ function deriveShell(entry) {
         layerOffset: descriptor.depthOffset,
         width: shoulderRevealWidth,
         startRadius: shoulderRevealStartRadius,
+        backWidth: shoulderRevealBackWidth,
+        flareStartRadius: shoulderRevealFlareStartRadius,
       });
       return Object.freeze({
         ...descriptor,
@@ -593,7 +611,9 @@ function deriveShell(entry) {
         envelopeOutline,
         shoulderRevealProfile: MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_PROFILE,
         shoulderRevealWidth,
+        shoulderRevealBackWidth,
         shoulderRevealStartRadius,
+        shoulderRevealFlareStartRadius,
       });
     }
     if(entry.machineRole!=='analysis'||!['main-shell','shoulder-plate'].includes(descriptor.layer))return descriptor;
@@ -710,14 +730,6 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
       ) {
         reasons.push(id + ':SHOULDER_REVEAL_SCOPE_INVALID');
       }
-      const shoulderMin = Math.min(Number(descriptor.dimensions?.x), Number(descriptor.dimensions?.z));
-      if (!(shoulderMin > 0) || !Number.isFinite(shoulderMin)) {
-        reasons.push(id + ':SHOULDER_REVEAL_ENVELOPE_DIMENSIONS_INVALID');
-      } else if (
-        Math.abs(Number(descriptor.shoulderRevealWidth) / shoulderMin - MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO) > 1e-7
-      ) {
-        reasons.push(id + ':SHOULDER_REVEAL_WIDTH_RATIO_MISMATCH');
-      }
       const mainEnvelope = list.find((entry) =>
         entry.branchId === descriptor.branchId && entry.layer === 'main-shell'
       );
@@ -727,22 +739,33 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
         const mainMin = Math.min(Number(mainEnvelope.dimensions?.x), Number(mainEnvelope.dimensions?.z));
         if (!(mainMin > 0) || !Number.isFinite(mainMin)) {
           reasons.push(id + ':SHOULDER_REVEAL_MAIN_DIMENSIONS_INVALID');
-        } else if (
-          Math.abs(Number(descriptor.shoulderRevealStartRadius) / mainMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) > 1e-7
-        ) {
-          reasons.push(id + ':SHOULDER_REVEAL_START_RADIUS_MISMATCH');
+        } else {
+          if (
+            Math.abs(Number(descriptor.shoulderRevealWidth) / mainMin - MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_WIDTH_RATIO) > 1e-7
+          ) reasons.push(id + ':SHOULDER_REVEAL_WIDTH_RATIO_MISMATCH');
+          if (
+            Math.abs(Number(descriptor.shoulderRevealBackWidth) / mainMin - MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_BACK_WIDTH_RATIO) > 1e-7
+          ) reasons.push(id + ':SHOULDER_REVEAL_BACK_WIDTH_RATIO_MISMATCH');
+          if (
+            Math.abs(Number(descriptor.shoulderRevealStartRadius) / mainMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) > 1e-7
+          ) reasons.push(id + ':SHOULDER_REVEAL_START_RADIUS_MISMATCH');
+          if (
+            Math.abs(Number(descriptor.shoulderRevealFlareStartRadius) / mainMin - MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_FLARE_START_RADIUS_RATIO) > 1e-7
+          ) reasons.push(id + ':SHOULDER_REVEAL_FLARE_START_RADIUS_MISMATCH');
         }
         if (
           !Number.isFinite(Number(mainEnvelope.coreRevealStartRadius))
           || Math.abs(Number(descriptor.shoulderRevealStartRadius) - Number(mainEnvelope.coreRevealStartRadius)) > 1e-7
-        ) {
-          reasons.push(id + ':SHOULDER_REVEAL_REAR_EDGE_MISALIGNED');
-        }
+        ) reasons.push(id + ':SHOULDER_REVEAL_REAR_EDGE_MISALIGNED');
       }
       if (!Array.isArray(descriptor.envelopeOutline) || descriptor.envelopeOutline.length < 3) {
         reasons.push(id + ':SHOULDER_REVEAL_ENVELOPE_MISSING');
       }
-      if (!(Number(descriptor.shoulderRevealWidth) > 0) || !Number.isFinite(Number(descriptor.shoulderRevealStartRadius))) {
+      if (!(Number(descriptor.shoulderRevealWidth) > 0) || !(Number(descriptor.shoulderRevealBackWidth) > 0)
+        || Number(descriptor.shoulderRevealBackWidth) >= Number(descriptor.shoulderRevealWidth)
+        || !Number.isFinite(Number(descriptor.shoulderRevealStartRadius))
+        || !Number.isFinite(Number(descriptor.shoulderRevealFlareStartRadius))
+        || Number(descriptor.shoulderRevealFlareStartRadius) <= Number(descriptor.shoulderRevealStartRadius)) {
         reasons.push(id + ':SHOULDER_REVEAL_PARAMETERS_INVALID');
       }
       try {

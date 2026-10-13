@@ -80,7 +80,7 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-visible-pods', '10');
     await expect(canvas).toHaveAttribute('data-structural-visible-facilities', '4');
     await expect(canvas).toHaveAttribute('data-structural-visible-divisions', '0');
-    await expect(canvas).toHaveAttribute('data-structural-facility-shell-version', 'S7-OUTER-BODY-V8');
+    await expect(canvas).toHaveAttribute('data-structural-facility-shell-version', 'S7-OUTER-BODY-V9');
     await expect(canvas).toHaveAttribute('data-structural-facility-shell-descriptor-count', '24');
     await expect(canvas).toHaveAttribute('data-structural-facility-nested-cradle-count', '4');
     await expect(canvas).toHaveAttribute('data-structural-facility-service-bay-descriptor-count', '2');
