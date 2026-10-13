@@ -90,6 +90,16 @@ export const MACHINE_WORLD_S7_FOCUS_SHELL_COLOR = Object.freeze({
   color: Object.freeze([0.64, 0.68, 0.70]),
 });
 
+export const MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL = Object.freeze({
+  profile: 's7-control-rotor-metal-v1',
+  branchId: 'BRANCH-OUTER-GAMMA',
+  componentRoles: Object.freeze(['rotor-ring', 'rotor-ring-secondary', 'control-collar']),
+  color: Object.freeze([0.64, 0.68, 0.70]),
+  emit: 0.02,
+  glow: 0.025,
+  alpha: 0.94,
+});
+
 export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
   profile: 's7-face-normal-v4',
   viewVectorProfile: 'camera-position-v1',
@@ -2298,6 +2308,17 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : '';
     canvas.dataset.machineWorldFacilityFocusMainShellColor = selectedShellColorTelemetry;
     canvas.dataset.machineWorldFacilityFocusShoulderPlateColor = selectedShellColorTelemetry;
+    const controlRotorMaterialActive = facilityFocused
+      && requestedFacilityFocusBranchId === MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.branchId;
+    canvas.dataset.machineWorldFacilityFocusControlRotorMaterialProfile = controlRotorMaterialActive
+      ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.profile
+      : 'base';
+    canvas.dataset.machineWorldFacilityFocusControlRotorMaterialColor = controlRotorMaterialActive
+      ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.color.map((value) => value.toFixed(2)).join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityFocusControlRotorMetalComponentCount = controlRotorMaterialActive
+      ? String(MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.componentRoles.length)
+      : '0';
     const facilityFocusBranchId = facilityFocused ? requestedFacilityFocusBranchId : '';
     const facilitySubject = facilityFocused ? derivedFacilityFocusSubject : null;
     const activePresentationBranchId = facilityFocused ? facilityFocusBranchId : branchId;
@@ -2638,6 +2659,34 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       for (const component of machine.components) {
         const presentation = presentationById.get(component.id);
         const renderedHeight = Math.max(0.04, finite(component.dimensions.y));
+        const authoredComponentMaterial = component.materialRole === 'energy'
+          ? activeHeroMaterials.energy
+          : component.materialRole === 'trace'
+            ? activeHeroMaterials.trace
+            : component.materialRole === 'glass'
+              ? activeHeroMaterials.glass
+              : component.materialRole === 'metal2'
+                ? activeHeroMaterials.metal2
+                : activeHeroMaterials.metal;
+        const controlRotorMetalComponent = controlRotorMaterialActive
+          && selected
+          && machine.machineRole === 'control'
+          && MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.componentRoles.includes(component.role);
+        const componentDrawMaterial = controlRotorMetalComponent
+          ? {
+              ...(component.role === 'rotor-ring' ? activeHeroMaterials.metal : activeHeroMaterials.metal2),
+              color: MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.color,
+            }
+          : authoredComponentMaterial;
+        const componentEmit = controlRotorMetalComponent
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.emit
+          : selected ? 0.18 : 0.07;
+        const componentGlow = controlRotorMetalComponent
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.glow
+          : selected ? 0.26 : 0.09;
+        const componentAlpha = controlRotorMetalComponent
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.alpha
+          : selected ? 0.86 : 0.58;
         ringDraw(
           component.shape,
           multiplyMatrix(
@@ -2662,19 +2711,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
               ),
             ),
           ),
-          component.materialRole === 'energy'
-            ? activeHeroMaterials.energy
-            : component.materialRole === 'trace'
-              ? activeHeroMaterials.trace
-              : component.materialRole === 'glass'
-                ? activeHeroMaterials.glass
-                : component.materialRole === 'metal2'
-                  ? activeHeroMaterials.metal2
-                  : activeHeroMaterials.metal,
+          componentDrawMaterial,
           {
-            emit: selected ? 0.18 : 0.07,
-            glow: selected ? 0.26 : 0.09,
-            alpha: selected ? 0.86 : 0.58,
+            emit: componentEmit,
+            glow: componentGlow,
+            alpha: componentAlpha,
           },
         );
       }

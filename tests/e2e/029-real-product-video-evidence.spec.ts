@@ -60,6 +60,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-color-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-version', 'S3-V8');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-face-brace-attachment', 'panel-local-matrix-v2');
     
@@ -93,6 +96,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-color', '0.64,0.68,0.70');
     await expect(page.locator('[data-facility-focus="BRANCH-OUTER-ALPHA"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#facility-focus-status')).toContainText('Analysis · Telescope');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
     const focusedSubject = await page.evaluate(() => ({
       center: document.querySelector('#hero-canvas')?.getAttribute('data-machine-world-facility-focus-subject-center'),
       span: document.querySelector('#hero-canvas')?.getAttribute('data-machine-world-facility-focus-subject-span'),
@@ -145,6 +151,18 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-color-profile', 's7-focus-shell-albedo-v1');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-color', '0.64,0.68,0.70');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-color', '0.64,0.68,0.70');
+      await expect(canvas).toHaveAttribute(
+        'data-machine-world-facility-focus-control-rotor-material-profile',
+        branchId === 'BRANCH-OUTER-GAMMA' ? 's7-control-rotor-metal-v1' : 'base',
+      );
+      await expect(canvas).toHaveAttribute(
+        'data-machine-world-facility-focus-control-rotor-material-color',
+        branchId === 'BRANCH-OUTER-GAMMA' ? '0.64,0.68,0.70' : '',
+      );
+      await expect(canvas).toHaveAttribute(
+        'data-machine-world-facility-focus-control-rotor-metal-component-count',
+        branchId === 'BRANCH-OUTER-GAMMA' ? '3' : '0',
+      );
       const span = await canvas.getAttribute('data-machine-world-facility-focus-subject-span');
       expect(span?.split(',').map(Number).every((value) => Number.isFinite(value) && value > 0)).toBe(true);
       if (branchId === 'BRANCH-OUTER-BETA') {
@@ -166,6 +184,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-color-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
 
     // The return affordance must also work as an ordinary browser interaction.
     await worldMenuToggle.click();
@@ -197,6 +218,9 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shell-color-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-main-shell-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-shoulder-plate-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
     await expect(page.locator('#facility-focus-status')).toHaveText('World overview');
     await expect(canvas).toHaveAttribute('data-machine-world-topology-validation', 'pass');
     await expect(worldMenu).toBeHidden();

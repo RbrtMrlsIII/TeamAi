@@ -7,6 +7,7 @@ import {
   createMachineWorldNormalMatrix,
   MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE,
   MACHINE_WORLD_S7_FOCUS_SHELL_COLOR,
+  MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL,
 } from '../public/machine-world-renderer.js';
 
 const near = (actual, expected, epsilon = 1e-6) => {
@@ -180,4 +181,27 @@ test('focused S7 shell albedo uses a neutral metal only on the selected main and
   assert.ok(source.includes("canvas.dataset.machineWorldFacilityFocusShoulderPlateColor = selectedShellColorTelemetry"));
   assert.ok(source.includes('const material = shell.materialRole ==='));
   assert.ok(source.includes(': activeHeroMaterials.metal2;'));
+});
+
+test('Control focus separates mechanical rotor rings from the energy emitter without changing World presentation', async () => {
+  assert.deepEqual(MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL, {
+    profile: 's7-control-rotor-metal-v1',
+    branchId: 'BRANCH-OUTER-GAMMA',
+    componentRoles: ['rotor-ring', 'rotor-ring-secondary', 'control-collar'],
+    color: [0.64, 0.68, 0.70],
+    emit: 0.02,
+    glow: 0.025,
+    alpha: 0.94,
+  });
+  const source = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.ok(source.includes('const controlRotorMaterialActive = facilityFocused'));
+  assert.ok(source.includes("requestedFacilityFocusBranchId === MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.branchId"));
+  assert.ok(source.includes("machine.machineRole === 'control'"));
+  assert.ok(source.includes('MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.componentRoles.includes(component.role)'));
+  assert.ok(source.includes("component.role === 'rotor-ring' ? activeHeroMaterials.metal : activeHeroMaterials.metal2"));
+  assert.ok(source.includes('color: MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.color'));
+  assert.ok(source.includes('const componentEmit = controlRotorMetalComponent'));
+  assert.ok(source.includes('const componentGlow = controlRotorMetalComponent'));
+  assert.ok(source.includes('const componentAlpha = controlRotorMetalComponent'));
+  assert.ok(source.includes("canvas.dataset.machineWorldFacilityFocusControlRotorMaterialProfile = controlRotorMaterialActive"));
 });
