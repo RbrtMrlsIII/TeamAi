@@ -14,6 +14,153 @@ import {
   deriveMachineFacilityPhysicalInterfaces,
 } from '../frontend/spatial/machine-facility-machinery.js';
 import { requiredStructuralRootsForSlice } from '../frontend/spatial/machine-spatial-root-contract.js';
+import { MACHINE_POD_SHELL_OUTLINE } from '../frontend/spatial/machine-pod-profile.js';
+
+const MACHINE_WORLD_RENDERER_SOURCE = readFileSync(
+  new URL('../frontend/spatial/machine-world-renderer.js', import.meta.url),
+  'utf8',
+);
+
+function polygonSignedArea(points) {
+  let twiceArea = 0;
+  for (let index = 0; index < points.length; index += 1) {
+    const current = points[index];
+    const next = points[(index + 1) % points.length];
+    twiceArea += current[0] * next[1] - next[0] * current[1];
+  }
+  return twiceArea * 0.5;
+}
+
+function polygonCross(a, b) {
+  return a[0] * b[1] - a[1] * b[0];
+}
+
+function intersectConvexPolygons(subjectPoints, clipPoints) {
+  let output = subjectPoints.map((point) => [...point]);
+  const orientation = polygonSignedArea(clipPoints) >= 0 ? 1 : -1;
+  const inside = (point, start, end) => orientation * polygonCross(
+    [end[0] - start[0], end[1] - start[1]],
+    [point[0] - start[0], point[1] - start[1]],
+  ) >= -1e-10;
+  const lineIntersection = (start, end, clipStart, clipEnd) => {
+    const direction = [end[0] - start[0], end[1] - start[1]];
+    const clipDirection = [clipEnd[0] - clipStart[0], clipEnd[1] - clipStart[1]];
+    const denominator = polygonCross(direction, clipDirection);
+    if (Math.abs(denominator) < 1e-12) return [...end];
+    const clipToStart = [clipStart[0] - start[0], clipStart[1] - start[1]];
+    const t = polygonCross(clipToStart, clipDirection) / denominator;
+    return [start[0] + t * direction[0], start[1] + t * direction[1]];
+  };
+
+  for (let clipIndex = 0; clipIndex < clipPoints.length && output.length; clipIndex += 1) {
+    const clipStart = clipPoints[clipIndex];
+    const clipEnd = clipPoints[(clipIndex + 1) % clipPoints.length];
+    const input = output;
+    output = [];
+    let previous = input[input.length - 1];
+    let previousInside = inside(previous, clipStart, clipEnd);
+    for (const current of input) {
+      const currentInside = inside(current, clipStart, clipEnd);
+      if (currentInside) {
+        if (!previousInside) output.push(lineIntersection(previous, current, clipStart, clipEnd));
+        output.push(current);
+      } else if (previousInside) {
+        output.push(lineIntersection(previous, current, clipStart, clipEnd));
+      }
+      previous = current;
+      previousInside = currentInside;
+    }
+  }
+
+  return output.length >= 3 ? Math.abs(polygonSignedArea(output)) : 0;
+}
+
+function rendererPlanarFootprint(part) {
+  let outline;
+  if (part.shape === 'CYL') {
+    // Exact normalized X/Z footprint used by PRIMITIVE_POLYGONS.CYL.
+    outline = Array.from({ length: 16 }, (_, index) => {
+      const angle = (index / 16) * Math.PI * 2;
+      return [Math.cos(angle), Math.sin(angle)];
+    });
+  } else if (part.shape === 'CUBE') {
+    // CUBE is deliberately the renderer's authored Pod profile, not a box.
+    outline = MACHINE_POD_SHELL_OUTLINE;
+  } else if (part.shape === 'BOX') {
+    outline = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+  } else if (part.shape === 'TORUS') {
+    // The planar outside boundary of the actual 24-segment annular prism.
+    outline = Array.from({ length: 24 }, (_, index) => {
+      const angle = (index / 24) * Math.PI * 2;
+      return [Math.cos(angle), Math.sin(angle)];
+    });
+  } else {
+    throw new Error('Unexpected shape in S7 bearing geometry proof: ' + part.shape);
+  }
+
+  const yaw = Number(part.rotationY) || 0;
+  const cosine = Math.cos(yaw);
+  const sine = Math.sin(yaw);
+  return outline.map(([x, z]) => {
+    const localX = x * part.dimensions.x * 0.5;
+    const localZ = z * part.dimensions.z * 0.5;
+    return [
+      part.center.x + cosine * localX + sine * localZ,
+      part.center.z - sine * localX + cosine * localZ,
+    ];
+  });
+}
+
+function renderedPlanarIntersectionArea(partA, partB) {
+  return intersectConvexPolygons(
+    rendererPlanarFootprint(partA),
+    rendererPlanarFootprint(partB),
+  );
+}
+
+function renderedBearingRingIntersectionArea(bearing, ring) {
+  const bearingFootprint = rendererPlanarFootprint(bearing);
+  const ringOutside = intersectConvexPolygons(
+    bearingFootprint,
+    rendererPlanarFootprint(ring),
+  );
+  const ringBore = intersectConvexPolygons(
+    bearingFootprint,
+    rendererPlanarFootprint({
+      ...ring,
+      dimensions: {
+        ...ring.dimensions,
+        x: ring.dimensions.x * 0.72,
+        z: ring.dimensions.z * 0.72,
+      },
+      shape: 'TORUS',
+    }),
+  );
+  return Math.max(0, ringOutside - ringBore);
+}
+
+function nearestDetail(part, details, role) {
+  return details
+    .filter((entry) => entry.role === role)
+    .sort((a, b) => Math.hypot(
+      a.center.x - part.center.x,
+      a.center.z - part.center.z,
+    ) - Math.hypot(
+      b.center.x - part.center.x,
+      b.center.z - part.center.z,
+    ))[0];
+}
+
+function renderedVerticalOverlap(partA, partB) {
+  return Math.min(
+    partA.center.y + partA.dimensions.y * 0.5,
+    partB.center.y + partB.dimensions.y * 0.5,
+  ) - Math.max(
+    partA.center.y - partA.dimensions.y * 0.5,
+    partB.center.y - partB.dimensions.y * 0.5,
+  );
+}
+
 
 test('S7 builds four genuinely distinct outer-machine grammars from S6 destinations', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
@@ -360,12 +507,79 @@ test('S7 control machine exposes paired rotor-drive links across the 1-10 Seat h
   }
 });
 
+test('S7 Control bearing blocks physically engage the rendered rotor hub across 30 Seat/expansion states', () => {
+  // Keep this proof bound to production primitive semantics. A future renderer
+  // shape change must update this independent polygon-intersection model.
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE, /pod:\s*MACHINE_POD_SHELL_OUTLINE/);
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE, /CUBE:\s*POLYS\.pod/);
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE, /CYL:\s*regularPolygon\(16\)/);
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE, /BOX:\s*Object\.freeze\(\[\[-1, -1\], \[1, -1\], \[1, 1\], \[-1, 1\]\]\)/);
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE, /segments = 24,\s*innerRadius = 0\.72/);
+
+  let stateCount = 0;
+  let bearingCount = 0;
+  let minimumOverlapArea = Infinity;
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const core = createBranchConnectionCore({ seatCount, expansionAmount });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: deriveMachineFacilityAssemblies({
+          outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
+        }),
+      });
+      const control = machinery.find((machine) => machine.machineRole === 'control');
+      assert.ok(control, seatCount + '-seat / expansion ' + expansionAmount + ': Control machine');
+      const hub = control.components.find((entry) => entry.role === 'rotor-hub');
+      const ring = control.components.find((entry) => entry.role === 'rotor-ring');
+      const details = control.mechanicalDetails;
+      const bearingBlocks = details.filter((entry) => entry.role === 'rotor-bearing-block');
+      assert.ok(hub, seatCount + '-seat / expansion ' + expansionAmount + ': rotor hub');
+      assert.ok(ring, seatCount + '-seat / expansion ' + expansionAmount + ': rotor ring');
+      assert.equal(bearingBlocks.length, 2);
+
+      for (const bearing of bearingBlocks) {
+        assert.equal(bearing.shape, 'CUBE');
+        assert.equal(bearing.parentRole, 'rotor-hub');
+        const overlapArea = renderedPlanarIntersectionArea(bearing, hub);
+        const overlapHeight = renderedVerticalOverlap(bearing, hub);
+        assert.ok(overlapHeight > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical hub engagement');
+        assert.ok(
+          overlapArea >= 0.001,
+          seatCount + '-seat / expansion ' + expansionAmount + ': bearing/hub rendered footprint overlap was ' + overlapArea,
+        );
+
+        const ringOverlap = renderedBearingRingIntersectionArea(bearing, ring);
+        assert.ok(ringOverlap >= 0.005, seatCount + '-seat / expansion ' + expansionAmount + ': bearing/ring footprint overlap was ' + ringOverlap);
+        assert.ok(renderedVerticalOverlap(bearing, ring) > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical ring engagement');
+
+        const link = nearestDetail(bearing, details, 'rotor-drive-link');
+        assert.ok(link, seatCount + '-seat / expansion ' + expansionAmount + ': rotor drive link');
+        assert.ok(renderedPlanarIntersectionArea(bearing, link) >= 0.005, seatCount + '-seat / expansion ' + expansionAmount + ': bearing/link footprint engagement');
+        assert.ok(renderedVerticalOverlap(bearing, link) > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical link engagement');
+
+        const support = nearestDetail(bearing, details, 'support-strut');
+        assert.ok(support, seatCount + '-seat / expansion ' + expansionAmount + ': support strut');
+        assert.ok(renderedPlanarIntersectionArea(bearing, support) >= 0.015, seatCount + '-seat / expansion ' + expansionAmount + ': bearing/support footprint engagement');
+        assert.ok(renderedVerticalOverlap(bearing, support) > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical support engagement');
+
+        minimumOverlapArea = Math.min(minimumOverlapArea, overlapArea);
+        bearingCount += 1;
+      }
+      stateCount += 1;
+    }
+  }
+
+  assert.equal(stateCount, 30);
+  assert.equal(bearingCount, 60);
+  assert.ok(minimumOverlapArea >= 0.001);
+});
+
 test('S7 control and access families expose nested retainers with independent housing bounds', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V21');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V22');
 
   const expected = Object.freeze({
     control: Object.freeze({

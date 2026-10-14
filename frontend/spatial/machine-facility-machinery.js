@@ -14,9 +14,12 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V21';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V22';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
+
+// Keeps the tapered bearing-block footprints physically engaged with the rendered rotor hub.
+const CONTROL_BEARING_TANGENT_OFFSET_RATIO = 0.155;
 
 const ANALYSIS_BARREL_OUTLINES = Object.freeze({
   'barrel-stage-1': Object.freeze([
@@ -869,10 +872,10 @@ export function deriveMachineFacilityMachinery({
               shape: 'CUBE',
               center: Object.freeze({
                 x: housingCenter.x + basis.outward.x * frameDepth * 0.08
-                  + basis.tangent.x * frameWidth * 0.18 * side,
+                  + basis.tangent.x * frameWidth * CONTROL_BEARING_TANGENT_OFFSET_RATIO * side,
                 y: housingCenter.y + frameHeight * 0.30,
                 z: housingCenter.z + basis.outward.z * frameDepth * 0.08
-                  + basis.tangent.z * frameWidth * 0.18 * side,
+                  + basis.tangent.z * frameWidth * CONTROL_BEARING_TANGENT_OFFSET_RATIO * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.06, frameWidth * 0.08),
