@@ -32,10 +32,80 @@ import {
   MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_STANCHION_WIDTH_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP,
+  MACHINE_WORLD_FACILITY_CONTROL_STANCHION_BASE_OVERLAP,
   deriveMachineWorldFacilityRadialRevealOutline,
   deriveMachineWorldFacilityServiceBayOutline,
   triangulateMachineWorldFacilityBodyOutline,
 } from '../frontend/spatial/machine-world-facility-shell.js';
+
+function signedPolygonArea(points) {
+  let twice = 0;
+  for (let index = 0; index < points.length; index += 1) {
+    const current = points[index];
+    const next = points[(index + 1) % points.length];
+    twice += current.x * next.z - next.x * current.z;
+  }
+  return twice * 0.5;
+}
+
+function cross2D(a, b) { return a.x * b.z - a.z * b.x; }
+
+function intersectConvexFootprints(subject, clip) {
+  let output = subject.map((point) => ({ ...point }));
+  const orientation = signedPolygonArea(clip) >= 0 ? 1 : -1;
+  const inside = (point, a, b) => orientation * cross2D(
+    { x: b.x - a.x, z: b.z - a.z },
+    { x: point.x - a.x, z: point.z - a.z },
+  ) >= -1e-9;
+  const intersection = (start, end, a, b) => {
+    const direction = { x: end.x - start.x, z: end.z - start.z };
+    const edge = { x: b.x - a.x, z: b.z - a.z };
+    const denominator = cross2D(direction, edge);
+    if (Math.abs(denominator) < 1e-12) return { ...end };
+    const toClip = { x: a.x - start.x, z: a.z - start.z };
+    const t = cross2D(toClip, edge) / denominator;
+    return { x: start.x + t * direction.x, z: start.z + t * direction.z };
+  };
+
+  for (let index = 0; index < clip.length && output.length; index += 1) {
+    const a = clip[index];
+    const b = clip[(index + 1) % clip.length];
+    const input = output;
+    output = [];
+    let previous = input[input.length - 1];
+    let wasInside = inside(previous, a, b);
+    for (const current of input) {
+      const isInside = inside(current, a, b);
+      if (isInside) {
+        if (!wasInside) output.push(intersection(previous, current, a, b));
+        output.push(current);
+      } else if (wasInside) {
+        output.push(intersection(previous, current, a, b));
+      }
+      previous = current;
+      wasInside = isInside;
+    }
+  }
+  return output.length >= 3 ? Math.abs(signedPolygonArea(output)) : 0;
+}
+
+function descriptorWorldFootprint(descriptor) {
+  const outline = descriptor.shape === 'FACILITY_FACETED_BODY'
+    ? descriptor.outline
+    : [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+  const cosine = Math.cos(descriptor.rotationY || 0);
+  const sine = Math.sin(descriptor.rotationY || 0);
+  return outline.map(([u, v]) => {
+    const x = u * descriptor.dimensions.x * 0.5;
+    const z = v * descriptor.dimensions.z * 0.5;
+    return {
+      x: descriptor.center.x + cosine * x + sine * z,
+      z: descriptor.center.z - sine * x + cosine * z,
+    };
+  });
+}
 
 test('S7 layered outer facility shells derive a coherent body stack for each authored module', () => {
   const scene = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
@@ -51,7 +121,7 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V9');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V10');
   const bays=descriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE);
   assert.equal(bays.length,2);
   assert.deepEqual(bays.map(entry=>entry.layer).sort(),['main-shell','shoulder-plate']);
@@ -450,7 +520,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
   const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
 
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V9');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V10');
   assert.equal(cores.length, 4);
   assert.deepEqual(
     Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),
@@ -558,7 +628,7 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
         minX: Math.min(...hullWorld.map((p) => p.x)), maxX: Math.max(...hullWorld.map((p) => p.x)),
         minZ: Math.min(...hullWorld.map((p) => p.z)), maxZ: Math.max(...hullWorld.map((p) => p.z)),
       };
-      for (const part of [core, ...rings]) {
+      for (const part of [core, ...rings, ...posts]) {
         const pc = Math.cos(part.rotationY), ps = Math.sin(part.rotationY);
         const halfX = Math.abs(pc) * part.dimensions.x * 0.5 + Math.abs(ps) * part.dimensions.z * 0.5;
         const halfZ = Math.abs(ps) * part.dimensions.x * 0.5 + Math.abs(pc) * part.dimensions.z * 0.5;
@@ -576,11 +646,73 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
       assert.equal(posts.length, 2);
       assert.ok(posts.every((post) => Math.abs(post.dimensions.y / expectedRingSpan - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO) < 1e-7));
       const coreRadius = Math.max(core.dimensions.x, core.dimensions.y) * 0.5;
+      const base = shells.find((entry) => entry.branchId === MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH && entry.layer === 'base-collar');
+      assert.ok(base, 'Control rotor cradle must retain its existing base collar');
+      const stanchionRingOffset = core.dimensions.z * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
+      const stanchionRingThickness = Math.max(0.06, main.dimensions.y * 0.055);
+      const requiredAxialSpan = 2 * stanchionRingOffset + stanchionRingThickness
+        + 2 * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP;
+      const baseTopY = base.center.y + base.dimensions.y * 0.5;
+      let postFootAreaMinimum = Infinity;
+      let postBaseVerticalOverlapMinimum = Infinity;
       for (const post of posts) {
-        const reach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
-        const postRadius = Math.hypot(post.dimensions.x, post.dimensions.z) * 0.5;
-        assert.ok(reach - postRadius > coreRadius, 'stanchion must frame the rotor');
+        // The long local-Z dimension now follows the shaft axis. Only local-X
+        // half-width contributes to tangential core clearance; hypot(X,Z)/2
+        // would incorrectly treat a bridge beam as a radially symmetric post.
+        const tangentialReach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
+        const postTangentialHalfWidth = post.dimensions.x * 0.5;
+        assert.ok(tangentialReach - postTangentialHalfWidth > coreRadius + 0.02,
+          'stanchion tangential side must preserve rotor-core clearance');
+        assert.ok(Math.abs(post.dimensions.x / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_WIDTH_RATIO) < 1e-7,
+          'stanchion tangential width must match its named ratio');
+        assert.ok(Math.abs(post.rotationY - core.rotationY) < 1e-7,
+          'stanchion shaft-axis depth must align with the axial ring normal');
+        assert.ok(Math.abs(post.dimensions.z - requiredAxialSpan) < 1e-7,
+          'stanchion depth must span both axial ring planes with a bounded overlap');
+        const halfAxial = post.dimensions.z * 0.5;
+        const postAxisOffset = (post.center.x - core.center.x) * Math.sin(core.rotationY)
+          + (post.center.z - core.center.z) * Math.cos(core.rotationY);
+        assert.ok(Math.abs(postAxisOffset) < 1e-7,
+          'stanchion center must remain on the existing rotor shaft-axis origin');
+        const postMin = postAxisOffset - halfAxial;
+        const postMax = postAxisOffset + halfAxial;
+        for (const ring of rings) {
+          const signedOffset = (ring.center.x - core.center.x) * Math.sin(core.rotationY)
+            + (ring.center.z - core.center.z) * Math.cos(core.rotationY);
+          const ringMin = signedOffset - ring.dimensions.z * 0.5;
+          const ringMax = signedOffset + ring.dimensions.z * 0.5;
+          assert.ok(postMax - ringMax >= MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP - 1e-7,
+            'stanchion must extend past each axial ring outer edge by the named margin');
+          assert.ok(ringMin - postMin >= MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP - 1e-7,
+            'stanchion must extend past each axial ring inner edge by the named margin');
+          const ringInnerRadius = ring.dimensions.x * 0.5 * 0.72;
+          const ringOuterRadius = ring.dimensions.x * 0.5;
+          const tangentialOffset = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
+          const tangentialHalfWidth = post.dimensions.x * 0.5;
+          const annularTangentialOverlap = Math.min(tangentialOffset + tangentialHalfWidth, ringOuterRadius)
+            - Math.max(tangentialOffset - tangentialHalfWidth, ringInnerRadius);
+          assert.ok(annularTangentialOverlap > 0.02,
+            'stanchion tangential footprint must intersect the annular ring material, got ' + annularTangentialOverlap);
+          const postBottom = post.center.y - post.dimensions.y * 0.5;
+          const postTop = post.center.y + post.dimensions.y * 0.5;
+          assert.ok(ring.center.y - postBottom >= 0.02 && postTop - ring.center.y >= 0.02,
+            'stanchion must span the ring center height at its annular contact point');
+        }
+        const postFootY = post.center.y - post.dimensions.y * 0.5;
+        const baseOverlap = baseTopY - postFootY;
+        assert.ok(baseOverlap >= MACHINE_WORLD_FACILITY_CONTROL_STANCHION_BASE_OVERLAP - 1e-7,
+          'stanchion foot must overlap the base collar vertically');
+        postBaseVerticalOverlapMinimum = Math.min(postBaseVerticalOverlapMinimum, baseOverlap);
+        const footprintArea = intersectConvexFootprints(
+          descriptorWorldFootprint(post),
+          descriptorWorldFootprint(base),
+        );
+        assert.ok(footprintArea > 0.02,
+          'stanchion must overlap the actual faceted base-collar footprint, got ' + footprintArea);
+        postFootAreaMinimum = Math.min(postFootAreaMinimum, footprintArea);
       }
+      assert.ok(postFootAreaMinimum > 0.02);
+      assert.ok(postBaseVerticalOverlapMinimum >= MACHINE_WORLD_FACILITY_CONTROL_STANCHION_BASE_OVERLAP - 1e-7);
       const pods = scene.parts.filter((part) => part.kind === 'inner-pod');
       let minimumClearance = Infinity;
       for (const cradle of cradles) {

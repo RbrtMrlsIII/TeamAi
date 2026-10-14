@@ -9,7 +9,7 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V9';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V10';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
@@ -28,7 +28,10 @@ export const MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO = 0.46;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO = 0.64;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO = 0.82;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO = 0.34;
-export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO = 0.86;
+export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO = 0.96;
+export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_WIDTH_RATIO = 0.08;
+export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP = 0.02;
+export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_BASE_OVERLAP = 0.02;
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE = 'control-rotor-cradle-v1';
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_BRANCH = 'BRANCH-OUTER-GAMMA';
 export const MACHINE_WORLD_FACILITY_SHELL_BASE_DESCRIPTOR_COUNT = 20;
@@ -532,7 +535,21 @@ function deriveShell(entry) {
       }));
     }
     const stanchionReach = bodyMin * 0.30;
-    const stanchionSpan = Math.max(0.06, bodyMin * 0.07);
+    // A vertical bridge post must cross both axial ring planes and land on the
+    // existing base collar. Keep tangential width separate from shaft-axis depth.
+    const stanchionSpan = Math.max(0.06, bodyMin * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_WIDTH_RATIO);
+    const stanchionAxialSpan = 2 * ringOffset + ringThickness
+      + 2 * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP;
+    const stanchionHeight = Math.max(
+      0.10,
+      ringSpan * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO,
+    );
+    const baseCollar = layered.find((descriptor) => descriptor.layer === 'base-collar');
+    if (!baseCollar) throw new Error('Control rotor cradle requires the authored base collar');
+    const baseCollarTopY = baseCollar.center.y + baseCollar.dimensions.y * 0.5;
+    const stanchionCenterY = baseCollarTopY
+      - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_BASE_OVERLAP
+      + stanchionHeight * 0.5;
     for (const side of [-1, 1]) {
       const key = side > 0 ? 'RIGHT' : 'LEFT';
       layered.push(Object.freeze({
@@ -542,17 +559,19 @@ function deriveShell(entry) {
         shape: 'BOX',
         center: Object.freeze({
           x: core.center.x + tangent.x * stanchionReach * side,
-          y: core.center.y,
+          y: stanchionCenterY,
           z: core.center.z + tangent.z * stanchionReach * side,
         }),
         depthOffset: tangent.x * stanchionReach * side * Math.cos(angle)
           + tangent.z * stanchionReach * side * Math.sin(angle),
         dimensions: Object.freeze({
           x: stanchionSpan,
-          y: Math.max(0.10, ringSpan * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO),
-          z: stanchionSpan,
+          y: stanchionHeight,
+          z: stanchionAxialSpan,
         }),
-        rotationY: angle,
+        // The long local-Z edge follows the shaft/ring axis so it physically
+        // intersects both annular planes; local X remains the tangential width.
+        rotationY: Math.PI * 0.5 - angle,
         materialRole: 'metal2',
         outline: null,
         layer: 'nested-cradle',
