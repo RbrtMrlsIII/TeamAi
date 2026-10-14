@@ -14,12 +14,12 @@ import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V22';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V23';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
-// Keeps the tapered bearing-block footprints physically engaged with the rendered rotor hub.
-const CONTROL_BEARING_TANGENT_OFFSET_RATIO = 0.155;
+// Seats the Control rotor links against the existing bearing-block footprints.
+const CONTROL_ROTOR_DRIVE_LINK_TANGENT_OFFSET_RATIO = 0.135;
 
 const ANALYSIS_BARREL_OUTLINES = Object.freeze({
   'barrel-stage-1': Object.freeze([
@@ -306,7 +306,7 @@ function buildMachineComponents(assembly) {
       return Object.freeze([
         component(id('ROTOR_HUB'), 'rotor-hub', 'CYL',
           { x: center.x, y: center.y + 0.26, z: center.z },
-          { x: width * 0.28, y: height * 0.30, z: width * 0.28 }, 'metal'),
+          { x: width * 0.33, y: height * 0.30, z: width * 0.33 }, 'metal'),
         component(id('ROTOR_RING'), 'rotor-ring', 'TORUS',
           { x: center.x, y: center.y + 0.36, z: center.z },
           { x: width * 0.56, y: height * 0.10, z: width * 0.56 }, 'energy'),
@@ -872,10 +872,10 @@ export function deriveMachineFacilityMachinery({
               shape: 'CUBE',
               center: Object.freeze({
                 x: housingCenter.x + basis.outward.x * frameDepth * 0.08
-                  + basis.tangent.x * frameWidth * CONTROL_BEARING_TANGENT_OFFSET_RATIO * side,
+                  + basis.tangent.x * frameWidth * 0.18 * side,
                 y: housingCenter.y + frameHeight * 0.30,
                 z: housingCenter.z + basis.outward.z * frameDepth * 0.08
-                  + basis.tangent.z * frameWidth * CONTROL_BEARING_TANGENT_OFFSET_RATIO * side,
+                  + basis.tangent.z * frameWidth * 0.18 * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.06, frameWidth * 0.08),
@@ -894,11 +894,11 @@ export function deriveMachineFacilityMachinery({
               center: Object.freeze({
                 x: housingCenter.x
                   + basis.outward.x * frameDepth * 0.12
-                  + basis.tangent.x * frameWidth * 0.12 * side,
+                  + basis.tangent.x * frameWidth * CONTROL_ROTOR_DRIVE_LINK_TANGENT_OFFSET_RATIO * side,
                 y: housingCenter.y + frameHeight * 0.42,
                 z: housingCenter.z
                   + basis.outward.z * frameDepth * 0.12
-                  + basis.tangent.z * frameWidth * 0.12 * side,
+                  + basis.tangent.z * frameWidth * CONTROL_ROTOR_DRIVE_LINK_TANGENT_OFFSET_RATIO * side,
               }),
               dimensions: Object.freeze({
                 x: Math.max(0.06, frameWidth * 0.055),

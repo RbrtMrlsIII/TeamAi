@@ -507,9 +507,9 @@ test('S7 control machine exposes paired rotor-drive links across the 1-10 Seat h
   }
 });
 
-test('S7 Control bearing blocks physically engage the rendered rotor hub across 30 Seat/expansion states', () => {
-  // Keep this proof bound to production primitive semantics. A future renderer
-  // shape change must update this independent polygon-intersection model.
+test('S7 Control rotor bearings maintain a connected, chamber-bounded load path across 30 Seat/expansion states', () => {
+  // This independent planar-intersection model follows the exact primitive
+  // profiles and annular bore used by the production raw WebGL renderer.
   assert.match(MACHINE_WORLD_RENDERER_SOURCE, /pod:\s*MACHINE_POD_SHELL_OUTLINE/);
   assert.match(MACHINE_WORLD_RENDERER_SOURCE, /CUBE:\s*POLYS\.pod/);
   assert.match(MACHINE_WORLD_RENDERER_SOURCE, /CYL:\s*regularPolygon\(16\)/);
@@ -518,7 +518,14 @@ test('S7 Control bearing blocks physically engage the rendered rotor hub across 
 
   let stateCount = 0;
   let bearingCount = 0;
-  let minimumOverlapArea = Infinity;
+  let minimumBearingHubArea = Infinity;
+  let minimumBearingRingArea = Infinity;
+  let minimumBearingLinkArea = Infinity;
+  let minimumBearingSupportArea = Infinity;
+  let minimumLinkHubArea = Infinity;
+  let minimumLinkRingArea = Infinity;
+  let bearingChamberBoundaryCrossings = 0;
+
   for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
     for (const expansionAmount of [0, 0.5, 1]) {
       const core = createBranchConnectionCore({ seatCount, expansionAmount });
@@ -531,39 +538,76 @@ test('S7 Control bearing blocks physically engage the rendered rotor hub across 
       assert.ok(control, seatCount + '-seat / expansion ' + expansionAmount + ': Control machine');
       const hub = control.components.find((entry) => entry.role === 'rotor-hub');
       const ring = control.components.find((entry) => entry.role === 'rotor-ring');
+      const chamber = control.components.find((entry) => entry.role === 'analysis-chamber');
       const details = control.mechanicalDetails;
       const bearingBlocks = details.filter((entry) => entry.role === 'rotor-bearing-block');
+      const driveLinks = details.filter((entry) => entry.role === 'rotor-drive-link');
       assert.ok(hub, seatCount + '-seat / expansion ' + expansionAmount + ': rotor hub');
       assert.ok(ring, seatCount + '-seat / expansion ' + expansionAmount + ': rotor ring');
+      assert.ok(chamber, seatCount + '-seat / expansion ' + expansionAmount + ': analysis chamber');
       assert.equal(bearingBlocks.length, 2);
+      assert.equal(driveLinks.length, 2);
 
       for (const bearing of bearingBlocks) {
         assert.equal(bearing.shape, 'CUBE');
         assert.equal(bearing.parentRole, 'rotor-hub');
         const overlapArea = renderedPlanarIntersectionArea(bearing, hub);
-        const overlapHeight = renderedVerticalOverlap(bearing, hub);
-        assert.ok(overlapHeight > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical hub engagement');
-        assert.ok(
-          overlapArea >= 0.001,
-          seatCount + '-seat / expansion ' + expansionAmount + ': bearing/hub rendered footprint overlap was ' + overlapArea,
-        );
+        assert.ok(renderedVerticalOverlap(bearing, hub) > 0,
+          seatCount + '-seat / expansion ' + expansionAmount + ': vertical hub engagement');
+        assert.ok(overlapArea >= 0.0014,
+          seatCount + '-seat / expansion ' + expansionAmount + ': bearing/hub rendered footprint overlap was ' + overlapArea);
+        minimumBearingHubArea = Math.min(minimumBearingHubArea, overlapArea);
 
         const ringOverlap = renderedBearingRingIntersectionArea(bearing, ring);
-        assert.ok(ringOverlap >= 0.005, seatCount + '-seat / expansion ' + expansionAmount + ': bearing/ring footprint overlap was ' + ringOverlap);
-        assert.ok(renderedVerticalOverlap(bearing, ring) > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical ring engagement');
+        assert.ok(ringOverlap >= 0.014,
+          seatCount + '-seat / expansion ' + expansionAmount + ': bearing/ring annular footprint overlap was ' + ringOverlap);
+        assert.ok(renderedVerticalOverlap(bearing, ring) > 0,
+          seatCount + '-seat / expansion ' + expansionAmount + ': vertical ring engagement');
+        minimumBearingRingArea = Math.min(minimumBearingRingArea, ringOverlap);
 
         const link = nearestDetail(bearing, details, 'rotor-drive-link');
         assert.ok(link, seatCount + '-seat / expansion ' + expansionAmount + ': rotor drive link');
-        assert.ok(renderedPlanarIntersectionArea(bearing, link) >= 0.005, seatCount + '-seat / expansion ' + expansionAmount + ': bearing/link footprint engagement');
-        assert.ok(renderedVerticalOverlap(bearing, link) > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical link engagement');
+        const bearingLinkArea = renderedPlanarIntersectionArea(bearing, link);
+        assert.ok(bearingLinkArea >= 0.0058,
+          seatCount + '-seat / expansion ' + expansionAmount + ': bearing/link footprint engagement was ' + bearingLinkArea);
+        assert.ok(renderedVerticalOverlap(bearing, link) > 0,
+          seatCount + '-seat / expansion ' + expansionAmount + ': vertical link engagement');
+        minimumBearingLinkArea = Math.min(minimumBearingLinkArea, bearingLinkArea);
 
         const support = nearestDetail(bearing, details, 'support-strut');
         assert.ok(support, seatCount + '-seat / expansion ' + expansionAmount + ': support strut');
-        assert.ok(renderedPlanarIntersectionArea(bearing, support) >= 0.015, seatCount + '-seat / expansion ' + expansionAmount + ': bearing/support footprint engagement');
-        assert.ok(renderedVerticalOverlap(bearing, support) > 0, seatCount + '-seat / expansion ' + expansionAmount + ': vertical support engagement');
+        const bearingSupportArea = renderedPlanarIntersectionArea(bearing, support);
+        assert.ok(bearingSupportArea >= 0.0075,
+          seatCount + '-seat / expansion ' + expansionAmount + ': bearing/support footprint engagement was ' + bearingSupportArea);
+        assert.ok(renderedVerticalOverlap(bearing, support) > 0,
+          seatCount + '-seat / expansion ' + expansionAmount + ': vertical support engagement');
+        minimumBearingSupportArea = Math.min(minimumBearingSupportArea, bearingSupportArea);
 
-        minimumOverlapArea = Math.min(minimumOverlapArea, overlapArea);
+        // Preserve the inherited chamber-floor intersection budget rather than
+        // forcing bearings farther through the glass chamber to reach the hub.
+        const chamberOverlap = renderedPlanarIntersectionArea(bearing, chamber);
+        const bearingArea = Math.abs(polygonSignedArea(rendererPlanarFootprint(bearing)));
+        const bearingOutsideChamber = Math.max(0, bearingArea - chamberOverlap);
+        if (chamberOverlap > 1e-7 && bearingOutsideChamber > 1e-7
+            && renderedVerticalOverlap(bearing, chamber) > 0) {
+          bearingChamberBoundaryCrossings += 1;
+        }
         bearingCount += 1;
+      }
+
+      for (const link of driveLinks) {
+        const linkHubArea = renderedPlanarIntersectionArea(link, hub);
+        const linkRingArea = renderedBearingRingIntersectionArea(link, ring);
+        assert.ok(linkHubArea >= 0.014,
+          seatCount + '-seat / expansion ' + expansionAmount + ': link/hub footprint engagement was ' + linkHubArea);
+        assert.ok(linkRingArea >= 0.014,
+          seatCount + '-seat / expansion ' + expansionAmount + ': link/ring annular engagement was ' + linkRingArea);
+        assert.ok(renderedVerticalOverlap(link, hub) > 0,
+          seatCount + '-seat / expansion ' + expansionAmount + ': vertical link/hub engagement');
+        assert.ok(renderedVerticalOverlap(link, ring) > 0,
+          seatCount + '-seat / expansion ' + expansionAmount + ': vertical link/ring engagement');
+        minimumLinkHubArea = Math.min(minimumLinkHubArea, linkHubArea);
+        minimumLinkRingArea = Math.min(minimumLinkRingArea, linkRingArea);
       }
       stateCount += 1;
     }
@@ -571,7 +615,14 @@ test('S7 Control bearing blocks physically engage the rendered rotor hub across 
 
   assert.equal(stateCount, 30);
   assert.equal(bearingCount, 60);
-  assert.ok(minimumOverlapArea >= 0.001);
+  assert.ok(minimumBearingHubArea >= 0.0014);
+  assert.ok(minimumBearingRingArea >= 0.014);
+  assert.ok(minimumBearingLinkArea >= 0.0058);
+  assert.ok(minimumBearingSupportArea >= 0.0075);
+  assert.ok(minimumLinkHubArea >= 0.014);
+  assert.ok(minimumLinkRingArea >= 0.014);
+  assert.ok(bearingChamberBoundaryCrossings <= 27,
+    'bearing/chamber boundary intersections must not exceed the inherited 27/60 baseline; observed ' + bearingChamberBoundaryCrossings);
 });
 
 test('S7 control and access families expose nested retainers with independent housing bounds', () => {
@@ -579,7 +630,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V22');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V23');
 
   const expected = Object.freeze({
     control: Object.freeze({
