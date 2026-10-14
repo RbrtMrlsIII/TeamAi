@@ -33,6 +33,39 @@ A higher state does not follow automatically from a lower one.
 
 ## Current continuation evidence state
 
+### 2026-10-14 S7 Control V23 bearing / rotor load-path correction
+
+**Code-bearing implementation head:** [\`fe5fd4c6a513a72afec50c50115fad59290967d7\`](https://github.com/RbrtMrlsIII/TeamAi/commit/fe5fd4c6a513a72afec50c50115fad59290967d7)
+
+**Scope**
+- Machinery contract advances \`S7-V22 → S7-V23\` within existing Control/Gamma component ownership.
+- V22 (\`90a8c1d3f265151ed25d7b1329950df811afd5f3\`) shifted bearings inward to 0.155W. This improved bearing-to-hub intersection but increased projected bearing/chamber boundary crossings from the inherited 27/60 to 39/60. That candidate is superseded, not accepted.
+- V23 restores bearing tangent placement to 0.18W, grows the rotor-hub footprint from 0.28W to 0.33W, and moves rotor-drive-link tangent from 0.12W to 0.135W. Other facilities, world overview, camera, materials, ports, topology, Seat law, and backend ownership are unchanged.
+
+**Independent shape-aware regression**
+- The test imports the canonical Pod shell outline and asserts the production renderer's primitive semantics: 16-segment \`CYL\`, Pod-outline \`CUBE\`, rectangular \`BOX\`, and 24-segment \`TORUS\` with inner radius 0.72.
+- Across Seat 1–10 × expansion 0/0.5/1, it checks 30 states / 60 bearing blocks. Bearing → hub, annular ring, drive link, and support strut contacts require planar footprint area and positive vertical overlap. Links also require footprint and vertical engagement with hub and ring. Bearing/chamber boundary intersections must remain ≤27/60.
+- This is 2D shape intersection plus vertical-range proof in the authored frame, not full 3D triangle-level collision proof. Preserve that limitation in future acceptance claims.
+
+**Exact code-head proof (all same SHA)**
+- Full-System [38526691986](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526691986): PASS, 1,298/1,298 tests.
+- Governance [38526691937](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526691937): PASS.
+- Security [38526691997](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526691997): PASS.
+- Deep Security [38526692312](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526692312): PASS.
+- Canonical Browser [38526692009](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526692009): PASS, 92 passed / 4 skipped / 0 failed.
+- Browser artifact [11876004074](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526692009/artifacts/11876004074): 13,209,159 bytes; ZIP SHA-256 \`4bd50b33ac45de20d7857162d7b2aa86c0246c2e513dc5b498fae3aaddbfd830\`.
+- Full Project artifact [11876316276](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38526691986/artifacts/11876316276): 6,832,291 bytes; ZIP SHA-256 \`3a9bfbb3614f404435bcfdd373a707cd0c04ea939e29af37973dfbdc536d882d\`. Nested project ZIP SHA-256 \`a68132ba3f25485149fb4a5ded7ca36d1817baf82554229e919101db98de76d6\`; 1,114 files. Integrity checks pass.
+- Local checks: focused test set 26/26 passes; source/public spatial runtime parity 83 modules passes; source/public machinery files share blob SHA \`3e8ab07315bac3fdd8f8a3c1a4365e81252e42ee\`.
+- Inspected Control capture (1440×900) SHA-256 \`8256338e6bd88ffc0bfe17e810e2fbd157c387dbbfcc56e528bc6806387be5de\`; 51.24-second Hero WebM at 800×500, 25 fps. V23 capture differs from V22 at max-channel RGB delta ≥5 on 9.491% of pixels; rotor ROI 12.506%. Animated captures are not controlled same-frame photometry. Overall contrast/machine density remains behind Hailuo/PNG direction; human acceptance stays OPEN.
+
+**Next bounded diagnosis**
+- Keep V23 as the current code baseline and map Control's remaining \`rotor ring → stanchion → chassis\` and collar/shaft interfaces by shape-aware planar footprint and vertical ranges across the 30-state sweep.
+- Keep the 0.16 conservative Pod-clearance policy; do not change camera, global materials, ports, topology, Seat law, non-Control families, or backend authority as side effects.
+- The documentation descendant of this code head must get its own fresh five-gate proof and matching Browser artifact; do not copy these code-head run IDs to a newer documentation head.
+
+**Acceptance boundary:** no merge/deploy/release, no production data mutation, and no final visual-acceptance claim. Issue #401 remains the sole global program frontier; PR #424 remains the only spatial vehicle.
+
+
 - **Active vehicle:** PR #424 `frontend/029-spatial-world-continuation`
 - PR #404 is merged into `main` as `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
 - The first post-#404 source behavior slice on #424 routes renderer material aliases through `authoredHeroMaterialSet`; source/public material and renderer mirrors are byte-identical.
