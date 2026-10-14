@@ -600,6 +600,7 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
 
       const rings = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-ring');
       assert.equal(rings.length, 2);
+      const posts = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion');
       assert.ok(rings.every((ring) => ring.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE));
       assert.ok(rings.every((ring) => ring.shape === 'TORUS'));
       const expectedRingSpan = Math.min(bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO, main.dimensions.y * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO);
@@ -642,7 +643,6 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
       const coreRearMargin = -reveal.coreRevealStartRadius - core.dimensions.z * 0.5;
       assert.ok(coreRearMargin / bodyMin > 0.015, 'rotor rear cap must clear shell return');
 
-      const posts = cradles.filter((entry) => entry.nestedMassingRole === 'rotor-stanchion');
       assert.equal(posts.length, 2);
       assert.ok(posts.every((post) => Math.abs(post.dimensions.y / expectedRingSpan - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO) < 1e-7));
       const coreRadius = Math.max(core.dimensions.x, core.dimensions.y) * 0.5;
