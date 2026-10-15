@@ -12,6 +12,7 @@ import {
   getRenderableMachineWorldConduitSegments,
   PHYSICAL_CONDUIT_EDGE_KINDS,
 } from '../frontend/spatial/machine-world-topology.js';
+import { resolveThreeConduitOrientation } from '../frontend/spatial/machine-three-scene-adapter.js';
 
 function buildFixture(seatCount, expansionAmount = 0) {
   const scene = createBranchConnectionCore({ seatCount, expansionAmount });
@@ -449,4 +450,56 @@ test('S8 conduit projection follows current dynamic route geometry', () => {
   assert.notDeepEqual(closedConduit.start, openConduit.start);
   assert.notDeepEqual(closedConduit.end, openConduit.end);
   assert.notDeepEqual(closedConduit.dimensions, openConduit.dimensions);
+});
+
+test('S8 boxed conduit long axes align with route endpoints across the 30-state matrix', () => {
+  let checked = 0;
+  let diagonal = 0;
+  let manifoldSegments = 0;
+  let mixedSlopeSegments = 0;
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const { topology } = buildFixture(seatCount, expansionAmount);
+      const segments = getRenderableMachineWorldConduitSegments(topology).filter((segment) =>
+        segment.edgeKind !== 'facility-facility'
+        && segment.structuralConduit !== true
+        && segment.segmentRole !== 'manifold-arc'
+        && Math.abs(segment.end.y - segment.start.y) < 1e-8
+        && Math.hypot(segment.end.x - segment.start.x, segment.end.z - segment.start.z) > 1e-8,
+      );
+      assert.ok(segments.length > 0, `no horizontal box routes at seats=${seatCount}, expansion=${expansionAmount}`);
+      for (const segment of segments) {
+        const dx = segment.end.x - segment.start.x;
+        const dz = segment.end.z - segment.start.z;
+        const length = Math.hypot(dx, dz);
+        const renderedAxis = { x: Math.cos(segment.rotationY), z: -Math.sin(segment.rotationY) };
+        const dot = (renderedAxis.x * dx + renderedAxis.z * dz) / length;
+        assert.ok(dot > 1 - 1e-8,
+          `${segment.id}: renderer X axis ${JSON.stringify(renderedAxis)} must align with route vector (${dx}, ${dz}); dot=${dot}`);
+        if (Math.abs(dx) > 1e-8 && Math.abs(dz) > 1e-8) diagonal += 1;
+        checked += 1;
+      }
+      for (const segment of topology.serviceManifold.segments) {
+        const orientation = resolveThreeConduitOrientation(segment);
+        assert.ok(orientation, `${segment.id}: manifold path requires a finite 3D box axis`);
+        const dx = segment.end.x - segment.start.x;
+        const dy = segment.end.y - segment.start.y;
+        const dz = segment.end.z - segment.start.z;
+        const length = Math.hypot(dx, dy, dz);
+        assert.ok(length > 1e-8);
+        const directionError = Math.hypot(
+          orientation.direction.x - dx / length,
+          orientation.direction.y - dy / length,
+          orientation.direction.z - dz / length,
+        );
+        assert.ok(directionError < 1e-12, `${segment.id}: Three.js long axis must follow full 3D endpoints`);
+        if (Math.abs(dy) > 1e-8 && Math.hypot(dx, dz) > 1e-8) mixedSlopeSegments += 1;
+        manifoldSegments += 1;
+      }
+    }
+  }
+  assert.ok(checked > 1000, `expected broad route coverage, checked ${checked}`);
+  assert.ok(diagonal > 500, `expected diagonal route coverage, checked ${diagonal}`);
+  assert.ok(manifoldSegments > 5000, `expected all manifold segments, checked ${manifoldSegments}`);
+  assert.ok(mixedSlopeSegments > 100, `expected mixed-slope service spurs, checked ${mixedSlopeSegments}`);
 });

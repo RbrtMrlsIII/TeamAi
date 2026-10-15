@@ -752,7 +752,7 @@ export function getRenderableMachineWorldConduitSegments(topology, {
             ? { x: thickness, y: length + thickness, z: thickness }
             : { x: length + thickness, y: thickness, z: thickness },
         ),
-        rotationY: vertical ? 0 : Math.atan2(dz, dx),
+        rotationY: vertical ? 0 : Math.atan2(-dz, dx),
         radius,
         corridorRadius: Math.max(0, finite(edge?.corridor?.radius)),
         routeContinuous: edge.routeContinuous === true,

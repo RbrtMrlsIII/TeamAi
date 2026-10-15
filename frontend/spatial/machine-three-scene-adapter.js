@@ -87,6 +87,23 @@ export function resolveThreeConduitRenderShape(segment = {}) {
   return segment?.structuralConduit === true || segment?.edgeKind === 'pod-division' ? 'TUBE' : 'BOX';
 }
 
+export function resolveThreeConduitOrientation(segment = {}) {
+  const start = segment?.start;
+  const end = segment?.end;
+  if (!start || !end) return null;
+  const dx = Number(end.x) - Number(start.x);
+  const dy = Number(end.y) - Number(start.y);
+  const dz = Number(end.z) - Number(start.z);
+  const length = Math.hypot(dx, dy, dz);
+  if (!Number.isFinite(length) || length < 1e-8) return null;
+  const horizontal = Math.hypot(dx, dz);
+  return Object.freeze({
+    axis: Math.abs(dy) >= horizontal ? 'Y' : 'X',
+    direction: Object.freeze({ x: dx / length, y: dy / length, z: dz / length }),
+    length,
+  });
+}
+
 
 export function deriveThreeCanonicalRingDescriptors({
   seatCount = 10,
@@ -1240,7 +1257,22 @@ export function createMachineThreeSceneAdapter({ THREE, canvas } = {}) {
         );
       } else {
         mesh.scale.set(segment.dimensions.x, segment.dimensions.y, segment.dimensions.z);
-        mesh.rotation.y = segment.rotationY;
+        const orientation = resolveThreeConduitOrientation(segment);
+        if (orientation) {
+          const longAxis = orientation.axis === 'Y'
+            ? new THREE.Vector3(0, 1, 0)
+            : new THREE.Vector3(1, 0, 0);
+          mesh.quaternion.setFromUnitVectors(
+            longAxis,
+            new THREE.Vector3(
+              orientation.direction.x,
+              orientation.direction.y,
+              orientation.direction.z,
+            ),
+          );
+        } else {
+          mesh.rotation.y = segment.rotationY;
+        }
       }
       mesh.userData.conduitShape = conduitShape;
     }

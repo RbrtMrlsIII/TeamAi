@@ -7,6 +7,7 @@ import {
   normalizeThreeDescriptor,
   normalizeThreeShape,
   resolveThreeConduitRenderShape,
+  resolveThreeConduitOrientation,
   deriveThreeCanonicalRingDescriptors,
   MACHINE_THREE_ADAPTER_ID,
   MACHINE_THREE_ADAPTER_VERSION,
@@ -1523,4 +1524,41 @@ test('S24 unknown material roles fail to a canonical authored structural family'
     metal2: { color: [0.4, 0.4, 0.4], rough: 0.4, emit: 0 },
   });
   assert.equal(resolved.authoredRole, 'metal2');
+});
+
+
+test('S24 conduit box orientation follows its full 3D route while retaining box/tube presentation policy', () => {
+  const cases = [
+    { segment: { start: { x: 0, y: 0, z: 0 }, end: { x: 1, y: 0, z: 1 } }, axis: 'X' },
+    { segment: { start: { x: 0, y: 0, z: 0 }, end: { x: 1, y: 0.7, z: -1 } }, axis: 'X' },
+    { segment: { start: { x: 0, y: 0, z: 0 }, end: { x: 0.2, y: 2, z: 0.1 } }, axis: 'Y' },
+  ];
+  for (const { segment, axis } of cases) {
+    const orientation = resolveThreeConduitOrientation(segment);
+    assert.ok(orientation);
+    assert.equal(orientation.axis, axis);
+    const length = Math.hypot(
+      segment.end.x - segment.start.x,
+      segment.end.y - segment.start.y,
+      segment.end.z - segment.start.z,
+    );
+    const expected = {
+      x: (segment.end.x - segment.start.x) / length,
+      y: (segment.end.y - segment.start.y) / length,
+      z: (segment.end.z - segment.start.z) / length,
+    };
+    assert.ok(Math.hypot(
+      orientation.direction.x - expected.x,
+      orientation.direction.y - expected.y,
+      orientation.direction.z - expected.z,
+    ) < 1e-12);
+  }
+  assert.equal(resolveThreeConduitOrientation({ start: { x: 0, y: 0, z: 0 }, end: { x: 0, y: 0, z: 0 } }), null);
+  assert.equal(resolveThreeConduitOrientation({ start: { x: 0, y: 0, z: 0 } }), null);
+  assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-division' }), 'TUBE');
+  assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'pod-facility' }), 'BOX');
+  assert.equal(resolveThreeConduitRenderShape({ edgeKind: 'facility-facility' }), 'BOX');
+  const source = readFileSync('frontend/spatial/machine-three-scene-adapter.js', 'utf8');
+  assert.match(source, /resolveThreeConduitOrientation\(segment\)/);
+  assert.match(source, /mesh\.quaternion\.setFromUnitVectors\(/);
 });
