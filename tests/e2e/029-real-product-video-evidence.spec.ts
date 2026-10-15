@@ -36,11 +36,11 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-service-manifold-junction-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-service-manifold-junction-rendered-count', '4');
     await expect(canvas).toHaveAttribute('data-machine-world-service-manifold-junction-validation', 'pass');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-version', 'S8-FACILITY-CARRIER-V2');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-count', '20');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-stage-count', '12');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-hinge-count', '8');
-    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-rendered', '20');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-version', 'S8-FACILITY-CARRIER-V3');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-count', '28');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-stage-count', '16');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-hinge-count', '12');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-rendered', '28');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-carrier-scope', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-machine-world-presentation-mode', 'WORLD_OVERVIEW');

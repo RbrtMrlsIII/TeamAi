@@ -53,6 +53,8 @@ import {
   deriveMachineWorldFacilityCarrierDescriptors,
   validateMachineWorldFacilityCarrierDescriptors,
   MACHINE_WORLD_FACILITY_CARRIER_VERSION,
+  MACHINE_WORLD_FACILITY_CARRIER_HINGE_BORE_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CARRIER_HINGE_INNER_RADIUS_RATIO,
 } from './machine-world-facility-carrier.js';
 import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
 import {
@@ -510,12 +512,8 @@ function scaleMatrix(x, y, z) {
   ]);
 }
 
-function rotateYMatrix(angle) {
-  const c = Math.cos(angle), s = Math.sin(angle);
-  return new Float32Array([
-    c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1,
-  ]);
-}
+function rotateYMatrix(angle) {const c=Math.cos(angle),s=Math.sin(angle);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]);}
+function rotateZMatrix(angle) {const c=Math.cos(angle),s=Math.sin(angle);return new Float32Array([c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1]);}
 
 function multiplyMatrix(a, b) {
   const out = new Float32Array(16);
@@ -830,7 +828,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : key === 'CYLINDER_AXIAL'
         ? createAxialCylinderVertices()
         : key === 'TORUS'
-          ? createAnnularPrismVertices()
+          ? createAnnularPrismVertices({
+              segments: MACHINE_WORLD_FACILITY_CARRIER_HINGE_BORE_SEGMENTS,
+              innerRadius: MACHINE_WORLD_FACILITY_CARRIER_HINGE_INNER_RADIUS_RATIO,
+            })
           : key === 'POD_SHELL'
             ? createMachinePodShellVertices()
             : shapeBuffer(gl, polygon, 1);
@@ -1581,22 +1582,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     if (validation.valid) {
       for (const entry of descriptors) {
-        const renderedHeight = Math.max(0.02, finite(entry.dimensions.y));
-        const transform = multiplyMatrix(
-          translateMatrix(
-            entry.center.x,
-            centeredPrismBaseY(entry.center.y, renderedHeight),
-            entry.center.z,
-          ),
-          multiplyMatrix(
-            rotateYMatrix(finite(entry.rotationY)),
-            scaleMatrix(
-              Math.max(0.02, finite(entry.dimensions.x) * 0.5),
-              renderedHeight,
-              Math.max(0.02, finite(entry.dimensions.z) * 0.5),
-            ),
-          ),
-        );
+        const h=Math.max(0.02,finite(entry.dimensions.y)),half=h*0.5;let transform;
+        if(entry.shape==='TORUS'&&entry.axisDirection){const r=segmentTubeRotationMatrix({x:0,y:0,z:0},entry.axisDirection);if(!r)continue;transform=multiplyMatrix(translateMatrix(entry.center.x-r[4]*half,entry.center.y-r[5]*half,entry.center.z-r[6]*half),multiplyMatrix(r,scaleMatrix(Math.max(0.02,finite(entry.dimensions.x)*0.5),h,Math.max(0.02,finite(entry.dimensions.z)*0.5))));}
+        else{const yaw=finite(entry.rotationY),pitch=finite(entry.rotationZ),ox=-Math.cos(yaw)*Math.sin(pitch)*half,oy=Math.cos(pitch)*half,oz=Math.sin(yaw)*Math.sin(pitch)*half;transform=multiplyMatrix(translateMatrix(entry.center.x-ox,entry.center.y-oy,entry.center.z-oz),multiplyMatrix(rotateYMatrix(yaw),multiplyMatrix(rotateZMatrix(pitch),scaleMatrix(Math.max(0.02,finite(entry.dimensions.x)*0.5),h,Math.max(0.02,finite(entry.dimensions.z)*0.5)))));}
         const selected = Boolean(selectedBranchId)
           && String(entry.semanticEdgeId).includes(String(selectedBranchId));
         ringDraw(

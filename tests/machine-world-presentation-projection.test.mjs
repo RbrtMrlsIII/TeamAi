@@ -111,6 +111,9 @@ test('World presentation moves only machine-side manifold spur endpoints and pre
           y: (segment.start.y + segment.end.y) * 0.5,
           z: (segment.start.z + segment.end.z) * 0.5,
         }), segment.id + ': segment center follows its transformed endpoints');
+        const dx=segment.end.x-segment.start.x,dz=segment.end.z-segment.start.z;
+        const expectedYaw=Math.hypot(dx,dz)<1e-8?0:Math.atan2(-dz,dx);
+        assert.ok(Math.abs(Math.atan2(Math.sin(segment.rotationY-expectedYaw),Math.cos(segment.rotationY-expectedYaw)))<1e-8,segment.id+': projected yaw matches renderer');
       }
 
       for (const junction of projected.topology.serviceManifold.junctions) {
