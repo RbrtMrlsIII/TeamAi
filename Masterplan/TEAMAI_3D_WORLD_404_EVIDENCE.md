@@ -33,7 +33,44 @@ A higher state does not follow automatically from a lower one.
 
 ## Current continuation evidence state
 
-### 2026-10-14 S7 Control V23 bearing / rotor load-path correction
+### 2026-10-15 S7 Control V10 cradle / ring / base load-path correction
+
+**Geometry implementation:** [`c5d4820a263ae3cc137d06cba9abff2a4180aa28`](https://github.com/RbrtMrlsIII/TeamAi/commit/c5d4820a263ae3cc137d06cba9abff2a4180aa28). Latest test-owner commit / exact five-gate head: [`a2af4dc379bf6efaa64675afb06408305c309420`](https://github.com/RbrtMrlsIII/TeamAi/commit/a2af4dc379bf6efaa64675afb06408305c309420).
+
+**Root cause and smallest owning fix**
+- The previous two Control/Gamma `rotor-stanchion` descriptors had the wrong spatial extent/orientation to span the axial ring planes and stopped **0.225078** units short. Their bottom faces were **0.054206** units above the base collar. This was a real source-space join gap, not inferred from a world AABB.
+- The shell owner advances to `S7-OUTER-BODY-V10`. Stanchion local Z is aligned to the shaft/ring axis and its span is derived from both ring offsets + ring thickness + two 0.02 overlap margins. Local X is the separate tangential width at 0.08 of the body's smaller dimension; `outline: null` prevents inherited housing-silhouette geometry from overriding the authored BOX shape. The vertical origin is computed from the actual base-collar descriptor to guarantee a 0.02 vertical overlap.
+- Only the existing Control cradle changed. Four facility families, 24 shell/cradle descriptor total, branch IDs, service ports, topology, Seat Law 1–10, camera, other facility geometry, and backend/runtime ownership are preserved. Source/public shell copies are byte-identical.
+
+**Independent validation**
+- Actual owner functions were evaluated over Seat 1–10 × expansion 0 / 0.5 / 1: **30 states, 60 posts**.
+- Minimum post/ring axial overlap: **0.0200**.
+- Minimum post/base vertical overlap: **0.0200**.
+- Minimum actual base-collar footprint intersection: **0.097194 square units**.
+- Minimum annular tangential engagement width: **0.026830**.
+- Minimum conservative radial Pod clearance: **3.208134 units**, above the **0.16** governed floor. Actual post/core clearance is approximately **0.152764**.
+- The automated regression covers the same 30-state matrix and checks post bounds, exact ring span, core clearance, annular engagement, base overlap in vertical and projected footprint, descriptor validity, and conservative Pod clearance. This is planar footprint + vertical-range proof, not triangle-level mesh collision proof.
+
+**Exact current-head five-gate proof (all PASS on `a2af4dc...`)**
+- Full-System [38551987698](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987698): **1,298/1,298, zero failures**; package create and verification PASS for 1,114 files.
+- Governance [38551987673](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987673): PASS.
+- Security [38551987739](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987739): PASS.
+- Deep Security [38551987662](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987662): PASS.
+- Canonical Browser [38551987665](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987665): **92 passed / 4 skipped / 0 failed**.
+
+**Artifacts / observation**
+- Browser artifact [11888175315](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987665/artifacts/11888175315), 13,436,908 bytes, SHA-256 `8f09fa282eadb2b4acb0e786d8239bf7c9c9fddccd70c87474981a4ff579302b`. Its workflow metadata names exact head `a2af4dc...`. Downloaded ZIP hash matched metadata; `unzip -t` passed.
+- Full Project artifact [11886633334](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38551987698/artifacts/11886633334), 6,839,160 bytes, SHA-256 `46be7acfad6656851d89c815bb84d5dd5a2a20ce05b9a15f76d805b04555fb4b`. Nested archive SHA-256 `4bfd7dd5448c956cce13e9d1e975838cb09cfeceedccf75254c2fed423f4439e`; 1,114 entries. Both ZIPs integrity checked.
+- Browser Control capture is 1440×900, SHA-256 `4686bb39940f9d73a2ce12a0560f10d28ad2d09e9bf81b55aa93c6fc1926f4ef`. The cradle reads as physically joined, but whole-scene body massing/contrast remains dark and sparse versus Hailuo/PNG. Human visual acceptance remains OPEN.
+- Local machinery suite: 26/26 pass. Source/public parity: 83 modules pass. The standalone exact-source geometry matrix above ran without installed third-party dependencies. The packaged shell test couldn't start locally because the exported source archive lacks installed package `three`; Full-System CI succeeded and its exact-head test result is authoritative.
+
+**Next bounded diagnosis**
+- Keep V10 fixed. The next physical owner to check is the existing collar/shaft junction and its load continuation into the chassis. Derive its actual primitive/frame convention, test the annular/shaft contact and vertical/radial intervals over the 30-state matrix, and only then decide whether a further code change exists.
+- Preserve Issue #401 as the sole global execution frontier and PR #424 as the only spatial vehicle.
+
+**Acceptance boundary:** no merge/deploy/release, no production data mutation, no triangle-level collision-proof claim, no final human visual acceptance, and no formal S30/S0–S33 closure.
+
+### Historical 2026-10-14 S7 Control V23 bearing / rotor load-path correction (superseded by V10)
 
 **Code-bearing implementation head:** [\`fe5fd4c6a513a72afec50c50115fad59290967d7\`](https://github.com/RbrtMrlsIII/TeamAi/commit/fe5fd4c6a513a72afec50c50115fad59290967d7)
 
