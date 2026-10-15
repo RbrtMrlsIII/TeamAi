@@ -81,10 +81,10 @@ test('production S7 mechanism and carrier paths preserve the centered descriptor
     'centeredPrismBaseY(\n                component.center.y',
     'centeredPrismBaseY(detail.center.y, renderedHeight)',
     'centeredPrismBaseY(dy, renderedHeight)',
-    'centeredPrismBaseY(entry.center.y, renderedHeight)',
+    'entry.center.y-oy',
     'centeredPrismBaseY(entry.connectorEnd.y, collarHeight)',
   ]) {
-    assert.ok(source.includes(marker), 'missing centered transform use: ' + marker);
+    assert.ok(source.includes(marker), 'missing center-preserving transform use: ' + marker);
   }
 });
 
@@ -257,7 +257,7 @@ test('production primitive cache routes TORUS to annular mesh and keeps source/p
   const source = readFileSync('frontend/spatial/machine-world-renderer.js', 'utf8');
   const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
   assert.equal(browser, source);
-  assert.match(source, /key === 'TORUS'[\s\S]*?createAnnularPrismVertices\(\)/);
+  assert.match(source, /key === 'TORUS'[\s\S]*?createAnnularPrismVertices\(\{[\s\S]*?segments: MACHINE_WORLD_FACILITY_CARRIER_HINGE_BORE_SEGMENTS,[\s\S]*?innerRadius: MACHINE_WORLD_FACILITY_CARRIER_HINGE_INNER_RADIUS_RATIO/);
   assert.match(source, /key === 'TORUS_AXIAL'[\s\S]*?createAxialAnnularPrismVertices\(\)/);
   assert.match(source, /key === 'CYLINDER_AXIAL'[\s\S]*?createAxialCylinderVertices\(\)/);
   assert.doesNotMatch(source, /TORUS:\s*regularPolygon/);
