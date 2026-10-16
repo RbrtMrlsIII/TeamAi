@@ -84,7 +84,8 @@ test.describe('S2-S10 structural embodiment candidate', () => {
     await expect(canvas).toHaveAttribute('data-structural-facility-shell-descriptor-count', '24');
     await expect(canvas).toHaveAttribute('data-structural-facility-nested-cradle-count', '4');
     await expect(canvas).toHaveAttribute('data-structural-facility-service-bay-descriptor-count', '2');
-    await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '20');
+    // Four routed edges contribute 16 staged BOX bodies plus 12 TORUS hinges.
+    await expect(canvas).toHaveAttribute('data-structural-facility-carrier-descriptor-count', '28');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-validation', 'pass');
     await expect(canvas).toHaveAttribute('data-structural-facility-carrier-scope', 'WORLD_OVERVIEW');
     await expect(canvas).toHaveAttribute('data-structural-facility-docking-descriptor-count', '19');
