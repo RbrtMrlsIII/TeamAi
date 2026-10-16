@@ -33,7 +33,20 @@ A higher state does not follow automatically from a lower one.
 
 ## Current continuation evidence state
 
-### 2026-10-15 S7 Control V10 cradle / ring / base load-path correction
+### 2026-10-16 S7 Control V11 faceted rotor-bore clearance
+
+- Code-bearing head: [1d113edc6caebb496c5a463d31d54f0125bd2fc2](https://github.com/RbrtMrlsIII/TeamAi/commit/1d113edc6caebb496c5a463d31d54f0125bd2fc2). PR #424 remains OPEN / DRAFT; Issue #401 is the sole global Current Slice. No merge, deployment, release, or production-data mutation.
+- V10 repaired the stanchion-to-ring and stanchion-to-base joins, but the 0.72 ring-bore ratio left only about 0.009547 world units of clearance to the 24-sided bore apothem in the limiting state. V11 centralizes the 24-segment ring profile, inner-radius ratio 0.77, minimum faceted core/bore clearance 0.03, and stanchion reach 0.29 × body-min.
+- The validator requires the same-branch axial core and computes the polygon apothem, not its vertex radius. Missing core fails closed as AXIAL_RING_CORE_MISSING; insufficient bore clearance fails as AXIAL_RING_CORE_CLEARANCE_INSUFFICIENT. The negative under-sized-ring case is rejected.
+- Actual owner-derived matrix: Seat 1–10 × expansion 0 / 0.5 / 1, 30 states and 60 posts. Minimum faceted core/bore clearance **0.039005**; stanchion/ring material overlap **0.048654**; stanchion/core gap **0.130940**; post/base vertical overlap **0.020000**; conservative Pod clearance **3.208134**; main-envelope containment margin **0.173252**. This is polygon-apothem and projected-footprint/vertical-range proof, not triangle-level mesh collision.
+- Exact-head gates, all PASS on 1d113ed: Full-System [38910560245](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560245), 1,302 tests; Governance [38910560347](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560347); Security [38910560323](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560323); Deep Security [38910560262](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560262); Browser [38910560115](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560115), 92 passed / 4 skipped / 0 failed.
+- Browser artifact [12050398640](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560115/artifacts/12050398640), SHA-256 9a5183a76dddc468d54c00b6458909fefd390b67eae7b5d8332a2ced6054d7ec. Full Project [12050575450](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/38910560245/artifacts/12050575450), SHA-256 d847d7e452120ad805eb370e178a7456fb22660599f431f2e10d515785add96a; nested ZIP SHA-256 d0658fee814c9613e01193b965a5d9414bae8ebf54c220016fb28ce1d288dda8. Downloaded hashes match GitHub; ZIP integrity passes; project has 1,114 files.
+- Exact-artifact local checks: spatial source/public parity 83 modules PASS; syntax 76 JS modules PASS; raw-WebGL tests 14/14 PASS; actual-owner geometry matrix 30/30 PASS. The exported source package lacks installed npm dependency three, so the full Three.js shell test was not run standalone; exact-head Full-System CI passed the complete suite.
+- The exact-head 1440×900 Control-focus capture SHA-256 is 320c07522164306dce5d9c0aced8e537107187f000b5b61005ffb162723af8979. The wider bore is visible, but the translucent shell still partly masks the rotor. Human visual acceptance against Hailuo/PNG remains OPEN; animated capture deltas are diagnostic only.
+- Next physical diagnosis: measure the existing Control collar/shaft junction and load continuation into the chassis over the same 30-state matrix. No camera/material polish or facility-family switch until that joint is measured.
+- Still open: triangle-level collision proof, production/live runtime proof under Issue #401, physical-device acceptance, formal S30/S0–S33 exit, merge/release authorization, and overall 029 completion.
+
+### Historical 2026-10-15 S7 Control V10 cradle / ring / base load-path correction (superseded by V11)
 
 **Geometry implementation:** [`c5d4820a263ae3cc137d06cba9abff2a4180aa28`](https://github.com/RbrtMrlsIII/TeamAi/commit/c5d4820a263ae3cc137d06cba9abff2a4180aa28). Latest test-owner commit / exact five-gate head: [`a2af4dc379bf6efaa64675afb06408305c309420`](https://github.com/RbrtMrlsIII/TeamAi/commit/a2af4dc379bf6efaa64675afb06408305c309420).
 
@@ -64,8 +77,8 @@ A higher state does not follow automatically from a lower one.
 - Browser Control capture is 1440×900, SHA-256 `4686bb39940f9d73a2ce12a0560f10d28ad2d09e9bf81b55aa93c6fc1926f4ef`. The cradle reads as physically joined, but whole-scene body massing/contrast remains dark and sparse versus Hailuo/PNG. Human visual acceptance remains OPEN.
 - Local machinery suite: 26/26 pass. Source/public parity: 83 modules pass. The standalone exact-source geometry matrix above ran without installed third-party dependencies. The packaged shell test couldn't start locally because the exported source archive lacks installed package `three`; Full-System CI succeeded and its exact-head test result is authoritative.
 
-**Next bounded diagnosis**
-- Keep V10 fixed. The next physical owner to check is the existing collar/shaft junction and its load continuation into the chassis. Derive its actual primitive/frame convention, test the annular/shaft contact and vertical/radial intervals over the 30-state matrix, and only then decide whether a further code change exists.
+**Disposition**
+- V11 supersedes the V10 bore fit only. V10's stanchion-to-ring and stanchion-to-base load-path corrections remain accepted history. The next physical diagnosis is the existing collar/shaft junction and its load continuation into the chassis.
 - Preserve Issue #401 as the sole global execution frontier and PR #424 as the only spatial vehicle.
 
 **Acceptance boundary:** no merge/deploy/release, no production data mutation, no triangle-level collision-proof claim, no final human visual acceptance, and no formal S30/S0–S33 closure.
