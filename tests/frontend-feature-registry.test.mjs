@@ -6,6 +6,7 @@ import {
   TEAMAI_FRONTEND_FEATURES,
   getFrontendFeature,
   getGuestPresentationState,
+  getFeatureTerminalClasses,
   listFrontendFeatures,
 } from '../frontend/spatial/feature-registry.js';
 
@@ -56,4 +57,16 @@ test('feature ids are product ids, not semantic tree ids', () => {
     assert.equal(feature.id.includes('TREE-'), false);
     assert.equal(feature.id.includes('SEAT_'), false);
   }
+});
+
+
+test('feature surface declarations derive Y0 terminal classes without creating semantic tree ids', () => {
+  assert.deepEqual(getFrontendFeature('workspace-hq') && getFeatureTerminalClasses('workspace-hq'), ['SPATIAL_SURFACE', 'APP_UI_HANDOFF']);
+  assert.deepEqual(getFeatureTerminalClasses('artifacts-inventory'), ['APP_UI_HANDOFF', 'READ_MODEL_ONLY']);
+  assert.deepEqual(getFeatureTerminalClasses('orchestration'), ['APP_UI_HANDOFF', 'READ_MODEL_ONLY']);
+  assert.deepEqual(getFeatureTerminalClasses('mcp-capability'), ['APP_UI_HANDOFF']);
+  for (const feature of TEAMAI_FRONTEND_FEATURES) {
+    assert.ok(getFeatureTerminalClasses(feature).length > 0);
+  }
+  assert.deepEqual(getFeatureTerminalClasses('not-a-feature'), []);
 });

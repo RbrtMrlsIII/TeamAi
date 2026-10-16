@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildSeatDivisionEdge, validateSeatDivisionEdges, validateSeatDivisionNetwork } from '../frontend/spatial/machine-seat-division-topology.js';
+import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveFocusedSeatDivisionGeometry } from '../frontend/spatial/machine-seat-division-presentation.js';
-import { seatDivisionFanDirection, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
+import { seatDivisionFanDirection, SEAT_DIVISION_FAN_SPAN, SEAT_DIVISION_FAN_DENSE_SPAN, seatDivisionFanAngle, seatDivisionFanSpan, SEAT_DIVISION_PORT_RADIUS } from '../frontend/spatial/seat-division-geometry.js';
 import { buildAdjacentDivisionWiring } from '../frontend/spatial/seat-adjacent-division-wiring.js';
 
 const children = [
@@ -24,6 +25,34 @@ const parent = {
   dimensions: { x: 1.34, y: 0.62, z: 1.08 },
   seam: 0.18,
 };
+
+test('seven-division fan adapts span and center spacing to Seat density', () => {
+  assert.equal(SEAT_DIVISION_FAN_SPAN, Math.PI);
+  assert.equal(SEAT_DIVISION_FAN_DENSE_SPAN, (11 * Math.PI) / 12);
+  assert.equal(seatDivisionFanSpan(9), SEAT_DIVISION_FAN_SPAN);
+  assert.equal(seatDivisionFanSpan(10), SEAT_DIVISION_FAN_DENSE_SPAN);
+
+  for (const seatCount of [1, 5, 9]) {
+    const span = seatDivisionFanSpan(seatCount);
+    const angles = children.map((_, index) => seatDivisionFanAngle(index, seatCount));
+    assert.ok(Math.abs(angles[0] + span / 2) < 1e-12);
+    assert.ok(Math.abs(angles[angles.length - 1] - span / 2) < 1e-12);
+    const expectedStep = span / (children.length - 1);
+    for (let index = 1; index < angles.length; index += 1) {
+      assert.ok(Math.abs((angles[index] - angles[index - 1]) - expectedStep) < 1e-12);
+    }
+  }
+
+  const denseAngles = children.map((_, index) => seatDivisionFanAngle(index, 10));
+  const denseExpected = [-82.5, -56.35, -30.2, 0, 30.2, 56.35, 82.5]
+    .map((degrees) => (degrees * Math.PI) / 180);
+  denseAngles.forEach((angle, index) => assert.ok(Math.abs(angle - denseExpected[index]) < 1e-12));
+  const denseSteps = denseAngles.slice(1).map((angle, index) => angle - denseAngles[index]);
+  assert.deepEqual(
+    denseSteps.map((step) => Math.round((step * 180 / Math.PI) * 1000) / 1000),
+    [26.15, 26.15, 30.2, 30.2, 26.15, 26.15],
+  );
+});
 
 test('all seat divisions have stable child-to-shell semantic edges', () => {
   const edges = children.map((childId, childIndex) => {
@@ -97,6 +126,7 @@ test('fan placement keeps all seven division volumes separated across supported 
       const angle = (Math.PI * 2 * seatIndex) / Math.max(1, seatCount);
       const parentAtSeat = {
         ...parent,
+        seatCount,
         seatIndex,
         level: 0.60 + ((seatIndex * 0.17) % 0.31),
         center: {
@@ -140,6 +170,41 @@ test('fan placement keeps all seven division volumes separated across supported 
         });
         assert.equal(validation.valid, true, validation.reasons.join(', '));
       }
+    }
+  }
+});
+
+test('fan deployment stays inside the compact radial envelope while preserving separation', () => {
+  const core = createBranchConnectionCore({ seatCount: 10 });
+  const parent = core.byBranch.get('BRANCH-SEAT-01');
+  const compact = children.map((childId, childIndex) =>
+    deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId,
+      childIndex,
+      amount: 0,
+    }),
+  );
+  const open = children.map((childId, childIndex) =>
+    deriveFocusedSeatDivisionGeometry({
+      parent,
+      childId,
+      childIndex,
+      amount: 1,
+    }),
+  );
+  const scale = Math.max(parent.dimensions.x, parent.dimensions.z);
+  assert.ok(compact.every((entry) => entry.radialDistance >= scale * 2.16 - 1e-12));
+  assert.ok(open.every((entry) => entry.radialDistance <= scale * 2.18 + 1e-12));
+  assert.ok(open.every((entry, index) => entry.radialDistance > compact[index].radialDistance));
+  const boxes = open.map((division) => boundsForDivision(division));
+  for (let boxIndex = 0; boxIndex < boxes.length; boxIndex += 1) {
+    for (let otherIndex = boxIndex + 1; otherIndex < boxes.length; otherIndex += 1) {
+      assert.equal(
+        overlaps(boxes[boxIndex], boxes[otherIndex]),
+        false,
+        'full-deployment division volumes overlap',
+      );
     }
   }
 });

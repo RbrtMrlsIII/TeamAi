@@ -40,7 +40,9 @@ export function mountMachineCoreVisual(root = globalThis.document) {
     const frame = renderer.render(timestamp, {
       seatCount,
       selectedSeat: 0,
-      hierarchyOpen: branchId !== 'HUB-CORE',
+      // Branch selection changes semantic camera/inspection only. The standalone preview's
+      // explicit Expand control is the sole owner of its physical expansion target.
+      hierarchyOpen: expanded,
       expanded,
       branchId,
       reducedMotion: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true,

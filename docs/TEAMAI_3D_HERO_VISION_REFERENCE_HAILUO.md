@@ -1,8 +1,9 @@
 # TeamAi 3D Hero — Vision Reference: Hailuo Mechanical Spatial Machine
 
 **Status:** USER-ENDORSED VISUAL REFERENCE · non-authoritative
-**Asset:** `assets/3D_Vision/hailuo.mp4`
-**Purpose:** preserve the visual direction endorsed for the TeamAi mechanical 3D Hero without promoting the reference into Product Law, structural truth, or implementation evidence.
+**Primary asset:** `assets/3D_Vision/hailuo.mp4` (repository source; binary timing/frame claims require direct inspection)
+**Companion design reference:** the project Library artifact **AI Rocket Factory Activation Storyboard.png** (PNG storyboard; current Library evidence, not a repository geometry authority)
+**Purpose:** preserve the visual direction endorsed for the TeamAi mechanical 3D Hero without promoting either visual reference into Product Law, structural truth, or implementation evidence.
 
 ## 1. Reference disposition
 
@@ -45,6 +46,15 @@ The reference establishes the following desired qualities for the TeamAi machine
 6. **Layered mechanical depth**
    - Nested rings, shells, mechanisms, corridors, and internal parts can communicate depth and hierarchy.
    - Visual density may vary with semantic/UI payload rather than being forced into one universal prototype shape.
+
+
+## 2A. Product-integrated reference rule
+
+The visual references are evaluated together with TeamAi product requirements. They guide manufactured form, mechanical density, articulated transformation, camera participation, material/depth language, and overall composition, while `Product_Law/PRODUCT_LAW.md`, Issue #400 feature grammar, and the owning spatial/runtime contracts determine what the machine represents and which features may be exposed.
+
+The acceptance target is therefore **not visual resemblance alone**. A reference-inspired change is admissible only when it preserves the real product feature vocabulary, semantic identities, interaction/read-model boundaries, and evidence rules. Conversely, a repository-green implementation remains visually unaccepted until the exact-head Browser evidence has completed and its resulting artifact/report has been inspected.
+
+The PNG storyboard is useful for frame-level structural vocabulary. The MP4 is the canonical preserved motion reference for the endorsed source asset. Video timing, motion curves, or frame-by-frame claims must not be invented from prose; they require direct inspection of the binary asset before being adopted as implementation requirements.
 
 ## 3. TeamAi translation
 

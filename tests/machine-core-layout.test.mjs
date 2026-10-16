@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createBranchConnectionCore, getBranchCamera, resolveBranchCamera, bindSeatShellProjection } from '../frontend/spatial/machine-core-layout.js';
 import { validateMachinePodAssembly } from '../frontend/spatial/machine-pod-assembly.js';
+import { deriveMachineWorldProfile } from '../frontend/spatial/hero-world-profile.js';
 
 test('branch connection core defaults to ten seats with one hub and four distinct outer housings', () => {
   const core = createBranchConnectionCore();
@@ -118,6 +119,28 @@ test('outer modules sit beyond the inner ring and connect into the lattice', () 
   assert.equal(core.connections.filter((connection) => connection.kind === 'lattice-link').length, 8);
   assert.equal(core.connections.filter((connection) => connection.kind === 'outer-spine').length, 4);
   assert.equal(core.connections.filter((connection) => connection.kind === 'inner-spoke').length, 10);
+});
+
+test('S3 applies the canonical density seatScale to Pod dimensions', () => {
+  const oneSeat = createBranchConnectionCore({ seatCount: 1 });
+  const tenSeat = createBranchConnectionCore({ seatCount: 10 });
+  const onePod = oneSeat.parts.find((part) => part.kind === 'inner-pod');
+  const tenPod = tenSeat.parts.find((part) => part.kind === 'inner-pod');
+  const profile = deriveMachineWorldProfile(10);
+
+  assert.equal(profile.seatScale, 0.78);
+  assert.ok(tenPod.dimensions.x < onePod.dimensions.x);
+  assert.ok(tenPod.dimensions.y < onePod.dimensions.y);
+  assert.ok(tenPod.dimensions.z < onePod.dimensions.z);
+  assert.equal(
+    Number((tenPod.dimensions.x / onePod.dimensions.x).toFixed(6)),
+    Number(profile.seatScale.toFixed(6)),
+  );
+  assert.equal(
+    Number((tenPod.dimensions.z / onePod.dimensions.z).toFixed(6)),
+    Number(profile.seatScale.toFixed(6)),
+  );
+  assert.ok(tenPod.seam < onePod.seam);
 });
 
 test('expanded core separates the modules farther from the hub without changing identity', () => {
