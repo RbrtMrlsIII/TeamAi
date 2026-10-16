@@ -9,7 +9,7 @@
 import { createSpatialConstructionContext } from './machine-spatial-root-contract.js';
 
 export const MACHINE_WORLD_FACILITY_SHELL_ID = 'MACHINE-WORLD-FACILITY-SHELL';
-export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V10';
+export const MACHINE_WORLD_FACILITY_SHELL_VERSION = 'S7-OUTER-BODY-V11';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE = 'analysis-telescope-open-bay';
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_WIDTH = 0.68;
 export const MACHINE_WORLD_FACILITY_SERVICE_BAY_START_RADIUS = -0.20;
@@ -22,6 +22,9 @@ export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_BACK_WIDTH_RATIO = 0.42;
 export const MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_FLARE_START_RADIUS_RATIO = -0.16;
 export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE = 'control-rotor-axial-core-v1';
 export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE = 'control-rotor-axial-ring-v1';
+export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS = 24;
+export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO = 0.77;
+export const MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN = 0.03;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE = 'radial-axial-v1';
 export const MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO = 0.38;
 export const MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO = 0.46;
@@ -30,6 +33,7 @@ export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO = 0.82;
 export const MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO = 0.34;
 export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_HEIGHT_RATIO = 0.96;
 export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_WIDTH_RATIO = 0.08;
+export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_REACH_RATIO = 0.29;
 export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP = 0.02;
 export const MACHINE_WORLD_FACILITY_CONTROL_STANCHION_BASE_OVERLAP = 0.02;
 export const MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE = 'control-rotor-cradle-v1';
@@ -534,7 +538,7 @@ function deriveShell(entry) {
         ...rootContext('FACILITY-BODY:' + entry.branchId + ':CRADLE-' + ring.key),
       }));
     }
-    const stanchionReach = bodyMin * 0.30;
+    const stanchionReach = bodyMin * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_REACH_RATIO;
     // A vertical bridge post must cross both axial ring planes and land on the
     // existing base collar. Keep tangential width separate from shaft-axis depth.
     const stanchionSpan = Math.max(0.06, bodyMin * MACHINE_WORLD_FACILITY_CONTROL_STANCHION_WIDTH_RATIO);
@@ -842,6 +846,24 @@ export function validateMachineWorldFacilityShellDescriptors(descriptors = []) {
           reasons.push(id + ':AXIAL_RING_EXCEEDS_VERTICAL_ENVELOPE');
         }
         if (!Number.isFinite(Number(descriptor.rotationY))) reasons.push(id + ':AXIAL_RING_ROTATION_INVALID');
+        const axialCore = list.find((entry) => entry.branchId === descriptor.branchId
+          && entry.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE);
+        if (!axialCore) {
+          reasons.push(id + ':AXIAL_RING_CORE_MISSING');
+        } else {
+          const coreDimensions = axialCore.dimensions || {};
+          const ringBoreRadius = Math.min(Number(dimensions.x), Number(dimensions.y)) * 0.5
+            * MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO;
+          // Conservative fit: the core circumradius must clear the polygon bore's apothem.
+          const ringBoreApothem = ringBoreRadius
+            * Math.cos(Math.PI / MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS);
+          const coreRadius = Math.max(Number(coreDimensions.x), Number(coreDimensions.y)) * 0.5;
+          const radialClearance = ringBoreApothem - coreRadius;
+          if (!Number.isFinite(radialClearance)
+            || radialClearance < MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN - 1e-7) {
+            reasons.push(id + ':AXIAL_RING_CORE_CLEARANCE_INSUFFICIENT');
+          }
+        }
       }
     }
     if(descriptor?.nestedMassingProfile){

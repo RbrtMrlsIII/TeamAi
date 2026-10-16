@@ -66,6 +66,8 @@ import {
   MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE,
   triangulateMachineWorldFacilityBodyOutline,
 } from './machine-world-facility-shell.js';
@@ -337,9 +339,9 @@ export function createAxialCylinderVertices({ segments = 16 } = {}) {
   return new Float32Array(vertices);
 }
 
-export function createAxialAnnularPrismVertices({ segments = 24, innerRadius = 0.72 } = {}) {
-  const count = Math.max(8, Math.min(96, Math.floor(finite(segments, 24))));
-  const inner = clamp(finite(innerRadius, 0.72), 0.50, 0.90);
+export function createAxialAnnularPrismVertices({ segments = MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS, innerRadius = MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO } = {}) {
+  const count = Math.max(8, Math.min(96, Math.floor(finite(segments, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS))));
+  const inner = clamp(finite(innerRadius, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO), 0.50, 0.90);
   const vertices = [];
   const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
   const point = (radius, angle, z) => [Math.cos(angle) * radius, Math.sin(angle) * radius, z];

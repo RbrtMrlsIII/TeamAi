@@ -20,6 +20,8 @@ import {
   triangulateMachineWorldFacilityBodyOutline,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO,
 } from './machine-world-facility-shell.js';
 import { getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
 import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
@@ -559,10 +561,10 @@ function buildExtrudedPolygonGeometry(THREE, descriptor, outline) {
 }
 
 
-function buildAxialAnnularPrismGeometry(THREE, descriptor, { segments = 24, innerRadius = 0.72 } = {}) {
+function buildAxialAnnularPrismGeometry(THREE, descriptor, { segments = MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS, innerRadius = MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO } = {}) {
   const { x, y, z } = descriptor.dimensions;
-  const count = Math.max(8, Math.min(96, Math.floor(Number(segments) || 24)));
-  const inner = Math.max(0.50, Math.min(0.90, Number(innerRadius) || 0.72));
+  const count = Math.max(8, Math.min(96, Math.floor(Number(segments) || MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS)));
+  const inner = Math.max(0.50, Math.min(0.90, Number(innerRadius) || MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO));
   const vertices = [];
   const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
   const point = (radius, angle, depth) => [
@@ -800,7 +802,7 @@ export function buildThreeGeometry(THREE, descriptor) {
     return buildToolkitRackGeometry(THREE, descriptor);
   }
   if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE && descriptor.shape === 'TORUS') {
-    return buildAxialAnnularPrismGeometry(THREE, descriptor, { segments: 24, innerRadius: 0.72 });
+    return buildAxialAnnularPrismGeometry(THREE, descriptor, { segments: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS, innerRadius: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO });
   }
   if (descriptor.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE && descriptor.shape === 'CYLINDER') {
     const axialRadius = Math.max(0.01, Math.max(x, y) * 0.5);

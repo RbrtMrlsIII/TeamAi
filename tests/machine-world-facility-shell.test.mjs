@@ -26,6 +26,10 @@ import {
   MACHINE_WORLD_FACILITY_SHOULDER_REVEAL_FLARE_START_RADIUS_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
   MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN,
+  MACHINE_WORLD_FACILITY_CONTROL_STANCHION_REACH_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO,
   MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO,
@@ -121,7 +125,7 @@ test('S7 layered outer facility shells derive a coherent body stack for each aut
   );
   assert.ok(descriptors.every((entry) => entry.presentationOnly === true));
   assert.ok(validateMachineWorldFacilityShellDescriptors(descriptors).valid);
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V10');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION,'S7-OUTER-BODY-V11');
   const bays=descriptors.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE);
   assert.equal(bays.length,2);
   assert.deepEqual(bays.map(entry=>entry.layer).sort(),['main-shell','shoulder-plate']);
@@ -418,7 +422,7 @@ test('S7 Control axial core and annular rotor rings triangulate real Three.js ge
         positions.getX(i) / (ring.dimensions.x / 2),
         positions.getY(i) / (ring.dimensions.y / 2),
       ));
-      assert.ok(Math.min(...radii) >= 0.72 - 1e-6);
+      assert.ok(Math.min(...radii) >= MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO - 1e-6);
       assert.ok(Math.max(...radii) <= 1 + 1e-6);
     } finally {
       geometry.dispose();
@@ -520,7 +524,7 @@ test('S7 mechanism housings retain their authored family primitive inside the fa
   const descriptors = deriveMachineWorldFacilityShellDescriptors(facilities);
   const cores = descriptors.filter((entry) => entry.layer === 'mechanism-housing');
 
-  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V10');
+  assert.equal(MACHINE_WORLD_FACILITY_SHELL_VERSION, 'S7-OUTER-BODY-V11');
   assert.equal(cores.length, 4);
   assert.deepEqual(
     Object.fromEntries(cores.map((entry) => [entry.branchId, entry.shape])),
@@ -614,6 +618,15 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
       const offsetRatio = MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
       assert.ok(Math.abs(ringOffsets[0] / bodyMin + offsetRatio) < 1e-7);
       assert.ok(Math.abs(ringOffsets[1] / bodyMin - offsetRatio) < 1e-7);
+      const axialCoreRadius = Math.max(core.dimensions.x, core.dimensions.y) * 0.5;
+      const minimumFacetedBoreClearance = Math.min(...rings.map((ring) =>
+        Math.min(ring.dimensions.x, ring.dimensions.y) * 0.5
+          * MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO
+          * Math.cos(Math.PI / MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS)
+          - axialCoreRadius
+      ));
+      assert.ok(minimumFacetedBoreClearance >= MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN - 1e-7,
+        seatCount + '/' + expansionAmount + ': faceted axial bore clearance was ' + minimumFacetedBoreClearance);
       assert.ok(Math.abs(reveal.coreRevealWidth / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_WIDTH_RATIO) < 1e-9);
       assert.ok(Math.abs(reveal.coreRevealStartRadius / bodyMin - MACHINE_WORLD_FACILITY_CORE_REVEAL_START_RADIUS_RATIO) < 1e-9);
       assert.equal(triangulateMachineWorldFacilityBodyOutline(reveal.outline).length, reveal.outline.length - 2);
@@ -660,6 +673,8 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
         // half-width contributes to tangential core clearance; hypot(X,Z)/2
         // would incorrectly treat a bridge beam as a radially symmetric post.
         const tangentialReach = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
+        assert.ok(Math.abs(tangentialReach / bodyMin - MACHINE_WORLD_FACILITY_CONTROL_STANCHION_REACH_RATIO) < 1e-7,
+          'stanchion reach must match its named S7 profile ratio');
         const postTangentialHalfWidth = post.dimensions.x * 0.5;
         assert.ok(tangentialReach - postTangentialHalfWidth > coreRadius + 0.02,
           'stanchion tangential side must preserve rotor-core clearance');
@@ -685,7 +700,7 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
             'stanchion must extend past each axial ring outer edge by the named margin');
           assert.ok(ringMin - postMin >= MACHINE_WORLD_FACILITY_CONTROL_STANCHION_RING_OVERLAP - 1e-7,
             'stanchion must extend past each axial ring inner edge by the named margin');
-          const ringInnerRadius = ring.dimensions.x * 0.5 * 0.72;
+          const ringInnerRadius = ring.dimensions.x * 0.5 * MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO;
           const ringOuterRadius = ring.dimensions.x * 0.5;
           const tangentialOffset = Math.hypot(post.center.x - core.center.x, post.center.z - core.center.z);
           const tangentialHalfWidth = post.dimensions.x * 0.5;
@@ -725,7 +740,14 @@ test('S7 Control radial rotor core and annular rings stay coherent across Seat/e
       }
       assert.ok(minimumClearance > 0.16, seatCount + '/' + expansionAmount + ': Pod clearance ' + minimumClearance);
       assert.equal(validateMachineWorldFacilityShellDescriptors(shells).valid, true, seatCount + '/' + expansionAmount + ': full descriptors valid');
-      assert.equal(validateMachineWorldFacilityShellDescriptors([main, ...cradles]).valid, true, seatCount + '/' + expansionAmount + ': cradle descriptors valid with their required main-shell envelope');
+      assert.equal(validateMachineWorldFacilityShellDescriptors([main, core, ...cradles]).valid, true, seatCount + '/' + expansionAmount + ': cradle descriptors valid with their required main-shell envelope and axial core');
+      if (seatCount === 1 && expansionAmount === 0) {
+        const ring = rings[0];
+        const undersizedRing = { ...ring, dimensions: Object.freeze({ ...ring.dimensions, x: core.dimensions.x * 1.02, y: core.dimensions.y * 1.02 }) };
+        const invalidBore = validateMachineWorldFacilityShellDescriptors(shells.map((entry) => entry.id === ring.id ? undersizedRing : entry));
+        assert.equal(invalidBore.valid, false, 'undersized axial ring bore must fail closed');
+        assert.ok(invalidBore.reasons.includes(ring.id + ':AXIAL_RING_CORE_CLEARANCE_INSUFFICIENT'));
+      }
     }
   }
 });

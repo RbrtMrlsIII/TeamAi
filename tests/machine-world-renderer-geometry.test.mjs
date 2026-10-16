@@ -3,7 +3,7 @@ import test from 'node:test';
 import { segmentTubeTransform, centeredPrismBaseY, createAnnularPrismVertices, createAxialCylinderVertices, createAxialAnnularPrismVertices, createExtrudedPolygonVertices } from '../frontend/spatial/machine-world-renderer.js';
 import { MACHINE_POD_SHELL_BEVEL_INSET, MACHINE_POD_SHELL_BEVEL_HEIGHT_RATIO, MACHINE_POD_SHELL_TOP_OPENING_SCALE, MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION, MACHINE_POD_SHELL_OUTLINE_BOUNDS, createMachinePodShellVertices } from '../frontend/spatial/machine-pod-profile.js';
 import { readFileSync } from 'node:fs';
-import { MACHINE_WORLD_FACILITY_BODY_OUTLINES, deriveMachineWorldFacilityServiceBayOutline, triangulateMachineWorldFacilityBodyOutline } from '../frontend/spatial/machine-world-facility-shell.js';
+import { MACHINE_WORLD_FACILITY_BODY_OUTLINES, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO, deriveMachineWorldFacilityServiceBayOutline, triangulateMachineWorldFacilityBodyOutline } from '../frontend/spatial/machine-world-facility-shell.js';
 
 const close = (actual, expected, tolerance = 1e-6) =>
   Math.abs(actual - expected) <= tolerance;
@@ -181,14 +181,14 @@ test('raw WebGL axial cylinder is centered on local Z with outward face normals'
 });
 
 test('raw WebGL axial annular prism keeps an open bore and correctly wound end/wall surfaces', () => {
-  const vertices = createAxialAnnularPrismVertices({ segments: 24, innerRadius: 0.72 });
-  assert.equal(vertices.length / 3, 24 * 24);
+  const vertices = createAxialAnnularPrismVertices({ segments: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS, innerRadius: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO });
+  assert.equal(vertices.length / 3, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS * 24);
   const point = (i) => [vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]];
   const normal = (a, b, c) => {
     const u = b.map((v, i) => v - a[i]), v = c.map((n, i) => n - a[i]);
     return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
   };
-  for (let segment = 0; segment < 24; segment += 1) {
+  for (let segment = 0; segment < MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS; segment += 1) {
     const base = segment * 8;
     for (const tri of [base, base + 1]) {
       const pts = [point(tri * 3), point(tri * 3 + 1), point(tri * 3 + 2)];
@@ -209,6 +209,10 @@ test('raw WebGL axial annular prism keeps an open bore and correctly wound end/w
       assert.ok(n[0] * center[0] + n[1] * center[1] < 0, 'bore wall faces inward');
     }
   }
+  const defaultVertices = createAxialAnnularPrismVertices();
+  const defaultRadii = Array.from({ length: defaultVertices.length / 3 }, (_, index) => Math.hypot(defaultVertices[index * 3], defaultVertices[index * 3 + 1]));
+  assert.equal(defaultVertices.length / 3, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS * 24);
+  assert.ok(Math.min(...defaultRadii) >= MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO - 1e-6, 'default axial bore must use the S7 profile contract');
 });
 
 test('raw WebGL TORUS is a closed annular collar with an open center', () => {
