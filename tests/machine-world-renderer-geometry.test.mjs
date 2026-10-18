@@ -77,8 +77,16 @@ test('production S7 mechanism and carrier paths preserve the centered descriptor
   const browser = readFileSync('public/machine-world-renderer.js', 'utf8');
   assert.equal(browser, source);
 
+  assert.match(source,
+    /centeredPrismBaseY\(\s*component\.center\.y \+ finite\(presentation\?\.dy\),\s*renderedHeight,/,
+    'ordinary S7 mechanism components keep their center-preserving prism transform');
+  assert.match(source,
+    /const axialCollar = component\.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE[\s\S]*?componentTransform = axialCollar[\s\S]*?translateMatrix\([\s\S]*?component\.center\.x \+ finite\(presentation\?\.dx\),\s*component\.center\.y \+ finite\(presentation\?\.dy\),\s*component\.center\.z \+ finite\(presentation\?\.dz\),/,
+    'the axial collar keeps its true three-dimensional center instead of using a lower-Y prism base');
+  assert.match(source, /ringDraw\(\s*axialCollar \? 'TORUS_AXIAL'/,
+    'the axial collar uses the shaft-axis annular primitive');
+
   for (const marker of [
-    'centeredPrismBaseY(\n                component.center.y',
     'centeredPrismBaseY(detail.center.y, renderedHeight)',
     'centeredPrismBaseY(dy, renderedHeight)',
     'entry.center.y-oy',
