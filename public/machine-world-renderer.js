@@ -2633,6 +2633,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
       : 'invalid';
     canvas.dataset.machineWorldFacilityCorePrimitiveValidation = 'pass';
+    const controlAxialCollarCount = facilityMachinery.reduce((count, machine) => count
+      + (machine.components || []).filter((component) =>
+        component.role === 'control-collar'
+        && component.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE
+        && component.shape === 'TORUS'
+      ).length, 0);
+    canvas.dataset.machineWorldFacilityControlAxialCollarCount = String(controlAxialCollarCount);
+    canvas.dataset.machineWorldFacilityControlAxialCollarProfile = controlAxialCollarCount === 1
+      ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
+      : 'invalid';
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;
     const facilityMechanismPhases = [];
@@ -2677,30 +2687,48 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         const componentAlpha = controlRotorMetalComponent
           ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.alpha
           : selected ? 0.86 : 0.58;
-        ringDraw(
-          component.shape,
-          multiplyMatrix(
-            translateMatrix(
-              component.center.x + finite(presentation?.dx),
-              centeredPrismBaseY(
+        const axialCollar = component.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE
+          && component.shape === 'TORUS';
+        const componentYaw = reducedMotion
+          ? component.rotationY
+          : finite(presentation?.rotationY, component.rotationY);
+        const componentTransform = axialCollar
+          ? multiplyMatrix(
+              translateMatrix(
+                component.center.x + finite(presentation?.dx),
                 component.center.y + finite(presentation?.dy),
-                renderedHeight,
+                component.center.z + finite(presentation?.dz),
               ),
-              component.center.z + finite(presentation?.dz),
-            ),
-            multiplyMatrix(
-              rotateYMatrix(
-                reducedMotion
-                  ? component.rotationY
-                  : finite(presentation?.rotationY, component.rotationY),
+              multiplyMatrix(
+                rotateYMatrix(componentYaw),
+                scaleMatrix(
+                  Math.max(0.08, component.dimensions.x * 0.5),
+                  Math.max(0.08, component.dimensions.y * 0.5),
+                  Math.max(0.08, component.dimensions.z * 0.5),
+                ),
               ),
-              scaleMatrix(
-                Math.max(0.08, component.dimensions.x * 0.5),
-                renderedHeight,
-                Math.max(0.08, component.dimensions.z * 0.5),
+            )
+          : multiplyMatrix(
+              translateMatrix(
+                component.center.x + finite(presentation?.dx),
+                centeredPrismBaseY(
+                  component.center.y + finite(presentation?.dy),
+                  renderedHeight,
+                ),
+                component.center.z + finite(presentation?.dz),
               ),
-            ),
-          ),
+              multiplyMatrix(
+                rotateYMatrix(componentYaw),
+                scaleMatrix(
+                  Math.max(0.08, component.dimensions.x * 0.5),
+                  renderedHeight,
+                  Math.max(0.08, component.dimensions.z * 0.5),
+                ),
+              ),
+            );
+        ringDraw(
+          axialCollar ? 'TORUS_AXIAL' : component.shape,
+          componentTransform,
           componentDrawMaterial,
           {
             emit: componentEmit,

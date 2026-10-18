@@ -3,7 +3,13 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 import { deriveMachineFacilityAssemblies } from '../frontend/spatial/machine-facility-assembly.js';
-import { deriveMachineWorldFacilityShellDescriptors } from '../frontend/spatial/machine-world-facility-shell.js';
+import {
+  deriveMachineWorldFacilityShellDescriptors,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN,
+} from '../frontend/spatial/machine-world-facility-shell.js';
 import {
   deriveMachineFacilityMachinery,
   validateMachineFacilityMachinery,
@@ -625,12 +631,120 @@ test('S7 Control rotor bearings maintain a connected, chamber-bounded load path 
     'bearing/chamber boundary intersections must not exceed the inherited 27/60 baseline; observed ' + bearingChamberBoundaryCrossings);
 });
 
+test('S7 Control collar is coaxial with the axial shaft and retains its bore clearance across 30 Seat/expansion states', () => {
+  let stateCount = 0;
+  let minimumBoreClearance = Infinity;
+  let minimumAxialSeparation = Infinity;
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const assemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: assemblies,
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      const machine = machinery.find((entry) => entry.machineRole === 'control');
+      assert.ok(machine, seatCount + '/' + expansionAmount + ': Control machine');
+      const validation = validateMachineFacilityMachinery(machinery);
+      assert.equal(validation.valid, true, validation.reasons.join(', '));
+
+      const collar = machine.components.find((entry) => entry.role === 'control-collar');
+      const shells = deriveMachineWorldFacilityShellDescriptors(machinery);
+      const shaft = shells.find((entry) => entry.branchId === machine.branchId
+        && entry.geometryProfile === 'control-rotor-axial-core-v1');
+      const shellRings = shells.filter((entry) => entry.branchId === machine.branchId
+        && entry.nestedMassingRole === 'rotor-ring');
+      assert.ok(collar && shaft, seatCount + '/' + expansionAmount + ': collar and shaft');
+      assert.equal(collar.shape, 'TORUS');
+      assert.equal(collar.geometryProfile, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE);
+      assert.equal(shellRings.length, 2);
+      assert.ok(Math.hypot(
+        collar.center.x - shaft.center.x,
+        collar.center.y - shaft.center.y,
+        collar.center.z - shaft.center.z,
+      ) < 1e-7, seatCount + '/' + expansionAmount + ': collar centered on shaft axis');
+      assert.ok(Math.abs(collar.rotationY - shaft.rotationY) < 1e-7,
+        seatCount + '/' + expansionAmount + ': collar local-Z axis must align to shaft');
+      assert.ok(Math.abs(collar.dimensions.x - collar.dimensions.y) < 1e-7,
+        seatCount + '/' + expansionAmount + ': annular collar must have circular cross-section');
+      assert.ok(collar.dimensions.z > 0, seatCount + '/' + expansionAmount + ': collar axial thickness');
+
+      const coreRadius = Math.max(shaft.dimensions.x, shaft.dimensions.y) * 0.5;
+      const boreApothem = Math.min(collar.dimensions.x, collar.dimensions.y) * 0.5
+        * MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO
+        * Math.cos(Math.PI / MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS);
+      const boreClearance = boreApothem - coreRadius;
+      assert.ok(boreClearance >= MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN - 1e-7,
+        seatCount + '/' + expansionAmount + ': annular collar bore clearance was ' + boreClearance);
+      minimumBoreClearance = Math.min(minimumBoreClearance, boreClearance);
+
+      const angle = Math.atan2(machine.outerHousing.center.z, machine.outerHousing.center.x);
+      const radial = { x: Math.cos(angle), z: Math.sin(angle) };
+      const ringOffsets = shellRings.map((ring) =>
+        (ring.center.x - shaft.center.x) * radial.x + (ring.center.z - shaft.center.z) * radial.z
+      );
+      assert.ok(ringOffsets.every((offset) => Math.abs(offset) > 0.02),
+        seatCount + '/' + expansionAmount + ': central collar is distinct from the two bearing rings');
+      for (const offset of ringOffsets) {
+        const matching = shellRings.find((ring) => Math.abs(
+          (ring.center.x - shaft.center.x) * radial.x + (ring.center.z - shaft.center.z) * radial.z - offset
+        ) < 1e-8);
+        const surfaceGap = Math.abs(offset) - (collar.dimensions.z + matching.dimensions.z) * 0.5;
+        assert.ok(surfaceGap > 0.02,
+          seatCount + '/' + expansionAmount + ': collar must not coincide with a shell-ring plane');
+        minimumAxialSeparation = Math.min(minimumAxialSeparation, surfaceGap);
+      }
+      stateCount += 1;
+    }
+  }
+
+  assert.equal(stateCount, 30);
+  assert.ok(minimumBoreClearance >= MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN - 1e-7);
+  assert.ok(minimumAxialSeparation > 0.02);
+
+  const negativeScene = createBranchConnectionCore({ seatCount: 1, expansionAmount: 0 });
+  const negativeAssemblies = deriveMachineFacilityAssemblies({
+    outerHousings: negativeScene.parts.filter((part) => part.kind === 'outer-housing'),
+  });
+  const negativeMachinery = deriveMachineFacilityMachinery({
+    facilityAssemblies: negativeAssemblies,
+    clearanceObstacles: negativeScene.parts.filter((part) => part.kind === 'inner-pod'),
+    requestedClearance: 0.16,
+  });
+  const negativeControl = negativeMachinery.find((entry) => entry.machineRole === 'control');
+  const undersizedControl = {
+    ...negativeControl,
+    components: negativeControl.components.map((part) => part.role === 'control-collar'
+      ? { ...part, dimensions: Object.freeze({
+          ...part.dimensions,
+          x: part.dimensions.x * 0.70,
+          y: part.dimensions.y * 0.70,
+        }) }
+      : part),
+  };
+  const rejected = validateMachineFacilityMachinery(negativeMachinery.map((entry) =>
+    entry.id === negativeControl.id ? undersizedControl : entry
+  ));
+  assert.equal(rejected.valid, false, 'undersized shaft collar bore must fail closed');
+  assert.ok(rejected.reasons.includes(negativeControl.id + ':CONTROL_AXIAL_COLLAR_CLEARANCE_INSUFFICIENT'));
+
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE,
+    /component\.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE/,
+    'raw WebGL must route the component through the axial annular primitive');
+  assert.match(MACHINE_WORLD_RENDERER_SOURCE, /ringDraw\(\s*axialCollar \? 'TORUS_AXIAL'/,
+    'raw WebGL collar draw must select the shaft-axis annular mesh');
+});
+
 test('S7 control and access families expose nested retainers with independent housing bounds', () => {
   const core = createBranchConnectionCore({ seatCount: 10, expansionAmount: 0 });
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V23');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V24');
 
   const expected = Object.freeze({
     control: Object.freeze({

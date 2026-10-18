@@ -261,6 +261,47 @@ export function deriveMachineWorldFacilityServiceBayOutline(options = {}) {
 const scale = (value, factor, minimum = 0.06) =>
   Math.max(minimum, finite(value, minimum) * factor);
 
+/**
+ * Canonical dimensions for Control's shaft, annular collars and collar fit.
+ * The machinery component and shell cradle consume this derivation so their
+ * axes, bore and ring dimensions cannot drift independently.
+ */
+export function deriveMachineWorldFacilityControlAxialGeometry(housing) {
+  const center = housing?.center;
+  const dimensions = housing?.dimensions;
+  if (!center || !dimensions
+    || !['x', 'y', 'z'].every((axis) => Number.isFinite(Number(center[axis])))
+    || !['x', 'y', 'z'].every((axis) => Number(dimensions[axis]) > 0)) {
+    throw new Error('Control axial geometry requires a finite S6 housing');
+  }
+  const bodyMin = Math.min(
+    scale(dimensions.x, 1.04 * BODY_SCALE),
+    scale(dimensions.z, 1.04 * BODY_SCALE),
+  );
+  const bodyHeight = scale(dimensions.y, 1.10 * BODY_SCALE);
+  const angle = Math.atan2(Number(center.z), Number(center.x));
+  const core = Object.freeze({
+    center: Object.freeze({
+      x: Number(center.x),
+      y: Number(center.y) + bodyHeight * 0.06,
+      z: Number(center.z),
+    }),
+    dimensions: Object.freeze({
+      x: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
+      y: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
+      z: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO,
+    }),
+    rotationY: Math.PI * 0.5 - angle,
+  });
+  const ringSpan = Math.min(
+    bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO,
+    bodyHeight * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO,
+  );
+  const ringThickness = Math.max(0.06, bodyHeight * 0.055);
+  const ringOffset = core.dimensions.z * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
+  return Object.freeze({ bodyMin, bodyHeight, core, ringSpan, ringThickness, ringOffset });
+}
+
 function rootContext(semanticId = null) {
   return createSpatialConstructionContext({
     slice: 'S7',
@@ -352,6 +393,9 @@ function deriveShell(entry) {
   const bodyDepth = Number(body.dimensions.z);
   const bodyHeight = Number(body.dimensions.y);
   const bodyMin = Math.min(bodyWidth, bodyDepth);
+  const controlAxialGeometry = entry.machineRole === 'control'
+    ? deriveMachineWorldFacilityControlAxialGeometry(housing)
+    : null;
   const radial = { x: Math.cos(angle), z: Math.sin(angle) };
   const depthOffset = (fraction) => bodyMin * fraction;
 
@@ -452,20 +496,12 @@ function deriveShell(entry) {
       rotationY: angle,
     },
     control: {
-      center: Object.freeze({
-        x: housing.center.x,
-        y: housing.center.y + bodyHeight * 0.06,
-        z: housing.center.z,
-      }),
-      dimensions: Object.freeze({
-        x: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
-        y: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_DIAMETER_RATIO,
-        z: bodyMin * MACHINE_WORLD_FACILITY_CONTROL_CORE_LENGTH_RATIO,
-      }),
+      center: controlAxialGeometry?.core.center,
+      dimensions: controlAxialGeometry?.core.dimensions,
       shape: 'CYLINDER',
       geometryProfile: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
       materialRole: 'energy',
-      rotationY: Math.PI * 0.5 - angle,
+      rotationY: controlAxialGeometry?.core.rotationY,
     },
     'access-commerce': {
       center: Object.freeze({
@@ -506,12 +542,7 @@ function deriveShell(entry) {
     // Nested rotor cradle frames the existing energy core. It stays inside the
     // authored main-shell AABB and does not move ports, topology, or Seat law.
     const tangent = { x: -radial.z, z: radial.x };
-    const ringSpan = Math.min(
-      bodyMin * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_SPAN_RATIO,
-      bodyHeight * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_HEIGHT_RATIO,
-    );
-    const ringThickness = Math.max(0.06, bodyHeight * 0.055);
-    const ringOffset = Number(core.dimensions.z) * MACHINE_WORLD_FACILITY_CONTROL_ROTOR_RING_AXIS_OFFSET_RATIO;
+    const { ringSpan, ringThickness, ringOffset } = controlAxialGeometry;
     for (const ring of [
       { key: 'REAR', offset: -ringOffset },
       { key: 'FRONT', offset: ringOffset },

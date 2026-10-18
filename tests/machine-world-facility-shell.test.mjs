@@ -410,7 +410,7 @@ test('S7 Control axial core and annular rotor rings triangulate real Three.js ge
     const geometry = buildThreeGeometry(THREE, ring);
     try {
       const positions = geometry.getAttribute('position');
-      assert.equal(positions.count, 24 * 24);
+      assert.equal(positions.count, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS * 24);
       geometry.computeBoundingBox();
       assert.ok(Math.abs(geometry.boundingBox.min.x + ring.dimensions.x / 2) < 1e-6);
       assert.ok(Math.abs(geometry.boundingBox.max.x - ring.dimensions.x / 2) < 1e-6);
@@ -427,6 +427,32 @@ test('S7 Control axial core and annular rotor rings triangulate real Three.js ge
     } finally {
       geometry.dispose();
     }
+  }
+
+  const control = machinery.find((entry) => entry.machineRole === 'control');
+  const collar = control.components.find((entry) => entry.role === 'control-collar');
+  assert.ok(collar);
+  assert.equal(collar.shape, 'TORUS');
+  assert.equal(collar.geometryProfile, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE);
+  const collarGeometry = buildThreeGeometry(THREE, collar);
+  try {
+    const positions = collarGeometry.getAttribute('position');
+    assert.equal(positions.count, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS * 24);
+    collarGeometry.computeBoundingBox();
+    assert.ok(Math.abs(collarGeometry.boundingBox.min.x + collar.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(collarGeometry.boundingBox.max.x - collar.dimensions.x / 2) < 1e-6);
+    assert.ok(Math.abs(collarGeometry.boundingBox.min.y + collar.dimensions.y / 2) < 1e-6);
+    assert.ok(Math.abs(collarGeometry.boundingBox.max.y - collar.dimensions.y / 2) < 1e-6);
+    assert.ok(Math.abs(collarGeometry.boundingBox.min.z + collar.dimensions.z / 2) < 1e-6);
+    assert.ok(Math.abs(collarGeometry.boundingBox.max.z - collar.dimensions.z / 2) < 1e-6);
+    const collarRadii = Array.from({ length: positions.count }, (_, i) => Math.hypot(
+      positions.getX(i) / (collar.dimensions.x / 2),
+      positions.getY(i) / (collar.dimensions.y / 2),
+    ));
+    assert.ok(Math.min(...collarRadii) >= MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO - 1e-6);
+    assert.ok(Math.max(...collarRadii) <= 1 + 1e-6);
+  } finally {
+    collarGeometry.dispose();
   }
 });
 

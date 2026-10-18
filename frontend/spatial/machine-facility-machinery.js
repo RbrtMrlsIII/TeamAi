@@ -12,9 +12,16 @@ import {
 } from './machine-spatial-root-contract.js';
 import { deriveMachineSubject } from './machine-subject.js';
 import { deriveMachineFacilityAssemblies } from './machine-facility-assembly.js';
+import {
+  deriveMachineWorldFacilityControlAxialGeometry,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN,
+} from './machine-world-facility-shell.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V23';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V24';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -257,6 +264,9 @@ function buildMachineComponents(assembly) {
   const width = Math.max(1, finite(dimensions.x, 1.8));
   const depth = Math.max(0.8, finite(dimensions.z, 1.2));
   const height = Math.max(0.7, finite(dimensions.y, 0.9));
+  const controlAxialGeometry = assembly.machineRole === 'control'
+    ? deriveMachineWorldFacilityControlAxialGeometry(assembly.outerHousing)
+    : null;
   const id = (role) => 'MACHINERY:' + assembly.branchId + ':' + role;
 
   switch (assembly.machineRole) {
@@ -317,9 +327,14 @@ function buildMachineComponents(assembly) {
           { x: center.x + basis.outward.x * 0.22, y: center.y + 0.58, z: center.z + basis.outward.z * 0.22 },
           { x: width * 0.36, y: height * 0.44, z: depth * 0.34 }, 'glass',
           basis.angle),
-        component(id('CONTROL_COLLAR'), 'control-collar', 'CYL',
-          { x: center.x - basis.outward.x * 0.18, y: center.y + 0.22, z: center.z - basis.outward.z * 0.18 },
-          { x: width * 0.18, y: height * 0.50, z: width * 0.18 }, 'trace'),
+        component(id('CONTROL_COLLAR'), 'control-collar', 'TORUS',
+          controlAxialGeometry.core.center,
+          {
+            x: controlAxialGeometry.ringSpan,
+            y: controlAxialGeometry.ringSpan,
+            z: Math.max(0.08, controlAxialGeometry.ringThickness),
+          }, 'trace', controlAxialGeometry.core.rotationY,
+          { geometryProfile: MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE }),
       ]);
     case 'access-commerce':
       return Object.freeze([
@@ -1417,6 +1432,52 @@ export function validateMachineFacilityMachinery(machinery = [], { expectedCount
       reasons.push(machine?.id + ':FACILITY_CLEARANCE_UNPROVEN');
     } else if (!machine.clearanceProfile.safe) {
       reasons.push(machine?.id + ':FACILITY_CLEARANCE_UNSAFE');
+    }
+
+    if (machine?.machineRole === 'control') {
+      let axialGeometry = null;
+      try {
+        if (machine.outerHousing?.center && machine.outerHousing?.dimensions) {
+          axialGeometry = deriveMachineWorldFacilityControlAxialGeometry(machine.outerHousing);
+        }
+      } catch {
+        axialGeometry = null;
+      }
+      const collars = (machine.components || []).filter((entry) => entry?.role === 'control-collar');
+      if (collars.length !== 1) {
+        reasons.push(machine?.id + ':CONTROL_AXIAL_COLLAR_COUNT_INVALID');
+      } else if (!axialGeometry) {
+        reasons.push(machine?.id + ':CONTROL_AXIAL_GEOMETRY_MISSING');
+      } else {
+        const collar = collars[0];
+        const expected = axialGeometry;
+        const expectedYaw = expected.core.rotationY;
+        const coreRadius = Math.max(expected.core.dimensions.x, expected.core.dimensions.y) * 0.5;
+        const boreApothem = Math.min(collar.dimensions?.x || 0, collar.dimensions?.y || 0) * 0.5
+          * MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO
+          * Math.cos(Math.PI / MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS);
+        const boreClearance = boreApothem - coreRadius;
+        if (collar.shape !== 'TORUS'
+          || collar.geometryProfile !== MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE) {
+          reasons.push(machine?.id + ':CONTROL_AXIAL_COLLAR_PROFILE_INVALID');
+        }
+        if (!collar.center || Math.hypot(
+          Number(collar.center.x) - expected.core.center.x,
+          Number(collar.center.y) - expected.core.center.y,
+          Number(collar.center.z) - expected.core.center.z,
+        ) > 1e-7 || Math.abs(Number(collar.rotationY) - expectedYaw) > 1e-7) {
+          reasons.push(machine?.id + ':CONTROL_AXIAL_COLLAR_ALIGNMENT_INVALID');
+        }
+        if (Math.abs(Number(collar.dimensions?.x) - expected.ringSpan) > 1e-7
+          || Math.abs(Number(collar.dimensions?.y) - expected.ringSpan) > 1e-7
+          || Math.abs(Number(collar.dimensions?.z) - Math.max(0.08, expected.ringThickness)) > 1e-7) {
+          reasons.push(machine?.id + ':CONTROL_AXIAL_COLLAR_DIMENSIONS_INVALID');
+        }
+        if (!Number.isFinite(boreClearance)
+          || boreClearance < MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_CORE_CLEARANCE_MIN - 1e-7) {
+          reasons.push(machine?.id + ':CONTROL_AXIAL_COLLAR_CLEARANCE_INSUFFICIENT');
+        }
+      }
     }
 
     if (roles.has(machine?.machineRole)) reasons.push('DUPLICATE_MACHINE_ROLE:' + machine?.machineRole);
