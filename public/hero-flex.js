@@ -103,9 +103,9 @@ import {
   requestSeatDivisionConfigure,
 } from './hero-hierarchy-runtime.js';
 import { cycleSeatShellBranchFocus } from './hero-seat-branch-walk.js';
-import { resolveSelectedSeatDock } from './hero-cam5-selected-tree-center.js';
 import { shouldApplyTreeNav } from './hero-cam3-tree-center-zoom.js';
 import { createMachineWorldRenderer } from './machine-world-renderer.js';
+import { createHeroCameraNavigationController } from './hero-camera-navigation.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { resolveMachineGuestPresentation } from './machine-guest-state.js';
 
@@ -136,6 +136,7 @@ const profile = (count) => {
 };
 
 let cameraId = 'HERO_WIDE';
+let cameraNavigation = null;
 let seatCount = GUEST_SEAT_COUNT;
 let selectedSeat = 0;
 let state = 'IDLE';
@@ -212,49 +213,16 @@ function setState(next, reason = 'transition') {
   }));
 }
 
-function seatCameraProfile() {
-  return {
-    seatRadius: deriveMachineWorldProfile(seatCount).seatShellRadius,
-  };
-}
-
 function setCamera(id) {
-  const allowed = new Set([
-    'HERO_WIDE',
-    'TEAM_ORBIT',
-    'SEAT_CLOSE',
-    'WORKSPACE_CLOSE',
-    'OVERHEAD_MAP',
-    'DETAIL_ANCHOR',
-  ]);
-  cameraId = allowed.has(id) ? id : 'HERO_WIDE';
-  lastNavBaseCameraId = cameraId;
-  hierarchyRuntime.cameraId = cameraId;
-  return cameraId;
+  return cameraNavigation.setCamera(id);
 }
 
 function getSubjectLockSnapshot() {
-  const shellOpen = Boolean(hierarchyRuntime.openParentId);
-  const active = shellOpen || cameraId === 'SEAT_CLOSE' || cameraId === 'DETAIL_ANCHOR';
-  const dock = resolveSelectedSeatDock(
-    cameraId,
-    selectedSeat,
-    seatCount,
-    seatCameraProfile(),
-    shellOpen ? { force: true } : {},
-  );
-  return {
-    active,
-    cameraId,
-    selectedSeat,
-    seatCount,
-    shellOpen,
-    target: dock?.t ?? null,
-  };
+  return cameraNavigation.getSubjectLockSnapshot();
 }
 
 function retargetSubjectLock() {
-  return getSubjectLockSnapshot();
+  return cameraNavigation.getSubjectLockSnapshot();
 }
 
 function setSelectedSeat(index) {
@@ -701,6 +669,7 @@ function frame(now) {
     hierarchyOpen: Boolean(hierarchyRuntime.openParentId),
     expanded: Boolean(hierarchyRuntime.openParentId || ['FOCUS', 'ACTIVE', 'CONTRIBUTE', 'ABSORB'].includes(state)),
     branchId: `BRANCH-SEAT-${String(selectedSeat + 1).padStart(2, '0')}`,
+    facilityFocusBranchId: cameraNavigation.getBranchId(),
     cameraId,
     reducedMotion,
     navOrbitYaw,
@@ -745,9 +714,25 @@ motionButton?.addEventListener('click', () => {
   updateLabels();
 });
 
-document.querySelectorAll('[data-world-camera-request]').forEach((button) => {
-  button.addEventListener('click', () => setCamera(button.dataset.worldCameraRequest));
+cameraNavigation = createHeroCameraNavigationController({
+  documentRef: document,
+  windowRef: window,
+  getCameraId: () => cameraId,
+  setBaseCamera: (id) => {
+    cameraId = id;
+    lastNavBaseCameraId = cameraId;
+    hierarchyRuntime.cameraId = cameraId;
+    return cameraId;
+  },
+  resetToWorld: () => returnFromSeatShell(),
+  stopLoop: () => {
+    if (demo) stopLoop();
+  },
+  getHierarchyOpen: () => Boolean(hierarchyRuntime.openParentId),
+  getSelectedSeat: () => selectedSeat,
+  getSeatCount: () => seatCount,
 });
+cameraNavigation.bindNavigation();
 
 window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('teamai:web-ai-seat-unlocked', (event) => {
@@ -799,6 +784,9 @@ window.TeamAiHero = {
   getSeatCount: () => seatCount,
   setTeamSize: setSeatCount,
   setCamera,
+  focusFacility: cameraNavigation.focusFacility,
+  returnToWorld: cameraNavigation.returnToWorld,
+  getFacilityFocusState: cameraNavigation.getState,
   startLoop,
   stopLoop,
   getState: () => state,

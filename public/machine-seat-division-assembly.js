@@ -39,7 +39,7 @@ export const MACHINE_SEAT_DIVISION_ATTACHMENT_PROFILES = Object.freeze({
     axis: 'radial',
     primaryComponent: 'coupler-ring',
     motion: 'translate',
-    travel: 0.24,
+    travel: 0.18,
   }),
   SEAT_BEHAVIOR: Object.freeze({
     type: 'HINGED_BAFFLE',

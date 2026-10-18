@@ -106,7 +106,7 @@ The historical #396 Slice-D work established concrete source owners for both int
 - R1/R2 placement is derived from the active workspace envelope and catalog rather than a second coordinate authority.
 - R1 threads consume declared display-face IDs, resolve missing endpoints by failing closed, and route deterministically outside the workspace center.
 - These ring modules remain presentation-only. No OAuth, credentials, provider execution, entitlement, or durable backend state is introduced.
-- Final service/backend topology, richer mechanical R1 articulation, complete R2 choreography, final electricity, and full machine construction now continue through PR #404 / Issue #405 under the #396 authority chain.
+- Final service/backend topology, richer mechanical R1 articulation, complete R2 choreography, final electricity, and full machine construction continue through PR #424 / Issue #405. Issue #396 is historical construction provenance.
 
 ## 6.6 Current Slice-D/E/F/G/H reconciliation
 
