@@ -8,6 +8,8 @@ import {
   MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE,
   MACHINE_WORLD_S7_FOCUS_SHELL_COLOR,
   MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL,
+  MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS,
+  partitionSelectedControlMechanismComponents,
 } from '../public/machine-world-renderer.js';
 
 const near = (actual, expected, epsilon = 1e-6) => {
@@ -204,4 +206,61 @@ test('Control focus separates mechanical rotor rings from the energy emitter wit
   assert.ok(source.includes('const componentGlow = controlRotorMetalComponent'));
   assert.ok(source.includes('const componentAlpha = controlRotorMetalComponent'));
   assert.ok(source.includes("canvas.dataset.machineWorldFacilityFocusControlRotorMaterialProfile = controlRotorMaterialActive"));
+});
+
+test('selected Control defers the translucent analysis chamber until after depth-writing solids', async () => {
+  assert.deepEqual(MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS, {
+    profile: 's7-control-selected-transparency-v1',
+    machineRole: 'control',
+    deferredRole: 'analysis-chamber',
+    depthRelationship: 'defer-translucent-chamber-after-solids-restore-depth-before-later-world',
+  });
+  const components = [
+    { id: 'hub', role: 'rotor-hub' },
+    { id: 'ring', role: 'rotor-ring' },
+    { id: 'chamber', role: 'analysis-chamber' },
+    { id: 'collar', role: 'control-collar' },
+  ];
+  const world = partitionSelectedControlMechanismComponents(components, {
+    facilityFocused: false,
+    selected: true,
+    machineRole: 'control',
+  });
+  assert.equal(world.active, false);
+  assert.deepEqual(world.deferred, []);
+  assert.deepEqual(world.solids.map((entry) => entry.role), components.map((entry) => entry.role));
+  const otherFamily = partitionSelectedControlMechanismComponents(components, {
+    facilityFocused: true,
+    selected: true,
+    machineRole: 'analysis',
+  });
+  assert.equal(otherFamily.active, false);
+  assert.deepEqual(otherFamily.solids.map((entry) => entry.id), ['hub', 'ring', 'chamber', 'collar']);
+  const focused = partitionSelectedControlMechanismComponents(components, {
+    facilityFocused: true,
+    selected: true,
+    machineRole: 'control',
+  });
+  assert.equal(focused.active, true);
+  assert.deepEqual(focused.solids.map((entry) => entry.id), ['hub', 'ring', 'collar']);
+  assert.deepEqual(focused.deferred.map((entry) => entry.id), ['chamber']);
+  const unselected = partitionSelectedControlMechanismComponents(components, {
+    facilityFocused: true,
+    selected: false,
+    machineRole: 'control',
+  });
+  assert.equal(unselected.active, false);
+  assert.deepEqual(unselected.deferred, []);
+
+  const source = await readFile(new URL('../frontend/spatial/machine-world-renderer.js', import.meta.url), 'utf8');
+  const mirror = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
+  assert.equal(mirror, source);
+  const drawSolids = source.indexOf('for (const component of controlTransparency.solids) drawFacilityMechanismComponent(component);');
+  const depthOff = source.indexOf('gl.depthMask(false);\n        for (const component of controlTransparency.deferred) drawFacilityMechanismComponent(component);\n        gl.depthMask(true);');
+  const laterWorld = source.indexOf('for (const detail of machine.physicalInterfaces || [])');
+  assert.ok(drawSolids > 0 && depthOff > drawSolids && laterWorld > depthOff);
+  assert.ok(source.includes('canvas.dataset.machineWorldFacilityControlTransparencyPass = machineWorldFacilityControlTransparencyPass'));
+  assert.ok(source.includes("machineRole: machine.machineRole"));
+  assert.equal((source.match(/gl\.depthMask\(false\)/g) || []).length, 3);
+  assert.equal((source.match(/gl\.depthMask\(true\)/g) || []).length, 3);
 });

@@ -33,6 +33,14 @@ A higher state does not follow automatically from a lower one.
 
 ## Current continuation evidence state
 
+### 2026-10-25 selected-Control transparency pass — IMPLEMENTED, not yet exact-head verified
+
+- **Owner:** canonical raw-WebGL renderer `frontend/spatial/machine-world-renderer.js`, mirrored to `public/machine-world-renderer.js`. Not a geometry, camera, material, topology, port, Seat, or backend change.
+- **Cause:** selected Control `analysis-chamber` (alpha below 1, not in the metal rotor-role set) was drawn with depth writes enabled before `control-collar`. Diagnosis: PR #424 comment 6252458618. V24 geometry remains the collar baseline.
+- **Change:** `partitionSelectedControlMechanismComponents` / `MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS` (`s7-control-selected-transparency-v1`). Deferred chamber draw uses `depthMask(false)` and restores `depthMask(true)` before physical interfaces and later world draws. Inactive unless facility focus + selected + `machineRole === 'control'`.
+- **Repository checks:** `tests/machine-world-shell-normals.test.mjs` partition and source-order contract; facility shell and machinery suites including the 30-state coaxial collar bore contract. Source/public renderer parity held after `scripts/sync-machine-spatial-runtime.mjs`.
+- **Not claimed:** exact-head CI, Canonical Browser, LIVE-DEPLOYED, RUNTIME-PROVEN, HUMAN-ACCEPTED, S24 closure, 029 release, or TEAM-BACKEND-001 completion. The next evidence step is this commit's own Browser artifact versus the V24 Control capture SHA-256 `60fdae80f14a6db689303ec4f0cc12dcdec2aacc9f996fe135c80b384016a3be`.
+
 ### 2026-10-18 S7 Control V24 coaxial axial collar
 
 - **Code-bearing implementation:** [`e966d354426913f1e2c30d41920756d3c901b36f`](https://github.com/RbrtMrlsIII/TeamAi/commit/e966d354426913f1e2c30d41920756d3c901b36f). **Exact regression-bearing head:** [`7d7db0979bc5baa4c78e1d096fabbb2891fa5685`](https://github.com/RbrtMrlsIII/TeamAi/commit/7d7db0979bc5baa4c78e1d096fabbb2891fa5685). PR #424 remains OPEN / DRAFT; Issue #401 remains the global current slice. No merge, deployment, release, or production mutation.

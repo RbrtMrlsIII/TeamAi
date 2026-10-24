@@ -104,6 +104,45 @@ export const MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL = Object.freeze({
   alpha: 0.94,
 });
 
+// Selected Control only. The translucent analysis chamber must not depth-write
+// before the axial collar. Later world geometry still depth-tests against the
+// solid collar/rotor depth because depth writes are restored immediately.
+export const MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS = Object.freeze({
+  profile: 's7-control-selected-transparency-v1',
+  machineRole: 'control',
+  deferredRole: 'analysis-chamber',
+  depthRelationship: 'defer-translucent-chamber-after-solids-restore-depth-before-later-world',
+});
+
+export function partitionSelectedControlMechanismComponents(components, {
+  facilityFocused = false,
+  selected = false,
+  machineRole = '',
+} = {}) {
+  const list = Array.isArray(components) ? components : [];
+  const active = facilityFocused === true
+    && selected === true
+    && machineRole === MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS.machineRole;
+  if (!active) {
+    return Object.freeze({
+      active: false,
+      solids: Object.freeze(list.slice()),
+      deferred: Object.freeze([]),
+    });
+  }
+  const solids = [];
+  const deferred = [];
+  for (const component of list) {
+    if (component?.role === MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS.deferredRole) deferred.push(component);
+    else solids.push(component);
+  }
+  return Object.freeze({
+    active: true,
+    solids: Object.freeze(solids),
+    deferred: Object.freeze(deferred),
+  });
+}
+
 export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
   profile: 's7-face-normal-v4',
   viewVectorProfile: 'camera-position-v1',
@@ -2645,6 +2684,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       : 'invalid';
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;
+    let machineWorldFacilityControlTransparencyPass = 'off';
     const facilityMechanismPhases = [];
     for (const machine of facilityMachinery) {
       const selected = machine.branchId === activePresentationBranchId;
@@ -2656,7 +2696,17 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       const presentationById = new Map(
         facilityPresentation.components.map((entry) => [entry.id, entry]),
       );
-      for (const component of machine.components) {
+      const controlTransparency = partitionSelectedControlMechanismComponents(machine.components, {
+        facilityFocused,
+        selected,
+        machineRole: machine.machineRole,
+      });
+      if (controlTransparency.active) {
+        machineWorldFacilityControlTransparencyPass = controlTransparency.deferred.length > 0
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS.profile
+          : 'control-focus-no-chamber';
+      }
+      const drawFacilityMechanismComponent = (component) => {
         const presentation = presentationById.get(component.id);
         const renderedHeight = Math.max(0.04, finite(component.dimensions.y));
         const authoredComponentMaterial = component.materialRole === 'energy'
@@ -2736,6 +2786,12 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
             alpha: componentAlpha,
           },
         );
+      };
+      for (const component of controlTransparency.solids) drawFacilityMechanismComponent(component);
+      if (controlTransparency.deferred.length > 0) {
+        gl.depthMask(false);
+        for (const component of controlTransparency.deferred) drawFacilityMechanismComponent(component);
+        gl.depthMask(true);
       }
       for (const detail of machine.physicalInterfaces || []) {
         const material = detail.materialRole === 'glass'
@@ -2940,6 +2996,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldFacilityMachineryComponents = String(facilityMachineryComponentCount);
     canvas.dataset.machineWorldFacilityMachineryPorts = String(facilityMachineryPortCount);
     canvas.dataset.machineWorldFacilityMachineryValidation = 'pass';
+    canvas.dataset.machineWorldFacilityControlTransparencyPass = machineWorldFacilityControlTransparencyPass;
     canvas.dataset.machineWorldFacilityMechanismPhases = facilityMechanismPhases.join('|');
     canvas.dataset.machineWorldFacilityMechanismState = choreography.transformation <= 0.001
       ? 'STOWED'

@@ -34,7 +34,14 @@ Historical exact-head Browser artifacts remain diagnostic provenance. S7-V21 mac
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
-#### Latest verified #424 code-bearing spatial checkpoint: 2026-10-18, S7 Control V24 coaxial axial collar
+#### Latest #424 spatial checkpoint: 2026-10-25 selected-Control transparency pass (repository, not yet exact-head CI)
+
+- PR #424 remains OPEN / DRAFT. Issue #401 remains the single global Current Slice. No second spatial PR, merge, deploy, release, or 029-released claim.
+- Diagnosis [6252458618](https://github.com/RbrtMrlsIII/TeamAi/pull/424#issuecomment-6252458618): selected Control `analysis-chamber` wrote depth before the axial collar. The bounded renderer change defers that one role on selected Control focus, draws it without depth writes, and restores depth writes before later world occluders. V24 geometry (`e966d354` / regression head `7d7db09`) stays the geometry baseline: bore clearance 0.039005 and stanchion contact 0.048654 are not modified here.
+- Local repository checks passed for the shell-normal contract, including the new partition test, and for facility shell/machinery suites. Exact-head Full-System, Governance, Security, Deep Security, and Canonical Browser have **not** been recorded for this head. Do not cite V24 Browser artifact `12132559536` as proof of this pass.
+- Next: inspect this head's Canonical Browser artifact, especially Control focus versus stable S2–S10 captures. Do not add collar geometry, camera, or global materials unless that artifact shows a remaining owning-layer gap.
+
+#### Historical verified #424 code-bearing spatial checkpoint: 2026-10-18, S7 Control V24 coaxial axial collar
 
 - Code-bearing implementation [`e966d354426913f1e2c30d41920756d3c901b36f`](https://github.com/RbrtMrlsIII/TeamAi/commit/e966d354426913f1e2c30d41920756d3c901b36f); exact regression-bearing head [`7d7db0979bc5baa4c78e1d096fabbb2891fa5685`](https://github.com/RbrtMrlsIII/TeamAi/commit/7d7db0979bc5baa4c78e1d096fabbb2891fa5685). PR #424 OPEN / DRAFT; Issue #401 remains the global current slice. No merge/deploy/release or production mutation.
 - V24 replaces the offset vertical Control cylinder with an axial annular collar derived from the same `deriveMachineWorldFacilityControlAxialGeometry` contract as the shaft/core and nested cradle. Machinery validation is fail-closed for collar count, axis alignment, geometry profile, dimensions, and faceted-bore clearance. Raw-WebGL applies a centered XYZ `TORUS_AXIAL` transform; the source-contract regression now protects both the ordinary centered-prism and axial-collar paths.
