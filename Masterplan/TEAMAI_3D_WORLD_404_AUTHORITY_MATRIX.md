@@ -1,6 +1,6 @@
-# PR #404 / S1-C1 Authority Matrix
+# PR #404 / S1-C1 Authority Matrix (Historical)
 
-Status: reconciled on PR #404 and enforced by tests/machine-authority-boundaries.test.mjs; the PR head is the authoritative current revision.
+Status: historical S1-C1 baseline. The matrix remains useful as provenance and is enforced by tests/machine-authority-boundaries.test.mjs, but PR #404 is merged historical provenance. Current spatial implementation authority is #405 → PR #424.
 
 ## Governing rule
 

@@ -9,15 +9,34 @@ const normalize = (value) => Number(Number(value).toFixed(12));
 
 export const SEAT1_CONNECTION_GEOMETRY_ID = 'TREE-HERO-SEAT#0:SEAT_CONNECTION:GEOMETRY';
 
-export const SEAT_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
+export const SEAT_DIVISION_FAN_SPAN = Math.PI;
+export const SEAT_DIVISION_FAN_DENSE_SPAN = (11 * Math.PI) / 12;
 export const SEAT_DIVISION_FAN_MAX_INDEX = 6;
 export const SEAT_DIVISION_PORT_RADIUS = 0.28;
 
 export const SEAT_DIVISION_SERVICE_DECK_LIFT = 0.56;
 
-export function seatDivisionFanAngle(childIndex = 0) {
+export function seatDivisionFanSpan(seatCount = null) {
+  const count = Number(seatCount);
+  // Ten-seat density is the limiting world envelope: narrower fan endpoints
+  // avoid the adjacent Pod; the dense angle profile then reallocates angular
+  // spacing toward the crowded central assemblies.
+  return Number.isInteger(count) && count >= 10
+    ? SEAT_DIVISION_FAN_DENSE_SPAN
+    : SEAT_DIVISION_FAN_SPAN;
+}
+
+const SEAT_DIVISION_DENSE_FAN_ANGLES = Object.freeze(
+  [-82.5, -56.35, -30.2, 0, 30.2, 56.35, 82.5]
+    .map((degrees) => (degrees * Math.PI) / 180),
+);
+
+export function seatDivisionFanAngle(childIndex = 0, seatCount = null) {
   const index = Math.max(0, Math.min(SEAT_DIVISION_FAN_MAX_INDEX, Number(childIndex) || 0));
-  return -SEAT_DIVISION_FAN_SPAN / 2 + (SEAT_DIVISION_FAN_SPAN * index) / SEAT_DIVISION_FAN_MAX_INDEX;
+  const count = Number(seatCount);
+  if (Number.isInteger(count) && count >= 10) return SEAT_DIVISION_DENSE_FAN_ANGLES[index];
+  const span = seatDivisionFanSpan(seatCount);
+  return -span / 2 + (span * index) / SEAT_DIVISION_FAN_MAX_INDEX;
 }
 
 export function seatDivisionFanDirection(parent = {}, childIndex = 0) {
@@ -25,7 +44,7 @@ export function seatDivisionFanDirection(parent = {}, childIndex = 0) {
     Number(parent?.center?.z) || 0,
     Number(parent?.center?.x) || 0,
   );
-  const fanAngle = seatDivisionFanAngle(childIndex);
+  const fanAngle = seatDivisionFanAngle(childIndex, parent?.seatCount);
   const radialX = Math.cos(radialAngle);
   const radialZ = Math.sin(radialAngle);
   const tangentX = -radialZ;
@@ -45,7 +64,11 @@ export function seatDivisionFanRadius(parent = {}, amount = 0) {
     0.2,
   );
   const t = clamp(amount, 0, 1);
-  return scale * (1.7 + 0.5 * t);
+  // S4 fan direction is density-aware: 180° through nine Seats, 165° at ten
+  // Seats to protect adjacent Pods. Keep the radial profile compact; S5 checks
+  // the resulting authored-subject sweep against divisions and world obstacles.
+  const deploymentFactor = 2.16 + 0.02 * t;
+  return scale * deploymentFactor;
 }
 
 export function resolveSeatDivisionSemanticId(id) {
