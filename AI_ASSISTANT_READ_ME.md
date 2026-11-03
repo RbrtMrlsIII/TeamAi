@@ -14,13 +14,21 @@
 - Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
 - S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
 
-## LIVE OVERRIDE — 2026-10-26 selected-Control transparency pass, exact-head verified on `a36bcdcf` only
+## LIVE OVERRIDE — selected-Control transparency assertion and QA-only canvas pause (gates pending)
+
+- **Vehicle:** PR #424 remains OPEN / DRAFT on `frontend/029-spatial-world-continuation`. Issue #401 remains the sole global current slice. No merge, deployment, release, production mutation, or 029-released claim. No second spatial PR.
+- **Parent proof:** documentation head `7075e8a3a98600bb15b48573cb96ae065d8f74e6` has its own five gates, all PASS (Full-System `40217504875`, Governance `40217504863`, Security `40217504880`, Deep Security `40217504860`, Browser `40217504871`). Code-bearing transparency head remains `a36bcdcf1946f3b4e29f0083bf4acae510ffb38d`. Neither result proves this later head.
+- **This slice:** production Hero asserts `data-machine-world-facility-control-transparency-pass` is `s7-control-selected-transparency-v1` only for selected Control and `off` otherwise. `__TEAMAI_HERO_TEST_HOOKS__` exists only on `/hero/?testMode=1`, pauses one RAF sample after that telemetry is true, saves the canvas, then resumes. Ordinary `/hero/` does not install the hook. No geometry, camera, material, depth-order, port, topology, or Seat-law change. Operations is not started.
+- **Next slice:** wait for this head's own five gates, then inspect `facility-focus-control-paused-canvas.png`. Do not start Operations or another visual/geometry change from the unverified head.
+- **Still open:** human visual acceptance; triangle-level collision; Issue #401 live Firestore/runtime proof (`operator_hierarchy_absent`); physical-device acceptance; formal S24–S33 / S30 exit; merge and release authorization.
+
+## Historical — 2026-10-26 selected-Control transparency pass, exact-head verified on `a36bcdcf` only
 
 - **Vehicle:** PR #424 remains OPEN / DRAFT on `frontend/029-spatial-world-continuation`. Issue #401 remains the sole global current slice. No merge, deployment, release, production mutation, or 029-released claim. No second spatial PR.
 - **Proven head:** [`a36bcdcf1946f3b4e29f0083bf4acae510ffb38d`](https://github.com/RbrtMrlsIII/TeamAi/commit/a36bcdcf1946f3b4e29f0083bf4acae510ffb38d). Full-System [40116964109](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964109) **1,304 / 1,304** (spatial block in the same job **212 / 212**); Governance [40116964110](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964110); Security [40116964111](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964111); Deep Security [40116964197](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964197); Canonical Browser [40116964108](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964108), **92 passed / 4 skipped / 0 failed**.
 - **Artifacts:** Browser [12569281949](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964108/artifacts/12569281949), SHA-256 `4681a7f65d7a13d5b5b984cd6d2eef06f3b7f5030a4afe7570651d56ed0c5e2c`. Full Project [12570100892](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964109/artifacts/12570100892), SHA-256 `a76ea51a522d34f1acea1491034340d75d752c97317399cbdce22c0dae4bdb85`; nested ZIP SHA-256 `10f7cb72840908fb3ebc58fd2b333124256020fa3ec085a66d8f93503c0ff01f`, 1,114 files. Downloads matched and ZIP integrity passed.
 - **Inspection:** Control capture SHA-256 `b7a15fc69bf231906952163803eb2710436474f66f99a9ae7c79a22997e7ffdb` versus V24 `60fdae80f14a6db689303ec4f0cc12dcdec2aacc9f996fe135c80b384016a3be`. Rotor-crown ROI luma **78.61 → 74.15**, blue-minus-red >30 **39.44% → 32.34%**. Structural world/seat/facility/return/transform-mid/world-canvas captures are byte-identical; return-mid delta is **0.057%**, under 0.5%. The collar stays visible through the housing. This is not a hard-occlusion finding and not human visual acceptance. Do not revert. Do not add collar geometry, camera, materials, or another depth change from this artifact.
-- **Next slice:** after the documentation head's own five gates, assert `data-machine-world-facility-control-transparency-pass` (`s7-control-selected-transparency-v1` on selected Control, `off` otherwise) and add one QA-only fixed-sample production Control canvas pause. No geometry, camera, material, depth-order, port, topology, or Seat-law change. Do not start Operations. Do not install the pause on ordinary Hero routes.
+- **Next slice:** superseded. The production telemetry assertion and QA-only `/hero/?testMode=1` Control canvas pause are the current LIVE OVERRIDE. Do not repeat that row. Do not treat this `a36bcdcf` proof as proof of the later pause head.
 - **This file edit is a new branch head.** Do not treat it as Browser-verified until Canonical Browser finishes on its own SHA.
 - **Still open:** human visual acceptance; triangle-level collision; Issue #401 live Firestore/runtime proof (`operator_hierarchy_absent`); physical-device acceptance; formal S24–S33 / S30 exit; merge and release authorization.
 
@@ -101,7 +109,18 @@
 
 ### 2026-10-26 CURRENT SESSION STATE
 
-This is the live recovery snapshot. The 2026-10-14 block below is historical provenance for that date.
+This block is historical relative to the LIVE OVERRIDE at the top of this file. The live recovery snapshot is the block immediately below.
+
+- main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
+- replacement branch: `frontend/029-spatial-world-continuation`.
+- proven spatial head: `a36bcdcf1946f3b4e29f0083bf4acae510ffb38d`, with documentation gates on `7075e8a3a98600bb15b48573cb96ae065d8f74e6`. The pause/assertion head is later and is not proven by those runs.
+- current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401); PR #424 remains a subordinate 029 spatial sub-frontier and does not replace the global frontier.
+- next allowed work: inspect this head's five gates and the paused Control canvas. No geometry, camera, material, depth-order, Operations, merge, deploy, or release work.
+- Do not claim TEAM-EXPERIENCE-029 released or TEAM-BACKEND-001 complete.
+
+### 2026-10-26 HISTORICAL SESSION STATE
+
+This is retained provenance for the `a36bcdcf` transparency proof. The live snapshot is the block above.
 
 - main baseline: `13356cae7e6ef8179f7e2e552211bb4d187f37fb`.
 - replacement branch: `frontend/029-spatial-world-continuation`.

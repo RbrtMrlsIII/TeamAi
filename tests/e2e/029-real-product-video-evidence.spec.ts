@@ -1,9 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 test.use({
   video: 'on',
   viewport: { width: 1440, height: 900 },
 });
+
+async function screenshotCanvasImmediately(page: Page, canvas: Locator, path: string) {
+  const bounds = await canvas.boundingBox();
+  if (!bounds) throw new Error('Hero canvas has no visible bounding box');
+  return page.screenshot({ clip: bounds, path });
+}
 
 test.describe('029 real-product video evidence', () => {
   test('captures the actual Hero machine through focus, division, return, and turn-loop states', async ({ page }, testInfo) => {
@@ -13,6 +19,7 @@ test.describe('029 real-product video evidence', () => {
     const worldMenu = page.locator('#world-menu');
     const worldMenuToggle = page.locator('[data-world-menu-toggle]');
     await expect(canvas).toBeVisible();
+    expect(await page.evaluate(() => (window as any).__TEAMAI_HERO_TEST_HOOKS__)).toBeUndefined();
 
     await page.waitForTimeout(1200);
 
@@ -65,6 +72,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-transparency-pass', 'off');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-assembly-version', 'S3-V8');
     await expect(canvas).toHaveAttribute('data-machine-world-pod-face-brace-attachment', 'panel-local-matrix-v2');
     
@@ -101,6 +109,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-transparency-pass', 'off');
     const focusedSubject = await page.evaluate(() => ({
       center: document.querySelector('#hero-canvas')?.getAttribute('data-machine-world-facility-focus-subject-center'),
       span: document.querySelector('#hero-canvas')?.getAttribute('data-machine-world-facility-focus-subject-span'),
@@ -165,6 +174,10 @@ test.describe('029 real-product video evidence', () => {
         'data-machine-world-facility-focus-control-rotor-metal-component-count',
         branchId === 'BRANCH-OUTER-GAMMA' ? '3' : '0',
       );
+      await expect(canvas).toHaveAttribute(
+        'data-machine-world-facility-control-transparency-pass',
+        branchId === 'BRANCH-OUTER-GAMMA' ? 's7-control-selected-transparency-v1' : 'off',
+      );
       const span = await canvas.getAttribute('data-machine-world-facility-focus-subject-span');
       expect(span?.split(',').map(Number).every((value) => Number.isFinite(value) && value > 0)).toBe(true);
       if (branchId === 'BRANCH-OUTER-BETA') {
@@ -189,6 +202,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-transparency-pass', 'off');
 
     // The return affordance must also work as an ordinary browser interaction.
     await worldMenuToggle.click();
@@ -223,6 +237,7 @@ test.describe('029 real-product video evidence', () => {
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-profile', 'base');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-material-color', '');
     await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-control-rotor-metal-component-count', '0');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-transparency-pass', 'off');
     await expect(page.locator('#facility-focus-status')).toHaveText('World overview');
     await expect(canvas).toHaveAttribute('data-machine-world-topology-validation', 'pass');
     await expect(worldMenu).toBeHidden();
@@ -263,5 +278,59 @@ test.describe('029 real-product video evidence', () => {
     expect(snapshot.cameraId).toBe('HERO_WIDE');
     expect(snapshot.reducedMotion).toBe(false);
     expect(snapshot.hierarchyOpen).toBeFalsy();
+  });
+
+  test('pauses one fixed Control canvas sample only when the Hero test route asks for it', async ({ page }, testInfo) => {
+    test.setTimeout(60_000);
+    await page.goto('/hero/?testMode=1');
+    const canvas = page.locator('#hero-canvas');
+    const worldMenu = page.locator('#world-menu');
+    const worldMenuToggle = page.locator('[data-world-menu-toggle]');
+    await expect(canvas).toBeVisible();
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-control-transparency-pass', 'off');
+
+    await worldMenuToggle.click();
+    await expect(worldMenu).toHaveClass(/is-open/);
+    await page.locator('[data-facility-focus="BRANCH-OUTER-GAMMA"]').click();
+    await expect(worldMenu).toBeHidden();
+
+    const paused = await page.waitForFunction(
+      () => {
+        const heroCanvas = document.querySelector('#hero-canvas');
+        if (heroCanvas?.getAttribute('data-machine-world-camera-mode') !== 'FACILITY_FOCUS') return false;
+        if (heroCanvas.getAttribute('data-machine-world-facility-focus-branch') !== 'BRANCH-OUTER-GAMMA') return false;
+        if (heroCanvas.getAttribute('data-machine-world-facility-control-transparency-pass') !== 's7-control-selected-transparency-v1') return false;
+        const hooks = (window as any).__TEAMAI_HERO_TEST_HOOKS__;
+        if (!hooks) throw new Error('Hero test hooks were not installed');
+        const pause = hooks.pauseFrame();
+        if (pause?.paused !== true) return false;
+        return pause;
+      },
+      undefined,
+      { timeout: 10000, polling: 'raf' },
+    ).then((handle) => handle.jsonValue());
+    expect(paused).toMatchObject({
+      paused: true,
+      transparencyPass: 's7-control-selected-transparency-v1',
+      cameraMode: 'FACILITY_FOCUS',
+      branchId: 'BRANCH-OUTER-GAMMA',
+    });
+
+    const pausedCanvas = await screenshotCanvasImmediately(
+      page,
+      canvas,
+      testInfo.outputPath('facility-focus-control-paused-canvas.png'),
+    );
+    expect(pausedCanvas.byteLength).toBeGreaterThan(1000);
+    await expect(canvas).toHaveAttribute(
+      'data-machine-world-facility-control-transparency-pass',
+      's7-control-selected-transparency-v1',
+    );
+
+    await page.evaluate(() => {
+      (window as any).__TEAMAI_HERO_TEST_HOOKS__.resumeFrame();
+    });
+    await expect(canvas).toHaveAttribute('data-machine-world-camera-mode', 'FACILITY_FOCUS');
+    await expect(canvas).toHaveAttribute('data-machine-world-facility-focus-branch', 'BRANCH-OUTER-GAMMA');
   });
 });

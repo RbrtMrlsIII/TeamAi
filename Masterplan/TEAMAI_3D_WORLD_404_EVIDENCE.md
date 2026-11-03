@@ -33,6 +33,14 @@ A higher state does not follow automatically from a lower one.
 
 ## Current continuation evidence state
 
+### Selected-Control transparency telemetry and QA-only canvas pause — gates pending
+
+- **Owner:** production Hero controller `public/_flex_src/hero-flex.base.js`, mirrored byte-for-byte to `public/hero-flex.js`, plus `tests/e2e/029-real-product-video-evidence.spec.ts` and `tests/hero-control-transparency-pause.test.mjs`. Not a geometry, camera, material, depth-order, topology, port, Seat, or backend change.
+- **Parent gates, not this head:** `7075e8a3a98600bb15b48573cb96ae065d8f74e6` Full-System `40217504875`, Governance `40217504863`, Security `40217504880`, Deep Security `40217504860`, Browser `40217504871`, all PASS. Transparency behavior remains the `a36bcdcf` renderer change.
+- **Authorized new rule:** selected Control publishes `data-machine-world-facility-control-transparency-pass=s7-control-selected-transparency-v1`; every other production state in the real-product journey publishes `off`. Ordinary `/hero/` does not install a pause hook. `/hero/?testMode=1` may pause one RAF sample, save the canvas, and resume.
+- **Protected old invariant:** the real-product spec did not assert the transparency attribute, and production Hero had no testMode pause. That absence is retained for ordinary routes.
+- **Evidence state:** IMPLEMENTED locally. Not REPOSITORY-VERIFIED on this head until its own five gates pass. Not BROWSER-VERIFIED, not human visual acceptance, not 029 release.
+
 ### 2026-10-26 selected-Control transparency pass — exact-head verified on `a36bcdcf` only
 
 - **Owner:** canonical raw-WebGL renderer `frontend/spatial/machine-world-renderer.js`, mirrored to `public/machine-world-renderer.js`. Not a geometry, camera, material, topology, port, Seat, or backend change.
