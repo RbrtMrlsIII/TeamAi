@@ -34,13 +34,20 @@ Historical exact-head Browser artifacts remain diagnostic provenance. S7-V21 mac
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
-#### Latest #424 spatial checkpoint: selected-Control transparency telemetry and QA-only canvas pause (gates pending on this head)
+#### Latest #424 spatial checkpoint: Hero controller stays under the monolith guard (gates pending)
+
+- PR #424 remains OPEN / DRAFT. Issue #401 remains the single global Current Slice. No second spatial PR, merge, deploy, release, or 029-released claim.
+- `5ad3f2904b2f4708abcc198ee0845e5dee9526be` is not an exact-head proof. Full-System [41686588522](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/41686588522) failed **1 / 1,305**: `public/hero-flex.js` grew to 31,081 characters and violated `entry.length < 30000`. Governance, Security, Deep Security, and Canonical Browser passed on that same head. Green Browser is not Full-System proof and is not visual acceptance.
+- This slice moves only the QA frame clock to `public/hero-test-frame-pause.js`. `public/hero-flex.js` remains the controller, byte-identical to `public/_flex_src/hero-flex.base.js`, and under 30,000 characters. `query.get('testMode') === '1'` is still the only route that installs `__TEAMAI_HERO_TEST_HOOKS__`. The e2e pause/save/resume contract is unchanged. No geometry, camera, material, depth-order, port, topology, or Seat-law change. Operations is not started.
+- **Next:** this head's own five gates, then inspect `facility-focus-control-paused-canvas.png`. Do not treat `5ad3f290` or `a36bcdcf` artifacts as proof of this head. Do not start Operations.
+
+#### Historical #424 spatial checkpoint: selected-Control transparency telemetry and QA-only canvas pause (Full-System failed)
 
 - PR #424 remains OPEN / DRAFT. Issue #401 remains the single global Current Slice. No second spatial PR, merge, deploy, release, or 029-released claim.
 - The documentation head `7075e8a3a98600bb15b48573cb96ae065d8f74e6` already has its own five gates, all PASS: Full-System [40217504875](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40217504875), Governance [40217504863](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40217504863), Security [40217504880](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40217504880), Deep Security [40217504860](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40217504860), Canonical Browser [40217504871](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40217504871). Those gates do not transfer to this later head.
 - This slice only adds the authorized production-route assertion and the QA-only pause. `tests/e2e/029-real-product-video-evidence.spec.ts` expects `data-machine-world-facility-control-transparency-pass=s7-control-selected-transparency-v1` only for selected Control and `off` for world overview, Analysis, Operations, Access-Commerce, unknown-branch rejection, and return. Ordinary `/hero/` must not install `__TEAMAI_HERO_TEST_HOOKS__`.
 - `/hero/?testMode=1` installs a non-enumerable frozen pause/resume hook, using the structural preview's testMode discipline. The new browser test waits until selected Control telemetry is true, pauses that production RAF sample, saves `facility-focus-control-paused-canvas.png`, then resumes. Geometry, camera, materials, depth order, ports, topology, and Seat law are unchanged. Operations is not started.
-- **Next:** do not start another spatial change until this head's own five gates finish and the paused Control canvas is inspected. Do not treat `7075e8a` or `a36bcdcf` Browser artifacts as proof of this pause. Do not start Operations. Do not change geometry, camera, materials, depth order, ports, topology, or Seat law.
+- **Historical next, superseded:** the in-controller pause on `5ad3f290` failed the 30,000-character controller guard. The live row above is the extraction. Do not repeat the inlined hook.
 
 #### Historical #424 spatial checkpoint: 2026-10-26 selected-Control transparency pass is exact-head verified on `a36bcdcf` (documentation head is not)
 

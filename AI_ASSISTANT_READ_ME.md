@@ -14,7 +14,15 @@
 - Never use the CI wait period as permission to speculate. Any candidate change must still be traced to an owning authority, measured where geometry is involved, and kept reversible.
 - S2-S10 structural truth, S11-S21 product/runtime realization, S22-S29 world expression, and S30-S33 proof/acceptance remain one inheritance chain. Materials, lighting, holograms, effects, or camera polish may not conceal an unproven structural or product-feature gap.
 
-## LIVE OVERRIDE — selected-Control transparency assertion and QA-only canvas pause (gates pending)
+## LIVE OVERRIDE — Hero controller monolith guard after the QA pause (gates pending)
+
+- **Vehicle:** PR #424 remains OPEN / DRAFT on `frontend/029-spatial-world-continuation`. Issue #401 remains the sole global current slice. No merge, deployment, release, production mutation, or 029-released claim. No second spatial PR.
+- **Failed parent:** `5ad3f2904b2f4708abcc198ee0845e5dee9526be` Full-System [41686588522](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/41686588522) **1,304 pass / 1 fail**. `tests/hero-flex-local-runtime.test.mjs` rejected `public/hero-flex.js` at 31,081 characters (`Hero flex should remain a controller, not a renderer monolith`, guard `< 30000`). Governance, Security, Deep Security, and Canonical Browser on that head passed. Browser success does not repair the failed Full-System gate. Do not inspect that head's paused canvas as acceptance.
+- **This slice:** the QA-only RAF pause moved from the Hero controller into `public/hero-test-frame-pause.js`. The controller calls `clock(frame, query.get('testMode') === '1', canvas)` and stays under 30,000 characters. Ordinary `/hero/` still does not install `__TEAMAI_HERO_TEST_HOOKS__`. No geometry, camera, material, depth-order, port, topology, or Seat-law change. Operations is not started. This is not a second animation framework.
+- **Next slice:** wait for this head's own five gates, then inspect `facility-focus-control-paused-canvas.png`. Do not start Operations or another visual/geometry change from an unverified head.
+- **Still open:** human visual acceptance; triangle-level collision; Issue #401 live Firestore/runtime proof (`operator_hierarchy_absent`); physical-device acceptance; formal S24–S33 / S30 exit; merge and release authorization.
+
+## Historical — selected-Control transparency assertion and QA-only canvas pause (Full-System failed on `5ad3f290`)
 
 - **Vehicle:** PR #424 remains OPEN / DRAFT on `frontend/029-spatial-world-continuation`. Issue #401 remains the sole global current slice. No merge, deployment, release, production mutation, or 029-released claim. No second spatial PR.
 - **Parent proof:** documentation head `7075e8a3a98600bb15b48573cb96ae065d8f74e6` has its own five gates, all PASS (Full-System `40217504875`, Governance `40217504863`, Security `40217504880`, Deep Security `40217504860`, Browser `40217504871`). Code-bearing transparency head remains `a36bcdcf1946f3b4e29f0083bf4acae510ffb38d`. Neither result proves this later head.
@@ -115,7 +123,7 @@ This block is historical relative to the LIVE OVERRIDE at the top of this file. 
 - replacement branch: `frontend/029-spatial-world-continuation`.
 - proven spatial head: `a36bcdcf1946f3b4e29f0083bf4acae510ffb38d`, with documentation gates on `7075e8a3a98600bb15b48573cb96ae065d8f74e6`. The pause/assertion head is later and is not proven by those runs.
 - current slice: TEAM-BACKEND-030 production Firestore authority, security, and runtime evidence (Issue #401); PR #424 remains a subordinate 029 spatial sub-frontier and does not replace the global frontier.
-- next allowed work: inspect this head's five gates and the paused Control canvas. No geometry, camera, material, depth-order, Operations, merge, deploy, or release work.
+- next allowed work: this head must pass its own five gates, then the paused Control canvas can be inspected. No geometry, camera, material, depth-order, Operations, merge, deploy, or release work. The `5ad3f290` Full-System failure is the reason the pause clock left the controller.
 - Do not claim TEAM-EXPERIENCE-029 released or TEAM-BACKEND-001 complete.
 
 ### 2026-10-26 HISTORICAL SESSION STATE

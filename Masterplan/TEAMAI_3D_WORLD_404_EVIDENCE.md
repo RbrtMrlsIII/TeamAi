@@ -33,7 +33,14 @@ A higher state does not follow automatically from a lower one.
 
 ## Current continuation evidence state
 
-### Selected-Control transparency telemetry and QA-only canvas pause — gates pending
+### Hero controller monolith guard — QA pause clock extracted, gates pending
+
+- **Owner:** `public/hero-test-frame-pause.js`, called from `public/_flex_src/hero-flex.base.js` / `public/hero-flex.js`. Not a geometry, camera, material, depth-order, topology, port, Seat, or backend change. Not a second renderer.
+- **Failed predecessor:** `5ad3f2904b2f4708abcc198ee0845e5dee9526be`. Full-System `41686588522` failed because the inlined pause made the controller 31,081 characters. The `< 30000` controller guard remains the protected invariant. Browser `41686588434` passed and does not override that failure.
+- **Authorized new rule:** the controller schedules frames through `bindHeroFrameClock` and passes `query.get('testMode') === '1'`. The hook string `__TEAMAI_HERO_TEST_HOOKS__` lives only in the pause module, inside `if (testMode)`.
+- **Evidence state:** IMPLEMENTED locally. Not REPOSITORY-VERIFIED until this head's own five gates pass. Not BROWSER-VERIFIED for this head, not human visual acceptance, not 029 release.
+
+### Selected-Control transparency telemetry and QA-only canvas pause — superseded as the live row
 
 - **Owner:** production Hero controller `public/_flex_src/hero-flex.base.js`, mirrored byte-for-byte to `public/hero-flex.js`, plus `tests/e2e/029-real-product-video-evidence.spec.ts` and `tests/hero-control-transparency-pause.test.mjs`. Not a geometry, camera, material, depth-order, topology, port, Seat, or backend change.
 - **Parent gates, not this head:** `7075e8a3a98600bb15b48573cb96ae065d8f74e6` Full-System `40217504875`, Governance `40217504863`, Security `40217504880`, Deep Security `40217504860`, Browser `40217504871`, all PASS. Transparency behavior remains the `a36bcdcf` renderer change.
@@ -50,7 +57,7 @@ A higher state does not follow automatically from a lower one.
 - **Artifacts:** Browser [12569281949](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964108/artifacts/12569281949), 12,929,892 bytes, SHA-256 `4681a7f65d7a13d5b5b984cd6d2eef06f3b7f5030a4afe7570651d56ed0c5e2c`. Full Project [12570100892](https://github.com/RbrtMrlsIII/TeamAi/actions/runs/40116964109/artifacts/12570100892), 6,863,884 bytes, SHA-256 `a76ea51a522d34f1acea1491034340d75d752c97317399cbdce22c0dae4bdb85`. Nested project ZIP SHA-256 `10f7cb72840908fb3ebc58fd2b333124256020fa3ec085a66d8f93503c0ff01f`, 1,114 files. Both outer archives and the nested archive passed ZIP integrity checks; local SHA-256 matched the GitHub artifact digests.
 - **Rendered comparison:** `facility-focus-control.png` SHA-256 `b7a15fc69bf231906952163803eb2710436474f66f99a9ae7c79a22997e7ffdb`, against V24 capture `60fdae80f14a6db689303ec4f0cc12dcdec2aacc9f996fe135c80b384016a3be`. Rotor-crown ROI `(610,365)-(850,450)` mean luma **78.61 → 74.15**; blue-minus-red >30 occupancy **39.44% → 32.34%**. Full-frame pixels above max-channel delta 8: **4.098%**. World, seat, facility, return, transform-mid, and world-canvas structural captures are byte-identical to the V24 artifact. Return-mid differs on **0.057%** of pixels above delta 8, below the 0.5% threshold. Analysis mechanism-box concentration was 7.1% versus Control 18.9%, so the Control delta is more local than the other animated facility capture, but neither production frame is clock-locked.
 - **Disposition:** BROWSER-VERIFIED for the depth-order pass on `a36bcdcf`. Not HUMAN-ACCEPTED. The collar remains visible through the translucent housing; this artifact does not show a remaining hard occlusion that would justify another depth, geometry, camera, or material edit. S2–S10 structural captures were preserved, so the pass is not reverted.
-- **Next:** one test-only production pause and telemetry assertion, described in `Masterplan/NEXT_SLICES.md`. No Operations family work and no further Control geometry in that slice.
+- **Next:** superseded by the monolith-guard extraction above. Do not inline the pause hook back into the controller.
 
 ### 2026-10-25 selected-Control transparency pass — repository implementation, superseded by the `a36bcdcf` inspection
 

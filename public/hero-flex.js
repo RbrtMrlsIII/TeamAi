@@ -108,6 +108,7 @@ import { createMachineWorldRenderer } from './machine-world-renderer.js';
 import { createHeroCameraNavigationController } from './hero-camera-navigation.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { resolveMachineGuestPresentation } from './machine-guest-state.js';
+import { bindHeroFrameClock as clock } from './hero-test-frame-pause.js';
 
 const canvas = document.querySelector('#hero-canvas');
 const shell = document.querySelector('.hero-shell');
@@ -651,9 +652,6 @@ function handleKeyDown(event) {
   updateLabels();
 }
 
-let heroFramePaused = false;
-let heroFrameHandle = 0;
-
 function frame(now) {
   syncReducedMotionFromDocument();
   const guest = updateGuestPresentation();
@@ -692,11 +690,7 @@ function frame(now) {
     machineLayer: shell.dataset.heroLayer === 'machine',
   });
 
-  if (heroFramePaused) {
-    heroFrameHandle = 0;
-    return;
-  }
-  heroFrameHandle = requestAnimationFrame(frame);
+  tick();
 }
 
 canvas.addEventListener('click', (event) => {
@@ -896,32 +890,5 @@ if (query.has('seats')) setSeatCount(Number(query.get('seats')));
 syncReducedMotionFromDocument();
 setCamera('HERO_WIDE');
 updateLabels();
-
-// QA-only production RAF pause. Ordinary /hero/ routes never install this hook.
-if (query.get('testMode') === '1') {
-  Object.defineProperty(window, '__TEAMAI_HERO_TEST_HOOKS__', {
-    configurable: false,
-    enumerable: false,
-    value: Object.freeze({
-      pauseFrame() {
-        heroFramePaused = true;
-        if (heroFrameHandle) cancelAnimationFrame(heroFrameHandle);
-        heroFrameHandle = 0;
-        return Object.freeze({
-          paused: true,
-          transparencyPass: canvas.getAttribute('data-machine-world-facility-control-transparency-pass'),
-          cameraMode: canvas.getAttribute('data-machine-world-camera-mode'),
-          branchId: canvas.getAttribute('data-machine-world-facility-focus-branch'),
-        });
-      },
-      resumeFrame() {
-        if (!heroFramePaused) return Object.freeze({ paused: false });
-        heroFramePaused = false;
-        if (!heroFrameHandle) heroFrameHandle = requestAnimationFrame(frame);
-        return Object.freeze({ paused: false });
-      },
-    }),
-  });
-}
-
-heroFrameHandle = requestAnimationFrame(frame);
+const tick = clock(frame, query.get('testMode') === '1', canvas);
+tick();
