@@ -65,9 +65,10 @@ test('V0.3 isSeatShellOpen gates product subject', () => {
 
 test('V0.3 controller keeps selected-seat subject locking as its boundary', async () => {
   const src = await readFile(join(root, 'public/hero-flex.js'), 'utf8');
+  const navigation = await readFile(join(root, 'public/hero-camera-navigation.js'), 'utf8');
   const renderer = await readFile(join(root, 'public/machine-world-renderer.js'), 'utf8');
-  assert.match(src, /force:\s*true/);
-  assert.match(src, /resolveSelectedSeatDock/);
+  assert.match(navigation, /force:\s*true/);
+  assert.match(navigation, /resolveSelectedSeatDock/);
   assert.match(src, /getSubjectLockSnapshot/);
   assert.match(renderer, /cameraSpec\.target/);
   assert.match(renderer, /navOrbitYaw/);

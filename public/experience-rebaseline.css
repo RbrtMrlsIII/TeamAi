@@ -188,6 +188,9 @@
   top: calc(100% + 8px);
   right: 0;
   min-width: 190px;
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: none;
   padding: 8px;
   border: 1px solid rgba(42,44,40,.1);
@@ -203,6 +206,30 @@
   border: 0;
   box-shadow: none;
   background: transparent;
+}
+
+.world-navigation__focus-heading {
+  margin-top: 5px;
+  padding: 7px 9px 3px;
+  border-top: 1px solid rgba(42,44,40,.12);
+  color: rgba(42,44,40,.58);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.world-navigation__popover button[aria-pressed="true"] {
+  background: rgba(34,119,151,.14);
+  color: #124b64;
+  font-weight: 700;
+}
+
+.world-navigation__focus-status {
+  display: block;
+  padding: 7px 9px 5px;
+  color: rgba(42,44,40,.68);
+  font-size: 11px;
 }
 
 .world-navigation__status {

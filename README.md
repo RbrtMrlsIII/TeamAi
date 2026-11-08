@@ -28,7 +28,7 @@ TeamAi evolved through provider-federated workspace foundations, durable Firebas
 
 ## Current project
 
-TEAM-EXPERIENCE-029 is moving from the previous monolithic 3D Hero toward a semantic modular machine. PR #344 is the current replacement candidate and remains Draft. It is not promoted by the governance PR.
+TEAM-EXPERIENCE-029 is moving from the previous monolithic 3D Hero toward a semantic modular machine. PR #404 is the historical merged spatial baseline. PR #424 is the current 029 spatial continuation candidate and remains Draft while it establishes fresh exact-head proof. It does not replace the global Issue #401 current slice or any backend/runtime authority.
 
 Machine construction follows:
 

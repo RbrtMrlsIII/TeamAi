@@ -45,8 +45,8 @@ const OUTER_DESTINATIONS = Object.freeze([
     machineRole: 'control',
     facilities: Object.freeze([
       Object.freeze({ id: 'mcp-capability', label: 'MCP / Capability', sourceModule: 'mcp-capability-facility.js' }),
-      Object.freeze({ id: 'orchestration-scheduler', label: 'Orchestration / Scheduler', sourceModule: 'orchestration-scheduler' }),
-      Object.freeze({ id: 'settings-control', label: 'Settings / Control', sourceModule: 'settings.js' }),
+      Object.freeze({ id: 'orchestration', label: 'Orchestration / Scheduler', sourceModule: 'orchestration-scheduler' }),
+      Object.freeze({ id: 'settings', label: 'Settings / Control', sourceModule: 'settings.js' }),
     ]),
   }),
   Object.freeze({
@@ -54,10 +54,14 @@ const OUTER_DESTINATIONS = Object.freeze([
     machineRole: 'access-commerce',
     facilities: Object.freeze([
       Object.freeze({ id: MARKETPLACE_FEATURE_ID, label: 'Marketplace / Commerce / Entitlement', sourceModule: 'marketplace-commerce-facility.js' }),
-      Object.freeze({ id: 'authentication-gateway', label: 'Authentication Gateway', sourceModule: 'auth-gateway' }),
+      Object.freeze({ id: 'auth-gateway', label: 'Authentication Gateway', sourceModule: 'auth-gateway' }),
     ]),
   }),
 ]);
+
+export const MACHINE_FACILITY_BRANCH_IDS = Object.freeze(
+  OUTER_DESTINATIONS.map(({ branchId }) => branchId),
+);
 
 export const MACHINE_PRODUCT_FACILITY_IDS = Object.freeze(
   OUTER_DESTINATIONS.flatMap(({ facilities }) => facilities.map(({ id }) => id)),

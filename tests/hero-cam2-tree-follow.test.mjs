@@ -94,7 +94,8 @@ test('module and contract stay presentation-only', async () => {
 
 test('Hero controller delegates camera semantics to canonical camera modules', async () => {
   const flex = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
-  assert.match(flex, /hero-cam5-selected-tree-center|resolveSelectedSeatDock/);
+  const navigation = await readFile(new URL('../public/hero-camera-navigation.js', import.meta.url), 'utf8');
+  assert.match(navigation, /hero-cam5-selected-tree-center|resolveSelectedSeatDock/);
   assert.match(flex, /hero-cam3-tree-center-zoom|shouldApplyTreeNav/);
   assert.match(flex, /machine-world-renderer\.js/);
 });

@@ -6,12 +6,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const flex = () => readFileSync(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const navigation = () => readFileSync(new URL('../public/hero-camera-navigation.js', import.meta.url), 'utf8');
 
 test('Hero controller uses the canonical selected-seat subject resolver', () => {
   const src = flex();
-  assert.match(src, /resolveSelectedSeatDock/);
-  assert.match(src, /function getSubjectLockSnapshot/);
-  assert.match(src, /force: true/);
+  const owner = navigation();
+  assert.match(owner, /resolveSelectedSeatDock/);
+  assert.match(owner, /function getSubjectLockSnapshot/);
+  assert.match(owner, /force: true/);
+  assert.match(src, /getSubjectLockSnapshot/);
   assert.match(src, /SEAT_SHELL/);
 });
 

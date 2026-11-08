@@ -599,6 +599,14 @@ The canonical visual system is:
 
 `Light mode = Light Spatial Skeuomorphism`
 
+### Visual-reference translation rule
+
+The endorsed Hailuo MP4 and PNG/storyboard references are visual-direction inputs for the spatial experience. They may guide manufactured form, mechanical density, articulated transformation, camera participation, composition, and material/depth language, but they do not override Product Law, feature identity, capacity, authorization, entitlement, scheduler/provider/payment authority, or durable-state semantics.
+
+Reference-frame composition is not product cardinality. A reference frame showing eight inner Pods is a cinematic/design composition; the governed TeamAi population remains 1–10 Web AI Seats and the guest machine presentation remains 10 slots. Visual refinement MUST preserve that product rule while using the reference's form language.
+
+For the current 029 outer-machine direction, the four reference families map to existing governed S7 machine roles: telescope → analysis, fin deploy → operations, rotating core → control, sensor array → access-commerce. This mapping guides physical embodiment and does not create new product features or semantic authorities.
+
 ### Workforce visualization flow
 
 `Seat → responsibility → skills → capability → authorization → workspace → task → status → evidence → integration`

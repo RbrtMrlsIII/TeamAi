@@ -17,6 +17,7 @@ test.describe('Modular branch connection core', () => {
     await expect(page.locator('[data-branch-inspector]')).toContainText('seat-configuration');
     await page.getByLabel('Branch camera').selectOption('BRANCH-OUTER-BETA');
     await expect(status).toContainText('camera BRANCH_CAMERA_BRANCH-OUTER-BETA');
+    await expect(status).toContainText('collapsed · 0%');
     await page.getByRole('button', { name: 'Expand', exact: true }).click();
     await expect(status).toContainText('opening');
     await expect(status).toContainText('expanded · 100%', { timeout: 3000 });

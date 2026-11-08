@@ -18,6 +18,73 @@ later work must not contradict it without explicit reconciliation
 
 When in doubt: **Product Law → Masterplan gate → ORUCAVEAM slice → evidence → merge.**
 
+## CURRENT OVERLAY — 2026-10-12 Control nested-massing exact-head verification
+
+
+
+This overlay supersedes older uses of “current” for branch head, CI, S7 family embodiment, capture claims, and next work. Historical entries remain valid for their own checkpoints.
+
+
+
+- Active vehicle remains PR #424 / `frontend/029-spatial-world-continuation`, OPEN / DRAFT. Issue #401 remains the only global Current Slice.
+
+- Current code-bearing head `0bfc1b7cb3e54b81aee701e14389948b22116db1`: Full-System `38199544335` PASS (1,287/1,287); Governance `38199544313` PASS; Security `38199544336` PASS; Deep Security `38199544324` PASS; Canonical Browser `38199544300` PASS (92 passed / 4 skipped / 0 failed).
+
+- Full Project artifact `11724783433`, SHA-256 `881f659f6ca88be61dfb7e740b89f0aca8c70a3be1897f3fb67a9a6072ba9978`; Browser artifact `11725270062`, SHA-256 `932dc2eb6702b829ede89c2b41a0a91fabd30a3dc22e51f011dd8373821ca169`. Local hashes match CI and both ZIP integrity checks pass.
+
+- S4/S5 remains the density-aware 180° / 165° fan contract, radial factor `2.16 + 0.02 × expansionAmount`, Connection coupler travel 0.18, and conservative authored-component sampled AABB proof at 0.16 clearance. Triangle-level mesh collision proof remains separate.
+
+- S7 Control now carries `S7-OUTER-BODY-V5` / `control-rotor-cradle-v1`: two rotor rings + two stanchions around the existing core, four presentation-only descriptors, no topology/port/Seat/backend authority changes. The 1–10 Seat × 0/0.5/1 envelope/core-gap/pod-clearance matrix and all five exact-head gates pass.
+
+- Browser parent failure on `f0db5a1e…` was a telemetry-category mismatch (normal shell count received 9 instead of 5 with Control selected). Current head separates shell count (5) from nested massing normal count (4 on Control, 0 on others) without changing shader behavior.
+
+- The exact current Browser artifact contains the successful 45.4-second real-Hero journey. Control cradle is visible, but the broad shell masks portions of it. Next step is visual reference acceptance against `assets/3D_Vision/hailuo.mp4` and endorsed PNG/reference board. Do not start Operations nested massing until this comparison decides whether the Control result is accepted or needs a bounded revision.
+
+- Human visual acceptance, production deployment/runtime proof, formal S30/S0–S33 exit, merge/release authorization, triangle-level collision proof, and final 029 completion remain open. See E424-2026-10-12B and the prior S4/S5 return-frame proof E424-2026-10-11G.
+
+## Historical 2026-09-29 continuation order (superseded by the 2026-10-11 overlay)
+
+This was the current decision-order overlay at that checkpoint. Earlier sections are historical decision lineage and remain useful provenance, but they do not override the 2026-10-11 overlay.
+
+### Current repository truth
+
+- Canonical main: 13356cae7e6ef8179f7e2e552211bb4d187f37fb
+- Active 029 spatial vehicle: PR #424 / frontend/029-spatial-world-continuation
+- Exact #424 head: 208c5570a8325bda10e2b427b97a30c3f439f111
+- #424 relation to main: 92 ahead / 0 behind
+- #424 state: OPEN / DRAFT / mergeable
+- Global current slice remains Issue #401 in Masterplan/NEXT_SLICES.md; #424 is a bounded spatial sub-frontier and not a second global current slice.
+
+### Current spatial order
+
+Y0 feature/leaf coverage closure
+→ Y1 renderer-substrate readiness / Three.js + WebGL2 adapter path
+→ S2–S10 structural visual embodiment acceptance
+→ S24 materials + lighting
+→ S25 holograms / payload presentation
+→ S26 ambient environment
+→ VC1 / AB1 integrated visual coherence checkpoint
+→ S27 performance
+→ S28 cross-feature choreography
+→ S29 final interaction choreography
+→ S30 exact-head repository proof
+→ S31 runtime/deployment reconciliation
+→ S32 human acceptance
+→ S33 final ProMax polish
+
+Y0 exists to prevent discovering missing product leaves after spatial geometry has been treated as final. Y1 is a rendering-substrate migration gate, not a new semantic hierarchy. The first implementation slice pins three@0.186.1 and proves an adapter path against real S2/S3 assembly descriptors without migrating the production Hero renderer yet. Exact head 5a4a353 is Browser-verified; the next boundary is one structural visual candidate combining S2-S10. Structural misses still return to their S2–S10 owner; effects never close missing structure.
+
+The first Y0 implementation pass also normalized S6 facility identity to the canonical Feature Registry ids. Three label-shaped aliases were found in the S6 assembly and had no broader fan-out, so they were repaired at the S6 owner and covered by a canonical-id regression test. The sourceModule field remains a descriptive presentation reference rather than authority.
+
+### Current verification boundary
+
+Historical verification state at that checkpoint: Governance PASS (36539522170), Full-System PASS (36539522147), Deep Security PASS (36539522181), Security/CodeQL PASS (36539522165), and Canonical Browser FAIL (36539522142, 87 passed / 4 skipped / 1 failed). That legacy failure belongs to its exact historical head; the 2026-10-11 code-bearing head has a new terminal Browser PASS. Do not carry the old failure forward as current evidence.
+
+### Durable decision rule
+
+Chat is a working surface, not project authority. A material decision, discrepancy, geometry calculation, evidence result, accepted/rejected alternative, or next-slice recommendation is not durable until it is recorded in the appropriate authoritative project surface. Use #409 for newcomer current-state transfer, the 029 evidence registry for verified findings/evidence, the Masterplan/checklist for ordered gates, Masterplan/NEXT_SLICES.md for the one global current slice, Product Law/WIRING for routing and authority rules, and the owning Issue/PR for bounded implementation context. Historical entries must remain explicitly historical rather than being rewritten into current truth.
+
+
 ---
 
 ## 1. Product foundation (standing)
@@ -110,22 +177,25 @@ The owner-visible acceptance gap is historical evidence from the recent Vision e
 
 ## 6. Current execution priority
 
-Do not re-open C0 as if it were unendorsed. Current `main` already has C0–C5 foundations, repository-owned Hero runtime, and classic Pages root. Remaining work is owned by active Issues and the canonical Masterplan, not by this historical chronology.
+The global current program frontier remains TEAM-BACKEND-030 / Issue #401. The spatial continuation is concurrently bounded inside PR #424 without creating a second global current-slice authority.
 
-- 029 remaining machine/camera/auth/C9 work: Issue **#278**.
-- Backend remaining gaps (provider stub, Gate 4, verification): Issue **#284**.
-- Conn-3 browser continuation: Issue **#204**.
-- **Only after C9 acceptance:** C10 ProMax. Issue **#83** is the later visual track, not a shortcut around #278.
+The next spatial implementation order is Y0 → Y1 → structural visual embodiment → S24 → S25 → S26 → VC1/AB1 → S27 → S28 → S29 → S30 → S31 → S32 → S33. The currently known Browser failure is owned by the isolated machine-core preview timing contract and should be hardened without weakening assertions or using arbitrary sleeps.
 
-Conn-3 live/browser proof and future security inquiries remain independent tracks. Vercel remains cut off. Command Deck is retired as an active product surface. ToolKit/Echo learning candidates come only from validated, generalized lessons.
+Do not advance to broad decorative work merely because renderer/material capabilities exist. Physical machine completeness, topology attachment, and camera participation remain upstream acceptance boundaries.
 
----
+The current successor-session source is Issue #409. The current evidence ledger is Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md. The detailed execution checklist is Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md. The authority-routing rule is Product_Law/WIRING.md.
 
 ## Quick links
 
-- [Dictionary](./DICTIONARY.md)
-- [Deploy manual](./USER_MANUAL_DEPLOYMENT.md)
-- [Hero baseline](./CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md)
-- [Experience rebaseline](./TEAMAI_029_EXPERIENCE_REBASELINE.md)
-- [Experience rebase checklist](./TEAMAI_029_EXPERIENCE_REBASE_CHECKLIST.md)
-- [Seat secret & free smoke](./TEAMAI_SEAT_SECRET_KEY_AND_FREE_SMOKE.md)
+- Dictionary: docs/DICTIONARY.md
+- Deploy manual: docs/USER_MANUAL_DEPLOYMENT.md
+- Hero baseline: docs/CHECKPOINT_TEAM-EXPERIENCE-029_HERO_SPATIAL_BASELINE_2026-09-07.md
+- Experience rebaseline: docs/TEAMAI_029_EXPERIENCE_REBASELINE.md
+- Evidence registry: Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md
+- Master execution checklist: Masterplan/TEAMAI_3D_WORLD_404_CHECKLIST.md
+- Canonical successor handoff, Issue #409: https://github.com/RbrtMrlsIII/TeamAi/issues/409
+
+
+## 2026-09-29 - Y0 feature/leaf coverage classification
+
+The Feature Registry + Tree Census descent is now durable in docs/TEAMAI_029_Y0_FEATURE_LEAF_COVERAGE_AUDIT.md. The key finding is that a feature existing in product grammar does not imply a new machine branch. Workspace HQ and Seats are the current SPATIAL_SURFACE candidates; most other features remain UI handoffs or read-model payloads. Five gaps are preserved for existing owners instead of creating a second spatial issue tree.

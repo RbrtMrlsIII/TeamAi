@@ -38,6 +38,30 @@ export function listFrontendFeatures() {
  * The frontend may show a complete feature vocabulary while keeping all
  * restricted facilities visibly locked until authoritative runtime state says otherwise.
  */
+
+const FEATURE_SURFACE_TERMINAL_CLASS = Object.freeze({
+  'spatial': 'SPATIAL_SURFACE',
+  'spatial-read-model': 'READ_MODEL_ONLY',
+  'spatial-handoff': 'APP_UI_HANDOFF',
+  'spatial-configuration': 'APP_UI_HANDOFF',
+  'normal-ui': 'APP_UI_HANDOFF',
+  'read-model': 'READ_MODEL_ONLY',
+});
+
+export function getFeatureTerminalClasses(featureOrId) {
+  const feature = typeof featureOrId === 'string'
+    ? getFrontendFeature(featureOrId)
+    : featureOrId;
+  if (!feature) return [];
+  const classes = new Set();
+  for (const token of String(feature.surface || '').split('+').filter(Boolean)) {
+    const terminalClass = FEATURE_SURFACE_TERMINAL_CLASS[token];
+    if (!terminalClass) throw new Error('unknown frontend feature surface token: ' + token);
+    classes.add(terminalClass);
+  }
+  return Object.freeze([...classes]);
+}
+
 export function getGuestPresentationState(featureOrId) {
   const feature = typeof featureOrId === 'string'
     ? getFrontendFeature(featureOrId)

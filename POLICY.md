@@ -2,6 +2,10 @@
 
 **Role:** execution policy only. Product meaning belongs to `Product_Law/PRODUCT_LAW.md`. Procedures belong to `skills/**/SKILL.md`. Current slice belongs to `Masterplan/NEXT_SLICES.md`.
 
+## 2026-09-28 029 spatial continuation
+
+PR #404 is merged historical spatial provenance. PR #424 is the active bounded 029 spatial continuation vehicle and remains Draft while its declared proof target and canonical synchronization requirements are satisfied. This continuation does not replace the global current-slice authority in `Masterplan/NEXT_SLICES.md` and does not move backend/runtime authority into the renderer.
+
 ## 2026-09-21 spatial PR migration checkpoint
 
 PR #398 is the reviewed 029 structural baseline merged into `main`. Current production-data/runtime work continues under Issue #401 / PR #402 on `backend/030-production-runtime-evidence`. It was created from exact PR #397 head `23a83ae166f0983b598910d616b1203ebf600096`; #397 is closed and historical. The active spatial renderer ownership is now `frontend/spatial/machine-world-renderer.js` → `public/machine-world-renderer.js`, while `public/hero-flex.js` remains the controller boundary.
@@ -37,15 +41,15 @@ The review unit is the PR's declared proof target and claimed scope. The owning 
 
 `O → R → U → C → A → V → E → A → M`
 
-- **O — Objective:** exact authorized outcome.
-- **R — Restrictions:** protected boundaries, dependencies, and prohibited shortcuts.
-- **U — User Authority:** user decision, scope, and explicit permission.
-- **C — Canonical Authority:** resolve meaning from Product Law, then checklist/current slice and owning Issue.
-- **A — Action:** smallest coherent change satisfying the authorized objective.
-- **V — Verification:** test the behavior actually claimed.
-- **E — Efficiency:** avoid duplicate documents, redundant tools, speculative refactors, and unnecessary runtime work.
-- **A — Audit:** reconcile code, contracts, Skills, indexes, evidence, and current state.
-- **M — Minimalistic Efficiency / Resource Use:** final implementation and evidence surface is no larger than required.
+- **O — Objective:** exact authorized outcome, including product-feature intent and visual-reference intent where applicable.
+- **R — Restrictions:** protected boundaries, dependencies, evidence rules, and prohibited shortcuts.
+- **U — User Authority:** user decision, scope, explicit permission, and acceptance boundary.
+- **C — Canonical Authority:** resolve meaning from Product Law first, then current slice/checklist, owning Issue, feature contracts, and applicable visual-reference interpretation.
+- **A — Action:** smallest coherent change that advances the authorized outcome without creating a competing authority.
+- **V — Verification:** test the behavior actually claimed, then wait for the **exact-head** validator set to finish. For spatial work, Canonical Browser must produce a terminal report/artifact before the change may be treated as browser-evidenced.
+- **E — Efficiency:** while CI/Browser is running, perform non-conflicting repository archaeology: history reconciliation, debris/stale-reference search, authority alignment, feature coverage review, independent geometry calculations, reference comparison, and next-commit preparation. Do not use this period to speculate or mutate the proof target blindly.
+- **A — Audit:** reconcile source, public mirrors, Product Law, feature grammar, Issues, Skills, workflows, evidence, reference assets, and current repository state. Flag discrepancies explicitly and preserve historical provenance.
+- **M — Minimalistic Efficiency / Resource Use:** keep the final implementation/evidence surface no larger than required, but do not remove evidence, tests, history, or reference material merely to make the repository look smaller.
 
 ## Governance
 Repository Governance Integrity lifecycle concurrency is keyed to the PR identity (or protected ref for push), so a newer PR event supersedes stale governance executions. Exact-head validation remains enforced inside each run and stale runs do not become current-state evidence.
@@ -81,6 +85,8 @@ For public live website testing, use only `https://RbrtMrlsIII.github.io/TeamAi/
 - **Required checks, evidence, canonical synchronization, and review-readiness must all pass before the PR is treated as a merge candidate or authorized for merge.** They are not a prerequisite for the Ready-for-review transition itself, because `review-readiness` is evaluated after that transition.
 - **Auto-merge is not used or relied upon for product changes.**
 - A PR may contain multiple related commits and multiple checklist items.
+- **Browser-completion discipline:** for any PR whose proof target includes browser-visible spatial behavior, a green status before the Browser workflow reaches a terminal result is incomplete evidence. Do not stop observation at “CI running.” Once Canonical Browser finishes, inspect its exact-head artifact/report and classify the result as accepted evidence, a reproducible defect, a stale/invalid run, or an unproven condition.
+- **No visual-only closure:** visual similarity to an MP4/PNG reference never closes a product or semantic gap. Conversely, a repository-green semantic implementation is not visually accepted merely because it satisfies tests. Product Law, feature contracts, machine structure, interaction semantics, and the endorsed visual references are evaluated together.
 - One slice is not required to equal one PR or one merge.
 - `main` changes through governed PRs only.
 
@@ -137,7 +143,7 @@ Never weaken a validator merely to obtain green CI. Existing tests must be class
 
 ## 2026-09-24 029 spatial acceptance correction boundary
 
-PR #404 remains a Draft implementation vehicle under the 029 lineage while the canonical current slice remains controlled by `Masterplan/NEXT_SLICES.md`. The exact head `965f0fb7db1ccf85fca8e30e7790d5f48404f768` contains a structural geometry correction rather than a validator-only workaround: the shared world profile provides explicit Seat-shell and outer-housing safety envelopes, the authored S4 division fan is preserved, and S5 evaluates its authored travel against outer housings and sibling Pods. The corresponding source-contract assertions now follow the current S5 renderer ownership.
+PR #404 is merged historical provenance; PR #424 is the active Draft implementation vehicle under the 029 lineage while the canonical current slice remains controlled by `Masterplan/NEXT_SLICES.md`. The exact current branch head `ba0d7dc7d057b9e778fd58cfd67d4d1b880402b4` contains a structural geometry correction rather than a validator-only workaround: the shared world profile provides explicit Seat-shell and outer-housing safety envelopes, the authored S4 division fan is preserved, and S5 evaluates its authored travel against outer housings and sibling Pods. The corresponding source-contract assertions now follow the current S5 renderer ownership.
 
 The correction is considered **implemented, not yet verified** until exact-head Full-System and Browser validators complete successfully. Governance synchronization is required because the PR changes governed spatial records. A green check may prove only the contract it runs; it does not close 029, establish deployment, or authorize merge.
 
@@ -162,7 +168,11 @@ The `Draft proof target` is a required PR proof contract. Its parser must recogn
 
 ## 3D world authority and census enforcement
 
-The 3D world has no independent Product Law or merge authority. Its Tree Authority XML, Machine Interaction Contract, implementation entry, and four-file Tree Census are subordinate structural records under Product Law, Masterplan, Policy, and the active 029 Issue.
+The 3D world has no independent Product Law or merge authority. Its Tree Authority XML, Machine Interaction Contract, implementation entry, and Tree Census are subordinate structural records under Product Law, Masterplan, Policy, the active 029 Issue, and the canonical frontend/product feature grammar.
+
+The 029 spatial target is not “a 3D world that resembles the reference.” It is the **TeamAi product expressed as one semantic spatial machine**. Product Law and feature contracts determine what must exist and what it means; the Hailuo MP4 and preserved PNG/reference-board material guide how the machine should feel and appear; S0-S33 implementation contracts determine how those meanings are physically projected and verified.
+
+When visual references, product behavior, and implementation constraints appear to conflict, resolve them through the authority chain rather than by silently dropping whichever requirement is harder.
 
 Governance Integrity must machine-check this structural record and execute the existing census synchronization contract against the full PR diff. Semantic tree/branch/division changes therefore cannot silently bypass Census reconciliation. Presentation-only proof modules remain outside Census synchronization only while they remain presentation-only and do not change semantic identity or structure.
 

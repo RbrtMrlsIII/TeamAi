@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 const runtime = await readFile(new URL('../public/hero-flex.js', import.meta.url), 'utf8');
+const cameraNavigation = await readFile(new URL('../public/hero-camera-navigation.js', import.meta.url), 'utf8');
 const renderer = await readFile(new URL('../public/machine-world-renderer.js', import.meta.url), 'utf8');
 const parts = await readFile(new URL('../public/hero-parts.js', import.meta.url), 'utf8');
 const auth = await readFile(new URL('../public/hero-auth-handoff.js', import.meta.url), 'utf8');
@@ -36,7 +37,7 @@ test('semantic POV catalog exists', () => {
     'WORKSPACE_CLOSE',
     'OVERHEAD_MAP',
     'DETAIL_ANCHOR',
-  ]) assert.match(runtime, new RegExp(cameraId));
+  ]) assert.match(cameraNavigation, new RegExp(cameraId));
   // CAM-R-RETIRE (#258 residual): HERO_LOW_ORBIT + TURN_FOLLOW intentionally removed
   assert.doesNotMatch(runtime, /HERO_LOW_ORBIT:\s*\{/);
   assert.doesNotMatch(runtime, /TURN_FOLLOW:\s*\{/);

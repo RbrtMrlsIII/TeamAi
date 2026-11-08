@@ -4,7 +4,8 @@
     <productLaw>Product_Law/PRODUCT_LAW.md</productLaw>
     <vision>docs/VISION.md</vision>
     <executionLedger>Issue #278</executionLedger>
-    <spatialExecutionGuide>Issue #396</spatialExecutionGuide>
+    <spatialExecutionGuide>Issue #405</spatialExecutionGuide>
+    <historicalSpatialGuide>Issue #396</historicalSpatialGuide>
     <frontendContract>Issue #400</frontendContract>
     <contract>docs/TEAMAI_3D_HERO_MACHINE_INTERACTION_CONTRACT.md</contract>
     <census>docs/TEAMAI_3D_HERO_TREE_CENSUS.md</census>
