@@ -428,6 +428,87 @@ test('S7 operations machine exposes paired fin actuator housings inside the fin 
   );
 });
 
+test('S7 operations exposes one nested hinge pin between hinge-core and the primary fin actuator', () => {
+  let stateCount = 0;
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const expansionAmount of [0, 0.5, 1]) {
+      const scene = createBranchConnectionCore({ seatCount, expansionAmount });
+      const machinery = deriveMachineFacilityMachinery({
+        facilityAssemblies: deriveMachineFacilityAssemblies({
+          outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+        }),
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      const validation = validateMachineFacilityMachinery(machinery);
+      assert.equal(validation.valid, true, validation.reasons.join(', '));
+
+      for (const machine of machinery) {
+        const pins = machine.mechanicalDetails.filter((entry) => entry.role === 'fin-hinge-pin');
+        if (machine.machineRole !== 'operations') {
+          assert.equal(pins.length, 0, machine.machineRole);
+          continue;
+        }
+        assert.equal(pins.length, 1);
+        assert.equal(machine.clearanceProfile.safe, true);
+        assert.ok(machine.clearanceProfile.minimumAvailableClearance >= 0.16 - 1e-9);
+
+        const pin = pins[0];
+        const hinge = machine.components.find((entry) => entry.role === 'hinge-core');
+        const actuator = machine.mechanicalDetails.find((entry) => entry.role === 'fin-actuator-primary');
+        assert.ok(hinge && actuator);
+        assert.equal(pin.profile, 'operations-fin-hinge-pin-v1');
+        assert.equal(pin.shape, 'BOX');
+        assert.equal(pin.parentRole, 'hinge-core');
+        assert.equal(pin.attachmentTargetRole, 'fin-actuator-primary');
+        assert.equal(pin.materialRole, 'metal2');
+        assert.equal(pin.constructionSlice, 'S7');
+        assert.equal(pin.constructionOwner, 'frontend/spatial/machine-facility-machinery.js');
+        assert.ok(machine.subject.sourcePartIds.includes(pin.id));
+        assert.equal(pin.center.y, hinge.center.y);
+
+        const dx = actuator.center.x - hinge.center.x;
+        const dz = actuator.center.z - hinge.center.z;
+        const span = Math.hypot(dx, dz);
+        assert.ok(Math.abs(pin.dimensions.z - span * 0.72) < 1e-9);
+        assert.ok(Math.abs(pin.center.x - (hinge.center.x + actuator.center.x) * 0.5) < 1e-9);
+        assert.ok(Math.abs(pin.center.z - (hinge.center.z + actuator.center.z) * 0.5) < 1e-9);
+        assert.ok(Math.abs(pin.rotationY - Math.atan2(dx, dz)) < 1e-9);
+
+        const axis = { x: dx / span, z: dz / span };
+        const endGap = (span - pin.dimensions.z) * 0.5;
+        for (const body of [hinge, actuator]) {
+          const reach = Math.hypot(body.dimensions.x, body.dimensions.y, body.dimensions.z) * 0.5;
+          assert.ok(endGap < reach, body.role + ': pin must nest into the existing body');
+        }
+        const center = machine.outerHousing.center;
+        const dimensions = machine.outerHousing.dimensions;
+        const angle = Math.atan2(axis.z, axis.x);
+        const housingBoundary = 1 / (
+          Math.abs(Math.cos(angle)) / (Math.abs(dimensions.x) * 0.5)
+          + Math.abs(Math.sin(angle)) / (Math.abs(dimensions.z) * 0.5)
+        );
+        const radialReach = pin.dimensions.z * 0.5 + Math.hypot(pin.dimensions.x, pin.dimensions.y) * 0.5;
+        const localX = pin.center.x - center.x;
+        const localZ = pin.center.z - center.z;
+        assert.ok(
+          Math.hypot(localX, localZ) + radialReach <= housingBoundary - 0.03 + 1e-9,
+          'fin-hinge-pin:housing-bound',
+        );
+        assert.equal(machine.components.filter((entry) => entry.role === 'control-collar').length, 0);
+      }
+      const control = machinery.find((entry) => entry.machineRole === 'control');
+      assert.equal(control.mechanicalDetails.length, 20);
+      stateCount += 1;
+    }
+  }
+  assert.equal(stateCount, 30);
+
+  const source = readFileSync('frontend/spatial/machine-facility-machinery.js', 'utf8');
+  const browser = readFileSync('public/machine-facility-machinery.js', 'utf8');
+  assert.equal(browser, source, 'source and browser machinery must stay byte-identical');
+});
+
 test('S7 operations machine exposes layered fin caps and actuator rails inside fin envelopes', () => {
   const core = createBranchConnectionCore({ seatCount: 10 });
   const machinery = deriveMachineFacilityMachinery({
@@ -471,7 +552,7 @@ test('S7 operations machine exposes layered fin caps and actuator rails inside f
     operations.mechanicalDetails.filter((entry) => entry.role.startsWith('deployment-fin-')).length,
     4,
   );
-  assert.equal(operations.mechanicalDetails.length, 20);
+  assert.equal(operations.mechanicalDetails.length, 21);
 });
 
 
@@ -744,7 +825,7 @@ test('S7 control and access families expose nested retainers with independent ho
   const machinery = deriveMachineFacilityMachinery({
     outerHousings: core.parts.filter((part) => part.kind === 'outer-housing'),
   });
-  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V24');
+  assert.equal(MACHINE_FACILITY_MACHINERY_VERSION, 'S7-V25');
 
   const expected = Object.freeze({
     control: Object.freeze({
@@ -852,11 +933,13 @@ test('S7 facility chassis details are authored and included in each machine subj
   });
 
   for (const machine of machinery) {
-    const expectedDetailCount = machine.machineRole === 'operations' || machine.machineRole === 'control'
-      ? 20
-      : machine.machineRole === 'access-commerce'
-        ? 23
-        : 18;
+    const expectedDetailCount = machine.machineRole === 'operations'
+      ? 21
+      : machine.machineRole === 'control'
+        ? 20
+        : machine.machineRole === 'access-commerce'
+          ? 23
+          : 18;
     assert.equal(machine.mechanicalDetails.length, expectedDetailCount);
     assert.equal(machine.physicalInterfaces.length, machine.facilityIds.length + 2);
     assert.equal(machine.physicalInterfaces.filter((entry) => entry.role === 'machine-core-input').length, 1);

@@ -21,7 +21,7 @@ import {
 } from './machine-world-facility-shell.js';
 
 export const MACHINE_FACILITY_MACHINERY_ID = 'MACHINE-FACILITY-MACHINERY';
-export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V24';
+export const MACHINE_FACILITY_MACHINERY_VERSION = 'S7-V25';
 
 const ROOT_OWNER = 'frontend/spatial/machine-facility-machinery.js';
 
@@ -753,6 +753,46 @@ export function deriveMachineFacilityMachinery({
         : []),
       ...(assembly.machineRole === 'operations'
         ? [
+            (() => {
+              // One nested pin only. It stays on the Operations owner and
+              // bridges the existing hinge-core to the primary fin actuator.
+              // Control, ports, topology, camera, and materials are untouched.
+              const hinge = components.find((entry) => entry.role === 'hinge-core');
+              if (!hinge) throw new Error('Operations hinge pin requires hinge-core');
+              const actuatorCenter = {
+                x: housingCenter.x + basis.outward.x * frameDepth * 0.10
+                  + basis.tangent.x * 0.28,
+                y: housingCenter.y + frameHeight * 0.28,
+                z: housingCenter.z + basis.outward.z * frameDepth * 0.10
+                  + basis.tangent.z * 0.28,
+              };
+              const dx = actuatorCenter.x - hinge.center.x;
+              const dz = actuatorCenter.z - hinge.center.z;
+              const span = Math.hypot(dx, dz);
+              if (!(span > 0.12)) throw new Error('Operations hinge pin span is degenerate');
+              const length = span * 0.72;
+              return Object.freeze({
+                id: 'MACHINERY:' + assembly.branchId + ':FIN-HINGE-PIN',
+                role: 'fin-hinge-pin',
+                shape: 'BOX',
+                center: Object.freeze({
+                  x: (hinge.center.x + actuatorCenter.x) * 0.5,
+                  y: hinge.center.y,
+                  z: (hinge.center.z + actuatorCenter.z) * 0.5,
+                }),
+                dimensions: Object.freeze({
+                  x: Math.max(0.04, Math.min(frameWidth * 0.04, hinge.dimensions.x * 0.35)),
+                  y: Math.max(0.04, Math.min(frameHeight * 0.06, hinge.dimensions.y * 0.35)),
+                  z: length,
+                }),
+                rotationY: localZAxisRotationY({ x: dx, z: dz }),
+                materialRole: 'metal2',
+                parentRole: 'hinge-core',
+                attachmentTargetRole: 'fin-actuator-primary',
+                profile: 'operations-fin-hinge-pin-v1',
+                ...rootContext(assembly.branchId + ':FIN-HINGE-PIN'),
+              });
+            })(),
             Object.freeze({
               id: 'MACHINERY:' + assembly.branchId + ':FIN-PRIMARY-CAP',
               role: 'deployment-fin-primary-cap',

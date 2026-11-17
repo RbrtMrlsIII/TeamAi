@@ -34,7 +34,15 @@ Historical exact-head Browser artifacts remain diagnostic provenance. S7-V21 mac
 
 The persistent handoff/evidence surfaces for this sub-frontier are Issue #409 and Masterplan/TEAMAI_3D_WORLD_404_EVIDENCE.md; do not create another current-slice pointer.
 
-#### Latest #424 spatial checkpoint: paused Control canvas inspected on `ff273b5` (documentation head is not yet its own proof)
+#### Latest #424 spatial checkpoint: Operations nested hinge pin (local proof only; this head is not yet its own five-gate proof)
+
+- PR #424 remains OPEN / DRAFT. Issue #401 remains the single global Current Slice. No second spatial PR, merge, deploy, release, or 029-released claim. No TEAM-BACKEND-001 completion.
+- Parent documentation head `004dc056f48cb8e97428f5ffecc482ea5d49c679` already has its own gates (Full-System `42505912814`, Browser `42505912783`, plus Governance/Security/Deep Security on that same push). Those gates do not transfer here. Control stays at the inspected `ff273b5` baseline.
+- This slice adds one Operations attachment on the existing S7 machinery owner: `fin-hinge-pin` (`operations-fin-hinge-pin-v1`, machinery `S7-V25`). It bridges existing `hinge-core` and `fin-actuator-primary` only. Operations mechanical-detail count is 21. Analysis 18, Control 20, and Access-Commerce 23 are unchanged. Source and `public/machine-facility-machinery.js` stay byte-identical.
+- Local contract `tests/machine-facility-machinery.test.mjs` passed 28/28, including Seats 1–10 × expansion 0/0.5/1 with clearance floor 0.16. That is repository proof of the pin contract only.
+- **Next:** this head's own five gates, then inspect the Operations facility Browser artifact before any further Operations, Analysis, or Access-Commerce body. Do not change Control, camera, materials, ports, topology, or Seat law. Do not embody all four families in one slice.
+
+#### Historical #424 spatial checkpoint: paused Control canvas inspected on `ff273b5` (documentation head is not yet its own proof)
 
 - PR #424 remains OPEN / DRAFT. Issue #401 remains the single global Current Slice. No second spatial PR, merge, deploy, release, or 029-released claim.
 - Code-bearing head [`ff273b5fe30285d5e7dd52053ba51f3f2372e15b`](https://github.com/RbrtMrlsIII/TeamAi/commit/ff273b5fe30285d5e7dd52053ba51f3f2372e15b) only. These gates do not transfer to the documentation commit that records them.
