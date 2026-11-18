@@ -1,0 +1,105 @@
+/**
+ * Cam-3 — Free zoom / orbit about **current tree center** while a parent is open.
+ * Authority: TEAMAI_3D_HERO_HIERARCHY_CAMERA_FOLLOW_CONTRACT.md (Cam-3)
+ * Presentation only · no 029-released claim.
+ */
+
+/**
+ * V0.4 / Vision — free orbit + scroll about **current subject** while a tree is open.
+ * Owner: this module + applyNavCamera / wheel / pointer in hero-flex (via apply-cam2).
+ * Product rule: free zoom remains available when a hierarchy parent is open.
+ * Look-at stays on subject via poseAboutTreeCenter (and Cam-6 seatDock when forced).
+ */
+export function navAllowedOnOpenTree() {
+  return true;
+}
+
+/** Explicit product flag for tests / docs (must stay true unless Product Law changes). */
+export const V04_FREE_NAV_ON_OPEN_TREE = true;
+
+/**
+ * Pick the camera dock that represents the current tree (from Cam-2 resolve).
+ */
+export function baseDockForTree(state = {}, cameraTable = {}) {
+  const id = state.cameraId || 'HERO_WIDE';
+  return cameraTable[id] || cameraTable.HERO_WIDE || { p: [0, 6.4, 9.6], t: [0, 0.78, 0], f: 39 };
+}
+
+/**
+ * Build camera pose: zoom scales distance from center target (look-at),
+ * yaw/pitch orbit about that center. Look-at never leaves the center.
+ */
+export function fitWorldOverviewDock(baseDock = {}, envelopeRadius = 0, aspect = 1, safety = 1.08) {
+  const t = (baseDock.t || [0, 0.78, 0]).slice();
+  const bp = baseDock.p || [0, 6.4, 9.6];
+  const dx = bp[0] - t[0], dy = bp[1] - t[1], dz = bp[2] - t[2];
+  const currentDistance = Math.hypot(dx, dy, dz) || 1;
+  const radius = Math.max(0, Number(envelopeRadius) || 0);
+  const viewportAspect = Math.max(0.35, Number(aspect) || 1);
+  const fov = Math.max(1, Number(baseDock.f) || 39) * Math.PI / 180;
+  const tangent = Math.tan(fov / 2);
+  const limitingTangent = tangent * Math.min(1, viewportAspect);
+  const requiredDistance = radius > 0 ? radius * Math.max(1, Number(safety) || 1) / Math.max(0.05, limitingTangent) : 0;
+  if (!Number.isFinite(requiredDistance) || requiredDistance <= currentDistance) return { p: bp.slice(), t, f: baseDock.f ?? 39 };
+  const scale = requiredDistance / currentDistance;
+  return { p: [t[0] + dx * scale, t[1] + dy * scale, t[2] + dz * scale], t, f: baseDock.f ?? 39 };
+}
+
+export function worldPullbackProgress(navZoom, navZoomMax = 2) {
+  const z = Number(navZoom), max = Number(navZoomMax);
+  if (!Number.isFinite(z) || z <= 1) return 0;
+  if (!Number.isFinite(max) || max <= 1) return 1;
+  return Math.max(0, Math.min(1, (z - 1) / (max - 1)));
+}
+
+export function blendCameraPose(from = {}, to = {}, amount = 0) {
+  const t = Math.max(0, Math.min(1, Number(amount) || 0));
+  const e = t * t * (3 - 2 * t);
+  const fp = from.p || [0, 6.4, 9.6], tp = to.p || fp;
+  const ft = from.t || [0, 0.78, 0], tt = to.t || ft;
+  return {
+    p: [fp[0] + (tp[0] - fp[0]) * e, fp[1] + (tp[1] - fp[1]) * e, fp[2] + (tp[2] - fp[2]) * e],
+    t: [ft[0] + (tt[0] - ft[0]) * e, ft[1] + (tt[1] - ft[1]) * e, ft[2] + (tt[2] - ft[2]) * e],
+    f: (from.f ?? 39) + ((to.f ?? from.f ?? 39) - (from.f ?? 39)) * e,
+  };
+}
+
+export function poseAboutTreeCenter(baseDock, nav = {}) {
+  const t = (baseDock.t || [0, 0.78, 0]).slice();
+  const bp = baseDock.p || [0, 6.4, 9.6];
+  const zoom = Number(nav.navZoom);
+  const z = Number.isFinite(zoom) && zoom > 0 ? zoom : 1;
+  const yaw = Number(nav.navOrbitYaw) || 0;
+  const pitch = Number(nav.navOrbitPitch) || 0;
+
+  const dx = bp[0] - t[0];
+  const dy = bp[1] - t[1];
+  const dz = bp[2] - t[2];
+  const dist0 = Math.hypot(dx, dy, dz) || 1;
+  const dist = dist0 * z;
+
+  const horiz = Math.hypot(dx, dz) || 1;
+  const baseYaw = Math.atan2(dx, dz);
+  const elev = Math.atan2(dy, horiz) + pitch * 0.85;
+  const yawOut = baseYaw + yaw;
+
+  const cosE = Math.cos(elev);
+  const p = [
+    t[0] + Math.sin(yawOut) * dist * Math.max(0.15, Math.abs(cosE) || 0.15),
+    t[1] + Math.sin(elev) * dist,
+    t[2] + Math.cos(yawOut) * dist * Math.max(0.15, Math.abs(cosE) || 0.15),
+  ];
+  return { p, t, f: baseDock.f ?? 39 };
+}
+
+/**
+ * Whether wheel/pinch/orbit should apply for the current hierarchy state.
+ * Cam-3: always allow when open (center-locked).
+ */
+export function shouldApplyTreeNav(state = {}, { requireNavigateWhenClosed = true } = {}) {
+  if (state.openParentId) return navAllowedOnOpenTree();
+  if (!requireNavigateWhenClosed) return true;
+  const mode = state.inputMode;
+  if (mode && mode !== 'NAVIGATE') return false;
+  return true;
+}

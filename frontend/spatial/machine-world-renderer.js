@@ -12,6 +12,7 @@
 import { resolveMachineResponsive } from './machine-responsive.js';
 import { deriveMachineResponsiveReadability } from './machine-responsive-readability.js';
 import { createBranchConnectionCore } from './machine-core-layout-runtime.js';
+import { deriveMachinePodAssembly } from './machine-pod-assembly.js';
 import {
   createMachineExpansionMechanism,
   deriveMachineSeatDivisionExpansionPlan,
@@ -34,7 +35,7 @@ import { deriveConcentricRingEnvelope } from './hero-ring-envelope.js';
 import { deriveWorkspaceCoreGeometry } from './hero-workspace-core.js';
 import { deriveMachineWorldProfile } from './hero-world-profile.js';
 import { mapHeroThemeLighting } from './hero-theme-lighting-adapter.js';
-import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial } from './hero-authored-materials.js';
+import { authoredRingMaterial, authoredSeatShellMaterial, authoredSeatInsetMaterial, authoredHeroMaterialSet } from './hero-authored-materials.js';
 import { drawFocusedSeatDivision, deriveFocusedSeatDivisionGeometry } from './machine-seat-division-presentation.js';
 import { resolveSeatDivisionPayload, SEAT_DIVISION_ORDER } from './machine-seat-division-payload.js';
 import { electricalRoutePoint, electricalRoutePrefix, resolveElectricalEdgeRoute } from './machine-energy-flow.js';
@@ -43,15 +44,124 @@ import { resolveMachineSignalState, machineSignalVisualProfile } from './machine
 import { deriveMachineRingArticulation } from './machine-ring-articulation.js';
 import { deriveWorkspaceReceivingPresentation, R0_RECEIVING_PHASE } from './machine-r0-receiving.js';
 import { deriveMachineCoreAssembly, validateMachineCoreAssembly } from './machine-core-assembly.js';
-import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies } from './machine-facility-assembly.js';
+import { deriveMachineFacilityAssemblies, validateMachineFacilityAssemblies, MACHINE_FACILITY_BRANCH_IDS } from './machine-facility-assembly.js';
 import { deriveMachineFacilityMachinery, validateMachineFacilityMachinery, deriveMachineFacilityMechanismPresentation } from './machine-facility-machinery.js';
-import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges } from './machine-world-topology.js';
+import { buildMachineWorldTopology, validateMachineWorldTopology, getRenderableMachineWorldEdges, getRenderableMachineWorldEdgesForScope, getRenderableMachineWorldConduitSegments } from './machine-world-topology.js';
+import { getRenderableMachineWorldStructuralConduitSegments } from './machine-world-structural-conduit.js';
+import { deriveMachineWorldFacilityDockingEmbodiment } from './machine-world-facility-docking-embodiment.js';
+import {
+  deriveMachineWorldFacilityCarrierDescriptors,
+  validateMachineWorldFacilityCarrierDescriptors,
+  MACHINE_WORLD_FACILITY_CARRIER_VERSION,
+  MACHINE_WORLD_FACILITY_CARRIER_HINGE_BORE_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CARRIER_HINGE_INNER_RADIUS_RATIO,
+} from './machine-world-facility-carrier.js';
+import { derivePodDivisionDockingCollars, derivePodDivisionDockingSockets } from './machine-world-pod-docking-embodiment.js';
+import {
+  deriveMachineWorldFacilityShellDescriptors,
+  MACHINE_WORLD_FACILITY_BODY_OUTLINES,
+  MACHINE_WORLD_FACILITY_SHELL_VERSION,
+  MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT,
+  MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE,
+  MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS,
+  MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO,
+  MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE,
+  triangulateMachineWorldFacilityBodyOutline,
+} from './machine-world-facility-shell.js';
+import {
+  MACHINE_POD_SHELL_OUTLINE,
+  MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION,
+  createMachinePodShellVertices,
+} from './machine-pod-profile.js';
+import {
+  getMachineSeatAuthorizationShieldOutline,
+  getMachineSeatBehaviorBaffleOutline,
+  MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE,
+  MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE,
+  MACHINE_SEAT_WORKSPACE_SCOPE_FRAME_RAIL_RENDER_SHAPE as MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE,
+  MACHINE_SEAT_CAPABILITIES_LATTICE_ELEMENT_RENDER_SHAPE as MACHINE_CAPABILITY_LATTICE_ELEMENT_RENDER_SHAPE,
+  MACHINE_SEAT_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE as MACHINE_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE,
+  MACHINE_SEAT_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE as MACHINE_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE,
+} from './machine-seat-division-profile.js';
 const TAU = Math.PI * 2;
+
+export const MACHINE_WORLD_S7_FOCUS_SHELL_COLOR = Object.freeze({
+  profile: 's7-focus-shell-albedo-v1',
+  selectedLayers: Object.freeze(['main-shell', 'shoulder-plate']),
+  color: Object.freeze([0.64, 0.68, 0.70]),
+});
+
+export const MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL = Object.freeze({
+  profile: 's7-control-rotor-metal-v1',
+  branchId: 'BRANCH-OUTER-GAMMA',
+  componentRoles: Object.freeze(['rotor-ring', 'rotor-ring-secondary', 'control-collar']),
+  color: Object.freeze([0.64, 0.68, 0.70]),
+  emit: 0.02,
+  glow: 0.025,
+  alpha: 0.94,
+});
+
+// Selected Control only. The translucent analysis chamber must not depth-write
+// before the axial collar. Later world geometry still depth-tests against the
+// solid collar/rotor depth because depth writes are restored immediately.
+export const MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS = Object.freeze({
+  profile: 's7-control-selected-transparency-v1',
+  machineRole: 'control',
+  deferredRole: 'analysis-chamber',
+  depthRelationship: 'defer-translucent-chamber-after-solids-restore-depth-before-later-world',
+});
+
+export function partitionSelectedControlMechanismComponents(components, {
+  facilityFocused = false,
+  selected = false,
+  machineRole = '',
+} = {}) {
+  const list = Array.isArray(components) ? components : [];
+  const active = facilityFocused === true
+    && selected === true
+    && machineRole === MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS.machineRole;
+  if (!active) {
+    return Object.freeze({
+      active: false,
+      solids: Object.freeze(list.slice()),
+      deferred: Object.freeze([]),
+    });
+  }
+  const solids = [];
+  const deferred = [];
+  for (const component of list) {
+    if (component?.role === MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS.deferredRole) deferred.push(component);
+    else solids.push(component);
+  }
+  return Object.freeze({
+    active: true,
+    solids: Object.freeze(solids),
+    deferred: Object.freeze(deferred),
+  });
+}
+
+export const MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE = Object.freeze({
+  profile: 's7-face-normal-v4',
+  viewVectorProfile: 'camera-position-v1',
+  surfaceRoughnessProfile: 'focused-broad-highlight-v1',
+  selectedPlateRoughness: 0.64,
+  specularGain: 0.72,
+  grazingRimGain: 0.24,
+});
 const READABILITY_CAMERA_QUANTUM = 0.25;
 const STAR_FIELD = createDeepSpaceField({ seed: 396 });
 const POLYS = {
   hex: [[-1,0],[-.5,-.86],[.5,-.86],[1,0],[.5,.86],[-.5,.86]],
-  pod: [[-.9,-.25],[-.55,-.58],[.18,-.62],[.78,-.30],[.9,.12],[.5,.5],[-.3,.58],[-.82,.3]],
+  pod: MACHINE_POD_SHELL_OUTLINE,
+  POD_SHELL: Object.freeze(
+    MACHINE_POD_SHELL_OUTLINE.map(([x, z]) => [x / 0.9, z / 0.6]),
+  ),
+  CORE_PANEL: regularPolygon(8, Math.PI / 8),
+  authorizationShield: getMachineSeatAuthorizationShieldOutline(),
+  behaviorBaffle: getMachineSeatBehaviorBaffleOutline(),
   fin: [[-1,-.55],[.05,-.7],[1,.3],[.35,.66],[-.5,.55]],
   arc: [[-.95,-.3],[-.45,-.7],[.25,-.7],[.85,-.28],[.85,.18],[.25,.68],[-.42,.62],[-.86,.25],[-.28,.08],[.35,.16],[.18,-.08],[-.38,-.03]],
   diamond: [[0,-.9],[.72,0],[0,.9],[-.72,0]],
@@ -81,13 +191,22 @@ const finite = (v,f=0) => Number.isFinite(Number(v)) ? Number(v) : f;
 function resolveHeroMaterialContext(state, reducedMotion) {
   const root = globalThis.document?.documentElement;
   const heroState = String(state?.heroState || 'IDLE');
+  const facilityFocused = Boolean(state?.facilityFocused);
   return mapHeroThemeLighting({
     themeMode: root?.getAttribute?.('data-theme-mode') || 'light',
     themeSource: root?.getAttribute?.('data-theme-source') || 'default',
     density: root?.getAttribute?.('data-density') || 'default',
     atmosphere: 0.52,
-    surface: heroState === 'ACTIVE' || heroState === 'CONTRIBUTE' ? 0.82 : 0.62,
-    focus: heroState === 'FOCUS' || heroState === 'ACTIVE' ? 0.86 : 0.24,
+    surface: facilityFocused
+      ? 0.92
+      : heroState === 'ACTIVE' || heroState === 'CONTRIBUTE'
+        ? 0.82
+        : 0.62,
+    focus: facilityFocused
+      ? 0.90
+      : heroState === 'FOCUS' || heroState === 'ACTIVE'
+        ? 0.86
+        : 0.24,
     signal: heroState === 'CONTRIBUTE' ? 1 : heroState === 'ABSORB' || heroState === 'REFLECT' ? 0.78 : 0,
     status: heroState === 'BLOCKED' ? 0.8 : heroState === 'UNAUTHORIZED' ? 0.55 : 0,
     reducedMotion: Boolean(reducedMotion),
@@ -115,20 +234,167 @@ function program(gl, vs, fs) {
   return value;
 }
 
-function shapeBuffer(gl, polygon, height) {
-  const vertices = [];
-  const count = polygon.length;
-  const pushTri = (a,b,c) => vertices.push(...a,...b,...c);
-  for (let i = 1; i < count - 1; i += 1) {
-    pushTri([0,0,0],[polygon[i][0],0,polygon[i][1]],[polygon[i+1][0],0,polygon[i+1][1]]);
-    pushTri([0,height,0],[polygon[i+1][0],height,polygon[i+1][1]],[polygon[i][0],height,polygon[i][1]]);
+export function createExtrudedPolygonVertices(polygon,height) {
+  const vertices=[],count=polygon.length;
+  if(!Number.isFinite(Number(height))||!(Number(height)>0))throw new Error('FACILITY_BODY_EXTRUSION_HEIGHT_INVALID');
+  const pushTri=(a,b,c)=>vertices.push(...a,...b,...c);
+  const area=polygon.reduce((sum,p,i)=>{const q=polygon[(i+1)%count];return sum+p[0]*q[1]-q[0]*p[1];},0),ccw=area>0;
+  for(const [ai,bi,ci] of triangulateMachineWorldFacilityBodyOutline(polygon)){
+    const a=polygon[ai],b=polygon[bi],c=polygon[ci];
+    const ba=[a[0],0,a[1]],bb=[b[0],0,b[1]],bc=[c[0],0,c[1]];
+    const ta=[a[0],height,a[1]],tb=[b[0],height,b[1]],tc=[c[0],height,c[1]];
+    if(ccw){pushTri(ba,bb,bc);pushTri(ta,tc,tb);}else{pushTri(ba,bc,bb);pushTri(ta,tb,tc);}
   }
+  for(let i=0;i<count;i+=1){
+    const j=(i+1)%count,[ax,az]=polygon[i],[bx,bz]=polygon[j];
+    if(ccw){pushTri([ax,0,az],[bx,height,bz],[bx,0,bz]);pushTri([ax,0,az],[ax,height,az],[bx,height,bz]);}
+    else{pushTri([ax,0,az],[bx,0,bz],[bx,height,bz]);pushTri([ax,0,az],[bx,height,bz],[ax,height,az]);}
+  }
+  return new Float32Array(vertices);
+}
+
+/** Flat, geometric triangle normals for an unindexed TRIANGLES vertex stream. */
+export function createFlatTriangleNormals(vertices) {
+  if (!vertices || vertices.length === 0 || vertices.length % 9 !== 0) {
+    throw new Error('MACHINE_WORLD_SURFACE_VERTEX_STREAM_INVALID');
+  }
+  const normals = new Float32Array(vertices.length);
+  for (let offset = 0; offset < vertices.length; offset += 9) {
+    const abx = vertices[offset + 3] - vertices[offset];
+    const aby = vertices[offset + 4] - vertices[offset + 1];
+    const abz = vertices[offset + 5] - vertices[offset + 2];
+    const acx = vertices[offset + 6] - vertices[offset];
+    const acy = vertices[offset + 7] - vertices[offset + 1];
+    const acz = vertices[offset + 8] - vertices[offset + 2];
+    const nx = aby * acz - abz * acy;
+    const ny = abz * acx - abx * acz;
+    const nz = abx * acy - aby * acx;
+    const length = Math.hypot(nx, ny, nz);
+    if (!Number.isFinite(length) || length < 1e-8) {
+      throw new Error('MACHINE_WORLD_SURFACE_TRIANGLE_DEGENERATE');
+    }
+    const normal = [nx / length, ny / length, nz / length];
+    for (let vertex = 0; vertex < 3; vertex += 1) {
+      normals.set(normal, offset + vertex * 3);
+    }
+  }
+  return normals;
+}
+
+/** Inverse-transpose of the upper 3×3 model transform, column-major for WebGL. */
+export function createMachineWorldNormalMatrix(modelMatrix) {
+  if (!modelMatrix || modelMatrix.length !== 16) {
+    throw new Error('MACHINE_WORLD_NORMAL_MATRIX_MODEL_INVALID');
+  }
+  const c0 = [modelMatrix[0], modelMatrix[1], modelMatrix[2]];
+  const c1 = [modelMatrix[4], modelMatrix[5], modelMatrix[6]];
+  const c2 = [modelMatrix[8], modelMatrix[9], modelMatrix[10]];
+  const cross = (a, b) => [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0],
+  ];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cofactor0 = cross(c1, c2);
+  const determinant = dot(c0, cofactor0);
+  if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-10) {
+    throw new Error('MACHINE_WORLD_NORMAL_MATRIX_SINGULAR');
+  }
+  const cofactor1 = cross(c2, c0);
+  const cofactor2 = cross(c0, c1);
+  return new Float32Array([
+    cofactor0[0] / determinant, cofactor0[1] / determinant, cofactor0[2] / determinant,
+    cofactor1[0] / determinant, cofactor1[1] / determinant, cofactor1[2] / determinant,
+    cofactor2[0] / determinant, cofactor2[1] / determinant, cofactor2[2] / determinant,
+  ]);
+}
+
+function shapeBuffer(gl, polygon, height) {
+  return createExtrudedPolygonVertices(polygon, height);
+}
+
+export function createAnnularPrismVertices({
+  segments = 24,
+  innerRadius = 0.72,
+  height = 1,
+} = {}) {
+  const segmentCount = Math.max(8, Math.min(96, Math.floor(finite(segments, 24))));
+  const inner = clamp(finite(innerRadius, 0.72), 0.50, 0.90);
+  const outer = 1;
+  const topY = Math.max(0.01, finite(height, 1));
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (radius, angle, y) => [
+    Math.cos(angle) * radius,
+    y,
+    Math.sin(angle) * radius,
+  ];
+
+  for (let index = 0; index < segmentCount; index += 1) {
+    const angle0 = (index / segmentCount) * TAU;
+    const angle1 = ((index + 1) / segmentCount) * TAU;
+
+    const outerBottom0 = point(outer, angle0, 0);
+    const outerBottom1 = point(outer, angle1, 0);
+    const innerBottom0 = point(inner, angle0, 0);
+    const innerBottom1 = point(inner, angle1, 0);
+    const outerTop0 = point(outer, angle0, topY);
+    const outerTop1 = point(outer, angle1, topY);
+    const innerTop0 = point(inner, angle0, topY);
+    const innerTop1 = point(inner, angle1, topY);
+
+    // Upper/lower annular surfaces leave the central opening empty.
+    pushTri(outerTop0, innerTop1, outerTop1);
+    pushTri(outerTop0, innerTop0, innerTop1);
+    pushTri(outerBottom0, outerBottom1, innerBottom1);
+    pushTri(outerBottom0, innerBottom1, innerBottom0);
+
+    // The outer and inner walls close the washer-like collar.
+    pushTri(outerBottom0, outerTop1, outerBottom1);
+    pushTri(outerBottom0, outerTop0, outerTop1);
+    pushTri(innerBottom0, innerBottom1, innerTop1);
+    pushTri(innerBottom0, innerTop1, innerTop0);
+  }
+
+  return new Float32Array(vertices);
+}
+
+
+export function createAxialCylinderVertices({ segments = 16 } = {}) {
+  const count = Math.max(8, Math.min(64, Math.floor(finite(segments, 16))));
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (angle, z) => [Math.cos(angle), Math.sin(angle), z];
   for (let i = 0; i < count; i += 1) {
-    const j = (i + 1) % count;
-    const [ax,az] = polygon[i];
-    const [bx,bz] = polygon[j];
-    pushTri([ax,0,az],[bx,0,bz],[bx,height,bz]);
-    pushTri([ax,0,az],[bx,height,bz],[ax,height,az]);
+    const a0 = (i / count) * TAU;
+    const a1 = ((i + 1) / count) * TAU;
+    const b0 = point(a0, -1), b1 = point(a1, -1);
+    const f0 = point(a0, 1), f1 = point(a1, 1);
+    pushTri([0, 0, 1], f0, f1);
+    pushTri([0, 0, -1], b1, b0);
+    pushTri(b0, b1, f1);
+    pushTri(b0, f1, f0);
+  }
+  return new Float32Array(vertices);
+}
+
+export function createAxialAnnularPrismVertices({ segments = MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS, innerRadius = MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO } = {}) {
+  const count = Math.max(8, Math.min(96, Math.floor(finite(segments, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_SEGMENTS))));
+  const inner = clamp(finite(innerRadius, MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_INNER_RADIUS_RATIO), 0.50, 0.90);
+  const vertices = [];
+  const pushTri = (a, b, c) => vertices.push(...a, ...b, ...c);
+  const point = (radius, angle, z) => [Math.cos(angle) * radius, Math.sin(angle) * radius, z];
+  for (let i = 0; i < count; i += 1) {
+    const a0 = (i / count) * TAU;
+    const a1 = ((i + 1) / count) * TAU;
+    const ob0 = point(1, a0, -1), ob1 = point(1, a1, -1);
+    const of0 = point(1, a0, 1), of1 = point(1, a1, 1);
+    const ib0 = point(inner, a0, -1), ib1 = point(inner, a1, -1);
+    const if0 = point(inner, a0, 1), if1 = point(inner, a1, 1);
+    pushTri(of0, of1, if1); pushTri(of0, if1, if0);
+    pushTri(ob0, ib1, ob1); pushTri(ob0, ib0, ib1);
+    pushTri(ob0, ob1, of1); pushTri(ob0, of1, of0);
+    pushTri(ib0, if1, ib1); pushTri(ib0, if0, if1);
   }
   return new Float32Array(vertices);
 }
@@ -195,18 +461,84 @@ const PRIMITIVE_POLYGONS = Object.freeze({
   CORE_HEX: regularPolygon(6, Math.PI / 6),
   CORE_OCT: regularPolygon(8, Math.PI / 8),
   CORE_DODEC: regularPolygon(12, Math.PI / 12),
+  BOX: Object.freeze([[-1, -1], [1, -1], [1, 1], [-1, 1]]),
   CUBE: POLYS.pod,
+  [MACHINE_SEAT_AUTHORIZATION_SHIELD_RENDER_SHAPE]: POLYS.authorizationShield,
+  [MACHINE_SEAT_BEHAVIOR_BAFFLE_RENDER_SHAPE]: POLYS.behaviorBaffle,
   CYL: regularPolygon(16),
-  TORUS: regularPolygon(12),
   SPH: regularPolygon(10),
-});
-
-const RING_MATERIALS = Object.freeze({
-  metal: Object.freeze({ color: [0.42, 0.50, 0.56], emit: 0.02 }),
-  metal2: Object.freeze({ color: [0.28, 0.36, 0.42], emit: 0.01 }),
-  glass: Object.freeze({ color: [0.58, 0.72, 0.82], emit: 0.06 }),
-  energy: Object.freeze({ color: [0.28, 0.76, 1.00], emit: 0.16 }),
-  trace: Object.freeze({ color: [0.30, 0.52, 0.66], emit: 0.03 }),
+  POD_RIB: Object.freeze([
+    [-1.00, -0.52],
+    [-0.32, -0.92],
+    [0.42, -0.78],
+    [1.00, -0.18],
+    [0.82, 0.58],
+    [0.10, 1.00],
+    [-0.72, 0.64],
+  ]),
+  CORE_FIN: Object.freeze([
+    [-1.00, -0.70],
+    [-0.38, -1.00],
+    [0.48, -0.92],
+    [1.00, -0.12],
+    [0.62, 0.74],
+    [-0.22, 1.00],
+    [-1.00, 0.26],
+  ]),
+  FACILITY_FIN_PRIMARY: Object.freeze([
+    [-1.00, -0.95], [-0.25, -1.00], [0.55, -0.92],
+    [0.95, -0.55], [1.00, 0.15], [0.65, 0.72],
+    [0.05, 1.00], [-0.70, 0.58], [-1.00, 0.05],
+  ]),
+  FACILITY_FIN_SECONDARY: Object.freeze([
+    [-1.00, -0.90], [-0.40, -1.00], [0.42, -0.96],
+    [0.95, -0.48], [1.00, 0.28], [0.55, 0.78],
+    [-0.10, 1.00], [-0.78, 0.55], [-1.00, 0.00],
+  ]),
+  FACILITY_SENSOR_DISH: Object.freeze([
+    [-1.00, -0.46], [-0.58, -0.86], [0.18, -0.96], [0.86, -0.60],
+    [1.00, 0.18], [0.56, 0.78], [-0.22, 0.92], [-0.86, 0.52],
+  ]),
+  POD_SHELL_PANEL: Object.freeze([
+    [-1.00, -0.48],
+    [-0.54, -0.66],
+    [0.42, -0.58],
+    [0.96, -0.24],
+    [0.86, 0.40],
+    [0.20, 0.64],
+    [-0.72, 0.48],
+    [-1.00, 0.12],
+  ]),
+  CORE_BRACE: Object.freeze([
+    [-1.00, -0.18],
+    [1.00, -0.18],
+    [1.00, 0.18],
+    [-1.00, 0.18],
+  ]),
+  [MACHINE_SCOPE_FRAME_RAIL_RENDER_SHAPE]: Object.freeze([
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+    [-1, 1],
+  ]),
+  [MACHINE_CAPABILITY_LATTICE_ELEMENT_RENDER_SHAPE]: Object.freeze([
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+    [-1, 1],
+  ]),
+  [MACHINE_CONNECTION_COUPLER_ELEMENT_RENDER_SHAPE]: Object.freeze([
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+    [-1, 1],
+  ]),
+  [MACHINE_TOOLKIT_RACK_ELEMENT_RENDER_SHAPE]: Object.freeze([
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+    [-1, 1],
+  ]),
 });
 
 function translateMatrix(x, y, z) {
@@ -221,12 +553,8 @@ function scaleMatrix(x, y, z) {
   ]);
 }
 
-function rotateYMatrix(angle) {
-  const c = Math.cos(angle), s = Math.sin(angle);
-  return new Float32Array([
-    c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1,
-  ]);
-}
+function rotateYMatrix(angle) {const c=Math.cos(angle),s=Math.sin(angle);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]);}
+function rotateZMatrix(angle) {const c=Math.cos(angle),s=Math.sin(angle);return new Float32Array([c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1]);}
 
 function multiplyMatrix(a, b) {
   const out = new Float32Array(16);
@@ -242,13 +570,106 @@ function multiplyMatrix(a, b) {
   return out;
 }
 
+export function centeredPrismBaseY(centerY, height) {
+  return finite(centerY) - Math.max(0, finite(height)) * 0.5;
+}
+
+function segmentTubeRotationMatrix(start, end) {
+  const dx = finite(end?.x) - finite(start?.x);
+  const dy = finite(end?.y) - finite(start?.y);
+  const dz = finite(end?.z) - finite(start?.z);
+  const length = Math.hypot(dx, dy, dz);
+  if (length < 0.000001) return null;
+
+  const yx = dx / length;
+  const yy = dy / length;
+  const yz = dz / length;
+  const reference = Math.abs(yy) < 0.92
+    ? [0, 1, 0]
+    : [1, 0, 0];
+
+  let xx = reference[1] * yz - reference[2] * yy;
+  let xy = reference[2] * yx - reference[0] * yz;
+  let xz = reference[0] * yy - reference[1] * yx;
+  const xLength = Math.hypot(xx, xy, xz) || 1;
+  xx /= xLength;
+  xy /= xLength;
+  xz /= xLength;
+
+  const zx = yy * xz - yz * xy;
+  const zy = yz * xx - yx * xz;
+  const zz = yx * xy - yy * xx;
+  return new Float32Array([
+    xx, xy, xz, 0,
+    yx, yy, yz, 0,
+    zx, zy, zz, 0,
+    0, 0, 0, 1,
+  ]);
+}
+
+function directionalTubeTransform(center, direction, length, radius) {
+  const halfLength = Math.max(0.01, finite(length, 0.1) * 0.5);
+  const dx = finite(direction?.x);
+  const dy = finite(direction?.y);
+  const dz = finite(direction?.z);
+  const magnitude = Math.hypot(dx, dy, dz);
+  if (magnitude < 0.000001) return null;
+  const unit = { x: dx / magnitude, y: dy / magnitude, z: dz / magnitude };
+  return segmentTubeTransform({
+    start: {
+      x: finite(center?.x) - unit.x * halfLength,
+      y: finite(center?.y) - unit.y * halfLength,
+      z: finite(center?.z) - unit.z * halfLength,
+    },
+    end: {
+      x: finite(center?.x) + unit.x * halfLength,
+      y: finite(center?.y) + unit.y * halfLength,
+      z: finite(center?.z) + unit.z * halfLength,
+    },
+    radius: Math.max(0.01, finite(radius, 0.035)),
+  });
+}
+
+export function segmentTubeTransform(segment, radiusScale = 1) {
+  const start = segment?.start;
+  const end = segment?.end;
+  const dx = finite(end?.x) - finite(start?.x);
+  const dy = finite(end?.y) - finite(start?.y);
+  const dz = finite(end?.z) - finite(start?.z);
+  const length = Math.hypot(dx, dy, dz);
+  if (length < 0.000001) return null;
+  const rotation = segmentTubeRotationMatrix(start, end);
+  if (!rotation) return null;
+  const radius = Math.max(0.01, finite(segment?.radius, 0.035) * Math.max(0.1, Number(radiusScale) || 1));
+  return multiplyMatrix(
+    translateMatrix(
+      (finite(start?.x) + finite(end?.x)) * 0.5,
+      (finite(start?.y) + finite(end?.y)) * 0.5,
+      (finite(start?.z) + finite(end?.z)) * 0.5,
+    ),
+    multiplyMatrix(
+      rotation,
+      multiplyMatrix(
+        translateMatrix(0, -length * 0.5, 0),
+        scaleMatrix(radius, length, radius),
+      ),
+    ),
+  );
+}
+
 export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const gl = providedGl || canvas?.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
   if (!canvas || !gl) throw new Error('machine-world renderer requires the canonical Hero canvas and WebGL context');
+  let activeHeroMaterials = authoredHeroMaterialSet({ themeMode: 'light', density: 'default' });
+  let activeHeroLighting = mapHeroThemeLighting({ themeMode: 'light', density: 'default' });
 
   const solid = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; varying vec3 W; void main(){vec4 wp=M*vec4(p,1.0);W=wp.xyz;gl_Position=P*V*wp;}',
-    'precision mediump float; uniform vec4 c; uniform float glow; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));float d=.34+.66*max(dot(n,normalize(vec3(-.42,.86,.32))),0.0);float rim=pow(1.0-max(dot(n,normalize(vec3(.15,.85,.50))),0.0),3.0);gl_FragColor=vec4(c.rgb*(d+.10*rim)+vec3(.05,.08,.11)*glow,c.a);}'
+    'precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; varying vec3 W; void main(){vec3 n=normalize(vec3(W.x*.018+.12, .88, W.z*.018+.20));vec3 l=normalize(keyDirection);vec3 v=normalize(vec3(.15,.85,.50));vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*.18+c.rgb*(rimStrength*.10*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}'
+  );
+  const shellSurface = program(gl,
+    'attribute vec3 p; attribute vec3 aNormal; uniform mat4 P; uniform mat4 V; uniform mat4 M; uniform mat3 NM; varying vec3 Nw; varying vec3 Pw; void main(){vec4 wp=M*vec4(p,1.0);Nw=normalize(NM*aNormal);Pw=wp.xyz;gl_Position=P*V*wp;}',
+    `precision mediump float; uniform vec4 c; uniform float glow; uniform float keyIntensity; uniform float fillIntensity; uniform vec3 keyDirection; uniform float rimStrength; uniform float roughness; uniform vec3 spec; uniform vec3 cameraPosition; varying vec3 Nw; varying vec3 Pw; void main(){vec3 n=normalize(Nw);vec3 l=normalize(keyDirection);vec3 v=normalize(cameraPosition-Pw);vec3 h=normalize(l+v);float ndl=max(dot(n,l),0.0);float d=.18+.52*fillIntensity+.86*keyIntensity*ndl;float specPower=mix(8.0,64.0,1.0-clamp(roughness,0.0,1.0));float specular=pow(max(dot(n,h),0.0),specPower);float rim=pow(1.0-max(dot(n,v),0.0),mix(2.0,5.0,clamp(roughness,0.0,1.0)));vec3 lit=c.rgb*d+spec*specular*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain.toFixed(2)}+c.rgb*(rimStrength*${MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain.toFixed(2)}*rim);gl_FragColor=vec4(lit+vec3(.05,.08,.11)*glow,c.a);}`
   );
   const line = program(gl,
     'attribute vec3 p; uniform mat4 P; uniform mat4 V; uniform mat4 M; void main(){gl_Position=P*V*M*vec4(p,1.0);}',
@@ -265,6 +686,27 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const solidM = gl.getUniformLocation(solid,'M');
   const solidColor = gl.getUniformLocation(solid,'c');
   const solidGlow = gl.getUniformLocation(solid,'glow');
+  const solidKeyIntensity = gl.getUniformLocation(solid,'keyIntensity');
+  const solidFillIntensity = gl.getUniformLocation(solid,'fillIntensity');
+  const solidKeyDirection = gl.getUniformLocation(solid,'keyDirection');
+  const solidRimStrength = gl.getUniformLocation(solid,'rimStrength');
+  const solidRoughness = gl.getUniformLocation(solid,'roughness');
+  const solidSpecular = gl.getUniformLocation(solid,'spec');
+  const shellSurfacePos = gl.getAttribLocation(shellSurface, 'p');
+  const shellSurfaceNormal = gl.getAttribLocation(shellSurface, 'aNormal');
+  const shellSurfaceP = gl.getUniformLocation(shellSurface, 'P');
+  const shellSurfaceV = gl.getUniformLocation(shellSurface, 'V');
+  const shellSurfaceM = gl.getUniformLocation(shellSurface, 'M');
+  const shellSurfaceNormalMatrix = gl.getUniformLocation(shellSurface, 'NM');
+  const shellSurfaceCameraPosition = gl.getUniformLocation(shellSurface, 'cameraPosition');
+  const shellSurfaceColor = gl.getUniformLocation(shellSurface, 'c');
+  const shellSurfaceGlow = gl.getUniformLocation(shellSurface, 'glow');
+  const shellSurfaceKeyIntensity = gl.getUniformLocation(shellSurface, 'keyIntensity');
+  const shellSurfaceFillIntensity = gl.getUniformLocation(shellSurface, 'fillIntensity');
+  const shellSurfaceKeyDirection = gl.getUniformLocation(shellSurface, 'keyDirection');
+  const shellSurfaceRimStrength = gl.getUniformLocation(shellSurface, 'rimStrength');
+  const shellSurfaceRoughness = gl.getUniformLocation(shellSurface, 'roughness');
+  const shellSurfaceSpecular = gl.getUniformLocation(shellSurface, 'spec');
   const linePos = gl.getAttribLocation(line,'p');
   const lineP = gl.getUniformLocation(line,'P');
   const lineV = gl.getUniformLocation(line,'V');
@@ -307,6 +749,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   const SPATIAL_TOPOLOGY_RESOLUTION = 24;
   let machineWorldSpatialCache = null;
   let responsiveReadabilityCache = null;
+
+  // Initialize responsive contract synchronously so consumers do not race the first RAF.
+  const initialWidth = canvas.clientWidth || 1180;
+  const initialHeight = canvas.clientHeight || 760;
+  const initialResponsive = resolveMachineResponsive({ width: initialWidth, height: initialHeight });
+  canvas.dataset.machineWorldResponsiveTier = initialResponsive.tier;
+  canvas.dataset.machineWorldResponsiveOrientation = initialResponsive.orientation;
 
   function worldProfile(seatCount) {
     const profile = deriveMachineWorldProfile(seatCount);
@@ -415,13 +864,109 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let entry = primitiveBuffers.get(key);
     if (entry) return entry;
     const polygon = PRIMITIVE_POLYGONS[key] || PRIMITIVE_POLYGONS.CUBE;
-    const data = shapeBuffer(gl, polygon, 1);
+    const data = key === 'TORUS_AXIAL'
+      ? createAxialAnnularPrismVertices()
+      : key === 'CYLINDER_AXIAL'
+        ? createAxialCylinderVertices()
+        : key === 'TORUS'
+          ? createAnnularPrismVertices({
+              segments: MACHINE_WORLD_FACILITY_CARRIER_HINGE_BORE_SEGMENTS,
+              innerRadius: MACHINE_WORLD_FACILITY_CARRIER_HINGE_INNER_RADIUS_RATIO,
+            })
+          : key === 'POD_SHELL'
+            ? createMachinePodShellVertices()
+            : shapeBuffer(gl, polygon, 1);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    entry = { buffer, count: data.length / 3 };
+    entry = { buffer, count: data.length / 3, vertices: data };
     primitiveBuffers.set(key, entry);
     return entry;
+  }
+
+  function normalizeFacilityBodyOutline(outline,envelopeOutline=outline){
+    const points=Array.isArray(outline)?outline.filter(p=>Array.isArray(p)&&p.length>=2):[];
+    const envelope=Array.isArray(envelopeOutline)?envelopeOutline.filter(p=>Array.isArray(p)&&p.length>=2):[];
+    if(points.length<3||envelope.length<3)return PRIMITIVE_POLYGONS.CUBE;
+    let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+    for(const [x,z] of envelope){minX=Math.min(minX,Number(x)||0);maxX=Math.max(maxX,Number(x)||0);minZ=Math.min(minZ,Number(z)||0);maxZ=Math.max(maxZ,Number(z)||0);}
+    const cx=(minX+maxX)*0.5,cz=(minZ+maxZ)*0.5,sx=2/Math.max(1e-6,maxX-minX),sz=2/Math.max(1e-6,maxZ-minZ);
+    return points.map(([x,z])=>[((Number(x)||0)-cx)*sx,((Number(z)||0)-cz)*sz]);
+  }
+  function ensureFacilityBodyBuffer(silhouette,outline=null,envelopeOutline=null){
+    const fallback=MACHINE_WORLD_FACILITY_BODY_OUTLINES[String(silhouette||'')]||PRIMITIVE_POLYGONS.CUBE;
+    const chosen=Array.isArray(outline)&&outline.length>=3?outline:fallback;
+    const envelope=Array.isArray(envelopeOutline)&&envelopeOutline.length>=3?envelopeOutline:fallback;
+    const key='FACILITY_FACETED_BODY:'+String(silhouette||'')+':'+JSON.stringify(chosen)+':'+JSON.stringify(envelope);
+    let entry=primitiveBuffers.get(key);if(entry)return entry;
+    const polygon=normalizeFacilityBodyOutline(chosen,envelope),data=shapeBuffer(gl,polygon,1),buffer=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
+    entry={buffer,count:data.length/3,vertices:data};primitiveBuffers.set(key,entry);return entry;
+  }
+
+  function ensureSurfaceNormalBuffer(entry) {
+    if (!entry || !entry.vertices || entry.vertices.length !== entry.count * 3) return null;
+    if (entry.surfaceNormalBuffer) return entry.surfaceNormalBuffer;
+    const normals = createFlatTriangleNormals(entry.vertices);
+    const normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+    entry.surfaceNormalBuffer = normalBuffer;
+    return normalBuffer;
+  }
+
+  function drawBuffer(entry, transform, material, options = {}) {
+    if (!entry) return;
+    const color = material?.color || [0.5, 0.6, 0.7];
+    const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
+    const spec = Array.isArray(material?.spec) ? material.spec : [0, 0, 0];
+    const roughness = clamp(finite(options.rough, material?.rough ?? 0.5), 0, 1);
+    const useSurfaceNormals = options.surfaceNormals === true && Boolean(entry.surfaceNormalBuffer);
+    const activeProgram = useSurfaceNormals ? shellSurface : solid;
+    const positionAttribute = useSurfaceNormals ? shellSurfacePos : solidPos;
+    const projectionUniform = useSurfaceNormals ? shellSurfaceP : solidP;
+    const viewUniform = useSurfaceNormals ? shellSurfaceV : solidV;
+    const modelUniform = useSurfaceNormals ? shellSurfaceM : solidM;
+    const colorUniform = useSurfaceNormals ? shellSurfaceColor : solidColor;
+    const glowUniform = useSurfaceNormals ? shellSurfaceGlow : solidGlow;
+    const keyIntensityUniform = useSurfaceNormals ? shellSurfaceKeyIntensity : solidKeyIntensity;
+    const fillIntensityUniform = useSurfaceNormals ? shellSurfaceFillIntensity : solidFillIntensity;
+    const keyDirectionUniform = useSurfaceNormals ? shellSurfaceKeyDirection : solidKeyDirection;
+    const rimStrengthUniform = useSurfaceNormals ? shellSurfaceRimStrength : solidRimStrength;
+    const roughnessUniform = useSurfaceNormals ? shellSurfaceRoughness : solidRoughness;
+    const specularUniform = useSurfaceNormals ? shellSurfaceSpecular : solidSpecular;
+    gl.useProgram(activeProgram);
+    gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
+    gl.enableVertexAttribArray(positionAttribute);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.uniformMatrix4fv(projectionUniform, false, projection);
+    gl.uniformMatrix4fv(viewUniform, false, view);
+    gl.uniformMatrix4fv(modelUniform, false, transform);
+    gl.uniform4f(colorUniform, color[0], color[1], color[2], finite(options.alpha, 1));
+    gl.uniform1f(glowUniform, glow);
+    gl.uniform1f(keyIntensityUniform, finite(activeHeroLighting?.keyLight?.intensity, 0.8));
+    gl.uniform1f(fillIntensityUniform, finite(activeHeroLighting?.environmentalFillIntensity, 0.6));
+    gl.uniform3f(
+      keyDirectionUniform,
+      finite(activeHeroLighting?.keyLight?.direction?.[0], -0.52),
+      finite(activeHeroLighting?.keyLight?.direction?.[1], 0.82),
+      finite(activeHeroLighting?.keyLight?.direction?.[2], 0.28),
+    );
+    gl.uniform1f(rimStrengthUniform, finite(activeHeroLighting?.grazingRimStrength, 0.5));
+    gl.uniform1f(roughnessUniform, roughness);
+    gl.uniform3f(specularUniform, spec[0], spec[1], spec[2]);
+    if (useSurfaceNormals) {
+      const eye = options.cameraPosition;
+      if (!eye || eye.length !== 3 || Array.from(eye).some((value) => !Number.isFinite(Number(value)))) {
+        throw new Error('MACHINE_WORLD_FOCUS_CAMERA_POSITION_INVALID');
+      }
+      gl.uniform3f(shellSurfaceCameraPosition, Number(eye[0]), Number(eye[1]), Number(eye[2]));
+      gl.bindBuffer(gl.ARRAY_BUFFER, entry.surfaceNormalBuffer);
+      gl.enableVertexAttribArray(shellSurfaceNormal);
+      gl.vertexAttribPointer(shellSurfaceNormal, 3, gl.FLOAT, false, 0, 0);
+      gl.uniformMatrix3fv(shellSurfaceNormalMatrix, false, createMachineWorldNormalMatrix(transform));
+    }
+    gl.drawArrays(gl.TRIANGLES, 0, entry.count);
   }
 
   function drawMachineCoreAssembly({ assembly, reducedMotion }) {
@@ -437,11 +982,11 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     });
 
     const materialForRole = (role) => {
-      if (role === 'reactor-chamber') return RING_MATERIALS.energy;
-      if (role === 'receiving-deck') return RING_MATERIALS.glass;
-      if (role === 'upper-shell') return RING_MATERIALS.metal;
-      if (role === 'conductor-collar') return RING_MATERIALS.metal;
-      return RING_MATERIALS.metal2;
+      if (role === 'reactor-chamber') return activeHeroMaterials.energy;
+      if (role === 'receiving-deck') return activeHeroMaterials.glass;
+      if (role === 'upper-shell') return activeHeroMaterials.metal;
+      if (role === 'conductor-collar') return activeHeroMaterials.metal;
+      return activeHeroMaterials.metal2;
     };
 
     for (const component of assembly.components) {
@@ -459,6 +1004,55 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           : 1,
       });
     }
+
+    for (const detail of assembly.mechanicalDetails || []) {
+      const shape = detail.role === 'foundation-brace'
+        ? 'CORE_BRACE'
+        : detail.role === 'reactor-guard'
+          ? 'CUBE'
+          : detail.role === 'reactor-cage-fin'
+            ? 'CORE_FIN'
+            : ['foundation-panel', 'reactor-rib'].includes(detail.role)
+              ? 'CORE_PANEL'
+              : ['port-collar', 'reactor-band'].includes(detail.role)
+                ? 'TORUS'
+                : 'CORE_DODEC';
+      const material = detail.materialRole === 'glass'
+        ? activeHeroMaterials.glass
+        : detail.materialRole === 'metal2'
+          ? activeHeroMaterials.metal2
+          : activeHeroMaterials.metal;
+      const dimensions = detail.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+      ringDraw(
+        shape,
+        multiplyMatrix(
+          translateMatrix(
+            detail.center.x,
+            detail.center.y - dimensions.y * 0.5,
+            detail.center.z,
+          ),
+          multiplyMatrix(
+            rotateYMatrix(finite(detail.rotationY)),
+            scaleMatrix(
+              Math.max(0.02, dimensions.x * 0.5),
+              Math.max(0.02, dimensions.y),
+              Math.max(0.02, dimensions.z * 0.5),
+            ),
+          ),
+        ),
+        material,
+        {
+          emit: detail.role === 'reactor-inner-housing' ? 0.04 : 0,
+          glow: detail.role === 'reactor-inner-housing' ? 0.08 : 0.025,
+          alpha: detail.role === 'reactor-inner-housing'
+            ? 0.72
+            : 0.94,
+        },
+      );
+    }
+
+    canvas.dataset.machineWorldCoreMechanicalDetails =
+      String((assembly.mechanicalDetails || []).length);
 
     for (const mechanism of assembly.concentricMechanisms) {
       const ring = ringPoints(96, mechanism.radius, mechanism.y);
@@ -490,7 +1084,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           translateMatrix(port.point.x, port.point.y, port.point.z),
           scaleMatrix(scale, scale, scale),
         ),
-        RING_MATERIALS.energy,
+        activeHeroMaterials.energy,
         {
           emit: 0.10,
           glow: 0.12,
@@ -503,6 +1097,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldCoreAssemblyVersion = assembly.version;
     canvas.dataset.machineWorldCoreComponents = String(assembly.components.length);
     canvas.dataset.machineWorldCorePorts = String(assembly.ports.length);
+    canvas.dataset.machineWorldCoreMechanicalProfile = (assembly.mechanicalDetails || []).length
+      ? 'layered-rib-guard-v1'
+      : 'none';
     canvas.dataset.machineWorldCoreValidation = 'pass';
     return assembly;
   }
@@ -517,7 +1114,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     if (!assembly) return null;
 
     const shapeForRole = Object.freeze({
-      'outer-shell': 'CUBE',
+      'outer-shell': 'POD_SHELL',
       'structural-collar': 'TORUS',
       'inner-chamber': 'CORE_OCT',
       'articulation-mechanism': 'TORUS',
@@ -529,49 +1126,163 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const materialForRole = (role) => {
       if (role === 'outer-shell') return shellMaterial;
       if (role === 'payload-surface') return insetMaterial;
-      if (role === 'connection-interface') return RING_MATERIALS.energy;
-      if (role === 'status-indicator') return RING_MATERIALS.trace;
-      if (role === 'articulation-mechanism') return RING_MATERIALS.glass;
-      if (role === 'inner-chamber') return RING_MATERIALS.metal2;
-      return RING_MATERIALS.metal;
+      if (role === 'connection-interface') return activeHeroMaterials.energy;
+      if (role === 'status-indicator') return activeHeroMaterials.accent;
+      if (role === 'articulation-mechanism') return activeHeroMaterials.glass;
+      if (role === 'inner-chamber') return activeHeroMaterials.metal2;
+      return activeHeroMaterials.metal;
     };
 
+    const mechanical = assembly.mechanicalPresentation;
+    const progress = finite(mechanical?.amount, assembly.articulation?.amount || 0);
+    const radial = mechanical?.outward || { x: 0, z: 0 };
+    const tangent = mechanical?.tangent || { x: 0, z: 1 };
+    const mechanicalState = progress <= 0.02
+      ? 'CLOSED'
+      : progress >= 0.999
+        ? 'OPEN'
+        : 'OPENING';
+
     for (const component of assembly.components) {
-      const shape = shapeForRole[component.role] || 'CUBE';
       const material = materialForRole(component.role);
-      const phase = component.role === 'articulation-mechanism'
-        ? assembly.articulation.phase
-        : 0;
-      const sx = Number(component.dimensions?.x || component.radius * 2) * 0.5;
+      const baseSx = Number(component.dimensions?.x || component.radius * 2) * 0.5;
       const sy = Math.max(0.025, Number(component.dimensions?.y || component.height));
-      const sz = Number(component.dimensions?.z || component.radius * 2) * 0.5;
-      const transform = multiplyMatrix(
-        translateMatrix(
-          component.center.x,
-          component.center.y - sy * 0.5,
-          component.center.z,
-        ),
+      const baseSz = Number(component.dimensions?.z || component.radius * 2) * 0.5;
+
+      if (component.role === 'outer-shell' && mechanical && progress > 0.02) {
+        for (const side of [-1, 1]) {
+          const panelCenter = {
+            x: component.center.x
+              + tangent.x * mechanical.shellPanelSeparation * side
+              + radial.x * mechanical.shellPanelTravel,
+            y: component.center.y + mechanical.shellPanelLift,
+            z: component.center.z
+              + tangent.z * mechanical.shellPanelSeparation * side
+              + radial.z * mechanical.shellPanelTravel,
+          };
+          const panelRotation =
+            finite(mechanical.outwardAngle, 0)
+            + finite(mechanical.shellPanelRotation, 0) * side;
+          ringDraw(
+            'POD_SHELL_PANEL',
+            multiplyMatrix(
+              translateMatrix(panelCenter.x, panelCenter.y - sy * 0.5, panelCenter.z),
+              multiplyMatrix(
+                rotateYMatrix(panelRotation),
+                scaleMatrix(baseSx * 0.54, sy, baseSz * 0.88),
+              ),
+            ),
+            material,
+            {
+              emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
+              glow: selected ? 0.17 : 0.04,
+              alpha: 1,
+            },
+          );
+        }
+        continue;
+      }
+
+      const roleTravel = component.role === 'structural-collar'
+        ? finite(mechanical?.collarTravel)
+        : component.role === 'inner-chamber'
+          ? finite(mechanical?.chamberTravel)
+          : component.role === 'articulation-mechanism'
+            ? finite(mechanical?.articulationTravel)
+            : component.role === 'payload-surface'
+              ? finite(mechanical?.payloadTravel)
+              : 0;
+      const roleLift = component.role === 'structural-collar'
+        ? finite(mechanical?.collarLift)
+        : component.role === 'inner-chamber'
+          ? finite(mechanical?.chamberLift)
+          : component.role === 'payload-surface'
+            ? finite(mechanical?.payloadLift)
+            : 0;
+      const roleRotation = component.role === 'articulation-mechanism'
+        ? finite(mechanical?.articulationRotation)
+        : 0;
+      const center = {
+        x: component.center.x + radial.x * roleTravel,
+        y: component.center.y + roleLift,
+        z: component.center.z + radial.z * roleTravel,
+      };
+      const phase = component.role === 'articulation-mechanism'
+        ? finite(assembly.articulation.phase) + roleRotation
+        : component.role === 'inner-chamber'
+          ? finite(mechanical?.revealGap)
+          : 0;
+      ringDraw(
+        shapeForRole[component.role] || 'CUBE',
         multiplyMatrix(
-          rotateYMatrix(phase),
-          scaleMatrix(sx, sy, sz),
+          translateMatrix(center.x, center.y - sy * 0.5, center.z),
+          multiplyMatrix(
+            rotateYMatrix(phase),
+            scaleMatrix(baseSx, sy, baseSz),
+          ),
         ),
+        material,
+        {
+          emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
+          glow: (selected ? 0.16 : 0.035) + (
+            component.role === 'connection-interface' || component.role === 'status-indicator'
+              ? 0.08
+              : 0
+          ),
+          alpha: component.role === 'payload-surface'
+            ? (reducedMotion ? 0.38 : 0.62)
+            : component.role === 'connection-interface'
+              ? (reducedMotion ? 0.34 : 0.64)
+              : component.role === 'status-indicator'
+                ? (reducedMotion ? 0.28 : 0.54)
+                : 1,
+        },
       );
-      ringDraw(shape, transform, material, {
-        emit: finite(material?.emit, 0) + (selected ? 0.035 : 0),
-        glow: (selected ? 0.16 : 0.035) + (
-          component.role === 'connection-interface' || component.role === 'status-indicator'
-            ? 0.08
-            : 0
-        ),
-        alpha: component.role === 'payload-surface'
-          ? (reducedMotion ? 0.38 : 0.62)
-          : component.role === 'connection-interface'
-            ? (reducedMotion ? 0.34 : 0.64)
-            : component.role === 'status-indicator'
-              ? (reducedMotion ? 0.28 : 0.54)
-              : 1,
-      });
     }
+
+    for (const detail of assembly.mechanicalDetails || []) {
+      const material = detail.materialRole === 'glass'
+        ? activeHeroMaterials.glass
+        : detail.materialRole === 'metal2'
+          ? activeHeroMaterials.metal2
+          : activeHeroMaterials.metal;
+      const dimensions = detail.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+      ringDraw(
+        detail.shape || 'CUBE',
+        multiplyMatrix(
+          translateMatrix(
+            detail.center.x,
+            detail.center.y - dimensions.y * 0.5,
+            detail.center.z,
+          ),
+          multiplyMatrix(
+            rotateYMatrix(finite(detail.rotationY)),
+            scaleMatrix(
+              Math.max(0.02, dimensions.x * 0.5),
+              Math.max(0.02, dimensions.y),
+              Math.max(0.02, dimensions.z * 0.5),
+            ),
+          ),
+        ),
+        material,
+        {
+          emit: detail.role === 'payload-collar' ? 0.035 : 0,
+          glow: selected ? 0.045 : 0.02,
+          alpha: detail.role === 'payload-collar' ? 0.78 : 0.90,
+        },
+      );
+    }
+
+    canvas.dataset.machineWorldPodMechanicalDetails =
+      String((assembly.mechanicalDetails || []).length);
+    canvas.dataset.machineWorldPodAssemblyVersion = String(assembly.version || 'unknown');
+    canvas.dataset.machineWorldPodShellGeometry = MACHINE_POD_SHELL_RENDER_GEOMETRY_VERSION;
+    canvas.dataset.machineWorldPodFaceBraceAttachment = 'panel-local-matrix-v2';
+    canvas.dataset.machineWorldPodMechanicalState = mechanicalState;
+    canvas.dataset.machineWorldPodMechanicalAmount = String(progress);
+    canvas.dataset.machineWorldPodMechanicalProfile = mechanical
+      ? 'split-shell-reveal-v1'
+      : 'none';
 
     for (const podPort of assembly.ports) {
       const scale = Number(podPort.radius) || 0.08;
@@ -582,8 +1293,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           scaleMatrix(scale, scale, scale),
         ),
         podPort.role === 'connection'
-          ? RING_MATERIALS.energy
-          : RING_MATERIALS.trace,
+          ? activeHeroMaterials.energy
+          : activeHeroMaterials.trace,
         {
           emit: podPort.role === 'connection' ? 0.10 : 0.045,
           glow: selected ? 0.16 : 0.05,
@@ -596,19 +1307,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
   }
 
   function ringDraw(shape, transform, material, options = {}) {
-    const entry = ensurePrimitiveBuffer(shape);
-    const color = material?.color || [0.5, 0.6, 0.7];
-    const glow = finite(options.emit, material?.emit || 0) + finite(options.glow, 0);
-    gl.useProgram(solid);
-    gl.bindBuffer(gl.ARRAY_BUFFER, entry.buffer);
-    gl.enableVertexAttribArray(solidPos);
-    gl.vertexAttribPointer(solidPos,3,gl.FLOAT,false,0,0);
-    gl.uniformMatrix4fv(solidP,false,projection);
-    gl.uniformMatrix4fv(solidV,false,view);
-    gl.uniformMatrix4fv(solidM,false,transform);
-    gl.uniform4f(solidColor,color[0],color[1],color[2],finite(options.alpha, 1));
-    gl.uniform1f(solidGlow,glow);
-    gl.drawArrays(gl.TRIANGLES,0,entry.count);
+    drawBuffer(ensurePrimitiveBuffer(shape), transform, material, options);
   }
 
   function drawCanonicalRings({ seatCount, ringFocus, setupRingFillAmount, reducedMotion, now, seatRingRadius, articulationAmount, ringArticulation }) {
@@ -637,7 +1336,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       S: scaleMatrix,
       RY: rotateYMatrix,
       mul: multiplyMatrix,
-      M: RING_MATERIALS,
+      M: activeHeroMaterials,
     };
     drawBackendDisplayRing({
       ...common,
@@ -701,7 +1400,8 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ? scene.byBranch?.get(context.branchId)
       : null;
     const worldSubject = deriveMachineSubject(scene.parts, 0.2);
-    const podSubject = branch?.podAssembly?.subject
+    const podSubject = context.podSubjectOverride
+      || branch?.podAssembly?.subject
       || (branch ? deriveMachineSubject([branch], 0.12) : null);
     const mode = resolveMachineCameraMode({
       cameraId: context.cameraId || 'HERO_WIDE',
@@ -914,8 +1614,124 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
   }
 
-  function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}) {
-    const edges = getRenderableMachineWorldEdges(topology);
+  function renderMachineWorldFacilityCarrier(topology, mode, selectedBranchId, reducedMotion) {
+    const descriptors = deriveMachineWorldFacilityCarrierDescriptors(topology, { mode });
+    const validation = validateMachineWorldFacilityCarrierDescriptors(descriptors, { topology });
+    let rendered = 0;
+    let stageCount = 0;
+    let hingeCount = 0;
+
+    if (validation.valid) {
+      for (const entry of descriptors) {
+        const h=Math.max(0.02,finite(entry.dimensions.y)),half=h*0.5;let transform;
+        if(entry.shape==='TORUS'&&entry.axisDirection){const r=segmentTubeRotationMatrix({x:0,y:0,z:0},entry.axisDirection);if(!r)continue;transform=multiplyMatrix(translateMatrix(entry.center.x-r[4]*half,entry.center.y-r[5]*half,entry.center.z-r[6]*half),multiplyMatrix(r,scaleMatrix(Math.max(0.02,finite(entry.dimensions.x)*0.5),h,Math.max(0.02,finite(entry.dimensions.z)*0.5))));}
+        else{const yaw=finite(entry.rotationY),pitch=finite(entry.rotationZ),ox=-Math.cos(yaw)*Math.sin(pitch)*half,oy=Math.cos(pitch)*half,oz=Math.sin(yaw)*Math.sin(pitch)*half;transform=multiplyMatrix(translateMatrix(entry.center.x-ox,entry.center.y-oy,entry.center.z-oz),multiplyMatrix(rotateYMatrix(yaw),multiplyMatrix(rotateZMatrix(pitch),scaleMatrix(Math.max(0.02,finite(entry.dimensions.x)*0.5),h,Math.max(0.02,finite(entry.dimensions.z)*0.5)))));}
+        const selected = Boolean(selectedBranchId)
+          && String(entry.semanticEdgeId).includes(String(selectedBranchId));
+        ringDraw(
+          entry.shape === 'TORUS' ? 'TORUS' : 'CUBE',
+          transform,
+          activeHeroMaterials.metal2 || activeHeroMaterials.metal,
+          {
+            emit: selected ? 0.075 : 0.028,
+            glow: selected ? 0.11 : 0.035,
+            alpha: reducedMotion ? 0.76 : selected ? 0.92 : 0.82,
+          },
+        );
+        if (entry.shape === 'TORUS') hingeCount += 1;
+        else stageCount += 1;
+        rendered += 1;
+      }
+    }
+
+    canvas.dataset.machineWorldFacilityCarrierVersion = MACHINE_WORLD_FACILITY_CARRIER_VERSION;
+    canvas.dataset.machineWorldFacilityCarrierCount = String(descriptors.length);
+    canvas.dataset.machineWorldFacilityCarrierStageCount = String(stageCount);
+    canvas.dataset.machineWorldFacilityCarrierHingeCount = String(hingeCount);
+    canvas.dataset.machineWorldFacilityCarrierRendered = String(rendered);
+    canvas.dataset.machineWorldFacilityCarrierValidation = validation.valid ? 'pass' : 'fail';
+    canvas.dataset.machineWorldFacilityCarrierScope = mode;
+    return rendered;
+  }
+
+  function renderMachineWorldFacilityDockingEmbodiment(facilityMachinery, selectedBranchId, reducedMotion) {
+    const descriptors = deriveMachineWorldFacilityDockingEmbodiment(facilityMachinery);
+    let rendered = 0;
+    for (const entry of descriptors) {
+      const selected = entry.id.includes(String(selectedBranchId || ''));
+      const material = entry.role === 'machine-endpoint-collar'
+        ? activeHeroMaterials.metal2
+        : activeHeroMaterials.metal;
+      const connectorTransform = directionalTubeTransform(
+        entry.center,
+        entry.direction,
+        entry.length,
+        Math.max(0.025, entry.radius * 0.66),
+      );
+      if (connectorTransform) {
+        ringDraw(
+          'CYL',
+          connectorTransform,
+          material,
+          {
+            emit: selected ? 0.09 : entry.role === 'machine-endpoint-collar' ? 0.028 : 0.014,
+            glow: selected ? 0.14 : 0.035,
+            alpha: reducedMotion ? 0.78 : 0.94,
+          },
+        );
+      }
+      const collarHeight = Math.max(0.035, entry.radius * 0.46);
+      ringDraw(
+        'TORUS',
+        multiplyMatrix(
+          translateMatrix(
+            entry.connectorEnd.x,
+            centeredPrismBaseY(entry.connectorEnd.y, collarHeight),
+            entry.connectorEnd.z,
+          ),
+          scaleMatrix(
+            Math.max(0.04, entry.radius),
+            collarHeight,
+            Math.max(0.04, entry.radius),
+          ),
+        ),
+        material,
+        {
+          emit: selected ? 0.10 : entry.role === 'machine-endpoint-collar' ? 0.035 : 0.018,
+          glow: selected ? 0.16 : 0.045,
+          alpha: reducedMotion ? 0.72 : 0.88,
+        },
+      );
+      rendered += 1;
+    }
+    canvas.dataset.machineWorldFacilityDockingEmbodiment = 'S8-ENDPOINT-V3';
+    canvas.dataset.machineWorldFacilityDockingCount = String(descriptors.length);
+    canvas.dataset.machineWorldFacilityDockingConnectorSpan = 'visible';
+    canvas.dataset.machineWorldFacilityDockingEndpointCount = String(
+      descriptors.filter((entry) => entry.role === 'machine-endpoint-collar').length,
+    );
+    canvas.dataset.machineWorldFacilityDockingFacilityCount = String(
+      descriptors.filter((entry) => entry.role === 'facility-port-flange').length,
+    );
+    return rendered;
+  }
+
+  function renderMachineWorldTopologyEdges(topology, selectedBranchId, reducedMotion, now, signalState = {}, scope = {}) {
+    const edges = getRenderableMachineWorldEdgesForScope(topology, scope);
+    const scopedEdgeIds = new Set(edges.map((edge) => edge.semanticEdgeId));
+    const conduitSegments = getRenderableMachineWorldConduitSegments(topology, {
+      mode: scope.mode,
+      branchId: scope.branchId,
+    }).filter((segment) => scopedEdgeIds.has(segment.semanticEdgeId));
+    const physicalKinds = new Set([
+      'pod-division',
+      'pod-facility',
+      'facility-facility',
+      'workspace-contribution',
+      'adjacent-seat',
+      'inner-spoke',
+      'lattice-link',
+    ]);
     let rendered = 0;
     gl.useProgram(line);
     gl.uniformMatrix4fv(lineP,false,projection);
@@ -924,6 +1740,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const renderedSignals = [];
     for (const edge of edges) {
       const route = edge.route;
+      if (physicalKinds.has(edge.kind)) continue;
       const values = route.flatMap((point) => [point.x, point.y, point.z]);
       const signal = resolveMachineSignalState({
         edge,
@@ -953,7 +1770,156 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       renderedSignals.push(signal?.state || 'IDLE');
       rendered += 1;
     }
+    let renderedConduits = 0;
+    for (const segment of conduitSegments) {
+      const edge = topology.edges.find((candidate) => candidate.semanticEdgeId === segment.semanticEdgeId);
+      if (!edge) continue;
+      const signal = resolveMachineSignalState({
+        edge,
+        state: signalState,
+        selectedBranchId,
+        reducedMotion,
+        now,
+      });
+      const visual = machineSignalVisualProfile(signal);
+      const selected = edge.sourceBranchId === selectedBranchId || edge.targetBranchId === selectedBranchId;
+      const material = visual.state === 'ERROR' || visual.state === 'BLOCKED'
+        ? activeHeroMaterials.metal2
+        : selected || visual.state === 'HANDOFF_READY' || visual.state === 'REFLECT'
+          ? activeHeroMaterials.energy
+          : activeHeroMaterials.trace;
+      const useVolumetricTube = segment.edgeKind === 'facility-facility'
+        || segment.segmentRole === 'manifold-arc'
+        || segment.structuralConduit === true;
+      const tubeTransform = useVolumetricTube
+        ? segmentTubeTransform(
+            segment,
+            segment.segmentRole === 'manifold-arc' ? 1.25 : 1,
+          )
+        : null;
+      const transform = tubeTransform || multiplyMatrix(
+        translateMatrix(segment.center.x, segment.center.y, segment.center.z),
+        multiplyMatrix(
+          rotateYMatrix(segment.rotationY),
+          scaleMatrix(
+            Math.max(0.02, segment.dimensions.x * 0.5),
+            Math.max(0.02, segment.dimensions.y * 0.5),
+            Math.max(0.02, segment.dimensions.z * 0.5),
+          ),
+        ),
+      );
+      ringDraw(
+        tubeTransform ? 'CYL' : 'CUBE',
+        transform,
+        material,
+        {
+          emit: selected ? 0.14 : 0.035 + visual.pulse * 0.05,
+          glow: selected ? 0.18 : 0.04,
+          alpha: Math.min(0.90, 0.54 + (selected ? 0.16 : 0) + visual.pulse * 0.08),
+        },
+      );
+      renderedConduits += 1;
+    }
+
+    const structuralConduitSegments = getRenderableMachineWorldStructuralConduitSegments(topology, {
+      mode: scope.mode,
+      branchId: scope.branchId,
+    });
+    let renderedStructuralConduits = 0;
+    for (const segment of structuralConduitSegments) {
+      const transform = segmentTubeTransform(segment, 1);
+      if (!transform) continue;
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        {
+          emit: 0.025,
+          glow: 0.045,
+          alpha: 0.92,
+        },
+      );
+      renderedStructuralConduits += 1;
+    }
+
+    const allServiceManifoldJunctions = Array.isArray(topology?.serviceManifold?.junctions)
+      ? topology.serviceManifold.junctions
+      : [];
+    const visibleServiceManifoldJunctions = scope.mode === 'WORLD_OVERVIEW'
+      ? allServiceManifoldJunctions
+      : [];
+    let renderedServiceManifoldJunctions = 0;
+    for (const junction of visibleServiceManifoldJunctions) {
+      if (junction.routeContinuous !== true) continue;
+      const dimensions = junction.dimensions || {};
+      const height = Math.max(0.07, finite(dimensions.y, 0.08));
+      const transform = multiplyMatrix(
+        translateMatrix(
+          finite(junction.center?.x),
+          finite(junction.center?.y) - height * 0.5,
+          finite(junction.center?.z),
+        ),
+        scaleMatrix(
+          Math.max(0.025, finite(dimensions.x, 0.14) * 0.5),
+          height,
+          Math.max(0.025, finite(dimensions.z, 0.14) * 0.5),
+        ),
+      );
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        { emit: 0.025, glow: 0.035, alpha: 0.96 },
+      );
+      renderedServiceManifoldJunctions += 1;
+    }
+    canvas.dataset.machineWorldServiceManifoldJunctionCount = String(allServiceManifoldJunctions.length);
+    canvas.dataset.machineWorldServiceManifoldJunctionRenderedCount = String(renderedServiceManifoldJunctions);
+    canvas.dataset.machineWorldServiceManifoldJunctionValidation =
+      topology?.serviceManifoldValidation?.valid === true ? 'pass' : 'fail';
+
+    const podDivisionDockingSegments = conduitSegments.filter(
+      (segment) => segment.edgeKind === 'pod-division' && segment.routeContinuous,
+    );
+    const dockingSockets = derivePodDivisionDockingSockets(podDivisionDockingSegments);
+    for (const socket of dockingSockets) {
+      const transform = directionalTubeTransform(
+        socket.center,
+        socket.direction,
+        socket.length,
+        socket.radius,
+      );
+      if (!transform) continue;
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        { emit: 0.018, glow: 0.035, alpha: 0.94 },
+      );
+    }
+
+    const dockingCollars = derivePodDivisionDockingCollars(podDivisionDockingSegments);
+    for (const collar of dockingCollars) {
+      const transform = directionalTubeTransform(
+        collar.center,
+        { x: 0, y: 1, z: 0 },
+        collar.length,
+        collar.radius,
+      );
+      if (!transform) continue;
+      ringDraw(
+        'CYL',
+        transform,
+        activeHeroMaterials.metal2,
+        { emit: 0.012, glow: 0.026, alpha: 0.92 },
+      );
+    }
+
     canvas.dataset.machineWorldSignalEdgeCount = String(rendered);
+    canvas.dataset.machineWorldConduitSegmentCount = String(renderedConduits);
+    canvas.dataset.machineWorldStructuralConduitSegmentCount = String(renderedStructuralConduits);
+    canvas.dataset.machineWorldDockingSocketCount = String(dockingSockets.length);
+    canvas.dataset.machineWorldDockingCollarCount = String(dockingCollars.length);
     canvas.dataset.machineWorldSignalStates = renderedSignals.join(',');
     canvas.dataset.machineWorldSignalReducedMotion = String(Boolean(reducedMotion));
     return rendered;
@@ -1011,7 +1977,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         translateMatrix(point.x, point.y, point.z),
         scaleMatrix(.12, .12, .12),
       ),
-      RING_MATERIALS.energy,
+      activeHeroMaterials.energy,
       {
         glow: reducedMotion ? .12 : .26,
         emit: reducedMotion ? .08 + .08 * activation : .12 + .18 * activation,
@@ -1055,7 +2021,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     ringDraw('SPH', multiplyMatrix(
       translateMatrix(point.x, point.y, point.z),
       scaleMatrix(receiverScale, receiverScale, receiverScale),
-    ), RING_MATERIALS.energy, {
+    ), activeHeroMaterials.energy, {
       emit: 0.12 + 0.22 * presentation.receiverAmount,
       glow: reducedMotion ? 0.08 : 0.24,
       alpha: 0.48 + 0.36 * presentation.receiverAmount,
@@ -1066,7 +2032,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     ringDraw('TORUS', multiplyMatrix(
       translateMatrix(target.x, target.y + 0.02, target.z),
       scaleMatrix(targetScale, 1, targetScale),
-    ), presentation.reflectionAmount > 0 ? RING_MATERIALS.energy : RING_MATERIALS.glass, {
+    ), presentation.reflectionAmount > 0 ? activeHeroMaterials.energy : activeHeroMaterials.glass, {
       emit: 0.10 + 0.28 * presentation.receiverAmount + 0.12 * presentation.reflectionAmount,
       alpha: 0.50 + 0.30 * presentation.receiverAmount,
     });
@@ -1077,7 +2043,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       ringDraw('TORUS', multiplyMatrix(
         translateMatrix(target.x, target.y + 0.05, target.z),
         scaleMatrix(radius, 1, radius),
-      ), RING_MATERIALS.energy, {
+      ), activeHeroMaterials.energy, {
         emit: 0.08 + 0.12 * presentation.reflectionAmount,
         alpha: 0.24 + 0.18 * presentation.reflectionAmount,
       });
@@ -1135,7 +2101,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
 
     const reducedMotion = Boolean(state.reducedMotion);
     const hierarchyOpen = Boolean(state.hierarchyOpen);
-    const materialLighting = resolveHeroMaterialContext(state, reducedMotion);
+    const requestedFacilityFocusBranchId = typeof state.facilityFocusBranchId === 'string'
+      ? state.facilityFocusBranchId
+      : '';
+    const requestedFacilityFocus = MACHINE_FACILITY_BRANCH_IDS.includes(requestedFacilityFocusBranchId);
+    const materialLighting = resolveHeroMaterialContext({ ...state, facilityFocused: requestedFacilityFocus }, reducedMotion);
+    activeHeroLighting = materialLighting;
+    activeHeroMaterials = authoredHeroMaterialSet(materialLighting);
+    canvas.dataset.machineWorldFacilityFocusLighting =
+      requestedFacilityFocus ? 'enhanced' : 'base';
     const authoredRing = authoredRingMaterial(materialLighting);
     const authoredSeatShell = authoredSeatShellMaterial(materialLighting);
     const authoredSeatInset = authoredSeatInsetMaterial(materialLighting);
@@ -1167,6 +2141,16 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       return Math.max(radius, Math.hypot(part.center.x, part.center.z));
     }, 0);
     const previewShell = scene.byBranch.get(branchId);
+    const focusedPodBaseAmount = hierarchyOpen && state.focusedChildId
+      ? clamp(finite(state.focusedChildAmount, 0), 0, 1)
+      : 0;
+    const focusedPodAssembly = previewShell?.kind === 'inner-pod'
+      ? deriveMachinePodAssembly({
+          part: previewShell,
+          expansionAmount: focusedPodBaseAmount,
+        })
+      : null;
+    const focusedPodSubject = focusedPodAssembly?.subject || previewShell?.podAssembly?.subject || null;
     const focusedExpansionPlan = hierarchyOpen && previewShell && state.focusedChildId && focusedChildIndex >= 0
       ? deriveMachineSeatDivisionExpansionPlan({
           parent: previewShell,
@@ -1186,6 +2170,13 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     const focusedSubject = focusedExpansionPlan
       ? subjectAtExpansionAmount(focusedExpansionPlan, focusedChildAmount)
       : null;
+    const focusedPodAssemblyResolved = previewShell?.kind === 'inner-pod'
+      ? deriveMachinePodAssembly({
+          part: previewShell,
+          expansionAmount: hierarchyOpen && state.focusedChildId ? focusedChildAmount : 0,
+        })
+      : null;
+    const focusedPodSubjectResolved = focusedPodAssemblyResolved?.subject || focusedPodSubject;
     const choreography = deriveMachineTransformationChoreography({
       shellAmount: finite(state.hierarchyOpenAmount, expansionSample.amount),
       divisionAmount: focusedChildAmount,
@@ -1212,6 +2203,155 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       throw new Error(`invalid S2 core assembly: ${coreAssemblyValidation.reasons.join(', ')}`);
     }
 
+    const spatialGeometryKey = [
+      seatCount,
+      Math.round(sample.amount * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
+      Math.round((hierarchyOpen ? focusedChildAmount : 1) * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
+    ].join(':');
+    let facilityAssemblies;
+    let facilityAssemblyValidation;
+    let facilityMachinery;
+    let facilityMachineryValidation;
+    let machineWorldTopology;
+    let machineWorldTopologyValidation;
+
+    if (machineWorldSpatialCache?.key === spatialGeometryKey) {
+      ({
+        facilityAssemblies,
+        facilityAssemblyValidation,
+        facilityMachinery,
+        facilityMachineryValidation,
+        machineWorldTopology,
+        machineWorldTopologyValidation,
+      } = machineWorldSpatialCache);
+    } else {
+      facilityAssemblies = deriveMachineFacilityAssemblies({
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+      });
+      facilityAssemblyValidation = validateMachineFacilityAssemblies(facilityAssemblies);
+      if (!facilityAssemblyValidation.valid) {
+        throw new Error(`invalid S6 facility assembly: ${facilityAssemblyValidation.reasons.join(', ')}`);
+      }
+
+      facilityMachinery = deriveMachineFacilityMachinery({
+        facilityAssemblies,
+        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
+        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
+        requestedClearance: 0.16,
+      });
+      facilityMachineryValidation = validateMachineFacilityMachinery(facilityMachinery);
+      if (!facilityMachineryValidation.valid) {
+        throw new Error(`invalid S7 facility machinery: ${facilityMachineryValidation.reasons.join(', ')}`);
+      }
+
+      machineWorldTopology = buildMachineWorldTopology({
+        scene,
+        facilityAssemblies,
+        facilityMachinery,
+        seatDivisionAmount: hierarchyOpen ? Math.max(0, finite(focusedChildAmount, 1)) : 1,
+        clearance: 0.16,
+      });
+      machineWorldTopologyValidation = validateMachineWorldTopology(
+        machineWorldTopology,
+        { expectedSeatCount: scene.seatCount },
+      );
+      if (!machineWorldTopologyValidation.valid) {
+        throw new Error(`invalid S8 world topology: ${machineWorldTopologyValidation.reasons.join(', ')}`);
+      }
+
+      machineWorldSpatialCache = Object.freeze({
+        key: spatialGeometryKey,
+        facilityAssemblies,
+        facilityAssemblyValidation,
+        facilityMachinery,
+        facilityMachineryValidation,
+        machineWorldTopology,
+        machineWorldTopologyValidation,
+      });
+    }
+
+
+    const facilityBodyShells = deriveMachineWorldFacilityShellDescriptors(facilityMachinery);
+    const facilityFocusMachine = facilityMachinery.find(
+      (machine) => machine.branchId === requestedFacilityFocusBranchId,
+    ) || null;
+    const facilityFocusParts = [];
+    if (facilityFocusMachine?.subject) {
+      const subject = facilityFocusMachine.subject;
+      const subjectDimensions = {
+        x: finite(subject.max?.x) - finite(subject.min?.x),
+        y: finite(subject.max?.y) - finite(subject.min?.y),
+        z: finite(subject.max?.z) - finite(subject.min?.z),
+      };
+      if (Object.values(subjectDimensions).every((value) => Number.isFinite(value) && value > 0)) {
+        facilityFocusParts.push({
+          id: 'S10:FOCUS:' + facilityFocusMachine.branchId + ':MACHINERY',
+          center: subject.center,
+          dimensions: subjectDimensions,
+        });
+      }
+      for (const shell of facilityBodyShells.filter(
+        (entry) => entry.branchId === requestedFacilityFocusBranchId,
+      )) {
+        const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+        // A radial square bounding the rotated XZ shell gives a conservative
+        // camera subject without modifying any authored mesh dimensions.
+        const radialSpan = Math.max(0.1, Math.hypot(
+          finite(dimensions.x),
+          finite(dimensions.z),
+        ));
+        facilityFocusParts.push({
+          id: 'S10:FOCUS:' + facilityFocusMachine.branchId + ':' + shell.id,
+          center: shell.center,
+          dimensions: {
+            x: radialSpan,
+            y: Math.max(0.1, finite(dimensions.y)),
+            z: radialSpan,
+          },
+        });
+      }
+    }
+    const derivedFacilityFocusSubject = facilityFocusParts.length
+      ? deriveMachineSubject(facilityFocusParts, 0.20)
+      : null;
+    const facilityFocusSubjectValid = Boolean(
+      derivedFacilityFocusSubject
+      && ['x', 'y', 'z'].every((axis) =>
+        Number.isFinite(derivedFacilityFocusSubject.center?.[axis])
+        && Number.isFinite(derivedFacilityFocusSubject.min?.[axis])
+        && Number.isFinite(derivedFacilityFocusSubject.max?.[axis])
+        && derivedFacilityFocusSubject.max[axis] > derivedFacilityFocusSubject.min[axis]
+      ),
+    );
+    const facilityFocused = Boolean(facilityFocusMachine && facilityFocusSubjectValid);
+    canvas.dataset.machineWorldFacilityFocusLighting = facilityFocused ? 'enhanced' : 'base';
+    canvas.dataset.machineWorldFacilityFocusShellAlphaProfile =
+      facilityFocused ? 'selected-core-reveal-v1' : 'base';
+    canvas.dataset.machineWorldFacilityFocusMainShellAlpha = facilityFocused ? '0.32' : '';
+    canvas.dataset.machineWorldFacilityFocusShoulderPlateAlpha = facilityFocused ? '0.42' : '';
+    canvas.dataset.machineWorldFacilityFocusShellColorProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.profile
+      : 'base';
+    const selectedShellColorTelemetry = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.color.map((value) => value.toFixed(2)).join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityFocusMainShellColor = selectedShellColorTelemetry;
+    canvas.dataset.machineWorldFacilityFocusShoulderPlateColor = selectedShellColorTelemetry;
+    const controlRotorMaterialActive = facilityFocused
+      && requestedFacilityFocusBranchId === MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.branchId;
+    canvas.dataset.machineWorldFacilityFocusControlRotorMaterialProfile = controlRotorMaterialActive
+      ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.profile
+      : 'base';
+    canvas.dataset.machineWorldFacilityFocusControlRotorMaterialColor = controlRotorMaterialActive
+      ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.color.map((value) => value.toFixed(2)).join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityFocusControlRotorMetalComponentCount = controlRotorMaterialActive
+      ? String(MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.componentRoles.length)
+      : '0';
+    const facilityFocusBranchId = facilityFocused ? requestedFacilityFocusBranchId : '';
+    const facilitySubject = facilityFocused ? derivedFacilityFocusSubject : null;
+    const activePresentationBranchId = facilityFocused ? facilityFocusBranchId : branchId;
+
     const effectiveCameraId = hierarchyOpen ? branchId : 'HUB-CORE';
     const navigationCameraId = String(
       state.cameraId || (hierarchyOpen ? 'SEAT_CLOSE' : 'HERO_WIDE'),
@@ -1224,14 +2364,15 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       focusedChildAmount,
       divisionSubject: focusedSubject,
       coreSubject: coreAssembly?.subject || null,
-      facilitySubject: state.facilitySubject || null,
-      parentSubject: previewShell?.podAssembly?.subject || null,
-      facilityFocused: Boolean(state.facilityFocused),
+      facilitySubject,
+      parentSubject: focusedPodSubjectResolved || null,
+      podSubjectOverride: focusedPodSubjectResolved || null,
+      facilityFocused,
       returningToParent: Boolean(state.returningToParent),
       returningToWorld: Boolean(state.returningToWorld),
       reducedMotion,
     });
-    const focusedCameraSubject = focusedSubject || null;
+    const focusedCameraSubject = facilityFocused ? facilitySubject : (focusedSubject || null);
     const cameraTarget = cameraSpec.target;
     const cameraRadius = Math.max(
       cameraSpec.radius,
@@ -1334,73 +2475,6 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       reducedMotion,
     });
 
-    const spatialGeometryKey = [
-      seatCount,
-      Math.round(sample.amount * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
-      Math.round((hierarchyOpen ? focusedChildAmount : 1) * SPATIAL_TOPOLOGY_RESOLUTION) / SPATIAL_TOPOLOGY_RESOLUTION,
-    ].join(':');
-    let facilityAssemblies;
-    let facilityAssemblyValidation;
-    let facilityMachinery;
-    let facilityMachineryValidation;
-    let machineWorldTopology;
-    let machineWorldTopologyValidation;
-
-    if (machineWorldSpatialCache?.key === spatialGeometryKey) {
-      ({
-        facilityAssemblies,
-        facilityAssemblyValidation,
-        facilityMachinery,
-        facilityMachineryValidation,
-        machineWorldTopology,
-        machineWorldTopologyValidation,
-      } = machineWorldSpatialCache);
-    } else {
-      facilityAssemblies = deriveMachineFacilityAssemblies({
-        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
-      });
-      facilityAssemblyValidation = validateMachineFacilityAssemblies(facilityAssemblies);
-      if (!facilityAssemblyValidation.valid) {
-        throw new Error(`invalid S6 facility assembly: ${facilityAssemblyValidation.reasons.join(', ')}`);
-      }
-
-      facilityMachinery = deriveMachineFacilityMachinery({
-        facilityAssemblies,
-        outerHousings: scene.parts.filter((part) => part.kind === 'outer-housing'),
-        clearanceObstacles: scene.parts.filter((part) => part.kind === 'inner-pod'),
-        requestedClearance: 0.16,
-      });
-      facilityMachineryValidation = validateMachineFacilityMachinery(facilityMachinery);
-      if (!facilityMachineryValidation.valid) {
-        throw new Error(`invalid S7 facility machinery: ${facilityMachineryValidation.reasons.join(', ')}`);
-      }
-
-      machineWorldTopology = buildMachineWorldTopology({
-        scene,
-        facilityAssemblies,
-        facilityMachinery,
-        seatDivisionAmount: hierarchyOpen ? Math.max(0, finite(focusedChildAmount, 1)) : 1,
-        clearance: 0.16,
-      });
-      machineWorldTopologyValidation = validateMachineWorldTopology(
-        machineWorldTopology,
-        { expectedSeatCount: scene.seatCount },
-      );
-      if (!machineWorldTopologyValidation.valid) {
-        throw new Error(`invalid S8 world topology: ${machineWorldTopologyValidation.reasons.join(', ')}`);
-      }
-
-      machineWorldSpatialCache = Object.freeze({
-        key: spatialGeometryKey,
-        facilityAssemblies,
-        facilityAssemblyValidation,
-        facilityMachinery,
-        facilityMachineryValidation,
-        machineWorldTopology,
-        machineWorldTopologyValidation,
-      });
-    }
-
     updateResponsiveReadability({
       responsive,
       width,
@@ -1417,11 +2491,203 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let facilityComponentCount = 0;
     let facilityPortCount = 0;
     let facilityMachineryCount = 0;
+
+
+    const authoredS7BodyBranchIds = new Set(
+      facilityBodyShells
+        .filter((entry) => entry.layer === 'main-shell')
+        .map((entry) => entry.branchId),
+    );
+    if (authoredS7BodyBranchIds.size !== 4) {
+      throw new Error('invalid S7 authored outer-body branch coverage');
+    }
+    if (
+      facilityBodyShells.length !== MACHINE_WORLD_FACILITY_SHELL_DESCRIPTOR_COUNT
+      || !facilityBodyShells.every((entry) =>
+        entry.presentationOnly === true
+        && entry.constructionSlice === 'S7'
+        && entry.constructionOwner === 'frontend/spatial/machine-world-facility-shell.js'
+      )
+    ) {
+      throw new Error('invalid S7 facility body shells');
+    }
+
+    // The body skin is a presentation layer around the existing S6/S7 owners.
+    // It does not acquire depth-write authority over the real mechanisms.
+    gl.depthMask(false);
+    let facilityFocusNormalShellCount = 0;
+    let facilityFocusNormalNestedMassingCount = 0;
+    const mechanismHousingPrimitiveShapes = [];
+    for (const shell of facilityBodyShells) {
+      const authoredOutline = Array.isArray(shell.outline) && shell.outline.length >= 3;
+      const authoredPrimitiveShape = shell.shape === 'CYLINDER' ? 'CYL' : shell.shape;
+      const axialCore = shell.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE;
+      const axialRing = shell.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE;
+      if (shell.layer === 'mechanism-housing') {
+        if (authoredOutline || !['CYL', 'BOX'].includes(authoredPrimitiveShape)) {
+          throw new Error('invalid S7 mechanism-housing primitive: ' + shell.branchId);
+        }
+        mechanismHousingPrimitiveShapes.push(shell.branchId + ':' + authoredPrimitiveShape);
+      }
+      const primitiveShape = axialCore ? 'CYLINDER_AXIAL' : axialRing ? 'TORUS_AXIAL' : authoredPrimitiveShape;
+      const buffer = authoredOutline
+        ? ensureFacilityBodyBuffer(shell.silhouette,shell.outline,shell.envelopeOutline)
+        : ensurePrimitiveBuffer(primitiveShape);
+      const selected = shell.branchId === activePresentationBranchId;
+      const useSurfaceNormals = facilityFocused && selected;
+      if (useSurfaceNormals) {
+        if (!ensureSurfaceNormalBuffer(buffer)) {
+          throw new Error('S7_FOCUS_SURFACE_NORMALS_UNAVAILABLE:' + shell.branchId + ':' + shell.layer);
+        }
+        if (shell.layer === 'nested-cradle') {
+          facilityFocusNormalNestedMassingCount += 1;
+        } else {
+          facilityFocusNormalShellCount += 1;
+        }
+      }
+      const dimensions = shell.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+      const material = shell.materialRole === 'glass'
+        ? activeHeroMaterials.glass
+        : shell.materialRole === 'energy'
+          ? activeHeroMaterials.energy
+          : shell.materialRole === 'metal'
+            ? activeHeroMaterials.metal
+            : activeHeroMaterials.metal2;
+      const focusShellColorActive = facilityFocused
+        && selected
+        && MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.selectedLayers.includes(shell.layer);
+      const drawMaterial = focusShellColorActive
+        ? { ...material, color: MACHINE_WORLD_S7_FOCUS_SHELL_COLOR.color }
+        : material;
+      const layerAlpha = shell.layer === 'main-shell'
+        ? (selected ? (facilityFocused ? 0.32 : 0.80) : 0.66)
+        : shell.layer === 'base-collar'
+          ? (selected ? 0.94 : 0.82)
+          : shell.layer === 'shoulder-plate'
+            ? (selected ? (facilityFocused ? 0.42 : 0.88) : 0.76)
+            : shell.layer === 'upper-cap'
+              ? (selected ? 0.72 : 0.60)
+              : shell.layer === 'nested-cradle'
+                ? (selected ? 0.94 : 0.84)
+                : (selected ? 0.78 : 0.66);
+      const shellTransform = axialCore || axialRing
+        ? multiplyMatrix(
+            translateMatrix(shell.center.x, shell.center.y, shell.center.z),
+            multiplyMatrix(
+              rotateYMatrix(finite(shell.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, dimensions.x * 0.5),
+                Math.max(0.02, dimensions.y * 0.5),
+                Math.max(0.02, dimensions.z * 0.5),
+              ),
+            ),
+          )
+        : multiplyMatrix(
+            translateMatrix(shell.center.x, shell.center.y - dimensions.y * 0.5, shell.center.z),
+            multiplyMatrix(
+              rotateYMatrix(finite(shell.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, dimensions.x * 0.5),
+                Math.max(0.02, dimensions.y),
+                Math.max(0.02, dimensions.z * 0.5),
+              ),
+            ),
+          );
+      drawBuffer(
+        buffer,
+        shellTransform,
+        drawMaterial,
+        {
+          emit: selected ? 0.10 : 0.035,
+          glow: selected ? 0.12 : 0.035,
+          alpha: layerAlpha,
+          surfaceNormals: useSurfaceNormals,
+          rough: facilityFocused && selected && ['main-shell', 'shoulder-plate'].includes(shell.layer)
+            ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.selectedPlateRoughness
+            : undefined,
+          cameraPosition: useSurfaceNormals ? cameraPose.p : null,
+        },
+      );
+    }
+    gl.depthMask(true);
+    canvas.dataset.machineWorldFacilityFocusNormalProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.profile
+      : 'position-approx';
+    canvas.dataset.machineWorldFacilityFocusNormalShellCount = String(facilityFocusNormalShellCount);
+    canvas.dataset.machineWorldFacilityFocusNormalNestedMassingCount = facilityFocused
+      ? String(facilityFocusNormalNestedMassingCount)
+      : '';
+    canvas.dataset.machineWorldFacilityFocusViewVectorProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.viewVectorProfile
+      : '';
+    canvas.dataset.machineWorldFacilityFocusNormalSpecularGain = facilityFocused
+      ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.specularGain)
+      : '';
+    canvas.dataset.machineWorldFacilityFocusNormalRimGain = facilityFocused
+      ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.grazingRimGain)
+      : '';
+    const activeFocusedPlateRoughness = facilityFocused
+      ? String(MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.selectedPlateRoughness)
+      : '';
+    canvas.dataset.machineWorldFacilityFocusSurfaceRoughnessProfile = facilityFocused
+      ? MACHINE_WORLD_S7_FOCUS_SURFACE_RESPONSE.surfaceRoughnessProfile
+      : '';
+    canvas.dataset.machineWorldFacilityFocusMainShellRoughness = activeFocusedPlateRoughness;
+    canvas.dataset.machineWorldFacilityFocusShoulderPlateRoughness = activeFocusedPlateRoughness;
+    canvas.dataset.machineWorldFacilityBodyShellCount = String(facilityBodyShells.length);
+    canvas.dataset.machineWorldFacilityNestedCradleCount = String(
+      facilityBodyShells.filter((entry) => entry.nestedMassingProfile === MACHINE_WORLD_FACILITY_NESTED_MASSING_PROFILE).length,
+    );
+    canvas.dataset.machineWorldFacilityServiceBayCount = String(
+      facilityBodyShells.filter(entry=>entry.serviceBayProfile===MACHINE_WORLD_FACILITY_SERVICE_BAY_PROFILE).length,
+    );
+    canvas.dataset.machineWorldLegacyOuterHousingFallbackCount = String(
+      scene.parts.filter((part) =>
+        part.kind === 'outer-housing' && !authoredS7BodyBranchIds.has(part.branchId),
+      ).length,
+    );
+    canvas.dataset.machineWorldAuthoredOuterHousingReplacementCount = String(
+      scene.parts.filter((part) =>
+        part.kind === 'outer-housing' && authoredS7BodyBranchIds.has(part.branchId),
+      ).length,
+    );
+    canvas.dataset.machineWorldFacilityBodyMainShellCount = String(
+      facilityBodyShells.filter((entry) => entry.layer === 'main-shell').length,
+    );
+    canvas.dataset.machineWorldFacilityBodySilhouettes = [
+      ...new Set(facilityBodyShells.map((entry) => entry.silhouette)),
+    ].join(',');
+    if (mechanismHousingPrimitiveShapes.length !== 4) {
+      throw new Error('invalid S7 mechanism-housing primitive count');
+    }
+    canvas.dataset.machineWorldFacilityBodyShellVersion = MACHINE_WORLD_FACILITY_SHELL_VERSION;
+    canvas.dataset.machineWorldFacilityCorePrimitiveCount = String(mechanismHousingPrimitiveShapes.length);
+    canvas.dataset.machineWorldFacilityCoreShapes = mechanismHousingPrimitiveShapes.join('|');
+    const axialCoreCount = facilityBodyShells.filter((entry) => entry.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_CORE_PROFILE).length;
+    const axialRingCount = facilityBodyShells.filter((entry) => entry.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE).length;
+    canvas.dataset.machineWorldFacilityControlRotorAxisProfile = axialCoreCount === 1
+      ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
+      : 'none';
+    canvas.dataset.machineWorldFacilityControlRotorRingAxisProfile = axialRingCount === 2 && axialCoreCount === 1
+      ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
+      : 'invalid';
+    canvas.dataset.machineWorldFacilityCorePrimitiveValidation = 'pass';
+    const controlAxialCollarCount = facilityMachinery.reduce((count, machine) => count
+      + (machine.components || []).filter((component) =>
+        component.role === 'control-collar'
+        && component.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE
+        && component.shape === 'TORUS'
+      ).length, 0);
+    canvas.dataset.machineWorldFacilityControlAxialCollarCount = String(controlAxialCollarCount);
+    canvas.dataset.machineWorldFacilityControlAxialCollarProfile = controlAxialCollarCount === 1
+      ? MACHINE_WORLD_FACILITY_CONTROL_ROTOR_AXIS_PROFILE
+      : 'invalid';
     let facilityMachineryComponentCount = 0;
     let facilityMachineryPortCount = 0;
+    let machineWorldFacilityControlTransparencyPass = 'off';
     const facilityMechanismPhases = [];
     for (const machine of facilityMachinery) {
-      const selected = machine.branchId === branchId;
+      const selected = machine.branchId === activePresentationBranchId;
       const facilityPresentation = deriveMachineFacilityMechanismPresentation(machine, {
         amount: choreography.transformation,
         reducedMotion,
@@ -1430,71 +2696,201 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       const presentationById = new Map(
         facilityPresentation.components.map((entry) => [entry.id, entry]),
       );
-      for (const component of machine.components) {
+      const controlTransparency = partitionSelectedControlMechanismComponents(machine.components, {
+        facilityFocused,
+        selected,
+        machineRole: machine.machineRole,
+      });
+      if (controlTransparency.active) {
+        machineWorldFacilityControlTransparencyPass = controlTransparency.deferred.length > 0
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_TRANSPARENCY_PASS.profile
+          : 'control-focus-no-chamber';
+      }
+      const drawFacilityMechanismComponent = (component) => {
         const presentation = presentationById.get(component.id);
+        const renderedHeight = Math.max(0.04, finite(component.dimensions.y));
+        const authoredComponentMaterial = component.materialRole === 'energy'
+          ? activeHeroMaterials.energy
+          : component.materialRole === 'trace'
+            ? activeHeroMaterials.trace
+            : component.materialRole === 'glass'
+              ? activeHeroMaterials.glass
+              : component.materialRole === 'metal2'
+                ? activeHeroMaterials.metal2
+                : activeHeroMaterials.metal;
+        const controlRotorMetalComponent = controlRotorMaterialActive
+          && selected
+          && machine.machineRole === 'control'
+          && MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.componentRoles.includes(component.role);
+        const componentDrawMaterial = controlRotorMetalComponent
+          ? {
+              ...(component.role === 'rotor-ring' ? activeHeroMaterials.metal : activeHeroMaterials.metal2),
+              color: MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.color,
+            }
+          : authoredComponentMaterial;
+        const componentEmit = controlRotorMetalComponent
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.emit
+          : selected ? 0.18 : 0.07;
+        const componentGlow = controlRotorMetalComponent
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.glow
+          : selected ? 0.26 : 0.09;
+        const componentAlpha = controlRotorMetalComponent
+          ? MACHINE_WORLD_S7_FOCUS_CONTROL_ROTOR_MATERIAL.alpha
+          : selected ? 0.86 : 0.58;
+        const axialCollar = component.geometryProfile === MACHINE_WORLD_FACILITY_CONTROL_AXIAL_RING_PROFILE
+          && component.shape === 'TORUS';
+        const componentYaw = reducedMotion
+          ? component.rotationY
+          : finite(presentation?.rotationY, component.rotationY);
+        const componentTransform = axialCollar
+          ? multiplyMatrix(
+              translateMatrix(
+                component.center.x + finite(presentation?.dx),
+                component.center.y + finite(presentation?.dy),
+                component.center.z + finite(presentation?.dz),
+              ),
+              multiplyMatrix(
+                rotateYMatrix(componentYaw),
+                scaleMatrix(
+                  Math.max(0.08, component.dimensions.x * 0.5),
+                  Math.max(0.08, component.dimensions.y * 0.5),
+                  Math.max(0.08, component.dimensions.z * 0.5),
+                ),
+              ),
+            )
+          : multiplyMatrix(
+              translateMatrix(
+                component.center.x + finite(presentation?.dx),
+                centeredPrismBaseY(
+                  component.center.y + finite(presentation?.dy),
+                  renderedHeight,
+                ),
+                component.center.z + finite(presentation?.dz),
+              ),
+              multiplyMatrix(
+                rotateYMatrix(componentYaw),
+                scaleMatrix(
+                  Math.max(0.08, component.dimensions.x * 0.5),
+                  renderedHeight,
+                  Math.max(0.08, component.dimensions.z * 0.5),
+                ),
+              ),
+            );
         ringDraw(
-          component.shape,
+          axialCollar ? 'TORUS_AXIAL' : component.shape,
+          componentTransform,
+          componentDrawMaterial,
+          {
+            emit: componentEmit,
+            glow: componentGlow,
+            alpha: componentAlpha,
+          },
+        );
+      };
+      for (const component of controlTransparency.solids) drawFacilityMechanismComponent(component);
+      if (controlTransparency.deferred.length > 0) {
+        gl.depthMask(false);
+        for (const component of controlTransparency.deferred) drawFacilityMechanismComponent(component);
+        gl.depthMask(true);
+      }
+      for (const detail of machine.physicalInterfaces || []) {
+        const material = detail.materialRole === 'glass'
+          ? activeHeroMaterials.glass
+          : detail.materialRole === 'energy'
+            ? activeHeroMaterials.energy
+            : detail.materialRole === 'trace'
+              ? activeHeroMaterials.trace
+              : detail.materialRole === 'metal2'
+                ? activeHeroMaterials.metal2
+                : activeHeroMaterials.metal;
+        const renderedHeight = Math.max(0.02, finite(detail.dimensions.y));
+        ringDraw(
+          detail.shape || 'CUBE',
           multiplyMatrix(
             translateMatrix(
-              component.center.x + finite(presentation?.dx),
-              component.center.y + finite(presentation?.dy),
-              component.center.z + finite(presentation?.dz),
+              detail.center.x,
+              centeredPrismBaseY(detail.center.y, renderedHeight),
+              detail.center.z,
             ),
             multiplyMatrix(
-              rotateYMatrix(
-                reducedMotion
-                  ? component.rotationY
-                  : finite(presentation?.rotationY, component.rotationY),
-              ),
+              rotateYMatrix(finite(detail.rotationY)),
               scaleMatrix(
-                Math.max(0.08, component.dimensions.x * 0.5),
-                Math.max(0.04, component.dimensions.y),
-                Math.max(0.08, component.dimensions.z * 0.5),
+                Math.max(0.02, detail.dimensions.x * 0.5),
+                renderedHeight,
+                Math.max(0.02, detail.dimensions.z * 0.5),
               ),
             ),
           ),
-          component.materialRole === 'energy'
-            ? RING_MATERIALS.energy
-            : component.materialRole === 'trace'
-              ? RING_MATERIALS.trace
-              : component.materialRole === 'glass'
-                ? RING_MATERIALS.glass
-                : component.materialRole === 'metal2'
-                  ? RING_MATERIALS.metal2
-                  : RING_MATERIALS.metal,
+          material,
           {
-            emit: selected ? 0.18 : 0.07,
-            glow: selected ? 0.26 : 0.09,
-            alpha: selected ? 0.86 : 0.58,
+            emit: selected ? 0.07 : 0.025,
+            glow: selected ? 0.12 : 0.035,
+            alpha: selected ? 0.95 : 0.76,
+          },
+        );
+      }
+      for (const detail of machine.mechanicalDetails || []) {
+        const material = detail.materialRole === 'glass'
+          ? activeHeroMaterials.glass
+          : detail.materialRole === 'metal2'
+            ? activeHeroMaterials.metal2
+            : activeHeroMaterials.metal;
+        const dimensions = detail.dimensions || { x: 0.1, y: 0.1, z: 0.1 };
+        ringDraw(
+          detail.shape || 'CUBE',
+          multiplyMatrix(
+            translateMatrix(
+              detail.center.x,
+              detail.center.y - dimensions.y * 0.5,
+              detail.center.z,
+            ),
+            multiplyMatrix(
+              rotateYMatrix(finite(detail.rotationY)),
+              scaleMatrix(
+                Math.max(0.02, dimensions.x * 0.5),
+                Math.max(0.02, dimensions.y),
+                Math.max(0.02, dimensions.z * 0.5),
+              ),
+            ),
+          ),
+          material,
+          {
+            emit: 0.0,
+            glow: selected ? 0.045 : 0.02,
+            alpha: 0.90,
           },
         );
       }
       facilityMachineryCount += 1;
+      canvas.dataset.machineWorldFacilityMechanicalDetails = String(
+        (machine.mechanicalDetails || []).length,
+      );
       facilityMachineryComponentCount += machine.components.length;
       facilityMachineryPortCount += machine.ports.length;
     }
     const facilityMaterial = {
-      glass: RING_MATERIALS.glass,
-      energy: RING_MATERIALS.energy,
+      glass: activeHeroMaterials.glass,
+      energy: activeHeroMaterials.energy,
     };
     const facilityFeatureScale = Number(responsive.facilityFeatureScale) > 0
       ? Number(responsive.facilityFeatureScale)
       : 1;
     canvas.dataset.machineWorldResponsiveFacilityFeatureScale = String(facilityFeatureScale);
     for (const assembly of facilityAssemblies) {
-      const selected = assembly.branchId === branchId;
+      const selected = assembly.branchId === activePresentationBranchId;
       for (const component of assembly.components) {
         const dx = component.center.x;
         const dy = component.center.y;
         const dz = component.center.z;
-        const material = facilityMaterial[component.materialRole] || RING_MATERIALS.glass;
+        const renderedHeight = Math.max(0.045, finite(component.dimensions.y));
+        const material = facilityMaterial[component.materialRole] || activeHeroMaterials.glass;
         ringDraw(
           component.shape,
           multiplyMatrix(
-            translateMatrix(dx, dy, dz),
+            translateMatrix(dx, centeredPrismBaseY(dy, renderedHeight), dz),
             scaleMatrix(
               Math.max(0.12, component.dimensions.x * 0.5 * facilityFeatureScale),
-              Math.max(0.045, component.dimensions.y),
+              renderedHeight,
               Math.max(0.12, component.dimensions.z * 0.5 * facilityFeatureScale),
             ),
           ),
@@ -1517,12 +2913,18 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     let podAssemblySelectedBranch = '';
     for (const part of scene.parts) {
       if (part.kind === 'hub') continue;
-      const selected = part.branchId === branchId;
+      const selected = part.branchId === activePresentationBranchId;
       let entry = null;
 
       if (part.kind === 'inner-pod' && part.podAssembly) {
+        const podAssembly = part.branchId === branchId && hierarchyOpen && state.focusedChildId
+          ? focusedPodAssemblyResolved
+          : deriveMachinePodAssembly({
+              part,
+              expansionAmount: 0,
+            });
         const projected = drawMachinePodAssembly({
-          assembly: part.podAssembly,
+          assembly: podAssembly || part.podAssembly,
           reducedMotion,
           selected,
           shellMaterial: authoredSeatShell,
@@ -1534,7 +2936,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
           podAssemblyPortCount += projected.ports.length;
           if (selected) podAssemblySelectedBranch = projected.branchId;
         }
-      } else {
+      } else if (part.kind !== 'outer-housing' || !authoredS7BodyBranchIds.has(part.branchId)) {
         entry = ensureBuffer(part);
         gl.useProgram(solid);
         gl.bindBuffer(gl.ARRAY_BUFFER,entry.buffer);
@@ -1558,6 +2960,10 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         );
         gl.uniform1f(solidGlow, selected ? .75 : .16);
         gl.drawArrays(gl.TRIANGLES,0,entry.count);
+      } else {
+        // S7's authored layered chassis now owns the housing surface. Do not redraw
+        // the legacy opaque housing mesh over the embedded core primitives.
+        entry = null;
       }
 
       if (part.uiSurface) {
@@ -1590,12 +2996,48 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldFacilityMachineryComponents = String(facilityMachineryComponentCount);
     canvas.dataset.machineWorldFacilityMachineryPorts = String(facilityMachineryPortCount);
     canvas.dataset.machineWorldFacilityMachineryValidation = 'pass';
+    canvas.dataset.machineWorldFacilityControlTransparencyPass = machineWorldFacilityControlTransparencyPass;
     canvas.dataset.machineWorldFacilityMechanismPhases = facilityMechanismPhases.join('|');
     canvas.dataset.machineWorldFacilityMechanismState = choreography.transformation <= 0.001
       ? 'STOWED'
       : choreography.transformation >= 0.999
         ? 'ACTIVE'
         : 'DEPLOYING';
+    const machineWorldPresentationMode = facilityFocused
+      ? 'FACILITY_FOCUS'
+      : hierarchyOpen
+        ? (state.focusedChildId ? 'DIVISION_FOCUS' : 'POD_FOCUS')
+        : 'WORLD_OVERVIEW';
+    const renderedFacilityCarrier = renderMachineWorldFacilityCarrier(
+      machineWorldTopology,
+      machineWorldPresentationMode,
+      activePresentationBranchId,
+      reducedMotion,
+    );
+    canvas.dataset.machineWorldPresentationMode = machineWorldPresentationMode;
+    canvas.dataset.machineWorldFacilityFocusBranch = facilityFocusBranchId;
+    canvas.dataset.machineWorldFacilityFocusValidation = requestedFacilityFocusBranchId && !facilityFocused
+      ? 'fail'
+      : 'pass';
+    canvas.dataset.machineWorldFacilityFocusSubjectCenter = facilitySubject
+      ? [facilitySubject.center.x, facilitySubject.center.y, facilitySubject.center.z].join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityFocusSubjectSpan = facilitySubject
+      ? [
+          facilitySubject.max.x - facilitySubject.min.x,
+          facilitySubject.max.y - facilitySubject.min.y,
+          facilitySubject.max.z - facilitySubject.min.z,
+        ].map((value) => Number(value).toFixed(4)).join(',')
+      : '';
+    canvas.dataset.machineWorldFacilityCarrierLastRenderCount = String(renderedFacilityCarrier);
+
+    const renderedFacilityDocking = renderMachineWorldFacilityDockingEmbodiment(
+      facilityMachinery,
+      activePresentationBranchId,
+      reducedMotion,
+    );
+    canvas.dataset.machineWorldFacilityDockingRendered = String(renderedFacilityDocking);
+
     const renderedWorldTopologyEdges = renderMachineWorldTopologyEdges(
       machineWorldTopology,
       branchId,
@@ -1603,7 +3045,14 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       now,
       {
         ...state,
+        facilityFocused,
+        facilityFocusBranchId,
+        facilitySubject,
         workspaceReceptionAmount: choreography.workspaceReception,
+      },
+      {
+        mode: machineWorldPresentationMode,
+        branchId: activePresentationBranchId,
       },
     );
     canvas.dataset.machineWorldTopology = machineWorldTopology.id;
@@ -1649,7 +3098,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         S: scaleMatrix,
         RY: rotateYMatrix,
         mul: multiplyMatrix,
-        M: RING_MATERIALS,
+        M: activeHeroMaterials,
       }, now / 1000);
       canvas.dataset.machineWorldFocusedDivision = focusedDivision?.childId || '';
       canvas.dataset.machineWorldFocusedDivisionGeometry = focusedDivision?.id || '';
@@ -1740,7 +3189,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
       gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(route),gl.DYNAMIC_DRAW);
       gl.enableVertexAttribArray(linePos);
       gl.vertexAttribPointer(linePos,3,gl.FLOAT,false,0,0);
-      const selected = connection.targetBranchId === branchId || connection.sourceBranchId === branchId;
+      const selected = !facilityFocused && (connection.targetBranchId === branchId || connection.sourceBranchId === branchId);
       const pulse = reducedMotion ? .34 : .32 + .24 * (.5 + .5*Math.sin(now*.004 + connection.id.length));
       gl.uniform4f(lineColor,
         selected ? .36 : .14,
@@ -1756,7 +3205,7 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
         translateMatrix(workspaceCoreForAssembly.center.x, workspaceCoreForAssembly.center.y, workspaceCoreForAssembly.center.z),
         scaleMatrix(workspaceCoreForAssembly.innerRadius * (0.20 + 0.08 * choreography.workspaceReception), 0.12 + 0.06 * choreography.workspaceReception, workspaceCoreForAssembly.innerRadius * (0.20 + 0.08 * choreography.workspaceReception)),
       ),
-      RING_MATERIALS.metal2,
+      activeHeroMaterials.metal2,
       {
         rough: 0.34,
         emit: 0.05 + 0.10 * choreography.workspaceReception,
@@ -1808,7 +3257,9 @@ export function createMachineWorldRenderer({ canvas, gl: providedGl } = {}) {
     canvas.dataset.machineWorldExpansionInterrupted = String(expansionSample.interrupted);
     canvas.dataset.machineWorldExpansionClearanceLimited = String(expansionSample.clearanceLimited);
     canvas.dataset.machineWorldRingAuthority = 'canonical-machine-world';
-    canvas.dataset.machineWorldMaterialModel = 'hero-authored-v1';
+    canvas.dataset.machineWorldMaterialModel = 'hero-authored-v2';
+    canvas.dataset.machineWorldMaterialShader = 'bounded-lit-v1';
+    canvas.dataset.machineWorldMaterialTheme = materialLighting.themeMode;
 
     return Object.freeze({
       state: toMachineDisplayState(expansionSample.phase, expansionSample.amount),

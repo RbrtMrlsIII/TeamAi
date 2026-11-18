@@ -19,7 +19,7 @@ const finite = (value, fallback = 0) =>
 const ROOT_OWNER = 'frontend/spatial/machine-pod-assembly.js';
 
 export const MACHINE_POD_ASSEMBLY_ID = 'MACHINE-POD-ASSEMBLY';
-export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V1';
+export const MACHINE_POD_ASSEMBLY_VERSION = 'S3-V8';
 
 export const POD_COMPONENT_ROLES = Object.freeze([
   'outer-shell',
@@ -38,6 +38,17 @@ export const POD_PORT_ROLES = Object.freeze([
 
 export const POD_DIVISION_COUNT = 7;
 export const POD_DIVISION_FAN_SPAN = (5 * Math.PI) / 6;
+
+const POD_SHELL_RIB_OUTLINE = Object.freeze([
+  [-1.00, -0.52],
+  [-0.32, -0.92],
+  [0.42, -0.78],
+  [1.00, -0.18],
+  [0.82, 0.58],
+  [0.10, 1.00],
+  [-0.72, 0.64],
+]);
+
 
 function rootContext(semanticId = null) {
   return createSpatialConstructionContext({
@@ -117,6 +128,317 @@ export function deriveMachinePodAssembly({
   const payloadScale = 0.86 + 0.18 * density;
   const shellHeight = height * (0.72 + 0.08 * expansion);
   const articulationPhase = expansion * Math.PI * 0.12;
+  const radial = Object.freeze({
+    x: Math.cos(outwardAngle),
+    z: Math.sin(outwardAngle),
+  });
+  const tangent = Object.freeze({
+    x: -radial.z,
+    z: radial.x,
+  });
+  const minimumSpan = Math.min(width, depth);
+  const mechanicalPresentation = Object.freeze({
+    axis: 'radial-outward',
+    amount: expansion,
+    outwardAngle,
+    outward: radial,
+    tangent,
+    shellPanelSeparation: minimumSpan * (0.26 + 0.16 * expansion) * expansion,
+    shellPanelTravel: minimumSpan * 0.16 * expansion,
+    shellPanelLift: height * 0.12 * expansion,
+    shellPanelRotation: 0.24 * expansion,
+    collarTravel: minimumSpan * 0.16 * expansion,
+    collarLift: height * 0.06 * expansion,
+    chamberTravel: minimumSpan * 0.30 * expansion,
+    chamberLift: height * 0.18 * expansion,
+    articulationTravel: minimumSpan * 0.28 * expansion,
+    articulationRotation: 0.38 * expansion,
+    payloadTravel: minimumSpan * 0.38 * expansion,
+    payloadLift: height * 0.42 * expansion,
+    revealGap: minimumSpan * 0.12 * expansion,
+    presentationOnly: true,
+  });
+
+  const mechanicalDetails = Object.freeze([
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:DOCKING-STRUT:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'docking-strut',
+      shape: 'CUBE',
+      center: Object.freeze({
+        x: center.x - radial.x * connectionOffset * 0.50
+          + tangent.x * minimumSpan * 0.12 * side,
+        y: center.y + height * 0.20,
+        z: center.z - radial.z * connectionOffset * 0.50
+          + tangent.z * minimumSpan * 0.12 * side,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.075,
+        y: height * 0.12,
+        z: Math.max(minimumSpan * 0.28, connectionOffset * 0.62),
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal',
+      ...rootContext(),
+    })),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:PANEL-RAIL:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'panel-rail',
+      shape: 'CUBE',
+      center: Object.freeze({
+        x: center.x
+          + tangent.x * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.17 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + tangent.z * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.10,
+        y: height * 0.075,
+        z: minimumSpan * 0.44,
+      }),
+      rotationY: outwardAngle + Math.PI / 2,
+      materialRole: 'metal',
+      ...rootContext(),
+    })),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:HINGE:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'hinge-joint',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: center.x
+          + tangent.x * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.10 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + tangent.z * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: height * 0.12,
+        y: height * 0.12,
+        z: height * 0.12,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    })),
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = outwardAngle + index * (TAU / 4);
+      const ribRadius = chamberRadius * 0.98;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:CHAMBER-RIB:${index + 1}`,
+        role: 'chamber-rib',
+        shape: 'CUBE',
+        center: Object.freeze({
+          x: center.x + radial.x * mechanicalPresentation.chamberTravel
+            + Math.cos(angle) * ribRadius,
+          y: center.y + height * 0.34 + mechanicalPresentation.chamberLift,
+          z: center.z + radial.z * mechanicalPresentation.chamberTravel
+            + Math.sin(angle) * ribRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.055,
+          y: height * 0.19,
+          z: minimumSpan * 0.14,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    Object.freeze({
+      id: `MACHINE-POD:${branchId}:LOWER-PLINTH`,
+      role: 'lower-plinth',
+      shape: 'POD_SHELL_PANEL',
+      center: Object.freeze({
+        x: center.x + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.03 + mechanicalPresentation.shellPanelLift * 0.55,
+        z: center.z + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: width * 0.92,
+        y: height * 0.14,
+        z: depth * 0.72,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    }),
+    Object.freeze({
+      id: `MACHINE-POD:${branchId}:UPPER-PAYLOAD-FRAME`,
+      role: 'upper-payload-frame',
+      shape: 'TORUS',
+      center: Object.freeze({
+        x: center.x + radial.x * mechanicalPresentation.payloadTravel,
+        y: center.y + height * 0.55 + mechanicalPresentation.payloadLift * 0.75,
+        z: center.z + radial.z * mechanicalPresentation.payloadTravel,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.68,
+        y: height * 0.07,
+        z: minimumSpan * 0.68,
+      }),
+      rotationY: 0,
+      materialRole: 'metal',
+      ...rootContext(),
+    }),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:SIDE-ACTUATOR:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'side-actuator',
+      shape: 'CYL',
+      center: Object.freeze({
+        x: center.x
+          + tangent.x * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.x * mechanicalPresentation.shellPanelTravel,
+        y: center.y + height * 0.30 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + tangent.z * (minimumSpan * 0.34 + mechanicalPresentation.shellPanelSeparation) * side
+          + radial.z * mechanicalPresentation.shellPanelTravel,
+      }),
+      dimensions: Object.freeze({
+        x: height * 0.095,
+        y: height * 0.26,
+        z: height * 0.095,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    })),
+    ...[-1, 1].map((side) => Object.freeze({
+      id: `MACHINE-POD:${branchId}:CHAMBER-LOCK:${side > 0 ? 'RIGHT' : 'LEFT'}`,
+      role: 'chamber-lock',
+      shape: 'CUBE',
+      center: Object.freeze({
+        x: center.x
+          + radial.x * (mechanicalPresentation.chamberTravel + chamberRadius * 0.72)
+          + tangent.x * minimumSpan * 0.18 * side,
+        y: center.y + height * 0.36 + mechanicalPresentation.chamberLift,
+        z: center.z
+          + radial.z * (mechanicalPresentation.chamberTravel + chamberRadius * 0.72)
+          + tangent.z * minimumSpan * 0.18 * side,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.10,
+        y: height * 0.22,
+        z: minimumSpan * 0.08,
+      }),
+      rotationY: outwardAngle,
+      materialRole: 'metal2',
+      ...rootContext(),
+    })),
+    Object.freeze({
+      id: `MACHINE-POD:${branchId}:PAYLOAD-COLLAR`,
+      role: 'payload-collar',
+      shape: 'TORUS',
+      center: Object.freeze({
+        x: center.x + radial.x * mechanicalPresentation.payloadTravel,
+        y: center.y + height * 0.72 + mechanicalPresentation.payloadLift,
+        z: center.z + radial.z * mechanicalPresentation.payloadTravel,
+      }),
+      dimensions: Object.freeze({
+        x: minimumSpan * 0.56,
+        y: height * 0.055,
+        z: minimumSpan * 0.56,
+      }),
+      rotationY: 0,
+      materialRole: 'glass',
+      ...rootContext(),
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6);
+      const ribRadius = shellRadius * 0.80;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:SHELL-RIB:${index + 1}`,
+        role: 'shell-rib',
+        shape: 'POD_RIB',
+        profile: 'pod-shell-rib',
+        center: Object.freeze({
+          x: center.x + Math.cos(angle) * ribRadius,
+          y: center.y + height * 0.18,
+          z: center.z + Math.sin(angle) * ribRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.085,
+          y: height * 0.46,
+          z: minimumSpan * 0.14,
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        outline: POD_SHELL_RIB_OUTLINE,
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = Math.PI / 4 + index * (TAU / 4);
+      const bulkheadRadius = shellRadius * 0.62;
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:SHELL-BULKHEAD:${index + 1}`,
+        role: 'shell-bulkhead',
+        shape: 'CUBE',
+        profile: 'nested-shell-bulkhead',
+        center: Object.freeze({
+          x: center.x + Math.cos(angle) * bulkheadRadius,
+          y: center.y + height * 0.18,
+          z: center.z + Math.sin(angle) * bulkheadRadius,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.16,
+          y: height * 0.38,
+          z: minimumSpan * 0.10,
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 4 }, (_, index) => {
+      // Two braces mount to each split shell half, away from the panel seam.
+      // Their centers are transformed by the exact local-to-world Y rotation
+      // used by drawMachinePodAssembly, not a separately inferred radial turn.
+      const angle = outwardAngle + Math.PI / 4 + index * (TAU / 4);
+      const localAngle = angle - outwardAngle;
+      const side = Math.sin(localAngle) >= 0 ? 1 : -1;
+      const faceRadius = shellRadius * 0.42;
+      const panelAngle = outwardAngle + mechanicalPresentation.shellPanelRotation * side;
+      const localX = faceRadius * Math.cos(localAngle);
+      const localZ = faceRadius * Math.sin(localAngle);
+      const panelCenter = {
+        x: center.x
+          + radial.x * mechanicalPresentation.shellPanelTravel
+          + tangent.x * mechanicalPresentation.shellPanelSeparation * side,
+        y: center.y + height * 0.06 + mechanicalPresentation.shellPanelLift,
+        z: center.z
+          + radial.z * mechanicalPresentation.shellPanelTravel
+          + tangent.z * mechanicalPresentation.shellPanelSeparation * side,
+      };
+      return Object.freeze({
+        id: `MACHINE-POD:${branchId}:SHELL-FACE-BRACE:${index + 1}`,
+        role: 'shell-face-brace',
+        shape: 'POD_SHELL_PANEL',
+        profile: 'outer-shell-face-frame',
+        center: Object.freeze({
+          x: panelCenter.x
+            + Math.cos(panelAngle) * localX
+            + Math.sin(panelAngle) * localZ,
+          y: panelCenter.y + height * 0.12,
+          z: panelCenter.z
+            - Math.sin(panelAngle) * localX
+            + Math.cos(panelAngle) * localZ,
+        }),
+        dimensions: Object.freeze({
+          x: minimumSpan * 0.18,
+          y: height * 0.24,
+          z: minimumSpan * 0.08,
+        }),
+        rotationY: panelAngle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        outline: POD_SHELL_RIB_OUTLINE,
+        ...rootContext(),
+      });
+    }),
+  ]);
 
   const components = Object.freeze([
     component({
@@ -273,19 +595,95 @@ export function deriveMachinePodAssembly({
     connectionPoint.x - center.x,
     connectionPoint.z - center.z,
   ) + Number(connectionComponent?.radius || 0);
+  const mechanicalDetailRadialExtent = mechanicalDetails.reduce((maxExtent, item) => {
+    const centerReach = Math.hypot(
+      Number(item.center.x) - center.x,
+      Number(item.center.z) - center.z,
+    );
+    const halfDiagonal = Math.hypot(
+      Number(item.dimensions?.x || 0) * 0.5,
+      Number(item.dimensions?.z || 0) * 0.5,
+    );
+    return Math.max(maxExtent, centerReach + halfDiagonal);
+  }, 0);
   const maxHorizontalExtent = Math.max(
     width,
     depth,
     collarRadius * 2,
     articulationRadius * 2,
     connectionRadialExtent * 2,
+    mechanicalDetailRadialExtent * 2,
   );
   const neighborClearance = adjacentCenterSpacing == null
     ? null
     : Number(adjacentCenterSpacing) - maxHorizontalExtent;
 
+  const mechanicalSubjectParts = [];
+  for (const item of components) {
+    const horizontalHalfExtent = Math.hypot(
+      Number(item.dimensions?.x || item.radius * 2) * 0.5,
+      Number(item.dimensions?.z || item.radius * 2) * 0.5,
+    );
+    const base = {
+      id: item.id,
+      center: item.center,
+      dimensions: {
+        x: horizontalHalfExtent * 2,
+        y: Number(item.dimensions?.y || item.height),
+        z: horizontalHalfExtent * 2,
+      },
+    };
+    if (item.role === 'outer-shell' && expansion > 0.02) {
+      for (const side of [-1, 1]) {
+        mechanicalSubjectParts.push({
+          ...base,
+          id: item.id + ':PANEL:' + side,
+          center: {
+            x: item.center.x
+              + tangent.x * mechanicalPresentation.shellPanelSeparation * side
+              + radial.x * mechanicalPresentation.shellPanelTravel,
+            y: item.center.y + mechanicalPresentation.shellPanelLift,
+            z: item.center.z
+              + tangent.z * mechanicalPresentation.shellPanelSeparation * side
+              + radial.z * mechanicalPresentation.shellPanelTravel,
+          },
+          dimensions: {
+            x: horizontalHalfExtent * 1.08,
+            y: Number(item.dimensions?.y || item.height),
+            z: horizontalHalfExtent * 1.08,
+          },
+        });
+      }
+      continue;
+    }
+    const roleTravel = item.role === 'structural-collar'
+      ? mechanicalPresentation.collarTravel
+      : item.role === 'inner-chamber'
+        ? mechanicalPresentation.chamberTravel
+        : item.role === 'articulation-mechanism'
+          ? mechanicalPresentation.articulationTravel
+          : item.role === 'payload-surface'
+            ? mechanicalPresentation.payloadTravel
+            : 0;
+    const roleLift = item.role === 'structural-collar'
+      ? mechanicalPresentation.collarLift
+      : item.role === 'inner-chamber'
+        ? mechanicalPresentation.chamberLift
+        : item.role === 'payload-surface'
+          ? mechanicalPresentation.payloadLift
+          : 0;
+    mechanicalSubjectParts.push({
+      ...base,
+      center: {
+        x: item.center.x + radial.x * roleTravel,
+        y: item.center.y + roleLift,
+        z: item.center.z + radial.z * roleTravel,
+      },
+    });
+  }
   const subjectParts = [
-    ...components.map((item) => ({
+    ...mechanicalSubjectParts,
+    ...mechanicalDetails.map((item) => ({
       id: item.id,
       center: item.center,
       dimensions: item.dimensions,
@@ -297,6 +695,14 @@ export function deriveMachinePodAssembly({
     })),
   ];
 
+  const subject = deriveMachineSubject(subjectParts, 0.06);
+  const horizontalRadius = Math.max(
+    Math.abs(subject.max.x - center.x),
+    Math.abs(center.x - subject.min.x),
+    Math.abs(subject.max.z - center.z),
+    Math.abs(center.z - subject.min.z),
+  );
+
   return Object.freeze({
     id: MACHINE_POD_ASSEMBLY_ID,
     version: MACHINE_POD_ASSEMBLY_VERSION,
@@ -305,20 +711,22 @@ export function deriveMachinePodAssembly({
     seatIndex: Number.isInteger(Number(part.seatIndex)) ? Number(part.seatIndex) : null,
     center,
     components,
+    mechanicalDetails,
     ports,
     divisionAttachmentZone,
     payloadSurface,
     localInterfaces,
     articulation,
     statusPresentation,
+    mechanicalPresentation,
     envelope: Object.freeze({
-      radius: maxHorizontalExtent * 0.5,
+      radius: Math.max(maxHorizontalExtent * 0.5, horizontalRadius),
       height: shellHeight,
       adjacentCenterSpacing: adjacentCenterSpacing == null ? null : Number(adjacentCenterSpacing),
       neighborClearance,
       requestedClearance: clearance,
     }),
-    subject: deriveMachineSubject(subjectParts, 0.06),
+    subject,
     presentationOnly: true,
   });
 }

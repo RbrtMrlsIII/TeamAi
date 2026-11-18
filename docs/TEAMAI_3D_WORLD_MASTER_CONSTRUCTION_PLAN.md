@@ -6,8 +6,13 @@ Frontend contract: #400
 Seat / turn / handoff product context: #392 (consolidated #377 context)
 Visual/material track: #83
 Backend/runtime counterpart: #402 / #401
-Base: main at 87f466fb0edac3784280128785a8fd2dc757e749
+Historical structural base: PR #398 merged at `87f466fb0edac3784280128785a8fd2dc757e749`  
+Current 029 spatial continuation base: `main` at `13356cae7e6ef8179f7e2e552211bb4d187f37fb` via merged PR #404; active implementation vehicle PR #424
 No 029-release claim.
+
+### Current continuation boundary (2026-09-28)
+
+The reviewed PR #398 structural foundation and merged PR #404 spatial implementation are historical baselines. PR #424 is the active bounded continuation vehicle for Y0/Y1, structural visual embodiment, S24 and later 029 world-expression layers. The sequence remains S0-S10 structural roots → S11-S21 product/runtime realization → S22-S29 world expression → S30-S33 proof, runtime reconciliation, human acceptance, and polish. This plan does not move Firebase/Firestore, authorization, entitlement, provider, scheduler, commerce, or production-delivery authority into the renderer.
 
 ## 0. Purpose
 
@@ -87,7 +92,7 @@ Product_Law/PRODUCT_LAW.md remains the highest product authority.
 
 Issue #278 remains the active 029 product-experience ledger.
 
-Issue #396 remains the current 029 spatial workstream.
+Issue #405 governs the active 029 spatial workstream; #396 is retained as historical construction guidance.
 
 Issue #400 remains the canonical frontend/product feature grammar.
 
@@ -457,7 +462,7 @@ The target design language includes:
 
 The available project Library contains the AI Rocket Factory Activation Storyboard, which captures this target language: central hexagonal core, eight inner pod assemblies, four distinct outer facility mechanisms, layered mechanical activation, blue/white/orange energy, metallic/glass surfaces, holographic payload, and synchronized final state.
 
-No actual video file is currently present in the available project Library. Video-specific timing or motion must therefore remain unclaimed until the source video is supplied and inspected.
+The reference video asset is present in the repository at assets/3D_Vision/hailuo.mp4. Video-specific timing or motion remains unclaimed unless directly inspected and deliberately adopted as visual/mechanical guidance.
 
 ## 8. Visual system
 
@@ -555,6 +560,90 @@ Use semantic effect families rather than a single spinner:
 - recovery/error
 
 Never show a false-success animation merely because a request completed at the transport layer.
+
+
+## 12A. Renderer substrate evolution (cross-cutting architecture gate)
+
+The project is adopting **Three.js + WebGL2 + JavaScript mesh/scene abstractions (current package candidate: three@0.186.1) as the target rendering substrate** for the spatial machine. This is a renderer implementation decision, not a new semantic, geometry, topology, camera, backend, or authority layer.
+
+### Evidence for the decision
+
+The current exact #424 renderer is approximately **2,087 lines / 87,405 characters**, with roughly **312 direct gl.* references**, while most machine-specific geometry/mechanics already live in separate pure assembly modules. The renderer is therefore becoming the maintenance bottleneck around an otherwise increasingly clean spatial model.
+
+Current upstream documentation checked on 2026-09-29 confirms:
+- Three.js WebGLRenderer uses WebGL 2 and does not support WebGL 1.
+- Mesh combines a scene object with BufferGeometry and a Material.
+- BufferGeometry provides reusable vertex/index/normal/UV/custom-attribute buffers plus bounds.
+- GLTFLoader provides the governed future path for imported glTF assets.
+
+### Non-negotiable ownership boundary
+
+Three.js MUST NOT become:
+- semantic identity authority;
+- Product Law authority;
+- domain/backend state;
+- authorization/entitlement authority;
+- scheduler/provider/payment authority;
+- geometry truth.
+
+Existing authored spatial modules remain the geometry/mechanics authority. Three.js becomes the **scene representation and rendering substrate**.
+
+### Target scene architecture
+
+authoritative product/read model
+  ↓
+semantic tree / branch / leaf payload
+  ↓
+authored spatial assembly + derived geometry
+  ↓
+Three.js scene adapter
+  ↓
+Object3D / Group hierarchy
+  ↓
+Mesh + BufferGeometry + Material
+  ↓
+WebGLRenderer (WebGL2)
+  ↓
+single existing Hero canvas
+
+The runtime remains one canvas, one renderer, one scene, one semantic camera authority, and one animation loop.
+
+### Machine mapping rules
+
+- Pod → Group root with nested shell, collar, chamber, articulation, payload, interfaces, and status meshes.
+- Division → child Group/mesh hierarchy derived from the existing S4 assembly and attachment mechanism.
+- Facility → facility-owned Group using its existing machine-specific components.
+- Core → central Group preserving the existing S2 assembly and subject envelope.
+- Physical attachments → authored parent/child transforms, not arbitrary world-coordinate offsets.
+- Materials → Product Law theme mapping into Three.js materials or bounded custom shader materials.
+- Camera → existing semantic camera spec projected into a Three.js PerspectiveCamera; the Three.js camera object is never semantic identity.
+
+### Migration order
+
+1. Freeze semantic/assembly contracts and capture exact-head browser baselines.
+2. Add an exact pinned Three.js dependency and lockfile integrity.
+3. Introduce a single scene adapter that consumes current S2-S10 assembly descriptors.
+4. Port reusable primitive/mesh factories to BufferGeometry/Mesh.
+5. Port S2 Core and one S3 Pod end-to-end, including focused opening.
+6. Port S4 divisions and S7 facilities without reauthoring semantics.
+7. Port S8 topology visualization and S10 camera projection.
+8. Re-run geometry, parity, accessibility, responsive, reduced-motion, and Browser verification.
+9. Compare fixed-state renders against the pre-migration baseline.
+10. Remove the raw WebGL renderer only after exact-head verification and rollback/archive evidence.
+
+### Migration acceptance gate
+
+The migration passes only when:
+- semantic IDs and assembly ownership remain unchanged;
+- subject envelopes and geometry invariants remain valid;
+- source/public parity remains exact;
+- focused Pod opening keeps the same semantic state progression;
+- responsive/reduced-motion/accessibility contracts survive;
+- Browser proves one-canvas runtime without duplicate contexts;
+- measured performance is within the agreed baseline or an accepted tradeoff is documented;
+- fixed-state renders show increased mechanical fidelity rather than merely changed shading.
+
+This gate is separate from feature completion and from S24 art direction. It exists to make the renderer capable of representing the already-defined machine cleanly enough for richer meshes, materials, lighting, and future assets.
 
 ## 12. Implementation architecture
 
@@ -702,14 +791,15 @@ Exit: the outer machine reads as four specialized facility machines.
 
 Exit: machine wiring is semantically and geometrically valid.
 
-### S9 - Electricity / signal
-- [ ] Idle signal.
-- [ ] Active-turn signal.
-- [ ] Contribution transfer.
-- [ ] Workspace receiving.
-- [ ] Handoff signal.
-- [ ] Blocked/error signal.
+### S9 - Signal topology projection / electricity infrastructure
+- [ ] Idle semantic signal projection.
+- [ ] Active-turn semantic signal projection.
+- [ ] Contribution transfer projection over declared S8 edges.
+- [ ] Workspace receiving state projection.
+- [ ] Handoff state projection.
+- [ ] Blocked/error state projection.
 - [ ] Reduced-motion semantic equivalent.
+- [ ] Final electrical styling, carrier geometry, bloom, and intensity choreography remain downstream of the post-S26 coherence checkpoint.
 - [ ] Remove unowned decorative routes.
 
 Exit: energy explains actual machine state.
@@ -747,6 +837,75 @@ S1 must reconcile the owners that already exist before any new physical assembly
 | State/effect projection | machine animation + energy flow + choreography modules | PARTITIONED | S9/S28/S29 must separate semantic state from visual effect orchestration. |
 
 **Construction rule:** do not close S1 by pretending PARTITIONED rows are complete. The next structural slice must resolve the partition only where the existing evidence shows real ownership overlap. Reuse established owners rather than introducing generic duplicate abstractions.
+
+
+## 12B. Spatial feature descent and leaf-coverage gate
+
+A parent facility or Seat branch is not structurally complete merely because its shell, selector, or menu exists. Construction descends until every currently declared terminal surface is classified.
+
+L0 MACHINE
+→ L1 TREE / FACILITY
+→ L2 BRANCH / DIVISION
+→ L3 SUBASSEMBLY / MECHANISM
+→ L4 PAYLOAD / CONFIGURATION SURFACE
+→ L5 LEAF ACTION / RESULT
+
+Each leaf is classified as one of:
+- SPATIAL_SURFACE
+- SPATIAL_PAYLOAD
+- APP_UI_HANDOFF
+- READ_MODEL_ONLY
+- STATE_ONLY
+
+### Seat descent inventory
+
+| Parent branch | Current known terminal payload / UI leaf scope |
+|---|---|
+| SEAT_SHELL | identity, provider/runtime/model facets, overview/status |
+| SEAT_CONNECTION | Connection, Health, Configure, bind/test/readiness |
+| SEAT_BEHAVIOR | Behavior, Do/Don't/defaults, inspect/configure |
+| SEAT_TOOLKIT | Core skill bundle, Domain skill bundle, External assign slot, configure/equip |
+| SEAT_CAPABILITIES | Capabilities, Available actions, configure/inspect |
+| SEAT_AUTHORIZATION | Authorization, Policy grant preview, reason-bearing configure/inspect |
+| SEAT_WORKSPACE_SCOPE | Workspace scope, Current workspace, configure/scope |
+| SEAT_TASK_EVIDENCE | Task evidence, Trace, report/result/evidence, inspect/configure |
+
+Recursive descendants may exist only where governed payload supplies stable semantic parentage. A button, form field, label, or ordinary control does not automatically deserve its own spatial branch.
+
+### Product-facility descent inventory
+
+The existing frontend feature registry defines:
+- Workspace HQ: dynamic target-owned paths;
+- Projects Library: project-owned paths;
+- Artifacts / Inventory: item-owned paths;
+- Storage: item-owned paths;
+- Seats 1–10: Seat-owned paths;
+- Team / Agents: role-owned paths;
+- MCP / Capability: target-owned recursive paths;
+- Skills / Responsibility: responsibility-owned paths;
+- Orchestration / Scheduler: task-owned paths;
+- Marketplace / Commerce: offer-owned paths;
+- Settings / Control: category-owned paths;
+- Authentication Gateway: gateway-owned paths.
+
+### Leaf completeness invariant
+
+Before a branch can participate in visual completion it must have:
+1. stable semantic owner;
+2. real payload source;
+3. physical parent or explicit UI handoff classification;
+4. geometry/footprint requirement when spatial;
+5. connection/interface requirement when spatial;
+6. camera relationship when spatial;
+7. state/loading/error/blocked semantics;
+8. accessibility, responsive, and reduced-motion behavior;
+9. owning verification evidence.
+
+### Spatial closure gate
+
+Before S24 visual art direction, perform one cold-review pass over the feature registry plus Tree Census and produce the current L0-L5 paths, owners, spatial leaves, UI handoffs, unresolved branches, topology dependencies, camera dependencies, and terminal controls with missing owners.
+
+This is a coverage gate, not a new semantic hierarchy and not permission to invent future feature branches.
 
 ### S11-S21 inheritance contract
 
@@ -901,6 +1060,7 @@ Exit: interactive world is operable without relying on mouse, color, or animatio
 Exit: mobile is designed as a first-class machine view.
 
 ### S24 - Visual/material system
+**Prerequisites:** spatial feature descent/leaf coverage and renderer-substrate migration are complete enough that the declared machine vocabulary can be represented without structural stand-ins.
 - [ ] Light-skeomorphic environment.
 - [ ] Mechanical material hierarchy.
 - [ ] Glass/translucency.
@@ -929,6 +1089,23 @@ Exit: surfaces communicate product meaning.
 - [ ] State-aware ambient intensity.
 
 Exit: environment supports the machine without visual noise.
+
+
+### VC1 - Visual coherence checkpoint (non-blocking diagnostic)
+
+Run immediately after S26 and before broad S27+ work is judged from a blank slate.
+
+- [ ] Capture fixed HERO_WIDE overview.
+- [ ] Capture one focused/open Seat.
+- [ ] Capture one focused/open branch or specialized facility.
+- [ ] Compare against the light-skeuomorphic direction, product rebaseline, and endorsed mechanical reference.
+- [ ] Record PASS/FAIL for silhouette, hierarchy, depth, mechanical readability, topology attachment, camera intimacy, and overall coherence.
+- [ ] Record one-line "reads unintentionally" notes for every miss.
+- [ ] Classify each miss as structural root, renderer substrate, material/lighting, hologram, ambient, topology, camera, or choreography.
+- [ ] Keep the checkpoint non-blocking for S27 unless a separate governed acceptance gate is explicitly failed.
+- [ ] Carry the baseline into S30/S32/S33.
+
+Exit: S33 begins from an observed composed baseline rather than being the first integrated visual review.
 
 ### S27 - Performance
 - [ ] Frame-time measurement.

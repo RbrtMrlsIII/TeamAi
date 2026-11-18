@@ -105,7 +105,7 @@ RETURN_TO_PARENT · RETURN_TO_WORLD · CONTINUOUS_TREE_TRAVEL
 RESPONSIVE_FRAMING · REDUCED_MOTION_EQUIVALENT
 ```
 
-Subject identity is semantic. Named docks and ~`700 ms` lerp are implementation baselines, not final travel law. Continuous tree-to-tree travel and deep branch subject resolution remain incomplete. PR #398 is the merged structural baseline; remaining construction is governed by PR #404 / Issue #405.
+Subject identity is semantic. Named docks and ~`700 ms` lerp are implementation baselines, not final travel law. Continuous tree-to-tree travel and deep branch subject resolution remain incomplete. PR #398 is the merged structural baseline; remaining construction is governed by PR #424 / Issue #405. PR #404 is merged historical provenance.
 
 ### Electricity law
 
@@ -127,7 +127,7 @@ Effects communicate semantics: pulse → activity; flow → **real edge**; error
 
 ## 3. Establish-one-tree checklist (Phases A–H)
 
-Execute through PR #404 / dedicated Issue #405 under the broader Issue #278 / #396 authority chain. One coherent slice at a time; do not open another implementation PR. Evidence remains evidence-only.
+Execute through PR #424 / dedicated Issue #405 under the broader Issue #278 product-experience chain. Issue #396 is historical construction guidance, not a second implementation route. One coherent slice at a time; do not open another spatial implementation PR. Evidence remains evidence-only.
 
 ### Phase A — Define before drawing
 

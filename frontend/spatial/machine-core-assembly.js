@@ -63,7 +63,7 @@ function freezeComponent({
 }
 
 export const MACHINE_CORE_ASSEMBLY_ID = 'MACHINE-CORE-ASSEMBLY';
-export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V2';
+export const MACHINE_CORE_ASSEMBLY_VERSION = 'S2-V5';
 
 export const CORE_COMPONENT_ROLES = Object.freeze([
   'foundation-shell',
@@ -80,6 +80,17 @@ export const CORE_PORT_ROLES = Object.freeze([
   'south',
   'west',
 ]);
+
+const CORE_REACTOR_CAGE_FIN_OUTLINE = Object.freeze([
+  [-1.00, -0.70],
+  [-0.38, -1.00],
+  [0.48, -0.92],
+  [1.00, -0.12],
+  [0.62, 0.74],
+  [-0.22, 1.00],
+  [-1.00, 0.26],
+]);
+
 
 export function deriveMachineCorePorts({
   hub,
@@ -226,17 +237,181 @@ export function deriveMachineCoreAssembly({
       });
     }),
   );
+  const mechanicalDetails = Object.freeze([
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6) + Math.PI / 6;
+      const radius = foundationRadius * 0.70;
+      const point = polar(radius, angle, center.y + 0.36 + 0.02 * expansion);
+      return Object.freeze({
+        id: `CORE_FOUNDATION_BRACE_${index + 1}`,
+        role: 'foundation-brace',
+        profile: 'radial-foundation-brace',
+        center: point,
+        dimensions: Object.freeze({
+          x: foundationRadius * 0.50,
+          y: 0.11 + 0.02 * expansion,
+          z: 0.15,
+        }),
+        rotationY: angle,
+        materialRole: 'metal',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6);
+      const radius = collarRadius * 1.18;
+      const point = polar(radius, angle, center.y + 0.86 + 0.03 * expansion);
+      return Object.freeze({
+        id: `CORE_REACTOR_GUARD_${index + 1}`,
+        role: 'reactor-guard',
+        profile: 'reactor-guard-post',
+        center: point,
+        dimensions: Object.freeze({
+          x: 0.11,
+          y: 0.34 + 0.04 * expansion,
+          z: 0.11,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6);
+      const radius = foundationRadius * 0.80;
+      const point = polar(radius, angle, center.y + 0.25 + 0.01 * expansion);
+      return Object.freeze({
+        id: `CORE_FOUNDATION_PANEL_${index + 1}`,
+        role: 'foundation-panel',
+        profile: 'beveled-foundation-panel',
+        center: point,
+        dimensions: Object.freeze({
+          x: foundationRadius * 0.26,
+          y: 0.18 + 0.02 * expansion,
+          z: foundationRadius * 0.12,
+        }),
+        rotationY: angle,
+        materialRole: 'metal',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 4 }, (_, index) => {
+      const angle = index * (TAU / 4);
+      const radius = hubRadius * 0.92;
+      const point = polar(radius, angle, center.y + 0.69 + 0.02 * expansion);
+      return Object.freeze({
+        id: `CORE_PORT_COLLAR_${index + 1}`,
+        role: 'port-collar',
+        profile: 'radial-port-collar',
+        center: point,
+        dimensions: Object.freeze({
+          x: hubRadius * 0.20,
+          y: 0.14 + 0.01 * expansion,
+          z: hubRadius * 0.14,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const angle = index * (TAU / 6) + Math.PI / 6;
+      const radius = reactorRadius * 0.92;
+      const point = polar(radius, angle, center.y + 1.08 + 0.03 * expansion);
+      return Object.freeze({
+        id: `CORE_REACTOR_RIB_${index + 1}`,
+        role: 'reactor-rib',
+        profile: 'reactor-rib',
+        center: point,
+        dimensions: Object.freeze({
+          x: 0.075,
+          y: 0.28 + 0.03 * expansion,
+          z: 0.11,
+        }),
+        rotationY: angle,
+        materialRole: 'metal2',
+        ...rootContext(),
+      });
+    }),
+    ...Array.from({ length: 3 }, (_, index) => {
+      const bandScale = [0.92, 1.02, 1.12][index];
+      return Object.freeze({
+        id: `CORE_REACTOR_BAND_${index + 1}`,
+        role: 'reactor-band',
+        profile: 'concentric-reactor-band',
+        center: Object.freeze({
+          x: center.x,
+          y: center.y + 0.96 + index * 0.19 + 0.03 * expansion,
+          z: center.z,
+        }),
+        dimensions: Object.freeze({
+          x: reactorRadius * bandScale,
+          y: 0.075 + 0.01 * expansion,
+          z: reactorRadius * bandScale,
+        }),
+        rotationY: Math.PI / 12 * index,
+        materialRole: 'glass',
+        ...rootContext(),
+      });
+    }),
+        Object.freeze({
+      id: 'CORE_REACTOR_INNER_HOUSING',
+      role: 'reactor-inner-housing',
+      profile: 'nested-reactor-housing',
+      center: Object.freeze({
+        x: center.x,
+        y: center.y + 0.94 + 0.04 * expansion,
+        z: center.z,
+      }),
+      dimensions: Object.freeze({
+        x: reactorRadius * 1.46,
+        y: 0.22 + 0.03 * expansion,
+        z: reactorRadius * 1.46,
+      }),
+      rotationY: Math.PI / 8,
+      materialRole: 'glass',
+      ...rootContext(),
+    }),
+    ...Array.from({ length: 8 }, (_, index) => {
+      const angle = index * (TAU / 8) + Math.PI / 8;
+      const radius = reactorRadius * 1.18;
+      const point = polar(radius, angle, center.y + 1.12 + 0.03 * expansion);
+      return Object.freeze({
+        id: `CORE_REACTOR_CAGE_FIN_${index + 1}`,
+        role: 'reactor-cage-fin',
+        profile: 'radial-reactor-cage-fin',
+        center: point,
+        dimensions: Object.freeze({
+          x: Math.min(0.24, reactorRadius * 0.42),
+          y: 0.72 + 0.06 * expansion,
+          z: Math.min(0.30, reactorRadius * 0.52),
+        }),
+        rotationY: angle,
+        materialRole: index % 2 === 0 ? 'metal2' : 'metal',
+        outline: CORE_REACTOR_CAGE_FIN_OUTLINE,
+        ...rootContext(),
+      });
+    }),
+  ]);
+
   const ports = deriveMachineCorePorts({
     hub,
     expansionAmount: expansion,
     requestedClearance: clearance,
   });
 
-  const subjectParts = components.map((component) => ({
-    id: component.id,
-    center: component.center,
-    dimensions: component.dimensions,
-  }));
+  const subjectParts = [
+    ...components.map((component) => ({
+      id: component.id,
+      center: component.center,
+      dimensions: component.dimensions,
+    })),
+    ...mechanicalDetails.map((detail) => ({
+      id: detail.id,
+      center: detail.center,
+      dimensions: detail.dimensions,
+    })),
+  ];
   const portSubjectParts = ports.map((port) => ({
     id: `${port.id}:SUBJECT`,
     center: port.point,
@@ -247,10 +422,36 @@ export function deriveMachineCoreAssembly({
     },
   }));
 
+  const mechanicalDetailRadialExtent = Math.max(
+    ...mechanicalDetails.map((detail) =>
+      Math.hypot(
+        Number(detail.center.x) - center.x,
+        Number(detail.center.z) - center.z,
+      ) + Math.hypot(
+        Number(detail.dimensions?.x || 0) * 0.5,
+        Number(detail.dimensions?.z || 0) * 0.5,
+      )
+    ),
+    foundationRadius,
+  );
+  const portRadialExtent = Math.max(
+    ...ports.map((port) =>
+      Math.hypot(
+        Number(port.point.x) - center.x,
+        Number(port.point.z) - center.z,
+      ) + Number(port.radius || 0)
+    ),
+    0,
+  );
+  const assemblyRadius = Math.max(
+    foundationRadius,
+    mechanicalDetailRadialExtent,
+    portRadialExtent,
+  );
   const root = rootContext();
   const radialCenterlineGap = adjacentSeatRadius == null
     ? null
-    : Number(adjacentSeatRadius) - foundationRadius;
+    : Number(adjacentSeatRadius) - assemblyRadius;
 
   return Object.freeze({
     id: MACHINE_CORE_ASSEMBLY_ID,
@@ -259,12 +460,13 @@ export function deriveMachineCoreAssembly({
     center,
     components,
     concentricMechanisms,
+    mechanicalDetails,
     ports,
     portByRole: Object.freeze(Object.fromEntries(ports.map((port) => [port.role, port]))),
     expansionAmount: expansion,
     receptionAmount: reception,
     envelope: Object.freeze({
-      radius: foundationRadius,
+      radius: assemblyRadius,
       height: components.reduce(
         (max, component) => Math.max(max, component.center.y + component.height / 2),
         center.y,

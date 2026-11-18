@@ -6,6 +6,7 @@ import {
   resolveMachineResponsive,
 } from '../frontend/spatial/machine-responsive.js';
 import { deriveMachineResponsiveReadability } from '../frontend/spatial/machine-responsive-readability.js';
+import { createBranchConnectionCore } from '../frontend/spatial/machine-core-layout.js';
 
 test('S23 exposes one presentation density policy without changing user-controlled data-density', () => {
   const desktop = resolveMachineResponsive({ width: 1280, height: 800 });
@@ -66,6 +67,8 @@ test('S23 fails the readability contract when the projected machine is genuinely
 
 test('S23 projects actual machine geometry through the supplied final phone camera pose', () => {
   const responsive = resolveMachineResponsive({ width: 390, height: 844 });
+  const machine = createBranchConnectionCore({ seatCount: 10 });
+  const seat = machine.byBranch.get('BRANCH-SEAT-01');
   const seatCenters = [
     [0, 5.05, 0.6, 0], [1, 4.0855358216, 0.77, 2.9683155241],
     [2, 1.5605358216, 0.63, 4.8028354073], [3, -1.5605358216, 0.8, 4.8028354073],
@@ -82,7 +85,7 @@ test('S23 projects actual machine geometry through the supplied final phone came
     cameraTarget: [0, 0.42, 0],
     seatCount: 10,
     seatCenters,
-    podFeatures: [{ center: { x: 5.05, y: 0.6, z: 0 }, dimensions: { x: 1.34, y: 0.62, z: 1.08 } }],
+    podFeatures: [{ center: seat.center, dimensions: seat.dimensions }],
     facilityFeatures: [{ center: { x: -0.41, y: 1.5, z: -10.03 }, dimensions: { x: 0.56, y: 0.18, z: 0.46 } }],
   });
   assert.equal(result.tier, MACHINE_RESPONSIVE_TIER.PHONE);

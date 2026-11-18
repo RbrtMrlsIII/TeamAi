@@ -312,3 +312,166 @@ test('S5 real Seat-01 envelope plans are bounded against the existing outer faci
     if (plan.clearancePlan.collision) assert.ok(plan.clearancePlan.maxSafeAmount < 1);
   }
 });
+
+
+test('S5 expansion stays clear of six closed sibling divisions across the full Seat and shell-state matrix', () => {
+  const divisionIds = [
+    'SEAT_CONNECTION',
+    'SEAT_BEHAVIOR',
+    'SEAT_TOOLKIT',
+    'SEAT_CAPABILITIES',
+    'SEAT_AUTHORIZATION',
+    'SEAT_WORKSPACE_SCOPE',
+    'SEAT_TASK_EVIDENCE',
+  ];
+  const shellAmounts = [0, 0.5, 1];
+
+  for (let seatCount = 1; seatCount <= 10; seatCount += 1) {
+    for (const shellAmount of shellAmounts) {
+      const core = createBranchConnectionCore({
+        seatCount,
+        expansionAmount: shellAmount,
+      });
+      const seats = core.parts.filter((part) => part.kind === 'inner-pod');
+      const outerHousings = core.parts.filter((part) => part.kind === 'outer-housing');
+
+      for (const seat of seats) {
+        const closedSiblingSubjects = divisionIds.map((childId, childIndex) => {
+          const geometry = deriveFocusedSeatDivisionGeometry({
+            parent: seat,
+            childId,
+            childIndex,
+            amount: 0,
+          });
+          const assembly = deriveMachineSeatDivisionAssembly({
+            parent: seat,
+            childId,
+            childIndex,
+            amount: 0,
+            geometry,
+          });
+          assert.ok(assembly?.subject, `missing closed sibling subject: ${seat.branchId}/${childId}`);
+          return { childId, subject: assembly.subject };
+        });
+
+        const worldObstacles = [
+          ...outerHousings,
+          ...seats.filter((otherSeat) => otherSeat.branchId !== seat.branchId),
+        ];
+
+        for (const [childIndex, childId] of divisionIds.entries()) {
+          const targetClosed = closedSiblingSubjects.find((entry) => entry.childId === childId)?.subject;
+          const siblingObstacles = closedSiblingSubjects
+            .filter((entry) => entry.childId !== childId)
+            .map((entry) => entry.subject);
+          const clearanceOverlap = (left, right, padding) =>
+            left.min.x <= right.max.x + padding
+            && left.max.x >= right.min.x - padding
+            && left.min.y <= right.max.y + padding
+            && left.max.y >= right.min.y - padding
+            && left.min.z <= right.max.z + padding
+            && left.max.z >= right.min.z - padding;
+          const axisGap = (leftMin, leftMax, rightMin, rightMax) =>
+            Math.max(0, rightMin - leftMax, leftMin - rightMax);
+          const obstacleBounds = (obstacle) => {
+            if (obstacle?.min && obstacle?.max) return obstacle;
+            if (!obstacle?.center || !obstacle?.dimensions) return null;
+            const half = {
+              x: Math.abs(Number(obstacle.dimensions.x) || 0) * 0.5,
+              y: Math.abs(Number(obstacle.dimensions.y) || 0) * 0.5,
+              z: Math.abs(Number(obstacle.dimensions.z) || 0) * 0.5,
+            };
+            return {
+              min: {
+                x: Number(obstacle.center.x) - half.x,
+                y: Number(obstacle.center.y) - half.y,
+                z: Number(obstacle.center.z) - half.z,
+              },
+              max: {
+                x: Number(obstacle.center.x) + half.x,
+                y: Number(obstacle.center.y) + half.y,
+                z: Number(obstacle.center.z) + half.z,
+              },
+            };
+          };
+          const blockingWorld = worldObstacles
+            .map((obstacle) => ({
+              id: obstacle.branchId || obstacle.id || obstacle.kind || 'world-obstacle',
+              bounds: obstacleBounds(obstacle),
+            }))
+            .filter((entry) => entry.bounds && clearanceOverlap(targetClosed, entry.bounds, 0.16))
+            .map((entry) => ({
+              id: entry.id,
+              gaps: {
+                x: axisGap(targetClosed.min.x, targetClosed.max.x, entry.bounds.min.x, entry.bounds.max.x),
+                y: axisGap(targetClosed.min.y, targetClosed.max.y, entry.bounds.min.y, entry.bounds.max.y),
+                z: axisGap(targetClosed.min.z, targetClosed.max.z, entry.bounds.min.z, entry.bounds.max.z),
+              },
+              bounds: entry.bounds,
+            }));
+          const blockingSiblings = closedSiblingSubjects
+            .filter((entry) => entry.childId !== childId && clearanceOverlap(targetClosed, entry.subject, 0.16))
+            .map((entry) => ({
+              childId: entry.childId,
+              gaps: {
+                x: axisGap(targetClosed.min.x, targetClosed.max.x, entry.subject.min.x, entry.subject.max.x),
+                y: axisGap(targetClosed.min.y, targetClosed.max.y, entry.subject.min.y, entry.subject.max.y),
+                z: axisGap(targetClosed.min.z, targetClosed.max.z, entry.subject.min.z, entry.subject.max.z),
+              },
+              targetBounds: targetClosed,
+              siblingBounds: entry.subject,
+            }));
+          const plan = deriveMachineSeatDivisionExpansionPlan({
+            parent: seat,
+            childId,
+            childIndex,
+            obstacles: [...worldObstacles, ...siblingObstacles],
+            clearance: 0.16,
+          });
+
+          assert.ok(
+            plan?.clearancePlan?.clearanceSatisfiedAtClosed,
+            `closed-state clearance failed: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, blockingWorld=${JSON.stringify(blockingWorld)}, blockingSiblingDivisions=${JSON.stringify(blockingSiblings)}`,
+          );
+          const collisionAmount = Number(plan?.clearancePlan?.firstCollisionAmount);
+          const collisionSubject = Number.isFinite(collisionAmount)
+            ? subjectAtExpansionAmount(plan, collisionAmount)
+            : null;
+          const pathBlockers = collisionSubject
+            ? [
+                ...worldObstacles.map((obstacle) => ({
+                  id: obstacle.branchId || obstacle.id || obstacle.kind || 'world-obstacle',
+                  source: 'world',
+                  bounds: obstacleBounds(obstacle),
+                })),
+                ...closedSiblingSubjects
+                  .filter((entry) => entry.childId !== childId)
+                  .map((entry) => ({ id: entry.childId, source: 'closed-sibling', bounds: entry.subject })),
+              ]
+                .filter((entry) => entry.bounds && clearanceOverlap(collisionSubject, entry.bounds, 0.16))
+                .map((entry) => ({
+                  id: entry.id,
+                  source: entry.source,
+                  gaps: {
+                    x: axisGap(collisionSubject.min.x, collisionSubject.max.x, entry.bounds.min.x, entry.bounds.max.x),
+                    y: axisGap(collisionSubject.min.y, collisionSubject.max.y, entry.bounds.min.y, entry.bounds.max.y),
+                    z: axisGap(collisionSubject.min.z, collisionSubject.max.z, entry.bounds.min.z, entry.bounds.max.z),
+                  },
+                  bounds: entry.bounds,
+                }))
+            : [];
+          assert.equal(
+            plan?.clearancePlan?.collision,
+            false,
+            `division travel collides: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}, firstCollision=${Number.isFinite(collisionAmount) ? collisionAmount.toFixed(6) : 'none'}, maxSafe=${plan?.clearancePlan?.maxSafeAmount}, blockers=${JSON.stringify(pathBlockers)}`,
+          );
+          assert.equal(
+            plan?.clearancePlan?.maxSafeAmount,
+            1,
+            `division travel was unexpectedly limited: seats=${seatCount}, shell=${shellAmount}, ${seat.branchId}, ${childId}`,
+          );
+        }
+      }
+    }
+  }
+});

@@ -156,20 +156,48 @@ export function deriveMachineCameraSpec({
   const span = subjectSpan(subject);
   const responsive = resolveMachineResponsive(viewport);
 
-  let distance = clamp(
-    span * (
-      resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
+  const focusedMode = resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
+    || resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
+    || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+    || resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
+    || resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS;
+  const requestedFocusSubject = resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
+    ? podSubject
+    : resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
       || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
-        ? 1.55
-        : resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
-          ? 1.35
-          : resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
-            ? 1.28
+      ? divisionSubject
+      : resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
+        ? coreSubject
+        : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
+          ? facilitySubject
+          : null;
+  const closeFocus = focusedMode && validSubject(requestedFocusSubject);
+  const focusOffset = resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
+    || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+      ? 1.55
+      : resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
+        ? 1.30
+        : resolvedMode === MACHINE_CAMERA_MODE.CORE_FOCUS
+          ? 1.32
           : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
-            ? 1.48
-            : 1.12
-    ) + (resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW ? 6 : 3.5),
-    8,
+            ? 1.12
+            : 1.12;
+  const focusBase = resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW
+    ? 6
+    : closeFocus
+      ? 1.55
+      : 3.5;
+  const focusMinimum = resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
+    || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
+      ? 3.8
+      : resolvedMode === MACHINE_CAMERA_MODE.POD_FOCUS
+        ? 4.2
+        : resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
+          ? 3.8
+          : 5.0;
+  let distance = clamp(
+    span * focusOffset + focusBase,
+    resolvedMode === MACHINE_CAMERA_MODE.WORLD_OVERVIEW ? 8 : focusMinimum,
     22,
   );
 
@@ -183,7 +211,7 @@ export function deriveMachineCameraSpec({
   }
 
   let pitch = resolvedMode === MACHINE_CAMERA_MODE.FACILITY_FOCUS
-    ? Math.max(2.6, distance * 0.30)
+    ? Math.max(2.3, distance * 0.27)
     : resolvedMode === MACHINE_CAMERA_MODE.DIVISION_FOCUS
       || resolvedMode === MACHINE_CAMERA_MODE.EXPANSION_FOLLOW
         ? Math.max(2.2, distance * 0.27)

@@ -61,7 +61,9 @@ test.describe('Issue #88 material/depth visual evidence', () => {
     expect(api.seats).toBe(4);
 
     // Canonical material authority now lives in the machine-world renderer, not the controller.
-    await expect(page.locator('#hero-canvas')).toHaveAttribute('data-machine-world-material-model', 'hero-authored-v1');
+    await expect(page.locator('#hero-canvas')).toHaveAttribute('data-machine-world-material-model', 'hero-authored-v2');
+    await expect(page.locator('#hero-canvas')).toHaveAttribute('data-machine-world-material-shader', 'bounded-lit-v1');
+    await expect(page.locator('#hero-canvas')).toHaveAttribute('data-machine-world-material-theme', 'light');
     const srcOk = await page.evaluate(async () => {
       const res = await fetch('/hero/machine-world-renderer.js');
       const text = await res.text();
@@ -69,7 +71,12 @@ test.describe('Issue #88 material/depth visual evidence', () => {
         text.includes('authoredRingMaterial') &&
         text.includes('authoredSeatShellMaterial') &&
         text.includes('authoredSeatInsetMaterial') &&
-        text.includes('mapHeroThemeLighting')
+        text.includes('authoredHeroMaterialSet') &&
+        text.includes('mapHeroThemeLighting') &&
+        text.includes('solidRoughness') &&
+        text.includes('solidSpecular') &&
+        text.includes('bounded-lit-v1') &&
+        !text.includes('const RING_MATERIALS')
       );
     });
     expect(srcOk).toBe(true);
